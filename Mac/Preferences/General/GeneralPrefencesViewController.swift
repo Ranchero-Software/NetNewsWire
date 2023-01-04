@@ -109,7 +109,7 @@ private extension GeneralPreferencesViewController {
 
 		let defaultBrowser = MacWebBrowser.default
 
-		let defaultBrowserFormat = NSLocalizedString("System Default (%@)", comment: "Default browser item title format")
+		let defaultBrowserFormat = NSLocalizedString("button.title.default-browser.%@", comment: "System Default (%@)")
 		let defaultBrowserTitle = String(format: defaultBrowserFormat, defaultBrowser.name!)
 		let item = NSMenuItem(title: defaultBrowserTitle, action: nil, keyEquivalent: "")
 		let icon = defaultBrowser.icon!
@@ -148,10 +148,10 @@ private extension GeneralPreferencesViewController {
 	func showNotificationsDeniedError() {
 		let updateAlert = NSAlert()
 		updateAlert.alertStyle = .informational
-		updateAlert.messageText = NSLocalizedString("Enable Notifications", comment: "Notifications")
-		updateAlert.informativeText = NSLocalizedString("To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.", comment: "To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.")
-		updateAlert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
-		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
+		updateAlert.messageText = NSLocalizedString("alert.title.enable-notifications", comment: "Enable Notifications")
+		updateAlert.informativeText = NSLocalizedString("alert.message.enable-notifications-in-system-settings", comment: "To enable notifications, open Notifications in System Settings, then find NetNewsWire in the list.")
+		updateAlert.addButton(withTitle: NSLocalizedString("button.title.open-system-settings", comment: "Open System Settings"))
+		updateAlert.addButton(withTitle: NSLocalizedString("button.title.close", comment: "Close"))
 		let modalResponse = updateAlert.runModal()
 		if modalResponse == .alertFirstButtonReturn {
 			NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!)

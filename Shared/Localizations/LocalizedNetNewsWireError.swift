@@ -21,26 +21,46 @@ public enum LocalizedNetNewsWireError: LocalizedError {
 	
 	case userNameAndPasswordRequired
 	
+	case userNamePasswordAndURLRequired
+	
+	case userNameRequired
+	
 	case invalidUsernameOrPassword
+	
+	case invalidURL
 	
 	case keychainError
 	
 	case duplicateDefaultTheme
+	
+	case networkError
+	
+	case unrecognizedAccount
 
 	public var errorDescription: String? {
 		switch self {
 		case .duplicateAccount:
-			return String(localized: "There is already an account of that type with that username created.", comment: "Error message: duplicate account with same username.")
+			return NSLocalizedString("alert.error.duplicate-account-username", comment: "There is already an account of that type with that username created.")
 		case .iCloudDriveMissing:
-			return String(localized: "Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.", comment: "Error message: The user cannot enable the iCloud account becasue iCloud or iCloud Drive isn't enabled in Settings.")
+			return NSLocalizedString("alert.error.cloudkit-missing", comment: "Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.")
 		case .userNameAndPasswordRequired:
-			return String(localized: "Username and password required", comment: "Error message: The user must provide a username and password.")
+			return NSLocalizedString("alert.error.username-and-password-required", comment: "Error message: The user must provide a username and password.")
+		case .userNamePasswordAndURLRequired:
+			return NSLocalizedString("alert.error.username-password-url-required", comment: "The user must provide a username, password, and URL.")
+		case .userNameRequired:
+			return NSLocalizedString("alert.error.username-required", comment: "Username required.")
 		case .invalidUsernameOrPassword:
-			return String(localized: "Invalid username or password", comment: "Error message: The user provided an invalid username or password.")
+			return NSLocalizedString("alert.error.invalid-username-or-password", comment: "Error message: The user provided an invalid username or password.")
+		case .invalidURL:
+			return NSLocalizedString("alert.error.invalid-api-url", comment: "Invalid API URL.")
 		case .keychainError:
-			return String(localized: "Keychain error while storing credentials.", comment: "Error message: Unable to save due a Keychain error.")
+			return NSLocalizedString("alert.error.keychain-error", comment: "Error message: Unable to save due a Keychain error.")
 		case .duplicateDefaultTheme:
-			return String(localized: "You cannot import a theme that shares the same name as a provided theme.", comment: "Error message: cannot import theme as this is a duplicate of a provided theme.")
+			return NSLocalizedString("alert.error.theme-duplicate-of-provided", comment: "Error message: This theme shares the same name as a provided theme and cannot be imported.")
+		case .networkError:
+			return NSLocalizedString("alert.error.network-error", comment: "Network error. Please try later.")
+		case .unrecognizedAccount:
+			return NSLocalizedString("alert.error.unrecognized-account", comment: "The account type in invalid.")
 		}
 	}
 }

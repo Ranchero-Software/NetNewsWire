@@ -860,6 +860,9 @@
 		DFB349A0294E87B700BC81AD /* LocalAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */; };
 		DFB349A2294E90B500BC81AD /* FeedbinAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB349A1294E90B500BC81AD /* FeedbinAddAccountView.swift */; };
 		DFB349A4294E914D00BC81AD /* AccountSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB349A3294E914D00BC81AD /* AccountSectionHeader.swift */; };
+		DFB616A92965300400A359AB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB616A72965300400A359AB /* Localizable.strings */; };
+		DFB616AC2965300400A359AB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB616AA2965300400A359AB /* Localizable.strings */; };
+		DFB616AD2965300400A359AB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB616AA2965300400A359AB /* Localizable.strings */; };
 		DFBB4EAC2951BC0200639228 /* NNWThemeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */; };
 		DFBB4EAD2951BC0200639228 /* NNWThemeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */; };
 		DFBB4EAE2951BC0200639228 /* NNWThemeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */; };
@@ -1621,6 +1624,8 @@
 		DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAddAccountView.swift; sourceTree = "<group>"; };
 		DFB349A1294E90B500BC81AD /* FeedbinAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAddAccountView.swift; sourceTree = "<group>"; };
 		DFB349A3294E914D00BC81AD /* AccountSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSectionHeader.swift; sourceTree = "<group>"; };
+		DFB616A82965300400A359AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DFB616AB2965300400A359AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NNWThemeDocument.swift; sourceTree = "<group>"; };
 		DFBB4EAF2951BCAC00639228 /* ArticleThemeManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemeManagerView.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
@@ -1953,6 +1958,7 @@
 			children = (
 				51314666235A7E4600387FDC /* IntentHandler.swift */,
 				51314665235A7E4600387FDC /* Info.plist */,
+				DFB616A72965300400A359AB /* Localizable.strings */,
 				51314684235A7EB900387FDC /* NetNewsWire_iOS_IntentsExtension.entitlements */,
 			);
 			path = IntentsExtension;
@@ -2701,6 +2707,7 @@
 				84C9FC9022629ECB00D921D6 /* NetNewsWire.entitlements */,
 				51F805D32428499E0022C792 /* NetNewsWire-dev.entitlements */,
 				84C9FC9122629F2200D921D6 /* Info.plist */,
+				DFB616AA2965300400A359AB /* Localizable.strings */,
 				65ED409F235DEFF00081F399 /* container-migration.plist */,
 				17192AE12567B3FE00AAEACA /* org.sparkle-project.Downloader.xpc */,
 				17192AE22567B3FE00AAEACA /* org.sparkle-project.InstallerConnection.xpc */,
@@ -3453,6 +3460,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFB616A92965300400A359AB /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3539,6 +3547,7 @@
 				65ED406B235DEF6C0081F399 /* CrashReporterWindow.xib in Resources */,
 				65ED406C235DEF6C0081F399 /* Credits.rtf in Resources */,
 				65ED406D235DEF6C0081F399 /* Inspector.storyboard in Resources */,
+				DFB616AD2965300400A359AB /* Localizable.strings in Resources */,
 				65ED406E235DEF6C0081F399 /* AddWebFeedSheet.xib in Resources */,
 				51077C5927A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				51DEE81326FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
@@ -3609,6 +3618,7 @@
 				84C9FC7D22629E1200D921D6 /* AccountsDetail.xib in Resources */,
 				5137C2E426F3F52D009EFEDB /* Sepia.nnwtheme in Resources */,
 				517630042336215100E15FFF /* main.js in Resources */,
+				DFB616AC2965300400A359AB /* Localizable.strings in Resources */,
 				65ED40A0235DEFF00081F399 /* container-migration.plist in Resources */,
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
 				51D0214626ED617100FF2E0F /* core.css in Resources */,
@@ -4747,6 +4757,22 @@
 				DF332718295BBBC200BFD911 /* en */,
 			);
 			name = LaunchScreenPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		DFB616A72965300400A359AB /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DFB616A82965300400A359AB /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		DFB616AA2965300400A359AB /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DFB616AB2965300400A359AB /* en */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 		DFD86798295D553D0070D62D /* Localizable.strings */ = {

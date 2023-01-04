@@ -35,7 +35,7 @@ final class RenameWindowController: NSWindowController {
 
 		newTitleTextField.stringValue = originalTitle!
 
-		let prompt = NSLocalizedString("Rename %@ to:", comment: "Rename sheet")
+		let prompt = NSLocalizedString("textfield.prompt.rename-to.%@", comment: "Rename %@ to:")
 		let localizedPrompt = NSString.localizedStringWithFormat(prompt as NSString, originalTitle!)
 		renamePrompt.stringValue = localizedPrompt as String
 

@@ -134,7 +134,7 @@ private extension AddTwitterFeedWindowController {
 			
 			accountLabel.isHidden = false
 			accountPopupButton.isHidden = false
-			typeDescriptionLabel.stringValue = NSLocalizedString("Tweets from everyone you follow", comment: "Home Timeline")
+			typeDescriptionLabel.stringValue = NSLocalizedString("label.text.tweets-from-everyone", comment: "Tweets from everyone you follow")
 			screenSearchTextField.isHidden = true
 			addButton.isEnabled = true
 			
@@ -142,7 +142,7 @@ private extension AddTwitterFeedWindowController {
 			
 			accountLabel.isHidden = false
 			accountPopupButton.isHidden = false
-			typeDescriptionLabel.stringValue = NSLocalizedString("Tweets mentioning you", comment: "Mentions")
+			typeDescriptionLabel.stringValue = NSLocalizedString("label.text.tweets-mentioning-you", comment: "Tweets mentioning you")
 			screenSearchTextField.isHidden = true
 			addButton.isEnabled = true
 			
@@ -156,12 +156,13 @@ private extension AddTwitterFeedWindowController {
 				if let screenName = screenSearch, screenName.starts(with: "@") {
 					screenSearch = String(screenName[screenName.index(screenName.startIndex, offsetBy: 1)..<screenName.endIndex])
 				}
-				typeDescriptionLabel.stringValue = NSLocalizedString("Tweets from @\(screenSearch!)", comment: "Home Timeline")
+				let tweets = NSLocalizedString("label.text.tweets-from.%@", comment: "Tweets from @%@")
+				typeDescriptionLabel.stringValue = String(format: tweets, screenSearch!)
 			} else {
 				typeDescriptionLabel.stringValue = ""
 			}
 			
-			screenSearchTextField.placeholderString = NSLocalizedString("@name", comment: "@name")
+			screenSearchTextField.placeholderString = NSLocalizedString("textfield.placeholder.twitter-username", comment: "@name")
 			screenSearchTextField.isHidden = false
 			addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
 			
@@ -171,12 +172,13 @@ private extension AddTwitterFeedWindowController {
 			accountPopupButton.isHidden = true
 			
 			if !screenSearchTextField.stringValue.isEmpty {
-				typeDescriptionLabel.stringValue = NSLocalizedString("Tweets that contain \(screenSearchTextField.stringValue)", comment: "Home Timeline")
+				let tweets = NSLocalizedString("label.text.tweets-containing.%@", comment: "Tweets that contain %@")
+				typeDescriptionLabel.stringValue = String(format: tweets, screenSearchTextField.stringValue)
 			} else {
 				typeDescriptionLabel.stringValue = ""
 			}
 			
-			screenSearchTextField.placeholderString = NSLocalizedString("Search Term or #hashtag", comment: "Search Term")
+			screenSearchTextField.placeholderString = NSLocalizedString("textfield.placeholder.search-term-hashtag", comment: "Search Term or #hashtag")
 			screenSearchTextField.isHidden = false
 			addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
 			

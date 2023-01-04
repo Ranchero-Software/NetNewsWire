@@ -31,9 +31,9 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		}
 
 		title = "NetNewsWire"
-		placeholder = "Feed Name (Optional)"
+		placeholder = NSLocalizedString("textfield.placeholder.feed-name", comment: "Feed Name (Optional)")
 		if let button = navigationController?.navigationBar.topItem?.rightBarButtonItem {
-			button.title = "Add Feed"
+			button.title = NSLocalizedString("button.title.add-feed", comment: "Add Feed")
 			button.isEnabled = true
 		}
 

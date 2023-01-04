@@ -20,8 +20,8 @@ extension URLPasteboardWriter {
 
 		if urlStrings.contains(nil), !AppDefaults.shared.hasSeenNotAllArticlesHaveURLsAlert {
 			let alert = NSAlert()
-			alert.messageText = NSLocalizedString("Some articles don’t have links, so they weren't copied.", comment: "\"Some articles have no links\" copy alert message text")
-			alert.informativeText = NSLocalizedString("You won't see this message again.", comment: "You won't see this message again")
+			alert.messageText = NSLocalizedString("alert.message.articles-without-links", comment: "Some articles don’t have links, so they weren't copied.")
+			alert.informativeText = NSLocalizedString("alert.informative.will-not-see-again", comment: "You won't see this message again")
 
 			if let window {
 				alert.beginSheetModal(for: window)

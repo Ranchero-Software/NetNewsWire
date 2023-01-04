@@ -83,7 +83,7 @@ struct ArticleThemeManagerView: View {
 				Text("button.title.cancel", comment: "Cancel")
 			}
 		}, message: {
-			Text("alert.message.cannot-undo-action", comment: "This action cannot be undone.")
+			Text("alert.message.cannot-undo-action", comment: "You can't undo this action.")
 		})
 		.alert(Text("alert.title.import-theme", comment: "Import Theme"),
 			   isPresented: $showImportConfirmationAlert.1,

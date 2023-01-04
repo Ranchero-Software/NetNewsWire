@@ -45,13 +45,13 @@ class ArticleExtractorButton: NSButton {
 	override func accessibilityLabel() -> String? {
 		switch buttonState {
 		case .error:
-			return NSLocalizedString("Error - Reader View", comment: "Error - Reader View")
+			return NSLocalizedString("label.text.error-reader-view", comment: "Error - Reader View")
 		case .animated:
-			return NSLocalizedString("Processing - Reader View", comment: "Processing - Reader View")
+			return NSLocalizedString("label.text.processing-reader-view", comment: "Processing - Reader View")
 		case .on:
-			return NSLocalizedString("Selected - Reader View", comment: "Selected - Reader View")
+			return NSLocalizedString("label.text.selected-reader-view", comment: "Selected - Reader View")
 		case .off:
-			return NSLocalizedString("Reader View", comment: "Reader View")
+			return NSLocalizedString("label.text.reader-view", comment: "Reader View")
 		}
 	}
 

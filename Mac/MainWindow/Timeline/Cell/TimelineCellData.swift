@@ -11,7 +11,7 @@ import Articles
 
 struct TimelineCellData {
 	
-	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
+	private static let noText = NSLocalizedString("label.text.no-text", comment: "(No Text)")
 	
 	let title: String
 	let attributedTitle: NSAttributedString

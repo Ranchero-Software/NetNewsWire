@@ -39,7 +39,7 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 			updateFeed()
 		}
 	}
-	var windowTitle: String = NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
+	var windowTitle: String = NSLocalizedString("window.title.feed-inspector", comment: "Feed Inspector")
 
 	func canInspect(_ objects: [Any]) -> Bool {
 		return objects.count == 1 && objects.first is WebFeed
@@ -138,7 +138,7 @@ private extension WebFeedInspectorViewController {
 		updateFeedURL()
 		updateNotifyAboutNewArticles()
 		updateIsReaderViewAlwaysOn()
-		windowTitle = feed?.nameForDisplay ?? NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
+		windowTitle = feed?.nameForDisplay ?? NSLocalizedString("window.title.feed-inspector", comment: "Feed Inspector")
 		view.needsLayout = true
 		if let webfeed = feed {
 			webfeed.isFeedProvider ? (isReaderViewAlwaysOnCheckBox?.isEnabled = false) : (isReaderViewAlwaysOnCheckBox?.isEnabled = true)
@@ -172,7 +172,7 @@ private extension WebFeedInspectorViewController {
 	}
 
 	func updateNotifyAboutNewArticles() {
-		isNotifyAboutNewArticlesCheckBox?.title = feed?.notificationDisplayName ?? NSLocalizedString("Show notifications for new articles", comment: "Show notifications for new articles")
+		isNotifyAboutNewArticlesCheckBox?.title = feed?.notificationDisplayName ?? NSLocalizedString("checkbox.title.show-new-article-notifications", comment: "Show notifications for new articles")
 		isNotifyAboutNewArticlesCheckBox?.state = (feed?.isNotifyAboutNewArticles ?? false) ? .on : .off
 	}
 
@@ -194,10 +194,10 @@ private extension WebFeedInspectorViewController {
 	func showNotificationsDeniedError() {
 		let updateAlert = NSAlert()
 		updateAlert.alertStyle = .informational
-		updateAlert.messageText = NSLocalizedString("Enable Notifications", comment: "Notifications")
-		updateAlert.informativeText = NSLocalizedString("To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.", comment: "To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.")
-		updateAlert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
-		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
+		updateAlert.messageText = NSLocalizedString("alert.title.enable-notifications", comment: "Enable Notifications")
+		updateAlert.informativeText = NSLocalizedString("alert.message.enable-notifications-in-system-settings", comment: "To enable notifications, open Notifications in System Settings, then find NetNewsWire in the list.")
+		updateAlert.addButton(withTitle: NSLocalizedString("button.title.open-system-settings", comment: "Open System Settings"))
+		updateAlert.addButton(withTitle: NSLocalizedString("button.title.close", comment: "Close"))
 		let modalResponse = updateAlert.runModal()
 		if modalResponse == .alertFirstButtonReturn {
 			NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!)

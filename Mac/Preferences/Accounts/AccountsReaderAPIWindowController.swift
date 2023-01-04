@@ -41,25 +41,25 @@ class AccountsReaderAPIWindowController: NSWindowController, Logging {
 			switch accountType {
 			case .freshRSS:
 				titleImageView.image = AppAssets.accountFreshRSS
-				titleLabel.stringValue = NSLocalizedString("Sign in to your FreshRSS account.", comment: "FreshRSS")
-				noAccountTextField.stringValue = NSLocalizedString("Don’t have a FreshRSS instance?", comment: "No FreshRSS")
-				createAccountButton.title = NSLocalizedString("Find out more", comment: "No FreshRSS Button")
-				apiURLTextField.placeholderString = NSLocalizedString("fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
+				titleLabel.stringValue = NSLocalizedString("label.text.sign-in-freshrss", comment: "Sign in to your FreshRSS account.")
+				noAccountTextField.stringValue = NSLocalizedString("label.text.no-fresh-rss", comment: "Don’t have a FreshRSS instance?")
+				createAccountButton.title = NSLocalizedString("label.text.find-out-more", comment: "Find out more")
+				apiURLTextField.placeholderString = "fresh.rss.net/api/greader.php" // not localized.
 			case .inoreader:
 				titleImageView.image = AppAssets.accountInoreader
-				titleLabel.stringValue = NSLocalizedString("Sign in to your InoReader account.", comment: "InoReader")
+				titleLabel.stringValue = NSLocalizedString("label.text.sign-in-inoreader", comment: "Sign in to your InoReader account.")
 				gridView.row(at: 2).isHidden = true
-				noAccountTextField.stringValue = NSLocalizedString("Don’t have an InoReader account?", comment: "No InoReader")
+				noAccountTextField.stringValue = NSLocalizedString("label.text.no-inoreader", comment: "Don’t have an InoReader account?")
 			case .bazQux:
 				titleImageView.image = AppAssets.accountBazQux
-				titleLabel.stringValue = NSLocalizedString("Sign in to your BazQux account.", comment: "BazQux")
+				titleLabel.stringValue = NSLocalizedString("label.text.sign-in-bazqux", comment: "Sign in to your BazQux account.")
 				gridView.row(at: 2).isHidden = true
-				noAccountTextField.stringValue = NSLocalizedString("Don’t have a BazQux account?", comment: "No BazQux")
+				noAccountTextField.stringValue = NSLocalizedString("label.text.no-bazqux", comment: "Don’t have a BazQux account?")
 			case .theOldReader:
 				titleImageView.image = AppAssets.accountTheOldReader
-				titleLabel.stringValue = NSLocalizedString("Sign in to your The Old Reader account.", comment: "The Old Reader")
+				titleLabel.stringValue = NSLocalizedString("label.text.sign-in-old-reader", comment: "Sign in to your The Old Reader account.")
 				gridView.row(at: 2).isHidden = true
-				noAccountTextField.stringValue = NSLocalizedString("Don’t have a The Old Reader account?", comment: "No OldReader")
+				noAccountTextField.stringValue = NSLocalizedString("label.text.no-old-reader", comment: "Don’t have a The Old Reader account?")
 			default:
 				break
 			}
@@ -68,9 +68,9 @@ class AccountsReaderAPIWindowController: NSWindowController, Logging {
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .readerBasic) {
 			usernameTextField.stringValue = credentials.username
 			apiURLTextField.stringValue = account.endpointURL?.absoluteString ?? ""
-			actionButton.title = NSLocalizedString("Update", comment: "Update")
+			actionButton.title = NSLocalizedString("button.title.update", comment: "Update")
 		} else {
-			actionButton.title = NSLocalizedString("Create", comment: "Create")
+			actionButton.title = NSLocalizedString("button.title.create", comment: "Create")
 		}
 		
 		enableAutofill()
@@ -94,17 +94,17 @@ class AccountsReaderAPIWindowController: NSWindowController, Logging {
 		self.errorMessageLabel.stringValue = ""
 		
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.userNameAndPasswordRequired.localizedDescription
 			return
 		}
 		
 		guard let accountType = accountType, !(accountType == .freshRSS && apiURLTextField.stringValue.isEmpty) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.userNamePasswordAndURLRequired.localizedDescription
 			return
 		}
 		
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: usernameTextField.stringValue) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
+			self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.duplicateAccount.localizedDescription
 			return
 		}
 		
@@ -112,7 +112,7 @@ class AccountsReaderAPIWindowController: NSWindowController, Logging {
 		switch accountType {
 		case .freshRSS:
 			guard let inputURL = URL(string: apiURLTextField.stringValue) else {
-				self.errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Invalid API URL")
+				self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.invalidURL.localizedDescription
 				return
 			}
 			apiURL = inputURL
@@ -123,7 +123,7 @@ class AccountsReaderAPIWindowController: NSWindowController, Logging {
 		case .theOldReader:
 			apiURL =  URL(string: ReaderAPIVariant.theOldReader.host)!
 		default:
-			self.errorMessageLabel.stringValue = NSLocalizedString("Unrecognized account type.", comment: "Bad account type")
+			self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.unrecognizedAccount.localizedDescription
 			return
 		}
 		
@@ -143,7 +143,7 @@ class AccountsReaderAPIWindowController: NSWindowController, Logging {
 			switch result {
 			case .success(let validatedCredentials):
 				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.invalidUsernameOrPassword.localizedDescription
 					return
 				}
 				
@@ -170,12 +170,12 @@ class AccountsReaderAPIWindowController: NSWindowController, Logging {
 					
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.keychainError.localizedDescription
 					self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public)")
 				}
 				
 			case .failure:
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
+				self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.networkError.localizedDescription
 			}
 			
 		}

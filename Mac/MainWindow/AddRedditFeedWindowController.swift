@@ -148,7 +148,7 @@ private extension AddRedditFeedWindowController {
 			animateShowHideFields(collapsed: false) {
 				self.accountLabel.isHidden = false
 				self.accountPopupButton.isHidden = false
-				self.typeDescriptionLabel.stringValue = NSLocalizedString("Your personal Reddit frontpage", comment: "Home")
+				self.typeDescriptionLabel.stringValue = NSLocalizedString("label.text.reddit-front-page", comment: "Your personal Reddit frontpage")
 				self.subredditTextField.isHidden = true
 				self.addButton.isEnabled = true
 			}
@@ -157,7 +157,7 @@ private extension AddRedditFeedWindowController {
 			
 			accountLabel.isHidden = true
 			accountPopupButton.isHidden = true
-			typeDescriptionLabel.stringValue = NSLocalizedString("The best posts on Reddit for you", comment: "Popular")
+			typeDescriptionLabel.stringValue = NSLocalizedString("label.text.reddit-best-posts", comment: "The best posts on Reddit for you")
 			subredditTextField.isHidden = true
 			addButton.isEnabled = true
 			animateShowHideFields(collapsed: true)
@@ -166,7 +166,7 @@ private extension AddRedditFeedWindowController {
 			
 			accountLabel.isHidden = true
 			accountPopupButton.isHidden = true
-			typeDescriptionLabel.stringValue = NSLocalizedString("The most active posts", comment: "All")
+			typeDescriptionLabel.stringValue = NSLocalizedString("label.text.reddit-active-posts", comment: "The most active posts")
 			subredditTextField.isHidden = true
 			addButton.isEnabled = true
 			animateShowHideFields(collapsed: true)
@@ -178,12 +178,13 @@ private extension AddRedditFeedWindowController {
 				self.accountPopupButton.isHidden = true
 				
 				if !self.subredditTextField.stringValue.isEmpty {
-					self.typeDescriptionLabel.stringValue = NSLocalizedString("Posts from r/\(self.subredditTextField.stringValue)", comment: "Subreddit")
+					let subreddit = NSLocalizedString("label.text.posts-from-subreddit.%@", comment: "Posts from r/%@")
+					self.typeDescriptionLabel.stringValue = String(format: subreddit, self.subredditTextField.stringValue)
 				} else {
 					self.typeDescriptionLabel.stringValue = ""
 				}
 				
-				self.subredditTextField.placeholderString = NSLocalizedString("Subreddit", comment: "Search Term")
+				self.subredditTextField.placeholderString = NSLocalizedString("label.text.subreddit", comment: "Subreddit")
 				self.subredditTextField.isHidden = false
 				self.addButton.isEnabled = !self.subredditTextField.stringValue.isEmpty
 			}

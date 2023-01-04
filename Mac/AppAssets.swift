@@ -183,7 +183,7 @@ struct AppAssets {
 	}()
 
 	static var privacyPolicyLink: NSAttributedString = {
-		return NSAttributedString(linkText: NSLocalizedString("Privacy Policy", comment: "Privacy Policy"), linkURL: URL(string: "https://netnewswire.com/privacypolicy")!)
+		return NSAttributedString(linkText: NSLocalizedString("label.text.privacy-policy", comment: "Privacy Policy"), linkURL: URL(string: "https://netnewswire.com/privacypolicy")!)
 	}()
 	
 	static var readClosedImage: RSImage = {

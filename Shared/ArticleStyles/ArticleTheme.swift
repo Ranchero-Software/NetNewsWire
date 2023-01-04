@@ -20,8 +20,9 @@ struct ArticleTheme: Equatable {
 	static let defaultTheme = ArticleTheme()
 	static let nnwThemeSuffix = ".nnwtheme"
 	
-	private static let defaultThemeName = NSLocalizedString("Default", comment: "Default")
-	private static let unknownValue = NSLocalizedString("Unknown", comment: "Unknown Value")
+	// Don't localize the theme names.
+	private static let defaultThemeName = "Default"
+	private static let unknownValue = "Unknown"
 	
 	let path: String?
 	let template: String?

@@ -77,10 +77,10 @@ class ExportOPMLWindowController: NSWindowController {
 		let panel = NSSavePanel()
 		panel.allowedFileTypes = ["opml"]
 		panel.allowsOtherFileTypes = false
-		panel.prompt = NSLocalizedString("Export OPML", comment: "Export OPML")
-		panel.title = NSLocalizedString("Export OPML", comment: "Export OPML")
-		panel.nameFieldLabel = NSLocalizedString("Export to:", comment: "Export OPML")
-		panel.message = NSLocalizedString("Choose a location for the exported OPML file.", comment: "Export OPML")
+		panel.prompt = NSLocalizedString("panel.prompt.export-opml", comment: "Export OPML")
+		panel.title = NSLocalizedString("panel.title.export-opml", comment: "Export OPML")
+		panel.nameFieldLabel = NSLocalizedString("panel.textfield.export-opml-destination", comment: "Export to:")
+		panel.message = NSLocalizedString("panel.message.export-opml", comment: "Choose a location for the exported OPML file.")
 		panel.isExtensionHidden = false
 		
 		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)

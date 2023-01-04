@@ -156,10 +156,10 @@ extension SidebarViewController {
 	func showNotificationsNotEnabledAlert() {
 		DispatchQueue.main.async {
 			let alert = NSAlert()
-			alert.messageText = NSLocalizedString("Notifications are not enabled", comment: "Notifications are not enabled.")
-			alert.informativeText = NSLocalizedString("You can enable NetNewsWire notifications in System Preferences.", comment: "Notifications are not enabled.")
-			alert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
-			alert.addButton(withTitle: NSLocalizedString("Dismiss", comment: "Dismiss"))
+			alert.messageText = NSLocalizedString("alert.title.notifications-not-enabled", comment: "Notifications are not enabled.")
+			alert.informativeText = NSLocalizedString("alert.message.enable-notifications-in-settings", comment: "You can enable NetNewsWire notifications in System Settings.")
+			alert.addButton(withTitle: NSLocalizedString("button.title.open-settings", comment: "Open Settings"))
+			alert.addButton(withTitle: NSLocalizedString("button.title.dismiss", comment: "Dismiss"))
 			let userChoice = alert.runModal()
 			if userChoice == .alertFirstButtonReturn {
 				let config = NSWorkspace.OpenConfiguration()
@@ -208,8 +208,8 @@ private extension SidebarViewController {
 
 		let menu = NSMenu(title: "")
 
-		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(AppDelegate.showAddWebFeedWindow(_:)), keyEquivalent: "")
-		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(AppDelegate.showAddFolderWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("button.title.new-feed", comment: "New Feed"), action: #selector(AppDelegate.showAddWebFeedWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("button.title.new-folder", comment: "New Folder"), action: #selector(AppDelegate.showAddFolderWindow(_:)), keyEquivalent: "")
 
 		return menu
 	}
@@ -224,16 +224,16 @@ private extension SidebarViewController {
 		}
 
 		if let homePageURL = webFeed.homePageURL, let _ = URL(string: homePageURL) {
-			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL.decodedURLString ?? homePageURL)
+			let item = menuItem(NSLocalizedString("button.title.open-home-page", comment: "Open Home Page"), #selector(openHomePageFromContextualMenu(_:)), homePageURL.decodedURLString ?? homePageURL)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), webFeed.url.decodedURLString ?? webFeed.url)
+		let copyFeedURLItem = menuItem(NSLocalizedString("button.title.copy-feed-url", comment: "Copy Feed URL"), #selector(copyURLFromContextualMenu(_:)), webFeed.url.decodedURLString ?? webFeed.url)
 		menu.addItem(copyFeedURLItem)
 
 		if let homePageURL = webFeed.homePageURL {
-			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL.decodedURLString ?? homePageURL)
+			let item = menuItem(NSLocalizedString("button.title.copy-home-page-url", comment: "Copy Home Page URL"), #selector(copyURLFromContextualMenu(_:)), homePageURL.decodedURLString ?? homePageURL)
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
@@ -250,7 +250,7 @@ private extension SidebarViewController {
 		
 		
 		if !webFeed.isFeedProvider {
-			let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
+			let articleExtractorText = NSLocalizedString("button.title.always-use-reader-view", comment: "Always Use Reader View")
 			let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
 			
 			if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
@@ -313,17 +313,17 @@ private extension SidebarViewController {
 
 	func markAllReadMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
+		return menuItem(NSLocalizedString("button.title.mark-all-as-read.titlecase", comment: "Mark All as Read"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects)
+		return menuItem(NSLocalizedString("button.title.delete", comment: "Delete"), #selector(deleteFromContextualMenu(_:)), objects)
 	}
 
 	func renameMenuItem(_ object: Any) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object)
+		return menuItem(NSLocalizedString("button.title.rename", comment: "Rename"), #selector(renameFromContextualMenu(_:)), object)
 	}
 
 	func anyObjectInArrayHasNonZeroUnreadCount(_ objects: [Any]) -> Bool {

@@ -227,7 +227,7 @@ private extension TimelineViewController {
 			return nil
 		}
 
-		let menu = NSMenu(title: NSLocalizedString("Share", comment: "Share menu name"))
+		let menu = NSMenu(title: NSLocalizedString("button.title.share", comment: "Share menu name"))
 		services.forEach { (service) in
 			service.delegate = sharingServiceDelegate
 			let menuItem = NSMenuItem(title: service.menuItemTitle, action: #selector(performShareServiceFromContextualMenu(_:)), keyEquivalent: "")
@@ -242,34 +242,34 @@ private extension TimelineViewController {
 
 	func markReadMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("button.title.mark-as-read", comment: "Mark as Read"), #selector(markArticlesReadFromContextualMenu(_:)), articles)
 	}
 
 	func markUnreadMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("button.title.mark-as-unread", comment: "Mark as Unread"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles)
 	}
 
 	func markStarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("button.title.mark-as-starred", comment: "Mark as Starred"), #selector(markArticlesStarredFromContextualMenu(_:)), articles)
 	}
 
 	func markUnstarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("button.title.mark-as-unstarred", comment: "Mark as Unstarred"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles)
 	}
 
 	func markAboveReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("button.title-mark-above-as-read.titlecase", comment: "Mark Above as Read"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles)
 	}
 	
 	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("button.title-mark-below-as-read.titlecase", comment: "Mark Below as Read"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles)
 	}
 
 	func selectFeedInSidebarMenuItem(_ feed: WebFeed) -> NSMenuItem {
-		let localizedMenuText = NSLocalizedString("Select “%@” in Sidebar", comment: "Command")
+		let localizedMenuText = NSLocalizedString("button.title.select-in-sidebar.%@", comment: "Select “%@” in Sidebar")
 		let formattedMenuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay)
 		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed)
 	}
@@ -283,14 +283,14 @@ private extension TimelineViewController {
 			return nil
 		}
 
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let localizedMenuText = NSLocalizedString("button.title.mark-all-as-read.%@", comment: "Mark All as Read in “%@”")
 		let menuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		
 		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), articles)
 	}
 	
 	func openInBrowserMenuItem(_ urlStrings: [String]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
+		return menuItem(NSLocalizedString("button.title.open-in-browser", comment: "Open in Browser"), #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
 	}
 
 	func openInBrowserReversedMenuItem(_ urlStrings: [String]) -> NSMenuItem {
@@ -301,13 +301,13 @@ private extension TimelineViewController {
 	}
 	
 	func copyArticleURLsMenuItem(_ urlStrings: [String?]) -> NSMenuItem {
-		let format = NSLocalizedString("Copy Article URL", comment: "Command")
+		let format = NSLocalizedString("button.title.copy-article-url", comment: "Copy Article URL")
 		let title = String.localizedStringWithFormat(format, urlStrings.count)
 		return menuItem(title, #selector(copyURLFromContextualMenu(_:)), urlStrings)
 	}
 	
 	func copyExternalURLMenuItem(_ urlString: String) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Copy External URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString)
+		return menuItem(NSLocalizedString("button.title.copy-external-url", comment: "Copy External URL"), #selector(copyURLFromContextualMenu(_:)), urlString)
 	}
 
 

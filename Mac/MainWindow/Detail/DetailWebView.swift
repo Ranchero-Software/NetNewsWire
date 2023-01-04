@@ -15,7 +15,7 @@ final class DetailWebView: WKWebView {
 	weak var keyboardDelegate: KeyboardDelegate?
 	
 	override func accessibilityLabel() -> String? {
-		return NSLocalizedString("Article", comment: "Article")
+		return NSLocalizedString("label.text.article", comment: "Article")
 	}
 
 	// MARK: - NSResponder

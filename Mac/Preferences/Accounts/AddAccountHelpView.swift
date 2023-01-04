@@ -43,8 +43,8 @@ struct AddAccountHelpView: View {
 			
 		}
 		.alert(isPresented: $iCloudUnavailableError, content: {
-			Alert(title: Text(NSLocalizedString("Error", comment: "Error")),
-				  message: Text(NSLocalizedString("You've already set up an iCloud account.", comment: "Error")),
+			Alert(title: Text(NSLocalizedString("alert.title.error", comment: "Error")),
+				  message: Text(NSLocalizedString("alert.message.cloudkit-already-setup", comment: "You've already set up an iCloud account.")),
 				  dismissButton: Alert.Button.cancel({
 					iCloudUnavailableError = false
 				  }))

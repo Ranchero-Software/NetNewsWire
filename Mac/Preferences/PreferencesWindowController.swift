@@ -35,13 +35,13 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
 		var specs = [PreferencesToolbarItemSpec]()
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General,
-											 name: NSLocalizedString("General", comment: "Preferences"),
+											 name: NSLocalizedString("button.title.general", comment: "General"),
 											 image: AppAssets.preferencesToolbarGeneralImage)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
-											 name: NSLocalizedString("Accounts", comment: "Preferences"),
+											 name: NSLocalizedString("button.title.accounts", comment: "Account"),
 											 image: AppAssets.preferencesToolbarAccountsImage)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Extensions,
-											 name: NSLocalizedString("Extensions", comment: "Preferences"),
+											 name: NSLocalizedString("button.title.extensions", comment: "Extensions"),
 											 image: AppAssets.preferencesToolbarExtensionsImage)]
 
 		// Omit the Advanced Preferences for now because the Software Update related functionality is
@@ -50,7 +50,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		// of the content in this tab.
 		#if !MAC_APP_STORE
 			specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
-												 name: NSLocalizedString("Advanced", comment: "Preferences"),
+												 name: NSLocalizedString("button.title.advanced", comment: "Advanced"),
 												 image: AppAssets.preferencesToolbarAdvancedImage)]
 		#endif
 		return specs

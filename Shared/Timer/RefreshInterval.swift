@@ -41,19 +41,19 @@ enum RefreshInterval: Int, CaseIterable, Identifiable {
 	func description() -> String {
 		switch self {
 		case .manually:
-			return NSLocalizedString("Manually", comment: "Manually")
+			return NSLocalizedString("button.title.manually", comment: "Manually")
 		case .every10Minutes:
-			return NSLocalizedString("Every 10 Minutes", comment: "Every 10 Minutes")
+			return NSLocalizedString("button.title.10-minutes", comment: "Every 10 Minutes")
 		case .every30Minutes:
-			return NSLocalizedString("Every 30 Minutes", comment: "Every 30 Minutes")
+			return NSLocalizedString("button.title.30-minutes", comment: "Every 30 Minutes")
 		case .everyHour:
-			return NSLocalizedString("Every Hour", comment: "Every Hour")
+			return NSLocalizedString("button.title.every-hour", comment: "Every Hour")
 		case .every2Hours:
-			return NSLocalizedString("Every 2 Hours", comment: "Every 2 Hours")
+			return NSLocalizedString("button.title.2-hours", comment: "Every 2 Hours")
 		case .every4Hours:
-			return NSLocalizedString("Every 4 Hours", comment: "Every 4 Hours")
+			return NSLocalizedString("button.title.4-hours", comment: "Every 4 Hours")
 		case .every8Hours:
-			return NSLocalizedString("Every 8 Hours", comment: "Every 8 Hours")
+			return NSLocalizedString("button.title.8-hours", comment: "Every 8 Hours")
 		}
 	}
 	

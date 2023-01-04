@@ -34,13 +34,13 @@ class AccountsFeedbinWindowController: NSWindowController, Logging {
 	override func windowDidLoad() {
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .basic) {
 			usernameTextField.stringValue = credentials.username
-			actionButton.title = NSLocalizedString("Update", comment: "Update")
-			signInTextField.stringValue = NSLocalizedString("Update your Feedbin account credentials.", comment: "SignIn")
+			actionButton.title = NSLocalizedString("button.title.update", comment: "Update")
+			signInTextField.stringValue = NSLocalizedString("textfield.text.update-feedbin-credentials", comment: "Update your Feedbin account credentials.")
 			noAccountTextField.isHidden = true
 			createNewAccountButton.isHidden = true
 		} else {
-			actionButton.title = NSLocalizedString("Create", comment: "Add Account")
-			signInTextField.stringValue = NSLocalizedString("Sign in to your Feedbin account.", comment: "SignIn")
+			actionButton.title = NSLocalizedString("button.title.create", comment: "Create")
+			signInTextField.stringValue = NSLocalizedString("textfield.text.sign-in-feedbin", comment: "Sign in to your Feedbin account.")
 		}
 		
 		enableAutofill()
@@ -66,12 +66,13 @@ class AccountsFeedbinWindowController: NSWindowController, Logging {
 		self.errorMessageLabel.stringValue = ""
 		
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.userNameAndPasswordRequired.localizedDescription
+			
 			return
 		}
 		
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: usernameTextField.stringValue) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error")
+			self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.duplicateAccount.localizedDescription
 			return
 		}
 		
@@ -92,7 +93,8 @@ class AccountsFeedbinWindowController: NSWindowController, Logging {
 			case .success(let validatedCredentials):
 			
 				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.invalidUsernameOrPassword.localizedDescription
+					
 					return
 				}
 				
@@ -115,13 +117,13 @@ class AccountsFeedbinWindowController: NSWindowController, Logging {
 					
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.keychainError.localizedDescription
 					self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public)")
 				}
 				
 			case .failure:
 				
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
+				self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.networkError.localizedDescription
 				
 			}
 			

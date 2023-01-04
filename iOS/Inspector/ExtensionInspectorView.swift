@@ -43,7 +43,7 @@ struct ExtensionInspectorView: View {
 						Text("button.title.cancel", comment: "Cancel")
 					}
 				} message: {
-					Text("alert.message.cannot-undo-action", comment: "This action cannot be undone.")
+					Text("alert.message.cannot-undo-action", comment: "You can't undo this action.")
 				}
 				Spacer()
 			}

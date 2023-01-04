@@ -259,11 +259,11 @@ private extension Node {
 
 private struct DeleteActionName {
 
-	private static let deleteFeed = NSLocalizedString("Delete Feed", comment: "command")
-	private static let deleteFeeds = NSLocalizedString("Delete Feeds", comment: "command")
-	private static let deleteFolder = NSLocalizedString("Delete Folder", comment: "command")
-	private static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
-	private static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
+	private static let deleteFeed = NSLocalizedString("button.title.delete-feed", comment: "Delete Feed")
+	private static let deleteFeeds = NSLocalizedString("button.title.delete-feeds", comment: "Delete Feeds")
+	private static let deleteFolder = NSLocalizedString("button.title.delete-folder", comment: "Delete Folder")
+	private static let deleteFolders = NSLocalizedString("button.title.delete-folders", comment: "Delete Folders")
+	private static let deleteFeedsAndFolders = NSLocalizedString("button.title.delete-feeds-and-folders", comment: "Delete Feeds and Folders")
 
 	static func name(for nodes: [Node]) -> String? {
 

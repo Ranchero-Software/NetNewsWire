@@ -25,7 +25,7 @@ struct EnableExtensionPointView: View {
 	
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
-			Text("Choose an extension to add...")
+			Text("label.text.choose-extension-to-add", comment: "Choose an extension to add...")
 				.font(.headline)
 				.padding()
 			
@@ -37,7 +37,7 @@ struct EnableExtensionPointView: View {
 				Button(action: {
 					parent?.dismiss(nil)
 				}, label: {
-					Text("Cancel")
+					Text("button.title.cancel", comment: "Cancel")
 						.frame(width: 80)
 				})
 				.help("Cancel")
@@ -72,7 +72,7 @@ struct EnableExtensionPointView: View {
 		VStack(alignment: .leading) {
 			let extensionPointTypeNames = Self.feedProviderExtensionPointTypes.map { String(describing: $0) }
 			if extensionPointTypeNames.count > 0 {
-				Text("Feed Provider")
+				Text("label.text.feed-provider", comment: "Feed Provider")
 					.font(.headline)
 					.padding(.horizontal)
 
@@ -95,7 +95,7 @@ struct EnableExtensionPointView: View {
 				.pickerStyle(RadioGroupPickerStyle())
 				.offset(x: 7.5, y: 0)
 				
-				Text("An extension that makes websites appear to provide RSS feeds for their content.")
+				Text("label.text.feed-provider-explainer", comment: "An extension that makes websites appear to provide RSS feeds for their content.")
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
@@ -113,7 +113,7 @@ struct EnableExtensionPointView: View {
 		VStack(alignment: .leading) {
 			let extensionPointTypeNames = Self.sendToCommandExtensionPointTypes.map { String(describing: $0) }
 			if extensionPointTypeNames.count > 0 {
-				Text("Third-Party Integration")
+				Text("label.text.third-party-integration", comment: "Third-Party Integration")
 					.font(.headline)
 					.padding(.horizontal)
 					.padding(.top, 8)
@@ -137,7 +137,7 @@ struct EnableExtensionPointView: View {
 				.pickerStyle(RadioGroupPickerStyle())
 				.offset(x: 7.5, y: 0)
 				
-				Text("An extension that enables a share menu item that passes article data to a third-party application.")
+				Text("label.text.share-extension-explainer", comment: "An extension that enables a share menu item that passes article data to a third-party application.")
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
