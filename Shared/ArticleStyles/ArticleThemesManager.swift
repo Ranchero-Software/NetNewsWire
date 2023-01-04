@@ -76,11 +76,13 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 	}
 	
 	func presentedSubitemDidChange(at url: URL) {
-		themeNames = buildThemeNames()
-		do {
-			currentTheme = try articleThemeWithThemeName(currentThemeName)
-		} catch {
-			appDelegate.presentThemeImportError(error)
+		if url.lastPathComponent.localizedCaseInsensitiveContains("nnwtheme") {
+			themeNames = buildThemeNames()
+			do {
+				currentTheme = try articleThemeWithThemeName(currentThemeName)
+			} catch {
+				appDelegate.presentThemeImportError(error)
+			}
 		}
 	}
 
