@@ -313,6 +313,9 @@
 /* Mark as Read */
 "button.title.mark-as-read" = "Mark as Read";
 
+/* Mark as Read Older Than */
+"button.title.mark-as-read-older-than" = "Mark as Read Older Than";
+
 /* Mark as Starred */
 "button.title.mark-as-starred" = "Mark as Starred";
 
