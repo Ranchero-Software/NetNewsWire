@@ -5,7 +5,7 @@
 "1nF-7O-aKU.title" = "Check for Updates…";
 
 /* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
-"1UK-8n-QPP.title" = "Customize Toolbar…";
+"1UK-8n-QPP.title" = "Customise Toolbar…";
 
 /* Class = "NSMenuItem"; title = "NetNewsWire"; ObjectID = "1Xt-HY-uBw"; */
 "1Xt-HY-uBw.title" = "NetNewsWire";
@@ -254,7 +254,7 @@
 "OwM-mh-QMV.title" = "Find Previous";
 
 /* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
-"OY7-WF-poV.title" = "Minimize";
+"OY7-WF-poV.title" = "Minimise";
 
 /* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
 "Oyz-dy-DGm.title" = "Stop Speaking";
@@ -326,7 +326,7 @@
 "TzI-3g-N0v.title" = "Article";
 
 /* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
-"UEZ-Bs-lqG.title" = "Capitalize";
+"UEZ-Bs-lqG.title" = "Capitalise";
 
 /* Class = "NSMenuItem"; title = "Debug"; ObjectID = "UqE-mp-gtV"; */
 "UqE-mp-gtV.title" = "Debug";
