@@ -730,6 +730,9 @@
 /* Small */
 "label.text.small" = "Small";
 
+/* Starred */
+"label.text.starred" = "Starred";
+
 /* Thanks */
 "label.text.thanks" = "Thanks";
 
@@ -744,6 +747,9 @@
 
 /* Timeline */
 "label.text.timeline" = "Timeline";
+
+/* Unread */
+"label.text.unread" = "Unread";
 
 /* Relative time that the account was last refreshed. The variable is a named relative time. Example: Updated 8 minutes ago */
 "label.text.updatedat.%@" = "Updated %@";

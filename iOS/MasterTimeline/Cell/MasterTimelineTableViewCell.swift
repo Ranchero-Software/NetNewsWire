@@ -263,9 +263,8 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateAccessiblityLabel() {
-		#warning("This needs to be localized.")
-		let starredStatus = cellData.starred ? "\(NSLocalizedString("Starred", comment: "Starred article for accessibility")), " : ""
-		let unreadStatus = cellData.read ? "" : "\(NSLocalizedString("Unread", comment: "Unread")), "
+		let starredStatus = cellData.starred ? "\(NSLocalizedString("label.text.starred", comment: "Starred")), " : ""
+		let unreadStatus = cellData.read ? "" : "\(NSLocalizedString("label.text.unread", comment: "Unread")), "
 		let label = starredStatus + unreadStatus + "\(cellData.feedName), \(cellData.title), \(cellData.summary), \(cellData.dateString)"
 		accessibilityLabel = label
 	}
