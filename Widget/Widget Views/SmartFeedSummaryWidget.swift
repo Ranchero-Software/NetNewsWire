@@ -26,7 +26,7 @@ struct SmartFeedSummaryWidgetView: View {
 		VStack(alignment: .leading, spacing: 2) {
 			HStack {
 				todayImage
-				Text(L10n.today).bold().font(.body)
+				Text("label.text.today", comment: "Today").bold().font(.body)
 				Spacer()
 				Text(formattedCount(entry.widgetData.currentTodayCount)).bold()
 				
@@ -34,14 +34,14 @@ struct SmartFeedSummaryWidgetView: View {
 			
 			HStack {
 				unreadImage
-				Text(L10n.unread).bold().font(.body)
+				Text("label.text.unread", comment: "Unread").bold().font(.body)
 				Spacer()
 				Text(formattedCount(entry.widgetData.currentUnreadCount)).bold()
 			}
 			
 			HStack {
 				starredImage
-				Text(L10n.starred).bold().font(.body)
+				Text("label.text.starred", comment: "Starred").bold().font(.body)
 				Spacer()
 				Text(formattedCount(entry.widgetData.currentStarredCount)).bold()
 			}

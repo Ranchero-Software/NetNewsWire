@@ -11,8 +11,6 @@ import RSWeb
 
 struct ArticleItemView: View {
 	
-	
-	
 	var article: LatestArticle
 	var deepLink: URL
 	@State private var iconImage: Image?
@@ -30,7 +28,7 @@ struct ArticleItemView: View {
 				
 				// Title and Feed Name
 				VStack(alignment: .leading) {
-					Text(article.articleTitle ?? "Untitled")
+					Text(verbatim: article.articleTitle ?? "Untitled")
 						.font(.footnote)
 						.bold()
 						.lineLimit(1)
@@ -38,12 +36,12 @@ struct ArticleItemView: View {
 						.padding(.top, -3)
 					
 					HStack {
-						Text(article.feedTitle)
+						Text(verbatim: article.feedTitle)
 							.font(.caption)
 							.lineLimit(1)
 							.foregroundColor(.secondary)
 						Spacer()
-						Text(pubDate(article.pubDate))
+						Text(verbatim: pubDate(article.pubDate))
 							.font(.caption)
 							.lineLimit(1)
 							.foregroundColor(.secondary)

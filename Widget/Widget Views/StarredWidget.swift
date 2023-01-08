@@ -37,7 +37,7 @@ struct StarredWidgetView : View {
 				Spacer()
 				
 				VStack(alignment:.leading, spacing: 0) {
-					ForEach(0..<maxCount(), content: { i in
+					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.starredArticles[i],
@@ -61,7 +61,7 @@ struct StarredWidgetView : View {
 						HStack {
 							Spacer()
 							if entry.widgetData.currentStarredCount - maxCount() > 0 {
-								Text(L10n.starredCount(entry.widgetData.currentStarredCount - maxCount()))
+								Text(String(format: NSLocalizedString("starred.count.%lld", comment: "Number of starred articles beyond what are currently displayed in the widget."), locale: .current, starredCount()))
 									.font(.caption2)
 									.bold()
 									.foregroundColor(.secondary)
@@ -97,6 +97,10 @@ struct StarredWidgetView : View {
 		return entry.widgetData.currentStarredCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
 	}
 	
+	func starredCount() -> Int {
+		entry.widgetData.currentStarredCount - maxCount()
+	}
+	
 	var inboxZero: some View {
 		VStack(alignment: .center) {
 			Spacer()
@@ -107,11 +111,11 @@ struct StarredWidgetView : View {
 				.foregroundColor(.yellow)
 				
 
-			Text(L10n.starredWidgetNoItemsTitle)
+			Text("widget.title.starred-no-items", comment: "Starred")
 				.font(.headline)
 				.foregroundColor(.primary)
 			
-			Text(L10n.starredWidgetNoItems)
+			Text("widget.description.starred-no-items", comment: "When you mark articles as Starred, they'll appear here.")
 				.font(.caption)
 				.foregroundColor(.gray)
 			Spacer()

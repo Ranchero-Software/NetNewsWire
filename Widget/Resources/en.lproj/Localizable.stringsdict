@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UnreadCount</key>
+	<key>unread.count.%lld</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@unread_count@</string>
@@ -11,16 +11,16 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
+			<string>lld</string>
 			<key>zero</key>
 			<string>No more unread articles</string>
 			<key>one</key>
 			<string>+ 1 more unread article</string>
 			<key>other</key>
-			<string>+ %u more unread articles</string>
+			<string>+ %lld more unread articles</string>
 		</dict>
 	</dict>
-	<key>StarredCount</key>
+	<key>starred.count.%lld</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@starred_count@</string>
@@ -29,47 +29,31 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
+			<string>lld</string>
 			<key>zero</key>
 			<string>No more starred articles</string>
 			<key>one</key>
 			<string>+ 1 more starred article</string>
 			<key>other</key>
-			<string>+ %u more starred articles</string>
+			<string>+ %lld more starred articles</string>
 		</dict>
 	</dict>
-	<key>TodayCount</key>
+	<key>today.count.%lld</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@today_count@</string>
-		<key>today_count</key>
+		<key>today.count</key>
 		<dict>
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
+			<string>lld</string>
 			<key>zero</key>
 			<string>No more recent articles</string>
 			<key>one</key>
 			<string>+ 1 more recent unread article</string>
 			<key>other</key>
-			<string>+ %u more recent unread articles</string>
-		</dict>
-	</dict>
-	<key>LocalizedCount</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@localized_count@</string>
-		<key>localized_count</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>zero</key>
-			<string>0</string>
-			<key>other</key>
-			<string>%u</string>
+			<string>+ %lld more recent unread articles</string>
 		</dict>
 	</dict>
 </dict>

@@ -37,7 +37,7 @@ struct TodayWidgetView : View {
 				Spacer()
 				
 				VStack(alignment:.leading, spacing: 0) {
-					ForEach(0..<maxCount(), content: { i in
+					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.todayArticles[i],
@@ -61,10 +61,12 @@ struct TodayWidgetView : View {
 						HStack {
 							Spacer()
 							if entry.widgetData.currentTodayCount - maxCount() > 0 {
-								Text(L10n.todayCount(entry.widgetData.currentTodayCount - maxCount()))
+								Text(String(format: NSLocalizedString("today.count.%lld", comment: "Number of today articles beyond what are currently displayed in the widget."), locale: .current, todayCount()))
 									.font(.caption2)
 									.bold()
 									.foregroundColor(.secondary)
+								
+								
 							}
 						}
 					}
@@ -82,6 +84,10 @@ struct TodayWidgetView : View {
 			.frame(width: 30, height: 30, alignment: .center)
 			.cornerRadius(4)
 			.foregroundColor(.orange)
+	}
+	
+	func todayCount() -> Int {
+		entry.widgetData.currentTodayCount - maxCount()
 	}
 	
 	func maxCount() -> Int {
@@ -106,11 +112,11 @@ struct TodayWidgetView : View {
 				.foregroundColor(.orange)
 				
 
-			Text(L10n.todayWidgetNoItemsTitle)
+			Text("widget.title.today-no-items", comment: "Today")
 				.font(.headline)
 				.foregroundColor(.primary)
 			
-			Text(L10n.todayWidgetNoItems)
+			Text("widget.description.today-no-items", comment: "There are no recent unread articles left to read.")
 				.font(.caption)
 				.foregroundColor(.gray)
 			Spacer()

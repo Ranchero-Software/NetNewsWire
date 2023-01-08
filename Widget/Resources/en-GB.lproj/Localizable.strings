@@ -1,54 +1,51 @@
-/* (No Comment) */
-"SmartFeedSummary_Widget_Description" = "Your smart feeds, summarised.";
+/* Starred */
+"label.text.starred" = "Starred";
 
-/* (No Comment) */
-"SmartFeedSummary_Widget_Title" = "Your Smart Feed Summary";
-
-/* (No Comment) */
-"Starred" = "Starred";
-
-/* (No Comment) */
-"Starred_Widget_Description" = "A sneak peek at your starred articles.";
-
-/* (No Comment) */
-"Starred_Widget_NoItems" = "When you mark articles as Starred, they'll appear here.";
-
-/* Starred Widget */
-"Starred_Widget_NoItemsTitle" = "Starred";
-
-/* (No Comment) */
-"Starred_Widget_Title" = "Your Starred Articles";
-
-/* (No Comment) */
-"Today" = "Today  ";
-
-/* (No Comment) */
-"Today_Widget_Description" = "A sneak peek at recently published unread articles.";
-
-/* (No Comment) */
-"Today_Widget_NoItems" = "There are no recent unread articles left to read.";
-
-/* Today Widget */
-"Today_Widget_NoItemsTitle" = "Today";
-
-/* (No Comment) */
-"Today_Widget_Title" = "Your Today Articles";
+/* Today */
+"label.text.today" = "Today";
 
 /* Smart Feed Summary Widget */
-"Unread" = "Unread";
+"label.text.unread" = "Unread";
 
-/* (No Comment) */
-"Unread_Widget_Description" = "A sneak peek at your unread articles.";
+/* Your smart feeds, summarized. */
+"widget.description.smart-feed-summary" = "Your smart feeds, summarised.";
 
-/* (No Comment) */
-"Unread_Widget_NoItems" = "There are no unread articles left to read.";
+/* A sneak peek at your starred articles. */
+"widget.description.starred" = "A sneak peek at your starred articles.";
 
-/* Unread Widget */
-"Unread_Widget_NoItemsTitle" = "Unread";
+/* When you mark articles as Starred, they'll appear here. */
+"widget.description.starred-no-items" = "When you mark articles as Starred, they'll appear here.";
+
+/* A sneak peek at recently published unread articles. */
+"widget.description.today" = "A sneak peek at recently published unread articles.";
+
+/* There are no recent unread articles left to read. */
+"widget.description.today-no-items" = "There are no recent unread articles left to read.";
+
+/* A sneak peek at your unread articles. */
+"widget.description.unread" = "A sneak peek at your unread articles.";
+
+/* There are no unread articles left to read. */
+"widget.description.unread-no-items" = "There are no unread articles left to read.";
+
+/* Your Smart Feed Summary */
+"widget.title.smart-feed-summary" = "Your Smart Feed Summary";
+
+/* Your Starred Articles */
+"widget.title.starred" = "Your Starred Articles";
+
+/* Starred Widget */
+"widget.title.starred-no-items" = "Starred";
+
+/* Your Today Articles */
+"widget.title.today" = "Your Today Articles";
+
+/* Today Widget */
+"widget.title.today-no-items" = "Today";
 
 /* Bundle */
-"Unread_Widget_Title" = "Your Unread Articles";
+"widget.title.unread" = "Your Unread Articles";
 
-/* No comment provided by engineer. */
-"Untitled" = "Untitled";
+/* Unread Widget */
+"widget.title.unread-no-items" = "Unread";
 

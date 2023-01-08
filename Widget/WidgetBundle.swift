@@ -22,8 +22,8 @@ struct UnreadWidget: Widget {
 				.background(Color("WidgetBackground"))
 			
 		})
-		.configurationDisplayName(L10n.unreadWidgetTitle)
-		.description(L10n.unreadWidgetDescription)
+		.configurationDisplayName(Text("widget.title.unread", comment: "Your Unread Articles"))
+		.description(Text("widget.description.unread", comment: "A sneak peek at your unread articles."))
 		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
@@ -40,8 +40,8 @@ struct TodayWidget: Widget {
 				.background(Color("WidgetBackground"))
 			
 		})
-		.configurationDisplayName(L10n.todayWidgetTitle)
-		.description(L10n.todayWidgetDescription)
+		.configurationDisplayName(Text("widget.title.today", comment: "Your Today Articles"))
+		.description(Text("widget.description.today", comment: "A sneak peek at recently published unread articles."))
 		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
@@ -58,8 +58,8 @@ struct StarredWidget: Widget {
 				.background(Color("WidgetBackground"))
 			
 		})
-		.configurationDisplayName(L10n.starredWidgetTitle)
-		.description(L10n.starredWidgetDescription)
+		.configurationDisplayName(Text("widget.title.starred", comment: "Your Starred Articles"))
+		.description(Text("widget.description.starred", comment: "A sneak peek at your starred articles."))
 		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
@@ -75,8 +75,8 @@ struct SmartFeedSummaryWidget: Widget {
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			SmartFeedSummaryWidgetView(entry: entry)
 		})
-		.configurationDisplayName(L10n.smartFeedSummaryWidgetTitle)
-		.description(L10n.smartFeedSummaryWidgetDescription)
+		.configurationDisplayName(Text("widget.title.smart-feed-summary", comment: "Your Smart Feed Summary"))
+		.description(Text("widget.description.smart-feed-summary", comment: "Your smart feeds, summarized."))
 		.supportedFamilies([.accessoryRectangular])
 	}
 }
