@@ -136,7 +136,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsStarred(updateableStarredArticleIDs) { databaseError in
 			if let databaseError = databaseError {
 				errorOccurred = true
-                self.logger.error("Error occurred while stroing starred records: \(databaseError.localizedDescription, privacy: .public)")
+                self.logger.error("Error occurred while storing starred records: \(databaseError.localizedDescription, privacy: .public)")
 			}
 			group.leave()
 		}

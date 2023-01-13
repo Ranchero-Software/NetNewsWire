@@ -30,7 +30,7 @@ final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProv
 		service.getCollections { result in
 			switch result {
 			case .success(let collections):
-                self.logger.debug("Receving collections: \(collections.map({ $0.id }), privacy: .public)")
+                self.logger.debug("Receiving collections: \(collections.map({ $0.id }), privacy: .public)")
 				self.collections = collections
 				self.didFinish()
 				
