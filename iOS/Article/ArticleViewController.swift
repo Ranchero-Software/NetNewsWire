@@ -45,7 +45,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 		return button
 	}()
 	
-	var mainControllerIdentifer = MainControllerIdentifier.article
+	var mainControllerIdentifier = MainControllerIdentifier.article
 	
 	weak var coordinator: SceneCoordinator!
 	

@@ -16,7 +16,7 @@ import SafariServices
 import SwiftUI
 
 protocol MainControllerIdentifiable {
-	var mainControllerIdentifer: MainControllerIdentifier { get }
+	var mainControllerIdentifier: MainControllerIdentifier { get }
 }
 
 enum MainControllerIdentifier {
@@ -973,7 +973,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	func selectPrevUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
@@ -994,7 +994,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
@@ -1380,9 +1380,9 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 
 		defer {
 			if let mainController = viewController as? MainControllerIdentifiable {
-				lastMainControllerToAppear = mainController.mainControllerIdentifer
+				lastMainControllerToAppear = mainController.mainControllerIdentifier
 			} else if let mainController = (viewController as? UINavigationController)?.topViewController as? MainControllerIdentifiable {
-				lastMainControllerToAppear = mainController.mainControllerIdentifer
+				lastMainControllerToAppear = mainController.mainControllerIdentifier
 			}
 		}
 
