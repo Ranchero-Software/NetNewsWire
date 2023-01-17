@@ -1,6 +1,10 @@
 # iOS Release Notes
 
-### 6.1.1 TestFlight build 6111 - 8 Jan 2023
+### 6.1.1 TestFlight build 6112 - 16 Jan 2023
+
+Add some feeds back to defaults — now an even 10 feeds
+
+### 6.1.1 TestFlight build 6111 - 8 Jan 2023 (didn’t actually go out via TestFlight)
 
 Fixed a crashing bug in the Feeds screen
 Cut way down on number of default feeds, added BBC World News
