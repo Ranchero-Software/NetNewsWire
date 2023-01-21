@@ -20,7 +20,7 @@ struct ArticleTheme: Equatable {
 	static let defaultTheme = ArticleTheme()
 	static let nnwThemeSuffix = ".nnwtheme"
 	
-	private static let defaultThemeName = NSLocalizedString("Default", comment: "Default")
+	private static let defaultThemeName = "NetNewsWire"
 	private static let unknownValue = NSLocalizedString("Unknown", comment: "Unknown Value")
 	
 	let path: String?

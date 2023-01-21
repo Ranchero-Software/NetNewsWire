@@ -28,7 +28,7 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 
 final class AppDefaults {
 
-	static let defaultThemeName = "Default"
+	static let defaultThemeName = "NetNewsWire"
 	
 	static let shared = AppDefaults()
 	private init() {}
