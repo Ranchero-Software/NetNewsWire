@@ -364,31 +364,42 @@ public final class AccountManager: UnreadCountProvider {
 		return articles
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
+    public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
 		precondition(Thread.isMainThread)
 		
 		var allFetchedArticles = Set<Article>()
 		let numberOfAccounts = activeAccounts.count
 		var accountsReporting = 0
-		
+		var didCallCompletionBlock = false
+        var databaseFetchDidFail = false
+        
+        func callCompletion(_ result: ArticleSetResult) {
+            guard !didCallCompletionBlock else {
+                return
+            }
+            completion(result)
+            didCallCompletionBlock = true
+        }
+        
 		guard numberOfAccounts > 0 else {
-			completion(.success(allFetchedArticles))
+			callCompletion(.success(allFetchedArticles))
 			return
 		}
 
 		for account in activeAccounts {
 			account.fetchArticlesAsync(fetchType) { (articleSetResult) in
+                precondition(Thread.isMainThread)
 				accountsReporting += 1
 
 				switch articleSetResult {
 				case .success(let articles):
 					allFetchedArticles.formUnion(articles)
-					if accountsReporting == numberOfAccounts {
-						completion(.success(allFetchedArticles))
+					if accountsReporting == numberOfAccounts && !databaseFetchDidFail {
+                        callCompletion(.success(allFetchedArticles))
 					}
 				case .failure(let databaseError):
-					completion(.failure(databaseError))
-					return
+                    databaseFetchDidFail = true
+                    callCompletion(.failure(databaseError))
 				}
 			}
 		}
