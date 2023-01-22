@@ -371,7 +371,10 @@ protocol SidebarDelegate: AnyObject {
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
-		let node = item as! Node
+		guard let node = item as? Node else {
+			assertionFailure("Expected item to be a Node.")
+			return false
+		}
 		return node.isGroupItem
 	}
 
