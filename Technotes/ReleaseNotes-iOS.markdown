@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.1 TestFlight build 6113 - 22 Jan 2023
+
+Fix a crashing bug when fetching data for the widget
+
 ### 6.1.1 TestFlight build 6112 - 16 Jan 2023
 
 Add some feeds back to defaults — now an even 10 feeds
