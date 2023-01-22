@@ -11,6 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 import ArticlesDatabase
+import RSDatabase
 
 // Main thread only.
 
@@ -363,47 +364,46 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return articles
 	}
-
+    
     public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
-		precondition(Thread.isMainThread)
-		
-		var allFetchedArticles = Set<Article>()
-		let numberOfAccounts = activeAccounts.count
-		var accountsReporting = 0
-		var didCallCompletionBlock = false
-        var databaseFetchDidFail = false
+        precondition(Thread.isMainThread)
         
-        func callCompletion(_ result: ArticleSetResult) {
-            guard !didCallCompletionBlock else {
-                return
-            }
-            completion(result)
-            didCallCompletionBlock = true
+        guard activeAccounts.count > 0 else {
+            completion(.success(Set<Article>()))
+            return
         }
         
-		guard numberOfAccounts > 0 else {
-			callCompletion(.success(allFetchedArticles))
-			return
-		}
-
-		for account in activeAccounts {
-			account.fetchArticlesAsync(fetchType) { (articleSetResult) in
+        var allFetchedArticles = Set<Article>()
+        var databaseError: DatabaseError?
+        let dispatchGroup = DispatchGroup()
+        
+        for account in activeAccounts {
+            
+            dispatchGroup.enter()
+            
+            account.fetchArticlesAsync(fetchType) { (articleSetResult) in
                 precondition(Thread.isMainThread)
-				accountsReporting += 1
-
-				switch articleSetResult {
-				case .success(let articles):
-					allFetchedArticles.formUnion(articles)
-					if accountsReporting == numberOfAccounts && !databaseFetchDidFail {
-                        callCompletion(.success(allFetchedArticles))
-					}
-				case .failure(let databaseError):
-                    databaseFetchDidFail = true
-                    callCompletion(.failure(databaseError))
-				}
-			}
-		}
-	}
+                
+                switch articleSetResult {
+                case .success(let articles):
+                    allFetchedArticles.formUnion(articles)
+                case .failure(let error):
+                    databaseError = error
+                }
+                
+                dispatchGroup.leave()
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            if let databaseError {
+                completion(.failure(databaseError))
+            }
+            else {
+                completion(.success(allFetchedArticles))
+            }
+        }
+    }
     
     // MARK: - Fetching Article Counts
     
