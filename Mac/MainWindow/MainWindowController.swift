@@ -1446,11 +1446,6 @@ private extension MainWindowController {
 		newRedditFeedItem.action = Selector(("showAddRedditFeedWindow:"))
 		menu.addItem(newRedditFeedItem)
 		
-		let newTwitterFeedItem = NSMenuItem()
-		newTwitterFeedItem.title = NSLocalizedString("New Twitter Feed…", comment: "New Twitter Feed")
-		newTwitterFeedItem.action = Selector(("showAddTwitterFeedWindow:"))
-		menu.addItem(newTwitterFeedItem)
-		
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")
 		newFolderFeedItem.action = Selector(("showAddFolderWindow:"))

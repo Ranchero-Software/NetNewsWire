@@ -478,13 +478,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return ExtensionPointManager.shared.isRedditEnabled
 		}
 		
-		if item.action == #selector(showAddTwitterFeedWindow(_:)) {
-			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isTwitterEnabled else {
-				return false
-			}
-			return ExtensionPointManager.shared.isTwitterEnabled
-		}
-		
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
@@ -562,12 +555,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		createAndShowMainWindowIfNecessary()
 		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
 		addFeedController?.showAddFeedSheet(.redditFeed)
-	}
-
-	@IBAction func showAddTwitterFeedWindow(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
-		addFeedController?.showAddFeedSheet(.twitterFeed)
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
