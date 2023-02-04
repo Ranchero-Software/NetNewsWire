@@ -84,10 +84,6 @@ struct AppAssets {
 		return RSImage(named: "extensionPointReddit")!
 	}()
 
-	static var extensionPointTwitter: RSImage = {
-		return RSImage(named: "extensionPointTwitter")!
-	}()
-	
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()

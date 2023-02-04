@@ -80,12 +80,6 @@
                                                 <action selector="showAddRedditFeedWindow:" target="Ady-hI-5gd" id="Irh-Rw-mFK"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="New Twitter Feed…" id="ki4-7l-tM6">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="showAddTwitterFeedWindow:" target="Ady-hI-5gd" id="dZR-aU-O52"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="New Folder…" keyEquivalent="N" id="wkh-LX-Xp1">
                                             <connections>
                                                 <action selector="showAddFolderWindow:" target="Ady-hI-5gd" id="GIi-wc-uYk"/>

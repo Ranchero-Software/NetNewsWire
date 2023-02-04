@@ -48,9 +48,6 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		case .redditFeed:
 			addFeedWindowController = AddRedditFeedWindowController(folderTreeController: folderTreeController,
 																	 delegate: self)
-		case .twitterFeed:
-			addFeedWindowController = AddTwitterFeedWindowController(folderTreeController: folderTreeController,
-																	 delegate: self)
 		}
 		
 		addFeedWindowController!.runSheetOnWindow(hostWindow)
