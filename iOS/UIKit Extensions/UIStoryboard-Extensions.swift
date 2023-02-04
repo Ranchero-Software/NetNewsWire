@@ -24,10 +24,6 @@ extension UIStoryboard {
 		return UIStoryboard(name: "RedditAdd", bundle: nil)
 	}
 	
-	static var twitterAdd: UIStoryboard {
-		return UIStoryboard(name: "TwitterAdd", bundle: nil)
-	}
-	
 	static var settings: UIStoryboard {
 		return UIStoryboard(name: "Settings", bundle: nil)
 	}

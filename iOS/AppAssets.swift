@@ -105,10 +105,6 @@ struct AppAssets {
 		return UIImage(named: "contextMenuReddit")!
 	}()
 	
-	static var contextMenuTwitter: UIImage = {
-		return UIImage(named: "contextMenuTwitter")!
-	}()
-	
 	static var copyImage: UIImage = {
 		return UIImage(systemName: "doc.on.doc")!
 	}()
@@ -123,10 +119,6 @@ struct AppAssets {
 	
 	static var extensionPointReddit: RSImage = {
 		return RSImage(named: "extensionPointReddit")!
-	}()
-
-	static var extensionPointTwitter: UIImage = {
-		return UIImage(named: "extensionPointTwitter")!
 	}()
 
 	static var faviconTemplateImage: RSImage = {
@@ -262,10 +254,6 @@ struct AppAssets {
 
 	static var trashImage: UIImage = {
 		return UIImage(systemName: "trash")!
-	}()
-	
-	static var twitterOriginal: UIImage = {
-		return UIImage(named: "twitterWhite")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
 	}()
 	
 	static var unreadFeedImage: IconImage {
