@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19162"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -78,12 +78,6 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="showAddRedditFeedWindow:" target="Ady-hI-5gd" id="Irh-Rw-mFK"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="New Twitter Feed…" id="ki4-7l-tM6">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="showAddTwitterFeedWindow:" target="Ady-hI-5gd" id="dZR-aU-O52"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="New Folder…" keyEquivalent="N" id="wkh-LX-Xp1">

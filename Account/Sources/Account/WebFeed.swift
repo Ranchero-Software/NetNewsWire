@@ -244,17 +244,13 @@ public final class WebFeed: Feed, Renamable, Hashable {
     // MARK: - NotificationDisplayName
     public var notificationDisplayName: String {
         #if os(macOS)
-        if self.url.contains("twitter.com") {
-            return NSLocalizedString("Show notifications for new tweets", comment: "notifyNameDisplay / Twitter")
-        } else if self.url.contains("www.reddit.com") {
+        if self.url.contains("www.reddit.com") {
             return NSLocalizedString("Show notifications for new posts", comment: "notifyNameDisplay / Reddit")
         } else {
             return NSLocalizedString("Show notifications for new articles", comment: "notifyNameDisplay / Default")
         }
         #else
-        if self.url.contains("twitter.com") {
-            return NSLocalizedString("Notify about new tweets", comment: "notifyNameDisplay / Twitter")
-        } else if self.url.contains("www.reddit.com") {
+        if self.url.contains("www.reddit.com") {
             return NSLocalizedString("Notify about new posts", comment: "notifyNameDisplay / Reddit")
         } else {
             return NSLocalizedString("Notify about new articles", comment: "notifyNameDisplay / Default")

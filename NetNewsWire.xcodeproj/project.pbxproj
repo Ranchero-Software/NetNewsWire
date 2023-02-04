@@ -213,10 +213,6 @@
 		5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
 		5148F44B2336DB4700F8CD8B /* MasterTimelineTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */; };
 		5148F4552336DB7000F8CD8B /* MasterTimelineTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */; };
-		514A89A2244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 514A897F244FD63F0085E65D /* AddTwitterFeedSheet.xib */; };
-		514A89A3244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 514A897F244FD63F0085E65D /* AddTwitterFeedSheet.xib */; };
-		514A89A5244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514A89A4244FD6640085E65D /* AddTwitterFeedWindowController.swift */; };
-		514A89A6244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514A89A4244FD6640085E65D /* AddTwitterFeedWindowController.swift */; };
 		514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */; };
 		514C16CE24D2E63F009A3AFA /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16CD24D2E63F009A3AFA /* Account */; };
 		514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16DD24D2EF15009A3AFA /* RSTree */; };
@@ -225,8 +221,6 @@
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
 		515A50E7243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
-		515A5107243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */; };
-		515A5108243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */; };
 		515A5148243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
 		515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
 		515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A516D243E7F950089E588 /* ExtensionPointDetail.xib */; };
@@ -237,7 +231,6 @@
 		515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515A517B243E90260089E588 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		515A517C243E90260089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
-		515A5180243E90260089E588 /* TwitterFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */; };
 		515A5181243E90260089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
 		515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */ = {isa = PBXBuildFile; fileRef = 515D4FCB2325815A00EE1167 /* SafariExt.js */; };
@@ -1233,11 +1226,8 @@
 		5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedbin.xib; sourceTree = "<group>"; };
 		5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterTimelineTitleView.xib; sourceTree = "<group>"; };
 		5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineTitleView.swift; sourceTree = "<group>"; };
-		514A8980244FD63F0085E65D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddTwitterFeedSheet.xib; sourceTree = SOURCE_ROOT; };
-		514A89A4244FD6640085E65D /* AddTwitterFeedWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AddTwitterFeedWindowController.swift; path = AddFeed/AddTwitterFeedWindowController.swift; sourceTree = "<group>"; };
 		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		515A50E5243D07A90089E588 /* ExtensionPointManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointManager.swift; sourceTree = "<group>"; };
-		515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TwitterFeedProvider-Extensions.swift"; sourceTree = "<group>"; };
 		515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointEnableWindowController.swift; sourceTree = "<group>"; };
 		515A516D243E7F950089E588 /* ExtensionPointDetail.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtensionPointDetail.xib; sourceTree = "<group>"; };
 		515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointDetailViewController.swift; sourceTree = "<group>"; };
@@ -1841,7 +1831,6 @@
 				515A50E5243D07A90089E588 /* ExtensionPointManager.swift */,
 				84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */,
 				84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */,
-				515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */,
 				5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */,
 			);
 			path = ExtensionPoints;
@@ -2380,8 +2369,6 @@
 				51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */,
 				51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */,
 				51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */,
-				514A897F244FD63F0085E65D /* AddTwitterFeedSheet.xib */,
-				514A89A4244FD6640085E65D /* AddTwitterFeedWindowController.swift */,
 				848363002262A3BC00DA1D35 /* AddWebFeedSheet.xib */,
 				849A97521ED9EAC0007D329B /* AddWebFeedWindowController.swift */,
 				51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */,
@@ -3386,7 +3373,6 @@
 				65ED405C235DEF6C0081F399 /* ImportOPMLSheet.xib in Resources */,
 				51DEE81926FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
-				514A89A3244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
 				51D0214726ED617100FF2E0F /* core.css in Resources */,
 				5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
@@ -3513,7 +3499,6 @@
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
 				51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
 				BDCB516724282C8A00102A80 /* AccountsNewsBlur.xib in Resources */,
-				514A89A2244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
 				5103A9982421643300410853 /* blank.html in Resources */,
 				515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */,
 				84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */,
@@ -3935,7 +3920,6 @@
 				65ED3FEC235DEF6C0081F399 /* RSHTMLMetadata+Extension.swift in Sources */,
 				518C3194237B00DA004D740F /* DetailIconSchemeHandler.swift in Sources */,
 				65ED3FED235DEF6C0081F399 /* SendToMarsEditCommand.swift in Sources */,
-				514A89A6244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */,
 				65ED3FEE235DEF6C0081F399 /* UserNotificationManager.swift in Sources */,
 				653813182680E152007A082C /* AccountType+Helpers.swift in Sources */,
 				65ED3FEF235DEF6C0081F399 /* ScriptingObjectContainer.swift in Sources */,
@@ -4008,7 +3992,6 @@
 				65ED4028235DEF6C0081F399 /* ExtractedArticle.swift in Sources */,
 				65ED4029235DEF6C0081F399 /* DeleteCommand.swift in Sources */,
 				65ED402A235DEF6C0081F399 /* AddWebFeedWindowController.swift in Sources */,
-				515A5108243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */,
 				65ED402B235DEF6C0081F399 /* ImportOPMLWindowController.swift in Sources */,
 				65ED402C235DEF6C0081F399 /* TimelineTableView.swift in Sources */,
 				178A9F9E2549449F00AB7E9D /* AddAccountsView.swift in Sources */,
@@ -4179,7 +4162,6 @@
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,
 				5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */,
 				51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */,
-				515A5180243E90260089E588 /* TwitterFeedProvider-Extensions.swift in Sources */,
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
 				51A1699B235E10D700EB091F /* AccountInspectorViewController.swift in Sources */,
@@ -4269,7 +4251,6 @@
 				849C78922362AB04009A71E4 /* ExportOPMLWindowController.swift in Sources */,
 				84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */,
 				849A97661ED9EB96007D329B /* SidebarViewController.swift in Sources */,
-				514A89A5244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */,
 				849A97641ED9EB96007D329B /* SidebarOutlineView.swift in Sources */,
 				5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */,
 				8405DD9922153B6B008CE1BF /* TimelineContainerView.swift in Sources */,
@@ -4335,7 +4316,6 @@
 				5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
-				515A5107243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
 				511B9806237DCAC90028BCAA /* UserInfoKey.swift in Sources */,
@@ -4545,14 +4525,6 @@
 				513C5CEB232571C2003D4054 /* Base */,
 			);
 			name = MainInterface.storyboard;
-			sourceTree = "<group>";
-		};
-		514A897F244FD63F0085E65D /* AddTwitterFeedSheet.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				514A8980244FD63F0085E65D /* Base */,
-			);
-			name = AddTwitterFeedSheet.xib;
 			sourceTree = "<group>";
 		};
 		51C0307F257D815A00609262 /* UnifiedWindow.storyboard */ = {
