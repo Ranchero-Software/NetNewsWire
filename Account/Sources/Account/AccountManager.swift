@@ -340,7 +340,7 @@ public final class AccountManager: UnreadCountProvider {
 		return articles
 	}
 
-    public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
+	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
         precondition(Thread.isMainThread)
         
         guard activeAccounts.count > 0 else {

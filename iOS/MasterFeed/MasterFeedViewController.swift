@@ -617,8 +617,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 			Context Menu Order:
 			1. Add Web Feed
 			2. Add Reddit Feed
-			3. Add Twitter Feed
-			4. Add Folder
+			3. Add Folder
 		*/
 		
 		var menuItems: [UIAction] = []
@@ -636,13 +635,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 					self.coordinator.showAddRedditFeed()
 				}
 				menuItems.append(addRedditFeedAction)
-			}
-			if ExtensionPointManager.shared.isTwitterEnabled {
-				let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
-				let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter.tinted(color: .label)) { _ in
-					self.coordinator.showAddTwitterFeed()
-				}
-				menuItems.append(addTwitterFeedAction)
 			}
 		}
 					
