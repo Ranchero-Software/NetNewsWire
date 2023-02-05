@@ -725,16 +725,18 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		var twitterIsActive: Bool = false
 		AccountManager.shared.accounts.forEach({ account in
-			account.flattenedWebFeeds().forEach({ webfeed in
-				guard let components = URLComponents(string: webfeed.url),
-				   let host = components.host else {
-					return
-				}
-				if host == "twitter.com" {
-					twitterIsActive = true
-					return
-				}
-			})
+			if account.type == .cloudKit || account.type == .onMyMac {
+				account.flattenedWebFeeds().forEach({ webfeed in
+					guard let components = URLComponents(string: webfeed.url),
+					   let host = components.host else {
+						return
+					}
+					if host == "twitter.com" {
+						twitterIsActive = true
+						return
+					}
+				})
+			}
 		})
 		if twitterIsActive {
 			showTwitterDeprecationAlert()
