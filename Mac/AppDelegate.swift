@@ -132,6 +132,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
 		appDelegate = self
+		
+		presentTwitterDeprecationAlertIfRequired()
 	}
 
 	// MARK: - API
@@ -948,6 +950,46 @@ internal extension AppDelegate {
 			button?.action = #selector(self.openThemesFolder(_:))
 			alert.buttons[0].keyEquivalent = "\033"
 			alert.buttons[1].keyEquivalent = "\r"
+			alert.runModal()
+		}
+	}
+	
+	private func presentTwitterDeprecationAlertIfRequired() {
+		if AppDefaults.shared.twitterDeprecationAlertShown { return }
+		
+		let expiryDate = Date(timeIntervalSince1970: 1691539200).timeIntervalSince1970 // August 9th 2023, 00:00 UTC
+		let currentDate = Date().timeIntervalSince1970
+		if currentDate > expiryDate {
+			return // If after August 9th, don't show
+		}
+		
+		var twitterIsActive: Bool = false
+		AccountManager.shared.accounts.forEach({ account in
+			account.flattenedWebFeeds().forEach({ webfeed in
+				guard let components = URLComponents(string: webfeed.url),
+					  let host = components.host else {
+					return
+				}
+				if host == "twitter.com" {
+					twitterIsActive = true
+					return
+				}
+			})
+		})
+		if twitterIsActive {
+			showTwitterDeprecationAlert()
+		}
+		AppDefaults.shared.twitterDeprecationAlertShown = true
+	}
+	
+	private func showTwitterDeprecationAlert() {
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.alertStyle = .warning
+			alert.messageText = NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed")
+			alert.informativeText = NSLocalizedString("On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation informative text.")
+			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			alert.buttons[0].keyEquivalent = "\r"
 			alert.runModal()
 		}
 	}
