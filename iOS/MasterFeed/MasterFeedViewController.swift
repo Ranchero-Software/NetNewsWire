@@ -717,7 +717,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	private func presentTwitterDeprecationAlertIfRequired() {
 		if AppDefaults.shared.twitterDeprecationAlertShown { return }
 		
-		let expiryDate = Date(timeIntervalSince1970: 1691510400).timeIntervalSince1970 // August 9th 2023
+		let expiryDate = Date(timeIntervalSince1970: 1691539200).timeIntervalSince1970 // August 9th 2023, 00:00 UTC
 		let currentDate = Date().timeIntervalSince1970
 		if currentDate > expiryDate {
 			return // If after August 9th, don't show
