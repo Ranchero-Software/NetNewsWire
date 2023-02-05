@@ -730,7 +730,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				   let host = components.host else {
 					return
 				}
-				print(host)
 				if host == "twitter.com" {
 					twitterIsActive = true
 					return
