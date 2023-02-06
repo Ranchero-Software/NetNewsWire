@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.1.1b2 build 6108 5 Feb 2023
+
+Remove Twitter integration. On first launch, for people with Twitter feeds, display an alert explaining what happened
+Fix a crashing bug that could happen in the sidebar
+
 ### 6.1.1b1 build 6107 3 Nov 2022
 
 Fixed a bug that could prevent users from accessing BazQux if an article was missing a field
