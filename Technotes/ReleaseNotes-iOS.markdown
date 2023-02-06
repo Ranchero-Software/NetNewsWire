@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.1 TestFlight build 6114 - 5 Feb 2023
+
+Remove Twitter integration. Include alert that Twitter integration was removed.
+
 ### 6.1.1 TestFlight build 6113 - 22 Jan 2023
 
 Fix a crashing bug when fetching data for the widget
