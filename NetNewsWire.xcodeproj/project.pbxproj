@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3587,6 +3587,7 @@
 		};
 		5170CA5A279E468000702605 /* Delete Unnecessary Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -4624,6 +4625,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1768140A2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Xlinker",
+					"-no_application_extension",
+				);
 			};
 			name = Debug;
 		};
@@ -4631,6 +4637,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1768140A2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Xlinker",
+					"-no_application_extension",
+				);
 			};
 			name = Release;
 		};
@@ -4652,6 +4663,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Xlinker",
+					"-no_application_extension",
+				);
 			};
 			name = Debug;
 		};
@@ -4659,6 +4675,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Xlinker",
+					"-no_application_extension",
+				);
 			};
 			name = Release;
 		};
@@ -4666,6 +4687,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Xlinker",
+					"-no_application_extension",
+				);
 			};
 			name = Debug;
 		};
@@ -4673,6 +4699,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Xlinker",
+					"-no_application_extension",
+				);
 			};
 			name = Release;
 		};
