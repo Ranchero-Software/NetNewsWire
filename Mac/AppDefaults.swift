@@ -42,6 +42,7 @@ final class AppDefaults {
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
+		static let twitterDeprecationAlertShown = "twitterDeprecationAlertShown"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -308,6 +309,16 @@ final class AppDefaults {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
 		}
 	}
+	
+	var twitterDeprecationAlertShown: Bool {
+		get {
+			return AppDefaults.bool(for: Key.twitterDeprecationAlertShown)
+		}
+		set {
+			AppDefaults.setBool(for: Key.twitterDeprecationAlertShown, newValue)
+		}
+	}
+	
 
 	func registerDefaults() {
 		#if DEBUG
