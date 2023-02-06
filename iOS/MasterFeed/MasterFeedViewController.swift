@@ -73,6 +73,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(configureContextMenu(_:)), name: .ActiveExtensionPointsDidChange, object: nil)
+		
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -84,6 +85,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	override func viewWillAppear(_ animated: Bool) {
 		updateUI()
 		super.viewWillAppear(animated)
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		if (isBeingPresented || isMovingToParent) {
+			// Only show the Twitter alert the first time
+			// the view is presented.
+			presentTwitterDeprecationAlertIfRequired()
+		}
 	}
 	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -690,7 +701,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			self.addNewItemButton.menu = contextMenu
 		}
 	}
-	
+		
 	func focus() {
 		becomeFirstResponder()
 	}
@@ -701,6 +712,45 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			let vc = SFSafariViewController(url: url)
 			present(vc, animated: true)
 		}
+	}
+	
+	private func presentTwitterDeprecationAlertIfRequired() {
+		if AppDefaults.shared.twitterDeprecationAlertShown { return }
+		
+		let expiryDate = Date(timeIntervalSince1970: 1691539200).timeIntervalSince1970 // August 9th 2023, 00:00 UTC
+		let currentDate = Date().timeIntervalSince1970
+		if currentDate > expiryDate {
+			return // If after August 9th, don't show
+		}
+		
+		var twitterIsActive: Bool = false
+		AccountManager.shared.accounts.forEach({ account in
+			if account.type == .cloudKit || account.type == .onMyMac {
+				account.flattenedWebFeeds().forEach({ webfeed in
+					guard let components = URLComponents(string: webfeed.url),
+					   let host = components.host else {
+						return
+					}
+					if host == "twitter.com" {
+						twitterIsActive = true
+						return
+					}
+				})
+			}
+		})
+		if twitterIsActive {
+			showTwitterDeprecationAlert()
+		}
+		AppDefaults.shared.twitterDeprecationAlertShown = true
+	}
+	
+	private func showTwitterDeprecationAlert() {
+		let alert = UIAlertController(title: NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed"),
+									  message: NSLocalizedString("On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation message"),
+									  preferredStyle: .alert)
+		
+		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+		present(alert, animated: true)
 	}
 	
 }
