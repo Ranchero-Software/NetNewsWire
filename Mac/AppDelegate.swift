@@ -957,28 +957,13 @@ internal extension AppDelegate {
 	private func presentTwitterDeprecationAlertIfRequired() {
 		if AppDefaults.shared.twitterDeprecationAlertShown { return }
 		
-		let expiryDate = Date(timeIntervalSince1970: 1691539200).timeIntervalSince1970 // August 9th 2023, 00:00 UTC
-		let currentDate = Date().timeIntervalSince1970
+		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
+		let currentDate = Date()
 		if currentDate > expiryDate {
 			return // If after August 9th, don't show
 		}
-		
-		var twitterIsActive: Bool = false
-		AccountManager.shared.accounts.forEach({ account in
-			if account.type == .cloudKit || account.type == .onMyMac {
-				account.flattenedWebFeeds().forEach({ webfeed in
-					guard let components = URLComponents(string: webfeed.url),
-					   let host = components.host else {
-						return
-					}
-					if host == "twitter.com" {
-						twitterIsActive = true
-						return
-					}
-				})
-			}
-		})
-		if twitterIsActive {
+
+		if AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed() {
 			showTwitterDeprecationAlert()
 		}
 		AppDefaults.shared.twitterDeprecationAlertShown = true
