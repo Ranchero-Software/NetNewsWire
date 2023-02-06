@@ -69,7 +69,7 @@ public final class WidgetDataEncoder {
 	
 	@available(iOS 14, *)
 	private func encodeWidgetData(completion: @escaping (WidgetData?) -> Void) {
-		var dispatchGroup = DispatchGroup()
+		let dispatchGroup = DispatchGroup()
 		var groupError: Error? = nil
 		
 		var unread = [LatestArticle]()
