@@ -15,7 +15,6 @@ import RSParser
 enum AddFeedType {
 	case web
 	case reddit
-	case twitter
 }
 
 class AddFeedViewController: UITableViewController {
@@ -43,9 +42,6 @@ class AddFeedViewController: UITableViewController {
 		switch addFeedType {
 		case .reddit:
 			navigationItem.title = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			navigationItem.leftBarButtonItem = nil
-		case .twitter:
-			navigationItem.title = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
 			navigationItem.leftBarButtonItem = nil
 		default:
 			break

@@ -30,7 +30,7 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 
 final class AppDefaults: ObservableObject {
 
-	static let defaultThemeName = "Default"
+	static let defaultThemeName = "NetNewsWire"
 	
 	static let shared = AppDefaults()
 	private init() {}
@@ -60,6 +60,7 @@ final class AppDefaults: ObservableObject {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
+		static let twitterDeprecationAlertShown = "twitterDeprecationAlertShown"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -253,6 +254,15 @@ final class AppDefaults: ObservableObject {
 		set {
 			AppDefaults.setString(for: Key.currentThemeName, newValue)
 			AppDefaults.shared.objectWillChange.send()
+		}
+	}
+	
+	var twitterDeprecationAlertShown: Bool {
+		get {
+			return AppDefaults.bool(for: Key.twitterDeprecationAlertShown)
+		}
+		set {
+			AppDefaults.setBool(for: Key.twitterDeprecationAlertShown, newValue)
 		}
 	}
 	

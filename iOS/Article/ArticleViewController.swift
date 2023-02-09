@@ -45,7 +45,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 		return button
 	}()
 	
-	var mainControllerIdentifer = MainControllerIdentifier.article
+	var mainControllerIdentifier = MainControllerIdentifier.article
 	
 	weak var coordinator: SceneCoordinator!
 	
@@ -267,7 +267,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 			themeActions.append(action)
 		}
 		
-		let defaultThemeAction = UIAction(title: NSLocalizedString("Default", comment: "Default"),
+		let defaultThemeAction = UIAction(title: "NetNewsWire",
 										  image: nil,
 										  identifier: nil,
 										  discoverabilityTitle: nil,

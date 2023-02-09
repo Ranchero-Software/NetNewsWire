@@ -46,7 +46,7 @@ final class SmartFeed: PseudoFeed {
 	}
 	#endif
 
-	private let delegate: SmartFeedDelegate
+	public let delegate: SmartFeedDelegate
 	private var unreadCounts = [String: Int]()
 
 	init(delegate: SmartFeedDelegate) {
@@ -93,6 +93,10 @@ extension SmartFeed: ArticleFetcher {
 
 	func fetchUnreadArticles() throws -> Set<Article> {
 		return try delegate.fetchUnreadArticles()
+	}
+
+	func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
+		return try delegate.fetchUnreadArticlesBetween(before: before, after: after)
 	}
 
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {

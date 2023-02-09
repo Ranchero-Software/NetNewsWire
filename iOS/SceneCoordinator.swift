@@ -16,7 +16,7 @@ import SafariServices
 import SwiftUI
 
 protocol MainControllerIdentifiable {
-	var mainControllerIdentifer: MainControllerIdentifier { get }
+	var mainControllerIdentifier: MainControllerIdentifier { get }
 }
 
 enum MainControllerIdentifier {
@@ -350,6 +350,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 					if let feedIdentifier = FeedIdentifier(userInfo: key) {
 						readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
 					}
+				}
+			}
+			
+			if let isSidebarHidden = windowState[UserInfoKey.isSidebarHidden] as? Bool, isSidebarHidden {
+				DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+					self.rootSplitViewController.preferredDisplayMode = .secondaryOnly
 				}
 			}
 
@@ -967,7 +973,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	func selectPrevUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
@@ -988,7 +994,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
@@ -1210,13 +1216,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		masterFeedViewController.present(addNavViewController, animated: true)
 	}
 	
-	func showAddTwitterFeed() {
-		let addNavViewController = UIStoryboard.twitterAdd.instantiateInitialViewController() as! UINavigationController
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		masterFeedViewController.present(addNavViewController, animated: true)
-	}
-	
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
@@ -1374,9 +1373,9 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 
 		defer {
 			if let mainController = viewController as? MainControllerIdentifiable {
-				lastMainControllerToAppear = mainController.mainControllerIdentifer
+				lastMainControllerToAppear = mainController.mainControllerIdentifier
 			} else if let mainController = (viewController as? UINavigationController)?.topViewController as? MainControllerIdentifiable {
-				lastMainControllerToAppear = mainController.mainControllerIdentifer
+				lastMainControllerToAppear = mainController.mainControllerIdentifier
 			}
 		}
 
@@ -2124,7 +2123,8 @@ private extension SceneCoordinator {
 		return [
 			UserInfoKey.readFeedsFilterState: isReadFeedsFiltered,
 			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
-			UserInfoKey.readArticlesFilterState: readArticlesFilterState
+			UserInfoKey.readArticlesFilterState: readArticlesFilterState,
+			UserInfoKey.isSidebarHidden: rootSplitViewController.displayMode == .secondaryOnly
 		]
 	}
 	

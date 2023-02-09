@@ -653,6 +653,22 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		fetchUnreadCounts(for: webFeeds, completion: completion)
 	}
 
+	public func fetchUnreadArticlesBetween(limit: Int?, before: Date?, after: Date?) throws -> Set<Article> {
+		return try fetchUnreadArticlesBetween(forContainer: self, limit: limit, before: before, after: after)
+	}
+
+	public func fetchUnreadArticlesBetween(folder: Folder, limit: Int?, before: Date?, after: Date?) throws -> Set<Article> {
+		return try fetchUnreadArticlesBetween(forContainer: folder, limit: limit, before: before, after: after)
+	}
+
+	public func fetchUnreadArticlesBetween(webFeeds: Set<WebFeed>, limit: Int?, before: Date?, after: Date?) throws -> Set<Article> {
+		return try fetchUnreadArticlesBetween(feeds: webFeeds, limit: limit, before: before, after: after)
+	}
+
+	public func fetchArticlesBetween(articleIDs: Set<String>, before: Date?, after: Date?) throws -> Set<Article> {
+		return try database.fetchArticlesBetween(articleIDs: articleIDs, before: before, after: after)
+	}
+
 	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
@@ -1147,6 +1163,17 @@ private extension Account {
 			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
 		}
 		
+		return articles
+	}
+
+	func fetchUnreadArticlesBetween(forContainer container: Container, limit: Int?, before: Date?, after: Date?) throws -> Set<Article> {
+		let feeds = container.flattenedWebFeeds()
+		let articles = try database.fetchUnreadArticlesBetween(feeds.webFeedIDs(), limit, before, after)
+		return articles
+	}
+
+	func fetchUnreadArticlesBetween(feeds: Set<WebFeed>, limit: Int?, before: Date?, after: Date?) throws -> Set<Article> {
+		let articles = try database.fetchUnreadArticlesBetween(feeds.webFeedIDs(), limit, before, after)
 		return articles
 	}
 

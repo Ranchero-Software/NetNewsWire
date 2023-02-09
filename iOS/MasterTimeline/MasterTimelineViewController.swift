@@ -31,7 +31,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
 	
-	var mainControllerIdentifer = MainControllerIdentifier.masterTimeline
+	var mainControllerIdentifier = MainControllerIdentifier.masterTimeline
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
