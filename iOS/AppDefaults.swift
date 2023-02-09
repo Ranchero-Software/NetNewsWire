@@ -58,6 +58,7 @@ final class AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
+		static let twitterDeprecationAlertShown = "twitterDeprecationAlertShown"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -220,6 +221,15 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setString(for: Key.currentThemeName, newValue)
+		}
+	}
+	
+	var twitterDeprecationAlertShown: Bool {
+		get {
+			return AppDefaults.bool(for: Key.twitterDeprecationAlertShown)
+		}
+		set {
+			AppDefaults.setBool(for: Key.twitterDeprecationAlertShown, newValue)
 		}
 	}
 	
