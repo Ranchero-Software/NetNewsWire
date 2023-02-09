@@ -21,14 +21,14 @@ struct ArticleThemeManagerView: View {
 	
 	var body: some View {
 		Form {
-			Section(header: Text("Ranchero Software Themes", comment: "Section header for installed themes"), footer: Text("These themes cannot be deleted.", comment: "Section footer for installed themes.")) {
+			Section(header: Text("Built-in Themes", comment: "Section header for installed themes"), footer: Text("These themes cannot be deleted.", comment: "Section footer for installed themes.")) {
 				articleThemeRow(try! themeManager.articleThemeWithThemeName("Default"))
 				ForEach(0..<installedFirstPartyThemes.count, id: \.self) { i in
 					articleThemeRow(installedFirstPartyThemes[i])
 				}
 			}
 			
-			Section(header: Text("Third Party Themes", comment: "Section header for third party themes")) {
+			Section(header: Text("Other Themes", comment: "Section header for third party themes")) {
 				ForEach(0..<installedThirdPartyThemes.count, id: \.self) { i in
 					articleThemeRow(installedThirdPartyThemes[i])
 				}
