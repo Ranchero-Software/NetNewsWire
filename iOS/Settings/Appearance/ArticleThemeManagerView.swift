@@ -21,13 +21,13 @@ struct ArticleThemeManagerView: View {
 		Form {
 			Section(header: Text("Built-in Themes", comment: "Section header for installed themes"), footer: Text("These themes cannot be deleted.", comment: "Section footer for installed themes.")) {
 				articleThemeRow(try! themeManager.articleThemeWithThemeName(AppDefaults.defaultThemeName))
-				ForEach(0..<themeManager.themesByDeveloper().0.count, id: \.self) { i in
+				ForEach(0..<themeManager.themesByDeveloper().builtIn.count, id: \.self) { i in
 					articleThemeRow(themeManager.themesByDeveloper().0[i])
 				}
 			}
 			
 			Section(header: Text("Other Themes", comment: "Section header for third party themes")) {
-				ForEach(0..<themeManager.themesByDeveloper().1.count, id: \.self) { i in
+				ForEach(0..<themeManager.themesByDeveloper().other.count, id: \.self) { i in
 					articleThemeRow(themeManager.themesByDeveloper().1[i])
 				}
 			}

@@ -140,11 +140,10 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 			} catch {
 				logger.error("\(error.localizedDescription)")
 			}
-			 
 		}
 	}
 	
-	func themesByDeveloper() -> ([ArticleTheme], [ArticleTheme]) {
+	func themesByDeveloper() -> (builtIn: [ArticleTheme], other: [ArticleTheme]) {
 		let installedProvidedThemes = themeNames.map({ try? articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ $0.isAppTheme }).sorted(by: { $0.name < $1.name }).filter({ $0.name != AppDefaults.defaultThemeName })
 		
 		let installedOtherThemes = themeNames.map({ try? articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ !$0.isAppTheme }).sorted(by: { $0.name < $1.name })
@@ -173,7 +172,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 		
 		let installedThemes = ArticleThemesManager.shared.themesByDeveloper()
 		
-		for theme in installedThemes.0 {
+		for theme in installedThemes.builtIn {
 			let item = NSMenuItem()
 			item.title = theme.name
 			item.action = #selector(updateThemeSelection(_:))
@@ -189,7 +188,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 		thirdPartyHeading.isEnabled = false
 		menu.addItem(thirdPartyHeading)
 
-		for theme in installedThemes.1 {
+		for theme in installedThemes.other {
 			let item = NSMenuItem()
 			item.title = theme.name
 			item.action = #selector(updateThemeSelection(_:))
