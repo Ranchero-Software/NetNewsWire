@@ -3532,7 +3532,7 @@
 		};
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -3544,7 +3544,7 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBS.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
 		};
@@ -4580,11 +4580,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1768140A2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Xlinker",
-					"-no_application_extension",
-				);
 			};
 			name = Debug;
 		};
@@ -4592,11 +4587,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1768140A2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Xlinker",
-					"-no_application_extension",
-				);
 			};
 			name = Release;
 		};
@@ -4618,11 +4608,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Xlinker",
-					"-no_application_extension",
-				);
 			};
 			name = Debug;
 		};
@@ -4630,11 +4615,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Xlinker",
-					"-no_application_extension",
-				);
 			};
 			name = Release;
 		};
@@ -4642,11 +4622,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Xlinker",
-					"-no_application_extension",
-				);
 			};
 			name = Debug;
 		};
@@ -4654,11 +4629,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Xlinker",
-					"-no_application_extension",
-				);
 			};
 			name = Release;
 		};

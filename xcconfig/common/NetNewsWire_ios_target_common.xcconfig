@@ -11,3 +11,4 @@ GCC_C_LANGUAGE_STANDARD = gnu11;
 SDKROOT = iphoneos;
 TARGETED_DEVICE_FAMILY = 1,2
 IPHONEOS_DEPLOYMENT_TARGET = 15.0
+OTHER_LDFLAGS = $(inherited) -Xlinker -no_application_extension
