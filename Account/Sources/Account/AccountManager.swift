@@ -326,6 +326,26 @@ public final class AccountManager: UnreadCountProvider {
 		return false
 	}
 
+    public func anyLocalOriCloudAccountHasAtLeastOneTwitterFeed() -> Bool {
+        // We removed our Twitter code, and the ability to read feeds from Twitter,
+        // when Twitter announced the end of the free tier for the Twitter API.
+        // We are cheering on Twitter’s increasing irrelevancy.
+        
+        for account in accounts {
+            if account.type == .cloudKit || account.type == .onMyMac {
+                for webfeed in account.flattenedWebFeeds() {
+                    if let components = URLComponents(string: webfeed.url), let host = components.host {
+                        if host == "twitter.com" { // Allow, for instance, blog.twitter.com, which might have an actual RSS feed
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        
+        return false
+    }
+    
 	// MARK: - Fetching Articles
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
