@@ -3528,11 +3528,8 @@
 				511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
 				51BB7C312335ACDE008E8144 /* page.html in Resources */,
-<<<<<<< HEAD
 				512392C324E3451400F11704 /* TwitterAdd.storyboard in Resources */,
-=======
 				516A093723609A3600EAE89B /* SettingsComboTableViewCell.xib in Resources */,
->>>>>>> main
 				51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
 				51DEE81A26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
