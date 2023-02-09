@@ -16,29 +16,24 @@ struct ArticleThemeManagerView: View {
 	@State private var showImportConfirmationAlert: (ArticleTheme?, Bool) = (nil, false)
 	@State private var showImportErrorAlert: (Error?, Bool) = (nil, false)
 	@State private var showImportSuccessAlert: Bool = false
-	@State private var installedFirstPartyThemes: [ArticleTheme] = []
-	@State private var installedThirdPartyThemes: [ArticleTheme] = []
 	
 	var body: some View {
 		Form {
 			Section(header: Text("Built-in Themes", comment: "Section header for installed themes"), footer: Text("These themes cannot be deleted.", comment: "Section footer for installed themes.")) {
-				articleThemeRow(try! themeManager.articleThemeWithThemeName("Default"))
-				ForEach(0..<installedFirstPartyThemes.count, id: \.self) { i in
-					articleThemeRow(installedFirstPartyThemes[i])
+				articleThemeRow(try! themeManager.articleThemeWithThemeName(AppDefaults.defaultThemeName))
+				ForEach(0..<themeManager.themesByDeveloper().0.count, id: \.self) { i in
+					articleThemeRow(themeManager.themesByDeveloper().0[i])
 				}
 			}
 			
 			Section(header: Text("Other Themes", comment: "Section header for third party themes")) {
-				ForEach(0..<installedThirdPartyThemes.count, id: \.self) { i in
-					articleThemeRow(installedThirdPartyThemes[i])
+				ForEach(0..<themeManager.themesByDeveloper().1.count, id: \.self) { i in
+					articleThemeRow(themeManager.themesByDeveloper().1[i])
 				}
 			}
 			
 		}
 		.navigationTitle(Text("Article Themes", comment: "Navigation bar title for Article Themes"))
-		.task {
-			updateThemesArrays()
-		}
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
@@ -142,9 +137,6 @@ struct ArticleThemeManagerView: View {
 			   actions: { }, message: {
 			Text("\(showImportErrorAlert.0?.localizedDescription ?? "")")
 		})
-		.onReceive(themeManager.objectWillChange) { _ in
-			updateThemesArrays()
-		}
     }
 	
 	func articleThemeRow(_ theme: ArticleTheme) -> some View {
@@ -180,12 +172,6 @@ struct ArticleThemeManagerView: View {
 				.tint(.red)
 			}
 		}
-	}
-	
-	private func updateThemesArrays() {
-		installedFirstPartyThemes = themeManager.themeNames.map({ try? themeManager.articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ $0.isAppTheme }).sorted(by: { $0.name < $1.name })
-		
-		installedThirdPartyThemes = themeManager.themeNames.map({ try? themeManager.articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ !$0.isAppTheme }).sorted(by: { $0.name < $1.name })
 	}
 }
 
