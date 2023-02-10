@@ -213,7 +213,8 @@ struct SettingsViewRows {
 			Image(systemName: sheet.systemImage)
 				.resizable()
 				.renderingMode(.template)
-				.foregroundColor(Color(uiColor: .tertiaryLabel))
+				.symbolRenderingMode(.hierarchical)
+				.foregroundColor(Color(uiColor: AppAssets.primaryAccentColor))
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 30.0, height: 30.0)
 		}
@@ -230,10 +231,11 @@ struct SettingsViewRows {
 			Label {
 				Text("button.title.about", comment: "About")
 			} icon: {
-				Image(systemName: "info.circle")
+				Image(systemName: "info.circle.fill")
 					.resizable()
 					.renderingMode(.template)
-					.foregroundColor(Color(uiColor: .tertiaryLabel))
+					.symbolRenderingMode(.hierarchical)
+					.foregroundColor(Color(uiColor: AppAssets.primaryAccentColor))
 					.aspectRatio(contentMode: .fit)
 					.frame(width: 30.0, height: 30.0)
 			}

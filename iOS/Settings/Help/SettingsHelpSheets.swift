@@ -34,9 +34,9 @@ public enum HelpSheet: CustomStringConvertible, CaseIterable {
 	public var systemImage: String {
 		switch self {
 		case .help:
-			return "questionmark.app"
+			return "questionmark.circle.fill"
 		case .website:
-			return "globe"
+			return "safari.fill"
 		}
 	}
 }
