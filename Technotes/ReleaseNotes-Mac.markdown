@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 6.1.1b4 build 6110 9 Feb 2023
+
+Update the Twitter removal warning to say “later in February” instead of “February 9,” since Twitter postponed the removal date to the 13th and might postpone it further.
+
 ### 6.1.1b3 build 6109 6 Feb 2023
 
 Update Safari extension icon (credit to Louie Mantia for the new icon)
