@@ -131,6 +131,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 		
 		appDelegate = self
+		
+		presentTwitterDeprecationAlertIfRequired()
 	}
 	
 	// MARK: - API
@@ -520,26 +522,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return ExtensionPointManager.shared.isRedditEnabled
 		}
 		
-		if item.action == #selector(showAddTwitterFeedWindow(_:)) {
-			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isTwitterEnabled else {
-				return false
-			}
-			return ExtensionPointManager.shared.isTwitterEnabled
-		}
-
-		#if !DEBUG
-		if item.action == #selector(debugDropConditionalGetInfo(_:)) {
-			return false
-		}
-		#endif
-		
-		if item.action == #selector(debugTestCrashReporterWindow(_:)) ||
-			item.action == #selector(debugTestCrashReportSending(_:)) ||
-			item.action == #selector(forceCrash(_:)) {
-			let appIDPrefix = Bundle.main.infoDictionary?["AppIdentifierPrefix"] as! String
-			return appIDPrefix == "M8L2WTLA8W."
-		}
-
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
@@ -617,12 +599,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		createAndShowMainWindowIfNecessary()
 		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
 		addFeedController?.showAddFeedSheet(.redditFeed)
-	}
-
-	@IBAction func showAddTwitterFeedWindow(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
-		addFeedController?.showAddFeedSheet(.twitterFeed)
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
@@ -980,6 +956,33 @@ internal extension AppDelegate {
 		alert.beginSheetModal(for: window)
 	}
 	
+	private func presentTwitterDeprecationAlertIfRequired() {
+		if AppDefaults.shared.twitterDeprecationAlertShown { return }
+		
+		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
+		let currentDate = Date()
+		if currentDate > expiryDate {
+			return // If after August 9th, don't show
+		}
+
+		if AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed() {
+			showTwitterDeprecationAlert()
+		}
+		AppDefaults.shared.twitterDeprecationAlertShown = true
+	}
+	
+	private func showTwitterDeprecationAlert() {
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.alertStyle = .warning
+			alert.messageText = NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed")
+			alert.informativeText = NSLocalizedString("On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation informative text.")
+			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			alert.buttons[0].keyEquivalent = "\r"
+			alert.runModal()
+		}
+	}
+
 }
 
 /*

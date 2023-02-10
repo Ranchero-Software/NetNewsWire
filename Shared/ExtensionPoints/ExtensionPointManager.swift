@@ -69,16 +69,12 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		return activeExtensionPoints.values.compactMap({ return $0 as? FeedProvider })
 	}
 	
-	var isTwitterEnabled: Bool {
-		return activeExtensionPoints.values.contains(where: { $0 is TwitterFeedProvider })
-	}
-	
 	var isRedditEnabled: Bool {
 		return activeExtensionPoints.values.contains(where: { $0 is RedditFeedProvider })
 	}
 
 	init() {
-		possibleExtensionPointTypes = [TwitterFeedProvider.self, RedditFeedProvider.self]
+		possibleExtensionPointTypes = [RedditFeedProvider.self]
 		loadExtensionPoints()
 	}
 	
@@ -121,12 +117,6 @@ private extension ExtensionPointManager {
 	
 	func extensionPoint(for extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess?, completion: @escaping (Result<ExtensionPoint, Error>) -> Void) {
 		switch extensionPointType {
-		case is TwitterFeedProvider.Type:
-			if let tokenSuccess = tokenSuccess, let twitter = TwitterFeedProvider(tokenSuccess: tokenSuccess) {
-				completion(.success(twitter))
-			} else {
-				completion(.failure(ExtensionPointManagerError.unableToCreate))
-			}
 		case is RedditFeedProvider.Type:
 			if let tokenSuccess = tokenSuccess {
 				RedditFeedProvider.create(tokenSuccess: tokenSuccess) { result in
@@ -147,8 +137,6 @@ private extension ExtensionPointManager {
 	
 	func extensionPoint(for extensionPointID: ExtensionPointIdentifer) -> ExtensionPoint? {
 		switch extensionPointID {
-		case .twitter(let screenName):
-			return TwitterFeedProvider(screenName: screenName)
 		case .reddit(let username):
 			return RedditFeedProvider(username: username)
 		#if os(macOS)

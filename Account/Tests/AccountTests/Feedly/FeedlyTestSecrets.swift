@@ -13,8 +13,6 @@ struct FeedlyTestSecrets: SecretsProvider {
 	var mercuryClientSecret = ""
 	var feedlyClientId = ""
 	var feedlyClientSecret = ""
-	var twitterConsumerKey = ""
-	var twitterConsumerSecret = ""
 	var redditConsumerKey = ""
 	var inoreaderAppId = ""
 	var inoreaderAppKey = ""

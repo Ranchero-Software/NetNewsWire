@@ -1216,13 +1216,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		masterFeedViewController.present(addNavViewController, animated: true)
 	}
 	
-	func showAddTwitterFeed() {
-		let addNavViewController = UIStoryboard.twitterAdd.instantiateInitialViewController() as! UINavigationController
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		masterFeedViewController.present(addNavViewController, animated: true)
-	}
-	
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet

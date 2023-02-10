@@ -267,7 +267,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 			themeActions.append(action)
 		}
 		
-		let defaultThemeAction = UIAction(title: NSLocalizedString("button.title.default", comment: "Button title: Default"),
+		let defaultThemeAction = UIAction(title: "NetNewsWire",
 										  image: nil,
 										  identifier: nil,
 										  discoverabilityTitle: nil,

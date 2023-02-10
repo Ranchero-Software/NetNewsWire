@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -117,10 +117,6 @@
 		512392C024E33A3C00F11704 /* RedditAdd.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 516AE5FF246AF34100731738 /* RedditAdd.storyboard */; };
 		512392C124E33A3C00F11704 /* RedditSelectTypeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE601246AF36100731738 /* RedditSelectTypeTableViewController.swift */; };
 		512392C224E33A3C00F11704 /* RedditEnterDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE605246AF3A900731738 /* RedditEnterDetailTableViewController.swift */; };
-		512392C324E3451400F11704 /* TwitterAdd.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */; };
-		512392C424E3451400F11704 /* TwitterSelectTypeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */; };
-		512392C524E3451400F11704 /* TwitterEnterDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */; };
-		512392C624E3451400F11704 /* TwitterSelectAccountTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */; };
 		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
@@ -197,10 +193,6 @@
 		5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
 		5148F44B2336DB4700F8CD8B /* MasterTimelineTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */; };
 		5148F4552336DB7000F8CD8B /* MasterTimelineTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */; };
-		514A89A2244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 514A897F244FD63F0085E65D /* AddTwitterFeedSheet.xib */; };
-		514A89A3244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 514A897F244FD63F0085E65D /* AddTwitterFeedSheet.xib */; };
-		514A89A5244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514A89A4244FD6640085E65D /* AddTwitterFeedWindowController.swift */; };
-		514A89A6244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514A89A4244FD6640085E65D /* AddTwitterFeedWindowController.swift */; };
 		514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */; };
 		514C16CE24D2E63F009A3AFA /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16CD24D2E63F009A3AFA /* Account */; };
 		514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16DD24D2EF15009A3AFA /* RSTree */; };
@@ -210,8 +202,6 @@
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
 		515A50E7243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
-		515A5107243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */; };
-		515A5108243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */; };
 		515A5148243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
 		515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
 		515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A516D243E7F950089E588 /* ExtensionPointDetail.xib */; };
@@ -222,7 +212,6 @@
 		515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515A517B243E90260089E588 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		515A517C243E90260089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
-		515A5180243E90260089E588 /* TwitterFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */; };
 		515A5181243E90260089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
 		515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */ = {isa = PBXBuildFile; fileRef = 515D4FCB2325815A00EE1167 /* SafariExt.js */; };
@@ -1197,9 +1186,6 @@
 		17E0084525941887000C23F0 /* SizeCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeCategories.swift; sourceTree = "<group>"; };
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
 		510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectComboTableViewCell.swift; sourceTree = "<group>"; };
-		510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TwitterAdd.storyboard; sourceTree = "<group>"; };
-		510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectTypeTableViewController.swift; sourceTree = "<group>"; };
-		510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectAccountTableViewController.swift; sourceTree = "<group>"; };
 		5103A9972421643300410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsAddCloudKit.xib; sourceTree = "<group>"; };
@@ -1261,11 +1247,8 @@
 		5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedbin.xib; sourceTree = "<group>"; };
 		5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterTimelineTitleView.xib; sourceTree = "<group>"; };
 		5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineTitleView.swift; sourceTree = "<group>"; };
-		514A8980244FD63F0085E65D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddTwitterFeedSheet.xib; sourceTree = SOURCE_ROOT; };
-		514A89A4244FD6640085E65D /* AddTwitterFeedWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AddTwitterFeedWindowController.swift; path = AddFeed/AddTwitterFeedWindowController.swift; sourceTree = "<group>"; };
 		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		515A50E5243D07A90089E588 /* ExtensionPointManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointManager.swift; sourceTree = "<group>"; };
-		515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TwitterFeedProvider-Extensions.swift"; sourceTree = "<group>"; };
 		515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointEnableWindowController.swift; sourceTree = "<group>"; };
 		515A516D243E7F950089E588 /* ExtensionPointDetail.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtensionPointDetail.xib; sourceTree = "<group>"; };
 		515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointDetailViewController.swift; sourceTree = "<group>"; };
@@ -1326,7 +1309,6 @@
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
-		51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterEnterDetailTableViewController.swift; sourceTree = "<group>"; };
 		51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreviewViewController.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
 		51C45250226506F400C03939 /* String-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String-Extensions.swift"; sourceTree = "<group>"; };
@@ -1891,17 +1873,6 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		510289CE2451BA1E00426DDF /* Twitter */ = {
-			isa = PBXGroup;
-			children = (
-				510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */,
-				510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */,
-				510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */,
-				51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */,
-			);
-			path = Twitter;
-			sourceTree = "<group>";
-		};
 		510C415D24E5CDE3008226FD /* ShareExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -1924,7 +1895,6 @@
 				515A50E5243D07A90089E588 /* ExtensionPointManager.swift */,
 				84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */,
 				84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */,
-				515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */,
 				5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */,
 			);
 			path = ExtensionPoints;
@@ -2237,7 +2207,6 @@
 				510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */,
 				51E36E8B239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib */,
 				516AE5DD246AF2DD00731738 /* Reddit */,
-				510289CE2451BA1E00426DDF /* Twitter */,
 			);
 			path = Add;
 			sourceTree = "<group>";
@@ -2459,8 +2428,6 @@
 				51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */,
 				51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */,
 				51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */,
-				514A897F244FD63F0085E65D /* AddTwitterFeedSheet.xib */,
-				514A89A4244FD6640085E65D /* AddTwitterFeedWindowController.swift */,
 				848363002262A3BC00DA1D35 /* AddWebFeedSheet.xib */,
 				849A97521ED9EAC0007D329B /* AddWebFeedWindowController.swift */,
 				51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */,
@@ -3418,9 +3385,7 @@
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1250;
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -3585,7 +3550,6 @@
 				65ED405C235DEF6C0081F399 /* ImportOPMLSheet.xib in Resources */,
 				51DEE81926FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
-				514A89A3244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
 				51D0214726ED617100FF2E0F /* core.css in Resources */,
 				DDF9E1D828EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
 				5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
@@ -3641,7 +3605,7 @@
 				511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
 				51BB7C312335ACDE008E8144 /* page.html in Resources */,
-				512392C324E3451400F11704 /* TwitterAdd.storyboard in Resources */,
+				516A093723609A3600EAE89B /* SettingsComboTableViewCell.xib in Resources */,
 				51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
 				DFD86796295D553D0070D62D /* Localizable.strings in Resources */,
@@ -3711,7 +3675,6 @@
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
 				51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
 				BDCB516724282C8A00102A80 /* AccountsNewsBlur.xib in Resources */,
-				514A89A2244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
 				5103A9982421643300410853 /* blank.html in Resources */,
 				DF93DB2B296A319000586C0E /* Localizable.stringsdict in Resources */,
 				515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */,
@@ -3736,7 +3699,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -3748,12 +3711,13 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBS.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
+			shellScript = "xcrun -sdk macosx swift buildscripts/VerifyNoBS.swift  --xcode  ${PROJECT_DIR}/${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
 		};
 		5170CA5A279E468000702605 /* Delete Unnecessary Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -4083,7 +4047,6 @@
 				65ED3FEC235DEF6C0081F399 /* RSHTMLMetadata+Extension.swift in Sources */,
 				518C3194237B00DA004D740F /* DetailIconSchemeHandler.swift in Sources */,
 				65ED3FED235DEF6C0081F399 /* SendToMarsEditCommand.swift in Sources */,
-				514A89A6244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */,
 				65ED3FEE235DEF6C0081F399 /* UserNotificationManager.swift in Sources */,
 				653813182680E152007A082C /* AccountType+Helpers.swift in Sources */,
 				65ED3FEF235DEF6C0081F399 /* ScriptingObjectContainer.swift in Sources */,
@@ -4159,7 +4122,6 @@
 				65ED4028235DEF6C0081F399 /* ExtractedArticle.swift in Sources */,
 				65ED4029235DEF6C0081F399 /* DeleteCommand.swift in Sources */,
 				65ED402A235DEF6C0081F399 /* AddWebFeedWindowController.swift in Sources */,
-				515A5108243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */,
 				65ED402B235DEF6C0081F399 /* ImportOPMLWindowController.swift in Sources */,
 				65ED402C235DEF6C0081F399 /* TimelineTableView.swift in Sources */,
 				178A9F9E2549449F00AB7E9D /* AddAccountsView.swift in Sources */,
@@ -4286,7 +4248,6 @@
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
 				51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */,
 				176813E92564BAE200D98635 /* WidgetDeepLinks.swift in Sources */,
-				512392C424E3451400F11704 /* TwitterSelectTypeTableViewController.swift in Sources */,
 				51B5C87723F22B8200032075 /* ExtensionContainers.swift in Sources */,
 				51C45292226509C800C03939 /* TodayFeedDelegate.swift in Sources */,
 				51C452A222650A1900C03939 /* RSHTMLMetadata+Extension.swift in Sources */,
@@ -4329,19 +4290,16 @@
 				DFB34997294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */,
 				51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				51F9F3F723DF6DB200A314FD /* ArticleIconSchemeHandler.swift in Sources */,
-				512392C524E3451400F11704 /* TwitterEnterDetailTableViewController.swift in Sources */,
 				512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */,
 				512392C124E33A3C00F11704 /* RedditSelectTypeTableViewController.swift in Sources */,
 				515A5181243E90260089E588 /* ExtensionPointIdentifer.swift in Sources */,
 				DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
-				512392C624E3451400F11704 /* TwitterSelectAccountTableViewController.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,
 				DFD406FC291FB63B00C02962 /* SettingsHelpSheets.swift in Sources */,
 				51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */,
-				515A5180243E90260089E588 /* TwitterFeedProvider-Extensions.swift in Sources */,
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
 				512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */,
@@ -4432,7 +4390,6 @@
 				849C78922362AB04009A71E4 /* ExportOPMLWindowController.swift in Sources */,
 				84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */,
 				849A97661ED9EB96007D329B /* SidebarViewController.swift in Sources */,
-				514A89A5244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */,
 				849A97641ED9EB96007D329B /* SidebarOutlineView.swift in Sources */,
 				5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */,
 				8405DD9922153B6B008CE1BF /* TimelineContainerView.swift in Sources */,
@@ -4499,7 +4456,6 @@
 				5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
-				515A5107243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
 				DFBB4EAC2951BC0200639228 /* NNWThemeDocument.swift in Sources */,
 				DFC14F1228EA5DC500F6EE86 /* AboutData.swift in Sources */,
