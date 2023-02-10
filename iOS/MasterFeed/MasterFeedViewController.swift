@@ -688,8 +688,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	}
 	
 	private func showTwitterDeprecationAlert() {
-		let alert = UIAlertController(title: NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed"),
-									  message: NSLocalizedString("On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation message"),
+		let alert = UIAlertController(title: NSLocalizedString("alert.title.twitter-integration-removed", comment: "Twitter Integration Removed"),
+									  message: NSLocalizedString("alert.message.twitter-integration-removed", comment: "Twitter deprecation message"),
 									  preferredStyle: .alert)
 		
 		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
@@ -768,12 +768,12 @@ private extension MasterFeedViewController {
 	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
-		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
+		filterButton?.accLabelText = NSLocalizedString("button.accessibility.title.selected-filter-read-feeds", comment: "Selected - Filter Read Feeds")
 	}
 	
 	func setFilterButtonToInactive() {
 		filterButton?.image = AppAssets.filterInactiveImage
-		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
+		filterButton?.accLabelText = NSLocalizedString("button.accessibility.title.filter-read-feeds", comment: "Filter Read Feeds")
 	}
 	
 	func resetEstimatedRowHeight() {

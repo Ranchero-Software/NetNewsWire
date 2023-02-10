@@ -45,7 +45,7 @@ struct ExtensionsManagementView: View {
 			Button(role: .cancel) {
 				extensionToDeactivate = nil
 			} label: {
-				Text("Cancel", comment: "Button title")
+				Text("button.title.cancel", comment: "Button title")
 			}
 
 		} message: {

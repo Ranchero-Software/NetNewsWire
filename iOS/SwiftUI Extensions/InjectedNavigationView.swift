@@ -21,7 +21,7 @@ struct InjectedNavigationView: View {
 						Button(role: .cancel) {
 							dismiss()
 						} label: {
-							Text("Done", comment: "Button title")
+							Text("button.title.done", comment: "Button title")
 						}
 					}
 				}				
