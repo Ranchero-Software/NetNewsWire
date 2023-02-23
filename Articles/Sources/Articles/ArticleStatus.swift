@@ -11,7 +11,7 @@ import Foundation
 // Threading rules:
 // * Main-thread only
 // * Except: may be created on background thread by StatusesTable.
-// Which is safe, because at creation time it’t not yet shared,
+// Which is safe, because at creation time it’s not yet shared,
 // and it won’t be mutated ever on a background thread.
 
 public final class ArticleStatus: Hashable {
