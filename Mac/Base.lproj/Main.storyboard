@@ -459,7 +459,7 @@
                                                 <action selector="gotoToday:" target="Ady-hI-5gd" id="GyO-dW-XCy"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="All Unread" keyEquivalent="2" id="8ZT-ew-JNc">
+                                        <menuItem title="All Unread" keyEquivalent="2" id="8ZT-ew-JNc" userLabel="Unread">
                                             <connections>
                                                 <action selector="gotoAllUnread:" target="Ady-hI-5gd" id="xGb-dU-hH7"/>
                                             </connections>

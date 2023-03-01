@@ -183,7 +183,7 @@ struct AppAssets {
 	}()
 	
 	static var readClosedImage: RSImage = {
-		return NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
+		return NSImage(systemSymbolName: "record.circle", accessibilityDescription: nil)!
 	}()
 
 	static var readOpenImage: RSImage = {
@@ -216,7 +216,7 @@ struct AppAssets {
 	
 	static var starredFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
-		let preferredColor = NSColor(named: "StarColor")!
+		let preferredColor = NSColor(named: "AccentColor")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
@@ -229,17 +229,17 @@ struct AppAssets {
 	}()
 
 	static var timelineStarUnselected: RSImage! = {
-		return RSImage(named: "timelineStar")?.tinted(with: starColor)
+		return RSImage(named: "timelineStar")?.tinted(with: NSColor(named: "AccentColor")!)
 	}()
 
 	static var todayFeedImage: IconImage = {
-		let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
-		let preferredColor = NSColor.orange
+		let image = NSImage(systemSymbolName: "doc.text.image", accessibilityDescription: nil)!
+		let preferredColor = NSColor(named: "AccentColor")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
 	static var unreadFeedImage: IconImage = {
-		let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
+		let image = NSImage(systemSymbolName: "record.circle", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
@@ -250,7 +250,7 @@ struct AppAssets {
 	}()
 
 	static var swipeMarkUnreadImage: RSImage = {
-		return RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
+		return RSImage(systemSymbolName: "record.circle", accessibilityDescription: "Mark Unread")!
 			.withSymbolConfiguration(.init(scale: .large))!
 	}()
 
@@ -262,10 +262,6 @@ struct AppAssets {
 	static var swipeMarkUnstarredImage: RSImage = {
 		return RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
 			.withSymbolConfiguration(.init(scale: .large))!
-	}()
-	
-	static var starColor: NSColor = {
-		return NSColor(named: NSColor.Name("StarColor"))!
 	}()
 	
 	static func image(for accountType: AccountType) -> NSImage? {

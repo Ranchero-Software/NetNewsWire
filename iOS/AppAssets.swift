@@ -94,7 +94,7 @@ struct AppAssets {
 	}()
 
 	static var circleClosedImage: UIImage = {
-		return UIImage(systemName: "largecircle.fill.circle")!
+		return UIImage(systemName: "record.circle")!
 	}()
 	
 	static var circleOpenImage: UIImage = {
@@ -247,7 +247,7 @@ struct AppAssets {
 	
 	static var starredFeedImage: IconImage {
 		let image = UIImage(systemName: "star.fill")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.starColor.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}
 	
 	static var themeImage: UIImage = {
@@ -260,12 +260,12 @@ struct AppAssets {
 	
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
-		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
+		return image.withTintColor(AppAssets.secondaryAccentColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	static var todayFeedImage: IconImage {
-		let image = UIImage(systemName: "sun.max.fill")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: UIColor.systemOrange.cgColor)
+		let image = UIImage(systemName: "doc.text.image")!
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}
 
 	static var trashImage: UIImage = {
@@ -273,7 +273,7 @@ struct AppAssets {
 	}()
 	
 	static var unreadFeedImage: IconImage {
-		let image = UIImage(systemName: "largecircle.fill.circle")!
+		let image = UIImage(systemName: "record.circle")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}
 	

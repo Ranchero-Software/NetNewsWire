@@ -144,7 +144,7 @@ private extension KeyboardManager {
 		let goToTodayTitle = NSLocalizedString("Go To Today", comment: "Go To Today")
 		keys.append(KeyboardManager.createKeyCommand(title: goToTodayTitle, action: "goToToday:", input: "1", modifiers: [.command]))
 
-		let goToAllUnreadTitle = NSLocalizedString("Go To All Unread", comment: "Go To All Unread")
+		let goToAllUnreadTitle = NSLocalizedString("Go To Unread", comment: "Go To Unread")
 		keys.append(KeyboardManager.createKeyCommand(title: goToAllUnreadTitle, action: "goToAllUnread:", input: "2", modifiers: [.command]))
 
 		let goToStarredTitle = NSLocalizedString("Go To Starred", comment: "Go To Starred")
