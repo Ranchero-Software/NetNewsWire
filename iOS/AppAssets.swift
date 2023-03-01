@@ -233,10 +233,6 @@ struct AppAssets {
 		return UIImage(systemName: "gear")!
 	}()
 	
-	static var starColor: UIColor = {
-		return UIColor(named: "starColor")!
-	}()
-	
 	static var starClosedImage: UIImage = {
 		return UIImage(systemName: "star.fill")!
 	}()
