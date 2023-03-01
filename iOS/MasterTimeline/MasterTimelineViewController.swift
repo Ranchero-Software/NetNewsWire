@@ -303,7 +303,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 		
 		starAction.image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
-		starAction.backgroundColor = AppAssets.starColor
+		starAction.backgroundColor = AppAssets.primaryAccentColor
 		
 		// Set up the read action
 		let moreTitle = NSLocalizedString("More", comment: "More")
