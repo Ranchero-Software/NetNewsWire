@@ -234,7 +234,7 @@ struct AppAssets {
 	}()
 	
 	static var starClosedImage: UIImage = {
-		return UIImage(systemName: "star.fill")!
+		return UIImage(systemName: "star.slash")!
 	}()
 	
 	static var starOpenImage: UIImage = {
@@ -242,7 +242,7 @@ struct AppAssets {
 	}()
 	
 	static var starredFeedImage: IconImage {
-		let image = UIImage(systemName: "star.fill")!
+		let image = UIImage(systemName: "star")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}
 	
@@ -255,7 +255,7 @@ struct AppAssets {
 	}()
 	
 	static var timelineStarImage: UIImage = {
-		let image = UIImage(systemName: "star.fill")!
+		let image = UIImage(systemName: "star")!
 		return image.withTintColor(AppAssets.secondaryAccentColor, renderingMode: .alwaysOriginal)
 	}()
 	

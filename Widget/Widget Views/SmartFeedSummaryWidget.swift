@@ -71,7 +71,7 @@ struct SmartFeedSummaryWidgetView: View {
 	}
 	
 	var starredImage: some View {
-		Image(systemName: "star.fill")
+		Image(systemName: "star")
 			.resizable()
 			.frame(width: 12, height: 12, alignment: .center)
 	}

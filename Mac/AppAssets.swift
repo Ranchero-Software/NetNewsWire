@@ -207,7 +207,7 @@ struct AppAssets {
 	}()
 	
 	static var starClosedImage: RSImage = {
-		return NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
+		return NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
 	}()
 
 	static var starOpenImage: RSImage = {
@@ -215,7 +215,7 @@ struct AppAssets {
 	}()
 	
 	static var starredFeedImage: IconImage = {
-		let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
+		let image = NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
@@ -255,12 +255,12 @@ struct AppAssets {
 	}()
 
 	static var swipeMarkStarredImage: RSImage = {
-		return RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
+		return RSImage(systemSymbolName: "star", accessibilityDescription: "Star")!
 			.withSymbolConfiguration(.init(scale: .large))!
 	}()
 
 	static var swipeMarkUnstarredImage: RSImage = {
-		return RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
+		return RSImage(systemSymbolName: "star.slash", accessibilityDescription: "Unstar")!
 			.withSymbolConfiguration(.init(scale: .large))!
 	}()
 	

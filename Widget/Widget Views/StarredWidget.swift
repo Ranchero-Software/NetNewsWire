@@ -78,7 +78,7 @@ struct StarredWidgetView : View {
 	}
 	
 	var starredImage: some View {
-		Image(systemName: "star.fill")
+		Image(systemName: "star")
 			.resizable()
 			.frame(width: 30, height: 30, alignment: .center)
 			.cornerRadius(4)
@@ -100,7 +100,7 @@ struct StarredWidgetView : View {
 	var inboxZero: some View {
 		VStack(alignment: .center) {
 			Spacer()
-			Image(systemName: "star.fill")
+			Image(systemName: "star")
 				.resizable()
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 30)

@@ -302,7 +302,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			completion(true)
 		}
 		
-		starAction.image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		starAction.image = article.status.starred ? AppAssets.starClosedImage : AppAssets.starOpenImage
 		starAction.backgroundColor = AppAssets.primaryAccentColor
 		
 		// Set up the read action
@@ -768,7 +768,7 @@ private extension MasterTimelineViewController {
 		let title = article.status.starred ?
 			NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") :
 			NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
-		let image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		let image = article.status.starred ? AppAssets.starClosedImage : AppAssets.starOpenImage
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
 			self?.coordinator.toggleStar(article)
