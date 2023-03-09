@@ -22,6 +22,7 @@ class SettingsViewController: UITableViewController, Logging {
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
 	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
+	@IBOutlet weak var markArticlesAsReadOnScrollSwitch: UISwitch!
 	@IBOutlet weak var articleThemeDetailLabel: UILabel!
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
@@ -75,6 +76,12 @@ class SettingsViewController: UITableViewController, Logging {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
+		if AppDefaults.shared.markArticlesAsReadOnScroll {
+			markArticlesAsReadOnScrollSwitch.isOn = true
+		} else {
+			markArticlesAsReadOnScrollSwitch.isOn = false
+		}
+		
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
@@ -114,7 +121,7 @@ class SettingsViewController: UITableViewController, Logging {
 		
 		switch section {
 		case 0:
-			if notificationStatus == .authorized { return 2 }
+//			if notificationStatus == .authorized { return 2 }
 			return 1
 		case 1:
 			return AccountManager.shared.accounts.count + 1
@@ -167,6 +174,7 @@ class SettingsViewController: UITableViewController, Logging {
 				cell = acctCell
 			}
 		default:
+			print("***** \(indexPath)")
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
 			
 		}
@@ -328,6 +336,14 @@ class SettingsViewController: UITableViewController, Logging {
 			AppDefaults.shared.refreshClearsReadArticles = true
 		} else {
 			AppDefaults.shared.refreshClearsReadArticles = false
+		}
+	}
+	
+	@IBAction func switchMarkArticlesAsReadOnScroll(_ sender: Any) {
+		if markArticlesAsReadOnScrollSwitch.isOn {
+			AppDefaults.shared.markArticlesAsReadOnScroll = true
+		} else {
+			AppDefaults.shared.markArticlesAsReadOnScroll = false
 		}
 	}
 	

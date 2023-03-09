@@ -141,6 +141,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var undoableCommands = [UndoableCommand]()
 
+	var articlesWithManuallyChangedReadStatus: Set<Article> = Set()
+	private var firstVisibleRowIndexWhenDraggingBegan: Int = 0
+	
+	private var isScrolling = false
+	
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -194,6 +199,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
+	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
@@ -328,6 +335,48 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	@objc func openArticleInBrowser(_ sender: Any?) {
 		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
 		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+
+		if let link = oneSelectedArticle?.preferredLink {
+			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+		}
+	}
+	
+	@objc func scrollViewDidScroll(notification: Notification){
+		if isScrolling {
+			scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+		}
+	}
+	
+	@objc func scrollViewWillStartLiveScroll(notification: Notification){
+		isScrolling = true
+		firstVisibleRowIndexWhenDraggingBegan = tableView.rows(in: tableView.visibleRect).location
+	}
+	
+	@objc func scrollViewDidEndLiveScroll(notification: Notification){
+		isScrolling = false
+	}
+	
+	@objc func scrollPositionDidChange(){
+		if !AppDefaults.shared.markArticlesAsReadOnScroll {
+			return
+		}
+		
+		// Mark articles scrolled out of sight at the top as read
+		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
+		
+		let unreadArticlesScrolledAway = articles.articlesBetween(
+			upperPosition: firstVisibleRowIndexWhenDraggingBegan, lowerPosition: firstVisibleRowIndex).filter { !$0.status.read && !articlesWithManuallyChangedReadStatus.contains($0) }
+				
+		if unreadArticlesScrolledAway.isEmpty { return }
+
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: unreadArticlesScrolledAway, markingRead: true, directlyMarked: false, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+	
+	func resetMarkAsReadOnScroll() {
+		articlesWithManuallyChangedReadStatus.removeAll()
 	}
 	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {

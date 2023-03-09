@@ -110,7 +110,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
-	private var directlyMarkedAsUnreadArticles = Set<Article>()
+	var directlyMarkedAsUnreadArticles = Set<Article>()
 	
 	var prefersStatusBarHidden = false
 	
