@@ -25,7 +25,6 @@ class SettingsViewController: UITableViewController, Logging {
 	@IBOutlet weak var markArticlesAsReadOnScrollSwitch: UISwitch!
 	@IBOutlet weak var articleThemeDetailLabel: UILabel!
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
-	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
 	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
 	
