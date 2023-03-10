@@ -37,8 +37,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	var undoableCommands = [UndoableCommand]()
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 
-	private var firstVisibleArticleWhenDraggingBegan: Article?
-	
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
 		
@@ -435,21 +433,20 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.selectArticle(article, animations: [.scroll, .select, .navigation])
 	}
 	
-	override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-		guard let visibleRowIndexPaths = tableView.indexPathsForVisibleRows, visibleRowIndexPaths.count > 0 else { return }
-		let firstVisibleRowIndexPath = visibleRowIndexPaths[0]
-		
-		if scrollView.isTracking {
-			firstVisibleArticleWhenDraggingBegan = dataSource.itemIdentifier(for: firstVisibleRowIndexPath)
-		} else {
-			firstVisibleArticleWhenDraggingBegan = nil
+	override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+		guard let firstVisible = tableView.indexPathsForVisibleRows?.first,
+			  indexPath < firstVisible,
+			  let article = dataSource.itemIdentifier(for: indexPath),
+			  article.status.read == false,
+			  !coordinator.directlyMarkedAsUnreadArticles.contains(article) else {
+			return
 		}
+		
+		coordinator.markAllAsRead([article])
 	}
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		if scrollView.isTracking {
-			scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
-		}
+		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
 	
 	// MARK: Notifications
@@ -547,33 +544,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@objc func scrollPositionDidChange() {
 		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
-
-		if !AppDefaults.shared.markArticlesAsReadOnScroll {
-			return
-		}
-		
-		// Mark articles scrolled out of sight at the top as read
-		guard let visibleRowIndexPaths = tableView.indexPathsForVisibleRows, visibleRowIndexPaths.count > 0 else { return }
-		let firstVisibleRowIndexPath = visibleRowIndexPaths[0]
-		
-		guard let firstVisibleArticle = dataSource.itemIdentifier(for: firstVisibleRowIndexPath), let firstArticleScrolledAway = firstVisibleArticleWhenDraggingBegan else {
-			return
-		}
-
-		guard let unreadArticlesScrolledAway = coordinator.articles
-				.articlesBetween(upperArticle: firstArticleScrolledAway, lowerArticle: firstVisibleArticle)
-				.filter({ !coordinator.directlyMarkedAsUnreadArticles.contains($0) })
-				.unreadArticles() else { return }
-
-		coordinator.markAllAsRead(unreadArticlesScrolledAway)
-		
-		for article in unreadArticlesScrolledAway {
-			if let indexPath = dataSource.indexPath(for: article) {
-				if let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
-					configure(cell, article: article, indexPath: indexPath)
-				}
-			}
-		}
 	}
 	
 	// MARK: Reloading
