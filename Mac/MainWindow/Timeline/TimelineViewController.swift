@@ -194,6 +194,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
+	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
@@ -224,6 +226,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(markStatusCommandDidDirectMarking(_:)), name: .MarkStatusCommandDidDirectMarking, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(markStatusCommandDidUndoDirectMarking(_:)), name: .MarkStatusCommandDidUndoDirectMarking, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(scrollViewDidScroll), name: NSScrollView.didLiveScrollNotification, object: tableView.enclosingScrollView)
 			didRegisterForNotifications = true
 		}
 	}
@@ -328,6 +331,31 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	@objc func openArticleInBrowser(_ sender: Any?) {
 		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
 		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+
+		if let link = oneSelectedArticle?.preferredLink {
+			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+		}
+	}
+	
+	@objc func scrollViewDidScroll(notification: Notification) {
+		guard AppDefaults.shared.markArticlesAsReadOnScroll else { return }
+		
+		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
+		
+		// We go back 5 extras incase we didn't get a notification during a fast scroll
+		let indexSet = IndexSet(integersIn: max(firstVisibleRowIndex - 6, 0)...max(firstVisibleRowIndex - 1, 0))
+		guard let articles = articles.articlesForIndexes(indexSet).unreadArticles() else {
+			return
+		}
+
+		let markArticles = articles.filter { !directlyMarkedAsUnreadArticles.contains($0) }
+		guard !markArticles.isEmpty,
+			  let undoManager = undoManager,
+			  let markReadCommand = MarkStatusCommand(initialArticles: markArticles, markingRead: true, directlyMarked: false, undoManager: undoManager) else {
+			return
+		}
+		
+		runCommand(markReadCommand)
 	}
 	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {

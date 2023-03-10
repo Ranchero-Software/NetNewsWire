@@ -44,6 +44,7 @@ final class AppDefaults {
 		static let currentThemeName = "currentThemeName"
 		static let hasSeenNotAllArticlesHaveURLsAlert = "hasSeenNotAllArticlesHaveURLsAlert"
 		static let twitterDeprecationAlertShown = "twitterDeprecationAlertShown"
+		static let markArticlesAsReadOnScroll = "markArticlesAsReadOnScroll"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -329,6 +330,14 @@ final class AppDefaults {
 		}
 	}
 	
+	var markArticlesAsReadOnScroll: Bool {
+		get {
+			return AppDefaults.bool(for: Key.markArticlesAsReadOnScroll)
+		}
+		set {
+			AppDefaults.setBool(for: Key.markArticlesAsReadOnScroll, newValue)
+		}
+	}
 
 	func registerDefaults() {
 		#if DEBUG

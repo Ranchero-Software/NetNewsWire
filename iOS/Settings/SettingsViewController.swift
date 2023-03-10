@@ -22,9 +22,9 @@ class SettingsViewController: UITableViewController, Logging {
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
 	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
+	@IBOutlet weak var markArticlesAsReadOnScrollSwitch: UISwitch!
 	@IBOutlet weak var articleThemeDetailLabel: UILabel!
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
-	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
 	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
 	
@@ -75,6 +75,12 @@ class SettingsViewController: UITableViewController, Logging {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
+		if AppDefaults.shared.markArticlesAsReadOnScroll {
+			markArticlesAsReadOnScrollSwitch.isOn = true
+		} else {
+			markArticlesAsReadOnScrollSwitch.isOn = false
+		}
+		
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
@@ -328,6 +334,14 @@ class SettingsViewController: UITableViewController, Logging {
 			AppDefaults.shared.refreshClearsReadArticles = true
 		} else {
 			AppDefaults.shared.refreshClearsReadArticles = false
+		}
+	}
+	
+	@IBAction func switchMarkArticlesAsReadOnScroll(_ sender: Any) {
+		if markArticlesAsReadOnScrollSwitch.isOn {
+			AppDefaults.shared.markArticlesAsReadOnScroll = true
+		} else {
+			AppDefaults.shared.markArticlesAsReadOnScroll = false
 		}
 	}
 	
