@@ -121,7 +121,7 @@ class SettingsViewController: UITableViewController, Logging {
 		
 		switch section {
 		case 0:
-//			if notificationStatus == .authorized { return 2 }
+			if notificationStatus == .authorized { return 2 }
 			return 1
 		case 1:
 			return AccountManager.shared.accounts.count + 1
@@ -174,7 +174,6 @@ class SettingsViewController: UITableViewController, Logging {
 				cell = acctCell
 			}
 		default:
-			print("***** \(indexPath)")
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
 			
 		}
