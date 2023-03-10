@@ -342,11 +342,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		
 		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
 		
-		guard let article = articles.articleAtRow(firstVisibleRowIndex - 1),
-				article.status.read == false,
-				!directlyMarkedAsUnreadArticles.contains(article),
-				let undoManager = undoManager,
-				let markReadCommand = MarkStatusCommand(initialArticles: [article], markingRead: true, directlyMarked: false, undoManager: undoManager) else {
+		// We go back 5 extras incase we didn't get a notification during a fast scroll
+		let indexSet = IndexSet(integersIn: max(firstVisibleRowIndex - 6, 0)...max(firstVisibleRowIndex - 1, 0))
+		guard let articles = articles.articlesForIndexes(indexSet).unreadArticles() else {
+			return
+		}
+
+		let markArticles = articles.filter { !directlyMarkedAsUnreadArticles.contains($0) }
+		guard !markArticles.isEmpty,
+			  let undoManager = undoManager,
+			  let markReadCommand = MarkStatusCommand(initialArticles: markArticles, markingRead: true, directlyMarked: false, undoManager: undoManager) else {
 			return
 		}
 		
