@@ -434,7 +434,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-		guard let firstVisible = tableView.indexPathsForVisibleRows?.first,
+		guard AppDefaults.shared.markArticlesAsReadOnScroll,
+			  let firstVisible = tableView.indexPathsForVisibleRows?.first,
 			  indexPath < firstVisible,
 			  let article = dataSource.itemIdentifier(for: indexPath),
 			  article.status.read == false,
