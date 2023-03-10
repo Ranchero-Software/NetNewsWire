@@ -35,7 +35,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
-	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
@@ -433,21 +432,26 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.selectArticle(article, animations: [.scroll, .select, .navigation])
 	}
 	
-	override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
+
+		// Implement Mark As Read on Scroll where we mark after the leading edge goes a little beyond the safe area inset
 		guard AppDefaults.shared.markArticlesAsReadOnScroll,
-			  let firstVisible = tableView.indexPathsForVisibleRows?.first,
-			  indexPath < firstVisible,
-			  let article = dataSource.itemIdentifier(for: indexPath),
-			  article.status.read == false,
-			  !coordinator.directlyMarkedAsUnreadArticles.contains(article) else {
-			return
+			  let firstVisibleindexPath = tableView.indexPathsForVisibleRows?.first else { return }
+		
+		var articles = [Article]()
+		for i in firstVisibleindexPath.row..<tableView.numberOfRows(inSection: firstVisibleindexPath.section) {
+			let indexPath = IndexPath(row: i, section: firstVisibleindexPath.section)
+			let cellRect = tableView.rectForRow(at: indexPath)
+			
+			guard tableView.convert(cellRect, to: nil).origin.y < tableView.safeAreaInsets.top - 40 else { break }
+			
+			if let article = dataSource.itemIdentifier(for: indexPath), article.status.read == false {
+				articles.append(article)
+			}
 		}
 		
-		coordinator.markAllAsRead([article])
-	}
-	
-	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+		coordinator.markAllAsRead(articles)
 	}
 	
 	// MARK: Notifications
@@ -541,10 +545,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@objc func willEnterForeground(_ note: Notification) {
 		updateUI()
-	}
-	
-	@objc func scrollPositionDidChange() {
-		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
 	}
 	
 	// MARK: Reloading
