@@ -44,6 +44,8 @@ extension UIViewController {
 				informativeText = error.localizedDescription
 				presentError(title: errorTitle, message: informativeText, dismiss: dismiss)
 			}
+		} else if let accountError = error as? AccountError {
+			presentError(title: accountError.errorTitle, message: accountError.localizedDescription)
 		} else {
 			let errorTitle = NSLocalizedString("alert.title.error", comment: "Error")
 			presentError(title: errorTitle, message: error.localizedDescription, dismiss: dismiss)

@@ -136,8 +136,8 @@ private extension AddFeedController {
 	func showAlreadySubscribedError(_ urlString: String) {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("alert.title.already-subscribed", comment: "Already subscribed")
-		alert.informativeText = NSLocalizedString("alert.message.already-subscribed", comment: "Can’t add this feed because you’ve already subscribed to it.")
+		alert.messageText = AccountError.createErrorAlreadySubscribed.errorTitle
+		alert.informativeText = AccountError.createErrorAlreadySubscribed.localizedDescription
 		alert.beginSheetModal(for: hostWindow)
 	}
 
@@ -155,8 +155,8 @@ private extension AddFeedController {
 	func showNoFeedsErrorMessage() {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("alert.title.feed-not-found", comment: "Feed not found")
-		alert.informativeText = NSLocalizedString("alert.message.feed-not-found", comment: "Can’t add a feed because no feed was found.")
+		alert.messageText = AccountError.createErrorNotFound.errorTitle
+		alert.informativeText = AccountError.createErrorNotFound.localizedDescription
 		alert.beginSheetModal(for: hostWindow)
 	}
 
