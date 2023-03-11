@@ -101,15 +101,13 @@ struct SettingsView: View {
 			}
 			.task {
 				UNUserNotificationCenter.current().getNotificationSettings { settings in
-					DispatchQueue.main.async {
-						self.viewModel.notificationPermissions = settings.authorizationStatus
-					}
+					Task { await MainActor.run { self.viewModel.notificationPermissions = settings.authorizationStatus }}
 				}
 			}
-			.onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
-				UNUserNotificationCenter.current().getNotificationSettings { settings in
-					DispatchQueue.main.async {
-						self.viewModel.notificationPermissions = settings.authorizationStatus
+			.task {
+				for await _ in NotificationCenter.default.notifications(named: UIScene.willEnterForegroundNotification) {
+					UNUserNotificationCenter.current().getNotificationSettings { settings in
+						Task { await MainActor.run { self.viewModel.notificationPermissions = settings.authorizationStatus }}
 					}
 				}
 			}
