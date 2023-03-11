@@ -124,6 +124,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 
 			directlyMarkedAsUnreadArticles = Set<Article>()
+			lastVerticlePosition = 0
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
 		}
@@ -194,7 +195,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
-	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	private var markAsReadOnScrollWorkItem: DispatchWorkItem?
+	private var markAsReadOnScrollStart: Int?
+	private var markAsReadOnScrollEnd: Int?
+	private var lastVerticlePosition: CGFloat = 0
 	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
@@ -238,6 +242,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - API
 	
 	func markAllAsRead(completion: (() -> Void)? = nil) {
+		markAllAsRead(articles, completion: completion)
+	}
+
+	func markAllAsRead(_ articles: [Article], completion: (() -> Void)? = nil) {
 		let markableArticles = Set(articles).subtracting(directlyMarkedAsUnreadArticles)
 		guard let undoManager = undoManager,
 			  let markReadCommand = MarkStatusCommand(initialArticles: markableArticles,
@@ -338,24 +346,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	@objc func scrollViewDidScroll(notification: Notification) {
-		guard AppDefaults.shared.markArticlesAsReadOnScroll else { return }
-		
-		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
-		
-		// We go back 5 extras incase we didn't get a notification during a fast scroll
-		let indexSet = IndexSet(integersIn: max(firstVisibleRowIndex - 6, 0)...max(firstVisibleRowIndex - 1, 0))
-		guard let articles = articles.articlesForIndexes(indexSet).unreadArticles() else {
-			return
-		}
-
-		let markArticles = articles.filter { !directlyMarkedAsUnreadArticles.contains($0) }
-		guard !markArticles.isEmpty,
-			  let undoManager = undoManager,
-			  let markReadCommand = MarkStatusCommand(initialArticles: markArticles, markingRead: true, directlyMarked: false, undoManager: undoManager) else {
-			return
-		}
-		
-		runCommand(markReadCommand)
+		markAsReadOnScroll()
 	}
 	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
@@ -1354,4 +1345,51 @@ private extension TimelineViewController {
 		}
 		return false
 	}
+	
+	func markAsReadOnScroll() {
+		guard AppDefaults.shared.markArticlesAsReadOnScroll else { return }
+		
+		// Only try to mark if we are scrolling up
+		defer {
+			lastVerticlePosition = tableView.enclosingScrollView?.documentVisibleRect.origin.y ?? 0
+		}
+		guard lastVerticlePosition < tableView.enclosingScrollView?.documentVisibleRect.origin.y ?? 0 else {
+			return
+		}
+		
+		// Make sure we are a little past the visible area so that marking isn't too touchy
+		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
+		guard let firstVisibleRowRect = tableView.rowView(atRow: firstVisibleRowIndex, makeIfNecessary: false)?.frame,
+			  tableView.convert(firstVisibleRowRect, to: tableView.enclosingScrollView).origin.y < tableView.safeAreaInsets.top - 20 else {
+			return
+		}
+
+		// We only mark immediately after scrolling stops, not during, to prevent scroll hitching
+		markAsReadOnScrollWorkItem?.cancel()
+		markAsReadOnScrollWorkItem = DispatchWorkItem { [weak self] in
+			defer {
+				self?.markAsReadOnScrollStart = nil
+				self?.markAsReadOnScrollEnd = nil
+			}
+			
+			guard let start: Int = self?.markAsReadOnScrollStart,
+				  let end: Int = self?.markAsReadOnScrollEnd ?? self?.markAsReadOnScrollStart,
+				  start <= end,
+				  let self = self else {
+				return
+			}
+			
+			let articles = self.articles[start...end].filter({ $0.status.read == false })
+			self.markAllAsRead(articles)
+		}
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: markAsReadOnScrollWorkItem!)
+
+		// Here we are creating a range of rows to attempt to mark later with the work item
+		guard markAsReadOnScrollStart != nil else {
+			markAsReadOnScrollStart = max(firstVisibleRowIndex - 5, 0)
+			return
+		}
+		markAsReadOnScrollEnd = max(markAsReadOnScrollEnd ?? 0, firstVisibleRowIndex)
+	}
+	
 }

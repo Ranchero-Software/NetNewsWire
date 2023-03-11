@@ -31,6 +31,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
 	
+	private var markAsReadOnScrollWorkItem: DispatchWorkItem?
+	private var markAsReadOnScrollStart: Int?
+	private var markAsReadOnScrollEnd: Int?
+	private var lastVerticlePosition: CGFloat = 0
+
 	var mainControllerIdentifier = MainControllerIdentifier.masterTimeline
 	
 	weak var coordinator: SceneCoordinator!
@@ -434,24 +439,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
-
-		// Implement Mark As Read on Scroll where we mark after the leading edge goes a little beyond the safe area inset
-		guard AppDefaults.shared.markArticlesAsReadOnScroll,
-			  let firstVisibleindexPath = tableView.indexPathsForVisibleRows?.first else { return }
-		
-		var articles = [Article]()
-		for i in firstVisibleindexPath.row..<tableView.numberOfRows(inSection: firstVisibleindexPath.section) {
-			let indexPath = IndexPath(row: i, section: firstVisibleindexPath.section)
-			let cellRect = tableView.rectForRow(at: indexPath)
-			
-			guard tableView.convert(cellRect, to: nil).origin.y < tableView.safeAreaInsets.top - 40 else { break }
-			
-			if let article = dataSource.itemIdentifier(for: indexPath), article.status.read == false {
-				articles.append(article)
-			}
-		}
-		
-		coordinator.markAllAsRead(articles)
+		markAsReadOnScroll()
 	}
 	
 	// MARK: Notifications
@@ -708,6 +696,8 @@ private extension MasterTimelineViewController {
 	}
 	
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
+		lastVerticlePosition = 0
+		
 		if coordinator.articles.count == 0 {
 			tableView.rowHeight = tableView.estimatedRowHeight
 		} else {
@@ -758,6 +748,54 @@ private extension MasterTimelineViewController {
 			return RSImage(data: data)
 		}
 		return nil
+	}
+	
+	func markAsReadOnScroll() {
+		// Only try to mark if we are scrolling up
+		defer {
+			lastVerticlePosition = tableView.contentOffset.y
+		}
+		guard lastVerticlePosition < tableView.contentOffset.y else {
+			return
+		}
+		
+		// Implement Mark As Read on Scroll where we mark after the leading edge goes a little beyond the safe area inset
+		guard AppDefaults.shared.markArticlesAsReadOnScroll,
+			  lastVerticlePosition < tableView.contentOffset.y,
+			  let firstVisibleIndexPath = tableView.indexPathsForVisibleRows?.first else { return }
+
+		let firstVisibleRowRect = tableView.rectForRow(at: firstVisibleIndexPath)
+		guard tableView.convert(firstVisibleRowRect, to: nil).origin.y < tableView.safeAreaInsets.top - 40 else { return }
+
+		// We only mark immediately after scrolling stops, not during, to prevent scroll hitching
+		markAsReadOnScrollWorkItem?.cancel()
+		markAsReadOnScrollWorkItem = DispatchWorkItem { [weak self] in
+			defer {
+				self?.markAsReadOnScrollStart = nil
+				self?.markAsReadOnScrollEnd = nil
+			}
+			
+			guard let start: Int = self?.markAsReadOnScrollStart,
+				  let end: Int = self?.markAsReadOnScrollEnd ?? self?.markAsReadOnScrollStart,
+				  start <= end,
+				  let self = self else {
+				return
+			}
+			
+			let articles = Array(start...end)
+				.map({ IndexPath(row: $0, section: 0) })
+				.compactMap({ self.dataSource.itemIdentifier(for: $0) })
+				.filter({ $0.status.read == false })
+			self.coordinator.markAllAsRead(articles)
+		}
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: markAsReadOnScrollWorkItem!)
+
+		// Here we are creating a range of rows to attempt to mark later with the work item
+		guard markAsReadOnScrollStart != nil else {
+			markAsReadOnScrollStart = max(firstVisibleIndexPath.row - 5, 0)
+			return
+		}
+		markAsReadOnScrollEnd = max(markAsReadOnScrollEnd ?? 0, firstVisibleIndexPath.row)
 	}
 	
 	func toggleArticleReadStatusAction(_ article: Article) -> UIAction? {
