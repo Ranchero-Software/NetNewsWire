@@ -36,16 +36,12 @@ public enum AccountError: LocalizedError {
     public var errorTitle: String {
         switch self {
         case .createErrorNotFound:
-            // TODO: Add to Localizable
             return NSLocalizedString("error.title.feed-not-found", bundle: Bundle.module, comment: "Unable to Add Feed")
         case .createErrorAlreadySubscribed:
-            // TODO: Add to Localizable
             return NSLocalizedString("error.title.already-subscribed", bundle: Bundle.module, comment: "Already Subscribed")
         case .opmlImportInProgress:
-            // TODO: Add to Localizable
             return NSLocalizedString("error.title.ompl-import-in-progress", bundle: Bundle.module, comment: "OPML Import in Progress")
         case .wrappedError(_, _):
-            // TODO: Add to Localizable
             return NSLocalizedString("error.title.error", bundle: Bundle.module, comment: "Error")
         }
     }
@@ -53,19 +49,15 @@ public enum AccountError: LocalizedError {
 	public var errorDescription: String? {
 		switch self {
 		case .createErrorNotFound:
-			// TODO: Add to Localizable
             return NSLocalizedString("error.message.feed-not-found", bundle: Bundle.module, comment: "Can’t add a feed because no feed was found.")
 		case .createErrorAlreadySubscribed:
-            // TODO: Add to Localizable
             return NSLocalizedString("error.message.feed-already-subscribed", bundle: Bundle.module, comment: "You are already subscribed to this feed and can’t add it again.")
 		case .opmlImportInProgress:
-            // TODO: Add to Localizable
             return NSLocalizedString("error.message.opml-import-in-progress", bundle: Bundle.module, comment: "An OPML import for this account is already running.")
 		case .wrappedError(let error, let account):
 			switch error {
 			case TransportError.httpError(let status):
 				if isCredentialsError(status: status) {
-                    // TODO: Add to Localizable
                     let localizedText = NSLocalizedString("error.message.credentials-expired.%@", bundle: Bundle.module, comment: "Your ”%@” credentials have expired.")
                     return String(format: localizedText, account.nameForDisplay)
 				} else {
