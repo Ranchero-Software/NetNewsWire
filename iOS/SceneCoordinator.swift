@@ -1042,10 +1042,18 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 			completion?()
 		}
 	}
+	
+	func canMarkAllAsRead() -> Bool {
+		return articles.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
+	}
+
+	func canMarkAllAsRead(_ articles: [Article]) -> Bool {
+		return articles.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
+	}
 
 	func canMarkAboveAsRead(for article: Article) -> Bool {
 		let articlesAboveArray = articles.articlesAbove(article: article)
-		return articlesAboveArray.canMarkAllAsRead()
+		return articlesAboveArray.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func markAboveAsRead() {
@@ -1063,7 +1071,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 
 	func canMarkBelowAsRead(for article: Article) -> Bool {
 		let articleBelowArray = articles.articlesBelow(article: article)
-		return articleBelowArray.canMarkAllAsRead()
+		return articleBelowArray.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func markBelowAsRead() {
