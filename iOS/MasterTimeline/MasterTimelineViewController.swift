@@ -765,7 +765,7 @@ private extension MasterTimelineViewController {
 			  let firstVisibleIndexPath = tableView.indexPathsForVisibleRows?.first else { return }
 
 		let firstVisibleRowRect = tableView.rectForRow(at: firstVisibleIndexPath)
-		guard tableView.convert(firstVisibleRowRect, to: nil).origin.y < tableView.safeAreaInsets.top - 40 else { return }
+		guard tableView.convert(firstVisibleRowRect, to: nil).origin.y < tableView.safeAreaInsets.top - 20 else { return }
 
 		// We only mark immediately after scrolling stops, not during, to prevent scroll hitching
 		markAsReadOnScrollWorkItem?.cancel()
