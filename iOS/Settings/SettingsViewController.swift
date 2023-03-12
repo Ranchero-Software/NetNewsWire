@@ -233,7 +233,7 @@ class SettingsViewController: UITableViewController, Logging {
 			}
 		case 4:
 			switch indexPath.row {
-			case 3:
+			case 4:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
