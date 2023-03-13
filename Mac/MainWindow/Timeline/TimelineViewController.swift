@@ -259,7 +259,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func canMarkAllAsRead() -> Bool {
-		return articles.canMarkAllAsRead()
+		return articles.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func canMarkSelectedArticlesAsRead() -> Bool {
@@ -493,7 +493,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	func markReadCommandStatus() -> MarkCommandValidationStatus {
 		let articles = selectedArticles
 		
-		if articles.anyArticleIsUnread() {
+		if articles.anyArticleIsUnreadAndCanMarkRead() {
 			return .canMark
 		}
 		
@@ -518,12 +518,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	func canMarkAboveArticlesAsRead() -> Bool {
 		guard let first = selectedArticles.first else { return false }
-		return articles.articlesAbove(article: first).canMarkAllAsRead()
+		return articles.articlesAbove(article: first).canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func canMarkBelowArticlesAsRead() -> Bool {
 		guard let last = selectedArticles.last else { return false }
-		return articles.articlesBelow(article: last).canMarkAllAsRead()
+		return articles.articlesBelow(article: last).canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func markOlderArticlesRead(_ selectedArticles: [Article]) {

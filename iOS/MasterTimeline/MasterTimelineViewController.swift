@@ -679,7 +679,7 @@ private extension MasterTimelineViewController {
 	func updateToolbar() {
 		guard firstUnreadButton != nil else { return }
 		
-		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+		markAllAsReadButton.isEnabled = coordinator.canMarkAllAsRead()
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		
 		if coordinator.isRootSplitCollapsed {
@@ -925,7 +925,7 @@ private extension MasterTimelineViewController {
 		}
 
 		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+		guard coordinator.canMarkAllAsRead(articles), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
 		
@@ -948,7 +948,7 @@ private extension MasterTimelineViewController {
 		}
 		
 		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+		guard coordinator.canMarkAllAsRead(articles), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
 		

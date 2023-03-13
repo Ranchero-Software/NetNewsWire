@@ -54,8 +54,8 @@ extension Array where Element == Article {
 		return ArticleSorter.sortedByDate(articles: self, sortDirection: sortDirection, groupByFeed: groupByFeed)
 	}
 	
-	func canMarkAllAsRead() -> Bool {
-		return anyArticleIsUnread()
+	func canMarkAllAsRead(exemptArticles: Set<Article> = .init()) -> Bool {
+		return anyArticleIsUnreadAndCanMarkRead(exemptArticles: exemptArticles)
 	}
 
 	func anyArticlePassesTest(_ test: ((Article) -> Bool)) -> Bool {
@@ -71,8 +71,8 @@ extension Array where Element == Article {
 		return anyArticlePassesTest { $0.status.read && $0.isAvailableToMarkUnread }
 	}
 
-	func anyArticleIsUnread() -> Bool {
-		return anyArticlePassesTest { !$0.status.read }
+	func anyArticleIsUnreadAndCanMarkRead(exemptArticles: Set<Article> = .init()) -> Bool {
+		return anyArticlePassesTest { !(exemptArticles.contains($0) || $0.status.read) }
 	}
 
 	func anyArticleIsStarred() -> Bool {
