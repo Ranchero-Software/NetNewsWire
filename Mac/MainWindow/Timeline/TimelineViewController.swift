@@ -339,12 +339,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	@objc func openArticleInBrowser(_ sender: Any?) {
 		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
 		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-
-		if let link = oneSelectedArticle?.preferredLink {
-			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		}
 	}
-	
+
 	@objc func scrollViewDidScroll(notification: Notification) {
 		markAsReadOnScroll()
 	}
