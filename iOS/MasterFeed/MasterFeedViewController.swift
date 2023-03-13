@@ -564,7 +564,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 			return
 		}
 		
-		if tableView.window == nil { return }
+		if tableView.window == nil {
+			completion?()
+			return
+		}
 		
 		tableView.performBatchUpdates {
 			if let deletes = changes.deletes, !deletes.isEmpty {
