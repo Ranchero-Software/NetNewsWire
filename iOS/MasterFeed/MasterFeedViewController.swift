@@ -563,11 +563,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 			completion?()
 			return
 		}
-		
-		if tableView.window == nil {
-			completion?()
-			return
-		}
+
+// This change made the Sidebar completely unusable
+//		if tableView.window == nil {
+//			completion?()
+//			return
+//		}
 		
 		tableView.performBatchUpdates {
 			if let deletes = changes.deletes, !deletes.isEmpty {
