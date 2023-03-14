@@ -157,7 +157,7 @@ private extension TimelineViewController {
 	func menu(for articles: [Article]) -> NSMenu? {
 		let menu = NSMenu(title: "")
 
-		if articles.anyArticleIsUnread() {
+		if articles.anyArticleIsUnreadAndCanMarkRead() {
 			menu.addItem(markReadMenuItem(articles))
 		}
 		if articles.anyArticleIsReadAndCanMarkUnread() {
@@ -169,10 +169,10 @@ private extension TimelineViewController {
 		if articles.anyArticleIsStarred() {
 			menu.addItem(markUnstarredMenuItem(articles))
 		}
-		if let first = articles.first, self.articles.articlesAbove(article: first).canMarkAllAsRead() {
+		if let first = articles.first, self.articles.articlesAbove(article: first).canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles) {
 			menu.addItem(markAboveReadMenuItem(articles))
 		}
-		if let last = articles.last, self.articles.articlesBelow(article: last).canMarkAllAsRead() {
+		if let last = articles.last, self.articles.articlesBelow(article: last).canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles) {
 			menu.addItem(markBelowReadMenuItem(articles))
 		}
 

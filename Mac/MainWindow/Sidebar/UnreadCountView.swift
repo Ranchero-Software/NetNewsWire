@@ -27,7 +27,7 @@ class UnreadCountView : NSView {
 		}
 	}
 	var unreadCountString: String {
-		return unreadCount < 1 ? "" : "\(unreadCount)"
+		return unreadCount < 1 ? "" : numberFormatter.string(from: NSNumber(value: unreadCount))!
 	}
 
 	private var intrinsicContentSizeIsValid = false
@@ -91,6 +91,22 @@ class UnreadCountView : NSView {
 		if unreadCount > 0 {
 			unreadCountString.draw(at: textRect().origin, withAttributes: Appearance.textAttributes)
 		}
+	}
+	
+	var numberFormatter: NumberFormatter!
+	
+	override init(frame frameRect: NSRect) {
+		super.init(frame: frameRect)
+		self.frame = frameRect
+		
+		let formatter = NumberFormatter()
+		formatter.locale = Locale.current
+		formatter.numberStyle = .decimal
+		numberFormatter = formatter
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
 	}
 }
 

@@ -56,7 +56,7 @@ final class MarkStatusCommand: UndoableCommand {
     }
 
 	convenience init?(initialArticles: [Article], statusKey: ArticleStatus.Key, flag: Bool, directlyMarked: Bool, undoManager: UndoManager, completion: (() -> Void)? = nil) {
-		self.init(initialArticles: Set(initialArticles), statusKey: .read, flag: flag, directlyMarked: directlyMarked, undoManager: undoManager, completion: completion)
+		self.init(initialArticles: Set(initialArticles), statusKey: statusKey, flag: flag, directlyMarked: directlyMarked, undoManager: undoManager, completion: completion)
 	}
 
 	convenience init?(initialArticles: Set<Article>, markingRead: Bool, directlyMarked: Bool, undoManager: UndoManager, completion: (() -> Void)? = nil) {
