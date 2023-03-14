@@ -22,6 +22,7 @@ struct DisplayAndBehaviorsView: View {
 			Section(header: Text("Timeline", comment: "Display & Behaviours: Timeline section header")) {
 				SettingsViewRows.sortOldestToNewest($appDefaults.timelineSortDirectionBool)
 				SettingsViewRows.groupByFeed($appDefaults.timelineGroupByFeed)
+				SettingsViewRows.markAsReadOnScroll($appDefaults.markArticlesAsReadOnScroll)
 				SettingsViewRows.refreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
 				SettingsViewRows.timelineLayout
 			}

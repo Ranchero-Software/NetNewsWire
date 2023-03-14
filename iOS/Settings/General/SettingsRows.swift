@@ -61,6 +61,16 @@ struct SettingsViewRows {
 		}
 	}
 	
+	
+	/// Toggle for determining if articles are marked as read when scrolling the timeline view.
+	/// - Parameter preference: `Binding<Bool>`
+	/// - Returns: `some View`
+	static func markAsReadOnScroll(_ preference: Binding<Bool>) -> some View {
+		Toggle(isOn: preference) {
+			Text("Mark As Read on Scroll", comment: "Mark As Read on Scroll")
+		}
+	}
+	
 	/// This row, when tapped, will push the the Manage Extension screen
 	/// in to view.
 	static var manageExtensions: some View {

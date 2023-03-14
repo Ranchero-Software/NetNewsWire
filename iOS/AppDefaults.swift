@@ -273,6 +273,7 @@ final class AppDefaults: ObservableObject {
 		}
 		set {
 			AppDefaults.setBool(for: Key.markArticlesAsReadOnScroll, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	
