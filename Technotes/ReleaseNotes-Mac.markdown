@@ -1,5 +1,13 @@
 # Mac Release Notes
 
+## 6.1.1 build 6112 13 Mar 2023
+
+Revised Twitter removal warning to not mention any specific month. We’re holding this release until Twitter shuts down free access to its API.
+
+## 6.1.1 build 6111 9 Feb 2023
+
+Same as 6.1.1b4 but with updated build and version number.
+
 ### 6.1.1b4 build 6110 9 Feb 2023
 
 Update the Twitter removal warning to say “later in February” instead of “February 9,” since Twitter postponed the removal date to the 13th and might postpone it further.
