@@ -39,7 +39,7 @@ struct AboutView: View, LoadableAboutData {
 				Image(uiImage: RSImage.appIconImage!)
 					.resizable()
 					.frame(width: 75, height: 75)
-					.cornerRadius(11)
+					.clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
 				
 				Text(Bundle.main.appName)
 					.font(.headline)
