@@ -59,6 +59,7 @@ final class AppDefaults {
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
 		static let twitterDeprecationAlertShown = "twitterDeprecationAlertShown"
+		static let markArticlesAsReadOnScroll = "markArticlesAsReadOnScroll"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -230,6 +231,15 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.twitterDeprecationAlertShown, newValue)
+		}
+	}
+	
+	var markArticlesAsReadOnScroll: Bool {
+		get {
+			return AppDefaults.bool(for: Key.markArticlesAsReadOnScroll)
+		}
+		set {
+			AppDefaults.setBool(for: Key.markArticlesAsReadOnScroll, newValue)
 		}
 	}
 	
