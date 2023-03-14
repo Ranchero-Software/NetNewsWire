@@ -124,7 +124,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 
 			directlyMarkedAsUnreadArticles = Set<Article>()
-			lastVerticlePosition = 0
+			lastVerticalPosition = 0
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
 		}
@@ -198,7 +198,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var markAsReadOnScrollWorkItem: DispatchWorkItem?
 	private var markAsReadOnScrollStart: Int?
 	private var markAsReadOnScrollEnd: Int?
-	private var lastVerticlePosition: CGFloat = 0
+	private var lastVerticalPosition: CGFloat = 0
 	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
@@ -1347,9 +1347,9 @@ private extension TimelineViewController {
 		
 		// Only try to mark if we are scrolling up
 		defer {
-			lastVerticlePosition = tableView.enclosingScrollView?.documentVisibleRect.origin.y ?? 0
+			lastVerticalPosition = tableView.enclosingScrollView?.documentVisibleRect.origin.y ?? 0
 		}
-		guard lastVerticlePosition < tableView.enclosingScrollView?.documentVisibleRect.origin.y ?? 0 else {
+		guard lastVerticalPosition < tableView.enclosingScrollView?.documentVisibleRect.origin.y ?? 0 else {
 			return
 		}
 		
