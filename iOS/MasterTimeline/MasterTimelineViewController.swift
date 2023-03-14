@@ -34,7 +34,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private var markAsReadOnScrollWorkItem: DispatchWorkItem?
 	private var markAsReadOnScrollStart: Int?
 	private var markAsReadOnScrollEnd: Int?
-	private var lastVerticlePosition: CGFloat = 0
+	private var lastVerticalPosition: CGFloat = 0
 
 	var mainControllerIdentifier = MainControllerIdentifier.masterTimeline
 	
@@ -696,7 +696,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
-		lastVerticlePosition = 0
+		lastVerticalPosition = 0
 		
 		if coordinator.articles.count == 0 {
 			tableView.rowHeight = tableView.estimatedRowHeight
@@ -753,15 +753,15 @@ private extension MasterTimelineViewController {
 	func markAsReadOnScroll() {
 		// Only try to mark if we are scrolling up
 		defer {
-			lastVerticlePosition = tableView.contentOffset.y
+			lastVerticalPosition = tableView.contentOffset.y
 		}
-		guard lastVerticlePosition < tableView.contentOffset.y else {
+		guard lastVerticalPosition < tableView.contentOffset.y else {
 			return
 		}
 		
 		// Implement Mark As Read on Scroll where we mark after the leading edge goes a little beyond the safe area inset
 		guard AppDefaults.shared.markArticlesAsReadOnScroll,
-			  lastVerticlePosition < tableView.contentOffset.y,
+			  lastVerticalPosition < tableView.contentOffset.y,
 			  let firstVisibleIndexPath = tableView.indexPathsForVisibleRows?.first else { return }
 
 		let firstVisibleRowRect = tableView.rectForRow(at: firstVisibleIndexPath)
