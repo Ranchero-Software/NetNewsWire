@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 6.1.2 TestFlight build 6116 - 19 Mar 2023
+
+Revise Twitter alert to not mention any dates
+Update copyright to 2023
+
 ### 6.1.1 TestFlight build 6114 - 5 Feb 2023
 
 Remove Twitter integration. Include alert that Twitter integration was removed.
