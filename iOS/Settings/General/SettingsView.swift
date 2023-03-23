@@ -14,6 +14,7 @@ import UserNotifications
 struct SettingsView: View {
 	
 	@Environment(\.dismiss) var dismiss
+	@Environment(\.scenePhase) var scenePhase
 	@StateObject private var appDefaults = AppDefaults.shared
 	@StateObject private var viewModel = SettingsViewModel()
 	
@@ -104,13 +105,13 @@ struct SettingsView: View {
 					Task { await MainActor.run { self.viewModel.notificationPermissions = settings.authorizationStatus }}
 				}
 			}
-			.task {
-				for await _ in NotificationCenter.default.notifications(named: UIScene.willEnterForegroundNotification) {
+			.onChange(of: scenePhase, perform: { phase in
+				if phase == .active {
 					UNUserNotificationCenter.current().getNotificationSettings { settings in
 						Task { await MainActor.run { self.viewModel.notificationPermissions = settings.authorizationStatus }}
 					}
 				}
-			}
+			})
 			.dismissOnExternalContextLaunch()
 			.fileImporter(isPresented: $viewModel.showImportView, allowedContentTypes: OPMLDocument.readableContentTypes) { result in
 				switch result {
