@@ -26,15 +26,15 @@ struct SettingsView: View {
 				// Device Permissions
 				Section(header: Text("Device Permissions", comment: "Settings: Device Permissions section header."),
 						footer: Text("Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.", comment: "Settings: Device Permissions section footer.")) {
-					SettingsViewRows.openSystemSettings
+					SettingsRow.openSystemSettings
 				}
 				
 				// Account/Extensions/OPML Management
 				Section(header: Text("Accounts & Extensions", comment: "Settings: Accounts and Extensions section header."),
 						footer: Text("Add, delete, enable, or disable accounts and extensions.", comment: "Settings: Accounts and Extensions section footer.")) {
-					SettingsViewRows.addAccount
-					SettingsViewRows.manageExtensions
-					SettingsViewRows.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
+					SettingsRow.addAccount
+					SettingsRow.manageExtensions
+					SettingsRow.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
 						.confirmationDialog(Text("Choose an account to receive the imported feeds and folders", comment: "Import OPML confirmation title."),
 											isPresented: $viewModel.showImportActionSheet,
 											titleVisibility: .visible) {
@@ -46,7 +46,7 @@ struct SettingsView: View {
 							}
 						}
 					
-					SettingsViewRows.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
+					SettingsRow.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
 						.confirmationDialog(Text("Choose an account with the subscriptions to export", comment: "Export OPML confirmation title."),
 											isPresented: $viewModel.showExportActionSheet,
 											titleVisibility: .visible) {
@@ -68,18 +68,18 @@ struct SettingsView: View {
 				// Appearance
 				Section(header: Text("Appearance", comment: "Settings: Appearance section header."),
 						footer: Text("Manage the look, feel, and behavior of NetNewsWire.", comment: "Settings: Appearance section footer.")) {
-					SettingsViewRows.configureAppearance($isConfigureAppearanceShown)
+					SettingsRow.configureAppearance($isConfigureAppearanceShown)
 					if viewModel.notificationPermissions == .authorized {
-						SettingsViewRows.configureNewArticleNotifications
+						SettingsRow.configureNewArticleNotifications
 					}
 				}
 				
 				// Help
 				Section {
 					ForEach(0..<HelpSheet.allCases.count, id: \.self) { i in
-						SettingsViewRows.showHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $viewModel.helpSheet, $viewModel.showHelpSheet)
+						SettingsRow.showHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $viewModel.helpSheet, $viewModel.showHelpSheet)
 					}
-					SettingsViewRows.aboutNetNewsWire
+					SettingsRow.aboutNetNewsWire
 				}
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))

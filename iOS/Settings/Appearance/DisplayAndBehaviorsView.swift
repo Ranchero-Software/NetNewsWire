@@ -20,17 +20,17 @@ struct DisplayAndBehaviorsView: View {
 			}
 			
 			Section(header: Text("Timeline", comment: "Display & Behaviours: Timeline section header")) {
-				SettingsViewRows.sortOldestToNewest($appDefaults.timelineSortDirectionBool)
-				SettingsViewRows.groupByFeed($appDefaults.timelineGroupByFeed)
-				SettingsViewRows.confirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
-				SettingsViewRows.markAsReadOnScroll($appDefaults.markArticlesAsReadOnScroll)
-				SettingsViewRows.refreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
-				SettingsViewRows.timelineLayout
+				SettingsRow.sortOldestToNewest($appDefaults.timelineSortDirectionBool)
+				SettingsRow.groupByFeed($appDefaults.timelineGroupByFeed)
+				SettingsRow.confirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
+				SettingsRow.markAsReadOnScroll($appDefaults.markArticlesAsReadOnScroll)
+				SettingsRow.refreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
+				SettingsRow.timelineLayout
 			}
 			
 			Section(header: Text("Article", comment: "Display & Behaviours: Article section header")) {
-				SettingsViewRows.themeSelection
-				SettingsViewRows.openLinksInNetNewsWire(Binding<Bool>(
+				SettingsRow.themeSelection
+				SettingsRow.openLinksInNetNewsWire(Binding<Bool>(
 					get: { !appDefaults.useSystemBrowser },
 					set: { appDefaults.useSystemBrowser = !$0 }
 				))
