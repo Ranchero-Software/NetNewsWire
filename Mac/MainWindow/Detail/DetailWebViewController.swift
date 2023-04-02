@@ -105,9 +105,6 @@ final class DetailWebViewController: NSViewController {
 		webView.navigationDelegate = self
 		webView.keyboardDelegate = keyboardDelegate
 		webView.translatesAutoresizingMaskIntoConstraints = false
-		if let userAgent = UserAgent.fromInfoPlist() {
-			webView.customUserAgent = userAgent
-		}
 
 		view = webView
 
