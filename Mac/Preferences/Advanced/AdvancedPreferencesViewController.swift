@@ -12,7 +12,6 @@ import AppKit
 
 	@IBOutlet var releaseBuildsButton: NSButton!
 	@IBOutlet var testBuildsButton: NSButton!
-	@IBOutlet weak var privacyPolicyTextField: NSTextField!
 
 	let releaseBuildsURL = Bundle.main.infoDictionary!["SUFeedURL"]! as! String
 	let testBuildsURL = Bundle.main.infoDictionary!["FeedURLForTestBuilds"]! as! String
@@ -35,7 +34,6 @@ import AppKit
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			didRegisterForNotification = true
 		}
-		privacyPolicyTextField.attributedStringValue = AppAssets.privacyPolicyLink
 	}
 
 	@IBAction func updateTypeButtonClicked(_ sender: Any?) {
