@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-final class PreferencesControlsBackgroundView: NSView {
+@MainActor final class PreferencesControlsBackgroundView: NSView {
 
 	private let lightModeFillColor = NSColor(white: 0.97, alpha: 1.0)
 	private let darkModeFillColor = NSColor(red: 0.32, green: 0.34, blue: 0.35, alpha: 1.0)

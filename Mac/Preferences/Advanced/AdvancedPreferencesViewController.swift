@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class AdvancedPreferencesViewController: NSViewController {
+@MainActor final class AdvancedPreferencesViewController: NSViewController {
 
 	@IBOutlet var releaseBuildsButton: NSButton!
 	@IBOutlet var testBuildsButton: NSButton!

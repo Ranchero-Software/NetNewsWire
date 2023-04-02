@@ -12,7 +12,7 @@ import RSWeb
 import RSCore
 import Secrets
 
-class AccountsReaderAPIWindowController: NSWindowController, Logging {
+@MainActor class AccountsReaderAPIWindowController: NSWindowController, Logging {
 
 	@IBOutlet weak var titleImageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!
