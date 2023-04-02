@@ -20,9 +20,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 	public let folderPath: String
 
 	lazy var presentedItemOperationQueue = OperationQueue.main
-	var presentedItemURL: URL? {
-		return URL(fileURLWithPath: folderPath)
-	}
+	var presentedItemURL: URL?
 
 	var currentThemeName: String {
 		get {
@@ -33,6 +31,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 				do {
 					currentTheme = try articleThemeWithThemeName(newValue)
 					AppDefaults.shared.currentThemeName = newValue
+					updateFilePresenter()
 				} catch {
 					logger.error("Unable to set new theme: \(error.localizedDescription, privacy: .public)")
 				}
@@ -71,18 +70,22 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 			assertionFailure("Could not create folder for Themes.")
 			abort()
 		}
-		
-		NSFileCoordinator.addFilePresenter(self)
+
+		#if os(macOS)
+		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: NSApplication.didBecomeActiveNotification, object: nil)
+		#else
+		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+		#endif
+
+		updateFilePresenter()
 	}
 	
 	func presentedSubitemDidChange(at url: URL) {
-		if url.lastPathComponent.localizedCaseInsensitiveContains("nnwtheme") {
-			themeNames = buildThemeNames()
-			do {
-				currentTheme = try articleThemeWithThemeName(currentThemeName)
-			} catch {
-				appDelegate.presentThemeImportError(error)
-			}
+		themeNames = buildThemeNames()
+		do {
+			currentTheme = try articleThemeWithThemeName(currentThemeName)
+		} catch {
+			appDelegate.presentThemeImportError(error)
 		}
 	}
 
@@ -103,6 +106,8 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 		}
 		
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
+
+		themeNames = buildThemeNames()
 	}
 	
 	func articleThemeWithThemeName(_ themeName: String) throws -> ArticleTheme {
@@ -128,6 +133,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 	func deleteTheme(themeName: String) {
 		if let filename = pathForThemeName(themeName, folder: folderPath) {
 			try? FileManager.default.removeItem(atPath: filename)
+			themeNames = buildThemeNames()
 		}
 	}
 	
@@ -136,6 +142,19 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 // MARK : Private
 
 private extension ArticleThemesManager {
+	
+	@objc func applicationDidBecomeActive(_ note: Notification) {
+		themeNames = buildThemeNames()
+	}
+
+	func updateFilePresenter() {
+		guard let currentThemePath = currentTheme.path else {
+			return
+		}
+		NSFileCoordinator.removeFilePresenter(self)
+		presentedItemURL = URL(fileURLWithPath: currentThemePath)
+		NSFileCoordinator.addFilePresenter(self)
+	}
 
 	func buildThemeNames() -> [String] {
 		let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
