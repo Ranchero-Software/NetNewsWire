@@ -83,6 +83,9 @@ final class DetailWebViewController: NSViewController {
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
+		if #available(macOS 12.3, *) {
+			preferences.isElementFullscreenEnabled = true
+		}
 		
 		let webpagePrefs = WKWebpagePreferences()
 		
