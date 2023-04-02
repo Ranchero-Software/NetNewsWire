@@ -10,7 +10,7 @@ import Foundation
 import RSWeb
 import RSCore
 
-struct CacheCleaner: Logging {
+@MainActor struct CacheCleaner: Logging {
 
 	static func purgeIfNecessary() {
 
