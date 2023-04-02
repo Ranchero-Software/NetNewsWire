@@ -29,6 +29,9 @@ class PreloadedWebView: WKWebView {
 		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 		configuration.allowsInlineMediaPlayback = true
 		configuration.mediaTypesRequiringUserActionForPlayback = .audio
+		if #available(iOS 15.4, *) {
+			configuration.preferences.isElementFullscreenEnabled = true
+		}
 		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		
 		super.init(frame: .zero, configuration: configuration)
