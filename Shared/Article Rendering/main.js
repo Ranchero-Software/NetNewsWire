@@ -165,7 +165,7 @@ function addYouTubeVideos() {
 	
 	// Dynamically add the YouTube frame
 	const bodyContainer = document.querySelector("#bodyContainer");
-	bodyContainer.setAttribute("style", "position: relative; padding-bottom: 56.25%; height: 100%; overflow: hidden;")
+	bodyContainer.setAttribute("style", "position: relative; padding-bottom: 56.25%; height: 100%; max-width: 100% !important; overflow: hidden;")
 	
 	var youTubeFrame = document.createElement("iFrame");
 	youTubeFrame.setAttribute("src", "https://www.youtube.com/embed/" + titleURL.substring(youTubeLink.length));
