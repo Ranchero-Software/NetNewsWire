@@ -521,16 +521,11 @@ private extension WebViewController {
 			
 			webView.ready {
 				
-				// Add the webview
-				webView.translatesAutoresizingMaskIntoConstraints = false
+				// Add the webview - using autolayout will cause fullscreen video to fail and lose the web view
+				webView.frame = self.view.bounds
+				webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 				self.view.insertSubview(webView, at: 0)
-				NSLayoutConstraint.activate([
-					self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
-					self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
-					self.view.topAnchor.constraint(equalTo: webView.topAnchor),
-					self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
-				])
-			
+
 				// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
 				// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
 				// us from easily swiping between WKWebViews.  This hack fixes that.
