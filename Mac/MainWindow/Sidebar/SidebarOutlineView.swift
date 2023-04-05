@@ -10,7 +10,7 @@ import AppKit
 import RSCore
 import RSTree
 
-class SidebarOutlineView : NSOutlineView {
+@MainActor class SidebarOutlineView : NSOutlineView {
 
 	@IBOutlet var keyboardDelegate: KeyboardDelegate!
 

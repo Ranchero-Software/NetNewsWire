@@ -12,7 +12,7 @@ import Articles
 import RSWeb
 import Account
 
-final class SidebarStatusBarView: NSView {
+@MainActor final class SidebarStatusBarView: NSView {
 
 	@IBOutlet var progressIndicator: NSProgressIndicator!
 	@IBOutlet var progressLabel: NSTextField!

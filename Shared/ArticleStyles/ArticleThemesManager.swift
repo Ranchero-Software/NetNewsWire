@@ -81,7 +81,9 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 			do {
 				currentTheme = try articleThemeWithThemeName(currentThemeName)
 			} catch {
-				appDelegate.presentThemeImportError(error)
+				Task { @MainActor in
+					appDelegate.presentThemeImportError(error)
+				}
 			}
 		}
 	}

@@ -66,7 +66,9 @@ struct CreditsNetNewsWireView: View, LoadableAboutData {
 		.onTapGesture {
 			guard let url = appCredit.url else { return }
 			if let _ = URL(string: url) {
-				Browser.open(url, inBackground: false)
+				Task { @MainActor in
+					Browser.open(url, inBackground: false)
+				}
 			}
 		}
 	}
