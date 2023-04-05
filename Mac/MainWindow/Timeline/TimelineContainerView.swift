@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class TimelineContainerView: NSView {
+@MainActor final class TimelineContainerView: NSView {
 
 	private var contentViewConstraints: [NSLayoutConstraint]?
 

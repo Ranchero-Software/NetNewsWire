@@ -8,7 +8,7 @@
 
 import AppKit
 
-class TimelineTableRowView : NSTableRowView {
+@MainActor final class TimelineTableRowView : NSTableRowView {
 
 	private var separator: NSView?
 	
