@@ -11,7 +11,7 @@ import AuthenticationServices
 import OAuthSwift
 import Secrets
 
-class ExtensionPointEnableWindowController: NSWindowController {
+@MainActor class ExtensionPointEnableWindowController: NSWindowController {
 
 	@IBOutlet weak var imageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!

@@ -12,7 +12,7 @@ import RSCore
 import RSWeb
 import Secrets
 
-class AccountsFeedbinWindowController: NSWindowController, Logging {
+@MainActor class AccountsFeedbinWindowController: NSWindowController, Logging {
 
 	@IBOutlet weak var signInTextField: NSTextField!
 	@IBOutlet weak var noAccountTextField: NSTextField!

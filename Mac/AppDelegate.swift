@@ -386,7 +386,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			
 			alert.buttons[0].keyEquivalent = "\r"
 			
-			let response = alert.runModal()
+			_ = alert.runModal()
 		}
 	}
 	
