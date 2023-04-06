@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-struct NNW3ImportController {
+@MainActor struct NNW3ImportController {
 
 	/// Import NNW3 subscriptions if they exist.
 	/// Return true if Subscriptions.plist was found and subscriptions were imported.
