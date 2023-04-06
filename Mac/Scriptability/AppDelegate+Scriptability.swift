@@ -63,7 +63,9 @@ extension AppDelegate : AppDelegateAppleEvents {
 					do {
 						try ArticleThemeDownloader.shared.handleFile(at: location)
 					} catch {
-						self.presentThemeImportError(error)
+						Task { @MainActor in
+							self.presentThemeImportError(error)
+						}
 					}
 				}
 				task.resume()
