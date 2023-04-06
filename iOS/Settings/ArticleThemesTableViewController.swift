@@ -114,7 +114,7 @@ extension ArticleThemesTableViewController: UIDocumentPickerDelegate {
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		guard let url = urls.first else { return }
-		try ArticleThemeImporter.importTheme(controller: self, filename: url.standardizedFileURL.path)
+		ArticleThemeImporter.importTheme(controller: self, filename: url.standardizedFileURL.path)
 	}
 	
 }
