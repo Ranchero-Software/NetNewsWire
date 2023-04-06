@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ExtensionPointDetailViewController: NSViewController {
+@MainActor class ExtensionPointDetailViewController: NSViewController {
 
 	@IBOutlet weak var imageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!

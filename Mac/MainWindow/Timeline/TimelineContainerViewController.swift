@@ -17,7 +17,7 @@ protocol TimelineContainerViewControllerDelegate: AnyObject {
 
 }
 
-final class TimelineContainerViewController: NSViewController {
+@MainActor final class TimelineContainerViewController: NSViewController {
 
 	@IBOutlet weak var viewOptionsPopUpButton: NSPopUpButton!
 	@IBOutlet weak var newestToOldestMenuItem: NSMenuItem!

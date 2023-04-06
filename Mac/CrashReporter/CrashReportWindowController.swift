@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class CrashReportWindowController: NSWindowController {
+@MainActor final class CrashReportWindowController: NSWindowController {
 
 	@IBOutlet var textView: NSTextView! {
 		didSet {

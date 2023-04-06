@@ -17,7 +17,7 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 	func mouseDidExit(_: DetailWebViewController)
 }
 
-final class DetailWebViewController: NSViewController {
+@MainActor final class DetailWebViewController: NSViewController {
 
 	weak var delegate: DetailWebViewControllerDelegate?
 	var webView: DetailWebView!

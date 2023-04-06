@@ -20,7 +20,7 @@ enum DetailState: Equatable {
 	case extracted(Article, ExtractedArticle, CGFloat?)
 }
 
-final class DetailViewController: NSViewController, WKUIDelegate {
+@MainActor final class DetailViewController: NSViewController, WKUIDelegate {
 
 	@IBOutlet var containerView: DetailContainerView!
 	@IBOutlet var statusBarView: DetailStatusBarView!

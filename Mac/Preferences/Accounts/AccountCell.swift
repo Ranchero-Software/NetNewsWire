@@ -8,7 +8,7 @@
 
 import AppKit
 
-class AccountCell: NSTableCellView {
+@MainActor class AccountCell: NSTableCellView {
 	
 	private var originalImage: NSImage?
 	

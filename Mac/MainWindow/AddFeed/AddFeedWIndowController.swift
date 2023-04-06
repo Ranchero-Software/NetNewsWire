@@ -14,7 +14,7 @@ enum AddFeedWindowControllerType {
 	case redditFeed
 }
 
-protocol AddFeedWindowControllerDelegate: AnyObject {
+@MainActor protocol AddFeedWindowControllerDelegate: AnyObject {
 
 	// userEnteredURL will have already been validated and normalized.
 	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
@@ -22,7 +22,7 @@ protocol AddFeedWindowControllerDelegate: AnyObject {
 	
 }
 
-protocol AddFeedWindowController {
+@MainActor protocol AddFeedWindowController {
 
 	var window: NSWindow? { get }
 	func runSheetOnWindow(_ hostWindow: NSWindow)

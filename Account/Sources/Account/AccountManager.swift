@@ -246,7 +246,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() -> Void)? = nil) {
+	public func refreshAll(errorHandler: @escaping @MainActor (Error) -> Void, completion: (() -> Void)? = nil) {
 		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
 
 		let group = DispatchGroup()
@@ -259,7 +259,9 @@ public final class AccountManager: UnreadCountProvider {
 				case .success:
 					break
 				case .failure(let error):
-					errorHandler(error)
+                    Task { @MainActor in
+                        errorHandler(error)
+                    }
 				}
 			}
 		}

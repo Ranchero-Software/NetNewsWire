@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import UserNotifications
 
-final class GeneralPreferencesViewController: NSViewController {
+@MainActor final class GeneralPreferencesViewController: NSViewController {
 
 	private var userNotificationSettings: UNNotificationSettings?
 

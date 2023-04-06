@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-final class NNW3OpenPanelAccessoryViewController: NSViewController {
+@MainActor final class NNW3OpenPanelAccessoryViewController: NSViewController {
 
 	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
 
