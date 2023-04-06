@@ -9,7 +9,7 @@
 import AppKit
 import Articles
 
-final class DetailStatusBarView: NSView {
+@MainActor final class DetailStatusBarView: NSView {
 
 	@IBOutlet var urlLabel: NSTextField!
 

@@ -10,7 +10,7 @@ import Foundation
 import WebKit
 import Articles
 
-class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
+final class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
 	
 	var currentArticle: Article?
 	
