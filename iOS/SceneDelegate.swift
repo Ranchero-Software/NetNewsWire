@@ -12,7 +12,7 @@ import Account
 import Zip
 import RSCore
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
+@MainActor final class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 	
 	var window: UIWindow?
 	var coordinator: SceneCoordinator!
