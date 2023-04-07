@@ -53,7 +53,7 @@ struct FeedNode: Hashable {
 	}
 }
 
-class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
+final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {

@@ -11,7 +11,7 @@ import Articles
 import Account
 import UserNotifications
 
-final class WebFeedInspectorViewController: NSViewController, Inspector {
+@MainActor final class WebFeedInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var nameTextField: NSTextField?

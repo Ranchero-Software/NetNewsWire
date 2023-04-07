@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector {
+@MainActor final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet var nameTextField: NSTextField?
 	@IBOutlet weak var smartFeedImageView: NSImageView!
