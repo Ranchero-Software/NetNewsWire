@@ -50,11 +50,9 @@ struct AddExtensionListView: View {
 					}
 				}
 			}
-			.task {
-				for await _ in NotificationCenter.default.notifications(named: .ActiveExtensionPointsDidChange) {
-					await MainActor.run(body: { dismiss() })
-				}
-			}
+			.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange), perform: { _ in
+				dismiss()
+			})
 		}
 		
 	}

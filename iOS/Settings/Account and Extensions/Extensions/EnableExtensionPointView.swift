@@ -32,11 +32,9 @@ struct EnableExtensionPointView: View  {
 		.navigationTitle(extensionPoint.title)
 		.navigationBarTitleDisplayMode(.inline)
 		.dismissOnExternalContextLaunch()
-		.task {
-			for await _ in NotificationCenter.default.notifications(named: .ActiveExtensionPointsDidChange) {
-				await MainActor.run { dismiss() }
-			}
-		}
+		.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange), perform: { _ in
+			dismiss()
+		})
 		.edgesIgnoringSafeArea(.bottom)
 	}
 	

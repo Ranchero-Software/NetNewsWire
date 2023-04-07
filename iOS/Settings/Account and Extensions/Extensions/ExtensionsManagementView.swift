@@ -51,12 +51,9 @@ struct ExtensionsManagementView: View {
 		} message: {
 			Text("This action cannot be undone.", comment: "Alert message: confirmation that deactivation of extension cannot be undone.")
 		}
-		.task {
-			for await _ in NotificationCenter.default.notifications(named: .ActiveExtensionPointsDidChange) {
-				await MainActor.run { availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title }) }
-			}
-		}
-
+		.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange), perform: { _ in
+			availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
+		})
     }
 	
 	private var activeExtensionsSection: some View {

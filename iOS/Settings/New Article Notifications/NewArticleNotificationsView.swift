@@ -28,33 +28,25 @@ struct NewArticleNotificationsView: View, Logging {
 			
 		}
 		.tint(Color(uiColor: AppAssets.primaryAccentColor))
-		.task {
-			for await notification in NotificationCenter.default.notifications(named: .FaviconDidBecomeAvailable) {
-				await MainActor.run {
-					guard let faviconURLString = notification.userInfo?["faviconURL"] as? String,
-						  let faviconHost = URL(string: faviconURLString)?.host else {
-						return
-					}
-					activeAccounts.forEach { account in
-						for feed in Array(account.flattenedWebFeeds()) {
-							if let feedURLHost = URL(string: feed.url)?.host {
-								if faviconHost == feedURLHost {
-									feed.objectWillChange.send()
-								}
-							}
+		.onReceive(NotificationCenter.default.publisher(for: .FaviconDidBecomeAvailable), perform: { notification in
+			guard let faviconURLString = notification.userInfo?["faviconURL"] as? String,
+				  let faviconHost = URL(string: faviconURLString)?.host else {
+				return
+			}
+			activeAccounts.forEach { account in
+				for feed in Array(account.flattenedWebFeeds()) {
+					if let feedURLHost = URL(string: feed.url)?.host {
+						if faviconHost == feedURLHost {
+							feed.objectWillChange.send()
 						}
 					}
 				}
 			}
-		}
-		.task {
-			for await notification in NotificationCenter.default.notifications(named: .WebFeedIconDidBecomeAvailable) {
-				await MainActor.run {
-					guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
-					webFeed.objectWillChange.send()
-				}
-			}
-		}
+		})
+		.onReceive(NotificationCenter.default.publisher(for: .WebFeedIconDidBecomeAvailable), perform: { notification in
+			guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
+			webFeed.objectWillChange.send()
+		})
     }
 	
 	private func sortedWebFeedsForAccount(_ account: Account) -> [WebFeed] {
