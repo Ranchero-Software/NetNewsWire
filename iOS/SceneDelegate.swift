@@ -195,7 +195,9 @@ import RSCore
 						do {
 							try ArticleThemeDownloader.shared.handleFile(at: location)
 						} catch {
-							self.presentError(error)
+							Task { @MainActor in
+								self.presentError(error)
+							}
 						}
 					}
 					task.resume()
