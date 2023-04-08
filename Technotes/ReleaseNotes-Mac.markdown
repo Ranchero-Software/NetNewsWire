@@ -1,6 +1,6 @@
 # Mac Release Notes
 
-## 6.1.1 build 6113 7 Apr 2023
+## 6.1.2 build 6114 8 Apr 2023
 
 Update default feeds to remove feeds that don’t appear to be active anymore (sadly!).
 
