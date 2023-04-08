@@ -12,7 +12,7 @@ import UIKit
 // Uses a cache.
 // Main thready only.
 
-final class SingleLineUILabelSizer {
+@MainActor final class SingleLineUILabelSizer {
 
 	let font: UIFont
 	private var cache = [String: CGSize]()
