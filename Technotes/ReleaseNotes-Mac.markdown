@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+## 6.1.1 build 6113 7 Apr 2023
+
+Update default feeds to remove feeds that don’t appear to be active anymore (sadly!).
+
 ## 6.1.1 build 6112 13 Mar 2023
 
 Revised Twitter removal warning to not mention any specific month. We’re holding this release until Twitter shuts down free access to its API.
