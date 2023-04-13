@@ -207,6 +207,12 @@
 		514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16DD24D2EF15009A3AFA /* RSTree */; };
 		514C16DF24D2EF15009A3AFA /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 514C16DD24D2EF15009A3AFA /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		514C16E124D2EF38009A3AFA /* RSCoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16E024D2EF38009A3AFA /* RSCoreResources */; };
+		514DE4C129DDFD16001B0D79 /* WKUserContentController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514DE4C029DDFD16001B0D79 /* WKUserContentController-Extensions.swift */; };
+		514DE4C329DE0609001B0D79 /* inject.js in Resources */ = {isa = PBXBuildFile; fileRef = 514DE4C229DE0609001B0D79 /* inject.js */; };
+		514DE4C429DE0609001B0D79 /* inject.js in Resources */ = {isa = PBXBuildFile; fileRef = 514DE4C229DE0609001B0D79 /* inject.js */; };
+		514DE4C529DE0609001B0D79 /* inject.js in Resources */ = {isa = PBXBuildFile; fileRef = 514DE4C229DE0609001B0D79 /* inject.js */; };
+		514DE4C629DE4536001B0D79 /* WKUserContentController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514DE4C029DDFD16001B0D79 /* WKUserContentController-Extensions.swift */; };
+		514DE4C729DE4537001B0D79 /* WKUserContentController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514DE4C029DDFD16001B0D79 /* WKUserContentController-Extensions.swift */; };
 		5153A35428DC5CEB0036C545 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = DF2A8F32289BFBD9002455AD /* RSCore */; };
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
@@ -1228,6 +1234,8 @@
 		5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterTimelineTitleView.xib; sourceTree = "<group>"; };
 		5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineTitleView.swift; sourceTree = "<group>"; };
 		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
+		514DE4C029DDFD16001B0D79 /* WKUserContentController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKUserContentController-Extensions.swift"; sourceTree = "<group>"; };
+		514DE4C229DE0609001B0D79 /* inject.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = inject.js; sourceTree = "<group>"; };
 		515A50E5243D07A90089E588 /* ExtensionPointManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointManager.swift; sourceTree = "<group>"; };
 		515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointEnableWindowController.swift; sourceTree = "<group>"; };
 		515A516D243E7F950089E588 /* ExtensionPointDetail.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtensionPointDetail.xib; sourceTree = "<group>"; };
@@ -2145,13 +2153,14 @@
 		51C452A822650DA100C03939 /* Article Rendering */ = {
 			isa = PBXGroup;
 			children = (
-				51D0214526ED617100FF2E0F /* core.css */,
-				B27EEBDF244D15F2000932E6 /* stylesheet.css */,
-				848362FE2262A30E00DA1D35 /* template.html */,
-				517630032336215100E15FFF /* main.js */,
-				49F40DEF2335B71000552BF4 /* newsfoot.js */,
 				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
 				51DC07972552083500A3F79F /* ArticleTextSize.swift */,
+				51D0214526ED617100FF2E0F /* core.css */,
+				514DE4C229DE0609001B0D79 /* inject.js */,
+				517630032336215100E15FFF /* main.js */,
+				49F40DEF2335B71000552BF4 /* newsfoot.js */,
+				B27EEBDF244D15F2000932E6 /* stylesheet.css */,
+				848362FE2262A30E00DA1D35 /* template.html */,
 			);
 			path = "Article Rendering";
 			sourceTree = "<group>";
@@ -2374,6 +2383,7 @@
 				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
 				5108F6B52375E612001ABC45 /* CacheCleaner.swift */,
 				516AE9DE2372269A007DEEAA /* IconImage.swift */,
+				51D205EE28E3CF8D007C46EF /* LinkTextField.swift */,
 				849A97971ED9EFAA007D329B /* Node-Extensions.swift */,
 				B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */,
 				519279F728E23F5F000AE856 /* NSEvent-Extensions.swift */,
@@ -2382,7 +2392,7 @@
 				51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */,
 				84411E701FE5FBFA004B527F /* SmallIconProvider.swift */,
 				51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */,
-				51D205EE28E3CF8D007C46EF /* LinkTextField.swift */,
+				514DE4C029DDFD16001B0D79 /* WKUserContentController-Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -3386,6 +3396,7 @@
 				65ED406A235DEF6C0081F399 /* newsfoot.js in Resources */,
 				5103A9992421643300410853 /* blank.html in Resources */,
 				65ED406B235DEF6C0081F399 /* CrashReporterWindow.xib in Resources */,
+				514DE4C429DE0609001B0D79 /* inject.js in Resources */,
 				65ED406C235DEF6C0081F399 /* Credits.rtf in Resources */,
 				65ED406D235DEF6C0081F399 /* Inspector.storyboard in Resources */,
 				65ED406E235DEF6C0081F399 /* AddWebFeedSheet.xib in Resources */,
@@ -3426,6 +3437,7 @@
 				51DEE81A26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				1768140B2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig in Resources */,
 				5103A9B424216A4200410853 /* blank.html in Resources */,
+				514DE4C529DE0609001B0D79 /* inject.js in Resources */,
 				51D0214826ED617100FF2E0F /* core.css in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */,
 				516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */,
@@ -3468,6 +3480,7 @@
 				5142194B2353C1CF00E07E2C /* main_mac.js in Resources */,
 				DFCE4F9128EF26F100405869 /* About.plist in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
+				514DE4C329DE0609001B0D79 /* inject.js in Resources */,
 				B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */,
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
@@ -3928,6 +3941,7 @@
 				519279F928E23F5F000AE856 /* NSEvent-Extensions.swift in Sources */,
 				65ED4015235DEF6C0081F399 /* AccountsDetailViewController.swift in Sources */,
 				65ED4016235DEF6C0081F399 /* DetailViewController.swift in Sources */,
+				514DE4C729DE4537001B0D79 /* WKUserContentController-Extensions.swift in Sources */,
 				5117715624E1EA0F00A2A836 /* ArticleExtractorButton.swift in Sources */,
 				65ED4017235DEF6C0081F399 /* AppDelegate.swift in Sources */,
 				65ED4018235DEF6C0081F399 /* PreferencesTableViewBackgroundView.swift in Sources */,
@@ -4151,6 +4165,7 @@
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,
 				512392BF24E33A3C00F11704 /* RedditSelectSortTableViewController.swift in Sources */,
+				514DE4C629DE4536001B0D79 /* WKUserContentController-Extensions.swift in Sources */,
 				516AE9E02372269A007DEEAA /* IconImage.swift in Sources */,
 				519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */,
 				51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */,
@@ -4347,6 +4362,7 @@
 				510C418124E5D1AE008226FD /* ExtensionContainers.swift in Sources */,
 				51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */,
 				849ADEE42359817E000E1B81 /* NNW3ImportController.swift in Sources */,
+				514DE4C129DDFD16001B0D79 /* WKUserContentController-Extensions.swift in Sources */,
 				179C39EB26F76B3800D4E741 /* ArticleThemePlist.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
 				51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */,

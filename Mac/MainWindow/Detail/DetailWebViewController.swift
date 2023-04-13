@@ -98,6 +98,8 @@ final class DetailWebViewController: NSViewController {
 		userContentController.add(self, name: MessageName.windowDidScroll)
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
+		userContentController.addUserScript(forResource: "inject", withExtension: "js")
+
 		configuration.userContentController = userContentController
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)

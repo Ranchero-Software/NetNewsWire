@@ -156,19 +156,18 @@ function removeWpSmiley() {
 	}
 }
 
-function addYouTubeVideos() {
+function addYouTubeVideo() {
 	const titleURL = document.querySelector(".articleTitle A").getAttribute("href")
 	const youTubeLink = "https://www.youtube.com/watch?v="
 	if (!titleURL.startsWith(youTubeLink)) {
 		return;
 	}
-	
-	// Dynamically add the YouTube frame
+
 	const bodyContainer = document.querySelector("#bodyContainer");
 	bodyContainer.setAttribute("style", "position: relative; padding-bottom: 56.25%; height: 100%; max-width: 100% !important; overflow: hidden;")
-	
+
 	var youTubeFrame = document.createElement("iFrame");
-	youTubeFrame.setAttribute("src", "https://www.youtube.com/embed/" + titleURL.substring(youTubeLink.length));
+	youTubeFrame.setAttribute("src", "https://www.youtube.com/embed/" + titleURL.substring(youTubeLink.length) + "?fs=0&rel=0");
 	youTubeFrame.setAttribute("style", "position: absolute; top: 0; left: 0; width: 100%; height: 100%;");
 	youTubeFrame.setAttribute("title", "YouTube video player");
 	youTubeFrame.setAttribute("frameborder", "0");
@@ -186,6 +185,6 @@ function processPage() {
 	flattenPreElements();
 	styleLocalFootnotes();
 	removeWpSmiley();
-	addYouTubeVideos();
+	addYouTubeVideo();
 	postRenderProcessing();
 }
