@@ -155,18 +155,6 @@ function postRenderProcessing() {
 	showFeedInspectorSetup();
 }
 
-function onResize() {
-	const meta = document.querySelector("meta[name=viewport]");
-	
-	if (!meta) return;
-	
-	const originalContent = meta.content;
-	meta.setAttribute("content", originalContent + ", maximum-scale=1.0");
-	meta.setAttribute("content", originalContent);
-}
-window.addEventListener("resize", onResize);
-
-
 function makeHighlightRect({left, top, width, height}, offsetTop=0, offsetLeft=0) {
 	const overlay = document.createElement('a');
 
