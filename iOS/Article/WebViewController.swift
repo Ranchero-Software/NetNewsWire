@@ -509,47 +509,9 @@ private extension WebViewController {
 			self.renderPage(webView)
 			return
 		}
-		
-<<<<<<< Updated upstream
-		coordinator.webViewProvider.dequeueWebView() { webView in
-			
-			webView.ready {
-				
-				// Add the webview - using autolayout will cause fullscreen video to fail and lose the web view
-				webView.frame = self.view.bounds
-				webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-				self.view.insertSubview(webView, at: 0)
 
-				// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
-				// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
-				// us from easily swiping between WKWebViews.  This hack fixes that.
-				webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
-
-				webView.scrollView.setZoomScale(1.0, animated: false)
-
-				self.view.setNeedsLayout()
-				self.view.layoutIfNeeded()
-
-				// Configure the webview
-				webView.navigationDelegate = self
-				webView.uiDelegate = self
-				webView.scrollView.delegate = self
-				self.configureContextMenuInteraction()
-
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
-				webView.configuration.userContentController.addUserScript(forResource: "inject", withExtension: "js")
-
-				self.renderPage(webView)
-				
-			}
-			
-		}
-=======
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false
->>>>>>> Stashed changes
 		
 		/// The defaults for `preferredContentMode` and `allowsContentJavaScript` are suitable
 		/// and don't need to be explicitly set.
