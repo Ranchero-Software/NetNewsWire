@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MasterUnreadIndicatorView: UIView {
+@MainActor class MasterUnreadIndicatorView: UIView {
 
 	override func layoutSubviews() {
 		super.layoutSubviews()

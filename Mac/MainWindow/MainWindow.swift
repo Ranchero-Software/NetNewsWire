@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MainWindow: NSWindow {
+@MainActor class MainWindow: NSWindow {
 	
 	override func sendEvent(_ event: NSEvent) {
 		

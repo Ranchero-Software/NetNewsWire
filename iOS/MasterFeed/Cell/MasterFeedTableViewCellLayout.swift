@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-struct MasterFeedTableViewCellLayout {
+@MainActor struct MasterFeedTableViewCellLayout {
 
 	private static let indentWidth = CGFloat(integerLiteral: 15)
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)

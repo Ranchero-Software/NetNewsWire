@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-struct MasterFeedTableViewSectionHeaderLayout {
+@MainActor struct MasterFeedTableViewSectionHeaderLayout {
 
 	private static let labelMarginRight = CGFloat(integerLiteral: 8)
 	private static let disclosureButtonSize = CGSize(width: 44, height: 44)

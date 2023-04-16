@@ -21,7 +21,7 @@ protocol MasterTimelineCellLayout {
 	
 }
 
-extension MasterTimelineCellLayout {
+@MainActor extension MasterTimelineCellLayout {
 	
 	static func rectForUnreadIndicator(_ point: CGPoint) -> CGRect {
 		var r = CGRect.zero

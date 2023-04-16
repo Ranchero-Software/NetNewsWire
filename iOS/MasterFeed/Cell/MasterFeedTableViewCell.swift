@@ -15,7 +15,7 @@ protocol MasterFeedTableViewCellDelegate: AnyObject {
 	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 
-class MasterFeedTableViewCell : VibrantTableViewCell {
+@MainActor final class MasterFeedTableViewCell : VibrantTableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
 

@@ -15,7 +15,7 @@ enum ArticleExtractorButtonState {
 	case off
 }
 
-class ArticleExtractorButton: NSButton {
+@MainActor final class ArticleExtractorButton: NSButton {
 	
 	public var rightClickAction: Selector?
 	
