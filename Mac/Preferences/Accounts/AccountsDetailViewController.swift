@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate {
+@MainActor final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate {
 
 	@IBOutlet weak var typeLabel: NSTextField!
 	@IBOutlet weak var nameTextField: NSTextField!

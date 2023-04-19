@@ -10,7 +10,7 @@ import Foundation
 import Account
 import RSCore
 
-struct OPMLExporter {
+@MainActor struct OPMLExporter {
 
 	static func OPMLString(with account: Account, title: String) -> String {
 

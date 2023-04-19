@@ -8,7 +8,7 @@
 
 import RSCore
 
-extension URLPasteboardWriter {
+@MainActor extension URLPasteboardWriter {
 
 	/// Copy URL strings, alerting the user the first time the array of URL strings contains `nil`.
 	/// - Parameters:

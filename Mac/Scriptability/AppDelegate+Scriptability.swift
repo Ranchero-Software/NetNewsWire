@@ -39,7 +39,7 @@ extension AppDelegate : AppDelegateAppleEvents {
         NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
     }
     
-    @objc func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
+    @MainActor @objc func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
 
         guard var urlString = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {
             return
@@ -63,7 +63,9 @@ extension AppDelegate : AppDelegateAppleEvents {
 					do {
 						try ArticleThemeDownloader.shared.handleFile(at: location)
 					} catch {
-						self.presentThemeImportError(error)
+						Task { @MainActor in
+							self.presentThemeImportError(error)
+						}
 					}
 				}
 				task.resume()

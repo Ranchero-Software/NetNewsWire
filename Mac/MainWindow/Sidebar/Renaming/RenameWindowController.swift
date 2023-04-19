@@ -13,7 +13,7 @@ protocol RenameWindowControllerDelegate {
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject: Any, withNewName: String)
 }
 
-final class RenameWindowController: NSWindowController {
+@MainActor final class RenameWindowController: NSWindowController {
 
 	@IBOutlet var renamePrompt: NSTextField!
 	@IBOutlet var newTitleTextField: NSTextField!

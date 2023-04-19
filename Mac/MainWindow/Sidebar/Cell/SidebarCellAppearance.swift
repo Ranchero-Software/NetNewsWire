@@ -8,7 +8,7 @@
 
 import AppKit
 
-struct SidebarCellAppearance: Equatable {
+@MainActor struct SidebarCellAppearance: Equatable {
 
 	let imageSize: CGSize
 	let imageMarginRight: CGFloat = 4.0

@@ -12,7 +12,7 @@ import RSTree
 import Articles
 import Account
 
-class AddRedditFeedWindowController : NSWindowController, AddFeedWindowController {
+@MainActor final class AddRedditFeedWindowController : NSWindowController, AddFeedWindowController {
 
 	@IBOutlet weak var typePopupButton: NSPopUpButton!
 	@IBOutlet weak var typeDescriptionLabel: NSTextField!
