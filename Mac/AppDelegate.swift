@@ -955,43 +955,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		alert.beginSheetModal(for: window)
 	}
-
+	
 	private func presentTwitterDeprecationAlertIfRequired() {
 		if AppDefaults.shared.twitterDeprecationAlertShown { return }
-
+		
 		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
 		let currentDate = Date()
 		if currentDate > expiryDate {
 			return // If after August 9th, don't show
 		}
-
-		if AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed() {
-			showTwitterDeprecationAlert()
-		}
-		AppDefaults.shared.twitterDeprecationAlertShown = true
-	}
-
-	private func showTwitterDeprecationAlert() {
-		DispatchQueue.main.async {
-			let alert = NSAlert()
-			alert.alertStyle = .warning
-			alert.messageText = NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed")
-			alert.informativeText = NSLocalizedString("On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation informative text.")
-			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
-			alert.buttons[0].keyEquivalent = "\r"
-			alert.runModal()
-		}
-	}
-
-	private func presentTwitterDeprecationAlertIfRequired() {
-		if AppDefaults.shared.twitterDeprecationAlertShown { return }
-
-		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
-		let currentDate = Date()
-		if currentDate > expiryDate {
-			return // If after August 9th, don't show
-		}
-
+		
 		if AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed() {
 			showTwitterDeprecationAlert()
 		}
@@ -1007,16 +980,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
 			alert.buttons[0].keyEquivalent = "\r"
 			alert.runModal()
-		}
-	}
-
-	@objc func openThemesFolder(_ sender: Any) {
-		if themeImportPath == nil {
-			let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
-			NSWorkspace.shared.open(url)
-		} else {
-			let url = URL(fileURLWithPath: themeImportPath!)
-			NSWorkspace.shared.open(url.deletingLastPathComponent())
 		}
 	}
 }
