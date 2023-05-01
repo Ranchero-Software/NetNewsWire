@@ -77,7 +77,7 @@ public final class WebFeedIconDownloader {
 			return cachedImage
 		}
 		
-		if let hpURLString = feed.homePageURL, let hpURL = URL(string: hpURLString), hpURL.host == "nnw.ranchero.com" {
+		if let hpURLString = feed.homePageURL, let hpURL = URL(string: hpURLString), hpURL.host == "nnw.ranchero.com" || hpURL.host == "netnewswire.blog" {
 			return IconImage.appIcon
 		}
 
