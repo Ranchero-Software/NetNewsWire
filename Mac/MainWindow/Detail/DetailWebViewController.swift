@@ -98,6 +98,7 @@ final class DetailWebViewController: NSViewController {
 		configuration.preferences = preferences
 		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
+		configuration.mediaTypesRequiringUserActionForPlayback = .audio
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.windowDidScroll)
