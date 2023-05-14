@@ -59,8 +59,6 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return rootSplitViewController.undoManager
 	}
 	
-	lazy var webViewProvider = WebViewProvider(coordinator: self)
-	
 	private var activityManager = ActivityManager()
 	
 	private var rootSplitViewController: RootSplitViewController!
