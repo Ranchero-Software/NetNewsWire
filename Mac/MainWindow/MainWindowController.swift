@@ -83,7 +83,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		detailSplitViewItem?.minimumThickness = CGFloat(MainWindowController.detailViewMinimumThickness)
 
-		sidebarViewController = splitViewController?.splitViewItems[0].viewController as? SidebarViewController
+		let sidebarSplitViewItem = splitViewController?.splitViewItems[0]
+		sidebarViewController = sidebarSplitViewItem?.viewController as? SidebarViewController
+		sidebarViewController!.splitViewItem = sidebarSplitViewItem
 		sidebarViewController!.delegate = self
 
 		timelineContainerViewController = splitViewController?.splitViewItems[1].viewController as? TimelineContainerViewController

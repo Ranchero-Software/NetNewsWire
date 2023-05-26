@@ -28,6 +28,8 @@ protocol SidebarDelegate: AnyObject {
 	
 	weak var delegate: SidebarDelegate?
 
+	weak var splitViewItem: NSSplitViewItem?
+
 	private let rebuildTreeAndRestoreSelectionQueue = CoalescingQueue(name: "Rebuild Tree Queue", interval: 1.0)
 	let treeControllerDelegate = WebFeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
@@ -318,6 +320,7 @@ protocol SidebarDelegate: AnyObject {
 	}
 
 	func focus() {
+		if splitViewItem?.isCollapsed == true { return }
 		outlineView.window?.makeFirstResponderUnlessDescendantIsFirstResponder(outlineView)
 	}
 
