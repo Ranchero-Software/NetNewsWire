@@ -6,7 +6,12 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
+
 import RSCore
 import Combine
 #if canImport(AppKit)
@@ -24,9 +29,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 	public let folderPath: String
 
 	lazy var presentedItemOperationQueue = OperationQueue.main
-	var presentedItemURL: URL? {
-		return URL(fileURLWithPath: folderPath)
-	}
+	var presentedItemURL: URL?
 
 	var currentThemeName: String {
 		get {
@@ -38,6 +41,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 					currentTheme = try articleThemeWithThemeName(newValue)
 					AppDefaults.shared.currentThemeName = newValue
 					objectWillChange.send()
+					updateFilePresenter()
 				} catch {
 					logger.error("Unable to set new theme: \(error.localizedDescription, privacy: .public)")
 				}
@@ -78,19 +82,23 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 			assertionFailure("Could not create folder for Themes.")
 			abort()
 		}
-		
-		NSFileCoordinator.addFilePresenter(self)
+
+		#if os(macOS)
+		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: NSApplication.didBecomeActiveNotification, object: nil)
+		#else
+		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+		#endif
+
+		updateFilePresenter()
 	}
 	
 	func presentedSubitemDidChange(at url: URL) {
-		if url.lastPathComponent.localizedCaseInsensitiveContains("nnwtheme") {
-			themeNames = buildThemeNames()
-			do {
-				currentTheme = try articleThemeWithThemeName(currentThemeName)
-			} catch {
-				Task { @MainActor in
-					appDelegate.presentThemeImportError(error)
-				}
+		themeNames = buildThemeNames()
+		do {
+			currentTheme = try articleThemeWithThemeName(currentThemeName)
+		} catch {
+			Task { @MainActor in
+				appDelegate.presentThemeImportError(error)
 			}
 		}
 	}
@@ -113,6 +121,8 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 		
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
 		objectWillChange.send()
+
+		themeNames = buildThemeNames()
 	}
 	
 	func articleThemeWithThemeName(_ themeName: String) throws -> ArticleTheme {
@@ -137,86 +147,29 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 
 	func deleteTheme(themeName: String) {
 		if let filename = pathForThemeName(themeName, folder: folderPath) {
-			do {
-				try FileManager.default.removeItem(atPath: filename)
-			} catch {
-				logger.error("\(error.localizedDescription)")
-			}
+			try? FileManager.default.removeItem(atPath: filename)
+			themeNames = buildThemeNames()
 		}
 	}
-	
-	func themesByDeveloper() -> (builtIn: [ArticleTheme], other: [ArticleTheme]) {
-		let installedProvidedThemes = themeNames.map({ try? articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ $0.isAppTheme }).sorted(by: { $0.name < $1.name }).filter({ $0.name != AppDefaults.defaultThemeName })
-		
-		let installedOtherThemes = themeNames.map({ try? articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ !$0.isAppTheme }).sorted(by: { $0.name < $1.name })
-		
-		return (installedProvidedThemes, installedOtherThemes)
-	}
-	
-	#if os(macOS)
-	func articleThemesMenu(for popUpButton: NSPopUpButton?) -> NSMenu {
-		let menu = NSMenu()
-		menu.autoenablesItems = false
-		menu.removeAllItems()
-		
-		let defaultMenuItem = NSMenuItem()
-		defaultMenuItem.title = ArticleTheme.defaultTheme.name
-		defaultMenuItem.action = #selector(updateThemeSelection(_:))
-		defaultMenuItem.state = currentTheme.name == defaultMenuItem.title ? .on : .off
-		defaultMenuItem.target = self
-		menu.addItem(defaultMenuItem)
-		menu.addItem(NSMenuItem.separator())
-		
-		let rancheroHeading = NSMenuItem(title: "Built-in Themes", action: nil, keyEquivalent: "")
-		rancheroHeading.attributedTitle = NSAttributedString(string: "Built-in Themes", attributes: [NSAttributedString.Key.foregroundColor : NSColor.secondaryLabelColor, NSAttributedString.Key.font: NSFont.boldSystemFont(ofSize: 12)])
-		rancheroHeading.isEnabled = false
-		menu.addItem(rancheroHeading)
-		
-		let installedThemes = ArticleThemesManager.shared.themesByDeveloper()
-		
-		for theme in installedThemes.builtIn {
-			let item = NSMenuItem()
-			item.title = theme.name
-			item.action = #selector(updateThemeSelection(_:))
-			item.state = currentTheme.name == theme.name ? .on : .off
-			item.target = self
-			menu.addItem(item)
-		}
-		
-		menu.addItem(NSMenuItem.separator())
-		
-		let thirdPartyHeading = NSMenuItem(title: "Other Themes", action: nil, keyEquivalent: "")
-		thirdPartyHeading.attributedTitle = NSAttributedString(string: "Other Themes", attributes: [NSAttributedString.Key.foregroundColor : NSColor.secondaryLabelColor, NSAttributedString.Key.font: NSFont.boldSystemFont(ofSize: 12)])
-		thirdPartyHeading.isEnabled = false
-		menu.addItem(thirdPartyHeading)
-
-		for theme in installedThemes.other {
-			let item = NSMenuItem()
-			item.title = theme.name
-			item.action = #selector(updateThemeSelection(_:))
-			item.state = currentTheme.name == theme.name ? .on : .off
-			item.target = self
-			menu.addItem(item)
-		}
-		popUpButton?.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
-		if popUpButton?.indexOfSelectedItem == -1 {
-			popUpButton?.selectItem(withTitle: ArticleTheme.defaultTheme.name)
-		}
-		return menu
-	}
-	
-	@objc
-	func updateThemeSelection(_ menuItem: NSMenuItem) {
-		currentThemeName = menuItem.title
-	}
-	
-	#endif
 	
 }
 
 // MARK : Private
 
 private extension ArticleThemesManager {
+	
+	@objc func applicationDidBecomeActive(_ note: Notification) {
+		themeNames = buildThemeNames()
+	}
+
+	func updateFilePresenter() {
+		guard let currentThemePath = currentTheme.path else {
+			return
+		}
+		NSFileCoordinator.removeFilePresenter(self)
+		presentedItemURL = URL(fileURLWithPath: currentThemePath)
+		NSFileCoordinator.addFilePresenter(self)
+	}
 
 	func buildThemeNames() -> [String] {
 		let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)

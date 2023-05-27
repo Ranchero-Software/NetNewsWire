@@ -7,6 +7,24 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.1.2</title>
+            <description><![CDATA[
+            <p><b>Twitter integration has been removed:</b> Twitter has suspended NetNewsWire, and Twitter is removing free access to the Twitter API</p>
+            <p>Since Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.</p>
+            <p>We’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.</p>
+            <p>You can still read whatever you have already downloaded. However, those feeds will no longer update.</p>
+            <p>Other changes…</p>
+            <p>Fixed a crashing bug that could happen in the sidebar</p>
+            <p>Fixed a bug that could prevent users from accessing BazQux if an article was missing a field</p>
+            <p>Fixed an issue that could prevent Feedly users from syncing if they tried to mark too many articles as read at the same time</p>
+            <p>Updated the Safari extension icon (credit to Louie Mantia for the new icon)</p>
+            ]]></description>
+            <pubDate>Sat, 08 Apr 2023 10:30:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.2/NetNewsWire6.1.2.zip" sparkle:version="6114" sparkle:shortVersionString="6.1.2" length="10873540" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.1</title>
             <description><![CDATA[
                 <p>Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences or by adding the theme switcher to the toolbar</p>

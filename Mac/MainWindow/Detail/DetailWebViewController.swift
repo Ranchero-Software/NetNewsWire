@@ -90,6 +90,7 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 		configuration.defaultWebpagePreferences = webpagePrefs
 		configuration.preferences = preferences
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
+		configuration.mediaTypesRequiringUserActionForPlayback = .audio
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.windowDidScroll)

@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
+@MainActor struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 	
 	let height: CGFloat
 	let unreadIndicatorRect: CGRect
