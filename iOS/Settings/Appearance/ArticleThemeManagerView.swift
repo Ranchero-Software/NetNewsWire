@@ -21,14 +21,14 @@ struct ArticleThemeManagerView: View {
 		Form {
 			Section(header: Text("label.text.default-themes", comment: "Default Themes"), footer: Text("label.text.default-themes-explainer", comment: "These themes cannot be deleted.")) {
 				articleThemeRow(try! themeManager.articleThemeWithThemeName("Default"))
-				ForEach(0..<installedFirstPartyThemes.count, id: \.self) { i in
-					articleThemeRow(installedFirstPartyThemes[i])
+				ForEach(0..<themeManager.themesByDeveloper().builtIn.count, id: \.self) { i in
+					articleThemeRow(themeManager.themesByDeveloper().builtIn[i])
 				}
 			}
 			
 			Section(header: Text("label.text.third-party-themes", comment: "Third Party Themes")) {
-				ForEach(0..<installedThirdPartyThemes.count, id: \.self) { i in
-					articleThemeRow(installedThirdPartyThemes[i])
+				ForEach(0..<themeManager.themesByDeveloper().other.count, id: \.self) { i in
+					articleThemeRow(themeManager.themesByDeveloper().other[i])
 				}
 			}
 			

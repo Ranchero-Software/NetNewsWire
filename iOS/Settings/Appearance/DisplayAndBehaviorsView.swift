@@ -20,8 +20,8 @@ struct DisplayAndBehaviorsView: View {
 			}
 			
 			Section(header: Text("label.text.timeline", comment: "Timeline")) {
-				SettingsViewRows.sortOldestToNewest($appDefaults.timelineSortDirectionBool)
-				SettingsViewRows.groupByFeed($appDefaults.timelineGroupByFeed)
+				SettingsRow.sortOldestToNewest($appDefaults.timelineSortDirectionBool)
+				SettingsRow.groupByFeed($appDefaults.timelineGroupByFeed)
 				SettingsRow.confirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
 				SettingsRow.markAsReadOnScroll($appDefaults.markArticlesAsReadOnScroll)
 				SettingsRow.refreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
@@ -29,7 +29,7 @@ struct DisplayAndBehaviorsView: View {
 			}
 			
 			Section(header: Text("label.text.articles", comment: "Articles")) {
-				SettingsViewRows.themeSelection
+				SettingsRow.themeSelection
 				SettingsRow.openLinksInNetNewsWire(Binding<Bool>(
 					get: { !appDefaults.useSystemBrowser },
 					set: { appDefaults.useSystemBrowser = !$0 }

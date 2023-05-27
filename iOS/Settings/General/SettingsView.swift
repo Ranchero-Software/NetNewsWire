@@ -26,15 +26,15 @@ struct SettingsView: View {
 				// Device Permissions
 				Section(header: Text("label.text.device-permissions", comment: "Device Permissions"),
 						footer: Text("label.text.device-permissions-explainer", comment: "Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.")) {
-					SettingsViewRows.openSystemSettings
+					SettingsRow.openSystemSettings
 				}
 				
 				// Account/Extensions/OPML Management
 				Section(header: Text("label.text.accounts-and-extensions", comment: "Settings: Accounts & Extensions section header."),
 						footer: Text("label.text.account-and-extensions-explainer", comment: "Add, delete, enable, or disable accounts and extensions.")) {
-					SettingsViewRows.addAccount
-					SettingsViewRows.manageExtensions
-					SettingsViewRows.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
+					SettingsRow.addAccount
+					SettingsRow.manageExtensions
+					SettingsRow.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
 						.confirmationDialog(Text("actionsheet.title.choose-opml-destination", comment: "Choose an account to receive the imported feeds and folders"),
 											isPresented: $viewModel.showImportActionSheet,
 											titleVisibility: .visible) {
@@ -46,7 +46,7 @@ struct SettingsView: View {
 							}
 						}
 					
-					SettingsViewRows.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
+					SettingsRow.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
 						.confirmationDialog(Text("actionsheet.title.choose-opml-export-account", comment: "Choose an account with the subscriptions to export"),
 											isPresented: $viewModel.showExportActionSheet,
 											titleVisibility: .visible) {
@@ -68,7 +68,7 @@ struct SettingsView: View {
 				// Appearance
 				Section(header: Text("label.text.appearance", comment: "Settings: Appearance section header."),
 						footer: Text("label.text.appearance-explainer", comment: "Manage the look, feel, and behavior of NetNewsWire.")) {
-					SettingsViewRows.configureAppearance($isConfigureAppearanceShown)
+					SettingsRow.configureAppearance($isConfigureAppearanceShown)
 					if viewModel.notificationPermissions == .authorized {
 						SettingsRow.configureNewArticleNotifications
 					}
