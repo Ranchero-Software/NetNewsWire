@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "notifications.sounds.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

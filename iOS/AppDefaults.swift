@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Combine
+import SwiftUI
 
 enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	case automatic = 0
@@ -26,7 +28,7 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	
 }
 
-final class AppDefaults {
+final class AppDefaults: ObservableObject {
 
 	static let defaultThemeName = "NetNewsWire"
 	
@@ -86,6 +88,7 @@ final class AppDefaults {
 		}
 		set {
 			setInt(for: Key.userInterfaceColorPalette, newValue.rawValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 
@@ -95,6 +98,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setString(for: Key.addWebFeedAccountID, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	
@@ -104,6 +108,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setString(for: Key.addWebFeedFolderName, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	
@@ -113,6 +118,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	
@@ -122,6 +128,7 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.activeExtensionPointIDs)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	
@@ -131,6 +138,7 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.hasUsedFullScreenPreviously)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	
@@ -140,6 +148,7 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	
@@ -149,6 +158,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 
@@ -158,6 +168,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 
@@ -167,6 +178,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.refreshClearsReadArticles, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 
@@ -176,15 +188,33 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
-
+	
+	/// This is a `Bool` wrapper for `timelineSortDirection`'s
+	/// `ComparisonResult`
+	var timelineSortDirectionBool: Bool {
+		get {
+			if AppDefaults.shared.timelineSortDirection == .orderedAscending {
+				return true
+			}
+			return false
+		}
+		set {
+			if newValue == true { timelineSortDirection = .orderedAscending } else {
+				timelineSortDirection = .orderedDescending
+			}
+		}
+	}
+	
 	var articleFullscreenEnabled: Bool {
 		get {
 			return AppDefaults.bool(for: Key.articleFullscreenEnabled)
 		}
 		set {
 			AppDefaults.setBool(for: Key.articleFullscreenEnabled, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 
@@ -203,6 +233,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)
+			objectWillChange.send()
 		}
 	}
 	
@@ -213,6 +244,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconDimension)
+			objectWillChange.send()
 		}
 	}
 	
@@ -222,6 +254,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setString(for: Key.currentThemeName, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	
@@ -240,6 +273,7 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.markArticlesAsReadOnScroll, newValue)
+			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	

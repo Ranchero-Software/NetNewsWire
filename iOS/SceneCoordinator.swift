@@ -13,6 +13,7 @@ import Articles
 import RSCore
 import RSTree
 import SafariServices
+import SwiftUI
 
 protocol MainControllerIdentifiable {
 	var mainControllerIdentifier: MainControllerIdentifier { get }
@@ -1172,23 +1173,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func showSettings(scrollToArticlesSection: Bool = false) {
-		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
-		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
-		settingsNavController.modalPresentationStyle = .formSheet
-		settingsViewController.presentingParentController = rootSplitViewController
-		rootSplitViewController.present(settingsNavController, animated: true)
+		var s = scrollToArticlesSection
+		let hostedSettings = UIHostingController(rootView: SettingsView(isConfigureAppearanceShown: Binding(get: { s }, set: { s = $0 })))
+		rootSplitViewController.present(hostedSettings, animated: true)
 	}
 	
 	func showAccountInspector(for account: Account) {
-		let accountInspectorNavController =
-			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
-		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
-		accountInspectorNavController.modalPresentationStyle = .formSheet
-		accountInspectorNavController.preferredContentSize = AccountInspectorViewController.preferredContentSizeForFormSheetDisplay
-		accountInspectorController.isModal = true
-		accountInspectorController.account = account
-		rootSplitViewController.present(accountInspectorNavController, animated: true)
+		let hosting = UIHostingController(rootView: InjectedNavigationView(injectedView: AccountInspectorView(account: account)))
+		rootSplitViewController.present(hosting, animated: true, completion: nil)
 	}
 	
 	func showFeedInspector() {
@@ -1201,13 +1193,10 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func showFeedInspector(for feed: WebFeed) {
-		let feedInspectorNavController =
-			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
-		let feedInspectorController = feedInspectorNavController.topViewController as! WebFeedInspectorViewController
-		feedInspectorNavController.modalPresentationStyle = .formSheet
-		feedInspectorNavController.preferredContentSize = WebFeedInspectorViewController.preferredContentSizeForFormSheetDisplay
-		feedInspectorController.webFeed = feed
-		rootSplitViewController.present(feedInspectorNavController, animated: true)
+
+		let hosting = UIHostingController(rootView: InjectedNavigationView(injectedView: WebFeedInspectorView(webFeed: feed)))
+		
+		rootSplitViewController.present(hosting, animated: true)
 	}
 	
 	func showAddWebFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
@@ -1333,8 +1322,11 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else { return }
-		settings.dismiss(animated: true, completion: nil)
+		
+		// There's no obvious way to detect if the presented controller
+		// is the SwiftUI UIHostingController<SettingsView>. Posting a notification
+		// which it can react to seems to be the simplest solution.
+		NotificationCenter.default.post(name: .LaunchedFromExternalAction, object: nil)
 	}
 	
 }

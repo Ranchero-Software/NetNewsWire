@@ -7,6 +7,53 @@
 //
 
 import UIKit
+import SwiftUI
+
+struct TickMarkSliderView: UIViewRepresentable {
+	
+	var minValue: Int
+	var maxValue: Int
+	@Binding var currentValue: Float
+	
+	func makeUIView(context: Context) -> TickMarkSlider {
+		let slider = TickMarkSlider()
+		slider.minimumValue = Float(minValue)
+		slider.maximumValue = Float(maxValue)
+		slider.value = currentValue
+		slider.addTickMarks()
+		return slider
+	}
+	
+	func updateUIView(_ uiView: TickMarkSlider, context: Context) {
+		uiView.addTarget(
+			context.coordinator,
+			action: #selector(Coordinator.valueChanged(_:)),
+			for: .valueChanged
+		)
+	}
+	
+	func makeCoordinator() -> Coordinator {
+		Coordinator(value: $currentValue)
+	}
+	
+	class Coordinator: NSObject {
+		var value: Binding<Float>
+		
+		init(value: Binding<Float>) {
+			self.value = value
+		}
+		
+		// Create a valueChanged(_:) action
+		@objc func valueChanged(_ sender: Any) {
+			if let slider = sender as? UISlider {
+				self.value.wrappedValue = Float(slider.value.rounded())
+			}
+		}
+		
+	}
+	
+	typealias UIViewType = TickMarkSlider
+}
 
 class TickMarkSlider: UISlider {
 

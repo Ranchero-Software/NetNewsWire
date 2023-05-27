@@ -162,7 +162,7 @@ extension CGImage {
 }
 
 
-enum IconSize: Int, CaseIterable {
+enum IconSize: Int, CaseIterable, CustomStringConvertible {
 	case small = 1
 	case medium = 2
 	case large = 3
@@ -179,6 +179,17 @@ enum IconSize: Int, CaseIterable {
 			return CGSize(width: IconSize.mediumDimension, height: IconSize.mediumDimension)
 		case .large:
 			return CGSize(width: IconSize.largeDimension, height: IconSize.largeDimension)
+		}
+	}
+	
+	var description: String {
+		switch self {
+		case .small:
+			return Bundle.main.localizedString(forKey: "SMALL_ICON_SIZE", value: nil, table: "Settings")
+		case .medium:
+			return Bundle.main.localizedString(forKey: "MEDIUM_ICON_SIZE", value: nil, table: "Settings")
+		case .large:
+			return Bundle.main.localizedString(forKey: "LARGE_ICON_SIZE", value: nil, table: "Settings")
 		}
 	}
 
