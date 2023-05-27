@@ -1,0 +1,27 @@
+/* Class = "NSButtonCell"; title = "Send"; ObjectID = "2l4-PO-we5"; */
+"2l4-PO-we5.title" = "Send";
+
+/* Class = "NSTextFieldCell"; title = "NetNewsWire"; ObjectID = "5Ed-E1-Gf1"; */
+"5Ed-E1-Gf1.title" = "NetNewsWire";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "6Up-t3-mwm"; */
+"6Up-t3-mwm.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "27c-xz-zoJ"; */
+"27c-xz-zoJ.placeholderString" = "Optional";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "Djb-KO-yjg"; */
+"Djb-KO-yjg.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "jf0-bY-EUJ"; */
+"jf0-bY-EUJ.title" = "Item 2";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "Piv-xr-hYI"; */
+"Piv-xr-hYI.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; title = "Folder:"; ObjectID = "qp4-R2-aO5"; */
+"qp4-R2-aO5.title" = "Folder:";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "wvm-BK-3HS"; */
+"wvm-BK-3HS.title" = "Item 1";
+

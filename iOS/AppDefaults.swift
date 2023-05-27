@@ -18,11 +18,11 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	var description: String {
 		switch self {
 		case .automatic:
-			return NSLocalizedString("Automatic", comment: "Automatic")
+			return NSLocalizedString("appdefaults.colorpalette.automatic", comment: "Automatic")
 		case .light:
-			return NSLocalizedString("Light", comment: "Light")
+			return NSLocalizedString("appdefaults.colorpalette.light", comment: "Light")
 		case .dark:
-			return NSLocalizedString("Dark", comment: "Dark")
+			return NSLocalizedString("appdefaults.colorpalette.dark", comment: "Dark")
 		}
 	}
 	

@@ -136,17 +136,17 @@ private extension AddFeedController {
 	func showAlreadySubscribedError(_ urlString: String) {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Already subscribed", comment: "Feed finder")
-		alert.informativeText = NSLocalizedString("Can’t add this feed because you’ve already subscribed to it.", comment: "Feed finder")
+		alert.messageText = AccountError.createErrorAlreadySubscribed.errorTitle
+		alert.informativeText = AccountError.createErrorAlreadySubscribed.localizedDescription
 		alert.beginSheetModal(for: hostWindow)
 	}
 
 	func showInitialDownloadError(_ error: Error) {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Download Error", comment: "Feed finder")
+		alert.messageText = NSLocalizedString("alert.title.download-error", comment: "Download Error")
 
-		let formatString = NSLocalizedString("Can’t add this feed because of a download error: “%@”", comment: "Feed finder")
+		let formatString = NSLocalizedString("alert.message.download-error.%@", comment: "Can’t add this feed because of a download error: “%@”")
 		let errorText = NSString.localizedStringWithFormat(formatString as NSString, error.localizedDescription)
 		alert.informativeText = errorText as String
 		alert.beginSheetModal(for: hostWindow)
@@ -155,15 +155,15 @@ private extension AddFeedController {
 	func showNoFeedsErrorMessage() {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Feed not found", comment: "Feed finder")
-		alert.informativeText = NSLocalizedString("Can’t add a feed because no feed was found.", comment: "Feed finder")
+		alert.messageText = AccountError.createErrorNotFound.errorTitle
+		alert.informativeText = AccountError.createErrorNotFound.localizedDescription
 		alert.beginSheetModal(for: hostWindow)
 	}
 
 	// MARK: Progress
 
 	func beginShowingProgress() {
-		runIndeterminateProgressWithMessage(NSLocalizedString("Finding feed…", comment:"Feed finder"))
+		runIndeterminateProgressWithMessage(NSLocalizedString("label.text.finding-feed", comment:"Finding feed..."))
 	}
 	
 	func endShowingProgress() {

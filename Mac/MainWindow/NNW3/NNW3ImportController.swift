@@ -73,7 +73,7 @@ private extension NNW3ImportController {
 		panel.allowsOtherFileTypes = false
 		panel.accessoryView = accessoryViewController.view
 		panel.isAccessoryViewDisclosed = true
-		panel.title = NSLocalizedString("Choose a Subscriptions.plist file:", comment: "NNW3 Import")
+		panel.title = NSLocalizedString("panel.title.select-opml-file", comment: "Choose a Subscriptions.plist file:")
 		
 		panel.beginSheetModal(for: window) { modalResult in
 			guard modalResult == .OK, let subscriptionsPlistURL = panel.url else {

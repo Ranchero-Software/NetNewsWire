@@ -60,10 +60,10 @@ import UIKit
 	
 	private func updateUI() {
 		if resultsCount > 0 {
-			let format = NSLocalizedString("%d of %d", comment: "Results selection and count")
+			let format = NSLocalizedString("label.search-results.%i.%i", comment: "In English, this shows the current search result selection out of the total number of search results. Example: 3 of 5. The variables are ordered as current selection, total search results count.")
 			resultsLabel.text = String.localizedStringWithFormat(format, selectedResult, resultsCount)
 		} else {
-			resultsLabel.text = NSLocalizedString("No results", comment: "No results")
+			resultsLabel.text = NSLocalizedString("label.text.no-results", comment: "No results")
 		}
 		
 		nextButton.isEnabled = selectedResult < resultsCount
@@ -101,7 +101,7 @@ private extension ArticleSearchBar {
 		addSubview(background)
 		
 		let doneButton = UIButton()
-		doneButton.setTitle(NSLocalizedString("Done", comment: "Done"), for: .normal)
+		doneButton.setTitle(NSLocalizedString("button.title.done", comment: "Done"), for: .normal)
 		doneButton.setTitleColor(UIColor.label, for: .normal)
 		doneButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
 		doneButton.isAccessibilityElement = true
@@ -129,14 +129,14 @@ private extension ArticleSearchBar {
 		
 		prevButton = UIButton(type: .system)
 		prevButton.setImage(UIImage(systemName: "chevron.up"), for: .normal)
-		prevButton.accessibilityLabel = "Previous Result"
+		prevButton.accessibilityLabel = NSLocalizedString("button.title.previous-result", comment: "Previous Result")
 		prevButton.isAccessibilityElement = true
 		prevButton.addTarget(self, action: #selector(previousPressed), for: .touchUpInside)
 		addArrangedSubview(prevButton)
 		
 		nextButton = UIButton(type: .system)
 		nextButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-		nextButton.accessibilityLabel = "Next Result"
+		nextButton.accessibilityLabel = NSLocalizedString("button.title.next-result", comment: "Next Result")
 		nextButton.isAccessibilityElement = true
 		nextButton.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
 		addArrangedSubview(nextButton)

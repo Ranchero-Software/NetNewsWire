@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="AJQ-jq-uMa">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="AJQ-jq-uMa">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view hidden="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="782" width="414" height="31"/>
+                                <rect key="frame" x="0.0" y="777" width="414" height="36"/>
                                 <color key="backgroundColor" name="barBackgroundColor"/>
                             </view>
                         </subviews>
@@ -33,6 +33,9 @@
                     </view>
                     <toolbarItems>
                         <barButtonItem title="Toggle Read" image="circle" catalog="system" id="hy0-LS-MzE">
+                            <attributedString key="userComments">
+                                <fragment content="Button title: Toggle Read"/>
+                            </attributedString>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Read"/>
                             </userDefinedRuntimeAttributes>
@@ -42,6 +45,9 @@
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="n8Q-7d-yb4"/>
                         <barButtonItem title="Toggle Starred" image="star" catalog="system" id="wU4-eH-wC9">
+                            <attributedString key="userComments">
+                                <fragment content="Button title: Toggle Starred"/>
+                            </attributedString>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Starred"/>
                             </userDefinedRuntimeAttributes>
@@ -51,6 +57,9 @@
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="bf9-AH-def"/>
                         <barButtonItem enabled="NO" title="Next Unread" image="chevron.down.circle" catalog="system" id="2w5-e9-C2V">
+                            <attributedString key="userComments">
+                                <fragment content="Button title: Next Unread"/>
+                            </attributedString>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Next Unread"/>
@@ -62,6 +71,9 @@
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="vAq-iW-Yyo"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="KUq-GZ-WY9"/>
                         <barButtonItem image="square.and.arrow.up" catalog="system" id="9Ut-5B-JKP">
+                            <attributedString key="userComments">
+                                <fragment content="Button title: Share"/>
+                            </attributedString>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Share"/>
@@ -74,6 +86,9 @@
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="mOI-FS-AaM">
                         <rightBarButtonItems>
                             <barButtonItem title="Next Article" image="chevron.down" catalog="system" id="2qz-M5-Yhk">
+                                <attributedString key="userComments">
+                                    <fragment content="Button title: Next Article"/>
+                                </attributedString>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                     <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Next Article"/>
@@ -83,6 +98,9 @@
                                 </connections>
                             </barButtonItem>
                             <barButtonItem title="Previous Article" image="chevron.up" catalog="system" id="v4j-fq-23N">
+                                <attributedString key="userComments">
+                                    <fragment content="Button title: Previous Article"/>
+                                </attributedString>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
                                     <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Previous Article"/>
@@ -92,6 +110,9 @@
                                 </connections>
                             </barButtonItem>
                             <barButtonItem image="ellipsis.circle" catalog="system" id="SoN-ax-tEE">
+                                <attributedString key="userComments">
+                                    <fragment content="Button Title: Appearance"/>
+                                </attributedString>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Appearance"/>
                                 </userDefinedRuntimeAttributes>
@@ -141,6 +162,9 @@
                     </tableView>
                     <toolbarItems>
                         <barButtonItem title="Item" image="arrow.up.arrow.down.circle" catalog="system" id="fTv-eX-72r">
+                            <attributedString key="userComments">
+                                <fragment content="Mark All as Read button title."/>
+                            </attributedString>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
                             </userDefinedRuntimeAttributes>
@@ -151,7 +175,11 @@
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="53V-wq-bat"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="93y-8j-WBh"/>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4"/>
+                    <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" customizationIdentifier="" id="wcC-1L-ug4">
+                        <attributedString key="userComments">
+                            <fragment content="Title used in the navigation bar for the Timeline."/>
+                        </attributedString>
+                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
@@ -203,6 +231,9 @@
                     </tableView>
                     <toolbarItems>
                         <barButtonItem title="Settings" image="gear" catalog="system" id="TlU-Pg-ATe">
+                            <attributedString key="userComments">
+                                <fragment content="Settings bar button item."/>
+                            </attributedString>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Settings"/>
                             </userDefinedRuntimeAttributes>
@@ -213,13 +244,19 @@
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="Rbh-Vg-Wo8"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="Vhj-bc-20A"/>
                         <barButtonItem systemItem="add" id="YFE-wd-vFC">
+                            <attributedString key="userComments">
+                                <fragment content="Add New Item bar button item."/>
+                            </attributedString>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Add Item"/>
                             </userDefinedRuntimeAttributes>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
+                    <navigationItem key="navigationItem" title="Feeds" customizationIdentifier="navigationbar.feeds.title" id="Zdf-7t-Un8">
                         <barButtonItem key="rightBarButtonItem" image="line.3.horizontal.decrease.circle" catalog="system" id="9ro-XY-5xU">
+                            <attributedString key="userComments">
+                                <fragment content="Feeds Filter bar button item."/>
+                            </attributedString>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Feeds Filter"/>
                             </userDefinedRuntimeAttributes>
@@ -227,9 +264,15 @@
                                 <action selector="toggleFilter:" destination="7bK-jq-Zjz" id="jmL-ei-avl"/>
                             </connections>
                         </barButtonItem>
+                        <attributedString key="userComments">
+                            <fragment content="Title used in the navigation bar for the Feeds list."/>
+                        </attributedString>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <attributedString key="userComments">
+                        <fragment content="Feeds scene."/>
+                    </attributedString>
                     <connections>
                         <outlet property="addNewItemButton" destination="YFE-wd-vFC" id="NMJ-uE-zGh"/>
                         <outlet property="filterButton" destination="9ro-XY-5xU" id="PSL-lE-ITK"/>
@@ -341,24 +384,36 @@
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <color key="textColor" name="primaryAccentColor"/>
                                 <nil key="highlightedColor"/>
+                                <attributedString key="userComments">
+                                    <fragment content="This does not need to be localized as it is provided by feed data."/>
+                                </attributedString>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Blog Author" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7GV-PV-YVq">
                                 <rect key="frame" x="20" y="36.5" width="90" height="21"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
+                                <attributedString key="userComments">
+                                    <fragment content="This does not need to be localized as it is provided by feed data."/>
+                                </attributedString>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Title" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iFp-rn-HhQ">
                                 <rect key="frame" x="20" y="74.5" width="136" height="33.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
+                                <attributedString key="userComments">
+                                    <fragment content="This does not need to be localized as it is provided by feed data."/>
+                                </attributedString>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Hz-Dv-MhU">
                                 <rect key="frame" x="20" y="116" width="43.5" height="20.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
+                                <attributedString key="userComments">
+                                    <fragment content="This does not need to be localized as it is provided by feed data."/>
+                                </attributedString>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Ms-dt-2M8">
                                 <rect key="frame" x="346" y="8" width="48" height="48"/>

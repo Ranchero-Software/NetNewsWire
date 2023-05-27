@@ -17,12 +17,12 @@ import AppKit
 	}
 
 	func sharingService(_ sharingService: NSSharingService, willShareItems items: [Any]) {
-		sharingService.subject = items
+		let selectedItemTitles = items
 			.compactMap { item in
 				let writer = item as? ArticlePasteboardWriter
 				return writer?.article.title
 			}
-			.joined(separator: ", ")
+		sharingService.subject = ListFormatter().string(from: selectedItemTitles)
 	}
 	
 	func sharingService(_ sharingService: NSSharingService, sourceWindowForShareItems items: [Any], sharingContentScope: UnsafeMutablePointer<NSSharingService.SharingContentScope>) -> NSWindow? {

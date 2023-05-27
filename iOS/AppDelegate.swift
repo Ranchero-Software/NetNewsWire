@@ -118,6 +118,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		
 		#if DEBUG
 		syncTimer!.update()
+		if let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.path {
+				print("Documents Directory: \(documentsPath)")
+			}
 		#endif
 			
 		return true
@@ -253,15 +256,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	private func initializeHomeScreenQuickActions() {
-		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
+		let unreadTitle = NSLocalizedString("homescreen.action.first-unread", comment: "First Unread")
 		let unreadIcon = UIApplicationShortcutIcon(systemImageName: "chevron.down.circle")
 		let unreadItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.FirstUnread", localizedTitle: unreadTitle, localizedSubtitle: nil, icon: unreadIcon, userInfo: nil)
 		
-		let searchTitle = NSLocalizedString("Search", comment: "Search")
+		let searchTitle = NSLocalizedString("homescreen.action.search", comment: "Search")
 		let searchIcon = UIApplicationShortcutIcon(systemImageName: "magnifyingglass")
 		let searchItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowSearch", localizedTitle: searchTitle, localizedSubtitle: nil, icon: searchIcon, userInfo: nil)
 
-		let addTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
+		let addTitle = NSLocalizedString("homescreen.action.add-feed", comment: "Add Feed")
 		let addIcon = UIApplicationShortcutIcon(systemImageName: "plus")
 		let addItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowAdd", localizedTitle: addTitle, localizedSubtitle: nil, icon: addIcon, userInfo: nil)
 

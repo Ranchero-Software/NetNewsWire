@@ -41,7 +41,7 @@ class AddFeedViewController: UITableViewController {
 		
 		switch addFeedType {
 		case .reddit:
-			navigationItem.title = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
+			navigationItem.title = NSLocalizedString("navigation.title.add-reddit-feed", comment: "Add Reddit Feed")
 			navigationItem.leftBarButtonItem = nil
 		default:
 			break

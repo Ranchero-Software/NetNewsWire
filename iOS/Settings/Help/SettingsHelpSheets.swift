@@ -16,9 +16,9 @@ public enum HelpSheet: CustomStringConvertible, CaseIterable {
 	public var description: String {
 		switch self {
 		case .help:
-			return String(localized: "NetNewsWire Help", comment: "Button: opens NetNewsWire Help page")
+			return NSLocalizedString("button.title.netnewswire-help", comment: "NetNewsWire Help")
 		case .website:
-			return String(localized: "NetNewsWire Website", comment: "Button: opens NetNewsWire website")
+			return NSLocalizedString("button.title.netnewswire-website", comment: "NetNewsWire Website")
 		}
 	}
 	

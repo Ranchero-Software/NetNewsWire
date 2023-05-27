@@ -1,0 +1,16 @@
+/* 
+  Localizable.strings
+  
+
+  Created by Stuart Breckenridge on 11/03/2023.
+  
+*/
+
+"error.title.feed-not-found" = "Unable to Add Feed";
+"error.title.already-subscribed" = "Already Subscribed";
+"error.title.ompl-import-in-progress" = "OPML Import in Progress";
+"error.title.error" = "Error";
+
+"error.message.feed-not-found" = "Can’t add a feed because no feed was found.";
+"error.message.already-subscribed" = "You are already subscribed to this feed and can’t add it again.";
+"error.message.opml-import-in-progress" = "An OPML import for this account is already running.";

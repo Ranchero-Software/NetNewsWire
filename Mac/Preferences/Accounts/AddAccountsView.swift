@@ -20,13 +20,13 @@ enum AddAccountSections: Int, CaseIterable {
 	var sectionHeader: String {
 		switch self {
 		case .local:
-			return NSLocalizedString("Local", comment: "Local Account")
+			return NSLocalizedString("label.text.local", comment: "Local")
 		case .icloud:
-			return NSLocalizedString("iCloud", comment: "iCloud Account")
+			return NSLocalizedString("label.text.cloudkit", comment: "iCloud")
 		case .web:
-			return NSLocalizedString("Web", comment: "Web Account")
+			return NSLocalizedString("label.text.web", comment: "Web")
 		case .selfhosted:
-			return NSLocalizedString("Self-hosted", comment: "Self hosted Account")
+			return NSLocalizedString("label.text.self-hosted", comment: "Self-hosted")
 		case .allOrdered:
 			return ""
 		}
@@ -35,13 +35,13 @@ enum AddAccountSections: Int, CaseIterable {
 	var sectionFooter: String {
 		switch self {
 		case .local:
-			return NSLocalizedString("Local accounts do not sync feeds across devices", comment: "Local Account")
+			return NSLocalizedString("label.text.local-account-explainer", comment: "Local accounts do not sync your feeds across devices")
 		case .icloud:
-			return NSLocalizedString("Your iCloud account syncs your feeds across your Mac and iOS devices", comment: "iCloud Account")
+			return NSLocalizedString("label.text.cloudkit-explainer", comment: "Your iCloud account syncs your feeds across your Mac and iOS devices")
 		case .web:
-			return NSLocalizedString("Web accounts sync your feeds across all your devices", comment: "Web Account")
+			return NSLocalizedString("label.text.web-account-explainer", comment: "Web accounts sync your feeds across all your devices")
 		case .selfhosted:
-			return NSLocalizedString("Self-hosted accounts sync your feeds across all your devices", comment: "Self hosted Account")
+			return NSLocalizedString("label.text.self-hosted-accounts-explainer", comment: "Self-hosted accounts sync your feeds across all your devices")
 		case .allOrdered:
 			return ""
 		}
@@ -87,7 +87,7 @@ struct AddAccountsView: View {
 	
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
-			Text("Choose an account type to add...")
+			Text("label.text.choose-account-to-add", comment: "Choose an account type to add...")
 				.font(.headline)
 				.padding()
 			
@@ -106,20 +106,20 @@ struct AddAccountsView: View {
 				Button(action: {
 					parent?.dismiss(nil)
 				}, label: {
-					Text("Cancel")
+					Text("button.title.cancel")
 						.frame(width: 76)
 				})
-				.help("Cancel")
+				.help("label.text.cancel")
 				.keyboardShortcut(.cancelAction)
 				
 				Button(action: {
 					addAccountDelegate?.presentSheetForAccount(selectedAccount)
 					parent?.dismiss(nil)
 				}, label: {
-					Text("Continue")
+					Text("button.title.continue", comment: "Continue")
 						.frame(width: 76)
 				})
-				.help("Add Account")
+				.help("label.text.add-account")
 				.keyboardShortcut(.defaultAction)
 			}
 			.padding(.top, 12)
@@ -133,7 +133,7 @@ struct AddAccountsView: View {
 	
 	var localAccount: some View {
 		VStack(alignment: .leading) {
-			Text("Local")
+			Text("label.text.local", comment: "Local")
 				.font(.headline)
 				.padding(.horizontal)
 			
@@ -164,7 +164,7 @@ struct AddAccountsView: View {
 	
 	var icloudAccount: some View {
 		VStack(alignment: .leading) {
-			Text("iCloud")
+			Text("label.text.cloudkit", comment: "iCloud")
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)
@@ -196,7 +196,7 @@ struct AddAccountsView: View {
 	@ViewBuilder
 	var webAccounts: some View {
 		VStack(alignment: .leading) {
-			Text("Web")
+			Text("label.text.web", comment: "Web")
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)
@@ -234,7 +234,7 @@ struct AddAccountsView: View {
 	
 	var selfhostedAccounts: some View {
 		VStack(alignment: .leading) {
-			Text("Self-hosted")
+			Text("label.text.self-hosted", comment: "Self-hosted")
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)

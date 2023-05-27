@@ -32,7 +32,7 @@ import RSCore
 			updateFolder()
 		}
 	}
-	var windowTitle: String = NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
+	var windowTitle: String = NSLocalizedString("window.title.folder-inspector", comment: "Folder Inspector")
 
 	func canInspect(_ objects: [Any]) -> Bool {
 
@@ -102,7 +102,7 @@ private extension FolderInspectorViewController {
 		if nameTextField.stringValue != name {
 			nameTextField.stringValue = name
 		}
-		windowTitle = folder?.nameForDisplay ?? NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
+		windowTitle = folder?.nameForDisplay ?? NSLocalizedString("window.title.folder-inspector", comment: "Folder Inspector")
 	}
 	
 	func renameFolderIfNecessary() {

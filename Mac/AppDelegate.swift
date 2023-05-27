@@ -353,13 +353,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if let decodingError = error as? DecodingError {
 			switch decodingError {
 			case .typeMismatch(let type, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist", comment: "Type mismatch")
+				let localizedError = NSLocalizedString("alert.error.theme-type-mismatch.%@", comment: "This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist")
 				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, type as! CVarArg) as String
 			case .valueNotFound(let value, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the value—“%@”—is not found in the Info.plist.", comment: "Decoding value missing")
+				let localizedError = NSLocalizedString("alert.error.theme-value-missing.%@", comment: "This theme cannot be used because the the value—“%@”—is not found in the Info.plist.")
 				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, value as! CVarArg) as String
 			case .keyNotFound(let codingKey, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the key—“%@”—is not found in the Info.plist.", comment: "Decoding key missing")
+				let localizedError = NSLocalizedString("alert.error.theme-key-not-found.%@", comment: "This theme cannot be used because the the key—“%@”—is not found in the Info.plist.")
 				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, codingKey.stringValue) as String
 			case .dataCorrupted(let context):
 				guard let underlyingError = context.underlyingError as NSError?,
@@ -367,7 +367,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 					informativeText = error.localizedDescription
 					break
 				}
-				let localizedError = NSLocalizedString("This theme cannot be used because of data corruption in the Info.plist: %@.", comment: "Decoding key missing")
+				let localizedError = NSLocalizedString("alert.error.theme-data-corruption.%@", comment: "This theme cannot be used because of data corruption in the Info.plist: %@.")
 				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, debugDescription) as String
 
 			default:
@@ -380,10 +380,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		DispatchQueue.main.async {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
-			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme error")
+			alert.messageText = NSLocalizedString("alert.title.theme-error", comment: "Theme error")
 			alert.informativeText = informativeText
-			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
-
+			alert.addButton(withTitle: NSLocalizedString("button.title.ok", comment: "OK"))
+			
 			alert.buttons[0].keyEquivalent = "\r"
 
 			_ = alert.runModal()
@@ -608,8 +608,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@MainActor @IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
 		if keyboardShortcutsWindowController == nil {
-
-			keyboardShortcutsWindowController = WebViewWindowController(title: NSLocalizedString("Keyboard Shortcuts", comment: "window title"))
+			
+			keyboardShortcutsWindowController = WebViewWindowController(title: NSLocalizedString("window.title.keyboard-shortcuts", comment: "Keyboard Shortcuts"))
 			let htmlFile = Bundle(for: type(of: self)).path(forResource: "KeyboardShortcuts", ofType: "html")!
 			keyboardShortcutsWindowController?.displayContents(of: htmlFile)
 
@@ -775,11 +775,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBAction func debugClearImageCaches(_ sender: Any?) {
 		let alert = NSAlert()
 		alert.alertStyle = .warning
-		alert.messageText = NSLocalizedString("Are you sure you want to clear the image caches? This will restart NetNewsWire to begin reloading the remote images.",
-											  comment: "Clear and restart confirmation message.")
-		alert.addButton(withTitle: NSLocalizedString("Clear & Restart", comment: "Clear & Restart"))
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"))
-
+		alert.messageText = NSLocalizedString("alert.message.clear-image-cache-confirmation",
+											  comment: "Are you sure you want to clear the image caches? This will restart NetNewsWire to begin reloading the remote images.")
+		alert.addButton(withTitle: NSLocalizedString("button.title.clear-and-restart", comment: "Clear & Restart"))
+		alert.addButton(withTitle: NSLocalizedString("button.title.cancel", comment: "Cancel"))
+		
 		let userChoice = alert.runModal()
 		if userChoice == .alertFirstButtonReturn {
 			CacheCleaner.purge()
@@ -872,7 +872,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			let alert = NSAlert()
 			alert.alertStyle = .informational
 
-			let localizedMessageText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
+			let localizedMessageText = NSLocalizedString("alert.title.install-theme.%@.%@", comment: "Install theme “%@” by %@? — the order of the variables is theme name, author name")
 			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
 
 			var attrs = [NSAttributedString.Key : Any]()
@@ -884,7 +884,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			attrs[.paragraphStyle] = titleParagraphStyle
 
 			let websiteText = NSMutableAttributedString()
-			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attrs))
+			websiteText.append(NSAttributedString(string: NSLocalizedString("alert.title.authors-website", comment: "Author's website:"), attributes: attrs))
 
 			websiteText.append(NSAttributedString(string: "\n"))
 
@@ -899,10 +899,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			textView.drawsBackground = false
 			textView.textStorage?.setAttributedString(websiteText)
 			alert.accessoryView = textView
-
-			alert.addButton(withTitle: NSLocalizedString("Install Theme", comment: "Install Theme"))
-			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
-
+			
+			alert.addButton(withTitle: NSLocalizedString("button.title.install-theme", comment: "Install Theme"))
+			alert.addButton(withTitle: NSLocalizedString("button.title.cancel", comment: "Cancel Install Theme"))
+				
 			func importTheme() {
 				do {
 					try ArticleThemesManager.shared.importTheme(filename: filename)
@@ -920,12 +920,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 						let alert = NSAlert()
 						alert.alertStyle = .warning
 
-						let localizedMessageText = NSLocalizedString("The theme “%@” already exists. Overwrite it?", comment: "Overwrite theme")
+						let localizedMessageText = NSLocalizedString("alert.message.duplicate-theme.%@", comment: "The theme “%@” already exists. Overwrite it?")
 						alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
 
-						alert.addButton(withTitle: NSLocalizedString("Overwrite", comment: "Overwrite"))
-						alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
-
+						alert.addButton(withTitle: NSLocalizedString("button.title.overwrite", comment: "Overwrite"))
+						alert.addButton(withTitle: NSLocalizedString("button.title.cancel", comment: "Cancel Install Theme"))
+						
 						alert.beginSheetModal(for: window) { result in
 							if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 								importTheme()
@@ -946,12 +946,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Theme installed", comment: "Theme installed")
-
-		let localizedInformativeText = NSLocalizedString("The theme “%@” has been installed.", comment: "Theme installed")
+		alert.messageText = NSLocalizedString("alert.title.theme-installed", comment: "Theme installed")
+		
+		let localizedInformativeText = NSLocalizedString("alert.message.theme-installed.%@", comment: "The theme “%@” has been installed.")
 		alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, themeName) as String
-
-		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+		
+		alert.addButton(withTitle: NSLocalizedString("button.title.ok", comment: "OK"))
 
 		alert.beginSheetModal(for: window)
 	}
@@ -975,9 +975,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		DispatchQueue.main.async {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
-			alert.messageText = NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed")
-			alert.informativeText = NSLocalizedString("Twitter has ended free access to the parts of the Twitter API that we need.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation informative text.")
-			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			alert.messageText = NSLocalizedString("alert.title.twitter-integration-removed", comment: "Twitter Integration Removed")
+			alert.informativeText = NSLocalizedString("alert.message.twitter-integration-removed", comment: "Twitter deprecation informative text.")
+			alert.addButton(withTitle: NSLocalizedString("button.title.ok", comment: "OK"))
 			alert.buttons[0].keyEquivalent = "\r"
 			alert.runModal()
 		}

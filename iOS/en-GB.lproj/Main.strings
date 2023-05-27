@@ -1,0 +1,42 @@
+/* Class = "UILabel"; text = "Label"; ObjectID = "0Hz-Dv-MhU"; Note = "This does not need to be localized as it is provided by feed data."; */
+"0Hz-Dv-MhU.text" = "Label";
+
+/* Class = "UIBarButtonItem"; title = "Next Article"; ObjectID = "2qz-M5-Yhk"; Note = "Button title: Next Article"; */
+"2qz-M5-Yhk.title" = "Next Article";
+
+/* Class = "UIBarButtonItem"; title = "Next Unread"; ObjectID = "2w5-e9-C2V"; Note = "Button title: Next Unread"; */
+"2w5-e9-C2V.title" = "Next Unread";
+
+/* Class = "UILabel"; text = "Blog Author"; ObjectID = "7GV-PV-YVq"; Note = "This does not need to be localized as it is provided by feed data."; */
+"7GV-PV-YVq.text" = "Blog Author";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "fTv-eX-72r"; Note = "Mark All as Read button title."; */
+"fTv-eX-72r.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Toggle Read"; ObjectID = "hy0-LS-MzE"; Note = "Button title: Toggle Read"; */
+"hy0-LS-MzE.title" = "Toggle Read";
+
+/* Class = "UILabel"; text = "Article Title"; ObjectID = "iFp-rn-HhQ"; Note = "This does not need to be localized as it is provided by feed data."; */
+"iFp-rn-HhQ.text" = "Article Title";
+
+/* Class = "UIViewController"; title = "Detail"; ObjectID = "JEX-9P-axG"; */
+"JEX-9P-axG.title" = "Detail";
+
+/* Class = "UIBarButtonItem"; title = "Settings"; ObjectID = "TlU-Pg-ATe"; Note = "Settings bar button item."; */
+"TlU-Pg-ATe.title" = "Settings";
+
+/* Class = "UIBarButtonItem"; title = "Previous Article"; ObjectID = "v4j-fq-23N"; Note = "Button title: Previous Article"; */
+"v4j-fq-23N.title" = "Previous Article";
+
+/* Class = "UINavigationItem"; title = "Timeline"; ObjectID = "wcC-1L-ug4"; Note = "Title used in the navigation bar for the Timeline."; */
+"wcC-1L-ug4.title" = "Timeline";
+
+/* Class = "UIBarButtonItem"; title = "Toggle Starred"; ObjectID = "wU4-eH-wC9"; Note = "Button title: Toggle Starred"; */
+"wU4-eH-wC9.title" = "Toggle Starred";
+
+/* Class = "UILabel"; text = "Blog Name"; ObjectID = "YsT-Lt-Zry"; Note = "This does not need to be localized as it is provided by feed data."; */
+"YsT-Lt-Zry.text" = "Blog Name";
+
+/* Class = "UINavigationItem"; title = "Feeds"; ObjectID = "Zdf-7t-Un8"; Note = "Title used in the navigation bar for the Feeds list."; */
+"Zdf-7t-Un8.title" = "Feeds";
+

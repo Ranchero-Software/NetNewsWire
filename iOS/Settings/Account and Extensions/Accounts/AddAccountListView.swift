@@ -74,7 +74,7 @@ struct AddAccountListView: View {
 				webAccountSection
 				selfHostedSection
 			}
-			.navigationTitle(Text("Add Account", comment: "Navigation title: Add Account"))
+			.navigationTitle(Text("navigation.title.add-account", comment: "Add Account"))
 			.navigationBarTitleDisplayMode(.inline)
 			.listItemTint(.primary)
 			.toolbar {
@@ -82,7 +82,7 @@ struct AddAccountListView: View {
 					Button(role: .cancel) {
 						dismiss()
 					} label: {
-						Text("Cancel", comment: "Button title")
+						Text("button.title.cancel", comment: "Button title")
 					}
 				}
 			}
@@ -100,11 +100,11 @@ struct AddAccountListView: View {
 					Text(viewModel.showAddAccountSheet.accountType.localizedAccountName())
 				}
 			}
-			.alert(Text("Error", comment: "Alert title: Error"),
+			.alert(Text("alert.title.error", comment: "Error"),
 				   isPresented: $viewModel.showAddAccountError.1,
 				   actions: { },
 				   message: {
-				Text("\(viewModel.showAddAccountError.0?.localizedDescription ?? "Unknown Error")")
+				Text(verbatim: "\(viewModel.showAddAccountError.0?.localizedDescription ?? "Unknown Error")")
 			})
 			.dismissOnAccountAdd()
 		}
@@ -116,7 +116,7 @@ struct AddAccountListView: View {
 				viewModel.showAddAccountSheet = (true, .onMyMac)
 			} label: {
 				Label {
-					Text(AccountType.onMyMac.localizedAccountName())
+					Text(verbatim: AccountType.onMyMac.localizedAccountName())
 						.foregroundColor(.primary)
 				} icon: {
 					Image(uiImage: AppAssets.image(for: .onMyMac)!)
@@ -125,9 +125,9 @@ struct AddAccountListView: View {
 				}
 			}
 		} header: {
-			Text("Local", comment: "Add Account: Local account section header")
+			Text("label.text.local-account", comment: "Local Account")
 		} footer: {
-			Text("Local accounts do not sync your feeds across devices", comment: "Local account section footer")
+			Text("label.text.local-account-explainer", comment: "Local accounts do not sync your feeds across devices")
 		}
 	}
 	
@@ -148,9 +148,9 @@ struct AddAccountListView: View {
 			}
 			.disabled(interactionDisabled(for: .cloudKit))
 		} header: {
-			Text("iCloud", comment: "Add Account: iCloud section header")
+			Text("label.text.cloudkit-account", comment: "iCloud")
 		} footer: {
-			Text("Your iCloud account syncs your feeds across your Mac and iOS devices", comment: "Add Account: iCloud section footer")
+			Text("label.text.cloudkit-account-footer", comment: "Your iCloud account syncs your feeds across your Mac and iOS devices")
 		}
 	}
 	
@@ -180,9 +180,9 @@ struct AddAccountListView: View {
 				}
 			}
 		} header: {
-			Text("Web Account", comment: "Add Account: Web Account section header")
+			Text("label.text.web-account", comment: "Web Account")
 		} footer: {
-			Text("Web accounts sync your feeds across all your devices", comment: "Add Account: Web Account section footer")
+			Text("label.text.web-account-explainer", comment: "Web accounts sync your feeds across all your devices")
 		}
 	}
 	
@@ -202,9 +202,9 @@ struct AddAccountListView: View {
 				}
 			}
 		} header: {
-			Text("Self-Hosted", comment: "Add Accont: Self-hosted section header")
+			Text("label.text.self-hosted-accounts", comment: "Self-Hosted Accounts")
 		} footer: {
-			Text("Self-hosted accounts sync your feeds across all your devices", comment: "Add Account: Self-hosted section footer")
+			Text("label.text.self-hosted-accounts-explainer", comment: "Self-hosted accounts sync your feeds across all your devices")
 		}
 	}
 	

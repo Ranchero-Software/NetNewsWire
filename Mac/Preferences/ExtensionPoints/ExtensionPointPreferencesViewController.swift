@@ -64,13 +64,13 @@ protocol ExtensionPointPreferencesEnabler: AnyObject {
 		
 		let alert = NSAlert()
 		alert.alertStyle = .warning
-		let prompt = NSLocalizedString("Deactivate", comment: "Deactivate")
-		alert.messageText = "\(prompt) “\(extensionPoint.title)”?"
+		let prompt = NSLocalizedString("alert.title.deactivate-extension.%@", comment: "Deactivate “%@“?")
+		alert.messageText = String(format: prompt, extensionPoint.title)
 		let extensionPointTypeTitle = extensionPoint.extensionPointID.extensionPointType.title
-		alert.informativeText = NSLocalizedString("Are you sure you want to deactivate the \(extensionPointTypeTitle) extension “\(extensionPoint.title)”?", comment: "Deactivate text")
+		alert.informativeText = NSLocalizedString("alert.message.cannot-undo-action", comment: "You can't undo this action.")
 		
-		alert.addButton(withTitle: NSLocalizedString("Deactivate", comment: "Deactivate Extension"))
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Deactivate Extension"))
+		alert.addButton(withTitle: NSLocalizedString("button.title.deactivate", comment: "Deactivate Extension"))
+		alert.addButton(withTitle: NSLocalizedString("button.title.cancel", comment: "Cancel Deactivate Extension"))
 			
 		alert.beginSheetModal(for: view.window!) { [weak self] result in
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
@@ -201,12 +201,12 @@ private extension ExtensionPointPreferencesViewController {
 		if tableView.selectedRow == -1 {
 			var helpText = ""
 			if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
-				helpText = NSLocalizedString("You've added all available extensions.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("label.text.added-all-extensions", comment: "You've added all available extensions.")
 			}
 			else if activeExtensionPoints.count == 0 {
-				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("label.text.add-extension", comment: "Add an extension by clicking the + button.")
 			} else {
-				helpText = NSLocalizedString("Select an extension or add a new extension by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("label.text.select-or-add-extension", comment: "Select an extension or add a new extension by clicking the + button.")
 			}
 			
 			if let controller = children.first {
@@ -244,12 +244,12 @@ private extension ExtensionPointPreferencesViewController {
 		if tableView.selectedRow == -1 {
 			var helpText = ""
 			if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
-				helpText = NSLocalizedString("You've added all available extensions.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("label.text.added-all-extensions", comment: "You've added all available extensions.")
 			}
 			else if activeExtensionPoints.count == 0 {
-				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("label.text.add-extension", comment: "Add an extension by clicking the + button.")
 			} else {
-				helpText = NSLocalizedString("Select an extension or add a new extension by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("label.text.select-or-add-extension", comment: "Select an extension or add a new extension by clicking the + button.")
 			}
 			
 			let textHostingController = NSHostingController(rootView: EnableExtensionPointHelpView(helpText: helpText, preferencesController: self))

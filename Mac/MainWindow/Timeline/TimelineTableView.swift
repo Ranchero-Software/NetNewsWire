@@ -14,7 +14,7 @@ import RSCore
 	weak var keyboardDelegate: KeyboardDelegate?
 	
 	override func accessibilityLabel() -> String? {
-		return NSLocalizedString("Timeline", comment: "Timeline")
+		return NSLocalizedString("label.text.timeline", comment: "Timeline")
 	}
 	
 	// MARK: - NSResponder

@@ -28,7 +28,7 @@ struct ColorPaletteSelectorView: View {
 				.resizable()
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 40.0, height: 40.0)
-			Text("Always Light", comment: "Button: always use light display mode")
+			Text("label.text.use-light-appearance", comment: "Always Light")
 				.font(.subheadline)
 			if AppDefaults.userInterfaceColorPalette == .light {
 				Image(systemName: "checkmark.circle.fill")
@@ -47,7 +47,7 @@ struct ColorPaletteSelectorView: View {
 				.resizable()
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 40.0, height: 40.0)
-			Text("Always Dark", comment: "Button: always use dark display mode")
+			Text("label.text.use-dark-appearance", comment: "Always Dark")
 				.font(.subheadline)
 			if AppDefaults.userInterfaceColorPalette == .dark {
 				Image(systemName: "checkmark.circle.fill")
@@ -66,7 +66,7 @@ struct ColorPaletteSelectorView: View {
 				.resizable()
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 40.0, height: 40.0)
-			Text("Use Device", comment: "Button: always use device display mode")
+			Text("label.text.use-device-appearance", comment: "Use Device")
 				.font(.subheadline)
 			if AppDefaults.userInterfaceColorPalette == .automatic {
 				Image(systemName: "checkmark.circle.fill")

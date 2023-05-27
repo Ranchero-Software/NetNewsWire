@@ -21,7 +21,7 @@ class RedditEnterDetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-		nextBarButtonItem.title = NSLocalizedString("Next", comment: "Next")
+		nextBarButtonItem.title = NSLocalizedString("button.title.next", comment: "Next")
 		nextBarButtonItem.style = .plain
 		nextBarButtonItem.target = self
 		nextBarButtonItem.action = #selector(nextScene)

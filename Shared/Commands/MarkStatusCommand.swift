@@ -111,10 +111,10 @@ private extension MarkStatusCommand {
 																											   Account.UserInfoKey.statusFlag: flag])
 	}
 
-	static private let markReadActionName = NSLocalizedString("Mark Read", comment: "command")
-	static private let markUnreadActionName = NSLocalizedString("Mark Unread", comment: "command")
-	static private let markStarredActionName = NSLocalizedString("Mark Starred", comment: "command")
-	static private let markUnstarredActionName = NSLocalizedString("Mark Unstarred", comment: "command")
+	static private let markReadActionName = NSLocalizedString("button.title.mark-read", comment: "Mark Read")
+	static private let markUnreadActionName = NSLocalizedString("button.title.mark-unread", comment: "Mark Unread")
+	static private let markStarredActionName = NSLocalizedString("button.title.mark-starred", comment: "Mark Starred")
+	static private let markUnstarredActionName = NSLocalizedString("button.title.mark-unstarred", comment: "Mark Unstarred")
 
 	static func actionName(_ statusKey: ArticleStatus.Key, _ flag: Bool) -> String {
 

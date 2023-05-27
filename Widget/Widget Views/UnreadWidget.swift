@@ -61,7 +61,7 @@ struct UnreadWidgetView : View {
 						HStack {
 							Spacer()
 							if entry.widgetData.currentUnreadCount - maxCount() > 0 {
-								Text(L10n.unreadCount(entry.widgetData.currentUnreadCount - maxCount()))
+								Text(String(format: NSLocalizedString("unread.count.%lld", comment: "Number of unread articles beyond what are currently displayed in the widget."), locale: .current, unreadCount()))
 									.font(.caption2)
 									.bold()
 									.foregroundColor(.secondary)
@@ -95,6 +95,10 @@ struct UnreadWidgetView : View {
 		return entry.widgetData.unreadArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
 	}
 	
+	func unreadCount() -> Int {
+		entry.widgetData.currentUnreadCount - maxCount()
+	}
+	
 	var inboxZero: some View {
 		VStack(alignment: .center) {
 			Spacer()
@@ -104,11 +108,11 @@ struct UnreadWidgetView : View {
 				.foregroundColor(.accentColor)
 				.frame(width: 30)
 
-			Text(L10n.unreadWidgetNoItemsTitle)
+			Text("widget.title.unread-no-items", comment: "Unread")
 				.font(.headline)
 				.foregroundColor(.primary)
 			
-			Text(L10n.unreadWidgetNoItems)
+			Text("widget.description.unread-no-items", comment: "There are no unread articles left to read.")
 				.font(.caption)
 				.foregroundColor(.gray)
 			Spacer()

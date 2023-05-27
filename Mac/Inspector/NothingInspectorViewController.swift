@@ -19,7 +19,7 @@ import AppKit
 			updateTextFields()
 		}
 	}
-	var windowTitle: String = NSLocalizedString("Inspector", comment: "Inspector window title")
+	var windowTitle: String = NSLocalizedString("window.title.inspector", comment: "Inspector")
 
 	func canInspect(_ objects: [Any]) -> Bool {
 

@@ -20,17 +20,17 @@ struct AboutNetNewsWireView: View {
 					.resizable()
 					.frame(width: 75, height: 75)
 				
-				Text("NetNewsWire")
+				Text(verbatim: "NetNewsWire")
 					.font(.headline)
 				
 				Text("\(Bundle.main.versionNumber) (\(Bundle.main.buildNumber))")
 					.foregroundColor(.secondary)
 					.font(.callout)
 				
-				Text("By Brent Simmons and the NetNewsWire team.")
+				Text("label.text.netnewswire-byline", comment: "By Brent Simmons and the NetNewsWire team.")
 					.font(.subheadline)
 				
-				Text("[netnewswire.com](https://netnewswire.com)")
+				Text("label.markdown.netnewswire-website", comment: "Markdown formatted link to netnewswire.com")
 					.font(.callout)
 				
 				Spacer()

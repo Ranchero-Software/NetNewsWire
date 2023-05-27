@@ -13,7 +13,7 @@ class OpenInBrowserActivity: UIActivity {
 	private var activityItems: [Any]?
 
 	override var activityTitle: String? {
-		return NSLocalizedString("Open in Browser", comment: "Open in Browser")
+		return NSLocalizedString("activity.title.open-in-browser", comment: "Open in Browser")
 	}
 	
 	override var activityImage: UIImage? {

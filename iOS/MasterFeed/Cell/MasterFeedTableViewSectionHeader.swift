@@ -27,9 +27,9 @@ protocol MasterFeedTableViewSectionHeaderDelegate {
 		set {}
 		get {
 			if disclosureExpanded {
-				return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
+				return NSLocalizedString("label.accessibility.expanded", comment: "Disclosure button expanded state for accessibility")
 			}
-			return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
+			return NSLocalizedString("label.accessibility.collapsed", comment: "Disclosure button collapsed state for accessibility")
 		}
 	}
 	

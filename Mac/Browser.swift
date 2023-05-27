@@ -69,8 +69,8 @@ extension Browser {
 		let openInBackgroundPref = AppDefaults.shared.openInBrowserInBackground
 
 		return openInBackgroundPref ?
-			NSLocalizedString("Open in Browser in Foreground", comment: "Open in Browser in Foreground menu item title") :
-			NSLocalizedString("Open in Browser in Background", comment: "Open in Browser in Background menu item title")
+			NSLocalizedString("button.title.open-in-foreground", comment: "Open in Browser in Foreground") :
+			NSLocalizedString("button.title.open-in-background", comment: "Open in Browser in Background")
 	}
 }
 
@@ -95,11 +95,11 @@ extension Browser {
 
 		if urlStrings.count > 20 {
 			let alert = NSAlert()
-			let messageFormat = NSLocalizedString("Are you sure you want to open %ld articles in your browser?", comment: "Open in Browser confirmation alert message format")
+			let messageFormat = NSLocalizedString("alert.title.open-articles-in-browser.%ld", comment: "Are you sure you want to open %ld articles in your browser?")
 			alert.messageText = String.localizedStringWithFormat(messageFormat, urlStrings.count)
-			let confirmButtonTitleFormat = NSLocalizedString("Open %ld Articles", comment: "Open URLs in Browser confirm button format")
+			let confirmButtonTitleFormat = NSLocalizedString("button.title.open-articles.%ld", comment: "Open %ld Articles")
 			alert.addButton(withTitle: String.localizedStringWithFormat(confirmButtonTitleFormat, urlStrings.count))
-			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
+			alert.addButton(withTitle: NSLocalizedString("button.title.cancel", comment: "Cancel button"))
 
 			if let window {
 				alert.beginSheetModal(for: window) { response in

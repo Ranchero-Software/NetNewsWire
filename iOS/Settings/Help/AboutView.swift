@@ -14,21 +14,21 @@ struct AboutView: View, LoadableAboutData {
 	var body: some View {
 		List {
 			Section(header: aboutHeaderView) {}
-			Section(header: Text("Primary Contributors", comment: "About: Primary Contributors section header")) {
+			Section(header: Text("label.text.primary-contributors", comment: "Primary Contributors")) {
 				ForEach(0..<about.PrimaryContributors.count, id: \.self) { i in
 					contributorView(about.PrimaryContributors[i])
 				}
 			}
-			Section(header: Text("Additional Contributors", comment: "About: Additional Contributors section header")) {
+			Section(header: Text("label.text.additional-contributors", comment: "Additional Contributors")) {
 				ForEach(0..<about.AdditionalContributors.count, id: \.self) { i in
 					contributorView(about.AdditionalContributors[i])
 				}
 			}
-			Section(header: Text("Thanks", comment: "About: Thanks section header"), footer: thanks, content: {})
+			Section(header: Text("label.text.thanks", comment: "Thanks"), footer: thanks, content: {})
 			Section(footer: copyright, content: {})
 		}
 		.listStyle(.insetGrouped)
-		.navigationTitle(Text("About", comment: "Navigation title: About"))
+		.navigationTitle(Text("navigation.title.about", comment: "About"))
 		.navigationBarTitleDisplayMode(.inline)
     }
 	
@@ -48,10 +48,10 @@ struct AboutView: View, LoadableAboutData {
 					.foregroundColor(.secondary)
 					.font(.callout)
 					
-				Text("By Brent Simmons and the Ranchero Software team.", comment: "NetNewsWire byline.")
+				Text("label.text.netnewswire-byline", comment: "By Brent Simmons and the Ranchero Software team.")
 					.font(.subheadline)
 				
-				Text("[netnewswire.com](https://netnewswire.com)")
+				Text("label.markdown.netnewswire-website", comment: "Markdown formatted link to netnewswire.com")
 					
 			}
 			Spacer()

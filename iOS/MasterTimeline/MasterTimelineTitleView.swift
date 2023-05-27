@@ -22,7 +22,7 @@ import UIKit
 		set { }
 		get {
 			if let name = label.text {
-				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
+				let unreadLabel = NSLocalizedString("label.accessibility.unread", comment: "unread")
 				return "\(name) \(unreadCountView.unreadCount) \(unreadLabel)"
 			}
 			else {

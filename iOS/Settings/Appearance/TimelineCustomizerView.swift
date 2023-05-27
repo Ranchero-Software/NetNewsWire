@@ -15,7 +15,7 @@ struct TimelineCustomizerView: View {
 	
     var body: some View {
 		List {
-			Section(header: Text("Icon Size", comment: "Timline Customiser: Icon size section header")) {
+			Section(header: Text("label.text.icon-size", comment: "Icon Size")) {
 				ZStack {
 					TickMarkSliderView(minValue: 1, maxValue: 3, currentValue: Binding(get: {
 						Float(appDefaults.timelineIconSize.rawValue)
@@ -27,7 +27,7 @@ struct TimelineCustomizerView: View {
 			.listRowBackground(Color.clear)
 			.listRowSeparator(.hidden)
 			
-			Section(header: Text("Number of Lines", comment: "Timeline customiser: Number of lines section header")) {
+			Section(header: Text("label.text.number-of-lines", comment: "Number of Lines")) {
 				ZStack {
 					TickMarkSliderView(minValue: 1, maxValue: 5, currentValue: Binding(get: {
 						Float(appDefaults.timelineNumberOfLines)
@@ -45,7 +45,7 @@ struct TimelineCustomizerView: View {
 			}
 		}
 		.listStyle(.grouped)
-		.navigationTitle(Text("Timeline Layout", comment: "Navigation bar title for Timeline Layout"))
+		.navigationTitle(Text("navigation.title.timeline-layout", comment: "Timeline Layout"))
 		
     }
 	
@@ -70,11 +70,11 @@ struct TimelineCustomizerView: View {
 					.bold()
 					.lineLimit(appDefaults.timelineNumberOfLines)
 				HStack {
-					Text("Feed name", comment: "Feed name placeholder used in timeline preview")
+					Text("label.placeholder.feed-name", comment: "Feed name")
 						.foregroundColor(.secondary)
 						.font(.caption)
 					Spacer()
-					Text("08:51", comment: "Sample time used in timeline preview")
+					Text(verbatim: localizedTime())
 						.foregroundColor(.secondary)
 						.font(.caption)
 				}.padding(0)
@@ -83,6 +83,13 @@ struct TimelineCustomizerView: View {
 		.edgesIgnoringSafeArea(.all)
 		.padding(.vertical, 4)
 		.padding(.leading, 4)
+	}
+	
+	func localizedTime() -> String {
+		let now = Date.now
+		let formatter = DateFormatter()
+		formatter.setLocalizedDateFormatFromTemplate("hh:mm")
+		return formatter.string(from: now)
 	}
 }
 

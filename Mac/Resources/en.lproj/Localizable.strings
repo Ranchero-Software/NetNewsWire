@@ -1,0 +1,695 @@
+/* On My iPad */
+"account.name.ipad" = "On My iPad";
+
+/* On My iPhone */
+"account.name.iphone" = "On My iPhone";
+
+/* On My Mac */
+"account.name.mac" = "On My Mac";
+
+/* See articles in “%@” */
+"activity.title.see-article-in.folder.%@" = "See articles in “%@”";
+
+/* See first unread article */
+"activity.title.see-first-unread-article" = "See first unread article";
+
+/* Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings. */
+"alert.error.cloudkit-missing" = "Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.";
+
+/* There is already an account of that type with that username created. */
+"alert.error.duplicate-account-username" = "There is already an account of that type with that username created.";
+
+/* Invalid API URL. */
+"alert.error.invalid-api-url" = "Invalid API URL.";
+
+/* Error message: The user provided an invalid username or password. */
+"alert.error.invalid-username-or-password" = "A username or password is required.";
+
+/* Error message: Unable to save due a Keychain error. */
+"alert.error.keychain-error" = "Unable to save account credentials due to a Keychain error.";
+
+/* Network error. Please try later. */
+"alert.error.network-error" = "A network error has occurred. Please try later.";
+
+/* This theme cannot be used because of data corruption in the Info.plist: %@. */
+"alert.error.theme-data-corruption.%@" = "This theme cannot be used because of data corruption in the Info.plist: %@.";
+
+/* Error message: This theme shares the same name as a provided theme and cannot be imported. */
+"alert.error.theme-duplicate-of-provided" = "This theme shares the same name as a provided theme and cannot be imported.";
+
+/* This theme cannot be used because the the key—“%@”—is not found in the Info.plist. */
+"alert.error.theme-key-not-found.%@" = "This theme cannot be used because the the key—“%@”—is not found in the Info.plist.";
+
+/* This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist */
+"alert.error.theme-type-mismatch.%@" = "This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist";
+
+/* This theme cannot be used because the the value—“%@”—is not found in the Info.plist. */
+"alert.error.theme-value-missing.%@" = "This theme cannot be used because the the value—“%@”—is not found in the Info.plist.";
+
+/* The account type in invalid. */
+"alert.error.unrecognized-account" = "The account type is not recognized.";
+
+/* Error message: The user must provide a username and password. */
+"alert.error.username-and-password-required" = "A username and password are required.";
+
+/* The user must provide a username, password, and URL. */
+"alert.error.username-password-url-required" = "A username, password, and API URL are required.";
+
+/* Username required. */
+"alert.error.username-required" = "A username is required.";
+
+/* You won't see this message again */
+"alert.informative.will-not-see-again" = "You won't see this message again";
+
+/* Some articles don’t have links, so they weren't copied. */
+"alert.message.articles-without-links" = "Some articles don’t have links, so they weren't copied.";
+
+/* Cannot undo action
+   You can't undo this action. */
+"alert.message.cannot-undo-action" = "You can't undo this action.";
+
+/* Are you sure you want to clear the image caches? This will restart NetNewsWire to begin reloading the remote images. */
+"alert.message.clear-image-cache-confirmation" = "Are you sure you want to clear the image caches? This will restart NetNewsWire to begin reloading the remote images.";
+
+/* You've already set up an iCloud account. */
+"alert.message.cloudkit-already-setup" = "You've already set up an iCloud account.";
+
+/* Are you sure you want to delete the “%@” feed? */
+"alert.message.delete-feed.%@" = "Are you sure you want to delete the “%@” feed?";
+
+/* Are you sure you want to delete the “%@” folder? */
+"alert.message.delete-folder.%@" = "Are you sure you want to delete the “%@” folder?";
+
+/* Are you sure you want to delete the %d selected items? */
+"alert.message.delete-items.%d" = "Are you sure you want to delete the %d selected items?";
+
+/* Can’t add this feed because of a download error: “%@” */
+"alert.message.download-error.%@" = "Can’t add this feed because of a download error: “%@”";
+
+/* The theme “%@” already exists. Overwrite it? */
+"alert.message.duplicate-theme.%@" = "The theme “%@” already exists. Overwrite it?";
+
+/* You can enable NetNewsWire notifications in System Settings. */
+"alert.message.enable-notifications-in-settings" = "You can enable NetNewsWire notifications in System Settings.";
+
+/* To enable notifications, open Notifications in System Settings, then find NetNewsWire in the list. */
+"alert.message.enable-notifications-in-system-settings" = "To enable notifications, open Notifications in System Settings, then find NetNewsWire in the list.";
+
+/* A web browser will open the Feedly login for you to authorize access. */
+"alert.message.feedly-web-browser-information" = "A web browser will open the Feedly login for you to authorize access.";
+
+/* The theme “%@” has been installed. */
+"alert.message.theme-installed.%@" = "The theme “%@” has been installed.";
+
+/* Twitter Deprecation Message */
+"alert.message.twitter-deprecation-message" = "On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.";
+
+/* Author's website: */
+"alert.title.authors-website" = "Author's website:";
+
+/* Deactivate “%@“? */
+"alert.title.deactivate-extension.%@" = "Deactivate “%@“?";
+
+/* Delete Feed */
+"alert.title.delete-feed" = "Delete Feed";
+
+/* Delete Folder */
+"alert.title.delete-folder" = "Delete Folder";
+
+/* Delete Items */
+"alert.title.delete-items" = "Delete Items";
+
+/* Delete “%@“ */
+"alert.title.delete.%@" = "Delete “%@“";
+
+/* Download Error */
+"alert.title.download-error" = "Download Error";
+
+/* Enable Notifications */
+"alert.title.enable-notifications" = "Enable Notifications";
+
+/* Error */
+"alert.title.error" = "Error";
+
+/* Install theme “%@” by %@? — the order of the variables is theme name, author name */
+"alert.title.install-theme.%@.%@" = "Install theme “%@” by %@?";
+
+/* Notifications are not enabled. */
+"alert.title.notifications-not-enabled" = "Notifications are not enabled.";
+
+/* Are you sure you want to open %ld articles in your browser? */
+"alert.title.open-articles-in-browser.%ld" = "Are you sure you want to open %ld articles in your browser?";
+
+/* Theme error */
+"alert.title.theme-error" = "Theme error";
+
+/* Theme installed */
+"alert.title.theme-installed" = "Theme installed";
+
+/* Twitter Integration Removed */
+"alert.title.twitter-integration-removed" = "Twitter Integration Removed";
+
+/* Alert title when adding a Feedly account and waiting for authorization from the user. */
+"alert.title.waiting-for-feedly-access" = "Waiting for Feedly access...";
+
+/* Mark Above as Read */
+"button.title-mark-above-as-read.titlecase" = "Mark Above as Read";
+
+/* Mark Below as Read */
+"button.title-mark-below-as-read.titlecase" = "Mark Below as Read";
+
+/* 1 day */
+"button.title.1-day" = "1 day";
+
+/* 1 month */
+"button.title.1-month" = "1 month";
+
+/* 1 week */
+"button.title.1-week" = "1 week";
+
+/* 1 year */
+"button.title.1-year" = "1 year";
+
+/* 2 days */
+"button.title.2-days" = "2 days";
+
+/* Every 2 Hours */
+"button.title.2-hours" = "Every 2 Hours";
+
+/* 2 weeks */
+"button.title.2-weeks" = "2 weeks";
+
+/* 3 days */
+"button.title.3-days" = "3 days";
+
+/* Every 4 Hours */
+"button.title.4-hours" = "Every 4 Hours";
+
+/* Every 8 Hours */
+"button.title.8-hours" = "Every 8 Hours";
+
+/* Every 10 Minutes */
+"button.title.10-minutes" = "Every 10 Minutes";
+
+/* Every 30 Minutes */
+"button.title.30-minutes" = "Every 30 Minutes";
+
+/* Account */
+"button.title.accounts" = "Account";
+
+/* Add Item */
+"button.title.add-item" = "Add Item";
+
+/* Advanced */
+"button.title.advanced" = "Advanced";
+
+/* Always Use Reader View */
+"button.title.always-use-reader-view" = "Always User Reader View";
+
+/* Article Theme */
+"button.title.article-theme" = "Article Theme";
+
+/* Cancel
+   Cancel button
+   Cancel Deactivate Extension
+   Cancel Delete Account
+   Cancel Install Theme */
+"button.title.cancel" = "Cancel";
+
+/* Clean Up */
+"button.title.clean-up" = "Clean Up";
+
+/* Clear & Restart */
+"button.title.clear-and-restart" = "Clear & Restart";
+
+/* Close */
+"button.title.close" = "Close";
+
+/* Continue */
+"button.title.continue" = "Continue";
+
+/* Copy Article URL */
+"button.title.copy-article-url" = "Copy Article URL";
+
+/* Copy External URL */
+"button.title.copy-external-url" = "Copy External URL";
+
+/* Copy Feed URL */
+"button.title.copy-feed-url" = "Copy Feed URL";
+
+/* Copy Home Page URL */
+"button.title.copy-home-page-url" = "Copy Home Page URL";
+
+/* Create */
+"button.title.create" = "Create";
+
+/* Deactivate Extension */
+"button.title.deactivate" = "Deactivate";
+
+/* System Default (%@) */
+"button.title.default-browser.%@" = "System Default (%@)";
+
+/* Delete
+   Delete Account */
+"button.title.delete" = "Delete";
+
+/* Delete Feed */
+"button.title.delete-feed" = "Delete Feed";
+
+/* Delete Feeds */
+"button.title.delete-feeds" = "Delete Feeds";
+
+/* Delete Feeds and Folders */
+"button.title.delete-feeds-and-folders" = "Delete Feeds and Folders";
+
+/* Delete Folder */
+"button.title.delete-folder" = "Delete Folder";
+
+/* Delete Folders */
+"button.title.delete-folders" = "Delete Folders";
+
+/* Dismiss */
+"button.title.dismiss" = "Dismiss";
+
+/* Every Hour */
+"button.title.every-hour" = "Every Hour";
+
+/* Extensions */
+"button.title.extensions" = "Extensions";
+
+/* General */
+"button.title.general" = "General";
+
+/* Hide Read Articles */
+"button.title.hide-read-articles" = "Hide Read Articles";
+
+/* Hide Read Feeds */
+"button.title.hide-read-feeds" = "Hide Read Feeds";
+
+/* Hide Sidebar */
+"button.title.hide-sidebar" = "Hide Sidebar";
+
+/* Install Theme */
+"button.title.install-theme" = "Install Theme";
+
+/* Manually */
+"button.title.manually" = "Manually";
+
+/* Mark Above as Read */
+"button.title.mark-above-as-read.titlecase" = "Mark Above as Read";
+
+/* Mark All as Read in “%@” */
+"button.title.mark-all-as-read.%@" = "Mark All as Read in “%@”";
+
+/* Mark All as Read */
+"button.title.mark-all-as-read.titlecase" = "Mark All as Read";
+
+/* Mark as Read */
+"button.title.mark-as-read" = "Mark as Read";
+
+/* Mark as Read Older Than */
+"button.title.mark-as-read-older-than" = "Mark as Read Older Than";
+
+/* Mark as Starred */
+"button.title.mark-as-starred" = "Mark as Starred";
+
+/* Mark as Unread */
+"button.title.mark-as-unread" = "Mark as Unread";
+
+/* Mark as Unstarred */
+"button.title.mark-as-unstarred" = "Mask as Unstarred";
+
+/* Mark Below as Read */
+"button.title.mark-below-as-read.titlecase" = "Mark Below as Read";
+
+/* Mark Read */
+"button.title.mark-read" = "Mark Read";
+
+/* Star */
+"button.title.mark-star" = "Mark Star";
+
+/* Mark Starred */
+"button.title.mark-starred" = "Mark Starred";
+
+/* Mark Unread */
+"button.title.mark-unread" = "Mark Unread";
+
+/* Mark Unstarred */
+"button.title.mark-unstarred" = "Mark Unstarred";
+
+/* New Feed */
+"button.title.new-feed" = "New Feed";
+
+/* New Folder
+   New Folder... */
+"button.title.new-folder" = "New Folder";
+
+/* New Reddit Feed... */
+"button.title.new-reddit-feed" = "New Reddit Feed...";
+
+/* New Twitter Feed... */
+"button.title.new-twitter-feed" = "New Twitter Feed...";
+
+/* New Web Feed... */
+"button.title.new-web-feed" = "New Web Feed...";
+
+/* Next Unread */
+"button.title.next-read" = "Next Unread";
+
+/* OK */
+"button.title.ok" = "OK";
+
+/* Open */
+"button.title.open" = "Open";
+
+/* Open %ld Articles */
+"button.title.open-articles.%ld" = "Open %ld Articles";
+
+/* Open Home Page */
+"button.title.open-home-page" = "Open Home Page";
+
+/* Open in Browser in Background */
+"button.title.open-in-background" = "Open in Browser in Background";
+
+/* Open in Browser */
+"button.title.open-in-browser" = "Open in Browser";
+
+/* Open in Browser in Foreground */
+"button.title.open-in-foreground" = "Open in Browser in Foreground";
+
+/* New Folder... */
+"button.title.open-new-folder" = "New Folder...";
+
+/* Open Settings */
+"button.title.open-settings" = "Open Settings";
+
+/* Open System Settings */
+"button.title.open-system-settings" = "Open System Settings";
+
+/* Overwrite */
+"button.title.overwrite" = "Overwrite";
+
+/* Read Articles Filter */
+"button.title.read-articles-filter" = "Read Articles Filter";
+
+/* Reader View */
+"button.title.reader-view" = "Reader View";
+
+/* Refresh */
+"button.title.refresh" = "Refresh";
+
+/* Rename */
+"button.title.rename" = "Rename";
+
+/* Search */
+"button.title.search" = "Search";
+
+/* Select “%@” in Sidebar */
+"button.title.select-in-sidebar.%@" = "Select “%@” in Sidebar";
+
+/* Share
+   Share menu name */
+"button.title.share" = "Share";
+
+/* Show Read Articles */
+"button.title.show-read-articles" = "Show Read Articles";
+
+/* Show Read Feeds */
+"button.title.show-read-feeds" = "Show Read Feeds";
+
+/* Show Sidebar */
+"button.title.show-sidebar" = "Show Sidebar";
+
+/* Toggle Sidebar */
+"button.title.toggle-sidebar" = "Toggle Sidebar";
+
+/* Update */
+"button.title.update" = "Update";
+
+/* Show notifications for new articles */
+"checkbox.title.show-new-article-notifications" = "Show notifications for new articles";
+
+/* Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings. */
+"error.description.cloudkit-unavailable" = "Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.";
+
+/* Unable to create extension. */
+"error.message.unable-to-create-extension" = "Unable to create extension.";
+
+/* Markdown formatted link to netnewswire.com */
+"label.markdown.netnewswire-website" = "[netnewswire.com](https://netnewswire.com)";
+
+/* Add an account by clicking the + button. */
+"label.text.add-account-explainer" = "Add an account by clicking the + button.";
+
+/* Add an extension by clicking the + button. */
+"label.text.add-extension" = "Add an extension by clicking the + button.";
+
+/* You've added all available extensions. */
+"label.text.added-all-extensions" = "You've added all available extensions.";
+
+/* Article */
+"label.text.article" = "Article";
+
+/* Choose an account type to add... */
+"label.text.choose-account-to-add" = "Choose an account type to add...";
+
+/* Choose an extension to add... */
+"label.text.choose-extension-to-add" = "Choose an extension to add...";
+
+/* iCloud */
+"label.text.cloudkit" = "iCloud";
+
+/* Your iCloud account syncs your feeds across your Mac and iOS devices */
+"label.text.cloudkit-explainer" = "Your iCloud account syncs your feeds across your Mac and iOS devices";
+
+/* Error - Reader View */
+"label.text.error-reader-view" = "Error - Reader View";
+
+/* XX-Large */
+"label.text.extra-extra-large" = "XX-Large";
+
+/* X-Large */
+"label.text.extra-large" = "X-Large";
+
+/* Feed Provider */
+"label.text.feed-provider" = "Feed Provider";
+
+/* An extension that makes websites appear to provide RSS feeds for their content. */
+"label.text.feed-provider-explainer" = "An extension that makes websites appear to provide RSS feeds for their content.";
+
+/* Find out more */
+"label.text.find-out-more" = "Find out more";
+
+/* Finding feed... */
+"label.text.finding-feed" = "Finding feed...";
+
+/* Large */
+"label.text.large" = "Large";
+
+/* Link: */
+"label.text.link" = "Link:";
+
+/* Local */
+"label.text.local" = "Local";
+
+/* Local accounts do not sync your feeds across devices */
+"label.text.local-account-explainer" = "Local accounts do not sync your feeds across devices";
+
+/* This extension enables share menu functionality to send selected article text to MarsEdit. You need the MarsEdit application for this to work. */
+"label.text.marsedit.explainer" = "This extension enables share menu functionality to send selected article text to MarsEdit. You need the MarsEdit application for this to work.";
+
+/* Medium */
+"label.text.medium" = "Medium";
+
+/* This extension enables share menu functionality to send selected article text to Micro.blog. You need the Micro.blog application for this to work. */
+"label.text.micro-blog-expaliner" = "This extension enables share menu functionality to send selected article text to Micro.blog. You need the Micro.blog application for this to work.";
+
+/* By Brent Simmons and the NetNewsWire team. */
+"label.text.netnewswire-byline" = "By Brent Simmons and the NetNewsWire team.";
+
+/* Don’t have a BazQux account? */
+"label.text.no-bazqux" = "Don’t have a BazQux account?";
+
+/* Don’t have a FreshRSS instance? */
+"label.text.no-fresh-rss" = "Don’t have a FreshRSS instance?";
+
+/* Don’t have an InoReader account? */
+"label.text.no-inoreader" = "Don’t have an InoReader account?";
+
+/* Don’t have a The Old Reader account? */
+"label.text.no-old-reader" = "Don’t have a The Old Reader account?";
+
+/* (No Text) */
+"label.text.no-text" = "(No Text)";
+
+/* Posts from r/%@ */
+"label.text.posts-from-subreddit.%@" = "Posts from r/%@";
+
+/* Privacy Policy */
+"label.text.privacy-policy" = "Privacy Policy";
+
+/* Processing - Reader View */
+"label.text.processing-reader-view" = "Processing - Reader View";
+
+/* Reader View */
+"label.text.reader-view" = "Reader View";
+
+/* The most active posts */
+"label.text.reddit-active-posts" = "The most active posts";
+
+/* The best posts on Reddit for you */
+"label.text.reddit-best-posts" = "The best posts on Reddit for you";
+
+/* Your personal Reddit frontpage */
+"label.text.reddit-front-page" = "Your personal Reddit frontpage";
+
+/* Select an account or add a new account by clicking the + button. */
+"label.text.select-or-add-account-explainer" = "Select an account or add a new account by clicking the + button.";
+
+/* Select an extension or add a new extension by clicking the + button. */
+"label.text.select-or-add-extension" = "Select an extension or add a new extension by clicking the + button.";
+
+/* Selected - Reader View */
+"label.text.selected-reader-view" = "Selected - Reader View";
+
+/* Self-hosted */
+"label.text.self-hosted" = "Self-hosted";
+
+/* Self-hosted accounts sync your feeds across all your devices */
+"label.text.self-hosted-accounts-explainer" = "Self-hosted accounts sync your feeds across all your devices";
+
+/* An extension that enables a share menu item that passes article data to a third-party application. */
+"label.text.share-extension-explainer" = "An extension that enables a share menu item that passes article data to a third-party application.";
+
+/* Sign in to your BazQux account. */
+"label.text.sign-in-bazqux" = "Sign in to your BazQux account.";
+
+/* Sign in to your FreshRSS account. */
+"label.text.sign-in-freshrss" = "Sign in to your FreshRSS account.";
+
+/* Sign in to your InoReader account. */
+"label.text.sign-in-inoreader" = "Sign in to your InoReader account.";
+
+/* Sign in to your The Old Reader account. */
+"label.text.sign-in-old-reader" = "Sign in to your The Old Reader account.";
+
+/* Small */
+"label.text.small" = "Small";
+
+/* Subreddit */
+"label.text.subreddit" = "Subreddit";
+
+/* Built-in */
+"label.text.themes-builtin" = "Built-in Themes";
+
+/* Third Party */
+"label.text.themes-third-party" = "Other Themes";
+
+/* Third-Party Integration */
+"label.text.third-party-integration" = "Third-Party Integration";
+
+/* Timeline */
+"label.text.timeline" = "Timeline";
+
+/* Tweets that contain %@ */
+"label.text.tweets-containing.%@" = "Tweets that contain %@";
+
+/* Tweets from everyone you follow */
+"label.text.tweets-from-everyone" = "Tweets from everyone you follow";
+
+/* Tweets from @%@ */
+"label.text.tweets-from.%@" = "Tweets from @%@";
+
+/* Tweets mentioning you */
+"label.text.tweets-mentioning-you" = "Tweets mentioning you";
+
+/* unread */
+"label.text.unread" = "unread";
+
+/* Web */
+"label.text.web" = "Web";
+
+/* Web accounts sync your feeds across all your devices */
+"label.text.web-account-explainer" = "Web accounts sync your feeds across all your devices";
+
+/* Catch up to articles older than... */
+"menu.title.catch-up-to-articles" = "Catch up to articles older than...";
+
+/* Choose a location for the exported OPML file. */
+"panel.message.export-opml" = "Choose a location for the exported OPML file.";
+
+/* Export OPML */
+"panel.prompt.export-opml" = "Export OPML";
+
+/* Export to: */
+"panel.textfield.export-opml-destination" = "Export to:";
+
+/* Export OPML */
+"panel.title.export-opml" = "Export OPML";
+
+/* Choose a Subscriptions.plist file: */
+"panel.title.select-opml-file" = "Choose a Subscriptions.plist file:";
+
+/* All Unread pseudo-feed title */
+"smartfeed.title.allunread" = "All Unread";
+
+/* Starred pseudo-feed title */
+"smartfeed.title.starred" = "Starred";
+
+/* Today pseudo-feed title */
+"smartfeed.title.today" = "Today";
+
+/* Smart Feeds group title */
+"smartfeeds.title" = "Smart Feeds";
+
+/* Search: */
+"textfield.placeholder.search" = "Search:";
+
+/* Search Term or #hashtag */
+"textfield.placeholder.search-term-hashtag" = "Search Term or #hashtag";
+
+/* @name */
+"textfield.placeholder.twitter-username" = "@name";
+
+/* Rename %@ to: */
+"textfield.prompt.rename-to.%@" = "Rename %@ to:";
+
+/* Create a local account on your Mac. */
+"textfield.text.create-a-local-account" = "Create a local account on your Mac.";
+
+/* Sign in to your Feedbin account. */
+"textfield.text.sign-in-feedbin" = "Sign in to your Feedbin account.";
+
+/* Sign in to your NewsBlur account. */
+"textfield.text.sign-in-newsblur" = "Sign in to your NewsBlur account.";
+
+/* Update your Feedbin account credentials. */
+"textfield.text.update-feedbin-credentials" = "Update your Feedbin account credentials.";
+
+/* Update your NewsBlur account credentials. */
+"textfield.text.update-newsblur-credentials" = "Update your NewsBlur account credentials.";
+
+/* %d unread */
+"window.subtitle.unread-count.%d" = "%d unread";
+
+/* Feed Inspector */
+"window.title.feed-inspector" = "Feed Inspector";
+
+/* Folder Inspector */
+"window.title.folder-inspector" = "Folder Inspector";
+
+/* Inspector */
+"window.title.inspector" = "Inspector";
+
+/* Keyboard Shortcuts */
+"window.title.keyboard-shortcuts" = "Keyboard Shortcuts";
+
+/* Multiple */
+"window.title.multiple" = "Multiple";
+
+/* Search: %@ */
+"window.title.search.%@" = "Search: %@";
+
+/* Smart Feed Inspector */
+"window.title.smart-feed-inspector" = "Smart Feed Inspector";
+

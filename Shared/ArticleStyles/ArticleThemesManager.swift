@@ -167,8 +167,11 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 		menu.addItem(defaultMenuItem)
 		menu.addItem(NSMenuItem.separator())
 		
-		let rancheroHeading = NSMenuItem(title: "Built-in Themes", action: nil, keyEquivalent: "")
-		rancheroHeading.attributedTitle = NSAttributedString(string: "Built-in Themes", attributes: [NSAttributedString.Key.foregroundColor : NSColor.secondaryLabelColor, NSAttributedString.Key.font: NSFont.boldSystemFont(ofSize: 12)])
+		let rancheroString = NSLocalizedString("label.text.themes-builtin", comment: "Built-in Themes")
+		let otherString = NSLocalizedString("label.text.themes-builtin", comment: "Other Themes")
+		
+		let rancheroHeading = NSMenuItem(title: rancheroString, action: nil, keyEquivalent: "")
+		rancheroHeading.attributedTitle = NSAttributedString(string: rancheroString, attributes: [NSAttributedString.Key.foregroundColor : NSColor.secondaryLabelColor, NSAttributedString.Key.font: NSFont.boldSystemFont(ofSize: 12)])
 		rancheroHeading.isEnabled = false
 		menu.addItem(rancheroHeading)
 		
@@ -185,8 +188,8 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 		
 		menu.addItem(NSMenuItem.separator())
 		
-		let thirdPartyHeading = NSMenuItem(title: "Other Themes", action: nil, keyEquivalent: "")
-		thirdPartyHeading.attributedTitle = NSAttributedString(string: "Other Themes", attributes: [NSAttributedString.Key.foregroundColor : NSColor.secondaryLabelColor, NSAttributedString.Key.font: NSFont.boldSystemFont(ofSize: 12)])
+		let thirdPartyHeading = NSMenuItem(title: otherString, action: nil, keyEquivalent: "")
+		thirdPartyHeading.attributedTitle = NSAttributedString(string: otherString, attributes: [NSAttributedString.Key.foregroundColor : NSColor.secondaryLabelColor, NSAttributedString.Key.font: NSFont.boldSystemFont(ofSize: 12)])
 		thirdPartyHeading.isEnabled = false
 		menu.addItem(thirdPartyHeading)
 		

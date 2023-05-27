@@ -1,0 +1,12 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "Subscribe to Feed";
+
+/* Bundle name */
+"CFBundleName" = "Subscribe to Feed";
+
+/* Copyright (human-readable) */
+"NSHumanReadableCopyright" = "Copyright © 2019-2022 Brent Simmons. All rights reserved.";
+
+/* Human readable description */
+"NSHumanReadableDescription" = "This extension adds a Safari toolbar button for easily subscribing to the syndication feed for the current page.";
+

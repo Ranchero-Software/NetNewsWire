@@ -2,11 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Copy Article URL</key>
+	<key>button.title.copy-article-urls.%ld</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@copy_article_url@</string>
-		<key>copy_article_url</key>
+		<string>%#@count@</string>
+		<key>count</key>
 		<dict>
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>

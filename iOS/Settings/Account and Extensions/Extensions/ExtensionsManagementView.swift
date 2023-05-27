@@ -20,7 +20,7 @@ struct ExtensionsManagementView: View {
 		List {
 			activeExtensionsSection
 		}
-		.navigationTitle(Text("Manage Extensions", comment: "Navigation title: Manage Extensions"))
+		.navigationTitle(Text("navigation.title.manage-extensions", comment: " Manage Extensions"))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
@@ -33,23 +33,23 @@ struct ExtensionsManagementView: View {
 		.sheet(isPresented: $showAddExtensionView) {
 			AddExtensionListView()
 		}
-		.alert(Text("Are you sure you want to deactivate “\(extensionToDeactivate?.value.title ?? "")?", comment: "Alert title: confirm deactivate extension"),
+		.alert(Text("alert.title.deactive-extension.\(extensionToDeactivate?.value.extensionPointID.extensionPointType.title ?? "").\(extensionToDeactivate?.value.title ?? "")", comment: "Are you sure you want to deactivate the %@ extension “%@“? Note: the ordering of the variables is extension type, extension name."),
 			   isPresented: $showDeactivateAlert) {
 			
 			Button(role: .destructive) {
 				ExtensionPointManager.shared.deactivateExtensionPoint(extensionToDeactivate!.value.extensionPointID)
 			} label: {
-				Text("Deactivate Extension", comment: "Button: deactivate extension.")
+				Text("button.title.deactivate-extension", comment: "Deactivate Extension")
 			}
 
 			Button(role: .cancel) {
 				extensionToDeactivate = nil
 			} label: {
-				Text("Cancel", comment: "Button title")
+				Text("button.title.cancel", comment: "Button title")
 			}
 
 		} message: {
-			Text("This action cannot be undone.", comment: "Alert message: confirmation that deactivation of extension cannot be undone.")
+			Text("alert.message.cannot-undo-action", comment: "You can't undo this action.")
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange), perform: { _ in
 			availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
@@ -57,7 +57,7 @@ struct ExtensionsManagementView: View {
     }
 	
 	private var activeExtensionsSection: some View {
-		Section(header: Text("Active Extensions", comment: "Active Extensions section header")) {
+		Section(header: Text("label.text.active-extensions", comment: "Active Extensions")) {
 			ForEach(0..<ExtensionPointManager.shared.activeExtensionPoints.count, id: \.self) { i in
 				let point = Array(ExtensionPointManager.shared.activeExtensionPoints)[i]
 				NavigationLink {
@@ -73,7 +73,7 @@ struct ExtensionsManagementView: View {
 						extensionToDeactivate = point
 						showDeactivateAlert = true
 					} label: {
-						Text("Deactivate", comment: "Button: deactivates extension")
+						Text("button.title.deactivate-extension", comment: "Deactivate Extension")
 						Image(systemName: "minus.circle")
 					}.tint(.red)
 				}

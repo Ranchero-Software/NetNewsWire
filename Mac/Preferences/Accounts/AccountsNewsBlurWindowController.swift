@@ -34,13 +34,13 @@ import Secrets
 	override func windowDidLoad() {
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .newsBlurBasic) {
 			usernameTextField.stringValue = credentials.username
-			actionButton.title = NSLocalizedString("Update", comment: "Update")
-			signInTextField.stringValue = NSLocalizedString("Update your NewsBlur account credentials.", comment: "SignIn")
+			actionButton.title = NSLocalizedString("button.title.update", comment: "Update")
+			signInTextField.stringValue = NSLocalizedString("textfield.text.update-newsblur-credentials", comment: "Update your NewsBlur account credentials.")
 			noAccountTextField.isHidden = true
 			createNewAccountButton.isHidden = true
 		} else {
-			actionButton.title = NSLocalizedString("Create", comment: "Create")
-			signInTextField.stringValue = NSLocalizedString("Sign in to your NewsBlur account.", comment: "SignIn")
+			actionButton.title = NSLocalizedString("button.title.create", comment: "Create")
+			signInTextField.stringValue = NSLocalizedString("textfield.text.sign-in-newsblur", comment: "Sign in to your NewsBlur account.")
 		}
 		enableAutofill()
 		usernameTextField.becomeFirstResponder()
@@ -63,12 +63,12 @@ import Secrets
 		self.errorMessageLabel.stringValue = ""
 
 		guard !usernameTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.userNameRequired.localizedDescription
 			return
 		}
 		
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: usernameTextField.stringValue) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
+			self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.duplicateAccount.localizedDescription
 			return
 		}
 		
@@ -88,7 +88,7 @@ import Secrets
 			switch result {
 			case .success(let validatedCredentials):
 				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.invalidUsernameOrPassword.localizedDescription
 					return
 				}
 
@@ -113,14 +113,12 @@ import Secrets
 					
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.keychainError.localizedDescription
 					self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public)")
 				}
 
 			case .failure:
-
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
-
+				self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.networkError.localizedDescription
 			}
 		}
 	}

@@ -18,8 +18,8 @@ struct AddExtensionListView: View {
 	var body: some View {
 		NavigationView {
 			List {
-				Section(header: Text("Feed Providers", comment: "Feed Providers section header"),
-						footer: Text("Feed Providers allow you to subscribe to some pages as if they were RSS feeds.", comment: "Feed Providers section footer.")) {
+				Section(header: Text("label.text.feed-providers", comment: "Feed Providers"),
+						footer: Text("label.text.feed-providers-explainer", comment: "Feed Providers allow you to subscribe to some pages as if they were RSS feeds")) {
 					ForEach(0..<availableExtensionPointTypes.count, id: \.self) { i in
 						Button {
 							showExtensionPointView = (availableExtensionPointTypes[i], true)
@@ -35,7 +35,7 @@ struct AddExtensionListView: View {
 				}
 			}
 			.navigationBarTitleDisplayMode(.inline)
-			.navigationTitle(Text("Add Extensions", comment: "Navigation title: Add Extensions"))
+			.navigationTitle(Text("navigation.title.add-extensions", comment: "Add Extensions"))
 			.sheet(isPresented: $showExtensionPointView.1, content: {
 				if showExtensionPointView.0 != nil {
 					EnableExtensionPointView(extensionPoint: showExtensionPointView.0!)
@@ -46,7 +46,7 @@ struct AddExtensionListView: View {
 					Button(role: .cancel) {
 						dismiss()
 					} label: {
-						Text("Cancel", comment: "Button title")
+						Text("button.title.cancel", comment: "Cancel")
 					}
 				}
 			}

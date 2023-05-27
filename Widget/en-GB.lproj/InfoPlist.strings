@@ -1,0 +1,6 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "NetNewsWire Widget";
+
+/* Bundle name */
+"CFBundleName" = "NetNewsWire iOS Widget Extension";
+

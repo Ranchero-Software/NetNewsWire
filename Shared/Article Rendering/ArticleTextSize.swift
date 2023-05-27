@@ -35,15 +35,15 @@ enum ArticleTextSize: Int, CaseIterable, Identifiable {
 	func description() -> String {
 		switch self {
 		case .small:
-			return NSLocalizedString("Small", comment: "Small")
+			return NSLocalizedString("label.text.small", comment: "Small")
 		case .medium:
-			return NSLocalizedString("Medium", comment: "Medium")
+			return NSLocalizedString("label.text.medium", comment: "Medium")
 		case .large:
-			return NSLocalizedString("Large", comment: "Large")
+			return NSLocalizedString("label.text.large", comment: "Large")
 		case .xlarge:
-			return NSLocalizedString("Extra Large", comment: "X-Large")
+			return NSLocalizedString("label.text.extra-large", comment: "X-Large")
 		case .xxlarge:
-			return NSLocalizedString("Extra Extra Large", comment: "XX-Large")
+			return NSLocalizedString("label.text.extra-extra-large", comment: "XX-Large")
 		}
 	}
 	

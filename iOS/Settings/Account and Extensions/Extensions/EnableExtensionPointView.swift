@@ -21,13 +21,13 @@ struct EnableExtensionPointView: View  {
 			Section(footer: extensionExplainer) {}
 			Section { enableButton }
 		}
-		.alert(Text("Error", comment: "Alert title: Error"), isPresented: $extensionError.1, actions: {
+		.alert(Text("alert.title.error", comment: "Error"), isPresented: $extensionError.1, actions: {
 		}, message: {
-			Text(extensionError.0?.localizedDescription ?? "Unknown Error")
+			Text(verbatim: extensionError.0?.localizedDescription ?? "Unknown Error")
 		})
-		.alert(Text("Error", comment: "Alert title: Error"), isPresented: $viewModel.showExtensionError.1, actions: {
+		.alert(Text("alert.title.error", comment: "Error"), isPresented: $viewModel.showExtensionError.1, actions: {
 		}, message: {
-			Text(viewModel.showExtensionError.0?.localizedDescription ?? "Unknown Error")
+			Text(verbatim: viewModel.showExtensionError.0?.localizedDescription ?? "Unknown Error")
 		})
 		.navigationTitle(extensionPoint.title)
 		.navigationBarTitleDisplayMode(.inline)
@@ -56,7 +56,7 @@ struct EnableExtensionPointView: View  {
 		} label: {
 			HStack {
 				Spacer()
-				Text("Enable Extension", comment: "Button title")
+				Text("button.title.enable-extension", comment: "Enable Extension")
 				Spacer()
 			}
 			

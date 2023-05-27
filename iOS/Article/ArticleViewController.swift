@@ -220,19 +220,19 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 		if article.status.read {
 			readBarButtonItem.image = AppAssets.circleOpenImage
 			readBarButtonItem.isEnabled = article.isAvailableToMarkUnread
-			readBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
+			readBarButtonItem.accLabelText = NSLocalizedString("button.title.mark-article-unread", comment: "Mark Article Unread")
 		} else {
 			readBarButtonItem.image = AppAssets.circleClosedImage
 			readBarButtonItem.isEnabled = true
-			readBarButtonItem.accLabelText = NSLocalizedString("Selected - Mark Article Unread", comment: "Selected - Mark Article Unread")
+			readBarButtonItem.accLabelText = NSLocalizedString("button.title.selected-mark-article-unread", comment: "Selected - Mark Article Unread")
 		}
 		
 		if article.status.starred {
 			starBarButtonItem.image = AppAssets.starClosedImage
-			starBarButtonItem.accLabelText = NSLocalizedString("Selected - Star Article", comment: "Selected - Star Article")
+			starBarButtonItem.accLabelText = NSLocalizedString("button.title.selected-star-article", comment: "Selected - Star Article")
 		} else {
 			starBarButtonItem.image = AppAssets.starOpenImage
-			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
+			starBarButtonItem.accLabelText = NSLocalizedString("button.title.star-article", comment: "Star Article")
 		}
 		
 		configureAppearanceMenu()
@@ -291,7 +291,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 		
 		if let currentWebViewController = currentWebViewController {
 			if currentWebViewController.isFullScreenAvailable {
-				let fullScreenAction = UIAction(title: NSLocalizedString("Full Screen", comment: "Full Screen"),
+				let fullScreenAction = UIAction(title: NSLocalizedString("button.title.full-screen", comment: "Full Screen"),
 												image: UIImage(systemName: "arrow.up.backward.and.arrow.down.forward"),
 												identifier: nil,
 												discoverabilityTitle: nil,
@@ -299,10 +299,10 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 												state: .off) { [weak self] _ in
 					self?.currentWebViewController?.hideBars()
 					if AppDefaults.shared.hasUsedFullScreenPreviously == false {
-						let alert = UIAlertController(title: NSLocalizedString("Exit Full Screen", comment: "Full Screen"),
-													  message: NSLocalizedString("To exit Full Screen mode tap the top of the screen.\n\nYou'll only see this message once.", comment: "Full screen explainer."),
+						let alert = UIAlertController(title: NSLocalizedString("alert.title.exit-full-screen", comment: "Full Screen"),
+													  message: NSLocalizedString("alert.message.exit-full-screen", comment: "To exit Full Screen mode tap the top of the screen.\n\nYou'll only see this message once."),
 													  preferredStyle: .alert)
-						alert.addAction(UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .default, handler: { _ in
+						alert.addAction(UIAlertAction(title: NSLocalizedString("button.title.dismiss", comment: "Dismiss"), style: .default, handler: { _ in
 							AppDefaults.shared.hasUsedFullScreenPreviously = true
 						}))
 						self?.present(alert, animated: true, completion: nil)
@@ -313,13 +313,13 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 		}
 		
 		appearanceBarButtonItem.image = AppAssets.articleAppearanceImage
-		appearanceBarButtonItem.menu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), children: appearanceChildren)
+		appearanceBarButtonItem.menu = UIMenu(title: NSLocalizedString("menu.title.articleappearance", comment: "Article Appearance menu title"), children: appearanceChildren)
 	}
 	
 	private func configureArticleExtractorMenu() {
 		if let feed = article?.webFeed {
 			let extractorOn = feed.isArticleExtractorAlwaysOn ?? false
-			let readerAction = UIAction(title: NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View"),
+			let readerAction = UIAction(title: NSLocalizedString("button.title.always-use-reader-view", comment: "Button title: Always Use Reader View"),
 										image: AppAssets.articleExtractorOffSF,
 										identifier: nil,
 										discoverabilityTitle: nil,

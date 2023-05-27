@@ -16,10 +16,10 @@ final class SendToMicroBlogCommand: ExtensionPoint, SendToCommand {
 
 	static var isSinglton = true
 	static var isDeveloperBuildRestricted = false
-	static var title: String =  NSLocalizedString("Micro.blog", comment: "Micro.blog")
+	static var title: String =  "Micro.blog" // not localized
 	static var image = AppAssets.extensionPointMicroblog
 	static var description: NSAttributedString = {
-		let attrString = SendToMicroBlogCommand.makeAttrString("This extension enables share menu functionality to send selected article text to Micro.blog. You need the Micro.blog application for this to work.")
+		let attrString = SendToMicroBlogCommand.makeAttrString(NSLocalizedString("label.text.micro-blog-expaliner", comment: "This extension enables share menu functionality to send selected article text to Micro.blog. You need the Micro.blog application for this to work."))
 		let range = NSRange(location: 81, length: 10)
 		attrString.beginEditing()
 		attrString.addAttribute(NSAttributedString.Key.link, value: "https://micro.blog", range: range)

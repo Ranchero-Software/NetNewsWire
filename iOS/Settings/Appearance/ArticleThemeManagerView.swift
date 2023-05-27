@@ -19,28 +19,28 @@ struct ArticleThemeManagerView: View {
 	
 	var body: some View {
 		Form {
-			Section(header: Text("Built-in Themes", comment: "Section header for installed themes"), footer: Text("These themes cannot be deleted.", comment: "Section footer for installed themes.")) {
-				articleThemeRow(try! themeManager.articleThemeWithThemeName(AppDefaults.defaultThemeName))
+			Section(header: Text("label.text.default-themes", comment: "Default Themes"), footer: Text("label.text.default-themes-explainer", comment: "These themes cannot be deleted.")) {
+				articleThemeRow(try! themeManager.articleThemeWithThemeName("Default"))
 				ForEach(0..<themeManager.themesByDeveloper().builtIn.count, id: \.self) { i in
-					articleThemeRow(themeManager.themesByDeveloper().0[i])
+					articleThemeRow(themeManager.themesByDeveloper().builtIn[i])
 				}
 			}
 			
-			Section(header: Text("Other Themes", comment: "Section header for third party themes")) {
+			Section(header: Text("label.text.third-party-themes", comment: "Third Party Themes")) {
 				ForEach(0..<themeManager.themesByDeveloper().other.count, id: \.self) { i in
-					articleThemeRow(themeManager.themesByDeveloper().1[i])
+					articleThemeRow(themeManager.themesByDeveloper().other[i])
 				}
 			}
 			
 		}
-		.navigationTitle(Text("Article Themes", comment: "Navigation bar title for Article Themes"))
+		.navigationTitle(Text("navigation.title.article-themes", comment: "Article Themes"))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
 					showImportThemeView = true
 				} label: {
 					Label {
-						Text("Import Theme", comment: "Button title")
+						Text("button.title.import-theme", comment: "Import Theme")
 					} icon: {
 						Image(systemName: "plus")
 					}
@@ -64,23 +64,23 @@ struct ArticleThemeManagerView: View {
 				showImportErrorAlert = (failure, true)
 			}
 		}
-		.alert(Text("Are you sure you want to delete “\(showDeleteConfirmation.0)”?", comment: "Alert title: confirm theme deletion"),
+		.alert(Text("alert.title.delete-theme.\(showDeleteConfirmation.0)", comment: "In English: Are you sure you want to delete “%@”?"),
 			   isPresented: $showDeleteConfirmation.1, actions: {
 			Button(role: .destructive) {
 				themeManager.deleteTheme(themeName: showDeleteConfirmation.0)
 			} label: {
-				Text("Delete Theme", comment: "Button title")
+				Text("button.title.delete-theme", comment: "Delete Theme")
 			}
 			
 			Button(role: .cancel) {
 				
 			} label: {
-				Text("Cancel", comment: "Button title")
+				Text("button.title.cancel", comment: "Cancel")
 			}
 		}, message: {
-			Text("This action cannot be undone.", comment: "Alert message: confirm theme deletion")
+			Text("alert.message.cannot-undo-action", comment: "You can't undo this action.")
 		})
-		.alert(Text("Import Theme", comment: "Alert title: confirm theme import"),
+		.alert(Text("alert.title.import-theme", comment: "Import Theme"),
 			   isPresented: $showImportConfirmationAlert.1,
 			   actions: {
 					Button {
@@ -102,40 +102,35 @@ struct ArticleThemeManagerView: View {
 					} label: {
 						let exists = themeManager.themeExists(filename: showImportConfirmationAlert.0?.path ?? "")
 						if exists == true {
-							Text("Overwrite Theme", comment: "Button title")
+							Text("button.title.overwrite-theme", comment: "Overwrite Theme")
 						} else {
-							Text("Import Theme", comment: "Button title")
+							Text("button.title.import-theme", comment: "Import Theme")
 						}
 					}
 					
 					Button(role: .cancel) {
 						
 					} label: {
-						Text("Cancel", comment: "Button title")
+						Text("button.title.cancel", comment: "Cancel")
 					}
 		}, message: {
 			let exists = themeManager.themeExists(filename: showImportConfirmationAlert.0?.path ?? "")
 			if exists {
-				Text("The theme “\(showImportConfirmationAlert.0?.name ?? "")” already exists. Do you want to overwrite it?", comment: "Alert message: confirm theme import and overwrite of existing theme")
+				Text("alert.message.duplicate-theme.\(showImportConfirmationAlert.0?.name ?? "")", comment: "In English: The theme “%@” already exists. Do you want to overwrite it?")
 			} else {
-				Text("Are you sure you want to import “\(showImportConfirmationAlert.0?.name ?? "")” by \(showImportConfirmationAlert.0?.creatorName ?? "")?", comment: "Alert message: confirm theme import")
+				Text("alert.message.import-theme.\(showImportConfirmationAlert.0?.name ?? "").\(showImportConfirmationAlert.0?.creatorName ?? "")", comment: "Are you sure you want to import “%@” by %@")
 			}
 		})
-		.alert(Text("Imported Successfully", comment: "Alert title: theme imported successfully"),
+		.alert(Text("alert.title.imported-theme-succesfully", comment: "Imported Successfully"),
 			   isPresented: $showImportSuccessAlert,
-			   actions: {
-					Button(role: .cancel) {
-						
-					} label: {
-						Text("Dismiss", comment: "Button title")
-					}
-		}, message: {
-			Text("The theme “\(showImportConfirmationAlert.0?.name ?? "")” has been imported.", comment: "Alert message: theme imported successfully")
+			   actions: { },
+		message: {
+			Text("alert.message.imported-theme-successfully.\(showImportConfirmationAlert.0?.name ?? "")", comment: "The theme “%@” has been imported.")
 		})
-		.alert(Text("Error", comment: "Alert title: Error"),
+		.alert(Text("alert.title.error", comment: "Error"),
 			   isPresented: $showImportErrorAlert.1,
 			   actions: { }, message: {
-			Text("\(showImportErrorAlert.0?.localizedDescription ?? "")")
+			Text(verbatim: "\(showImportErrorAlert.0?.localizedDescription ?? "")")
 		})
     }
 	
@@ -145,9 +140,9 @@ struct ArticleThemeManagerView: View {
 		} label: {
 			HStack {
 				VStack(alignment: .leading) {
-					Text(theme.name)
+					Text(verbatim: theme.name)
 						.foregroundColor(.primary)
-					Text("Created by \(theme.creatorName)", comment: "Article theme creator byline.")
+					Text("label.text.theme-created-byline.\(theme.creatorName)", comment: "Created by %@")
 						.font(.caption)
 						.foregroundColor(.secondary)
 				}
@@ -166,7 +161,7 @@ struct ArticleThemeManagerView: View {
 				Button {
 					showDeleteConfirmation = (theme.name, true)
 				} label: {
-					Text("Delete", comment: "Button title")
+					Text("button.title.delete", comment: "Delete")
 					Image(systemName: "trash")
 				}
 				.tint(.red)

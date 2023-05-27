@@ -207,7 +207,7 @@ enum TimelineSourceMode {
 			let canCopyArticleURL = canCopyArticleURL()
 
 			if let item = item as? NSMenuItem {
-				let format = NSLocalizedString("Copy Article URL", comment: "Copy Article URL");
+				let format = NSLocalizedString("button.title.copy-article-url", comment: "Copy Article URL");
 
 				item.title = String.localizedStringWithFormat(format, selectedArticles?.count ?? 0)
 			}
@@ -290,7 +290,7 @@ enum TimelineSourceMode {
 
 			let sidebarIsShowing = !splitViewItem.isCollapsed
 			if let menuItem = item as? NSMenuItem {
-				let title = sidebarIsShowing ? NSLocalizedString("Hide Sidebar", comment: "Menu item") : NSLocalizedString("Show Sidebar", comment: "Menu item")
+				let title = sidebarIsShowing ? NSLocalizedString("button.title.hide-sidebar", comment: "Hide Sidebar") : NSLocalizedString("button.title.show-sidebar", comment: "Show Sidebar")
 				menuItem.title = title
 			}
 
@@ -581,7 +581,7 @@ enum TimelineSourceMode {
 		let menu = NSMenu()
 
 		let alwaysUseReaderViewItem = NSMenuItem()
-		alwaysUseReaderViewItem.title = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
+		alwaysUseReaderViewItem.title = NSLocalizedString("button.title.always-use-reader-view", comment: "Always Use Reader View")
 		alwaysUseReaderViewItem.target = self
 		alwaysUseReaderViewItem.action = #selector(alwaysUseReaderView)
 		alwaysUseReaderViewItem.state = {
@@ -852,57 +852,57 @@ extension MainWindowController: NSToolbarDelegate {
 		switch itemIdentifier {
 
 		case .sidebarToggle:
-			let title = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
+			let title = NSLocalizedString("button.title.toggle-sidebar", comment: "Toggle Sidebar")
 			return buildToolbarButton(.toggleSidebar, title, AppAssets.sidebarToggleImage, "toggleTheSidebar:")
 
 		case .refresh:
-			let title = NSLocalizedString("Refresh", comment: "Refresh")
+			let title = NSLocalizedString("button.title.refresh", comment: "Refresh")
 			return buildToolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
 		
 		case .newSidebarItemMenu:
 			let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
 			toolbarItem.image = AppAssets.addNewSidebarItemImage
-			let description = NSLocalizedString("Add Item", comment: "Add Item")
+			let description = NSLocalizedString("button.title.add-item", comment: "Add Item")
 			toolbarItem.toolTip = description
 			toolbarItem.label = description
 			toolbarItem.menu = buildNewSidebarItemMenu()
 			return toolbarItem
 
 		case .markAllAsRead:
-			let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+			let title = NSLocalizedString("button.title.mark-all-as-read.titlecase", comment: "Mark All as Read")
 			return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
 		
 		case .markAboveAsRead:
-			let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+			let title = NSLocalizedString("button.title.mark-above-as-read.titlecase", comment: "Mark Above as Read")
 			return buildToolbarButton(.markAboveAsRead, title, AppAssets.markAboveAsReadImage, "markAboveAsRead:")
 		
 		case .markBelowAsRead:
-			let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+			let title = NSLocalizedString("button.title.mark-below-as-read.titlecase", comment: "Mark Below as Read")
 			return buildToolbarButton(.markBelowAsRead, title, AppAssets.markBelowAsReadImage, "markBelowAsRead:")
 		
 		case .toggleReadArticlesFilter:
-			let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
+			let title = NSLocalizedString("button.title.read-articles-filter", comment: "Read Articles Filter")
 			return buildToolbarButton(.toggleReadArticlesFilter, title, AppAssets.filterInactive, "toggleReadArticlesFilter:")
 		
 		case .timelineTrackingSeparator:
 			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
 		case .markRead:
-			let title = NSLocalizedString("Mark Read", comment: "Mark Read")
+			let title = NSLocalizedString("button.title.mark-read", comment: "Mark Read")
 			return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
 		
 		case .markStar:
-			let title = NSLocalizedString("Star", comment: "Star")
+			let title = NSLocalizedString("button.title.mark-star", comment: "Star")
 			return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
 		
 		case .nextUnread:
-			let title = NSLocalizedString("Next Unread", comment: "Next Unread")
+			let title = NSLocalizedString("button.title.next-read", comment: "Next Unread")
 			return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
 		
 		case .readerView:
 			let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
 			toolbarItem.autovalidates = true
-			let description = NSLocalizedString("Reader View", comment: "Reader View")
+			let description = NSLocalizedString("button.title.reader-view", comment: "Reader View")
 			toolbarItem.toolTip = description
 			toolbarItem.label = description
 			let button = ArticleExtractorButton()
@@ -914,7 +914,7 @@ extension MainWindowController: NSToolbarDelegate {
 			return toolbarItem
 
 		case .share:
-			let title = NSLocalizedString("Share", comment: "Share")
+			let title = NSLocalizedString("button.title.share", comment: "Share")
 			let image = AppAssets.shareImage
 			if #available(macOS 13.0, *) {
 				// `item.view` is required for properly positioning the sharing picker.
@@ -929,25 +929,25 @@ extension MainWindowController: NSToolbarDelegate {
 			}
 		
 		case .openInBrowser:
-			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+			let title = NSLocalizedString("button.title.open-in-browser", comment: "Open in Browser")
 			return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
 		
 		case .articleThemeMenu:
 			articleThemeMenuToolbarItem.image = AppAssets.articleTheme
-			let description = NSLocalizedString("Article Theme", comment: "Article Theme")
+			let description = NSLocalizedString("button.title.article-theme", comment: "Article Theme")
 			articleThemeMenuToolbarItem.toolTip = description
 			articleThemeMenuToolbarItem.label = description
 			return articleThemeMenuToolbarItem
 
 		case .search:
 			let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
-			let description = NSLocalizedString("Search", comment: "Search")
+			let description = NSLocalizedString("button.title.search", comment: "Search")
 			toolbarItem.toolTip = description
 			toolbarItem.label = description
 			return toolbarItem
 
 		case .cleanUp:
-			let title = NSLocalizedString("Clean Up", comment: "Clean Up")
+			let title = NSLocalizedString("button.title.clean-up", comment: "Clean Up")
 			return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
 		
 		default:
@@ -1162,7 +1162,7 @@ private extension MainWindowController {
 			result = false
 		}
 		
-		let commandName = markingRead ? NSLocalizedString("Mark as Read", comment: "Command") : NSLocalizedString("Mark as Unread", comment: "Command")
+		let commandName = markingRead ? NSLocalizedString("button.title.mark-as-read", comment: "Mark as Read") : NSLocalizedString("button.title.mark-as-unread", comment: "Mark as Unread")
 		
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
@@ -1249,7 +1249,7 @@ private extension MainWindowController {
 			result = false
 		}
 
-		let commandName = starring ? NSLocalizedString("Mark as Starred", comment: "Command") : NSLocalizedString("Mark as Unstarred", comment: "Command")
+		let commandName = starring ? NSLocalizedString("button.title.mark-as-starred", comment: "Mark as Starred") : NSLocalizedString("button.title.mark-as-unstarred", comment: "Mark as Unstarred")
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
@@ -1270,15 +1270,15 @@ private extension MainWindowController {
 	func validateToggleReadFeeds(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		guard let menuItem = item as? NSMenuItem else { return false }
 
-		let showCommand = NSLocalizedString("Show Read Feeds", comment: "Command")
-		let hideCommand = NSLocalizedString("Hide Read Feeds", comment: "Command")
+		let showCommand = NSLocalizedString("button.title.show-read-feeds", comment: "Show Read Feeds")
+		let hideCommand = NSLocalizedString("button.title.hide-read-feeds", comment: "Hide Read Feeds")
 		menuItem.title = sidebarViewController?.isReadFiltered ?? false ? showCommand : hideCommand
 		return true
 	}
 
 	func validateToggleReadArticles(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		let showCommand = NSLocalizedString("Show Read Articles", comment: "Command")
-		let hideCommand = NSLocalizedString("Hide Read Articles", comment: "Command")
+		let showCommand = NSLocalizedString("button.title.show-read-articles", comment: "Show Read Articles")
+		let hideCommand = NSLocalizedString("button.title.hide-read-articles", comment: "Hide Read Articles")
 
 		guard let isReadFiltered = timelineContainerViewController?.isReadFiltered else {
 			(item as? NSMenuItem)?.title = hideCommand
@@ -1330,14 +1330,14 @@ private extension MainWindowController {
 
 	func updateWindowTitle() {
 		guard timelineSourceMode != .search else {
-			let localizedLabel = NSLocalizedString("Search: %@", comment: "Search")
+			let localizedLabel = NSLocalizedString("window.title.search.%@", comment: "Search: %@")
 			window?.title = NSString.localizedStringWithFormat(localizedLabel as NSString, searchString ?? "") as String
 			window?.subtitle = ""
 			return
 		}
 		
 		func setSubtitle(_ count: Int) {
-			let localizedLabel = NSLocalizedString("%d unread", comment: "Unread")
+			let localizedLabel = NSLocalizedString("window.subtitle.unread-count.%d", comment: "%d unread")
 			let formattedLabel = NSString.localizedStringWithFormat(localizedLabel as NSString, count)
 			window?.subtitle = formattedLabel as String
 		}
@@ -1349,7 +1349,7 @@ private extension MainWindowController {
 		}
 		
 		guard selectedObjects.count == 1 else {
-			window?.title = NSLocalizedString("Multiple", comment: "Multiple")
+			window?.title = NSLocalizedString("window.title.multiple", comment: "Multiple")
 			let unreadCount = selectedObjects.reduce(0, { result, selectedObject in
 				if let unreadCountProvider = selectedObject as? UnreadCountProvider {
 					return result + unreadCountProvider.unreadCount
@@ -1443,17 +1443,17 @@ private extension MainWindowController {
 		let menu = NSMenu()
 		
 		let newWebFeedItem = NSMenuItem()
-		newWebFeedItem.title = NSLocalizedString("New Web Feed…", comment: "New Web Feed")
+		newWebFeedItem.title = NSLocalizedString("button.title.new-web-feed", comment: "New Web Feed...")
 		newWebFeedItem.action = Selector(("showAddWebFeedWindow:"))
 		menu.addItem(newWebFeedItem)
 		
 		let newRedditFeedItem = NSMenuItem()
-		newRedditFeedItem.title = NSLocalizedString("New Reddit Feed…", comment: "New Reddit Feed")
+		newRedditFeedItem.title = NSLocalizedString("button.title.new-reddit-feed", comment: "New Reddit Feed...")
 		newRedditFeedItem.action = Selector(("showAddRedditFeedWindow:"))
 		menu.addItem(newRedditFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()
-		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")
+		newFolderFeedItem.title = NSLocalizedString("button.title.open-new-folder", comment: "New Folder...")
 		newFolderFeedItem.action = Selector(("showAddFolderWindow:"))
 		menu.addItem(newFolderFeedItem)
 		

@@ -32,21 +32,34 @@ public enum AccountError: LocalizedError {
 		}
 		return false
 	}
+    
+    public var errorTitle: String {
+        switch self {
+        case .createErrorNotFound:
+            return NSLocalizedString("error.title.feed-not-found", bundle: Bundle.module, comment: "Unable to Add Feed")
+        case .createErrorAlreadySubscribed:
+            return NSLocalizedString("error.title.already-subscribed", bundle: Bundle.module, comment: "Already Subscribed")
+        case .opmlImportInProgress:
+            return NSLocalizedString("error.title.ompl-import-in-progress", bundle: Bundle.module, comment: "OPML Import in Progress")
+        case .wrappedError(_, _):
+            return NSLocalizedString("error.title.error", bundle: Bundle.module, comment: "Error")
+        }
+    }
 	
 	public var errorDescription: String? {
 		switch self {
 		case .createErrorNotFound:
-			return NSLocalizedString("The feed couldn’t be found and can’t be added.", comment: "Not found")
+            return NSLocalizedString("error.message.feed-not-found", bundle: Bundle.module, comment: "Can’t add a feed because no feed was found.")
 		case .createErrorAlreadySubscribed:
-			return NSLocalizedString("You are already subscribed to this feed and can’t add it again.", comment: "Already subscribed")
+            return NSLocalizedString("error.message.feed-already-subscribed", bundle: Bundle.module, comment: "You are already subscribed to this feed and can’t add it again.")
 		case .opmlImportInProgress:
-			return NSLocalizedString("An OPML import for this account is already running.", comment: "Import running")
+            return NSLocalizedString("error.message.opml-import-in-progress", bundle: Bundle.module, comment: "An OPML import for this account is already running.")
 		case .wrappedError(let error, let account):
 			switch error {
 			case TransportError.httpError(let status):
 				if isCredentialsError(status: status) {
-					let localizedText = NSLocalizedString("Your “%@” credentials are invalid or expired.", comment: "Invalid or expired")
-					return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay) as String
+                    let localizedText = NSLocalizedString("error.message.credentials-expired.%@", bundle: Bundle.module, comment: "Your ”%@” credentials have expired.")
+                    return String(format: localizedText, account.nameForDisplay)
 				} else {
 					return unknownError(error, account)
 				}

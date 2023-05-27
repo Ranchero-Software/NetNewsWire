@@ -112,7 +112,7 @@ import RSTree
 
 	override func accessibilityLabel() -> String? {
 		if unreadCount > 0 {
-			let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
+			let unreadLabel = NSLocalizedString("label.text.unread", comment: "unread")
 			return "\(name) \(unreadCount) \(unreadLabel)"
 		} else {
 			return name

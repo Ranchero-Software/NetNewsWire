@@ -25,31 +25,34 @@ extension AccountType {
 		case .onMyMac:
 			let defaultName: String
 			#if os(macOS)
-			defaultName = NSLocalizedString("On My Mac", comment: "Account name")
+			defaultName = NSLocalizedString("account.name.mac", comment: "On My Mac")
 			#else
 			if UIDevice.current.userInterfaceIdiom == .pad {
-				defaultName = NSLocalizedString("On My iPad", comment: "Account name")
+				defaultName = NSLocalizedString("account.name.ipad", comment: "On My iPad")
 			} else {
-				defaultName = NSLocalizedString("On My iPhone", comment: "Account name")
+				defaultName = NSLocalizedString("account.name.iphone", comment: "On My iPhone")
 			}
 			#endif
 			return defaultName
+		
+		/* The below account names are not localized as they are product names. */
+			
 		case .bazQux:
-			return NSLocalizedString("BazQux", comment: "Account name")
+			return "BazQux"
 		case .cloudKit:
-			return NSLocalizedString("iCloud", comment: "Account name")
+			return "iCloud"
 		case .feedbin:
-			return NSLocalizedString("Feedbin", comment: "Account name")
+			return "Feedbin"
 		case .feedly:
-			return NSLocalizedString("Feedly", comment: "Account name")
+			return "Feedly"
 		case .freshRSS:
-			return NSLocalizedString("FreshRSS", comment: "Account name")
+			return "FreshRSS"
 		case .inoreader:
-			return NSLocalizedString("Inoreader", comment: "Account name")
+			return "Inoreader"
 		case .newsBlur:
-			return NSLocalizedString("NewsBlur", comment: "Account name")
+			return "NewsBlur"
 		case .theOldReader:
-			return NSLocalizedString("The Old Reader", comment: "Account name")
+			return "The Old Reader"
 		}
 	}
 	
