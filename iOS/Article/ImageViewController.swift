@@ -25,6 +25,16 @@ class ImageViewController: UIViewController {
 		return imageScrollView.zoomedFrame
 	}
 	
+	override var keyCommands: [UIKeyCommand]? {
+		return [
+			UIKeyCommand(
+				title: NSLocalizedString("Close Image", comment: "Close Image"),
+				action: #selector(done(_:)),
+				input: " "
+			)
+		]
+	}
+	
 	override func viewDidLoad() {
         super.viewDidLoad()
 		

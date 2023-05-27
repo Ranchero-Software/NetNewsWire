@@ -18,8 +18,8 @@ import RSDatabase
 public final class AccountManager: UnreadCountProvider {
 
 	public static var shared: AccountManager!
-	public static let netNewsWireNewsURL = "https://nnw.ranchero.com/feed.xml"
-	private static let jsonNetNewsWireNewsURL = "https://nnw.ranchero.com/feed.json"
+	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
+	private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
 
 	public let defaultAccount: Account
 
@@ -246,7 +246,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() -> Void)? = nil) {
+	public func refreshAll(errorHandler: @escaping @MainActor (Error) -> Void, completion: (() -> Void)? = nil) {
 		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
 
 		let group = DispatchGroup()
@@ -259,7 +259,9 @@ public final class AccountManager: UnreadCountProvider {
 				case .success:
 					break
 				case .failure(let error):
-					errorHandler(error)
+                    Task { @MainActor in
+                        errorHandler(error)
+                    }
 				}
 			}
 		}

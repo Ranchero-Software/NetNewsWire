@@ -13,7 +13,7 @@ import UniformTypeIdentifiers
 
 // MARK: - Rows
 
-struct SettingsViewRows {
+struct SettingsRow {
 	
 	/// This row, when tapped, will open iOS System Settings.
 	static var openSystemSettings: some View {
@@ -23,7 +23,7 @@ struct SettingsViewRows {
 			Image("system.settings")
 				.resizable()
 				.aspectRatio(contentMode: .fit)
-				.frame(width: 30.0, height: 30.0)
+				.frame(width: 25.0, height: 25.0)
 				.clipShape(RoundedRectangle(cornerRadius: 6))
 		}
 		.onTapGesture {
@@ -40,7 +40,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("notifications.sounds")
 					.resizable()
-					.frame(width: 30.0, height: 30.0)
+					.frame(width: 25.0, height: 25.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -55,9 +55,19 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.account")
 					.resizable()
-					.frame(width: 30.0, height: 30.0)
+					.frame(width: 25.0, height: 25.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
+		}
+	}
+	
+	
+	/// Toggle for determining if articles are marked as read when scrolling the timeline view.
+	/// - Parameter preference: `Binding<Bool>`
+	/// - Returns: `some View`
+	static func markAsReadOnScroll(_ preference: Binding<Bool>) -> some View {
+		Toggle(isOn: preference) {
+			Text("Mark As Read on Scroll", comment: "Mark As Read on Scroll")
 		}
 	}
 	
@@ -70,7 +80,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.extension")
 					.resizable()
-					.frame(width: 30.0, height: 30.0)
+					.frame(width: 25.0, height: 25.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -89,7 +99,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.import.opml")
 					.resizable()
-					.frame(width: 30.0, height: 30.0)
+					.frame(width: 25.0, height: 25.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -108,7 +118,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.export.opml")
 					.resizable()
-					.frame(width: 30.0, height: 30.0)
+					.frame(width: 25.0, height: 25.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -194,7 +204,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.appearance")
 					.resizable()
-					.frame(width: 30.0, height: 30.0)
+					.frame(width: 25.0, height: 25.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -216,7 +226,7 @@ struct SettingsViewRows {
 				.symbolRenderingMode(.hierarchical)
 				.foregroundColor(Color(uiColor: AppAssets.primaryAccentColor))
 				.aspectRatio(contentMode: .fit)
-				.frame(width: 30.0, height: 30.0)
+				.frame(width: 25.0, height: 25.0)
 		}
 		.onTapGesture {
 			selectedSheet.wrappedValue = sheet
@@ -237,7 +247,7 @@ struct SettingsViewRows {
 					.symbolRenderingMode(.hierarchical)
 					.foregroundColor(Color(uiColor: AppAssets.primaryAccentColor))
 					.aspectRatio(contentMode: .fit)
-					.frame(width: 30.0, height: 30.0)
+					.frame(width: 25.0, height: 25.0)
 			}
 		}
 	}

@@ -53,14 +53,12 @@ struct FeedNode: Hashable {
 	}
 }
 
-class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
+final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
 		return rootSplitViewController.undoManager
 	}
-	
-	lazy var webViewProvider = WebViewProvider(coordinator: self)
 	
 	private var activityManager = ActivityManager()
 	
@@ -111,7 +109,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
-	private var directlyMarkedAsUnreadArticles = Set<Article>()
+	var directlyMarkedAsUnreadArticles = Set<Article>()
 	
 	var prefersStatusBarHidden = false
 	
@@ -1043,10 +1041,18 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 			completion?()
 		}
 	}
+	
+	func canMarkAllAsRead() -> Bool {
+		return articles.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
+	}
+
+	func canMarkAllAsRead(_ articles: [Article]) -> Bool {
+		return articles.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
+	}
 
 	func canMarkAboveAsRead(for article: Article) -> Bool {
 		let articlesAboveArray = articles.articlesAbove(article: article)
-		return articlesAboveArray.canMarkAllAsRead()
+		return articlesAboveArray.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func markAboveAsRead() {
@@ -1064,7 +1070,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 
 	func canMarkBelowAsRead(for article: Article) -> Bool {
 		let articleBelowArray = articles.articlesBelow(article: article)
-		return articleBelowArray.canMarkAllAsRead()
+		return articleBelowArray.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func markBelowAsRead() {

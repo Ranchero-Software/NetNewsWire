@@ -28,7 +28,7 @@ private struct ToolbarItemIdentifier {
 	static let Advanced = "Advanced"
 }
 
-class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
+@MainActor class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	
 	private let windowWidth = CGFloat(512.0) // Width is constant for all views; only the height changes
 	private var viewControllers = [String: NSViewController]()

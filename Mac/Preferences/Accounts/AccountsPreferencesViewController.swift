@@ -17,7 +17,7 @@ protocol AccountsPreferencesAddAccountDelegate {
 }
 
 // MARK: - AccountsPreferencesViewController
-final class AccountsPreferencesViewController: NSViewController {
+@MainActor final class AccountsPreferencesViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var detailView: NSView!

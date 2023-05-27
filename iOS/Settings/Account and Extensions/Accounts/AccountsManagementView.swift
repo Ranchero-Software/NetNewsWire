@@ -22,21 +22,13 @@ public final class AccountManagementViewModel: ObservableObject {
 	init() {
 		refreshAccounts()
 		
-		NotificationCenter.default.addObserver(forName: .AccountStateDidChange, object: nil, queue: .main) { [weak self] _ in
-			self?.refreshAccounts()
-		}
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshAccounts(_:)), name: .AccountStateDidChange, object: nil)
 		
-		NotificationCenter.default.addObserver(forName: .UserDidAddAccount, object: nil, queue: .main) { [weak self] _ in
-			self?.refreshAccounts()
-		}
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshAccounts(_:)), name: .UserDidAddAccount, object: nil)
 		
-		NotificationCenter.default.addObserver(forName: .UserDidDeleteAccount, object: nil, queue: .main) { [weak self] _ in
-			self?.refreshAccounts()
-		}
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshAccounts(_:)), name: .UserDidDeleteAccount, object: nil)
 		
-		NotificationCenter.default.addObserver(forName: .DisplayNameDidChange, object: nil, queue: .main) { [weak self] _ in
-			self?.refreshAccounts()
-		}
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshAccounts(_:)), name: .DisplayNameDidChange, object: nil)
 	}
 	
 	func temporarilyDeleteAccount(_ account: Account) {
@@ -54,7 +46,8 @@ public final class AccountManagementViewModel: ObservableObject {
 		self.refreshAccounts()
 	}
 	
-	private func refreshAccounts() {
+	@objc
+	private func refreshAccounts(_ sender: Any? = nil) {
 		sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
 		sortedInactiveAccounts = AccountManager.shared.sortedAccounts.filter({ $0.isActive == false })
 	}

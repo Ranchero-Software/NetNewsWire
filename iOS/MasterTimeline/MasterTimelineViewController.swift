@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import WebKit
 import SwiftUI
 import RSCore
 import Account
@@ -31,11 +32,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
 	
+	private var markAsReadOnScrollWorkItem: DispatchWorkItem?
+	private var markAsReadOnScrollStart: Int?
+	private var markAsReadOnScrollEnd: Int?
+	private var lastVerticalPosition: CGFloat = 0
+
 	var mainControllerIdentifier = MainControllerIdentifier.masterTimeline
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
-	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
@@ -43,7 +48,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
 		// commands that the system is looking for by going up the responder chain. They will interfere with
 		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
-		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else { return nil }
+		guard let current = UIResponder.currentFirstResponder, !(current is WKWebView) else { return nil }
 		
 		return keyboardManager.keyCommands
 	}
@@ -435,7 +440,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
+		markAsReadOnScroll()
 	}
 	
 	// MARK: Notifications
@@ -529,10 +535,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@objc func willEnterForeground(_ note: Notification) {
 		updateUI()
-	}
-	
-	@objc func scrollPositionDidChange() {
-		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
 	}
 	
 	// MARK: Reloading
@@ -679,7 +681,7 @@ private extension MasterTimelineViewController {
 	func updateToolbar() {
 		guard firstUnreadButton != nil else { return }
 		
-		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+		markAllAsReadButton.isEnabled = coordinator.canMarkAllAsRead()
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		
 		if coordinator.isRootSplitCollapsed {
@@ -696,6 +698,8 @@ private extension MasterTimelineViewController {
 	}
 	
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
+		lastVerticalPosition = 0
+		
 		if coordinator.articles.count == 0 {
 			tableView.rowHeight = tableView.estimatedRowHeight
 		} else {
@@ -724,7 +728,6 @@ private extension MasterTimelineViewController {
     }
 	
 	func configure(_ cell: MasterTimelineTableViewCell, article: Article, indexPath: IndexPath) {
-		
 		let iconImage = iconImageFor(article)
 		let featuredImage = featuredImageFor(article)
 		
@@ -747,6 +750,54 @@ private extension MasterTimelineViewController {
 			return RSImage(data: data)
 		}
 		return nil
+	}
+	
+	func markAsReadOnScroll() {
+		// Only try to mark if we are scrolling up
+		defer {
+			lastVerticalPosition = tableView.contentOffset.y
+		}
+		guard lastVerticalPosition < tableView.contentOffset.y else {
+			return
+		}
+		
+		// Implement Mark As Read on Scroll where we mark after the leading edge goes a little beyond the safe area inset
+		guard AppDefaults.shared.markArticlesAsReadOnScroll,
+			  lastVerticalPosition < tableView.contentOffset.y,
+			  let firstVisibleIndexPath = tableView.indexPathsForVisibleRows?.first else { return }
+
+		let firstVisibleRowRect = tableView.rectForRow(at: firstVisibleIndexPath)
+		guard tableView.convert(firstVisibleRowRect, to: nil).origin.y < tableView.safeAreaInsets.top - 20 else { return }
+
+		// We only mark immediately after scrolling stops, not during, to prevent scroll hitching
+		markAsReadOnScrollWorkItem?.cancel()
+		markAsReadOnScrollWorkItem = DispatchWorkItem { [weak self] in
+			defer {
+				self?.markAsReadOnScrollStart = nil
+				self?.markAsReadOnScrollEnd = nil
+			}
+			
+			guard let start: Int = self?.markAsReadOnScrollStart,
+				  let end: Int = self?.markAsReadOnScrollEnd ?? self?.markAsReadOnScrollStart,
+				  start <= end,
+				  let self = self else {
+				return
+			}
+			
+			let articles = Array(start...end)
+				.map({ IndexPath(row: $0, section: 0) })
+				.compactMap({ self.dataSource.itemIdentifier(for: $0) })
+				.filter({ $0.status.read == false })
+			self.coordinator.markAllAsRead(articles)
+		}
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: markAsReadOnScrollWorkItem!)
+
+		// Here we are creating a range of rows to attempt to mark later with the work item
+		guard markAsReadOnScrollStart != nil else {
+			markAsReadOnScrollStart = max(firstVisibleIndexPath.row - 5, 0)
+			return
+		}
+		markAsReadOnScrollEnd = max(markAsReadOnScrollEnd ?? 0, firstVisibleIndexPath.row)
 	}
 	
 	func toggleArticleReadStatusAction(_ article: Article) -> UIAction? {
@@ -876,7 +927,7 @@ private extension MasterTimelineViewController {
 		}
 
 		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+		guard coordinator.canMarkAllAsRead(articles), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
 		
@@ -899,7 +950,7 @@ private extension MasterTimelineViewController {
 		}
 		
 		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+		guard coordinator.canMarkAllAsRead(articles), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
 		

@@ -51,10 +51,9 @@ struct ExtensionsManagementView: View {
 		} message: {
 			Text("alert.message.cannot-undo-action", comment: "You can't undo this action.")
 		}
-		.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange)) { _ in
+		.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange), perform: { _ in
 			availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
-		}
-
+		})
     }
 	
 	private var activeExtensionsSection: some View {

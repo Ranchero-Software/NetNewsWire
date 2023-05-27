@@ -8,7 +8,7 @@
 
 import AppKit
 
-protocol Inspector: AnyObject {
+@MainActor protocol Inspector: AnyObject {
 
 	var objects: [Any]? { get set }
 	var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
@@ -20,7 +20,7 @@ protocol Inspector: AnyObject {
 typealias InspectorViewController = Inspector & NSViewController
 
 
-final class InspectorWindowController: NSWindowController {
+@MainActor final class InspectorWindowController: NSWindowController {
 
 	class var shouldOpenAtStartup: Bool {
 		return UserDefaults.standard.bool(forKey: DefaultsKey.windowIsOpen)

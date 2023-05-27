@@ -50,9 +50,9 @@ struct AddExtensionListView: View {
 					}
 				}
 			}
-			.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange)) { _ in
+			.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange), perform: { _ in
 				dismiss()
-			}
+			})
 		}
 		
 	}

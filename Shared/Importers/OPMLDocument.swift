@@ -30,7 +30,7 @@ public struct OPMLDocument: FileDocument {
 		self.account = account
 	}
 	
-	public func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+	@MainActor public func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
 		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
 		let filename = "Subscriptions-\(accountName).opml"
 		let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent(filename)

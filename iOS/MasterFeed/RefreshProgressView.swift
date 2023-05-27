@@ -10,7 +10,7 @@
 import SwiftUI
 import Account
 
-struct RefreshProgressView: View {
+@MainActor struct RefreshProgressView: View {
 	
 	static let width: CGFloat = 100
 	static let height: CGFloat = 5

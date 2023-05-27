@@ -9,7 +9,7 @@
 import Foundation
 import RSWeb
 
-struct Browser {
+@MainActor struct Browser {
 
 	/// The user-specified default browser for opening web pages.
 	///

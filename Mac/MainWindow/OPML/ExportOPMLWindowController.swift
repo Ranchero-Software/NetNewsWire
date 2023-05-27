@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-class ExportOPMLWindowController: NSWindowController {
+@MainActor final class ExportOPMLWindowController: NSWindowController {
 
 	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
 	private weak var hostWindow: NSWindow?

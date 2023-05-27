@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import RSCore
 
 struct AboutView: View, LoadableAboutData {
     
@@ -35,9 +36,10 @@ struct AboutView: View, LoadableAboutData {
 		HStack {
 			Spacer()
 			VStack(alignment: .center, spacing: 8) {
-				Image("About")
+				Image(uiImage: RSImage.appIconImage!)
 					.resizable()
 					.frame(width: 75, height: 75)
+					.clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
 				
 				Text(Bundle.main.appName)
 					.font(.headline)

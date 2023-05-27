@@ -10,16 +10,13 @@ import AppKit
 import Account
 import RSCore
 
-struct ErrorHandler: Logging {
+@MainActor struct ErrorHandler: Logging {
 
-	
-	
 	public static func present(_ error: Error) {
 		NSApplication.shared.presentError(error)
 	}
-	
+
 	public static func log(_ error: Error) {
 		ErrorHandler.logger.error("\(error.localizedDescription, privacy: .public)")
 	}
-	
 }

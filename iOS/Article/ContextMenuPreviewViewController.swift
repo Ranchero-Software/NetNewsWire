@@ -9,7 +9,7 @@
 import UIKit
 import Articles
 
-class ContextMenuPreviewViewController: UIViewController {
+@MainActor class ContextMenuPreviewViewController: UIViewController {
 
 	@IBOutlet weak var blogNameLabel: UILabel!
 	@IBOutlet weak var blogAuthorLabel: UILabel!

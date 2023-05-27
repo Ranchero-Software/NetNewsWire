@@ -28,7 +28,7 @@ struct NewArticleNotificationsView: View, Logging {
 			
 		}
 		.tint(Color(uiColor: AppAssets.primaryAccentColor))
-		.onReceive(NotificationCenter.default.publisher(for: .FaviconDidBecomeAvailable)) { notification in
+		.onReceive(NotificationCenter.default.publisher(for: .FaviconDidBecomeAvailable), perform: { notification in
 			guard let faviconURLString = notification.userInfo?["faviconURL"] as? String,
 				  let faviconHost = URL(string: faviconURLString)?.host else {
 				return
@@ -42,11 +42,11 @@ struct NewArticleNotificationsView: View, Logging {
 					}
 				}
 			}
-		}
-		.onReceive(NotificationCenter.default.publisher(for: .WebFeedIconDidBecomeAvailable)) { notification in
+		})
+		.onReceive(NotificationCenter.default.publisher(for: .WebFeedIconDidBecomeAvailable), perform: { notification in
 			guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
 			webFeed.objectWillChange.send()
-		}
+		})
     }
 	
 	private func sortedWebFeedsForAccount(_ account: Account) -> [WebFeed] {

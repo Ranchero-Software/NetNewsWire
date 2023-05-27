@@ -14,6 +14,7 @@ import UserNotifications
 struct SettingsView: View {
 	
 	@Environment(\.dismiss) var dismiss
+	@Environment(\.scenePhase) var scenePhase
 	@StateObject private var appDefaults = AppDefaults.shared
 	@StateObject private var viewModel = SettingsViewModel()
 	
@@ -69,16 +70,16 @@ struct SettingsView: View {
 						footer: Text("label.text.appearance-explainer", comment: "Manage the look, feel, and behavior of NetNewsWire.")) {
 					SettingsViewRows.configureAppearance($isConfigureAppearanceShown)
 					if viewModel.notificationPermissions == .authorized {
-						SettingsViewRows.configureNewArticleNotifications
+						SettingsRow.configureNewArticleNotifications
 					}
 				}
 				
 				// Help
 				Section {
 					ForEach(0..<HelpSheet.allCases.count, id: \.self) { i in
-						SettingsViewRows.showHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $viewModel.helpSheet, $viewModel.showHelpSheet)
+						SettingsRow.showHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $viewModel.helpSheet, $viewModel.showHelpSheet)
 					}
-					SettingsViewRows.aboutNetNewsWire
+					SettingsRow.aboutNetNewsWire
 				}
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))
@@ -101,18 +102,16 @@ struct SettingsView: View {
 			}
 			.task {
 				UNUserNotificationCenter.current().getNotificationSettings { settings in
-					DispatchQueue.main.async {
-						self.viewModel.notificationPermissions = settings.authorizationStatus
-					}
+					Task { await MainActor.run { self.viewModel.notificationPermissions = settings.authorizationStatus }}
 				}
 			}
-			.onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
-				UNUserNotificationCenter.current().getNotificationSettings { settings in
-					DispatchQueue.main.async {
-						self.viewModel.notificationPermissions = settings.authorizationStatus
+			.onChange(of: scenePhase, perform: { phase in
+				if phase == .active {
+					UNUserNotificationCenter.current().getNotificationSettings { settings in
+						Task { await MainActor.run { self.viewModel.notificationPermissions = settings.authorizationStatus }}
 					}
 				}
-			}
+			})
 			.dismissOnExternalContextLaunch()
 			.fileImporter(isPresented: $viewModel.showImportView, allowedContentTypes: OPMLDocument.readableContentTypes) { result in
 				switch result {

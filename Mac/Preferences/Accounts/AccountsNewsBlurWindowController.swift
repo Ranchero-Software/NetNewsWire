@@ -12,7 +12,7 @@ import RSWeb
 import RSCore
 import Secrets
 
-class AccountsNewsBlurWindowController: NSWindowController, Logging {
+@MainActor class AccountsNewsBlurWindowController: NSWindowController, Logging {
 	
 	@IBOutlet weak var signInTextField: NSTextField!
 	@IBOutlet weak var noAccountTextField: NSTextField!

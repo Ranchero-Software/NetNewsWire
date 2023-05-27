@@ -57,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var isSyncArticleStatusRunning = false
 	var isWaitingForSyncTasks = false
 	
-	override init() {
+	@MainActor override init() {
 		super.init()
 		appDelegate = self
 
@@ -76,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 	}
 	
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+	@MainActor func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		AppDefaults.registerDefaults()
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
@@ -127,7 +127,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		
 	}
 	
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+	@MainActor func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		DispatchQueue.main.async {
 			self.resumeDatabaseProcessingIfNecessary()
 			AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
@@ -137,17 +137,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
     }
 	
-	func applicationWillTerminate(_ application: UIApplication) {
+	@MainActor func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
 	}
 
-	func applicationDidEnterBackground(_ application: UIApplication) {
+	@MainActor func applicationDidEnterBackground(_ application: UIApplication) {
 		IconImageCache.shared.emptyCache()
 	}
 	
 	// MARK: Notifications
 	
-	@objc func unreadCountDidChange(_ note: Notification) {
+	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
 		}
@@ -155,21 +155,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	// MARK: - API
 	
-	func manualRefresh(errorHandler: @escaping (Error) -> ()) {
+	@MainActor func manualRefresh(errorHandler: @escaping (Error) -> ()) {
 		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
 			$0.cleanUp(conditional: true)
 		}
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
 	}
 	
-	func resumeDatabaseProcessingIfNecessary() {
+	@MainActor func resumeDatabaseProcessingIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			logger.info("Application processing resumed.")
 		}
 	}
 	
-	func prepareAccountsForBackground() {
+	@MainActor func prepareAccountsForBackground() {
 		extensionFeedAddRequestFile.suspend()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
@@ -178,7 +178,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		waitForSyncTasksToFinish()
 	}
 	
-	func prepareAccountsForForeground() {
+	@MainActor func prepareAccountsForForeground() {
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
 
@@ -218,7 +218,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		
     }
 	
-	func presentThemeImportError(_ error: Error) {
+	@MainActor func presentThemeImportError(_ error: Error) {
 		let windowScene = {
 			let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
 			return scenes.filter { $0.activationState == .foregroundActive }.first ?? scenes.first
@@ -231,7 +231,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 // MARK: App Initialization
 
-private extension AppDelegate {
+@MainActor private extension AppDelegate {
 	
 	private func initializeDownloaders() {
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!

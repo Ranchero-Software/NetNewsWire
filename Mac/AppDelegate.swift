@@ -32,11 +32,11 @@ var appDelegate: AppDelegate!
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate, Logging
 {
-	
+
 	private struct WindowRestorationIdentifiers {
 		static let mainWindow = "mainWindow"
 	}
-	
+
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
@@ -44,13 +44,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var webFeedIconDownloader: WebFeedIconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
-	
+
 	var appName: String!
-	
+
 	var refreshTimer: AccountRefreshTimer?
 	var syncTimer: ArticleStatusSyncTimer?
 	var lastRefreshInterval = AppDefaults.shared.refreshInterval
-	
+
 	var shuttingDown = false {
 		didSet {
 			if shuttingDown {
@@ -61,9 +61,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 	}
-	
+
 	var isShutDownSyncDone = false
-	
+
 	@IBOutlet var shareMenuItem: NSMenuItem!
 	@IBOutlet var fileMenuItem: NSMenuItem!
 	@IBOutlet var debugMenuItem: NSMenuItem!
@@ -71,7 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var groupArticlesByFeedMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
-	
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -80,7 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 	}
-	
+
 	private var mainWindowController: MainWindowController? {
 		var bestController: MainWindowController?
 		for candidateController in mainWindowControllers {
@@ -94,7 +94,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 		return bestController
 	}
-	
+
 	private var mainWindowControllers = [MainWindowController]()
 	private var preferencesWindowController: NSWindowController?
 	private var addFeedController: AddFeedController?
@@ -109,50 +109,50 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var softwareUpdater: SPUUpdater!
 	private var crashReporter: PLCrashReporter!
 #endif
-	
-	override init() {
+
+	@MainActor override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
-		
+
 #if !MAC_APP_STORE
 		let crashReporterConfig = PLCrashReporterConfig.defaultConfiguration()
 		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
 		crashReporter.enable()
 #endif
-		
+
 		SecretsManager.provider = Secrets()
 		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
 		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
-		
+
 		appDelegate = self
-		
+
 		presentTwitterDeprecationAlertIfRequired()
 	}
-	
+
 	// MARK: - API
-	func showAddFolderSheetOnWindow(_ window: NSWindow) {
+	@MainActor func showAddFolderSheetOnWindow(_ window: NSWindow) {
 		addFolderWindowController = AddFolderWindowController()
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
-	
-	func showAddWebFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
+
+	@MainActor func showAddWebFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 		addFeedController = AddFeedController(hostWindow: window)
 		addFeedController?.showAddFeedSheet(.webFeed, urlString, name, account, folder)
 	}
-	
+
 	// MARK: - NSApplicationDelegate
-	
-	func applicationWillFinishLaunching(_ notification: Notification) {
+
+	@MainActor func applicationWillFinishLaunching(_ notification: Notification) {
 		installAppleEventHandlers()
-		
+
 		CacheCleaner.purgeIfNecessary()
-		
+
 		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
 		let cacheFolder: String
 		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).path {
@@ -162,25 +162,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
 		}
-		
+
 		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
 		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
 		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
-		
+
 		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
 		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
 		imageDownloader = ImageDownloader(folder: imagesFolder)
-		
+
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		webFeedIconDownloader = WebFeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
-		
+
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 	}
-	
-	func applicationDidFinishLaunching(_ note: Notification) {
-		
+
+	@MainActor func applicationDidFinishLaunching(_ note: Notification) {
+
 #if MAC_APP_STORE || TEST
 		checkForUpdatesMenuItem.isHidden = true
 #else
@@ -188,7 +188,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		let hostBundle = Bundle.main
 		let updateDriver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
 		self.softwareUpdater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: updateDriver, delegate: self)
-		
+
 		do {
 			try self.softwareUpdater.start()
 		}
@@ -196,55 +196,55 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			logger.error("Failed to start software updater with error: \(error.localizedDescription, privacy: .public)")
 		}
 #endif
-		
+
 		AppDefaults.shared.registerDefaults()
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
 			logger.debug("Is first run")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
-		
+
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
 			// Import feeds. Either old NNW 3 feeds or the default feeds.
 			if !NNW3ImportController.importSubscriptionsIfFileExists(account: localAccount) {
 				DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 			}
 		}
-		
+
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
-		
+
 		if mainWindowController == nil {
 			let mainWindowController = createAndShowMainWindow()
 			mainWindowController.restoreStateFromUserDefaults()
 		}
-		
+
 		fileMenuItem.submenu?.delegate = self
 		shareMenuItem.submenu?.delegate = self
-		
+
 		if isFirstRun {
 			mainWindowController?.window?.center()
 		}
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		
+
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
-		
+
 		if InspectorWindowController.shouldOpenAtStartup {
 			self.toggleInspectorWindow(self)
 		}
-		
+
 		extensionContainersFile = ExtensionContainersFile()
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
-		
+
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()
-		
+
 		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in }
-		
+
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
@@ -252,10 +252,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 				}
 			}
 		}
-		
+
 		UNUserNotificationCenter.current().delegate = self
 		userNotificationManager = UserNotificationManager()
-		
+
 #if DEBUG
 		refreshTimer!.update()
 		syncTimer!.update()
@@ -270,7 +270,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 #endif
-		
+
 		if AppDefaults.shared.showDebugMenu {
 			// The Web Inspector uses SPI and can never appear in a MAC_APP_STORE build.
 #if MAC_APP_STORE
@@ -283,24 +283,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		} else {
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 		}
-		
+
 #if !MAC_APP_STORE
 		DispatchQueue.main.async {
 			CrashReporter.check(crashReporter: self.crashReporter)
 		}
 #endif
-		
+
 	}
-	
-	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
+
+	@MainActor func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
 		guard let mainWindowController = mainWindowController else {
 			return false
 		}
 		mainWindowController.handle(userActivity)
 		return true
 	}
-	
-	func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+
+	@MainActor func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
 		// https://github.com/brentsimmons/NetNewsWire/issues/522
 		// I couldn’t reproduce the crashing bug, but it appears to happen on creating a main window
 		// and its views and view controllers. The check below is so that the app does nothing
@@ -313,43 +313,43 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		mainWindowController.showWindow(self)
 		return false
 	}
-	
-	func applicationDidBecomeActive(_ notification: Notification) {
+
+	@MainActor func applicationDidBecomeActive(_ notification: Notification) {
 		fireOldTimers()
 	}
-	
-	func applicationDidResignActive(_ notification: Notification) {
+
+	@MainActor func applicationDidResignActive(_ notification: Notification) {
 		ArticleStringFormatter.emptyCaches()
 		saveState()
 	}
-	
-	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+
+	@MainActor func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
 		AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
 	}
-	
-	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
+
+	@MainActor func application(_ sender: NSApplication, openFile filename: String) -> Bool {
 		guard filename.hasSuffix(ArticleTheme.nnwThemeSuffix) else { return false }
 		importTheme(filename: filename)
 		return true
 	}
-	
-	func applicationWillTerminate(_ notification: Notification) {
+
+	@MainActor func applicationWillTerminate(_ notification: Notification) {
 		shuttingDown = true
 		saveState()
-		
+
 		ArticleThemeDownloader.shared.cleanUp()
-		
+
 		AccountManager.shared.sendArticleStatusAll() {
 			self.isShutDownSyncDone = true
 		}
-		
+
 		let timeout = Date().addingTimeInterval(2)
 		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: timeout) && timeout > Date() { }
 	}
-	
-	func presentThemeImportError(_ error: Error) {
+
+	@MainActor func presentThemeImportError(_ error: Error) {
 		var informativeText: String = ""
-		
+
 		if let decodingError = error as? DecodingError {
 			switch decodingError {
 			case .typeMismatch(let type, _):
@@ -369,14 +369,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 				}
 				let localizedError = NSLocalizedString("alert.error.theme-data-corruption.%@", comment: "This theme cannot be used because of data corruption in the Info.plist: %@.")
 				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, debugDescription) as String
-				
+
 			default:
 				informativeText = error.localizedDescription
 			}
 		} else {
 			informativeText = error.localizedDescription
 		}
-		
+
 		DispatchQueue.main.async {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
@@ -385,20 +385,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			alert.addButton(withTitle: NSLocalizedString("button.title.ok", comment: "OK"))
 			
 			alert.buttons[0].keyEquivalent = "\r"
-			
-			let response = alert.runModal()
+
+			_ = alert.runModal()
 		}
 	}
-	
+
 	// MARK: Notifications
-	
-	@objc func unreadCountDidChange(_ note: Notification) {
+
+	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
 		}
 	}
-	
-	@objc func webFeedSettingDidChange(_ note: Notification) {
+
+	@MainActor @objc func webFeedSettingDidChange(_ note: Notification) {
 		guard let feed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
@@ -406,31 +406,31 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			let _ = faviconDownloader.favicon(for: feed)
 		}
 	}
-	
-	@objc func inspectableObjectsDidChange(_ note: Notification) {
+
+	@MainActor @objc func inspectableObjectsDidChange(_ note: Notification) {
 		guard let inspectorWindowController = inspectorWindowController, inspectorWindowController.isOpen else {
 			return
 		}
 		inspectorWindowController.objects = objectsForInspector()
 	}
-	
-	@objc func userDefaultsDidChange(_ note: Notification) {
+
+	@MainActor @objc func userDefaultsDidChange(_ note: Notification) {
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
-		
+
 		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
 			refreshTimer?.update()
 			lastRefreshInterval = AppDefaults.shared.refreshInterval
 		}
-		
+
 		updateDockBadge()
 	}
-	
-	@objc func didWakeNotification(_ note: Notification) {
+
+	@MainActor @objc func didWakeNotification(_ note: Notification) {
 		fireOldTimers()
 	}
-	
-	@objc func importDownloadedTheme(_ note: Notification) {
+
+	@MainActor @objc func importDownloadedTheme(_ note: Notification) {
 		guard let userInfo = note.userInfo,
 			  let url = userInfo["url"] as? URL else {
 			return
@@ -439,108 +439,108 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			self.importTheme(filename: url.path)
 		}
 	}
-	
+
 	// MARK: Main Window
-	
-	func createMainWindowController() -> MainWindowController {
+
+	@MainActor func createMainWindowController() -> MainWindowController {
 		let controller: MainWindowController
 		controller = windowControllerWithName("MainWindow") as! MainWindowController
-		
+
 		if !(mainWindowController?.isOpen ?? false) {
 			mainWindowControllers.removeAll()
 		}
 		mainWindowControllers.append(controller)
 		return controller
 	}
-	
-	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
+
+	@MainActor func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
 		let storyboard = NSStoryboard(name: NSStoryboard.Name(storyboardName), bundle: nil)
 		return storyboard.instantiateInitialController()! as! NSWindowController
 	}
-	
+
 	@discardableResult
-	func createAndShowMainWindow() -> MainWindowController {
+	@MainActor func createAndShowMainWindow() -> MainWindowController {
 		let controller = createMainWindowController()
 		controller.showWindow(self)
-		
+
 		if let window = controller.window {
 			window.restorationClass = Self.self
 			window.identifier = NSUserInterfaceItemIdentifier(rawValue: WindowRestorationIdentifiers.mainWindow)
 		}
-		
+
 		return controller
 	}
-	
-	func createAndShowMainWindowIfNecessary() {
+
+	@MainActor func createAndShowMainWindowIfNecessary() {
 		if mainWindowController == nil {
 			createAndShowMainWindow()
 		} else {
 			mainWindowController?.showWindow(self)
 		}
 	}
-	
-	func removeMainWindow(_ windowController: MainWindowController) {
+
+	@MainActor func removeMainWindow(_ windowController: MainWindowController) {
 		guard mainWindowControllers.count > 1 else { return }
 		if let index = mainWindowControllers.firstIndex(of: windowController) {
 			mainWindowControllers.remove(at: index)
 		}
 	}
-	
+
 	// MARK: NSUserInterfaceValidations
-	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+	@MainActor func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		if shuttingDown {
 			return false
 		}
-		
+
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
 		let isSpecialAccountAvailable = AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit })
-		
+
 		if item.action == #selector(refreshAll(_:)) {
 			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty
 		}
-		
+
 		if item.action == #selector(importOPMLFromFile(_:)) {
 			return AccountManager.shared.activeAccounts.contains(where: { !$0.behaviors.contains(where: { $0 == .disallowOPMLImports }) })
 		}
-		
+
 		if item.action == #selector(addAppNews(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() && !AccountManager.shared.activeAccounts.isEmpty
 		}
-		
+
 		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
 			return mainWindowController?.isOpen ?? false
 		}
-		
+
 		if item.action == #selector(showAddWebFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
-		
+
 		if item.action == #selector(showAddRedditFeedWindow(_:)) {
 			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isRedditEnabled else {
 				return false
 			}
 			return ExtensionPointManager.shared.isRedditEnabled
 		}
-		
+
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
 		}
 		#endif
-		
+
 		return true
 	}
 
 	// MARK: UNUserNotificationCenterDelegate
-	
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+
+	@MainActor func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .badge, .sound])
     }
-	
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-		
+
+	@MainActor func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+
 		let userInfo = response.notification.request.content.userInfo
-		
+
 		switch response.actionIdentifier {
 		case "MARK_AS_READ":
 			handleMarkAsRead(userInfo: userInfo)
@@ -551,11 +551,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 		completionHandler()
     }
-	
+
 	// MARK: Add Feed
-	func addWebFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
+	@MainActor func addWebFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
 		createAndShowMainWindowIfNecessary()
-		
+
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
@@ -564,13 +564,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	// MARK: - Dock Badge
-	@objc func updateDockBadge() {
+	@MainActor @objc func updateDockBadge() {
 		let label = unreadCount > 0 ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}
 
 	// MARK: - Actions
-	@IBAction func showPreferences(_ sender: Any?) {
+	@MainActor @IBAction func showPreferences(_ sender: Any?) {
 		if preferencesWindowController == nil {
 			preferencesWindowController = windowControllerWithName("Preferences")
 		}
@@ -578,35 +578,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		preferencesWindowController!.showWindow(self)
 	}
 
-	@IBAction func newMainWindow(_ sender: Any?) {
+	@MainActor @IBAction func newMainWindow(_ sender: Any?) {
 		createAndShowMainWindow()
 	}
 
-	@IBAction func showMainWindow(_ sender: Any?) {
+	@MainActor @IBAction func showMainWindow(_ sender: Any?) {
 		createAndShowMainWindowIfNecessary()
 		mainWindowController?.window?.makeKey()
 	}
 
-	@IBAction func refreshAll(_ sender: Any?) {
+	@MainActor @IBAction func refreshAll(_ sender: Any?) {
 		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 	}
 
-	@IBAction func showAddWebFeedWindow(_ sender: Any?) {
+	@MainActor @IBAction func showAddWebFeedWindow(_ sender: Any?) {
 		addWebFeed(nil)
 	}
 
-	@IBAction func showAddRedditFeedWindow(_ sender: Any?) {
+	@MainActor @IBAction func showAddRedditFeedWindow(_ sender: Any?) {
 		createAndShowMainWindowIfNecessary()
 		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
 		addFeedController?.showAddFeedSheet(.redditFeed)
 	}
 
-	@IBAction func showAddFolderWindow(_ sender: Any?) {
+	@MainActor @IBAction func showAddFolderWindow(_ sender: Any?) {
 		createAndShowMainWindowIfNecessary()
 		showAddFolderSheetOnWindow(mainWindowController!.window!)
 	}
 
-	@IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
+	@MainActor @IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
 		if keyboardShortcutsWindowController == nil {
 			
 			keyboardShortcutsWindowController = WebViewWindowController(title: NSLocalizedString("window.title.keyboard-shortcuts", comment: "Keyboard Shortcuts"))
@@ -619,13 +619,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 				let minSize = NSSize(width: 400, height: 400)
 				window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 			}
-			
+
 		}
 
 		keyboardShortcutsWindowController!.showWindow(self)
 	}
 
-	@IBAction func toggleInspectorWindow(_ sender: Any?) {
+	@MainActor @IBAction func toggleInspectorWindow(_ sender: Any?) {
 		if inspectorWindowController == nil {
 			inspectorWindowController = (windowControllerWithName("Inspector") as! InspectorWindowController)
 		}
@@ -639,58 +639,58 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 
-	@IBAction func importOPMLFromFile(_ sender: Any?) {
+	@MainActor @IBAction func importOPMLFromFile(_ sender: Any?) {
 		createAndShowMainWindowIfNecessary()
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
-		
+
 		importOPMLController = ImportOPMLWindowController()
 		importOPMLController?.runSheetOnWindow(mainWindowController!.window!)
 	}
-	
-	@IBAction func importNNW3FromFile(_ sender: Any?) {
+
+	@MainActor @IBAction func importNNW3FromFile(_ sender: Any?) {
 		createAndShowMainWindowIfNecessary()
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
 		NNW3ImportController.askUserToImportNNW3Subscriptions(window: mainWindowController!.window!)
 	}
-	
-	@IBAction func exportOPML(_ sender: Any?) {
+
+	@MainActor @IBAction func exportOPML(_ sender: Any?) {
 		createAndShowMainWindowIfNecessary()
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
-		
+
 		exportOPMLController = ExportOPMLWindowController()
 		exportOPMLController?.runSheetOnWindow(mainWindowController!.window!)
 	}
-	
-	@IBAction func addAppNews(_ sender: Any?) {
+
+	@MainActor @IBAction func addAppNews(_ sender: Any?) {
 		if AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() {
 			return
 		}
 		addWebFeed(AccountManager.netNewsWireNewsURL, name: "NetNewsWire News")
 	}
 
-	@IBAction func openWebsite(_ sender: Any?) {
+	@MainActor @IBAction func openWebsite(_ sender: Any?) {
 
 		Browser.open("https://netnewswire.com/", inBackground: false)
 	}
-	
-	@IBAction func showHelp(_ sender: Any?) {
+
+	@MainActor @IBAction func showHelp(_ sender: Any?) {
 
 		Browser.open("https://netnewswire.com/help/mac/6.1/en/", inBackground: false)
 	}
 
-	@IBAction func gotoToday(_ sender: Any?) {
+	@MainActor @IBAction func gotoToday(_ sender: Any?) {
 
 		createAndShowMainWindowIfNecessary()
 		mainWindowController!.gotoToday(sender)
 	}
 
-	@IBAction func gotoAllUnread(_ sender: Any?) {
+	@MainActor @IBAction func gotoAllUnread(_ sender: Any?) {
 
 		createAndShowMainWindowIfNecessary()
 		mainWindowController!.gotoAllUnread(sender)
@@ -702,27 +702,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		mainWindowController!.gotoStarred(sender)
 	}
 
-	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
+	@MainActor @IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
 
 		AppDefaults.shared.timelineSortDirection = .orderedAscending
 	}
 
-	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
+	@MainActor @IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
 
 		AppDefaults.shared.timelineSortDirection = .orderedDescending
 	}
-	
-	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {		
+
+	@MainActor @IBAction func groupByFeedToggled(_ sender: NSMenuItem) {
 		AppDefaults.shared.timelineGroupByFeed.toggle()
 	}
 
-	@IBAction func checkForUpdates(_ sender: Any?) {
+	@MainActor @IBAction func checkForUpdates(_ sender: Any?) {
 		#if !MAC_APP_STORE && !TEST
 			self.softwareUpdater.checkForUpdates()
 		#endif
 	}
-	
-	@IBAction func showAbout(_ sender: Any?) {
+
+	@MainActor @IBAction func showAbout(_ sender: Any?) {
 		if #available(macOS 12, *) {
 			for window in NSApplication.shared.windows {
 				if window.identifier == .aboutNetNewsWire {
@@ -741,26 +741,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 // MARK: - NSMenuDelegate
 
-extension AppDelegate: NSMenuDelegate {
+@MainActor extension AppDelegate: NSMenuDelegate {
 
 	public func menuNeedsUpdate(_ menu: NSMenu) {
 		let newShareMenu = mainWindowController?.shareMenu
-		
+
 		guard menu != fileMenuItem.submenu else {
 			shareMenuItem.isEnabled = newShareMenu != nil
 			return
 		}
-		
+
 		menu.removeAllItems()
 		if let newShareMenu = newShareMenu {
 			menu.takeItems(from: newShareMenu)
 		}
 	}
-	
+
 }
 
 // MARK: - Debug Menu
-extension AppDelegate {
+@MainActor extension AppDelegate {
 
 	@IBAction func debugSearch(_ sender: Any?) {
 		AccountManager.shared.defaultAccount.debugRunSearch()
@@ -787,7 +787,7 @@ extension AppDelegate {
 			let configuration = NSWorkspace.OpenConfiguration()
 			configuration.createsNewApplicationInstance = true
 			NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration)
-			
+
 			NSApp.terminate(self)
 		}
 	}
@@ -832,7 +832,7 @@ extension AppDelegate {
 
 }
 
-internal extension AppDelegate {
+@MainActor internal extension AppDelegate {
 
 	func fireOldTimers() {
 		// It’s possible there’s a refresh timer set to go off in the past.
@@ -840,7 +840,7 @@ internal extension AppDelegate {
 		refreshTimer?.fireOldTimer()
 		syncTimer?.fireOldTimer()
 	}
-	
+
 	func objectsForInspector() -> [Any]? {
 		guard let window = NSApplication.shared.mainWindow, let windowController = window.windowController as? MainWindowController else {
 			return nil
@@ -858,15 +858,15 @@ internal extension AppDelegate {
 		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
 		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
 	}
-	
+
 	func updateGroupByFeedMenuItem() {
 		let groupByFeedEnabled = AppDefaults.shared.timelineGroupByFeed
 		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
 	}
-	
+
 	func importTheme(filename: String) {
 		guard let window = mainWindowController?.window else { return }
-		
+
 		do {
 			let theme = try ArticleTheme(path: filename, isAppTheme: false)
 			let alert = NSAlert()
@@ -874,11 +874,11 @@ internal extension AppDelegate {
 
 			let localizedMessageText = NSLocalizedString("alert.title.install-theme.%@.%@", comment: "Install theme “%@” by %@? — the order of the variables is theme name, author name")
 			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
-			
+
 			var attrs = [NSAttributedString.Key : Any]()
 			attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
 			attrs[.foregroundColor] = NSColor.textColor
-			
+
 			let titleParagraphStyle = NSMutableParagraphStyle()
 			titleParagraphStyle.alignment = .center
 			attrs[.paragraphStyle] = titleParagraphStyle
@@ -912,7 +912,7 @@ internal extension AppDelegate {
 					logger.error("Error importing theme: \(error.localizedDescription, privacy: .public)")
 				}
 			}
-			
+
 			alert.beginSheetModal(for: window) { result in
 				if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 
@@ -940,10 +940,10 @@ internal extension AppDelegate {
 			presentThemeImportError(error)
 		}
 	}
-	
+
 	func confirmImportSuccess(themeName: String) {
 		guard let window = mainWindowController?.window else { return }
-		
+
 		let alert = NSAlert()
 		alert.alertStyle = .informational
 		alert.messageText = NSLocalizedString("alert.title.theme-installed", comment: "Theme installed")
@@ -964,13 +964,13 @@ internal extension AppDelegate {
 		if currentDate > expiryDate {
 			return // If after August 9th, don't show
 		}
-
+		
 		if AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed() {
 			showTwitterDeprecationAlert()
 		}
 		AppDefaults.shared.twitterDeprecationAlertShown = true
 	}
-	
+
 	private func showTwitterDeprecationAlert() {
 		DispatchQueue.main.async {
 			let alert = NSAlert()
@@ -982,13 +982,12 @@ internal extension AppDelegate {
 			alert.runModal()
 		}
 	}
-
 }
 
 /*
     the ScriptingAppDelegate protocol exposes a narrow set of accessors with
     internal visibility which are very similar to some private vars.
-    
+
     These would be unnecessary if the similar accessors were marked internal rather than private,
     but for now, we'll keep the stratification of visibility
 */
@@ -1007,8 +1006,8 @@ extension AppDelegate : ScriptingAppDelegate {
     }
 }
 
-extension AppDelegate: NSWindowRestoration {
-	
+@MainActor extension AppDelegate: NSWindowRestoration {
+
 	@objc static func restoreWindow(withIdentifier identifier: NSUserInterfaceItemIdentifier, state: NSCoder, completionHandler: @escaping (NSWindow?, Error?) -> Void) {
 		var mainWindow: NSWindow? = nil
 		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
@@ -1016,39 +1015,39 @@ extension AppDelegate: NSWindowRestoration {
 		}
 		completionHandler(mainWindow, nil)
 	}
-	
+
 }
 
 // Handle Notification Actions
 
-private extension AppDelegate {
-	
+@MainActor private extension AppDelegate {
+
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
 		markArticle(userInfo: userInfo, statusKey: .read)
 	}
-	
+
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
 		markArticle(userInfo: userInfo, statusKey: .starred)
 	}
-	
+
 	func markArticle(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
 		}
-		
+
 		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
 			logger.debug("No account found from notification.")
 			return
 		}
-		
+
 		guard let articles = try? account.fetchArticles(.articleIDs([articleID])), !articles.isEmpty else {
 			logger.debug("No article found from search using: \(articleID, privacy: .public)")
 			return
 		}
-		
+
 		account.mark(articles: articles, statusKey: statusKey, flag: true) { _ in }
 	}
-	
+
 }

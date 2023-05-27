@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MasterFeedUnreadCountView : UIView {
+@MainActor class MasterFeedUnreadCountView : UIView {
 	
 	var padding: UIEdgeInsets {
 		return UIEdgeInsets(top: 1.0, left: 9.0, bottom: 1.0, right: 9.0)
@@ -35,8 +35,10 @@ class MasterFeedUnreadCountView : UIView {
 	}
 	
 	var unreadCountString: String {
-		return unreadCount < 1 ? "" : "\(unreadCount)"
+		return unreadCount < 1 ? "" : numberFormatter.string(from: NSNumber(value: unreadCount))!
 	}
+	
+	var numberFormatter: NumberFormatter!
 
 	private var contentSizeIsValid = false
 	private var _contentSize = CGSize.zero
@@ -44,11 +46,21 @@ class MasterFeedUnreadCountView : UIView {
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		self.isOpaque = false
+		
+		let formatter = NumberFormatter()
+		formatter.locale = Locale.current
+		formatter.numberStyle = .decimal
+		numberFormatter = formatter
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		self.isOpaque = false
+		
+		let formatter = NumberFormatter()
+		formatter.locale = Locale.current
+		formatter.numberStyle = .decimal
+		numberFormatter = formatter
 	}
 	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

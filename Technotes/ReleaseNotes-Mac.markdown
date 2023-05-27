@@ -1,8 +1,29 @@
 # Mac Release Notes
 
+## 6.1.2 build 6114 8 Apr 2023
+
+Update default feeds to remove feeds that don’t appear to be active anymore (sadly!).
+
+## 6.1.1 build 6112 13 Mar 2023
+
+Revised Twitter removal warning to not mention any specific month. We’re holding this release until Twitter shuts down free access to its API.
+
+## 6.1.1 build 6111 9 Feb 2023
+
+Same as 6.1.1b4 but with updated build and version number.
+
+### 6.1.1b4 build 6110 9 Feb 2023
+
+Update the Twitter removal warning to say “later in February” instead of “February 9,” since Twitter postponed the removal date to the 13th and might postpone it further.
+
+### 6.1.1b3 build 6109 6 Feb 2023
+
+Update Safari extension icon (credit to Louie Mantia for the new icon)
+
 ### 6.1.1b2 build 6108 5 Feb 2023
 
 Remove Twitter integration. On first launch, for people with Twitter feeds, display an alert explaining what happened
+
 Fix a crashing bug that could happen in the sidebar
 
 ### 6.1.1b1 build 6107 3 Nov 2022

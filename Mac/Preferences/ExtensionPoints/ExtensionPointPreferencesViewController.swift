@@ -16,7 +16,7 @@ protocol ExtensionPointPreferencesEnabler: AnyObject {
 	func enable(_ extensionPointType: ExtensionPoint.Type)
 }
 
-final class ExtensionPointPreferencesViewController: NSViewController {
+@MainActor final class ExtensionPointPreferencesViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var detailView: NSView!

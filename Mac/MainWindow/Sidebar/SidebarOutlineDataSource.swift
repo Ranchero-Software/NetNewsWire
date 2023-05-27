@@ -492,7 +492,7 @@ private extension SidebarOutlineDataSource {
 		return true
 	}
 
-	func acceptSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardWebFeed, _ parentNode: Node, _ index: Int) -> Bool {
+	@MainActor func acceptSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardWebFeed, _ parentNode: Node, _ index: Int) -> Bool {
 		guard nodeIsDropTarget(parentNode), index == NSOutlineViewDropOnItemIndex else {
 			return false
 		}

@@ -17,7 +17,7 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 	func mouseDidExit(_: DetailWebViewController)
 }
 
-final class DetailWebViewController: NSViewController {
+@MainActor final class DetailWebViewController: NSViewController {
 
 	weak var delegate: DetailWebViewControllerDelegate?
 	var webView: DetailWebView!
@@ -90,6 +90,7 @@ final class DetailWebViewController: NSViewController {
 		configuration.defaultWebpagePreferences = webpagePrefs
 		configuration.preferences = preferences
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
+		configuration.mediaTypesRequiringUserActionForPlayback = .audio
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.windowDidScroll)

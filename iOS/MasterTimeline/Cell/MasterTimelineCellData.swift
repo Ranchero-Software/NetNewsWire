@@ -9,7 +9,7 @@
 import UIKit
 import Articles
 
-struct MasterTimelineCellData {
+@MainActor struct MasterTimelineCellData {
 
 	private static let noText = NSLocalizedString("label.text.no-text", comment: "(No Text)")
 	

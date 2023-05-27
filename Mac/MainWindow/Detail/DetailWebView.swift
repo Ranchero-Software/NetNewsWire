@@ -10,7 +10,7 @@ import AppKit
 import WebKit
 import RSCore
 
-final class DetailWebView: WKWebView {
+@MainActor final class DetailWebView: WKWebView {
 
 	weak var keyboardDelegate: KeyboardDelegate?
 	

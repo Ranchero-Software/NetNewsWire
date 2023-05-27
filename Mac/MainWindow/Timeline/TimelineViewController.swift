@@ -124,6 +124,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 
 			directlyMarkedAsUnreadArticles = Set<Article>()
+			lastVerticalPosition = 0
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
 		}
@@ -194,6 +195,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
+	private var markAsReadOnScrollWorkItem: DispatchWorkItem?
+	private var markAsReadOnScrollStart: Int?
+	private var markAsReadOnScrollEnd: Int?
+	private var lastVerticalPosition: CGFloat = 0
+	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
@@ -224,6 +230,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(markStatusCommandDidDirectMarking(_:)), name: .MarkStatusCommandDidDirectMarking, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(markStatusCommandDidUndoDirectMarking(_:)), name: .MarkStatusCommandDidUndoDirectMarking, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(scrollViewDidScroll), name: NSScrollView.didLiveScrollNotification, object: tableView.enclosingScrollView)
 			didRegisterForNotifications = true
 		}
 	}
@@ -235,6 +242,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - API
 	
 	func markAllAsRead(completion: (() -> Void)? = nil) {
+		markAllAsRead(articles, completion: completion)
+	}
+
+	func markAllAsRead(_ articles: [Article], completion: (() -> Void)? = nil) {
 		let markableArticles = Set(articles).subtracting(directlyMarkedAsUnreadArticles)
 		guard let undoManager = undoManager,
 			  let markReadCommand = MarkStatusCommand(initialArticles: markableArticles,
@@ -248,7 +259,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func canMarkAllAsRead() -> Bool {
-		return articles.canMarkAllAsRead()
+		return articles.canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func canMarkSelectedArticlesAsRead() -> Bool {
@@ -328,6 +339,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	@objc func openArticleInBrowser(_ sender: Any?) {
 		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
 		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+	}
+
+	@objc func scrollViewDidScroll(notification: Notification) {
+		markAsReadOnScroll()
 	}
 	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
@@ -474,7 +489,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	func markReadCommandStatus() -> MarkCommandValidationStatus {
 		let articles = selectedArticles
 		
-		if articles.anyArticleIsUnread() {
+		if articles.anyArticleIsUnreadAndCanMarkRead() {
 			return .canMark
 		}
 		
@@ -499,12 +514,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	func canMarkAboveArticlesAsRead() -> Bool {
 		guard let first = selectedArticles.first else { return false }
-		return articles.articlesAbove(article: first).canMarkAllAsRead()
+		return articles.articlesAbove(article: first).canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func canMarkBelowArticlesAsRead() -> Bool {
 		guard let last = selectedArticles.last else { return false }
-		return articles.articlesBelow(article: last).canMarkAllAsRead()
+		return articles.articlesBelow(article: last).canMarkAllAsRead(exemptArticles: directlyMarkedAsUnreadArticles)
 	}
 
 	func markOlderArticlesRead(_ selectedArticles: [Article]) {
@@ -1326,4 +1341,51 @@ private extension TimelineViewController {
 		}
 		return false
 	}
+	
+	func markAsReadOnScroll() {
+		guard AppDefaults.shared.markArticlesAsReadOnScroll else { return }
+		
+		// Only try to mark if we are scrolling up
+		defer {
+			lastVerticalPosition = tableView.enclosingScrollView?.documentVisibleRect.origin.y ?? 0
+		}
+		guard lastVerticalPosition < tableView.enclosingScrollView?.documentVisibleRect.origin.y ?? 0 else {
+			return
+		}
+		
+		// Make sure we are a little past the visible area so that marking isn't too touchy
+		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
+		guard let firstVisibleRowRect = tableView.rowView(atRow: firstVisibleRowIndex, makeIfNecessary: false)?.frame,
+			  tableView.convert(firstVisibleRowRect, to: tableView.enclosingScrollView).origin.y < tableView.safeAreaInsets.top - 20 else {
+			return
+		}
+
+		// We only mark immediately after scrolling stops, not during, to prevent scroll hitching
+		markAsReadOnScrollWorkItem?.cancel()
+		markAsReadOnScrollWorkItem = DispatchWorkItem { [weak self] in
+			defer {
+				self?.markAsReadOnScrollStart = nil
+				self?.markAsReadOnScrollEnd = nil
+			}
+			
+			guard let start: Int = self?.markAsReadOnScrollStart,
+				  let end: Int = self?.markAsReadOnScrollEnd ?? self?.markAsReadOnScrollStart,
+				  start <= end,
+				  let self = self else {
+				return
+			}
+			
+			let articles = self.articles[start...end].filter({ $0.status.read == false })
+			self.markAllAsRead(articles)
+		}
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: markAsReadOnScrollWorkItem!)
+
+		// Here we are creating a range of rows to attempt to mark later with the work item
+		guard markAsReadOnScrollStart != nil else {
+			markAsReadOnScrollStart = max(firstVisibleRowIndex - 5, 0)
+			return
+		}
+		markAsReadOnScrollEnd = max(markAsReadOnScrollEnd ?? 0, firstVisibleRowIndex)
+	}
+	
 }

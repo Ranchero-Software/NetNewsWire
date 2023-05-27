@@ -12,7 +12,7 @@ import Account
 import Zip
 import RSCore
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
+@MainActor final class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 	
 	var window: UIWindow?
 	var coordinator: SceneCoordinator!
@@ -195,7 +195,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 						do {
 							try ArticleThemeDownloader.shared.handleFile(at: location)
 						} catch {
-							self.presentError(error)
+							Task { @MainActor in
+								self.presentError(error)
+							}
 						}
 					}
 					task.resume()

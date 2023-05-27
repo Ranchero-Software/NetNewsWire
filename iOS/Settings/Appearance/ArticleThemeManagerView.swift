@@ -16,8 +16,6 @@ struct ArticleThemeManagerView: View {
 	@State private var showImportConfirmationAlert: (ArticleTheme?, Bool) = (nil, false)
 	@State private var showImportErrorAlert: (Error?, Bool) = (nil, false)
 	@State private var showImportSuccessAlert: Bool = false
-	@State private var installedFirstPartyThemes: [ArticleTheme] = []
-	@State private var installedThirdPartyThemes: [ArticleTheme] = []
 	
 	var body: some View {
 		Form {
@@ -36,9 +34,6 @@ struct ArticleThemeManagerView: View {
 			
 		}
 		.navigationTitle(Text("navigation.title.article-themes", comment: "Article Themes"))
-		.task {
-			updateThemesArrays()
-		}
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
@@ -137,9 +132,6 @@ struct ArticleThemeManagerView: View {
 			   actions: { }, message: {
 			Text(verbatim: "\(showImportErrorAlert.0?.localizedDescription ?? "")")
 		})
-		.onReceive(themeManager.objectWillChange) { _ in
-			updateThemesArrays()
-		}
     }
 	
 	func articleThemeRow(_ theme: ArticleTheme) -> some View {
@@ -175,12 +167,6 @@ struct ArticleThemeManagerView: View {
 				.tint(.red)
 			}
 		}
-	}
-	
-	private func updateThemesArrays() {
-		installedFirstPartyThemes = themeManager.themeNames.map({ try? themeManager.articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ $0.isAppTheme }).sorted(by: { $0.name < $1.name })
-		
-		installedThirdPartyThemes = themeManager.themeNames.map({ try? themeManager.articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ !$0.isAppTheme }).sorted(by: { $0.name < $1.name })
 	}
 }
 
