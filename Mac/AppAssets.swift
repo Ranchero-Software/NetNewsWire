@@ -171,7 +171,10 @@ struct AppAssets {
 	}()
 	
 	static var preferencesToolbarExtensionsImage: RSImage = {
-		return RSImage(named: "preferencesToolbarExtensions")!
+		if #unavailable(macOS 12.0) {
+			return RSImage(named: "preferencesToolbarExtensions")!
+		}
+		return NSImage(systemSymbolName: "puzzlepiece.extension", accessibilityDescription: nil)!
 	}()
 	
 	static var preferencesToolbarGeneralImage: RSImage = {
