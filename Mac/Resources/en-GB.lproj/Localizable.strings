@@ -454,6 +454,12 @@
 /* You've added all available extensions. */
 "label.text.added-all-extensions" = "You've added all available extensions.";
 
+/* Primary Contributors */
+"label.text.primary-contributors" = "Primary Contributors";
+
+/* Additional Contributors */
+"label.text.additional-contributors" = "Additional Contributors";
+
 /* Article */
 "label.text.article" = "Article";
 

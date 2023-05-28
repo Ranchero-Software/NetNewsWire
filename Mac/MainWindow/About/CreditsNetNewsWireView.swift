@@ -7,71 +7,52 @@
 //
 
 import SwiftUI
+import WebKit
+import Html
+ 
+@available(macOS 12, *)
+struct WebView: NSViewRepresentable {
+
+	var htmlString: String
+ 
+	func makeNSView(context: Context) -> WKWebView {
+		let view = WKWebView()
+		view.loadHTMLString(htmlString, baseURL: nil)
+		return view
+	}
+ 
+	func updateNSView(_ webView: WKWebView, context: Context) {
+		
+	}
+}
 
 @available(macOS 12, *)
 struct CreditsNetNewsWireView: View, LoadableAboutData {
 	var body: some View {
-		ScrollView(.vertical, showsIndicators: false) {
-			Spacer()
-				.frame(height: 12)
-			Section("Primary Contributors") {
-				GroupBox {
-					ForEach(0..<about.PrimaryContributors.count, id: \.self) { i in
-						contributorView(about.PrimaryContributors[i])
-							.padding(.vertical, 2)
-							.listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
-					}
-				}
-				
-			}
+		VStack {
+			Image("About")
+				.resizable()
+				.frame(width: 75, height: 75)
 			
-			Section("Additional Contributors") {
-				GroupBox {
-					ForEach(0..<about.AdditionalContributors.count, id: \.self) { i in
-						contributorView(about.AdditionalContributors[i])
-							.padding(.vertical, 2)
-							.listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
-					}
-				}
-				
-			}
+			Text(verbatim: "NetNewsWire")
+				.font(.headline)
 			
-			Section("Thanks") {
-				GroupBox {
-					Text(about.ThanksMarkdown)
-						.multilineTextAlignment(.center)
-						.font(.callout)
-						.padding(.vertical, 2)
-				}
-				
-			}
-			Spacer()
-				.frame(height: 12)
+			Text("\(Bundle.main.versionNumber) (\(Bundle.main.buildNumber))")
+				.foregroundColor(.secondary)
+				.font(.callout)
+			
+			Text("label.text.netnewswire-byline", comment: "By Brent Simmons and the NetNewsWire team.")
+				.font(.subheadline)
+			
+			Text("label.markdown.netnewswire-website", comment: "Markdown formatted link to netnewswire.com")
+				.font(.callout)
+			
+			WebView(htmlString: AboutHTML().renderedDocument())
 		}
-		.padding(.horizontal)
-		.frame(width: 400, height: 400)
+		
+		.frame(width: 500, height: 700)
 	}
 	
-	func contributorView(_ appCredit: AboutData.Contributor) -> some View {
-		HStack {
-			Text(appCredit.name)
-			Spacer()
-			if let role = appCredit.role {
-				Text(role)
-					.foregroundColor(.secondary)
-			}
-			Image(systemName: "info.circle")
-				.foregroundColor(.secondary)
-		}
-		.onTapGesture {
-			guard let url = appCredit.url else { return }
-			if let _ = URL(string: url) {
-				Task { @MainActor in
-					Browser.open(url, inBackground: false)
-				}
-			}
-		}
-	}
 }
 
 @available(macOS 12, *)

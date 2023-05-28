@@ -826,6 +826,8 @@
 		DF3630EF293618A900326FB8 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EE293618A900326FB8 /* SettingsViewModel.swift */; };
 		DF394F0029357A180081EB6E /* NewArticleNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */; };
 		DF47CDB2294803AB00FCD57E /* AddExtensionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */; };
+		DF5124CA2A22D5FA00BBAB1F /* Html in Frameworks */ = {isa = PBXBuildFile; productRef = DF5124C92A22D5FA00BBAB1F /* Html */; };
+		DF5124CC2A22D62600BBAB1F /* AboutHTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5124CB2A22D62600BBAB1F /* AboutHTML.swift */; };
 		DF59F072292085B800ACD33D /* ColorPaletteSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */; };
 		DF59F0742920DB5100ACD33D /* AccountsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */; };
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
@@ -1595,6 +1597,7 @@
 		DF3630EE293618A900326FB8 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArticleNotificationsView.swift; sourceTree = "<group>"; };
 		DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExtensionListView.swift; sourceTree = "<group>"; };
+		DF5124CB2A22D62600BBAB1F /* AboutHTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutHTML.swift; sourceTree = "<group>"; };
 		DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteSelectorView.swift; sourceTree = "<group>"; };
 		DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsManagementView.swift; sourceTree = "<group>"; };
 		DF6DE5092965907A002EC085 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1633,7 +1636,6 @@
 		DFB616AF29653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/MainWindow.strings"; sourceTree = "<group>"; };
 		DFB616B029653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../../../en-GB.lproj/RenameSheet.strings"; sourceTree = "<group>"; };
 		DFB616B129653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/AddRedditFeedSheet.strings"; sourceTree = "<group>"; };
-		DFB616B229653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/AddTwitterFeedSheet.strings"; sourceTree = "<group>"; };
 		DFB616B329653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/AddWebFeedSheet.strings"; sourceTree = "<group>"; };
 		DFB616B429653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../../en-GB.lproj/AddFolderSheet.strings"; sourceTree = "<group>"; };
 		DFB616B529653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/Preferences.strings"; sourceTree = "<group>"; };
@@ -1791,6 +1793,7 @@
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
 				51A737AE24DB19730015FA66 /* RSCore in Frameworks */,
 				51A737C824DB19CC0015FA66 /* RSParser in Frameworks */,
+				DF5124CA2A22D5FA00BBAB1F /* Html in Frameworks */,
 				179C39EA26F76B0500D4E741 /* Zip in Frameworks */,
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				514C16E124D2EF38009A3AFA /* RSCoreResources in Frameworks */,
@@ -2711,6 +2714,7 @@
 			isa = PBXGroup;
 			children = (
 				849C64671ED37A5D003D8FC0 /* Assets.xcassets */,
+				DF5124CB2A22D62600BBAB1F /* AboutHTML.swift */,
 				84C9FC8922629E8F00D921D6 /* Credits.rtf */,
 				DF93DB2D296A319000586C0E /* Localizable.stringsdict */,
 				84C9FC8A22629E8F00D921D6 /* NetNewsWire.sdef */,
@@ -3303,6 +3307,7 @@
 				513277602590FC640064F1E7 /* ArticlesDatabase */,
 				513277632590FC640064F1E7 /* SyncDatabase */,
 				179C39E926F76B0500D4E741 /* Zip */,
+				DF5124C92A22D5FA00BBAB1F /* Html */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -3423,6 +3428,7 @@
 				17192AD82567B3D500AAEACA /* XCRemoteSwiftPackageReference "Sparkle-Binary" */,
 				519CA8E325841DB700EB079A /* XCRemoteSwiftPackageReference "plcrashreporter" */,
 				179D280926F6F93D003B2E0A /* XCRemoteSwiftPackageReference "Zip" */,
+				DF5124C82A22D5FA00BBAB1F /* XCRemoteSwiftPackageReference "swift-html" */,
 			);
 			productRefGroup = 849C64611ED37A5D003D8FC0 /* Products */;
 			projectDirPath = "";
@@ -3599,7 +3605,6 @@
 				511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
 				51BB7C312335ACDE008E8144 /* page.html in Resources */,
-				516A093723609A3600EAE89B /* SettingsComboTableViewCell.xib in Resources */,
 				51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
 				DFD86796295D553D0070D62D /* Localizable.strings in Resources */,
@@ -4470,6 +4475,7 @@
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
 				84DEE56522C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */,
+				DF5124CC2A22D62600BBAB1F /* AboutHTML.swift in Sources */,
 				51FA73B72332D5F70090D516 /* LegacyArticleExtractorButton.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,
@@ -4674,15 +4680,6 @@
 				DFB616BC29653A0700A359AB /* en-GB */,
 			);
 			name = MainInterface.storyboard;
-			sourceTree = "<group>";
-		};
-		514A897F244FD63F0085E65D /* AddTwitterFeedSheet.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				514A8980244FD63F0085E65D /* Base */,
-				DFB616B229653A0600A359AB /* en-GB */,
-			);
-			name = AddTwitterFeedSheet.xib;
 			sourceTree = "<group>";
 		};
 		6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */ = {
@@ -5267,6 +5264,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		DF5124C82A22D5FA00BBAB1F /* XCRemoteSwiftPackageReference "swift-html" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-html.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5500,6 +5505,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
 			productName = RSCore;
+		};
+		DF5124C92A22D5FA00BBAB1F /* Html */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF5124C82A22D5FA00BBAB1F /* XCRemoteSwiftPackageReference "swift-html" */;
+			productName = Html;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
