@@ -454,6 +454,12 @@
 /* You've added all available extensions. */
 "label.text.added-all-extensions" = "You've added all available extensions.";
 
+/* Primary Contributors */
+"label.text.primary-contributors" = "Primary Contributors";
+
+/* Additional Contributors */
+"label.text.additional-contributors" = "Additional Contributors";
+
 /* Article */
 "label.text.article" = "Article";
 
@@ -585,6 +591,15 @@
 
 /* Subreddit */
 "label.text.subreddit" = "Subreddit";
+
+/* Thanks */
+"label.text.thanks" = "Thanks";
+
+/* Thanks - Dedication */
+"label.text.thanks-details" = "
+<p>Thanks to Sheila and my family; thanks to my friends in Seattle and around the globe; thanks to the ever-patient and ever-awesome NetNewsWire beta testers. </p>
+<p>Thanks to <a href=\"https://shapeof.com/\">Gus Mueller</a> for <a href=\"https://github.com/ccgus/fmdb\">FMDB</a> by <a href=\"http://flyingmeat.com/\">Flying Meat Software</a>. Thanks to <a href=\"https://github.com\">GitHub</a> and <a href=\"https://slack.com\">Slack</a> for making open source collaboration easy and fun. Thanks to <a href=\"https://benubois.com/\">Ben Ubois</a> at <a href=\"https://feedbin.com/\">Feedbin</a> for all the extra help with syncing and article rendering — and for <a href=\"https://feedbin.com/blog/2019/03/11/the-future-of-full-content/\">hosting the server for the Reader view</a>.</p>
+<p>NetNewsWire 6 is dedicated to everyone working to save democracy around the world.</p>";
 
 /* Built-in */
 "label.text.themes-builtin" = "Built-in Themes";
