@@ -1,0 +1,24 @@
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "Aat-NW-hPO"; */
+"Aat-NW-hPO.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "CVJ-R1-O8v"; */
+"CVJ-R1-O8v.title" = "Item 3";
+
+/* Class = "NSButtonCell"; title = "Add Folder"; ObjectID = "F5a-Q7-NMn"; */
+"F5a-Q7-NMn.title" = "Add Folder";
+
+/* Class = "NSWindow"; title = "Add Folder"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Add Folder";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "SDZ-cp-t7j"; */
+"SDZ-cp-t7j.title" = "Item 1";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "VXk-Yp-k6W"; */
+"VXk-Yp-k6W.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Folder Name:"; ObjectID = "k8o-om-Rgh"; */
+"k8o-om-Rgh.title" = "Folder Name:";
+
+/* Class = "NSTextFieldCell"; title = "Account:"; ObjectID = "t6T-ar-V3d"; */
+"t6T-ar-V3d.title" = "Account:";

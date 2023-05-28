@@ -1,0 +1,78 @@
+
+/* Class = "NSMenuItem"; title = "Subreddit"; ObjectID = "0gG-oY-8yR"; */
+"0gG-oY-8yR.title" = "Subreddit";
+
+/* Class = "NSMenuItem"; title = "Popular"; ObjectID = "177-F8-Esj"; */
+"177-F8-Esj.title" = "Popular";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "5AA-um-oEb"; */
+"5AA-um-oEb.title" = "Label";
+
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "6NK-Ql-drk"; */
+"6NK-Ql-drk.title" = "Add";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "8ca-Qp-BkT"; */
+"8ca-Qp-BkT.title" = "Name:";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "APc-af-7Um"; */
+"APc-af-7Um.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "All"; ObjectID = "DBZ-RV-FfV"; */
+"DBZ-RV-FfV.title" = "All";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "Dop-HC-6Q9"; */
+"Dop-HC-6Q9.title" = "Cancel";
+
+/* Class = "NSMenuItem"; title = "Hot"; ObjectID = "KA5-sN-dho"; */
+"KA5-sN-dho.title" = "Hot";
+
+/* Class = "NSTextFieldCell"; title = "Folder:"; ObjectID = "Kwx-7B-CIu"; */
+"Kwx-7B-CIu.title" = "Folder:";
+
+/* Class = "NSTextFieldCell"; title = "Account:"; ObjectID = "LFf-JL-Ahl"; */
+"LFf-JL-Ahl.title" = "Account:";
+
+/* Class = "NSWindow"; title = "Add Reddit Feed"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Add Reddit Feed";
+
+/* Class = "NSMenuItem"; title = "u/username"; ObjectID = "Tfk-aQ-RKg"; */
+"Tfk-aQ-RKg.title" = "u/username";
+
+/* Class = "NSMenuItem"; title = "Rising"; ObjectID = "XIL-2V-O3A"; */
+"XIL-2V-O3A.title" = "Rising";
+
+/* Class = "NSMenuItem"; title = "Best"; ObjectID = "aub-jN-9Gq"; */
+"aub-jN-9Gq.title" = "Best";
+
+/* Class = "NSTextFieldCell"; title = "Sort:"; ObjectID = "cxl-iF-EB5"; */
+"cxl-iF-EB5.title" = "Sort:";
+
+/* Class = "NSMenuItem"; title = "Top"; ObjectID = "fuh-g6-Ro7"; */
+"fuh-g6-Ro7.title" = "Top";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "fza-9c-2en"; */
+"fza-9c-2en.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "j09-9b-bGs"; */
+"j09-9b-bGs.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "New"; ObjectID = "kUE-J5-iAE"; */
+"kUE-J5-iAE.title" = "New";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "pLP-pL-5R5"; */
+"pLP-pL-5R5.placeholderString" = "Optional";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "qto-IO-a1j"; */
+"qto-IO-a1j.title" = "Type:";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "s6D-9M-HpZ"; */
+"s6D-9M-HpZ.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "tLJ-zY-CcZ"; */
+"tLJ-zY-CcZ.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Home"; ObjectID = "uE6-1a-w5g"; */
+"uE6-1a-w5g.title" = "Home";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "xTm-Qr-PIp"; */
+"xTm-Qr-PIp.title" = "Item 2";
