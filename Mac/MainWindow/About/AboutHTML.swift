@@ -17,13 +17,13 @@ struct AboutHTML: LoadableAboutData {
 			margin: 2em;
 			color: #333333;
 			background-color: white;
-			line-height: 0.7em;
+			line-height: 1.1em;
 			font-family: -apple-system;
 			text-align: center;
-			font-size: 0.7em;
+			font-size: 12px;
 		}
-		
-		h3 { padding-top: 10px; padding-bottom: 10px; }
+
+		h3 { padding-top: 10px; padding-bottom: 8px; }
 		@media (prefers-color-scheme: dark) {
 			body {
 			color: white;
@@ -45,7 +45,10 @@ struct AboutHTML: LoadableAboutData {
 					Node.h3(.text(NSLocalizedString("label.text.primary-contributors", comment: "Primary Contributors"))),
 					Node.fragment(about.PrimaryContributors.map { .p(.a(attributes: [.href($0.url ?? "")], "\($0.name)")) }),
 					Node.h3(.text(NSLocalizedString("label.text.additional-contributors", comment: "Additional Contributors"))),
-					Node.fragment(about.AdditionalContributors.map { .p(.a(attributes: [.href($0.url ?? "")], "\($0.name)")) })
+					Node.fragment(about.AdditionalContributors.map { .p(.a(attributes: [.href($0.url ?? "")], "\($0.name)")) }),
+					Node.h3(.text(NSLocalizedString("label.text.thanks", comment: "Thanks"))),
+					Node.raw(NSLocalizedString("label.text.thanks-details", comment: "Thanks details"))
+					
 				)
 			)
 		)
