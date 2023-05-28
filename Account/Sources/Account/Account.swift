@@ -79,12 +79,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public static let defaultLocalAccountName: String = {
 		let defaultName: String
 		#if os(macOS)
-		defaultName = NSLocalizedString("On My Mac", comment: "Account name")
+		defaultName = NSLocalizedString("account.name.mac", value: "On My Mac", comment: "Account name")
 		#else
 		if UIDevice.current.userInterfaceIdiom == .pad {
-			defaultName = NSLocalizedString("On My iPad", comment: "Account name")
+			defaultName = NSLocalizedString("account.name.ipad", value: "On My iPad", comment: "Account name")
 		} else {
-			defaultName = NSLocalizedString("On My iPhone", comment: "Account name")
+			defaultName = NSLocalizedString("account.name.iphone", value: "On My iPhone", comment: "Account name")
 		}
 		#endif
 		
