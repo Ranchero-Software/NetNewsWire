@@ -16,7 +16,6 @@ extension NSUserInterfaceItemIdentifier {
 
 // MARK: - AboutWindowController
 
-@available(macOS 12, *)
 class AboutWindowController: NSWindowController {
 	
 	var hostingController: AboutHostingController
@@ -44,7 +43,6 @@ class AboutWindowController: NSWindowController {
 
 // MARK: - AboutHostingController
 
-@available(macOS 12, *)
 class AboutHostingController: NSHostingController<AnyView> {
 	
 	override init(rootView: AnyView) {
