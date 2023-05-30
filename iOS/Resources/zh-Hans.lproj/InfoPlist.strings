@@ -2,10 +2,10 @@
 "CFBundleName" = "NetNewsWire";
 
 /* (No Comment) */
-"NetNewsWire Theme" = "NetNewsWire Theme";
+"NetNewsWire Theme" = "NetNewsWire 主题";
 
 /* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Grant permission to save images from the article.";
+"NSPhotoLibraryAddUsageDescription" = "授予相册权限以从文章中保存图标。";
 
 /* (No Comment) */
 "OPML" = "OPML";

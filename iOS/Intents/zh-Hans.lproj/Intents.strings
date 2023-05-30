@@ -1,38 +1,57 @@
-"4xjRes" = "You must supply a URL.";
+/* (No Comment) */
+"4xjRes" = "你必须提供一个 URL。";
 
-"5CYbGL" = "There are ${count} options matching ‘${folderName}’.";
+/* (No Comment) */
+"5CYbGL" = "有 ${count} 个与“${folderName}”匹配的选项。";
 
-"Ac5RHN" = "Title";
+/* (No Comment) */
+"Ac5RHN" = "标题";
 
+/* (No Comment) */
 "BCHr23" = "URL";
 
-"CSrgUY" = "Account Name";
+/* (No Comment) */
+"CSrgUY" = "账户名称";
 
-"ExjqcE" = "Unable to communicate with NetNewsWire.";
+/* (No Comment) */
+"dkSFD2" = "将 ${url} 添加到 ${accountName} 的 ${folderName} 中。";
 
-"HHiZUh" = "Just to confirm, you wanted ‘${accountName}’?";
+/* (No Comment) */
+"ef5kBt" = "需要一个有效的文件夹名称";
 
-"IGNcSh" = "What is the ${title}of the feed?";
+/* (No Comment) */
+"ExjqcE" = "无法连接 NetNewsWire。";
 
-"IbqUVS" = "There are ${count} options matching ‘${accountName}’.";
+/* (No Comment) */
+"HHiZUh" = "确认一下，你希望使用“${accountName}”吗？";
 
-"IuAbef" = "Add a web feed";
+/* (No Comment) */
+"IbqUVS" = "有 ${count} 个与“${accountName}”匹配的选项。";
 
-"JGkCuS" = "A valid Account Name is required.";
+/* (No Comment) */
+"IGNcSh" = "这个订阅的 ${title} 是什么？";
 
-"dkSFD2" = "Add ${url} to ${folderName} in ${accountName}";
+/* (No Comment) */
+"IuAbef" = "添加一个 Web 订阅";
 
-"ef5kBt" = "A valid Folder Name is required.";
+/* (No Comment) */
+"JGkCuS" = "需要一个有效的账户名称";
 
-"jLLidQ" = "What is the ${url} you would like add?";
+/* (No Comment) */
+"jLLidQ" = "你想要添加的 ${url} 是什么？";
 
-"k5GTo0" = "Just to confirm, you wanted ‘${folderName}’?";
+/* (No Comment) */
+"k5GTo0" = "确认一下，你想要“${folderName}”？";
 
-"kaKsEY" = "Add ${url} to ${accountName}";
+/* (No Comment) */
+"kaKsEY" = "将 ${url} 添加到 ${accountName}";
 
-"oV681v" = "Add Web Feed";
+/* (No Comment) */
+"oV681v" = "添加 Web 订阅";
 
-"uSfloN" = "Unable to communicate with NetNewsWire.";
+/* (No Comment) */
+"uSfloN" = "无法连接 NetNewsWire。";
 
-"zXhMPF" = "Folder Name";
+/* (No Comment) */
+"zXhMPF" = "文件夹名称";
 

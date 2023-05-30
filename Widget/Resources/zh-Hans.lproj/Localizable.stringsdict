@@ -2,24 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>unread.count.%lld</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@unread_count@</string>
-		<key>unread_count</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>lld</string>
-			<key>zero</key>
-			<string>No more unread articles</string>
-			<key>one</key>
-			<string>+ 1 more unread article</string>
-			<key>other</key>
-			<string>+ %lld more unread articles</string>
-		</dict>
-	</dict>
 	<key>starred.count.%lld</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -30,12 +12,10 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
-			<key>zero</key>
-			<string>No more starred articles</string>
-			<key>one</key>
-			<string>+ 1 more starred article</string>
 			<key>other</key>
-			<string>+ %lld more starred articles</string>
+			<string>还有 + %lld 篇星标文章</string>
+			<key>zero</key>
+			<string>没有更多星标文章</string>
 		</dict>
 	</dict>
 	<key>today.count.%lld</key>
@@ -48,12 +28,26 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>lld</string>
-			<key>zero</key>
-			<string>No more recent articles</string>
-			<key>one</key>
-			<string>+ 1 more recent unread article</string>
 			<key>other</key>
-			<string>+ %lld more recent unread articles</string>
+			<string>还有 + %lld 篇最近文章</string>
+			<key>zero</key>
+			<string>没有更多最近文章</string>
+		</dict>
+	</dict>
+	<key>unread.count.%lld</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@unread_count@</string>
+		<key>unread_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>other</key>
+			<string>还有 + %lld 篇未读文章</string>
+			<key>zero</key>
+			<string>没有更多未读文章</string>
 		</dict>
 	</dict>
 </dict>

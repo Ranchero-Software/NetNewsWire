@@ -1,12 +1,12 @@
 /* Bundle display name */
-"CFBundleDisplayName" = "Subscribe to Feed";
+"CFBundleDisplayName" = "添加到订阅";
 
 /* Bundle name */
-"CFBundleName" = "Subscribe to Feed";
+"CFBundleName" = "添加到订阅";
 
 /* Copyright (human-readable) */
 "NSHumanReadableCopyright" = "Copyright © 2019-2022 Brent Simmons. All rights reserved.";
 
 /* Human readable description */
-"NSHumanReadableDescription" = "This extension adds a Safari toolbar button for easily subscribing to the syndication feed for the current page.";
+"NSHumanReadableDescription" = "此扩展会为Safari添加一个工具栏按钮，方便添加当前页面的订阅源。";
 

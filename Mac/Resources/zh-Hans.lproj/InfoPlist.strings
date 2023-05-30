@@ -2,10 +2,10 @@
 "CFBundleName" = "NetNewsWire";
 
 /* (No Comment) */
-"NetNewsWire Theme" = "NetNewsWire Theme";
+"NetNewsWire Theme" = "NetNewsWire 主题";
 
 /* Privacy - AppleEvents Sending Usage Description */
-"NSAppleEventsUsageDescription" = "NetNewsWire communicates with other apps on your Mac when you choose to share an article.";
+"NSAppleEventsUsageDescription" = "当您选择共享一篇文章时，NetNewsWire 会与 Mac 上的其他应用程序连接。";
 
 /* Copyright (human-readable) */
 "NSHumanReadableCopyright" = "Copyright © 2002-2022 Brent Simmons. All rights reserved.";

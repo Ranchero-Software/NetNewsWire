@@ -1,126 +1,126 @@
-
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "2C0-LP-36T"; */
-"2C0-LP-36T.title" = "Preferences";
+"2C0-LP-36T.title" = "偏好设置";
 
 /* Class = "NSMenuItem"; title = "Extra Extra Large"; ObjectID = "4Pi-2Y-XmV"; */
-"4Pi-2Y-XmV.title" = "Extra Extra Large";
+"4Pi-2Y-XmV.title" = "最大";
 
 /* Class = "NSTextFieldCell"; title = "Download:"; ObjectID = "6bb-c0-guo"; */
-"6bb-c0-guo.title" = "Download:";
+"6bb-c0-guo.title" = "下载：";
 
 /* Class = "NSMenuItem"; title = "Every 4 hours"; ObjectID = "7e2-TV-hth"; */
-"7e2-TV-hth.title" = "Every 4 hours";
+"7e2-TV-hth.title" = "每 4 小时";
 
 /* Class = "NSMenuItem"; title = "Every 8 hours"; ObjectID = "7gV-gL-Nue"; */
-"7gV-gL-Nue.title" = "Every 8 hours";
-
-/* Class = "NSButtonCell"; title = "Mark articles as read on scroll"; ObjectID = "ANv-PZ-pn6"; */
-"ANv-PZ-pn6.title" = "Mark articles as read on scroll";
+"7gV-gL-Nue.title" = "每 8 小时";
 
 /* Class = "NSButtonCell"; title = "Check for Updates"; ObjectID = "AaA-Rr-UYD"; */
-"AaA-Rr-UYD.title" = "Check for Updates";
+"AaA-Rr-UYD.title" = "检查更新";
+
+/* Class = "NSButtonCell"; title = "Mark articles as read on scroll"; ObjectID = "ANv-PZ-pn6"; */
+"ANv-PZ-pn6.title" = "滚动时标记文章为已读";
 
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "CcS-BO-sdv"; */
-"CcS-BO-sdv.title" = "Table View Cell";
+"CcS-BO-sdv.title" = "表格视图单元格";
 
 /* Class = "NSTextFieldCell"; title = "Browser:"; ObjectID = "CgU-dE-Qtb"; */
-"CgU-dE-Qtb.title" = "Browser:";
+"CgU-dE-Qtb.title" = "浏览器：";
+
+/* Class = "NSMenuItem"; title = "Large"; ObjectID = "ckZ-0Q-rNz"; */
+"ckZ-0Q-rNz.title" = "大";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Djh-3Q-J0Q"; */
-"Djh-3Q-J0Q.title" = "Text Cell";
+"Djh-3Q-J0Q.title" = "文本单元格";
+
+/* Class = "NSButtonCell"; title = "Check automatically"; ObjectID = "dm8-Xy-0Ba"; */
+"dm8-Xy-0Ba.title" = "自动检查";
+
+/* Class = "NSMenuItem"; title = "Manually only"; ObjectID = "doa-Wq-4Uq"; */
+"doa-Wq-4Uq.title" = "仅手动";
 
 /* Class = "NSTextFieldCell"; title = "Press the Shift key to do the opposite."; ObjectID = "EMq-9M-zTJ"; */
-"EMq-9M-zTJ.title" = "Press the Shift key to do the opposite.";
+"EMq-9M-zTJ.title" = "按下 Shift 键来执行相反的操作。";
 
 /* Class = "NSTextFieldCell"; title = "Safari Extension:"; ObjectID = "Eth-o0-pWM"; */
-"Eth-o0-pWM.title" = "Safari Extension:";
+"Eth-o0-pWM.title" = "Safari 扩展：";
 
 /* Class = "NSTextFieldCell"; title = "Refresh Feeds:"; ObjectID = "F7c-lm-g97"; */
-"F7c-lm-g97.title" = "Refresh Feeds:";
+"F7c-lm-g97.title" = "刷新订阅：";
 
 /* Class = "NSButtonCell"; title = "Release builds"; ObjectID = "F8M-rS-und"; */
-"F8M-rS-und.title" = "Release builds";
+"F8M-rS-und.title" = "发行版本";
+
+/* Class = "NSTextFieldCell"; title = "If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss."; ObjectID = "fOZ-zv-QTc"; */
+"fOZ-zv-QTc.title" = "如果你不确定，请选择发行版本。测试版本可能存在导致崩溃和数据丢失的错误。";
 
 /* Class = "NSButtonCell"; title = "Test builds"; ObjectID = "Fuf-rU-D6M"; */
-"Fuf-rU-D6M.title" = "Test builds";
+"Fuf-rU-D6M.title" = "测试版本";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "goO-QG-kk7"; */
+"goO-QG-kk7.title" = "表格视图单元格";
+
+/* Class = "NSViewController"; title = "General"; ObjectID = "iuH-lz-18x"; */
+"iuH-lz-18x.title" = "通用";
+
+/* Class = "NSMenuItem"; title = "Medium"; ObjectID = "jMV-2o-5Oh"; */
+"jMV-2o-5Oh.title" = "中";
+
+/* Class = "NSButtonCell"; title = "Send automatically"; ObjectID = "jnc-C5-4oI"; */
+"jnc-C5-4oI.title" = "自动发送";
+
+/* Class = "NSButtonCell"; title = "Privacy Policy"; ObjectID = "kSv-Wu-NYx"; */
+"kSv-Wu-NYx.title" = "隐私政策";
 
 /* Class = "NSTextFieldCell"; title = "Article Theme:"; ObjectID = "MQe-Za-N8J"; */
-"MQe-Za-N8J.title" = "Article Theme:";
+"MQe-Za-N8J.title" = "文章主题：";
+
+/* Class = "NSMenuItem"; title = "Every 2 hours"; ObjectID = "o1h-xo-elW"; */
+"o1h-xo-elW.title" = "每 2 小时";
 
 /* Class = "NSMenuItem"; title = "Safari"; ObjectID = "ObP-qK-qDJ"; */
 "ObP-qK-qDJ.title" = "Safari";
 
 /* Class = "NSMenuItem"; title = "Default"; ObjectID = "Pkl-EA-Goa"; */
-"Pkl-EA-Goa.title" = "Default";
-
-/* Class = "NSMenuItem"; title = "Every hour"; ObjectID = "Qjt-qr-WER"; */
-"Qjt-qr-WER.title" = "Every hour";
-
-/* Class = "NSButtonCell"; title = "Open feeds in default news reader"; ObjectID = "SkZ-tE-blK"; */
-"SkZ-tE-blK.title" = "Open feeds in default news reader";
-
-/* Class = "NSMenuItem"; title = "Large"; ObjectID = "ckZ-0Q-rNz"; */
-"ckZ-0Q-rNz.title" = "Large";
-
-/* Class = "NSButtonCell"; title = "Check automatically"; ObjectID = "dm8-Xy-0Ba"; */
-"dm8-Xy-0Ba.title" = "Check automatically";
-
-/* Class = "NSMenuItem"; title = "Manually only"; ObjectID = "doa-Wq-4Uq"; */
-"doa-Wq-4Uq.title" = "Manually only";
-
-/* Class = "NSTextFieldCell"; title = "If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss."; ObjectID = "fOZ-zv-QTc"; */
-"fOZ-zv-QTc.title" = "If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss.";
-
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "goO-QG-kk7"; */
-"goO-QG-kk7.title" = "Table View Cell";
-
-/* Class = "NSViewController"; title = "General"; ObjectID = "iuH-lz-18x"; */
-"iuH-lz-18x.title" = "General";
-
-/* Class = "NSMenuItem"; title = "Medium"; ObjectID = "jMV-2o-5Oh"; */
-"jMV-2o-5Oh.title" = "Medium";
-
-/* Class = "NSButtonCell"; title = "Send automatically"; ObjectID = "jnc-C5-4oI"; */
-"jnc-C5-4oI.title" = "Send automatically";
-
-/* Class = "NSButtonCell"; title = "Privacy Policy"; ObjectID = "kSv-Wu-NYx"; */
-"kSv-Wu-NYx.title" = "Privacy Policy";
-
-/* Class = "NSMenuItem"; title = "Every 2 hours"; ObjectID = "o1h-xo-elW"; */
-"o1h-xo-elW.title" = "Every 2 hours";
-
-/* Class = "NSMenuItem"; title = "Extra Large"; ObjectID = "qMe-6g-Vme"; */
-"qMe-6g-Vme.title" = "Extra Large";
+"Pkl-EA-Goa.title" = "默认";
 
 /* Class = "NSTextFieldCell"; title = "Crash logs:"; ObjectID = "qcq-fU-Ks0"; */
-"qcq-fU-Ks0.title" = "Crash logs:";
+"qcq-fU-Ks0.title" = "崩溃日志：";
 
-/* Class = "NSMenuItem"; title = "Every 30 minutes"; ObjectID = "rZU-Tg-xwo"; */
-"rZU-Tg-xwo.title" = "Every 30 minutes";
+/* Class = "NSMenuItem"; title = "Every hour"; ObjectID = "Qjt-qr-WER"; */
+"Qjt-qr-WER.title" = "每小时";
+
+/* Class = "NSMenuItem"; title = "Extra Large"; ObjectID = "qMe-6g-Vme"; */
+"qMe-6g-Vme.title" = "特大";
 
 /* Class = "NSMenuItem"; title = "Small"; ObjectID = "roB-Mu-Ht7"; */
-"roB-Mu-Ht7.title" = "Small";
+"roB-Mu-Ht7.title" = "小";
+
+/* Class = "NSMenuItem"; title = "Every 30 minutes"; ObjectID = "rZU-Tg-xwo"; */
+"rZU-Tg-xwo.title" = "每 30 分钟";
+
+/* Class = "NSButtonCell"; title = "Open feeds in default news reader"; ObjectID = "SkZ-tE-blK"; */
+"SkZ-tE-blK.title" = "在默认的新闻阅读器中打开订阅源";
 
 /* Class = "NSButtonCell"; title = "Open web pages in background in browser"; ObjectID = "t0a-LN-rCv"; */
-"t0a-LN-rCv.title" = "Open web pages in background in browser";
+"t0a-LN-rCv.title" = "在浏览器后台打开网页";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "uax-iF-gzP"; */
-"uax-iF-gzP.title" = "Text Cell";
+"uax-iF-gzP.title" = "文本单元格";
 
 /* Class = "NSButtonCell"; title = "Open feeds in NetNewsWire"; ObjectID = "uvx-O8-HvU"; */
-"uvx-O8-HvU.title" = "Open feeds in NetNewsWire";
+"uvx-O8-HvU.title" = "在 NetNewsWire 中打开订阅源";
 
 /* Class = "NSTextFieldCell"; title = "Timeline:"; ObjectID = "wi9-yM-Ri0"; */
-"wi9-yM-Ri0.title" = "Timeline:";
+"wi9-yM-Ri0.title" = "时间线：";
 
 /* Class = "NSTextFieldCell"; title = "Article Text Size:"; ObjectID = "xQu-QV-91i"; */
-"xQu-QV-91i.title" = "Article Text Size:";
+"xQu-QV-91i.title" = "文章字体大小：";
 
 /* Class = "NSButtonCell"; title = "Open Themes Folder"; ObjectID = "ySX-5i-SP1"; */
-"ySX-5i-SP1.title" = "Open Themes Folder";
+"ySX-5i-SP1.title" = "打开主题文件夹";
 
 /* Class = "NSMenuItem"; title = "Every 10 minutes"; ObjectID = "zmy-xe-mVw"; */
-"zmy-xe-mVw.title" = "Every 10 minutes";
+"zmy-xe-mVw.title" = "每 10 分钟";
 
 /* Class = "NSTextFieldCell"; title = "App Updates:"; ObjectID = "zqG-X2-E9b"; */
-"zqG-X2-E9b.title" = "App Updates:";
+"zqG-X2-E9b.title" = "应用更新：";
+

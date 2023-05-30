@@ -1,36 +1,36 @@
-
 /* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1F7-qu-7oN"; */
 "1F7-qu-7oN.title" = "Item 2";
 
-/* Class = "NSMenuItem"; title = "Newest Article on Top"; ObjectID = "40c-kt-vhO"; */
-"40c-kt-vhO.title" = "Newest Article on Top";
-
 /* Class = "NSMenuItem"; title = "Sort"; ObjectID = "4BZ-ya-evy"; */
-"4BZ-ya-evy.title" = "Sort";
+"4BZ-ya-evy.title" = "排序方式";
+
+/* Class = "NSMenuItem"; title = "Newest Article on Top"; ObjectID = "40c-kt-vhO"; */
+"40c-kt-vhO.title" = "最新文章在顶部";
+
+/* Class = "NSOutlineView"; ibExternalAccessibilityDescription = "Feeds"; ObjectID = "cnV-kg-Dn2"; */
+"cnV-kg-Dn2.ibExternalAccessibilityDescription" = "订阅";
+
+/* Class = "NSTextFieldCell"; title = "HEADER CELL"; ObjectID = "dRB-0K-qxz"; */
+"dRB-0K-qxz.title" = "标题单元格";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "dVE-XG-mlU"; */
+"dVE-XG-mlU.title" = "描述";
 
 /* Class = "NSWindow"; title = "NetNewsWire"; ObjectID = "IQv-IB-iLA"; */
 "IQv-IB-iLA.title" = "NetNewsWire";
-
-/* Class = "NSMenuItem"; title = "Group by Feed"; ObjectID = "YSR-5C-Yjd"; */
-"YSR-5C-Yjd.title" = "Group by Feed";
-
-/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "ZDH-CV-Y2s"; */
-"ZDH-CV-Y2s.title" = "Item 1";
-
-/* Class = "NSOutlineView"; ibExternalAccessibilityDescription = "Feeds"; ObjectID = "cnV-kg-Dn2"; */
-"cnV-kg-Dn2.ibExternalAccessibilityDescription" = "Feeds";
-
-/* Class = "NSTextFieldCell"; title = "HEADER CELL"; ObjectID = "dRB-0K-qxz"; */
-"dRB-0K-qxz.title" = "HEADER CELL";
-
-/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "dVE-XG-mlU"; */
-"dVE-XG-mlU.title" = "Label";
 
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "r9E-FO-GoU"; */
 "r9E-FO-GoU.title" = "Item 3";
 
 /* Class = "NSMenuItem"; title = "Oldest Article on Top"; ObjectID = "sOF-Ez-vIL"; */
-"sOF-Ez-vIL.title" = "Oldest Article on Top";
+"sOF-Ez-vIL.title" = "最旧文章在顶部";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "sXh-y7-12P"; */
-"sXh-y7-12P.title" = "Text Cell";
+"sXh-y7-12P.title" = "文本单元格";
+
+/* Class = "NSMenuItem"; title = "Group by Feed"; ObjectID = "YSR-5C-Yjd"; */
+"YSR-5C-Yjd.title" = "按订阅源分组";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "ZDH-CV-Y2s"; */
+"ZDH-CV-Y2s.title" = "Item 1";
+

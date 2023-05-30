@@ -1,18 +1,18 @@
 /* Automatic */
-"appdefaults.colorpalette.automatic" = "Automatic";
+"appdefaults.colorpalette.automatic" = "自动";
 
 /* Dark */
-"appdefaults.colorpalette.dark" = "Dark";
+"appdefaults.colorpalette.dark" = "深色";
 
 /* Light */
-"appdefaults.colorpalette.light" = "Light";
+"appdefaults.colorpalette.light" = "浅色";
 
 /* Add Feed */
-"button.title.add-feed" = "Add Feed";
+"button.title.add-feed" = "添加订阅";
 
 /* Folder */
-"navigation.title.folder" = "Folder";
+"navigation.title.folder" = "文件夹";
 
 /* Feed Name (Optional) */
-"textfield.placeholder.feed-name" = "Feed Name (Optional)";
+"textfield.placeholder.feed-name" = "订阅名称（可选）";
 

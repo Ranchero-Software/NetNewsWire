@@ -1,6 +1,6 @@
 /* Bundle display name */
-"CFBundleDisplayName" = "NetNewsWire Widget";
+"CFBundleDisplayName" = "NetNewsWire 小组件";
 
 /* Bundle name */
-"CFBundleName" = "NetNewsWire iOS Widget Extension";
+"CFBundleName" = "NetNewsWire iOS 小组件扩展";
 
