@@ -8,12 +8,10 @@
 
 import Foundation
 
-@available(iOS 15, *)
 protocol LoadableAboutData {
 	var about: AboutData { get }
 }
 
-@available(iOS 15, *)
 extension LoadableAboutData {
 	
 	var about: AboutData {
@@ -27,7 +25,6 @@ extension LoadableAboutData {
 	
 }
 
-@available(iOS 15, *)
 struct AboutData: Codable {
 	var PrimaryContributors: [Contributor]
 	var AdditionalContributors: [Contributor]
