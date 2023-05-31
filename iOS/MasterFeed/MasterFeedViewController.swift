@@ -127,11 +127,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		}
 		
 		var node: Node? = nil
-		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
-			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
-		} else {
-			node = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
-		}
+		node = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
 
 		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
 		if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
