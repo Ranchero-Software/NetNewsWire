@@ -23,7 +23,7 @@ struct EnableExtensionPointHelpView: View {
 	var body: some View {
 		VStack {
 			HStack {
-				ForEach(0..<extensionPoints.count, content: { i in
+				ForEach(0..<extensionPoints.count, id: \.self, content: { i in
 					Button(action: {
 						preferencesController?.enableExtensionPointFromSelection(extensionPoints[i])
 					}, label: {
