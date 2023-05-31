@@ -8,7 +8,6 @@
 
 import Html
 
-@available(macOS 12, *)
 struct AboutHTML: LoadableAboutData {
 
 	private func stylesheet() -> StaticString {

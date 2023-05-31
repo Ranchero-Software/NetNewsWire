@@ -1,0 +1,33 @@
+
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "7g8-Kk-ISg"; */
+"7g8-Kk-ISg.title" = "Password:";
+
+/* Class = "NSTextFieldCell"; title = "Email:"; ObjectID = "DqN-SV-v35"; */
+"DqN-SV-v35.title" = "Email:";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Window";
+
+/* Class = "NSTextFieldCell"; title = "Your username and password will be encrypted and stored in Keychain. "; ObjectID = "HuQ-TS-tS3"; */
+"HuQ-TS-tS3.title" = "Your username and password will be encrypted and stored in Keychain. ";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "IMO-YT-k9Z"; */
+"IMO-YT-k9Z.title" = "Create";
+
+/* Class = "NSTextFieldCell"; title = "Don’t have a Feedbin account?"; ObjectID = "QF5-gl-fjb"; */
+"QF5-gl-fjb.title" = "Don’t have a Feedbin account?";
+
+/* Class = "NSTextFieldCell"; placeholderString = "me@email.com"; ObjectID = "fCk-Tf-q01"; */
+"fCk-Tf-q01.placeholderString" = "me@email.com";
+
+/* Class = "NSButtonCell"; title = "Create one here."; ObjectID = "fx3-Uk-NVw"; */
+"fx3-Uk-NVw.title" = "Create one here.";
+
+/* Class = "NSTextFieldCell"; title = "Sign in to your Feedbin account."; ObjectID = "ras-dj-nP8"; */
+"ras-dj-nP8.title" = "Sign in to your Feedbin account.";
+
+/* Class = "NSSecureTextFieldCell"; placeholderString = "•••••••••"; ObjectID = "trK-OG-tBe"; */
+"trK-OG-tBe.placeholderString" = "•••••••••";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "ufs-ar-BAY"; */
+"ufs-ar-BAY.title" = "Cancel";

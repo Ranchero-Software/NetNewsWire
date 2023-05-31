@@ -1,0 +1,36 @@
+
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "7g8-Kk-ISg"; */
+"7g8-Kk-ISg.title" = "Password:";
+
+/* Class = "NSTextFieldCell"; title = "Login:"; ObjectID = "DqN-SV-v35"; */
+"DqN-SV-v35.title" = "Login:";
+
+/* Class = "NSTextFieldCell"; title = "Your username and password will be encrypted and stored in Keychain. "; ObjectID = "Ec9-bB-tQz"; */
+"Ec9-bB-tQz.title" = "Your username and password will be encrypted and stored in Keychain. ";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Window";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "IMO-YT-k9Z"; */
+"IMO-YT-k9Z.title" = "Create";
+
+/* Class = "NSTextFieldCell"; placeholderString = "username"; ObjectID = "fCk-Tf-q01"; */
+"fCk-Tf-q01.placeholderString" = "username";
+
+/* Class = "NSTextFieldCell"; title = "Don’t have a Reader account?"; ObjectID = "ker-hu-FEc"; */
+"ker-hu-FEc.title" = "Don’t have a Reader account?";
+
+/* Class = "NSTextFieldCell"; title = "Sign in to a Reader API account."; ObjectID = "ras-dj-nP8"; */
+"ras-dj-nP8.title" = "Sign in to a Reader API account.";
+
+/* Class = "NSSecureTextFieldCell"; placeholderString = "••••••••"; ObjectID = "trK-OG-tBe"; */
+"trK-OG-tBe.placeholderString" = "••••••••";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "ufs-ar-BAY"; */
+"ufs-ar-BAY.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Create one here."; ObjectID = "xY9-Rw-8kx"; */
+"xY9-Rw-8kx.title" = "Create one here.";
+
+/* Class = "NSTextFieldCell"; title = "API URL:"; ObjectID = "zBm-dZ-EF1"; */
+"zBm-dZ-EF1.title" = "API URL:";

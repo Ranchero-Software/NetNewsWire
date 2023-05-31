@@ -53,51 +53,10 @@ import RSCore
 	override func viewDidEndLiveResize() {
 		super.viewDidEndLiveResize()
 		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
-		bigSurOffsetFix()
 	}
 	
 	override func setFrameSize(_ newSize: NSSize) {
 		super.setFrameSize(newSize)
-		if (!inLiveResize) {
-			bigSurOffsetFix()
-		}
-	}
-		
-	private var inBigSurOffsetFix = false
-	
-	@available(macOS, obsoleted: 12, message: "when minimum deployment > macOS 11 remove bigSurOffsetFix() and calls to it.")
-	private func bigSurOffsetFix() {
-		/*
-		On macOS 11, when a user exits full screen
-		or exits zoomed mode by disconnecting an external display
-		the webview's `origin.y` is offset by a sizeable amount.
-		
-		This code adjusts the height of the window by -1pt/+1pt,
-		which puts the webview back in the correct place.
-		 
-		This code is only executed if currently running on macOS 11
-		*/
-		
-		if #unavailable(macOS 12) {
-			guard var frame = window?.frame else {
-				return
-			}
-			
-			guard !inBigSurOffsetFix else {
-				return
-			}
-			
-			inBigSurOffsetFix = true
-			
-			defer {
-				inBigSurOffsetFix = false
-			}
-			
-			frame.size = NSSize(width: window!.frame.width, height: window!.frame.height - 1)
-			window!.setFrame(frame, display: false)
-			frame.size = NSSize(width: frame.width, height: frame.height + 1)
-			window!.setFrame(frame, display: false)
-		}
 	}
 
 	// MARK: NSTextFinderClient
