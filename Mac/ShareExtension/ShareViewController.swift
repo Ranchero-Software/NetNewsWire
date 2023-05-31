@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import UniformTypeIdentifiers
 
 class ShareViewController: NSViewController {
 
@@ -31,14 +32,14 @@ class ShareViewController: NSViewController {
 		// Try to get any HTML that is maybe passed in
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
 			for itemProvider in item.attachments! {
-				if itemProvider.hasItemConformingToTypeIdentifier(kUTTypePropertyList as String) {
+				if itemProvider.hasItemConformingToTypeIdentifier(UTType.propertyList.description) {
 					provider = itemProvider
 				}
 			}
 		}
 
 		if provider != nil  {
-			provider!.loadItem(forTypeIdentifier: kUTTypePropertyList as String, options: nil, completionHandler: { [weak self] (pList, error) in
+			provider!.loadItem(forTypeIdentifier: UTType.propertyList.description, options: nil, completionHandler: { [weak self] (pList, error) in
 				if error != nil {
 					return
 				}
@@ -58,14 +59,14 @@ class ShareViewController: NSViewController {
 		// Try to get the URL if it is passed in as a URL
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
 			for itemProvider in item.attachments! {
-				if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
+				if itemProvider.hasItemConformingToTypeIdentifier(UTType.url.description) {
 					provider = itemProvider
 				}
 			}
 		}
 
 		if provider != nil  {
-			provider!.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil, completionHandler: { [weak self] (urlCoded, error) in
+			provider!.loadItem(forTypeIdentifier: UTType.url.description, options: nil, completionHandler: { [weak self] (urlCoded, error) in
 				if error != nil {
 					return
 				}

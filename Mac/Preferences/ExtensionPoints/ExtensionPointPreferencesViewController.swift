@@ -66,7 +66,6 @@ protocol ExtensionPointPreferencesEnabler: AnyObject {
 		alert.alertStyle = .warning
 		let prompt = NSLocalizedString("alert.title.deactivate-extension.%@", comment: "Deactivate “%@“?")
 		alert.messageText = String(format: prompt, extensionPoint.title)
-		let extensionPointTypeTitle = extensionPoint.extensionPointID.extensionPointType.title
 		alert.informativeText = NSLocalizedString("alert.message.cannot-undo-action", comment: "You can't undo this action.")
 		
 		alert.addButton(withTitle: NSLocalizedString("button.title.deactivate", comment: "Deactivate Extension"))
