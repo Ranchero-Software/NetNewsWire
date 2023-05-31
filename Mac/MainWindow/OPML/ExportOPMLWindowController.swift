@@ -75,7 +75,7 @@ import Account
 	func exportOPML(account: Account) {
 		
 		let panel = NSSavePanel()
-		panel.allowedFileTypes = ["opml"]
+		panel.allowedContentTypes = [.xml]
 		panel.allowsOtherFileTypes = false
 		panel.prompt = NSLocalizedString("panel.prompt.export-opml", comment: "Export OPML")
 		panel.title = NSLocalizedString("panel.title.export-opml", comment: "Export OPML")

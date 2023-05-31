@@ -85,7 +85,7 @@ import Account
 		panel.allowsMultipleSelection = false
 		panel.canChooseDirectories = false
 		panel.resolvesAliases = true
-		panel.allowedFileTypes = ["opml", "xml"]
+		panel.allowedContentTypes = [.xml, .opml]
 		panel.allowsOtherFileTypes = false
 		
 		panel.beginSheetModal(for: hostWindow!) { modalResult in
