@@ -10,7 +10,6 @@ import SwiftUI
 import WebKit
 import Html
  
-@available(macOS 12, *)
 fileprivate struct WebView: NSViewRepresentable {
 
 	var htmlString: String
@@ -50,7 +49,6 @@ fileprivate struct WebView: NSViewRepresentable {
 	}
 }
 
-@available(macOS 12, *)
 struct AboutNewNewsWireView: View, LoadableAboutData {
 	var body: some View {
 		VStack(spacing: 4) {
@@ -85,7 +83,7 @@ struct AboutNewNewsWireView: View, LoadableAboutData {
 	}
 }
 
-@available(macOS 12, *)
+
 struct AboutNetNewsWireView_Previews: PreviewProvider {
     static var previews: some View {
         AboutNewNewsWireView()
