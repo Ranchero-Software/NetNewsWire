@@ -1,0 +1,12 @@
+/* Bundle name */
+"CFBundleName" = "NetNewsWire";
+
+/* (No Comment) */
+"NetNewsWire Theme" = "NetNewsWire 主题";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "授予相册权限以从文章中保存图标。";
+
+/* (No Comment) */
+"OPML" = "OPML";
+

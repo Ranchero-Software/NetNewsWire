@@ -1,0 +1,704 @@
+/* No comment provided by engineer. */
+"%@ (%@)" = "%1$@ (%2$@)";
+
+/* On My iPad */
+"account.name.ipad" = "我的 iPad";
+
+/* On My iPhone */
+"account.name.iphone" = "我的 iPhone";
+
+/* On My Mac */
+"account.name.mac" = "我的 Mac";
+
+/* See articles in “%@” */
+"activity.title.see-article-in.folder.%@" = "查看“%@”中的文章。";
+
+/* See first unread article */
+"activity.title.see-first-unread-article" = "查看第一篇未读文章";
+
+/* Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings. */
+"alert.error.cloudkit-missing" = "无法添加 iCloud 帐户。请确保在系统设置中启用 iCloud 和 iCloud 云盘。";
+
+/* There is already an account of that type with that username created. */
+"alert.error.duplicate-account-username" = "已经存在该类型且使用该用户名创建的帐户。";
+
+/* Invalid API URL. */
+"alert.error.invalid-api-url" = "无效的 API URL。";
+
+/* Error message: The user provided an invalid username or password. */
+"alert.error.invalid-username-or-password" = "需要提供用户名或密码。";
+
+/* Error message: Unable to save due a Keychain error. */
+"alert.error.keychain-error" = "由于钥匙串错误，帐户凭证无法保存。";
+
+/* Network error. Please try later. */
+"alert.error.network-error" = "发生了网络错误，请稍后重试。";
+
+/* This theme cannot be used because of data corruption in the Info.plist: %@. */
+"alert.error.theme-data-corruption.%@" = "由于 Info.plist 中的数据损坏，无法使用此主题：%@。";
+
+/* Error message: This theme shares the same name as a provided theme and cannot be imported. */
+"alert.error.theme-duplicate-of-provided" = "该主题与提供的主题同名，无法导入。";
+
+/* This theme cannot be used because the the key—“%@”—is not found in the Info.plist. */
+"alert.error.theme-key-not-found.%@" = "无法使用此主题，因为在 Info.plist 中找不到键“%@”。";
+
+/* This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist */
+"alert.error.theme-type-mismatch.%@" = "无法使用此主题，因为在 Info.plist 中类型“%@”不匹配。";
+
+/* This theme cannot be used because the the value—“%@”—is not found in the Info.plist. */
+"alert.error.theme-value-missing.%@" = "无法使用此主题，因为在 Info.plist 中找不到值“%@”。";
+
+/* The account type in invalid. */
+"alert.error.unrecognized-account" = "账户类型无法识别。";
+
+/* Error message: The user must provide a username and password. */
+"alert.error.username-and-password-required" = "需要提供用户名和密码。";
+
+/* The user must provide a username, password, and URL. */
+"alert.error.username-password-url-required" = "需要提供用户名、密码和 API URL。";
+
+/* Username required. */
+"alert.error.username-required" = "需要提供用户名。";
+
+/* You won't see this message again */
+"alert.informative.will-not-see-again" = "你将不会再看到这条消息。";
+
+/* Some articles don’t have links, so they weren't copied. */
+"alert.message.articles-without-links" = "一些文章因没有链接无法拷贝。";
+
+/* Cannot undo action
+   You can't undo this action. */
+"alert.message.cannot-undo-action" = "此操作无法撤销。";
+
+/* Are you sure you want to clear the image caches? This will restart NetNewsWire to begin reloading the remote images. */
+"alert.message.clear-image-cache-confirmation" = "你确定要清除图像缓存吗？NetNewsWire将重新打开并重新加载远程图像。";
+
+/* You've already set up an iCloud account. */
+"alert.message.cloudkit-already-setup" = "你已经配置了一个 iCloud 帐户。";
+
+/* Are you sure you want to delete the “%@” feed? */
+"alert.message.delete-feed.%@" = "确定要删除“%@”订阅吗？";
+
+/* Are you sure you want to delete the “%@” folder? */
+"alert.message.delete-folder.%@" = "你确定要删除“%@”文件夹吗？";
+
+/* Are you sure you want to delete the %d selected items? */
+"alert.message.delete-items.%d" = "你确定要删除所选的 %d 个项目吗？";
+
+/* Can’t add this feed because of a download error: “%@” */
+"alert.message.download-error.%@" = "由于下载错误，无法添加此订阅：“%@”。";
+
+/* The theme “%@” already exists. Overwrite it? */
+"alert.message.duplicate-theme.%@" = "主题“%@”已经存在。是否覆盖？";
+
+/* You can enable NetNewsWire notifications in System Settings. */
+"alert.message.enable-notifications-in-settings" = "你可以在系统设置中启用 NetNewsWire 通知";
+
+/* To enable notifications, open Notifications in System Settings, then find NetNewsWire in the list. */
+"alert.message.enable-notifications-in-system-settings" = "要启用通知，请打开系统设置中的“通知”选项，然后在列表中找到 NetNewsWire。";
+
+/* A web browser will open the Feedly login for you to authorize access. */
+"alert.message.feedly-web-browser-information" = "浏览器将会打开 Feedly 登录界面以授权访问。";
+
+/* The theme “%@” has been installed. */
+"alert.message.theme-installed.%@" = "已安装主题“%@”。";
+
+/* Twitter Deprecation Message */
+"alert.message.twitter-deprecation-message" = "2023年2月1日，Twitter 宣布从2023年2月9日起停止免费访问 Twitter API。\n\n由于 Twitter 不提供 RSS 订阅，我们必须使用Twitter API。由于 API 开始收费，我们无法读取 Twitter 的订阅。\n\n我们保留了你的 Twitter 订阅。如果你在这些订阅中有任何星标的文章，只要不删除订阅源，它们将留在那里。\n\n你仍然可以阅读已经下载的内容。但是这些订阅将不再更新。";
+
+/* Author's website: */
+"alert.title.authors-website" = "Author's website:";
+
+/* Deactivate “%@“? */
+"alert.title.deactivate-extension.%@" = "Deactivate “%@“?";
+
+/* Delete Feed */
+"alert.title.delete-feed" = "删除订阅";
+
+/* Delete Folder */
+"alert.title.delete-folder" = "删除文件夹";
+
+/* Delete Items */
+"alert.title.delete-items" = "删除项目";
+
+/* Delete “%@“ */
+"alert.title.delete.%@" = "删除“%@”";
+
+/* Download Error */
+"alert.title.download-error" = "下载错误";
+
+/* Enable Notifications */
+"alert.title.enable-notifications" = "启用通知";
+
+/* Error */
+"alert.title.error" = "错误";
+
+/* Install theme “%@” by %@? — the order of the variables is theme name, author name */
+"alert.title.install-theme.%@.%@" = "安装由 %2$@ 创作的“%@”主题？";
+
+/* Notifications are not enabled. */
+"alert.title.notifications-not-enabled" = "通知未启用。";
+
+/* Are you sure you want to open %ld articles in your browser? */
+"alert.title.open-articles-in-browser.%ld" = "你确认要在浏览器中打开 %ld 篇文章吗？";
+
+/* Theme error */
+"alert.title.theme-error" = "主题错误";
+
+/* Theme installed */
+"alert.title.theme-installed" = "主题已安装";
+
+/* Twitter Integration Removed */
+"alert.title.twitter-integration-removed" = "Twitter 集成已移除";
+
+/* Alert title when adding a Feedly account and waiting for authorization from the user. */
+"alert.title.waiting-for-feedly-access" = "等待 Feedly 访问...";
+
+/* Mark Above as Read */
+"button.title-mark-above-as-read.titlecase" = "将上方文章标为已读";
+
+/* Mark Below as Read */
+"button.title-mark-below-as-read.titlecase" = "将下方文章标为已读";
+
+/* 1 day */
+"button.title.1-day" = "1 天";
+
+/* 1 month */
+"button.title.1-month" = "1 月";
+
+/* 1 week */
+"button.title.1-week" = "1 周";
+
+/* 1 year */
+"button.title.1-year" = "1 年";
+
+/* 2 days */
+"button.title.2-days" = "2 天";
+
+/* Every 2 Hours */
+"button.title.2-hours" = "每 2 小时";
+
+/* 2 weeks */
+"button.title.2-weeks" = "2 周";
+
+/* 3 days */
+"button.title.3-days" = "3 天";
+
+/* Every 4 Hours */
+"button.title.4-hours" = "每 4 小时";
+
+/* Every 8 Hours */
+"button.title.8-hours" = "每 8 小时";
+
+/* Every 10 Minutes */
+"button.title.10-minutes" = "每 10 分钟";
+
+/* Every 30 Minutes */
+"button.title.30-minutes" = "每 30 分钟";
+
+/* Account */
+"button.title.accounts" = "账户";
+
+/* Add Item */
+"button.title.add-item" = "添加项目";
+
+/* Advanced */
+"button.title.advanced" = "高级";
+
+/* Always Use Reader View */
+"button.title.always-use-reader-view" = "总是使用阅读器视图";
+
+/* Article Theme */
+"button.title.article-theme" = "文章主题";
+
+/* Cancel
+   Cancel button
+   Cancel Deactivate Extension
+   Cancel Delete Account
+   Cancel Install Theme */
+"button.title.cancel" = "取消";
+
+/* Clean Up */
+"button.title.clean-up" = "清理";
+
+/* Clear & Restart */
+"button.title.clear-and-restart" = "清除并重新打开";
+
+/* Close */
+"button.title.close" = "关闭";
+
+/* Continue */
+"button.title.continue" = "继续";
+
+/* Copy Article URL */
+"button.title.copy-article-url" = "拷贝文章 URL";
+
+/* Copy External URL */
+"button.title.copy-external-url" = "拷贝外部 URL";
+
+/* Copy Feed URL */
+"button.title.copy-feed-url" = "拷贝订阅源 URL";
+
+/* Copy Home Page URL */
+"button.title.copy-home-page-url" = "拷贝主页 URL";
+
+/* Create */
+"button.title.create" = "创建";
+
+/* Deactivate Extension */
+"button.title.deactivate" = "停用";
+
+/* System Default (%@) */
+"button.title.default-browser.%@" = "系统默认（%@）";
+
+/* Delete
+   Delete Account */
+"button.title.delete" = "删除";
+
+/* Delete Feed */
+"button.title.delete-feed" = "删除订阅";
+
+/* Delete Feeds */
+"button.title.delete-feeds" = "删除订阅";
+
+/* Delete Feeds and Folders */
+"button.title.delete-feeds-and-folders" = "删除订阅和文件夹";
+
+/* Delete Folder */
+"button.title.delete-folder" = "删除文件夹";
+
+/* Delete Folders */
+"button.title.delete-folders" = "删除文件夹";
+
+/* Dismiss */
+"button.title.dismiss" = "关闭";
+
+/* Every Hour */
+"button.title.every-hour" = "每小时";
+
+/* Extensions */
+"button.title.extensions" = "扩展";
+
+/* General */
+"button.title.general" = "通用";
+
+/* Hide Read Articles */
+"button.title.hide-read-articles" = "隐藏已读文章";
+
+/* Hide Read Feeds */
+"button.title.hide-read-feeds" = "隐藏已读订阅";
+
+/* Hide Sidebar */
+"button.title.hide-sidebar" = "隐藏边栏";
+
+/* Install Theme */
+"button.title.install-theme" = "安装主题";
+
+/* Manually */
+"button.title.manually" = "手动";
+
+/* Mark Above as Read */
+"button.title.mark-above-as-read.titlecase" = "将上方文章标为已读";
+
+/* Mark All as Read in “%@” */
+"button.title.mark-all-as-read.%@" = "将“%@”中的文章全部标为已读";
+
+/* Mark All as Read */
+"button.title.mark-all-as-read.titlecase" = "全部标为已读";
+
+/* Mark as Read */
+"button.title.mark-as-read" = "标为已读";
+
+/* Mark as Read Older Than */
+"button.title.mark-as-read-older-than" = "在早于以下日期时标为已读";
+
+/* Mark as Starred */
+"button.title.mark-as-starred" = "添加星标";
+
+/* Mark as Unread */
+"button.title.mark-as-unread" = "标为未读";
+
+/* Mark as Unstarred */
+"button.title.mark-as-unstarred" = "取消星标";
+
+/* Mark Below as Read */
+"button.title.mark-below-as-read.titlecase" = "将下方文章标为已读";
+
+/* Mark Read */
+"button.title.mark-read" = "标为已读";
+
+/* Star */
+"button.title.mark-star" = "添加星标";
+
+/* Mark Starred */
+"button.title.mark-starred" = "添加星标";
+
+/* Mark Unread */
+"button.title.mark-unread" = "标为未读";
+
+/* Mark Unstarred */
+"button.title.mark-unstarred" = "取消星标";
+
+/* New Feed */
+"button.title.new-feed" = "添加订阅";
+
+/* New Folder
+   New Folder... */
+"button.title.new-folder" = "新建文件夹";
+
+/* New Reddit Feed... */
+"button.title.new-reddit-feed" = "添加 Reddit 订阅...";
+
+/* New Twitter Feed... */
+"button.title.new-twitter-feed" = "添加 Twitter 订阅...";
+
+/* New Web Feed... */
+"button.title.new-web-feed" = "添加 Web 订阅...";
+
+/* Next Unread */
+"button.title.next-read" = "下一个未读";
+
+/* OK */
+"button.title.ok" = "OK";
+
+/* Open */
+"button.title.open" = "打开";
+
+/* Open %ld Articles */
+"button.title.open-articles.%ld" = "打开 %ld 篇文章";
+
+/* Open Home Page */
+"button.title.open-home-page" = "打开主页";
+
+/* Open in Browser in Background */
+"button.title.open-in-background" = "在浏览器后台打开";
+
+/* Open in Browser */
+"button.title.open-in-browser" = "在浏览器中打开";
+
+/* Open in Browser in Foreground */
+"button.title.open-in-foreground" = "在浏览器前台打开";
+
+/* New Folder... */
+"button.title.open-new-folder" = "新建文件夹...";
+
+/* Open Settings */
+"button.title.open-settings" = "打开设置";
+
+/* Open System Settings */
+"button.title.open-system-settings" = "打开系统设置";
+
+/* Overwrite */
+"button.title.overwrite" = "覆盖";
+
+/* Read Articles Filter */
+"button.title.read-articles-filter" = "已读文章过滤器";
+
+/* Reader View */
+"button.title.reader-view" = "阅读器视图";
+
+/* Refresh */
+"button.title.refresh" = "刷新";
+
+/* Rename */
+"button.title.rename" = "重命名";
+
+/* Search */
+"button.title.search" = "搜索";
+
+/* Select “%@” in Sidebar */
+"button.title.select-in-sidebar.%@" = "在边栏中选择“%@”";
+
+/* Share
+   Share menu name */
+"button.title.share" = "共享";
+
+/* Show Read Articles */
+"button.title.show-read-articles" = "显示已读文章";
+
+/* Show Read Feeds */
+"button.title.show-read-feeds" = "显示已读订阅";
+
+/* Show Sidebar */
+"button.title.show-sidebar" = "显示边栏";
+
+/* Toggle Sidebar */
+"button.title.toggle-sidebar" = "显示/折叠边栏";
+
+/* Update */
+"button.title.update" = "更新";
+
+/* Show notifications for new articles */
+"checkbox.title.show-new-article-notifications" = "有新文章时推送\n通知";
+
+/* No comment provided by engineer. */
+"Continue" = "继续";
+
+/* Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings. */
+"error.description.cloudkit-unavailable" = "无法添加 iCloud 帐户。请确保在系统设置中启用 iCloud 和 iCloud 云盘。";
+
+/* Unable to create extension. */
+"error.message.unable-to-create-extension" = "无法创建扩展";
+
+/* Markdown formatted link to netnewswire.com */
+"label.markdown.netnewswire-website" = "[netnewswire.com](https://netnewswire.com)";
+
+/* Add an account by clicking the + button. */
+"label.text.add-account-explainer" = "通过点击 + 添加新账户。";
+
+/* Add an extension by clicking the + button. */
+"label.text.add-extension" = "通过点击 + 添加新扩展。";
+
+/* You've added all available extensions. */
+"label.text.added-all-extensions" = "你已添加了所有的可用扩展";
+
+/* Article */
+"label.text.article" = "文章";
+
+/* Choose an account type to add... */
+"label.text.choose-account-to-add" = "选择一个要添加的账户...";
+
+/* Choose an extension to add... */
+"label.text.choose-extension-to-add" = "选择一个要添加的扩展...";
+
+/* iCloud */
+"label.text.cloudkit" = "iCloud";
+
+/* Your iCloud account syncs your feeds across your Mac and iOS devices */
+"label.text.cloudkit-explainer" = "你的 iCloud 帐户将在 Mac 和 iOS 设备之间同步你的订阅。";
+
+/* Error - Reader View */
+"label.text.error-reader-view" = "错误 - 阅读器视图";
+
+/* XX-Large */
+"label.text.extra-extra-large" = "最大";
+
+/* X-Large */
+"label.text.extra-large" = "特大";
+
+/* Feed Provider */
+"label.text.feed-provider" = "订阅服务提供商";
+
+/* An extension that makes websites appear to provide RSS feeds for their content. */
+"label.text.feed-provider-explainer" = "使网站看起来提供其内容的 RSS 订阅源的扩展。";
+
+/* Find out more */
+"label.text.find-out-more" = "了解更多信息";
+
+/* Finding feed... */
+"label.text.finding-feed" = "查找订阅...";
+
+/* Large */
+"label.text.large" = "大";
+
+/* Link: */
+"label.text.link" = "链接：";
+
+/* Local */
+"label.text.local" = "本地";
+
+/* Local accounts do not sync your feeds across devices */
+"label.text.local-account-explainer" = "本地账户不会在设备间同步你的订阅。";
+
+/* This extension enables share menu functionality to send selected article text to MarsEdit. You need the MarsEdit application for this to work. */
+"label.text.marsedit.explainer" = "此扩展能让你使用共享菜单将所选文章文本发送到 MarsEdit。你需要拥有 MarsEdit 应用才能正常使用此功能。";
+
+/* Medium */
+"label.text.medium" = "中";
+
+/* This extension enables share menu functionality to send selected article text to Micro.blog. You need the Micro.blog application for this to work. */
+"label.text.micro-blog-expaliner" = "此扩展能让你使用共享菜单将所选文章文本发送到 Micro.blog。你需要拥有 Micro.blog 应用才能正常使用此功能。";
+
+/* By Brent Simmons and the NetNewsWire team. */
+"label.text.netnewswire-byline" = "由 Brent Simmons 和 NetNewsWire 团队开发。";
+
+/* Don’t have a BazQux account? */
+"label.text.no-bazqux" = "还没有 BazQux 帐户？";
+
+/* Don’t have a FreshRSS instance? */
+"label.text.no-fresh-rss" = "还没有 FreshRSS 帐户？";
+
+/* Don’t have an InoReader account? */
+"label.text.no-inoreader" = "还没有 InoReader 帐户？";
+
+/* Don’t have a The Old Reader account? */
+"label.text.no-old-reader" = "还没有 The Old Reader 帐户？";
+
+/* (No Text) */
+"label.text.no-text" = "（无文本）";
+
+/* Posts from r/%@ */
+"label.text.posts-from-subreddit.%@" = "来自 r/%@ 的帖子";
+
+/* Privacy Policy */
+"label.text.privacy-policy" = "隐私政策";
+
+/* Processing - Reader View */
+"label.text.processing-reader-view" = "处理中 - 阅读器视图";
+
+/* Reader View */
+"label.text.reader-view" = "阅读器视图";
+
+/* The most active posts */
+"label.text.reddit-active-posts" = "最活跃的帖子";
+
+/* The best posts on Reddit for you */
+"label.text.reddit-best-posts" = "为你提供的 Reddit 最佳帖子";
+
+/* Your personal Reddit frontpage */
+"label.text.reddit-front-page" = "你的个人 Reddit 主页";
+
+/* Select an account or add a new account by clicking the + button. */
+"label.text.select-or-add-account-explainer" = "选择一个账户或通过点击 + 添加新账户。";
+
+/* Select an extension or add a new extension by clicking the + button. */
+"label.text.select-or-add-extension" = "选择一个扩展或通过点击 + 添加新扩展。";
+
+/* Selected - Reader View */
+"label.text.selected-reader-view" = "已选择 - 阅读器视图";
+
+/* Self-hosted */
+"label.text.self-hosted" = "自托管账户";
+
+/* Self-hosted accounts sync your feeds across all your devices */
+"label.text.self-hosted-accounts-explainer" = "自托管帐户可以在所有设备上同步你的订阅。";
+
+/* An extension that enables a share menu item that passes article data to a third-party application. */
+"label.text.share-extension-explainer" = "一个通过共享菜单将文章数据传输给第三方应用的扩展。";
+
+/* Sign in to your BazQux account. */
+"label.text.sign-in-bazqux" = "登录到你的 BazQux 账户。";
+
+/* Sign in to your FreshRSS account. */
+"label.text.sign-in-freshrss" = "登录到你的 FreshRSS 账户。";
+
+/* Sign in to your InoReader account. */
+"label.text.sign-in-inoreader" = "登录到你的 InoReader 账户。";
+
+/* Sign in to your The Old Reader account. */
+"label.text.sign-in-old-reader" = "登录你的 The Old Reader 帐户。";
+
+/* Small */
+"label.text.small" = "小";
+
+/* Subreddit */
+"label.text.subreddit" = "Subreddit";
+
+/* Built-in */
+"label.text.themes-builtin" = "内置主题";
+
+/* Third Party */
+"label.text.themes-third-party" = "其他主题";
+
+/* Third-Party Integration */
+"label.text.third-party-integration" = "第三方集成";
+
+/* Timeline */
+"label.text.timeline" = "时间线";
+
+/* Tweets that contain %@ */
+"label.text.tweets-containing.%@" = "Tweets that contain %@";
+
+/* Tweets from everyone you follow */
+"label.text.tweets-from-everyone" = "Tweets from everyone you follow";
+
+/* Tweets from @%@ */
+"label.text.tweets-from.%@" = "Tweets from @%@";
+
+/* Tweets mentioning you */
+"label.text.tweets-mentioning-you" = "Tweets mentioning you";
+
+/* unread */
+"label.text.unread" = "未读";
+
+/* Web */
+"label.text.web" = "Web";
+
+/* Web accounts sync your feeds across all your devices */
+"label.text.web-account-explainer" = "Web 账户会将你的订阅在所有设备间同步";
+
+/* Catch up to articles older than... */
+"menu.title.catch-up-to-articles" = "将早于以下时间的文章标为已读...";
+
+/* Choose a location for the exported OPML file. */
+"panel.message.export-opml" = "选择一个导出 OPML 文件的位置。";
+
+/* Export OPML */
+"panel.prompt.export-opml" = "导出 OPML";
+
+/* Export to: */
+"panel.textfield.export-opml-destination" = "导出到：";
+
+/* Export OPML */
+"panel.title.export-opml" = "导出 OPML";
+
+/* Choose a Subscriptions.plist file: */
+"panel.title.select-opml-file" = "选择一个 Subscriptions.plist 文件";
+
+/* All Unread pseudo-feed title */
+"smartfeed.title.allunread" = "所有未读";
+
+/* Starred pseudo-feed title */
+"smartfeed.title.starred" = "星标";
+
+/* Today pseudo-feed title */
+"smartfeed.title.today" = "今日";
+
+/* Smart Feeds group title */
+"smartfeeds.title" = "智能订阅";
+
+/* Search: */
+"textfield.placeholder.search" = "搜索：";
+
+/* Search Term or #hashtag */
+"textfield.placeholder.search-term-hashtag" = "搜索词语或者 #标签";
+
+/* @name */
+"textfield.placeholder.twitter-username" = "@name";
+
+/* Rename %@ to: */
+"textfield.prompt.rename-to.%@" = "将 %@ 重命名为：";
+
+/* Create a local account on your Mac. */
+"textfield.text.create-a-local-account" = "在你的 Mac 上创建一个本地账户。";
+
+/* Sign in to your Feedbin account. */
+"textfield.text.sign-in-feedbin" = "登录到你的 Feedbin 账户。";
+
+/* Sign in to your NewsBlur account. */
+"textfield.text.sign-in-newsblur" = "登录到你的 NewsBlur 账户。";
+
+/* Update your Feedbin account credentials. */
+"textfield.text.update-feedbin-credentials" = "更新你的 Feedbin 用户凭证。";
+
+/* Update your NewsBlur account credentials. */
+"textfield.text.update-newsblur-credentials" = "更新你的 NewsBlur 账户凭证。";
+
+/* Unknown Value */
+"Unknown" = "未知";
+
+/* %d unread */
+"window.subtitle.unread-count.%d" = "%d 个未读";
+
+/* Feed Inspector */
+"window.title.feed-inspector" = "订阅检查器";
+
+/* Folder Inspector */
+"window.title.folder-inspector" = "文件夹检查器";
+
+/* Inspector */
+"window.title.inspector" = "检查器";
+
+/* Keyboard Shortcuts */
+"window.title.keyboard-shortcuts" = "键盘快捷键";
+
+/* Multiple */
+"window.title.multiple" = "多个";
+
+/* Search: %@ */
+"window.title.search.%@" = "搜索：%@";
+
+/* Smart Feed Inspector */
+"window.title.smart-feed-inspector" = "智能订阅源检查器";
+

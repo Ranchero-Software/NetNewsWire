@@ -1,0 +1,51 @@
+/* Starred */
+"label.text.starred" = "星标";
+
+/* Today */
+"label.text.today" = "今日";
+
+/* Smart Feed Summary Widget */
+"label.text.unread" = "未读";
+
+/* Your smart feeds, summarized. */
+"widget.description.smart-feed-summary" = "智能订阅的摘要，准备就绪";
+
+/* A sneak peek at your starred articles. */
+"widget.description.starred" = "一些你的星标文章";
+
+/* When you mark articles as Starred, they'll appear here. */
+"widget.description.starred-no-items" = "这里显示添加星标的文章";
+
+/* A sneak peek at recently published unread articles. */
+"widget.description.today" = "一些最近发布的未读文章。";
+
+/* There are no recent unread articles left to read. */
+"widget.description.today-no-items" = "没有最近未读的文章了";
+
+/* A sneak peek at your unread articles. */
+"widget.description.unread" = "一些你未读的文章。";
+
+/* There are no unread articles left to read. */
+"widget.description.unread-no-items" = "没有未读的文章了";
+
+/* Your Smart Feed Summary */
+"widget.title.smart-feed-summary" = "你的智能订阅摘要";
+
+/* Your Starred Articles */
+"widget.title.starred" = "你的星标文章";
+
+/* Starred Widget */
+"widget.title.starred-no-items" = "星标";
+
+/* Your Today Articles */
+"widget.title.today" = "你的今日文章";
+
+/* Today Widget */
+"widget.title.today-no-items" = "今日";
+
+/* Bundle */
+"widget.title.unread" = "你的未读文章";
+
+/* Unread Widget */
+"widget.title.unread-no-items" = "未读";
+

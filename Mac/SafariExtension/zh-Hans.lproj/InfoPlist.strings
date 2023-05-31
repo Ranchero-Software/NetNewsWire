@@ -1,0 +1,12 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "添加到订阅";
+
+/* Bundle name */
+"CFBundleName" = "添加到订阅";
+
+/* Copyright (human-readable) */
+"NSHumanReadableCopyright" = "Copyright © 2019-2022 Brent Simmons. All rights reserved.";
+
+/* Human readable description */
+"NSHumanReadableDescription" = "此扩展会为Safari添加一个工具栏按钮，方便添加当前页面的订阅源。";
+

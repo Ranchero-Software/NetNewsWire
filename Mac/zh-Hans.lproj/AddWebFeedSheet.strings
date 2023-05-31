@@ -1,0 +1,33 @@
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "6NK-Ql-drk"; */
+"6NK-Ql-drk.title" = "添加";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "8ca-Qp-BkT"; */
+"8ca-Qp-BkT.title" = "名称：";
+
+/* Class = "NSTextFieldCell"; title = "URL:"; ObjectID = "8jE-9v-BT2"; */
+"8jE-9v-BT2.title" = "URL：";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "APc-af-7Um"; */
+"APc-af-7Um.title" = "Item 2";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "Dop-HC-6Q9"; */
+"Dop-HC-6Q9.title" = "取消";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "j09-9b-bGs"; */
+"j09-9b-bGs.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "Folder:"; ObjectID = "Kwx-7B-CIu"; */
+"Kwx-7B-CIu.title" = "文件夹：";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "pLP-pL-5R5"; */
+"pLP-pL-5R5.placeholderString" = "可选";
+
+/* Class = "NSWindow"; title = "Add Web Feed"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "添加 Web 订阅";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "tLJ-zY-CcZ"; */
+"tLJ-zY-CcZ.title" = "Item 1";
+
+/* Class = "NSButtonCell"; title = "Open Feed Directory"; ObjectID = "wKl-a9-7FY"; */
+"wKl-a9-7FY.title" = "打开订阅路径";
+

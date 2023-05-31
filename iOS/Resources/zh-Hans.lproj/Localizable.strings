@@ -1,0 +1,929 @@
+/* No comment provided by engineer. */
+"%@" = "%@";
+
+/* No comment provided by engineer. */
+"%@ (%@)" = "%1$@ (%2$@)";
+
+/* On My iPad */
+"account.name.ipad" = "我的 iPad";
+
+/* On My iPhone */
+"account.name.iphone" = "我的 iPhone";
+
+/* On My Mac */
+"account.name.mac" = "我的 Mac";
+
+/* Cancel */
+"action.title.cancel" = "取消";
+
+/* Delete */
+"action.title.delete" = "删除";
+
+/* More */
+"action.title.more" = "更多";
+
+/* Rename */
+"action.title.rename" = "重命名";
+
+/* Choose an account to receive the imported feeds and folders */
+"actionsheet.title.choose-opml-destination" = "选择一个带有要导出订阅的账户";
+
+/* Choose an account with the subscriptions to export */
+"actionsheet.title.choose-opml-export-account" = "选择一个带有要导出的订阅的帐户。";
+
+/* Find in Article */
+"activity.title.find-in-article.titlecase" = "在文章中查找";
+
+/* Open in Browser */
+"activity.title.open-in-browser" = "在浏览器中打开";
+
+/* See articles in “%@” */
+"activity.title.see-article-in.folder.%@" = "查看“%@”中的文章。";
+
+/* See first unread article */
+"activity.title.see-first-unread-article" = "查看第一篇未读文章";
+
+/* Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings. */
+"alert.error.cloudkit-missing" = "无法添加 iCloud 帐户。请确保在系统设置中启用 iCloud 和 iCloud 云盘。";
+
+/* There is already an account of that type with that username created. */
+"alert.error.duplicate-account-username" = "已经存在该类型且使用该用户名创建的帐户。";
+
+/* Invalid API URL. */
+"alert.error.invalid-api-url" = "无效的 API URL。";
+
+/* Error message: The user provided an invalid username or password. */
+"alert.error.invalid-username-or-password" = "需要提供用户名或密码。";
+
+/* Error message: Unable to save due a Keychain error. */
+"alert.error.keychain-error" = "由于钥匙串错误，帐户凭证无法保存。";
+
+/* Network error. Please try later. */
+"alert.error.network-error" = "发生了网络错误，请稍后重试。";
+
+/* Error message: This theme shares the same name as a provided theme and cannot be imported. */
+"alert.error.theme-duplicate-of-provided" = "该主题与提供的主题同名，无法导入。";
+
+/* The account type in invalid. */
+"alert.error.unrecognized-account" = "无法识别账户类型。";
+
+/* Error message: The user must provide a username and password. */
+"alert.error.username-and-password-required" = "需要提供用户名和密码。";
+
+/* The user must provide a username, password, and URL. */
+"alert.error.username-password-url-required" = "需要提供用户名、密码和 API URL。";
+
+/* Username required. */
+"alert.error.username-required" = "需要提供用户名。";
+
+/* The variable is the author's home page. In English, the alert message is: Author‘s website:\n%@ */
+"alert.message.author-website.%@" = "作者网站：\n%@";
+
+/* The action cannot be undone.
+   You can't undo this action. */
+"alert.message.cannot-undo-action" = "此操作无法撤销。";
+
+/* Asks the user for confirmation that they wish to delete a folder. The variable provided is the folder name. In English, the message is: Are you sure you want to delete the “%@” feed? */
+"alert.message.delete-feed.%@" = "你确定要删除“%@”吗？";
+
+/* Asks the user for confirmation that they wish to delete a folder. The variable provided is the folder name. In English, the message is: Are you sure you want to delete the “%@” folder? */
+"alert.message.delete-folder.%@" = "你确定要删除文件夹“%@”吗？";
+
+/* This device cannot send emails. */
+"alert.message.device-cannot-send-email" = "此设备无法发送电子邮件。";
+
+/* In English: The theme “%@” already exists. Do you want to overwrite it?
+   This message details that this theme is a duplicate and gives the user the option to overwrite the existing theme. In English, the message is: The theme “%@” already exists. Overwrite it? */
+"alert.message.duplicate-theme.%@" = "主题“%@”已经存在。是否覆盖？";
+
+/* To exit Full Screen mode tap the top of the screen.\n\nYou'll only see this message once. */
+"alert.message.exit-full-screen" = "请点击屏幕顶部以退出全屏。\n\n此消息只会出现一次。";
+
+/* Are you sure you want to import “%@” by %@ */
+"alert.message.import-theme.%@.%@" = "你确定要导入由 %2$@ 创作的“%1$@”吗？";
+
+/* The theme “%@” has been imported. */
+"alert.message.imported-theme-successfully.%@" = "主题“%@”已导入。";
+
+/* Message that indicates a user can turn off the Mark As Read confirmation in Settings. */
+"alert.message.markasread.turnoffconfirmation" = "你可以在设置中关闭此确认提示。";
+
+/* Subscriptions have been imported to your “%@“ account. */
+"alert.message.opml-import-success.%@" = "订阅已导入到你的 %@ 账户。";
+
+/* Your subscriptions have been exported successfully. */
+"alert.message.opml.opml-export-success" = "你的订阅已成功导出。";
+
+/* Error message when theme data is corrupted. The variable is a description provided by Apple. In English, the message is: This theme cannot be used because of data corruption in the Info.plist. %@. */
+"alert.message.theme-data-corrupted.%@" = "由于 Info.plist 中的数据损坏，无法使用此主题。%@。";
+
+/* This alert message provides confirmation that the theme has been installed. In English, the message is: The theme “%@” has been installed. */
+"alert.message.theme-installed.%@" = "已安装主题“%@”。";
+
+/* Error message when a key is missing. In English, the message is: This theme cannot be used because the the key—“%@”—is not found in the Info.plist. */
+"alert.message.theme-key-missing.%@" = "无法使用此主题，因为在 Info.plist 中找不到键“%@”。";
+
+/* Error message when a type is mismatched. In English, the message is: This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist. */
+"alert.message.theme-type-mismatch.%@" = "无法使用此主题，因为在 Info.plist 中类型“%@”不匹配。";
+
+/* Error message when a value is missing. In English, the message is: This theme cannot be used because the the value—“%@”—is not found in the Info.plist. */
+"alert.message.theme-value-missing.%@" = "无法使用此主题，因为在 Info.plist 中找不到值“%@”。";
+
+/* Twitter Deprecation Message */
+"alert.message.twitter-deprecation-message" = "2023年2月1日，Twitter 宣布从2023年2月9日起停止免费访问 Twitter API。\n\n由于 Twitter 不提供 RSS 订阅，我们必须使用Twitter API。由于 API 开始收费，我们无法读取 Twitter 的订阅。\n\n我们保留了你的 Twitter 订阅。如果你在这些订阅中有任何星标的文章，只要不删除订阅源，它们将留在那里。\n\n你仍然可以阅读已经下载的内容。但是这些订阅将不再更新。";
+
+/* Are you sure you want to deactivate “%@“? */
+"alert.title.deactivate-extension.%@" = "你确定要停用“%@”吗？";
+
+/* Are you sure you want to deactivate the %@ extension “%@“? Note: the ordering of the variables is extension type, extension name. */
+"alert.title.deactive-extension.%@.%@" = "你确定要停用 %@ 扩展“%@”吗？";
+
+/* Delete folder */
+"alert.title.delete-folder" = "删除文件夹";
+
+/* In English: Are you sure you want to delete “%@”? */
+"alert.title.delete-theme.%@" = "你确定要删除“%@”吗？";
+
+/* Duplicate Theme */
+"alert.title.duplicate-theme" = "重复的主题";
+
+/* Alert Error
+   Error */
+"alert.title.error" = "错误";
+
+/* Full Screen */
+"alert.title.exit-full-screen" = "退出全屏";
+
+/* Import Theme */
+"alert.title.import-theme" = "导入主题";
+
+/* Imported Successfully */
+"alert.title.imported-theme-succesfully" = "导入成功";
+
+/* Install Theme */
+"alert.title.install-theme" = "安装主题";
+
+/* Variable ordering is theme name; author name. In English, the alert title is: Install theme “%@” by %@? */
+"alert.title.install-theme.%@.%@" = "安装由 %2$@ 创作的“%@”主题？";
+
+/* Mark As Read */
+"alert.title.markasread" = "标为已读";
+
+/* Alert title: Exported Successfully */
+"alert.title.opml.opml-export-success" = "导出成功";
+
+/* Alert title: Imported Successfully */
+"alert.title.opml.opml-import-success" = "导入成功";
+
+/* Are you sure you want to remove “%@“? */
+"alert.title.remove-account.%@" = "你确定要重命名“%@”吗？";
+
+/* Rename feed. The variable provided is the feed name. In English: Rename “%@” */
+"alert.title.rename-feed.%@" = "重命名“%@”";
+
+/* Theme installed */
+"alert.title.theme-installed" = "主题已安装";
+
+/* Twitter Integration Removed */
+"alert.title.twitter-integration-removed" = "已移除 Twitter 功能";
+
+/* Automatic */
+"appdefaults.colorpalette.automatic" = "自动";
+
+/* Dark */
+"appdefaults.colorpalette.dark" = "深色";
+
+/* Light */
+"appdefaults.colorpalette.light" = "浅色";
+
+/* Error - Reader View */
+"button.accessibility.title.error-readerview" = "错误 - 阅读器视图";
+
+/* Filter Read Feeds */
+"button.accessibility.title.filter-read-feeds" = "过滤已读订阅";
+
+/* Processing - Reader View */
+"button.accessibility.title.processing-readerview" = "处理中 - 阅读器视图";
+
+/* Reader View */
+"button.accessibility.title.readerview" = "阅读器视图";
+
+/* Selected - Filter Read Feeds */
+"button.accessibility.title.selected-filter-read-feeds" = "已选择 - 过滤已读订阅";
+
+/* Selected - Reader View */
+"button.accessibility.title.selected-readerview" = "已选择 - 阅读器视图";
+
+/* Every 2 Hours */
+"button.title.2-hours" = "每 2 小时";
+
+/* Every 4 Hours */
+"button.title.4-hours" = "每 4 小时";
+
+/* Every 8 Hours */
+"button.title.8-hours" = "每 8 小时";
+
+/* Every 10 Minutes */
+"button.title.10-minutes" = "每 10 分钟";
+
+/* Every 30 Minutes */
+"button.title.30-minutes" = "每 30 分钟";
+
+/* About */
+"button.title.about" = "关于";
+
+/* Activate Account */
+"button.title.activate-account" = "启用账户";
+
+/* Add Account */
+"button.title.add-account" = "添加账户";
+
+/* Add Folder */
+"button.title.add-folder" = "新建文件夹";
+
+/* Add Item */
+"button.title.add-item" = "添加项目";
+
+/* Add Reddit Feed */
+"button.title.add-reddit-feed" = "添加 Reddit 订阅";
+
+/* Add Web Feed */
+"button.title.add-web-feed" = "添加 Web 订阅";
+
+/* Add Twitter Feed */
+"button.title.addtwitterfeed" = "添加 Twitter 订阅";
+
+/* Button title: Always Use Reader View */
+"button.title.always-use-reader-view" = "总是使用阅读器视图";
+
+/* Article Themes */
+"button.title.artice-themes" = "文章主题";
+
+/* Button title
+   Cancel */
+"button.title.cancel" = "取消";
+
+/* Close */
+"button.title.close" = "关闭";
+
+/* Copy Article URL */
+"button.title.copy-article-url" = "拷贝文章 URL";
+
+/* Copy External URL */
+"button.title.copy-external-url" = "拷贝外部 URL";
+
+/* Copy Feed URL */
+"button.title.copy-feed-url" = "拷贝订阅源 URL";
+
+/* Copy Home Page URL */
+"button.title.copy-home-pageurl" = "拷贝主页 URL";
+
+/* Credentials */
+"button.title.credentials" = "凭证";
+
+/* Deactivate */
+"button.title.deactivate" = "停用";
+
+/* Deactivate Account */
+"button.title.deactivate-account" = "停用账户";
+
+/* Deactivate Extension */
+"button.title.deactivate-extension" = "停用扩展";
+
+/* Button title: Default */
+"button.title.default" = "默认";
+
+/* Delete
+   Delete Feed */
+"button.title.delete" = "删除";
+
+/* Delete feed */
+"button.title.delete-feed" = "删除订阅";
+
+/* Delete Feeds */
+"button.title.delete-feeds" = "删除订阅";
+
+/* Delete Feeds and Folders */
+"button.title.delete-feeds-and-folders" = "删除订阅和文件夹";
+
+/* Delete Folder */
+"button.title.delete-folder" = "删除文件夹";
+
+/* Delete Folders */
+"button.title.delete-folders" = "删除文件夹";
+
+/* Delete Theme */
+"button.title.delete-theme" = "删除主题";
+
+/* Dismiss */
+"button.title.dismiss" = "关闭";
+
+/* Display & Behaviors */
+"button.title.display-and-behaviors" = "显示和体验";
+
+/* Done */
+"button.title.done" = "完成";
+
+/* Enable Extension */
+"button.title.enable-extension" = "启用扩展";
+
+/* Every Hour */
+"button.title.every-hour" = "每小时";
+
+/* Export Subscriptions */
+"button.title.export-subscriptions" = "导出订阅";
+
+/* Full Screen */
+"button.title.full-screen" = "全屏";
+
+/* Get Info */
+"button.title.get-info" = "获取信息";
+
+/* Go To Feed. Use to navigate to the user to the article list for a feed. */
+"button.title.go-to-feed" = "前往订阅";
+
+/* Go To Feed. Use to navigate to the user to the article list for a feed. */
+"button.title.go-to-feed.titlecase" = "前往订阅";
+
+/* Import Subscriptions */
+"button.title.import-subscriptions" = "导入订阅";
+
+/* Import Theme */
+"button.title.import-theme" = "导入主题";
+
+/* Manage Accounts */
+"button.title.manage-accounts" = "管理账户";
+
+/* Manage Extensions */
+"button.title.manage-extensions" = "管理扩展";
+
+/* Manually */
+"button.title.manually" = "手动";
+
+/* Mark Above as Read. Used to mark articles above the current article as read. */
+"button.title.mark-above-as-read.titlecase" = "将上方文章标为已读";
+
+/* Mark All as Read */
+"button.title.mark-all-as-read" = "全部标为已读";
+
+/* Mark All as Read in ”feed”. The variable name is the feed name. */
+"button.title.mark-all-as-read.%@" = "将“%@”中的文章全部标为已读";
+
+/* Mark All as Read */
+"button.title.mark-all-as-read.titlecase" = "全部标为已读";
+
+/* Mark Article Unread */
+"button.title.mark-article-unread" = "将文章标为未读";
+
+/* Mark as Read */
+"button.title.mark-as-read" = "标为已读";
+
+/* Mark as Read
+   Mark as Read. Used to mark an article Read */
+"button.title.mark-as-read.titlecase" = "标为已读";
+
+/* Mark as Starred */
+"button.title.mark-as-starred" = "添加星标";
+
+/* Mark as Starred
+   Mark as Starred. Used to mark an article as starred */
+"button.title.mark-as-starred.titlecase" = "星标";
+
+/* Mark as Unread
+   Mark as Unread. Used to mark an article unread */
+"button.title.mark-as-unread.titlecase" = "标为未读";
+
+/* Mark as Unstarred
+   Mark as Unstarred. Used to mark an article as unstarred */
+"button.title.mark-as-unstarred.titlecase" = "取消星标";
+
+/* Mark Below as Read. Used to mark articles below the current article as read. */
+"button.title.mark-below-as-read.titlecase" = "将下方文章标为已读";
+
+/* Mark Read */
+"button.title.mark-read" = "标为已读";
+
+/* Mark Starred */
+"button.title.mark-starred" = "添加星标";
+
+/* Mark Unread */
+"button.title.mark-unread" = "标为未读";
+
+/* Mark Unstarred */
+"button.title.mark-unstarred" = "取消星标";
+
+/* More */
+"button.title.more" = "更多";
+
+/* NetNewsWire Help */
+"button.title.netnewswire-help" = "NetNewsWire 帮助";
+
+/* NetNewsWire Website */
+"button.title.netnewswire-website" = "NetNewsWire 官网";
+
+/* New Article Notifications */
+"button.title.new-article-notifications" = "新文章通知";
+
+/* Next */
+"button.title.next" = "下一个";
+
+/* Next Article */
+"button.title.next-article" = "新文章";
+
+/* Next Result */
+"button.title.next-result" = "下一个结果";
+
+/* Next Unread Article */
+"button.title.next-unread-article" = "下一个未读文章";
+
+/* Open */
+"button.title.open" = "打开";
+
+/* Open Home Page */
+"button.title.open-home-page" = "打开主页";
+
+/* Open In Browser */
+"button.title.open-in-browser" = "在浏览器中打开";
+
+/* Open Settings */
+"button.title.open-settings" = "打开设置";
+
+/* Open System Settings */
+"button.title.open-system-settings" = "打开系统设置";
+
+/* Overwrite */
+"button.title.overwrite" = "覆盖";
+
+/* Overwrite Theme */
+"button.title.overwrite-theme" = "覆盖主题";
+
+/* Previous Article */
+"button.title.previous-article" = "上一篇文章";
+
+/* Previous Result */
+"button.title.previous-result" = "上一个结果";
+
+/* Remove Account */
+"button.title.remove-account" = "移除账户";
+
+/* Rename */
+"button.title.rename" = "重命名";
+
+/* Selected - Mark Article Unread */
+"button.title.selected-mark-article-unread" = "已选择 - 标记文章为未读";
+
+/* Selected - Star Article */
+"button.title.selected-star-article" = "已选择 - 星标文章";
+
+/* Share */
+"button.title.share" = "共享";
+
+/* Show Feed Article */
+"button.title.show-feed-article" = "显示订阅文章";
+
+/* Show Reader View */
+"button.title.show-reader-view" = "显示阅读器视图";
+
+/* Show Website */
+"button.title.show-website" = "显示网站";
+
+/* Star. Used when marking an article as starred. */
+"button.title.star" = "星标";
+
+/* Star Article */
+"button.title.star-article" = "星标文章";
+
+/* Timeline Layout */
+"button.title.timeline-layout" = "时间线布局";
+
+/* Unstar. Used when removing the starred status from an article */
+"button.title.unstar" = "取消星标";
+
+/* Update Credentials */
+"button.title.update-credentials" = "更新凭证";
+
+/* Use iCloud */
+"button.title.use-cloudkit" = "使用 iCloud";
+
+/* Close Image */
+"Close Image" = "关闭图像";
+
+/* Unable to create extension. */
+"error.message.unable-to-create-extension" = "无法创建扩展。";
+
+/* Unable to communicate with NetNewsWire. */
+"errordescription.localized.communication-failure" = "无法连接 NetNewsWire。";
+
+/* Add Feed */
+"homescreen.action.add-feed" = "添加订阅";
+
+/* First Unread */
+"homescreen.action.first-unread" = "第一个未读";
+
+/* Search */
+"homescreen.action.search" = "搜索";
+
+/* Article Search */
+"keyboard.command.article-search" = "搜索文章";
+
+/* Clean Up */
+"keyboard.command.clean-up" = "清理";
+
+/* Find in Article */
+"keyboard.command.find-in-article" = "在文章中查找";
+
+/* Get Feed Info */
+"keyboard.command.get-feed-info" = "获取订阅信息";
+
+/* Go To All Unread */
+"keyboard.command.go-to-all-unread" = "前往 所有未读";
+
+/* Go To Settings */
+"keyboard.command.go-to-settings" = "前往 设置";
+
+/* Go To Starred */
+"keyboard.command.go-to-starred" = "前往 星标";
+
+/* Go To Today */
+"keyboard.command.go-to-today" = "前往 今日";
+
+/* Mark Above as Read */
+"keyboard.command.mark-above-as-read" = "将上方文章标为已读";
+
+/* Mark All as Read */
+"keyboard.command.mark-all-as-read" = "全部标为已读";
+
+/* Mark Below as Read */
+"keyboard.command.mark-below-as-read" = "将下方文章标为已读";
+
+/* New Folder */
+"keyboard.command.new-folder" = "新建文件夹";
+
+/* New Web Feed */
+"keyboard.command.new-web-feed" = "添加 Web 订阅";
+
+/* Next Unread */
+"keyboard.command.next-unread" = "下一个未读";
+
+/* Open In Browser */
+"keyboard.command.open-in-browser" = "在浏览器中打开";
+
+/* Refresh */
+"keyboard.command.refresh" = "刷新";
+
+/* Select Next Down */
+"keyboard.command.select-next-down" = "选择下一个";
+
+/* Select Next Up */
+"keyboard.command.select-next-up" = "选择上一个";
+
+/* Toggle Read Articles Filter */
+"keyboard.command.toggle-read-articles-filter" = "切换已读文章过滤器";
+
+/* Toggle Read Feeds Filter */
+"keyboard.command.toggle-read-feeds-filter" = "切换已读订阅过滤器";
+
+/* Toggle Read Status */
+"keyboard.command.toggle-read-status" = "切换已读状态";
+
+/* Toggle Reader View */
+"keyboard.command.toggle-reader-view" = "切换阅读器视图";
+
+/* Toggle Sidebar */
+"keyboard.command.toggle-sidebar" = "显示/折叠边栏";
+
+/* Toggle Starred Status */
+"keyboard.command.toggle-starred-status" = "切换星标状态";
+
+/* Collapse Folder */
+"label.accessibility.collapse-folder" = "折叠文件夹";
+
+/* Disclosure button collapsed state for accessibility */
+"label.accessibility.collapsed" = "已折叠";
+
+/* Expand Folder */
+"label.accessibility.expand-folder" = "已展开文件夹";
+
+/* Disclosure button expanded state for accessibility */
+"label.accessibility.expanded" = "已展开";
+
+/* Filter Read Articles */
+"label.accessibility.filter-read-artciles" = "过滤已读文章";
+
+/* Selected - Filter Read Articles */
+"label.accessibility.selected-filter-read-artciles" = "已选择 - 过滤已读文章";
+
+/* Unread label for accessiblity */
+"label.accessibility.unread" = "未读";
+
+/* Markdown formatted link to netnewswire.com */
+"label.markdown.netnewswire-website" = "[netnewswire.com](https://netnewswire.com)";
+
+/* Feed name */
+"label.placeholder.feed-name" = "订阅名称";
+
+/* In English, this shows the current search result selection out of the total number of search results. Example: 3 of 5. The variables are ordered as current selection, total search results count. */
+"label.search-results.%i.%i" = "%1$i/%2$i";
+
+/* Add, delete, enable, or disable accounts and extensions. */
+"label.text.account-and-extensions-explainer" = "添加、删除、启用或禁用账户和扩展。";
+
+/* Settings: Accounts & Extensions section header. */
+"label.text.accounts-and-extensions" = "账户 & 扩展";
+
+/* Active Accounts */
+"label.text.active-accounts" = "活跃账户";
+
+/* Active Extensions */
+"label.text.active-extensions" = "活跃扩展";
+
+/* Additional Contributors */
+"label.text.additional-contributors" = "其他贡献者";
+
+/* Settings: Appearance section header. */
+"label.text.appearance" = "外观";
+
+/* Manage the look, feel, and behavior of NetNewsWire. */
+"label.text.appearance-explainer" = "管理 NetNewsWire 的外观和体验";
+
+/* Application */
+"label.text.application" = "应用";
+
+/* Articles */
+"label.text.articles" = "文章";
+
+/* Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account? [Sign Up Here](https://bazqux.com) */
+"label.text.bazqux-explainer" = "登录你的 BazQux 帐户以在设备间同步你的订阅。你的用户名和密码将被加密并存储在钥匙串中。\n\n还没有 BazQux 账户？\n\n[在这里注册](https://bazqux.com)";
+
+/* iCloud */
+"label.text.cloudkit-account" = "iCloud";
+
+/* Your iCloud account syncs your feeds across your Mac and iOS devices */
+"label.text.cloudkit-account-footer" = "你的 iCloud 帐户将在 Mac 和 iOS 设备之间同步你的订阅。";
+
+/* NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices. */
+"label.text.cloudkit-explainer" = "NetNewsWire 将使用你的 iCloud 帐户在 Mac 和 iOS 设备间同步你的订阅。";
+
+/* Default Themes */
+"label.text.default-themes" = "默认主题";
+
+/* These themes cannot be deleted. */
+"label.text.default-themes-explainer" = "这些主题无法删除。";
+
+/* Device Permissions */
+"label.text.device-permissions" = "设备权限";
+
+/* Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more. */
+"label.text.device-permissions-explainer" = "配置 NetNewsWire 对 Siri、后台应用刷新、移动数据等的访问权限。";
+
+/* XX-Large */
+"label.text.extra-extra-large" = "最大";
+
+/* X-Large */
+"label.text.extra-large" = "特大";
+
+/* Feed Providers */
+"label.text.feed-providers" = "订阅服务提供商";
+
+/* Feed Providers allow you to subscribe to some pages as if they were RSS feeds */
+"label.text.feed-providers-explainer" = "订阅服务提供商允许你像订阅 RSS 一样订阅某些页面";
+
+/* Feed URL */
+"label.text.feed-url" = "订阅源 URL";
+
+/* Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account? [Sign Up Here](https://feedbin.com/signup) */
+"label.text.feedbin-explainer" = "登录你的 Feedbin 帐户以在设备间同步你的订阅。你的用户名和密码将被加密并存储在钥匙串中。\n\n还没有 Feedbin 账户？\n\n[在这里注册](https://feedbin.com/signup)";
+
+/* Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance? [Sign Up Here](https://freshrss.org) */
+"label.text.freshrss-explainer" = "登录你的 FreshRSS 帐户以在设备间同步你的订阅。你的用户名和密码将被加密并存储在钥匙串中。\n\n还没有 FreshRSS 账户？\n\n[在这里注册](https://freshrss.org)";
+
+/* Home Page */
+"label.text.home-page" = "主页";
+
+/* Icon Size */
+"label.text.icon-size" = "图标大小";
+
+/* Inactive Accounts */
+"label.text.inactive-accounts" = "不活跃账户";
+
+/* Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? [Sign Up Here](https://www.inoreader.com) */
+"label.text.inoreader-explainer" = "登录你的 InoReader 帐户以在设备间同步你的订阅。你的用户名和密码将被加密并存储在钥匙串中。\n\n还没有 InoReader 账户？\n\n[在这里注册](https://www.inoreader.com)";
+
+/* Large */
+"label.text.large" = "大";
+
+/* Link: */
+"label.text.link" = "链接：";
+
+/* Local Account */
+"label.text.local-account" = "本地账户";
+
+/* Local accounts do not sync your feeds across devices */
+"label.text.local-account-explainer" = "本地账户不会在设备间同步你的订阅。";
+
+/* Medium */
+"label.text.medium" = "中";
+
+/* By Brent Simmons and the Ranchero Software team. */
+"label.text.netnewswire-byline" = "由 Brent Simmons 和 Ranchero Software 团队开发。";
+
+/* Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account? [Sign Up Here](https://newsblur.com) */
+"label.text.newsblur-explainer" = "登录你的 NewsBlur 帐户以在设备间同步你的订阅。你的用户名和密码将被加密并存储在钥匙串中。\n\n还没有 NewsBlur 账户？\n\n[在这里注册](https://newsblur.com)";
+
+/* No results */
+"label.text.no-results" = "无结果";
+
+/* (No Text) */
+"label.text.no-text" = "（无文本）";
+
+/* Number of Lines */
+"label.text.number-of-lines" = "行数";
+
+/* Primary Contributors */
+"label.text.primary-contributors" = "主要贡献者";
+
+/* Self-Hosted Accounts */
+"label.text.self-hosted-accounts" = "自托管账户";
+
+/* Self-hosted accounts sync your feeds across all your devices */
+"label.text.self-hosted-accounts-explainer" = "自托管帐户可以在所有设备上同步你的订阅。";
+
+/* Small */
+"label.text.small" = "小";
+
+/* Starred */
+"label.text.starred" = "星标";
+
+/* Thanks */
+"label.text.thanks" = "鸣谢";
+
+/* Created by %@ */
+"label.text.theme-created-byline.%@" = "由 %@ 创建";
+
+/* Built-in Themes
+   Other Themes */
+"label.text.themes-builtin" = "";
+
+/* Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? [Sign Up Here](https://theoldreader.com) */
+"label.text.theoldreader-explainer" = "登录你的 The Old Reader 帐户以在设备间同步你的订阅。你的用户名和密码将被加密并存储在钥匙串中。\n\n还没有 The Old Reader 帐户？\n\n[在这里注册](https://theoldreader.com)";
+
+/* Third Party Themes */
+"label.text.third-party-themes" = "第三方主题";
+
+/* Timeline */
+"label.text.timeline" = "时间线";
+
+/* Unread */
+"label.text.unread" = "未读";
+
+/* Relative time that the account was last refreshed. The variable is a named relative time. Example: Updated 8 minutes ago */
+"label.text.updatedat.%@" = "更新于 %@";
+
+/* Text indicating that feeds have just been updated. Example: Updated Just Now */
+"label.text.updatednow" = "刚刚更新";
+
+/* Always Dark */
+"label.text.use-dark-appearance" = "总是保持深色";
+
+/* Use Device */
+"label.text.use-device-appearance" = "和设备同步";
+
+/* Always Light */
+"label.text.use-light-appearance" = "总是保持浅色";
+
+/* Web Account */
+"label.text.web-account" = "Web 账户";
+
+/* Web accounts sync your feeds across all your devices */
+"label.text.web-account-explainer" = "Web 账户会将你的订阅在所有设备间同步";
+
+/* Link to the NetNewsWire iCloud syncing limitations and soltutions website.
+   Link which opens webpage describing iCloud syncing limitations. */
+"link.markdown.icloud-limitations" = "[iCloud 同步限制 & 解决方案](https://netnewswire.com/help/iCloud)";
+
+/* Command */
+"Mark as Read Older Than" = "在早于以下日期时标为已读";
+
+/* Mark As Read on Scroll */
+"Mark As Read on Scroll" = "滚动时标为已读";
+
+/* Article Appearance menu title */
+"menu.title.articleappearance" = "文章样式";
+
+/* About */
+"navigation.title.about" = "关于";
+
+/* Add Account */
+"navigation.title.add-account" = "添加账户";
+
+/* Add Extensions */
+"navigation.title.add-extensions" = "添加扩展";
+
+/* Add Reddit Feed */
+"navigation.title.add-reddit-feed" = "添加 Reddit 订阅";
+
+/* Add Twitter Feed */
+"navigation.title.add-twitter-feed" = "添加 Twitter 订阅";
+
+/* Article Themes */
+"navigation.title.article-themes" = "文章主题";
+
+/* Display & Behaviors */
+"navigation.title.display-and-behaviors" = "显示和体验";
+
+/* Enter Name */
+"navigation.title.enter-name" = "输入名称";
+
+/* Enter Search */
+"navigation.title.enter-search" = "输入搜索";
+
+/* Manage Accounts */
+"navigation.title.manage-accounts" = "管理账户";
+
+/* Manage Extensions */
+"navigation.title.manage-extensions" = "管理扩展";
+
+/* New Article Notifications */
+"navigation.title.new-article-notifications" = "新文章通知";
+
+/* Settings */
+"navigation.title.settings" = "设置";
+
+/* Timeline Layout */
+"navigation.title.timeline-layout" = "时间线布局";
+
+/* Search Articles */
+"searchbar.placeholder.searcharticles" = "搜索文章";
+
+/* Title used when desribing the search when scoped to all articles. */
+"searchbar.scope.allarticles" = "全部文章";
+
+/* Title used when describing the search when scoped to the current timeline. */
+"searchbar.scope.here" = "仅当前订阅";
+
+/* All Unread pseudo-feed title */
+"smartfeed.title.allunread" = "所有未读";
+
+/* Starred pseudo-feed title */
+"smartfeed.title.starred" = "星标";
+
+/* Today pseudo-feed title */
+"smartfeed.title.today" = "今日";
+
+/* Smart Feeds group title */
+"smartfeeds.title" = "智能订阅";
+
+/* Email Address */
+"textfield.placeholder.email-address" = "电子邮箱地址";
+
+/* Name */
+"textfield.placeholder.name" = "名称";
+
+/* Password */
+"textfield.placeholder.password" = "密码";
+
+/* Screen Name */
+"textfield.placeholder.screen-name" = "显示名称";
+
+/* Search: */
+"textfield.placeholder.search" = "搜索：";
+
+/* Search Term or #hashtag */
+"textfield.placeholder.search-term-hashtag" = "搜索词语或者 #标签";
+
+/* Username */
+"textfield.placeholder.username" = "用户名";
+
+/* Username or Email */
+"textfield.placeholder.username-or-email" = "用户名或邮箱";
+
+/* Active */
+"toggle.account.active" = "活跃";
+
+/* Always Show Reader View */
+"toggle.title.always-show-reader-view" = "始终显示阅读器视图";
+
+/* Confirm Mark All as Read */
+"toggle.title.confirm-mark-all-as-read" = "确认全部标为已读";
+
+/* Group by Feed */
+"toggle.title.group-by-feed" = "按订阅源分组";
+
+/* New Article Notifications */
+"toggle.title.notify-about-new-articles" = "新文章通知";
+
+/* Open Links in NetNewsWire */
+"toggle.title.open-links-in-netnewswire" = "在 NetNewsWire 中打开链接";
+
+/* Refresh to Clear Articles */
+"toggle.title.refresh-to-clear-articles" = "刷新后清除文章";
+
+/* Sort Oldest to Newest */
+"toggle.title.sort-oldest-to-newest" = "按从老到新排序";
+
+/* Unknown Value */
+"Unknown" = "未知";
+
+/* Unread label for accessibility */
+"unread" = "未读";
+

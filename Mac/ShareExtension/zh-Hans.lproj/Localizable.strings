@@ -1,0 +1,36 @@
+/* Every 2 Hours */
+"button.title.2-hours" = "每 2 小时";
+
+/* Every 4 Hours */
+"button.title.4-hours" = "每 4 小时";
+
+/* Every 8 Hours */
+"button.title.8-hours" = "每 8 小时";
+
+/* Every 10 Minutes */
+"button.title.10-minutes" = "每 10 分钟";
+
+/* Every 30 Minutes */
+"button.title.30-minutes" = "每 30 分钟";
+
+/* Every Hour */
+"button.title.every-hour" = "每小时";
+
+/* Manually */
+"button.title.manually" = "手动";
+
+/* XX-Large */
+"label.text.extra-extra-large" = "最大";
+
+/* X-Large */
+"label.text.extra-large" = "特大";
+
+/* Large */
+"label.text.large" = "大";
+
+/* Medium */
+"label.text.medium" = "中";
+
+/* Small */
+"label.text.small" = "小";
+
