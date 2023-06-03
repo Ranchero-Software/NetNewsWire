@@ -453,6 +453,12 @@
 /* You've added all available extensions. */
 "label.text.added-all-extensions" = "你已添加了所有的可用扩展";
 
+/* Primary Contributors */
+"label.text.primary-contributors" = "主要贡献者";
+
+/* Additional Contributors */
+"label.text.additional-contributors" = "其他贡献者";
+
 /* Article */
 "label.text.article" = "文章";
 
@@ -584,6 +590,15 @@
 
 /* Subreddit */
 "label.text.subreddit" = "Subreddit";
+
+/* Thanks */
+"label.text.thanks" = "致谢";
+
+/* Thanks - Dedication */
+"label.text.thanks-details" = "
+<p>感谢 Sheila 和我的家人；感谢我在西雅图和全球各地的朋友们；感谢耐心且优秀的 NetNewsWire 测试人员。</p>
+<p>感谢 <a href=\"https://shapeof.com/\">Gus Mueller</a> 提供由 <a href=\"http://flyingmeat.com/\">Flying Meat Software</a> 开发的 <a href=\"https://github.com/ccgus/fmdb\">FMDB</a>。感谢 <a href=\"https://github.com\">GitHub</a> 和 <a href=\"https://slack.com\">Slack</a> 让开源协作变得简单有趣。感谢 <a href=\"https://feedbin.com/\">Feedbin</a> 团队的 <a href=\"https://benubois.com/\">Ben Ubois</a>  在同步和文章渲染提供的支持以及<a href=\"https://feedbin.com/blog/2019/03/11/the-future-of-full-content/\">为阅读器视图托管服务器</a>.</p>
+<p>NetNewsWire 6 致力于服务全球每个为拯救民主而努力的人。</p>";
 
 /* Built-in */
 "label.text.themes-builtin" = "内置主题";
