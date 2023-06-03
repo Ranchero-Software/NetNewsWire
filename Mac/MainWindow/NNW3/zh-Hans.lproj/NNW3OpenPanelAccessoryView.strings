@@ -2,7 +2,7 @@
 "hAU-Zh-UCo.title" = "Item 3";
 
 /* Class = "NSTextFieldCell"; title = "Choose a NetNewsWire 3 “Subscriptions.plist” file.\n\nThen choose the account to receive your imported subscriptions."; ObjectID = "IFj-4w-B03"; */
-"IFj-4w-B03.title" = "选择一个 NetNewsWire 3“Subscriptions.plist”文件。\n\n然后选择一个账户以导入订阅";
+"IFj-4w-B03.title" = "选择一个 NetNewsWire 3 Subscriptions.plist 文件\n\n然后选择一个账户以导入订阅";
 
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "OAk-KA-y5i"; */
 "OAk-KA-y5i.title" = "Item 1";
