@@ -198,7 +198,9 @@ struct SettingsRow {
 	/// This row, when tapped, will push the New Article Notifications
 	/// screen in to view.
 	static func configureAppearance(_ isShown: Binding<Bool>) -> some View {
-		NavigationLink(destination: DisplayAndBehaviorsView(), isActive: isShown) {
+		NavigationLink {
+			DisplayAndBehaviorsView()
+		} label: {
 			Label {
 				Text("button.title.display-and-behaviors", comment: "Display & Behaviors")
 			} icon: {
@@ -208,6 +210,7 @@ struct SettingsRow {
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
+
 	}
 	
 	/// Sets the help sheet the user wishes to see.

@@ -21,7 +21,7 @@ struct SettingsView: View {
 	@Binding var isConfigureAppearanceShown: Bool
 		
 	var body: some View {
-		NavigationView {
+		NavigationStack {
 			List {
 				// Device Permissions
 				Section(header: Text("label.text.device-permissions", comment: "Device Permissions"),
@@ -101,9 +101,8 @@ struct SettingsView: View {
 				AboutView()
 			}
 			.task {
-				UNUserNotificationCenter.current().getNotificationSettings { settings in
-					Task { await MainActor.run { self.viewModel.notificationPermissions = settings.authorizationStatus }}
-				}
+				let settings = await UNUserNotificationCenter.current().notificationSettings()
+				Task { await MainActor.run { self.viewModel.notificationPermissions = settings.authorizationStatus }}
 			}
 			.onChange(of: scenePhase, perform: { phase in
 				if phase == .active {
@@ -155,6 +154,7 @@ struct SettingsView: View {
 				   isPresented: $viewModel.showImportExportError,
 				   actions: {},
 				   message: { Text(verbatim: viewModel.importExportError?.localizedDescription ?? "") } )
-		}.navigationViewStyle(.stack)
+		}
+		.navigationViewStyle(.stack)
 	}
 }

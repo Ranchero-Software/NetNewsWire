@@ -7,13 +7,7 @@
 //
 
 import Foundation
-import UniformTypeIdentifiers
 
-public extension UTType {
-	static var nnwTheme: UTType {
-		UTType("com.ranchero.netnewswire.theme")!
-	}
-}
 
 struct ArticleTheme: Equatable {
 	
