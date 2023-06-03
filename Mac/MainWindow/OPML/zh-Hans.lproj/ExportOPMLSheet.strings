@@ -1,0 +1,24 @@
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "6lK-bV-Vwd"; */
+"6lK-bV-Vwd.title" = "取消";
+
+/* Class = "NSTextFieldCell"; title = "Choose the account with the subscriptions you’d like to export. Subscriptions are exported in the standard OPML format, which most RSS readers can import."; ObjectID = "7Ap-KG-Lc7"; */
+"7Ap-KG-Lc7.title" = "选择你想导出订阅的账户。订阅将以标准 OPML 格式导出，大多数 RSS 阅读器可以将其导入。";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "7U3-Y5-qeM"; */
+"7U3-Y5-qeM.title" = "Item 2";
+
+/* Class = "NSButtonCell"; title = "Export as OPML…"; ObjectID = "bRz-cx-bmm"; */
+"bRz-cx-bmm.title" = "导出为 OPML...";
+
+/* Class = "NSTextFieldCell"; title = "Account:"; ObjectID = "Dao-jI-G6i"; */
+"Dao-jI-G6i.title" = "账户";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "MJb-Bf-UJG"; */
+"MJb-Bf-UJG.title" = "Item 1";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Window";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "Uii-dd-siy"; */
+"Uii-dd-siy.title" = "Item 3";
+

@@ -1,0 +1,48 @@
+/* Class = "UILabel"; text = "Folder"; ObjectID = "3Tp-A7-7rS"; */
+"3Tp-A7-7rS.text" = "文件夹";
+
+/* Class = "UITableViewController"; title = "Web Feed Folder"; ObjectID = "acA-n7-ohN"; */
+"acA-n7-ohN.title" = "Web 订阅文件夹";
+
+/* Class = "UINavigationItem"; title = "Select Folder"; ObjectID = "e4Y-zR-cTn"; */
+"e4Y-zR-cTn.title" = "选择文件夹";
+
+/* Class = "UITextField"; placeholder = "URL"; ObjectID = "eRp-AP-WFq"; */
+"eRp-AP-WFq.placeholder" = "URL";
+
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "F8z-me-Hnx"; */
+"F8z-me-Hnx.title" = "添加";
+
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "gXG-Xt-d9B"; */
+"gXG-Xt-d9B.title" = "添加";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "htg-Nn-3xi"; */
+"htg-Nn-3xi.text" = "标签";
+
+/* Class = "UINavigationItem"; title = "Add Web Feed"; ObjectID = "i1W-2z-PAk"; */
+"i1W-2z-PAk.title" = "添加 Web 订阅";
+
+/* Class = "UINavigationItem"; title = "Add Folder"; ObjectID = "LuA-AC-n99"; */
+"LuA-AC-n99.title" = "添加文件夹";
+
+/* Class = "UITextField"; placeholder = "Name"; ObjectID = "lZK-wx-jbo"; */
+"lZK-wx-jbo.placeholder" = "名称";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "mxj-Bw-Jfx"; */
+"mxj-Bw-Jfx.text" = "标签";
+
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "QpU-Ro-nHd"; */
+"QpU-Ro-nHd.title" = "取消";
+
+/* Class = "UILabel"; text = "Folder"; ObjectID = "RtT-rR-5LA"; */
+"RtT-rR-5LA.text" = "文件夹";
+
+/* Class = "UITextField"; placeholder = "Title (Optional)"; ObjectID = "u7n-VL-Ho9"; */
+"u7n-VL-Ho9.placeholder" = "标题（可选）";
+
+/* Class = "UILabel"; text = "Account"; ObjectID = "YRf-I7-nkL"; */
+"YRf-I7-nkL.text" = "账户";
+
+/* Class = "UILabel"; text = "Account"; ObjectID = "ZQp-94-vJz"; */
+"ZQp-94-vJz.text" = "账户";
+

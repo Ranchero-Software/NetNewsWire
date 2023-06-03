@@ -430,7 +430,7 @@
 "button.title.update" = "更新";
 
 /* Show notifications for new articles */
-"checkbox.title.show-new-article-notifications" = "有新文章时推送\n通知";
+"checkbox.title.show-new-article-notifications" = "有新文章时推送通知";
 
 /* No comment provided by engineer. */
 "Continue" = "继续";
@@ -452,6 +452,9 @@
 
 /* You've added all available extensions. */
 "label.text.added-all-extensions" = "你已添加了所有的可用扩展";
+
+/* Additional Contributors */
+"label.text.additional-contributors" = "其他贡献者";
 
 /* Article */
 "label.text.article" = "文章";
@@ -531,6 +534,9 @@
 /* Posts from r/%@ */
 "label.text.posts-from-subreddit.%@" = "来自 r/%@ 的帖子";
 
+/* Primary Contributors */
+"label.text.primary-contributors" = "主要贡献者";
+
 /* Privacy Policy */
 "label.text.privacy-policy" = "隐私政策";
 
@@ -584,6 +590,12 @@
 
 /* Subreddit */
 "label.text.subreddit" = "Subreddit";
+
+/* Thanks */
+"label.text.thanks" = "鸣谢";
+
+/* Thanks - Dedication */
+"label.text.thanks-details" = "\n<p>感谢 Sheila 和我的家人；感谢我在西雅图和全球各地的朋友们；感谢耐心且出色的 NetNewsWire 测试人员们。</p>\n<p>感谢 <a href=\"https://shapeof.com/\">Gus Mueller</a> 提供由 <a href=\"http://flyingmeat.com/\">Flying Meat Software</a> 开发的 <a href=\"https://github.com/ccgus/fmdb\">FMDB</a> 。感谢 <a href=\"https://github.com\">GitHub</a> 和 <a href=\"https://slack.com\">Slack</a> 让开源协作变得轻松有趣。 特别感谢 <a href=\"https://feedbin.com/\">Feedbin</a> 团队的 <a href=\"https://benubois.com/\">Ben Ubois</a> 在同步和文章渲染方面提供的额外帮助，以及<a href=\"https://feedbin.com/blog/2019/03/11/the-future-of-full-content/\">提供用来获取文章阅读器视图的服务器</a>。</p>\n<p>NetNewsWire 6 致力于为全球每个拯救民主而努力的人服务。</p>";
 
 /* Built-in */
 "label.text.themes-builtin" = "内置主题";

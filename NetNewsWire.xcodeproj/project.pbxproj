@@ -1578,6 +1578,21 @@
 		C47370402A232A4900E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		C47370412A232A5200E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		C47370422A232A5800E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		C4A396682A2AE80A00C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CrashReporterWindow.strings"; sourceTree = "<group>"; };
+		C4A3966A2A2AE82600C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Inspector.strings"; sourceTree = "<group>"; };
+		C4A3966C2A2AE85300C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AccountsAddCloudKit.strings"; sourceTree = "<group>"; };
+		C4A3966E2A2AE85700C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AccountsAddLocal.strings"; sourceTree = "<group>"; };
+		C4A396702A2AE85A00C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AccountsDetail.strings"; sourceTree = "<group>"; };
+		C4A396722A2AE85E00C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AccountsFeedbin.strings"; sourceTree = "<group>"; };
+		C4A396742A2AE86100C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AccountsNewsBlur.strings"; sourceTree = "<group>"; };
+		C4A396762A2AE86500C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AccountsReaderAPI.strings"; sourceTree = "<group>"; };
+		C4A396782A2AE8B400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Add.strings"; sourceTree = "<group>"; };
+		C4A3967A2A2AE8E100C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MasterTimelineTitleView.strings"; sourceTree = "<group>"; };
+		C4A3967B2A2AE96D00C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AddFeedSelectFolderTableViewCell.strings"; sourceTree = "<group>"; };
+		C4A3967C2A2AEC5400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/NNW3OpenPanelAccessoryView.strings"; sourceTree = "<group>"; };
+		C4A3967D2A2AEC5400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ExportOPMLSheet.strings"; sourceTree = "<group>"; };
+		C4A3967E2A2AEC5400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ImportOPMLSheet.strings"; sourceTree = "<group>"; };
+		C4A3967F2A2AEC5400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ExtensionPointDetail.strings"; sourceTree = "<group>"; };
 		C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleActivityItemSource.swift; sourceTree = "<group>"; };
 		C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController-Extensions.swift"; sourceTree = "<group>"; };
 		D3555BF324664539005E48C3 /* ArticleSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSearchBar.swift; sourceTree = "<group>"; };
@@ -4734,6 +4749,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8FBBEE432304CC00007279FB /* Base */,
+				C4A3967E2A2AEC5400C89D55 /* zh-Hans */,
 			);
 			name = ImportOPMLSheet.xib;
 			sourceTree = "<group>";
@@ -4802,6 +4818,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8FB3CBC9235D307E0026324C /* Base */,
+				C4A3967C2A2AEC5400C89D55 /* zh-Hans */,
 			);
 			name = NNW3OpenPanelAccessoryView.xib;
 			sourceTree = "<group>";
@@ -4810,6 +4827,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8FBBEE4E2304CC06007279FB /* Base */,
+				C4A3967D2A2AEC5400C89D55 /* zh-Hans */,
 			);
 			name = ExportOPMLSheet.xib;
 			sourceTree = "<group>";
@@ -4851,6 +4869,7 @@
 			children = (
 				DF5124CF2A230FC100BBAB1F /* Base */,
 				DF5124D22A230FC700BBAB1F /* en-GB */,
+				C4A3966A2A2AE82600C89D55 /* zh-Hans */,
 			);
 			name = Inspector.storyboard;
 			sourceTree = "<group>";
@@ -4860,6 +4879,7 @@
 			children = (
 				DF5124D52A230FE400BBAB1F /* Base */,
 				DF5124D82A230FE700BBAB1F /* en-GB */,
+				C4A3966C2A2AE85300C89D55 /* zh-Hans */,
 			);
 			name = AccountsAddCloudKit.xib;
 			sourceTree = "<group>";
@@ -4869,6 +4889,7 @@
 			children = (
 				DF5124DB2A23107300BBAB1F /* Base */,
 				DF5124DE2A23107600BBAB1F /* en-GB */,
+				C4A3966E2A2AE85700C89D55 /* zh-Hans */,
 			);
 			name = AccountsAddLocal.xib;
 			sourceTree = "<group>";
@@ -4878,6 +4899,7 @@
 			children = (
 				DF5124E12A23108000BBAB1F /* Base */,
 				DF5124E42A23108200BBAB1F /* en-GB */,
+				C4A396702A2AE85A00C89D55 /* zh-Hans */,
 			);
 			name = AccountsDetail.xib;
 			sourceTree = "<group>";
@@ -4887,6 +4909,7 @@
 			children = (
 				DF5124E72A23108F00BBAB1F /* Base */,
 				DF5124EA2A23109400BBAB1F /* en-GB */,
+				C4A396722A2AE85E00C89D55 /* zh-Hans */,
 			);
 			name = AccountsFeedbin.xib;
 			sourceTree = "<group>";
@@ -4896,6 +4919,7 @@
 			children = (
 				DF5124ED2A23109900BBAB1F /* Base */,
 				DF5124F02A23109C00BBAB1F /* en-GB */,
+				C4A396742A2AE86100C89D55 /* zh-Hans */,
 			);
 			name = AccountsNewsBlur.xib;
 			sourceTree = "<group>";
@@ -4905,6 +4929,7 @@
 			children = (
 				DF5124F32A2310A100BBAB1F /* Base */,
 				DF5124F62A2310A500BBAB1F /* en-GB */,
+				C4A396762A2AE86500C89D55 /* zh-Hans */,
 			);
 			name = AccountsReaderAPI.xib;
 			sourceTree = "<group>";
@@ -4914,6 +4939,7 @@
 			children = (
 				DF5124F92A2310AC00BBAB1F /* Base */,
 				DF5124FC2A2310AF00BBAB1F /* en-GB */,
+				C4A3967F2A2AEC5400C89D55 /* zh-Hans */,
 			);
 			name = ExtensionPointDetail.xib;
 			sourceTree = "<group>";
@@ -4923,6 +4949,7 @@
 			children = (
 				DF5124FF2A23110F00BBAB1F /* Base */,
 				DF5125022A23111200BBAB1F /* en-GB */,
+				C4A396682A2AE80A00C89D55 /* zh-Hans */,
 			);
 			name = CrashReporterWindow.xib;
 			sourceTree = "<group>";
@@ -4932,6 +4959,7 @@
 			children = (
 				DF5125042A23116B00BBAB1F /* Base */,
 				DF5125072A23116F00BBAB1F /* en-GB */,
+				C4A3967A2A2AE8E100C89D55 /* zh-Hans */,
 			);
 			name = MasterTimelineTitleView.xib;
 			sourceTree = "<group>";
@@ -4941,6 +4969,7 @@
 			children = (
 				DF5125092A23118300BBAB1F /* Base */,
 				DF51250C2A23118700BBAB1F /* en-GB */,
+				C4A396782A2AE8B400C89D55 /* zh-Hans */,
 			);
 			name = Add.storyboard;
 			sourceTree = "<group>";
@@ -4950,6 +4979,7 @@
 			children = (
 				DF51250E2A23119800BBAB1F /* Base */,
 				DF5125112A23119B00BBAB1F /* en-GB */,
+				C4A3967B2A2AE96D00C89D55 /* zh-Hans */,
 			);
 			name = AddFeedSelectFolderTableViewCell.xib;
 			sourceTree = "<group>";
