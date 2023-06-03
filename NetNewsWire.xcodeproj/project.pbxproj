@@ -1587,6 +1587,11 @@
 		C4A396762A2AE86500C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AccountsReaderAPI.strings"; sourceTree = "<group>"; };
 		C4A396782A2AE8B400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Add.strings"; sourceTree = "<group>"; };
 		C4A3967A2A2AE8E100C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MasterTimelineTitleView.strings"; sourceTree = "<group>"; };
+		C4A3967B2A2AE96D00C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AddFeedSelectFolderTableViewCell.strings"; sourceTree = "<group>"; };
+		C4A3967C2A2AEC5400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/NNW3OpenPanelAccessoryView.strings"; sourceTree = "<group>"; };
+		C4A3967D2A2AEC5400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ExportOPMLSheet.strings"; sourceTree = "<group>"; };
+		C4A3967E2A2AEC5400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ImportOPMLSheet.strings"; sourceTree = "<group>"; };
+		C4A3967F2A2AEC5400C89D55 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ExtensionPointDetail.strings"; sourceTree = "<group>"; };
 		C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleActivityItemSource.swift; sourceTree = "<group>"; };
 		C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController-Extensions.swift"; sourceTree = "<group>"; };
 		D3555BF324664539005E48C3 /* ArticleSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSearchBar.swift; sourceTree = "<group>"; };
@@ -4732,6 +4737,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8FBBEE432304CC00007279FB /* Base */,
+				C4A3967E2A2AEC5400C89D55 /* zh-Hans */,
 			);
 			name = ImportOPMLSheet.xib;
 			sourceTree = "<group>";
@@ -4800,6 +4806,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8FB3CBC9235D307E0026324C /* Base */,
+				C4A3967C2A2AEC5400C89D55 /* zh-Hans */,
 			);
 			name = NNW3OpenPanelAccessoryView.xib;
 			sourceTree = "<group>";
@@ -4808,6 +4815,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8FBBEE4E2304CC06007279FB /* Base */,
+				C4A3967D2A2AEC5400C89D55 /* zh-Hans */,
 			);
 			name = ExportOPMLSheet.xib;
 			sourceTree = "<group>";
@@ -4919,6 +4927,7 @@
 			children = (
 				DF5124F92A2310AC00BBAB1F /* Base */,
 				DF5124FC2A2310AF00BBAB1F /* en-GB */,
+				C4A3967F2A2AEC5400C89D55 /* zh-Hans */,
 			);
 			name = ExtensionPointDetail.xib;
 			sourceTree = "<group>";
@@ -4958,6 +4967,7 @@
 			children = (
 				DF51250E2A23119800BBAB1F /* Base */,
 				DF5125112A23119B00BBAB1F /* en-GB */,
+				C4A3967B2A2AE96D00C89D55 /* zh-Hans */,
 			);
 			name = AddFeedSelectFolderTableViewCell.xib;
 			sourceTree = "<group>";

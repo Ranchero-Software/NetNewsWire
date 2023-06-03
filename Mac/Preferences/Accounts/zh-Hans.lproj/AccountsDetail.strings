@@ -1,24 +1,24 @@
-
 /* Class = "NSTextFieldCell"; title = "iCloud Syncing Limitations & Solutions"; ObjectID = "0XE-hc-x09"; */
-"0XE-hc-x09.title" = "iCloud Syncing Limitations & Solutions";
-
-/* Class = "NSTabViewItem"; label = "Account"; ObjectID = "35c-I3-wfs"; */
-"35c-I3-wfs.label" = "Account";
+"0XE-hc-x09.title" = "iCloud 同步限制 & 解决方案";
 
 /* Class = "NSTextFieldCell"; title = "On My Mac"; ObjectID = "6yI-bV-1Sh"; */
-"6yI-bV-1Sh.title" = "On My Mac";
+"6yI-bV-1Sh.title" = "我的 Mac";
+
+/* Class = "NSTabViewItem"; label = "Account"; ObjectID = "35c-I3-wfs"; */
+"35c-I3-wfs.label" = "账户";
 
 /* Class = "NSTextFieldCell"; title = "The name appears in the sidebar. It can be anything you want. You can even use emoji. 🎸"; ObjectID = "MW0-mH-Gaa"; */
-"MW0-mH-Gaa.title" = "The name appears in the sidebar. It can be anything you want. You can even use emoji. 🎸";
+"MW0-mH-Gaa.title" = "该名称将在侧边栏中显示。它可以是任何内容，甚至是表情符号 🎸。";
 
 /* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "tC5-Vt-gBc"; */
-"tC5-Vt-gBc.title" = "Type:";
+"tC5-Vt-gBc.title" = "类型：";
 
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "uyQ-Zi-QCr"; */
-"uyQ-Zi-QCr.title" = "Name:";
+"uyQ-Zi-QCr.title" = "名称：";
 
 /* Class = "NSButtonCell"; title = "Credentials"; ObjectID = "vYg-ZC-o4W"; */
-"vYg-ZC-o4W.title" = "Credentials";
+"vYg-ZC-o4W.title" = "凭证";
 
 /* Class = "NSButtonCell"; title = "Active"; ObjectID = "wxB-dX-nGt"; */
-"wxB-dX-nGt.title" = "Active";
+"wxB-dX-nGt.title" = "活跃";
+

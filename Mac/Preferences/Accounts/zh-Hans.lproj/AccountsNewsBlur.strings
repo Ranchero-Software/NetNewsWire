@@ -1,33 +1,33 @@
-
 /* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "7g8-Kk-ISg"; */
-"7g8-Kk-ISg.title" = "Password:";
+"7g8-Kk-ISg.title" = "密码：";
 
 /* Class = "NSTextFieldCell"; title = "Username or Email:"; ObjectID = "DqN-SV-v35"; */
-"DqN-SV-v35.title" = "Username or Email:";
+"DqN-SV-v35.title" = "用户名或邮箱：";
 
 /* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
-"F0z-JX-Cv5.title" = "Window";
-
-/* Class = "NSButtonCell"; title = "Create"; ObjectID = "IMO-YT-k9Z"; */
-"IMO-YT-k9Z.title" = "Create";
-
-/* Class = "NSTextFieldCell"; title = "Your username and password will be encrypted and stored in Keychain. "; ObjectID = "VWI-0W-Duk"; */
-"VWI-0W-Duk.title" = "Your username and password will be encrypted and stored in Keychain. ";
+"F0z-JX-Cv5.title" = "窗口";
 
 /* Class = "NSTextFieldCell"; placeholderString = "me@email.com"; ObjectID = "fCk-Tf-q01"; */
 "fCk-Tf-q01.placeholderString" = "me@email.com";
 
 /* Class = "NSTextFieldCell"; title = "Don’t have a NewsBlur account?"; ObjectID = "fPs-Sh-GEf"; */
-"fPs-Sh-GEf.title" = "Don’t have a NewsBlur account?";
+"fPs-Sh-GEf.title" = "还没有 NewsBlur 账户？";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "IMO-YT-k9Z"; */
+"IMO-YT-k9Z.title" = "创建";
 
 /* Class = "NSButtonCell"; title = "Create one here."; ObjectID = "moP-jO-Ubz"; */
-"moP-jO-Ubz.title" = "Create one here.";
+"moP-jO-Ubz.title" = "在这里创建";
 
 /* Class = "NSTextFieldCell"; title = "Sign in to your NewsBlur account."; ObjectID = "ras-dj-nP8"; */
-"ras-dj-nP8.title" = "Sign in to your NewsBlur account.";
+"ras-dj-nP8.title" = "登录到你的 NewsBlur 账户。";
 
 /* Class = "NSSecureTextFieldCell"; placeholderString = "••••••••"; ObjectID = "trK-OG-tBe"; */
 "trK-OG-tBe.placeholderString" = "••••••••";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "ufs-ar-BAY"; */
-"ufs-ar-BAY.title" = "Cancel";
+"ufs-ar-BAY.title" = "取消";
+
+/* Class = "NSTextFieldCell"; title = "Your username and password will be encrypted and stored in Keychain. "; ObjectID = "VWI-0W-Duk"; */
+"VWI-0W-Duk.title" = "你的用户名和密码将会被加密存储在钥匙串中。";
+

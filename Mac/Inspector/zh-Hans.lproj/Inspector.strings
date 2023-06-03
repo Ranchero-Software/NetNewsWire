@@ -1,48 +1,48 @@
-
 /* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "3v9-Z7-d7l"; */
-"3v9-Z7-d7l.title" = "Label";
+"3v9-Z7-d7l.title" = "标签";
 
 /* Class = "NSTextFieldCell"; title = "Multiple selection"; ObjectID = "5oG-0x-T8O"; */
-"5oG-0x-T8O.title" = "Multiple selection";
+"5oG-0x-T8O.title" = "多选";
+
+/* Class = "NSButtonCell"; title = "Always use Reader view"; ObjectID = "aRe-yV-R0h"; */
+"aRe-yV-R0h.title" = "总是使用阅读器视图";
+
+/* Class = "NSWindow"; title = "Inspector"; ObjectID = "bma-LM-jVu"; */
+"bma-LM-jVu.title" = "检查器";
 
 /* Class = "NSButtonCell"; title = "Show notifications for new articles"; ObjectID = "Bw5-c7-yDX"; */
-"Bw5-c7-yDX.title" = "Show notifications for new articles";
+"Bw5-c7-yDX.title" = "有新文章时推送通知";
 
 /* Class = "NSViewController"; title = "Nothing to inspect"; ObjectID = "Fdj-2F-Kl1"; */
-"Fdj-2F-Kl1.title" = "Nothing to inspect";
+"Fdj-2F-Kl1.title" = "无内容可检查";
 
 /* Class = "NSTextFieldCell"; title = "Home Page"; ObjectID = "Fg8-rA-G5J"; */
-"Fg8-rA-G5J.title" = "Home Page";
+"Fg8-rA-G5J.title" = "主页";
 
 /* Class = "NSTextFieldCell"; title = "http://example.com/feed"; ObjectID = "HpC-rK-YGK"; */
 "HpC-rK-YGK.title" = "http://example.com/feed";
 
+/* Class = "NSTextFieldCell"; title = "Nothing to inspect"; ObjectID = "iLD-8q-EAJ"; */
+"iLD-8q-EAJ.title" = "无内容可检查";
+
 /* Class = "NSTextFieldCell"; title = "http://example.com/"; ObjectID = "L2p-ur-j7a"; */
 "L2p-ur-j7a.title" = "http://example.com/";
 
-/* Class = "NSTextFieldCell"; title = "Folder\nName\nField"; ObjectID = "Xl3-7D-9Mw"; */
-"Xl3-7D-9Mw.title" = "Folder\nName\nField";
-
-/* Class = "NSButtonCell"; title = "Always use Reader view"; ObjectID = "aRe-yV-R0h"; */
-"aRe-yV-R0h.title" = "Always use Reader view";
-
-/* Class = "NSWindow"; title = "Inspector"; ObjectID = "bma-LM-jVu"; */
-"bma-LM-jVu.title" = "Inspector";
-
-/* Class = "NSTextFieldCell"; title = "Nothing to inspect"; ObjectID = "iLD-8q-EAJ"; */
-"iLD-8q-EAJ.title" = "Nothing to inspect";
-
 /* Class = "NSViewController"; title = "Feed"; ObjectID = "sfH-oR-GXm"; */
-"sfH-oR-GXm.title" = "Feed";
+"sfH-oR-GXm.title" = "订阅";
 
 /* Class = "NSTextFieldCell"; title = "Feed\nName\nField"; ObjectID = "tAO-GI-MT1"; */
-"tAO-GI-MT1.title" = "Feed\nName\nField";
+"tAO-GI-MT1.title" = "文件夹\n名称\n字段";
+
+/* Class = "NSTextFieldCell"; title = "Folder\nName\nField"; ObjectID = "Xl3-7D-9Mw"; */
+"Xl3-7D-9Mw.title" = "文件夹\n名称\n字段";
 
 /* Class = "NSViewController"; title = "Builtin Smart Feed"; ObjectID = "ye3-co-8lc"; */
-"ye3-co-8lc.title" = "Builtin Smart Feed";
+"ye3-co-8lc.title" = "内置智能订阅";
 
 /* Class = "NSViewController"; title = "Folder"; ObjectID = "ylq-Dz-pnT"; */
-"ylq-Dz-pnT.title" = "Folder";
+"ylq-Dz-pnT.title" = "文件夹";
 
 /* Class = "NSTextFieldCell"; title = "Feed"; ObjectID = "zzB-rX-1dK"; */
-"zzB-rX-1dK.title" = "Feed";
+"zzB-rX-1dK.title" = "订阅";
+

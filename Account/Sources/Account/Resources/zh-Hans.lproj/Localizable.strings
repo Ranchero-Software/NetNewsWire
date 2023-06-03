@@ -1,16 +1,22 @@
-/* 
-  Localizable.strings
-  
+/* Localizable.strings
 
-  Created by Jerry on 28/05/2023.
-  
-*/
+Created by Jerry on 28/05/2023.*/
 
-"error.title.feed-not-found" = "无法添加订阅";
-"error.title.already-subscribed" = "已经订阅过了";
-"error.title.ompl-import-in-progress" = "OPML 导入中";
-"error.title.error" = "错误";
-
-"error.message.feed-not-found" = "未找到订阅源，无法添加订阅。";
+/* (No Comment) */
 "error.message.already-subscribed" = "你已经添加此订阅，无法再次添加。";
+
+/* Can’t add a feed because no feed was found. */
+"error.message.feed-not-found" = "未找到订阅源，无法添加订阅。";
+
+/* An OPML import for this account is already running. */
 "error.message.opml-import-in-progress" = "该帐户的 OPML 导入正在进行中。";
+
+/* Already Subscribed */
+"error.title.already-subscribed" = "已经订阅过了";
+
+/* Error */
+"error.title.error" = "错误";
+"error.title.feed-not-found" = "无法添加订阅";
+
+/* OPML Import in Progress */
+"error.title.ompl-import-in-progress" = "OPML 导入中";
