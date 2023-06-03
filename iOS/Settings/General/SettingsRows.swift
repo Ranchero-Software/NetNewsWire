@@ -49,17 +49,6 @@ struct SettingsRow {
 	/// This row, when tapped, will push the the Add Account screen
 	/// in to view.
 	static var addAccount: some View {
-//		NavigationLink(destination: AccountsManagementView()) {
-//			Label {
-//				Text("button.title.manage-accounts", comment: "Manage Accounts")
-//			} icon: {
-//				Image("app.account")
-//					.resizable()
-//					.frame(width: 25.0, height: 25.0)
-//					.clipShape(RoundedRectangle(cornerRadius: 6))
-//			}
-//		}
-		
 		Label {
 			Text("button.title.manage-accounts", comment: "Manage Accounts")
 		} icon: {
