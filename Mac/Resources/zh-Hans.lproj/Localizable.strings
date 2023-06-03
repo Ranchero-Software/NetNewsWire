@@ -430,7 +430,7 @@
 "button.title.update" = "更新";
 
 /* Show notifications for new articles */
-"checkbox.title.show-new-article-notifications" = "有新文章时推送\n通知";
+"checkbox.title.show-new-article-notifications" = "有新文章时推送通知";
 
 /* No comment provided by engineer. */
 "Continue" = "继续";
