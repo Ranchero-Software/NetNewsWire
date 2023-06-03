@@ -75,7 +75,7 @@ import Account
 	func exportOPML(account: Account) {
 		
 		let panel = NSSavePanel()
-		panel.allowedContentTypes = [.xml]
+		panel.allowedContentTypes = [.opml]
 		panel.allowsOtherFileTypes = false
 		panel.prompt = NSLocalizedString("panel.prompt.export-opml", comment: "Export OPML")
 		panel.title = NSLocalizedString("panel.title.export-opml", comment: "Export OPML")
@@ -84,7 +84,7 @@ import Account
 		panel.isExtensionHidden = false
 		
 		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
-		panel.nameFieldStringValue = "Subscriptions-\(accountName).opml"
+		panel.nameFieldStringValue = "Subscriptions-\(accountName)"
 		
 		panel.beginSheetModal(for: hostWindow!) { result in
 			if result == NSApplication.ModalResponse.OK, let url = panel.url {
