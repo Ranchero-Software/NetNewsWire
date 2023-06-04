@@ -204,7 +204,7 @@
 "button.title.advanced" = "Advanced";
 
 /* Always Use Reader View */
-"button.title.always-use-reader-view" = "Always User Reader View";
+"button.title.always-use-reader-view" = "Always Use Reader View";
 
 /* Article Theme */
 "button.title.article-theme" = "Article Theme";
@@ -566,6 +566,12 @@
 
 /* An extension that enables a share menu item that passes article data to a third-party application. */
 "label.text.share-extension-explainer" = "An extension that enables a share menu item that passes article data to a third-party application.";
+
+/* Show notifications for new articles */
+"label.text.show-notifications-for-new-articles" = "Show notifications for new articles";
+
+/* Show notifications for new posts */
+"label.text.show-notifications-for-new-posts" = "Show notifications for new posts";
 
 /* Sign in to your BazQux account. */
 "label.text.sign-in-bazqux" = "Sign in to your BazQux account.";

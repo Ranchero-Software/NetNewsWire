@@ -748,6 +748,12 @@
 /* Self-hosted accounts sync your feeds across all your devices */
 "label.text.self-hosted-accounts-explainer" = "自托管帐户可以在所有设备上同步你的订阅。";
 
+/* Notify about new articles */
+"label.text.show-notifications-for-new-articles" = "新文章通知";
+
+/* Notify about new posts */
+"label.text.show-notifications-for-new-posts" = "新帖子通知";
+
 /* Small */
 "label.text.small" = "小";
 
