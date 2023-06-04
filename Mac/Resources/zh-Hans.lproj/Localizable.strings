@@ -573,6 +573,12 @@
 /* An extension that enables a share menu item that passes article data to a third-party application. */
 "label.text.share-extension-explainer" = "一个通过共享菜单将文章数据传输给第三方应用的扩展。";
 
+/* Show notifications for new articles */
+"label.text.show-notifications-for-new-articles" = "Show notifications for new articles";
+
+/* Show notifications for new posts */
+"label.text.show-notifications-for-new-posts" = "Show notifications for new posts";
+
 /* Sign in to your BazQux account. */
 "label.text.sign-in-bazqux" = "登录到你的 BazQux 账户。";
 

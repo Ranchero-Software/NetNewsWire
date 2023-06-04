@@ -739,6 +739,12 @@
 /* Self-hosted accounts sync your feeds across all your devices */
 "label.text.self-hosted-accounts-explainer" = "Self-hosted accounts sync your feeds across all your devices";
 
+/* Show notifications for new articles */
+"label.text.show-notifications-for-new-articles" = "Notify about new articles";
+
+/* Show notifications for new posts */
+"label.text.show-notifications-for-new-posts" = "Notify about new posts";
+
 /* Small */
 "label.text.small" = "Small";
 
