@@ -574,10 +574,10 @@
 "label.text.share-extension-explainer" = "一个通过共享菜单将文章数据传输给第三方应用的扩展。";
 
 /* Show notifications for new articles */
-"label.text.show-notifications-for-new-articles" = "Show notifications for new articles";
+"label.text.show-notifications-for-new-articles" = "有新文章时推送通知";
 
 /* Show notifications for new posts */
-"label.text.show-notifications-for-new-posts" = "Show notifications for new posts";
+"label.text.show-notifications-for-new-posts" = "有新帖子时推送通知";
 
 /* Sign in to your BazQux account. */
 "label.text.sign-in-bazqux" = "登录到你的 BazQux 账户。";
