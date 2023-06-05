@@ -610,8 +610,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if keyboardShortcutsWindowController == nil {
 			
 			keyboardShortcutsWindowController = WebViewWindowController(title: NSLocalizedString("window.title.keyboard-shortcuts", comment: "Keyboard Shortcuts"))
-			//let htmlFile = Bundle(for: type(of: self)).path(forResource: "KeyboardShortcuts", ofType: "html")!
-			//keyboardShortcutsWindowController?.displayContents(of: htmlFile)
 			keyboardShortcutsWindowController?.displayContents(of: KeyboardHTML().htmlFile())
 			
 
