@@ -1,9 +1,14 @@
-
 /* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "3v9-Z7-d7l"; */
 "3v9-Z7-d7l.title" = "Label";
 
 /* Class = "NSTextFieldCell"; title = "Multiple selection"; ObjectID = "5oG-0x-T8O"; */
 "5oG-0x-T8O.title" = "Multiple selection";
+
+/* Class = "NSButtonCell"; title = "Always use Reader view"; ObjectID = "aRe-yV-R0h"; */
+"aRe-yV-R0h.title" = "Always use Reader view";
+
+/* Class = "NSWindow"; title = "Inspector"; ObjectID = "bma-LM-jVu"; */
+"bma-LM-jVu.title" = "Inspector";
 
 /* Class = "NSButtonCell"; title = "Show notifications for new articles"; ObjectID = "Bw5-c7-yDX"; */
 "Bw5-c7-yDX.title" = "Show notifications for new articles";
@@ -17,26 +22,20 @@
 /* Class = "NSTextFieldCell"; title = "http://example.com/feed"; ObjectID = "HpC-rK-YGK"; */
 "HpC-rK-YGK.title" = "http://example.com/feed";
 
-/* Class = "NSTextFieldCell"; title = "http://example.com/"; ObjectID = "L2p-ur-j7a"; */
-"L2p-ur-j7a.title" = "http://example.com/";
-
-/* Class = "NSTextFieldCell"; title = "Folder\nName\nField"; ObjectID = "Xl3-7D-9Mw"; */
-"Xl3-7D-9Mw.title" = "Folder\nName\nField";
-
-/* Class = "NSButtonCell"; title = "Always use Reader view"; ObjectID = "aRe-yV-R0h"; */
-"aRe-yV-R0h.title" = "Always use Reader view";
-
-/* Class = "NSWindow"; title = "Inspector"; ObjectID = "bma-LM-jVu"; */
-"bma-LM-jVu.title" = "Inspector";
-
 /* Class = "NSTextFieldCell"; title = "Nothing to inspect"; ObjectID = "iLD-8q-EAJ"; */
 "iLD-8q-EAJ.title" = "Nothing to inspect";
+
+/* Class = "NSTextFieldCell"; title = "http://example.com/"; ObjectID = "L2p-ur-j7a"; */
+"L2p-ur-j7a.title" = "http://example.com/";
 
 /* Class = "NSViewController"; title = "Feed"; ObjectID = "sfH-oR-GXm"; */
 "sfH-oR-GXm.title" = "Feed";
 
 /* Class = "NSTextFieldCell"; title = "Feed\nName\nField"; ObjectID = "tAO-GI-MT1"; */
 "tAO-GI-MT1.title" = "Feed\nName\nField";
+
+/* Class = "NSTextFieldCell"; title = "Folder\nName\nField"; ObjectID = "Xl3-7D-9Mw"; */
+"Xl3-7D-9Mw.title" = "Folder\nName\nField";
 
 /* Class = "NSViewController"; title = "Builtin Smart Feed"; ObjectID = "ye3-co-8lc"; */
 "ye3-co-8lc.title" = "Builtin Smart Feed";
@@ -46,3 +45,4 @@
 
 /* Class = "NSTextFieldCell"; title = "Feed"; ObjectID = "zzB-rX-1dK"; */
 "zzB-rX-1dK.title" = "Feed";
+

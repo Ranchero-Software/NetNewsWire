@@ -28,7 +28,7 @@ class ImageViewController: UIViewController {
 	override var keyCommands: [UIKeyCommand]? {
 		return [
 			UIKeyCommand(
-				title: NSLocalizedString("Close Image", comment: "Close Image"),
+				title: NSLocalizedString("button.title.close-image", comment: "Close Image"),
 				action: #selector(done(_:)),
 				input: " "
 			)

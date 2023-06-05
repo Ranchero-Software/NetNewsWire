@@ -1,4 +1,3 @@
-
 /* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "7g8-Kk-ISg"; */
 "7g8-Kk-ISg.title" = "Password:";
 
@@ -11,11 +10,11 @@
 /* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "Window";
 
-/* Class = "NSButtonCell"; title = "Create"; ObjectID = "IMO-YT-k9Z"; */
-"IMO-YT-k9Z.title" = "Create";
-
 /* Class = "NSTextFieldCell"; placeholderString = "username"; ObjectID = "fCk-Tf-q01"; */
 "fCk-Tf-q01.placeholderString" = "username";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "IMO-YT-k9Z"; */
+"IMO-YT-k9Z.title" = "Create";
 
 /* Class = "NSTextFieldCell"; title = "Don’t have a Reader account?"; ObjectID = "ker-hu-FEc"; */
 "ker-hu-FEc.title" = "Don’t have a Reader account?";
@@ -34,3 +33,4 @@
 
 /* Class = "NSTextFieldCell"; title = "API URL:"; ObjectID = "zBm-dZ-EF1"; */
 "zBm-dZ-EF1.title" = "API URL:";
+

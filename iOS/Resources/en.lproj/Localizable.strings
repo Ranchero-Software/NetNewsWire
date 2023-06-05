@@ -190,20 +190,20 @@
 /* Light */
 "appdefaults.colorpalette.light" = "Light";
 
-/* Filter Read Feeds */
-"button.accessibility.title.filter-read-feeds" = "Filter Read Feeds";
-
-/* Selected - Filter Read Feeds */
-"button.accessibility.title.selected-filter-read-feeds" = "Selected - Filter Read Feeds";
-
 /* Error - Reader View */
 "button.accessibility.title.error-readerview" = "Error - Reader View";
+
+/* Filter Read Feeds */
+"button.accessibility.title.filter-read-feeds" = "Filter Read Feeds";
 
 /* Processing - Reader View */
 "button.accessibility.title.processing-readerview" = "Processing - Reader View";
 
 /* Reader View */
 "button.accessibility.title.readerview" = "Reader View";
+
+/* Selected - Filter Read Feeds */
+"button.accessibility.title.selected-filter-read-feeds" = "Selected - Filter Read Feeds";
 
 /* Selected - Reader View */
 "button.accessibility.title.selected-readerview" = "Selected - Reader View";
@@ -259,6 +259,9 @@
 
 /* Close */
 "button.title.close" = "Close";
+
+/* Close Image */
+"button.title.close-image" = "Close Image";
 
 /* Copy Article URL */
 "button.title.copy-article-url" = "Copy Article URL";

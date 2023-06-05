@@ -596,7 +596,6 @@
 		65ED4056235DEF6C0081F399 /* NetNewsWire.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8A22629E8F00D921D6 /* NetNewsWire.sdef */; };
 		65ED4058235DEF6C0081F399 /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		65ED405A235DEF6C0081F399 /* main_mac.js in Resources */ = {isa = PBXBuildFile; fileRef = 5142194A2353C1CF00E07E2C /* main_mac.js */; };
-		65ED405B235DEF6C0081F399 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8722629E8F00D921D6 /* KeyboardShortcuts.html */; };
 		65ED405C235DEF6C0081F399 /* ImportOPMLSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA3A227A379E00D19003 /* ImportOPMLSheet.xib */; };
 		65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
 		65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */ = {isa = PBXBuildFile; fileRef = 84A3EE52223B667F00557320 /* DefaultFeeds.opml */; };
@@ -719,7 +718,6 @@
 		84C9FC7B22629E1200D921D6 /* PreferencesControlsBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC7122629E1200D921D6 /* PreferencesControlsBackgroundView.swift */; };
 		84C9FC7C22629E1200D921D6 /* AccountsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */; };
 		84C9FC8222629E4800D921D6 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8022629E4800D921D6 /* Preferences.storyboard */; };
-		84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8722629E8F00D921D6 /* KeyboardShortcuts.html */; };
 		84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8922629E8F00D921D6 /* Credits.rtf */; };
 		84C9FC8F22629E8F00D921D6 /* NetNewsWire.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8A22629E8F00D921D6 /* NetNewsWire.sdef */; };
 		84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9B2262A1A900D921D6 /* Assets.xcassets */; };
@@ -848,6 +846,8 @@
 		DF84E563295122BA0045C334 /* TimelineCustomizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */; };
 		DF93DB2B296A319000586C0E /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DF93DB2D296A319000586C0E /* Localizable.stringsdict */; };
 		DF93DB2F296A42BD00586C0E /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DF93DB31296A42BD00586C0E /* Localizable.stringsdict */; };
+		DFACAE022A2D52F8007F7568 /* KeyboardHTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFACAE012A2D52F8007F7568 /* KeyboardHTML.swift */; };
+		DFACAE032A2D52F8007F7568 /* KeyboardHTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFACAE012A2D52F8007F7568 /* KeyboardHTML.swift */; };
 		DFB3497A294A962D00BC81AD /* AddAccountListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34979294A962D00BC81AD /* AddAccountListView.swift */; };
 		DFB34980294B085100BC81AD /* AccountInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3497F294B085100BC81AD /* AccountInspectorView.swift */; };
 		DFB34988294B447F00BC81AD /* InjectedNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */; };
@@ -1493,7 +1493,6 @@
 		84C9FC7122629E1200D921D6 /* PreferencesControlsBackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesControlsBackgroundView.swift; sourceTree = "<group>"; };
 		84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesViewController.swift; sourceTree = "<group>"; };
 		84C9FC8122629E4800D921D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/Preferences.storyboard; sourceTree = SOURCE_ROOT; };
-		84C9FC8722629E8F00D921D6 /* KeyboardShortcuts.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = KeyboardShortcuts.html; sourceTree = "<group>"; };
 		84C9FC8922629E8F00D921D6 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		84C9FC8A22629E8F00D921D6 /* NetNewsWire.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NetNewsWire.sdef; sourceTree = "<group>"; };
 		84C9FC9022629ECB00D921D6 /* NetNewsWire.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire.entitlements; sourceTree = "<group>"; };
@@ -1675,6 +1674,11 @@
 		DF93DB30296A42BD00586C0E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		DF93DB33296A4A8F00586C0E /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		DF93DB34296A4A9300586C0E /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-GB"; path = "en-GB.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		DFACAE012A2D52F8007F7568 /* KeyboardHTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHTML.swift; sourceTree = "<group>"; };
+		DFACAE042A2DD690007F7568 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/NNW3OpenPanelAccessoryView.strings"; sourceTree = "<group>"; };
+		DFACAE052A2DD690007F7568 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/ExportOPMLSheet.strings"; sourceTree = "<group>"; };
+		DFACAE062A2DD690007F7568 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/ImportOPMLSheet.strings"; sourceTree = "<group>"; };
+		DFACAE072A2DD9F0007F7568 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DFB34979294A962D00BC81AD /* AddAccountListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountListView.swift; sourceTree = "<group>"; };
 		DFB3497F294B085100BC81AD /* AccountInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInspectorView.swift; sourceTree = "<group>"; };
 		DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectedNavigationView.swift; sourceTree = "<group>"; };
@@ -2790,7 +2794,7 @@
 		84C9FC8622629E8F00D921D6 /* KeyboardShortcuts */ = {
 			isa = PBXGroup;
 			children = (
-				84C9FC8722629E8F00D921D6 /* KeyboardShortcuts.html */,
+				DFACAE012A2D52F8007F7568 /* KeyboardHTML.swift */,
 			);
 			path = KeyboardShortcuts;
 			sourceTree = "<group>";
@@ -3594,7 +3598,6 @@
 				65ED40A1235DEFF00081F399 /* container-migration.plist in Resources */,
 				DF5124DA2A23107300BBAB1F /* AccountsAddLocal.xib in Resources */,
 				65ED405A235DEF6C0081F399 /* main_mac.js in Resources */,
-				65ED405B235DEF6C0081F399 /* KeyboardShortcuts.html in Resources */,
 				65ED405C235DEF6C0081F399 /* ImportOPMLSheet.xib in Resources */,
 				51DEE81926FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
@@ -3699,7 +3702,6 @@
 				51DEE81826FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				5142194B2353C1CF00E07E2C /* main_mac.js in Resources */,
 				DFCE4F9128EF26F100405869 /* About.plist in Resources */,
-				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
 				B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */,
 				DF6DE5142965924C002EC085 /* InfoPlist.strings in Resources */,
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
@@ -4051,6 +4053,7 @@
 				65ED3FC4235DEF6C0081F399 /* OPMLExporter.swift in Sources */,
 				51DC07992552083500A3F79F /* ArticleTextSize.swift in Sources */,
 				65ED3FC6235DEF6C0081F399 /* UnreadFeed.swift in Sources */,
+				DFACAE032A2D52F8007F7568 /* KeyboardHTML.swift in Sources */,
 				65ED3FC8235DEF6C0081F399 /* SidebarCellLayout.swift in Sources */,
 				65ED3FC9235DEF6C0081F399 /* SmartFeedPasteboardWriter.swift in Sources */,
 				515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */,
@@ -4558,6 +4561,7 @@
 				8454C3F8263F3AD400E3F9C7 /* IconImageCache.swift in Sources */,
 				518651B223555EB20078E021 /* NNW3Document.swift in Sources */,
 				D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */,
+				DFACAE022A2D52F8007F7568 /* KeyboardHTML.swift in Sources */,
 				DFC14F0F28EA55BD00F6EE86 /* AboutWindowController.swift in Sources */,
 				D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */,
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
@@ -4750,6 +4754,7 @@
 			children = (
 				8FBBEE432304CC00007279FB /* Base */,
 				C4A3967E2A2AEC5400C89D55 /* zh-Hans */,
+				DFACAE062A2DD690007F7568 /* en-GB */,
 			);
 			name = ImportOPMLSheet.xib;
 			sourceTree = "<group>";
@@ -4819,6 +4824,7 @@
 			children = (
 				8FB3CBC9235D307E0026324C /* Base */,
 				C4A3967C2A2AEC5400C89D55 /* zh-Hans */,
+				DFACAE042A2DD690007F7568 /* en-GB */,
 			);
 			name = NNW3OpenPanelAccessoryView.xib;
 			sourceTree = "<group>";
@@ -4828,6 +4834,7 @@
 			children = (
 				8FBBEE4E2304CC06007279FB /* Base */,
 				C4A3967D2A2AEC5400C89D55 /* zh-Hans */,
+				DFACAE052A2DD690007F7568 /* en-GB */,
 			);
 			name = ExportOPMLSheet.xib;
 			sourceTree = "<group>";
@@ -5017,6 +5024,7 @@
 			children = (
 				DF6DE5132965924C002EC085 /* en-GB */,
 				C473703E2A232A3200E77890 /* zh-Hans */,
+				DFACAE072A2DD9F0007F7568 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

@@ -1,0 +1,15 @@
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "hAU-Zh-UCo"; */
+"hAU-Zh-UCo.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "Choose a NetNewsWire 3 “Subscriptions.plist” file.\n\nThen choose the account to receive your imported subscriptions."; ObjectID = "IFj-4w-B03"; */
+"IFj-4w-B03.title" = "Choose a NetNewsWire 3 “Subscriptions.plist” file.\n\nThen choose the account to receive your imported subscriptions.";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "OAk-KA-y5i"; */
+"OAk-KA-y5i.title" = "Item 1";
+
+/* Class = "NSTextFieldCell"; title = "Account:"; ObjectID = "uoh-QY-7LX"; */
+"uoh-QY-7LX.title" = "Account:";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "zkS-Dx-uCM"; */
+"zkS-Dx-uCM.title" = "Item 2";
+

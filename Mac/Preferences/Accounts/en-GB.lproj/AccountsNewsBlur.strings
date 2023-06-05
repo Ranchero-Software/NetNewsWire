@@ -1,4 +1,3 @@
-
 /* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "7g8-Kk-ISg"; */
 "7g8-Kk-ISg.title" = "Password:";
 
@@ -8,17 +7,14 @@
 /* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "Window";
 
-/* Class = "NSButtonCell"; title = "Create"; ObjectID = "IMO-YT-k9Z"; */
-"IMO-YT-k9Z.title" = "Create";
-
-/* Class = "NSTextFieldCell"; title = "Your username and password will be encrypted and stored in Keychain. "; ObjectID = "VWI-0W-Duk"; */
-"VWI-0W-Duk.title" = "Your username and password will be encrypted and stored in Keychain. ";
-
 /* Class = "NSTextFieldCell"; placeholderString = "me@email.com"; ObjectID = "fCk-Tf-q01"; */
 "fCk-Tf-q01.placeholderString" = "me@email.com";
 
 /* Class = "NSTextFieldCell"; title = "Don’t have a NewsBlur account?"; ObjectID = "fPs-Sh-GEf"; */
 "fPs-Sh-GEf.title" = "Don’t have a NewsBlur account?";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "IMO-YT-k9Z"; */
+"IMO-YT-k9Z.title" = "Create";
 
 /* Class = "NSButtonCell"; title = "Create one here."; ObjectID = "moP-jO-Ubz"; */
 "moP-jO-Ubz.title" = "Create one here.";
@@ -31,3 +27,7 @@
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "ufs-ar-BAY"; */
 "ufs-ar-BAY.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Your username and password will be encrypted and stored in Keychain. "; ObjectID = "VWI-0W-Duk"; */
+"VWI-0W-Duk.title" = "Your username and password will be encrypted and stored in Keychain. ";
+
