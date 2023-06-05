@@ -625,6 +625,15 @@
 /* Feed name */
 "label.placeholder.feed-name" = "Feed name";
 
+/* Multiple selection */
+"label.text.multiple-selection" = "Multiple selection";
+
+/* Multiple selection */
+"label.text.no-selection" = "No selection";
+
+/* Loading... */
+"label.text.loading" = "Loading...";
+
 /* In English, this shows the current search result selection out of the total number of search results. Example: 3 of 5. The variables are ordered as current selection, total search results count. */
 "label.search-results.%i.%i" = "%1$i of %2$i";
 

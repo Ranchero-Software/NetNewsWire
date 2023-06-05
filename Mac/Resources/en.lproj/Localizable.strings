@@ -642,6 +642,15 @@
 /* By Brent Simmons and the NetNewsWire team. */
 "label.text.netnewswire-byline" = "By Brent Simmons and the NetNewsWire team.";
 
+/* Multiple selection */
+"label.text.multiple-selection" = "Multiple selection";
+
+/* Multiple selection */
+"label.text.no-selection" = "No selection";
+
+/* Loading... */
+"label.text.loading" = "Loading...";
+
 /* Don’t have a BazQux account? */
 "label.text.no-bazqux" = "Don’t have a BazQux account?";
 

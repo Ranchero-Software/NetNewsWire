@@ -543,6 +543,15 @@
 /* Next subscription */
 "keyboard.text.next-subscription" = "Next subscription";
 
+/* Multiple selection */
+"label.text.multiple-selection" = "Multiple selection";
+
+/* Multiple selection */
+"label.text.no-selection" = "No selection";
+
+/* Loading... */
+"label.text.loading" = "Loading...";
+
 /* Open in browser */
 "keyboard.text.open-in-browser" = "Open in browser";
 

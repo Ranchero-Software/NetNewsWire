@@ -667,6 +667,15 @@
 /* Device Permissions */
 "label.text.device-permissions" = "Device Permissions";
 
+/* Multiple selection */
+"label.text.multiple-selection" = "Multiple selection";
+
+/* Multiple selection */
+"label.text.no-selection" = "No selection";
+
+/* Loading... */
+"label.text.loading" = "Loading...";
+
 /* Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more. */
 "label.text.device-permissions-explainer" = "Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.";
 
