@@ -13,8 +13,6 @@
 		17071EF126F8137400F5E71D /* ArticleTheme+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17071EEF26F8137400F5E71D /* ArticleTheme+Notifications.swift */; };
 		1710B9132552354E00679C0D /* AddAccountHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B9122552354E00679C0D /* AddAccountHelpView.swift */; };
 		1710B9142552354E00679C0D /* AddAccountHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B9122552354E00679C0D /* AddAccountHelpView.swift */; };
-		1710B929255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */; };
-		1710B92A255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */; };
 		17192ADA2567B3D500AAEACA /* RSSparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 17192AD92567B3D500AAEACA /* RSSparkle */; };
 		17192AE52567B3FE00AAEACA /* org.sparkle-project.Downloader.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 17192AE12567B3FE00AAEACA /* org.sparkle-project.Downloader.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		17192AE62567B3FE00AAEACA /* org.sparkle-project.InstallerConnection.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 17192AE22567B3FE00AAEACA /* org.sparkle-project.InstallerConnection.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -108,8 +106,6 @@
 		510C43F8243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		510FFAB326EEA22C00F32265 /* ArticleThemesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */; };
 		51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */; };
-		51107746243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
-		51107747243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
 		5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */; };
 		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		5117715524E1EA0F00A2A836 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5117715424E1EA0F00A2A836 /* ArticleExtractorButton.swift */; };
@@ -163,10 +159,6 @@
 		513277662590FC780064F1E7 /* Secrets in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51C4CFF524D37DD500AF9874 /* Secrets */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5132778C2590FF1E0064F1E7 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5132778B2590FF1E0064F1E7 /* RSCore */; };
 		5132779F2591034D0064F1E7 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5132779E2591034D0064F1E7 /* icon.icns */; };
-		51333D1624685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
-		51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
-		51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
-		51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
 		5137C2E426F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
 		5137C2E526F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
 		5137C2E626F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
@@ -221,12 +213,6 @@
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
 		515A50E7243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
-		515A5148243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
-		515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
-		515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A516D243E7F950089E588 /* ExtensionPointDetail.xib */; };
-		515A516F243E7F950089E588 /* ExtensionPointDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A516D243E7F950089E588 /* ExtensionPointDetail.xib */; };
-		515A5171243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */; };
-		515A5172243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */; };
 		515A5177243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515A517B243E90260089E588 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
@@ -257,8 +243,6 @@
 		5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		5183CCE8226F68D90010922C /* AccountRefreshTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */; };
-		5183CFAF254C78C8006B83A5 /* EnableExtensionPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CFAE254C78C8006B83A5 /* EnableExtensionPointView.swift */; };
-		5183CFB0254C78C8006B83A5 /* EnableExtensionPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CFAE254C78C8006B83A5 /* EnableExtensionPointView.swift */; };
 		518651B223555EB20078E021 /* NNW3Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651AB23555EB20078E021 /* NNW3Document.swift */; };
 		518651DA235621840078E021 /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518651D9235621840078E021 /* ImageTransition.swift */; };
 		51868BF1254386630011A17B /* SidebarDeleteItemsAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51868BF0254386630011A17B /* SidebarDeleteItemsAlert.swift */; };
@@ -272,9 +256,6 @@
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
 		51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
-		5193CD58245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
-		5193CD59245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
-		5193CD5A245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
 		5195C1DA2720205F00888867 /* ShadowTableChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5195C1D92720205F00888867 /* ShadowTableChanges.swift */; };
 		5195C1DC2720BD3000888867 /* MasterFeedRowIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5195C1DB2720BD3000888867 /* MasterFeedRowIdentifier.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
@@ -1115,7 +1096,6 @@
 		1701E1E625689D1E009453D8 /* Localized.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localized.swift; sourceTree = "<group>"; };
 		17071EEF26F8137400F5E71D /* ArticleTheme+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ArticleTheme+Notifications.swift"; sourceTree = "<group>"; };
 		1710B9122552354E00679C0D /* AddAccountHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountHelpView.swift; sourceTree = "<group>"; };
-		1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionPointHelpView.swift; sourceTree = "<group>"; };
 		17192AE12567B3FE00AAEACA /* org.sparkle-project.Downloader.xpc */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.xpc-service"; path = "org.sparkle-project.Downloader.xpc"; sourceTree = "<group>"; };
 		17192AE22567B3FE00AAEACA /* org.sparkle-project.InstallerConnection.xpc */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.xpc-service"; path = "org.sparkle-project.InstallerConnection.xpc"; sourceTree = "<group>"; };
 		17192AE32567B3FE00AAEACA /* org.sparkle-project.InstallerLauncher.xpc */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.xpc-service"; path = "org.sparkle-project.InstallerLauncher.xpc"; sourceTree = "<group>"; };
@@ -1176,7 +1156,6 @@
 		510C43F6243D035C009F70C3 /* ExtensionPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPoint.swift; sourceTree = "<group>"; };
 		510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemesTableViewController.swift; sourceTree = "<group>"; };
 		51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
-		51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointPreferencesViewController.swift; sourceTree = "<group>"; };
 		5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorIconHeaderView.swift; sourceTree = "<group>"; };
 		51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSapp_target.xcconfig; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
@@ -1202,8 +1181,6 @@
 		51314706235C41FC00387FDC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
 		51314714235C420900387FDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Intents.strings; sourceTree = "<group>"; };
 		5132779E2591034D0064F1E7 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
-		51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRedditFeedWindowController.swift; sourceTree = "<group>"; };
-		51333D3A2468615D00EB5C91 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddRedditFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Sepia.nnwtheme; sourceTree = "<group>"; };
 		5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemeImporter.swift; sourceTree = "<group>"; };
 		51386A8D25673276005F3762 /* AccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCell.swift; sourceTree = "<group>"; };
@@ -1228,9 +1205,6 @@
 		5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineTitleView.swift; sourceTree = "<group>"; };
 		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		515A50E5243D07A90089E588 /* ExtensionPointManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointManager.swift; sourceTree = "<group>"; };
-		515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointEnableWindowController.swift; sourceTree = "<group>"; };
-		515A516D243E7F950089E588 /* ExtensionPointDetail.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtensionPointDetail.xib; sourceTree = "<group>"; };
-		515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointDetailViewController.swift; sourceTree = "<group>"; };
 		515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointIdentifer.swift; sourceTree = "<group>"; };
 		515D4FCB2325815A00EE1167 /* SafariExt.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SafariExt.js; sourceTree = "<group>"; };
 		515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_ShareExtension.entitlements; sourceTree = "<group>"; };
@@ -1259,7 +1233,6 @@
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
 		5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRefreshTimer.swift; sourceTree = "<group>"; };
-		5183CFAE254C78C8006B83A5 /* EnableExtensionPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionPointView.swift; sourceTree = "<group>"; };
 		518651AB23555EB20078E021 /* NNW3Document.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NNW3Document.swift; sourceTree = "<group>"; };
 		518651D9235621840078E021 /* ImageTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransition.swift; sourceTree = "<group>"; };
 		51868BF0254386630011A17B /* SidebarDeleteItemsAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarDeleteItemsAlert.swift; sourceTree = "<group>"; };
@@ -1270,7 +1243,6 @@
 		51934CC1230F5963006127BE /* InteractiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveNavigationController.swift; sourceTree = "<group>"; };
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
-		5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RedditFeedProvider-Extensions.swift"; sourceTree = "<group>"; };
 		5195C1D92720205F00888867 /* ShadowTableChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowTableChanges.swift; sourceTree = "<group>"; };
 		5195C1DB2720BD3000888867 /* MasterFeedRowIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedRowIdentifier.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
@@ -1831,20 +1803,6 @@
 				515A50E5243D07A90089E588 /* ExtensionPointManager.swift */,
 				84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */,
 				84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */,
-				5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */,
-			);
-			path = ExtensionPoints;
-			sourceTree = "<group>";
-		};
-		51107744243BEDD300D97C8C /* ExtensionPoints */ = {
-			isa = PBXGroup;
-			children = (
-				5183CFAE254C78C8006B83A5 /* EnableExtensionPointView.swift */,
-				1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */,
-				515A516D243E7F950089E588 /* ExtensionPointDetail.xib */,
-				515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */,
-				515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */,
-				51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */,
 			);
 			path = ExtensionPoints;
 			sourceTree = "<group>";
@@ -2367,8 +2325,6 @@
 			children = (
 				849A97511ED9EAC0007D329B /* AddFeedController.swift */,
 				51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */,
-				51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */,
-				51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */,
 				848363002262A3BC00DA1D35 /* AddWebFeedSheet.xib */,
 				849A97521ED9EAC0007D329B /* AddWebFeedWindowController.swift */,
 				51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */,
@@ -2606,7 +2562,6 @@
 				84C9FC6A22629E1200D921D6 /* Advanced */,
 				84C9FC6C22629E1200D921D6 /* General */,
 				84C9FC6F22629E1200D921D6 /* Accounts */,
-				51107744243BEDD300D97C8C /* ExtensionPoints */,
 			);
 			path = Preferences;
 			sourceTree = "<group>";
@@ -3376,7 +3331,6 @@
 				51D0214726ED617100FF2E0F /* core.css in Resources */,
 				5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
-				51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
 				51C03082257D815A00609262 /* UnifiedWindow.storyboard in Resources */,
 				65ED405F235DEF6C0081F399 /* Preferences.storyboard in Resources */,
 				65ED4061235DEF6C0081F399 /* Assets.xcassets in Resources */,
@@ -3389,7 +3343,6 @@
 				65ED4068235DEF6C0081F399 /* MainWindow.storyboard in Resources */,
 				BDCB516824282C8A00102A80 /* AccountsNewsBlur.xib in Resources */,
 				3B826DCD2385C89600FC1ADB /* AccountsFeedWrangler.xib in Resources */,
-				515A516F243E7F950089E588 /* ExtensionPointDetail.xib in Resources */,
 				65ED4069235DEF6C0081F399 /* AccountsReaderAPI.xib in Resources */,
 				65ED406A235DEF6C0081F399 /* newsfoot.js in Resources */,
 				5103A9992421643300410853 /* blank.html in Resources */,
@@ -3497,10 +3450,8 @@
 				3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
-				51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
 				BDCB516724282C8A00102A80 /* AccountsNewsBlur.xib in Resources */,
 				5103A9982421643300410853 /* blank.html in Resources */,
-				515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */,
 				84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */,
 				51DEE81226FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
 				84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */,
@@ -3855,14 +3806,12 @@
 			files = (
 				65ED3FB7235DEF6C0081F399 /* ArticleArray.swift in Sources */,
 				65ED3FB8235DEF6C0081F399 /* CrashReporter.swift in Sources */,
-				51107747243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */,
 				65ED3FB9235DEF6C0081F399 /* IconView.swift in Sources */,
 				65ED3FBB235DEF6C0081F399 /* InspectorWindowController.swift in Sources */,
 				65ED3FBC235DEF6C0081F399 /* ColorHash.swift in Sources */,
 				65ED3FBD235DEF6C0081F399 /* AppDefaults.swift in Sources */,
 				65ED3FBE235DEF6C0081F399 /* Account+Scriptability.swift in Sources */,
 				65ED3FBF235DEF6C0081F399 /* NothingInspectorViewController.swift in Sources */,
-				1710B92A255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */,
 				65ED3FC0235DEF6C0081F399 /* AppNotifications.swift in Sources */,
 				65ED3FC1235DEF6C0081F399 /* TimelineKeyboardDelegate.swift in Sources */,
 				65ED3FC2235DEF6C0081F399 /* Browser.swift in Sources */,
@@ -3873,7 +3822,6 @@
 				65ED3FC6235DEF6C0081F399 /* UnreadFeed.swift in Sources */,
 				65ED3FC8235DEF6C0081F399 /* SidebarCellLayout.swift in Sources */,
 				65ED3FC9235DEF6C0081F399 /* SmartFeedPasteboardWriter.swift in Sources */,
-				515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */,
 				65ED3FCA235DEF6C0081F399 /* SmartFeedsController.swift in Sources */,
 				515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */,
 				65ED3FCB235DEF6C0081F399 /* SidebarViewController.swift in Sources */,
@@ -3885,11 +3833,8 @@
 				65ED3FD1235DEF6C0081F399 /* PseudoFeed.swift in Sources */,
 				65ED3FD3235DEF6C0081F399 /* NSScriptCommand+NetNewsWire.swift in Sources */,
 				65ED3FD4235DEF6C0081F399 /* Article+Scriptability.swift in Sources */,
-				515A5172243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */,
 				65ED3FD5235DEF6C0081F399 /* SmartFeed.swift in Sources */,
-				51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */,
 				65ED3FD6235DEF6C0081F399 /* MarkStatusCommand.swift in Sources */,
-				5183CFB0254C78C8006B83A5 /* EnableExtensionPointView.swift in Sources */,
 				65ED3FD7235DEF6C0081F399 /* NSApplication+Scriptability.swift in Sources */,
 				65ED3FD8235DEF6C0081F399 /* NSView-Extensions.swift in Sources */,
 				51A052CF244FB9D7006C2024 /* AddFeedWIndowController.swift in Sources */,
@@ -3910,7 +3855,6 @@
 				65ED3FE3235DEF6C0081F399 /* ArticleUtilities.swift in Sources */,
 				65ED3FE4235DEF6C0081F399 /* NNW3OpenPanelAccessoryViewController.swift in Sources */,
 				65ED3FE5235DEF6C0081F399 /* DefaultFeedsImporter.swift in Sources */,
-				5193CD59245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */,
 				65ED3FE6235DEF6C0081F399 /* RenameWindowController.swift in Sources */,
 				65ED3FE7235DEF6C0081F399 /* SendToMicroBlogCommand.swift in Sources */,
 				65ED3FE8235DEF6C0081F399 /* ArticleTheme.swift in Sources */,
@@ -4091,7 +4035,6 @@
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
-				5193CD5A245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
@@ -4228,7 +4171,6 @@
 			files = (
 				84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */,
 				848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */,
-				515A5171243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */,
 				847CD6CA232F4CBF00FAC46D /* IconView.swift in Sources */,
 				84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */,
 				51EF0F7A22771B890050506E /* ColorHash.swift in Sources */,
@@ -4264,7 +4206,6 @@
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
-				1710B929255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */,
 				515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */,
 				51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				515A5177243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */,
@@ -4294,10 +4235,8 @@
 				51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleThemesManager.swift in Sources */,
 				8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */,
-				51107746243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */,
 				519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */,
 				FF3ABF1523259DDB0074C542 /* ArticleSorter.swift in Sources */,
-				5183CFAF254C78C8006B83A5 /* EnableExtensionPointView.swift in Sources */,
 				84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */,
 				849A97791ED9EC04007D329B /* ArticleStringFormatter.swift in Sources */,
 				B24E9ADC245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */,
@@ -4309,7 +4248,6 @@
 				55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */,
 				5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* PasteboardFolder.swift in Sources */,
-				515A5148243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */,
 				51DC07982552083500A3F79F /* ArticleTextSize.swift in Sources */,
 				5117715524E1EA0F00A2A836 /* ArticleExtractorButton.swift in Sources */,
 				5103A9F724225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */,
@@ -4328,7 +4266,6 @@
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,
 				5183CCE8226F68D90010922C /* AccountRefreshTimer.swift in Sources */,
 				849A97831ED9EC63007D329B /* SidebarStatusBarView.swift in Sources */,
-				5193CD58245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */,
 				51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */,
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
@@ -4370,7 +4307,6 @@
 				178A9F9D2549449F00AB7E9D /* AddAccountsView.swift in Sources */,
 				51C4CFF024D37D1F00AF9874 /* Secrets.swift in Sources */,
 				849A976D1ED9EBC8007D329B /* TimelineTableView.swift in Sources */,
-				51333D1624685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */,
 				84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */,
 				D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */,
 				51A052CE244FB9D7006C2024 /* AddFeedWIndowController.swift in Sources */,
@@ -4509,14 +4445,6 @@
 				51314714235C420900387FDC /* en */,
 			);
 			name = Intents.intentdefinition;
-			sourceTree = "<group>";
-		};
-		51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				51333D3A2468615D00EB5C91 /* Base */,
-			);
-			name = AddRedditFeedSheet.xib;
 			sourceTree = "<group>";
 		};
 		513C5CEA232571C2003D4054 /* MainInterface.storyboard */ = {

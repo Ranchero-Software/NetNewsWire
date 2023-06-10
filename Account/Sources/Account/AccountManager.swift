@@ -371,6 +371,27 @@ public final class AccountManager: UnreadCountProvider {
         return false
     }
     
+    public func anyLocaloriCloudAccountHasAtLeastOneRedditFeed() -> Bool {
+        // We removed our Reddit code, and the ability to read feeds from Reddit,
+        // as a result of Reddit's API pricing.
+        // We are cheering on Reddit’s increasing irrelevancy.
+        
+        for account in accounts {
+            if account.type == .cloudKit || account.type == .onMyMac {
+                for webfeed in account.flattenedWebFeeds() {
+                    if let components = URLComponents(string: webfeed.url) {
+                        // This will return true for an account, e.g., https://netnewswire@www.reddit.com/best
+                        // and false for a standard RSS feed https://www.reddit.com/best
+                        if components.user != nil && components.host == "www.reddit.com" {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+    
 	// MARK: - Fetching Articles
 
 	// These fetch articles from active accounts and return a merged Set<Article>.

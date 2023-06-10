@@ -19,10 +19,6 @@ RSDatabase uses FMDB for SQLite persistence.
 ## [Kanna](https://github.com/tid-kijyun/Kanna)
 Required by OAuthSwift as a testing dependency.  Not shipped in NNW.
 
-## [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift)
-Our Reddit integration uses the OAuth framework to authenticate with the services
-and then service requests to them.
-
 ## [PLCrashReporter](https://github.com/microsoft/plcrashreporter)
 Used to collect crash reports and send them to Brent.  Mac only.
 

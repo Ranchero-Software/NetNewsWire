@@ -123,7 +123,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		SecretsManager.provider = Secrets()
 		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
-		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
@@ -134,6 +133,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		appDelegate = self
 		
 		presentTwitterDeprecationAlertIfRequired()
+		presentRedditDeprecationAlertIfRequired()
+		
 	}
 
 	// MARK: - API
@@ -473,13 +474,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		
-		if item.action == #selector(showAddRedditFeedWindow(_:)) {
-			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isRedditEnabled else {
-				return false
-			}
-			return ExtensionPointManager.shared.isRedditEnabled
-		}
-		
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
@@ -551,12 +545,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func showAddWebFeedWindow(_ sender: Any?) {
 		addWebFeed(nil)
-	}
-
-	@IBAction func showAddRedditFeedWindow(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
-		addFeedController?.showAddFeedSheet(.redditFeed)
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
@@ -975,6 +963,35 @@ internal extension AppDelegate {
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed")
 			alert.informativeText = NSLocalizedString("Twitter has ended free access to the parts of the Twitter API that we need.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation informative text.")
+			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			alert.buttons[0].keyEquivalent = "\r"
+			alert.runModal()
+		}
+	}
+	
+	private func presentRedditDeprecationAlertIfRequired() {
+		if AppDefaults.shared.redditDeprecationAlertShown {
+			return
+		}
+		
+		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
+		let currentDate = Date()
+		if currentDate > expiryDate {
+			return // If after August 9th, don't show
+		}
+		
+		if AccountManager.shared.anyLocaloriCloudAccountHasAtLeastOneRedditFeed() {
+			showRedditDeprecationAlert()
+		}
+		AppDefaults.shared.redditDeprecationAlertShown = true
+	}
+	
+	private func showRedditDeprecationAlert() {
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.alertStyle = .warning
+			alert.messageText = NSLocalizedString("Reddit Integration Removed", comment: "Reddit Integration Removed")
+			alert.informativeText = NSLocalizedString("Reddit has ended free access to their API.\n\nSince Reddit provides limited public RSS feeds, we’ve had to use the Reddit API to read feeds related to your Reddit account. Without free access to that API, we can’t read those feeds.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Reddit deprecation informative text.")
 			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
 			alert.buttons[0].keyEquivalent = "\r"
 			alert.runModal()

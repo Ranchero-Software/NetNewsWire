@@ -24,7 +24,6 @@ private struct PreferencesToolbarItemSpec {
 private struct ToolbarItemIdentifier {
 	static let General = "General"
 	static let Accounts = "Accounts"
-	static let Extensions = "Extensions"
 	static let Advanced = "Advanced"
 }
 
@@ -40,9 +39,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
 											 name: NSLocalizedString("Accounts", comment: "Preferences"),
 											 image: AppAssets.preferencesToolbarAccountsImage)]
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Extensions,
-											 name: NSLocalizedString("Extensions", comment: "Preferences"),
-											 image: AppAssets.preferencesToolbarExtensionsImage)]
+		
 
 		// Omit the Advanced Preferences for now because the Software Update related functionality is
 		// forbidden/non-applicable, and we can rely upon Apple to some extent for crash reports. We
