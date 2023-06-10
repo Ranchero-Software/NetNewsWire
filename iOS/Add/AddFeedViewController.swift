@@ -14,7 +14,6 @@ import RSParser
 
 enum AddFeedType {
 	case web
-	case reddit
 }
 
 class AddFeedViewController: UITableViewController {
@@ -38,14 +37,6 @@ class AddFeedViewController: UITableViewController {
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-		
-		switch addFeedType {
-		case .reddit:
-			navigationItem.title = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			navigationItem.leftBarButtonItem = nil
-		default:
-			break
-		}
 		
 		activityIndicator.isHidden = true
 		activityIndicator.color = .label

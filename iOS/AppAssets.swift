@@ -101,10 +101,6 @@ struct AppAssets {
 		return UIImage(named: "disclosure")!
 	}()
 	
-	static var contextMenuReddit: UIImage = {
-		return UIImage(named: "contextMenuReddit")!
-	}()
-	
 	static var copyImage: UIImage = {
 		return UIImage(systemName: "doc.on.doc")!
 	}()
@@ -115,10 +111,6 @@ struct AppAssets {
 	
 	static var editImage: UIImage = {
 		UIImage(systemName: "square.and.pencil")!
-	}()
-	
-	static var extensionPointReddit: RSImage = {
-		return RSImage(named: "extensionPointReddit")!
 	}()
 
 	static var faviconTemplateImage: RSImage = {

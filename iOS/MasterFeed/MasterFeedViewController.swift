@@ -94,6 +94,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			// Only show the Twitter alert the first time
 			// the view is presented.
 			presentTwitterDeprecationAlertIfRequired()
+			presentRedditDeprecationAlertIfRequired()
 		}
 	}
 	
@@ -456,23 +457,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				self.coordinator.showAddWebFeed()
 			}
 			
-			let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			let addRedditFeedAction = UIAlertAction(title: addRedditFeedActionTitle, style: .default) { _ in
-				self.coordinator.showAddRedditFeed()
-			}
-			
 			let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
 			let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
 				self.coordinator.showAddFolder()
 			}
 			
 			alertController.addAction(addWebFeedAction)
-			
-			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
-					alertController.addAction(addRedditFeedAction)
-				}
-			}
 			
 			alertController.addAction(addWebFolderAction)
 			alertController.addAction(cancelAction)
@@ -667,8 +657,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			/*
 				Context Menu Order:
 				1. Add Web Feed
-				2. Add Reddit Feed
-				3. Add Folder
+				2. Add Folder
 			*/
 			
 			var menuItems: [UIAction] = []
@@ -679,15 +668,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 			menuItems.append(addWebFeedAction)
 			
-			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
-					let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-					let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
-						self.coordinator.showAddRedditFeed()
-					}
-					menuItems.append(addRedditFeedAction)
-				}
-			}
 						
 			let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
 			let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
@@ -732,6 +712,30 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	private func showTwitterDeprecationAlert() {
 		let alert = UIAlertController(title: NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed"),
 									  message: NSLocalizedString("On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation message"),
+									  preferredStyle: .alert)
+		
+		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+		present(alert, animated: true)
+	}
+	
+	private func presentRedditDeprecationAlertIfRequired() {
+		if AppDefaults.shared.redditDeprecationAlertShown { return }
+		
+		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
+		let currentDate = Date()
+		if currentDate > expiryDate {
+			return // If after August 9th, don't show
+		}
+		
+		if AccountManager.shared.anyLocaloriCloudAccountHasAtLeastOneRedditFeed() {
+			showRedditDeprecationAlert()
+		}
+		AppDefaults.shared.redditDeprecationAlertShown = true
+	}
+	
+	private func showRedditDeprecationAlert() {
+		let alert = UIAlertController(title: NSLocalizedString("Reddit Integration Removed", comment: "Reddit Integration Removed"),
+									  message: NSLocalizedString("Reddit has ended free access to their API.\n\nSince Reddit provides limited public RSS feeds, we’ve had to use the Reddit API to read feeds related to your Reddit account. Without free access to that API, we can’t read those feeds.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Reddit deprecation informative text."),
 									  preferredStyle: .alert)
 		
 		alert.addAction(UIAlertAction(title: "OK", style: .cancel))

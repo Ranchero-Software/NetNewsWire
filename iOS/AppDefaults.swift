@@ -59,6 +59,7 @@ final class AppDefaults {
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
 		static let twitterDeprecationAlertShown = "twitterDeprecationAlertShown"
+		static let redditDeprecationAlertShown = "redditDeprecationAlertShown"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -239,6 +240,15 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.twitterDeprecationAlertShown, newValue)
+		}
+	}
+	
+	var redditDeprecationAlertShown: Bool {
+		get {
+			return AppDefaults.bool(for: Key.redditDeprecationAlertShown)
+		}
+		set {
+			AppDefaults.setBool(for: Key.redditDeprecationAlertShown, newValue)
 		}
 	}
 	
