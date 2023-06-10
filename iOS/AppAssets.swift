@@ -185,10 +185,6 @@ struct AppAssets {
 		return UIColor(named: "primaryAccentColor")!
 	}
 	
-	static var redditOriginal: UIImage = {
-		return UIImage(named: "redditWhite")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
-	}()
-	
 	static var safariImage: UIImage = {
 		return UIImage(systemName: "safari")!
 	}()
