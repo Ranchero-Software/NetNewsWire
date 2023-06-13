@@ -240,7 +240,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 		decisionHandler(.allow)
 	}
 	
-	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+	public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
 		// See note in viewDidLoad()
 		if waitingForFirstReload {
 			assert(webView.isHidden)
@@ -252,11 +252,14 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
 				webView.isHidden = false
 			}
-		} else {
-			if let windowScrollY = windowScrollY {
-				webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
-				self.windowScrollY = nil
-			}
+		}
+	}
+
+	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		assert(!waitingForFirstReload)
+		if let windowScrollY = windowScrollY {
+			webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
+			self.windowScrollY = nil
 		}
 	}
 
