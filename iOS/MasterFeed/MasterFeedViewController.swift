@@ -91,9 +91,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		super.viewDidAppear(animated)
 		
 		if (isBeingPresented || isMovingToParent) {
-			// Only show the Twitter alert the first time
+			// Only show the Twitter or Reddit alert the first time
 			// the view is presented.
-			presentTwitterDeprecationAlertIfRequired()
+			if shouldShowTwitterDeprecationAlert() {
+				showTwitterDeprecationAlert()
+			}
+			else if shouldShowRedditDeprecationAlert() {
+				showRedditDeprecationAlert()
+			}
 		}
 	}
 	
@@ -713,27 +718,51 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			present(vc, animated: true)
 		}
 	}
-	
-	private func presentTwitterDeprecationAlertIfRequired() {
-		if AppDefaults.shared.twitterDeprecationAlertShown { return }
-		
+
+	private func shouldShowTwitterDeprecationAlert() -> Bool {
+		if AppDefaults.shared.twitterDeprecationAlertShown { return false }
+
 		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
 		let currentDate = Date()
 		if currentDate > expiryDate {
-			return // If after August 9th, don't show
+			return false // If after August 9th, don't show
 		}
-		
-		if AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed() {
-			showTwitterDeprecationAlert()
-		}
-		AppDefaults.shared.twitterDeprecationAlertShown = true
+
+		return AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed()
 	}
-	
+
 	private func showTwitterDeprecationAlert() {
+		assert(shouldShowTwitterDeprecationAlert())
+		AppDefaults.shared.twitterDeprecationAlertShown = true
+
 		let alert = UIAlertController(title: NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed"),
 									  message: NSLocalizedString("On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation message"),
 									  preferredStyle: .alert)
 		
+		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+		present(alert, animated: true)
+	}
+
+	private func shouldShowRedditDeprecationAlert() -> Bool {
+		if AppDefaults.shared.redditDeprecationAlertShown { return false }
+
+		let expiryDate = Date(timeIntervalSince1970: 1701331200) // Thu Nov 30 2023 00:00:00 GMT-0800 (Pacific Standard Time)
+		let currentDate = Date()
+		if currentDate > expiryDate {
+			return false
+		}
+
+		return ExtensionPointManager.shared.isRedditEnabled
+	}
+
+	private func showRedditDeprecationAlert() {
+		assert(shouldShowRedditDeprecationAlert())
+		AppDefaults.shared.redditDeprecationAlertShown = true
+
+		let alert = UIAlertController(title: NSLocalizedString("Reddit API Integration Removed", comment: "Reddit API Integration Removed"),
+									  message: NSLocalizedString("Reddit has announced the end of free access to their API, effective July 1.\n\nThough Reddit does provide RSS feeds, we use the Reddit API to get more and better data. But, without free access to that API, we will stop using it on June 30, 2023.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded.\n\nAlso, importantly — after you remove Reddit from your extensions in NetNewsWire, you can add Reddit RSS feeds and those feeds will continue to update.", comment: "Reddit deprecation message"),
+									  preferredStyle: .alert)
+
 		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
 		present(alert, animated: true)
 	}
