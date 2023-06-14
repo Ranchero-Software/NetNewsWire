@@ -11,7 +11,7 @@
 	  <outline text="inessential" title="inessential" type="rss" version="RSS" htmlUrl="https://inessential.com/" xmlUrl="https://inessential.com/feed.json"/>
 	  <outline text="Jason Kottke" title="Jason Kottke" type="rss" version="RSS" htmlUrl="https://kottke.org/" xmlUrl="http://feeds.kottke.org/json"/>
 	  <outline text="Maurice Parker" title="Maurice Parker" type="rss" version="RSS" htmlUrl="https://vincode.io/" xmlUrl="https://vincode.io/feed.xml"/>
-	  <outline text="NetNewsWire Blog" title="NetNewsWire Blog" type="rss" version="RSS" htmlUrl="https://nnw.ranchero.com/" xmlUrl="https://nnw.ranchero.com/feed.json"/>
+	  <outline text="NetNewsWire Blog" title="NetNewsWire Blog" type="rss" version="RSS" htmlUrl="https://netnewswire.blog/" xmlUrl="https://netnewswire.blog/feed.json"/>
 	  <outline text="One Foot Tsunami" title="One Foot Tsunami" type="rss" version="RSS" htmlUrl="https://onefoottsunami.com/" xmlUrl="https://onefoottsunami.com/feed/json/"/>
 	  <outline text="Six Colors" title="Six Colors" type="rss" version="RSS" htmlUrl="https://sixcolors.com/" xmlUrl="https://feedpress.me/sixcolors?type=xml"/>
   </body>
