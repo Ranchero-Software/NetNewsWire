@@ -18,8 +18,8 @@ import RSDatabase
 public final class AccountManager: UnreadCountProvider {
 
 	public static var shared: AccountManager!
-	public static let netNewsWireNewsURL = "https://nnw.ranchero.com/feed.xml"
-	private static let jsonNetNewsWireNewsURL = "https://nnw.ranchero.com/feed.json"
+    public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
+    private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
 
 	public let defaultAccount: Account
 
