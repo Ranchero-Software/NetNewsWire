@@ -27,7 +27,7 @@ dependencies.append(contentsOf: [
 let package = Package(
     name: "Account",
     defaultLocalization: "en",
-	platforms: [.macOS(SupportedPlatform.MacOSVersion.v11), .iOS(SupportedPlatform.IOSVersion.v14)],
+	platforms: [.macOS(SupportedPlatform.MacOSVersion.v13), .iOS(SupportedPlatform.IOSVersion.v16)],
     products: [
         .library(
             name: "Account",
