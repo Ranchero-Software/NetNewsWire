@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 6.1.3b1 build 6117 18 June 2023
+
+Show Reddit deprecation notice on startup if needed.
+
 ## 6.1.2 build 6114 8 Apr 2023
 
 Update default feeds to remove feeds that don’t appear to be active anymore (sadly!).
