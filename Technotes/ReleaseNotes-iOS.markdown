@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.3 TestFlight build 6117 - 18 June 2023
+
+Show Reddit shutoff alert to people using Reddit integration.
+
 ### 6.1.2 TestFlight build 6116 - 19 Mar 2023
 
 Revise Twitter alert to not mention any dates
