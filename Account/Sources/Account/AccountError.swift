@@ -36,29 +36,29 @@ public enum AccountError: LocalizedError {
     public var errorTitle: String {
         switch self {
         case .createErrorNotFound:
-            return NSLocalizedString("error.title.feed-not-found", bundle: Bundle.module, comment: "Unable to Add Feed")
+            return String(localized: "error.title.feed-not-found", bundle: .module, comment: "Unable to Add Feed")
         case .createErrorAlreadySubscribed:
-            return NSLocalizedString("error.title.already-subscribed", bundle: Bundle.module, comment: "Already Subscribed")
+            return String(localized: "error.title.already-subscribed", bundle: .module, comment: "Already Subscribed")
         case .opmlImportInProgress:
-            return NSLocalizedString("error.title.ompl-import-in-progress", bundle: Bundle.module, comment: "OPML Import in Progress")
+            return String(localized: "error.title.ompl-import-in-progress", bundle: .module, comment: "OPML Import in Progress")
         case .wrappedError(_, _):
-            return NSLocalizedString("error.title.error", bundle: Bundle.module, comment: "Error")
+            return String(localized: "error.title.error", bundle: .module, comment: "Error")
         }
     }
 	
 	public var errorDescription: String? {
 		switch self {
 		case .createErrorNotFound:
-            return NSLocalizedString("error.message.feed-not-found", bundle: Bundle.module, comment: "Can’t add a feed because no feed was found.")
+            return String(localized: "error.message.feed-not-found", bundle: .module, comment: "Can’t add a feed because no feed was found.")
 		case .createErrorAlreadySubscribed:
-            return NSLocalizedString("error.message.feed-already-subscribed", bundle: Bundle.module, comment: "You are already subscribed to this feed and can’t add it again.")
+            return String(localized: "error.message.feed-already-subscribed", bundle: .module, comment: "You are already subscribed to this feed and can’t add it again.")
 		case .opmlImportInProgress:
-            return NSLocalizedString("error.message.opml-import-in-progress", bundle: Bundle.module, comment: "An OPML import for this account is already running.")
+            return String(localized: "error.message.opml-import-in-progress", bundle: Bundle.module, comment: "An OPML import for this account is already running.")
 		case .wrappedError(let error, let account):
 			switch error {
 			case TransportError.httpError(let status):
 				if isCredentialsError(status: status) {
-                    let localizedText = NSLocalizedString("error.message.credentials-expired.%@", bundle: Bundle.module, comment: "Your ”%@” credentials have expired.")
+                    let localizedText = String(localized: "error.message.credentials-expired.%@", bundle: .module, comment: "Your ”%@” credentials have expired.")
                     return String(format: localizedText, account.nameForDisplay)
 				} else {
 					return unknownError(error, account)
@@ -79,15 +79,15 @@ public enum AccountError: LocalizedError {
 			switch error {
 			case TransportError.httpError(let status):
 				if isCredentialsError(status: status) {
-					return NSLocalizedString("Please update your credentials for this account, or ensure that your account with this service is still valid.", comment: "Expired credentials")
+                    return String(localized: "Please update your credentials for this account, or ensure that your account with this service is still valid.", bundle: .module, comment: "Expired credentials")
 				} else {
-					return NSLocalizedString("Please try again later.", comment: "Try later")
+                    return String(localized: "Please try again later.", bundle: .module, comment: "Try later")
 				}
 			default:
-				return NSLocalizedString("Please try again later.", comment: "Try later")
+                return String(localized: "Please try again later.", bundle: .module, comment: "Try later")
 			}
 		default:
-			return NSLocalizedString("Please try again later.", comment: "Try later")
+            return String(localized: "Please try again later.", bundle: .module, comment: "Try later")
 		}
 	}
 	
@@ -98,7 +98,7 @@ public enum AccountError: LocalizedError {
 private extension AccountError {
 	
 	func unknownError(_ error: Error, _ account: Account) -> String {
-		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
+        let localizedText = String(localized: "An error occurred while processing the “%@” account: %@", bundle: .module, comment: "Unknown error")
 		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
 	}
 	

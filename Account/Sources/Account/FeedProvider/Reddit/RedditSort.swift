@@ -18,15 +18,15 @@ public enum RedditSort: String, CaseIterable {
 	var displayName: String {
 		switch self {
 		case .best:
-			return NSLocalizedString("Best", comment: "Best")
+            return String(localized: "Best", bundle: .module, comment: "Best")
 		case .rising:
-			return NSLocalizedString("Rising", comment: "Rising")
+            return String(localized:"Rising", bundle: .module, comment: "Rising")
 		case .hot:
-			return NSLocalizedString("Hot", comment: "Hot")
+            return String(localized:"Hot", bundle: .module, comment: "Hot")
 		case .new:
-			return NSLocalizedString("New", comment: "New")
+            return String(localized:"New", bundle: .module, comment: "New")
 		case .top:
-			return NSLocalizedString("Top", comment: "Top")
+            return String(localized:"Top", bundle: .module, comment: "Top")
 		}
 	}
 }

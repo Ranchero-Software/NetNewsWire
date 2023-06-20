@@ -1,16 +1,162 @@
-/* 
-  Localizable.strings
-  
+/* Feedly – Could not move a feed between folders/collections. */
+"“%@” may be in both “%@” and “%@”." = "“%@” may be in both “%@” and “%@”.";
 
-  Created by Stuart Breckenridge on 11/03/2023.
-  
-*/
+/* Status bar progress */
+"%@ of %@" = "%@ of %@";
 
-"error.title.feed-not-found" = "Unable to Add Feed";
+/* Unknown error */
+"A Reddit Feed Provider error has occurred." = "A Reddit Feed Provider error has occurred.";
+
+/* On My Mac */
+"account.name.mac" = "account.name.mac";
+
+/* All */
+"All" = "All";
+
+/* Reddit Access */
+"An attempt to access your Reddit feed(s) failed.\n\nIf this problem persists, please deactivate and reactivate the Reddit extension to fix this problem.\n\n%@" = "An attempt to access your Reddit feed(s) failed.\n\nIf this problem persists, please deactivate and reactivate the Reddit extension to fix this problem.\n\n%@";
+
+/* Unknown error */
+"An error occurred while processing the “%@” account: %@" = "An error occurred while processing the “%@” account: %@";
+
+/* An invalid parameter was passed. */
+"An invalid parameter was passed." = "An invalid parameter was passed.";
+
+/* An unexpected CloudKit error occurred. */
+"An unexpected CloudKit error occurred." = "An unexpected CloudKit error occurred.";
+
+/* An unexpected error occurred. */
+"An unexpected error occurred." = "An unexpected error occurred.";
+
+/* Best */
+"Best" = "Best";
+
+/* OAuth - recovery suggestion - ensure browser selected supports web authentication. */
+"Check your default web browser in System Preferences or change it to Safari and try again." = "Check your default web browser in System Preferences or change it to Safari and try again.";
+
+/* Feedly – Could not create a folder/collection. */
+"Could not create a folder named “%@”." = "Could not create a folder named “%@”.";
+
+/* Feedly – Could not encode resource id to send to Feedly. */
+"Could not encode the identifier “%@”." = "Could not encode the identifier “%@”.";
+
+/* Feedly – Could not move a feed between folders/collections. */
+"Could not move “%@” to “%@”." = "Could not move “%@” to “%@”.";
+
+/* Feedly – Could not remove a feed. */
+"Could not remove “%@”." = "Could not remove “%@”.";
+
+/* Feedly – Could not remove a folder/collection. */
+"Could not remove the folder named “%@”." = "Could not remove the folder named “%@”.";
+
+/* Feedly – Could not rename a folder/collection. */
+"Could not rename “%@” to “%@”." = "Could not rename “%@” to “%@”.";
+
+/* (No Comment) */
+"error.message.already-subscribed" = "You are already subscribed to this feed and can’t add it again.";
+
+/* Your ”%@” credentials have expired. */
+"error.message.credentials-expired.%@" = "error.message.credentials-expired.%@";
+
+/* You are already subscribed to this feed and can’t add it again. */
+"error.message.feed-already-subscribed" = "error.message.feed-already-subscribed";
+
+/* Can’t add a feed because no feed was found. */
+"error.message.feed-not-found" = "Can’t add a feed because no feed was found.";
+
+/* An OPML import for this account is already running. */
+"error.message.opml-import-in-progress" = "An OPML import for this account is already running.";
+
+/* Already Subscribed */
 "error.title.already-subscribed" = "Already Subscribed";
-"error.title.ompl-import-in-progress" = "OPML Import in Progress";
+
+/* Error */
 "error.title.error" = "Error";
 
-"error.message.feed-not-found" = "Can’t add a feed because no feed was found.";
-"error.message.already-subscribed" = "You are already subscribed to this feed and can’t add it again.";
-"error.message.opml-import-in-progress" = "An OPML import for this account is already running.";
+/* Localizable.strings
+  
+
+  Created by Stuart Breckenridge on 11/03/2023. */
+"error.title.feed-not-found" = "Unable to Add Feed";
+
+/* OPML Import in Progress */
+"error.title.ompl-import-in-progress" = "OPML Import in Progress";
+
+/* Feedly – Feed can only be added to folders. */
+"Feeds cannot be added to the “%@” folder." = "Feeds cannot be added to the “%@” folder.";
+
+/* Hot */
+"Hot" = "Hot";
+
+/* iCloud Documentation */
+"iCloud Syncing Limitations & Solutions" = "iCloud Syncing Limitations & Solutions";
+
+/* Show notifications for new articles */
+"label.text.show-notifications-for-new-articles" = "label.text.show-notifications-for-new-articles";
+
+/* Show notifications for new posts */
+"label.text.show-notifications-for-new-posts" = "label.text.show-notifications-for-new-posts";
+
+/* New */
+"New" = "New";
+
+/* Feedly – Credentials not found. */
+"Please add the Feedly account again. If this problem persists, open Keychain Access and delete all feedly.com entries, then try again." = "Please add the Feedly account again. If this problem persists, open Keychain Access and delete all feedly.com entries, then try again.";
+
+/* Feedly – Feed can only be added to folders recovery suggestion. */
+"Please choose a different folder to contain the feed." = "Please choose a different folder to contain the feed.";
+
+/* Feedly – Feed can only be added to folders. */
+"Please choose a folder to contain the feed." = "Please choose a folder to contain the feed.";
+
+/* Feedly – Recovery suggestion for not being able to encode a resource id to send to Feedly.. */
+"Please contact NetNewsWire support." = "Please contact NetNewsWire support.";
+
+/* Try later */
+"Please try again later." = "Please try again later.";
+
+/* Expired credentials */
+"Please update your credentials for this account, or ensure that your account with this service is still valid." = "Please update your credentials for this account, or ensure that your account with this service is still valid";
+
+/* Popular */
+"Popular" = "Popular";
+
+/* Reddit */
+"Reddit %@" = "Reddit %@";
+
+/* Rate Limit */
+"Reddit API rate limit has been exceeded.  Please wait a short time and try again." = "Reddit API rate limit has been exceeded.  Please wait a short time and try again.";
+
+/* Reddit Home */
+"Reddit Home" = "Reddit Home";
+
+/* Rising */
+"Rising" = "Rising";
+
+/* Status bar progress */
+"Syncing %@" = "Syncing %@";
+
+/* Status bar progress */
+"Syncing %@ accounts" = "Syncing %@ accounts";
+
+/* The API URL wasn't found. */
+"The API URL wasn't found." = "The API URL wasn't found.";
+
+/* Duplicate Error */
+"There is already a Feedly account with that username created." = "There is already a Feedly account with that username created.";
+
+/* There was an invalid response from the server. */
+"There was an invalid response from the server." = "There was an invalid response from the server.";
+
+/* Top */
+"Top" = "Top";
+
+/* OAuth - error description - unable to authorize because ASWebAuthenticationSession did not start. */
+"Unable to start a web authentication session with the default web browser." = "Unable to start a web authentication session with the default web browser.";
+
+/* Feed name */
+"Untitled" = "Untitled";
+
+/* Folder name */
+"Untitled ƒ" = "Untitled f";
+
