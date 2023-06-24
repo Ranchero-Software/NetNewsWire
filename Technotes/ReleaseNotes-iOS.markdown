@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.3 TestFlight build 6118 - 23 June 2023
+
+Fix release notes URL: it’s now https://github.com/Ranchero-Software/NetNewsWire/releases/
+
 ### 6.1.3 TestFlight build 6117 - 18 June 2023
 
 Show Reddit shutoff alert to people using Reddit integration.
