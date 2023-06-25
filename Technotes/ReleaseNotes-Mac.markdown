@@ -1,5 +1,63 @@
 # Mac Release Notes
 
+## 6.1.3 build 6118 25 June 2023
+
+Change release notes URL to point to release notes page: https://github.com/Ranchero-Software/NetNewsWire/releases/
+
+### 6.1.3b1 build 6117 18 June 2023
+
+Show Reddit deprecation notice on startup if needed.
+
+## 6.1.2 build 6114 8 Apr 2023
+
+Update default feeds to remove feeds that don’t appear to be active anymore (sadly!).
+
+## 6.1.1 build 6112 13 Mar 2023
+
+Revised Twitter removal warning to not mention any specific month. We’re holding this release until Twitter shuts down free access to its API.
+
+## 6.1.1 build 6111 9 Feb 2023
+
+Same as 6.1.1b4 but with updated build and version number.
+
+### 6.1.1b4 build 6110 9 Feb 2023
+
+Update the Twitter removal warning to say “later in February” instead of “February 9,” since Twitter postponed the removal date to the 13th and might postpone it further.
+
+### 6.1.1b3 build 6109 6 Feb 2023
+
+Update Safari extension icon (credit to Louie Mantia for the new icon)
+
+### 6.1.1b2 build 6108 5 Feb 2023
+
+Remove Twitter integration. On first launch, for people with Twitter feeds, display an alert explaining what happened
+
+Fix a crashing bug that could happen in the sidebar
+
+### 6.1.1b1 build 6107 3 Nov 2022
+
+Fixed a bug that could prevent users from accessing BazQux if an article was missing a field
+Fixed an issue that could prevent Feedly users from syncing if they tried to mark too many articles as read at the same time
+
+### 6.1 build 6106 6 April 2022
+
+Small cosmetic change — better alignment for items in General Preferences pane
+
+### 6.1b5 build 6104 3 April 2022
+
+Updated built-in feeds
+Building on a new Apple Silicon Mac — testing to make sure all’s well
+
+### 6.1b4 build 6103 27 Feb 2022
+
+Fixed a few font and sizing issues
+
+
+### 6.1b3 build 6102 - 8 Feb 2022
+
+Two new themes: Hyperlegible and NewsFax
+Change in how built-in themes work: they’re part of the app bundle and they’re not copied into the Themes folder. When a built-in theme changes in a new app release, anyone using that new version gets the changes to the built-in theme
+
 ### 6.1b2 build 6101 - 17 Jan 2022
 
 Dealt with provisioning profiles, certificates, and IDs. Made notarization service happy.
