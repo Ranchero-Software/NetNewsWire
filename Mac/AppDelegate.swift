@@ -455,7 +455,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
-		let isSpecialAccountAvailable = AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit })
 
 		if item.action == #selector(refreshAll(_:)) {
 			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty

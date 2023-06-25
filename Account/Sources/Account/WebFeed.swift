@@ -221,18 +221,6 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
     
-    // MARK: - Feed Provider
-    public var isFeedProvider: Bool {
-        get {
-            guard let webfeedURL = URL(string: url),
-                  let components = URLComponents(url: webfeedURL, resolvingAgainstBaseURL: false) else {
-                return false
-            }
-
-            return false
-        }
-    }
-    
     // MARK: - NotificationDisplayName
     public var notificationDisplayName: String {
         #if os(macOS)
