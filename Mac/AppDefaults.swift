@@ -24,7 +24,6 @@ final class AppDefaults {
 	struct Key {
 		static let firstRunDate = "firstRunDate"
 		static let windowState = "windowState"
-		static let activeExtensionPointIDs = "activeExtensionPointIDs"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let sidebarFontSize = "sidebarFontSize"
 		static let timelineFontSize = "timelineFontSize"
@@ -82,15 +81,6 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.windowState)
-		}
-	}
-	
-	var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
-		get {
-			return UserDefaults.standard.object(forKey: Key.activeExtensionPointIDs) as? [[AnyHashable : AnyHashable]]
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.activeExtensionPointIDs)
 		}
 	}
 	
