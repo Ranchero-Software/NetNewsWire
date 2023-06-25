@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+## 6.1.4b1 build 6119 25 June 2023
+
+Remove Reddit API integration. Remove UI and code for Extensions.
+
 ## 6.1.3 build 6118 25 June 2023
 
 Change release notes URL to point to release notes page: https://github.com/Ranchero-Software/NetNewsWire/releases/
