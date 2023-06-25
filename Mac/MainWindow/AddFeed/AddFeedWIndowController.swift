@@ -11,7 +11,6 @@ import Account
 
 enum AddFeedWindowControllerType {
 	case webFeed
-	case redditFeed
 }
 
 protocol AddFeedWindowControllerDelegate: AnyObject {
