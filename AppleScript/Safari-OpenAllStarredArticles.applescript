@@ -36,8 +36,8 @@ set safariWindow to missing value
 --for each one of those, open a new tab in Safari
 
 tell application "NetNewsWire"
-	set allAccounts to every account
-	repeat with nthAccount in allAccounts
+	set allActiveAccounts to every account where active is true
+	repeat with nthAccount in allActiveAccounts
 		set userFeeds to allWebFeeds of nthAccount
 		repeat with nthFeed in userFeeds
 			set starredArticles to (get every article of nthFeed where starred is true)

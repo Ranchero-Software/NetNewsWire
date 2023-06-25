@@ -34,8 +34,8 @@ end tell
 
 set totalFeeds to 0
 tell application "NetNewsWire"
-	set allAccounts to every account
-	repeat with nthAccount in allAccounts
+	set allActiveAccounts to every account where active is true
+	repeat with nthAccount in allActiveAccounts
 		set userFeeds to allWebFeeds of nthAccount
 		repeat with nthFeed in userFeeds
 			set feedname to name of nthFeed
