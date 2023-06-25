@@ -79,12 +79,12 @@ struct AppAssets {
 		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
 	}()
 
-	static var extensionPointMarsEdit: RSImage = {
-		return RSImage(named: "extensionPointMarsEdit")!
+	static var marsEditIcon: RSImage = {
+		return RSImage(named: "MarsEditIcon")!
 	}()
 	
-	static var extensionPointMicroblog: RSImage = {
-		return RSImage(named: "extensionPointMicroblog")!
+	static var microblogIcon: RSImage = {
+		return RSImage(named: "MicroblogIcon")!
 	}()
 	
 	static var faviconTemplateImage: RSImage = {
