@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+## 6.1.3 build 6118 25 June 2023
+
+Change release notes URL to point to release notes page: https://github.com/Ranchero-Software/NetNewsWire/releases/
+
 ### 6.1.3b1 build 6117 18 June 2023
 
 Show Reddit deprecation notice on startup if needed.
