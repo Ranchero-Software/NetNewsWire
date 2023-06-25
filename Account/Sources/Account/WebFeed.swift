@@ -152,14 +152,9 @@ public final class WebFeed: Feed, Renamable, Hashable {
 	
 	public var isArticleExtractorAlwaysOn: Bool? {
 		get {
-            if isFeedProvider == true { return false } // not an option for FeedProviders
-			return metadata.isArticleExtractorAlwaysOn
+            metadata.isArticleExtractorAlwaysOn
 		}
 		set {
-            if isFeedProvider == true {
-                metadata.isArticleExtractorAlwaysOn = false
-                return
-            }
 			metadata.isArticleExtractorAlwaysOn = newValue
 		}
 	}

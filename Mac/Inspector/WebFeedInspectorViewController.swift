@@ -139,10 +139,8 @@ private extension WebFeedInspectorViewController {
 		updateNotifyAboutNewArticles()
 		updateIsReaderViewAlwaysOn()
 		windowTitle = feed?.nameForDisplay ?? NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
+		isReaderViewAlwaysOnCheckBox?.isEnabled = true
 		view.needsLayout = true
-		if let webfeed = feed {
-			webfeed.isFeedProvider ? (isReaderViewAlwaysOnCheckBox?.isEnabled = false) : (isReaderViewAlwaysOnCheckBox?.isEnabled = true)
-		}
 	}
 
 	func updateImage() {
