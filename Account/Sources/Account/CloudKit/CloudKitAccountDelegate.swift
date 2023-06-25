@@ -176,20 +176,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		guard let url = URL(string: urlString), let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
 		}
 		
 		let editedName = name == nil || name!.isEmpty ? nil : name
 
-		// Username should be part of the URL on new feed adds
-		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
-			createProviderWebFeed(for: account, urlComponents: urlComponents, editedName: editedName, container: container, feedProvider: feedProvider, completion: completion)
-		} else {
-			createRSSWebFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed, completion: completion)
-		}
-		
+		createRSSWebFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed, completion: completion)
 	}
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -570,119 +564,15 @@ private extension CloudKitAccountDelegate {
 
 	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		var refresherWebFeeds = Set<WebFeed>()
 		let group = DispatchGroup()
-		var feedProviderError: Error? = nil
-		
-		for webFeed in webFeeds {
-			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
-				group.enter()
-				feedProvider.refresh(webFeed) { result in
-					switch result {
-					case .success(let parsedItems):
-						
-						account.update(webFeed.webFeedID, with: parsedItems) { result in
-							switch result {
-							case .success(let articleChanges):
-								self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles) {
-									self.refreshProgress.completeTask()
-									group.leave()
-								}
-							case .failure(let error):
-								os_log(.error, log: self.log, "CloudKit Feed refresh update error: %@.", error.localizedDescription)
-								self.refreshProgress.completeTask()
-								group.leave()
-							}
-							
-						}
 
-					case .failure(let error):
-						os_log(.error, log: self.log, "CloudKit Feed refresh error: %@.", error.localizedDescription)
-						feedProviderError = error
-						self.refreshProgress.completeTask()
-						group.leave()
-					}
-				}
-			} else {
-				refresherWebFeeds.insert(webFeed)
-			}
-		}
-		
 		group.enter()
-		refresher.refreshFeeds(refresherWebFeeds) {
+		refresher.refreshFeeds(webFeeds) {
 			group.leave()
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			if let error = feedProviderError {
-				completion(.failure(error))
-			} else {
-				completion(.success(()))
-			}
-		}
-
-	}
-
-	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
-		
-		feedProvider.metaData(urlComponents) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-				
-			case .success(let metaData):
-
-				guard let urlString = urlComponents.url?.absoluteString else {
-					self.refreshProgress.completeTasks(4)
-					completion(.failure(AccountError.createErrorNotFound))
-					return
-				}
-				
-				self.accountZone.createWebFeed(url: urlString, name: metaData.name, editedName: editedName, homePageURL: metaData.homePageURL, container: container) { result in
-
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success(let externalID):
-
-						let feed = account.createWebFeed(with: metaData.name, url: urlString, webFeedID: urlString, homePageURL: metaData.homePageURL)
-						feed.editedName = editedName
-						feed.externalID = externalID
-						container.addWebFeed(feed)
-
-						feedProvider.refresh(feed) { result in
-							self.refreshProgress.completeTask()
-							switch result {
-							case .success(let parsedItems):
-								
-								account.update(urlString, with: parsedItems) { result in
-									switch result {
-									case .success:
-										self.sendNewArticlesToTheCloud(account, feed)
-										self.refreshProgress.clear()
-										completion(.success(feed))
-									case .failure(let error):
-										self.refreshProgress.completeTasks(2)
-										completion(.failure(error))
-									}
-									
-								}
-								
-							case .failure:
-								self.refreshProgress.completeTasks(3)
-								completion(.failure(AccountError.createErrorNotFound))
-							}
-						}
-						
-					case .failure(let error):
-						self.refreshProgress.completeTasks(4)
-						completion(.failure(error))
-					}
-				}
-
-			case .failure:
-				self.refreshProgress.completeTasks(4)
-				completion(.failure(AccountError.createErrorNotFound))
-			}
+            completion(.success(()))
 		}
 	}
 	
