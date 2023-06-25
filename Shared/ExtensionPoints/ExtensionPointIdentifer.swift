@@ -11,28 +11,25 @@ import Account
 import RSCore
 
 enum ExtensionPointIdentifer: Hashable {
-	#if os(macOS)
+#if os(macOS)
 	case marsEdit
 	case microblog
-	#endif
-	case reddit(String)
+#endif
 
 	var extensionPointType: ExtensionPoint.Type {
 		switch self {
-		#if os(macOS)
+#if os(macOS)
 		case .marsEdit:
 			return SendToMarsEditCommand.self
 		case .microblog:
 			return SendToMicroBlogCommand.self
-		#endif
-		case .reddit:
-			return RedditFeedProvider.self
+#endif
 		}
 	}
 	
 	public var userInfo: [AnyHashable: AnyHashable] {
 		switch self {
-		#if os(macOS)
+#if os(macOS)
 		case .marsEdit:
 			return [
 				"type": "marsEdit"
@@ -41,12 +38,7 @@ enum ExtensionPointIdentifer: Hashable {
 			return [
 				"type": "microblog"
 			]
-		#endif
-		case .reddit(let username):
-			return [
-				"type": "reddit",
-				"username": username
-			]
+#endif
 		}
 	}
 	
@@ -54,15 +46,12 @@ enum ExtensionPointIdentifer: Hashable {
 		guard let type = userInfo["type"] as? String else { return nil }
 		
 		switch type {
-		#if os(macOS)
+#if os(macOS)
 		case "marsEdit":
 			self = ExtensionPointIdentifer.marsEdit
 		case "microblog":
 			self = ExtensionPointIdentifer.microblog
-		#endif
-		case "reddit":
-			guard let username = userInfo["username"] as? String else { return nil }
-			self = ExtensionPointIdentifer.reddit(username)
+#endif
 		default:
 			return nil
 		}
@@ -70,16 +59,12 @@ enum ExtensionPointIdentifer: Hashable {
 	
 	public func hash(into hasher: inout Hasher) {
 		switch self {
-		#if os(macOS)
+#if os(macOS)
 		case .marsEdit:
 			hasher.combine("marsEdit")
 		case .microblog:
 			hasher.combine("microblog")
-		#endif
-		case .reddit(let username):
-			hasher.combine("reddit")
-			hasher.combine(username)
+#endif
 		}
 	}
-	
 }
