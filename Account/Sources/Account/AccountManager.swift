@@ -393,8 +393,8 @@ public final class AccountManager: UnreadCountProvider {
     ///
     /// More info: [Pathogen-David's Guide to RSS and Reddit!](https://www.reddit.com/r/pathogendavid/comments/tv8m9/pathogendavids_guide_to_rss_and_reddit/)
     private func feedRequiresRedditAPI(_ feed: WebFeed) -> Bool {
-        if let components = URLComponents(string: webfeed.url), let host = components.host {
-            return host.hasSuffix("reddit.com") && !path.hasSuffix(".rss")
+        if let components = URLComponents(string: feed.url), let host = components.host {
+            return host.hasSuffix("reddit.com") && !components.path.hasSuffix(".rss")
         }
         return false
     }
