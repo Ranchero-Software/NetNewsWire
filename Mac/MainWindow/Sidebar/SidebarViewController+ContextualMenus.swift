@@ -239,21 +239,17 @@ private extension SidebarViewController {
 			notificationMenuItem.state = .on
 		}
 		menu.addItem(notificationMenuItem)
-		
-		
-		if !webFeed.isFeedProvider {
-			let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
-			let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
-			
-			if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
-				articleExtractorMenuItem.state = .off
-			} else {
-				articleExtractorMenuItem.state = .on
-			}
-			menu.addItem(articleExtractorMenuItem)
+
+		let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
+		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
+
+		if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
+			articleExtractorMenuItem.state = .off
+		} else {
+			articleExtractorMenuItem.state = .on
 		}
-		
-		
+		menu.addItem(articleExtractorMenuItem)
+
 		menu.addItem(NSMenuItem.separator())
 		
 		menu.addItem(renameMenuItem(webFeed))

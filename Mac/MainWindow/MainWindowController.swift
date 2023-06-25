@@ -1145,12 +1145,7 @@ private extension MainWindowController {
 			}
 			
 			if let webfeed = currentTimelineViewController?.selectedArticles.first?.webFeed {
-				if webfeed.isFeedProvider {
-					toolbarButton.isEnabled = false
-					return false
-				} else {
-					toolbarButton.isEnabled = true
-				}
+				toolbarButton.isEnabled = true
 			}
 
 			guard let state = articleExtractor?.state else {
@@ -1177,12 +1172,7 @@ private extension MainWindowController {
 			}
 			
 			if let webfeed = currentTimelineViewController?.selectedArticles.first?.webFeed {
-				if webfeed.isFeedProvider {
-					toolbarButton.isEnabled = false
-					return false
-				} else {
-					toolbarButton.isEnabled = true
-				}
+				toolbarButton.isEnabled = true
 			}
 			
 			toolbarButton.state = isShowingExtractedArticle ? .on : .off
