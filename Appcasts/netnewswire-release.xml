@@ -7,6 +7,17 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.1.3</title>
+            <description><![CDATA[
+            <p>Show Reddit deprecation notice on startup if needed.</p>
+            <p>For more information, read <a href="https://netnewswire.blog/2023/06/11/netnewswire-to-end.html">NetNewsWire to End Reddit API Use by End of June</a>.</p>
+            ]]></description>
+            <pubDate>Sun, 25 Jun 2023 14:00:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.3/NetNewsWire6.1.3.zip" sparkle:version="6118" sparkle:shortVersionString="6.1.3" length="10876175" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.1.2</title>
             <description><![CDATA[
             <p><b>Twitter integration has been removed:</b> Twitter has suspended NetNewsWire, and Twitter is removing free access to the Twitter API</p>
