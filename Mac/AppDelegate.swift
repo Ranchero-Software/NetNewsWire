@@ -995,7 +995,7 @@ internal extension AppDelegate {
 			return false
 		}
 
-		return ExtensionPointManager.shared.isRedditEnabled
+		return AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneRedditAPIFeed()
 	}
 
 	private func showRedditDeprecationAlert() {
@@ -1006,7 +1006,7 @@ internal extension AppDelegate {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Reddit API Integration Removed", comment: "Reddit API Integration Removed")
-			alert.informativeText = NSLocalizedString("Reddit has announced the end of free access to their API, effective July 1.\n\nThough Reddit does provide RSS feeds, we use the Reddit API to get more and better data. But, without free access to that API, we will stop using it on June 30, 2023.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded.\n\nAlso, importantly — after you remove Reddit from your extensions in NetNewsWire, you can add Reddit RSS feeds and those feeds will continue to update.", comment: "Reddit deprecation message")
+			alert.informativeText = NSLocalizedString("Reddit has ended free access to their API.\n\nThough Reddit does provide RSS feeds, we used the Reddit API to get more and better data. But, without free access to that API, we have had to stop using it.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded.\n\nAlso, importantly — Reddit still provides RSS feeds, and you can follow Reddit activity through RSS.", comment: "Reddit deprecation message")
 			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
 			alert.buttons[0].keyEquivalent = "\r"
 			alert.runModal()
