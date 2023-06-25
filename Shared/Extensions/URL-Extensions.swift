@@ -20,19 +20,9 @@ extension URL {
 		scheme == "mailto" ? self.string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)?.url : nil
 	}
 	
-	/// URL pointing to current app version release notes.
-	static var releaseNotes: URL {
-		let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
-		var gitHub = "https://github.com/Ranchero-Software/NetNewsWire/releases/tag/"
-		#if os(macOS)
-		gitHub += "mac-\(String(describing: appVersion))"
-		return URL(string: gitHub)!
-		#else
-		gitHub += "ios-\(String(describing: appVersion))"
-		return URL(string: gitHub)!
-		#endif
-	}
-	
+	/// Reverse chronological list of release notes.
+	static var releaseNotes = URL(string: "https://github.com/Ranchero-Software/NetNewsWire/releases/")!
+
 	func valueFor(_ parameter: String) -> String? {
 		guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
 			  let queryItems = components.queryItems,
