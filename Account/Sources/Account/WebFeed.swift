@@ -233,11 +233,8 @@ public final class WebFeed: Feed, Renamable, Hashable {
                   let components = URLComponents(url: webfeedURL, resolvingAgainstBaseURL: false) else {
                 return false
             }
-            
-            if FeedProviderManager.shared.best(for: components) == nil {
-                return false
-            }
-            return true
+
+            return false
         }
     }
     

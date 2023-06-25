@@ -27,7 +27,7 @@ public enum ExtensionPointManagerError: LocalizedError {
 }
 
 
-final class ExtensionPointManager: FeedProviderManagerDelegate {
+final class ExtensionPointManager {
 	
 	static let shared = ExtensionPointManager()
 
@@ -63,10 +63,6 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		#endif
 		
 		return commands
-	}
-	
-	var activeFeedProviders: [FeedProvider] {
-		return activeExtensionPoints.values.compactMap({ return $0 as? FeedProvider })
 	}
 	
 	init() {
@@ -126,14 +122,4 @@ private extension ExtensionPointManager {
 		#endif
 		}
 	}
-	
-	func feedProviderMatching(_ offered: URLComponents, ability: FeedProviderAbility) -> FeedProvider? {
-		for extensionPoint in activeExtensionPoints.values {
-			if let feedProvider = extensionPoint as? FeedProvider, feedProvider.ability(offered) == ability {
-				return feedProvider
-			}
-		}
-		return nil
-	}
-
 }

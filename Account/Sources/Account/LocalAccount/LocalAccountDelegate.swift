@@ -50,48 +50,20 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 
-		var refresherWebFeeds = Set<WebFeed>()
 		let webFeeds = account.flattenedWebFeeds()
 		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
 
 		let group = DispatchGroup()
-		var feedProviderError: Error? = nil
-		
-		for webFeed in webFeeds {
-			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
-				group.enter()
-				feedProvider.refresh(webFeed) { result in
-					switch result {
-					case .success(let parsedItems):
-						account.update(webFeed.webFeedID, with: parsedItems) { _ in
-							self.refreshProgress.completeTask()
-							group.leave()
-						}
-					case .failure(let error):
-						os_log(.error, log: self.log, "Feed Provider refresh error: %@.", error.localizedDescription)
-						feedProviderError = error
-						self.refreshProgress.completeTask()
-						group.leave()
-					}
-				}
-			} else {
-				refresherWebFeeds.insert(webFeed)
-			}
-		}
-		
+
 		group.enter()
-		refresher?.refreshFeeds(refresherWebFeeds) {
+		refresher?.refreshFeeds(webFeeds) {
 			group.leave()
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
 			self.refreshProgress.clear()
 			account.metadata.lastArticleFetchEndTime = Date()
-			if let error = feedProviderError {
-				completion(.failure(error))
-			} else {
-				completion(.success(()))
-			}
+			completion(.success(()))
 		}
 		
 	}
@@ -156,12 +128,7 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		// Username should be part of the URL on new feed adds
-		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
-			createProviderWebFeed(for: account, urlComponents: urlComponents, editedName: name, container: container, feedProvider: feedProvider, completion: completion)
-		} else {
-			createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
-		}
+        createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 	}
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -263,44 +230,6 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 }
 
 private extension LocalAccountDelegate {
-	
-	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		
-		feedProvider.metaData(urlComponents) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-				
-			case .success(let metaData):
-
-				guard let urlString = urlComponents.url?.absoluteString else {
-					completion(.failure(AccountError.createErrorNotFound))
-					return
-				}
-
-				let feed = account.createWebFeed(with: metaData.name, url: urlString, webFeedID: urlString, homePageURL: metaData.homePageURL)
-				feed.editedName = editedName
-				container.addWebFeed(feed)
-
-				feedProvider.refresh(feed) { result in
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success(let parsedItems):
-						account.update(urlString, with: parsedItems) { _ in
-							completion(.success(feed))
-						}
-					case .failure(let error):
-						self.refreshProgress.clear()
-						completion(.failure(error))
-					}
-				}
-				
-			case .failure:
-				self.refreshProgress.clear()
-				completion(.failure(AccountError.createErrorNotFound))
-			}
-		}
-	}
 	
 	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 
