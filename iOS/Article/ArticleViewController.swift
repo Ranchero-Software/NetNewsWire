@@ -191,11 +191,7 @@ class ArticleViewController: UIViewController {
 		starBarButtonItem.isEnabled = true
 		
 		let permalinkPresent = article.preferredLink != nil
-		var isFeedProvider = false
-		if let webfeed = article.webFeed {
-			isFeedProvider = webfeed.isFeedProvider
-		}
-		articleExtractorButton.isEnabled = permalinkPresent && !AppDefaults.shared.isDeveloperBuild && !isFeedProvider
+		articleExtractorButton.isEnabled = permalinkPresent && !AppDefaults.shared.isDeveloperBuild
 		actionBarButtonItem.isEnabled = permalinkPresent
 		
 		if article.status.read {
