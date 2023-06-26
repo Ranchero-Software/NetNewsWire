@@ -17,7 +17,13 @@ extension URL {
 	
 	/// Percent encoded `mailto` URL for use with `canOpenUrl`. If the URL doesn't contain the `mailto` scheme, this is `nil`.
 	var percentEncodedEmailAddress: URL? {
-		scheme == "mailto" ? self.string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)?.url : nil
+		guard scheme == "mailto" else {
+			return nil
+		}
+		guard let urlString = absoluteString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+			return nil
+		}
+		return URL(string: urlString)
 	}
 	
 	/// Reverse chronological list of release notes.
