@@ -18,7 +18,6 @@
 
 import Foundation
 import Articles
-import Zip
 
 protocol AppDelegateAppleEvents {
     func installAppleEventHandlers()
