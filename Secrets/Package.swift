@@ -8,16 +8,14 @@ let package = Package(
         .library(
             name: "Secrets",
 			type: .dynamic,
-            targets: ["Secrets"]),
+            targets: ["Secrets"]
+        )
     ],
-    dependencies: [
-		.package(url: "https://github.com/OAuthSwift/OAuthSwift.git", .exact("2.1.2")),
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "Secrets",
-            dependencies: [
-				"OAuthSwift",
-			]),
+            dependencies: []
+        )
     ]
 )
