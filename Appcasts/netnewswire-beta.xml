@@ -6,6 +6,18 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
+       <item>
+            <title>NetNewsWire 6.1.4b1</title>
+            <description><![CDATA[
+            <p><b>This build removes Reddit API integration! Don’t install it if you’re not ready for that to happen!</b></p>
+            <p>But note that Reddit API integration will end June 30, due to Reddit CEO Steve Huffman’s decision to make apps like NetNewsWire pay to use the Reddit API.</p>
+            <p>For more information, read <a href="https://netnewswire.blog/2023/06/11/netnewswire-to-end.html">NetNewsWire to End Reddit API Use by End of June</a>.</p>
+            ]]></description>
+            <pubDate>Mon, 26 Jun 2023 21:30:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.4b1/NetNewsWire6.1.4b1.zip" sparkle:version="6119" sparkle:shortVersionString="6.1.4b1" length="10313938" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
         <item>
             <title>NetNewsWire 6.1.3</title>
             <description><![CDATA[
