@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+## 6.1.4 build 6120 27 June 2023
+
+Same as 6.1.4b1 but as final release.
+
 ## 6.1.4b1 build 6119 25 June 2023
 
 Remove Reddit API integration. Remove UI and code for Extensions.
