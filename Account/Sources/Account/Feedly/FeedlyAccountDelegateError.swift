@@ -23,41 +23,41 @@ enum FeedlyAccountDelegateError: LocalizedError {
 	var errorDescription: String? {
 		switch self {
 		case .notLoggedIn:
-            return String(localized: "Please add the Feedly account again. If this problem persists, open Keychain Access and delete all feedly.com entries, then try again.", bundle: .module, comment: "Feedly – Credentials not found.")
+            return String(localized: "error.feedly.credentials-not-found", bundle: .module, comment: "Feedly – Credentials not found.")
 			
 		case .unexpectedResourceId(let resourceId):
-            let template = String(localized: "Could not encode the identifier “%@”.", bundle: .module, comment: "Feedly – Could not encode resource id to send to Feedly.")
+            let template = String(localized: "error.message.could-not-encode-identifier-\(resourceId)", bundle: .module, comment: "Feedly – Could not encode resource id to send to Feedly.")
 			return String(format: template, resourceId)
 			
 		case .unableToAddFolder(let name):
-            let template = String(localized: "Could not create a folder named “%@”.", bundle: .module, comment: "Feedly – Could not create a folder/collection.")
+            let template = String(localized: "error.message.could-not-create-folder-\(name)", bundle: .module, comment: "Feedly – Could not create a folder/collection.")
 			return String(format: template, name)
 			
 		case .unableToRenameFolder(let from, let to):
-            let template = String(localized: "Could not rename “%@” to “%@”.", bundle: .module, comment: "Feedly – Could not rename a folder/collection.")
+            let template = String(localized: "error.message.could-not-rename-folder", bundle: .module, comment: "Feedly – Could not rename a folder/collection.")
 			return String(format: template, from, to)
 			
 		case .unableToRemoveFolder(let name):
-            let template = String(localized: "Could not remove the folder named “%@”.", bundle: .module, comment: "Feedly – Could not remove a folder/collection.")
+            let template = String(localized: "error.message.could-not-remove-folder-\(name)", bundle: .module, comment: "Feedly – Could not remove a folder/collection.")
 			return String(format: template, name)
 			
 		case .unableToMoveFeedBetweenFolders(let feed, _, let to):
-            let template = String(localized: "Could not move “%@” to “%@”.", bundle: .module, comment: "Feedly – Could not move a feed between folders/collections.")
+            let template = String(localized: "error.message.could-not-move-feed", bundle: .module, comment: "Feedly – Could not move a feed between folders/collections.")
 			return String(format: template, feed.nameForDisplay, to.nameForDisplay)
 			
 		case .addFeedChooseFolder:
-            return String(localized: "Please choose a folder to contain the feed.", bundle: .module, comment: "Feedly – Feed can only be added to folders.")
+            return String(localized: "error.message.folder-not-chosen", bundle: .module, comment: "Feedly – Feed can only be added to folders.")
 			
 		case .addFeedInvalidFolder(let invalidFolder):
-            let template = String(localized: "Feeds cannot be added to the “%@” folder.", bundle: .module, comment: "Feedly – Feed can only be added to folders.")
+            let template = String(localized: "error.message.could-not-add-to-folder", bundle: .module, comment: "Feedly – Feed can only be added to folders.")
 			return String(format: template, invalidFolder.nameForDisplay)
 			
 		case .unableToRenameFeed(let from, let to):
-            let template = String(localized: "Could not rename “%@” to “%@”.", bundle: .module, comment: "Feedly – Could not rename a feed.")
+            let template = String(localized: "error.message.could-not-rename-feed", bundle: .module, comment: "Feedly – Could not rename a feed.")
 			return String(format: template, from, to)
 			
 		case .unableToRemoveFeed(let feed):
-            let template = String(localized: "Could not remove “%@”.", bundle: .module, comment: "Feedly – Could not remove a feed.")
+            let template = String(localized: "error.message.could-not-remove-feed", bundle: .module, comment: "Feedly – Could not remove a feed.")
 			return String(format: template, feed.nameForDisplay)
 		}
 	}
@@ -68,7 +68,7 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			return nil
 			
 		case .unexpectedResourceId:
-            let template = String(localized: "Please contact NetNewsWire support.", bundle: .module, comment: "Feedly – Recovery suggestion for not being able to encode a resource id to send to Feedly..")
+            let template = String(localized: "error.message.contact-support", bundle: .module, comment: "Feedly – Recovery suggestion for not being able to encode a resource id to send to Feedly..")
 			return String(format: template)
 			
 		case .unableToAddFolder:
@@ -81,14 +81,14 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			return nil
 			
 		case .unableToMoveFeedBetweenFolders(let feed, let from, let to):
-            let template = String(localized: "“%@” may be in both “%@” and “%@”.", bundle: .module, comment: "Feedly – Could not move a feed between folders/collections.")
+            let template = String(localized: "error.message.unable-to-move-feed-between-folders", bundle: .module, comment: "Feedly – Could not move a feed between folders/collections.")
 			return String(format: template, feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)
 			
 		case .addFeedChooseFolder:
 			return nil
 			
 		case .addFeedInvalidFolder:
-            return String(localized: "Please choose a different folder to contain the feed.", bundle: .module, comment: "Feedly – Feed can only be added to folders recovery suggestion.")
+            return String(localized: "error.message.add-feed-invalid-folder", bundle: .module, comment: "Feedly – Feed can only be added to folders recovery suggestion.")
 			
 		case .unableToRemoveFeed:
 			return nil

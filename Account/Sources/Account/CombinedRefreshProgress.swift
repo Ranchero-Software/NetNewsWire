@@ -61,15 +61,15 @@ public struct CombinedRefreshProgress {
 			if isInprecise {
 				if numberOfDownloadsActive == 1 {
 					if let activeName = downloadProgressArray.first(where: { $0.isComplete == false })?.name {
-                        let formatString = String(localized: "Syncing %@", bundle: .module, comment: "Status bar progress")
+                        let formatString = String(localized: "message.activeName.syncing-%@", bundle: .module, comment: "Status bar progress")
 						label = NSString(format: formatString as NSString, activeName) as String
 					}
 				} else {
-                    let formatString = String(localized: "Syncing %@ accounts", bundle: .module, comment: "Status bar progress")
+                    let formatString = String(localized: "message.syncing-%@-accounts", bundle: .module, comment: "Status bar progress")
 					label = NSString(format: formatString as NSString, NSNumber(value: numberOfDownloadsActive)) as String
 				}
 			} else {
-                let formatString = String(localized: "%@ of %@", bundle: .module, comment: "Status bar progress")
+                let formatString = String(localized: "%@-of-%@", bundle: .module, comment: "Status bar progress")
 				label = NSString(format: formatString as NSString, NSNumber(value: numberCompleted), NSNumber(value: numberOfTasks)) as String
 			}
 		}

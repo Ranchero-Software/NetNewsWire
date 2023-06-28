@@ -19,7 +19,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	case duplicateAccount
 	
 	public var errorDescription: String? {
-        return String(localized: "There is already a Feedly account with that username created.", bundle: .module, comment: "Duplicate Error")
+        return String(localized: "error.description.duplicate-error", bundle: .module, comment: "Duplicate Error")
 	}
 }
 @objc public final class OAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
@@ -79,9 +79,9 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 			/// Documentation does not say on why `ASWebAuthenticationSession.start` or `canStart` might return false.
 			/// Perhaps it has something to do with an inter-process communication failure? No browsers installed? No browsers that support web authentication?
 			struct UnableToStartASWebAuthenticationSessionError: LocalizedError {
-                let errorDescription: String? = String(localized: "Unable to start a web authentication session with the default web browser.", bundle: .module,
+                let errorDescription: String? = String(localized: "localisederror.message-unable-to-start-as-web-authentication-session-error", bundle: .module,
 																  comment: "OAuth - error description - unable to authorize because ASWebAuthenticationSession did not start.")
-                let recoverySuggestion: String? = String(localized: "Check your default web browser in System Preferences or change it to Safari and try again.", bundle: .module,
+                let recoverySuggestion: String? = String(localized: "oauth.recoverysuggestion.ensure-browser-supports-web-authentication", bundle: .module,
 																	comment: "OAuth - recovery suggestion - ensure browser selected supports web authentication.")
 			}
 			

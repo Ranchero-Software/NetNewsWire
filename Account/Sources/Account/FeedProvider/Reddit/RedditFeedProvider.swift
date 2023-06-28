@@ -21,11 +21,11 @@ public enum RedditFeedProviderError: LocalizedError {
 	public var errorDescription: String? {
 		switch self {
 		case .rateLimitExceeded:
-            return String(localized: "Reddit API rate limit has been exceeded.  Please wait a short time and try again.", bundle: .module, comment: "Rate Limit")
+            return String(localized: "error.message.reddit-api-limit-exceeded", bundle: .module, comment: "Rate Limit")
 		case .accessFailure(let error):
-            return String(localized: "An attempt to access your Reddit feed(s) failed.\n\nIf this problem persists, please deactivate and reactivate the Reddit extension to fix this problem.\n\n\(error.localizedDescription)", bundle: .module, comment: "Reddit Access")
+            return String(localized: "error.message.reddit-access.failure.\n\n\(error.localizedDescription)", bundle: .module, comment: "Reddit Access")
 		case .unknown:
-            return String(localized: "A Reddit Feed Provider error has occurred.", bundle: .module, comment: "Unknown error")
+            return String(localized: "error.message.unknown-error-contact-support", bundle: .module, comment: "Unknown error")
 		}
 	}
 }
@@ -45,8 +45,8 @@ public final class RedditFeedProvider: FeedProvider, RedditFeedProviderTokenRefr
 	private static let userAgentHeaders = UserAgent.headers() as! [String: String]
 	
 	private static let pseudoSubreddits = [
-        "popular": String(localized: "Popular", bundle: .module, comment: "Popular"),
-        "all": String(localized:"All", bundle: .module, comment: "All")
+        "popular": String(localized: "message-popular", bundle: .module, comment: "Popular"),
+        "all": String(localized:"message-all", bundle: .module, comment: "All")
 	]
 	
 	private let operationQueue = MainThreadOperationQueue()
@@ -126,7 +126,7 @@ public final class RedditFeedProvider: FeedProvider, RedditFeedProviderTokenRefr
 		// Reddit Home
 		let splitPath = path.split(separator: "/")
 		if path == "" || path == "/" || (splitPath.count == 1 && RedditSort(rawValue: String(splitPath[0])) != nil) {
-            let name = String(localized: "Reddit Home", bundle: .module, comment: "Reddit Home")
+            let name = String(localized: "reddit-home", bundle: .module, comment: "Reddit Home")
 			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)
 			completion(.success(metaData))
 			return
@@ -147,7 +147,7 @@ public final class RedditFeedProvider: FeedProvider, RedditFeedProviderTokenRefr
 		
 		// Reddit Popular, Reddit All, etc...
 		if let subredditName = Self.pseudoSubreddits[String(splitPath[1])] {
-            let localized = String(localized: "Reddit %@", bundle: .module, comment: "Reddit")
+            let localized = String(localized: "reddit-\(subredditName)", bundle: .module, comment: "Reddit")
 			let name = NSString.localizedStringWithFormat(localized as NSString, subredditName) as String
 			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: homePageURL)
 			completion(.success(metaData))

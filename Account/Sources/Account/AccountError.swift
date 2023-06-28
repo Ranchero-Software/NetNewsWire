@@ -79,15 +79,15 @@ public enum AccountError: LocalizedError {
 			switch error {
 			case TransportError.httpError(let status):
 				if isCredentialsError(status: status) {
-                    return String(localized: "Please update your credentials for this account, or ensure that your account with this service is still valid.", bundle: .module, comment: "Expired credentials")
+                    return String(localized: "error.message.credentials-expired.%@", bundle: .module, comment: "Expired credentials")
 				} else {
-                    return String(localized: "Please try again later.", bundle: .module, comment: "Try later")
+                    return String(localized: "error.message.try-later", bundle: .module, comment: "Try later")
 				}
 			default:
-                return String(localized: "Please try again later.", bundle: .module, comment: "Try later")
+                return String(localized: "error.message.try-later", bundle: .module, comment: "Try later")
 			}
 		default:
-            return String(localized: "Please try again later.", bundle: .module, comment: "Try later")
+            return String(localized: "error.message.try-later", bundle: .module, comment: "Try later")
 		}
 	}
 	
@@ -98,7 +98,7 @@ public enum AccountError: LocalizedError {
 private extension AccountError {
 	
 	func unknownError(_ error: Error, _ account: Account) -> String {
-        let localizedText = String(localized: "An error occurred while processing the “%@” account: %@", bundle: .module, comment: "Unknown error")
+        let localizedText = String(localized: "error.message.\(error.localizedDescription)", bundle: .module, comment: "Unknown error")
 		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
 	}
 	

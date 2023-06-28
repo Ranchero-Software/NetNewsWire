@@ -22,13 +22,13 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	public var errorDescription: String? {
 		switch self {
 		case .unknown:
-            return String(localized: "An unexpected error occurred.", bundle: .module, comment: "An unexpected error occurred.")
+            return String(localized: "error.message.unknown", bundle: .module, comment: "An unexpected error occurred.")
 		case .invalidParameter:
-			return String(localized: "An invalid parameter was passed.", bundle: .module, comment: "An invalid parameter was passed.")
+			return String(localized: "error.message.invalid-parameter", bundle: .module, comment: "An invalid parameter was passed.")
 		case .invalidResponse:
-			return String(localized: "There was an invalid response from the server.", bundle: .module, comment: "There was an invalid response from the server.")
+			return String(localized: "error.message.invalid-response", bundle: .module, comment: "There was an invalid response from the server.")
 		case .urlNotFound:
-			return String(localized: "The API URL wasn't found.", bundle: .module, comment: "The API URL wasn't found.")
+			return String(localized: "error.message.url-not-found", bundle: .module, comment: "The API URL wasn't found.")
 		}
 	}
 }

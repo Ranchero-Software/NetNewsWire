@@ -210,7 +210,7 @@ public final class WebFeed: Feed, Renamable, Hashable, ObservableObject {
 		if let s = name, !s.isEmpty {
 			return s
 		}
-        return String(localized: "Untitled", bundle: .module, comment: "Feed name")
+        return String(localized: "untitled", bundle: .module, comment: "Feed name")
 	}
 
 	// MARK: - Renamable

@@ -42,7 +42,7 @@ public final class Folder: Feed, Renamable, Container, Hashable {
 		}
 	}
 	
-    static let untitledName = String(localized: "Untitled ƒ", bundle: .module, comment: "Folder name")
+    static let untitledName = String(localized: "untitled-ƒ", bundle: .module, comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
 	public var isSyncingPaused = false
 	public var externalID: String? = nil
