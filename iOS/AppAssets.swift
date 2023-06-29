@@ -101,10 +101,6 @@ struct AppAssets {
 		return UIImage(named: "disclosure")!
 	}()
 	
-	static var contextMenuReddit: UIImage = {
-		return UIImage(named: "contextMenuReddit")!
-	}()
-	
 	static var copyImage: UIImage = {
 		return UIImage(systemName: "doc.on.doc")!
 	}()
@@ -117,10 +113,6 @@ struct AppAssets {
 		UIImage(systemName: "square.and.pencil")!
 	}()
 	
-	static var extensionPointReddit: RSImage = {
-		return RSImage(named: "extensionPointReddit")!
-	}()
-
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
@@ -192,10 +184,6 @@ struct AppAssets {
 	static var primaryAccentColor: UIColor {
 		return UIColor(named: "primaryAccentColor")!
 	}
-	
-	static var redditOriginal: UIImage = {
-		return UIImage(named: "redditWhite")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
-	}()
 	
 	static var safariImage: UIImage = {
 		return UIImage(systemName: "safari")!

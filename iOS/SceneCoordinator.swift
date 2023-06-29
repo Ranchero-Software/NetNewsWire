@@ -1230,13 +1230,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		masterFeedViewController.present(addNavViewController, animated: true)
 	}
 	
-	func showAddRedditFeed() {
-		let addNavViewController = UIStoryboard.redditAdd.instantiateInitialViewController() as! UINavigationController
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		masterFeedViewController.present(addNavViewController, animated: true)
-	}
-	
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet

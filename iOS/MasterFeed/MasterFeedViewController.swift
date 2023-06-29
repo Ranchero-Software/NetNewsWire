@@ -71,9 +71,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(configureContextMenu(_:)), name: .ActiveExtensionPointsDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)		
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -461,23 +459,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				self.coordinator.showAddWebFeed()
 			}
 			
-			let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			let addRedditFeedAction = UIAlertAction(title: addRedditFeedActionTitle, style: .default) { _ in
-				self.coordinator.showAddRedditFeed()
-			}
-			
 			let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
 			let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
 				self.coordinator.showAddFolder()
 			}
 			
 			alertController.addAction(addWebFeedAction)
-			
-			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
-					alertController.addAction(addRedditFeedAction)
-				}
-			}
 			
 			alertController.addAction(addWebFolderAction)
 			alertController.addAction(cancelAction)
@@ -671,29 +658,18 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			
 			/*
 				Context Menu Order:
-				1. Add Web Feed
-				2. Add Reddit Feed
+				1. Add Feed
 				3. Add Folder
 			*/
 			
 			var menuItems: [UIAction] = []
 			
-			let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+			let addWebFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
 			let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
 				self.coordinator.showAddWebFeed()
 			}
 			menuItems.append(addWebFeedAction)
 			
-			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
-					let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-					let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
-						self.coordinator.showAddRedditFeed()
-					}
-					menuItems.append(addRedditFeedAction)
-				}
-			}
-						
 			let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
 			let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
 				self.coordinator.showAddFolder()
@@ -752,7 +728,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return false
 		}
 
-		return ExtensionPointManager.shared.isRedditEnabled
+		return AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneRedditAPIFeed()
 	}
 
 	private func showRedditDeprecationAlert() {
@@ -760,7 +736,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		AppDefaults.shared.redditDeprecationAlertShown = true
 
 		let alert = UIAlertController(title: NSLocalizedString("Reddit API Integration Removed", comment: "Reddit API Integration Removed"),
-									  message: NSLocalizedString("Reddit has announced the end of free access to their API, effective July 1.\n\nThough Reddit does provide RSS feeds, we use the Reddit API to get more and better data. But, without free access to that API, we will stop using it on June 30, 2023.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded.\n\nAlso, importantly — after you remove Reddit from your extensions in NetNewsWire, you can add Reddit RSS feeds and those feeds will continue to update.", comment: "Reddit deprecation message"),
+									  message: NSLocalizedString("Reddit has ended free access to their API.\n\nThough Reddit does provide RSS feeds, we used the Reddit API to get more and better data. But, without free access to that API, we have had to stop using it.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded.\n\nAlso, importantly, you can add Reddit RSS feeds and those feeds will continue to update.", comment: "Reddit deprecation message"),
 									  preferredStyle: .alert)
 
 		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
