@@ -1,12 +1,5 @@
-
 /* Class = "NSButtonCell"; title = "Send Crash Log"; ObjectID = "7ot-Ev-JTY"; */
 "7ot-Ev-JTY.title" = "Send Crash Log";
-
-/* Class = "NSTextFieldCell"; title = "To help us fix crashing bugs, click Send Crash Log. Below is the text that will be sent to Brent. No other information will be sent."; ObjectID = "O6E-xl-G55"; */
-"O6E-xl-G55.title" = "To help us fix crashing bugs, click Send Crash Log. Below is the text that will be sent to Brent. No other information will be sent.";
-
-/* Class = "NSWindow"; title = "Crash Log Reporter"; ObjectID = "QvC-M9-y7g"; */
-"QvC-M9-y7g.title" = "Crash Log Reporter";
 
 /* Class = "NSTextFieldCell"; title = "Privacy Policy"; ObjectID = "a10-hs-ajA"; */
 "a10-hs-ajA.title" = "Privacy Policy";
@@ -22,3 +15,10 @@
 
 /* Class = "NSTextFieldCell"; title = "You can skip this window in the future by telling NetNewsWire to automatically send crash logs. You can also turn this setting on and off in the Preferences window, in the Advanced section."; ObjectID = "nou-5k-c1U"; */
 "nou-5k-c1U.title" = "You can skip this window in the future by telling NetNewsWire to automatically send crash logs. You can also turn this setting on and off in the Preferences window, in the Advanced section.";
+
+/* Class = "NSTextFieldCell"; title = "To help us fix crashing bugs, click Send Crash Log. Below is the text that will be sent to Brent. No other information will be sent."; ObjectID = "O6E-xl-G55"; */
+"O6E-xl-G55.title" = "To help us fix crashing bugs, click Send Crash Log. Below is the text that will be sent to Brent. No other information will be sent.";
+
+/* Class = "NSWindow"; title = "Crash Log Reporter"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Crash Log Reporter";
+

@@ -506,7 +506,7 @@
 "button.title.use-cloudkit" = "使用 iCloud";
 
 /* Close Image */
-"Close Image" = "关闭图像";
+"button.title.close-image" = "关闭图像";
 
 /* Unable to create extension. */
 "error.message.unable-to-create-extension" = "无法创建扩展。";

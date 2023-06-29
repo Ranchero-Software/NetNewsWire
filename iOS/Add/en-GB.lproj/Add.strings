@@ -1,24 +1,5 @@
-
 /* Class = "UILabel"; text = "Folder"; ObjectID = "3Tp-A7-7rS"; */
 "3Tp-A7-7rS.text" = "Folder";
-
-/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "F8z-me-Hnx"; */
-"F8z-me-Hnx.title" = "Add";
-
-/* Class = "UINavigationItem"; title = "Add Folder"; ObjectID = "LuA-AC-n99"; */
-"LuA-AC-n99.title" = "Add Folder";
-
-/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "QpU-Ro-nHd"; */
-"QpU-Ro-nHd.title" = "Cancel";
-
-/* Class = "UILabel"; text = "Folder"; ObjectID = "RtT-rR-5LA"; */
-"RtT-rR-5LA.text" = "Folder";
-
-/* Class = "UILabel"; text = "Account"; ObjectID = "YRf-I7-nkL"; */
-"YRf-I7-nkL.text" = "Account";
-
-/* Class = "UILabel"; text = "Account"; ObjectID = "ZQp-94-vJz"; */
-"ZQp-94-vJz.text" = "Account";
 
 /* Class = "UITableViewController"; title = "Web Feed Folder"; ObjectID = "acA-n7-ohN"; */
 "acA-n7-ohN.title" = "Web Feed Folder";
@@ -29,6 +10,9 @@
 /* Class = "UITextField"; placeholder = "URL"; ObjectID = "eRp-AP-WFq"; */
 "eRp-AP-WFq.placeholder" = "URL";
 
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "F8z-me-Hnx"; */
+"F8z-me-Hnx.title" = "Add";
+
 /* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "gXG-Xt-d9B"; */
 "gXG-Xt-d9B.title" = "Add";
 
@@ -38,11 +22,27 @@
 /* Class = "UINavigationItem"; title = "Add Web Feed"; ObjectID = "i1W-2z-PAk"; */
 "i1W-2z-PAk.title" = "Add Web Feed";
 
+/* Class = "UINavigationItem"; title = "Add Folder"; ObjectID = "LuA-AC-n99"; */
+"LuA-AC-n99.title" = "Add Folder";
+
 /* Class = "UITextField"; placeholder = "Name"; ObjectID = "lZK-wx-jbo"; */
 "lZK-wx-jbo.placeholder" = "Name";
 
 /* Class = "UILabel"; text = "Label"; ObjectID = "mxj-Bw-Jfx"; */
 "mxj-Bw-Jfx.text" = "Label";
 
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "QpU-Ro-nHd"; */
+"QpU-Ro-nHd.title" = "Cancel";
+
+/* Class = "UILabel"; text = "Folder"; ObjectID = "RtT-rR-5LA"; */
+"RtT-rR-5LA.text" = "Folder";
+
 /* Class = "UITextField"; placeholder = "Title (Optional)"; ObjectID = "u7n-VL-Ho9"; */
 "u7n-VL-Ho9.placeholder" = "Title (Optional)";
+
+/* Class = "UILabel"; text = "Account"; ObjectID = "YRf-I7-nkL"; */
+"YRf-I7-nkL.text" = "Account";
+
+/* Class = "UILabel"; text = "Account"; ObjectID = "ZQp-94-vJz"; */
+"ZQp-94-vJz.text" = "Account";
+

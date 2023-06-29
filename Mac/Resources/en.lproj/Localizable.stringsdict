@@ -12,10 +12,10 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>ld</string>
-			<key>other</key>
-			<string>Copy Article URLs</string>
 			<key>one</key>
 			<string>Copy Article URL</string>
+			<key>other</key>
+			<string>Copy Article URLs</string>
 		</dict>
 	</dict>
 </dict>

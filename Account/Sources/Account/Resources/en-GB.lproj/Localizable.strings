@@ -1,16 +1,120 @@
-/* 
-  Localizable.strings
-  
+/* Feedly – Could not move a feed between folders/collections. */
+"“%@” may be in both “%@” and “%@”." = "“%1$@” may be in both “%2$@” and “%3$@”.";
 
-  Created by Stuart Breckenridge on 11/03/2023.
-  
-*/
+/* Status bar progress */
+"%@ of %@" = "%1$@ of %2$@";
 
-"error.title.feed-not-found" = "Unable to Add Feed";
+/* Unknown error */
+"A Reddit Feed Provider error has occurred." = "A Reddit Feed Provider error has occurred.";
+
+/* Account name */
+"account.name.ipad" = "On My iPad";
+
+/* Account name */
+"account.name.iphone" = "On My iPhone";
+
+/* Account name */
+"account.name.mac" = "On My Mac";
+
+/* All */
+"All" = "All";
+
+/* Reddit Access */
+"An attempt to access your Reddit feed(s) failed.\n\nIf this problem persists, please deactivate and reactivate the Reddit extension to fix this problem.\n\n(error.localizedDescription)" = "An attempt to access your Reddit feed(s) failed.\n\nIf this problem persists, please deactivate and reactivate the Reddit extension to fix this problem.";
+
+/* Unknown error */
+"An error occurred while processing the “%@” account: %@" = "An error occurred while processing the “%1$@” account: %2$@";
+
+/* An invalid parameter was passed. */
+"An invalid parameter was passed." = "An invalid parameter was passed.";
+
+/* An unexpected CloudKit error occurred. */
+"An unexpected CloudKit error occurred." = "An unexpected CloudKit error occurred.";
+
+/* An unexpected error occurred. */
+"An unexpected error occurred." = "An unexpected error occurred.";
+
+/* Best */
+"Best" = "Best";
+
+/* OAuth - recovery suggestion - ensure browser selected supports web authentication. */
+"Check your default web browser in System Preferences or change it to Safari and try again." = "Check your default web browser in System Preferences or change it to Safari and try again.";
+
+/* Feedly – Could not create a folder/collection. */
+"Could not create a folder named “%@”." = "Could not create a folder named “%@”.";
+
+/* Feedly – Could not encode resource id to send to Feedly. */
+"Could not encode the identifier “%@”." = "Could not encode the identifier “%@”.";
+
+/* Feedly – Could not move a feed between folders/collections. */
+"Could not move “%@” to “%@”." = "Could not move “%1$@” to “%2$@”.";
+
+/* Feedly – Could not remove a feed. */
+"Could not remove “%@”." = "Could not remove “%@”.";
+
+/* Feedly – Could not remove a folder/collection. */
+"Could not remove the folder named “%@”." = "Could not remove the folder named “%@”.";
+
+/* Feedly – Could not rename a feed.
+   Feedly – Could not rename a folder/collection. */
+"Could not rename “%@” to “%@”." = "Could not rename “%1$@” to “%2$@”.";
+
+/* (No Comment) */
+"error.message.already-subscribed" = "You are already subscribed to this feed and can’t add it again.";
+
+/* Your ”%@” credentials have expired. */
+"error.message.credentials-expired.%@" = "Your ”%@” credentials have expired.";
+
+/* You are already subscribed to this feed and can’t add it again. */
+"error.message.feed-already-subscribed" = "You are already subscribed to this feed and can’t add it again.";
+
+/* Can’t add a feed because no feed was found. */
+"error.message.feed-not-found" = "Can’t add a feed because no feed was found.";
+
+/* An OPML import for this account is already running. */
+"error.message.opml-import-in-progress" = "An OPML import for this account is already running.";
+
+/* Already Subscribed */
 "error.title.already-subscribed" = "Already Subscribed";
-"error.title.ompl-import-in-progress" = "OPML Import in Progress";
+
+/* Error */
 "error.title.error" = "Error";
 
-"error.message.feed-not-found" = "Can’t add a feed because no feed was found.";
-"error.message.already-subscribed" = "You are already subscribed to this feed and can’t add it again.";
-"error.message.opml-import-in-progress" = "An OPML import for this account is already running.";
+/* Localizable.strings
+  
+
+  Created by Stuart Breckenridge on 11/03/2023. */
+"error.title.feed-not-found" = "Unable to Add Feed";
+
+/* OPML Import in Progress */
+"error.title.ompl-import-in-progress" = "OPML Import in Progress";
+
+/* Feedbin */
+"Feedbin" = "Feedbin";
+
+/* Feedly */
+"Feedly" = "Feedly";
+
+/* Feedly – Feed can only be added to folders. */
+"Feeds cannot be added to the “%@” folder." = "Feedly – Feed can only be added to folders.";
+
+/* FreshRSS */
+"FreshRSS" = "FreshRSS";
+
+/* Notify about new articles
+   Show notifications for new articles */
+"label.text.show-notifications-for-new-articles" = "Notify about new articles";
+
+/* Notify about new posts
+   Show notifications for new posts */
+"label.text.show-notifications-for-new-posts" = "Notify about new posts";
+
+/* New */
+"New" = "New";
+
+/* NewsBlur */
+"NewsBlur" = "NewsBlur";
+
+/* Feedly – Credentials not found. */
+"Please add the Feedly account again. If this problem persists, open Keychain Access and delete all feedly.com entries, then try again." = "Please add the Feedly account again. If this problem persists, open Keychain Access and delete all feedly.com entries, then try again.";
+

@@ -1,16 +1,27 @@
-/* 
-  Localizable.strings
-  
+/* Reddit Access */
+"An attempt to access your Reddit feed(s) failed.\n\nIf this problem persists, please deactivate and reactivate the Reddit extension to fix this problem.\n\n(error.localizedDescription)" = "An attempt to access your Reddit feed(s) failed.\n\nIf this problem persists, please deactivate and reactivate the Reddit extension to fix this problem.";
 
-  Created by Stuart Breckenridge on 11/03/2023.
-  
-*/
+/* (No Comment) */
+"error.message.already-subscribed" = "You are already subscribed to this feed and can’t add it again.";
 
-"error.title.feed-not-found" = "Unable to Add Feed";
+/* Can’t add a feed because no feed was found. */
+"error.message.feed-not-found" = "Can’t add a feed because no feed was found.";
+
+/* An OPML import for this account is already running. */
+"error.message.opml-import-in-progress" = "An OPML import for this account is already running.";
+
+/* Already Subscribed */
 "error.title.already-subscribed" = "Already Subscribed";
-"error.title.ompl-import-in-progress" = "OPML Import in Progress";
+
+/* Error */
 "error.title.error" = "Error";
 
-"error.message.feed-not-found" = "Can’t add a feed because no feed was found.";
-"error.message.already-subscribed" = "You are already subscribed to this feed and can’t add it again.";
-"error.message.opml-import-in-progress" = "An OPML import for this account is already running.";
+/* Localizable.strings
+  
+
+  Created by Stuart Breckenridge on 11/03/2023. */
+"error.title.feed-not-found" = "Unable to Add Feed";
+
+/* OPML Import in Progress */
+"error.title.ompl-import-in-progress" = "OPML Import in Progress";
+

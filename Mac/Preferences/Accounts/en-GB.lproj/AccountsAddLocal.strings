@@ -1,12 +1,8 @@
-
 /* Class = "NSTextFieldCell"; title = "Create a local account on your Mac."; ObjectID = "1d2-Mx-TKe"; */
 "1d2-Mx-TKe.title" = "Create a local account on your Mac.";
 
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "AVh-ns-LEN"; */
 "AVh-ns-LEN.title" = "Name:";
-
-/* Class = "NSWindow"; title = "Window"; ObjectID = "QvC-M9-y7g"; */
-"QvC-M9-y7g.title" = "Window";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "iVd-bO-4LN"; */
 "iVd-bO-4LN.title" = "Cancel";
@@ -14,5 +10,9 @@
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "oih-6c-KbS"; */
 "oih-6c-KbS.title" = "Create";
 
+/* Class = "NSWindow"; title = "Window"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Window";
+
 /* Class = "NSTextFieldCell"; title = "Local accounts store their data on your Mac. They do not sync across your devices."; ObjectID = "wfr-Dv-UIF"; */
 "wfr-Dv-UIF.title" = "Local accounts store their data on your Mac. They do not sync across your devices.";
+

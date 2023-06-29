@@ -16,6 +16,9 @@
 /* Class = "NSButtonCell"; title = "Check for Updates"; ObjectID = "AaA-Rr-UYD"; */
 "AaA-Rr-UYD.title" = "Check for Updates";
 
+/* Class = "NSButtonCell"; title = "Mark articles as read on scroll"; ObjectID = "ANv-PZ-pn6"; */
+"ANv-PZ-pn6.title" = "Mark articles as read on scroll";
+
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "CcS-BO-sdv"; */
 "CcS-BO-sdv.title" = "Table View Cell";
 
@@ -64,6 +67,9 @@
 /* Class = "NSButtonCell"; title = "Send automatically"; ObjectID = "jnc-C5-4oI"; */
 "jnc-C5-4oI.title" = "Send automatically";
 
+/* Class = "NSButtonCell"; title = "Privacy Policy"; ObjectID = "kSv-Wu-NYx"; */
+"kSv-Wu-NYx.title" = "Privacy Policy";
+
 /* Class = "NSTextFieldCell"; title = "Article Theme:"; ObjectID = "MQe-Za-N8J"; */
 "MQe-Za-N8J.title" = "Article Theme:";
 
@@ -85,9 +91,6 @@
 /* Class = "NSMenuItem"; title = "Extra Large"; ObjectID = "qMe-6g-Vme"; */
 "qMe-6g-Vme.title" = "Extra Large";
 
-/* Class = "NSTextFieldCell"; title = "Privacy Policy"; ObjectID = "rJu-r1-AW4"; */
-"rJu-r1-AW4.title" = "Privacy Policy";
-
 /* Class = "NSMenuItem"; title = "Small"; ObjectID = "roB-Mu-Ht7"; */
 "roB-Mu-Ht7.title" = "Small";
 
@@ -105,6 +108,9 @@
 
 /* Class = "NSButtonCell"; title = "Open feeds in NetNewsWire"; ObjectID = "uvx-O8-HvU"; */
 "uvx-O8-HvU.title" = "Open feeds in NetNewsWire";
+
+/* Class = "NSTextFieldCell"; title = "Timeline:"; ObjectID = "wi9-yM-Ri0"; */
+"wi9-yM-Ri0.title" = "Timeline:";
 
 /* Class = "NSTextFieldCell"; title = "Article Text Size:"; ObjectID = "xQu-QV-91i"; */
 "xQu-QV-91i.title" = "Article Text Size:";

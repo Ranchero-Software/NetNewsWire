@@ -190,20 +190,20 @@
 /* Light */
 "appdefaults.colorpalette.light" = "Light";
 
-/* Filter Read Feeds */
-"button.accessibility.title.filter-read-feeds" = "Filter Read Feeds";
-
-/* Selected - Filter Read Feeds */
-"button.accessibility.title.selected-filter-read-feeds" = "Selected - Filter Read Feeds";
-
 /* Error - Reader View */
 "button.accessibility.title.error-readerview" = "Error - Reader View";
+
+/* Filter Read Feeds */
+"button.accessibility.title.filter-read-feeds" = "Filter Read Feeds";
 
 /* Processing - Reader View */
 "button.accessibility.title.processing-readerview" = "Processing - Reader View";
 
 /* Reader View */
 "button.accessibility.title.readerview" = "Reader View";
+
+/* Selected - Filter Read Feeds */
+"button.accessibility.title.selected-filter-read-feeds" = "Selected - Filter Read Feeds";
 
 /* Selected - Reader View */
 "button.accessibility.title.selected-readerview" = "Selected - Reader View";
@@ -259,6 +259,9 @@
 
 /* Close */
 "button.title.close" = "Close";
+
+/* Close Image */
+"button.title.close-image" = "Close Image";
 
 /* Copy Article URL */
 "button.title.copy-article-url" = "Copy Article URL";
@@ -663,6 +666,15 @@
 
 /* Device Permissions */
 "label.text.device-permissions" = "Device Permissions";
+
+/* Multiple selection */
+"label.text.multiple-selection" = "Multiple selection";
+
+/* Multiple selection */
+"label.text.no-selection" = "No selection";
+
+/* Loading... */
+"label.text.loading" = "Loading...";
 
 /* Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more. */
 "label.text.device-permissions-explainer" = "Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.";
