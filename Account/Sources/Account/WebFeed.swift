@@ -210,7 +210,7 @@ public final class WebFeed: Feed, Renamable, Hashable, ObservableObject {
 		if let s = name, !s.isEmpty {
 			return s
 		}
-		return NSLocalizedString("Untitled", comment: "Feed name")
+        return String(localized: "untitled", bundle: .module, comment: "Feed name")
 	}
 
 	// MARK: - Renamable
@@ -254,15 +254,15 @@ public final class WebFeed: Feed, Renamable, Hashable, ObservableObject {
     public var notificationDisplayName: String {
         #if os(macOS)
         if self.url.contains("www.reddit.com") {
-            return NSLocalizedString("label.text.show-notifications-for-new-posts", comment: "Show notifications for new posts")
+            return String(localized: "label.text.show-notifications-for-new-posts", bundle: .module, comment: "Show notifications for new posts")
         } else {
-            return NSLocalizedString("label.text.show-notifications-for-new-articles", comment: "Show notifications for new articles")
+            return String(localized: "label.text.show-notifications-for-new-articles", bundle: .module, comment: "Show notifications for new articles")
         }
         #else
         if self.url.contains("www.reddit.com") {
-            return NSLocalizedString("label.text.show-notifications-for-new-posts", comment: "Notify about new posts")
+            return String(localized: "label.text.show-notifications-for-new-posts", bundle: .module, comment: "Notify about new posts")
         } else {
-            return NSLocalizedString("label.text.show-notifications-for-new-articles", comment: "Notify about new articles")
+            return String(localized: "label.text.show-notifications-for-new-articles", bundle: .module, comment: "Notify about new articles")
         }
         #endif
     }

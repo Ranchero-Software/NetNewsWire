@@ -79,12 +79,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public static let defaultLocalAccountName: String = {
 		let defaultName: String
 		#if os(macOS)
-		defaultName = NSLocalizedString("account.name.mac", value: "On My Mac", comment: "Account name")
+        defaultName = String(localized: "account.name.mac", bundle: .module, comment: "On My Mac")
 		#else
 		if UIDevice.current.userInterfaceIdiom == .pad {
-			defaultName = NSLocalizedString("account.name.ipad", value: "On My iPad", comment: "Account name")
+            defaultName = String(localized: "account.name.ipad", bundle: .module, comment: "On My iPad")
 		} else {
-			defaultName = NSLocalizedString("account.name.iphone", value: "On My iPhone", comment: "Account name")
+            defaultName = String(localized: "account.name.iphone", bundle: .module, comment: "On My iPhone")
 		}
 		#endif
 		
@@ -291,21 +291,21 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .onMyMac:
 			defaultName = Account.defaultLocalAccountName
 		case .cloudKit:
-			defaultName = NSLocalizedString("iCloud", comment: "iCloud")
+            defaultName = String("iCloud")
 		case .feedly:
-			defaultName = NSLocalizedString("Feedly", comment: "Feedly")
+			defaultName = String("Feedly")
 		case .feedbin:
-			defaultName = NSLocalizedString("Feedbin", comment: "Feedbin")
+			defaultName = String("Feedbin")
 		case .newsBlur:
-			defaultName = NSLocalizedString("NewsBlur", comment: "NewsBlur")
+			defaultName = String("NewsBlur")
 		case .freshRSS:
-			defaultName = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+			defaultName = String("FreshRSS")
 		case .inoreader:
-			defaultName = NSLocalizedString("Inoreader", comment: "Inoreader")
+			defaultName = String("Inoreader")
 		case .bazQux:
-			defaultName = NSLocalizedString("BazQux", comment: "BazQux")
+			defaultName = String("BazQux")
 		case .theOldReader:
-			defaultName = NSLocalizedString("The Old Reader", comment: "The Old Reader")
+			defaultName = String("The Old Reader")
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)

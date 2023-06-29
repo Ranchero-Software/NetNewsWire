@@ -16,7 +16,7 @@ import CloudKit
 enum CloudKitAccountZoneError: LocalizedError {
 	case unknown
 	var errorDescription: String? {
-		return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
+        return String(localized: "error.cloudkit.localizedDescription", bundle: .module, comment: "An unexpected CloudKit error occurred.")
 	}
 }
 final class CloudKitAccountZone: CloudKitZone {
