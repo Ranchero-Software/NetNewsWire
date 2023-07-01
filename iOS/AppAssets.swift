@@ -109,10 +109,6 @@ struct AppAssets {
 		return UIImage(systemName: "chevron.right", withConfiguration: UIImage.SymbolConfiguration(pointSize: size, weight: weight))!
 	}
 	
-	static var contextMenuReddit: UIImage = {
-		return UIImage(named: "contextMenuReddit")!
-	}()
-	
 	static var copyImage: UIImage = {
 		return UIImage(systemName: "doc.on.doc")!
 	}()
@@ -200,10 +196,6 @@ struct AppAssets {
 	static var primaryAccentColor: UIColor {
 		return UIColor(named: "primaryAccentColor")!
 	}
-	
-	static var redditOriginal: UIImage = {
-		return UIImage(named: "redditWhite")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
-	}()
 	
 	static var safariImage: UIImage = {
 		return UIImage(systemName: "safari")!

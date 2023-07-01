@@ -347,14 +347,8 @@
    New Folder... */
 "button.title.new-folder" = "新建文件夹";
 
-/* New Reddit Feed... */
-"button.title.new-reddit-feed" = "添加 Reddit 订阅...";
-
-/* New Twitter Feed... */
-"button.title.new-twitter-feed" = "添加 Twitter 订阅...";
-
 /* New Web Feed... */
-"button.title.new-web-feed" = "添加 Web 订阅...";
+"button.title.new-web-feed" = "添加 订阅...";
 
 /* Next Unread */
 "button.title.next-read" = "下一个未读";
@@ -531,9 +525,6 @@
 /* (No Text) */
 "label.text.no-text" = "（无文本）";
 
-/* Posts from r/%@ */
-"label.text.posts-from-subreddit.%@" = "来自 r/%@ 的帖子";
-
 /* Primary Contributors */
 "label.text.primary-contributors" = "主要贡献者";
 
@@ -545,15 +536,6 @@
 
 /* Reader View */
 "label.text.reader-view" = "阅读器视图";
-
-/* The most active posts */
-"label.text.reddit-active-posts" = "最活跃的帖子";
-
-/* The best posts on Reddit for you */
-"label.text.reddit-best-posts" = "为你提供的 Reddit 最佳帖子";
-
-/* Your personal Reddit frontpage */
-"label.text.reddit-front-page" = "你的个人 Reddit 主页";
 
 /* Select an account or add a new account by clicking the + button. */
 "label.text.select-or-add-account-explainer" = "选择一个账户或通过点击 + 添加新账户。";
@@ -593,9 +575,6 @@
 
 /* Small */
 "label.text.small" = "小";
-
-/* Subreddit */
-"label.text.subreddit" = "Subreddit";
 
 /* Thanks */
 "label.text.thanks" = "鸣谢";

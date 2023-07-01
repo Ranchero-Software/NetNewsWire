@@ -45,9 +45,6 @@ import RSParser
 																 folder: folder,
 																 folderTreeController: folderTreeController,
 																 delegate: self)
-		case .redditFeed:
-			addFeedWindowController = AddRedditFeedWindowController(folderTreeController: folderTreeController,
-																	 delegate: self)
 		}
 		
 		addFeedWindowController!.runSheetOnWindow(hostWindow)

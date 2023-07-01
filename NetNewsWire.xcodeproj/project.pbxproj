@@ -138,10 +138,6 @@
 		513277662590FC780064F1E7 /* Secrets in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51C4CFF524D37DD500AF9874 /* Secrets */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5132778C2590FF1E0064F1E7 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5132778B2590FF1E0064F1E7 /* RSCore */; };
 		5132779F2591034D0064F1E7 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5132779E2591034D0064F1E7 /* icon.icns */; };
-		51333D1624685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
-		51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
-		51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
-		51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
 		5137C2E426F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
 		5137C2E526F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
 		5137C2E626F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
@@ -1210,8 +1206,6 @@
 		51314706235C41FC00387FDC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
 		51314714235C420900387FDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Intents.strings; sourceTree = "<group>"; };
 		5132779E2591034D0064F1E7 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
-		51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRedditFeedWindowController.swift; sourceTree = "<group>"; };
-		51333D3A2468615D00EB5C91 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddRedditFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Sepia.nnwtheme; sourceTree = "<group>"; };
 		5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemeImporter.swift; sourceTree = "<group>"; };
 		51386A8D25673276005F3762 /* AccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCell.swift; sourceTree = "<group>"; };
@@ -1536,7 +1530,6 @@
 		C47370262A232A0100E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		C47370272A232A0100E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/MainWindow.strings"; sourceTree = "<group>"; };
 		C47370282A232A0100E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../../../zh-Hans.lproj/RenameSheet.strings"; sourceTree = "<group>"; };
-		C47370292A232A0200E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/AddRedditFeedSheet.strings"; sourceTree = "<group>"; };
 		C473702A2A232A0200E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/AddWebFeedSheet.strings"; sourceTree = "<group>"; };
 		C473702B2A232A0200E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../../zh-Hans.lproj/AddFolderSheet.strings"; sourceTree = "<group>"; };
 		C473702C2A232A0200E77890 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/Preferences.strings"; sourceTree = "<group>"; };
@@ -1675,7 +1668,6 @@
 		DFB616AE29653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Main.strings"; sourceTree = "<group>"; };
 		DFB616AF29653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/MainWindow.strings"; sourceTree = "<group>"; };
 		DFB616B029653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../../../en-GB.lproj/RenameSheet.strings"; sourceTree = "<group>"; };
-		DFB616B129653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/AddRedditFeedSheet.strings"; sourceTree = "<group>"; };
 		DFB616B329653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/AddWebFeedSheet.strings"; sourceTree = "<group>"; };
 		DFB616B429653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../../en-GB.lproj/AddFolderSheet.strings"; sourceTree = "<group>"; };
 		DFB616B529653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/Preferences.strings"; sourceTree = "<group>"; };
@@ -2457,8 +2449,6 @@
 			children = (
 				849A97511ED9EAC0007D329B /* AddFeedController.swift */,
 				51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */,
-				51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */,
-				51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */,
 				848363002262A3BC00DA1D35 /* AddWebFeedSheet.xib */,
 				849A97521ED9EAC0007D329B /* AddWebFeedWindowController.swift */,
 				51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */,
@@ -3582,7 +3572,6 @@
 				DDF9E1D828EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
 				DF5124D42A230FE400BBAB1F /* AccountsAddCloudKit.xib in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
-				51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
 				65ED405F235DEF6C0081F399 /* Preferences.storyboard in Resources */,
 				65ED4061235DEF6C0081F399 /* Assets.xcassets in Resources */,
 				65ED4063235DEF6C0081F399 /* RenameSheet.xib in Resources */,
@@ -3700,7 +3689,6 @@
 				8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */,
 				DF5124F12A2310A100BBAB1F /* AccountsReaderAPI.xib in Resources */,
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
-				51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
 				DF5124EB2A23109900BBAB1F /* AccountsNewsBlur.xib in Resources */,
 				5103A9982421643300410853 /* blank.html in Resources */,
 				DF93DB2B296A319000586C0E /* Localizable.stringsdict in Resources */,
@@ -4047,7 +4035,6 @@
 				65ED3FD4235DEF6C0081F399 /* Article+Scriptability.swift in Sources */,
 				515A5172243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */,
 				65ED3FD5235DEF6C0081F399 /* SmartFeed.swift in Sources */,
-				51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */,
 				65ED3FD6235DEF6C0081F399 /* MarkStatusCommand.swift in Sources */,
 				DFBB4EAD2951BC0200639228 /* NNWThemeDocument.swift in Sources */,
 				5183CFB0254C78C8006B83A5 /* EnableExtensionPointView.swift in Sources */,
@@ -4542,7 +4529,6 @@
 				178A9F9D2549449F00AB7E9D /* AddAccountsView.swift in Sources */,
 				51C4CFF024D37D1F00AF9874 /* Secrets.swift in Sources */,
 				849A976D1ED9EBC8007D329B /* TimelineTableView.swift in Sources */,
-				51333D1624685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */,
 				84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */,
 				D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */,
 				51A052CE244FB9D7006C2024 /* AddFeedWIndowController.swift in Sources */,
@@ -4691,16 +4677,6 @@
 				C47370322A232A0200E77890 /* zh-Hans */,
 			);
 			name = Intents.intentdefinition;
-			sourceTree = "<group>";
-		};
-		51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				51333D3A2468615D00EB5C91 /* Base */,
-				DFB616B129653A0600A359AB /* en-GB */,
-				C47370292A232A0200E77890 /* zh-Hans */,
-			);
-			name = AddRedditFeedSheet.xib;
 			sourceTree = "<group>";
 		};
 		513C5CEA232571C2003D4054 /* MainInterface.storyboard */ = {

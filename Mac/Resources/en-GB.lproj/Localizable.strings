@@ -348,14 +348,8 @@
    New Folder... */
 "button.title.new-folder" = "New Folder";
 
-/* New Reddit Feed... */
-"button.title.new-reddit-feed" = "New Reddit Feed...";
-
-/* New Twitter Feed... */
-"button.title.new-twitter-feed" = "New Twitter Feed...";
-
 /* New Web Feed... */
-"button.title.new-web-feed" = "New Web Feed...";
+"button.title.new-web-feed" = "New Feed...";
 
 /* Next Unread */
 "button.title.next-read" = "Next Unread";
@@ -535,9 +529,6 @@
 /* (No Text) */
 "label.text.no-text" = "(No Text)";
 
-/* Posts from r/%@ */
-"label.text.posts-from-subreddit.%@" = "Posts from r/%@";
-
 /* Privacy Policy */
 "label.text.privacy-policy" = "Privacy Policy";
 
@@ -546,15 +537,6 @@
 
 /* Reader View */
 "label.text.reader-view" = "Reader View";
-
-/* The most active posts */
-"label.text.reddit-active-posts" = "The most active posts";
-
-/* The best posts on Reddit for you */
-"label.text.reddit-best-posts" = "The best posts on Reddit for you";
-
-/* Your personal Reddit frontpage */
-"label.text.reddit-front-page" = "Your personal Reddit frontpage";
 
 /* Select an account or add a new account by clicking the + button. */
 "label.text.select-or-add-account-explainer" = "Select an account or add a new account by clicking the + button.";
@@ -594,9 +576,6 @@
 
 /* Small */
 "label.text.small" = "Small";
-
-/* Subreddit */
-"label.text.subreddit" = "Subreddit";
 
 /* Thanks */
 "label.text.thanks" = "Thanks";

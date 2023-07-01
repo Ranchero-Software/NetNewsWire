@@ -627,29 +627,18 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	func configureContextMenu(_: Any? = nil) {
 		/*
 			Context Menu Order:
-			1. Add Web Feed
-			2. Add Reddit Feed
+			1. Add Feed
 			3. Add Folder
 		*/
 		
 		var menuItems: [UIAction] = []
 		
-		let addWebFeedActionTitle = NSLocalizedString("button.title.add-web-feed", comment: "Add Web Feed")
+		let addWebFeedActionTitle = NSLocalizedString("button.title.add-web-feed", comment: "Add Feed")
 		let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
 			self.coordinator.showAddWebFeed()
 		}
 		menuItems.append(addWebFeedAction)
 		
-		if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-			if ExtensionPointManager.shared.isRedditEnabled {
-				let addRedditFeedActionTitle = NSLocalizedString("button.title.add-reddit-feed", comment: "Add Reddit Feed")
-				let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
-					self.coordinator.showAddRedditFeed()
-				}
-				menuItems.append(addRedditFeedAction)
-			}
-		}
-					
 		let addWebFolderActionTitle = NSLocalizedString("button.title.add-folder", comment: "Add Folder")
 		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
 			self.coordinator.showAddFolder()
