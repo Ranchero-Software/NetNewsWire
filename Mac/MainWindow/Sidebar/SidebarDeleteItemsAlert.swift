@@ -22,7 +22,7 @@ import Account
 				alert.messageText = NSLocalizedString("alert.title.delete-folder", comment: "Delete Folder")
 				let localizedInformativeText = NSLocalizedString("alert.message.delete-folder.%@", comment: "Are you sure you want to delete the “%@” folder?")
 				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, folder.nameForDisplay) as String
-			} else if let feed = nodes.first?.representedObject as? Feed {
+			} else if let feed = nodes.first?.representedObject as? FeedProtocol {
 				alert.messageText = NSLocalizedString("alert.title.delete-feed", comment: "Delete Feed")
 				let localizedInformativeText = NSLocalizedString("alert.message.delete-feed.%@", comment: "Are you sure you want to delete the “%@” feed?")
 				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String

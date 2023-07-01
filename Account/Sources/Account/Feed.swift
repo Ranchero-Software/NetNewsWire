@@ -15,14 +15,14 @@ public enum ReadFilterType {
 	case alwaysRead
 }
 
-public protocol Feed: FeedIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
+public protocol FeedProtocol: FeedIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 
 	var account: Account? { get }
 	var defaultReadFilterType: ReadFilterType { get }
 	
 }
 
-public extension Feed {
+public extension FeedProtocol {
 	
 	func readFiltered(readFilterEnabledTable: [FeedIdentifier: Bool]) -> Bool {
 		guard defaultReadFilterType != .alwaysRead else {

@@ -42,7 +42,7 @@ struct FeedNode: Hashable {
 	var feedID: FeedIdentifier
 	
 	init?(_ node: Node) {
-		guard let feed = node.representedObject as? Feed else { return nil }
+		guard let feed = node.representedObject as? FeedProtocol else { return nil }
 		
 		self.node = node
 		self.feedID = feed.feedID!
@@ -86,7 +86,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 	
-	private(set) var preSearchTimelineFeed: Feed?
+	private(set) var preSearchTimelineFeed: FeedProtocol?
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
 	private var isSearching: Bool = false
@@ -167,7 +167,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	private var exceptionArticleFetcher: ArticleFetcher?
-	private(set) var timelineFeed: Feed?
+	private(set) var timelineFeed: FeedProtocol?
 	
 	var timelineMiddleIndexPath: IndexPath?
 	
@@ -620,7 +620,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 
 	func nodeFor(feedID: FeedIdentifier) -> Node? {
 		return treeController.rootNode.descendantNode(where: { node in
-			if let feed = node.representedObject as? Feed {
+			if let feed = node.representedObject as? FeedProtocol {
 				return feed.feedID == feedID
 			} else {
 				return false
@@ -776,7 +776,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return indexPathFor(node)
 	}
 	
-	func selectFeed(_ feed: Feed?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+	func selectFeed(_ feed: FeedProtocol?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		let indexPath: IndexPath? = {
 			if let feed = feed, let indexPath = indexPathFor(feed as AnyObject) {
 				return indexPath
@@ -800,7 +800,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 			selectArticle(nil)
 		}
 
-		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
+		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? FeedProtocol {
 			
 			self.activityManager.selecting(feed: feed)
 			self.rootSplitViewController.show(.supplementary)
@@ -1476,7 +1476,7 @@ private extension SceneCoordinator {
 		articleDictionaryNeedsUpdate = false
 	}
 	
-	func ensureFeedIsAvailableToSelect(_ feed: Feed, completion: @escaping () -> Void) {
+	func ensureFeedIsAvailableToSelect(_ feed: FeedProtocol, completion: @escaping () -> Void) {
 		addToFilterExeptionsIfNecessary(feed)
 		addShadowTableToFilterExceptions()
 		
@@ -1486,7 +1486,7 @@ private extension SceneCoordinator {
 		})
 	}
 
-	func addToFilterExeptionsIfNecessary(_ feed: Feed?) {
+	func addToFilterExeptionsIfNecessary(_ feed: FeedProtocol?) {
 		if isReadFeedsFiltered, let feedID = feed?.feedID {
 			if feed is SmartFeed {
 				treeControllerDelegate.addFilterException(feedID)
@@ -1503,7 +1503,7 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func addParentFolderToFilterExceptions(_ feed: Feed) {
+	func addParentFolderToFilterExceptions(_ feed: FeedProtocol) {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
 			let folder = node.parent?.representedObject as? Folder,
 			let folderFeedID = folder.feedID else {
@@ -1516,7 +1516,7 @@ private extension SceneCoordinator {
 	func addShadowTableToFilterExceptions() {
 		for section in shadowTable {
 			for feedNode in section.feedNodes {
-				if let feed = feedNode.node.representedObject as? Feed, let feedID = feed.feedID {
+				if let feed = feedNode.node.representedObject as? FeedProtocol, let feedID = feed.feedID {
 					treeControllerDelegate.addFilterException(feedID)
 				}
 			}
@@ -1648,10 +1648,10 @@ private extension SceneCoordinator {
 		return ShadowTableChanges(deletes: deletes, inserts: inserts, moves: moves, rowChanges: changes)
 	}
 	
-	func shadowTableContains(_ feed: Feed) -> Bool {
+	func shadowTableContains(_ feed: FeedProtocol) -> Bool {
 		for section in shadowTable {
 			for feedNode in section.feedNodes {
-				if let nodeFeed = feedNode.node.representedObject as? Feed, nodeFeed.feedID == feed.feedID {
+				if let nodeFeed = feedNode.node.representedObject as? FeedProtocol, nodeFeed.feedID == feed.feedID {
 					return true
 				}
 			}
@@ -1665,7 +1665,7 @@ private extension SceneCoordinator {
 		}
 	}
 
-	func setTimelineFeed(_ feed: Feed?, animated: Bool, completion: (() -> Void)? = nil) {
+	func setTimelineFeed(_ feed: FeedProtocol?, animated: Bool, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
 		
 		fetchAndReplaceArticlesAsync(animated: animated) {

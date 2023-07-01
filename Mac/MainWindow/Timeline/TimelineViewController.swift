@@ -29,7 +29,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
 	var isReadFiltered: Bool? {
-		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed else {
+		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? FeedProtocol else {
 			return nil
 		}
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
@@ -45,7 +45,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var isCleanUpAvailable: Bool {
 		let isEligibleForCleanUp: Bool?
 		
-		if representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed, timelineFeed.defaultReadFilterType == .alwaysRead {
+		if representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? FeedProtocol, timelineFeed.defaultReadFilterType == .alwaysRead {
 			isEligibleForCleanUp = true
 		} else {
 			isEligibleForCleanUp = isReadFiltered
@@ -281,7 +281,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func toggleReadFilter() {
-		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? Feed)?.feedID else { return }
+		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? FeedProtocol)?.feedID else { return }
 		readFilterEnabledTable[feedID] = !filter
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
@@ -1242,7 +1242,7 @@ private extension TimelineViewController {
 
 		var fetchedArticles = Set<Article>()
 		for fetchers in fetchers {
-			if (fetchers as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+			if (fetchers as? FeedProtocol)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
 				if let articles = try? fetchers.fetchUnreadArticles() {
 					fetchedArticles.formUnion(articles)
 				}

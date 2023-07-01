@@ -30,7 +30,7 @@ class IconImageCache {
 		return nil
 	}
 
-	func imageForFeed(_ feed: Feed) -> IconImage? {
+	func imageForFeed(_ feed: FeedProtocol) -> IconImage? {
 		guard let feedID = feed.feedID else {
 			return nil
 		}

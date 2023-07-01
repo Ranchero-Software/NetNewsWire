@@ -332,7 +332,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	}
 	
 	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? FeedProtocol else {
 			return nil
 		}
 		if feed is WebFeed {
@@ -794,7 +794,7 @@ private extension MasterFeedViewController {
 			cell.isDisclosureAvailable = false
 		}
 		
-		if let feed = node.representedObject as? Feed {
+		if let feed = node.representedObject as? FeedProtocol {
 			cell.name = feed.nameForDisplay
 			cell.unreadCount = feed.unreadCount
 			cell.itemIsInFolder = false
@@ -821,7 +821,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func configureIcon(_ cell: MasterFeedTableViewCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let feedID = feed.feedID else {
+		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? FeedProtocol, let feedID = feed.feedID else {
 			return
 		}
 		cell.iconImage = IconImageCache.shared.imageFor(feedID)
@@ -841,8 +841,8 @@ private extension MasterFeedViewController {
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MasterFeedTableViewCell, IndexPath) -> Void) {
 		applyToAvailableCells { (cell, indexPath) in
 			if let node = coordinator.nodeFor(indexPath),
-			   let representedFeed = representedObject as? Feed,
-			   let candidate = node.representedObject as? Feed,
+			   let representedFeed = representedObject as? FeedProtocol,
+			   let candidate = node.representedObject as? FeedProtocol,
 			   representedFeed.feedID == candidate.feedID {
 				completion(cell, indexPath)
 			}
@@ -1169,7 +1169,7 @@ private extension MasterFeedViewController {
 	}
 
 	func markAllAsReadAction(indexPath: IndexPath) -> UIAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? FeedProtocol,
 			  let contentView = self.tableView.cellForRow(at: indexPath)?.contentView,
 			  feed.unreadCount > 0 else {
 				  return nil
@@ -1188,7 +1188,7 @@ private extension MasterFeedViewController {
 	}
 
 	func catchUpActionMenu(indexPath: IndexPath) -> UIMenu? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? FeedProtocol,
 			  let contentView = self.tableView.cellForRow(at: indexPath)?.contentView,
 			  feed.unreadCount > 0 else {
 				  return nil
@@ -1396,7 +1396,7 @@ private extension MasterFeedViewController {
 
 
 	func rename(indexPath: IndexPath) {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else { return	}
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? FeedProtocol else { return	}
 
 	let formatString = NSLocalizedString("alert.title.rename-feed.%@", comment: "Rename feed. The variable provided is the feed name. In English: Rename “%@”")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, feed.nameForDisplay) as String
@@ -1450,7 +1450,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func delete(indexPath: IndexPath) {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else { return	}
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? FeedProtocol else { return	}
 
 		let title: String
 		let message: String

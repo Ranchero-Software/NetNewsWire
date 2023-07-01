@@ -51,7 +51,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		}
 		
 		guard let correctDestNode = coordinator.nodeFor(correctedIndexPath),
-			  let correctDestFeed = correctDestNode.representedObject as? Feed,
+			  let correctDestFeed = correctDestNode.representedObject as? FeedProtocol,
 			  let correctDestAccount = correctDestFeed.account else {
 			return UITableViewDropProposal(operation: .forbidden)
 		}

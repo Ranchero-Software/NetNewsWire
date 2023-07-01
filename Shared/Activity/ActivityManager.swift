@@ -49,7 +49,7 @@ class ActivityManager {
 		invalidateNextUnread()
 	}
 	
-	func selecting(feed: Feed) {
+	func selecting(feed: FeedProtocol) {
 		invalidateCurrentActivities()
 		
 		selectingActivity = makeSelectFeedActivity(feed: feed)
@@ -87,7 +87,7 @@ class ActivityManager {
 		nextUnreadActivity = nil
 	}
 	
-	func reading(feed: Feed?, article: Article?) {
+	func reading(feed: FeedProtocol?, article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
 		
@@ -162,7 +162,7 @@ class ActivityManager {
 
 private extension ActivityManager {
 	
-	func makeSelectFeedActivity(feed: Feed) -> NSUserActivity {
+	func makeSelectFeedActivity(feed: FeedProtocol) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)
 		
 		let localizedText = NSLocalizedString("activity.title.see-article-in.folder.%@", comment: "See articles in “%@”")
@@ -187,7 +187,7 @@ private extension ActivityManager {
 		return activity
 	}
 	
-	func makeReadArticleActivity(feed: Feed?, article: Article) -> NSUserActivity {
+	func makeReadArticleActivity(feed: FeedProtocol?, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
 		
