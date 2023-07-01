@@ -515,13 +515,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 
-		if item.action == #selector(showAddRedditFeedWindow(_:)) {
-			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isRedditEnabled else {
-				return false
-			}
-			return ExtensionPointManager.shared.isRedditEnabled
-		}
-
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
@@ -593,12 +586,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@MainActor @IBAction func showAddWebFeedWindow(_ sender: Any?) {
 		addWebFeed(nil)
-	}
-
-	@MainActor @IBAction func showAddRedditFeedWindow(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
-		addFeedController?.showAddFeedSheet(.redditFeed)
 	}
 
 	@MainActor @IBAction func showAddFolderWindow(_ sender: Any?) {

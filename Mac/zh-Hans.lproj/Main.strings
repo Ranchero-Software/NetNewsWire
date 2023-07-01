@@ -205,9 +205,6 @@
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "检查拼写和语法";
 
-/* Class = "NSMenuItem"; title = "New Reddit Feed…"; ObjectID = "n6h-Bp-CIc"; */
-"n6h-Bp-CIc.title" = "添加 Reddit 订阅...";
-
 /* Class = "NSMenuItem"; title = "Article Search…"; ObjectID = "nB2-mv-2i5"; */
 "nB2-mv-2i5.title" = "搜素文章...";
 

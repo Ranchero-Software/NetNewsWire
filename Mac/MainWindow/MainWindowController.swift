@@ -1445,14 +1445,9 @@ private extension MainWindowController {
 		let menu = NSMenu()
 		
 		let newWebFeedItem = NSMenuItem()
-		newWebFeedItem.title = NSLocalizedString("button.title.new-web-feed", comment: "New Web Feed...")
+		newWebFeedItem.title = NSLocalizedString("button.title.new-web-feed", comment: "New Feed...")
 		newWebFeedItem.action = Selector(("showAddWebFeedWindow:"))
 		menu.addItem(newWebFeedItem)
-		
-		let newRedditFeedItem = NSMenuItem()
-		newRedditFeedItem.title = NSLocalizedString("button.title.new-reddit-feed", comment: "New Reddit Feed...")
-		newRedditFeedItem.action = Selector(("showAddRedditFeedWindow:"))
-		menu.addItem(newRedditFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("button.title.open-new-folder", comment: "New Folder...")
