@@ -1191,7 +1191,7 @@ private extension MainWindowController {
 			return currentLink != nil
 		}
 		
-		if let webfeed = currentTimelineViewController?.selectedArticles.first?.webFeed {
+		if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
 			toolbarButton.isEnabled = true
 		}
 
