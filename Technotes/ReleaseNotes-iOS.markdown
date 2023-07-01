@@ -1,8 +1,14 @@
 # iOS Release Notes
 
-### 6.1.3 TestFlight build 6118 - 23 June 2023
+### 6.1.4 TestFlight build 6119 - 30 June 2023
+
+Remove Reddit from Settings. Remove Reddit API code.
+
+## 6.1.3 TestFlight build 6118 - 23 June 2023
 
 Fix release notes URL: it’s now https://github.com/Ranchero-Software/NetNewsWire/releases/
+
+This build was released to the App Store.
 
 ### 6.1.3 TestFlight build 6117 - 18 June 2023
 
