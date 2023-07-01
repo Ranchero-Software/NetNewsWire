@@ -764,7 +764,6 @@
 		DF28B44D294ED52700C4D8CA /* View+DismissOnExternalContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B44C294ED52700C4D8CA /* View+DismissOnExternalContext.swift */; };
 		DF28B44F294ED92F00C4D8CA /* NewsBlurAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B44E294ED92F00C4D8CA /* NewsBlurAddAccountView.swift */; };
 		DF28B451294EFC6C00C4D8CA /* View+DismissOnAccountAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B450294EFC6C00C4D8CA /* View+DismissOnAccountAdd.swift */; };
-		DF28B455294FE74A00C4D8CA /* ExtensionSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B454294FE74A00C4D8CA /* ExtensionSectionHeader.swift */; };
 		DF3630EB2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630EC2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630ED2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
@@ -814,7 +813,6 @@
 		DFB3497A294A962D00BC81AD /* AddAccountListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34979294A962D00BC81AD /* AddAccountListView.swift */; };
 		DFB34980294B085100BC81AD /* AccountInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3497F294B085100BC81AD /* AccountInspectorView.swift */; };
 		DFB34988294B447F00BC81AD /* InjectedNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */; };
-		DFB3498A294B45AC00BC81AD /* ExtensionInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */; };
 		DFB3498C294B4CA700BC81AD /* WebFeedInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */; };
 		DFB34994294C0E3900BC81AD /* ReaderAPIAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */; };
 		DFB34996294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */; };
@@ -1564,7 +1562,6 @@
 		DF28B44C294ED52700C4D8CA /* View+DismissOnExternalContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DismissOnExternalContext.swift"; sourceTree = "<group>"; };
 		DF28B44E294ED92F00C4D8CA /* NewsBlurAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsBlurAddAccountView.swift; sourceTree = "<group>"; };
 		DF28B450294EFC6C00C4D8CA /* View+DismissOnAccountAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DismissOnAccountAdd.swift"; sourceTree = "<group>"; };
-		DF28B454294FE74A00C4D8CA /* ExtensionSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionSectionHeader.swift; sourceTree = "<group>"; };
 		DF332714295BBBB900BFD911 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		DF332716295BBBBF00BFD911 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreenPad.strings; sourceTree = "<group>"; };
 		DF332718295BBBC200BFD911 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreenPhone.strings; sourceTree = "<group>"; };
@@ -1617,7 +1614,6 @@
 		DFB34979294A962D00BC81AD /* AddAccountListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountListView.swift; sourceTree = "<group>"; };
 		DFB3497F294B085100BC81AD /* AccountInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInspectorView.swift; sourceTree = "<group>"; };
 		DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectedNavigationView.swift; sourceTree = "<group>"; };
-		DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInspectorView.swift; sourceTree = "<group>"; };
 		DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedInspectorView.swift; sourceTree = "<group>"; };
 		DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderAPIAddAccountView.swift; sourceTree = "<group>"; };
 		DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedNetNewsWireError.swift; sourceTree = "<group>"; };
@@ -1912,7 +1908,6 @@
 			isa = PBXGroup;
 			children = (
 				DFB3497F294B085100BC81AD /* AccountInspectorView.swift */,
-				DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */,
 				DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */,
 			);
 			path = Inspector;
@@ -2931,7 +2926,6 @@
 			children = (
 				DFB349A3294E914D00BC81AD /* AccountSectionHeader.swift */,
 				DFE522A22953DEF400376B77 /* CustomInsetGroupedRowStyle.swift */,
-				DF28B454294FE74A00C4D8CA /* ExtensionSectionHeader.swift */,
 				DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */,
 				DF28B450294EFC6C00C4D8CA /* View+DismissOnAccountAdd.swift */,
 				DF28B44C294ED52700C4D8CA /* View+DismissOnExternalContext.swift */,
@@ -4157,7 +4151,6 @@
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
 				517A745B2443665000B553B9 /* UIPageViewController-Extensions.swift in Sources */,
-				DF28B455294FE74A00C4D8CA /* ExtensionSectionHeader.swift in Sources */,
 				51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */,
 				51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */,
 				DF790D6228E990A900455FC7 /* AboutData.swift in Sources */,
@@ -4176,7 +4169,6 @@
 				51C452A222650A1900C03939 /* RSHTMLMetadata+Extension.swift in Sources */,
 				51B5C87B23F2317700032075 /* ExtensionFeedAddRequest.swift in Sources */,
 				51627A93238A3836007B3B4B /* CroppingPreviewParameters.swift in Sources */,
-				DFB3498A294B45AC00BC81AD /* ExtensionInspectorView.swift in Sources */,
 				51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */,
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
 				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,

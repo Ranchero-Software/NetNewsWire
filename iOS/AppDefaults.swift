@@ -43,7 +43,6 @@ final class AppDefaults: ObservableObject {
 	
 	struct Key {
 		static let userInterfaceColorPalette = "userInterfaceColorPalette"
-		static let activeExtensionPointIDs = "activeExtensionPointIDs"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
@@ -118,16 +117,6 @@ final class AppDefaults: ObservableObject {
 		}
 		set {
 			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
-			AppDefaults.shared.objectWillChange.send()
-		}
-	}
-	
-	var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
-		get {
-			return UserDefaults.standard.object(forKey: Key.activeExtensionPointIDs) as? [[AnyHashable : AnyHashable]]
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.activeExtensionPointIDs)
 			AppDefaults.shared.objectWillChange.send()
 		}
 	}

@@ -71,21 +71,6 @@ struct SettingsRow {
 		}
 	}
 	
-	/// This row, when tapped, will push the the Manage Extension screen
-	/// in to view.
-	static var manageExtensions: some View {
-		NavigationLink(destination: ExtensionsManagementView()) {
-			Label {
-				Text("button.title.manage-extensions", comment: "Manage Extensions")
-			} icon: {
-				Image("app.extension")
-					.resizable()
-					.frame(width: 25.0, height: 25.0)
-					.clipShape(RoundedRectangle(cornerRadius: 6))
-			}
-		}
-	}
-	
 	/// This row, when tapped, will present the Import
 	/// Subscriptions Action Sheet.
 	static func importOPML(showImportActionSheet: Binding<Bool>) -> some View {
