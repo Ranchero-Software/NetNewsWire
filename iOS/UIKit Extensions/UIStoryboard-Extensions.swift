@@ -21,10 +21,6 @@ extension UIStoryboard: Logging {
 		return UIStoryboard(name: "Add", bundle: nil)
 	}
 	
-	static var redditAdd: UIStoryboard {
-		return UIStoryboard(name: "RedditAdd", bundle: nil)
-	}
-	
 	static var settings: UIStoryboard {
 		return UIStoryboard(name: "Settings", bundle: nil)
 	}

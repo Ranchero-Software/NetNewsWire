@@ -12,7 +12,6 @@ public protocol SecretsProvider {
 	var mercuryClientSecret: String { get }
 	var feedlyClientId: String { get }
 	var feedlyClientSecret: String { get }
-	var redditConsumerKey: String { get }
 	var inoreaderAppId: String { get }
 	var inoreaderAppKey: String { get }
 }

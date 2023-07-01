@@ -238,14 +238,8 @@
 /* Add Item */
 "button.title.add-item" = "Add Item";
 
-/* Add Reddit Feed */
-"button.title.add-reddit-feed" = "Add Reddit Feed";
-
 /* Add Web Feed */
-"button.title.add-web-feed" = "Add Web Feed";
-
-/* Add Twitter Feed */
-"button.title.addtwitterfeed" = "Add Twitter Feed";
+"button.title.add-web-feed" = "Add Feed";
 
 /* Button title: Always Use Reader View */
 "button.title.always-use-reader-view" = "Always Use Reader View";
@@ -805,12 +799,6 @@
 
 /* Add Extensions */
 "navigation.title.add-extensions" = "Add Extensions";
-
-/* Add Reddit Feed */
-"navigation.title.add-reddit-feed" = "Add Reddit Feed";
-
-/* Add Twitter Feed */
-"navigation.title.add-twitter-feed" = "Add Twitter Feed";
 
 /* Article Themes */
 "navigation.title.article-themes" = "Article Themes";

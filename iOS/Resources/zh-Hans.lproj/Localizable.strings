@@ -244,14 +244,8 @@
 /* Add Item */
 "button.title.add-item" = "添加项目";
 
-/* Add Reddit Feed */
-"button.title.add-reddit-feed" = "添加 Reddit 订阅";
-
 /* Add Web Feed */
-"button.title.add-web-feed" = "添加 Web 订阅";
-
-/* Add Twitter Feed */
-"button.title.addtwitterfeed" = "添加 Twitter 订阅";
+"button.title.add-web-feed" = "添加 订阅";
 
 /* Button title: Always Use Reader View */
 "button.title.always-use-reader-view" = "总是使用阅读器视图";
@@ -824,12 +818,6 @@
 
 /* Add Extensions */
 "navigation.title.add-extensions" = "添加扩展";
-
-/* Add Reddit Feed */
-"navigation.title.add-reddit-feed" = "添加 Reddit 订阅";
-
-/* Add Twitter Feed */
-"navigation.title.add-twitter-feed" = "添加 Twitter 订阅";
 
 /* Article Themes */
 "navigation.title.article-themes" = "文章主题";
