@@ -764,15 +764,12 @@
 		DF28B44D294ED52700C4D8CA /* View+DismissOnExternalContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B44C294ED52700C4D8CA /* View+DismissOnExternalContext.swift */; };
 		DF28B44F294ED92F00C4D8CA /* NewsBlurAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B44E294ED92F00C4D8CA /* NewsBlurAddAccountView.swift */; };
 		DF28B451294EFC6C00C4D8CA /* View+DismissOnAccountAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B450294EFC6C00C4D8CA /* View+DismissOnAccountAdd.swift */; };
-		DF28B453294FE6C600C4D8CA /* EnableExtensionPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B452294FE6C600C4D8CA /* EnableExtensionPointView.swift */; };
 		DF28B455294FE74A00C4D8CA /* ExtensionSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B454294FE74A00C4D8CA /* ExtensionSectionHeader.swift */; };
-		DF28B4572950163F00C4D8CA /* EnableExtensionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B4562950163F00C4D8CA /* EnableExtensionViewModel.swift */; };
 		DF3630EB2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630EC2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630ED2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630EF293618A900326FB8 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EE293618A900326FB8 /* SettingsViewModel.swift */; };
 		DF394F0029357A180081EB6E /* NewArticleNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */; };
-		DF47CDB2294803AB00FCD57E /* AddExtensionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */; };
 		DF5124CA2A22D5FA00BBAB1F /* Html in Frameworks */ = {isa = PBXBuildFile; productRef = DF5124C92A22D5FA00BBAB1F /* Html */; };
 		DF5124CC2A22D62600BBAB1F /* AboutHTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5124CB2A22D62600BBAB1F /* AboutHTML.swift */; };
 		DF5124CD2A230FC100BBAB1F /* Inspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF5124D02A230FC100BBAB1F /* Inspector.storyboard */; };
@@ -810,7 +807,6 @@
 		DF6DE5212965924D002EC085 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE51E2965924C002EC085 /* Localizable.strings */; };
 		DF6DE52529659443002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE52329659443002EC085 /* InfoPlist.strings */; };
 		DF6DE5282965971A002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE5262965971A002EC085 /* InfoPlist.strings */; };
-		DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DF84E563295122BA0045C334 /* TimelineCustomizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */; };
 		DF93DB2B296A319000586C0E /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DF93DB2D296A319000586C0E /* Localizable.stringsdict */; };
@@ -1568,16 +1564,13 @@
 		DF28B44C294ED52700C4D8CA /* View+DismissOnExternalContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DismissOnExternalContext.swift"; sourceTree = "<group>"; };
 		DF28B44E294ED92F00C4D8CA /* NewsBlurAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsBlurAddAccountView.swift; sourceTree = "<group>"; };
 		DF28B450294EFC6C00C4D8CA /* View+DismissOnAccountAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DismissOnAccountAdd.swift"; sourceTree = "<group>"; };
-		DF28B452294FE6C600C4D8CA /* EnableExtensionPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionPointView.swift; sourceTree = "<group>"; };
 		DF28B454294FE74A00C4D8CA /* ExtensionSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionSectionHeader.swift; sourceTree = "<group>"; };
-		DF28B4562950163F00C4D8CA /* EnableExtensionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionViewModel.swift; sourceTree = "<group>"; };
 		DF332714295BBBB900BFD911 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		DF332716295BBBBF00BFD911 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreenPad.strings; sourceTree = "<group>"; };
 		DF332718295BBBC200BFD911 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreenPhone.strings; sourceTree = "<group>"; };
 		DF3630EA2936183D00326FB8 /* OPMLDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLDocument.swift; sourceTree = "<group>"; };
 		DF3630EE293618A900326FB8 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArticleNotificationsView.swift; sourceTree = "<group>"; };
-		DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExtensionListView.swift; sourceTree = "<group>"; };
 		DF5124CB2A22D62600BBAB1F /* AboutHTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutHTML.swift; sourceTree = "<group>"; };
 		DF5124CF2A230FC100BBAB1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Inspector.storyboard; sourceTree = "<group>"; };
 		DF5124D22A230FC700BBAB1F /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Inspector.strings"; sourceTree = "<group>"; };
@@ -1614,7 +1607,6 @@
 		DF6DE5222965937C002EC085 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DF6DE52429659443002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		DF6DE5272965971A002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsManagementView.swift; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
 		DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerView.swift; sourceTree = "<group>"; };
 		DF93DB2C296A319000586C0E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
@@ -2019,7 +2011,7 @@
 			children = (
 				DF766FEB2936344D006FBBE2 /* General */,
 				DFD406FD291FDBD900C02962 /* Appearance */,
-				DF59F0752920E42000ACD33D /* Account and Extensions */,
+				DFB3497B294AA95200BC81AD /* Accounts */,
 				DF3630E92936038400326FB8 /* New Article Notifications */,
 				DF766FEA2936337A006FBBE2 /* Help */,
 				5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */,
@@ -2898,15 +2890,6 @@
 			path = "New Article Notifications";
 			sourceTree = "<group>";
 		};
-		DF59F0752920E42000ACD33D /* Account and Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				DFB3497B294AA95200BC81AD /* Accounts */,
-				DFB3497C294AA95A00BC81AD /* Extensions */,
-			);
-			path = "Account and Extensions";
-			sourceTree = "<group>";
-		};
 		DF766FEA2936337A006FBBE2 /* Help */ = {
 			isa = PBXGroup;
 			children = (
@@ -2933,17 +2916,6 @@
 				DFB34979294A962D00BC81AD /* AddAccountListView.swift */,
 			);
 			path = Accounts;
-			sourceTree = "<group>";
-		};
-		DFB3497C294AA95A00BC81AD /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */,
-				DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */,
-				DF28B452294FE6C600C4D8CA /* EnableExtensionPointView.swift */,
-				DF28B4562950163F00C4D8CA /* EnableExtensionViewModel.swift */,
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		DFB34985294B3B0800BC81AD /* Localizations */ = {
@@ -4126,7 +4098,6 @@
 				512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
-				DF28B4572950163F00C4D8CA /* EnableExtensionViewModel.swift in Sources */,
 				DF59F072292085B800ACD33D /* ColorPaletteSelectorView.swift in Sources */,
 				51F9F3FB23DFB25700A314FD /* Animations.swift in Sources */,
 				DFB34988294B447F00BC81AD /* InjectedNavigationView.swift in Sources */,
@@ -4159,7 +4130,6 @@
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
 				DFEB034F2A273BFE00C7573A /* UTType.swift in Sources */,
 				51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */,
-				DF28B453294FE6C600C4D8CA /* EnableExtensionPointView.swift in Sources */,
 				51AB8AB323B7F4C6008F147D /* WebViewController.swift in Sources */,
 				DFD406F7291FB1A600C02962 /* SafariView.swift in Sources */,
 				DF3630ED2936183D00326FB8 /* OPMLDocument.swift in Sources */,
@@ -4241,7 +4211,6 @@
 				51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				51F9F3F723DF6DB200A314FD /* ArticleIconSchemeHandler.swift in Sources */,
 				512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */,
-				DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
@@ -4251,7 +4220,6 @@
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
 				512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */,
-				DF47CDB2294803AB00FCD57E /* AddExtensionListView.swift in Sources */,
 				DFB34994294C0E3900BC81AD /* ReaderAPIAddAccountView.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5195C1DC2720BD3000888867 /* MasterFeedRowIdentifier.swift in Sources */,

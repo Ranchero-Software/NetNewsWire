@@ -39,9 +39,6 @@ private struct ToolbarItemIdentifier {
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
 											 name: NSLocalizedString("button.title.accounts", comment: "Account"),
 											 image: AppAssets.preferencesToolbarAccountsImage)]
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Extensions,
-											 name: NSLocalizedString("button.title.extensions", comment: "Extensions"),
-											 image: AppAssets.preferencesToolbarExtensionsImage)]
 
 		// Omit the Advanced Preferences for now because the Software Update related functionality is
 		// forbidden/non-applicable, and we can rely upon Apple to some extent for crash reports. We

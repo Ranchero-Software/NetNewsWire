@@ -17,24 +17,18 @@ extension URL {
 	
 	/// Percent encoded `mailto` URL for use with `canOpenUrl`. If the URL doesn't contain the `mailto` scheme, this is `nil`.
 	var percentEncodedEmailAddress: URL? {
-		scheme == "mailto" ? self.string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)?.url : nil
+		guard scheme == "mailto" else {
+			return nil
+		}
+		guard let urlString = absoluteString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+			return nil
+		}
+		return URL(string: urlString)
 	}
-	
-	/// URL pointing to current app version release notes.
-	static var releaseNotes: URL {
-		var gitHub = "https://github.com/Ranchero-Software/NetNewsWire/releases/tag/"
-		
-		#if os(macOS)
-		gitHub += "mac-"
-		#else
-		gitHub += "ios-"
-		#endif
 
-		gitHub += "\(Bundle.main.versionNumber)-\(Bundle.main.buildNumber)"
+	/// Reverse chronological list of release notes.
+	static var releaseNotes = URL(string: "https://github.com/Ranchero-Software/NetNewsWire/releases/")!
 
-		return URL(string: gitHub)!
-	}
-	
 	func valueFor(_ parameter: String) -> String? {
 		guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
 			  let queryItems = components.queryItems,
@@ -45,7 +39,7 @@ extension URL {
 		
 	}
 	
-	static func reparingIfRequired(_ link: String?) -> URL? {
+	static func encodingSpacesIfNeeded(_ link: String?) -> URL? {
 		// If required, we replace any space characters to handle malformed links that are otherwise percent
 		// encoded but contain spaces. For performance reasons, only try this if initial URL init fails.
 		guard let link = link, !link.isEmpty else { return nil }

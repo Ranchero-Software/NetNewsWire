@@ -46,15 +46,15 @@ extension Article {
 	}
 	
 	var url: URL? {
-		return URL.reparingIfRequired(rawLink)
+		return URL.encodingSpacesIfNeeded(rawLink)
 	}
 	
 	var externalURL: URL? {
-		return URL.reparingIfRequired(rawExternalLink)
+		return URL.encodingSpacesIfNeeded(rawExternalLink)
 	}
 	
 	var imageURL: URL? {
-		return URL.reparingIfRequired(rawImageLink)
+		return URL.encodingSpacesIfNeeded(rawImageLink)
 	}
 	
 	var link: String? {
