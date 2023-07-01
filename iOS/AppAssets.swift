@@ -125,10 +125,6 @@ struct AppAssets {
 		UIImage(systemName: "square.and.pencil")!
 	}()
 	
-	static var extensionPointReddit: RSImage = {
-		return RSImage(named: "extensionPointReddit")!
-	}()
-
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()

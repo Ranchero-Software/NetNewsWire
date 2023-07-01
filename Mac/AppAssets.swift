@@ -80,10 +80,6 @@ struct AppAssets {
 		return RSImage(named: "extensionPointMicroblog")!
 	}()
 	
-	static var extensionPointReddit: RSImage = {
-		return RSImage(named: "extensionPointReddit")!
-	}()
-
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()

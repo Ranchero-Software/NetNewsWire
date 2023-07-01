@@ -90,8 +90,6 @@
 		510C418424E5D1B4008226FD /* ExtensionFeedAddRequestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C8BF23F3866C00032075 /* ExtensionFeedAddRequestFile.swift */; };
 		510C418524E5D1B4008226FD /* ExtensionContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87623F22B8200032075 /* ExtensionContainers.swift */; };
 		510C418624E5D1B4008226FD /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
-		510C43F7243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
-		510C43F8243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */; };
 		51107746243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
 		51107747243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
@@ -194,17 +192,10 @@
 		514C16E124D2EF38009A3AFA /* RSCoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16E024D2EF38009A3AFA /* RSCoreResources */; };
 		5153A35428DC5CEB0036C545 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = DF2A8F32289BFBD9002455AD /* RSCore */; };
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
-		515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
-		515A50E7243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
 		515A5148243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
 		515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
 		515A5171243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */; };
 		515A5172243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */; };
-		515A5177243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
-		515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
-		515A517B243E90260089E588 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
-		515A517C243E90260089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
-		515A5181243E90260089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
 		515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */ = {isa = PBXBuildFile; fileRef = 515D4FCB2325815A00EE1167 /* SafariExt.js */; };
 		51627A6723861DA3007B3B4B /* MasterFeedViewController+Drag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51627A6623861DA3007B3B4B /* MasterFeedViewController+Drag.swift */; };
@@ -246,9 +237,6 @@
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
 		51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
-		5193CD58245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
-		5193CD59245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
-		5193CD5A245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
 		5195C1DA2720205F00888867 /* ShadowTableChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5195C1D92720205F00888867 /* ShadowTableChanges.swift */; };
 		5195C1DC2720BD3000888867 /* MasterFeedRowIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5195C1DB2720BD3000888867 /* MasterFeedRowIdentifier.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
@@ -1199,7 +1187,6 @@
 		510C416524E5CDE3008226FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		510C416624E5CDE3008226FD /* ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
 		510C418724E5D2E3008226FD /* NetNewsWire_shareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_shareextension_target.xcconfig; sourceTree = "<group>"; };
-		510C43F6243D035C009F70C3 /* ExtensionPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPoint.swift; sourceTree = "<group>"; };
 		51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
 		51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointPreferencesViewController.swift; sourceTree = "<group>"; };
 		51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSapp_target.xcconfig; sourceTree = "<group>"; };
@@ -1243,10 +1230,8 @@
 		5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsFeedbinWindowController.swift; sourceTree = "<group>"; };
 		5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineTitleView.swift; sourceTree = "<group>"; };
 		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
-		515A50E5243D07A90089E588 /* ExtensionPointManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointManager.swift; sourceTree = "<group>"; };
 		515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointEnableWindowController.swift; sourceTree = "<group>"; };
 		515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointDetailViewController.swift; sourceTree = "<group>"; };
-		515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointIdentifer.swift; sourceTree = "<group>"; };
 		515D4FCB2325815A00EE1167 /* SafariExt.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SafariExt.js; sourceTree = "<group>"; };
 		515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_ShareExtension.entitlements; sourceTree = "<group>"; };
 		515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSshareextension_target.xcconfig; sourceTree = "<group>"; };
@@ -1280,7 +1265,6 @@
 		51927A0328E28D1C000AE856 /* MainWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindow.swift; sourceTree = "<group>"; };
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
-		5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RedditFeedProvider-Extensions.swift"; sourceTree = "<group>"; };
 		5195C1D92720205F00888867 /* ShadowTableChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowTableChanges.swift; sourceTree = "<group>"; };
 		5195C1DB2720BD3000888867 /* MasterFeedRowIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedRowIdentifier.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
@@ -1945,12 +1929,8 @@
 		510C43F5243D0325009F70C3 /* ExtensionPoints */ = {
 			isa = PBXGroup;
 			children = (
-				510C43F6243D035C009F70C3 /* ExtensionPoint.swift */,
-				515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */,
-				515A50E5243D07A90089E588 /* ExtensionPointManager.swift */,
 				84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */,
 				84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */,
-				5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */,
 			);
 			path = ExtensionPoints;
 			sourceTree = "<group>";
@@ -4055,7 +4035,6 @@
 				65ED3FC9235DEF6C0081F399 /* SmartFeedPasteboardWriter.swift in Sources */,
 				515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */,
 				65ED3FCA235DEF6C0081F399 /* SmartFeedsController.swift in Sources */,
-				515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */,
 				65ED3FCB235DEF6C0081F399 /* SidebarViewController.swift in Sources */,
 				51BC4B00247277E0000A6ED8 /* URL-Extensions.swift in Sources */,
 				65ED3FCD235DEF6C0081F399 /* SidebarOutlineView.swift in Sources */,
@@ -4092,7 +4071,6 @@
 				65ED3FE3235DEF6C0081F399 /* ArticleUtilities.swift in Sources */,
 				65ED3FE4235DEF6C0081F399 /* NNW3OpenPanelAccessoryViewController.swift in Sources */,
 				65ED3FE5235DEF6C0081F399 /* DefaultFeedsImporter.swift in Sources */,
-				5193CD59245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */,
 				65ED3FE6235DEF6C0081F399 /* RenameWindowController.swift in Sources */,
 				65ED3FE7235DEF6C0081F399 /* SendToMicroBlogCommand.swift in Sources */,
 				65ED3FE8235DEF6C0081F399 /* ArticleTheme.swift in Sources */,
@@ -4108,7 +4086,6 @@
 				65ED3FF0235DEF6C0081F399 /* ArticleThemesManager.swift in Sources */,
 				65ED3FF1235DEF6C0081F399 /* DetailContainerView.swift in Sources */,
 				65ED3FF2235DEF6C0081F399 /* SharingServiceDelegate.swift in Sources */,
-				515A50E7243D07A90089E588 /* ExtensionPointManager.swift in Sources */,
 				65ED3FF3235DEF6C0081F399 /* ArticleSorter.swift in Sources */,
 				65ED3FF4235DEF6C0081F399 /* TimelineViewController+ContextualMenus.swift in Sources */,
 				65ED3FF5235DEF6C0081F399 /* ArticleStringFormatter.swift in Sources */,
@@ -4147,7 +4124,6 @@
 				65ED4012235DEF6C0081F399 /* TimelineContainerViewController.swift in Sources */,
 				65ED4013235DEF6C0081F399 /* MainWIndowKeyboardHandler.swift in Sources */,
 				65ED4014235DEF6C0081F399 /* PasteboardWebFeed.swift in Sources */,
-				510C43F8243D035C009F70C3 /* ExtensionPoint.swift in Sources */,
 				510C417B24E5D1AE008226FD /* ExtensionContainersFile.swift in Sources */,
 				519279F928E23F5F000AE856 /* NSEvent-Extensions.swift in Sources */,
 				65ED4015235DEF6C0081F399 /* AccountsDetailViewController.swift in Sources */,
@@ -4285,7 +4261,6 @@
 				DFB3499E294C5D5000BC81AD /* CloudKitAddAccountView.swift in Sources */,
 				DFB3498C294B4CA700BC81AD /* WebFeedInspectorView.swift in Sources */,
 				DFB349A0294E87B700BC81AD /* LocalAddAccountView.swift in Sources */,
-				5193CD5A245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
@@ -4339,7 +4314,6 @@
 				C5A6ED6D23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift in Sources */,
 				84CAFCA522BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
 				512392BE24E33A3C00F11704 /* RedditSelectAccountTableViewController.swift in Sources */,
-				515A517B243E90260089E588 /* ExtensionPoint.swift in Sources */,
 				51C4529C22650A1000C03939 /* SingleFaviconDownloader.swift in Sources */,
 				17D643B226F8A436008D4C05 /* ArticleThemeDownloader.swift in Sources */,
 				DFB34997294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */,
@@ -4347,7 +4321,6 @@
 				51F9F3F723DF6DB200A314FD /* ArticleIconSchemeHandler.swift in Sources */,
 				512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */,
 				512392C124E33A3C00F11704 /* RedditSelectTypeTableViewController.swift in Sources */,
-				515A5181243E90260089E588 /* ExtensionPointIdentifer.swift in Sources */,
 				DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
@@ -4404,7 +4377,6 @@
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,
 				5148F4552336DB7000F8CD8B /* MasterTimelineTitleView.swift in Sources */,
-				515A517C243E90260089E588 /* ExtensionPointManager.swift in Sources */,
 				51627A6723861DA3007B3B4B /* MasterFeedViewController+Drag.swift in Sources */,
 				51FFF0C4235EE8E5002762AA /* VibrantButton.swift in Sources */,
 				51C45259226508D300C03939 /* AppDefaults.swift in Sources */,
@@ -4458,9 +4430,7 @@
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				1710B929255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */,
-				515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */,
 				51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
-				515A5177243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */,
 				849A97651ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				510C418024E5D1AE008226FD /* ExtensionFeedAddRequestFile.swift in Sources */,
@@ -4526,7 +4496,6 @@
 				849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */,
 				5183CCE8226F68D90010922C /* AccountRefreshTimer.swift in Sources */,
 				849A97831ED9EC63007D329B /* SidebarStatusBarView.swift in Sources */,
-				5193CD58245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */,
 				51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
 				84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */,
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
@@ -4590,7 +4559,6 @@
 				179C39EB26F76B3800D4E741 /* ArticleThemePlist.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
 				51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */,
-				510C43F7243D035C009F70C3 /* ExtensionPoint.swift in Sources */,
 				519279FE28E24CCA000AE856 /* MainWindowController.swift in Sources */,
 				845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */,
 				D5F4EDB720074D6500B9E363 /* WebFeed+Scriptability.swift in Sources */,

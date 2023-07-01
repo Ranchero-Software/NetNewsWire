@@ -10,40 +10,15 @@ import AppKit
 import RSCore
 import Articles
 
-final class SendToMarsEditCommand: ExtensionPoint, SendToCommand {
+final class SendToMarsEditCommand: SendToCommand {
 
-	static var isSinglton = true
-	static var isDeveloperBuildRestricted = false
-	static var title = "MarsEdit" // not localized
-	static var image = AppAssets.extensionPointMarsEdit
-	static var description: NSAttributedString = {
-		let attrString = SendToMarsEditCommand.makeAttrString(NSLocalizedString("label.text.marsedit.explainer", comment: "This extension enables share menu functionality to send selected article text to MarsEdit. You need the MarsEdit application for this to work."))
-		let range = NSRange(location: 81, length: 8)
-		attrString.beginEditing()
-		attrString.addAttribute(NSAttributedString.Key.link, value: "https://red-sweater.com/marsedit/", range: range)
-		attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: NSColor.systemBlue, range: range)
-		attrString.endEditing()
-		return attrString
-	}()
-	
-	let extensionPointID = ExtensionPointIdentifer.marsEdit
-	
-	var title: String {
-		return extensionPointID.extensionPointType.title
-	}
-	
-	var image: NSImage? {
-		return appToUse()?.icon ?? nil
-	}
+	let title = "MarsEdit"
+	let image: RSImage? = AppAssets.marsEditIcon
 
 	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
 
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
-
-		if let _ = appToUse() {
-			return true
-		}
-		return false
+		appToUse() != nil
 	}
 
 	func sendObject(_ object: Any?, selectedText: String?) {
