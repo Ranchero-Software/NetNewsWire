@@ -27,12 +27,14 @@ import RSCore
 	}
 
 	static func customSharingServices(for items: [Any]) -> [NSSharingService] {
-		let customServices = ExtensionPointManager.shared.activeSendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
+		let customServices: [SendToCommand] = [SendToMarsEditCommand(), SendToMicroBlogCommand()]
+
+		return customServices.compactMap { (sendToCommand) -> NSSharingService? in
 
 			guard let object = items.first else {
 				return nil
 			}
-			
+
 			guard sendToCommand.canSendObject(object, selectedText: nil) else {
 				return nil
 			}
@@ -42,6 +44,5 @@ import RSCore
 				sendToCommand.sendObject(object, selectedText: nil)
 			}
 		}
-		return customServices
 	}
 }

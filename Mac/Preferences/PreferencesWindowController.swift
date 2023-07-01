@@ -24,7 +24,6 @@ private struct PreferencesToolbarItemSpec {
 private struct ToolbarItemIdentifier {
 	static let General = "General"
 	static let Accounts = "Accounts"
-	static let Extensions = "Extensions"
 	static let Advanced = "Advanced"
 }
 
