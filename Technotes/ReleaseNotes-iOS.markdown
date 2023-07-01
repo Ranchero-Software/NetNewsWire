@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.4 TestFlight build 6120 - 1 July 2023
+
+Build using Xcode 14.3.1 so the app won’t crash on launch on iOS 13.
+
 ### 6.1.4 TestFlight build 6119 - 30 June 2023
 
 Remove Reddit from Settings. Remove Reddit API code.
