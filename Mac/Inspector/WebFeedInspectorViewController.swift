@@ -141,7 +141,7 @@ private extension WebFeedInspectorViewController {
 		windowTitle = feed?.nameForDisplay ?? NSLocalizedString("window.title.feed-inspector", comment: "Feed Inspector")
 		view.needsLayout = true
 		if let webfeed = feed {
-			webfeed.isFeedProvider ? (isReaderViewAlwaysOnCheckBox?.isEnabled = false) : (isReaderViewAlwaysOnCheckBox?.isEnabled = true)
+			isReaderViewAlwaysOnCheckBox?.isEnabled = true
 		}
 	}
 

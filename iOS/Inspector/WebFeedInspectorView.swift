@@ -31,14 +31,6 @@ struct WebFeedInspectorView: View {
 				Toggle(isOn: Binding(get: { webFeed.isNotifyAboutNewArticles ?? false }, set: { webFeed.isNotifyAboutNewArticles = $0 })) {
 					Text("toggle.title.notify-about-new-articles", comment: "New Article Notifications")
 				}
-
-				if webFeed.isFeedProvider == false {
-					Toggle(isOn: Binding(
-						get: { webFeed.isArticleExtractorAlwaysOn ?? false },
-						set: { webFeed.isArticleExtractorAlwaysOn = $0 })) {
-						Text("toggle.title.always-show-reader-view", comment: "Always Show Reader View")
-					}
-				}
 			}
 			
 			Section(header: Text("label.text.home-page", comment: "Home Page")) {

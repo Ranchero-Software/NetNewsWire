@@ -152,15 +152,10 @@ public final class WebFeed: Feed, Renamable, Hashable, ObservableObject {
 	
 	public var isArticleExtractorAlwaysOn: Bool? {
 		get {
-            if isFeedProvider == true { return false } // not an option for FeedProviders
-			return metadata.isArticleExtractorAlwaysOn
+            metadata.isArticleExtractorAlwaysOn
 		}
 		set {
-            if isFeedProvider == true {
-                metadata.isArticleExtractorAlwaysOn = false
-                return
-            }
-			metadata.isArticleExtractorAlwaysOn = newValue
+            metadata.isArticleExtractorAlwaysOn = newValue
 		}
 	}
 	
@@ -234,21 +229,6 @@ public final class WebFeed: Feed, Renamable, Hashable, ObservableObject {
 			postUnreadCountDidChangeNotification()
 		}
 	}
-    
-    // MARK: - Feed Provider
-    public var isFeedProvider: Bool {
-        get {
-            guard let webfeedURL = URL(string: url),
-                  let components = URLComponents(url: webfeedURL, resolvingAgainstBaseURL: false) else {
-                return false
-            }
-            
-            if FeedProviderManager.shared.best(for: components) == nil {
-                return false
-            }
-            return true
-        }
-    }
     
     // MARK: - NotificationDisplayName
     public var notificationDisplayName: String {

@@ -304,19 +304,15 @@ private extension SidebarViewController {
 		}
 		menu.addItem(notificationMenuItem)
 		
+		let articleExtractorText = NSLocalizedString("button.title.always-use-reader-view", comment: "Always Use Reader View")
+		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
 		
-		if !webFeed.isFeedProvider {
-			let articleExtractorText = NSLocalizedString("button.title.always-use-reader-view", comment: "Always Use Reader View")
-			let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
-			
-			if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
-				articleExtractorMenuItem.state = .off
-			} else {
-				articleExtractorMenuItem.state = .on
-			}
-			menu.addItem(articleExtractorMenuItem)
+		if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
+			articleExtractorMenuItem.state = .off
+		} else {
+			articleExtractorMenuItem.state = .on
 		}
-		
+		menu.addItem(articleExtractorMenuItem)		
 		
 		menu.addItem(NSMenuItem.separator())
 		
