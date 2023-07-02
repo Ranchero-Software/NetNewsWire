@@ -129,7 +129,7 @@ private extension KeyboardManager {
 	static func globalAuxilaryKeyCommands() -> [UIKeyCommand] {
 		var keys = [UIKeyCommand]()
 		
-		let addNewFeedTitle = NSLocalizedString("keyboard.command.new-web-feed", comment: "New Web Feed")
+		let addNewFeedTitle = NSLocalizedString("keyboard.command.new-web-feed", comment: "New Feed")
 		keys.append(KeyboardManager.createKeyCommand(title: addNewFeedTitle, action: "addNewFeed:", input: "n", modifiers: [.command]))
 
 		let addNewFolderTitle = NSLocalizedString("keyboard.command.new-folder", comment: "New Folder")

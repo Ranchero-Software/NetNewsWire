@@ -331,8 +331,8 @@
 /* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
 "W48-6f-4Dl.title" = "编辑";
 
-/* Class = "NSMenuItem"; title = "New Web Feed…"; ObjectID = "Was-JA-tGl"; */
-"Was-JA-tGl.title" = "添加 Web 订阅...";
+/* Class = "NSMenuItem"; title = "New Feed…"; ObjectID = "Was-JA-tGl"; */
+"Was-JA-tGl.title" = "添加 订阅...";
 
 /* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
 "WeT-3V-zwk.title" = "粘贴并匹配样式";

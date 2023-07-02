@@ -93,7 +93,7 @@
 	<string>Grant permission to save images from the article.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>AddWebFeedIntent</string>
+		<string>AddFeedIntent</string>
 		<string>NextUnread</string>
 		<string>ReadArticle</string>
 		<string>Restoration</string>

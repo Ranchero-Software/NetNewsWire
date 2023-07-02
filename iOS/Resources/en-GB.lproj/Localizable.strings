@@ -244,7 +244,7 @@
 /* Add Item */
 "button.title.add-item" = "Add Item";
 
-/* Add Web Feed */
+/* Add Feed */
 "button.title.add-web-feed" = "Add Feed";
 
 /* Button title: Always Use Reader View */
@@ -559,8 +559,8 @@
 /* New Folder */
 "keyboard.command.new-folder" = "New Folder";
 
-/* New Web Feed */
-"keyboard.command.new-web-feed" = "New Web Feed";
+/* New Feed */
+"keyboard.command.new-web-feed" = "New Feed";
 
 /* Next Unread */
 "keyboard.command.next-unread" = "Next Unread";

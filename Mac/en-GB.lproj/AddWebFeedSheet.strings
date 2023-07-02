@@ -22,8 +22,8 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "pLP-pL-5R5"; */
 "pLP-pL-5R5.placeholderString" = "Optional";
 
-/* Class = "NSWindow"; title = "Add Web Feed"; ObjectID = "QvC-M9-y7g"; */
-"QvC-M9-y7g.title" = "Add Web Feed";
+/* Class = "NSWindow"; title = "Add Feed"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Add Feed";
 
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "tLJ-zY-CcZ"; */
 "tLJ-zY-CcZ.title" = "Item 1";

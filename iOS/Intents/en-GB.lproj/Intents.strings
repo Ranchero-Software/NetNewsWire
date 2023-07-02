@@ -32,7 +32,7 @@
 "IGNcSh" = "What is the ${title}of the feed?";
 
 /* (No Comment) */
-"IuAbef" = "Add a web feed";
+"IuAbef" = "Add a feed";
 
 /* (No Comment) */
 "JGkCuS" = "A valid Account Name is required.";
@@ -47,7 +47,7 @@
 "kaKsEY" = "Add ${url} to ${accountName}";
 
 /* (No Comment) */
-"oV681v" = "Add Web Feed";
+"oV681v" = "Add Feed";
 
 /* (No Comment) */
 "uSfloN" = "Unable to communicate with NetNewsWire.";

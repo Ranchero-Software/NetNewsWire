@@ -1,8 +1,8 @@
 /* Class = "UILabel"; text = "Folder"; ObjectID = "3Tp-A7-7rS"; */
 "3Tp-A7-7rS.text" = "文件夹";
 
-/* Class = "UITableViewController"; title = "Web Feed Folder"; ObjectID = "acA-n7-ohN"; */
-"acA-n7-ohN.title" = "Web 订阅文件夹";
+/* Class = "UITableViewController"; title = "Feed Folder"; ObjectID = "acA-n7-ohN"; */
+"acA-n7-ohN.title" = "订阅文件夹";
 
 /* Class = "UINavigationItem"; title = "Select Folder"; ObjectID = "e4Y-zR-cTn"; */
 "e4Y-zR-cTn.title" = "选择文件夹";
@@ -19,8 +19,8 @@
 /* Class = "UILabel"; text = "Label"; ObjectID = "htg-Nn-3xi"; */
 "htg-Nn-3xi.text" = "标签";
 
-/* Class = "UINavigationItem"; title = "Add Web Feed"; ObjectID = "i1W-2z-PAk"; */
-"i1W-2z-PAk.title" = "添加 Web 订阅";
+/* Class = "UINavigationItem"; title = "Add Feed"; ObjectID = "i1W-2z-PAk"; */
+"i1W-2z-PAk.title" = "添加 订阅";
 
 /* Class = "UINavigationItem"; title = "Add Folder"; ObjectID = "LuA-AC-n99"; */
 "LuA-AC-n99.title" = "添加文件夹";

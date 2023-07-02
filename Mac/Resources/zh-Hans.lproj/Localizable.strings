@@ -347,7 +347,7 @@
    New Folder... */
 "button.title.new-folder" = "新建文件夹";
 
-/* New Web Feed... */
+/* New Feed... */
 "button.title.new-web-feed" = "添加 订阅...";
 
 /* Next Unread */

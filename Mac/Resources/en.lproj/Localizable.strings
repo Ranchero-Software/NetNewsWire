@@ -347,8 +347,8 @@
 /* New Twitter Feed... */
 "button.title.new-twitter-feed" = "New Twitter Feed...";
 
-/* New Web Feed... */
-"button.title.new-web-feed" = "New Web Feed...";
+/* New Feed... */
+"button.title.new-web-feed" = "New Feed...";
 
 /* Next Unread */
 "button.title.next-read" = "Next Unread";

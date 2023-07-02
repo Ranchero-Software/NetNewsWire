@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Add Web Feed-->
+        <!--Add Feed-->
         <scene sceneID="2Tc-JN-edX">
             <objects>
                 <tableViewController storyboardIdentifier="AddWebFeedViewController" id="7aE-6a-iP7" customClass="AddFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
@@ -98,7 +98,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Add Web Feed" id="i1W-2z-PAk">
+                    <navigationItem key="navigationItem" title="Add Feed" id="i1W-2z-PAk">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="QpU-Ro-nHd">
                             <connections>
                                 <action selector="cancel:" destination="7aE-6a-iP7" id="g4H-Mc-Jnh"/>
@@ -144,7 +144,7 @@
             <objects>
                 <navigationController storyboardIdentifier="AddWebFeedFolderNavViewController" id="WDg-F7-gfk" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="akM-T1-shZ">
-                        <rect key="frame" x="0.0" y="47" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="50" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -256,7 +256,7 @@
             <objects>
                 <navigationController storyboardIdentifier="AddWebFeedViewControllerNav" id="4Ej-aI-tUP" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Fot-QF-7Rn">
-                        <rect key="frame" x="0.0" y="47" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="50" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -388,7 +388,7 @@
             <objects>
                 <navigationController storyboardIdentifier="AddFolderViewControllerNav" id="edk-IE-nce" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Pi1-Bc-YXQ">
-                        <rect key="frame" x="0.0" y="47" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="50" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
