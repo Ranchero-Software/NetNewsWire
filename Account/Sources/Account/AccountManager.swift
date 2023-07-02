@@ -347,7 +347,35 @@ public final class AccountManager: UnreadCountProvider {
         
         return false
     }
-    
+
+    public func anyLocalOriCloudAccountHasAtLeastOneRedditAPIFeed() -> Bool {
+        // We removed our Reddit code, and the ability to read feeds from Reddit,
+        // when Reddit announced the end of the free tier for the Reddit API.
+        // We are cheering on Reddit’s increasing irrelevancy.
+
+        for account in accounts {
+            if account.type == .cloudKit || account.type == .onMyMac {
+                for webfeed in account.flattenedWebFeeds() {
+                    if feedRequiresRedditAPI(webfeed) {
+                        return true
+                    }
+                }
+            }
+        }
+
+        return false
+    }
+
+    /// Return true if a feed is for reddit.com and the path doesn’t end with .rss.
+    ///
+    /// More info: [Pathogen-David's Guide to RSS and Reddit!](https://www.reddit.com/r/pathogendavid/comments/tv8m9/pathogendavids_guide_to_rss_and_reddit/)
+    private func feedRequiresRedditAPI(_ feed: WebFeed) -> Bool {
+        if let components = URLComponents(string: feed.url), let host = components.host {
+            return host.hasSuffix("reddit.com") && !components.path.hasSuffix(".rss")
+        }
+        return false
+    }
+
 	// MARK: - Fetching Articles
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
