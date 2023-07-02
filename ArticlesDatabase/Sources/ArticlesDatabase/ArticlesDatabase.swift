@@ -182,8 +182,8 @@ public final class ArticlesDatabase {
 	}
 
 	/// Fetch unread count for a single feed.
-	public func fetchUnreadCount(_ webFeedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
-		let operation = FetchFeedUnreadCountOperation(webFeedID: webFeedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+	public func fetchUnreadCount(_ feedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+		let operation = FetchFeedUnreadCountOperation(feedID: feedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
 		operation.completionBlock = { operation in
 			let fetchOperation = operation as! FetchFeedUnreadCountOperation
 			completion(fetchOperation.result)
