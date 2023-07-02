@@ -142,12 +142,12 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     }
 
 	@objc(feed)
-	var feed: ScriptableWebFeed? {
+	var feed: ScriptableFeed? {
 		guard let parentFeed = self.article.webFeed,
 			let account = parentFeed.account
 			else { return nil }
 
-		return ScriptableWebFeed(parentFeed, container: ScriptableAccount(account))
+		return ScriptableFeed(parentFeed, container: ScriptableAccount(account))
 	}
 
 }
