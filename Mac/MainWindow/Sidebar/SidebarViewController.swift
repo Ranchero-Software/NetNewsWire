@@ -32,7 +32,7 @@ protocol SidebarDelegate: AnyObject {
 	weak var splitViewItem: NSSplitViewItem?
 
 	private let rebuildTreeAndRestoreSelectionQueue = CoalescingQueue(name: "Rebuild Tree Queue", interval: 1.0)
-	let treeControllerDelegate = WebFeedTreeControllerDelegate()
+	let treeControllerDelegate = FeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()

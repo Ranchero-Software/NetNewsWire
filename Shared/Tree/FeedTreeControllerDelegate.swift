@@ -1,5 +1,5 @@
 //
-//  SidebarTreeControllerDelegate.swift
+//  FeedTreeControllerDelegate.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 7/24/16.
@@ -11,7 +11,7 @@ import RSTree
 import Articles
 import Account
 
-final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
+final class FeedTreeControllerDelegate: TreeControllerDelegate {
 
 	private var filterExceptions = Set<FeedIdentifier>()
 	var isReadFiltered = false
@@ -39,7 +39,7 @@ final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 	}	
 }
 
-private extension WebFeedTreeControllerDelegate {
+private extension FeedTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()

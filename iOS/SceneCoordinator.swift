@@ -113,7 +113,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	
 	var prefersStatusBarHidden = false
 	
-	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
+	private let treeControllerDelegate = FeedTreeControllerDelegate()
 	private let treeController: TreeController
 	
 	var stateRestorationActivity: NSUserActivity {
