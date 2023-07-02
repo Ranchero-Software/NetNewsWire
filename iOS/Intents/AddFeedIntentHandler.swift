@@ -1,5 +1,5 @@
 //
-//  AddWebFeedIntentHandler.swift
+//  AddFeedIntentHandler.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 10/18/19.
@@ -8,7 +8,7 @@
 
 import Intents
 
-public enum AddWebFeedIntentHandlerError: LocalizedError {
+public enum AddFeedIntentHandlerError: LocalizedError {
 	
 	case communicationFailure
 	
@@ -21,13 +21,13 @@ public enum AddWebFeedIntentHandlerError: LocalizedError {
 	
 }
 
-public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
+public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 
 	override init() {
 		super.init()
 	}
 	
-	public func resolveUrl(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedUrlResolutionResult) -> Void) {
+	public func resolveUrl(for intent: AddFeedIntent, with completion: @escaping (AddFeedUrlResolutionResult) -> Void) {
 		guard let url = intent.url else {
 			completion(.unsupported(forReason: .required))
 			return
@@ -35,7 +35,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		completion(.success(with: url))
 	}
 	
-	public func resolveTitle(for intent: AddWebFeedIntent, with completion: @escaping (INStringResolutionResult) -> Void) {
+	public func resolveTitle(for intent: AddFeedIntent, with completion: @escaping (INStringResolutionResult) -> Void) {
 		guard let title = intent.title else {
 			completion(INStringResolutionResult.notRequired())
 			return
@@ -43,9 +43,9 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		completion(.success(with: title))
 	}
 	
-	public func provideAccountNameOptionsCollection(for intent: AddWebFeedIntent, with completion: @escaping (INObjectCollection<NSString>?, Error?) -> Void) {
+	public func provideAccountNameOptionsCollection(for intent: AddFeedIntent, with completion: @escaping (INObjectCollection<NSString>?, Error?) -> Void) {
 		guard let extensionContainers = ExtensionContainersFile.read() else {
-			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
+			completion(nil, AddFeedIntentHandlerError.communicationFailure)
 			return
 		}
 
@@ -53,9 +53,9 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		completion(INObjectCollection(items: accountNames as [NSString]), nil)
 	}
 
-	public func resolveAccountName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedAccountNameResolutionResult) -> Void) {
+	public func resolveAccountName(for intent: AddFeedIntent, with completion: @escaping (AddFeedAccountNameResolutionResult) -> Void) {
 		guard let accountName = intent.accountName else {
-			completion(AddWebFeedAccountNameResolutionResult.notRequired())
+			completion(AddFeedAccountNameResolutionResult.notRequired())
 			return
 		}
 
@@ -71,9 +71,9 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		}
 	}
 	
-	public func provideFolderNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
+	public func provideFolderNameOptions(for intent: AddFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
 		guard let extensionContainers = ExtensionContainersFile.read() else {
-			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
+			completion(nil, AddFeedIntentHandlerError.communicationFailure)
 			return
 		}
 
@@ -86,9 +86,9 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		completion(folderNames, nil)
 	}
 	
-	public func provideFolderNameOptionsCollection(for intent: AddWebFeedIntent, with completion: @escaping (INObjectCollection<NSString>?, Error?) -> Void) {
+	public func provideFolderNameOptionsCollection(for intent: AddFeedIntent, with completion: @escaping (INObjectCollection<NSString>?, Error?) -> Void) {
 		guard let extensionContainers = ExtensionContainersFile.read() else {
-			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
+			completion(nil, AddFeedIntentHandlerError.communicationFailure)
 			return
 		}
 
@@ -101,9 +101,9 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		completion(INObjectCollection(items: folderNames as [NSString]), nil)
 	}
 
-	public func resolveFolderName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedFolderNameResolutionResult) -> Void) {
+	public func resolveFolderName(for intent: AddFeedIntent, with completion: @escaping (AddFeedFolderNameResolutionResult) -> Void) {
 		guard let accountName = intent.accountName, let folderName = intent.folderName else {
-			completion(AddWebFeedFolderNameResolutionResult.notRequired())
+			completion(AddFeedFolderNameResolutionResult.notRequired())
 			return
 		}
 		
@@ -126,9 +126,9 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 
 	}
 	
-	public func handle(intent: AddWebFeedIntent, completion: @escaping (AddWebFeedIntentResponse) -> Void) {
+	public func handle(intent: AddFeedIntent, completion: @escaping (AddFeedIntentResponse) -> Void) {
 		guard let url = intent.url, let extensionContainers = ExtensionContainersFile.read() else {
-			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
+			completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
 			return
 		}
 		
@@ -141,7 +141,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		}()
 
 		guard let validAccount = account else {
-			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
+			completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
 			return
 		}
 
@@ -154,13 +154,13 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		}()
 
 		guard let validContainer = container, let containerID = validContainer.containerID else {
-			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
+			completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
 			return
 		}
 
 		let request = ExtensionFeedAddRequest(name: intent.title, feedURL: url, destinationContainerID: containerID)
 		ExtensionFeedAddRequestFile.save(request)
-		completion(AddWebFeedIntentResponse(code: .success, userActivity: nil))
+		completion(AddFeedIntentResponse(code: .success, userActivity: nil))
 	}
 		
 }

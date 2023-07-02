@@ -12,8 +12,8 @@ class IntentHandler: INExtension {
     
 	override func handler(for intent: INIntent) -> Any {
 		switch intent {
-		case is AddWebFeedIntent:
-			return AddWebFeedIntentHandler()
+		case is AddFeedIntent:
+			return AddFeedIntentHandler()
 		default:
 			fatalError("Unhandled intent type: \(intent)")
 		}

@@ -714,7 +714,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
 		present(alert, animated: true)
 	}
-}}
+}
 
 // MARK: UIContextMenuInteractionDelegate
 
