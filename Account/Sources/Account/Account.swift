@@ -1217,7 +1217,7 @@ private extension Account {
 		// The unread number should match the feed’s unread count.
 
 		let feedUnreadCount = articles.reduce(0) { (result, article) -> Int in
-			if article.webFeed == webFeed && !article.status.read {
+			if article.feed == webFeed && !article.status.read {
 				return result + 1
 			}
 			return result
@@ -1281,7 +1281,7 @@ private extension Account {
     }
     
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
-		let feeds = Set(articles.compactMap { $0.webFeed })
+		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
 		let articleIDs = Set(articles.map { $0.articleID })
 
@@ -1372,10 +1372,10 @@ private extension Account {
 		var webFeeds = Set<WebFeed>()
 
 		if let newArticles = articleChanges.newArticles {
-			webFeeds.formUnion(Set(newArticles.compactMap { $0.webFeed }))
+			webFeeds.formUnion(Set(newArticles.compactMap { $0.feed }))
 		}
 		if let updatedArticles = articleChanges.updatedArticles {
-			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.webFeed }))
+			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.feed }))
 		}
 
 		var shouldSendNotification = false

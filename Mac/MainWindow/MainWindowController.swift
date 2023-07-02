@@ -576,7 +576,7 @@ enum TimelineSourceMode {
 	}
 	
 	@objc func showArticleExtractorMenu(_ button: NSButton) {
-		guard oneSelectedArticle?.webFeed != nil else {
+		guard oneSelectedArticle?.feed != nil else {
 			return
 		}
 
@@ -587,7 +587,7 @@ enum TimelineSourceMode {
 		alwaysUseReaderViewItem.target = self
 		alwaysUseReaderViewItem.action = #selector(alwaysUseReaderView)
 		alwaysUseReaderViewItem.state = {
-			if oneSelectedArticle?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+			if oneSelectedArticle?.feed?.isArticleExtractorAlwaysOn ?? false {
 				return NSControl.StateValue.on
 			} else {
 				return NSControl.StateValue.off
@@ -600,7 +600,7 @@ enum TimelineSourceMode {
 	}
 
 	@objc func alwaysUseReaderView() {
-		guard let feed = oneSelectedArticle?.webFeed else {
+		guard let feed = oneSelectedArticle?.feed else {
 			return
 		}
 		
@@ -689,7 +689,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		if let articles = articles {
 			if articles.count == 1 {
 				activityManager.reading(feed: nil, article: articles.first)
-				if articles.first?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {
@@ -1191,7 +1191,7 @@ private extension MainWindowController {
 			return currentLink != nil
 		}
 		
-		if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
+		if currentTimelineViewController?.selectedArticles.first?.feed != nil {
 			toolbarButton.isEnabled = true
 		}
 

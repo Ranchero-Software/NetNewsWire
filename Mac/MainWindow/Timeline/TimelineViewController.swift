@@ -657,7 +657,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			guard let article = articles.articleAtRow(row) else {
 				return false
 			}
-			return feed == article.webFeed
+			return feed == article.feed
 		}
 		if let indexesToReload = indexesToReload {
 			reloadCells(for: indexesToReload)
@@ -962,7 +962,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 		let iconImage = article.iconImage()
-		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
+		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
 	}
 
 	private func iconFor(_ article: Article) -> IconImage? {

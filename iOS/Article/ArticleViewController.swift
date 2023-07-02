@@ -313,7 +313,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 	}
 	
 	private func configureArticleExtractorMenu() {
-		if let feed = article?.webFeed {
+		if let feed = article?.feed {
 			let extractorOn = feed.isArticleExtractorAlwaysOn ?? false
 			let readerAction = UIAction(title: NSLocalizedString("button.title.always-use-reader-view", comment: "Button title: Always Use Reader View"),
 										image: AppAssets.articleExtractorOffSF,

@@ -56,7 +56,7 @@ public extension Article {
 		return manager.existingAccount(with: accountID)
 	}
 	
-	var webFeed: WebFeed? {
+	var feed: WebFeed? {
 		return account?.existingWebFeed(withWebFeedID: webFeedID)
 	}
 }

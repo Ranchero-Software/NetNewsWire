@@ -143,7 +143,7 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
 	@objc(feed)
 	var feed: ScriptableFeed? {
-		guard let parentFeed = self.article.webFeed,
+		guard let parentFeed = self.article.feed,
 			let account = parentFeed.account
 			else { return nil }
 

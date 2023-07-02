@@ -1185,7 +1185,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	
 	func showFeedInspector() {
 		let timelineWebFeed = timelineFeed as? WebFeed
-		let articleFeed = currentArticle?.webFeed
+		let articleFeed = currentArticle?.feed
 		guard let feed = timelineWebFeed ?? articleFeed else {
 			return
 		}

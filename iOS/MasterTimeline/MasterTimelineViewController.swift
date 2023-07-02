@@ -480,7 +480,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			if article.webFeed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
 				cell.setIconImage(image)
 			}
 		}
@@ -735,7 +735,7 @@ private extension MasterTimelineViewController {
 		let showIcon = coordinator.showIcons && iconImage != nil
 		let hideSeparater = indexPath.row == coordinator.articles.count - 1
 		
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: hideSeparater)
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: hideSeparater)
 	}
 	
 	func iconImageFor(_ article: Article) -> IconImage? {
@@ -898,7 +898,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let webFeed = article.webFeed,
+		guard let webFeed = article.feed,
 			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 		
 		let title = NSLocalizedString("button.title.go-to-feed.titlecase", comment: "Go To Feed. Use to navigate to the user to the article list for a feed.")
@@ -909,7 +909,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed,
+		guard let webFeed = article.feed,
 			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 
 		let title = NSLocalizedString("button.title.go-to-feed", comment: "Go To Feed. Use to navigate to the user to the article list for a feed.")
@@ -921,7 +921,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.feed else { return nil }
 		guard let fetchedArticles = try? webFeed.fetchArticles() else {
 			return nil
 		}
@@ -944,7 +944,7 @@ private extension MasterTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.feed else { return nil }
 		guard let fetchedArticles = try? webFeed.fetchArticles() else {
 			return nil
 		}
