@@ -258,7 +258,7 @@ private extension SidebarViewController {
 
 		let menu = NSMenu(title: "")
 
-		menu.addItem(withTitle: NSLocalizedString("button.title.new-feed", comment: "New Feed"), action: #selector(AppDelegate.showAddWebFeedWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("button.title.new-feed", comment: "New Feed"), action: #selector(AppDelegate.showAddFeedWindow(_:)), keyEquivalent: "")
 		menu.addItem(withTitle: NSLocalizedString("button.title.new-folder", comment: "New Folder"), action: #selector(AppDelegate.showAddFolderWindow(_:)), keyEquivalent: "")
 
 		return menu
