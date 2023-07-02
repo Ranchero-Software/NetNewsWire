@@ -55,7 +55,7 @@ final class AppDefaults: ObservableObject {
 		static let hasUsedFullScreenPreviously = "hasUsedFullScreenPreviously"
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let addFeedAccountID = "addWebFeedAccountID"
-		static let addWebFeedFolderName = "addWebFeedFolderName"
+		static let addFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
@@ -102,12 +102,12 @@ final class AppDefaults: ObservableObject {
 		}
 	}
 	
-	var addWebFeedFolderName: String? {
+	var addFeedFolderName: String? {
 		get {
-			return AppDefaults.string(for: Key.addWebFeedFolderName)
+			return AppDefaults.string(for: Key.addFeedFolderName)
 		}
 		set {
-			AppDefaults.setString(for: Key.addWebFeedFolderName, newValue)
+			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
 			AppDefaults.shared.objectWillChange.send()
 		}
 	}
