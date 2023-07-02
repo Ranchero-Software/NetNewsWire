@@ -1,5 +1,5 @@
 //
-//  WebFeedMetadataFile.swift
+//  FeedMetadataFile.swift
 //  Account
 //
 //  Created by Maurice Parker on 9/13/19.
@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 
-final class WebFeedMetadataFile: Logging {
+final class FeedMetadataFile: Logging {
 
 	private let fileURL: URL
 	private let account: Account
@@ -33,9 +33,9 @@ final class WebFeedMetadataFile: Logging {
 	func load() {
 		if let fileData = try? Data(contentsOf: fileURL) {
 			let decoder = PropertyListDecoder()
-			account.webFeedMetadata = (try? decoder.decode(Account.WebFeedMetadataDictionary.self, from: fileData)) ?? Account.WebFeedMetadataDictionary()
+			account.feedMetadata = (try? decoder.decode(Account.FeedMetadataDictionary.self, from: fileData)) ?? Account.FeedMetadataDictionary()
 		}
-		account.webFeedMetadata.values.forEach { $0.delegate = account }
+		account.feedMetadata.values.forEach { $0.delegate = account }
 	}
 	
 	func save() {
@@ -56,7 +56,7 @@ final class WebFeedMetadataFile: Logging {
 		
 }
 
-private extension WebFeedMetadataFile {
+private extension FeedMetadataFile {
 
 	func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
@@ -69,10 +69,10 @@ private extension WebFeedMetadataFile {
 		}
 	}
 
-	private func metadataForOnlySubscribedToFeeds() -> Account.WebFeedMetadataDictionary {
-		let webFeedIDs = account.idToWebFeedDictionary.keys
-		return account.webFeedMetadata.filter { (feedID: String, metadata: WebFeedMetadata) -> Bool in
-			return webFeedIDs.contains(metadata.webFeedID)
+	private func metadataForOnlySubscribedToFeeds() -> Account.FeedMetadataDictionary {
+		let feedIDs = account.idToWebFeedDictionary.keys
+		return account.feedMetadata.filter { (feedID: String, metadata: FeedMetadata) -> Bool in
+			return feedIDs.contains(metadata.feedID)
 		}
 	}
 

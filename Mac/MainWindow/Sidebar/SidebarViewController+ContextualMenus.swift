@@ -32,7 +32,7 @@ extension SidebarViewController {
 
 		switch object {
 		case is WebFeed:
-			return menuForWebFeed(object as! WebFeed)
+			return menuForFeed(object as! WebFeed)
 		case is Folder:
 			return menuForFolder(object as! Folder)
 		case is PseudoFeed:
@@ -264,7 +264,7 @@ private extension SidebarViewController {
 		return menu
 	}
 
-	func menuForWebFeed(_ webFeed: WebFeed) -> NSMenu? {
+	func menuForFeed(_ webFeed: WebFeed) -> NSMenu? {
 
 		let menu = NSMenu(title: "")
 

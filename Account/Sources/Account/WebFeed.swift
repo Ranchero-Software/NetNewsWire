@@ -30,10 +30,10 @@ public final class WebFeed: FeedProtocol, Renamable, Hashable, ObservableObject 
 
 	public var webFeedID: String {
 		get {
-			return metadata.webFeedID
+			return metadata.feedID
 		}
 		set {
-			metadata.webFeedID = newValue
+			metadata.feedID = newValue
 		}
 	}
 
@@ -247,7 +247,7 @@ public final class WebFeed: FeedProtocol, Renamable, Hashable, ObservableObject 
         #endif
     }
 
-	var metadata: WebFeedMetadata
+	var metadata: FeedMetadata
 
 	// MARK: - Private
 
@@ -255,7 +255,7 @@ public final class WebFeed: FeedProtocol, Renamable, Hashable, ObservableObject 
 
 	// MARK: - Init
 
-	init(account: Account, url: String, metadata: WebFeedMetadata) {
+	init(account: Account, url: String, metadata: FeedMetadata) {
 		self.account = account
 		self.accountID = account.accountID
 		self.url = url

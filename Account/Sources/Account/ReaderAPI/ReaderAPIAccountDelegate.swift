@@ -356,7 +356,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 						switch result {
 						case .success:
 							DispatchQueue.main.async {
-								account.clearWebFeedMetadata(feed)
+								account.clearFeedMetadata(feed)
 							}
 						case .failure(let error):
                             self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
@@ -476,7 +476,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
-					account.clearWebFeedMetadata(feed)
+					account.clearFeedMetadata(feed)
 					account.removeWebFeed(feed)
 					if let folders = account.folders {
 						for folder in folders {
@@ -767,7 +767,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		for feed in account.topLevelWebFeeds {
 			if !subFeedIds.contains(feed.webFeedID) {
-				account.clearWebFeedMetadata(feed)
+				account.clearFeedMetadata(feed)
 				account.removeWebFeed(feed)
 			}
 		}

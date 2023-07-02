@@ -230,7 +230,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			mainWindowController?.window?.center()
 		}
 
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 		DispatchQueue.main.async {
@@ -403,10 +403,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@MainActor @objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
+		guard let feed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.FeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
+		if key == WebFeed.FeedSettingKey.homePageURL || key == WebFeed.FeedSettingKey.faviconURL {
 			let _ = faviconDownloader.favicon(for: feed)
 		}
 	}

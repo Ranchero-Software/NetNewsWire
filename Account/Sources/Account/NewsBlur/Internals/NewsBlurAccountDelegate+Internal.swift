@@ -542,7 +542,7 @@ extension NewsBlurAccountDelegate {
 					}
 
 					if account.existingWebFeed(withWebFeedID: feedID) != nil {
-						account.clearWebFeedMetadata(feed)
+						account.clearFeedMetadata(feed)
 					}
 
 					completion(.success(()))
