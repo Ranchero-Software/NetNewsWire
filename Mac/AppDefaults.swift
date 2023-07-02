@@ -43,6 +43,7 @@ final class AppDefaults {
 		static let currentThemeName = "currentThemeName"
 		static let hasSeenNotAllArticlesHaveURLsAlert = "hasSeenNotAllArticlesHaveURLsAlert"
 		static let twitterDeprecationAlertShown = "twitterDeprecationAlertShown"
+		static let redditDeprecationAlertShown = "redditDeprecationAlertShown"
 		static let markArticlesAsReadOnScroll = "markArticlesAsReadOnScroll"
 
 		// Hidden prefs
@@ -317,6 +318,15 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.twitterDeprecationAlertShown, newValue)
+		}
+	}
+
+	var redditDeprecationAlertShown: Bool {
+		get {
+			return AppDefaults.bool(for: Key.redditDeprecationAlertShown)
+		}
+		set {
+			AppDefaults.setBool(for: Key.redditDeprecationAlertShown, newValue)
 		}
 	}
 
