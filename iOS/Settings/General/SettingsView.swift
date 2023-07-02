@@ -19,68 +19,14 @@ struct SettingsView: View {
 	@StateObject private var viewModel = SettingsViewModel()
 	
 	@Binding var isConfigureAppearanceShown: Bool
-		
+
 	var body: some View {
 		NavigationStack {
 			List {
-				// Device Permissions
-				Section(header: Text("label.text.device-permissions", comment: "Device Permissions"),
-						footer: Text("label.text.device-permissions-explainer", comment: "Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.")) {
-					SettingsRow.openSystemSettings
-				}
-				
-				// Account/Extensions/OPML Management
-				Section(header: Text("label.text.accounts-and-extensions", comment: "Settings: Accounts & Extensions section header."),
-						footer: Text("label.text.account-and-extensions-explainer", comment: "Add, delete, enable, or disable accounts and extensions.")) {
-					SettingsRow.addAccount
-					SettingsRow.manageExtensions
-					SettingsRow.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
-						.confirmationDialog(Text("actionsheet.title.choose-opml-destination", comment: "Choose an account to receive the imported feeds and folders"),
-											isPresented: $viewModel.showImportActionSheet,
-											titleVisibility: .visible) {
-							ForEach(AccountManager.shared.sortedActiveAccounts, id: \.self) { account in
-								Button(account.nameForDisplay) {
-									viewModel.importAccount = account
-									viewModel.showImportView = true
-								}
-							}
-						}
-					
-					SettingsRow.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
-						.confirmationDialog(Text("actionsheet.title.choose-opml-export-account", comment: "Choose an account with the subscriptions to export"),
-											isPresented: $viewModel.showExportActionSheet,
-											titleVisibility: .visible) {
-							ForEach(AccountManager.shared.sortedAccounts, id: \.self) { account in
-								Button(account.nameForDisplay) {
-									do {
-										let document = try OPMLDocument(account)
-										viewModel.exportDocument = document
-										viewModel.showExportView = true
-									} catch {
-										viewModel.importExportError = error
-										viewModel.showImportExportError = true
-									}
-								}
-							}
-						}
-				}
-				
-				// Appearance
-				Section(header: Text("label.text.appearance", comment: "Settings: Appearance section header."),
-						footer: Text("label.text.appearance-explainer", comment: "Manage the look, feel, and behavior of NetNewsWire.")) {
-					SettingsRow.configureAppearance($isConfigureAppearanceShown)
-					if viewModel.notificationPermissions == .authorized {
-						SettingsRow.configureNewArticleNotifications
-					}
-				}
-				
-				// Help
-				Section {
-					ForEach(0..<HelpSheet.allCases.count, id: \.self) { i in
-						SettingsRow.showHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $viewModel.helpSheet, $viewModel.showHelpSheet)
-					}
-					SettingsRow.aboutNetNewsWire
-				}
+				devicePermissionsSection
+				accountsAndOPMLSection
+				appearanceSection
+				helpSection
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))
 			.listStyle(.insetGrouped)
@@ -156,5 +102,71 @@ struct SettingsView: View {
 				   message: { Text(verbatim: viewModel.importExportError?.localizedDescription ?? "") } )
 		}
 		.navigationViewStyle(.stack)
+	}
+
+	@ViewBuilder
+	private var devicePermissionsSection: some View {
+		Section(header: Text("label.text.device-permissions", comment: "Device Permissions"),
+				footer: Text("label.text.device-permissions-explainer", comment: "Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.")) {
+			SettingsRow.openSystemSettings
+		}
+	}
+
+	@ViewBuilder
+	private var accountsAndOPMLSection: some View {
+		Section(header: Text("label.text.accounts", comment: "Settings: Accounts section header."),
+				footer: Text("label.text.account-explainer", comment: "Add, delete, enable, or disable accounts.")) {
+			SettingsRow.addAccount
+			SettingsRow.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
+				.confirmationDialog(Text("actionsheet.title.choose-opml-destination", comment: "Choose an account to receive the imported feeds and folders"),
+									isPresented: $viewModel.showImportActionSheet,
+									titleVisibility: .visible) {
+					ForEach(AccountManager.shared.sortedActiveAccounts, id: \.self) { account in
+						Button(account.nameForDisplay) {
+							viewModel.importAccount = account
+							viewModel.showImportView = true
+						}
+					}
+				}
+
+			SettingsRow.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
+				.confirmationDialog(Text("actionsheet.title.choose-opml-export-account", comment: "Choose an account with the subscriptions to export"),
+									isPresented: $viewModel.showExportActionSheet,
+									titleVisibility: .visible) {
+					ForEach(AccountManager.shared.sortedAccounts, id: \.self) { account in
+						Button(account.nameForDisplay) {
+							do {
+								let document = try OPMLDocument(account)
+								viewModel.exportDocument = document
+								viewModel.showExportView = true
+							} catch {
+								viewModel.importExportError = error
+								viewModel.showImportExportError = true
+							}
+						}
+					}
+				}
+		}
+	}
+
+	@ViewBuilder
+	private var appearanceSection: some View {
+		Section(header: Text("label.text.appearance", comment: "Settings: Appearance section header."),
+				footer: Text("label.text.appearance-explainer", comment: "Manage the look, feel, and behavior of NetNewsWire.")) {
+			SettingsRow.configureAppearance($isConfigureAppearanceShown)
+			if viewModel.notificationPermissions == .authorized {
+				SettingsRow.configureNewArticleNotifications
+			}
+		}
+	}
+
+	@ViewBuilder
+	private var helpSection: some View {
+		Section {
+			ForEach(0..<HelpSheet.allCases.count, id: \.self) { i in
+				SettingsRow.showHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $viewModel.helpSheet, $viewModel.showHelpSheet)
+			}
+			SettingsRow.aboutNetNewsWire
+		}
 	}
 }
