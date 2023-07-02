@@ -60,6 +60,7 @@ final class AppDefaults: ObservableObject {
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
 		static let twitterDeprecationAlertShown = "twitterDeprecationAlertShown"
+		static let redditDeprecationAlertShown = "redditDeprecationAlertShown"
 		static let markArticlesAsReadOnScroll = "markArticlesAsReadOnScroll"
 	}
 
@@ -255,7 +256,16 @@ final class AppDefaults: ObservableObject {
 			AppDefaults.setBool(for: Key.twitterDeprecationAlertShown, newValue)
 		}
 	}
-	
+
+	var redditDeprecationAlertShown: Bool {
+		get {
+			return AppDefaults.bool(for: Key.redditDeprecationAlertShown)
+		}
+		set {
+			AppDefaults.setBool(for: Key.redditDeprecationAlertShown, newValue)
+		}
+	}
+
 	var markArticlesAsReadOnScroll: Bool {
 		get {
 			return AppDefaults.bool(for: Key.markArticlesAsReadOnScroll)

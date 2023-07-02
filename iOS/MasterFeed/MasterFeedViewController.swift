@@ -98,9 +98,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		super.viewDidAppear(animated)
 		
 		if (isBeingPresented || isMovingToParent) {
-			// Only show the Twitter alert the first time
+			// Only show the Twitter or Reddit alert the first time
 			// the view is presented.
-			presentTwitterDeprecationAlertIfRequired()
+			if shouldShowTwitterDeprecationAlert() {
+				showTwitterDeprecationAlert()
+			}
+			else if shouldShowRedditDeprecationAlert() {
+				showRedditDeprecationAlert()
+			}
 		}
 	}
 	
@@ -662,30 +667,54 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		}
 	}
 	
-	private func presentTwitterDeprecationAlertIfRequired() {
-		if AppDefaults.shared.twitterDeprecationAlertShown { return }
-		
+	private func shouldShowTwitterDeprecationAlert() -> Bool {
+		if AppDefaults.shared.twitterDeprecationAlertShown { return false }
+
 		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
 		let currentDate = Date()
 		if currentDate > expiryDate {
-			return // If after August 9th, don't show
+			return false // If after August 9th, don't show
 		}
-		
-		if AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed() {
-			showTwitterDeprecationAlert()
-		}
-		AppDefaults.shared.twitterDeprecationAlertShown = true
+
+		return AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed()
 	}
-	
+
 	private func showTwitterDeprecationAlert() {
-		let alert = UIAlertController(title: NSLocalizedString("alert.title.twitter-integration-removed", comment: "Twitter Integration Removed"),
-									  message: NSLocalizedString("alert.message.twitter-integration-removed", comment: "Twitter deprecation message"),
+		assert(shouldShowTwitterDeprecationAlert())
+		AppDefaults.shared.twitterDeprecationAlertShown = true
+
+		let alert = UIAlertController(title: NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed"),
+									  message: NSLocalizedString("On February 1, 2023, Twitter announced the end of free access to the Twitter API, effective February 9.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation message"),
 									  preferredStyle: .alert)
-		
+
 		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
 		present(alert, animated: true)
 	}
-}
+
+	private func shouldShowRedditDeprecationAlert() -> Bool {
+		if AppDefaults.shared.redditDeprecationAlertShown { return false }
+
+		let expiryDate = Date(timeIntervalSince1970: 1701331200) // Thu Nov 30 2023 00:00:00 GMT-0800 (Pacific Standard Time)
+		let currentDate = Date()
+		if currentDate > expiryDate {
+			return false
+		}
+
+		return AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneRedditAPIFeed()
+	}
+
+	private func showRedditDeprecationAlert() {
+		assert(shouldShowRedditDeprecationAlert())
+		AppDefaults.shared.redditDeprecationAlertShown = true
+
+		let alert = UIAlertController(title: NSLocalizedString("Reddit API Integration Removed", comment: "Reddit API Integration Removed"),
+									  message: NSLocalizedString("Reddit has ended free access to their API.\n\nThough Reddit does provide RSS feeds, we used the Reddit API to get more and better data. But, without free access to that API, we have had to stop using it.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded.\n\nAlso, importantly, you can add Reddit RSS feeds and those feeds will continue to update.", comment: "Reddit deprecation message"),
+									  preferredStyle: .alert)
+
+		alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+		present(alert, animated: true)
+	}
+}}
 
 // MARK: UIContextMenuInteractionDelegate
 
