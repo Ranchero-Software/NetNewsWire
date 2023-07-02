@@ -74,11 +74,11 @@ struct PasteboardFeed: Hashable {
 
 	init?(pasteboardItem: NSPasteboardItem) {
 		var pasteboardType: NSPasteboard.PasteboardType?
-		if pasteboardItem.types.contains(WebFeedPasteboardWriter.webFeedUTIInternalType) {
-			pasteboardType = WebFeedPasteboardWriter.webFeedUTIInternalType
+		if pasteboardItem.types.contains(FeedPasteboardWriter.webFeedUTIInternalType) {
+			pasteboardType = FeedPasteboardWriter.webFeedUTIInternalType
 		}
-		else if pasteboardItem.types.contains(WebFeedPasteboardWriter.webFeedUTIType) {
-			pasteboardType = WebFeedPasteboardWriter.webFeedUTIType
+		else if pasteboardItem.types.contains(FeedPasteboardWriter.webFeedUTIType) {
+			pasteboardType = FeedPasteboardWriter.webFeedUTIType
 		}
 		if let foundType = pasteboardType {
 			if let feedDictionary = pasteboardItem.propertyList(forType: foundType) as? PasteboardFeedDictionary {
@@ -156,11 +156,11 @@ struct PasteboardFeed: Hashable {
 extension WebFeed: PasteboardWriterOwner {
 
 	public var pasteboardWriter: NSPasteboardWriting {
-		return WebFeedPasteboardWriter(webFeed: self)
+		return FeedPasteboardWriter(webFeed: self)
 	}
 }
 
-@objc final class WebFeedPasteboardWriter: NSObject, NSPasteboardWriting {
+@objc final class FeedPasteboardWriter: NSObject, NSPasteboardWriting {
 
 	private let webFeed: WebFeed
 	static let webFeedUTI = "com.ranchero.webFeed"
@@ -178,7 +178,7 @@ extension WebFeed: PasteboardWriterOwner {
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		return [WebFeedPasteboardWriter.webFeedUTIType, .URL, .string, WebFeedPasteboardWriter.webFeedUTIInternalType]
+		return [FeedPasteboardWriter.webFeedUTIType, .URL, .string, FeedPasteboardWriter.webFeedUTIInternalType]
 	}
 
 	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
@@ -190,9 +190,9 @@ extension WebFeed: PasteboardWriterOwner {
 			plist = webFeed.nameForDisplay
 		case .URL:
 			plist = webFeed.url
-		case WebFeedPasteboardWriter.webFeedUTIType:
+		case FeedPasteboardWriter.webFeedUTIType:
 			plist = exportDictionary
-		case WebFeedPasteboardWriter.webFeedUTIInternalType:
+		case FeedPasteboardWriter.webFeedUTIInternalType:
 			plist = internalDictionary
 		default:
 			plist = nil
@@ -202,7 +202,7 @@ extension WebFeed: PasteboardWriterOwner {
 	}
 }
 
-private extension WebFeedPasteboardWriter {
+private extension FeedPasteboardWriter {
 
 	var pasteboardFeed: PasteboardFeed {
 		return PasteboardFeed(url: webFeed.url, feedID: webFeed.webFeedID, homePageURL: webFeed.homePageURL, name: webFeed.name, editedName: webFeed.editedName, accountID: webFeed.account?.accountID, accountType: webFeed.account?.type)

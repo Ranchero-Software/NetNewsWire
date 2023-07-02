@@ -48,9 +48,9 @@ import Account
 		}
 		
 		// WebFeed objects don't have knowledge of their parent so we inject parent container information
-		// into WebFeedPasteboardWriter instance and it adds this field to the PasteboardFeed objects it writes.
+		// into FeedPasteboardWriter instance and it adds this field to the PasteboardFeed objects it writes.
 		// Add similar to FolderPasteboardWriter if/when we allow sub-folders
-		if let feedWriter = pasteboardWriter as? WebFeedPasteboardWriter {
+		if let feedWriter = pasteboardWriter as? FeedPasteboardWriter {
 			if let parentContainerID = (node.parent?.representedObject as? Folder)?.containerID {
 				feedWriter.containerID = parentContainerID
 				pasteboardWriter = feedWriter
