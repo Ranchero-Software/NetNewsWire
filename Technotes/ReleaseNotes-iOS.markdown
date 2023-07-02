@@ -1,5 +1,28 @@
 # iOS Release Notes
 
+### 6.1.4 TestFlight build 6120 - 1 July 2023
+
+Build using Xcode 14.3.1 so the app won’t crash on launch on iOS 13.
+
+### 6.1.4 TestFlight build 6119 - 30 June 2023
+
+Remove Reddit from Settings. Remove Reddit API code.
+
+## 6.1.3 TestFlight build 6118 - 23 June 2023
+
+Fix release notes URL: it’s now https://github.com/Ranchero-Software/NetNewsWire/releases/
+
+This build was released to the App Store.
+
+### 6.1.3 TestFlight build 6117 - 18 June 2023
+
+Show Reddit shutoff alert to people using Reddit integration.
+
+### 6.1.2 TestFlight build 6116 - 19 Mar 2023
+
+Revise Twitter alert to not mention any dates
+Update copyright to 2023
+
 ### 6.1.1 TestFlight build 6114 - 5 Feb 2023
 
 Remove Twitter integration. Include alert that Twitter integration was removed.
@@ -74,17 +97,17 @@ Fixed a bug where go-to-feed might not properly expand disclosure triangles
 
 ### 6.1 TestFlight build 6103 - 25 Jan 2022
 
-* Fixed regression with keyboard shortcuts.
-* Fixed crashing bug adding an account.
+Fixed regression with keyboard shortcuts.
+Fixed crashing bug adding an account.
 
 ### 6.1 TestFlight build 6102 - 23 Jan 2022
 
-* Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences.
-* Copy URLs using repaired, rather than raw, feed links.
-* Disallow creation of iCloud account in the app if iCloud and iCloud Drive aren’t both enabled.
-* Fixed bug showing quote tweets that only included an image.
-* Video autoplay is now disallowed.
-* Article view now supports RTL layout.
+Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences.
+Copy URLs using repaired, rather than raw, feed links.
+Disallow creation of iCloud account in the app if iCloud and iCloud Drive aren’t both enabled.
+Fixed bug showing quote tweets that only included an image.
+Video autoplay is now disallowed.
+Article view now supports RTL layout.
 
 ### 6.0.2 Release - 15 Oct 2021
 
@@ -96,52 +119,52 @@ Fixed bug with state restoration on launch (bug introduced in previous TestFligh
 
 ### 6.0.1 TestFlight build 608 - 28 Aug 2021
 
-* Fixed our top crashing bug — it could happen when updating a table view
+Fixed our top crashing bug — it could happen when updating a table view
 
 ### 6.0.1 TestFlight build 607 - 21 Aug 2021
 
-* Fixed bug where BazQux-synced feeds might stop updating
-* Fixed bug where words prepended with $ wouldn’t appear in Twitter feeds
-* Fixed bug where newlines would be just a space in Twitter feeds
-* Fixed a crashing bug in Twitter rendering
-* Fixed bug where hitting b key to open in browser wouldn’t always work
-* Fixed a crashing bug due to running code off the main thread that needed to be on the main thread
-* Fixed bug where article unread indicator could have wrong alpha in specific circumstances
-* Fixed bug using right arrow key to move focus to Article view
-* Fixed bug where long press could trigger a crash
-* Fixed bug where external URLs in Feedbin feeds might be lost
-* Fixed bug where favicons wouldn’t be found when a home page URL has non-ASCII characters
-* Fixed bug where iCloud syncing could stop prematurely when the sync database has records not in the local database
-* Fixed bug where creating a new folder in iCloud and moving feeds to it wouldn’t sync correctly
+Fixed bug where BazQux-synced feeds might stop updating
+Fixed bug where words prepended with $ wouldn’t appear in Twitter feeds
+Fixed bug where newlines would be just a space in Twitter feeds
+Fixed a crashing bug in Twitter rendering
+Fixed bug where hitting b key to open in browser wouldn’t always work
+Fixed a crashing bug due to running code off the main thread that needed to be on the main thread
+Fixed bug where article unread indicator could have wrong alpha in specific circumstances
+Fixed bug using right arrow key to move focus to Article view
+Fixed bug where long press could trigger a crash
+Fixed bug where external URLs in Feedbin feeds might be lost
+Fixed bug where favicons wouldn’t be found when a home page URL has non-ASCII characters
+Fixed bug where iCloud syncing could stop prematurely when the sync database has records not in the local database
+Fixed bug where creating a new folder in iCloud and moving feeds to it wouldn’t sync correctly
 
 ### 6.0 TestFlight build 604 - 31 May 2021
 
-* This is a final candidate
-* Updated about NetNewsWire section
-* Fixed bug where Tweetbot share sheet could be empty
-* Feedly: fixed bug where your custom name could get lost after moving a feed to a different folder
-* Twitter: fixed bug handling tweets containing characters made up of multiple scalars
-* iCloud: added explanation about when sync may be slow
+This is a final candidate
+Updated about NetNewsWire section
+Fixed bug where Tweetbot share sheet could be empty
+Feedly: fixed bug where your custom name could get lost after moving a feed to a different folder
+Twitter: fixed bug handling tweets containing characters made up of multiple scalars
+iCloud: added explanation about when sync may be slow
 
 ### 6.0 TestFlight build 603 - 16 May 2021
 
-* Feedly: handle Feedly API change with return value on deleting a folder
-* NewsBlur: sync no longer includes items marked as hidden on NewsBlur
-* FreshRSS: form for adding account now suggests endpoint URL
-* FreshRSS: improved the error message for when the API URL can’t be found
-* iCloud: retain existing feeds moved to a folder that doesn’t exist yet (sync ordering issue)
-* Renamed a Delete Account button to Remove Account
-* iCloud: skip displaying an error message on deleting a feed that doesn’t exist in iCloud
-* Preferences: Tweaked text explaining Feed Providers
-* Feeds list: context menu for smart feeds is back (regression fix)
-* Feeds list: all smart feeds remain visible despite Hide Read Feeds setting
-* Article view: fixed zoom issue on iPad on rotation
-* Article view: fixed bug where mark-read button on toolbar would flash on navigating to an unread article
-* Article view: made footnote detection more robust
-* Fixed regression on iPad where timeline and article wouldn’t update after the selected feed was deleted
-* Sharing: handle feeds where the URL has unencoded space characters (why a feed would do that is beyond our ken)
+Feedly: handle Feedly API change with return value on deleting a folder
+NewsBlur: sync no longer includes items marked as hidden on NewsBlur
+FreshRSS: form for adding account now suggests endpoint URL
+FreshRSS: improved the error message for when the API URL can’t be found
+iCloud: retain existing feeds moved to a folder that doesn’t exist yet (sync ordering issue)
+Renamed a Delete Account button to Remove Account
+iCloud: skip displaying an error message on deleting a feed that doesn’t exist in iCloud
+Preferences: Tweaked text explaining Feed Providers
+Feeds list: context menu for smart feeds is back (regression fix)
+Feeds list: all smart feeds remain visible despite Hide Read Feeds setting
+Article view: fixed zoom issue on iPad on rotation
+Article view: fixed bug where mark-read button on toolbar would flash on navigating to an unread article
+Article view: made footnote detection more robust
+Fixed regression on iPad where timeline and article wouldn’t update after the selected feed was deleted
+Sharing: handle feeds where the URL has unencoded space characters (why a feed would do that is beyond our ken)
 
 ### 6.0 TestFlight build 602 - 21 April 2021
 
-* Inoreader: don’t call it so often, so we don’t go over the API limits
-* Feedly: handle a specific case where Feedly started not returning a value we expected but didn’t actually need (we were reporting it as an error to the user, but it wasn’t)
+Inoreader: don’t call it so often, so we don’t go over the API limits
+Feedly: handle a specific case where Feedly started not returning a value we expected but didn’t actually need (we were reporting it as an error to the user, but it wasn’t)
