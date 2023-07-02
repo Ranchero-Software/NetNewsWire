@@ -54,7 +54,7 @@ final class AppDefaults: ObservableObject {
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
 		static let hasUsedFullScreenPreviously = "hasUsedFullScreenPreviously"
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
-		static let addWebFeedAccountID = "addWebFeedAccountID"
+		static let addFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
@@ -92,12 +92,12 @@ final class AppDefaults: ObservableObject {
 		}
 	}
 
-	var addWebFeedAccountID: String? {
+	var addFeedAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.addWebFeedAccountID)
+			return AppDefaults.string(for: Key.addFeedAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.addWebFeedAccountID, newValue)
+			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
 			AppDefaults.shared.objectWillChange.send()
 		}
 	}

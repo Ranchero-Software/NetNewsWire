@@ -13,7 +13,7 @@ struct AddWebFeedDefaultContainer {
 	
 	static var defaultContainer: Container? {
 		
-		if let accountID = AppDefaults.shared.addWebFeedAccountID, let account = AccountManager.shared.activeAccounts.first(where: { $0.accountID == accountID }) {
+		if let accountID = AppDefaults.shared.addFeedAccountID, let account = AccountManager.shared.activeAccounts.first(where: { $0.accountID == accountID }) {
 			if let folderName = AppDefaults.shared.addWebFeedFolderName, let folder = account.existingFolder(withDisplayName: folderName) {
 				return folder
 			} else {
@@ -28,7 +28,7 @@ struct AddWebFeedDefaultContainer {
 	}
 	
 	static func saveDefaultContainer(_ container: Container) {
-		AppDefaults.shared.addWebFeedAccountID = container.account?.accountID
+		AppDefaults.shared.addFeedAccountID = container.account?.accountID
 		if let folder = container as? Folder {
 			AppDefaults.shared.addWebFeedFolderName = folder.nameForDisplay
 		} else {
