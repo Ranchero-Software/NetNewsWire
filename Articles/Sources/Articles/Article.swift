@@ -48,12 +48,12 @@ public struct Article: Hashable {
 			self.articleID = articleID
 		}
 		else {
-			self.articleID = Article.calculatedArticleID(webFeedID: webFeedID, uniqueID: uniqueID)
+			self.articleID = Article.calculatedArticleID(feedID: webFeedID, uniqueID: uniqueID)
 		}
 	}
 
-	public static func calculatedArticleID(webFeedID: String, uniqueID: String) -> String {
-		return databaseIDWithString("\(webFeedID) \(uniqueID)")
+	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
+		return databaseIDWithString("\(feedID) \(uniqueID)")
 	}
 
 	// MARK: - Hashable

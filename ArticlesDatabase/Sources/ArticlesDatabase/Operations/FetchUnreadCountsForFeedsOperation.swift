@@ -24,10 +24,10 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	private let queue: DatabaseQueue
-	private let webFeedIDs: Set<String>
+	private let feedIDs: Set<String>
 
-	init(webFeedIDs: Set<String>, databaseQueue: DatabaseQueue) {
-		self.webFeedIDs = webFeedIDs
+	init(feedIDs: Set<String>, databaseQueue: DatabaseQueue) {
+		self.feedIDs = feedIDs
 		self.queue = databaseQueue
 	}
 
@@ -51,10 +51,10 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
 private extension FetchUnreadCountsForFeedsOperation {
 
 	func fetchUnreadCounts(_ database: FMDatabase) {
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 		let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 group by feedID;"
 
-		let parameters = Array(webFeedIDs) as [Any]
+		let parameters = Array(feedIDs) as [Any]
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
 			informOperationDelegateOfCompletion()
@@ -74,8 +74,8 @@ private extension FetchUnreadCountsForFeedsOperation {
 				return
 			}
 			let unreadCount = resultSet.long(forColumnIndex: 1)
-			if let webFeedID = resultSet.string(forColumnIndex: 0) {
-				unreadCountDictionary[webFeedID] = unreadCount
+			if let feedID = resultSet.string(forColumnIndex: 0) {
+				unreadCountDictionary[feedID] = unreadCount
 			}
 		}
 		resultSet.close()

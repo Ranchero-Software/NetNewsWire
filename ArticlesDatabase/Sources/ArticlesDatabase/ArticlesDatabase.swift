@@ -17,7 +17,7 @@ import Articles
 
 // Main thread only.
 
-public typealias UnreadCountDictionary = [String: Int] // webFeedID: unreadCount
+public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
 public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary,DatabaseError>
 public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCompletionResult) -> Void
 
@@ -90,44 +90,44 @@ public final class ArticlesDatabase {
 
 	// MARK: - Fetching Articles
 
-	public func fetchArticles(_ webFeedID: String) throws -> Set<Article> {
-		return try articlesTable.fetchArticles(webFeedID)
+	public func fetchArticles(_ feedID: String) throws -> Set<Article> {
+		return try articlesTable.fetchArticles(feedID)
 	}
 	
-	public func fetchArticles(_ webFeedIDs: Set<String>) throws -> Set<Article> {
-		return try articlesTable.fetchArticles(webFeedIDs)
+	public func fetchArticles(_ feedIDs: Set<String>) throws -> Set<Article> {
+		return try articlesTable.fetchArticles(feedIDs)
 	}
 
 	public func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
 		return try articlesTable.fetchArticles(articleIDs: articleIDs)
 	}
 
-	public func fetchUnreadArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
-		return try articlesTable.fetchUnreadArticles(webFeedIDs, limit)
+	public func fetchUnreadArticles(_ feedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
+		return try articlesTable.fetchUnreadArticles(feedIDs, limit)
 	}
 
 	public func fetchArticlesBetween(articleIDs: Set<String>, before: Date?, after: Date?) throws -> Set<Article> {
 		return try articlesTable.fetchArticlesBetween(articleIDs: articleIDs, before: before, after: after)
 	}
 
-	public func fetchUnreadArticlesBetween(_ webFeedIDs: Set<String>, _ limit: Int?, _ before: Date?, _ after: Date?) throws -> Set<Article> {
-		return try articlesTable.fetchUnreadArticlesBetween(webFeedIDs, limit, before, after)
+	public func fetchUnreadArticlesBetween(_ feedIDs: Set<String>, _ limit: Int?, _ before: Date?, _ after: Date?) throws -> Set<Article> {
+		return try articlesTable.fetchUnreadArticlesBetween(feedIDs, limit, before, after)
 	}
 
-	public func fetchTodayArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
-		return try articlesTable.fetchArticlesSince(webFeedIDs, todayCutoffDate(), limit)
+	public func fetchTodayArticles(_ feedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
+		return try articlesTable.fetchArticlesSince(feedIDs, todayCutoffDate(), limit)
 	}
 
-	public func fetchStarredArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
-		return try articlesTable.fetchStarredArticles(webFeedIDs, limit)
+	public func fetchStarredArticles(_ feedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
+		return try articlesTable.fetchStarredArticles(feedIDs, limit)
 	}
 
-    public func fetchStarredArticlesCount(_ webFeedIDs: Set<String>) throws -> Int {
-        return try articlesTable.fetchStarredArticlesCount(webFeedIDs)
+    public func fetchStarredArticlesCount(_ feedIDs: Set<String>) throws -> Int {
+        return try articlesTable.fetchStarredArticlesCount(feedIDs)
     }
     
-	public func fetchArticlesMatching(_ searchString: String, _ webFeedIDs: Set<String>) throws -> Set<Article> {
-		return try articlesTable.fetchArticlesMatching(searchString, webFeedIDs)
+	public func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) throws -> Set<Article> {
+		return try articlesTable.fetchArticlesMatching(searchString, feedIDs)
 	}
 
 	public func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
@@ -136,32 +136,32 @@ public final class ArticlesDatabase {
 
 	// MARK: - Fetching Articles Async
 
-	public func fetchArticlesAsync(_ webFeedID: String, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchArticlesAsync(webFeedID, completion)
+	public func fetchArticlesAsync(_ feedID: String, _ completion: @escaping ArticleSetResultBlock) {
+		articlesTable.fetchArticlesAsync(feedID, completion)
 	}
 
-	public func fetchArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchArticlesAsync(webFeedIDs, completion)
+	public func fetchArticlesAsync(_ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
+		articlesTable.fetchArticlesAsync(feedIDs, completion)
 	}
 
 	public func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping  ArticleSetResultBlock) {
 		articlesTable.fetchArticlesAsync(articleIDs: articleIDs, completion)
 	}
 
-	public func fetchUnreadArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchUnreadArticlesAsync(webFeedIDs, limit, completion)
+	public func fetchUnreadArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		articlesTable.fetchUnreadArticlesAsync(feedIDs, limit, completion)
 	}
 
-	public func fetchTodayArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchArticlesSinceAsync(webFeedIDs, todayCutoffDate(), limit, completion)
+	public func fetchTodayArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		articlesTable.fetchArticlesSinceAsync(feedIDs, todayCutoffDate(), limit, completion)
 	}
 
-	public func fetchedStarredArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchStarredArticlesAsync(webFeedIDs, limit, completion)
+	public func fetchedStarredArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		articlesTable.fetchStarredArticlesAsync(feedIDs, limit, completion)
 	}
 
-	public func fetchArticlesMatchingAsync(_ searchString: String, _ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchArticlesMatchingAsync(searchString, webFeedIDs, completion)
+	public func fetchArticlesMatchingAsync(_ searchString: String, _ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
+		articlesTable.fetchArticlesMatchingAsync(searchString, feedIDs, completion)
 	}
 
 	public func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
@@ -191,9 +191,9 @@ public final class ArticlesDatabase {
 		operationQueue.add(operation)
 	}
 
-	/// Fetch non-zero unread counts for given webFeedIDs.
-	public func fetchUnreadCounts(for webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		let operation = FetchUnreadCountsForFeedsOperation(webFeedIDs: webFeedIDs, databaseQueue: queue)
+	/// Fetch non-zero unread counts for given feedIDs.
+	public func fetchUnreadCounts(for feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+		let operation = FetchUnreadCountsForFeedsOperation(feedIDs: feedIDs, databaseQueue: queue)
 		operation.completionBlock = { operation in
 			let fetchOperation = operation as! FetchUnreadCountsForFeedsOperation
 			completion(fetchOperation.result)
@@ -201,30 +201,30 @@ public final class ArticlesDatabase {
 		operationQueue.add(operation)
 	}
 
-	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
-		fetchUnreadCount(for: webFeedIDs, since: todayCutoffDate(), completion: completion)
+	public func fetchUnreadCountForToday(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
+		fetchUnreadCount(for: feedIDs, since: todayCutoffDate(), completion: completion)
 	}
 
-	public func fetchUnreadCount(for webFeedIDs: Set<String>, since: Date, completion: @escaping SingleUnreadCountCompletionBlock) {
-		articlesTable.fetchUnreadCount(webFeedIDs, since, completion)
+	public func fetchUnreadCount(for feedIDs: Set<String>, since: Date, completion: @escaping SingleUnreadCountCompletionBlock) {
+		articlesTable.fetchUnreadCount(feedIDs, since, completion)
 	}
 
-	public func fetchStarredAndUnreadCount(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
-		articlesTable.fetchStarredAndUnreadCount(webFeedIDs, completion)
+	public func fetchStarredAndUnreadCount(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
+		articlesTable.fetchStarredAndUnreadCount(feedIDs, completion)
 	}
 
 	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
-	public func update(with parsedItems: Set<ParsedItem>, webFeedID: String, deleteOlder: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+	public func update(with parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .feedBased)
-		articlesTable.update(parsedItems, webFeedID, deleteOlder, completion)
+		articlesTable.update(parsedItems, feedID, deleteOlder, completion)
 	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
-	public func update(webFeedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+	public func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .syncSystem)
-		articlesTable.update(webFeedIDsAndItems, defaultRead, completion)
+		articlesTable.update(feedIDsAndItems, defaultRead, completion)
 	}
 
 	/// Delete articles
@@ -301,11 +301,11 @@ public final class ArticlesDatabase {
 	/// This prevents the database from growing forever. If we didn’t do this:
 	/// 1) The database would grow to an inordinate size, and
 	/// 2) the app would become very slow.
-	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
+	public func cleanupDatabaseAtStartup(subscribedToFeedIDs: Set<String>) {
 		if retentionStyle == .syncSystem {
 			articlesTable.deleteOldArticles()
 		}
-		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
+		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToFeedIDs)
 		articlesTable.deleteOldStatuses()
 	}
 

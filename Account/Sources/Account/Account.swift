@@ -331,7 +331,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				self.metadata.performedApril2020RetentionPolicyChange = true
 			}
 
-			self.database.cleanupDatabaseAtStartup(subscribedToWebFeedIDs: self.flattenedWebFeeds().webFeedIDs())
+			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedWebFeeds().webFeedIDs())
 			self.fetchAllUnreadCounts()
 		}
 
@@ -780,7 +780,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 		
-		database.update(with: parsedItems, webFeedID: webFeedID, deleteOlder: deleteOlder) { updateArticlesResult in
+		database.update(with: parsedItems, feedID: webFeedID, deleteOlder: deleteOlder) { updateArticlesResult in
 			switch updateArticlesResult {
 			case .success(let articleChanges):
 				self.sendNotificationAbout(articleChanges)
@@ -800,7 +800,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 
-		database.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
+		database.update(feedIDsAndItems: webFeedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
 			switch updateArticlesResult {
 			case .success(let newAndUpdatedArticles):
 				self.sendNotificationAbout(newAndUpdatedArticles)
