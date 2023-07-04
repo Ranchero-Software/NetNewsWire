@@ -17,12 +17,12 @@ public final class WebFeed: FeedProtocol, Renamable, Hashable, ObservableObject 
 		return .none
 	}
 
-	public var feedID: FeedIdentifier? {
+	public var itemID: ItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
 		}
-		return FeedIdentifier.webFeed(accountID, webFeedID)
+		return ItemIdentifier.feed(accountID, webFeedID)
 	}
 
 	public weak var account: Account?

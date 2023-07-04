@@ -200,13 +200,13 @@ public final class AccountManager: UnreadCountProvider {
 		return nil
 	}
 	
-	public func existingFeed(with feedID: FeedIdentifier) -> FeedProtocol? {
+	public func existingFeed(with feedID: ItemIdentifier) -> FeedProtocol? {
 		switch feedID {
 		case .folder(let accountID, let folderName):
 			if let account = existingAccount(with: accountID) {
 				return account.existingFolder(with: folderName)
 			}
-		case .webFeed(let accountID, let webFeedID):
+		case .feed(let accountID, let webFeedID):
 			if let account = existingAccount(with: accountID) {
 				return account.existingWebFeed(withWebFeedID: webFeedID)
 			}

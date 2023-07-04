@@ -1,5 +1,5 @@
 //
-//  ArticleFetcherType.swift
+//  ItemIdentifier.swift
 //  Account
 //
 //  Created by Maurice Parker on 11/13/19.
@@ -8,15 +8,15 @@
 
 import Foundation
 
-public protocol FeedIdentifiable {
-	var feedID: FeedIdentifier? { get }
+public protocol ItemIdentifiable {
+	var itemID: ItemIdentifier? { get }
 }
 
-public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
+public enum ItemIdentifier: CustomStringConvertible, Hashable, Equatable {
 	
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
-	case webFeed(String, String) // accountID, webFeedID
+	case feed(String, String) // accountID, feedID
 	case folder(String, String) // accountID, folderName
 	
 	public var description: String {
@@ -25,8 +25,8 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 			return "smartFeed: \(id)"
 		case .script(let id):
 			return "script: \(id)"
-		case .webFeed(let accountID, let webFeedID):
-			return "feed: \(accountID)_\(webFeedID)"
+		case .feed(let accountID, let feedID):
+			return "feed: \(accountID)_\(feedID)"
 		case .folder(let accountID, let folderName):
 			return "folder: \(accountID)_\(folderName)"
 		}
@@ -44,11 +44,11 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 				"type": "script",
 				"id": id
 			]
-		case .webFeed(let accountID, let webFeedID):
+		case .feed(let accountID, let feedID):
 			return [
 				"type": "feed",
 				"accountID": accountID,
-				"webFeedID": webFeedID
+				"feedID": feedID
 			]
 		case .folder(let accountID, let folderName):
 			return [
@@ -65,16 +65,16 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 		switch type {
 		case "smartFeed":
 			guard let id = userInfo["id"] as? String else { return nil }
-			self = FeedIdentifier.smartFeed(id)
+			self = ItemIdentifier.smartFeed(id)
 		case "script":
 			guard let id = userInfo["id"] as? String else { return nil }
-			self = FeedIdentifier.script(id)
+			self = ItemIdentifier.script(id)
 		case "feed":
-			guard let accountID = userInfo["accountID"] as? String, let webFeedID = userInfo["webFeedID"] as? String else { return nil }
-			self = FeedIdentifier.webFeed(accountID, webFeedID)
+			guard let accountID = userInfo["accountID"] as? String, let webFeedID = userInfo["feedID"] as? String else { return nil }
+			self = ItemIdentifier.feed(accountID, webFeedID)
 		case "folder":
 			guard let accountID = userInfo["accountID"] as? String, let folderName = userInfo["folderName"] as? String else { return nil }
-			self = FeedIdentifier.folder(accountID, folderName)
+			self = ItemIdentifier.folder(accountID, folderName)
 		default:
 			return nil
 		}

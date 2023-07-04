@@ -15,7 +15,7 @@ public enum ReadFilterType {
 	case alwaysRead
 }
 
-public protocol FeedProtocol: FeedIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
+public protocol FeedProtocol: ItemIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 
 	var account: Account? { get }
 	var defaultReadFilterType: ReadFilterType { get }
@@ -24,11 +24,11 @@ public protocol FeedProtocol: FeedIdentifiable, ArticleFetcher, DisplayNameProvi
 
 public extension FeedProtocol {
 	
-	func readFiltered(readFilterEnabledTable: [FeedIdentifier: Bool]) -> Bool {
+	func readFiltered(readFilterEnabledTable: [ItemIdentifier: Bool]) -> Bool {
 		guard defaultReadFilterType != .alwaysRead else {
 			return true
 		}
-		if let feedID = feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+		if let itemID = itemID, let readFilterEnabled = readFilterEnabledTable[itemID] {
 			return readFilterEnabled
 		} else {
 			return defaultReadFilterType == .read

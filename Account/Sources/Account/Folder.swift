@@ -24,12 +24,12 @@ public final class Folder: FeedProtocol, Renamable, Container, Hashable {
 		return ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 	
-	public var feedID: FeedIdentifier? {
+	public var itemID: ItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
 		}
-		return FeedIdentifier.folder(accountID, nameForDisplay)
+		return ItemIdentifier.folder(accountID, nameForDisplay)
 	}
 
 	public weak var account: Account?
