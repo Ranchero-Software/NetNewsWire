@@ -20,8 +20,8 @@ final class SmartFeed: PseudoFeed {
 		return .none
 	}
 
-	var feedID: FeedIdentifier? {
-		delegate.feedID
+	var itemID: ItemIdentifier? {
+		delegate.itemID
 	}
 
 	var nameForDisplay: String {

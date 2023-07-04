@@ -27,7 +27,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private var readFilterEnabledTable = [ItemIdentifier: Bool]()
 	var isReadFiltered: Bool? {
 		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? FeedProtocol else {
 			return nil
@@ -35,7 +35,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let feedID = timelineFeed.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+		if let itemID = timelineFeed.itemID, let readFilterEnabled = readFilterEnabledTable[itemID] {
 			return readFilterEnabled
 		} else {
 			return timelineFeed.defaultReadFilterType == .read
@@ -281,8 +281,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func toggleReadFilter() {
-		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? FeedProtocol)?.feedID else { return }
-		readFilterEnabledTable[feedID] = !filter
+		guard let filter = isReadFiltered, let itemID = (representedObjects?.first as? FeedProtocol)?.itemID else { return }
+		readFilterEnabledTable[itemID] = !filter
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
 	}
@@ -305,8 +305,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 
 		for i in 0..<readArticlesFilterStateKeys.count {
-			if let feedIdentifier = FeedIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
-				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
+			if let itemIdentifier = ItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
+				readFilterEnabledTable[itemIdentifier] = readArticlesFilterStateValues[i]
 			}
 		}
 		

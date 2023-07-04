@@ -39,7 +39,7 @@ enum ShowFeedName {
 
 struct FeedNode: Hashable {
 	var node: Node
-	var feedID: FeedIdentifier
+	var itemID: ItemIdentifier
 	
 	init?(_ node: Node) {
 		guard let feed = node.representedObject as? FeedProtocol else { return nil }
@@ -81,7 +81,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	private var lastExpandedTable = Set<ContainerIdentifier>()
 	
 	// Which Feeds have the Read Articles Filter enabled
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private var readFilterEnabledTable = [ItemIdentifier: Bool]()
 	
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
@@ -345,8 +345,8 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 			
 			if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
 				for key in readArticlesFilterState.keys {
-					if let feedIdentifier = FeedIdentifier(userInfo: key) {
-						readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
+					if let itemIdentifier = ItemIdentifier(userInfo: key) {
+						readFilterEnabledTable[itemIdentifier] = readArticlesFilterState[key]
 					}
 				}
 			}
@@ -618,10 +618,10 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		refreshTimeline(resetScroll: false)
 	}
 
-	func nodeFor(feedID: FeedIdentifier) -> Node? {
+	func nodeFor(itemID: ItemIdentifier) -> Node? {
 		return treeController.rootNode.descendantNode(where: { node in
 			if let feed = node.representedObject as? FeedProtocol {
-				return feed.feedID == feedID
+				return feed.itemID == itemID
 			} else {
 				return false
 			}
@@ -2129,17 +2129,17 @@ private extension SceneCoordinator {
 	
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
-			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
-			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
+			let itemIdentifierUserInfo = userInfo[UserInfoKey.itemIdentifier] as? [AnyHashable : AnyHashable],
+			let itemIdentifier = ItemIdentifier(userInfo: itemIdentifierUserInfo) else {
 				return
 		}
 
-		treeControllerDelegate.addFilterException(feedIdentifier)
+		treeControllerDelegate.addFilterException(itemIdentifier)
 		
-		switch feedIdentifier {
+		switch itemIdentifier {
 		
 		case .smartFeed:
-			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
+			guard let smartFeed = SmartFeedsController.shared.find(by: itemIdentifier) else { return }
 
 			markExpanded(SmartFeedsController.shared)
 			rebuildBackingStores(initialLoad: true, completion:  {
@@ -2214,31 +2214,31 @@ private extension SceneCoordinator {
 	}
 	
 	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
-		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
-			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo),
+		guard let itemIdentifierUserInfo = userInfo[UserInfoKey.itemIdentifier] as? [AnyHashable : AnyHashable],
+			  let itemIdentifier = ItemIdentifier(userInfo: itemIdentifierUserInfo),
 			  let isShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool,
 			  let articleWindowScrollY = userInfo[UserInfoKey.articleWindowScrollY] as? Int else {
 				  return false
 			  }
 
-		switch feedIdentifier {
+		switch itemIdentifier {
 
 		case .script:
 			return false
 
 		case .smartFeed, .folder:
-			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectFeedAndArticle(itemIdentifier: itemIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
-				treeControllerDelegate.addFilterException(feedIdentifier)
+				treeControllerDelegate.addFilterException(itemIdentifier)
 			}
 			return found
 		
 		case .webFeed:
-			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectFeedAndArticle(itemIdentifier: itemIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
-				treeControllerDelegate.addFilterException(feedIdentifier)
-				if let webFeedNode = nodeFor(feedID: feedIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
-					treeControllerDelegate.addFilterException(folderFeedID)
+				treeControllerDelegate.addFilterException(itemIdentifier)
+				if let webFeedNode = nodeFor(itemID: itemIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderItemID = folder.itemID {
+					treeControllerDelegate.addFilterException(folderItemID)
 				}
 			}
 			return found
@@ -2273,8 +2273,8 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-	func selectFeedAndArticle(feedIdentifier: FeedIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
-		guard let feedNode = nodeFor(feedID: feedIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
+	func selectFeedAndArticle(itemIdentifier: ItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+		guard let feedNode = nodeFor(itemID: itemIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
 		
 		selectFeed(indexPath: feedIndexPath) {
 			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)

@@ -100,7 +100,7 @@ protocol SidebarDelegate: AnyObject {
 	func saveState(to state: inout [AnyHashable : Any]) {
 		state[UserInfoKey.readFeedsFilterState] = isReadFiltered
 		state[UserInfoKey.containerExpandedWindowState] = expandedTable.map { $0.userInfo }
-		state[UserInfoKey.selectedFeedsState] = selectedFeeds.compactMap { $0.feedID?.userInfo }
+		state[UserInfoKey.selectedFeedsState] = selectedFeeds.compactMap { $0.itemID?.userInfo }
 	}
 	
 	func restoreState(from state: [AnyHashable : Any]) {
@@ -114,22 +114,22 @@ protocol SidebarDelegate: AnyObject {
 			return
 		}
 
-		let selectedFeedIdentifers = Set(selectedFeedsState.compactMap( { FeedIdentifier(userInfo: $0) }))
-		selectedFeedIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
+		let selectedItemIdentifers = Set(selectedFeedsState.compactMap( { ItemIdentifier(userInfo: $0) }))
+		selectedItemIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
 		
 		rebuildTreeAndReloadDataIfNeeded()
 		
 		var selectIndexes = IndexSet()
 
-		func selectFeedsVisitor(node: Node) {
-			if let feedID = (node.representedObject as? FeedIdentifiable)?.feedID {
-				if selectedFeedIdentifers.contains(feedID) {
+		func selectItemsVisitor(node: Node) {
+			if let itemID = (node.representedObject as? ItemIdentifiable)?.itemID {
+				if selectedItemIdentifers.contains(itemID) {
 					selectIndexes.insert(outlineView.row(forItem: node) )
 				}
 			}
 		}
 
-		treeController.visitNodes(selectFeedsVisitor(node:))
+		treeController.visitNodes(selectItemsVisitor(node:))
 		outlineView.selectRowIndexes(selectIndexes, byExtendingSelection: false)
 		focus()
 		
@@ -456,13 +456,13 @@ protocol SidebarDelegate: AnyObject {
 	// MARK: - API
 	
 	func selectFeed(_ feed: FeedProtocol) {
-		if isReadFiltered, let feedID = feed.feedID {
-			self.treeControllerDelegate.addFilterException(feedID)
+		if isReadFiltered, let itemID = feed.itemID {
+			self.treeControllerDelegate.addFilterException(itemID)
 			
 			if let webFeed = feed as? WebFeed, let account = webFeed.account {
 				let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
-				if let parentFolderFeedID = parentFolder?.feedID {
-					self.treeControllerDelegate.addFilterException(parentFolderFeedID)
+				if let parentFolderItemID = parentFolder?.itemID {
+					self.treeControllerDelegate.addFilterException(parentFolderItemID)
 				}
 			}
 			
@@ -544,16 +544,16 @@ private extension SidebarViewController {
 	}
 	
 	func addToFilterExeptionsIfNecessary(_ feed: FeedProtocol?) {
-		if isReadFiltered, let feedID = feed?.feedID {
+		if isReadFiltered, let itemID = feed?.itemID {
 			if feed is PseudoFeed {
-				treeControllerDelegate.addFilterException(feedID)
+				treeControllerDelegate.addFilterException(itemID)
 			} else if let folderFeed = feed as? Folder {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
-					treeControllerDelegate.addFilterException(feedID)
+					treeControllerDelegate.addFilterException(itemID)
 				}
 			} else if let webFeed = feed as? WebFeed {
 				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
-					treeControllerDelegate.addFilterException(feedID)
+					treeControllerDelegate.addFilterException(itemID)
 					addParentFolderToFilterExceptions(webFeed)
 				}
 			}
@@ -563,11 +563,11 @@ private extension SidebarViewController {
 	func addParentFolderToFilterExceptions(_ feed: FeedProtocol) {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
 			let folder = node.parent?.representedObject as? Folder,
-			let folderFeedID = folder.feedID else {
+			let folderItemID = folder.itemID else {
 				return
 		}
 		
-		treeControllerDelegate.addFilterException(folderFeedID)
+		treeControllerDelegate.addFilterException(folderItemID)
 	}
 	
 
@@ -621,8 +621,8 @@ private extension SidebarViewController {
 	}
 
 	func addTreeControllerToFilterExceptionsVisitor(node: Node) {
-		if let feed = node.representedObject as? FeedProtocol, let feedID = feed.feedID {
-			treeControllerDelegate.addFilterException(feedID)
+		if let feed = node.representedObject as? FeedProtocol, let itemID = feed.itemID {
+			treeControllerDelegate.addFilterException(itemID)
 		}
 	}
 

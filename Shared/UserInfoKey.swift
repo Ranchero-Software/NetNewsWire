@@ -13,7 +13,7 @@ struct UserInfoKey {
 	static let webFeed = "webFeed"
 	static let url = "url"
 	static let articlePath = "articlePath"
-	static let feedIdentifier = "feedIdentifier"
+	static let itemIdentifier = "itemIdentifier"
 	
 	static let windowState = "windowState"
 	static let windowFullScreenState = "windowFullScreenState"
