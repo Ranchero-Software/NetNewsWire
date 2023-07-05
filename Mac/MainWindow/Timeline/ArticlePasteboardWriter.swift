@@ -147,7 +147,7 @@ private extension ArticlePasteboardWriter {
 			d[Key.feedURL] = feed.url
 		}
 
-		d[Key.webFeedID] = article.webFeedID
+		d[Key.webFeedID] = article.feedID
 		d[Key.title] = article.title ?? nil
 		d[Key.contentHTML] = article.contentHTML ?? nil
 		d[Key.contentText] = article.contentText ?? nil

@@ -198,7 +198,7 @@ extension Article {
 		return [
 			ArticlePathKey.accountID: accountID,
 			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
-			ArticlePathKey.webFeedID: webFeedID,
+			ArticlePathKey.webFeedID: feedID,
 			ArticlePathKey.articleID: articleID
 		]
 	}
@@ -222,7 +222,7 @@ extension Article: SortableArticle {
 	}
 	
 	var sortableWebFeedID: String {
-		return webFeedID
+		return feedID
 	}
 	
 }

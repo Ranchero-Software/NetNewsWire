@@ -139,7 +139,7 @@ final class ArticlesTable: DatabaseTable {
 
 	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) throws -> Set<Article> {
 		var articles = try fetchArticlesMatching(searchString)
-		articles = articles.filter{ feedIDs.contains($0.webFeedID) }
+		articles = articles.filter{ feedIDs.contains($0.feedID) }
 		return articles
 	}
 
@@ -955,7 +955,7 @@ private extension ArticlesTable {
 	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
 		let articles = fetchArticlesMatching(searchString, database)
 		// TODO: include the feedIDs in the SQL rather than filtering here.
-		return articles.filter{ feedIDs.contains($0.webFeedID) }
+		return articles.filter{ feedIDs.contains($0.feedID) }
 	}
 
 	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {

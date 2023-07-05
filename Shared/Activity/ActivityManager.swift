@@ -283,7 +283,7 @@ private extension ActivityManager {
 	}
 	
 	static func identifier(for article: Article) -> String {
-		return "account_\(article.accountID)_feed_\(article.webFeedID)_article_\(article.articleID)"
+		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
 	}
 	
 	static func identifiers(for feed: WebFeed) -> [String] {

@@ -1202,9 +1202,9 @@ private extension Account {
 		// feeds.forEach { validateUnreadCount($0, articles) }
 		// Now we loop through articles exactly once. This makes a huge difference.
 
-		var unreadCountStorage = [String: Int]() // [WebFeedID: Int]
+		var unreadCountStorage = [String: Int]() // [FeedID: Int]
 		for article in articles where !article.status.read {
-			unreadCountStorage[article.webFeedID, default: 0] += 1
+			unreadCountStorage[article.feedID, default: 0] += 1
 		}
 		webFeeds.forEach { (webFeed) in
 			let unreadCount = unreadCountStorage[webFeed.webFeedID, default: 0]
