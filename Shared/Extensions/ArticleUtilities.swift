@@ -221,7 +221,7 @@ extension Article: SortableArticle {
 		return articleID
 	}
 	
-	var sortableWebFeedID: String {
+	var sortableFeedID: String {
 		return feedID
 	}
 	
