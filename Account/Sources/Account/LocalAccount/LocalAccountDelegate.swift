@@ -47,13 +47,13 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
             return
         }
 
-        let webFeeds = account.flattenedFeeds()
-        refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
+        let feeds = account.flattenedFeeds()
+        refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
 
         let group = DispatchGroup()
 
         group.enter()
-        refresher?.refreshFeeds(webFeeds) {
+        refresher?.refreshFeeds(feeds) {
             group.leave()
         }
 

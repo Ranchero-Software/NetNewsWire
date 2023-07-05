@@ -70,8 +70,8 @@ public enum ItemIdentifier: CustomStringConvertible, Hashable, Equatable {
 			guard let id = userInfo["id"] as? String else { return nil }
 			self = ItemIdentifier.script(id)
 		case "feed":
-			guard let accountID = userInfo["accountID"] as? String, let webFeedID = userInfo["feedID"] as? String else { return nil }
-			self = ItemIdentifier.feed(accountID, webFeedID)
+			guard let accountID = userInfo["accountID"] as? String, let feedID = userInfo["feedID"] as? String else { return nil }
+			self = ItemIdentifier.feed(accountID, feedID)
 		case "folder":
 			guard let accountID = userInfo["accountID"] as? String, let folderName = userInfo["folderName"] as? String else { return nil }
 			self = ItemIdentifier.folder(accountID, folderName)

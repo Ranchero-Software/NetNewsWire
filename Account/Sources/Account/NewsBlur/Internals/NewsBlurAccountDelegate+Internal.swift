@@ -100,27 +100,27 @@ extension NewsBlurAccountDelegate {
 
 		// Add any feeds we don't have and update any we do
 		var feedsToAdd = Set<NewsBlurFeed>()
-		feeds.forEach { feed in
-			let subFeedId = String(feed.feedID)
+		feeds.forEach { newsBlurFeed in
+			let subFeedID = String(newsBlurFeed.feedID)
 
-			if let webFeed = account.existingFeed(withFeedID: subFeedId) {
-				webFeed.name = feed.name
+			if let feed = account.existingFeed(withFeedID: subFeedID) {
+				feed.name = newsBlurFeed.name
 				// If the name has been changed on the server remove the locally edited name
-				webFeed.editedName = nil
-				webFeed.homePageURL = feed.homePageURL
-				webFeed.externalID = String(feed.feedID)
-				webFeed.faviconURL = feed.faviconURL
+                feed.editedName = nil
+                feed.homePageURL = newsBlurFeed.homePageURL
+                feed.externalID = String(newsBlurFeed.feedID)
+                feed.faviconURL = newsBlurFeed.faviconURL
 			}
 			else {
-				feedsToAdd.insert(feed)
+				feedsToAdd.insert(newsBlurFeed)
 			}
 		}
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
-		feedsToAdd.forEach { feed in
-			let webFeed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			webFeed.externalID = String(feed.feedID)
-			account.addFeed(webFeed)
+		feedsToAdd.forEach { newsBlurFeed in
+			let feed = account.createFeed(with: newsBlurFeed.name, url: newsBlurFeed.feedURL, feedID: String(newsBlurFeed.feedID), homePageURL: newsBlurFeed.homePageURL)
+            feed.externalID = String(newsBlurFeed.feedID)
+			account.addFeed(feed)
 		}
 	}
 
@@ -412,31 +412,31 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func createFeed(account: Account, feed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-		guard let feed = feed else {
+	func createFeed(account: Account, newsBlurFeed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+		guard let newsBlurFeed = newsBlurFeed else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
 		}
 
 		DispatchQueue.main.async {
-			let webFeed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			webFeed.externalID = String(feed.feedID)
-			webFeed.faviconURL = feed.faviconURL
+			let feed = account.createFeed(with: newsBlurFeed.name, url: newsBlurFeed.feedURL, feedID: String(newsBlurFeed.feedID), homePageURL: newsBlurFeed.homePageURL)
+            feed.externalID = String(newsBlurFeed.feedID)
+            feed.faviconURL = newsBlurFeed.faviconURL
 
-			account.addFeed(webFeed, to: container) { result in
+			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameFeed(webFeed, to: name) { result in
+						account.renameFeed(feed, to: name) { result in
 							switch result {
 							case .success:
-								self.initialFeedDownload(account: account, feed: webFeed, completion: completion)
+								self.initialFeedDownload(account: account, feed: feed, completion: completion)
 							case .failure(let error):
 								completion(.failure(error))
 							}
 						}
 					} else {
-						self.initialFeedDownload(account: account, feed: webFeed, completion: completion)
+						self.initialFeedDownload(account: account, feed: feed, completion: completion)
 					}
 				case .failure(let error):
 					completion(.failure(error))

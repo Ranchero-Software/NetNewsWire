@@ -951,7 +951,7 @@ private extension ReaderAPIAccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
 		// Download the initial articles
-		self.caller.retrieveItemIDs(type: .allForFeed, webFeedID: feed.feedID) { result in
+		self.caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let articleIDs):

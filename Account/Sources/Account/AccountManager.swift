@@ -200,15 +200,15 @@ public final class AccountManager: UnreadCountProvider {
 		return nil
 	}
 	
-	public func existingFeed(with feedID: ItemIdentifier) -> FeedProtocol? {
-		switch feedID {
+	public func existingFeed(with itemID: ItemIdentifier) -> FeedProtocol? {
+		switch itemID {
 		case .folder(let accountID, let folderName):
 			if let account = existingAccount(with: accountID) {
 				return account.existingFolder(with: folderName)
 			}
-		case .feed(let accountID, let webFeedID):
+		case .feed(let accountID, let feedID):
 			if let account = existingAccount(with: accountID) {
-				return account.existingFeed(withFeedID: webFeedID)
+				return account.existingFeed(withFeedID: feedID)
 			}
 		default:
 			break
@@ -335,8 +335,8 @@ public final class AccountManager: UnreadCountProvider {
         
         for account in accounts {
             if account.type == .cloudKit || account.type == .onMyMac {
-                for webfeed in account.flattenedFeeds() {
-                    if let components = URLComponents(string: webfeed.url), let host = components.host {
+                for feed in account.flattenedFeeds() {
+                    if let components = URLComponents(string: feed.url), let host = components.host {
                         if host == "twitter.com" { // Allow, for instance, blog.twitter.com, which might have an actual RSS feed
                             return true
                         }
@@ -355,8 +355,8 @@ public final class AccountManager: UnreadCountProvider {
 
         for account in accounts {
             if account.type == .cloudKit || account.type == .onMyMac {
-                for webfeed in account.flattenedFeeds() {
-                    if feedRequiresRedditAPI(webfeed) {
+                for feed in account.flattenedFeeds() {
+                    if feedRequiresRedditAPI(feed) {
                         return true
                     }
                 }

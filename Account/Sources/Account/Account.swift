@@ -55,7 +55,7 @@ public enum FetchType {
 	case unread(_: Int? = nil)
 	case today(_: Int? = nil)
 	case folder(Folder, Bool)
-	case webFeed(Feed)
+	case feed(Feed)
 	case articleIDs(Set<String>)
 	case search(String)
 	case searchWithArticleIDs(String, Set<String>)
@@ -72,7 +72,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		public static let articleIDs = "articleIDs" // StatusesDidChange
 		public static let statusKey = "statusKey" // StatusesDidChange
 		public static let statusFlag = "statusFlag" // StatusesDidChange
-		public static let webFeeds = "webFeeds" // AccountDidDownloadArticles, StatusesDidChange
+		public static let feeds = "feeds" // AccountDidDownloadArticles, StatusesDidChange
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
 
@@ -684,8 +684,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			} else {
 				return try fetchArticles(folder: folder)
 			}
-		case .webFeed(let webFeed):
-			return try fetchArticles(feed: webFeed)
+		case .feed(let feed):
+			return try fetchArticles(feed: feed)
 		case .articleIDs(let articleIDs):
 			return try fetchArticles(articleIDs: articleIDs)
 		case .search(let searchString):
@@ -709,8 +709,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			} else {
 				return fetchArticlesAsync(folder: folder, completion)
 			}
-		case .webFeed(let webFeed):
-			fetchArticlesAsync(feed: webFeed, completion)
+		case .feed(let feed):
+			fetchArticlesAsync(feed:feed, completion)
 		case .articleIDs(let articleIDs):
 			fetchArticlesAsync(articleIDs: articleIDs, completion)
 		case .search(let searchString):
@@ -749,8 +749,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return unreadCounts[feed.feedID] ?? 0
 	}
 
-	public func setUnreadCount(_ unreadCount: Int, for webFeed: Feed) {
-		unreadCounts[webFeed.feedID] = unreadCount
+	public func setUnreadCount(_ unreadCount: Int, for feed: Feed) {
+		unreadCounts[feed.feedID] = unreadCount
 	}
 
 	public func structureDidChange() {
@@ -1285,7 +1285,7 @@ private extension Account {
         // which will update their own unread counts.
         updateUnreadCounts(for: feeds)
         
-		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.articleIDs: articleIDs, UserInfoKey.webFeeds: feeds])
+		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.articleIDs: articleIDs, UserInfoKey.feeds: feeds])
     }
 
 	func noteStatusesForArticleIDsDidChange(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) {
@@ -1398,7 +1398,7 @@ private extension Account {
 		}
 
 		if shouldSendNotification {
-			userInfo[UserInfoKey.webFeeds] = feeds
+			userInfo[UserInfoKey.feeds] = feeds
 			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
 	}

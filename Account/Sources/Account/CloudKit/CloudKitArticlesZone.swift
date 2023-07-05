@@ -29,7 +29,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		static let recordType = "Article"
 		struct Fields {
 			static let articleStatus = "articleStatus"
-			static let webFeedURL = "webFeedURL"
+			static let feedURL = "webFeedURL"
 			static let uniqueID = "uniqueID"
 			static let title = "title"
 			static let contentHTML = "contentHTML"
@@ -49,7 +49,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	struct CloudKitArticleStatus {
 		static let recordType = "ArticleStatus"
 		struct Fields {
-			static let webFeedExternalID = "webFeedExternalID"
+			static let feedExternalID = "webFeedExternalID"
 			static let read = "read"
 			static let starred = "starred"
 		}
@@ -82,8 +82,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 	
-	func deleteArticles(_ webFeedExternalID: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		let predicate = NSPredicate(format: "webFeedExternalID = %@", webFeedExternalID)
+	func deleteArticles(_ feedExternalID: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		let predicate = NSPredicate(format: "webFeedExternalID = %@", feedExternalID)
 		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)
 		delete(ckQuery: ckQuery, completion: completion)
 	}
@@ -166,8 +166,8 @@ private extension CloudKitArticlesZone {
 	func makeStatusRecord(_ article: Article) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
-		if let webFeedExternalID = article.feed?.externalID {
-			record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
+		if let feedExternalID = article.feed?.externalID {
+			record[CloudKitArticleStatus.Fields.feedExternalID] = feedExternalID
 		}
 		record[CloudKitArticleStatus.Fields.read] = article.status.read ? "1" : "0"
 		record[CloudKitArticleStatus.Fields.starred] = article.status.starred ? "1" : "0"
@@ -178,8 +178,8 @@ private extension CloudKitArticlesZone {
 		let recordID = CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
 		
-		if let webFeedExternalID = statusUpdate.article?.feed?.externalID {
-			record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
+		if let feedExternalID = statusUpdate.article?.feed?.externalID {
+			record[CloudKitArticleStatus.Fields.feedExternalID] = feedExternalID
 		}
 		
 		record[CloudKitArticleStatus.Fields.read] = statusUpdate.isRead ? "1" : "0"
@@ -194,7 +194,7 @@ private extension CloudKitArticlesZone {
 
 		let articleStatusRecordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		record[CloudKitArticle.Fields.articleStatus] = CKRecord.Reference(recordID: articleStatusRecordID, action: .deleteSelf)
-		record[CloudKitArticle.Fields.webFeedURL] = article.feed?.url
+		record[CloudKitArticle.Fields.feedURL] = article.feed?.url
 		record[CloudKitArticle.Fields.uniqueID] = article.uniqueID
 		record[CloudKitArticle.Fields.title] = article.title
 		record[CloudKitArticle.Fields.contentHTML] = article.contentHTML

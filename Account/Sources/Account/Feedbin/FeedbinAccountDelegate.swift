@@ -470,9 +470,9 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let folder = container as? Folder, let webFeedID = Int(feed.feedID) {
+		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			caller.createTagging(webFeedID: webFeedID, name: folder.name ?? "") { result in
+			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
 				self.refreshProgress.completeTask()
 				switch result {
 				case .success(let taggingID):

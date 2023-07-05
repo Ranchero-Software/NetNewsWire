@@ -299,21 +299,21 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		accountZone.findWebFeedExternalIDs(for: folder) { result in
+		accountZone.findFeedExternalIDs(for: folder) { result in
 			self.refreshProgress.completeTask()
 			switch result {
-			case .success(let webFeedExternalIDs):
+			case .success(let feedExternalIDs):
 
-				let webFeeds = webFeedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
+				let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
 				let group = DispatchGroup()
 				var errorOccurred = false
 				
-				for webFeed in webFeeds {
+				for feed in feeds {
 					group.enter()
-					self.removeFeedFromCloud(for: account, with: webFeed, from: folder) { [weak self] result in
+					self.removeFeedFromCloud(for: account, with: feed, from: folder) { [weak self] result in
 						group.leave()
 						if case .failure(let error) = result {
-                            self?.logger.error("Remove folder, remove webfeed error: \(error.localizedDescription, privacy: .public)")
+                            self?.logger.error("Remove folder, remove feed error: \(error.localizedDescription, privacy: .public)")
 							errorOccurred = true
 						}
 					}
@@ -485,8 +485,8 @@ private extension CloudKitAccountDelegate {
 		accountZone.fetchChangesInZone() { result in
 			self.refreshProgress.completeTask()
 
-			let webFeeds = account.flattenedFeeds()
-			self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
+			let feeds = account.flattenedFeeds()
+			self.refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
 
 			switch result {
 			case .success:
@@ -496,7 +496,7 @@ private extension CloudKitAccountDelegate {
 					switch result {
 					case .success:
 						
-						self.combinedRefresh(account, webFeeds) { result in
+						self.combinedRefresh(account, feeds) { result in
 							self.refreshProgress.clear()
 							switch result {
 							case .success:
@@ -519,9 +519,9 @@ private extension CloudKitAccountDelegate {
 
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		let intialWebFeedsCount = account.flattenedFeeds().count
+		let intialFeedsCount = account.flattenedFeeds().count
 		refreshProgress.isIndeterminate = true
-		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialWebFeedsCount)
+		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialFeedsCount)
 
 		func fail(_ error: Error) {
 			self.processAccountError(account, error)
@@ -534,15 +534,15 @@ private extension CloudKitAccountDelegate {
 			case .success:
 				
 				self.refreshProgress.completeTask()
-				let webFeeds = account.flattenedFeeds()
-				self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count - intialWebFeedsCount)
+				let feeds = account.flattenedFeeds()
+				self.refreshProgress.addToNumberOfTasksAndRemaining(feeds.count - intialFeedsCount)
 				
 				self.refreshArticleStatus(for: account) { result in
 					switch result {
 					case .success:
 						self.refreshProgress.completeTask()
 						self.refreshProgress.isIndeterminate = false
-						self.combinedRefresh(account, webFeeds) { result in
+						self.combinedRefresh(account, feeds) { result in
 							self.sendArticleStatus(for: account, showProgress: true) { _ in
 								self.refreshProgress.clear()
 								if case .failure(let error) = result {
@@ -565,12 +565,12 @@ private extension CloudKitAccountDelegate {
 		
 	}
 
-    func combinedRefresh(_ account: Account, _ webFeeds: Set<Feed>, completion: @escaping (Result<Void, Error>) -> Void) {
+    func combinedRefresh(_ account: Account, _ feeds: Set<Feed>, completion: @escaping (Result<Void, Error>) -> Void) {
 
         let group = DispatchGroup()
 
         group.enter()
-        refresher.refreshFeeds(webFeeds) {
+        refresher.refreshFeeds(feeds) {
             group.leave()
         }
 
@@ -687,7 +687,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
-		account.fetchArticlesAsync(.webFeed(feed)) { result in
+		account.fetchArticlesAsync(.feed(feed)) { result in
 			switch result {
 			case .success(let articles):
 				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
@@ -780,11 +780,11 @@ private extension CloudKitAccountDelegate {
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
-				guard let webFeedExternalID = feed.externalID else {
+				guard let feedExternalID = feed.externalID else {
 					completion(.success(()))
 					return
 				}
-				self.articlesZone.deleteArticles(webFeedExternalID) { result in
+				self.articlesZone.deleteArticles(feedExternalID) { result in
 					feed.dropConditionalGetInfo()
 					self.refreshProgress.completeTask()
 					completion(result)

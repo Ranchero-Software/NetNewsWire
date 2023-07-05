@@ -429,7 +429,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 			switch result {
 			case .success(let feed):
-				self.createFeed(account: account, feed: feed, name: name, container: container, completion: completion)
+				self.createFeed(account: account, newsBlurFeed: feed, name: name, container: container, completion: completion)
 			case .failure(let error):
 				DispatchQueue.main.async {
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
