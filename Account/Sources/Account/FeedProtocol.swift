@@ -1,5 +1,5 @@
 //
-//  Feed.swift
+//  FeedProtocol.swift
 //  Account
 //
 //  Created by Maurice Parker on 11/15/19.
