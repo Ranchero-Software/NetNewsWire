@@ -18,7 +18,7 @@ extension Notification.Name {
 	static let WebFeedIconDidBecomeAvailable = Notification.Name("WebFeedIconDidBecomeAvailableNotification") // UserInfoKey.feed
 }
 
-public final class WebFeedIconDownloader {
+public final class FeedIconDownloader {
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -151,7 +151,7 @@ public final class WebFeedIconDownloader {
 	
 }
 
-private extension WebFeedIconDownloader {
+private extension FeedIconDownloader {
 
 	func icon(forHomePageURL homePageURL: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
 
@@ -256,15 +256,15 @@ private extension WebFeedIconDownloader {
 	}
 
 	func queueSaveFeedURLToIconURLCacheIfNeeded() {
-		WebFeedIconDownloader.saveQueue.add(self, #selector(saveFeedURLToIconURLCacheIfNeeded))
+		FeedIconDownloader.saveQueue.add(self, #selector(saveFeedURLToIconURLCacheIfNeeded))
 	}
 
 	func queueSaveHomePageToIconURLCacheIfNeeded() {
-		WebFeedIconDownloader.saveQueue.add(self, #selector(saveHomePageToIconURLCacheIfNeeded))
+		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePageToIconURLCacheIfNeeded))
 	}
 
 	func queueHomePagesWithNoIconURLCacheIfNeeded() {
-		WebFeedIconDownloader.saveQueue.add(self, #selector(saveHomePagesWithNoIconURLCacheIfNeeded))
+		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePagesWithNoIconURLCacheIfNeeded))
 	}
 
 	func saveFeedURLToIconURLCache() {

@@ -38,7 +38,7 @@ import RSParser
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
 		switch type {
-		case .webFeed:
+		case .feed:
 			addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
 																 name: name,
 																 account: account,

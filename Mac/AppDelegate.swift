@@ -41,7 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
-	var webFeedIconDownloader: WebFeedIconDownloader!
+	var feedIconDownloader: FeedIconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 
@@ -145,9 +145,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	@MainActor func showAddWebFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
+	@MainActor func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 		addFeedController = AddFeedController(hostWindow: window)
-		addFeedController?.showAddFeedSheet(.webFeed, urlString, name, account, folder)
+		addFeedController?.showAddFeedSheet(.feed, urlString, name, account, folder)
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -178,7 +178,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		imageDownloader = ImageDownloader(folder: imagesFolder)
 
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
-		webFeedIconDownloader = WebFeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
+		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
 
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 	}
@@ -230,7 +230,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			mainWindowController?.window?.center()
 		}
 
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 		DispatchQueue.main.async {
@@ -402,7 +402,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 
-	@MainActor @objc func webFeedSettingDidChange(_ note: Notification) {
+	@MainActor @objc func feedSettingDidChange(_ note: Notification) {
 		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
 			return
 		}
@@ -556,7 +556,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return
 		}
 
-		showAddWebFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, account: account, folder: folder)
+		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, account: account, folder: folder)
 	}
 
 	// MARK: - Dock Badge
