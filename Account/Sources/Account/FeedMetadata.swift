@@ -148,8 +148,8 @@ final class FeedMetadata: Codable {
 
 	weak var delegate: FeedMetadataDelegate?
 
-	init(webFeedID: String) {
-		self.feedID = webFeedID
+	init(feedID: String) {
+		self.feedID = feedID
 	}
 
 	func valueDidChange(_ key: CodingKeys) {

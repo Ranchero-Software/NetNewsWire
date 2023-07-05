@@ -144,10 +144,10 @@ private extension CloudKitArticlesZoneDelegate {
 		group.enter()
 		compressionQueue.async {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
-			let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 			
 			DispatchQueue.main.async {
-				for (webFeedID, parsedItems) in webFeedIDsAndItems {
+				for (webFeedID, parsedItems) in feedIDsAndItems {
 					group.enter()
 					self.account?.update(webFeedID, with: parsedItems, deleteOlder: false) { result in
 						switch result {

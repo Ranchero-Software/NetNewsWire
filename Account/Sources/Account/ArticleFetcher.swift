@@ -39,7 +39,7 @@ extension WebFeed: ArticleFetcher {
 	}
 
 	public func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
-		return try account?.fetchUnreadArticlesBetween(webFeeds: [self], limit: nil, before: before, after: after) ?? Set<Article>()
+		return try account?.fetchUnreadArticlesBetween(feeds: [self], limit: nil, before: before, after: after) ?? Set<Article>()
 	}
 
 	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {

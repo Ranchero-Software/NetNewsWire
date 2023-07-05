@@ -81,7 +81,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 				} else {
 					container = account
 				}
-				account.removeWebFeed(scriptableFeed.feed, from: container!) { result in
+				account.removeFeed(scriptableFeed.feed, from: container!) { result in
 				}
 			}
 		}
@@ -96,18 +96,18 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(webFeeds)
     var webFeeds:NSArray  {
-        return account.topLevelWebFeeds.map { ScriptableFeed($0, container:self) } as NSArray
+        return account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
     
     @objc(valueInWebFeedsWithUniqueID:)
     func valueInWebFeeds(withUniqueID id:String) -> ScriptableFeed? {
-		guard let feed = account.existingWebFeed(withWebFeedID: id) else { return nil }
+		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
     
     @objc(valueInWebFeedsWithName:)
     func valueInWebFeeds(withName name:String) -> ScriptableFeed? {
-		let feeds = Array(account.flattenedWebFeeds())
+		let feeds = Array(account.flattenedFeeds())
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
@@ -133,13 +133,13 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     @objc(allWebFeeds)
     var allWebFeeds: NSArray  {
 		var webFeeds = [ScriptableFeed]()
-		for webFeed in account.topLevelWebFeeds {
+		for webFeed in account.topLevelFeeds {
 			webFeeds.append(ScriptableFeed(webFeed, container: self))
 		}
 		if let folders = account.folders {
 			for folder in folders {
 				let scriptableFolder = ScriptableFolder(folder, container: self)
-				for webFeed in folder.topLevelWebFeeds {
+				for webFeed in folder.topLevelFeeds {
 					webFeeds.append(ScriptableFeed(webFeed, container: scriptableFolder))
 				}
 			}

@@ -134,7 +134,7 @@ class FeedlyTestSupport {
 			return
 		}
 		let collectionFeeds = collection["feeds"] as! [[String: Any]]
-		let folderFeeds = folder.topLevelWebFeeds
+		let folderFeeds = folder.topLevelFeeds
 		
 		XCTAssertEqual(collectionFeeds.count, folderFeeds.count)
 		

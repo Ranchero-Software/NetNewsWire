@@ -549,7 +549,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
     }
 
 	// MARK: Add Feed
-	@MainActor func addWebFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
+	@MainActor func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
 		createAndShowMainWindowIfNecessary()
 
 		if mainWindowController!.isDisplayingSheet {
@@ -588,7 +588,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@MainActor @IBAction func showAddFeedWindow(_ sender: Any?) {
-		addWebFeed(nil)
+		addFeed(nil)
 	}
 
 	@MainActor @IBAction func showAddFolderWindow(_ sender: Any?) {
@@ -661,7 +661,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() {
 			return
 		}
-		addWebFeed(AccountManager.netNewsWireNewsURL, name: "NetNewsWire News")
+		addFeed(AccountManager.netNewsWireNewsURL, name: "NetNewsWire News")
 	}
 
 	@MainActor @IBAction func openWebsite(_ sender: Any?) {

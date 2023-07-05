@@ -1495,7 +1495,7 @@ private extension SceneCoordinator {
 					treeControllerDelegate.addFilterException(feedID)
 				}
 			} else if let webFeed = feed as? WebFeed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
+				if webFeed.account?.existingFeed(withWebFeedID: webFeed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
 					addParentFolderToFilterExceptions(webFeed)
 				}
@@ -2016,7 +2016,7 @@ private extension SceneCoordinator {
 				if !unsortedArticleIDs.contains(article.articleID) {
 					updatedArticles.insert(article)
 				}
-				if article.account?.existingWebFeed(withWebFeedID: article.webFeedID) == nil {
+				if article.account?.existingFeed(withWebFeedID: article.webFeedID) == nil {
 					updatedArticles.remove(article)
 				}
 			}
@@ -2101,7 +2101,7 @@ private extension SceneCoordinator {
 			}
 		} else if let folder = timelineFeed as? Folder {
 			for oneFeed in feeds {
-				if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
+				if folder.hasFeed(with: oneFeed.webFeedID) || folder.hasFeed(withURL: oneFeed.url) {
 					return true
 				}
 			}
@@ -2175,7 +2175,7 @@ private extension SceneCoordinator {
 		case .webFeed(let accountID, let webFeedID):
 			guard let accountNode = findAccountNode(accountID: accountID),
 				let account = accountNode.representedObject as? Account,
-				let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
+				let webFeed = account.existingFeed(withWebFeedID: webFeedID) else {
 				return
 			}
 			
@@ -2204,7 +2204,7 @@ private extension SceneCoordinator {
 			return
 		}
 		
-		guard let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
+		guard let webFeed = account.existingFeed(withWebFeedID: webFeedID) else {
 			return
 		}
 		

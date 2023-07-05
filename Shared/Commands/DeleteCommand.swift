@@ -152,7 +152,7 @@ private struct SidebarItemSpecifier {
 			}
 			
 			BatchUpdate.shared.start()
-			account?.removeWebFeed(webFeed, from: container) { result in
+			account?.removeFeed(webFeed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
@@ -173,21 +173,21 @@ private struct SidebarItemSpecifier {
 	func restore() {
 
 		if let _ = webFeed {
-			restoreWebFeed()
+			restoreFeed()
 		}
 		else if let _ = folder {
 			restoreFolder()
 		}
 	}
 
-	private func restoreWebFeed() {
+	private func restoreFeed() {
 
 		guard let account = account, let feed = webFeed, let container = path.resolveContainer() else {
 			return
 		}
 		
 		BatchUpdate.shared.start()
-		account.restoreWebFeed(feed, container: container) { result in
+		account.restoreFeed(feed, container: container) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}

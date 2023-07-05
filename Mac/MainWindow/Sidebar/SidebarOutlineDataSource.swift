@@ -316,7 +316,7 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func copyWebFeedInAccount(_ feed: WebFeed, _ destination: Container ) {
-		destination.account?.addWebFeed(feed, to: destination) { result in
+		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
 				break
@@ -326,9 +326,9 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 	
-	func moveWebFeedInAccount(_ feed: WebFeed, _ source: Container, _ destination: Container) {
+	func moveFeedInAccount(_ feed: WebFeed, _ source: Container, _ destination: Container) {
 		BatchUpdate.shared.start()
-		source.account?.moveWebFeed(feed, from: source, to: destination) { result in
+		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -344,8 +344,8 @@ private extension SidebarOutlineDataSource {
 			return
 		}
 		
-		if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-			destinationAccount.addWebFeed(existingFeed, to: destinationContainer) { result in
+		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
 					break
@@ -354,7 +354,7 @@ private extension SidebarOutlineDataSource {
 				}
 			}
 		} else {
-			destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
+			destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
 					break
@@ -374,7 +374,7 @@ private extension SidebarOutlineDataSource {
 			guard let sourceAccountID = pasteboardFeed.accountID,
 				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
 				  let webFeedID = pasteboardFeed.feedID,
-				  let feed = sourceAccount.existingWebFeed(withWebFeedID:  webFeedID),
+				  let feed = sourceAccount.existingFeed(withFeedID:  webFeedID),
 				  let destinationContainer = parentNode.representedObject as? Container
 			else {
 				return
@@ -393,7 +393,7 @@ private extension SidebarOutlineDataSource {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
 					copyWebFeedInAccount(feed, destinationContainer)
 				} else {
-					moveWebFeedInAccount(feed, sourceContainer, destinationContainer)
+					moveFeedInAccount(feed, sourceContainer, destinationContainer)
 				}
 			} else {
 				copyWebFeedBetweenAccounts(feed, destinationContainer)
@@ -443,9 +443,9 @@ private extension SidebarOutlineDataSource {
 		destinationAccount.addFolder(folder.name ?? "") { result in
 			switch result {
 			case .success(let destinationFolder):
-				for feed in folder.topLevelWebFeeds {
-					if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-						destinationAccount.addWebFeed(existingFeed, to: destinationFolder) { result in
+				for feed in folder.topLevelFeeds {
+					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
 							switch result {
 							case .success:
 								break
@@ -454,7 +454,7 @@ private extension SidebarOutlineDataSource {
 							}
 						}
 					} else {
-						destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
+						destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
 							switch result {
 							case .success:
 								break
@@ -499,11 +499,11 @@ private extension SidebarOutlineDataSource {
 
 		// Show the add-feed sheet.
 		if let account = parentNode.representedObject as? Account {
-			appDelegate.addWebFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: nil)
+			appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: nil)
 		} else {
 			let account = parentNode.parent?.representedObject as? Account
 			let folder = parentNode.representedObject as? Folder
-			appDelegate.addWebFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: folder)
+			appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: folder)
 		}
 		
 		return true
@@ -635,7 +635,7 @@ private extension SidebarOutlineDataSource {
 					return true
 				}
 			} else {
-				if dropTargetAccount.hasWebFeed(withURL: draggedFeed.url) {
+				if dropTargetAccount.hasFeed(withURL: draggedFeed.url) {
 					return true
 				}
 			}

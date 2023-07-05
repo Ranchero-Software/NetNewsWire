@@ -34,7 +34,7 @@ struct NewArticleNotificationsView: View, Logging {
 				return
 			}
 			activeAccounts.forEach { account in
-				for feed in Array(account.flattenedWebFeeds()) {
+				for feed in Array(account.flattenedFeeds()) {
 					if let feedURLHost = URL(string: feed.url)?.host {
 						if faviconHost == feedURLHost {
 							feed.objectWillChange.send()
@@ -50,7 +50,7 @@ struct NewArticleNotificationsView: View, Logging {
     }
 	
 	private func sortedWebFeedsForAccount(_ account: Account) -> [WebFeed] {
-		return Array(account.flattenedWebFeeds()).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
+		return Array(account.flattenedFeeds()).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 	}
 	
 	

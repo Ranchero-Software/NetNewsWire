@@ -47,7 +47,7 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
             return
         }
 
-        let webFeeds = account.flattenedWebFeeds()
+        let webFeeds = account.flattenedFeeds()
         refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
 
         let group = DispatchGroup()
@@ -119,39 +119,39 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
 
 	}
 	
-	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
 		}
 		
 		// Username should be part of the URL on new feed adds
-		createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
+		createRSSFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 	}
 
-	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		feed.editedName = name
 		completion(.success(()))
 	}
 
-	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.removeWebFeed(feed)
+	func removeFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.removeFeed(feed)
 		completion(.success(()))
 	}
 	
-	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		from.removeWebFeed(feed)
-		to.addWebFeed(feed)
+	func moveFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		from.removeFeed(feed)
+		to.addFeed(feed)
 		completion(.success(()))
 	}
 	
-	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addWebFeed(feed)
+	func addFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.addFeed(feed)
 		completion(.success(()))
 	}
 	
-	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addWebFeed(feed)
+	func restoreFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.addFeed(feed)
 		completion(.success(()))
 	}
 	
@@ -231,7 +231,7 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 
 private extension LocalAccountDelegate {
 	
-	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 
 		// We need to use a batch update here because we need to assign add the feed to the
 		// container before the name has been downloaded.  This will put it in the sidebar
@@ -250,7 +250,7 @@ private extension LocalAccountDelegate {
 						return
 				}
 				
-				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
+				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
 					self.refreshProgress.completeTask()
 					BatchUpdate.shared.end()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
@@ -261,9 +261,9 @@ private extension LocalAccountDelegate {
 					self.refreshProgress.completeTask()
 
 					if let parsedFeed = parsedFeed {
-						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+						let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 						feed.editedName = editedName
-						container.addWebFeed(feed)
+						container.addFeed(feed)
 
 						account.update(feed, with: parsedFeed, {_ in
 							BatchUpdate.shared.end()

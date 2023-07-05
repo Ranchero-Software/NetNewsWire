@@ -58,7 +58,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		
 		// Validate account specific behaviors...
 		if correctDestAccount.behaviors.contains(.disallowFeedInMultipleFolders),
-		   sourceWebFeed.account?.accountID != correctDestAccount.accountID && correctDestAccount.hasWebFeed(withURL: sourceWebFeed.url) {
+		   sourceWebFeed.account?.accountID != correctDestAccount.accountID && correctDestAccount.hasFeed(withURL: sourceWebFeed.url) {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 
@@ -117,7 +117,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		guard let destination = destinationContainer, let webFeed = dragNode.representedObject as? WebFeed else { return }
 		
 		if source.account == destination.account {
-			moveWebFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
+			moveFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		} else {
 			copyWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		}
@@ -138,11 +138,11 @@ private extension MasterFeedViewController {
 		return correctDestination
 	}
 	
-	func moveWebFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
+	func moveFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
 		guard sourceContainer !== destinationContainer else { return }
 		
 		BatchUpdate.shared.start()
-		sourceContainer.account?.moveWebFeed(feed, from: sourceContainer, to: destinationContainer) { result in
+		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -155,10 +155,10 @@ private extension MasterFeedViewController {
 	
 	func copyWebFeedBetweenAccounts(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
 		
-		if let existingFeed = destinationContainer.account?.existingWebFeed(withURL: feed.url) {
+		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.addWebFeed(existingFeed, to: destinationContainer) { result in
+			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
 					BatchUpdate.shared.end()
@@ -171,7 +171,7 @@ private extension MasterFeedViewController {
 		} else {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
+			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
 					BatchUpdate.shared.end()
@@ -190,7 +190,7 @@ private extension MasterFeedViewController {
 private extension Container {
 	
 	func hasChildWebFeed(withURL url: String) -> Bool {
-		return topLevelWebFeeds.contains(where: { $0.url == url })
+		return topLevelFeeds.contains(where: { $0.url == url })
 	}
 	
 }

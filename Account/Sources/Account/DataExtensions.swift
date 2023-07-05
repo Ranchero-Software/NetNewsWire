@@ -57,7 +57,7 @@ public extension Article {
 	}
 	
 	var feed: WebFeed? {
-		return account?.existingWebFeed(withWebFeedID: feedID)
+		return account?.existingFeed(withFeedID: feedID)
 	}
 }
 

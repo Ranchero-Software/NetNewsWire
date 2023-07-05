@@ -60,12 +60,12 @@ import RSParser
 		}
 		let account = accountAndFolderSpecifier.account
 
-		if account.hasWebFeed(withURL: url.absoluteString) {
+		if account.hasFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError(url.absoluteString)
 			return
 		}
 
-		account.createWebFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
+		account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
 			
 			DispatchQueue.main.async {
 				self.endShowingProgress()

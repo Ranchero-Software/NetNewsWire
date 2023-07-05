@@ -35,7 +35,7 @@ import UserNotifications
 	let isFallbackInspector = false
 	var objects: [Any]? {
 		didSet {
-			renameWebFeedIfNecessary()
+			renameFeedIfNecessary()
 			updateFeed()
 		}
 	}
@@ -58,7 +58,7 @@ import UserNotifications
 	}
 	
 	override func viewDidDisappear() {
-		renameWebFeedIfNecessary()
+		renameFeedIfNecessary()
 	}
 	
 	// MARK: Actions
@@ -115,7 +115,7 @@ import UserNotifications
 extension WebFeedInspectorViewController: NSTextFieldDelegate {
 
 	func controlTextDidEndEditing(_ note: Notification) {
-		renameWebFeedIfNecessary()
+		renameFeedIfNecessary()
 	}
 	
 }
@@ -204,7 +204,7 @@ private extension WebFeedInspectorViewController {
 		}
 	}
 
-	func renameWebFeedIfNecessary() {
+	func renameFeedIfNecessary() {
 		guard let feed = feed,
 			  let account = feed.account,
 			  let nameTextField = nameTextField,
@@ -212,7 +212,7 @@ private extension WebFeedInspectorViewController {
 			return
 		}
 		
-		account.renameWebFeed(feed, to: nameTextField.stringValue) { [weak self] result in
+		account.renameFeed(feed, to: nameTextField.stringValue) { [weak self] result in
 			if case .failure(let error) = result {
 				self?.presentError(error)
 			} else {

@@ -552,7 +552,7 @@ private extension SidebarViewController {
 					treeControllerDelegate.addFilterException(itemID)
 				}
 			} else if let webFeed = feed as? WebFeed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
+				if webFeed.account?.existingFeed(withFeedID: webFeed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(itemID)
 					addParentFolderToFilterExceptions(webFeed)
 				}

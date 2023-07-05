@@ -29,11 +29,11 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 		
 		let feedsBefore = Set(pairs
 			.map { $0.1 }
-			.flatMap { $0.topLevelWebFeeds })
+			.flatMap { $0.topLevelFeeds })
 		
 		// Remove feeds in a folder which are not in the corresponding collection.
 		for (collectionFeeds, folder) in pairs {
-			let feedsInFolder = folder.topLevelWebFeeds
+			let feedsInFolder = folder.topLevelFeeds
 			let feedsInCollection = Set(collectionFeeds.map { $0.id })
 			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.webFeedID) }
 			if !feedsToRemove.isEmpty {
@@ -55,7 +55,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 			.compactMap { (collectionFeed, folder) -> (WebFeed, Folder) in
 
 				// find an existing feed previously added to the account
-				if let feed = account.existingWebFeed(withWebFeedID: collectionFeed.id) {
+				if let feed = account.existingFeed(withFeedID: collectionFeed.id) {
 					
 					// If the feed was renamed on Feedly, ensure we ingest the new name.
 					if feed.nameForDisplay != collectionFeed.title {
@@ -80,9 +80,9 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 
 				// no existing feed, create a new one
 				let parser = FeedlyFeedParser(feed: collectionFeed)
-				let feed = account.createWebFeed(with: parser.title,
+				let feed = account.createFeed(with: parser.title,
 												 url: parser.url,
-												 webFeedID: parser.webFeedID,
+												 feedID: parser.webFeedID,
 												 homePageURL: parser.homePageURL)
 				
 				// So the same feed isn't created more than once.
@@ -94,7 +94,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 		logger.debug("Processing \(feedsAndFolders.count, privacy: .public) feeds.")
 		feedsAndFolders.forEach { (feed, folder) in
 			if !folder.has(feed) {
-				folder.addWebFeed(feed)
+				folder.addFeed(feed)
 			}
 		}
 		

@@ -22,15 +22,15 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation, Logging
 	}
 	
 	override func run() {
-		let webFeedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
+		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 		
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { databaseError in
+		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { databaseError in
 			if let error = databaseError {
 				self.didFinish(with: error)
 				return
 			}
 			
-            self.logger.debug("Updated \(webFeedIDsAndItems.count, privacy: .public) feeds for \(self.organisedItemsProvider.parsedItemsByFeedProviderName, privacy: .public).")
+            self.logger.debug("Updated \(feedIDsAndItems.count, privacy: .public) feeds for \(self.organisedItemsProvider.parsedItemsByFeedProviderName, privacy: .public).")
 			self.didFinish()
 		}
 	}

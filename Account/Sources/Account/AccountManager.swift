@@ -208,7 +208,7 @@ public final class AccountManager: UnreadCountProvider {
 			}
 		case .feed(let accountID, let webFeedID):
 			if let account = existingAccount(with: accountID) {
-				return account.existingWebFeed(withWebFeedID: webFeedID)
+				return account.existingFeed(withFeedID: webFeedID)
 			}
 		default:
 			break
@@ -307,7 +307,7 @@ public final class AccountManager: UnreadCountProvider {
 	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
-			if account.hasAtLeastOneWebFeed() {
+			if account.hasAtLeastOneFeed() {
 				return true
 			}
 		}
@@ -321,7 +321,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		for account in activeAccounts {
-			if let _ = account.existingWebFeed(withURL: urlString) {
+			if let _ = account.existingFeed(withURL: urlString) {
 				return true
 			}
 		}
@@ -335,7 +335,7 @@ public final class AccountManager: UnreadCountProvider {
         
         for account in accounts {
             if account.type == .cloudKit || account.type == .onMyMac {
-                for webfeed in account.flattenedWebFeeds() {
+                for webfeed in account.flattenedFeeds() {
                     if let components = URLComponents(string: webfeed.url), let host = components.host {
                         if host == "twitter.com" { // Allow, for instance, blog.twitter.com, which might have an actual RSS feed
                             return true
@@ -355,7 +355,7 @@ public final class AccountManager: UnreadCountProvider {
 
         for account in accounts {
             if account.type == .cloudKit || account.type == .onMyMac {
-                for webfeed in account.flattenedWebFeeds() {
+                for webfeed in account.flattenedFeeds() {
                     if feedRequiresRedditAPI(webfeed) {
                         return true
                     }
