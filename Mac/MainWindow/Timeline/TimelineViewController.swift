@@ -13,7 +13,7 @@ import Account
 
 protocol TimelineDelegate: AnyObject  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
-	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: WebFeed)
+	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
@@ -110,7 +110,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				return
 			}
 
-			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is WebFeed {
+			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is Feed {
 				showFeedNames = {
 					for article in articles {
 						if !article.byline().isEmpty {
@@ -650,7 +650,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard showIcons, let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+		guard showIcons, let feed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
@@ -692,7 +692,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
+		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<Feed> else {
 			return
 		}
 
@@ -1317,23 +1317,23 @@ private extension TimelineViewController {
 		return representedObjects?.contains(where: { $0 is Folder }) ?? false
 	}
 
-	func representedObjectsContainsAnyWebFeed(_ webFeeds: Set<WebFeed>) -> Bool {
+	func representedObjectsContainsAnyWebFeed(_ webFeeds: Set<Feed>) -> Bool {
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 
 		guard let representedObjects = representedObjects else {
 			return false
 		}
 		for representedObject in representedObjects {
-			if let feed = representedObject as? WebFeed {
+			if let feed = representedObject as? Feed {
 				for oneFeed in webFeeds {
-					if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
+					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 						return true
 					}
 				}
 			}
 			else if let folder = representedObject as? Folder {
 				for oneFeed in webFeeds {
-					if folder.hasFeed(with: oneFeed.webFeedID) || folder.hasFeed(withURL: oneFeed.url) {
+					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true
 					}
 				}

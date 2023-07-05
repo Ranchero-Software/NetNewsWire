@@ -35,7 +35,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 		for (collectionFeeds, folder) in pairs {
 			let feedsInFolder = folder.topLevelFeeds
 			let feedsInCollection = Set(collectionFeeds.map { $0.id })
-			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.webFeedID) }
+			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.feedID) }
 			if !feedsToRemove.isEmpty {
 				folder.removeFeeds(feedsToRemove)
 			}
@@ -43,7 +43,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 		}
 		
 		// Pair each Feed with its Folder.
-		var feedsAdded = Set<WebFeed>()
+		var feedsAdded = Set<Feed>()
 		
 		let feedsAndFolders = pairs
 			.map({ (collectionFeeds, folder) -> [(FeedlyFeed, Folder)] in
@@ -52,7 +52,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 				}
 			})
 			.flatMap { $0 }
-			.compactMap { (collectionFeed, folder) -> (WebFeed, Folder) in
+			.compactMap { (collectionFeed, folder) -> (Feed, Folder) in
 
 				// find an existing feed previously added to the account
 				if let feed = account.existingFeed(withFeedID: collectionFeed.id) {
@@ -73,7 +73,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 					return (feed, folder)
 				} else {
 					// find an existing feed we created below in an earlier value
-					for feed in feedsAdded where feed.webFeedID == collectionFeed.id {
+					for feed in feedsAdded where feed.feedID == collectionFeed.id {
 						return (feed, folder)
 					}
 				}

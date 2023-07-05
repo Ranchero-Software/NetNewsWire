@@ -403,10 +403,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@MainActor @objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.FeedSettingUserInfoKey] as? String else {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == WebFeed.FeedSettingKey.homePageURL || key == WebFeed.FeedSettingKey.faviconURL {
+		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
 			let _ = faviconDownloader.favicon(for: feed)
 		}
 	}

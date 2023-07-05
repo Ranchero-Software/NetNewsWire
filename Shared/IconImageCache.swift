@@ -38,7 +38,7 @@ class IconImageCache {
 		if let smartFeed = feed as? PseudoFeed {
 			return imageForSmartFeed(smartFeed, itemID)
 		}
-		if let webFeed = feed as? WebFeed, let iconImage = imageForWebFeed(webFeed, itemID) {
+		if let webFeed = feed as? Feed, let iconImage = imageForWebFeed(webFeed, itemID) {
 			return iconImage
 		}
 		if let smallIconProvider = feed as? SmallIconProvider {
@@ -80,7 +80,7 @@ private extension IconImageCache {
 		return nil
 	}
 
-	func imageForWebFeed(_ webFeed: WebFeed, _ itemID: ItemIdentifier) -> IconImage? {
+	func imageForWebFeed(_ webFeed: Feed, _ itemID: ItemIdentifier) -> IconImage? {
 		if let iconImage = webFeedIconImageCache[itemID] {
 			return iconImage
 		}

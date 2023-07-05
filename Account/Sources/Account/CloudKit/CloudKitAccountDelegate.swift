@@ -172,7 +172,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		
 	}
 	
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
@@ -184,7 +184,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed, completion: completion)
 	}
 
-	func renameFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let editedName = name.isEmpty ? nil : name
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.renameFeed(feed, editedName: editedName) { result in
@@ -200,7 +200,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func removeFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		removeFeedFromCloud(for: account, with: feed, from: container) { result in
 			switch result {
 			case .success:
@@ -220,7 +220,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func moveFeed(for account: Account, with feed: WebFeed, from fromContainer: Container, to toContainer: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveFeed(for account: Account, with feed: Feed, from fromContainer: Container, to toContainer: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.moveFeed(feed, from: fromContainer, to: toContainer) { result in
 			self.refreshProgress.completeTask()
@@ -236,7 +236,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func addFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.addFeed(feed, to: container) { result in
 			self.refreshProgress.completeTask()
@@ -251,7 +251,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func restoreFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
 			switch result {
 			case .success:
@@ -565,7 +565,7 @@ private extension CloudKitAccountDelegate {
 		
 	}
 
-    func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping (Result<Void, Error>) -> Void) {
+    func combinedRefresh(_ account: Account, _ webFeeds: Set<Feed>, completion: @escaping (Result<Void, Error>) -> Void) {
 
         let group = DispatchGroup()
 
@@ -579,7 +579,7 @@ private extension CloudKitAccountDelegate {
         }
     }
 	
-	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		func addDeadFeed() {
 			let feed = account.createFeed(with: editedName, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
@@ -686,7 +686,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func sendNewArticlesToTheCloud(_ account: Account, _ feed: WebFeed) {
+	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
 		account.fetchArticlesAsync(.webFeed(feed)) { result in
 			switch result {
 			case .success(let articles):
@@ -774,7 +774,7 @@ private extension CloudKitAccountDelegate {
 	}
 	
 
-	func removeFeedFromCloud(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		accountZone.removeFeed(feed, from: container) { result in
 			self.refreshProgress.completeTask()
@@ -801,7 +801,7 @@ private extension CloudKitAccountDelegate {
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed) {
 		refreshProgress.completeTask()
 	}
 	

@@ -19,7 +19,7 @@ extension Notification.Name {
 public protocol Container: AnyObject, ContainerIdentifiable {
 
 	var account: Account? { get }
-	var topLevelFeeds: Set<WebFeed> { get set }
+	var topLevelFeeds: Set<Feed> { get set }
 	var folders: Set<Folder>? { get set }
 	var externalID: String? { get set }
 	
@@ -29,17 +29,17 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 	func hasChildFolder(with: String) -> Bool
 	func childFolder(with: String) -> Folder?
 
-    func removeFeed(_ webFeed: WebFeed)
-	func addFeed(_ webFeed: WebFeed)
+    func removeFeed(_ feed: Feed)
+	func addFeed(_ feed: Feed)
 
 	//Recursive — checks subfolders
-	func flattenedFeeds() -> Set<WebFeed>
-	func has(_ webFeed: WebFeed) -> Bool
+	func flattenedFeeds() -> Set<Feed>
+	func has(_ feed: Feed) -> Bool
 	func hasFeed(with feedID: String) -> Bool
 	func hasFeed(withURL url: String) -> Bool
-	func existingFeed(withFeedID: String) -> WebFeed?
-	func existingFeed(withURL url: String) -> WebFeed?
-	func existingFeed(withExternalID externalID: String) -> WebFeed?
+	func existingFeed(withFeedID: String) -> Feed?
+	func existingFeed(withURL url: String) -> Feed?
+	func existingFeed(withExternalID externalID: String) -> Feed?
 	func existingFolder(with name: String) -> Folder?
 	func existingFolder(withID: Int) -> Folder?
 
@@ -69,7 +69,7 @@ public extension Container {
 	}
 
 	func objectIsChild(_ object: AnyObject) -> Bool {
-		if let feed = object as? WebFeed {
+		if let feed = object as? Feed {
 			return topLevelFeeds.contains(feed)
 		}
 		if let folder = object as? Folder {
@@ -78,8 +78,8 @@ public extension Container {
 		return false
 	}
 
-	func flattenedFeeds() -> Set<WebFeed> {
-		var feeds = Set<WebFeed>()
+	func flattenedFeeds() -> Set<Feed> {
+		var feeds = Set<Feed>()
 		feeds.formUnion(topLevelFeeds)
 		if let folders = folders {
 			for folder in folders {
@@ -97,20 +97,20 @@ public extension Container {
 		return existingFeed(withURL: url) != nil
 	}
 
-	func has(_ feed: WebFeed) -> Bool {
+	func has(_ feed: Feed) -> Bool {
 		return flattenedFeeds().contains(feed)
 	}
 	
-	func existingFeed(withFeedID feedID: String) -> WebFeed? {
+	func existingFeed(withFeedID feedID: String) -> Feed? {
 		for feed in flattenedFeeds() {
-			if feed.webFeedID == feedID {
+			if feed.feedID == feedID {
 				return feed
 			}
 		}
 		return nil
 	}
 
-	func existingFeed(withURL url: String) -> WebFeed? {
+	func existingFeed(withURL url: String) -> Feed? {
 		for feed in flattenedFeeds() {
 			if feed.url == url {
 				return feed
@@ -119,7 +119,7 @@ public extension Container {
 		return nil
 	}
 	
-	func existingFeed(withExternalID externalID: String) -> WebFeed? {
+	func existingFeed(withExternalID externalID: String) -> Feed? {
 		for feed in flattenedFeeds() {
 			if feed.externalID == externalID {
 				return feed

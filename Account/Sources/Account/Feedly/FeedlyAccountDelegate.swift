@@ -312,7 +312,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 		
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		do {
 			guard let credentials = credentials else {
@@ -344,14 +344,14 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func renameFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
 			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
 			return
 		}
 		
-		let feedId = FeedlyFeedResourceId(id: feed.webFeedID)
+		let feedId = FeedlyFeedResourceId(id: feed.feedID)
 		let editedNameBefore = feed.editedName
 		
 		// Adding an existing feed updates it.
@@ -371,14 +371,14 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		feed.editedName = name
 	}
 	
-	func addFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		do {
 			guard let credentials = credentials else {
 				throw FeedlyAccountDelegateError.notLoggedIn
 			}
 			
-			let resource = FeedlyFeedResourceId(id: feed.webFeedID)
+			let resource = FeedlyFeedResourceId(id: feed.feedID)
             let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
                                                                      credentials: credentials,
                                                                      resource: resource,
@@ -401,14 +401,14 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func removeFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder, let collectionId = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed)))
 			}
 		}
 		
-		caller.removeFeed(feed.webFeedID, fromCollectionWith: collectionId) { result in
+		caller.removeFeed(feed.feedID, fromCollectionWith: collectionId) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -421,7 +421,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		folder.removeFeed(feed)
 	}
 	
-	func moveFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let from = from as? Folder, let to = to as? Folder else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
@@ -454,7 +454,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		to.addFeed(feed)
 	}
 	
-	func restoreFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {

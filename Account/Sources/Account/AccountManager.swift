@@ -369,7 +369,7 @@ public final class AccountManager: UnreadCountProvider {
     /// Return true if a feed is for reddit.com and the path doesn’t end with .rss.
     ///
     /// More info: [Pathogen-David's Guide to RSS and Reddit!](https://www.reddit.com/r/pathogendavid/comments/tv8m9/pathogendavids_guide_to_rss_and_reddit/)
-    private func feedRequiresRedditAPI(_ feed: WebFeed) -> Bool {
+    private func feedRequiresRedditAPI(_ feed: Feed) -> Bool {
         if let components = URLComponents(string: feed.url), let host = components.host {
             return host.hasSuffix("reddit.com") && !components.path.hasSuffix(".rss")
         }

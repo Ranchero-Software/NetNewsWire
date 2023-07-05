@@ -14,7 +14,7 @@ import Articles
 import ArticlesDatabase
 
 protocol LocalAccountRefresherDelegate {
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed)
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed)
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void)
 }
 
@@ -28,7 +28,7 @@ final class LocalAccountRefresher {
 		return DownloadSession(delegate: self)
 	}()
 
-	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
+	public func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
 		guard !feeds.isEmpty else {
 			completion?()
 			return
@@ -53,7 +53,7 @@ final class LocalAccountRefresher {
 extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
-		guard let feed = representedObject as? WebFeed else {
+		guard let feed = representedObject as? Feed else {
 			return nil
 		}
 		guard let url = URL(string: feed.url) else {
@@ -69,7 +69,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void) {
-		let feed = representedObject as! WebFeed
+		let feed = representedObject as! Feed
 		
 		guard !data.isEmpty, !isSuspended else {
 			completion()
@@ -120,7 +120,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
-		let feed = representedObject as! WebFeed
+		let feed = representedObject as! Feed
 		guard !isSuspended else {
 			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			return false
@@ -139,17 +139,17 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
-		let feed = representedObject as! WebFeed
+		let feed = representedObject as! Feed
 		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
-		let feed = representedObject as! WebFeed
+		let feed = representedObject as! Feed
 		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, didDiscardDuplicateRepresentedObject representedObject: AnyObject) {
-		let feed = representedObject as! WebFeed
+		let feed = representedObject as! Feed
 		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 	}
 

@@ -70,7 +70,7 @@ extension TimelineViewController {
 	}
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let webFeed = menuItem.representedObject as? WebFeed else {
+		guard let menuItem = sender as? NSMenuItem, let webFeed = menuItem.representedObject as? Feed else {
 			return
 		}
 		delegate?.timelineRequestedWebFeedSelection(self, webFeed: webFeed)
@@ -179,7 +179,7 @@ private extension TimelineViewController {
 		menu.addSeparatorIfNeeded()
 		
 		if articles.count == 1, let feed = articles.first!.feed {
-			if !(representedObjects?.contains(where: { $0 as? WebFeed == feed }) ?? false) {
+			if !(representedObjects?.contains(where: { $0 as? Feed == feed }) ?? false) {
 				menu.addItem(selectFeedInSidebarMenuItem(feed))
 			}
 			if let markAllMenuItem = markAllAsReadMenuItem(feed) {
@@ -268,13 +268,13 @@ private extension TimelineViewController {
 		return menuItem(NSLocalizedString("button.title-mark-below-as-read.titlecase", comment: "Mark Below as Read"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles)
 	}
 
-	func selectFeedInSidebarMenuItem(_ feed: WebFeed) -> NSMenuItem {
+	func selectFeedInSidebarMenuItem(_ feed: Feed) -> NSMenuItem {
 		let localizedMenuText = NSLocalizedString("button.title.select-in-sidebar.%@", comment: "Select “%@” in Sidebar")
 		let formattedMenuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay)
 		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed)
 	}
 
-	func markAllAsReadMenuItem(_ feed: WebFeed) -> NSMenuItem? {
+	func markAllAsReadMenuItem(_ feed: Feed) -> NSMenuItem? {
 		guard let articlesSet = try? feed.fetchArticles() else {
 			return nil
 		}

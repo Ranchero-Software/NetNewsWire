@@ -14,10 +14,10 @@ import Articles
 @objc(ScriptableFeed)
 class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
-    let feed:WebFeed
-    let container:ScriptingObjectContainer
+    let feed: Feed
+    let container: ScriptingObjectContainer
     
-    init (_ feed:WebFeed, container:ScriptingObjectContainer) {
+    init (_ feed: Feed, container:ScriptingObjectContainer) {
         self.feed = feed
         self.container = container
     }
@@ -45,7 +45,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
     var scriptingUniqueId:Any {
-        return feed.webFeedID
+        return feed.feedID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
@@ -71,7 +71,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return url
     }
     
-    class func scriptableFeed(_ feed:WebFeed, account:Account, folder:Folder?) -> ScriptableFeed  {
+    class func scriptableFeed(_ feed: Feed, account: Account, folder: Folder?) -> ScriptableFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
             let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)

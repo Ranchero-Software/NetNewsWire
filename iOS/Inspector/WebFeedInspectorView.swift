@@ -13,7 +13,7 @@ import UserNotifications
 
 struct WebFeedInspectorView: View {
    
-	var webFeed: WebFeed!
+	var webFeed: Feed!
 	@State private var showHomePage: Bool = false
 	
 	var body: some View {

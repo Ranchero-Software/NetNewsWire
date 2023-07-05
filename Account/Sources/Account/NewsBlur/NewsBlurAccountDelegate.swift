@@ -420,7 +420,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> ()) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> ()) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		let folderName = (container as? Folder)?.name
@@ -439,7 +439,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -466,7 +466,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func addFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let folder = container as? Folder else {
 			DispatchQueue.main.async {
 				if let account = container as? Account {
@@ -485,11 +485,11 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		completion(.success(()))
 	}
 
-	func removeFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
 		deleteFeed(for: account, with: feed, from: container, completion: completion)
 	}
 
-	func moveFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -516,7 +516,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {
@@ -544,7 +544,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 			return
 		}
 
-		var feedsToRestore: [WebFeed] = []
+		var feedsToRestore: [Feed] = []
 		for feed in folder.topLevelFeeds {
 			feedsToRestore.append(feed)
 			folder.topLevelFeeds.remove(feed)

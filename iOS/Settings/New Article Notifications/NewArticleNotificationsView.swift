@@ -18,9 +18,9 @@ struct NewArticleNotificationsView: View, Logging {
 	var body: some View {
 		List(activeAccounts, id: \.accountID) { account in
 			Section(header: Text(account.nameForDisplay)) {
-				ForEach(sortedWebFeedsForAccount(account), id: \.webFeedID) { feed in
+				ForEach(sortedWebFeedsForAccount(account), id: \.feedID) { feed in
 					WebFeedToggle(webfeed: feed)
-						.id(feed.webFeedID)
+						.id(feed.feedID)
 				}
 			}
 			.navigationTitle(Text("navigation.title.new-article-notifications", comment: "New Article Notifications"))
@@ -44,12 +44,12 @@ struct NewArticleNotificationsView: View, Logging {
 			}
 		})
 		.onReceive(NotificationCenter.default.publisher(for: .WebFeedIconDidBecomeAvailable), perform: { notification in
-			guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
+			guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? Feed else { return }
 			webFeed.objectWillChange.send()
 		})
     }
 	
-	private func sortedWebFeedsForAccount(_ account: Account) -> [WebFeed] {
+	private func sortedWebFeedsForAccount(_ account: Account) -> [Feed] {
 		return Array(account.flattenedFeeds()).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 	}
 	
@@ -58,7 +58,7 @@ struct NewArticleNotificationsView: View, Logging {
 
 fileprivate struct WebFeedToggle: View {
 	
-	@ObservedObject var webfeed: WebFeed
+	@ObservedObject var webfeed: Feed
 	
 	var body: some View {
 		Toggle(isOn: Binding(
@@ -67,7 +67,7 @@ fileprivate struct WebFeedToggle: View {
 				Label {
 					Text(webfeed.nameForDisplay)
 				} icon: {
-					Image(uiImage: IconImageCache.shared.imageFor(webfeed.feedID!)!.image)
+					Image(uiImage: IconImageCache.shared.imageFor(webfeed.itemID!)!.image)
 						.resizable()
 						.frame(width: 25, height: 25)
 						.cornerRadius(4)

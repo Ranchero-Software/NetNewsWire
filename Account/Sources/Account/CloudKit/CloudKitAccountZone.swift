@@ -117,7 +117,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 	
 	/// Rename the given web feed
-	func renameFeed(_ webFeed: WebFeed, editedName: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(_ webFeed: Feed, editedName: String?, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let externalID = webFeed.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -138,7 +138,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 	
 	/// Removes a web feed from a container and optionally deletes it, calling the completion with true if deleted
-	func removeFeed(_ webFeed: WebFeed, from: Container, completion: @escaping (Result<Bool, Error>) -> Void) {
+	func removeFeed(_ webFeed: Feed, from: Container, completion: @escaping (Result<Bool, Error>) -> Void) {
 		guard let fromContainerExternalID = from.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -187,7 +187,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-	func moveFeed(_ webFeed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveFeed(_ webFeed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let fromContainerExternalID = from.externalID, let toContainerExternalID = to.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -209,7 +209,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-	func addFeed(_ webFeed: WebFeed, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(_ webFeed: Feed, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let toContainerExternalID = to.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return

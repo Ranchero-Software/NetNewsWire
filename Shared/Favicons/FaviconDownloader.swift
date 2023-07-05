@@ -45,7 +45,7 @@ final class FaviconDownloader: Logging {
 	}
 
 	private let queue: DispatchQueue
-	private var cache = [WebFeed: IconImage]() // faviconURL: RSImage
+	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
@@ -70,10 +70,10 @@ final class FaviconDownloader: Logging {
 	// MARK: - API
 
 	func resetCache() {
-		cache = [WebFeed: IconImage]()
+		cache = [Feed: IconImage]()
 	}
 	
-	func favicon(for webFeed: WebFeed) -> IconImage? {
+	func favicon(for webFeed: Feed) -> IconImage? {
 
 		assert(Thread.isMainThread)
 
@@ -95,7 +95,7 @@ final class FaviconDownloader: Logging {
 		return nil
 	}
 	
-	func faviconAsIcon(for webFeed: WebFeed) -> IconImage? {
+	func faviconAsIcon(for webFeed: Feed) -> IconImage? {
 		
 		if let image = cache[webFeed] {
 			return image

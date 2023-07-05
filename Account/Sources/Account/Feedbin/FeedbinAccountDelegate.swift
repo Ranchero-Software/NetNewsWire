@@ -386,7 +386,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 		
 	}
 	
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.createSubscription(url: url) { result in
@@ -418,7 +418,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 		
 	}
 
-	func renameFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
@@ -445,7 +445,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 		
 	}
 
-	func removeFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {
@@ -453,7 +453,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func moveFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if from is Account {
 			addFeed(for: account, with: feed, to: to, completion: completion)
 		} else {
@@ -468,9 +468,9 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func addFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let folder = container as? Folder, let webFeedID = Int(feed.webFeedID) {
+		if let folder = container as? Folder, let webFeedID = Int(feed.feedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
 			caller.createTagging(webFeedID: webFeedID, name: folder.name ?? "") { result in
 				self.refreshProgress.completeTask()
@@ -500,7 +500,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 		
 	}
 	
-	func restoreFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
@@ -818,7 +818,7 @@ private extension FeedbinAccountDelegate {
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
-					if !subFeedIds.contains(feed.webFeedID) {
+					if !subFeedIds.contains(feed.feedID) {
 						folder.removeFeed(feed)
 					}
 				}
@@ -826,7 +826,7 @@ private extension FeedbinAccountDelegate {
 		}
 		
 		for feed in account.topLevelFeeds {
-			if !subFeedIds.contains(feed.webFeedID) {
+			if !subFeedIds.contains(feed.feedID) {
 				account.removeFeed(feed)
 			}
 		}
@@ -888,7 +888,7 @@ private extension FeedbinAccountDelegate {
 			
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
-				if !taggingFeedIDs.contains(feed.webFeedID) {
+				if !taggingFeedIDs.contains(feed.feedID) {
 					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					account.addFeed(feed)
@@ -896,7 +896,7 @@ private extension FeedbinAccountDelegate {
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelFeeds.map { $0.webFeedID }
+			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
 			
 			for tagging in groupedTaggings {
 				let taggingFeedID = String(tagging.feedID)
@@ -915,7 +915,7 @@ private extension FeedbinAccountDelegate {
 		
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelFeeds {
-			if taggedFeedIDs.contains(feed.webFeedID) {
+			if taggedFeedIDs.contains(feed.feedID) {
 				account.removeFeed(feed)
 			}
 		}
@@ -989,14 +989,14 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 	
-	func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
+	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
 			feed.folderRelationship = folderRelationship
 		}
 	}
 	
-	func saveFolderRelationship(for feed: WebFeed, withFolderName folderName: String, id: String) {
+	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = id
 			feed.folderRelationship = folderRelationship
@@ -1005,7 +1005,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
 		var orderFound = 0
 		
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
@@ -1024,7 +1024,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 	
-	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
 			
@@ -1057,13 +1057,13 @@ private extension FeedbinAccountDelegate {
 		
 	}
 
-	func initialFeedDownload( account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		// refreshArticles is being reused and will clear one of the tasks for us
 		refreshProgress.addToNumberOfTasksAndRemaining(4)
 
 		// Download the initial articles
-		self.caller.retrieveEntries(feedID: feed.webFeedID) { result in
+		self.caller.retrieveEntries(feedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
 			
 			switch result {
@@ -1370,7 +1370,7 @@ private extension FeedbinAccountDelegate {
 		
 	}
 
-	func deleteTagging(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -1400,7 +1400,7 @@ private extension FeedbinAccountDelegate {
 		
 	}
 
-	func deleteSubscription(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {

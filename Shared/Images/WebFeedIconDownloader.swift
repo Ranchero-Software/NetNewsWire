@@ -53,8 +53,8 @@ public final class WebFeedIconDownloader {
 	}()
 	
 	private var urlsInProgress = Set<String>()
-	private var cache = [WebFeed: IconImage]()
-	private var waitingForFeedURLs = [String: WebFeed]()
+	private var cache = [Feed: IconImage]()
+	private var waitingForFeedURLs = [String: Feed]()
 	
 	init(imageDownloader: ImageDownloader, folder: String) {
 		self.imageDownloader = imageDownloader
@@ -68,10 +68,10 @@ public final class WebFeedIconDownloader {
 	}
 
 	func resetCache() {
-		cache = [WebFeed: IconImage]()
+		cache = [Feed: IconImage]()
 	}
 
-	func icon(for feed: WebFeed) -> IconImage? {
+	func icon(for feed: Feed) -> IconImage? {
 
 		if let cachedImage = cache[feed] {
 			return cachedImage
@@ -153,7 +153,7 @@ public final class WebFeedIconDownloader {
 
 private extension WebFeedIconDownloader {
 
-	func icon(forHomePageURL homePageURL: String, feed: WebFeed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forHomePageURL homePageURL: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
 
 		if homePagesWithNoIconURLCache.contains(homePageURL) || homePagesWithUglyIcons.contains(homePageURL) {
 			imageResultBlock(nil)
@@ -168,7 +168,7 @@ private extension WebFeedIconDownloader {
 		findIconURLForHomePageURL(homePageURL, feed: feed)
 	}
 
-	func icon(forURL url: String, feed: WebFeed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
 		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {
 			imageResultBlock(nil)
@@ -177,7 +177,7 @@ private extension WebFeedIconDownloader {
 		RSImage.scaledForIcon(imageData, imageResultBlock: imageResultBlock)
 	}
 
-	func postFeedIconDidBecomeAvailableNotification(_ feed: WebFeed) {
+	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
 
 		DispatchQueue.main.async {
 			let userInfo: [AnyHashable: Any] = [UserInfoKey.webFeed: feed]
@@ -197,7 +197,7 @@ private extension WebFeedIconDownloader {
 		homePageToIconURLCacheDirty = true
 	}
 
-	func findIconURLForHomePageURL(_ homePageURL: String, feed: WebFeed) {
+	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed) {
 
 		guard !urlsInProgress.contains(homePageURL) else {
 			return
@@ -214,7 +214,7 @@ private extension WebFeedIconDownloader {
 		}
 	}
 
-	func pullIconURL(from metadata: RSHTMLMetadata, homePageURL: String, feed: WebFeed) {
+	func pullIconURL(from metadata: RSHTMLMetadata, homePageURL: String, feed: Feed) {
 
 		if let url = metadata.bestWebsiteIconURL() {
 			cacheIconURL(for: homePageURL, url)

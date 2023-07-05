@@ -23,7 +23,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		}
 		
 		guard let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
-			  let sourceWebFeed = sourceNode.representedObject as? WebFeed else {
+			  let sourceWebFeed = sourceNode.representedObject as? Feed else {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 
@@ -114,7 +114,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			}
 		}()
 		
-		guard let destination = destinationContainer, let webFeed = dragNode.representedObject as? WebFeed else { return }
+		guard let destination = destinationContainer, let webFeed = dragNode.representedObject as? Feed else { return }
 		
 		if source.account == destination.account {
 			moveFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
@@ -138,7 +138,7 @@ private extension MasterFeedViewController {
 		return correctDestination
 	}
 	
-	func moveFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
+	func moveFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		guard sourceContainer !== destinationContainer else { return }
 		
 		BatchUpdate.shared.start()
@@ -153,7 +153,7 @@ private extension MasterFeedViewController {
 		}
 	}
 	
-	func copyWebFeedBetweenAccounts(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
+	func copyWebFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		
 		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
 			

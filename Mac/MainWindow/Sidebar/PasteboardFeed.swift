@@ -153,7 +153,7 @@ struct PasteboardFeed: Hashable {
 	}
 }
 
-extension WebFeed: PasteboardWriterOwner {
+extension Feed: PasteboardWriterOwner {
 
 	public var pasteboardWriter: NSPasteboardWriting {
 		return FeedPasteboardWriter(webFeed: self)
@@ -162,7 +162,7 @@ extension WebFeed: PasteboardWriterOwner {
 
 @objc final class FeedPasteboardWriter: NSObject, NSPasteboardWriting {
 
-	private let webFeed: WebFeed
+	private let webFeed: Feed
 	static let webFeedUTI = "com.ranchero.webFeed"
 	static let webFeedUTIType = NSPasteboard.PasteboardType(rawValue: webFeedUTI)
 	static let webFeedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.webFeed"
@@ -170,7 +170,7 @@ extension WebFeed: PasteboardWriterOwner {
 
 	var containerID: ContainerIdentifier? = nil
 
-	init(webFeed: WebFeed) {
+	init(webFeed: Feed) {
 		self.webFeed = webFeed
 	}
 
@@ -205,7 +205,7 @@ extension WebFeed: PasteboardWriterOwner {
 private extension FeedPasteboardWriter {
 
 	var pasteboardFeed: PasteboardFeed {
-		return PasteboardFeed(url: webFeed.url, feedID: webFeed.webFeedID, homePageURL: webFeed.homePageURL, name: webFeed.name, editedName: webFeed.editedName, accountID: webFeed.account?.accountID, accountType: webFeed.account?.type)
+		return PasteboardFeed(url: webFeed.url, feedID: webFeed.feedID, homePageURL: webFeed.homePageURL, name: webFeed.name, editedName: webFeed.editedName, accountID: webFeed.account?.accountID, accountType: webFeed.account?.type)
 	}
 
 	var exportDictionary: PasteboardFeedDictionary {

@@ -54,7 +54,7 @@ class ActivityManager {
 		
 		selectingActivity = makeSelectFeedActivity(feed: feed)
 		
-		if let webFeed = feed as? WebFeed {
+		if let webFeed = feed as? Feed {
 			updateSelectingActivityFeedSearchAttributes(with: webFeed)
 		}
 		
@@ -135,23 +135,23 @@ class ActivityManager {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ webFeed: WebFeed) {
+	static func cleanUp(_ webFeed: Feed) {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: webFeed))
 	}
 	#endif
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
 			return
 		}
 		
 		#if os(iOS)
-		if let article = readingArticle, activityFeedId == article.webFeedID {
+		if let article = readingArticle, activityFeedId == article.feedID {
 			updateReadArticleSearchAttributes(with: article)
 		}
 		#endif
 		
-		if activityFeedId == webFeed.webFeedID {
+		if activityFeedId == webFeed.feedID {
 			updateSelectingActivityFeedSearchAttributes(with: webFeed)
 		}
 	}
@@ -181,7 +181,7 @@ private extension ActivityManager {
 		#if os(iOS)
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
-		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.feedID?.description ?? ""
+		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.itemID?.description ?? ""
 		#endif
 
 		return activity
@@ -245,7 +245,7 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	func updateSelectingActivityFeedSearchAttributes(with feed: WebFeed) {
+	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.item.identifier)
 		attributeSet.title = feed.nameForDisplay
@@ -278,15 +278,15 @@ private extension ActivityManager {
 		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
 	}
 	
-	static func identifier(for feed: WebFeed) -> String {
-		return "account_\(feed.account!.accountID)_feed_\(feed.webFeedID)"
+	static func identifier(for feed: Feed) -> String {
+		return "account_\(feed.account!.accountID)_feed_\(feed.feedID)"
 	}
 	
 	static func identifier(for article: Article) -> String {
 		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
 	}
 	
-	static func identifiers(for feed: WebFeed) -> [String] {
+	static func identifiers(for feed: Feed) -> [String] {
 		var ids = [String]()
 		ids.append(identifier(for: feed))
 		if let articles = try? feed.fetchArticles() {

@@ -116,11 +116,11 @@ extension Article {
 		return IconImageCache.shared.imageForArticle(self)
 	}
 	
-	func iconImageUrl(webFeed: WebFeed) -> URL? {
+	func iconImageUrl(webFeed: Feed) -> URL? {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-			let feedID = webFeed.webFeedID.replacingOccurrences(of: "/", with: "_")
+			let feedID = webFeed.feedID.replacingOccurrences(of: "/", with: "_")
 			#if os(macOS)
 			path.appendPathComponent(feedID + "_smallIcon.tiff")
 			#else
