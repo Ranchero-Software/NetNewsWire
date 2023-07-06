@@ -40,7 +40,7 @@ class ActivityManager {
 	}
 	
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 	}
 	
 	func invalidateCurrentActivities() {
@@ -54,8 +54,8 @@ class ActivityManager {
 		
 		selectingActivity = makeSelectFeedActivity(feed: feed)
 		
-		if let webFeed = feed as? Feed {
-			updateSelectingActivityFeedSearchAttributes(with: webFeed)
+		if let feed = feed as? Feed {
+			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
 		
 		donate(selectingActivity!)
@@ -117,8 +117,8 @@ class ActivityManager {
 			}
 		}
 		
-		for webFeed in account.flattenedFeeds() {
-			ids.append(contentsOf: identifiers(for: webFeed))
+		for feed in account.flattenedFeeds() {
+			ids.append(contentsOf: identifiers(for: feed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
@@ -128,31 +128,31 @@ class ActivityManager {
 		var ids = [String]()
 		ids.append(identifier(for: folder))
 		
-		for webFeed in folder.flattenedFeeds() {
-			ids.append(contentsOf: identifiers(for: webFeed))
+		for feed in folder.flattenedFeeds() {
+			ids.append(contentsOf: identifiers(for: feed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ webFeed: Feed) {
-		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: webFeed))
+	static func cleanUp(_ feed: Feed) {
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: feed))
 	}
 	#endif
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedID = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
 			return
 		}
 		
 		#if os(iOS)
-		if let article = readingArticle, activityFeedId == article.feedID {
+		if let article = readingArticle, activityFeedID == article.feedID {
 			updateReadArticleSearchAttributes(with: article)
 		}
 		#endif
 		
-		if activityFeedId == webFeed.feedID {
-			updateSelectingActivityFeedSearchAttributes(with: webFeed)
+		if activityFeedID == feed.feedID {
+			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
 	}
 

@@ -18,8 +18,8 @@ struct NewArticleNotificationsView: View, Logging {
 	var body: some View {
 		List(activeAccounts, id: \.accountID) { account in
 			Section(header: Text(account.nameForDisplay)) {
-				ForEach(sortedWebFeedsForAccount(account), id: \.feedID) { feed in
-					WebFeedToggle(webfeed: feed)
+				ForEach(sortedFeedsForAccount(account), id: \.feedID) { feed in
+					FeedToggle(feed: feed)
 						.id(feed.feedID)
 				}
 			}
@@ -43,31 +43,31 @@ struct NewArticleNotificationsView: View, Logging {
 				}
 			}
 		})
-		.onReceive(NotificationCenter.default.publisher(for: .WebFeedIconDidBecomeAvailable), perform: { notification in
-			guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? Feed else { return }
-			webFeed.objectWillChange.send()
+		.onReceive(NotificationCenter.default.publisher(for: .FeedIconDidBecomeAvailable), perform: { notification in
+			guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else { return }
+			feed.objectWillChange.send()
 		})
     }
 	
-	private func sortedWebFeedsForAccount(_ account: Account) -> [Feed] {
+	private func sortedFeedsForAccount(_ account: Account) -> [Feed] {
 		return Array(account.flattenedFeeds()).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 	}
 	
 	
 }
 
-fileprivate struct WebFeedToggle: View {
+fileprivate struct FeedToggle: View {
 	
-	@ObservedObject var webfeed: Feed
+	@ObservedObject var feed: Feed
 	
 	var body: some View {
 		Toggle(isOn: Binding(
-			get: { webfeed.isNotifyAboutNewArticles ?? false },
-			set: { webfeed.isNotifyAboutNewArticles = $0 })) {
+			get: { feed.isNotifyAboutNewArticles ?? false },
+			set: { feed.isNotifyAboutNewArticles = $0 })) {
 				Label {
-					Text(webfeed.nameForDisplay)
+					Text(feed.nameForDisplay)
 				} icon: {
-					Image(uiImage: IconImageCache.shared.imageFor(webfeed.itemID!)!.image)
+					Image(uiImage: IconImageCache.shared.imageFor(feed.itemID!)!.image)
 						.resizable()
 						.frame(width: 25, height: 25)
 						.cornerRadius(4)

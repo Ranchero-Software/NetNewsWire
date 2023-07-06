@@ -15,7 +15,7 @@ import RSParser
 
 extension Notification.Name {
 
-	static let WebFeedIconDidBecomeAvailable = Notification.Name("WebFeedIconDidBecomeAvailableNotification") // UserInfoKey.feed
+	static let FeedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailableNotification") // UserInfoKey.feed
 }
 
 public final class FeedIconDownloader {
@@ -180,8 +180,8 @@ private extension FeedIconDownloader {
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
 
 		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = [UserInfoKey.webFeed: feed]
-			NotificationCenter.default.post(name: .WebFeedIconDidBecomeAvailable, object: self, userInfo: userInfo)
+			let userInfo: [AnyHashable: Any] = [UserInfoKey.feed: feed]
+			NotificationCenter.default.post(name: .FeedIconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
 	}
 

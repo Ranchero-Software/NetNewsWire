@@ -1,5 +1,5 @@
 //
-//  AddWebFeedDefaultContainer.swift
+//  AddFeedDefaultContainer.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/16/19.
@@ -9,7 +9,7 @@
 import Foundation
 import Account
 
-struct AddWebFeedDefaultContainer {
+struct AddFeedDefaultContainer {
 	
 	static var defaultContainer: Container? {
 		

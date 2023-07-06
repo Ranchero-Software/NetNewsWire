@@ -23,7 +23,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		}
 		
 		guard let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
-			  let sourceWebFeed = sourceNode.representedObject as? Feed else {
+			  let sourceFeed = sourceNode.representedObject as? Feed else {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 
@@ -39,7 +39,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			// We didn't hit the corrected indexPath, but this at least it gets the section right
 			guard let section = destinationIndexPath?.section,
 				  let account = coordinator.nodeFor(section)?.representedObject as? Account,
-				  !account.hasChildWebFeed(withURL: sourceWebFeed.url) else {
+				  !account.hasChildFeed(withURL: sourceFeed.url) else {
 				return UITableViewDropProposal(operation: .forbidden)
 			}
 			
@@ -58,19 +58,19 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		
 		// Validate account specific behaviors...
 		if correctDestAccount.behaviors.contains(.disallowFeedInMultipleFolders),
-		   sourceWebFeed.account?.accountID != correctDestAccount.accountID && correctDestAccount.hasFeed(withURL: sourceWebFeed.url) {
+		   sourceFeed.account?.accountID != correctDestAccount.accountID && correctDestAccount.hasFeed(withURL: sourceFeed.url) {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 
 		// Determine the correct drop proposal
 		if let correctFolder = correctDestFeed as? Folder {
-			if correctFolder.hasChildWebFeed(withURL: sourceWebFeed.url) {
+			if correctFolder.hasChildFeed(withURL: sourceFeed.url) {
 				return UITableViewDropProposal(operation: .forbidden)
 			} else {
 				return UITableViewDropProposal(operation: successOperation, intent: .insertIntoDestinationIndexPath)
 			}
 		} else {
-			if let parentContainer = correctDestNode.parent?.representedObject as? Container, !parentContainer.hasChildWebFeed(withURL: sourceWebFeed.url) {
+			if let parentContainer = correctDestNode.parent?.representedObject as? Container, !parentContainer.hasChildFeed(withURL: sourceFeed.url) {
 				return UITableViewDropProposal(operation: successOperation, intent: .insertAtDestinationIndexPath)
 			} else {
 				return UITableViewDropProposal(operation: .forbidden)
@@ -114,12 +114,12 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			}
 		}()
 		
-		guard let destination = destinationContainer, let webFeed = dragNode.representedObject as? Feed else { return }
+		guard let destination = destinationContainer, let feed = dragNode.representedObject as? Feed else { return }
 		
 		if source.account == destination.account {
-			moveFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
+			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
 		} else {
-			copyWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
+			copyFeedBetweenAccounts(feed: feed, sourceContainer: source, destinationContainer: destination)
 		}
 	}
 	
@@ -153,7 +153,7 @@ private extension MasterFeedViewController {
 		}
 	}
 	
-	func copyWebFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+	func copyFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		
 		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
 			
@@ -189,7 +189,7 @@ private extension MasterFeedViewController {
 
 private extension Container {
 	
-	func hasChildWebFeed(withURL url: String) -> Bool {
+	func hasChildFeed(withURL url: String) -> Bool {
 		return topLevelFeeds.contains(where: { $0.url == url })
 	}
 	

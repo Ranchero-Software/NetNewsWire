@@ -74,11 +74,11 @@ struct PasteboardFeed: Hashable {
 
 	init?(pasteboardItem: NSPasteboardItem) {
 		var pasteboardType: NSPasteboard.PasteboardType?
-		if pasteboardItem.types.contains(FeedPasteboardWriter.webFeedUTIInternalType) {
-			pasteboardType = FeedPasteboardWriter.webFeedUTIInternalType
+		if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIInternalType) {
+			pasteboardType = FeedPasteboardWriter.feedUTIInternalType
 		}
-		else if pasteboardItem.types.contains(FeedPasteboardWriter.webFeedUTIType) {
-			pasteboardType = FeedPasteboardWriter.webFeedUTIType
+		else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
+			pasteboardType = FeedPasteboardWriter.feedUTIType
 		}
 		if let foundType = pasteboardType {
 			if let feedDictionary = pasteboardItem.propertyList(forType: foundType) as? PasteboardFeedDictionary {
@@ -111,8 +111,8 @@ struct PasteboardFeed: Hashable {
 		guard let items = pasteboard.pasteboardItems else {
 			return nil
 		}
-		let webFeeds = items.compactMap { PasteboardFeed(pasteboardItem: $0) }
-		return webFeeds.isEmpty ? nil : Set(webFeeds)
+		let feeds = items.compactMap { PasteboardFeed(pasteboardItem: $0) }
+		return feeds.isEmpty ? nil : Set(feeds)
 	}
 
 	// MARK: - Writing
@@ -156,29 +156,29 @@ struct PasteboardFeed: Hashable {
 extension Feed: PasteboardWriterOwner {
 
 	public var pasteboardWriter: NSPasteboardWriting {
-		return FeedPasteboardWriter(webFeed: self)
+		return FeedPasteboardWriter(feed: self)
 	}
 }
 
 @objc final class FeedPasteboardWriter: NSObject, NSPasteboardWriting {
 
-	private let webFeed: Feed
-	static let webFeedUTI = "com.ranchero.webFeed"
-	static let webFeedUTIType = NSPasteboard.PasteboardType(rawValue: webFeedUTI)
-	static let webFeedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.webFeed"
-	static let webFeedUTIInternalType = NSPasteboard.PasteboardType(rawValue: webFeedUTIInternal)
+	private let feed: Feed
+	static let feedUTI = "com.ranchero.feed"
+	static let feedUTIType = NSPasteboard.PasteboardType(rawValue: feedUTI)
+	static let feedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.feed"
+	static let feedUTIInternalType = NSPasteboard.PasteboardType(rawValue: feedUTIInternal)
 
 	var containerID: ContainerIdentifier? = nil
 
-	init(webFeed: Feed) {
-		self.webFeed = webFeed
+	init(feed: Feed) {
+		self.feed = feed
 	}
 
 	// MARK: - NSPasteboardWriting
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		return [FeedPasteboardWriter.webFeedUTIType, .URL, .string, FeedPasteboardWriter.webFeedUTIInternalType]
+		return [FeedPasteboardWriter.feedUTIType, .URL, .string, FeedPasteboardWriter.feedUTIInternalType]
 	}
 
 	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
@@ -187,12 +187,12 @@ extension Feed: PasteboardWriterOwner {
 
 		switch type {
 		case .string:
-			plist = webFeed.nameForDisplay
+			plist = feed.nameForDisplay
 		case .URL:
-			plist = webFeed.url
-		case FeedPasteboardWriter.webFeedUTIType:
+			plist = feed.url
+		case FeedPasteboardWriter.feedUTIType:
 			plist = exportDictionary
-		case FeedPasteboardWriter.webFeedUTIInternalType:
+		case FeedPasteboardWriter.feedUTIInternalType:
 			plist = internalDictionary
 		default:
 			plist = nil
@@ -205,7 +205,7 @@ extension Feed: PasteboardWriterOwner {
 private extension FeedPasteboardWriter {
 
 	var pasteboardFeed: PasteboardFeed {
-		return PasteboardFeed(url: webFeed.url, feedID: webFeed.feedID, homePageURL: webFeed.homePageURL, name: webFeed.name, editedName: webFeed.editedName, accountID: webFeed.account?.accountID, accountType: webFeed.account?.type)
+		return PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID, accountType: feed.account?.type)
 	}
 
 	var exportDictionary: PasteboardFeedDictionary {

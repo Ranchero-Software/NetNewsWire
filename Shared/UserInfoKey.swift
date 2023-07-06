@@ -11,7 +11,7 @@ import Foundation
 // Used for state restoration — don’t change the values.
 struct UserInfoKey {
 
-	static let webFeed = "webFeed"
+	static let feed = "webFeed"
 	static let url = "url"
 	static let articlePath = "articlePath"
 	static let itemIdentifier = "feedIdentifier"

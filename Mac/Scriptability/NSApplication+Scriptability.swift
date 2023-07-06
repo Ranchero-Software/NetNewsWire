@@ -73,26 +73,26 @@ extension NSApplication : ScriptingObjectContainer {
         for  'articles of feed "The Shape of Everything" of account "On My Mac"'
     */  
       
-    func allWebFeeds() -> [Feed] {
+    func allFeeds() -> [Feed] {
         let accounts = AccountManager.shared.activeAccounts
-        let emptyFeeds:[Feed] = []
+        let emptyFeeds: [Feed] = []
         return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
               let accountFeeds = Array(nthAccount.topLevelFeeds)
               return result + accountFeeds
         }
     }
 
-    @objc(webFeeds)
-    func webFeeds() -> NSArray {
-        let webFeeds = self.allWebFeeds()
-        return webFeeds.map { ScriptableFeed($0, container:self) } as NSArray
+    @objc(feeds)
+    func feeds() -> NSArray {
+        let feeds = self.allFeeds()
+        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
 
-    @objc(valueInWebFeedsWithUniqueID:)
-    func valueInWebFeeds(withUniqueID id:String) -> ScriptableFeed? {
-        let webFeeds = self.allWebFeeds()
-        guard let webFeed = webFeeds.first(where:{$0.feedID == id}) else { return nil }
-        return ScriptableFeed(webFeed, container:self)
+    @objc(valueInFeedsWithUniqueID:)
+    func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
+        let feeds = self.allFeeds()
+        guard let feed = feeds.first(where:{$0.feedID == id}) else { return nil }
+        return ScriptableFeed(feed, container:self)
     }
 }
 

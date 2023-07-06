@@ -94,19 +94,19 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     // MARK: --- Scriptable elements ---
     
-    @objc(webFeeds)
-    var webFeeds:NSArray  {
+    @objc(feeds)
+    var feeds:NSArray  {
         return account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
     
-    @objc(valueInWebFeedsWithUniqueID:)
-    func valueInWebFeeds(withUniqueID id:String) -> ScriptableFeed? {
+    @objc(valueInFeedsWithUniqueID:)
+    func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
 		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
     
-    @objc(valueInWebFeedsWithName:)
-    func valueInWebFeeds(withName name:String) -> ScriptableFeed? {
+    @objc(valueInFeedsWithName:)
+    func valueInFeeds(withName name:String) -> ScriptableFeed? {
 		let feeds = Array(account.flattenedFeeds())
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
         return ScriptableFeed(feed, container:self)
@@ -130,21 +130,21 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     // MARK: --- Scriptable properties ---
 
-    @objc(allWebFeeds)
-    var allWebFeeds: NSArray  {
-		var webFeeds = [ScriptableFeed]()
-		for webFeed in account.topLevelFeeds {
-			webFeeds.append(ScriptableFeed(webFeed, container: self))
+    @objc(allFeeds)
+    var allFeeds: NSArray  {
+		var feeds = [ScriptableFeed]()
+		for feed in account.topLevelFeeds {
+			feeds.append(ScriptableFeed(feed, container: self))
 		}
 		if let folders = account.folders {
 			for folder in folders {
 				let scriptableFolder = ScriptableFolder(folder, container: self)
-				for webFeed in folder.topLevelFeeds {
-					webFeeds.append(ScriptableFeed(webFeed, container: scriptableFolder))
+				for feed in folder.topLevelFeeds {
+					feeds.append(ScriptableFeed(feed, container: scriptableFolder))
 				}
 			}
 		}
-		return webFeeds as NSArray
+		return feeds as NSArray
     }
 
     @objc(opmlRepresentation)

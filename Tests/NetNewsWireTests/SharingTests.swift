@@ -40,10 +40,10 @@ class SharingTests: XCTestCase {
 
     private func article(titled title: String) -> Article {
         let articleId = randomId()
-		return Article(accountID: randomId(),
+		return Article(accountID: randomID(),
 					   articleID: articleId,
-					   webFeedID: randomId(),
-					   uniqueID: randomId(),
+					   feed: randomID(),
+					   uniqueID: randomID(),
 					   title: title,
 					   contentHTML: nil,
 					   contentText: nil,
@@ -58,7 +58,7 @@ class SharingTests: XCTestCase {
 		)
     }
 
-    private func randomId() -> String {
+    private func randomID() -> String {
         return UUID().uuidString
     }
 

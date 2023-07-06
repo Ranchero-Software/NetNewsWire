@@ -11,7 +11,7 @@ import Articles
 import Account
 import UserNotifications
 
-@MainActor final class WebFeedInspectorViewController: NSViewController, Inspector {
+@MainActor final class FeedInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var nameTextField: NSTextField?
@@ -112,7 +112,7 @@ import UserNotifications
 	
 }
 
-extension WebFeedInspectorViewController: NSTextFieldDelegate {
+extension FeedInspectorViewController: NSTextFieldDelegate {
 
 	func controlTextDidEndEditing(_ note: Notification) {
 		renameFeedIfNecessary()
@@ -120,7 +120,7 @@ extension WebFeedInspectorViewController: NSTextFieldDelegate {
 	
 }
 
-private extension WebFeedInspectorViewController {
+private extension FeedInspectorViewController {
 
 	func updateFeed() {
 		guard let objects = objects, objects.count == 1, let singleFeed = objects.first as? Feed else {

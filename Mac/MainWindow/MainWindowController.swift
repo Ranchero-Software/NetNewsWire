@@ -706,14 +706,13 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		detailViewController?.setState(detailState, mode: mode)
 	}
 
-	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: Feed) {
-		sidebarViewController?.selectFeed(webFeed)
+	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed) {
+		sidebarViewController?.selectFeed(feed)
 	}
 	
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController) {
 		invalidateRestorableState()
 	}
-	
 }
 
 // MARK: - NSSearchFieldDelegate
@@ -1439,10 +1438,10 @@ private extension MainWindowController {
 	func buildNewSidebarItemMenu() -> NSMenu {
 		let menu = NSMenu()
 		
-		let newWebFeedItem = NSMenuItem()
-		newWebFeedItem.title = NSLocalizedString("button.title.new-web-feed", comment: "New Feed...")
-		newWebFeedItem.action = Selector(("showAddFeedWindow:"))
-		menu.addItem(newWebFeedItem)
+		let newFeedItem = NSMenuItem()
+		newFeedItem.title = NSLocalizedString("button.title.new-feed", comment: "New Feed...")
+		newFeedItem.action = Selector(("showAddFeedWindow:"))
+		menu.addItem(newFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("button.title.open-new-folder", comment: "New Folder...")

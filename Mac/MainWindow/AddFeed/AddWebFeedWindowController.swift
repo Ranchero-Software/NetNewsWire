@@ -12,7 +12,7 @@ import RSTree
 import Articles
 import Account
 
-@MainActor final class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
+@MainActor final class AddFeedWindowController : NSWindowController, AddFeedWindowControllerProtocol {
     
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
@@ -38,7 +38,7 @@ import Account
     var hostWindow: NSWindow!
 
 	convenience init(urlString: String?, name: String?, account: Account?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
-		self.init(windowNibName: NSNib.Name("AddWebFeedSheet"))
+		self.init(windowNibName: NSNib.Name("AddFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
 		self.initialAccount = account
@@ -64,7 +64,7 @@ import Account
 		
 		if let account = initialAccount {
 			FolderTreeMenu.select(account: account, folder: initialFolder, in: folderPopupButton)
-		} else if let container = AddWebFeedDefaultContainer.defaultContainer {
+		} else if let container = AddFeedDefaultContainer.defaultContainer {
 			if let folder = container as? Folder, let account = folder.account {
 				FolderTreeMenu.select(account: account, folder: folder, in: folderPopupButton)
 			} else {
@@ -97,7 +97,7 @@ import Account
 		}
 		
 		guard let container = selectedContainer() else { return }
-		AddWebFeedDefaultContainer.saveDefaultContainer(container)
+		AddFeedDefaultContainer.saveDefaultContainer(container)
 
 		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
 		
@@ -119,7 +119,7 @@ import Account
 	}
 }
 
-private extension AddWebFeedWindowController {
+private extension AddFeedWindowController {
 	
 	private func updateUI() {
 		addButton.isEnabled = urlTextField.stringValue.mayBeURL && selectedContainer() != nil

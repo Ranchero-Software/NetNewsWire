@@ -21,7 +21,7 @@ enum AddFeedWindowControllerType {
 	
 }
 
-@MainActor protocol AddFeedWindowController {
+@MainActor protocol AddFeedWindowControllerProtocol {
 
 	var window: NSWindow? { get }
 	func runSheetOnWindow(_ hostWindow: NSWindow)

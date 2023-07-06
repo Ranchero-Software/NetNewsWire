@@ -96,7 +96,7 @@ final class RootSplitViewController: UISplitViewController {
 	}
 	
 	@objc func addNewFeed(_ sender: Any?) {
-		coordinator.showAddWebFeed()
+		coordinator.showAddFeed()
 	}
 
 	@objc func addNewFolder(_ sender: Any?) {

@@ -5,7 +5,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="AddWebFeedWindowController" customModule="NetNewsWire" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="AddFeedWindowController">
             <connections>
                 <outlet property="addButton" destination="dtI-Hu-rFb" id="D11-zR-dWH"/>
                 <outlet property="folderPopupButton" destination="6vt-DL-mVR" id="98M-xt-ZYU"/>

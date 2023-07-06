@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -32,7 +31,7 @@
         <!--Feed-->
         <scene sceneID="vUh-Rc-fPi">
             <objects>
-                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="WebFeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ecA-UY-KEd">
                         <rect key="frame" x="0.0" y="0.0" width="273" height="322"/>
                         <autoresizingMask key="autoresizingMask"/>

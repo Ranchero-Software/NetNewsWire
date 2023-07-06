@@ -47,7 +47,7 @@ import Account
 			return nil
 		}
 		
-		// WebFeed objects don't have knowledge of their parent so we inject parent container information
+		// Feed objects don't have knowledge of their parent so we inject parent container information
 		// into FeedPasteboardWriter instance and it adds this field to the PasteboardFeed objects it writes.
 		// Add similar to FolderPasteboardWriter if/when we allow sub-folders
 		if let feedWriter = pasteboardWriter as? FeedPasteboardWriter {
@@ -315,7 +315,7 @@ private extension SidebarOutlineDataSource {
 		return .copy	// different AccountIDs means can only copy
 	}
 	
-	func copyWebFeedInAccount(_ feed: Feed, _ destination: Container ) {
+	func copyFeedInAccount(_ feed: Feed, _ destination: Container ) {
 		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
@@ -339,7 +339,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 	
-	func copyWebFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
+	func copyFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
 		guard let destinationAccount = destinationContainer.account  else {
 			return
 		}
@@ -373,8 +373,8 @@ private extension SidebarOutlineDataSource {
 		draggedFeeds.forEach { pasteboardFeed in
 			guard let sourceAccountID = pasteboardFeed.accountID,
 				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
-				  let webFeedID = pasteboardFeed.feedID,
-				  let feed = sourceAccount.existingFeed(withFeedID:  webFeedID),
+				  let feedID = pasteboardFeed.feedID,
+				  let feed = sourceAccount.existingFeed(withFeedID:  feedID),
 				  let destinationContainer = parentNode.representedObject as? Container
 			else {
 				return
@@ -391,12 +391,12 @@ private extension SidebarOutlineDataSource {
 			
 			if sameAccount(pasteboardFeed, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyWebFeedInAccount(feed, destinationContainer)
+					copyFeedInAccount(feed, destinationContainer)
 				} else {
 					moveFeedInAccount(feed, sourceContainer, destinationContainer)
 				}
 			} else {
-				copyWebFeedBetweenAccounts(feed, destinationContainer)
+				copyFeedBetweenAccounts(feed, destinationContainer)
 			}
 		}
 		
@@ -553,8 +553,8 @@ private extension SidebarOutlineDataSource {
 			return account
 		} else if let folder = node.representedObject as? Folder {
 			return folder.account
-		} else if let webFeed = node.representedObject as? Feed {
-			return webFeed.account
+		} else if let feed = node.representedObject as? Feed {
+			return feed.account
 		} else {
 			return nil
 		}

@@ -73,18 +73,18 @@ final class FaviconDownloader: Logging {
 		cache = [Feed: IconImage]()
 	}
 	
-	func favicon(for webFeed: Feed) -> IconImage? {
+	func favicon(for feed: Feed) -> IconImage? {
 
 		assert(Thread.isMainThread)
 
-		var homePageURL = webFeed.homePageURL
-		if let faviconURL = webFeed.faviconURL {
+		var homePageURL = feed.homePageURL
+		if let faviconURL = feed.faviconURL {
 			return favicon(with: faviconURL, homePageURL: homePageURL)
 		}
 
 		if homePageURL == nil {
 			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
-			if let feedURL = URL(string: webFeed.url), let scheme = feedURL.scheme, let host = feedURL.host {
+			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
 				homePageURL = scheme + "://" + host + "/"
 			}
 		}
@@ -95,16 +95,16 @@ final class FaviconDownloader: Logging {
 		return nil
 	}
 	
-	func faviconAsIcon(for webFeed: Feed) -> IconImage? {
+	func faviconAsIcon(for feed: Feed) -> IconImage? {
 		
-		if let image = cache[webFeed] {
+		if let image = cache[feed] {
 			return image
 		}
 		
-		if let iconImage = favicon(for: webFeed), let imageData = iconImage.image.dataRepresentation() {
+		if let iconImage = favicon(for: feed), let imageData = iconImage.image.dataRepresentation() {
 			if let scaledImage = RSImage.scaledForIcon(imageData) {
 				let scaledIconImage = IconImage(scaledImage)
-				cache[webFeed] = scaledIconImage
+				cache[feed] = scaledIconImage
 				return scaledIconImage
 			}
 		}

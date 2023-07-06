@@ -225,7 +225,7 @@
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
 		51A052CE244FB9D7006C2024 /* AddFeedWIndowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */; };
 		51A052CF244FB9D7006C2024 /* AddFeedWIndowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */; };
-		51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
+		51A66685238075AE00CB272D /* AddFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */; };
 		51A737AE24DB19730015FA66 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737AD24DB19730015FA66 /* RSCore */; };
 		51A737AF24DB19730015FA66 /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737AD24DB19730015FA66 /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51A737BF24DB197F0015FA66 /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737BE24DB197F0015FA66 /* RSDatabase */; };
@@ -241,8 +241,8 @@
 		51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45254226507D200C03939 /* AppAssets.swift */; };
 		51A9A5EE2380D6080033AADF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9B2262A1A900D921D6 /* Assets.xcassets */; };
 		51A9A5EF2380D63B0033AADF /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
-		51A9A5F22380DE520033AADF /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
-		51A9A5F32380DE530033AADF /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
+		51A9A5F22380DE520033AADF /* AddFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */; };
+		51A9A5F32380DE530033AADF /* AddFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */; };
 		51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A5F42380F6A60033AADF /* ModalNavigationController.swift */; };
 		51A9A60A2382FD240033AADF /* PoppableGestureRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */; };
 		51AB8AB323B7F4C6008F147D /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51AB8AB223B7F4C6008F147D /* WebViewController.swift */; };
@@ -486,7 +486,7 @@
 		65ED3FF7235DEF6C0081F399 /* SearchFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */; };
 		65ED3FF8235DEF6C0081F399 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB32229AB02C00645299 /* ErrorHandler.swift */; };
 		65ED3FF9235DEF6C0081F399 /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
-		65ED3FFA235DEF6C0081F399 /* WebFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* WebFeedInspectorViewController.swift */; };
+		65ED3FFA235DEF6C0081F399 /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* FeedInspectorViewController.swift */; };
 		65ED3FFB235DEF6C0081F399 /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
 		65ED3FFC235DEF6C0081F399 /* AccountsAddLocalWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */; };
 		65ED3FFD235DEF6C0081F399 /* PasteboardFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EA92031617300BC20B7 /* PasteboardFolder.swift */; };
@@ -622,7 +622,7 @@
 		845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
 		845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7C01FC2488C00854A1F /* SmartFeed.swift */; };
 		84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
-		8472058120142E8900AD578B /* WebFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* WebFeedInspectorViewController.swift */; };
+		8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* FeedInspectorViewController.swift */; };
 		8477ACBE22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */; };
 		847CD6CA232F4CBF00FAC46D /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847CD6C9232F4CBF00FAC46D /* IconView.swift */; };
 		847E64A02262783000E00365 /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E64942262782F00E00365 /* NSAppleEventDescriptor+UserRecordFields.swift */; };
@@ -813,7 +813,7 @@
 		DFB3497A294A962D00BC81AD /* AddAccountListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34979294A962D00BC81AD /* AddAccountListView.swift */; };
 		DFB34980294B085100BC81AD /* AccountInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3497F294B085100BC81AD /* AccountInspectorView.swift */; };
 		DFB34988294B447F00BC81AD /* InjectedNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */; };
-		DFB3498C294B4CA700BC81AD /* WebFeedInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */; };
+		DFB3498C294B4CA700BC81AD /* FeedInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3498B294B4CA700BC81AD /* FeedInspectorView.swift */; };
 		DFB34994294C0E3900BC81AD /* ReaderAPIAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */; };
 		DFB34996294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */; };
 		DFB34997294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */; };
@@ -1231,7 +1231,7 @@
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		519E743422C663F900A78E47 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedWIndowController.swift; path = AddFeed/AddFeedWIndowController.swift; sourceTree = "<group>"; };
-		51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedDefaultContainer.swift; sourceTree = "<group>"; };
+		51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedDefaultContainer.swift; sourceTree = "<group>"; };
 		51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerAccountCell.xib; sourceTree = "<group>"; };
 		51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerFolderCell.xib; sourceTree = "<group>"; };
 		51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerCell.swift; sourceTree = "<group>"; };
@@ -1371,7 +1371,7 @@
 		845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarredFeedDelegate.swift; sourceTree = "<group>"; };
 		845EE7C01FC2488C00854A1F /* SmartFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeed.swift; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkStatusCommand.swift; sourceTree = "<group>"; };
-		8472058020142E8900AD578B /* WebFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedInspectorViewController.swift; sourceTree = "<group>"; };
+		8472058020142E8900AD578B /* FeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInspectorViewController.swift; sourceTree = "<group>"; };
 		847752FE2008879500D93690 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFeedDelegate.swift; sourceTree = "<group>"; };
 		847CD6C9232F4CBF00FAC46D /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
@@ -1614,7 +1614,7 @@
 		DFB34979294A962D00BC81AD /* AddAccountListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountListView.swift; sourceTree = "<group>"; };
 		DFB3497F294B085100BC81AD /* AccountInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInspectorView.swift; sourceTree = "<group>"; };
 		DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectedNavigationView.swift; sourceTree = "<group>"; };
-		DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedInspectorView.swift; sourceTree = "<group>"; };
+		DFB3498B294B4CA700BC81AD /* FeedInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInspectorView.swift; sourceTree = "<group>"; };
 		DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderAPIAddAccountView.swift; sourceTree = "<group>"; };
 		DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedNetNewsWireError.swift; sourceTree = "<group>"; };
 		DFB3499D294C5D5000BC81AD /* CloudKitAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAddAccountView.swift; sourceTree = "<group>"; };
@@ -1908,7 +1908,7 @@
 			isa = PBXGroup;
 			children = (
 				DFB3497F294B085100BC81AD /* AccountInspectorView.swift */,
-				DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */,
+				DFB3498B294B4CA700BC81AD /* FeedInspectorView.swift */,
 			);
 			path = Inspector;
 			sourceTree = "<group>";
@@ -2390,7 +2390,7 @@
 		849A97561ED9EB0D007D329B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */,
+				51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */,
 				849A97731ED9EC04007D329B /* ArticleStringFormatter.swift */,
 				849A97581ED9EB0D007D329B /* ArticleUtilities.swift */,
 				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
@@ -2546,7 +2546,7 @@
 			children = (
 				DF5124D02A230FC100BBAB1F /* Inspector.storyboard */,
 				84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */,
-				8472058020142E8900AD578B /* WebFeedInspectorViewController.swift */,
+				8472058020142E8900AD578B /* FeedInspectorViewController.swift */,
 				841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */,
 				841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */,
 				841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */,
@@ -3982,7 +3982,7 @@
 				65ED3FF8235DEF6C0081F399 /* ErrorHandler.swift in Sources */,
 				65ED3FF9235DEF6C0081F399 /* ActivityManager.swift in Sources */,
 				1710B9142552354E00679C0D /* AddAccountHelpView.swift in Sources */,
-				65ED3FFA235DEF6C0081F399 /* WebFeedInspectorViewController.swift in Sources */,
+				65ED3FFA235DEF6C0081F399 /* FeedInspectorViewController.swift in Sources */,
 				65ED3FFB235DEF6C0081F399 /* AccountsReaderAPIWindowController.swift in Sources */,
 				65ED3FFC235DEF6C0081F399 /* AccountsAddLocalWindowController.swift in Sources */,
 				514217062921C9DD00963F14 /* Bundle-Extensions.swift in Sources */,
@@ -4038,7 +4038,7 @@
 				65ED4026235DEF6C0081F399 /* TimelineTableRowView.swift in Sources */,
 				65ED4027235DEF6C0081F399 /* UnreadIndicatorView.swift in Sources */,
 				DFEB034E2A273BFE00C7573A /* UTType.swift in Sources */,
-				51A9A5F22380DE520033AADF /* AddWebFeedDefaultContainer.swift in Sources */,
+				51A9A5F22380DE520033AADF /* AddFeedDefaultContainer.swift in Sources */,
 				65ED4028235DEF6C0081F399 /* ExtractedArticle.swift in Sources */,
 				65ED4029235DEF6C0081F399 /* DeleteCommand.swift in Sources */,
 				65ED402A235DEF6C0081F399 /* AddWebFeedWindowController.swift in Sources */,
@@ -4145,7 +4145,7 @@
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				DFD406FA291FB5E400C02962 /* SettingsRows.swift in Sources */,
 				DFB3499E294C5D5000BC81AD /* CloudKitAddAccountView.swift in Sources */,
-				DFB3498C294B4CA700BC81AD /* WebFeedInspectorView.swift in Sources */,
+				DFB3498C294B4CA700BC81AD /* FeedInspectorView.swift in Sources */,
 				DFB349A0294E87B700BC81AD /* LocalAddAccountView.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
@@ -4162,7 +4162,7 @@
 				51C4CFF224D37D1F00AF9874 /* Secrets.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
-				51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */,
+				51A66685238075AE00CB272D /* AddFeedDefaultContainer.swift in Sources */,
 				176813E92564BAE200D98635 /* WidgetDeepLinks.swift in Sources */,
 				51B5C87723F22B8200032075 /* ExtensionContainers.swift in Sources */,
 				51C45292226509C800C03939 /* TodayFeedDelegate.swift in Sources */,
@@ -4301,7 +4301,7 @@
 				D57BE6E0204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift in Sources */,
 				D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
-				51A9A5F32380DE530033AADF /* AddWebFeedDefaultContainer.swift in Sources */,
+				51A9A5F32380DE530033AADF /* AddFeedDefaultContainer.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */,
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
@@ -4343,7 +4343,7 @@
 				8477ACBE22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */,
 				51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */,
 				51FE100A234673A00056195D /* ActivityManager.swift in Sources */,
-				8472058120142E8900AD578B /* WebFeedInspectorViewController.swift in Sources */,
+				8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */,
 				55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */,
 				5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* PasteboardFolder.swift in Sources */,

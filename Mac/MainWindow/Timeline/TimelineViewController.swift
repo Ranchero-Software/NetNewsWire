@@ -13,7 +13,7 @@ import Account
 
 protocol TimelineDelegate: AnyObject  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
-	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: Feed)
+	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
@@ -219,7 +219,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
@@ -649,8 +649,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		updateUnreadCount()
 	}
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard showIcons, let feed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard showIcons, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
@@ -696,7 +696,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 
-		let shouldFetchAndMergeArticles = representedObjectsContainsAnyWebFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
+		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
@@ -1317,7 +1317,7 @@ private extension TimelineViewController {
 		return representedObjects?.contains(where: { $0 is Folder }) ?? false
 	}
 
-	func representedObjectsContainsAnyWebFeed(_ webFeeds: Set<Feed>) -> Bool {
+	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 
 		guard let representedObjects = representedObjects else {
@@ -1325,14 +1325,14 @@ private extension TimelineViewController {
 		}
 		for representedObject in representedObjects {
 			if let feed = representedObject as? Feed {
-				for oneFeed in webFeeds {
+				for oneFeed in feeds {
 					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 						return true
 					}
 				}
 			}
 			else if let folder = representedObject as? Folder {
-				for oneFeed in webFeeds {
+				for oneFeed in feeds {
 					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true
 					}

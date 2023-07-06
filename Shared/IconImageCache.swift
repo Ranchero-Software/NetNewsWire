@@ -15,7 +15,7 @@ class IconImageCache {
 	static var shared = IconImageCache()
 
 	private var smartFeedIconImageCache = [ItemIdentifier: IconImage]()
-	private var webFeedIconImageCache = [ItemIdentifier: IconImage]()
+	private var feedIconImageCache = [ItemIdentifier: IconImage]()
 	private var faviconImageCache = [ItemIdentifier: IconImage]()
 	private var smallIconImageCache = [ItemIdentifier: IconImage]()
 	private var authorIconImageCache = [Author: IconImage]()
@@ -30,18 +30,18 @@ class IconImageCache {
 		return nil
 	}
 
-	func imageForFeed(_ feed: FeedProtocol) -> IconImage? {
-		guard let itemID = feed.itemID else {
+	func imageForFeed(_ feedProtocol: FeedProtocol) -> IconImage? {
+		guard let itemID = feedProtocol.itemID else {
 			return nil
 		}
 		
-		if let smartFeed = feed as? PseudoFeed {
+		if let smartFeed = feedProtocol as? PseudoFeed {
 			return imageForSmartFeed(smartFeed, itemID)
 		}
-		if let webFeed = feed as? Feed, let iconImage = imageForWebFeed(webFeed, itemID) {
+		if let feed = feedProtocol as? Feed, let iconImage = imageForFeed(feed, itemID) {
 			return iconImage
 		}
-		if let smallIconProvider = feed as? SmallIconProvider {
+		if let smallIconProvider = feedProtocol as? SmallIconProvider {
 			return imageForSmallIconProvider(smallIconProvider, itemID)
 		}
 
@@ -60,7 +60,7 @@ class IconImageCache {
 
 	func emptyCache() {
 		smartFeedIconImageCache = [ItemIdentifier: IconImage]()
-		webFeedIconImageCache = [ItemIdentifier: IconImage]()
+		feedIconImageCache = [ItemIdentifier: IconImage]()
 		faviconImageCache = [ItemIdentifier: IconImage]()
 		smallIconImageCache = [ItemIdentifier: IconImage]()
 		authorIconImageCache = [Author: IconImage]()
@@ -80,18 +80,18 @@ private extension IconImageCache {
 		return nil
 	}
 
-	func imageForWebFeed(_ webFeed: Feed, _ itemID: ItemIdentifier) -> IconImage? {
-		if let iconImage = webFeedIconImageCache[itemID] {
+	func imageForFeed(_ feed: Feed, _ itemID: ItemIdentifier) -> IconImage? {
+		if let iconImage = feedIconImageCache[itemID] {
 			return iconImage
 		}
-		if let iconImage = appDelegate.feedIconDownloader.icon(for: webFeed) {
-			webFeedIconImageCache[itemID] = iconImage
+		if let iconImage = appDelegate.feedIconDownloader.icon(for: feed) {
+			feedIconImageCache[itemID] = iconImage
 			return iconImage
 		}
 		if let faviconImage = faviconImageCache[itemID] {
 			return faviconImage
 		}
-		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
+		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
 			faviconImageCache[itemID] = faviconImage
 			return faviconImage
 		}

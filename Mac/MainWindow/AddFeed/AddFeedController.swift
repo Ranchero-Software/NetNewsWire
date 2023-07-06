@@ -39,7 +39,7 @@ import RSParser
 
 		switch type {
 		case .feed:
-			addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
+			addFeedWindowController = AddFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
 																 name: name,
 																 account: account,
 																 folder: folder,
@@ -73,7 +73,7 @@ import RSParser
 			
 			switch result {
 			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
 				switch error {
 				case AccountError.createErrorAlreadySubscribed:
