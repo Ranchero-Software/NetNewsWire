@@ -164,7 +164,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     }
     
     @objc(articles)
-    var articles:NSArray {
+	@MainActor var articles:NSArray {
         let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
         // the articles are a set, use the sorting algorithm from the viewer
         let sortedArticles = feedArticles.sorted(by:{
@@ -174,7 +174,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
     }
     
     @objc(valueInArticlesWithUniqueID:)
-    func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
+	@MainActor func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
         let articles = (try? feed.fetchArticles()) ?? Set<Article>()
         guard let article = articles.first(where:{$0.uniqueID == id}) else { return nil }
         return ScriptableArticle(article, container:self)

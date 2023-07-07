@@ -18,7 +18,7 @@ class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 		self.coordinator = coordinator
 	}
 	
-	func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+	@MainActor func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
 
 		guard let url = urlSchemeTask.request.url, let coordinator = coordinator else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))

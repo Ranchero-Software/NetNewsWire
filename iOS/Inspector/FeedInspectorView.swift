@@ -59,7 +59,7 @@ struct FeedInspectorView: View {
 		.dismissOnExternalContextLaunch()
     }
 	
-	var feedHeaderView: some View {
+	@MainActor var feedHeaderView: some View {
 		HStack {
 			Spacer()
 			Image(uiImage: feed.smallIcon!.image)

@@ -49,7 +49,7 @@ class ActivityManager {
 		invalidateNextUnread()
 	}
 	
-	func selecting(feed: FeedProtocol) {
+	@MainActor func selecting(feed: FeedProtocol) {
 		invalidateCurrentActivities()
 		
 		selectingActivity = makeSelectFeedActivity(feed: feed)
@@ -87,7 +87,7 @@ class ActivityManager {
 		nextUnreadActivity = nil
 	}
 	
-	func reading(feed: FeedProtocol?, article: Article?) {
+	@MainActor func reading(feed: FeedProtocol?, article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
 		
@@ -108,7 +108,7 @@ class ActivityManager {
 	}
 	
 	#if os(iOS)
-	static func cleanUp(_ account: Account) {
+	@MainActor static func cleanUp(_ account: Account) {
 		var ids = [String]()
 		
 		if let folders = account.folders {
@@ -124,7 +124,7 @@ class ActivityManager {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ folder: Folder) {
+	@MainActor static func cleanUp(_ folder: Folder) {
 		var ids = [String]()
 		ids.append(identifier(for: folder))
 		
@@ -135,12 +135,12 @@ class ActivityManager {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ feed: Feed) {
+	@MainActor static func cleanUp(_ feed: Feed) {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: feed))
 	}
 	#endif
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+	@MainActor @objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedID = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
 			return
 		}
@@ -187,7 +187,7 @@ private extension ActivityManager {
 		return activity
 	}
 	
-	func makeReadArticleActivity(feed: FeedProtocol?, article: Article) -> NSUserActivity {
+	@MainActor func makeReadArticleActivity(feed: FeedProtocol?, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
 		
@@ -217,7 +217,7 @@ private extension ActivityManager {
 	}
 	
 	#if os(iOS)
-	func updateReadArticleSearchAttributes(with article: Article) {
+	@MainActor func updateReadArticleSearchAttributes(with article: Article) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.compositeContent.identifier)
 		attributeSet.title = ArticleStringFormatter.truncatedTitle(article)
@@ -245,7 +245,7 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
+	@MainActor func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.item.identifier)
 		attributeSet.title = feed.nameForDisplay
@@ -286,7 +286,7 @@ private extension ActivityManager {
 		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
 	}
 	
-	static func identifiers(for feed: Feed) -> [String] {
+	@MainActor static func identifiers(for feed: Feed) -> [String] {
 		var ids = [String]()
 		ids.append(identifier(for: feed))
 		if let articles = try? feed.fetchArticles() {

@@ -87,16 +87,19 @@ public final class Folder: FeedProtocol, Renamable, Container, Hashable {
 
 	// MARK: - Notifications
 
-	@objc func unreadCountDidChange(_ note: Notification) {
-		if let object = note.object {
-			if objectIsChild(object as AnyObject) {
-				updateUnreadCount()
-			}
-		}
+    @MainActor @objc func unreadCountDidChange(_ note: Notification) {
+        guard let object = note.object, objectIsChild(object as AnyObject) else {
+            return
+        }
+//        Task { @MainActor in
+            updateUnreadCount()
+//        }
 	}
 
-	@objc func childrenDidChange(_ note: Notification) {
-		updateUnreadCount()
+    @MainActor @objc func childrenDidChange(_ note: Notification) {
+//        Task { @MainActor in
+            updateUnreadCount()
+//        }
 	}
 
 	// MARK: Container
@@ -157,7 +160,7 @@ public final class Folder: FeedProtocol, Renamable, Container, Hashable {
 
 private extension Folder {
 
-	func updateUnreadCount() {
+	@MainActor func updateUnreadCount() {
 		var updatedUnreadCount = 0
 		for feed in topLevelFeeds {
 			updatedUnreadCount += feed.unreadCount

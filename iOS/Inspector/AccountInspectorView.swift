@@ -98,7 +98,7 @@ struct AccountInspectorView: View {
 		}
 	}
 	
-	var removeAccountSection: some View {
+	@MainActor var removeAccountSection: some View {
 		Section {
 			Button(role: .destructive) {
 				showRemoveAccountAlert = true

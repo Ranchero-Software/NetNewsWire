@@ -21,7 +21,7 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 
 	var smartFeeds = [FeedProtocol]()
 	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
-	let unreadFeed = UnreadFeed()
+	@MainActor let unreadFeed = UnreadFeed()
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
 
 	private init() {

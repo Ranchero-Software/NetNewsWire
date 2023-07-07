@@ -19,7 +19,7 @@ protocol SmartFeedDelegate: ItemIdentifiable, DisplayNameProvider, ArticleFetche
 
 extension SmartFeedDelegate {
 
-	func fetchArticles() throws -> Set<Article> {
+	@MainActor func fetchArticles() throws -> Set<Article> {
 		return try AccountManager.shared.fetchArticles(fetchType)
 	}
 

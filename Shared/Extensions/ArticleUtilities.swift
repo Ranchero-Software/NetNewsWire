@@ -112,11 +112,11 @@ extension Article {
 		}
 	}
 
-	func iconImage() -> IconImage? {
+	@MainActor func iconImage() -> IconImage? {
 		return IconImageCache.shared.imageForArticle(self)
 	}
 	
-	func iconImageUrl(feed: Feed) -> URL? {
+	@MainActor func iconImageUrl(feed: Feed) -> URL? {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]

@@ -24,7 +24,7 @@ final class FeedTreeControllerDelegate: TreeControllerDelegate {
 		filterExceptions = Set<ItemIdentifier>()
 	}
 	
-	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
+	@MainActor func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 		if node.isRoot {
 			return childNodesForRootNode(node)
 		}
@@ -61,7 +61,7 @@ private extension FeedTreeControllerDelegate {
 		}
 	}
 
-	func childNodesForContainerNode(_ containerNode: Node) -> [Node]? {
+	@MainActor func childNodesForContainerNode(_ containerNode: Node) -> [Node]? {
 		let container = containerNode.representedObject as! Container
 
 		var children = [AnyObject]()

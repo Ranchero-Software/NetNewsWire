@@ -27,7 +27,7 @@ extension Account: SmallIconProvider {
 
 extension Feed: SmallIconProvider {
 
-	var smallIcon: IconImage? {
+	@MainActor var smallIcon: IconImage? {
 		if let iconImage = appDelegate.faviconDownloader.favicon(for: self) {
 			return iconImage
 		}

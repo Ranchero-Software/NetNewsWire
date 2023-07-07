@@ -20,7 +20,7 @@ class IconImageCache {
 	private var smallIconImageCache = [ItemIdentifier: IconImage]()
 	private var authorIconImageCache = [Author: IconImage]()
 
-	func imageFor(_ itemID: ItemIdentifier) -> IconImage? {
+	@MainActor func imageFor(_ itemID: ItemIdentifier) -> IconImage? {
 		if let smartFeed = SmartFeedsController.shared.find(by: itemID) {
 			return imageForFeed(smartFeed)
 		}
@@ -30,7 +30,7 @@ class IconImageCache {
 		return nil
 	}
 
-	func imageForFeed(_ feedProtocol: FeedProtocol) -> IconImage? {
+	@MainActor func imageForFeed(_ feedProtocol: FeedProtocol) -> IconImage? {
 		guard let itemID = feedProtocol.itemID else {
 			return nil
 		}
@@ -48,7 +48,7 @@ class IconImageCache {
 		return nil
 	}
 
-	func imageForArticle(_ article: Article) -> IconImage? {
+	@MainActor func imageForArticle(_ article: Article) -> IconImage? {
 		if let iconImage = imageForAuthors(article.authors) {
 			return iconImage
 		}
@@ -80,7 +80,7 @@ private extension IconImageCache {
 		return nil
 	}
 
-	func imageForFeed(_ feed: Feed, _ itemID: ItemIdentifier) -> IconImage? {
+	@MainActor func imageForFeed(_ feed: Feed, _ itemID: ItemIdentifier) -> IconImage? {
 		if let iconImage = feedIconImageCache[itemID] {
 			return iconImage
 		}
@@ -109,14 +109,14 @@ private extension IconImageCache {
 		return nil
 	}
 
-	func imageForAuthors(_ authors: Set<Author>?) -> IconImage? {
+	@MainActor func imageForAuthors(_ authors: Set<Author>?) -> IconImage? {
 		guard let authors = authors, authors.count == 1, let author = authors.first else {
 			return nil
 		}
 		return imageForAuthor(author)
 	}
 
-	func imageForAuthor(_ author: Author) -> IconImage? {
+	@MainActor func imageForAuthor(_ author: Author) -> IconImage? {
 		if let iconImage = authorIconImageCache[author] {
 			return iconImage
 		}

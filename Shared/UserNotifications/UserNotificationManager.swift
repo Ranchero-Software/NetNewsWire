@@ -20,7 +20,7 @@ final class UserNotificationManager: NSObject {
 		registerCategoriesAndActions()
 	}
 	
-	@objc func accountDidDownloadArticles(_ note: Notification) {
+	@MainActor @objc func accountDidDownloadArticles(_ note: Notification) {
 		guard let articles = note.userInfo?[Account.UserInfoKey.newArticles] as? Set<Article> else {
 			return
 		}
@@ -53,7 +53,7 @@ final class UserNotificationManager: NSObject {
 
 private extension UserNotificationManager {
 	
-	func sendNotification(feed: Feed, article: Article) {
+	@MainActor func sendNotification(feed: Feed, article: Article) {
 		let content = UNMutableNotificationContent()
 						
 		content.title = feed.nameForDisplay
@@ -73,13 +73,13 @@ private extension UserNotificationManager {
 		UNUserNotificationCenter.current().add(request)
 	}
 	
-	/// Determine if there is an available icon for the article. This will then move it to the caches directory and make it avialble for the notification. 
+	/// Determine if there is an available icon for the article. This will then move it to the caches directory and make it available for the notification. 
 	/// - Parameters:
 	///   - article: `Article`
 	///   - feed: `Feed`
 	/// - Returns: A `UNNotificationAttachment` if an icon is available. Otherwise nil.
 	/// - Warning: In certain scenarios, this will return the `faviconTemplateImage`.
-	func thumbnailAttachment(for article: Article, feed: Feed) -> UNNotificationAttachment? {
+	@MainActor func thumbnailAttachment(for article: Article, feed: Feed) -> UNNotificationAttachment? {
 		if let imageURL = article.iconImageUrl(feed: feed) {
 			let thumbnail = try? UNNotificationAttachment(identifier: feed.feedID, url: imageURL, options: nil)
 			return thumbnail

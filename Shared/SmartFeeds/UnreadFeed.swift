@@ -51,13 +51,13 @@ final class UnreadFeed: PseudoFeed {
 	}
 	#endif
 	
-	init() {
+	@MainActor init() {
 
 		self.unreadCount = appDelegate.unreadCount
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: appDelegate)
 	}
 
-	@objc func unreadCountDidChange(_ note: Notification) {
+	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
 
 		assert(note.object is AppDelegate)
 		unreadCount = appDelegate.unreadCount
@@ -66,7 +66,7 @@ final class UnreadFeed: PseudoFeed {
 
 extension UnreadFeed: ArticleFetcher {
 	
-	func fetchArticles() throws -> Set<Article> {
+	@MainActor func fetchArticles() throws -> Set<Article> {
 		return try fetchUnreadArticles()
 	}
 
@@ -74,7 +74,7 @@ extension UnreadFeed: ArticleFetcher {
 		fetchUnreadArticlesAsync(completion)
 	}
 
-	func fetchUnreadArticles() throws -> Set<Article> {
+	@MainActor func fetchUnreadArticles() throws -> Set<Article> {
 		return try AccountManager.shared.fetchArticles(fetchType)
 	}
 

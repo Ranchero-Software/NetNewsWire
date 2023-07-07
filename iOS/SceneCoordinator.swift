@@ -159,7 +159,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	// At some point we should refactor the current Feed IndexPath out and only use the timeline feed
 	private(set) var currentFeedIndexPath: IndexPath?
 
-	var timelineIconImage: IconImage? {
+	@MainActor var timelineIconImage: IconImage? {
 		guard let timelineFeed = timelineFeed else {
 			return nil
 		}
@@ -280,7 +280,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return timelineUnreadCount > 0
 	}
 	
-	var isAnyUnreadAvailable: Bool {
+	@MainActor var isAnyUnreadAvailable: Bool {
 		return appDelegate.unreadCount > 0
 	}
 	
@@ -372,7 +372,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
-	func handle(_ activity: NSUserActivity) {
+	@MainActor func handle(_ activity: NSUserActivity) {
 		selectFeed(indexPath: nil) {
 			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 			switch activityType {
@@ -390,7 +390,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
-	func handle(_ response: UNNotificationResponse) {
+	@MainActor func handle(_ response: UNNotificationResponse) {
 		let userInfo = response.notification.request.content.userInfo
 		handleReadArticle(userInfo)
 	}
@@ -403,7 +403,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
-	func selectFirstUnreadInAllUnread() {
+	@MainActor func selectFirstUnreadInAllUnread() {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
 			self.selectFeed(SmartFeedsController.shared.unreadFeed) {
@@ -412,7 +412,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 
-	func showSearch() {
+	@MainActor func showSearch() {
 		selectFeed(indexPath: nil) {
 			self.rootSplitViewController.show(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
@@ -679,7 +679,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return indexPath
 	}
 	
-	func unreadCountFor(_ node: Node) -> Int {
+	@MainActor func unreadCountFor(_ node: Node) -> Int {
 		// The coordinator supplies the unread count for the currently selected feed
 		if node.representedObject === timelineFeed as AnyObject {
 			return timelineUnreadCount
@@ -743,7 +743,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		rebuildBackingStores()
 	}
 	
-	func collapse(_ containerID: ContainerIdentifier) {
+	@MainActor func collapse(_ containerID: ContainerIdentifier) {
 		unmarkExpanded(containerID)
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
@@ -751,13 +751,13 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
-	func collapse(_ node: Node) {
+	@MainActor func collapse(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
 		lastExpandedTable.remove(containerID)
 		collapse(containerID)
 	}
 	
-	func collapseAllFolders() {
+	@MainActor func collapseAllFolders() {
 		for sectionNode in treeController.rootNode.childNodes {
 			for topLevelNode in sectionNode.childNodes {
 				if topLevelNode.representedObject is Folder {
@@ -776,7 +776,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return indexPathFor(node)
 	}
 	
-	func selectFeed(_ feed: FeedProtocol?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+	@MainActor func selectFeed(_ feed: FeedProtocol?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		let indexPath: IndexPath? = {
 			if let feed = feed, let indexPath = indexPathFor(feed as AnyObject) {
 				return indexPath
@@ -787,7 +787,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		selectFeed(indexPath: indexPath, animations: animations, deselectArticle: deselectArticle, completion: completion)
 	}
 	
-	func selectFeed(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+	@MainActor func selectFeed(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		guard indexPath != currentFeedIndexPath else {
 			completion?()
 			return
@@ -826,40 +826,40 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		
 	}
 	
-	func selectPrevFeed() {
+	@MainActor func selectPrevFeed() {
 		if let indexPath = prevFeedIndexPath {
 			selectFeed(indexPath: indexPath, animations: [.navigation, .scroll])
 		}
 	}
 	
-	func selectNextFeed() {
+	@MainActor func selectNextFeed() {
 		if let indexPath = nextFeedIndexPath {
 			selectFeed(indexPath: indexPath, animations: [.navigation, .scroll])
 		}
 	}
 	
-	func selectTodayFeed(completion: (() -> Void)? = nil) {
+	@MainActor func selectTodayFeed(completion: (() -> Void)? = nil) {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.todayFeed) {
 			self.selectFeed(SmartFeedsController.shared.todayFeed, animations: [.navigation, .scroll], completion: completion)
 		}
 	}
 
-	func selectAllUnreadFeed(completion: (() -> Void)? = nil) {
+	@MainActor func selectAllUnreadFeed(completion: (() -> Void)? = nil) {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
 			self.selectFeed(SmartFeedsController.shared.unreadFeed, animations: [.navigation, .scroll], completion: completion)
 		}
 	}
 
-	func selectStarredFeed(completion: (() -> Void)? = nil) {
+	@MainActor func selectStarredFeed(completion: (() -> Void)? = nil) {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.starredFeed) {
 			self.selectFeed(SmartFeedsController.shared.starredFeed, animations: [.navigation, .scroll], completion: completion)
 		}
 	}
 
-	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
+	@MainActor func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		guard article != currentArticle else { return }
 		
 		currentArticle = article
@@ -883,7 +883,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
-	func beginSearching() {
+	@MainActor func beginSearching() {
 		isSearching = true
 		preSearchTimelineFeed = timelineFeed
 		savedSearchArticles = articles
@@ -892,7 +892,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		selectArticle(nil)
 	}
 
-	func endSearching() {
+	@MainActor func endSearching() {
 		if let oldTimelineFeed = preSearchTimelineFeed {
 			emptyTheTimeline()
 			timelineFeed = oldTimelineFeed
@@ -950,25 +950,25 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return articles[index + 1]
 	}
 	
-	func selectPrevArticle() {
+	@MainActor func selectPrevArticle() {
 		if let article = prevArticle {
 			selectArticle(article, animations: [.navigation, .scroll])
 		}
 	}
 	
-	func selectNextArticle() {
+	@MainActor func selectNextArticle() {
 		if let article = nextArticle {
 			selectArticle(article, animations: [.navigation, .scroll])
 		}
 	}
 	
-	func selectFirstUnread() {
+	@MainActor func selectFirstUnread() {
 		if selectFirstUnreadArticleInTimeline() {
 			activityManager.selectingNextUnread()
 		}
 	}
 	
-	func selectPrevUnread() {
+	@MainActor func selectPrevUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
@@ -989,7 +989,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		selectPrevUnreadArticleInTimeline()
 	}
 
-	func selectNextUnread() {
+	@MainActor func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
@@ -1015,7 +1015,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
-	func scrollOrGoToNextUnread() {
+	@MainActor func scrollOrGoToNextUnread() {
 		if articleViewController?.canScrollDown() ?? false {
 			articleViewController?.scrollPageDown()
 		} else {
@@ -1153,7 +1153,9 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 
 		rebuildBackingStores(initialLoad: initialLoad, completion:  {
 			self.treeControllerDelegate.resetFilterExceptions()
-			self.selectFeed(feed, animations: animations, completion: completion)
+			Task { @MainActor in
+				self.selectFeed(feed, animations: animations, completion: completion)
+			}
 		})
 		
 	}
@@ -1197,7 +1199,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		rootSplitViewController.present(hosting, animated: true)
 	}
 	
-	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
+	@MainActor func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
 		
 		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
 		selectFeed(nil)
@@ -1270,12 +1272,12 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 
-	func navigateToFeeds() {
+	@MainActor func navigateToFeeds() {
 		masterFeedViewController?.focus()
 		selectArticle(nil)
 	}
 	
-	func navigateToTimeline() {
+	@MainActor func navigateToTimeline() {
 		if currentArticle == nil && articles.count > 0 {
 			selectArticle(articles[0])
 		}
@@ -1290,7 +1292,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .oneBesideSecondary ? .secondaryOnly : .oneBesideSecondary
 	}
 	
-	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
+	@MainActor func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		if let article = self.articles.first(where: { $0.articleID == articleID }) {
 			self.selectArticle(article, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 		}
@@ -1657,7 +1659,7 @@ private extension SceneCoordinator {
 		return false
 	}
 	
-	func clearTimelineIfNoLongerAvailable() {
+	@MainActor func clearTimelineIfNoLongerAvailable() {
 		if let feed = timelineFeed, !shadowTableContains(feed) {
 			selectFeed(nil, deselectArticle: true)
 		}
@@ -1746,7 +1748,7 @@ private extension SceneCoordinator {
 	// MARK: Select Prev Unread
 
 	@discardableResult
-	func selectPrevUnreadArticleInTimeline() -> Bool {
+	@MainActor func selectPrevUnreadArticleInTimeline() -> Bool {
 		let startingRow: Int = {
 			if let articleRow = currentArticleRow {
 				return articleRow
@@ -1758,7 +1760,7 @@ private extension SceneCoordinator {
 		return selectPrevArticleInTimeline(startingRow: startingRow)
 	}
 	
-	func selectPrevArticleInTimeline(startingRow: Int) -> Bool {
+	@MainActor func selectPrevArticleInTimeline(startingRow: Int) -> Bool {
 		
 		guard startingRow >= 0 else {
 			return false
@@ -1776,7 +1778,7 @@ private extension SceneCoordinator {
 		
 	}
 	
-	func selectPrevUnreadFeedFetcher() {
+	@MainActor func selectPrevUnreadFeedFetcher() {
 		
 		let indexPath: IndexPath = {
 			if currentFeedIndexPath == nil {
@@ -1808,7 +1810,7 @@ private extension SceneCoordinator {
 	}
 	
 	@discardableResult
-	func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
+	@MainActor func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
 		
 		for i in (0...indexPath.section).reversed() {
 			
@@ -1848,12 +1850,12 @@ private extension SceneCoordinator {
 	// MARK: Select Next Unread
 	
 	@discardableResult
-	func selectFirstUnreadArticleInTimeline() -> Bool {
+	@MainActor func selectFirstUnreadArticleInTimeline() -> Bool {
 		return selectNextArticleInTimeline(startingRow: 0, animated: true)
 	}
 	
 	@discardableResult
-	func selectNextUnreadArticleInTimeline() -> Bool {
+	@MainActor func selectNextUnreadArticleInTimeline() -> Bool {
 		let startingRow: Int = {
 			if let articleRow = currentArticleRow {
 				return articleRow + 1
@@ -1865,7 +1867,7 @@ private extension SceneCoordinator {
 		return selectNextArticleInTimeline(startingRow: startingRow, animated: false)
 	}
 	
-	func selectNextArticleInTimeline(startingRow: Int, animated: Bool) -> Bool {
+	@MainActor func selectNextArticleInTimeline(startingRow: Int, animated: Bool) -> Bool {
 		
 		guard startingRow < articles.count else {
 			return false
@@ -1883,7 +1885,7 @@ private extension SceneCoordinator {
 		
 	}
 	
-	func selectNextUnreadFeed(completion: @escaping () -> Void) {
+	@MainActor func selectNextUnreadFeed(completion: @escaping () -> Void) {
 		
 		let indexPath: IndexPath = {
 			if currentFeedIndexPath == nil {
@@ -1918,7 +1920,7 @@ private extension SceneCoordinator {
 		
 	}
 	
-	func selectNextUnreadFeed(startingWith indexPath: IndexPath, completion: @escaping (Bool) -> Void) {
+	@MainActor func selectNextUnreadFeed(startingWith indexPath: IndexPath, completion: @escaping (Bool) -> Void) {
 		
 		for i in indexPath.section..<shadowTable.count {
 			
@@ -2125,7 +2127,7 @@ private extension SceneCoordinator {
 		]
 	}
 	
-	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
+	@MainActor func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
 			let itemIdentifierUserInfo = userInfo[UserInfoKey.itemIdentifier] as? [AnyHashable : AnyHashable],
 			let itemIdentifier = ItemIdentifier(userInfo: itemIdentifierUserInfo) else {
@@ -2183,7 +2185,7 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
+	@MainActor func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo else { return }
 		
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
@@ -2211,7 +2213,7 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, feedID: String, articleID: String) -> Bool {
+	@MainActor func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, feedID: String, articleID: String) -> Bool {
 		guard let itemIdentifierUserInfo = userInfo[UserInfoKey.itemIdentifier] as? [AnyHashable : AnyHashable],
 			  let itemIdentifier = ItemIdentifier(userInfo: itemIdentifierUserInfo),
 			  let isShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool,
@@ -2271,7 +2273,7 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-	func selectFeedAndArticle(itemIdentifier: ItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+	@MainActor func selectFeedAndArticle(itemIdentifier: ItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
 		guard let feedNode = nodeFor(itemID: itemIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
 		
 		selectFeed(indexPath: feedIndexPath) {
