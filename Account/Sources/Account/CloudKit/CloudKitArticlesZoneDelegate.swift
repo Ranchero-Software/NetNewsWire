@@ -29,38 +29,37 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 	}
 	
 	func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		database.selectPendingReadStatusArticleIDs() { result in
-			switch result {
-			case .success(let pendingReadStatusArticleIDs):
 
-				self.database.selectPendingStarredStatusArticleIDs() { result in
-					switch result {
-					case .success(let pendingStarredStatusArticleIDs):
-						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) { error in
-							if let error = error {
-								completion(.failure(error))
-							} else {
-								self.update(records: updated,
-											pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-											pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-											completion: completion)
-							}
-						}
-					case .failure(let error):
+        database.selectPendingReadStatusArticleIDs() { result in
+            switch result {
+            case .success(let pendingReadStatusArticleIDs):
+
+                self.database.selectPendingStarredStatusArticleIDs() { result in
+                    switch result {
+                    case .success(let pendingStarredStatusArticleIDs):
+                        self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) { error in
+                            Task { @MainActor in
+                                if let error = error {
+                                    completion(.failure(error))
+                                } else {
+                                    self.update(records: updated,
+                                                pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+                                                pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+                                                completion: completion)
+                                }
+                            }
+                        }
+                    case .failure(let error):
                         self.logger.error("Error occurred getting pending starred records: \(error.localizedDescription, privacy: .public)")
-						completion(.failure(CloudKitZoneError.unknown))
-					}
-				}
-			case .failure(let error):
+                        completion(.failure(CloudKitZoneError.unknown))
+                    }
+                }
+            case .failure(let error):
                 self.logger.error("Error occurred getting pending read status records: \(error.localizedDescription, privacy: .public)")
-				completion(.failure(CloudKitZoneError.unknown))
-			}
-
-		}
-		
-	}
-	
+                completion(.failure(CloudKitZoneError.unknown))
+            }
+        }
+    }	
 }
 
 private extension CloudKitArticlesZoneDelegate {
@@ -76,21 +75,23 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { databaseError in
-			if let  databaseError = databaseError {
-				completion(databaseError)
-			} else {
-				self.account?.delete(articleIDs: deletableArticleIDs) { databaseError in
-					if let  databaseError = databaseError {
-						completion(databaseError)
-					} else {
-						completion(nil)
-					}
-				}
-			}
+            Task { @MainActor in
+                if let databaseError = databaseError {
+                    completion(databaseError)
+                } else {
+                    self.account?.delete(articleIDs: deletableArticleIDs) { databaseError in
+                        if let databaseError = databaseError {
+                            completion(databaseError)
+                        } else {
+                            completion(nil)
+                        }
+                    }
+                }
+            }
 		}
 	}
 
-	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
+    @MainActor func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ stripPrefix($0.externalID) }))
 		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ stripPrefix($0.externalID) }))

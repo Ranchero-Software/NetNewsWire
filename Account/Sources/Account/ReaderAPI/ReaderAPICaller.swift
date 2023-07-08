@@ -255,7 +255,7 @@ final class ReaderAPICaller: NSObject {
 		}
 	}
 	
-	func deleteTag(folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+    @MainActor func deleteTag(folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return

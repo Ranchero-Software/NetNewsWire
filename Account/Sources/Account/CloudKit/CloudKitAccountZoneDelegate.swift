@@ -31,7 +31,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		self.articlesZone = articlesZone
 	}
 	
-	func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+    @MainActor func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 		for deletedRecordKey in deleted {
 			switch deletedRecordKey.recordType {
 			case CloudKitAccountZone.CloudKitFeed.recordType:
@@ -57,7 +57,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		completion(.success(()))
 	}
 	
-	func addOrUpdateFeed(_ record: CKRecord) {
+    @MainActor func addOrUpdateFeed(_ record: CKRecord) {
 		guard let account = account,
 			let urlString = record[CloudKitAccountZone.CloudKitFeed.Fields.url] as? String,
 			let containerExternalIDs = record[CloudKitAccountZone.CloudKitFeed.Fields.containerExternalIDs] as? [String],
@@ -82,7 +82,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 	
-	func removeFeed(_ externalID: String) {
+    @MainActor func removeFeed(_ externalID: String) {
 		if let feed = account?.existingFeed(withExternalID: externalID), let containers = account?.existingContainers(withFeed: feed) {
 			containers.forEach {
 				feed.dropConditionalGetInfo()
@@ -91,7 +91,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 	
-	func addOrUpdateContainer(_ record: CKRecord) {
+    @MainActor func addOrUpdateContainer(_ record: CKRecord) {
 		guard let account = account,
 			let name = record[CloudKitAccountZone.CloudKitContainer.Fields.name] as? String,
 			let isAccount = record[CloudKitAccountZone.CloudKitContainer.Fields.isAccount] as? String,
@@ -130,7 +130,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 	
-	func removeContainer(_ externalID: String) {
+    @MainActor func removeContainer(_ externalID: String) {
 		if let folder = account?.existingFolder(withExternalID: externalID) {
 			account?.removeFolder(folder)
 		}
@@ -140,7 +140,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 private extension CloudKitAcountZoneDelegate {
 	
-	func updateFeed(_ feed: Feed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
+    @MainActor func updateFeed(_ feed: Feed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
 		guard let account = account else { return }
 		
         feed.name = name
@@ -168,7 +168,7 @@ private extension CloudKitAcountZoneDelegate {
 		}
 	}
 	
-	func createFeedIfNecessary(url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String, container: Container) {
+    @MainActor func createFeedIfNecessary(url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String, container: Container) {
 		guard let account = account else { return  }
 		
 		if account.existingFeed(withExternalID: feedExternalID) != nil {

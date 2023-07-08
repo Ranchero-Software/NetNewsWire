@@ -93,29 +93,30 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 		let parserData = ParserData(url: feed.url, data: data)
 		FeedParser.parse(parserData) { (parsedFeed, error) in
-			
-			guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
-				completion()
-				self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-				return
-			}
-			
-			account.update(feed, with: parsedFeed) { result in
-				if case .success(let articleChanges) = result {
-					if let httpResponse = response as? HTTPURLResponse {
-						feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
-					}
-					feed.contentHash = dataHash
-					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
-						completion()
-					}
-				} else {
-					completion()
-					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-				}
-			}
-			
+
+            Task { @MainActor in
+                guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
+                    completion()
+                    self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+                    return
+                }
+
+                account.update(feed, with: parsedFeed) { result in
+                    if case .success(let articleChanges) = result {
+                        if let httpResponse = response as? HTTPURLResponse {
+                            feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+                        }
+                        feed.contentHash = dataHash
+                        self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+                        self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
+                            completion()
+                        }
+                    } else {
+                        completion()
+                        self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+                    }
+                }
+            }
 		}
 	}
 	

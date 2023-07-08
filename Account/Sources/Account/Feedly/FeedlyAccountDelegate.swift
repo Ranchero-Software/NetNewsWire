@@ -236,7 +236,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+                    let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}

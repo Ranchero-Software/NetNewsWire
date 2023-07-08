@@ -19,7 +19,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 	case unknown = "An unknown error occurred."
 }
 
-final class FeedbinAccountDelegate: AccountDelegate, Logging {
+@MainActor final class FeedbinAccountDelegate: AccountDelegate, Logging {
 
 	private let database: SyncDatabase
 	
@@ -92,7 +92,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 					case .failure(let error):
 						DispatchQueue.main.async {
 							self.refreshProgress.clear()
-							let wrappedError = AccountError.wrappedError(error: error, account: account)
+							let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 							completion(.failure(wrappedError))
 						}
 					}
@@ -101,7 +101,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 			case .failure(let error):
 				DispatchQueue.main.async {
 					self.refreshProgress.clear()
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -134,7 +134,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 
 		database.selectForProcessing { result in
 
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
+            @MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
 				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
 				let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
@@ -280,7 +280,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -315,7 +315,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -409,7 +409,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -437,7 +437,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -484,7 +484,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 						completion(.failure(wrappedError))
 					}
 				}
@@ -1163,43 +1163,46 @@ private extension FeedbinAccountDelegate {
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 			
-			func process(_ fetchedArticleIDs: Set<String>) {
+            @MainActor func process(_ fetchedArticleIDs: Set<String>) {
 				let group = DispatchGroup()
 				var errorOccurred = false
 				
 				let articleIDs = Array(fetchedArticleIDs)
 				let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
-				for chunk in chunkedArticleIDs {
-					group.enter()
-					self.caller.retrieveEntries(articleIDs: chunk) { result in
+                for chunk in chunkedArticleIDs {
+                    group.enter()
+                    self.caller.retrieveEntries(articleIDs: chunk) { result in
 
-						switch result {
-						case .success(let entries):
+//                        Task { @MainActor in
+                            switch result {
+                            case .success(let entries):
+                                self.processEntries(account: account, entries: entries) { error in
+                                    group.leave()
+                                    if error != nil {
+                                        errorOccurred = true
+                                    }
+                                }
 
-							self.processEntries(account: account, entries: entries) { error in
-								group.leave()
-								if error != nil {
-									errorOccurred = true
-								}
-							}
-
-						case .failure(let error):
-							errorOccurred = true
-                            self.logger.error("Refreshing missing articles failed: \(error.localizedDescription, privacy: .public)")
-							group.leave()
-						}
-					}
-				}
+                            case .failure(let error):
+                                errorOccurred = true
+                                self.logger.error("Refreshing missing articles failed: \(error.localizedDescription, privacy: .public)")
+                                group.leave()
+                            }
+//                        }
+                    }
+                }
 
 				group.notify(queue: DispatchQueue.main) {
-					self.refreshProgress.completeTask()
-                    self.logger.debug("Done refreshing missing articles.")
-					if errorOccurred {
-						completion(.failure(FeedbinAccountDelegateError.unknown))
-					} else {
-						completion(.success(()))
-					}
+//                    Task { @MainActor in
+                        self.refreshProgress.completeTask()
+                        self.logger.debug("Done refreshing missing articles.")
+                        if errorOccurred {
+                            completion(.failure(FeedbinAccountDelegateError.unknown))
+                        } else {
+                            completion(.success(()))
+                        }
+//                    }
 				}
 			}
 
@@ -1273,7 +1276,7 @@ private extension FeedbinAccountDelegate {
 
 		database.selectPendingReadStatusArticleIDs() { result in
 
-			func process(_ pendingArticleIDs: Set<String>) {
+            @MainActor func process(_ pendingArticleIDs: Set<String>) {
 				
 				let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
 				let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
@@ -1326,7 +1329,7 @@ private extension FeedbinAccountDelegate {
 
 		database.selectPendingStarredStatusArticleIDs() { result in
 
-			func process(_ pendingArticleIDs: Set<String>) {
+            @MainActor func process(_ pendingArticleIDs: Set<String>) {
 				
 				let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
 				let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
@@ -1386,7 +1389,7 @@ private extension FeedbinAccountDelegate {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 						completion(.failure(wrappedError))
 					}
 				}

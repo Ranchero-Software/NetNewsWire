@@ -9,10 +9,10 @@
 import Foundation
 
 public protocol ContainerIdentifiable {
-	var containerID: ContainerIdentifier? { get }
+    @MainActor var containerID: ContainerIdentifier? { get }
 }
 
-public enum ContainerIdentifier: Hashable, Equatable {
+@MainActor public enum ContainerIdentifier: Hashable, Equatable {
 	case smartFeedController
 	case account(String) // accountID
 	case folder(String, String) // accountID, folderName

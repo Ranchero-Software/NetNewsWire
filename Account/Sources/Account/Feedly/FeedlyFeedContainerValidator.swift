@@ -11,7 +11,7 @@ import Foundation
 struct FeedlyFeedContainerValidator {
 	var container: Container
 	
-	func getValidContainer() throws -> (Folder, String) {
+    @MainActor func getValidContainer() throws -> (Folder, String) {
 		guard let folder = container as? Folder else {
 			throw FeedlyAccountDelegateError.addFeedChooseFolder
 		}

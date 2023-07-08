@@ -61,7 +61,7 @@ public enum FetchType {
 	case searchWithArticleIDs(String, Set<String>)
 }
 
-public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
+@MainActor public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
@@ -1017,13 +1017,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	// MARK: - Hashable
 
-	public func hash(into hasher: inout Hasher) {
+	nonisolated public func hash(into hasher: inout Hasher) {
 		hasher.combine(accountID)
 	}
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Account, rhs: Account) -> Bool {
+    nonisolated public class func ==(lhs: Account, rhs: Account) -> Bool {
 		return lhs === rhs
 	}
 }

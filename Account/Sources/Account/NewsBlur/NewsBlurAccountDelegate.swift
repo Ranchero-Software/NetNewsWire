@@ -90,7 +90,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 									case .failure(let error):
 										DispatchQueue.main.async {
 											self.refreshProgress.clear()
-											let wrappedError = AccountError.wrappedError(error: error, account: account)
+                                            let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 											completion(.failure(wrappedError))
 										}
 									}
@@ -134,7 +134,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
         logger.debug("Sending story statuses...")
 		database.selectForProcessing { result in
 
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
+            @MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
 				let createUnreadStatuses = syncStatuses.filter {
 					$0.key == SyncStatus.Key.read && $0.flag == false
 				}
@@ -270,7 +270,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 
-			func process(_ fetchedHashes: Set<String>) {
+            @MainActor func process(_ fetchedHashes: Set<String>) {
 				let group = DispatchGroup()
 				var errorOccurred = false
 
@@ -432,7 +432,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 				self.createFeed(account: account, newsBlurFeed: feed, name: name, container: container, completion: completion)
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -459,7 +459,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}

@@ -18,35 +18,35 @@ extension Notification.Name {
 
 public protocol Container: AnyObject, ContainerIdentifiable {
 
-	var account: Account? { get }
-	var topLevelFeeds: Set<Feed> { get set }
-	var folders: Set<Folder>? { get set }
-	var externalID: String? { get set }
+    @MainActor var account: Account? { get }
+    @MainActor var topLevelFeeds: Set<Feed> { get set }
+    @MainActor var folders: Set<Folder>? { get set }
+    @MainActor var externalID: String? { get set }
 	
-	func hasAtLeastOneFeed() -> Bool
-	func objectIsChild(_ object: AnyObject) -> Bool
+    @MainActor func hasAtLeastOneFeed() -> Bool
+    @MainActor func objectIsChild(_ object: AnyObject) -> Bool
 
-	func hasChildFolder(with: String) -> Bool
-	func childFolder(with: String) -> Folder?
+    @MainActor func hasChildFolder(with: String) -> Bool
+    @MainActor func childFolder(with: String) -> Folder?
 
-    func removeFeed(_ feed: Feed)
-	func addFeed(_ feed: Feed)
+    @MainActor func removeFeed(_ feed: Feed)
+    @MainActor func addFeed(_ feed: Feed)
 
 	//Recursive — checks subfolders
-	func flattenedFeeds() -> Set<Feed>
-	func has(_ feed: Feed) -> Bool
-	func hasFeed(with feedID: String) -> Bool
-	func hasFeed(withURL url: String) -> Bool
-	func existingFeed(withFeedID: String) -> Feed?
-	func existingFeed(withURL url: String) -> Feed?
-	func existingFeed(withExternalID externalID: String) -> Feed?
-	func existingFolder(with name: String) -> Folder?
-	func existingFolder(withID: Int) -> Folder?
+    @MainActor func flattenedFeeds() -> Set<Feed>
+    @MainActor func has(_ feed: Feed) -> Bool
+    @MainActor func hasFeed(with feedID: String) -> Bool
+    @MainActor func hasFeed(withURL url: String) -> Bool
+    @MainActor func existingFeed(withFeedID: String) -> Feed?
+    @MainActor func existingFeed(withURL url: String) -> Feed?
+    @MainActor func existingFeed(withExternalID externalID: String) -> Feed?
+    @MainActor func existingFolder(with name: String) -> Folder?
+    @MainActor func existingFolder(withID: Int) -> Folder?
 
-	func postChildrenDidChangeNotification()
+    @MainActor func postChildrenDidChangeNotification()
 }
 
-public extension Container {
+@MainActor public extension Container {
 
 	func hasAtLeastOneFeed() -> Bool {
 		return topLevelFeeds.count > 0

@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import ArticlesDatabase
 
-public protocol ArticleFetcher {
+@MainActor public protocol ArticleFetcher {
 
 	func fetchArticles() throws -> Set<Article>
 	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock)

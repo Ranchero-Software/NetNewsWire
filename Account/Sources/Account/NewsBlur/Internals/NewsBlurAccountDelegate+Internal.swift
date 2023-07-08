@@ -323,7 +323,7 @@ extension NewsBlurAccountDelegate {
 		}
 
 		database.selectPendingReadStatusArticleIDs() { result in
-			func process(_ pendingStoryHashes: Set<String>) {
+            @MainActor func process(_ pendingStoryHashes: Set<String>) {
 
 				let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
 				let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
@@ -371,7 +371,8 @@ extension NewsBlurAccountDelegate {
 		}
 
 		database.selectPendingStarredStatusArticleIDs() { result in
-			func process(_ pendingStoryHashes: Set<String>) {
+
+            @MainActor func process(_ pendingStoryHashes: Set<String>) {
 
 				let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
 				let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
@@ -550,7 +551,7 @@ extension NewsBlurAccountDelegate {
 
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}

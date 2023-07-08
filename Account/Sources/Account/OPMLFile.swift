@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 
-final class OPMLFile: Logging {
+@MainActor final class OPMLFile: Logging {
 
 	private let fileURL: URL
 	private let account: Account

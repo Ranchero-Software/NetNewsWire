@@ -88,7 +88,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
     
 	///  Persist a web feed record to iCloud and return the external key
-	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
+    @MainActor func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
 		record[CloudKitFeed.Fields.url] = url
@@ -138,7 +138,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 	
 	/// Removes a web feed from a container and optionally deletes it, calling the completion with true if deleted
-	func removeFeed(_ feed: Feed, from: Container, completion: @escaping (Result<Bool, Error>) -> Void) {
+    @MainActor func removeFeed(_ feed: Feed, from: Container, completion: @escaping (Result<Bool, Error>) -> Void) {
 		guard let fromContainerExternalID = from.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -187,7 +187,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-	func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+    @MainActor func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let fromContainerExternalID = from.externalID, let toContainerExternalID = to.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -209,7 +209,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-	func addFeed(_ feed: Feed, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+    @MainActor func addFeed(_ feed: Feed, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let toContainerExternalID = to.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -230,7 +230,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-	func findFeedExternalIDs(for folder: Folder, completion: @escaping (Result<[String], Error>) -> Void) {
+    @MainActor func findFeedExternalIDs(for folder: Folder, completion: @escaping (Result<[String], Error>) -> Void) {
 		guard let folderExternalID = folder.externalID else {
 			completion(.failure(CloudKitAccountZoneError.unknown))
 			return
@@ -292,7 +292,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		createContainer(name: name, isAccount: false, completion: completion)
 	}
 	
-	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    @MainActor func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let externalID = folder.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -312,7 +312,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-	func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+    @MainActor func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		delete(externalID: folder.externalID, completion: completion)
 	}
 	

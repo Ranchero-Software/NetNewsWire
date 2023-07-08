@@ -71,7 +71,7 @@ private extension CloudKitSendStatusOperation {
 			switch result {
 			case .success(let syncStatuses):
 				
-				func stopProcessing() {
+                @MainActor func stopProcessing() {
 					if self.showProgress {
 						self.refreshProgress?.completeTask()
 					}
@@ -108,7 +108,7 @@ private extension CloudKitSendStatusOperation {
 		let articleIDs = syncStatuses.map({ $0.articleID })
 		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
 			
-			func processWithArticles(_ articles: Set<Article>) {
+            @MainActor func processWithArticles(_ articles: Set<Article>) {
 				
 				let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
 				let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
@@ -118,7 +118,7 @@ private extension CloudKitSendStatusOperation {
 					return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
 				}
 				
-				func done(_ stop: Bool) {
+                func done(_ stop: Bool) {
 					// Don't clear the last one since we might have had additional ticks added
 					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 						self.refreshProgress?.completeTask()

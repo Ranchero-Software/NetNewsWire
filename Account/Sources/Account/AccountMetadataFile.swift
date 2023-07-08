@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 
-final class AccountMetadataFile: Logging {
+@MainActor final class AccountMetadataFile: Logging {
 
 	private let fileURL: URL
 	private let account: Account

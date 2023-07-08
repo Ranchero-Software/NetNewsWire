@@ -16,7 +16,7 @@ public final class Folder: FeedProtocol, Renamable, Container, Hashable {
 		return .read
 	}
 	
-	public var containerID: ContainerIdentifier? {
+    @MainActor public var containerID: ContainerIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
@@ -24,7 +24,7 @@ public final class Folder: FeedProtocol, Renamable, Container, Hashable {
 		return ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 	
-	public var itemID: ItemIdentifier? {
+    @MainActor public var itemID: ItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
@@ -66,7 +66,7 @@ public final class Folder: FeedProtocol, Renamable, Container, Hashable {
 
 	// MARK: - Renamable
 
-	public func rename(to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    @MainActor public func rename(to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let account = account else { return }
 		account.renameFolder(self, to: name, completion: completion)
 	}
@@ -122,7 +122,7 @@ public final class Folder: FeedProtocol, Renamable, Container, Hashable {
 		postChildrenDidChangeNotification()
 	}
 	
-	public func addFeeds(_ feeds: Set<Feed>) {
+    @MainActor public func addFeeds(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
 		}
@@ -135,7 +135,7 @@ public final class Folder: FeedProtocol, Renamable, Container, Hashable {
 		postChildrenDidChangeNotification()
 	}
 	
-	public func removeFeeds(_ feeds: Set<Feed>) {
+    @MainActor public func removeFeeds(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
 		}
@@ -168,7 +168,7 @@ private extension Folder {
 		unreadCount = updatedUnreadCount
 	}
 
-	func childrenContain(_ feed: Feed) -> Bool {
+    @MainActor func childrenContain(_ feed: Feed) -> Bool {
 		return topLevelFeeds.contains(feed)
 	}
 }
@@ -177,7 +177,7 @@ private extension Folder {
 
 extension Folder: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
+    @MainActor public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		
 		let attrExternalID: String = {
 			if allowCustomAttributes, let externalID = externalID {
@@ -220,7 +220,7 @@ extension Folder: OPMLRepresentable {
 
 // MARK: Set
 
-extension Set where Element == Folder {
+@MainActor extension Set where Element == Folder {
 	
 	func sorted() -> Array<Folder> {
 		return sorted(by: { (folder1, folder2) -> Bool in

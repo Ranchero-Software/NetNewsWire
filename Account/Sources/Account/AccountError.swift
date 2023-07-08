@@ -9,30 +9,54 @@
 import Foundation
 import RSWeb
 
+public struct WrappedAccountError: LocalizedError {
+
+    public let accountID: String
+    public let underlyingError: Error
+    public let isCredentialsError: Bool
+
+    public var errorTitle: String {
+        NSLocalizedString("error.title.error", bundle: Bundle.module, comment: "Error")
+    }
+
+    public var errorDescription: String? {
+        if isCredentialsError {
+            let localizedText = NSLocalizedString("error.message.credentials-expired.%@", bundle: Bundle.module, comment: "Your ”%@” credentials have expired.")
+            return String(format: localizedText, accountNameForDisplay)
+        }
+
+        let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
+        return String(format: localizedText, accountNameForDisplay, underlyingError.localizedDescription)
+    }
+
+    public var recoverySuggestion: String? {
+        if isCredentialsError {
+            return NSLocalizedString("Please update your credentials for this account, or ensure that your account with this service is still valid.", comment: "Expired credentials")
+        }
+        return NSLocalizedString("Please try again later.", comment: "Try later")
+    }
+
+    private let accountNameForDisplay: String
+
+    @MainActor init(account: Account, underlyingError: Error) {
+        self.accountID = account.accountID
+        self.underlyingError = underlyingError
+        self.accountNameForDisplay = account.nameForDisplay
+
+        var isCredentialsError = false
+        if case TransportError.httpError(let status) = underlyingError {
+            isCredentialsError = (status == HTTPResponseCode.unauthorized  || status == HTTPResponseCode.forbidden)
+        }
+        self.isCredentialsError = isCredentialsError
+    }
+}
+
 public enum AccountError: LocalizedError {
 	
 	case createErrorNotFound
 	case createErrorAlreadySubscribed
 	case opmlImportInProgress
-	case wrappedError(error: Error, account: Account)
-	
-	public var account: Account? {
-		if case .wrappedError(_, let account) = self {
-			return account
-		} else {
-			return nil
-		}
-	}
-	
-	public var isCredentialsError: Bool {
-		if case .wrappedError(let error, _) = self {
-			if case TransportError.httpError(let status) = error {
-				return isCredentialsError(status: status)
-			}
-		}
-		return false
-	}
-    
+
     public var errorTitle: String {
         switch self {
         case .createErrorNotFound:
@@ -41,8 +65,6 @@ public enum AccountError: LocalizedError {
             return NSLocalizedString("error.title.already-subscribed", bundle: Bundle.module, comment: "Already Subscribed")
         case .opmlImportInProgress:
             return NSLocalizedString("error.title.ompl-import-in-progress", bundle: Bundle.module, comment: "OPML Import in Progress")
-        case .wrappedError(_, _):
-            return NSLocalizedString("error.title.error", bundle: Bundle.module, comment: "Error")
         }
     }
 	
@@ -54,18 +76,6 @@ public enum AccountError: LocalizedError {
             return NSLocalizedString("error.message.feed-already-subscribed", bundle: Bundle.module, comment: "You are already subscribed to this feed and can’t add it again.")
 		case .opmlImportInProgress:
             return NSLocalizedString("error.message.opml-import-in-progress", bundle: Bundle.module, comment: "An OPML import for this account is already running.")
-		case .wrappedError(let error, let account):
-			switch error {
-			case TransportError.httpError(let status):
-				if isCredentialsError(status: status) {
-                    let localizedText = NSLocalizedString("error.message.credentials-expired.%@", bundle: Bundle.module, comment: "Your ”%@” credentials have expired.")
-                    return String(format: localizedText, account.nameForDisplay)
-				} else {
-					return unknownError(error, account)
-				}
-			default:
-				return unknownError(error, account)
-			}
 		}
 	}
 	
@@ -75,35 +85,8 @@ public enum AccountError: LocalizedError {
 			return nil
 		case .createErrorAlreadySubscribed:
 			return nil
-		case .wrappedError(let error, _):
-			switch error {
-			case TransportError.httpError(let status):
-				if isCredentialsError(status: status) {
-					return NSLocalizedString("Please update your credentials for this account, or ensure that your account with this service is still valid.", comment: "Expired credentials")
-				} else {
-					return NSLocalizedString("Please try again later.", comment: "Try later")
-				}
-			default:
-				return NSLocalizedString("Please try again later.", comment: "Try later")
-			}
 		default:
 			return NSLocalizedString("Please try again later.", comment: "Try later")
 		}
 	}
-	
-}
-
-// MARK: Private
-
-private extension AccountError {
-	
-	func unknownError(_ error: Error, _ account: Account) -> String {
-		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
-		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
-	}
-	
-	func isCredentialsError(status: Int) -> Bool {
-		return status == 401  || status == 403
-	}
-	
 }

@@ -33,7 +33,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	}
 }
 
-final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
+@MainActor final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 	
 	private let variant: ReaderAPIVariant
 	
@@ -135,7 +135,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 				DispatchQueue.main.async {
 					self.refreshProgress.clear()
 					
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
 						self.caller.credentials = basicCredentials
 						
@@ -198,7 +198,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 
 		database.selectForProcessing { result in
 
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
+            @MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
 				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
 				let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
@@ -312,7 +312,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -422,7 +422,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 						}
 					case .failure(let error):
 						DispatchQueue.main.async {
-							let wrappedError = AccountError.wrappedError(error: error, account: account)
+							let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 							completion(.failure(wrappedError))
 						}
 					}
@@ -456,7 +456,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -487,7 +487,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -537,7 +537,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						let wrappedError = WrappedAccountError(account: account, underlyingError: error)
 						completion(.failure(wrappedError))
 					}
 				}
@@ -980,7 +980,7 @@ private extension ReaderAPIAccountDelegate {
 	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDsResult in
 
-			func process(_ fetchedArticleIDs: Set<String>) {
+            @MainActor func process(_ fetchedArticleIDs: Set<String>) {
 				guard !fetchedArticleIDs.isEmpty else {
 					completion()
 					return
@@ -1086,7 +1086,7 @@ private extension ReaderAPIAccountDelegate {
 
 		database.selectPendingReadStatusArticleIDs() { result in
 
-			func process(_ pendingArticleIDs: Set<String>) {
+            @MainActor func process(_ pendingArticleIDs: Set<String>) {
 				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 				
 				account.fetchUnreadArticleIDs { articleIDsResult in
@@ -1135,7 +1135,7 @@ private extension ReaderAPIAccountDelegate {
 
 		database.selectPendingStarredStatusArticleIDs() { result in
 
-			func process(_ pendingArticleIDs: Set<String>) {
+            @MainActor func process(_ pendingArticleIDs: Set<String>) {
 				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
 				account.fetchStarredArticleIDs { articleIDsResult in
