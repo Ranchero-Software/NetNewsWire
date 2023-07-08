@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "rscore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSCore.git",
+      "state" : {
+        "revision" : "dcaa40ceb2c8acd182fbcd69d1f8e56df97e38b1",
+        "version" : "2.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}
