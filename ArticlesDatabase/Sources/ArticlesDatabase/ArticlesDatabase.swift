@@ -55,7 +55,7 @@ public typealias ArticleIDsCompletionBlock = (ArticleIDsResult) -> Void
 public typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseError>
 public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 
-public final class ArticlesDatabase {
+@MainActor public final class ArticlesDatabase {
 
 	public enum RetentionStyle {
 		case feedBased // Local and iCloud: article retention is defined by contents of feed
