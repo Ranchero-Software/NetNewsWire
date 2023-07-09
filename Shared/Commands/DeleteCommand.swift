@@ -12,7 +12,7 @@ import RSTree
 import Account
 import Articles
 
-final class DeleteCommand: UndoableCommand {
+@MainActor final class DeleteCommand: UndoableCommand {
 
 	let treeController: TreeController?
 	let undoManager: UndoManager
@@ -112,7 +112,7 @@ private struct SidebarItemSpecifier {
 		return nil
 	}
 
-	init?(node: Node, errorHandler: @escaping (Error) -> ()) {
+	@MainActor init?(node: Node, errorHandler: @escaping (Error) -> ()) {
 
 		var account: Account?
 
@@ -142,7 +142,7 @@ private struct SidebarItemSpecifier {
 		
 	}
 
-	func delete(completion: @escaping () -> Void) {
+	@MainActor func delete(completion: @escaping () -> Void) {
 
 		if let feed {
 			
@@ -170,7 +170,7 @@ private struct SidebarItemSpecifier {
 		}
 	}
 
-	func restore() {
+	@MainActor func restore() {
 
 		if let _ = feed {
 			restoreFeed()
@@ -180,7 +180,7 @@ private struct SidebarItemSpecifier {
 		}
 	}
 
-	private func restoreFeed() {
+	@MainActor private func restoreFeed() {
 
 		guard let account = account, let feed = feed, let container = path.resolveContainer() else {
 			return
@@ -194,7 +194,7 @@ private struct SidebarItemSpecifier {
 		
 	}
 
-	private func restoreFolder() {
+	@MainActor private func restoreFolder() {
 
 		guard let account = account, let folder = folder else {
 			return

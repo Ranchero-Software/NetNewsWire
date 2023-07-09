@@ -23,23 +23,25 @@ final class SendToMarsEditCommand: SendToCommand {
 
 	func sendObject(_ object: Any?, selectedText: String?) {
 
-		guard canSendObject(object, selectedText: selectedText) else {
-			return
-		}
-		guard let article = (object as? ArticlePasteboardWriter)?.article else {
-			return
-		}
-		guard let app = appToUse(), app.launchIfNeeded(), app.bringToFront() else {
-			return
-		}
+		Task { @MainActor in
+			guard canSendObject(object, selectedText: selectedText) else {
+				return
+			}
+			guard let article = (object as? ArticlePasteboardWriter)?.article else {
+				return
+			}
+			guard let app = appToUse(), app.launchIfNeeded(), app.bringToFront() else {
+				return
+			}
 
-		send(article, to: app)
+			send(article, to: app)
+		}
 	}
 }
 
 private extension SendToMarsEditCommand {
 
-	func send(_ article: Article, to app: UserApp) {
+	@MainActor func send(_ article: Article, to app: UserApp) {
 
 		// App has already been launched.
 

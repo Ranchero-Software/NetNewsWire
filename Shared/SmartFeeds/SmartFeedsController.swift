@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import Account
 
-final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
+@MainActor final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 	
 	var containerID: ContainerIdentifier? {
 		return ContainerIdentifier.smartFeedController

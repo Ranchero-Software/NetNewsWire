@@ -41,7 +41,7 @@ final class FeedTreeControllerDelegate: TreeControllerDelegate {
 
 private extension FeedTreeControllerDelegate {
 	
-	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
+	@MainActor func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()
 
 		let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
@@ -54,7 +54,7 @@ private extension FeedTreeControllerDelegate {
 		return topLevelNodes
 	}
 
-	func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
+	@MainActor func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
 		return SmartFeedsController.shared.smartFeeds.compactMap { (feed) -> Node? in
 			// All Smart Feeds should remain visible despite the Hide Read Feeds setting
 			return parentNode.existingOrNewChildNode(with: feed as AnyObject)
@@ -132,7 +132,7 @@ private extension FeedTreeControllerDelegate {
 		return node
 	}
 
-	func sortedAccountNodes(_ parent: Node) -> [Node] {
+	@MainActor func sortedAccountNodes(_ parent: Node) -> [Node] {
 		let nodes = AccountManager.shared.sortedActiveAccounts.compactMap { (account) -> Node? in
 			let accountNode = parent.existingOrNewChildNode(with: account)
 			accountNode.canHaveChildNodes = true

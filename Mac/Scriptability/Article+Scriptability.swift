@@ -11,7 +11,7 @@ import Account
 import Articles
 
 @objc(ScriptableArticle)
-class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let article:Article
     let container:ScriptingObjectContainer
@@ -111,7 +111,9 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 			return article.status.boolStatus(forKey:.read)
 		}
 		set {
-			markArticles([self.article], statusKey: .read, flag: newValue)
+			Task { @MainActor in
+				markArticles([self.article], statusKey: .read, flag: newValue)
+			}
 		}
     }
 
@@ -121,7 +123,9 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 			return article.status.boolStatus(forKey:.starred)
 		}
 		set {
-			markArticles([self.article], statusKey: .starred, flag: newValue)
+			Task { @MainActor in
+				markArticles([self.article], statusKey: .starred, flag: newValue)
+			}
 		}
     }
 

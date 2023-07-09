@@ -12,8 +12,8 @@ import RSCore
 @objc final class SharingServicePickerDelegate: NSObject, NSSharingServicePickerDelegate {
 	
 	private let sharingServiceDelegate: SharingServiceDelegate
-	
-	init(_ window: NSWindow?) {
+
+	@MainActor init(_ window: NSWindow?) {
 		sharingServiceDelegate = SharingServiceDelegate(window)
 	}
 	
@@ -27,13 +27,13 @@ import RSCore
 	}
 
 	static func customSharingServices(for items: [Any]) -> [NSSharingService] {
+		guard let object = items.first else {
+			return [NSSharingService]()
+		}
+
 		let customServices: [SendToCommand] = [SendToMarsEditCommand(), SendToMicroBlogCommand()]
 
 		return customServices.compactMap { (sendToCommand) -> NSSharingService? in
-
-			guard let object = items.first else {
-				return nil
-			}
 
 			guard sendToCommand.canSendObject(object, selectedText: nil) else {
 				return nil

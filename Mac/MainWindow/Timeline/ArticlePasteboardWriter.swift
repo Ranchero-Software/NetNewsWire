@@ -24,7 +24,7 @@ extension Article: PasteboardWriterOwner {
 	static let articleUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.article"
 	static let articleUTIInternalType = NSPasteboard.PasteboardType(rawValue: articleUTIInternal)
 
-	private lazy var renderedHTML: String = {
+	@MainActor private lazy var renderedHTML: String = {
 		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
 		return rendering.html
 	}()
@@ -46,7 +46,7 @@ extension Article: PasteboardWriterOwner {
 		return types
 	}
 
-	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+	@MainActor func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
 		let plist: Any?
 
 		switch type {
@@ -70,7 +70,7 @@ extension Article: PasteboardWriterOwner {
 
 private extension ArticlePasteboardWriter {
 
-	func plainText() -> String {
+	@MainActor func plainText() -> String {
 		var s = ""
 
 		if let title = article.title {
@@ -137,7 +137,7 @@ private extension ArticlePasteboardWriter {
 		static let accountID = "accountID"
 	}
 
-	func exportDictionary() -> [String: Any] {
+	@MainActor func exportDictionary() -> [String: Any] {
 		var d = [String: Any]()
 
 		d[Key.articleID] = article.articleID
@@ -163,7 +163,7 @@ private extension ArticlePasteboardWriter {
 		return d
 	}
 
-	func internalDictionary() -> [String: Any] {
+	@MainActor func internalDictionary() -> [String: Any] {
 		var d = exportDictionary()
 		d[Key.accountID] = article.accountID
 		return d

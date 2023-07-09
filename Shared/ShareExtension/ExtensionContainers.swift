@@ -55,7 +55,7 @@ struct ExtensionAccount: ExtensionContainer {
 	let containerID: ContainerIdentifier?
 	let folders: [ExtensionFolder]
 
-	init(account: Account) {
+	@MainActor init(account: Account) {
 		self.name = account.nameForDisplay
 		self.accountID = account.accountID
 		self.type = account.type
@@ -84,7 +84,7 @@ struct ExtensionFolder: ExtensionContainer {
 	let name: String
 	let containerID: ContainerIdentifier?
 
-	init(folder: Folder) {
+	@MainActor init(folder: Folder) {
 		self.accountName = folder.account?.nameForDisplay ?? ""
 		self.accountID = folder.account?.accountID ?? ""
 		self.name = folder.nameForDisplay

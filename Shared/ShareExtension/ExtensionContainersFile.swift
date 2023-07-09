@@ -21,10 +21,12 @@ final class ExtensionContainersFile: Logging {
 	
 	private var isDirty = false {
 		didSet {
-			queueSaveToDiskIfNeeded()
+			Task { @MainActor in
+				queueSaveToDiskIfNeeded()
+			}
 		}
 	}
-	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+	@MainActor private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
 
 	init() {
 		if !FileManager.default.fileExists(atPath: ExtensionContainersFile.filePath) {
@@ -66,7 +68,7 @@ private extension ExtensionContainersFile {
 		isDirty = true
 	}
 	
-	func queueSaveToDiskIfNeeded() {
+	@MainActor func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 

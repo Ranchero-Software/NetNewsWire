@@ -18,7 +18,7 @@ extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-final class FaviconDownloader: Logging {
+@MainActor final class FaviconDownloader: Logging {
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -280,11 +280,15 @@ private extension FaviconDownloader {
 	}
 
 	func queueSaveHomePageToFaviconURLCacheIfNeeded() {
-		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageToFaviconURLCacheIfNeeded))
+		Task { @MainActor in
+			FaviconDownloader.saveQueue.add(self, #selector(saveHomePageToFaviconURLCacheIfNeeded))
+		}
 	}
 
 	func queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
-		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageURLsWithNoFaviconURLCacheIfNeeded))
+		Task { @MainActor in
+			FaviconDownloader.saveQueue.add(self, #selector(saveHomePageURLsWithNoFaviconURLCacheIfNeeded))
+		}
 	}
 
 	func saveHomePageToFaviconURLCache() {

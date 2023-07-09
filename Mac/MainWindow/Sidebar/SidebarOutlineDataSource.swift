@@ -12,7 +12,7 @@ import Articles
 import RSCore
 import Account
 
-@objc final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
+@MainActor @objc final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
 
 	let treeController: TreeController
 	static let dragOperationNone = NSDragOperation(rawValue: 0)
@@ -250,7 +250,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	func accountForNode(_ node: Node) -> Account? {
+	@MainActor func accountForNode(_ node: Node) -> Account? {
 		if let account = node.representedObject as? Account {
 			return account
 		}
@@ -263,7 +263,7 @@ private extension SidebarOutlineDataSource {
 		return nil
 	}
 
-	func commonAccountsFor(_ nodes: Set<Node>) -> Set<Account> {
+	@MainActor func commonAccountsFor(_ nodes: Set<Node>) -> Set<Account> {
 		var accounts = Set<Account>()
 		for node in nodes {
 			guard let oneAccount = accountForNode(node) else {
@@ -274,7 +274,7 @@ private extension SidebarOutlineDataSource {
 		return accounts
 	}
 
-	func accountHasFolderRepresentingAnyDraggedFolders(_ account: Account, _ draggedFolders: Set<PasteboardFolder>) -> Bool {
+	@MainActor func accountHasFolderRepresentingAnyDraggedFolders(_ account: Account, _ draggedFolders: Set<PasteboardFolder>) -> Bool {
 		for draggedFolder in draggedFolders {
 			if account.existingFolder(with: draggedFolder.name) != nil {
 				return true
@@ -283,7 +283,7 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 	
-	func validateLocalFolderDrop(_ outlineView: NSOutlineView, _ draggedFolder: PasteboardFolder, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+	@MainActor func validateLocalFolderDrop(_ outlineView: NSOutlineView, _ draggedFolder: PasteboardFolder, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		guard let dropAccount = parentNode.representedObject as? Account, dropAccount.accountID != draggedFolder.accountID else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
@@ -297,7 +297,7 @@ private extension SidebarOutlineDataSource {
 		return .copy	// different AccountIDs means can only copy 
 	}
 	
-	func validateLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+	@MainActor func validateLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		guard let dropAccount = parentNode.representedObject as? Account else {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
@@ -315,7 +315,7 @@ private extension SidebarOutlineDataSource {
 		return .copy	// different AccountIDs means can only copy
 	}
 	
-	func copyFeedInAccount(_ feed: Feed, _ destination: Container ) {
+	@MainActor func copyFeedInAccount(_ feed: Feed, _ destination: Container ) {
 		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
@@ -326,7 +326,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 	
-	func moveFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
+	@MainActor func moveFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
 		BatchUpdate.shared.start()
 		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
@@ -339,7 +339,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 	
-	func copyFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
+	@MainActor func copyFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
 		guard let destinationAccount = destinationContainer.account  else {
 			return
 		}

@@ -17,9 +17,9 @@ protocol SmartFeedDelegate: ItemIdentifiable, DisplayNameProvider, ArticleFetche
 	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock)
 }
 
-extension SmartFeedDelegate {
+@MainActor extension SmartFeedDelegate {
 
-	@MainActor func fetchArticles() throws -> Set<Article> {
+	func fetchArticles() throws -> Set<Article> {
 		return try AccountManager.shared.fetchArticles(fetchType)
 	}
 

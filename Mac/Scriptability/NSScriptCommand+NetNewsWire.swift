@@ -26,7 +26,7 @@ extension NSScriptCommand {
         return true
     }
 
-    func accountAndFolderForNewChild() -> (Account, Folder?) {
+	@MainActor func accountAndFolderForNewChild() -> (Account, Folder?) {
         let appleEvent = self.appleEvent
         var account = AccountManager.shared.defaultAccount
         var folder:Folder? = nil

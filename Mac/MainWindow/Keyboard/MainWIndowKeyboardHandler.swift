@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-final class MainWindowKeyboardHandler: KeyboardDelegate {
+@MainActor final class MainWindowKeyboardHandler: KeyboardDelegate {
 
 	static let shared = MainWindowKeyboardHandler()
 	let globalShortcuts: Set<KeyboardShortcut>

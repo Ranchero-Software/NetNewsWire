@@ -235,7 +235,7 @@ private extension ActivityManager {
 	}
 	#endif
 	
-	func makeKeywords(_ article: Article) -> [String] {
+	@MainActor func makeKeywords(_ article: Article) -> [String] {
 		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
 		let articleTitleKeywords = makeKeywords(ArticleStringFormatter.truncatedTitle(article))
 		return feedNameKeywords + articleTitleKeywords
@@ -274,11 +274,11 @@ private extension ActivityManager {
 		activity.becomeCurrent()
 	}
 	
-	static func identifier(for folder: Folder) -> String {
+	@MainActor static func identifier(for folder: Folder) -> String {
 		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
 	}
 	
-	static func identifier(for feed: Feed) -> String {
+	@MainActor static func identifier(for feed: Feed) -> String {
 		return "account_\(feed.account!.accountID)_feed_\(feed.feedID)"
 	}
 	

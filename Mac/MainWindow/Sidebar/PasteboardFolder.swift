@@ -109,7 +109,7 @@ extension Folder: PasteboardWriterOwner {
 		return [.string, FolderPasteboardWriter.folderUTIInternalType]
 	}
 
-	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+	@MainActor func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
 
 		let plist: Any?
 
@@ -127,11 +127,11 @@ extension Folder: PasteboardWriterOwner {
 }
 
 private extension FolderPasteboardWriter {
-	var pasteboardFolder: PasteboardFolder {
+	@MainActor var pasteboardFolder: PasteboardFolder {
 		return PasteboardFolder(name: folder.name ?? "", folderID: String(folder.folderID), accountID: folder.account?.accountID)
 	}
 	
-	var internalDictionary: PasteboardFeedDictionary {
+	@MainActor var internalDictionary: PasteboardFeedDictionary {
 		return pasteboardFolder.internalDictionary()
 	}
 }

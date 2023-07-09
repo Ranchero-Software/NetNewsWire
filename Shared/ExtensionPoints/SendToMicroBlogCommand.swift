@@ -31,36 +31,38 @@ final class SendToMicroBlogCommand: SendToCommand {
 	
 	func sendObject(_ object: Any?, selectedText: String?) {
 
-		guard canSendObject(object, selectedText: selectedText) else {
-			return
-		}
-		guard let article = (object as? ArticlePasteboardWriter)?.article else {
-			return
-		}
-		guard microBlogApp.launchIfNeeded(), microBlogApp.bringToFront() else {
-			return
-		}
+		Task { @MainActor in
+			guard canSendObject(object, selectedText: selectedText) else {
+				return
+			}
+			guard let article = (object as? ArticlePasteboardWriter)?.article else {
+				return
+			}
+			guard microBlogApp.launchIfNeeded(), microBlogApp.bringToFront() else {
+				return
+			}
 
-		// TODO: get text from contentHTML or contentText if no title and no selectedText.
-		// TODO: consider selectedText.
+			// TODO: get text from contentHTML or contentText if no title and no selectedText.
+			// TODO: consider selectedText.
 
-		let s = article.attributionString + article.linkString
+			let s = article.attributionString + article.linkString
 
-		let urlQueryDictionary = ["text": s]
-		guard let urlQueryString = urlQueryDictionary.urlQueryString else {
-			return
+			let urlQueryDictionary = ["text": s]
+			guard let urlQueryString = urlQueryDictionary.urlQueryString else {
+				return
+			}
+			guard let url = URL(string: "microblog://post?" + urlQueryString) else {
+				return
+			}
+
+			NSWorkspace.shared.open(url)
 		}
-		guard let url = URL(string: "microblog://post?" + urlQueryString) else {
-			return
-		}
-
-		NSWorkspace.shared.open(url)
 	}
 }
 
 private extension Article {
 
-	var attributionString: String {
+	@MainActor var attributionString: String {
 
 		// Feed name, or feed name + author name (if author is specified per-article).
 		// Includes trailing space.

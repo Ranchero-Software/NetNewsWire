@@ -181,7 +181,7 @@ extension Feed: PasteboardWriterOwner {
 		return [FeedPasteboardWriter.feedUTIType, .URL, .string, FeedPasteboardWriter.feedUTIInternalType]
 	}
 
-	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+	@MainActor func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
 
 		let plist: Any?
 
@@ -204,15 +204,15 @@ extension Feed: PasteboardWriterOwner {
 
 private extension FeedPasteboardWriter {
 
-	var pasteboardFeed: PasteboardFeed {
+	@MainActor var pasteboardFeed: PasteboardFeed {
 		return PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID, accountType: feed.account?.type)
 	}
 
-	var exportDictionary: PasteboardFeedDictionary {
+	@MainActor var exportDictionary: PasteboardFeedDictionary {
 		return pasteboardFeed.exportDictionary()
 	}
 
-	var internalDictionary: PasteboardFeedDictionary {
+	@MainActor var internalDictionary: PasteboardFeedDictionary {
 		var dictionary = pasteboardFeed.internalDictionary()
 		if dictionary[PasteboardFeed.Key.containerName] == nil,
 		   case let .folder(accountID, folderName) = containerID {

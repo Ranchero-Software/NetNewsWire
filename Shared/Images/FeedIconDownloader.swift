@@ -20,7 +20,7 @@ extension Notification.Name {
 
 public final class FeedIconDownloader {
 
-	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
+	@MainActor private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
 	private let imageDownloader: ImageDownloader
 
@@ -28,7 +28,9 @@ public final class FeedIconDownloader {
 	private var feedURLToIconURLCachePath: String
 	private var feedURLToIconURLCacheDirty = false {
 		didSet {
-			queueSaveFeedURLToIconURLCacheIfNeeded()
+			Task { @MainActor in
+				queueSaveFeedURLToIconURLCacheIfNeeded()
+			}
 		}
 	}
 	
@@ -36,7 +38,9 @@ public final class FeedIconDownloader {
 	private var homePageToIconURLCachePath: String
 	private var homePageToIconURLCacheDirty = false {
 		didSet {
-			queueSaveHomePageToIconURLCacheIfNeeded()
+			Task { @MainActor in
+				queueSaveHomePageToIconURLCacheIfNeeded()
+			}
 		}
 	}
 	
@@ -44,7 +48,9 @@ public final class FeedIconDownloader {
 	private var homePagesWithNoIconURLCachePath: String
 	private var homePagesWithNoIconURLCacheDirty = false {
 		didSet {
-			queueHomePagesWithNoIconURLCacheIfNeeded()
+			Task { @MainActor in
+				queueHomePagesWithNoIconURLCacheIfNeeded()
+			}
 		}
 	}
 
@@ -255,15 +261,15 @@ private extension FeedIconDownloader {
 		homePagesWithNoIconURLCache = Set(decoded)
 	}
 
-	func queueSaveFeedURLToIconURLCacheIfNeeded() {
+	@MainActor func queueSaveFeedURLToIconURLCacheIfNeeded() {
 		FeedIconDownloader.saveQueue.add(self, #selector(saveFeedURLToIconURLCacheIfNeeded))
 	}
 
-	func queueSaveHomePageToIconURLCacheIfNeeded() {
+	@MainActor func queueSaveHomePageToIconURLCacheIfNeeded() {
 		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePageToIconURLCacheIfNeeded))
 	}
 
-	func queueHomePagesWithNoIconURLCacheIfNeeded() {
+	@MainActor func queueHomePagesWithNoIconURLCacheIfNeeded() {
 		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePagesWithNoIconURLCacheIfNeeded))
 	}
 

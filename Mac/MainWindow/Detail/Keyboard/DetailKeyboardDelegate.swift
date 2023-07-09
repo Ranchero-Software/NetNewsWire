@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-@objc final class DetailKeyboardDelegate: NSObject, KeyboardDelegate {
+@MainActor @objc final class DetailKeyboardDelegate: NSObject, KeyboardDelegate {
 
 	let shortcuts: Set<KeyboardShortcut>
 

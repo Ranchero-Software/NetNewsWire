@@ -13,7 +13,7 @@ import Account
 
 // These handle multiple accounts.
 
-func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
+@MainActor func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 
 	let group = DispatchGroup()
@@ -93,7 +93,7 @@ extension Article {
 		return datePublished ?? dateModified ?? status.dateArrived
 	}
 	
-	var isAvailableToMarkUnread: Bool {
+	@MainActor var isAvailableToMarkUnread: Bool {
 		guard let markUnreadWindow = account?.behaviors.compactMap( { behavior -> Int? in
 			switch behavior {
 			case .disallowMarkAsUnreadAfterPeriod(let days):
@@ -133,7 +133,7 @@ extension Article {
 		}
 	}
 	
-	func byline() -> String {
+	@MainActor func byline() -> String {
 		guard let authors = authors ?? feed?.authors, !authors.isEmpty else {
 			return ""
 		}
@@ -194,7 +194,7 @@ struct ArticlePathKey {
 
 extension Article {
 
-	public var pathUserInfo: [AnyHashable : Any] {
+	@MainActor public var pathUserInfo: [AnyHashable : Any] {
 		return [
 			ArticlePathKey.accountID: accountID,
 			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
@@ -209,7 +209,7 @@ extension Article {
 
 extension Article: SortableArticle {
 	
-	var sortableName: String {
+	@MainActor var sortableName: String {
 		return feed?.name ?? ""
 	}
 	

@@ -50,7 +50,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
         return self.classDescription as! NSScriptClassDescription
     }
  
-    func deleteElement(_ element:ScriptingObject) {
+	@MainActor func deleteElement(_ element:ScriptingObject) {
        if let scriptableFeed = element as? ScriptableFeed {
             BatchUpdate.shared.perform {
 				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { result in }
@@ -65,38 +65,43 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
         or
            tell account X to make new folder at end with properties {name:"new folder name"}
     */
-    class func handleCreateElement(command:NSCreateCommand) -> Any?  {
+	class func handleCreateElement(command:NSCreateCommand) -> Any?  {
         guard command.isCreateCommand(forClass:"fold") else { return nil }
         let name = command.property(forKey:"name") as? String ?? ""
 
-        // some combination of the tell target and the location specifier ("in" or "at")
-        // identifies where the new folder should be created
-        let (account, folder) = command.accountAndFolderForNewChild()
-        guard folder == nil else {
-            print("support for folders within folders is NYI");
-            return nil
-        }
-		
 		command.suspendExecution()
-		
-		account.addFolder(name) { result in
-			switch result {
-			case .success(let folder):
-				let scriptableAccount = ScriptableAccount(account)
-				let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
-				command.resumeExecution(withResult:scriptableFolder.objectSpecifier)
-			case .failure:
+
+		Task { @MainActor in
+
+			// some combination of the tell target and the location specifier ("in" or "at")
+			// identifies where the new folder should be created
+			let (account, folder) = command.accountAndFolderForNewChild()
+			guard folder == nil else {
+				print("NetNewsWire does not support creating folders within folders.");
 				command.resumeExecution(withResult:nil)
+				return
+			}
+
+
+			account.addFolder(name) { result in
+				switch result {
+				case .success(let folder):
+					let scriptableAccount = ScriptableAccount(account)
+					let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
+					command.resumeExecution(withResult:scriptableFolder.objectSpecifier)
+				case .failure:
+					command.resumeExecution(withResult:nil)
+				}
 			}
 		}
-		
+
         return nil
     }
     
     // MARK: --- Scriptable elements ---
     
     @objc(feeds)
-    var feeds:NSArray  {
+	@MainActor var feeds:NSArray  {
 		let feeds = Array(folder.topLevelFeeds)
         return feeds.map { ScriptableFeed($0, container:self) } as NSArray
     }

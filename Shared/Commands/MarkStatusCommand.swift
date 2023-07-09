@@ -23,7 +23,7 @@ public extension Notification.Name {
 	static let MarkStatusCommandDidUndoDirectMarking = Notification.Name("MarkStatusCommandDidUndoDirectMarking")
 }
 
-final class MarkStatusCommand: UndoableCommand {
+@MainActor final class MarkStatusCommand: UndoableCommand {
     
 	let undoActionName: String
 	let redoActionName: String

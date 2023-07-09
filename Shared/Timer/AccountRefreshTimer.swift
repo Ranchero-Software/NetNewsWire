@@ -9,7 +9,7 @@
 import Foundation
 import Account
 
-class AccountRefreshTimer {
+@MainActor class AccountRefreshTimer {
 	
 	var shuttingDown = false
 
@@ -75,5 +75,4 @@ class AccountRefreshTimer {
 		
 		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log, completion: nil)
 	}
-	
 }

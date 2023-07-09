@@ -71,7 +71,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return url
     }
     
-    class func scriptableFeed(_ feed: Feed, account: Account, folder: Folder?) -> ScriptableFeed  {
+	@MainActor class func scriptableFeed(_ feed: Feed, account: Account, folder: Folder?) -> ScriptableFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
             let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
@@ -85,33 +85,39 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         guard command.isCreateCommand(forClass:"Feed") else { return nil }
         guard let arguments = command.arguments else {return nil}
         let titleFromArgs = command.property(forKey:"name") as? String
-        let (account, folder) = command.accountAndFolderForNewChild()
-        guard let url = self.urlForNewFeed(arguments:arguments) else {return nil}
-        
-        if let existingFeed = account.existingFeed(withURL:url) {
-            return scriptableFeed(existingFeed, account:account, folder:folder).objectSpecifier
-        }
-		
-		let container: Container = folder != nil ? folder! : account
-		
-        // We need to download the feed and parse it.
-        // RSParser does the callback for the download on the main thread.
-        // Because we can't wait here (on the main thread) for the callback, we have to return from this function.
-        // Generally, returning from an AppleEvent handler function means that handling the Apple event is over,
-        // but we don’t yet have the result of the event yet, so we prevent the Apple event from returning by calling
-        // suspendExecution(). When we get the callback, we supply the event result and call resumeExecution().
-        command.suspendExecution()
-        
-		account.createFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
-			switch result {
-			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-				let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
-				command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
-			case .failure:
+
+		// We need to download the feed and parse it.
+		// RSParser does the callback for the download on the main thread.
+		// Because we can't wait here (on the main thread) for the callback, we have to return from this function.
+		// Generally, returning from an AppleEvent handler function means that handling the Apple event is over,
+		// but we don’t yet have the result of the event yet, so we prevent the Apple event from returning by calling
+		// suspendExecution(). When we get the callback, we supply the event result and call resumeExecution().
+		command.suspendExecution()
+
+		Task { @MainActor in
+			let (account, folder) = command.accountAndFolderForNewChild()
+			guard let url = self.urlForNewFeed(arguments:arguments) else {
 				command.resumeExecution(withResult:nil)
+				return
 			}
 
+			if let existingFeed = account.existingFeed(withURL:url) {
+				let scriptableFeed = scriptableFeed(existingFeed, account:account, folder:folder)
+				command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
+				return
+			}
+
+			let container: Container = folder != nil ? folder! : account
+			account.createFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
+				switch result {
+				case .success(let feed):
+					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+					let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
+					command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
+				case .failure:
+					command.resumeExecution(withResult:nil)
+				}
+			}
 		}
 		
         return nil
