@@ -13,7 +13,7 @@ import UniformTypeIdentifiers
 
 // MARK: - Rows
 
-struct SettingsRow {
+@MainActor struct SettingsRow {
 	
 	/// This row, when tapped, will open iOS System Settings.
 	static var openSystemSettings: some View {

@@ -13,7 +13,7 @@ import RSWeb
 import SafariServices
 import RSCore
 
-struct ReaderAPIAddAccountView: View {
+@MainActor struct ReaderAPIAddAccountView: View {
 	
 	@Environment(\.dismiss) var dismiss
 	

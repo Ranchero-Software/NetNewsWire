@@ -41,7 +41,7 @@ public final class AddAccountListViewModel: ObservableObject, OAuthAccountAuthor
 		return rootViewController
 	}
 	
-	public func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+	@MainActor public func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
 		account.refreshAll { [weak self] result in
 			switch result {
 			case .success:

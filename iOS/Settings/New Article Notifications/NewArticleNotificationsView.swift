@@ -11,7 +11,7 @@ import Account
 import RSCore
 
 
-struct NewArticleNotificationsView: View, Logging {
+@MainActor struct NewArticleNotificationsView: View, Logging {
 	
 	@State private var activeAccounts = AccountManager.shared.sortedActiveAccounts
     

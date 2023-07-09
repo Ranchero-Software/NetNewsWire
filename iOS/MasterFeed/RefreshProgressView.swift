@@ -68,7 +68,7 @@ import Account
 	
 }
 
-class RefreshProgressModel: ObservableObject {
+@MainActor class RefreshProgressModel: ObservableObject {
 	
 	@Published var isRefreshing = false
 	@Published var isIndeterminate = false

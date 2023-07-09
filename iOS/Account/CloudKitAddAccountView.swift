@@ -9,7 +9,7 @@
 import SwiftUI
 import Account
 
-struct CloudKitAddAccountView: View {
+@MainActor struct CloudKitAddAccountView: View {
     
 	@Environment(\.dismiss) private var dismiss
 	@State private var accountError: (Error?, Bool) = (nil, false)

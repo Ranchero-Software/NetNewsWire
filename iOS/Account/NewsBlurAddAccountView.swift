@@ -12,7 +12,7 @@ import Secrets
 import RSWeb
 import RSCore
 
-struct NewsBlurAddAccountView: View, Logging {
+@MainActor struct NewsBlurAddAccountView: View, Logging {
     
 	@Environment(\.dismiss) private var dismiss
 	@State var account: Account? = nil

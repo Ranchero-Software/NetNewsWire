@@ -9,7 +9,7 @@
 import SwiftUI
 import Account
 
-struct LocalAddAccountView: View {
+@MainActor struct LocalAddAccountView: View {
     
 	@Environment(\.dismiss) var dismiss
 	@State private var accountName: String = ""

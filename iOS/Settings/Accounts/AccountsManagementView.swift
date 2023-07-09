@@ -10,7 +10,7 @@ import SwiftUI
 import Account
 import Combine
 
-public final class AccountManagementViewModel: ObservableObject {
+@MainActor public final class AccountManagementViewModel: ObservableObject {
 	
 	@Published var sortedActiveAccounts = [Account]()
 	@Published var sortedInactiveAccounts = [Account]()

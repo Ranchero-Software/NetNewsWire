@@ -28,7 +28,7 @@ final class ExtensionContainersFile: Logging {
 	}
 	@MainActor private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
 
-	init() {
+	@MainActor init() {
 		if !FileManager.default.fileExists(atPath: ExtensionContainersFile.filePath) {
 			save()
 		}
@@ -72,14 +72,14 @@ private extension ExtensionContainersFile {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 
-	@objc func saveToDiskIfNeeded() {
+	@MainActor @objc func saveToDiskIfNeeded() {
 		if isDirty {
 			isDirty = false
 			save()
 		}
 	}
 
-	func save() {
+	@MainActor func save() {
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
 

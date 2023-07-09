@@ -10,7 +10,7 @@ import SwiftUI
 import SafariServices
 import Account
 
-struct AccountInspectorView: View {
+@MainActor struct AccountInspectorView: View {
     
 	@Environment(\.dismiss) var dismiss
 	@State private var showRemoveAccountAlert: Bool = false

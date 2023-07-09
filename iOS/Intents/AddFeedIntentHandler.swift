@@ -126,7 +126,7 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 
 	}
 	
-	public func handle(intent: AddFeedIntent, completion: @escaping (AddFeedIntentResponse) -> Void) {
+	@MainActor public func handle(intent: AddFeedIntent, completion: @escaping (AddFeedIntentResponse) -> Void) {
 		guard let url = intent.url, let extensionContainers = ExtensionContainersFile.read() else {
 			completion(AddFeedIntentResponse(code: .failure, userActivity: nil))
 			return

@@ -14,7 +14,7 @@ import SafariServices
 import RSCore
 
 
-struct FeedbinAddAccountView: View {
+@MainActor struct FeedbinAddAccountView: View {
 	
 	@Environment(\.dismiss) private var dismiss
 	@State var account: Account? = nil

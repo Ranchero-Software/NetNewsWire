@@ -189,7 +189,7 @@ private extension MasterFeedViewController {
 
 private extension Container {
 	
-	func hasChildFeed(withURL url: String) -> Bool {
+	@MainActor func hasChildFeed(withURL url: String) -> Bool {
 		return topLevelFeeds.contains(where: { $0.url == url })
 	}
 	
