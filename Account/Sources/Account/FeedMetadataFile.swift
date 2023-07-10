@@ -35,7 +35,9 @@ import RSCore
 			let decoder = PropertyListDecoder()
 			account.feedMetadata = (try? decoder.decode(Account.FeedMetadataDictionary.self, from: fileData)) ?? Account.FeedMetadataDictionary()
 		}
-		account.feedMetadata.values.forEach { $0.delegate = account }
+        for value in account.feedMetadata.values {
+            value.delegate = account
+        }
 	}
 	
 	func save() {

@@ -127,7 +127,11 @@ private extension ExtensionFeedAddRequestFile {
 			logger.error("Save to disk coordination failed: \(error.localizedDescription, privacy: .public)")
 		}
 
-		requests?.forEach { processRequest($0) }
+		if let requests {
+			for request in requests {
+				processRequest(request)
+			}
+		}
 	}
 	
 	@MainActor func processRequest(_ request: ExtensionFeedAddRequest) {

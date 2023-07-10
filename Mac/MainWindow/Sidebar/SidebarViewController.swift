@@ -540,7 +540,9 @@ private extension SidebarViewController {
 	}
 	
 	func addAllSelectedToFilterExceptions() {
-		selectedFeeds.forEach { addToFilterExeptionsIfNecessary($0) }
+		for feed in selectedFeeds {
+			addToFilterExeptionsIfNecessary(feed)
+		}
 	}
 	
 	func addToFilterExeptionsIfNecessary(_ feedProtocol: FeedProtocol?) {
@@ -583,7 +585,7 @@ private extension SidebarViewController {
 		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
 		
 		// Automatically expand any new or newly active accounts
-		AccountManager.shared.activeAccounts.forEach { account in
+		for account in AccountManager.shared.activeAccounts {
 			if !savedAccounts.contains(account) {
 				let accountNode = treeController.nodeInTreeRepresentingObject(account)
 				outlineView.expandItem(accountNode)
