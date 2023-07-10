@@ -33,7 +33,7 @@ import RSCore
 				  let faviconHost = URL(string: faviconURLString)?.host else {
 				return
 			}
-			activeAccounts.forEach { account in
+			for account in activeAccounts {
 				for feed in Array(account.flattenedFeeds()) {
 					if let feedURLHost = URL(string: feed.url)?.host {
 						if faviconHost == feedURLHost {

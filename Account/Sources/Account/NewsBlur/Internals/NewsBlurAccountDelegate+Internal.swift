@@ -45,7 +45,7 @@ extension NewsBlurAccountDelegate {
 
 		// Delete any folders not at NewsBlur
 		if let folders = account.folders {
-			folders.forEach { folder in
+            for folder in folders {
 				if !folderNames.contains(folder.name ?? "") {
 					for feed in folder.topLevelFeeds {
 						account.addFeed(feed)
@@ -66,7 +66,7 @@ extension NewsBlurAccountDelegate {
 
 		// Make any folders NewsBlur has, but we don't
 		// Ignore account-level folder
-		folderNames.forEach { folderName in
+        for folderName in folderNames {
 			if !accountFolderNames.contains(folderName) && folderName != " " {
 				_ = account.ensureFolder(with: folderName)
 			}
@@ -100,7 +100,7 @@ extension NewsBlurAccountDelegate {
 
 		// Add any feeds we don't have and update any we do
 		var feedsToAdd = Set<NewsBlurFeed>()
-		feeds.forEach { newsBlurFeed in
+		for newsBlurFeed in feeds {
 			let subFeedID = String(newsBlurFeed.feedID)
 
 			if let feed = account.existingFeed(withFeedID: subFeedID) {
@@ -117,7 +117,7 @@ extension NewsBlurAccountDelegate {
 		}
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
-		feedsToAdd.forEach { newsBlurFeed in
+        for newsBlurFeed in feedsToAdd {
 			let feed = account.createFeed(with: newsBlurFeed.name, url: newsBlurFeed.feedURL, feedID: String(newsBlurFeed.feedID), homePageURL: newsBlurFeed.homePageURL)
             feed.externalID = String(newsBlurFeed.feedID)
 			account.addFeed(feed)

@@ -759,7 +759,7 @@ private extension FeedbinAccountDelegate {
 		// Feedbin has a tag that we don't have a folder for.  We might not get a new
 		// taggings response for it if it is a folder rename.  Force expire the tagging
 		// so that we will for sure get the new tagging information.
-		tags.forEach { tag in
+        for tag in tags {
 			if !folderNames.contains(tag.name) {
 				accountMetadata?.conditionalGetInfo[FeedbinAPICaller.ConditionalGetKeys.taggings] = nil
 			}

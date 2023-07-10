@@ -75,7 +75,9 @@ final class SmartFeed: PseudoFeed {
 		if activeAccounts.isEmpty {
 			updateUnreadCount()
 		} else {
-			activeAccounts.forEach { self.fetchUnreadCount(for: $0) }
+			for account in activeAccounts {
+				fetchUnreadCount(for: account)
+			}
 		}
 	}
 	
