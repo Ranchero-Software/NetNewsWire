@@ -8,12 +8,10 @@
 
 import UIKit
 import RSCore
-import RSWeb
 import Account
 import Articles
 import BackgroundTasks
 import Secrets
-import WidgetKit
 
 var appDelegate: AppDelegate!
 
