@@ -370,14 +370,14 @@ private extension SidebarOutlineDataSource {
 			return false
 		}
 		
-		draggedFeeds.forEach { pasteboardFeed in
+		for pasteboardFeed in draggedFeeds {
 			guard let sourceAccountID = pasteboardFeed.accountID,
 				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
 				  let feedID = pasteboardFeed.feedID,
 				  let feed = sourceAccount.existingFeed(withFeedID:  feedID),
 				  let destinationContainer = parentNode.representedObject as? Container
 			else {
-				return
+				continue
 			}
 			
 			var sourceContainer: Container = sourceAccount				// default to top level,
@@ -475,14 +475,14 @@ private extension SidebarOutlineDataSource {
 			return false
 		}
 
-		draggedFolders.forEach { pasteboardFolder in
+		for pasteboardFolder in draggedFolders {
 			guard let sourceAccountID = pasteboardFolder.accountID,
 				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
 				  let folderStringID = pasteboardFolder.folderID,
 				  let folderID = Int(folderStringID),
 				  let folder = sourceAccount.existingFolder(withID: folderID)
 			else {
-				return
+				continue
 			}
 			if !sameAccount(pasteboardFolder, parentNode) {
 				copyFolderBetweenAccounts(folder: folder, to: parentNode)
