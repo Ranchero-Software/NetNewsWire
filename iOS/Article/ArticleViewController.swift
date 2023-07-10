@@ -576,8 +576,11 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 		
 		coordinator.selectArticle(article, animations: [.select, .scroll, .navigation])
 		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
-		
-		previousViewControllers.compactMap({ $0 as? WebViewController }).forEach({ $0.stopWebViewActivity() })
+
+		let webViewControllers = previousViewControllers.compactMap{ $0 as? WebViewController }
+		for webViewController in webViewControllers {
+			webViewController.stopWebViewActivity()
+		}
 	}
 	
 }

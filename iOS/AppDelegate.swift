@@ -154,9 +154,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	// MARK: - API
 	
 	@MainActor func manualRefresh(errorHandler: @escaping (Error) -> ()) {
-		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
-			$0.cleanUp(conditional: true)
+		let sceneDelegates = UIApplication.shared.connectedScenes.compactMap{ $0.delegate as? SceneDelegate }
+		for sceneDelegate in sceneDelegates {
+			sceneDelegate.cleanUp(conditional: true)
 		}
+
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
 	}
 	
