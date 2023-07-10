@@ -66,11 +66,11 @@ import RSParser
 		}
 
 		account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
-			
-			DispatchQueue.main.async {
+
+			Task { @MainActor in
 				self.endShowingProgress()
 			}
-			
+
 			switch result {
 			case .success(let feed):
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
@@ -81,7 +81,7 @@ import RSParser
 				case AccountError.createErrorNotFound:
 					self.showNoFeedsErrorMessage()
 				default:
-					DispatchQueue.main.async {
+					Task { @MainActor in
 						NSApplication.shared.presentError(error)
 					}
 				}

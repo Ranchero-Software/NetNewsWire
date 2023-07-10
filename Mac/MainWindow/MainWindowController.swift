@@ -106,11 +106,10 @@ enum TimelineSourceMode {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
-		
-		DispatchQueue.main.async {
+
+		Task { @MainActor in
 			self.updateWindowTitle()
 		}
-
 	}
 
 	// MARK: - API

@@ -223,7 +223,7 @@ var appDelegate: AppDelegate!
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
 
@@ -241,7 +241,7 @@ var appDelegate: AppDelegate!
 
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			if settings.authorizationStatus == .authorized {
-				DispatchQueue.main.async {
+				Task { @MainActor in
 					NSApplication.shared.registerForRemoteNotifications()
 				}
 			}
@@ -258,9 +258,9 @@ var appDelegate: AppDelegate!
 			refreshTimer!.update()
 			syncTimer!.update()
 		} else {
-			DispatchQueue.main.async {
-				self.refreshTimer!.timedRefresh(nil)
-				self.syncTimer!.timedRefresh(nil)
+			Task { @MainActor in
+				refreshTimer!.timedRefresh(nil)
+				syncTimer!.timedRefresh(nil)
 			}
 		}
 #endif
@@ -279,7 +279,7 @@ var appDelegate: AppDelegate!
 		}
 
 #if !MAC_APP_STORE
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			CrashReporter.check(crashReporter: self.crashReporter)
 		}
 #endif
@@ -371,13 +371,13 @@ var appDelegate: AppDelegate!
 			informativeText = error.localizedDescription
 		}
 
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("alert.title.theme-error", comment: "Theme error")
 			alert.informativeText = informativeText
 			alert.addButton(withTitle: NSLocalizedString("button.title.ok", comment: "OK"))
-			
+
 			alert.buttons[0].keyEquivalent = "\r"
 
 			_ = alert.runModal()
@@ -429,7 +429,7 @@ var appDelegate: AppDelegate!
 			  let url = userInfo["url"] as? URL else {
 			return
 		}
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			self.importTheme(filename: url.path)
 		}
 	}
@@ -960,7 +960,7 @@ extension AppDelegate {
 		assert(shouldShowTwitterDeprecationAlert())
 
 		AppDefaults.shared.twitterDeprecationAlertShown = true
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed")
@@ -987,7 +987,7 @@ extension AppDelegate {
 		assert(shouldShowRedditDeprecationAlert())
 		AppDefaults.shared.redditDeprecationAlertShown = true
 
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Reddit API Integration Removed", comment: "Reddit API Integration Removed")

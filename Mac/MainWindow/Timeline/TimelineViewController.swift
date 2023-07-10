@@ -320,7 +320,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			
 			if let selectedIndex = articles.firstIndex(where: { $0.articleID == articleID }) {
 				tableView.selectRow(selectedIndex)
-				DispatchQueue.main.async {
+				Task { @MainActor in
 					self.tableView.scrollTo(row: selectedIndex)
 				}
 				focus()

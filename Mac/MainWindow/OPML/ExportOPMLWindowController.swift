@@ -88,7 +88,7 @@ import Account
 		
 		panel.beginSheetModal(for: hostWindow!) { result in
 			if result == NSApplication.ModalResponse.OK, let url = panel.url {
-				DispatchQueue.main.async {
+				Task { @MainActor in
 					let filename = url.lastPathComponent
 					let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
 					do {
