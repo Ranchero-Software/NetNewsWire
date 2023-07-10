@@ -115,7 +115,9 @@ protocol SidebarDelegate: AnyObject {
 		}
 
 		let selectedItemIdentifers = Set(selectedFeedsState.compactMap( { ItemIdentifier(userInfo: $0) }))
-		selectedItemIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
+		for selectedItemIdentifier in selectedItemIdentifers {
+			treeControllerDelegate.addFilterException(selectedItemIdentifier)
+		}
 		
 		rebuildTreeAndReloadDataIfNeeded()
 		

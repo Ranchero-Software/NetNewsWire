@@ -68,21 +68,24 @@ final class CloudKitAccountZone: CloudKitZone {
 			}
 		}
 		
-		for item in items {
-			if let feedSpecifier = item.feedSpecifier {
-				processFeed(feedSpecifier: feedSpecifier, containerExternalID: rootExternalID)
-			} else {
-				if let title = item.titleFromAttributes {
-					let containerRecord = newContainerCKRecord(name: title)
-					records.append(containerRecord)
-					item.children?.forEach { itemChild in
-						if let feedSpecifier = itemChild.feedSpecifier {
-							processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
-						}
-					}
-				}
-			}
-		}
+        for item in items {
+            if let feedSpecifier = item.feedSpecifier {
+                processFeed(feedSpecifier: feedSpecifier, containerExternalID: rootExternalID)
+            } else {
+                if let title = item.titleFromAttributes {
+                    let containerRecord = newContainerCKRecord(name: title)
+                    records.append(containerRecord)
+
+                    if let itemChildren = item.children {
+                        for itemChild in itemChildren {
+                            if let feedSpecifier = itemChild.feedSpecifier {
+                                processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 		save(records, completion: completion)
 	}
