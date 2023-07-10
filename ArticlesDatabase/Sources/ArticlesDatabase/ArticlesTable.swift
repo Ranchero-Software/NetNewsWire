@@ -47,7 +47,20 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	// MARK: - Fetching Articles for Feed
-	
+
+    func articlesForFeed(_ feedID: String) async throws -> Set<Article> {
+        return try await withCheckedThrowingContinuation { continuation in
+            fetchArticlesAsync({ self.fetchArticlesForFeedID(feedID, $0) }) { articleSetResult in
+                switch articleSetResult {
+                case .success(let articles):
+                    continuation.resume(returning: articles)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
 	func fetchArticles(_ feedID: String) throws -> Set<Article> {
 		return try fetchArticles{ self.fetchArticlesForFeedID(feedID, $0) }
 	}

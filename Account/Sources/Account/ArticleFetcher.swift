@@ -17,6 +17,7 @@ import ArticlesDatabase
 	func fetchUnreadArticles() throws -> Set<Article>
 	func fetchUnreadArticlesBetween(before: Date?, after: Date?) throws -> Set<Article>
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
+//    func asyncFetchUnreadArticles() async throws -> Set<Article>
 }
 
 extension Feed: ArticleFetcher {
@@ -57,6 +58,15 @@ extension Feed: ArticleFetcher {
 			}
 		}
 	}
+
+    public func asyncFetchUnreadArticles() async throws -> Set<Article> {
+        guard let account else {
+            assertionFailure("Expected feed.account, but got nil.")
+            return Set<Article>()
+        }
+        let articles = try await account.asyncFetchArticles(.feed(self))
+        return articles.unreadArticles()
+    }
 }
 
 extension Folder: ArticleFetcher {

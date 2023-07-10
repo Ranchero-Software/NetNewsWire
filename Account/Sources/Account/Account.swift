@@ -695,6 +695,20 @@ public enum FetchType {
 		}
 	}
 
+    @MainActor public func asyncFetchArticles(_ fetchType: FetchType) async throws -> Set<Article> {
+        // Temporary until we can go async await all the way down.
+        return try await withCheckedThrowingContinuation { continuation in
+            fetchArticlesAsync(fetchType) { articleSetResult in
+                switch articleSetResult {
+                case .success(let articles):
+                    continuation.resume(returning: articles)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
 	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
 		switch fetchType {
 		case .starred(let limit):
@@ -1112,6 +1126,12 @@ private extension Account {
             }
 		}
 	}
+
+    @MainActor func articlesForFeed(_ feed: Feed) async throws -> Set<Article> {
+        let articles = try await database.articlesForFeed(feed.feedID)
+        validateUnreadCount(feed, articles)
+        return articles
+    }
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
 		return try database.fetchArticlesMatching(searchString, flattenedFeeds().feedIDs())

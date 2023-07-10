@@ -380,6 +380,33 @@ import RSDatabase
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
 
+    @MainActor public func asyncFetchArticles(_ fetchType: FetchType) async throws -> Set<Article> {
+
+        guard activeAccounts.count > 0 else {
+            return Set<Article>()
+        }
+
+        let articles = try await withThrowingTaskGroup(of: Set<Article>.self) { taskGroup in
+            for account in activeAccounts {
+                taskGroup.addTask {
+                    let articles = try await account.asyncFetchArticles(fetchType)
+                    return articles
+                }
+            }
+
+            var allFetchedArticles = Set<Article>()
+            for try await oneAccountArticles in taskGroup {
+                allFetchedArticles.formUnion(oneAccountArticles)
+            }
+
+            return allFetchedArticles
+        }
+
+        return articles
+    }
+
+
+
     @MainActor public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		precondition(Thread.isMainThread)
 
