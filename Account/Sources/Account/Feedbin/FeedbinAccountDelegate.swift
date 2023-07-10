@@ -777,7 +777,7 @@ private extension FeedbinAccountDelegate {
 
 		// Delete any folders not at Feedbin
 		if let folders = account.folders {
-			folders.forEach { folder in
+            for folder in folders {
 				if !tagNames.contains(folder.name ?? "") {
 					for feed in folder.topLevelFeeds {
 						account.addFeed(feed)
@@ -797,7 +797,7 @@ private extension FeedbinAccountDelegate {
 		}()
 
 		// Make any folders Feedbin has, but we don't
-		tagNames.forEach { tagName in
+        for tagName in tagNames {
 			if !folderNames.contains(tagName) {
 				_ = account.ensureFolder(with: tagName)
 			}
@@ -811,29 +811,29 @@ private extension FeedbinAccountDelegate {
 		assert(Thread.isMainThread)
 
         logger.debug("Syncing feeds with \(subscriptions.count, privacy: .public) subscriptions.")
-		
-		let subFeedIds = subscriptions.map { String($0.feedID) }
-		
-		// Remove any feeds that are no longer in the subscriptions
-		if let folders = account.folders {
-			for folder in folders {
-				for feed in folder.topLevelFeeds {
-					if !subFeedIds.contains(feed.feedID) {
-						folder.removeFeed(feed)
-					}
-				}
-			}
-		}
-		
-		for feed in account.topLevelFeeds {
-			if !subFeedIds.contains(feed.feedID) {
-				account.removeFeed(feed)
-			}
-		}
-		
-		// Add any feeds we don't have and update any we do
-		var subscriptionsToAdd = Set<FeedbinSubscription>()
-		subscriptions.forEach { subscription in
+
+        let subFeedIds = subscriptions.map { String($0.feedID) }
+
+        // Remove any feeds that are no longer in the subscriptions
+        if let folders = account.folders {
+            for folder in folders {
+                for feed in folder.topLevelFeeds {
+                    if !subFeedIds.contains(feed.feedID) {
+                        folder.removeFeed(feed)
+                    }
+                }
+            }
+        }
+
+        for feed in account.topLevelFeeds {
+            if !subFeedIds.contains(feed.feedID) {
+                account.removeFeed(feed)
+            }
+        }
+
+        // Add any feeds we don't have and update any we do
+        var subscriptionsToAdd = Set<FeedbinSubscription>()
+        for subscription in subscriptions {
 
 			let subFeedId = String(subscription.feedID)
 
@@ -852,7 +852,7 @@ private extension FeedbinAccountDelegate {
 		}
 
 		// Actually add subscriptions all in one go, so we don’t trigger various rebuilding things that Account does.
-		subscriptionsToAdd.forEach { subscription in
+        for subscription in subscriptionsToAdd {
 			let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
 			feed.externalID = String(subscription.subscriptionID)
 			account.addFeed(feed)

@@ -879,9 +879,9 @@ private extension MasterFeedViewController {
 	}
 	
 	func applyToAvailableCells(_ completion: (MasterFeedTableViewCell, IndexPath) -> Void) {
-		tableView.visibleCells.forEach { cell in
+		for cell in tableView.visibleCells {
 			guard let indexPath = tableView.indexPath(for: cell) else {
-				return
+				continue
 			}
 			completion(cell as! MasterFeedTableViewCell, indexPath)
 		}

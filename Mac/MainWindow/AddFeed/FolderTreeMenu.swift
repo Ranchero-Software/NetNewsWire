@@ -62,7 +62,7 @@ import Account
 
 	private static func addFolderItemsToMenuWithNodes(menu: NSMenu, nodes: [Node], indentationLevel: Int) {
 		
-		nodes.forEach { (oneNode) in
+		for oneNode in nodes {
 			
 			if let nameProvider = oneNode.representedObject as? DisplayNameProvider {
 				
