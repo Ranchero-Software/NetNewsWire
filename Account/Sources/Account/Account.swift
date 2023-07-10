@@ -503,11 +503,13 @@ public enum FetchType {
 					if let isSyncingPaused = item.attributes?["nnw_isSyncingPaused"] as? String, isSyncingPaused == "true" {
 						folder.isSyncingPaused = true
 					}
-					item.children?.forEach { itemChild in
-						if let feedSpecifier = itemChild.feedSpecifier {
-							folder.addFeed(newFeed(with: feedSpecifier))
-						}
-					}
+                    if let itemChildren = item.children {
+                        for itemChild in itemChildren {
+                            if let feedSpecifier = itemChild.feedSpecifier {
+                                folder.addFeed(newFeed(with: feedSpecifier))
+                            }
+                        }
+                    }
 				}
 			}
 		}
@@ -529,12 +531,16 @@ public enum FetchType {
 		if topLevelFeeds.contains(feed) {
 			containers.append(self)
 		}
-		folders?.forEach { folder in
-			if folder.topLevelFeeds.contains(feed) {
-				containers.append(folder)
-			}
-		}
-		return containers
+
+        if let folders {
+            for folder in folders {
+                if folder.topLevelFeeds.contains(feed) {
+                    containers.append(folder)
+                }
+            }
+        }
+
+        return containers
 	}
 	
 	@discardableResult
@@ -966,7 +972,9 @@ public enum FetchType {
 
 	public func debugDropConditionalGetInfo() {
 		#if DEBUG
-			flattenedFeeds().forEach{ $0.dropConditionalGetInfo() }
+        for feed in flattenedFeeds() {
+            feed.dropConditionalGetInfo()
+        }
 		#endif
 	}
 
@@ -1235,7 +1243,7 @@ private extension Account {
 		for article in articles where !article.status.read {
 			unreadCountStorage[article.feedID, default: 0] += 1
 		}
-        feeds.forEach { (feed) in
+        for feed in feeds {
 			let unreadCount = unreadCountStorage[feed.feedID, default: 0]
             feed.unreadCount = unreadCount
 		}
@@ -1286,7 +1294,7 @@ private extension Account {
 		var idDictionary = [String: Feed]()
 		var externalIDDictionary = [String: Feed]()
 		
-		flattenedFeeds().forEach { (feed) in
+		for feed in flattenedFeeds() {
 			idDictionary[feed.feedID] = feed
 			if let externalID = feed.externalID {
 				externalIDDictionary[externalID] = feed
