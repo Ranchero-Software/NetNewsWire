@@ -132,7 +132,9 @@ final class SearchTable: DatabaseTable {
 private extension SearchTable {
 
 	func performInitialIndexForArticles(_ articles: Set<ArticleSearchInfo>, _ database: FMDatabase) {
-		articles.forEach { performInitialIndex($0, database) }
+		for article in articles {
+            performInitialIndex(article, database)
+        }
 	}
 
 	func performInitialIndex(_ article: ArticleSearchInfo, _ database: FMDatabase) {
@@ -177,7 +179,7 @@ private extension SearchTable {
 		let groupedSearchInfos = Dictionary(grouping: searchInfos, by: { $0.rowID })
 		let searchInfosDictionary = groupedSearchInfos.mapValues { $0.first! }
 
-		articles.forEach { (article) in
+        for article in articles {
 			updateIndexForArticle(article, searchInfosDictionary, database)
 		}
 	}

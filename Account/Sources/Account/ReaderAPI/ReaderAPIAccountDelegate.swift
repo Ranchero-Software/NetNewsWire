@@ -716,7 +716,7 @@ private extension ReaderAPIAccountDelegate {
 
 		// Delete any folders not at Reader
 		if let folders = account.folders {
-			folders.forEach { folder in
+            for folder in folders {
 				if !readerFolderExternalIDs.contains(folder.externalID ?? "") {
 					for feed in folder.topLevelFeeds {
 						account.addFeed(feed)
@@ -736,7 +736,7 @@ private extension ReaderAPIAccountDelegate {
 		}()
 
 		// Make any folders Reader has, but we don't
-		folderTags.forEach { tag in
+        for tag in folderTags {
 			if !folderExternalIDs.contains(tag.tagID) {
 				let folder = account.ensureFolder(with: tag.folderName ?? "None")
 				folder?.externalID = tag.tagID
@@ -773,7 +773,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 		
 		// Add any feeds we don't have and update any we do
-		subscriptions.forEach { subscription in
+        for subscription in subscriptions {
 			
 			if let feed = account.existingFeed(withFeedID: subscription.feedID) {
 				feed.name = subscription.name
@@ -799,14 +799,14 @@ private extension ReaderAPIAccountDelegate {
 		let taggingsDict = subscriptions.reduce([String: [ReaderAPISubscription]]()) { (dict, subscription) in
 			var taggedFeeds = dict
 			
-			subscription.categories.forEach({ (category) in
+            for category in subscription.categories {
 				if var taggedFeed = taggedFeeds[category.categoryId] {
 					taggedFeed.append(subscription)
 					taggedFeeds[category.categoryId] = taggedFeed
 				} else {
 					taggedFeeds[category.categoryId] = [subscription]
 				}
-			})
+			}
 			
 			return taggedFeeds
 		}

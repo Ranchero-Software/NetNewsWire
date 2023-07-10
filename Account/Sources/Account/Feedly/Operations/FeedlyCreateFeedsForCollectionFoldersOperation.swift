@@ -92,7 +92,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 			}
 		
 		logger.debug("Processing \(feedsAndFolders.count, privacy: .public) feeds.")
-		feedsAndFolders.forEach { (feed, folder) in
+        for (feed, folder) in feedsAndFolders {
 			if !folder.has(feed) {
 				folder.addFeed(feed)
 			}
