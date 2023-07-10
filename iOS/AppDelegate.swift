@@ -20,7 +20,7 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider, Logging {
 	
-	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
+	private var backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 	
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
@@ -383,7 +383,7 @@ private extension AppDelegate {
 
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
-		bgTaskDispatchQueue.async { [weak self] in
+		backgroundTaskDispatchQueue.async { [weak self] in
 			do {
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
