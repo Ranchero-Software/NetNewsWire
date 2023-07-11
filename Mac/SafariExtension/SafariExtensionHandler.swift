@@ -72,10 +72,14 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
     }
     
     override func toolbarItemClicked(in window: SFSafariWindow) {
-		window.getActiveTab { (activeTab) in
-			activeTab?.getActivePage(completionHandler: { (activePage) in
-				activePage?.dispatchMessageToScript(withName: "toolbarButtonClicked", userInfo: nil)
-			})
+		Task { @MainActor in
+			guard let activeTab = await window.activeTab() else {
+				return
+			}
+			guard let activePage = await activeTab.activePage() else {
+				return
+			}
+			activePage.dispatchMessageToScript(withName: "toolbarButtonClicked", userInfo: nil)
 		}
     }
 
