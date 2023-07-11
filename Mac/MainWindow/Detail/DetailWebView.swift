@@ -47,12 +47,12 @@ import RSCore
 
 	override func viewWillStartLiveResize() {
 		super.viewWillStartLiveResize()
-		evaluateJavaScript("document.body.style.overflow = 'hidden';", completionHandler: nil)
+		evaluateJavaScript("document.body.style.overflow = 'hidden';")
 	}
 
 	override func viewDidEndLiveResize() {
 		super.viewDidEndLiveResize()
-		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
+		evaluateJavaScript("document.body.style.overflow = 'visible';")
 	}
 	
 	override func setFrameSize(_ newSize: NSSize) {
