@@ -16,7 +16,7 @@ import Secrets
 var appDelegate: AppDelegate!
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider, Logging {
+@MainActor class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider, Logging {
 	
 	private var backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 	
@@ -55,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var isSyncArticleStatusRunning = false
 	var isWaitingForSyncTasks = false
 	
-	@MainActor override init() {
+	override init() {
 		super.init()
 		appDelegate = self
 
@@ -72,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 	}
 	
-	@MainActor func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		AppDefaults.registerDefaults()
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		
 	}
 	
-	@MainActor func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+	func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		DispatchQueue.main.async {
 			self.resumeDatabaseProcessingIfNecessary()
 			AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
@@ -133,17 +133,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
     }
 	
-	@MainActor func applicationWillTerminate(_ application: UIApplication) {
+	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
 	}
 
-	@MainActor func applicationDidEnterBackground(_ application: UIApplication) {
+	func applicationDidEnterBackground(_ application: UIApplication) {
 		IconImageCache.shared.emptyCache()
 	}
 	
 	// MARK: Notifications
 	
-	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
+	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
 		}
@@ -151,7 +151,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	// MARK: - API
 	
-	@MainActor func manualRefresh(errorHandler: @escaping (Error) -> ()) {
+	func manualRefresh(errorHandler: @escaping (Error) -> ()) {
 		let sceneDelegates = UIApplication.shared.connectedScenes.compactMap{ $0.delegate as? SceneDelegate }
 		for sceneDelegate in sceneDelegates {
 			sceneDelegate.cleanUp(conditional: true)
@@ -160,14 +160,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
 	}
 	
-	@MainActor func resumeDatabaseProcessingIfNecessary() {
+	func resumeDatabaseProcessingIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			logger.info("Application processing resumed.")
 		}
 	}
 	
-	@MainActor func prepareAccountsForBackground() {
+	func prepareAccountsForBackground() {
 		extensionFeedAddRequestFile.suspend()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
@@ -176,7 +176,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		waitForSyncTasksToFinish()
 	}
 	
-	@MainActor func prepareAccountsForForeground() {
+	func prepareAccountsForForeground() {
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
 
@@ -213,10 +213,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 				})
 			}
 		}
-		
     }
 	
-	@MainActor func presentThemeImportError(_ error: Error) {
+	func presentThemeImportError(_ error: Error) {
 		let windowScene = {
 			let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
 			return scenes.filter { $0.activationState == .foregroundActive }.first ?? scenes.first
@@ -224,12 +223,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		guard let sceneDelegate = windowScene?.delegate as? SceneDelegate else { return }
 		sceneDelegate.presentError(error)
 	}
-	
 }
 
 // MARK: App Initialization
 
-@MainActor private extension AppDelegate {
+private extension AppDelegate {
 	
 	private func initializeDownloaders() {
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
@@ -268,7 +266,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 		UIApplication.shared.shortcutItems = [addItem, searchItem, unreadItem]
 	}
-	
 }
 
 // MARK: Go To Background
@@ -464,5 +461,4 @@ private extension AppDelegate {
 			})
 		}
 	}
-	
 }
