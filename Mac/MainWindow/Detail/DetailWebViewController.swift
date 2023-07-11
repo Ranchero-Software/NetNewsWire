@@ -161,16 +161,14 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 	
 	// MARK: Scrolling
 
-	func canScrollDown(_ completion: @escaping (Bool) -> Void) {
-		fetchScrollInfo { (scrollInfo) in
-			completion(scrollInfo?.canScrollDown ?? false)
-		}
+	func canScrollDown() async -> Bool {
+		let scrollInfo = await scrollInfo()
+		return scrollInfo?.canScrollDown ?? false
 	}
 
-	func canScrollUp(_ completion: @escaping (Bool) -> Void) {
-		fetchScrollInfo { (scrollInfo) in
-			completion(scrollInfo?.canScrollUp ?? false)
-		}
+	func canScrollUp() async -> Bool {
+		let scrollInfo = await scrollInfo()
+		return scrollInfo?.canScrollUp ?? false
 	}
 
 	override func scrollPageDown(_ sender: Any?) {
@@ -292,7 +290,8 @@ private extension DetailWebViewController {
 	}
 	
 	func reloadHTMLMaintainingScrollPosition() {
-		fetchScrollInfo() { scrollInfo in
+		Task { @MainActor in
+			let scrollInfo = await scrollInfo()
 			self.windowScrollY = scrollInfo?.offsetY
 			self.reloadHTML()
 		}
@@ -330,21 +329,23 @@ private extension DetailWebViewController {
 		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
 	}
 
-	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
+	func scrollInfo() async -> ScrollInfo? {
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
 
-		webView.evaluateJavaScript(javascriptString) { (info, error) in
-			guard let info = info as? [String: Any] else {
-				completion(nil)
-				return
-			}
-			guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
-				completion(nil)
-				return
-			}
+		return await withCheckedContinuation { continuation in
+			webView.evaluateJavaScript(javascriptString) { (info, error) in
+				guard let info = info as? [String: Any] else {
+					continuation.resume(returning: nil)
+					return
+				}
+				guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
+					continuation.resume(returning: nil)
+					return
+				}
 
-			let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webView.frame.height, offsetY: offsetY)
-			completion(scrollInfo)
+				let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webView.frame.height, offsetY: offsetY)
+				continuation.resume(returning: scrollInfo)
+			}
 		}
 	}
 

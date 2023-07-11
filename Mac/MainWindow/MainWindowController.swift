@@ -310,9 +310,15 @@ enum TimelineSourceMode {
 		guard let detailViewController = detailViewController else {
 			return
 		}
-		detailViewController.canScrollDown { (canScroll) in
+
+		Task { @MainActor in
+			let canScroll = await detailViewController.canScrollDown()
 			NSCursor.setHiddenUntilMouseMoves(true)
-			canScroll ? detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
+			if canScroll {
+				detailViewController.scrollPageDown(sender)
+			} else {
+				nextUnread(sender)
+			}
 		}
 	}
 
@@ -320,13 +326,14 @@ enum TimelineSourceMode {
 		guard let detailViewController = detailViewController else {
 			return
 		}
-		detailViewController.canScrollUp { (canScroll) in
-			if (canScroll) {
+
+		Task { @MainActor in
+			let canScroll = await detailViewController.canScrollUp()
+			if canScroll {
 				NSCursor.setHiddenUntilMouseMoves(true)
 				detailViewController.scrollPageUp(sender)
 			}
 		}
-
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
