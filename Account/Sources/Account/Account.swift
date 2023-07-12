@@ -887,6 +887,21 @@ public enum FetchType {
 		}
 	}
 
+    /// Mark articleIDs statuses based on statusKey and flag.
+    /// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+    func markArticleIDs(_ articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+        guard !articleIDs.isEmpty else {
+             return
+        }
+
+        try await database.markArticleIDs(articleIDs, statusKey: statusKey, flag: flag)
+        noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+    }
+
+    func markArticleIDsAsRead(_ articleIDs: Set<String>) async throws {
+        try await markArticleIDs(articleIDs, statusKey: .read, flag: true)
+    }
+
 	/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
 	func markAsRead(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {

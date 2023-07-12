@@ -1099,7 +1099,7 @@ private extension ReaderAPIAccountDelegate {
 
                 // Mark articles as read
                 let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-                account.markAsRead(deltaReadArticleIDs)
+                try await account.markArticleIDsAsRead(deltaReadArticleIDs)
             } catch let error {
                 self.logger.error("Sync Article Read Status failed: \(error.localizedDescription, privacy: .public)")
             }

@@ -257,6 +257,10 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		return articlesTable.mark(articles, statusKey, flag, completion)
 	}
 
+    public func markArticleIDs(_ articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+        try await articlesTable.markArticleIDs(articleIDs, statusKey, flag)
+    }
+
 	public func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock?) {
 		articlesTable.mark(articleIDs, statusKey, flag, completion)
 	}

@@ -493,6 +493,23 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+    func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool) async throws {
+
+        try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                queue.runInTransaction { databaseResult in
+                    switch databaseResult {
+                    case .success(let database):
+                        self.statusesTable.mark(articleIDs, statusKey, flag, database)
+                        continuation.resume()
+                    case .failure(let databaseError):
+                        continuation.resume(throwing: databaseError)
+                    }
+                }
+            }
+        }
+    }
+
 	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: DatabaseCompletionBlock?) {
 		queue.runInTransaction { databaseResult in
 			switch databaseResult {

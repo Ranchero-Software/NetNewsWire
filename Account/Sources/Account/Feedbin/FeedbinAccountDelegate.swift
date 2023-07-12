@@ -1290,7 +1290,7 @@ private extension FeedbinAccountDelegate {
 
                 // Mark articles as read
                 let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-                account.markAsRead(deltaReadArticleIDs)
+                try await account.markArticleIDsAsRead(deltaReadArticleIDs)
             } catch let error {
                 self.logger.error("Sync Articles Read Status failed: \(error.localizedDescription, privacy: .public)")
             }

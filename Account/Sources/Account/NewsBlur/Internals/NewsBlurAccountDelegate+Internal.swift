@@ -338,7 +338,7 @@ extension NewsBlurAccountDelegate {
 
                 // Mark articles as read
                 let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-                account.markAsRead(deltaReadArticleIDs)
+                try await account.markArticleIDsAsRead(deltaReadArticleIDs)
             } catch let error {
                 self.logger.error("Sync story read status failed: \(error.localizedDescription, privacy: .public)")
             }
