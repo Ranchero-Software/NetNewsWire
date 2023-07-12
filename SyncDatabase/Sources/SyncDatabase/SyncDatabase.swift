@@ -44,10 +44,18 @@ public struct SyncDatabase {
 		syncStatusTable.selectPendingCount(completion)
 	}
 
+    public func selectPendingReadArticleIDs() async throws -> Set<String> {
+        try await syncStatusTable.selectPendingReadArticleIDs()
+    }
+
     public func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
         syncStatusTable.selectPendingReadStatusArticleIDs(completion: completion)
     }
-    
+
+    public func selectPendingStarredArticleIDs() async throws -> Set<String> {
+        try await syncStatusTable.selectPendingStarredArticleIDs()
+    }
+
     public func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
         syncStatusTable.selectPendingStarredStatusArticleIDs(completion: completion)
     }

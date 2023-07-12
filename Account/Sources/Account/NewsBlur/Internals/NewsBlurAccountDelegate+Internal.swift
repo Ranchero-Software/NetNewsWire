@@ -317,87 +317,68 @@ extension NewsBlurAccountDelegate {
 	}
 
     func syncStoryReadState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
-        guard let hashes = hashes else {
-            completion()
-            return
-        }
 
-        database.selectPendingReadStatusArticleIDs() { result in
-            @MainActor func process(_ pendingStoryHashes: Set<String>) {
-
-                Task { @MainActor in
-                    let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
-                    let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
-
-                    do {
-                        let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
-
-                        // Mark articles as unread
-                        let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-                        account.markAsUnread(deltaUnreadArticleIDs)
-
-                        // Mark articles as read
-                        let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-                        account.markAsRead(deltaReadArticleIDs)
-                    } catch let error {
-                        self.logger.error("Sync story read status failed: \(error.localizedDescription, privacy: .public)")
-                    }
-
-                    completion()
-                }
-
-                switch result {
-                case .success(let pendingArticleIDs):
-                    process(pendingArticleIDs)
-                case .failure(let error):
-                    self.logger.error("Sync story read status failed: \(error.localizedDescription, privacy: .public)")
-                }
+        Task { @MainActor in
+            guard let hashes = hashes else {
+                completion()
+                return
             }
+
+            do {
+                let pendingStoryHashes = try await database.selectPendingReadArticleIDs()
+
+                let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
+                let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
+
+                let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+                
+                // Mark articles as unread
+                let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
+                account.markAsUnread(deltaUnreadArticleIDs)
+
+                // Mark articles as read
+                let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+                account.markAsRead(deltaReadArticleIDs)
+            } catch let error {
+                self.logger.error("Sync story read status failed: \(error.localizedDescription, privacy: .public)")
+            }
+
+            completion()
         }
     }
 
-	func syncStoryStarredState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
-		guard let hashes = hashes else {
-			completion()
-			return
-		}
+    func syncStoryStarredState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
 
-		database.selectPendingStarredStatusArticleIDs() { result in
-
-            func process(_ pendingStoryHashes: Set<String>) {
-
-                Task { @MainActor in
-                    let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
-                    let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
-
-                    do {
-                        let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
-
-                        // Mark articles as starred
-                        let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-                        account.markAsStarred(deltaStarredArticleIDs)
-
-                        // Mark articles as unstarred
-                        let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-                        account.markAsUnstarred(deltaUnstarredArticleIDs)
-                    } catch let error {
-                        self.logger.error("Sync story starred status failed: \(error.localizedDescription, privacy: .public)")
-                    }
-
-                    completion()
-                }
+        Task { @MainActor in
+            guard let hashes = hashes else {
+                completion()
+                return
             }
 
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
-                self.logger.error("Sync story starred status failed: \(error.localizedDescription, privacy: .public)")
-			}
-		}
-	}
+            do {
+                let pendingStoryHashes = try await database.selectPendingStarredArticleIDs()
 
-	func createFeed(account: Account, newsBlurFeed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+                let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
+                let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
+
+                let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
+
+                // Mark articles as starred
+                let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
+                account.markAsStarred(deltaStarredArticleIDs)
+
+                // Mark articles as unstarred
+                let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+                account.markAsUnstarred(deltaUnstarredArticleIDs)
+            } catch let error {
+                self.logger.error("Sync story starred status failed: \(error.localizedDescription, privacy: .public)")
+            }
+
+            completion()
+        }
+    }
+
+    func createFeed(account: Account, newsBlurFeed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let newsBlurFeed = newsBlurFeed else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return

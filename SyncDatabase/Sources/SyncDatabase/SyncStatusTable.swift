@@ -87,10 +87,18 @@ struct SyncStatusTable: DatabaseTable {
 		}
 	}
 
+    func selectPendingReadArticleIDs() async throws -> Set<String> {
+        return try await selectPendingArticleIDs(.read)
+    }
+
     func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
         selectPendingArticleIDsAsync(.read, completion)
     }
-    
+
+    func selectPendingStarredArticleIDs() async throws -> Set<String> {
+        return try await selectPendingArticleIDs(.starred)
+    }
+
     func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
         selectPendingArticleIDsAsync(.starred, completion)
     }
@@ -197,7 +205,22 @@ private extension SyncStatusTable {
 		
 		return SyncStatus(articleID: articleID, key: key, flag: flag, selected: selected)
 	}
-    
+
+    func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key) async throws -> Set<String> {
+        return try await withCheckedThrowingContinuation() { continuation in
+            Task { @MainActor in
+                selectPendingArticleIDsAsync(statusKey) { result in
+                    switch result {
+                    case .success(let articleIDs):
+                        continuation.resume(returning: articleIDs)
+                    case .failure(let databaseError):
+                        continuation.resume(throwing: databaseError)
+                    }
+                }
+            }
+        }
+    }
+
     func selectPendingArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ completion: @escaping SyncStatusArticleIDsCompletionBlock) {
 
         queue.runInDatabase { databaseResult in
