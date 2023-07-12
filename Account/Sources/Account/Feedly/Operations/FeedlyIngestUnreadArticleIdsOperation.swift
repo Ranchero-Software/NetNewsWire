@@ -94,16 +94,21 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 			didFinish()
 			return
 		}
-		
-		account.fetchUnreadArticleIDs { result in
-			switch result {
-			case .success(let localUnreadArticleIDs):
-				self.processUnreadArticleIDs(localUnreadArticleIDs)
-				
-			case .failure(let error):
-				self.didFinish(with: error)
-			}
-		}
+
+        Task { @MainActor in
+            var localUnreadArticleIDs: Set<String>?
+
+            do {
+                localUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+            } catch {
+                didFinish(with: error)
+                return
+            }
+
+            if let localUnreadArticleIDs {
+                processUnreadArticleIDs(localUnreadArticleIDs)
+            }
+        }
 	}
 	
 	private func processUnreadArticleIDs(_ localUnreadArticleIDs: Set<String>) {

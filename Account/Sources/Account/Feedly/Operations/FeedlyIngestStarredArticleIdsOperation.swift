@@ -93,16 +93,22 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation, Logging {
 			didFinish()
 			return
 		}
-		
-		account.fetchStarredArticleIDs { result in
-			switch result {
-			case .success(let localStarredArticleIDs):
-				self.processStarredArticleIDs(localStarredArticleIDs)
-				
-			case .failure(let error):
-				self.didFinish(with: error)
-			}
-		}
+
+        Task { @MainActor in
+
+            var localStarredArticleIDs: Set<String>?
+
+            do {
+                localStarredArticleIDs = try await account.fetchStarredArticleIDs()
+            } catch {
+                didFinish(with: error)
+                return
+            }
+
+            if let localStarredArticleIDs {
+                processStarredArticleIDs(localStarredArticleIDs)
+            }
+        }
 	}
 	
 	func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {

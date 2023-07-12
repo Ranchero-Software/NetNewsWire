@@ -239,13 +239,13 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 	// MARK: - Status
 
 	/// Fetch the articleIDs of unread articles.
-	public func fetchUnreadArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
-		articlesTable.fetchUnreadArticleIDsAsync(completion)
+	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
+		return try await articlesTable.fetchUnreadArticleIDsAsync()
 	}
 	
 	/// Fetch the articleIDs of starred articles.
-	public func fetchStarredArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
-		articlesTable.fetchStarredArticleIDsAsync(completion)
+	public func fetchStarredArticleIDsAsync() async throws -> Set<String> {
+        return try await articlesTable.fetchStarredArticleIDsAsync()
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).

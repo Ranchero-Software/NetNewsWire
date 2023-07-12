@@ -1078,102 +1078,82 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func syncArticleReadState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
+    func syncArticleReadState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
+        guard let articleIDs = articleIDs else {
+            completion()
+            return
+        }
 
-		database.selectPendingReadStatusArticleIDs() { result in
-
-            @MainActor func process(_ pendingArticleIDs: Set<String>) {
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-				
-				account.fetchUnreadArticleIDs { articleIDsResult in
-					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
-
-					let group = DispatchGroup()
-					
-					// Mark articles as unread
-					let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-					group.enter()
-					account.markAsUnread(deltaUnreadArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as read
-					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					group.enter()
-					account.markAsRead(deltaReadArticleIDs) { _ in
-						group.leave()
-					}
-					
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
-			}
-			
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
-                self.logger.error("Sync Article Read Status failed: \(error.localizedDescription, privacy: .public)")
-			}
-			
-		}
-		
-	}
-	
-	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
-
-		database.selectPendingStarredStatusArticleIDs() { result in
+        database.selectPendingReadStatusArticleIDs() { result in
 
             @MainActor func process(_ pendingArticleIDs: Set<String>) {
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+                Task { @MainActor in
+                    let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+                    
+                    do {
+                        let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
 
-				account.fetchStarredArticleIDs { articleIDsResult in
-					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+                        // Mark articles as unread
+                        let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+                        account.markAsUnread(deltaUnreadArticleIDs)
 
-					let group = DispatchGroup()
-					
-					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-					group.enter()
-					account.markAsStarred(deltaStarredArticleIDs) { _ in
-						group.leave()
-					}
+                        // Mark articles as read
+                        let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+                        account.markAsRead(deltaReadArticleIDs)
+                    } catch let error {
+                        self.logger.error("Sync Article Read Status failed: \(error.localizedDescription, privacy: .public)")
+                    }
 
-					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					group.enter()
-					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-						group.leave()
-					}
+                    completion()
+                }
 
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
-			}
-			
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
+                switch result {
+                case .success(let pendingArticleIDs):
+                    process(pendingArticleIDs)
+                case .failure(let error):
+                    self.logger.error("Sync Article Read Status failed: \(error.localizedDescription, privacy: .public)")
+                }
+            }
+        }
+    }
+
+    func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
+        guard let articleIDs = articleIDs else {
+            completion()
+            return
+        }
+
+        database.selectPendingStarredStatusArticleIDs() { result in
+
+            func process(_ pendingArticleIDs: Set<String>) {
+
+                Task { @MainActor in
+                    do {
+                        let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+
+                        let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
+
+                        // Mark articles as starred
+                        let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+                        account.markAsStarred(deltaStarredArticleIDs)
+
+                        // Mark articles as unstarred
+                        let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+                        account.markAsUnstarred(deltaUnstarredArticleIDs)
+                    } catch let error {
+                        self.logger.error("Sync Article Starred Status failed: \(error.localizedDescription, privacy: .public)")
+                    }
+
+                    completion()
+                }
+            }
+
+            switch result {
+            case .success(let pendingArticleIDs):
+                process(pendingArticleIDs)
+            case .failure(let error):
                 self.logger.error("Sync Article Starred Status failed: \(error.localizedDescription, privacy: .public)")
-			}
-
-		}
-		
-	}
-
+            }
+        }
+    }
 }

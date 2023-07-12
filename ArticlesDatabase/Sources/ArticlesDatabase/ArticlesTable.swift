@@ -461,12 +461,12 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Statuses
 	
-	func fetchUnreadArticleIDsAsync(_ completion: @escaping ArticleIDsCompletionBlock) {
-		statusesTable.fetchArticleIDsAsync(.read, false, completion)
+	func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
+		return try await statusesTable.fetchArticleIDsAsync(.read, false)
 	}
 
-	func fetchStarredArticleIDsAsync(_ completion: @escaping ArticleIDsCompletionBlock) {
-		statusesTable.fetchArticleIDsAsync(.starred, true, completion)
+	func fetchStarredArticleIDsAsync() async throws -> Set<String> {
+        return try await statusesTable.fetchArticleIDsAsync(.starred, true)
 	}
 
 	func fetchStarredArticleIDs() throws -> Set<String> {

@@ -1276,102 +1276,81 @@ private extension FeedbinAccountDelegate {
 
 		database.selectPendingReadStatusArticleIDs() { result in
 
-            @MainActor func process(_ pendingArticleIDs: Set<String>) {
-				
-				let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
-				
-				account.fetchUnreadArticleIDs { articleIDsResult in
-					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+            func process(_ pendingArticleIDs: Set<String>) {
 
-					let group = DispatchGroup()
-					
-					// Mark articles as unread
-					let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-					group.enter()
-					account.markAsUnread(deltaUnreadArticleIDs) { _ in
-						group.leave()
-					}
+                Task { @MainActor in
+                    let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+                    let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
 
-					// Mark articles as read
-					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-					group.enter()
-					account.markAsRead(deltaReadArticleIDs) { _ in
-						group.leave()
-					}
-					
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-					
-				}
+                    do {
+                        let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
 
-			}
-			
+                        // Mark articles as unread
+                        let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+                        account.markAsUnread(deltaUnreadArticleIDs)
+
+                        // Mark articles as read
+                        let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
+                        account.markAsRead(deltaReadArticleIDs)
+
+                    } catch let error {
+                        self.logger.error("Sync Articles Read Status failed: \(error.localizedDescription, privacy: .public)")
+                    }
+
+                    completion()
+                }
+            }
+
 			switch result {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
                 self.logger.error("Sync Articles Read Status failed: \(error.localizedDescription, privacy: .public)")
 			}
-			
 		}
-		
 	}
 	
-	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
+    func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
+        guard let articleIDs = articleIDs else {
+            completion()
+            return
+        }
 
-		database.selectPendingStarredStatusArticleIDs() { result in
+        database.selectPendingStarredStatusArticleIDs() { result in
 
-            @MainActor func process(_ pendingArticleIDs: Set<String>) {
-				
-				let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
+            func process(_ pendingArticleIDs: Set<String>) {
 
-				account.fetchStarredArticleIDs { articleIDsResult in
-					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+                Task { @MainActor in
+                    let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
+                    let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
 
-					let group = DispatchGroup()
-					
-					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-					group.enter()
-					account.markAsStarred(deltaStarredArticleIDs) { _ in
-						group.leave()
-					}
+                    do {
+                        let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
 
-					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
-					group.enter()
-					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-						group.leave()
-					}
+                        // Mark articles as starred
+                        let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+                        account.markAsStarred(deltaStarredArticleIDs)
 
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
-								
-			}
-			
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
+                        // Mark articles as unstarred
+                        let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
+                        account.markAsUnstarred(deltaUnstarredArticleIDs)
+
+                    } catch let error {
+                        self.logger.error("Sync Article Starred Status failed: \(error.localizedDescription, privacy: .public)")
+                    }
+
+                    completion()
+                }
+            }
+
+            switch result {
+            case .success(let pendingArticleIDs):
+                process(pendingArticleIDs)
+            case .failure(let error):
                 self.logger.error("Sync Article Starred Status failed: \(error.localizedDescription, privacy: .public)")
-			}
-
-		}
-		
-	}
+            }
+        }
+    }
 
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
