@@ -23,12 +23,12 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	private let database: SyncDatabase
 	private let feedName: String?
 	private let addToCollectionService: FeedlyAddFeedToCollectionService
-	private let syncUnreadIdsService: FeedlyGetStreamIdsService
+	private let syncUnreadIdsService: FeedlyGetStreamIDsService
 	private let getStreamContentsService: FeedlyGetStreamContentsService
 	private var feedResourceId: FeedlyFeedResourceId?
 	var addCompletionHandler: ((Result<Feed, Error>) -> ())?
 
-	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress) throws {
+	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIDsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress) throws {
 		
 
 		let validator = FeedlyFeedContainerValidator(container: container)
@@ -94,7 +94,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		createFeeds.downloadProgress = downloadProgress
 		operationQueue.add(createFeeds)
 		
-		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: syncUnreadIdsService, database: database, newerThan: nil)
+		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userID: credentials.username, service: syncUnreadIdsService, database: database, newerThan: nil)
 		syncUnread.addDependency(createFeeds)
 		syncUnread.downloadProgress = downloadProgress
 		syncUnread.delegate = self

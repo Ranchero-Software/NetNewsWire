@@ -39,7 +39,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamContentsService, newerThan: Date?) {
-		let all = FeedlyCategoryResourceId.Global.all(for: credentials.username)
+		let all = FeedlyCategoryResourceID.Global.all(for: credentials.username)
 		self.init(account: account, resource: all, service: service, isPagingEnabled: true, newerThan: newerThan)
 	}
 	

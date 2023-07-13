@@ -4,7 +4,7 @@
 //
 //  Created by Kiel Gillard on 18/10/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
-//
+///Users/brent/Projects/NetNewsWire/Account/Sources/Account/Feedly/Operations/FeedlyIngestUnreadArticleIDsOperation.swift
 
 import Foundation
 import RSCore
@@ -22,16 +22,16 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
-	private let service: FeedlyGetStreamIdsService
+	private let service: FeedlyGetStreamIDsService
 	private let database: SyncDatabase
-	private var remoteEntryIds = Set<String>()
+	private var remoteEntryIDs = Set<String>()
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
-		let resource = FeedlyCategoryResourceId.Global.all(for: userId)
+	convenience init(account: Account, userID: String, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?) {
+		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
@@ -39,30 +39,30 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 	}
 	
 	override func run() {
-		getStreamIds(nil)
+		getStreamIDs(nil)
 	}
 	
-	private func getStreamIds(_ continuation: String?) {
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: nil, unreadOnly: true, completion: didGetStreamIds(_:))
+	private func getStreamIDs(_ continuation: String?) {
+		service.streamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: true, completion: didGetStreamIDs(_:))
 	}
 	
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	private func didGetStreamIDs(_ result: Result<FeedlyStreamIDs, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
 		
 		switch result {
-		case .success(let streamIds):
+		case .success(let streamIDs):
 			
-			remoteEntryIds.formUnion(streamIds.ids)
+			remoteEntryIDs.formUnion(streamIDs.ids)
 			
-			guard let continuation = streamIds.continuation else {
-				removeEntryIdsWithPendingStatus()
+			guard let continuation = streamIDs.continuation else {
+				removeEntryIDsWithPendingStatus()
 				return
 			}
 			
-			getStreamIds(continuation)
+			getStreamIDs(continuation)
 			
 		case .failure(let error):
 			didFinish(with: error)
@@ -70,7 +70,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 	}
 	
 	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
-	private func removeEntryIdsWithPendingStatus() {
+	private func removeEntryIDsWithPendingStatus() {
 		guard !isCanceled else {
 			didFinish()
 			return
@@ -78,8 +78,8 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 		
 		database.selectPendingReadStatusArticleIDs { result in
 			switch result {
-			case .success(let pendingArticleIds):
-				self.remoteEntryIds.subtract(pendingArticleIds)
+			case .success(let pendingArticleIDs):
+				self.remoteEntryIDs.subtract(pendingArticleIDs)
 				
 				self.updateUnreadStatuses()
 				
@@ -106,51 +106,28 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
             }
 
             if let localUnreadArticleIDs {
-                processUnreadArticleIDs(localUnreadArticleIDs)
+                await processUnreadArticleIDs(localUnreadArticleIDs)
             }
         }
 	}
 	
-	private func processUnreadArticleIDs(_ localUnreadArticleIDs: Set<String>) {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
+	@MainActor private func processUnreadArticleIDs(_ localUnreadArticleIDs: Set<String>) async {
+        guard !isCanceled else {
+            didFinish()
+            return
+        }
 
-		let remoteUnreadArticleIDs = remoteEntryIds
-		let group = DispatchGroup()
-		
-		final class ReadStatusResults {
-			var markAsUnreadError: Error?
-			var markAsReadError: Error?
-		}
-		
-		let results = ReadStatusResults()
-		
-		group.enter()
-		account.markAsUnread(remoteUnreadArticleIDs) { databaseError in
-			if let databaseError = databaseError {
-				results.markAsUnreadError = databaseError
-			}
-			group.leave()
-		}
+		let remoteUnreadArticleIDs = remoteEntryIDs
 
-		let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
-		group.enter()
-		account.markAsRead(articleIDsToMarkRead) { databaseError in
-			if let databaseError = databaseError {
-				results.markAsReadError = databaseError
-			}
-			group.leave()
-		}
+        do {
+            try await account.markArticleIDsAsUnread(remoteUnreadArticleIDs)
 
-		group.notify(queue: .main) {
-			let markingError = results.markAsReadError ?? results.markAsUnreadError
-			guard let error = markingError else {
-				self.didFinish()
-				return
-			}
-			self.didFinish(with: error)
-		}
+            let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
+            try await account.markArticleIDsAsRead(articleIDsToMarkRead)
+
+            didFinish()
+        } catch let error {
+            didFinish(with: error)
+        }
 	}
 }

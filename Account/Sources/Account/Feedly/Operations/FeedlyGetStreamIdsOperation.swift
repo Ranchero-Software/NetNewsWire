@@ -1,5 +1,5 @@
 //
-//  FeedlyGetStreamIdsOperation.swift
+//  FeedlyGetStreamIDsOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 18/10/19.
@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 
 protocol FeedlyGetStreamIdsOperationDelegate: AnyObject {
-	func feedlyGetStreamIdsOperation(_ operation: FeedlyGetStreamIdsOperation, didGet streamIds: FeedlyStreamIds)
+	func feedlyGetStreamIdsOperation(_ operation: FeedlyGetStreamIdsOperation, didGet streamIds: FeedlyStreamIDs)
 }
 
 /// Single responsibility is to get the stream ids from Feedly.
@@ -24,16 +24,16 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 		return Set(ids)
 	}
 	
-	private(set) var streamIds: FeedlyStreamIds?
+	private(set) var streamIds: FeedlyStreamIDs?
 	
 	let account: Account
-	let service: FeedlyGetStreamIdsService
+	let service: FeedlyGetStreamIDsService
 	let continuation: String?
 	let resource: FeedlyResourceId
 	let unreadOnly: Bool?
 	let newerThan: Date?
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
@@ -45,7 +45,7 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
 	
 	override func run() {
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
+		service.streamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
 				self.streamIds = stream

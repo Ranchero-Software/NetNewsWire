@@ -334,7 +334,7 @@ extension NewsBlurAccountDelegate {
                 
                 // Mark articles as unread
                 let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-                account.markAsUnread(deltaUnreadArticleIDs)
+                try await account.markArticleIDsAsUnread(deltaUnreadArticleIDs)
 
                 // Mark articles as read
                 let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)

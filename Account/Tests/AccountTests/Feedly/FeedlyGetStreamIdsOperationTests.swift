@@ -29,7 +29,7 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 	
 	func testGetStreamIdsFailure() {
 		let service = TestGetStreamIdsService()
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		
 		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: service, continuation: nil, newerThan: nil, unreadOnly: nil, log: support.log)
 		
@@ -49,7 +49,7 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 	
 	func testValuesPassingForGetStreamIds() {
 		let service = TestGetStreamIdsService()
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		
 		let continuation: String? = "gfdsa"
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 1000)
@@ -57,7 +57,7 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 		
 		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: service, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly, log: support.log)
 		
-		let mockStreamIds = FeedlyStreamIds(continuation: "1234", ids: ["item/1", "item/2", "item/3"])
+		let mockStreamIds = FeedlyStreamIDs(continuation: "1234", ids: ["item/1", "item/2", "item/3"])
 		service.mockResult = .success(mockStreamIds)
 		service.getStreamIdsExpectation = expectation(description: "Did Call Service")
 		service.parameterTester = { serviceResource, serviceContinuation, serviceNewerThan, serviceUnreadOnly in
@@ -92,7 +92,7 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 		let jsonName = "JSON/feedly_unreads_1000"
 		transport.testFiles["/v3/streams/ids"] = "\(jsonName).json"
 		
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: caller, continuation: nil, newerThan: nil, unreadOnly: nil, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")

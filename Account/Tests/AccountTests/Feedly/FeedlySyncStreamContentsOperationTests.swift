@@ -29,7 +29,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 	
 	func testIngestsOnePageSuccess() throws {
 		let service = TestGetStreamContentsService()
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 0)
 		let items = service.makeMockFeedlyEntryItem()
 		service.mockResult = .success(FeedlyStream(id: resource.id, updated: nil, continuation: nil, items: items))
@@ -63,7 +63,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 	
 	func testIngestsOnePageFailure() {
 		let service = TestGetStreamContentsService()
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 0)
 		
 		service.mockResult = .failure(URLError(.timedOut))
@@ -93,7 +93,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 	
 	func testIngestsManyPagesSuccess() throws {
 		let service = TestGetPagedStreamContentsService()
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 0)
 		
 		let continuations = (1...10).map { "\($0)" }

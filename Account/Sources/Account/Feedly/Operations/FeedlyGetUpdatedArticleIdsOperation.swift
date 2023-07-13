@@ -18,18 +18,18 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 
 	private let account: Account
 	private let resource: FeedlyResourceId
-	private let service: FeedlyGetStreamIdsService
+	private let service: FeedlyGetStreamIDsService
 	private let newerThan: Date?
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.newerThan = newerThan
 	}
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, newerThan: Date?) {
-		let all = FeedlyCategoryResourceId.Global.all(for: userId)
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIDsService, newerThan: Date?) {
+		let all = FeedlyCategoryResourceID.Global.all(for: userId)
 		self.init(account: account, resource: all, service: service, newerThan: newerThan)
 	}
 	
@@ -50,10 +50,10 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 			return
 		}
 		
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil, completion: didGetStreamIds(_:))
+		service.streamIDs(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil, completion: didGetStreamIds(_:))
 	}
 	
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	private func didGetStreamIds(_ result: Result<FeedlyStreamIDs, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
@@ -72,7 +72,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 			getStreamIds(continuation)
 			
 		case .failure(let error):
-            self.logger.error("Error getting FeedlyStreamIds: \(error.localizedDescription, privacy: .public).")
+            self.logger.error("Error getting FeedlyStreamIDs: \(error.localizedDescription, privacy: .public).")
 			didFinish(with: error)
 		}
 	}

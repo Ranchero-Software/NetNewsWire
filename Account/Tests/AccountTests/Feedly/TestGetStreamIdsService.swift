@@ -9,13 +9,13 @@
 import XCTest
 @testable import Account
 
-final class TestGetStreamIdsService: FeedlyGetStreamIdsService {
+final class TestGetStreamIdsService: FeedlyGetStreamIDsService {
 	
-	var mockResult: Result<FeedlyStreamIds, Error>?
+	var mockResult: Result<FeedlyStreamIDs, Error>?
 	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
 	var getStreamIdsExpectation: XCTestExpectation?
 	
-	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
+	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
 		guard let result = mockResult else {
 			XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 			return

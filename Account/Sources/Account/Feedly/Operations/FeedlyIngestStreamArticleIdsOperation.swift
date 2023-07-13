@@ -19,16 +19,16 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
-	private let service: FeedlyGetStreamIdsService
+	private let service: FeedlyGetStreamIDsService
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 	}
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService) {
-		let all = FeedlyCategoryResourceId.Global.all(for: userId)
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIDsService) {
+		let all = FeedlyCategoryResourceID.Global.all(for: userId)
 		self.init(account: account, resource: all, service: service)
 	}
 	
@@ -37,10 +37,10 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation, Logging {
 	}
 	
 	private func getStreamIds(_ continuation: String?) {
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
+		service.streamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
 	}
 	
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	private func didGetStreamIds(_ result: Result<FeedlyStreamIDs, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return

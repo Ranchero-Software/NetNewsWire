@@ -43,7 +43,7 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation, Logging {
 		// TODO: Prioritise the must read collection/category before others so the most important content for the user loads first.
 		
 		for collection in collectionsProvider.collections {
-			let resource = FeedlyCategoryResourceId(id: collection.id)
+			let resource = FeedlyCategoryResourceID(id: collection.id)
 			let operation = FeedlyGetStreamContentsOperation(account: account,
 															   resource: resource,
 															   service: service,

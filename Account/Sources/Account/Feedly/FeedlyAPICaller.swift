@@ -671,9 +671,9 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 	}
 }
 
-extension FeedlyAPICaller: FeedlyGetStreamIdsService {
+extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 	
-	func getStreamIds(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
+	func streamIDs(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -724,7 +724,7 @@ extension FeedlyAPICaller: FeedlyGetStreamIdsService {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		send(request: request, resultType: FeedlyStreamIds.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: FeedlyStreamIDs.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, collections)):
 				if let response = collections {

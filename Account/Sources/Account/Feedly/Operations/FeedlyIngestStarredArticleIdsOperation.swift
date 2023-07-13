@@ -21,16 +21,16 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
-	private let service: FeedlyGetStreamIdsService
+	private let service: FeedlyGetStreamIDsService
 	private let database: SyncDatabase
 	private var remoteEntryIds = Set<String>()
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?) {
 		let resource = FeedlyTagResourceId.Global.saved(for: userId)
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
@@ -42,10 +42,10 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation, Logging {
 	}
 	
 	private func getStreamIds(_ continuation: String?) {
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
+		service.streamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
 	}
 	
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	private func didGetStreamIds(_ result: Result<FeedlyStreamIDs, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return

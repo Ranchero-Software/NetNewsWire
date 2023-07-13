@@ -9,14 +9,14 @@
 import XCTest
 @testable import Account
 
-final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
+final class TestGetPagedStreamIdsService: FeedlyGetStreamIDsService {
 	
 	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
 	var getStreamIdsExpectation: XCTestExpectation?
-	var pages = [String: FeedlyStreamIds]()
+	var pages = [String: FeedlyStreamIDs]()
 	
 	func addAtLeastOnePage(for resource: FeedlyResourceId, continuations: [String], numberOfEntriesPerPage count: Int)  {
-		pages = [String: FeedlyStreamIds](minimumCapacity: continuations.count + 1)
+		pages = [String: FeedlyStreamIDs](minimumCapacity: continuations.count + 1)
 		
 		// A continuation is an identifier for the next page.
 		// The first page has a nil identifier.
@@ -31,9 +31,9 @@ final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
 		}
 	}
 	
-	private func makeStreamIds(for resource: FeedlyResourceId, continuation: String?, between range: Range<Int>) -> FeedlyStreamIds {
+	private func makeStreamIds(for resource: FeedlyResourceId, continuation: String?, between range: Range<Int>) -> FeedlyStreamIDs {
 		let entryIds = range.map { _ in UUID().uuidString }
-		let stream = FeedlyStreamIds(continuation: continuation, ids: entryIds)
+		let stream = FeedlyStreamIDs(continuation: continuation, ids: entryIds)
 		return stream
 	}
 	
@@ -41,7 +41,7 @@ final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
 		return "\(stream.id)@\(continuation ?? "")"
 	}
 	
-	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
+	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
 		let key = TestGetPagedStreamIdsService.getPagingKey(for: resource, continuation: continuation)
 		guard let page = pages[key] else {
 			XCTFail("Missing page for \(resource.id) and continuation \(String(describing: continuation)). Test may time out because the completion will not be called.")

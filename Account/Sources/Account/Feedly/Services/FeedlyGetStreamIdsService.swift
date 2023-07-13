@@ -1,5 +1,5 @@
 //
-//  FeedlyGetStreamIdsService.swift
+//  FeedlyGetStreamIDsService.swift
 //  Account
 //
 //  Created by Kiel Gillard on 21/10/19.
@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol FeedlyGetStreamIdsService: AnyObject {
-	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ())
+protocol FeedlyGetStreamIDsService: AnyObject {
+	func streamIDs(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ())
 }

@@ -36,7 +36,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	
 	func testNoEntries() {
 		let entries = support.makeParsedItemTestDataFor(numberOfFeeds: 0, numberOfItemsInFeeds: 0)
-		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
+		let resource = FeedlyCategoryResourceID(id: "user/12345/category/6789")
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		
@@ -57,7 +57,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	
 	func testGroupsOneEntryByFeedId() {
 		let entries = support.makeParsedItemTestDataFor(numberOfFeeds: 1, numberOfItemsInFeeds: 1)
-		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
+		let resource = FeedlyCategoryResourceID(id: "user/12345/category/6789")
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		
@@ -78,7 +78,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	
 	func testGroupsManyEntriesByFeedId() {
 		let entries = support.makeParsedItemTestDataFor(numberOfFeeds: 100, numberOfItemsInFeeds: 100)
-		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
+		let resource = FeedlyCategoryResourceID(id: "user/12345/category/6789")
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		

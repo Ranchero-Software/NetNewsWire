@@ -898,6 +898,8 @@ public enum FetchType {
         noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
     }
 
+    /// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+    /// Returns a set of new article statuses.
     func markArticleIDsAsRead(_ articleIDs: Set<String>) async throws {
         try await markArticleIDs(articleIDs, statusKey: .read, flag: true)
     }
@@ -908,19 +910,37 @@ public enum FetchType {
 		mark(articleIDs: articleIDs, statusKey: .read, flag: true, completion: completion)
 	}
 
-	/// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+    /// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+    /// Returns a set of new article statuses.
+    func markArticleIDsAsUnread(_ articleIDs: Set<String>) async throws {
+        try await markArticleIDs(articleIDs, statusKey: .read, flag: false)
+    }
+
+    /// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
 	func markAsUnread(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		mark(articleIDs: articleIDs, statusKey: .read, flag: false, completion: completion)
 	}
 
-	/// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+    /// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+    /// Returns a set of new article statuses.
+    func markArticleIDsAsStarred(_ articleIDs: Set<String>) async throws {
+        try await markArticleIDs(articleIDs, statusKey: .starred, flag: true)
+    }
+
+    /// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
 	func markAsStarred(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		mark(articleIDs: articleIDs, statusKey: .starred, flag: true, completion: completion)
 	}
 
-	/// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+    /// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+    /// Returns a set of new article statuses.
+    func markArticleIDsAsUnstarred(_ articleIDs: Set<String>) async throws {
+        try await markArticleIDs(articleIDs, statusKey: .starred, flag: false)
+    }
+
+    /// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
 	func markAsUnstarred(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		mark(articleIDs: articleIDs, statusKey: .starred, flag: false, completion: completion)

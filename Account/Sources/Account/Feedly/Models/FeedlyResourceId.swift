@@ -44,29 +44,29 @@ extension FeedlyFeedResourceId {
 	}
 }
 
-struct FeedlyCategoryResourceId: FeedlyResourceId {
+struct FeedlyCategoryResourceID: FeedlyResourceId {
 	let id: String
 	
 	enum Global {
 		
-		static func uncategorized(for userId: String) -> FeedlyCategoryResourceId {
+		static func uncategorized(for userId: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
 			let id = "user/\(userId)/category/global.uncategorized"
-			return FeedlyCategoryResourceId(id: id)
+			return FeedlyCategoryResourceID(id: id)
 		}
 		
 		/// All articles from all the feeds the user subscribes to.
-		static func all(for userId: String) -> FeedlyCategoryResourceId {
+		static func all(for userId: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
 			let id = "user/\(userId)/category/global.all"
-			return FeedlyCategoryResourceId(id: id)
+			return FeedlyCategoryResourceID(id: id)
 		}
 		
 		/// All articles from all the feeds the user loves most.
-		static func mustRead(for userId: String) -> FeedlyCategoryResourceId {
+		static func mustRead(for userId: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
 			let id = "user/\(userId)/category/global.must"
-			return FeedlyCategoryResourceId(id: id)
+			return FeedlyCategoryResourceID(id: id)
 		}
 	}
 }
