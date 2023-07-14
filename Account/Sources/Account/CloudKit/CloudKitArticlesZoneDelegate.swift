@@ -74,22 +74,22 @@ private extension CloudKitArticlesZoneDelegate {
 			return
 		}
 		
-		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { databaseError in
+        database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { databaseError in
             Task { @MainActor in
                 if let databaseError = databaseError {
                     completion(databaseError)
-                } else {
-                    self.account?.delete(articleIDs: deletableArticleIDs) { databaseError in
-                        if let databaseError = databaseError {
-                            completion(databaseError)
-                        } else {
-                            completion(nil)
-                        }
-                    }
+                    return
+                }
+                
+                do {
+                    try await self.account?.deleteArticleIDs(deletableArticleIDs)
+                    completion(nil)
+                } catch let error {
+                    completion(error)
                 }
             }
-		}
-	}
+        }
+    }
 
     @MainActor func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
 

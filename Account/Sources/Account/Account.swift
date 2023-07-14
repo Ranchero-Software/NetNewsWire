@@ -946,6 +946,14 @@ public enum FetchType {
 		mark(articleIDs: articleIDs, statusKey: .starred, flag: false, completion: completion)
 	}
 
+    // Delete the articles associated with the given set of articleIDs
+    func deleteArticleIDs(_ articleIDs: Set<String>) async throws {
+        guard !articleIDs.isEmpty else {
+            return
+        }
+        try await database.deleteArticleIDs(articleIDs)
+    }
+
 	// Delete the articles associated with the given set of articleIDs
 	func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		guard !articleIDs.isEmpty else {

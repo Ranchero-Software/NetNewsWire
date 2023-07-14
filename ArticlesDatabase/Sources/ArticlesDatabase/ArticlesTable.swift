@@ -367,6 +367,23 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+    public func deleteArticleIDs(_ articleIDs: Set<String>) async throws {
+
+        try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                queue.runInTransaction { databaseResult in
+                    switch databaseResult {
+                    case .success(let database):
+                        self.removeArticles(articleIDs, database)
+                        continuation.resume()
+                    case .failure(let databaseError):
+                        continuation.resume(throwing: databaseError)
+                    }
+                }
+            }
+        }
+    }
+    
 	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
 		self.queue.runInTransaction { (databaseResult) in
 

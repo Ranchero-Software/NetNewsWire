@@ -231,6 +231,11 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		articlesTable.update(feedIDsAndItems, defaultRead, completion)
 	}
 
+    /// Delete articles
+    public func deleteArticleIDs(_ articleIDs: Set<String>) async throws {
+        try await articlesTable.deleteArticleIDs(articleIDs)
+    }
+
 	/// Delete articles
 	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
 		articlesTable.delete(articleIDs: articleIDs, completion: completion)
