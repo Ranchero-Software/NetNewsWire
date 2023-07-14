@@ -129,6 +129,10 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
 		createRSSFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 	}
 
+    func renameFeed(for account: Account, feed: Feed, name: String) async throws {
+        feed.editedName = name
+    }
+
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		feed.editedName = name
 		completion(.success(()))

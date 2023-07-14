@@ -418,6 +418,37 @@ public enum FeedbinAccountDelegateError: String, Error {
 		
 	}
 
+    func renameFeed(for account: Account, feed: Feed, name: String) async throws {
+        // This error should never happen
+        guard let subscriptionID = feed.externalID else {
+            throw FeedbinAccountDelegateError.invalidParameter
+        }
+
+        refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+        try await withCheckedThrowingContinuation { continuation in
+
+            caller.renameSubscription(subscriptionID: subscriptionID, newName: name) { result in
+                Task { @MainActor in
+
+                    self.refreshProgress.completeTask()
+                    switch result {
+                    case .success:
+                        DispatchQueue.main.async {
+                            feed.editedName = name
+                            continuation.resume()
+                        }
+                    case .failure(let error):
+                        DispatchQueue.main.async {
+                            let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+                            continuation.resume(throwing: wrappedError)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		// This error should never happen

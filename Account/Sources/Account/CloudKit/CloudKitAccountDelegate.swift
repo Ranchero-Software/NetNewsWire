@@ -184,6 +184,27 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed, completion: completion)
 	}
 
+    func renameFeed(for account: Account, feed: Feed, name: String) async throws {
+        let editedName = name.isEmpty ? nil : name
+        refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+        try await withCheckedThrowingContinuation { continuation in
+            accountZone.renameFeed(feed, editedName: editedName) { result in
+                Task { @MainActor in
+                    self.refreshProgress.completeTask()
+                    switch result {
+                    case .success:
+                        feed.editedName = name
+                        continuation.resume()
+                    case .failure(let error):
+                        self.processAccountError(account, error)
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
+    }
+
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let editedName = name.isEmpty ? nil : name
 		refreshProgress.addToNumberOfTasksAndRemaining(1)

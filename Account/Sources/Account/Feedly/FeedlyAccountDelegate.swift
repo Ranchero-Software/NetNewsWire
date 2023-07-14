@@ -343,7 +343,38 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 			}
 		}
 	}
-	
+
+    func renameFeed(for account: Account, feed: Feed, name: String) async throws {
+
+        let folderCollectionIDs = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
+        guard let collectionIDs = folderCollectionIDs, let collectionID = collectionIDs.first else {
+            throw FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)
+        }
+
+        let feedID = FeedlyFeedResourceId(id: feed.feedID)
+        let editedNameBefore = feed.editedName
+
+        // optimistically set the name
+        feed.editedName = name
+
+        // Adding an existing feed updates it.
+        // Updating feed name in one folder/collection updates it for all folders/collections.
+        try await withCheckedThrowingContinuation { continuation in
+            caller.addFeed(with: feedID, title: name, toCollectionWith: collectionID) { result in
+                Task { @MainActor in
+                    switch result {
+                    case .success:
+                        continuation.resume()
+
+                    case .failure(let error):
+                        feed.editedName = editedNameBefore
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
+    }
+
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
