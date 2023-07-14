@@ -1443,13 +1443,10 @@ private extension MasterFeedViewController {
 			}
 			
 			if let feed = feed as? Feed {
-				feed.rename(to: name) { result in
-					switch result {
-					case .success:
-						break
-					case .failure(let error):
-						self?.presentError(error)
-					}
+				do {
+					try await feed.rename(to: name)
+				} catch let error {
+					self?.presentError(error)
 				}
 			} else if let folder = feed as? Folder {
 				folder.rename(to: name) { result in
@@ -1461,7 +1458,6 @@ private extension MasterFeedViewController {
 					}
 				}
 			}
-			
 		}
 		
 		alertController.addAction(renameAction)

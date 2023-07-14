@@ -210,6 +210,13 @@ public final class Feed: FeedProtocol, Renamable, Hashable, ObservableObject {
 
 	// MARK: - Renamable
 
+    @MainActor public func rename(to newName: String) async throws {
+        guard let account else {
+            return
+        }
+        try await account.rename(self, to: newName)
+    }
+
     @MainActor public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let account = account else { return }
 		account.renameFeed(self, to: newName, completion: completion)

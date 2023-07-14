@@ -229,11 +229,10 @@ extension SidebarViewController: RenameWindowControllerDelegate {
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
 
 		if let feed = object as? Feed {
-			feed.rename(to: name) { result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
+			Task { @MainActor in
+				do {
+					try await feed.rename(to: name)
+				} catch let error {
 					NSApplication.shared.presentError(error)
 				}
 			}
