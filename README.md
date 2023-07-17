@@ -82,7 +82,7 @@ Access to [find your development team ID](/Technotes/FindingYourDevelopmentTeamI
 Set `ORGANIZATION_IDENTIFIER` to a reversed domain name that you control or have made up.
 Note that `PROVISIONING_PROFILE_SPECIFIER` should not have a value associated with it.
 
-You can now open the `NetNewsWire.xccodeproj` in Xcode.
+You can now open the `NetNewsWire.xcodeproj` in Xcode.
 
 Now you should be able to build without code signing errors and without modifying
 the NetNewsWire Xcode project.  This is a special build of NetNewsWire with some
