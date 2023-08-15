@@ -44,7 +44,7 @@ a:hover {
 	--article-date-color: rgba(0, 0, 0, 0.5);
 	--table-cell-border-color: lightgray;
 	--primary-accent-color: #43350e;
-	--secondary-accent-color: #43350e;
+	--secondary-accent-color: #935211;
 	--block-quote-border-color: rgba(0, 0, 0, 0.3);
 }
 
@@ -77,6 +77,12 @@ body > header .headerTable th {
 }
 body > header .headerTable td.avatar {
 	width: 33%;
+}
+body > article #bodyContainer a,
+body > article #bodyContainer a:link,
+body > article #bodyContainer a:visited {
+	color: var(--secondary-accent-color);
+	border-bottom: 1px dotted rgba(0, 0, 0, 0.15);
 }
 
 body code,
