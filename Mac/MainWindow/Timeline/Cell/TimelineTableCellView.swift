@@ -238,6 +238,12 @@ private extension TimelineTableCellView {
 			textField.attributedStringValue = s
 			needsLayout = true
 		}
+
+		if cellData.read {
+			textField.textColor = NSColor.secondaryLabelColor
+		} else {
+			textField.textColor = NSColor.labelColor
+		}
 	}
 
 	func updateFeedNameView() {
