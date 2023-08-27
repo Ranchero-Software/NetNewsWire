@@ -130,11 +130,12 @@ public enum FeedbinAccountDelegateError: String, Error {
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
-        logger.debug("Sending article statuses")
+		Task { @MainActor in
+			logger.debug("Sending article statuses")
 
-		database.selectForProcessing { result in
+			do {
+				let syncStatuses = try await self.database.selectForProcessing()
 
-            @MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
 				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
 				let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
@@ -144,7 +145,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 				var errorOccurred = false
 
 				group.enter()
-				self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) { result in
+				self.sendArticleStatuses(Array(createUnreadStatuses), apiCall: self.caller.createUnreadEntries) { result in
 					group.leave()
 					if case .failure = result {
 						errorOccurred = true
@@ -152,7 +153,15 @@ public enum FeedbinAccountDelegateError: String, Error {
 				}
 
 				group.enter()
-				self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) { result in
+				self.sendArticleStatuses(Array(deleteUnreadStatuses), apiCall: self.caller.deleteUnreadEntries) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+				
+				group.enter()
+				self.sendArticleStatuses(Array(createStarredStatuses), apiCall: self.caller.createStarredEntries) { result in
 					group.leave()
 					if case .failure = result {
 						errorOccurred = true
@@ -160,15 +169,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 				}
 
 				group.enter()
-				self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) { result in
+				self.sendArticleStatuses(Array(deleteStarredStatuses), apiCall: self.caller.deleteStarredEntries) { result in
 					group.leave()
 					if case .failure = result {
 						errorOccurred = true
@@ -176,20 +177,15 @@ public enum FeedbinAccountDelegateError: String, Error {
 				}
 
 				group.notify(queue: DispatchQueue.main) {
-                    self.logger.debug("Done sending article statuses.")
+					self.logger.debug("Done sending article statuses.")
 					if errorOccurred {
 						completion(.failure(FeedbinAccountDelegateError.unknown))
 					} else {
 						completion(.success(()))
 					}
 				}
-			}
-
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}
@@ -590,15 +586,20 @@ public enum FeedbinAccountDelegateError: String, Error {
 				let syncStatuses = articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
-
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
+				
+				Task { @MainActor in
+					do {
+						try await self.database.insertStatuses(syncStatuses)
+						let count = try await self.database.selectPendingCount()
+						if count > 100 {
 							self.sendArticleStatus(for: account) { _ in }
 						}
 						completion(.success(()))
+					} catch {
+						completion(.failure(error))
 					}
 				}
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -985,18 +986,19 @@ private extension FeedbinAccountDelegate {
 			
 			group.enter()
 			apiCall(articleIDGroup) { result in
-				switch result {
-				case .success:
-					self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
-					group.leave()
-				case .failure(let error):
-					errorOccurred = true
-                    self.logger.error("Article status sync call failed: \(error.localizedDescription, privacy: .public)")
-					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
-					group.leave()
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
+						group.leave()
+					case .failure(let error):
+						errorOccurred = true
+						self.logger.error("Article status sync call failed: \(error.localizedDescription, privacy: .public)")
+						try? await self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
+						group.leave()
+					}
 				}
 			}
-			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
@@ -1006,7 +1008,6 @@ private extension FeedbinAccountDelegate {
 				completion(.success(()))
 			}
 		}
-		
 	}
 	
 	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {

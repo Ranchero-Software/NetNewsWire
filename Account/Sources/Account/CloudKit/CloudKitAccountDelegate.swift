@@ -420,22 +420,21 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
-
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account, showProgress: false)  { _ in }
-						}
-						completion(.success(()))
+			Task { @MainActor in
+				switch result {
+				case .success(let articles):
+					let syncStatuses = articles.map { article in
+						return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 					}
+
+					try? await self.database.insertStatuses(syncStatuses)
+					if let count = try? await self.database.selectPendingCount(), count > 100 {
+						self.sendArticleStatus(for: account, showProgress: false)  { _ in }
+					}
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
 				}
-			case .failure(let error):
-				completion(.failure(error))
 			}
 		}
 	}
@@ -446,24 +445,25 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress, articlesZone: articlesZone)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
-		
-		database.resetAllSelectedForProcessing()
-		
-		// Check to see if this is a new account and initialize anything we need
-		if account.externalID == nil {
-			accountZone.findOrCreateAccount() { [weak self] result in
-				switch result {
-				case .success(let externalID):
-					account.externalID = externalID
-					self?.initialRefreshAll(for: account) { _ in }
-				case .failure(let error):
-                    self?.logger.error("Error adding account container: \(error.localizedDescription, privacy: .public)")
+
+		Task { @MainActor in
+			try? await database.resetAllSelectedForProcessing()
+
+			// Check to see if this is a new account and initialize anything we need
+			if account.externalID == nil {
+				accountZone.findOrCreateAccount() { [weak self] result in
+					switch result {
+					case .success(let externalID):
+						account.externalID = externalID
+						self?.initialRefreshAll(for: account) { _ in }
+					case .failure(let error):
+						self?.logger.error("Error adding account container: \(error.localizedDescription, privacy: .public)")
+					}
 				}
+				accountZone.subscribeToZoneChanges()
+				articlesZone.subscribeToZoneChanges()
 			}
-			accountZone.subscribeToZoneChanges()
-			articlesZone.subscribeToZoneChanges()
 		}
-		
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
@@ -773,7 +773,8 @@ private extension CloudKitAccountDelegate {
 		let syncStatuses = articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
 		}
-		database.insertStatuses(syncStatuses) { _ in
+		Task { @MainActor in
+			try? await database.insertStatuses(syncStatuses)
 			completion()
 		}
 	}

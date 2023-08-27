@@ -24,18 +24,13 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation, Logging {
 	}
 	
 	override func run() {
-        logger.debug("Sending article statuses...")
+		Task { @MainActor in
+			logger.debug("Sending article statuses...")
 
-		database.selectForProcessing { result in
-			if self.isCanceled {
-				self.didFinish()
-				return
-			}
-			
-			switch result {
-			case .success(let syncStatuses):
-				self.processStatuses(syncStatuses)
-			case .failure:
+			do {
+				let syncStatuses = try await database.selectForProcessing()
+				self.processStatuses(Array(syncStatuses))
+			} catch {
 				self.didFinish()
 			}
 		}
@@ -64,16 +59,14 @@ private extension FeedlySendArticleStatusesOperation {
 			let database = self.database
 			group.enter()
 			service.mark(ids, as: pairing.action) { result in
-				assert(Thread.isMainThread)
-				switch result {
-				case .success:
-					database.deleteSelectedForProcessing(Array(ids)) { _ in
-						group.leave()
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await database.deleteSelectedForProcessing(Array(ids))
+					case .failure:
+						try? await database.resetSelectedForProcessing(Array(ids))
 					}
-				case .failure:
-					database.resetSelectedForProcessing(Array(ids)) { _ in
-						group.leave()
-					}
+					group.leave()
 				}
 			}
 		}

@@ -535,22 +535,27 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
+			Task { @MainActor in
+				switch result {
+				case .success(let articles):
+					let syncStatuses = articles.map { article in
+						return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+					}
+
+					do {
+						try await self.database.insertStatuses(syncStatuses)
+						let count = try await self.database.selectPendingCount()
+						if count > 100 {
 							self.sendArticleStatus(for: account) { _ in }
 						}
 						completion(.success(()))
+					} catch {
+						completion(.failure(error))
 					}
+				case .failure(let error):
+					completion(.failure(error))
 				}
-			case .failure(let error):
-				completion(.failure(error))
 			}
 		}
 	}

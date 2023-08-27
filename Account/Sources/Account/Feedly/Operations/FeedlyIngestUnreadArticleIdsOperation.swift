@@ -75,15 +75,13 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 			didFinish()
 			return
 		}
-		
-		database.selectPendingReadStatusArticleIDs { result in
-			switch result {
-			case .success(let pendingArticleIDs):
+
+		Task { @MainActor in
+			do {
+				let pendingArticleIDs = try await database.selectPendingReadArticleIDs()
 				self.remoteEntryIDs.subtract(pendingArticleIDs)
-				
 				self.updateUnreadStatuses()
-				
-			case .failure(let error):
+			} catch {
 				self.didFinish(with: error)
 			}
 		}

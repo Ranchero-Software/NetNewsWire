@@ -75,14 +75,12 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation, Logging {
 			return
 		}
 		
-		database.selectPendingStarredStatusArticleIDs { result in
-			switch result {
-			case .success(let pendingArticleIds):
-				self.remoteEntryIds.subtract(pendingArticleIds)
-				
+		Task { @MainActor in
+			do {
+				let pendingArticleIDs = try await database.selectPendingStarredArticleIDs()
+				self.remoteEntryIds.subtract(pendingArticleIDs)
 				self.updateStarredStatuses()
-				
-			case .failure(let error):
+			} catch {
 				self.didFinish(with: error)
 			}
 		}

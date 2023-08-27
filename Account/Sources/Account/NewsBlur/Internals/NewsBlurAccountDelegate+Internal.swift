@@ -294,15 +294,25 @@ extension NewsBlurAccountDelegate {
 		for storyHashGroup in storyHashGroups {
 			group.enter()
 			apiCall(storyHashGroup) { result in
-				switch result {
-				case .success:
-					self.database.deleteSelectedForProcessing(storyHashGroup.map { String($0) } )
-					group.leave()
-				case .failure(let error):
-					errorOccurred = true
-                    self.logger.error("Story status sync call failed: \(error.localizedDescription, privacy: .public)")
-					self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
-					group.leave()
+				Task { @MainActor in
+					let articleIDs = storyHashGroup.map { String($0) }
+					switch result {
+					case .success:
+						do {
+							try await self.database.deleteSelectedForProcessing(articleIDs)
+							group.leave()
+						} catch {
+							errorOccurred = true
+							self.logger.error("Story status sync call failed: \(error.localizedDescription, privacy: .public)")
+							try? await self.database.resetSelectedForProcessing(articleIDs)
+							group.leave()
+						}
+					case .failure(let error):
+						errorOccurred = true
+						self.logger.error("Story status sync call failed: \(error.localizedDescription, privacy: .public)")
+						try? await self.database.resetSelectedForProcessing(articleIDs)
+						group.leave()
+					}
 				}
 			}
 		}

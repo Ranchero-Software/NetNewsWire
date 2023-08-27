@@ -10,12 +10,6 @@ import Foundation
 import RSCore
 import RSDatabase
 
-public typealias SyncStatusesResult = Result<Array<SyncStatus>, DatabaseError>
-public typealias SyncStatusesCompletionBlock = (SyncStatusesResult) -> Void
-
-public typealias SyncStatusArticleIDsResult = Result<Set<String>, DatabaseError>
-public typealias SyncStatusArticleIDsCompletionBlock = (SyncStatusArticleIDsResult) -> Void
-
 public struct SyncDatabase {
 
 	private let syncStatusTable: SyncStatusTable
@@ -32,44 +26,36 @@ public struct SyncDatabase {
 
 	// MARK: - API
 
-	public func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
-		syncStatusTable.insertStatuses(statuses, completion: completion)
-	}
-	
-	public func selectForProcessing(limit: Int? = nil, completion: @escaping SyncStatusesCompletionBlock) {
-		return syncStatusTable.selectForProcessing(limit: limit, completion: completion)
+	public func insertStatuses(_ statuses: [SyncStatus]) async throws {
+		try await syncStatusTable.insertStatuses(statuses)
 	}
 
-	public func selectPendingCount(completion: @escaping DatabaseIntCompletionBlock) {
-		syncStatusTable.selectPendingCount(completion)
+	public func selectForProcessing(limit: Int? = nil) async throws -> Set<SyncStatus> {
+		try await syncStatusTable.selectForProcessing(limit: limit)
+	}
+
+	public func selectPendingCount() async throws -> Int {
+		try await syncStatusTable.selectPendingCount()
 	}
 
     public func selectPendingReadArticleIDs() async throws -> Set<String> {
         try await syncStatusTable.selectPendingReadArticleIDs()
     }
 
-    public func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
-        syncStatusTable.selectPendingReadStatusArticleIDs(completion: completion)
-    }
-
     public func selectPendingStarredArticleIDs() async throws -> Set<String> {
         try await syncStatusTable.selectPendingStarredArticleIDs()
     }
 
-    public func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
-        syncStatusTable.selectPendingStarredStatusArticleIDs(completion: completion)
-    }
-    
-	public func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
-		syncStatusTable.resetAllSelectedForProcessing(completion: completion)
+	public func resetAllSelectedForProcessing() async throws {
+		try await syncStatusTable.resetAllSelectedForProcessing()
 	}
 
-	public func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
-		syncStatusTable.resetSelectedForProcessing(articleIDs, completion: completion)
+	public func resetSelectedForProcessing(_ articleIDs: [String]) async throws {
+		try await syncStatusTable.resetSelectedForProcessing(articleIDs)
 	}
-	
-    public func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
-		syncStatusTable.deleteSelectedForProcessing(articleIDs, completion: completion)
+
+	public func deleteSelectedForProcessing(_ articleIDs: [String]) async throws {
+		try await syncStatusTable.deleteSelectedForProcessing(articleIDs)
 	}
 
 	// MARK: - Suspend and Resume (for iOS)

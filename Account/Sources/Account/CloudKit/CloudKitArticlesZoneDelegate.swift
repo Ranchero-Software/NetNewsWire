@@ -30,36 +30,30 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 	
 	func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 
-        database.selectPendingReadStatusArticleIDs() { result in
-            switch result {
-            case .success(let pendingReadStatusArticleIDs):
+		Task { @MainActor in
 
-                self.database.selectPendingStarredStatusArticleIDs() { result in
-                    switch result {
-                    case .success(let pendingStarredStatusArticleIDs):
-                        self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) { error in
-                            Task { @MainActor in
-                                if let error = error {
-                                    completion(.failure(error))
-                                } else {
-                                    self.update(records: updated,
-                                                pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-                                                pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-                                                completion: completion)
-                                }
-                            }
-                        }
-                    case .failure(let error):
-                        self.logger.error("Error occurred getting pending starred records: \(error.localizedDescription, privacy: .public)")
-                        completion(.failure(CloudKitZoneError.unknown))
-                    }
-                }
-            case .failure(let error):
-                self.logger.error("Error occurred getting pending read status records: \(error.localizedDescription, privacy: .public)")
-                completion(.failure(CloudKitZoneError.unknown))
-            }
-        }
-    }	
+			do {
+				let pendingReadStatusArticleIDs = try await self.database.selectPendingReadArticleIDs()
+				let pendingStarredStatusArticleIDs = try await self.database.selectPendingStarredArticleIDs()
+
+				self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) { error in
+					Task { @MainActor in
+						if let error = error {
+							completion(.failure(error))
+						} else {
+							self.update(records: updated,
+										pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+										pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+										completion: completion)
+						}
+					}
+				}
+			} catch {
+				self.logger.error("Error occurred getting pending read status records: \(error.localizedDescription, privacy: .public)")
+				completion(.failure(CloudKitZoneError.unknown))
+			}
+		}
+	}
 }
 
 private extension CloudKitArticlesZoneDelegate {
@@ -73,23 +67,17 @@ private extension CloudKitArticlesZoneDelegate {
 			completion(nil)
 			return
 		}
-		
-        database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { databaseError in
-            Task { @MainActor in
-                if let databaseError = databaseError {
-                    completion(databaseError)
-                    return
-                }
-                
-                do {
-                    try await self.account?.deleteArticleIDs(deletableArticleIDs)
-                    completion(nil)
-                } catch let error {
-                    completion(error)
-                }
-            }
-        }
-    }
+
+		Task { @MainActor in
+			do {
+				try await database.deleteSelectedForProcessing(Array(deletableArticleIDs))
+				try await self.account?.deleteArticleIDs(deletableArticleIDs)
+				completion(nil)
+			} catch {
+				completion(error)
+			}
+		}
+	}
 
     @MainActor func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
 
@@ -147,30 +135,30 @@ private extension CloudKitArticlesZoneDelegate {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
 			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 			
-			DispatchQueue.main.async {
+			Task { @MainActor in
 				for (feedID, parsedItems) in feedIDsAndItems {
 					group.enter()
 					self.account?.update(feedID, with: parsedItems, deleteOlder: false) { result in
-						switch result {
-						case .success(let articleChanges):
-							guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
+						Task { @MainActor in
+							switch result {
+							case .success(let articleChanges):
+								guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
+									group.leave()
+									return
+								}
+								let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
+								try? await self.database.insertStatuses(syncStatuses)
 								group.leave()
-								return
-							}
-							let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
-							self.database.insertStatuses(syncStatuses) { _ in
+							case .failure(let databaseError):
+								errorOccurred = true
+								self.logger.error("Error occurred while storing articles: \(databaseError.localizedDescription, privacy: .public)")
 								group.leave()
 							}
-						case .failure(let databaseError):
-							errorOccurred = true
-                            self.logger.error("Error occurred while storing articles: \(databaseError.localizedDescription, privacy: .public)")
-							group.leave()
 						}
 					}
 				}
 				group.leave()
 			}
-			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {

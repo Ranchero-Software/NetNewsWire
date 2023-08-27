@@ -131,10 +131,10 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-        logger.debug("Sending story statuses...")
-		database.selectForProcessing { result in
+		Task { @MainActor in
+			logger.debug("Sending story statuses")
 
-            @MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
+			@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
 				let createUnreadStatuses = syncStatuses.filter {
 					$0.key == SyncStatus.Key.read && $0.flag == false
 				}
@@ -184,7 +184,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 				}
 
 				group.notify(queue: DispatchQueue.main) {
-                    self.logger.debug("Done sending article statuses.")
+					self.logger.debug("Done sending article statuses.")
 					if errorOccurred {
 						completion(.failure(NewsBlurError.unknown))
 					} else {
@@ -193,11 +193,11 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 				}
 			}
 
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			do {
+				let syncStatuses = try await database.selectForProcessing()
+				processStatuses(Array(syncStatuses))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}
@@ -609,19 +609,25 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		account.update(articles, statusKey: statusKey, flag: flag) { result in
 			switch result {
+
 			case .success(let articles):
 				let syncStatuses = articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
+				Task { @MainActor in
+					do {
+						try await self.database.insertStatuses(syncStatuses)
+						let count = try await self.database.selectPendingCount()
+						if count > 100 {
 							self.sendArticleStatus(for: account) { _ in }
 						}
 						completion(.success(()))
+					} catch {
+						completion(.failure(error))
 					}
 				}
+				
 			case .failure(let error):
 				completion(.failure(error))
 			}

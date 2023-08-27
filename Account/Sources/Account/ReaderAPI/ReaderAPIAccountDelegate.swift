@@ -194,53 +194,52 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-        logger.debug("Sending article statuses...")
+		logger.debug("Sending article statuses")
 
-		database.selectForProcessing { result in
+		@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
+			let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
+			let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
+			let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
+			let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
 
-            @MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
-				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
-				let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
-				let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
+			let group = DispatchGroup()
 
-				let group = DispatchGroup()
-
-				group.enter()
-				self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) {
-					group.leave()
-				}
-
-				group.notify(queue: DispatchQueue.main) {
-                    self.logger.debug("Done sending article statuses.")
-					completion(.success(()))
-				}
+			group.enter()
+			self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) {
+				group.leave()
 			}
 
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			group.enter()
+			self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) {
+				group.leave()
+			}
+
+			group.enter()
+			self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) {
+				group.leave()
+			}
+
+			group.enter()
+			self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) {
+				group.leave()
+			}
+
+			group.notify(queue: DispatchQueue.main) {
+				self.logger.debug("Done sending article statuses.")
+				completion(.success(()))
+			}
+		}
+
+		Task { @MainActor in
+			do {
+				let syncStatuses = try await database.selectForProcessing()
+				processStatuses(Array(syncStatuses))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}
-	
+
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
         logger.debug("Refreshing article statuses...")
 
@@ -640,13 +639,17 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 				let syncStatuses = articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
-
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
+				
+				Task { @MainActor in
+					do {
+						try await self.database.insertStatuses(syncStatuses)
+						let count = try await self.database.selectPendingCount()
+						if count > 100 {
 							self.sendArticleStatus(for: account) { _ in }
 						}
 						completion(.success(()))
+					} catch {
+						completion(.failure(error))
 					}
 				}
 			case .failure(let error):
@@ -910,23 +913,23 @@ private extension ReaderAPIAccountDelegate {
 			
 			group.enter()
 			apiCall(articleIDGroup) { result in
-				switch result {
-				case .success:
-					self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
-					group.leave()
-				case .failure(let error):
-                    self.logger.error("Article status sync call failed: \(error.localizedDescription, privacy: .public)")
-					self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
-					group.leave()
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
+						group.leave()
+					case .failure(let error):
+						self.logger.error("Article status sync call failed: \(error.localizedDescription, privacy: .public)")
+						try? await self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
+						group.leave()
+					}
 				}
 			}
-			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
 			completion()
 		}
-		
 	}
 	
 	func clearFolderRelationship(for feed: Feed, folderExternalID: String?) {

@@ -38,62 +38,56 @@ class CloudKitSendStatusOperation: MainThreadOperation, Logging {
 	}
 	
 	func run() {
-        logger.debug("Sending article statuses...")
-		
-		if showProgress {
-			
-			database.selectPendingCount() { result in
-				switch result {
-				case .success(let count):
+
+		Task { @MainActor in
+			logger.debug("Sending article statuses...")
+
+			if showProgress {
+				do {
+					let count = try await database.selectPendingCount()
 					let ticks = count / self.blockSize
 					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
 					self.selectForProcessing()
-				case .failure(let databaseError):
-                    self.logger.error("Send status count pending error: \(databaseError.localizedDescription, privacy: .public)")
+				} catch {
+					self.logger.error("Send status count pending error: \(error.localizedDescription, privacy: .public)")
 					self.operationDelegate?.cancelOperation(self)
 				}
+			} else {
+				selectForProcessing()
 			}
-			
-		} else {
-			
-			selectForProcessing()
-			
 		}
-		
 	}
-	
 }
 
 private extension CloudKitSendStatusOperation {
 	
 	func selectForProcessing() {
-		database.selectForProcessing(limit: blockSize) { result in
-			switch result {
-			case .success(let syncStatuses):
-				
-                @MainActor func stopProcessing() {
-					if self.showProgress {
-						self.refreshProgress?.completeTask()
-					}
-                    self.logger.debug("Done sending article statuses.")
-					self.operationDelegate?.operationDidComplete(self)
-				}
-				
+
+		@MainActor func stopProcessing() {
+			if self.showProgress {
+				self.refreshProgress?.completeTask()
+			}
+			self.logger.debug("Done sending article statuses.")
+			self.operationDelegate?.operationDidComplete(self)
+		}
+
+		Task { @MainActor in
+			do {
+				let syncStatuses = try await database.selectForProcessing(limit: blockSize)
 				guard syncStatuses.count > 0 else {
 					stopProcessing()
 					return
 				}
-				
-				self.processStatuses(syncStatuses) { stop in
+
+				self.processStatuses(Array(syncStatuses)) { stop in
 					if stop {
 						stopProcessing()
 					} else {
 						self.selectForProcessing()
 					}
 				}
-				
-			case .failure(let databaseError):
-                self.logger.error("Send status error: \(databaseError.localizedDescription, privacy: .public)")
+			} catch {
+				self.logger.error("Send status error: \(error.localizedDescription, privacy: .public)")
 				self.operationDelegate?.cancelOperation(self)
 			}
 		}
@@ -128,42 +122,42 @@ private extension CloudKitSendStatusOperation {
 				}
 				
 				// If this happens, we have somehow gotten into a state where we have new status records
-				// but the articles didn't come back in the fetch.  We need to clean up those sync records
+				// but the articles didn't come back in the fetch. We need to clean up those sync records
 				// and stop processing.
 				if statusUpdates.isEmpty {
-					self.database.deleteSelectedForProcessing(articleIDs) { _ in
+					Task { @MainActor in
+						try? await self.database.deleteSelectedForProcessing(articleIDs)
 						done(true)
-						return
 					}
+					return
 				} else {
 					articlesZone.modifyArticles(statusUpdates) { result in
-						switch result {
-						case .success:
-							self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
+						Task { @MainActor in
+							switch result {
+							case .success:
+								try? await self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID }))
 								done(false)
-							}
-						case .failure(let error):
-							self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+							case .failure(let error):
+								try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
 								self.processAccountError(account, error)
-                                self.logger.error("Send article status modify articles error: \(error.localizedDescription, privacy: .public)")
+								self.logger.error("Send article status modify articles error: \(error.localizedDescription, privacy: .public)")
 								completion(true)
 							}
 						}
 					}
 				}
-				
 			}
 
 			switch result {
 			case .success(let articles):
 				processWithArticles(articles)
 			case .failure(let databaseError):
-				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-                    self.logger.error("Send article status fetch articles error: \(databaseError.localizedDescription, privacy: .public)")
+				Task { @MainActor in
+					try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
+					self.logger.error("Send article status fetch articles error: \(databaseError.localizedDescription, privacy: .public)")
 					completion(true)
 				}
 			}
-
 		}
 	}
 	

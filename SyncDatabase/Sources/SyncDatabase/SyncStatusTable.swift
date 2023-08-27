@@ -21,67 +21,58 @@ struct SyncStatusTable: DatabaseTable {
 		self.queue = queue
 	}
 
-	func selectForProcessing(limit: Int?, completion: @escaping SyncStatusesCompletionBlock) {
-		queue.runInTransaction { databaseResult in
-			var statuses = Set<SyncStatus>()
-			var error: DatabaseError?
+	func selectForProcessing(limit: Int?) async throws -> Set<SyncStatus> {
 
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let updateSQL = "update syncStatus set selected = true"
-				database.executeUpdate(updateSQL, withArgumentsIn: nil)
+		return try await withCheckedThrowingContinuation { continuation in
+			queue.runInTransaction { databaseResult in
 
-				var selectSQL = "select * from syncStatus where selected == true"
-				if let limit = limit {
-					selectSQL = "\(selectSQL) limit \(limit)"
+				func makeDatabaseCall(_ database: FMDatabase) -> Set<SyncStatus> {
+					let updateSQL = "update syncStatus set selected = true"
+					database.executeUpdate(updateSQL, withArgumentsIn: nil)
+
+					var selectSQL = "select * from syncStatus where selected == true"
+					if let limit = limit {
+						selectSQL = "\(selectSQL) limit \(limit)"
+					}
+
+					var statuses = Set<SyncStatus>()
+					if let resultSet = database.executeQuery(selectSQL, withArgumentsIn: nil) {
+						statuses = resultSet.mapToSet(self.statusWithRow)
+					}
+					return statuses
 				}
-				if let resultSet = database.executeQuery(selectSQL, withArgumentsIn: nil) {
-					statuses = resultSet.mapToSet(self.statusWithRow)
-				}
-			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-			case .failure(let databaseError):
-				error = databaseError
-			}
-
-			DispatchQueue.main.async {
-				if let error = error {
-					completion(.failure(error))
-				}
-				else {
-					completion(.success(Array(statuses)))
+				switch databaseResult {
+				case .success(let database):
+					let statuses = makeDatabaseCall(database)
+					continuation.resume(returning: statuses)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}
 	}
-	
-	func selectPendingCount(_ completion: @escaping DatabaseIntCompletionBlock) {
-		queue.runInDatabase { databaseResult in
-			var count: Int = 0
-			var error: DatabaseError?
 
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let sql = "select count(*) from syncStatus"
-				if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
-					count = self.numberWithCountResultSet(resultSet)
+	func selectPendingCount() async throws -> Int {
+
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInDatabase { databaseResult in
+
+				func makeDatabaseCall(_ database: FMDatabase) -> Int {
+					let sql = "select count(*) from syncStatus"
+					var count = 0
+					if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
+						count = self.numberWithCountResultSet(resultSet)
+					}
+					return count
 				}
-			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-			case .failure(let databaseError):
-				error = databaseError
-			}
-
-			DispatchQueue.main.async {
-				if let error = error {
-					completion(.failure(error))
-				}
-				else {
-					completion(.success(count))
+				switch databaseResult {
+				case .success(let database):
+					let count = makeDatabaseCall(database)
+					continuation.resume(returning: count)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}
@@ -91,104 +82,107 @@ struct SyncStatusTable: DatabaseTable {
         return try await selectPendingArticleIDs(.read)
     }
 
-    func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
-        selectPendingArticleIDsAsync(.read, completion)
-    }
-
     func selectPendingStarredArticleIDs() async throws -> Set<String> {
         return try await selectPendingArticleIDs(.starred)
     }
 
-    func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
-        selectPendingArticleIDsAsync(.starred, completion)
-    }
-    
-	func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
-		queue.runInTransaction { databaseResult in
+	func resetAllSelectedForProcessing() async throws {
 
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let updateSQL = "update syncStatus set selected = false"
-				database.executeUpdate(updateSQL, withArgumentsIn: nil)
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInTransaction { databaseResult in
+
+				func makeDatabaseCall(_ database: FMDatabase) {
+					let updateSQL = "update syncStatus set selected = false"
+					database.executeUpdate(updateSQL, withArgumentsIn: nil)
+				}
+
+				switch databaseResult {
+				case .success(let database):
+					makeDatabaseCall(database)
+					continuation.resume()
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
+				}
+			}
+		}
+	}
+
+	func resetSelectedForProcessing(_ articleIDs: [String]) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			guard !articleIDs.isEmpty else {
+				continuation.resume()
+				return
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-				callCompletion(completion, nil)
-			case .failure(let databaseError):
-				callCompletion(completion, databaseError)
+			queue.runInTransaction { databaseResult in
+
+				func makeDatabaseCall(_ database: FMDatabase) {
+					let parameters = articleIDs.map { $0 as AnyObject }
+					let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+					let updateSQL = "update syncStatus set selected = false where articleID in \(placeholders)"
+					database.executeUpdate(updateSQL, withArgumentsIn: parameters)
+				}
+
+				switch databaseResult {
+				case .success(let database):
+					makeDatabaseCall(database)
+					continuation.resume()
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
+				}
 			}
 		}
 	}
 
-	func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
-		guard !articleIDs.isEmpty else {
-			callCompletion(completion, nil)
-			return
-		}
-		
-		queue.runInTransaction { databaseResult in
+	func deleteSelectedForProcessing(_ articleIDs: [String]) async throws {
 
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let parameters = articleIDs.map { $0 as AnyObject }
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-				let updateSQL = "update syncStatus set selected = false where articleID in \(placeholders)"
-				database.executeUpdate(updateSQL, withArgumentsIn: parameters)
+		try await withCheckedThrowingContinuation { continuation in
+			guard !articleIDs.isEmpty else {
+				continuation.resume()
+				return
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-				callCompletion(completion, nil)
-			case .failure(let databaseError):
-				callCompletion(completion, databaseError)
-			}
-		}
-	}
-	
-    func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
-		guard !articleIDs.isEmpty else {
-			callCompletion(completion, nil)
-			return
-		}
-		
-		queue.runInTransaction { databaseResult in
+			queue.runInTransaction { databaseResult in
 
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let parameters = articleIDs.map { $0 as AnyObject }
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-				let deleteSQL = "delete from syncStatus where selected = true and articleID in \(placeholders)"
-				database.executeUpdate(deleteSQL, withArgumentsIn: parameters)
-			}
+				func makeDatabaseCall(_ database: FMDatabase) {
+					let parameters = articleIDs.map { $0 as AnyObject }
+					let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+					let deleteSQL = "delete from syncStatus where selected = true and articleID in \(placeholders)"
+					database.executeUpdate(deleteSQL, withArgumentsIn: parameters)
+				}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-				callCompletion(completion, nil)
-			case .failure(let databaseError):
-				callCompletion(completion, databaseError)
+				switch databaseResult {
+				case .success(let database):
+					makeDatabaseCall(database)
+					continuation.resume()
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
+				}
 			}
 		}
 	}
-	
-    func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
-		queue.runInTransaction { databaseResult in
 
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let statusArray = statuses.map { $0.databaseDictionary() }
-				self.insertRows(statusArray, insertType: .orReplace, in: database)
-			}
+	func insertStatuses(_ statuses: [SyncStatus]) async throws {
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-				callCompletion(completion, nil)
-			case .failure(let databaseError):
-				callCompletion(completion, databaseError)
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInTransaction { databaseResult in
+
+				func makeDatabaseCall(_ database: FMDatabase) {
+					let statusArray = statuses.map { $0.databaseDictionary() }
+					self.insertRows(statusArray, insertType: .orReplace, in: database)
+				}
+
+				switch databaseResult {
+				case .success(let database):
+					makeDatabaseCall(database)
+					continuation.resume()
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
+				}
 			}
 		}
 	}
-	
 }
 
 private extension SyncStatusTable {
@@ -206,59 +200,30 @@ private extension SyncStatusTable {
 		return SyncStatus(articleID: articleID, key: key, flag: flag, selected: selected)
 	}
 
-    func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key) async throws -> Set<String> {
-        return try await withCheckedThrowingContinuation() { continuation in
-            Task { @MainActor in
-                selectPendingArticleIDsAsync(statusKey) { result in
-                    switch result {
-                    case .success(let articleIDs):
-                        continuation.resume(returning: articleIDs)
-                    case .failure(let databaseError):
-                        continuation.resume(throwing: databaseError)
-                    }
-                }
-            }
-        }
-    }
+	func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key) async throws -> Set<String> {
 
-    func selectPendingArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ completion: @escaping SyncStatusArticleIDsCompletionBlock) {
+		return try await withCheckedThrowingContinuation { continuation in
+			queue.runInDatabase { databaseResult in
 
-        queue.runInDatabase { databaseResult in
+				func makeDatabaseCall(_ database: FMDatabase) -> Set<String> {
+					let sql = "select articleID from syncStatus where selected == false and key = \"\(statusKey.rawValue)\";"
 
-            func makeDatabaseCall(_ database: FMDatabase) {
-                let sql = "select articleID from syncStatus where selected == false and key = \"\(statusKey.rawValue)\";"
+					guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
+						return Set<String>()
+					}
 
-                guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-                    DispatchQueue.main.async {
-                        completion(.success(Set<String>()))
-                    }
-                    return
-                }
+					let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
+					return articleIDs
+				}
 
-                let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
-                DispatchQueue.main.async {
-                    completion(.success(articleIDs))
-                }
-            }
-
-            switch databaseResult {
-            case .success(let database):
-                makeDatabaseCall(database)
-            case .failure(let databaseError):
-                DispatchQueue.main.async {
-                    completion(.failure(databaseError))
-                }
-            }
-        }
-    }
-    
-}
-
-private func callCompletion(_ completion: DatabaseCompletionBlock?, _ databaseError: DatabaseError?) {
-	guard let completion = completion else {
-		return
-	}
-	DispatchQueue.main.async {
-		completion(databaseError)
+				switch databaseResult {
+				case .success(let database):
+					let articleIDs = makeDatabaseCall(database)
+					continuation.resume(returning: articleIDs)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
+				}
+			}
+		}
 	}
 }
