@@ -1,97 +1,94 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "PLCrashReporter",
-        "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
-        "state": {
-          "branch": null,
-          "revision": "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
-          "version": "1.11.0"
-        }
-      },
-      {
-        "package": "RSCore",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSCore.git",
-        "state": {
-          "branch": null,
-          "revision": "dcaa40ceb2c8acd182fbcd69d1f8e56df97e38b1",
-          "version": "2.0.1"
-        }
-      },
-      {
-        "package": "RSDatabase",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSDatabase.git",
-        "state": {
-          "branch": null,
-          "revision": "a6c5f1622320f745cc9a0a910d1bed1e2eaf15e3",
-          "version": "1.0.0"
-        }
-      },
-      {
-        "package": "RSParser",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSParser.git",
-        "state": {
-          "branch": null,
-          "revision": "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
-          "version": "2.0.3"
-        }
-      },
-      {
-        "package": "RSTree",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSTree.git",
-        "state": {
-          "branch": null,
-          "revision": "9d051f42cfc4faa991fd79cdb32e4cc8c545e334",
-          "version": "1.0.0"
-        }
-      },
-      {
-        "package": "RSWeb",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSWeb.git",
-        "state": {
-          "branch": null,
-          "revision": "c8d6212b08ae86142105e828fda391a6503a2ea7",
-          "version": "1.0.6"
-        }
-      },
-      {
-        "package": "RSSparkle",
-        "repositoryURL": "https://github.com/Ranchero-Software/Sparkle-Binary.git",
-        "state": {
-          "branch": null,
-          "revision": "d1a8b3c98d96c601453f2e4230f1dd65b60d0581",
-          "version": "2.0.1"
-        }
-      },
-      {
-        "package": "swift-html",
-        "repositoryURL": "https://github.com/pointfreeco/swift-html.git",
-        "state": {
-          "branch": null,
-          "revision": "f53c38c4b841841f36afa1866093c908cadaa736",
-          "version": "0.4.0"
-        }
-      },
-      {
-        "package": "swift-snapshot-testing",
-        "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing.git",
-        "state": {
-          "branch": null,
-          "revision": "cef5b3f6f11781dd4591bdd1dd0a3d22bd609334",
-          "version": "1.11.0"
-        }
-      },
-      {
-        "package": "Zip",
-        "repositoryURL": "https://github.com/marmelroy/Zip.git",
-        "state": {
-          "branch": null,
-          "revision": "059e7346082d02de16220cd79df7db18ddeba8c3",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "plcrashreporter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/plcrashreporter.git",
+      "state" : {
+        "revision" : "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
+        "version" : "1.11.0"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "rscore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSCore.git",
+      "state" : {
+        "revision" : "dcaa40ceb2c8acd182fbcd69d1f8e56df97e38b1",
+        "version" : "2.0.1"
+      }
+    },
+    {
+      "identity" : "rsdatabase",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSDatabase.git",
+      "state" : {
+        "revision" : "17950e2c5c278f72f180d69f1ab9602e434b5ec4",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "rsparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSParser.git",
+      "state" : {
+        "revision" : "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
+        "version" : "2.0.3"
+      }
+    },
+    {
+      "identity" : "rstree",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSTree.git",
+      "state" : {
+        "revision" : "9d051f42cfc4faa991fd79cdb32e4cc8c545e334",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "rsweb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSWeb.git",
+      "state" : {
+        "revision" : "c8d6212b08ae86142105e828fda391a6503a2ea7",
+        "version" : "1.0.6"
+      }
+    },
+    {
+      "identity" : "sparkle-binary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/Sparkle-Binary.git",
+      "state" : {
+        "revision" : "d1a8b3c98d96c601453f2e4230f1dd65b60d0581",
+        "version" : "2.0.1"
+      }
+    },
+    {
+      "identity" : "swift-html",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-html.git",
+      "state" : {
+        "revision" : "f53c38c4b841841f36afa1866093c908cadaa736",
+        "version" : "0.4.0"
+      }
+    },
+    {
+      "identity" : "swift-snapshot-testing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-snapshot-testing.git",
+      "state" : {
+        "revision" : "cef5b3f6f11781dd4591bdd1dd0a3d22bd609334",
+        "version" : "1.11.0"
+      }
+    },
+    {
+      "identity" : "zip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/Zip.git",
+      "state" : {
+        "revision" : "059e7346082d02de16220cd79df7db18ddeba8c3"
+      }
+    }
+  ],
+  "version" : 2
 }
