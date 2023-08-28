@@ -13,6 +13,7 @@ dependencies.append(contentsOf: [
 	.package(path: "../AccountError"),
 	.package(path: "../Articles"),
 	.package(path: "../ArticlesDatabase"),
+	.package(path: "../FeedFinder"),
 	.package(path: "../Secrets"),
 	.package(path: "../SyncDatabase"),
 	.package(path: "../SyncClients/NewsBlur"),
@@ -30,7 +31,7 @@ dependencies.append(contentsOf: [
 let package = Package(
     name: "Account",
     defaultLocalization: "en",
-	platforms: [.macOS(SupportedPlatform.MacOSVersion.v13), .iOS(SupportedPlatform.IOSVersion.v16)],
+	platforms: [.macOS(.v13), .iOS(.v16)],
     products: [
         .library(
             name: "Account",
@@ -49,6 +50,7 @@ let package = Package(
 				"AccountError",
 				"Articles",
 				"ArticlesDatabase",
+				"FeedFinder",
 				"Secrets",
 				"SyncDatabase",
 				"NewsBlur",

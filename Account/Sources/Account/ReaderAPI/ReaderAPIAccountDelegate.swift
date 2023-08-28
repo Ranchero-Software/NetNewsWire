@@ -14,6 +14,7 @@ import SyncDatabase
 import Secrets
 import ReaderAPI
 import AccountError
+import FeedFinder
 
 public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case unknown

@@ -1344,6 +1344,7 @@
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinSmartFeedInspectorViewController.swift; sourceTree = "<group>"; };
+		84208B732A9CEE2B009FE5B9 /* FeedFinder */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FeedFinder; sourceTree = "<group>"; };
 		84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWebViewController.swift; sourceTree = "<group>"; };
 		842611891FCB67AA0086A189 /* FeedIconDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIconDownloader.swift; sourceTree = "<group>"; };
 		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
@@ -2505,6 +2506,7 @@
 				51C452B22265141B00C03939 /* Frameworks */,
 				51CD32C624D2DEF9009ABAEF /* Account */,
 				8486EC402A9C2EFE007EF90D /* AccountError */,
+				84208B732A9CEE2B009FE5B9 /* FeedFinder */,
 				8486EC3F2A9C2431007EF90D /* ReaderAPI */,
 				8486EC3E2A9BE083007EF90D /* NewsBlur */,
 				51CD32C424D2CF1D009ABAEF /* Articles */,

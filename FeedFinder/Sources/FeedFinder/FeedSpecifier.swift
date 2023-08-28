@@ -8,9 +8,9 @@
 
 import Foundation
 
-struct FeedSpecifier: Hashable {
+public struct FeedSpecifier: Hashable {
 
-	enum Source: Int {
+	public enum Source: Int {
 		case UserEntered = 0, HTMLHead, HTMLLink
 
 		func equalToOrBetterThan(_ otherSource: Source) -> Bool {
@@ -24,6 +24,13 @@ struct FeedSpecifier: Hashable {
 	public let orderFound: Int
 	public var score: Int {
 		return calculatedScore()
+	}
+	
+	public init(title: String?, urlString: String, source: Source, orderFound: Int) {
+		self.title = title
+		self.urlString = urlString
+		self.source = source
+		self.orderFound = orderFound
 	}
 	
 	func feedSpecifierByMerging(_ feedSpecifier: FeedSpecifier) -> FeedSpecifier {

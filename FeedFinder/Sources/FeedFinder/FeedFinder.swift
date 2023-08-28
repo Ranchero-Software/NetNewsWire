@@ -12,9 +12,9 @@ import RSWeb
 import RSCore
 import AccountError
 
-class FeedFinder {
+public final class FeedFinder {
 	
-	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
+	public static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		downloadAddingToCache(url) { (data, response, error) in
 			
 			if response?.forcedStatusCode == 404 {

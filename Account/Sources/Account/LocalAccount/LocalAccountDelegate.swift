@@ -14,6 +14,7 @@ import ArticlesDatabase
 import RSWeb
 import Secrets
 import AccountError
+import FeedFinder
 
 public enum LocalAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."
