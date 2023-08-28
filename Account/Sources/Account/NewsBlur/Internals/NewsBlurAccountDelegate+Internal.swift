@@ -13,6 +13,7 @@ import RSDatabase
 import RSParser
 import RSWeb
 import SyncDatabase
+import NewsBlur
 
 extension NewsBlurAccountDelegate {
 	

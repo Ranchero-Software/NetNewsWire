@@ -14,6 +14,7 @@ dependencies.append(contentsOf: [
 	.package(path: "../ArticlesDatabase"),
 	.package(path: "../Secrets"),
 	.package(path: "../SyncDatabase"),
+	.package(path: "../SyncClients/NewsBlur"),
 ])
 #else
 dependencies.append(contentsOf: [
@@ -47,6 +48,7 @@ let package = Package(
 				"ArticlesDatabase",
 				"Secrets",
 				"SyncDatabase",
+				"NewsBlur"
 			],
             linkerSettings: [
                 .unsafeFlags(["-Xlinker", "-no_application_extension"])

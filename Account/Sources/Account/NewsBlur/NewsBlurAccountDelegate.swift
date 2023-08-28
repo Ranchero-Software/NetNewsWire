@@ -13,6 +13,7 @@ import RSParser
 import RSWeb
 import SyncDatabase
 import Secrets
+import NewsBlur
 
 final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
@@ -34,7 +35,9 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 	init(dataFolder: String, transport: Transport?) {
 		if let transport = transport {
-			caller = NewsBlurAPICaller(transport: transport)
+			caller = NewsBlurAPICaller(transport: transport) { url, credentials in
+				URLRequest(url: url, credentials: credentials)
+			}
 		} else {
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -50,7 +53,9 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 			}
 
 			let session = URLSession(configuration: sessionConfiguration)
-			caller = NewsBlurAPICaller(transport: session)
+			caller = NewsBlurAPICaller(transport: session) { url, credentials in
+				URLRequest(url: url, credentials: credentials)
+			}
 		}
 
 		database = SyncDatabase(databaseFilePath: dataFolder.appending("/DB.sqlite3"))
@@ -644,7 +649,9 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 	}
 
 	class func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> ()) {
-		let caller = NewsBlurAPICaller(transport: transport)
+		let caller = NewsBlurAPICaller(transport: transport) { url, credentials in
+			URLRequest(url: url, credentials: credentials)
+		}
 		caller.credentials = credentials
 		caller.validateCredentials() { result in
 			DispatchQueue.main.async {

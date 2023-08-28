@@ -10,17 +10,22 @@ import Foundation
 import RSCore
 import RSParser
 
-typealias NewsBlurStoryHash = NewsBlurStoryHashesResponse.StoryHash
+public typealias NewsBlurStoryHash = NewsBlurStoryHashesResponse.StoryHash
 
-struct NewsBlurStoryHashesResponse: Decodable {
+public struct NewsBlurStoryHashesResponse: Decodable {
 	typealias StoryHashDictionary = [String: [StoryHash]]
 
 	var unread: [StoryHash]?
 	var starred: [StoryHash]?
 
-	struct StoryHash: Hashable, Codable {
-		var hash: String
-		var timestamp: Date
+	public struct StoryHash: Hashable, Codable {
+		public var hash: String
+		public var timestamp: Date
+
+		public init(hash: String, timestamp: Date) {
+			self.hash = hash
+			self.timestamp = timestamp
+		}
 	}
 }
 
@@ -30,7 +35,7 @@ extension NewsBlurStoryHashesResponse {
 		case starred = "starred_story_hashes"
 	}
 
-	init(from decoder: Decoder) throws {
+	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
 		// Parse unread

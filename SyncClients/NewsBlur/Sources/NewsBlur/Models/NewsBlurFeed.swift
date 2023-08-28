@@ -10,23 +10,23 @@ import Foundation
 import RSCore
 import RSParser
 
-typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
+public typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
 
-struct NewsBlurFeed: Hashable, Codable {
-	let name: String
-	let feedID: Int
-	let feedURL: String
-	let homePageURL: String?
-	let faviconURL: String?
+public struct NewsBlurFeed: Hashable, Codable {
+	public let name: String
+	public let feedID: Int
+	public let feedURL: String
+	public let homePageURL: String?
+	public let faviconURL: String?
 }
 
-struct NewsBlurFeedsResponse: Decodable {
+public struct NewsBlurFeedsResponse: Decodable {
 	let feeds: [NewsBlurFeed]
 	let folders: [Folder]
 
-	struct Folder: Hashable, Codable {
-		let name: String
-		let feedIDs: [Int]
+	public struct Folder: Hashable, Codable {
+		public let name: String
+		public let feedIDs: [Int]
 	}
 }
 
@@ -34,9 +34,9 @@ struct NewsBlurAddURLResponse: Decodable {
 	let feed: NewsBlurFeed?
 }
 
-struct NewsBlurFolderRelationship {
-	let folderName: String
-	let feedID: Int
+public struct NewsBlurFolderRelationship {
+	public let folderName: String
+	public let feedID: Int
 }
 
 extension NewsBlurFeed {
@@ -56,7 +56,7 @@ extension NewsBlurFeedsResponse {
 		// TODO: flat_folders_with_inactive
 	}
 
-	init(from decoder: Decoder) throws {
+	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
 		// Tricky part: Some feeds listed in `feeds` don't exist in `folders` for some reason
@@ -89,7 +89,7 @@ extension NewsBlurFeedsResponse {
 }
 
 extension NewsBlurFeedsResponse.Folder {
-	var asRelationships: [NewsBlurFolderRelationship] {
+	public var asRelationships: [NewsBlurFolderRelationship] {
 		return feedIDs.map { NewsBlurFolderRelationship(folderName: name, feedID: $0) }
 	}
 }

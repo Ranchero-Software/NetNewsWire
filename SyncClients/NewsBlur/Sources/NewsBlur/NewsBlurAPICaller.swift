@@ -10,32 +10,32 @@ import Foundation
 import RSWeb
 import Secrets
 
-final class NewsBlurAPICaller: NSObject {
-	static let SessionIdCookie = "newsblur_sessionid"
+public final class NewsBlurAPICaller {
+	public static let SessionIdCookie = "newsblur_sessionid"
 
 	let baseURL = URL(string: "https://www.newsblur.com/")!
 	var transport: Transport!
+	let createURLRequest: ((URL, Credentials?) -> URLRequest)
 	var suspended = false
 
-	var credentials: Credentials?
-	weak var accountMetadata: AccountMetadata?
+	public var credentials: Credentials?
 
-	init(transport: Transport!) {
-		super.init()
+	public init(transport: Transport!, createURLRequest: @escaping (URL, Credentials?) -> URLRequest) {
 		self.transport = transport
+		self.createURLRequest = createURLRequest
 	}
 
 	/// Cancels all pending requests rejects any that come in later
-	func suspend() {
+	public func suspend() {
 		transport.cancelAll()
 		suspended = true
 	}
 
-	func resume() {
+	public func resume() {
 		suspended = false
 	}
 
-	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	public func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		requestData(endpoint: "api/login", resultType: NewsBlurLoginResponse.self) { result in
 			switch result {
 			case .success((let response, let payload)):
@@ -68,11 +68,11 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func logout(completion: @escaping (Result<Void, Error>) -> Void) {
+	public func logout(completion: @escaping (Result<Void, Error>) -> Void) {
 		requestData(endpoint: "api/logout", completion: completion)
 	}
 
-	func retrieveFeeds(completion: @escaping (Result<([NewsBlurFeed]?, [NewsBlurFolder]?), Error>) -> Void) {
+	public func retrieveFeeds(completion: @escaping (Result<([NewsBlurFeed]?, [NewsBlurFolder]?), Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/feeds")
 				.appendingQueryItems([
@@ -112,21 +112,21 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func retrieveUnreadStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
+	public func retrieveUnreadStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
 		retrieveStoryHashes(
 				endpoint: "reader/unread_story_hashes", 
 				completion: completion
 		)
 	}
 
-	func retrieveStarredStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
+	public func retrieveStarredStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
 		retrieveStoryHashes(
 				endpoint: "reader/starred_story_hashes", 
 				completion: completion
 		)
 	}
 
-	func retrieveStories(feedID: String, page: Int, completion: @escaping (Result<([NewsBlurStory]?, Date?), Error>) -> Void) {
+	public func retrieveStories(feedID: String, page: Int, completion: @escaping (Result<([NewsBlurStory]?, Date?), Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/feed/\(feedID)")
 				.appendingQueryItems([
@@ -147,7 +147,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func retrieveStories(hashes: [NewsBlurStoryHash], completion: @escaping (Result<([NewsBlurStory]?, Date?), Error>) -> Void) {
+	public func retrieveStories(hashes: [NewsBlurStoryHash], completion: @escaping (Result<([NewsBlurStory]?, Date?), Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/river_stories")
 				.appendingQueryItem(.init(name: "include_hidden", value: "false"))?
@@ -165,7 +165,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func markAsUnread(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func markAsUnread(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/mark_story_hash_as_unread", 
 				payload: NewsBlurStoryStatusChange(hashes: hashes),
@@ -173,7 +173,7 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func markAsRead(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func markAsRead(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/mark_story_hashes_as_read", 
 				payload: NewsBlurStoryStatusChange(hashes: hashes),
@@ -181,7 +181,7 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func star(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func star(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/mark_story_hash_as_starred", 
 				payload: NewsBlurStoryStatusChange(hashes: hashes),
@@ -189,7 +189,7 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/mark_story_hash_as_unstarred", 
 				payload: NewsBlurStoryStatusChange(hashes: hashes),
@@ -197,7 +197,7 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func addFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func addFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/add_folder", 
 				payload: NewsBlurFolderChange.add(name),
@@ -205,7 +205,7 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func renameFolder(with folder: String, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func renameFolder(with folder: String, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/rename_folder", 
 				payload: NewsBlurFolderChange.rename(folder, name),
@@ -213,7 +213,7 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func removeFolder(named name: String, feedIDs: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func removeFolder(named name: String, feedIDs: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/delete_folder", 
 				payload: NewsBlurFolderChange.delete(name, feedIDs),
@@ -221,7 +221,7 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func addURL(_ url: String, folder: String?, completion: @escaping (Result<NewsBlurFeed?, Error>) -> Void) {
+	public func addURL(_ url: String, folder: String?, completion: @escaping (Result<NewsBlurFeed?, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/add_url", 
 				payload: NewsBlurFeedChange.add(url, folder),
@@ -236,7 +236,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func renameFeed(feedID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func renameFeed(feedID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/rename_feed", 
 				payload: NewsBlurFeedChange.rename(feedID, newName)
@@ -250,7 +250,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func deleteFeed(feedID: String, folder: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func deleteFeed(feedID: String, folder: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/delete_feed",
 				payload: NewsBlurFeedChange.delete(feedID, folder)
@@ -264,7 +264,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func moveFeed(feedID: String, from: String?, to: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func moveFeed(feedID: String, from: String?, to: String?, completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/move_feed_to_folder",
 				payload: NewsBlurFeedChange.move(feedID, from, to)

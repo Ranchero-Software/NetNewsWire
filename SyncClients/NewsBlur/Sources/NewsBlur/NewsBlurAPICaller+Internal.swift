@@ -13,12 +13,12 @@ protocol NewsBlurDataConvertible {
 	var asData: Data? { get }
 }
 
-enum NewsBlurError: LocalizedError {
+public enum NewsBlurError: LocalizedError {
 	case general(message: String)
 	case invalidParameter
 	case unknown
 
-	var errorDescription: String? {
+	public var errorDescription: String? {
 		switch self {
 		case .general(let message):
 			return message
@@ -108,7 +108,7 @@ extension NewsBlurAPICaller {
 			return
 		}
 
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = createURLRequest(callURL, credentials)
 
 		transport.send(request: request) { result in
 			if self.suspended {
@@ -138,7 +138,7 @@ extension NewsBlurAPICaller {
 			return
 		}
 
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = createURLRequest(callURL, credentials)
 
 		transport.send(
 				request: request,
@@ -171,7 +171,7 @@ extension NewsBlurAPICaller {
 			return
 		}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = createURLRequest(callURL, credentials)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.httpBody = payload.asData
 
@@ -209,7 +209,7 @@ extension NewsBlurAPICaller {
 			return
 		}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = createURLRequest(callURL, credentials)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
 		transport.send(
