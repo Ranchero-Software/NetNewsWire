@@ -13,6 +13,7 @@ import Articles
 import ArticlesDatabase
 import RSWeb
 import Secrets
+import AccountError
 
 public enum LocalAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."

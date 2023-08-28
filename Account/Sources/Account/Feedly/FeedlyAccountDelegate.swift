@@ -12,6 +12,7 @@ import RSParser
 import RSWeb
 import SyncDatabase
 import Secrets
+import AccountError
 
 final class FeedlyAccountDelegate: AccountDelegate, Logging {
 
@@ -236,7 +237,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
-                    let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}

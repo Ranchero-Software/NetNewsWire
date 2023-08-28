@@ -1380,6 +1380,8 @@
 		8483630A2262A3F000DA1D35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/RenameSheet.xib; sourceTree = SOURCE_ROOT; };
 		8483630D2262A3FE00DA1D35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/MainWindow.storyboard; sourceTree = SOURCE_ROOT; };
 		8486EC3E2A9BE083007EF90D /* NewsBlur */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = NewsBlur; path = SyncClients/NewsBlur; sourceTree = "<group>"; };
+		8486EC3F2A9C2431007EF90D /* ReaderAPI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ReaderAPI; path = SyncClients/ReaderAPI; sourceTree = "<group>"; };
+		8486EC402A9C2EFE007EF90D /* AccountError */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AccountError; sourceTree = "<group>"; };
 		848B937121C8C5540038DC0D /* CrashReporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrashReporter.swift; sourceTree = "<group>"; };
 		848D578D21543519005FFAD5 /* PasteboardFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardFeed.swift; sourceTree = "<group>"; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
@@ -2502,6 +2504,8 @@
 				849C64611ED37A5D003D8FC0 /* Products */,
 				51C452B22265141B00C03939 /* Frameworks */,
 				51CD32C624D2DEF9009ABAEF /* Account */,
+				8486EC402A9C2EFE007EF90D /* AccountError */,
+				8486EC3F2A9C2431007EF90D /* ReaderAPI */,
 				8486EC3E2A9BE083007EF90D /* NewsBlur */,
 				51CD32C424D2CF1D009ABAEF /* Articles */,
 				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,

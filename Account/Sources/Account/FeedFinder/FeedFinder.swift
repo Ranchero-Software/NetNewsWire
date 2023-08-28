@@ -10,6 +10,7 @@ import Foundation
 import RSParser
 import RSWeb
 import RSCore
+import AccountError
 
 class FeedFinder {
 	

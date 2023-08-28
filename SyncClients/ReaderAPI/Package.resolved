@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "rscore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSCore.git",
+      "state" : {
+        "revision" : "55644a3a037fed14f22ee2c0b531808f95051708",
+        "version" : "2.0.3"
+      }
+    },
+    {
+      "identity" : "rsparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSParser.git",
+      "state" : {
+        "revision" : "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
+        "version" : "2.0.3"
+      }
+    },
+    {
+      "identity" : "rsweb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSWeb.git",
+      "state" : {
+        "revision" : "aca2db763e3404757b273821f058bed2bbe02fcf",
+        "version" : "1.0.7"
+      }
+    }
+  ],
+  "version" : 2
+}

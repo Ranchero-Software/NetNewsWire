@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AccountError
 import CloudKit
 import SystemConfiguration
 import SyncDatabase

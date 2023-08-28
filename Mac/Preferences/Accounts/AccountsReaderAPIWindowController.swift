@@ -11,6 +11,7 @@ import Account
 import RSWeb
 import RSCore
 import Secrets
+import ReaderAPI
 
 @MainActor class AccountsReaderAPIWindowController: NSWindowController, Logging {
 

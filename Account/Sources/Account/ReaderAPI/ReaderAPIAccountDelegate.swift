@@ -12,6 +12,8 @@ import RSParser
 import RSWeb
 import SyncDatabase
 import Secrets
+import ReaderAPI
+import AccountError
 
 public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case unknown
@@ -34,7 +36,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 }
 
 @MainActor final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
-	
+
 	private let variant: ReaderAPIVariant
 	
 	private let database: SyncDatabase
@@ -63,20 +65,18 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 		}
 	}
 	
-	weak var accountMetadata: AccountMetadata? {
-		didSet {
-			caller.accountMetadata = accountMetadata
-		}
-	}
-
+	private weak var account: Account?
+	weak var accountMetadata: AccountMetadata?
+	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
 	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
-		
+		self.variant = variant
+
 		if transport != nil {
-			caller = ReaderAPICaller(transport: transport!)
+			self.caller = ReaderAPICaller(transport: transport!)
 		} else {
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -91,11 +91,11 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 			}
 			
-			caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
+			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
 		}
-		
-		caller.variant = variant
-		self.variant = variant
+
+		self.caller.delegate = self
+		self.caller.variant = variant
 	}
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
@@ -135,7 +135,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 				DispatchQueue.main.async {
 					self.refreshProgress.clear()
 					
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
 						self.caller.credentials = basicCredentials
 						
@@ -311,7 +311,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -373,7 +373,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 				account.removeFolder(folder)
 				completion(.success(()))
 			} else {
-				self.caller.deleteTag(folder: folder) { result in
+				self.caller.deleteTag(folderExternalID: folder.externalID) { result in
 					switch result {
 					case .success:
 						account.removeFolder(folder)
@@ -407,7 +407,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 					return
 				}
 
-				self.caller.createSubscription(url: bestFeedSpecifier.urlString, name: name, folder: container as? Folder) { result in
+				self.caller.createSubscription(url: bestFeedSpecifier.urlString, name: name) { result in
 					self.refreshProgress.completeTask()
 					switch result {
 					case .success(let subResult):
@@ -421,7 +421,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 						}
 					case .failure(let error):
 						DispatchQueue.main.async {
-							let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+							let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 							completion(.failure(wrappedError))
 						}
 					}
@@ -456,7 +456,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
                             continuation.resume()
                         }
                     case .failure(let error):
-                        let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+                        let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
                         continuation.resume(throwing: wrappedError)
                     }
                 }
@@ -484,7 +484,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -515,7 +515,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -565,7 +565,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+						let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 						completion(.failure(wrappedError))
 					}
 				}
@@ -665,21 +665,20 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	
 	func accountWillBeDeleted(_ account: Account) {
 	}
-	
+
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		guard let endpoint = endpoint else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
-		
-		let caller = ReaderAPICaller(transport: transport)
-		caller.credentials = credentials
-		caller.validateCredentials(endpoint: endpoint) { result in
-			DispatchQueue.main.async {
+
+		ReaderAPICaller.validateCredentials(credentials: credentials, transport: transport, endpoint: endpoint, variant: .generic) { url, credentials in
+			URLRequest(url: url, credentials: credentials)
+		} completion: { result in
+			Task { @MainActor in
 				completion(result)
 			}
 		}
-		
 	}
 
 	// MARK: Suspend and Resume (for iOS)
@@ -1074,10 +1073,14 @@ private extension ReaderAPIAccountDelegate {
 		guard let entries = entries else {
 			return Set<ParsedItem>()
 		}
-		
-		let parsedItems: [ParsedItem] = entries.compactMap { entry in
+
+		// There was a compactMap here, but somehow the compiler got confused about returning nil
+		// (which is kind of the point of compactMap) so we’re doing things the old-fashioned way.
+		// Hope the compiler is happy.
+		var parsedItems = Set<ParsedItem>()
+		for entry in entries {
 			guard let streamID = entry.origin.streamId else {
-				return nil
+				continue
 			}
 
 			var authors: Set<ParsedAuthor>? {
@@ -1086,8 +1089,8 @@ private extension ReaderAPIAccountDelegate {
 				}
 				return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
 			}
-			
-			return ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
+
+			let parsedItem = ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
 							  uniqueID: entry.uniqueID(variant: variant),
 							  feedURL: streamID,
 							  url: nil,
@@ -1104,9 +1107,10 @@ private extension ReaderAPIAccountDelegate {
 							  authors: authors,
 							  tags: nil,
 							  attachments: nil)
+			parsedItems.insert(parsedItem)
 		}
-		
-		return Set(parsedItems)
+
+		return parsedItems
 		
 	}
 	
@@ -1169,4 +1173,38 @@ private extension ReaderAPIAccountDelegate {
             completion()
         }
     }
+}
+
+extension ReaderAPIAccountDelegate: ReaderAPICallerDelegate {
+	
+	var apiBaseURL: URL? {
+		switch variant {
+		case .generic, .freshRSS:
+			return accountMetadata?.endpointURL
+		default:
+			return URL(string: variant.host)
+		}
+	}
+
+	var lastArticleFetchStartTime: Date? {
+		get {
+			account?.metadata.lastArticleFetchStartTime
+		}
+		set {
+			account?.metadata.lastArticleFetchStartTime = newValue
+		}
+	}
+
+	var lastArticleFetchEndTime: Date? {
+		get {
+			account?.metadata.lastArticleFetchEndTime
+		}
+		set {
+			account?.metadata.lastArticleFetchEndTime = newValue
+		}
+	}
+
+	func createURLRequest(url: URL, credentials: Secrets.Credentials?) -> URLRequest {
+		URLRequest(url: url, credentials: credentials)
+	}
 }

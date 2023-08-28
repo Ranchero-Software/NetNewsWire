@@ -16,17 +16,17 @@ struct ReaderAPITagContainer: Codable {
 	}
 }
 
-struct ReaderAPITag: Codable {
+public struct ReaderAPITag: Codable {
 	
-	let tagID: String
-	let type: String?
+	public let tagID: String
+	public let type: String?
 	
 	enum CodingKeys: String, CodingKey {
 		case tagID = "id"
 		case type = "type"
 	}
 	
-	var folderName: String? {
+	public var folderName: String? {
 		guard let range = tagID.range(of: "/label/") else {
 			return nil
 		}

@@ -11,6 +11,7 @@ import UIKit
 #endif
 
 import Foundation
+import AccountError
 import RSCore
 import Articles
 import RSParser

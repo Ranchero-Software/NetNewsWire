@@ -14,6 +14,7 @@ import RSParser
 import RSWeb
 import SyncDatabase
 import NewsBlur
+import AccountError
 
 extension NewsBlurAccountDelegate {
 	
@@ -527,7 +528,7 @@ extension NewsBlurAccountDelegate {
 
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}

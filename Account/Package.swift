@@ -10,11 +10,13 @@ var dependencies: [Package.Dependency] = [
 
 #if swift(>=5.6)
 dependencies.append(contentsOf: [
+	.package(path: "../AccountError"),
 	.package(path: "../Articles"),
 	.package(path: "../ArticlesDatabase"),
 	.package(path: "../Secrets"),
 	.package(path: "../SyncDatabase"),
 	.package(path: "../SyncClients/NewsBlur"),
+	.package(path: "../SyncClients/ReaderAPI"),
 ])
 #else
 dependencies.append(contentsOf: [
@@ -44,11 +46,13 @@ let package = Package(
 				"RSDatabase",
 				"RSParser",
 				"RSWeb",
+				"AccountError",
 				"Articles",
 				"ArticlesDatabase",
 				"Secrets",
 				"SyncDatabase",
-				"NewsBlur"
+				"NewsBlur",
+				"ReaderAPI"
 			],
             linkerSettings: [
                 .unsafeFlags(["-Xlinker", "-no_application_extension"])

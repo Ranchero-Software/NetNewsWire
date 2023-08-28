@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "rsweb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/RSWeb.git",
+      "state" : {
+        "revision" : "aca2db763e3404757b273821f058bed2bbe02fcf",
+        "version" : "1.0.7"
+      }
+    }
+  ],
+  "version" : 2
+}

@@ -55,12 +55,12 @@ struct ReaderAPISubscriptionContainer: Codable {
 }
 
 */
-struct ReaderAPISubscription: Codable {
-	let feedID: String
-	let name: String?
-	let categories: [ReaderAPICategory]
+public struct ReaderAPISubscription: Codable {
+	public let feedID: String
+	public let name: String?
+	public let categories: [ReaderAPICategory]
 	let feedURL: String?
-	let homePageURL: String?
+	public let homePageURL: String?
 	let iconURL: String?
 
 	enum CodingKeys: String, CodingKey {
@@ -72,7 +72,7 @@ struct ReaderAPISubscription: Codable {
 		case iconURL = "iconUrl"
 	}
 
-	var url: String {
+	public var url: String {
 		if let feedURL = feedURL {
 			return feedURL
 		} else {
@@ -81,8 +81,8 @@ struct ReaderAPISubscription: Codable {
 	}
 }
 
-struct ReaderAPICategory: Codable {
-	let categoryId: String
+public struct ReaderAPICategory: Codable {
+	public let categoryId: String
 	let categoryLabel: String
 	
 	enum CodingKeys: String, CodingKey {

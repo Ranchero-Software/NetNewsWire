@@ -38,10 +38,10 @@ public struct WrappedAccountError: LocalizedError {
 
     private let accountNameForDisplay: String
 
-    @MainActor init(account: Account, underlyingError: Error) {
-        self.accountID = account.accountID
+	@MainActor public init(accountID: String, accountNameForDisplay: String, underlyingError: Error) {
+        self.accountID = accountID
+		self.accountNameForDisplay = accountNameForDisplay
         self.underlyingError = underlyingError
-        self.accountNameForDisplay = account.nameForDisplay
 
         var isCredentialsError = false
         if case TransportError.httpError(let status) = underlyingError {

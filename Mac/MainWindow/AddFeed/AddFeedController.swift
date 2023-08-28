@@ -13,6 +13,7 @@ import RSTree
 import Articles
 import Account
 import RSParser
+import AccountError
 
 // Run add-feed sheet.
 // If it returns with URL and optional name,

@@ -7,6 +7,7 @@
 //
 
 import Articles
+import AccountError
 import RSCore
 import RSDatabase
 import RSParser
@@ -92,7 +93,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 					case .failure(let error):
 						DispatchQueue.main.async {
 							self.refreshProgress.clear()
-							let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+							let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 							completion(.failure(wrappedError))
 						}
 					}
@@ -101,7 +102,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 			case .failure(let error):
 				DispatchQueue.main.async {
 					self.refreshProgress.clear()
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -276,7 +277,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -311,7 +312,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -405,7 +406,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -436,7 +437,7 @@ public enum FeedbinAccountDelegateError: String, Error {
                         }
                     case .failure(let error):
                         DispatchQueue.main.async {
-                            let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+                            let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
                             continuation.resume(throwing: wrappedError)
                         }
                     }
@@ -464,7 +465,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 				}
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -511,7 +512,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+						let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 						completion(.failure(wrappedError))
 					}
 				}
@@ -1376,7 +1377,7 @@ private extension FeedbinAccountDelegate {
 					}
 				case .failure(let error):
 					DispatchQueue.main.async {
-						let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+						let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 						completion(.failure(wrappedError))
 					}
 				}

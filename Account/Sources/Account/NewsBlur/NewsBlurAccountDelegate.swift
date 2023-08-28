@@ -14,6 +14,7 @@ import RSWeb
 import SyncDatabase
 import Secrets
 import NewsBlur
+import AccountError
 
 final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
@@ -95,7 +96,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 									case .failure(let error):
 										DispatchQueue.main.async {
 											self.refreshProgress.clear()
-                                            let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+											let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 											completion(.failure(wrappedError))
 										}
 									}
@@ -437,7 +438,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 				self.createFeed(account: account, newsBlurFeed: feed, name: name, container: container, completion: completion)
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -463,7 +464,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
                         continuation.resume()
 
                     case .failure(let error):
-                        let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+                        let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
                         continuation.resume(throwing: wrappedError)
                     }
                 }
@@ -491,7 +492,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 			case .failure(let error):
 				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(account: account, underlyingError: error)
+					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 					completion(.failure(wrappedError))
 				}
 			}
