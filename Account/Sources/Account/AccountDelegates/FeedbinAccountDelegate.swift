@@ -15,6 +15,7 @@ import RSWeb
 import SyncDatabase
 import Secrets
 import FeedFinder
+import Feedbin
 
 public enum FeedbinAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."
@@ -37,25 +38,20 @@ public enum FeedbinAccountDelegateError: String, Error {
 		}
 	}
 	
-	weak var accountMetadata: AccountMetadata? {
-		didSet {
-			caller.accountMetadata = accountMetadata
-		}
-	}
+	weak var accountMetadata: AccountMetadata?
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	init(dataFolder: String, transport: Transport?) {
 		
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databaseFilePath: databaseFilePath)
+		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
 		
 		if transport != nil {
-			
-			caller = FeedbinAPICaller(transport: transport!)
-			
+			self.caller = FeedbinAPICaller(transport: transport!)
+
 		} else {
-			
+
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 			sessionConfiguration.timeoutIntervalForRequest = 60.0
@@ -69,10 +65,10 @@ public enum FeedbinAccountDelegateError: String, Error {
 				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 			}
 			
-			caller = FeedbinAPICaller(transport: URLSession(configuration: sessionConfiguration))
-			
+			self.caller = FeedbinAPICaller(transport: URLSession(configuration: sessionConfiguration))
 		}
-		
+
+		self.caller.delegate = self
 	}
 		
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
@@ -647,7 +643,37 @@ public enum FeedbinAccountDelegateError: String, Error {
 	}
 }
 
-// MARK: Private
+// MARK: - FeedbinAPICallerDelegate
+
+extension FeedbinAccountDelegate: FeedbinAPICallerDelegate {
+
+	var lastArticleFetchStartTime: Date? {
+		accountMetadata?.lastArticleFetchStartTime
+	}
+
+	func conditionalGetInfo(key: String) -> HTTPConditionalGetInfo? {
+		accountMetadata?.conditionalGetInfo[key]
+	}
+
+	func setConditionalGetInfo(_ info: HTTPConditionalGetInfo, forKey key: String) {
+		if var conditionalGetInfo = accountMetadata?.conditionalGetInfo {
+			conditionalGetInfo[key] = info
+		}
+		else {
+			var conditionalGetInfo = [String: HTTPConditionalGetInfo]()
+			conditionalGetInfo[key] = info
+			accountMetadata?.conditionalGetInfo = conditionalGetInfo
+		}
+	}
+
+	func createURLRequest(url: URL, credentials: Secrets.Credentials?, conditionalGet: RSWeb.HTTPConditionalGetInfo?) -> URLRequest {
+		URLRequest(url: url, credentials: credentials, conditionalGet: conditionalGet)
+	}
+
+
+}
+
+// MARK: - Private
 
 private extension FeedbinAccountDelegate {
 	

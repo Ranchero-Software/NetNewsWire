@@ -14,21 +14,31 @@ import Foundation
 import RSWeb
 import Secrets
 
-enum CreateSubscriptionResult {
+public enum CreateSubscriptionResult {
 	case created(FeedbinSubscription)
 	case multipleChoice([FeedbinSubscriptionChoice])
 	case alreadySubscribed
 	case notFound
 }
 
-final class FeedbinAPICaller: NSObject {
+public protocol FeedbinAPICallerDelegate: AnyObject {
+
+	var lastArticleFetchStartTime: Date? { get }
+
+	func conditionalGetInfo(key: String) -> HTTPConditionalGetInfo?
+	func setConditionalGetInfo(_: HTTPConditionalGetInfo, forKey: String)
+
+	func createURLRequest(url: URL, credentials: Secrets.Credentials?, conditionalGet: HTTPConditionalGetInfo?) -> URLRequest
+}
+
+public final class FeedbinAPICaller {
 	
-	struct ConditionalGetKeys {
-		static let subscriptions = "subscriptions"
-		static let tags = "tags"
-		static let taggings = "taggings"
-		static let unreadEntries = "unreadEntries"
-		static let starredEntries = "starredEntries"
+	public struct ConditionalGetKeys {
+		public static let subscriptions = "subscriptions"
+		public static let tags = "tags"
+		public static let taggings = "taggings"
+		public static let unreadEntries = "unreadEntries"
+		public static let starredEntries = "starredEntries"
 	}
 	
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
@@ -36,28 +46,30 @@ final class FeedbinAPICaller: NSObject {
 	private var suspended = false
 	private var lastBackdateStartTime: Date?
 	
-	var credentials: Credentials?
-	weak var accountMetadata: AccountMetadata?
+	public var credentials: Credentials?
+	public weak var delegate: FeedbinAPICallerDelegate?
 
-	init(transport: Transport) {
-		super.init()
+	public init(transport: Transport) {
 		self.transport = transport
 	}
 	
 	/// Cancels all pending requests rejects any that come in later
-	func suspend() {
+	public func suspend() {
 		transport.cancelAll()
 		suspended = true
 	}
 	
-	func resume() {
+	public func resume() {
 		suspended = false
 	}
 	
-	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		
+	public func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
+
 		let callURL = feedbinBaseURL.appendingPathComponent("authentication.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		guard let request = delegate?.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil) else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
 		
 		transport.send(request: request) { result in
 			
@@ -85,10 +97,15 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func importOPML(opmlData: Data, completion: @escaping (Result<FeedbinImportResult, Error>) -> Void) {
-		
+	public func importOPML(opmlData: Data, completion: @escaping (Result<FeedbinImportResult, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("imports.json")
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
 		transport.send(request: request, method: HTTPMethod.post, payload: opmlData) { result in
@@ -121,10 +138,15 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func retrieveOPMLImportResult(importID: Int, completion: @escaping (Result<FeedbinImportResult?, Error>) -> Void) {
+	public func retrieveOPMLImportResult(importID: Int, completion: @escaping (Result<FeedbinImportResult?, Error>) -> Void) {
 		
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("imports/\(importID).json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		
 		transport.send(request: request, resultType: FeedbinImportResult.self) { result in
 			
@@ -144,11 +166,16 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func retrieveTags(completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {
-		
+	public func retrieveTags(completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		let conditionalGet = delegate.conditionalGetInfo(key: ConditionalGetKeys.tags)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		transport.send(request: request, resultType: [FeedbinTag].self) { result in
 			
@@ -169,9 +196,15 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func renameTag(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func renameTag(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		let payload = FeedbinRenameTag(oldName: oldName, newName: newName)
 		
 		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
@@ -189,13 +222,18 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
-		
+	public func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
 
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
-		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
+		let conditionalGet = delegate.conditionalGetInfo(key: ConditionalGetKeys.subscriptions)
+		let request = delegate.createURLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinSubscription].self) { result in
 			
@@ -216,12 +254,17 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func createSubscription(url: String, completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
-		
+	public func createSubscription(url: String, completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
 
-		var request = URLRequest(url: callComponents.url!, credentials: credentials)
+		var request = delegate.createURLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: nil)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		
 		let payload: Data
@@ -295,9 +338,15 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID)/update.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		let payload = FeedbinUpdateSubscription(title: newName)
 		
 		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
@@ -315,9 +364,15 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func deleteSubscription(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func deleteSubscription(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID).json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		transport.send(request: request, method: HTTPMethod.delete) { result in
 			if self.suspended {
 				completion(.failure(TransportError.suspended))
@@ -333,11 +388,16 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func retrieveTaggings(completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
+	public func retrieveTaggings(completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
 		
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		let conditionalGet = delegate.conditionalGetInfo(key: ConditionalGetKeys.taggings)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinTagging].self) { result in
 			if self.suspended {
@@ -357,10 +417,15 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
+	public func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
 		
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
 		let payload: Data
@@ -396,9 +461,15 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func deleteTagging(taggingID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func deleteTagging(taggingID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings/\(taggingID).json")
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		transport.send(request: request, method: HTTPMethod.delete) { result in
 			if self.suspended {
@@ -415,8 +486,13 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
+	public func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
 		
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		guard !articleIDs.isEmpty else {
 			completion(.success(([FeedbinEntry]())))
 			return
@@ -431,7 +507,7 @@ final class FeedbinAPICaller: NSObject {
 				URLQueryItem(name: "ids", value: paramIDs),
 				URLQueryItem(name: "mode", value: "extended")
 			])
-		let request = URLRequest(url: url!, credentials: credentials)
+		let request = delegate.createURLRequest(url: url!, credentials: credentials, conditionalGet: nil)
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
@@ -451,8 +527,13 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func retrieveEntries(feedID: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+	public func retrieveEntries(feedID: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
 		
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let since = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
 		let sinceString = FeedbinDate.formatter.string(from: since)
 		
@@ -463,7 +544,7 @@ final class FeedbinAPICaller: NSObject {
 				URLQueryItem(name: "per_page", value: "100"),
 				URLQueryItem(name: "mode", value: "extended")
 			])
-		let request = URLRequest(url: url!, credentials: credentials)
+		let request = delegate.createURLRequest(url: url!, credentials: credentials, conditionalGet: nil)
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
@@ -486,7 +567,12 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Date?, Int?), Error>) -> Void) {
+	public func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Date?, Int?), Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
 
 		// If this is an initial sync, go and grab the previous 3 months of entries.  If not, use the last
 		// article fetch to only get the articles **published** since the last article fetch.
@@ -495,7 +581,7 @@ final class FeedbinAPICaller: NSObject {
 		// getting **updated** articles that normally wouldn't be found with a regular fetch.
 		// https://github.com/Ranchero-Software/NetNewsWire/issues/2549#issuecomment-722341356
 		let since: Date = {
-			if let lastArticleFetch = accountMetadata?.lastArticleFetchStartTime {
+			if let lastArticleFetch = delegate.lastArticleFetchStartTime {
 				if let lastBackdateStartTime = lastBackdateStartTime {
 					if lastBackdateStartTime.byAdding(days: 1) < lastArticleFetch {
 						self.lastBackdateStartTime = lastArticleFetch
@@ -520,7 +606,8 @@ final class FeedbinAPICaller: NSObject {
 				URLQueryItem(name: "per_page", value: "100"),
 				URLQueryItem(name: "mode", value: "extended")
 			])
-		let request = URLRequest(url: url!, credentials: credentials)
+
+		let request = delegate.createURLRequest(url: url!, credentials: credentials, conditionalGet: nil)
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
@@ -546,14 +633,18 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func retrieveEntries(page: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+	public func retrieveEntries(page: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
 		
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
 		guard let url = URL(string: page) else {
 			completion(.success((nil, nil)))
 			return
 		}
 		
-		let request = URLRequest(url: url, credentials: credentials)
+		let request = delegate.createURLRequest(url: url, credentials: credentials, conditionalGet: nil)
 
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
@@ -576,11 +667,16 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func retrieveUnreadEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
+	public func retrieveUnreadEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
 		
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		let conditionalGet = delegate.conditionalGetInfo(key: ConditionalGetKeys.unreadEntries)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [Int].self) { result in
 			
@@ -601,9 +697,15 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func createUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func createUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		let payload = FeedbinUnreadEntry(unreadEntries: entries)
 		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
 			if self.suspended {
@@ -620,9 +722,15 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func deleteUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func deleteUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		let payload = FeedbinUnreadEntry(unreadEntries: entries)
 		transport.send(request: request, method: HTTPMethod.delete, payload: payload) { result in
 			if self.suspended {
@@ -639,11 +747,16 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
+	public func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
 		
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		let conditionalGet = delegate.conditionalGetInfo(key: ConditionalGetKeys.starredEntries)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [Int].self) { result in
 			if self.suspended {
@@ -663,9 +776,15 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func createStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func createStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		let payload = FeedbinStarredEntry(starredEntries: entries)
 		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
 			if self.suspended {
@@ -682,9 +801,15 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func deleteStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func deleteStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+
+		guard let delegate else {
+			completion(.failure(TransportError.suspended))
+			return
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = delegate.createURLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
 		let payload = FeedbinStarredEntry(starredEntries: entries)
 		transport.send(request: request, method: HTTPMethod.delete, payload: payload) { result in
 			if self.suspended {
@@ -708,9 +833,8 @@ final class FeedbinAPICaller: NSObject {
 extension FeedbinAPICaller {
 	
 	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
-		if var conditionalGet = accountMetadata?.conditionalGetInfo {
-			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
-			accountMetadata?.conditionalGetInfo = conditionalGet
+		if let conditionalGetInfo = HTTPConditionalGetInfo(headers: headers) {
+			delegate?.setConditionalGetInfo(conditionalGetInfo, forKey: key)
 		}
 	}
 	

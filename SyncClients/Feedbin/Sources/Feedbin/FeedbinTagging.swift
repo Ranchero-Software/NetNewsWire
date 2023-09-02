@@ -8,11 +8,11 @@
 
 import Foundation
 
-struct FeedbinTagging: Codable {
+public struct FeedbinTagging: Codable {
 
-	let taggingID: Int
-	let feedID: Int
-	let name: String
+	public let taggingID: Int
+	public let feedID: Int
+	public let name: String
 
 	enum CodingKeys: String, CodingKey {
 		case taggingID = "id"
