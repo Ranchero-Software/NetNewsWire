@@ -1351,6 +1351,7 @@
 		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
 		8426119F1FCB72600086A189 /* FeaturedImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedImageDownloader.swift; sourceTree = "<group>"; };
 		842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSHTMLMetadata+Extension.swift"; sourceTree = "<group>"; };
+		842688C42AA5478800787185 /* LocalAccount */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LocalAccount; path = SyncClients/LocalAccount; sourceTree = "<group>"; };
 		842E45CD1ED8C308000A8B52 /* AppNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		84411E701FE5FBFA004B527F /* SmallIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallIconProvider.swift; sourceTree = "<group>"; };
@@ -2508,6 +2509,7 @@
 				51CD32C624D2DEF9009ABAEF /* Account */,
 				8486EC402A9C2EFE007EF90D /* AccountError */,
 				84208B732A9CEE2B009FE5B9 /* FeedFinder */,
+				842688C42AA5478800787185 /* LocalAccount */,
 				8486EC3F2A9C2431007EF90D /* ReaderAPI */,
 				8486EC3E2A9BE083007EF90D /* NewsBlur */,
 				84208B742A9CF1B3009FE5B9 /* Feedbin */,

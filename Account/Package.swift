@@ -25,6 +25,7 @@ let package = Package(
 		.package(path: "../SyncClients/NewsBlur"),
 		.package(path: "../SyncClients/ReaderAPI"),
 		.package(path: "../SyncClients/Feedbin"),
+		.package(path: "../SyncClients/LocalAccount"),
 	],
 	targets: [
 		.target(
@@ -42,7 +43,8 @@ let package = Package(
 				"SyncDatabase",
 				"NewsBlur",
 				"ReaderAPI",
-				"Feedbin"
+				"Feedbin",
+				"LocalAccount"
 			],
 			linkerSettings: [
 				.unsafeFlags(["-Xlinker", "-no_application_extension"])

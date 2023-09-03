@@ -18,6 +18,7 @@ import ArticlesDatabase
 import RSWeb
 import Secrets
 import FeedFinder
+import LocalAccount
 
 enum CloudKitAccountDelegateError: LocalizedError {
 	case invalidParameter
