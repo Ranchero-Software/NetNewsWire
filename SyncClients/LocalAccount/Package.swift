@@ -13,17 +13,20 @@ let package = Package(
             targets: ["LocalAccount"]),
     ],
 	dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.2")),
+		.package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMajor(from: "2.0.1")),
 		.package(url: "https://github.com/Ranchero-Software/RSWeb.git", .upToNextMajor(from: "1.0.0")),
+		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.2")),
 	],
-    targets: [
+	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
 		.target(
 			name: "LocalAccount",
 			dependencies: [
-				"RSParser",
-				"RSWeb"]
+				"RSCore",
+				"RSWeb",
+				"RSParser"
+			]
 		),
 		.testTarget(
 			name: "LocalAccountTests",

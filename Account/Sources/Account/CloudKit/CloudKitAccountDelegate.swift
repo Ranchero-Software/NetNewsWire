@@ -591,10 +591,11 @@ private extension CloudKitAccountDelegate {
 
     func combinedRefresh(_ account: Account, _ feeds: Set<Feed>, completion: @escaping (Result<Void, Error>) -> Void) {
 
+		let feedURLs = Set(feeds.map{ $0.url })
         let group = DispatchGroup()
 
         group.enter()
-        refresher.refreshFeeds(feeds) {
+        refresher.refreshFeedURLs(feedURLs) {
             group.leave()
         }
 
@@ -825,17 +826,85 @@ private extension CloudKitAccountDelegate {
 }
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed) {
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestForFeedURL feedURL: String) -> URLRequest? {
+
+		guard let url = URL(string: feedURL) else {
+			return nil
+		}
+
+		var request = URLRequest(url: url)
+		if let feed = account?.existingFeed(withURL: feedURL) {
+			feed.conditionalGetInfo?.addRequestHeadersToURLRequest(&request)
+		}
+
+		return request
+	}
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, feedURL: String, response: URLResponse?, data: Data, error: Error?, completion: @escaping () -> Void) {
+
+		guard !data.isEmpty else {
+			completion()
+			return
+		}
+
+		if let error {
+			print("Error downloading \(feedURL) - \(error)")
+			completion()
+			return
+		}
+
+		guard let feed = account?.existingFeed(withURL: feedURL) else {
+			completion()
+			return
+		}
+
+		processFeed(feed, response, data, completion)
+	}
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedForFeedURL: String) {
 		refreshProgress.completeTask()
 	}
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-		self.storeArticleChanges(new: articleChanges.newArticles,
-								 updated: articleChanges.updatedArticles,
-								 deleted: articleChanges.deletedArticles,
-								 completion: completion)
-	}
-	
 }
 
+private extension CloudKitAccountDelegate {
+
+	func processFeed(_ feed: Feed, _ response: URLResponse?, _ data: Data, _ completion: @escaping () -> Void) {
+
+		let dataHash = data.md5String
+		if dataHash == feed.contentHash {
+			completion()
+			return
+		}
+
+		let parserData = ParserData(url: feed.url, data: data)
+		FeedParser.parse(parserData) { (parsedFeed, error) in
+
+			Task { @MainActor in
+				guard let account = self.account, let parsedFeed = parsedFeed, error == nil else {
+					completion()
+					return
+				}
+
+				account.update(feed, with: parsedFeed) { result in
+					switch result {
+
+					case .success(let articleChanges):
+						if let httpResponse = response as? HTTPURLResponse {
+							feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+						}
+						feed.contentHash = dataHash
+
+						self.storeArticleChanges(new: articleChanges.newArticles,
+												 updated: articleChanges.updatedArticles,
+												 deleted: articleChanges.deletedArticles,
+												 completion: completion)
+
+					case .failure:
+						completion()
+					}
+				}
+			}
+		}
+	}
+}

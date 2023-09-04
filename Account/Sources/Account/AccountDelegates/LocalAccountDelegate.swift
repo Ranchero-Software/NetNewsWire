@@ -51,12 +51,13 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
         }
 
         let feeds = account.flattenedFeeds()
-        refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
+		let feedURLs = Set(feeds.map{ $0.url })
+        refreshProgress.addToNumberOfTasksAndRemaining(feedURLs.count)
 
         let group = DispatchGroup()
 
         group.enter()
-        refresher?.refreshFeeds(feeds) {
+        refresher?.refreshFeedURLs(feedURLs) {
             group.leave()
         }
 
@@ -224,16 +225,45 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
 }
 
 extension LocalAccountDelegate: LocalAccountRefresherDelegate {
-	
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed) {
-		refreshProgress.completeTask()
-	}
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-		completion()
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestForFeedURL feedURL: String) -> URLRequest? {
+
+		guard let url = URL(string: feedURL) else {
+			return nil
+		}
+
+		var request = URLRequest(url: url)
+		if let feed = account?.existingFeed(withURL: feedURL) {
+			feed.conditionalGetInfo?.addRequestHeadersToURLRequest(&request)
+		}
+
+		return request
 	}
 
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, feedURL: String, response: URLResponse?, data: Data, error: Error?, completion: @escaping () -> Void) {
+
+		guard !data.isEmpty else {
+			completion()
+			return
+		}
+
+		if let error = error {
+			print("Error downloading \(feedURL) - \(error)")
+			completion()
+			return
+		}
+
+		guard let feed = account?.existingFeed(withURL: feedURL) else {
+			completion()
+			return
+		}
+
+		processFeed(feed, response, data, completion)
+	}
+	
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedForFeedURL: String) {
+		refreshProgress.completeTask()
+	}
 }
 
 private extension LocalAccountDelegate {
@@ -288,9 +318,36 @@ private extension LocalAccountDelegate {
 				self.refreshProgress.completeTask()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
-			
 		}
-		
 	}
-	
+
+	func processFeed(_ feed: Feed, _ response: URLResponse?, _ data: Data, _ completion: @escaping () -> Void) {
+
+		let dataHash = data.md5String
+		if dataHash == feed.contentHash {
+			completion()
+			return
+		}
+
+		let parserData = ParserData(url: feed.url, data: data)
+		FeedParser.parse(parserData) { (parsedFeed, error) in
+
+			Task { @MainActor in
+				guard let account = self.account, let parsedFeed = parsedFeed, error == nil else {
+					completion()
+					return
+				}
+
+				account.update(feed, with: parsedFeed) { result in
+					if case .success(_) = result {
+						if let httpResponse = response as? HTTPURLResponse {
+							feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+						}
+						feed.contentHash = dataHash
+					}
+					completion()
+				}
+			}
+		}
+	}
 }
