@@ -174,7 +174,15 @@ public enum FetchType {
 		}
 		return _externalIDToFeedDictionary
 	}
-	
+
+	private var _urlToFeedDictionary = [String: Feed]()
+	var urlToFeedDictionary: [String: Feed] {
+		if feedDictionariesNeedUpdate {
+			rebuildFeedDictionaries()
+		}
+		return _urlToFeedDictionary
+	}
+
 	var flattenedFeedURLs: Set<String> {
 		return Set(flattenedFeeds().map({ $0.url }))
 	}
@@ -1341,16 +1349,19 @@ private extension Account {
 	func rebuildFeedDictionaries() {
 		var idDictionary = [String: Feed]()
 		var externalIDDictionary = [String: Feed]()
+		var urlToFeedDictionary = [String: Feed]()
 		
 		for feed in flattenedFeeds() {
 			idDictionary[feed.feedID] = feed
 			if let externalID = feed.externalID {
 				externalIDDictionary[externalID] = feed
 			}
+			urlToFeedDictionary[feed.url] = feed
 		}
 
 		_idToFeedDictionary = idDictionary
 		_externalIDToFeedDictionary = externalIDDictionary
+		_urlToFeedDictionary = urlToFeedDictionary
 		feedDictionariesNeedUpdate = false
 	}
     
@@ -1510,7 +1521,10 @@ extension Account {
 	public func existingFeed(withExternalID externalID: String) -> Feed? {
 		return externalIDToFeedDictionary[externalID]
 	}
-	
+
+	public func existingFeed(withURL url: String) -> Feed? {
+		urlToFeedDictionary[url]
+	}
 }
 
 // MARK: - OPMLRepresentable
