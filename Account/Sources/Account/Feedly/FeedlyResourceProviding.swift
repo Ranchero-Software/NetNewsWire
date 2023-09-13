@@ -12,7 +12,7 @@ protocol FeedlyResourceProviding {
 	var resource: FeedlyResourceID { get }
 }
 
-extension FeedlyFeedResourceId: FeedlyResourceProviding {
+extension FeedlyFeedResourceID: FeedlyResourceProviding {
 	
 	var resource: FeedlyResourceID {
 		return self

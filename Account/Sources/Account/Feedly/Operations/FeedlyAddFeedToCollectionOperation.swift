@@ -10,7 +10,7 @@ import Foundation
 import AccountError
 
 protocol FeedlyAddFeedToCollectionService {
-	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
+	func addFeed(with feedId: FeedlyFeedResourceID, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
 }
 
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
@@ -20,9 +20,9 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 	let service: FeedlyAddFeedToCollectionService
 	let account: Account
 	let folder: Folder
-	let feedResource: FeedlyFeedResourceId
+	let feedResource: FeedlyFeedResourceID
 
-	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
+	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceID, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
 		self.account = account
 		self.folder = folder
 		self.feedResource = feedResource

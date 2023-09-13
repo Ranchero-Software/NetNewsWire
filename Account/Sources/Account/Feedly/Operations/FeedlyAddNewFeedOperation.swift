@@ -26,7 +26,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	private let addToCollectionService: FeedlyAddFeedToCollectionService
 	private let syncUnreadIdsService: FeedlyGetStreamIDsService
 	private let getStreamContentsService: FeedlyGetStreamContentsService
-	private var feedResourceId: FeedlyFeedResourceId?
+	private var feedResourceId: FeedlyFeedResourceID?
 	var addCompletionHandler: ((Result<Feed, Error>) -> ())?
 
 	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIDsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress) throws {
@@ -81,7 +81,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 			return didFinish(with: AccountError.createErrorNotFound)
 		}
 		
-		let feedResourceId = FeedlyFeedResourceId(id: first.feedId)
+		let feedResourceId = FeedlyFeedResourceID(id: first.feedId)
 		self.feedResourceId = feedResourceId
 		
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: feedResourceId, feedName: feedName, collectionId: collectionId, service: addToCollectionService)

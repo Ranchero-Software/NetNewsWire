@@ -389,7 +389,7 @@ final class FeedlyAPICaller {
 
 extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 	
-	func addFeed(with feedId: FeedlyFeedResourceId, title: String? = nil, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
+	func addFeed(with feedId: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))

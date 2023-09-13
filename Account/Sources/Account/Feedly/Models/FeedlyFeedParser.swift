@@ -22,7 +22,7 @@ struct FeedlyFeedParser {
 	}
 	
 	var url: String {
-		let resource = FeedlyFeedResourceId(id: feed.id)
+		let resource = FeedlyFeedResourceID(id: feed.id)
 		return resource.url
 	}
 	

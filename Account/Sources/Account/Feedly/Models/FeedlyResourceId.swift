@@ -16,7 +16,7 @@ protocol FeedlyResourceID {
 }
 
 /// The Feed Resource is documented here: https://developer.feedly.com/cloud/
-struct FeedlyFeedResourceId: FeedlyResourceID {
+struct FeedlyFeedResourceID: FeedlyResourceID {
 	let id: String
 	
 	/// The location of the kind of resource a concrete type represents.
@@ -38,7 +38,7 @@ struct FeedlyFeedResourceId: FeedlyResourceID {
 	}
 }
 
-extension FeedlyFeedResourceId {
+extension FeedlyFeedResourceID {
 	init(url: String) {
 		self.id = "feed/\(url)"
 	}
@@ -49,23 +49,23 @@ struct FeedlyCategoryResourceID: FeedlyResourceID {
 	
 	enum Global {
 		
-		static func uncategorized(for userId: String) -> FeedlyCategoryResourceID {
+		static func uncategorized(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.uncategorized"
+			let id = "user/\(userID)/category/global.uncategorized"
 			return FeedlyCategoryResourceID(id: id)
 		}
 		
 		/// All articles from all the feeds the user subscribes to.
-		static func all(for userId: String) -> FeedlyCategoryResourceID {
+		static func all(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.all"
+			let id = "user/\(userID)/category/global.all"
 			return FeedlyCategoryResourceID(id: id)
 		}
 		
 		/// All articles from all the feeds the user loves most.
-		static func mustRead(for userId: String) -> FeedlyCategoryResourceID {
+		static func mustRead(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.must"
+			let id = "user/\(userID)/category/global.must"
 			return FeedlyCategoryResourceID(id: id)
 		}
 	}
@@ -76,9 +76,9 @@ struct FeedlyTagResourceId: FeedlyResourceID {
 	
 	enum Global {
 		
-		static func saved(for userId: String) -> FeedlyTagResourceId {
+		static func saved(for userID: String) -> FeedlyTagResourceId {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/tag/global.saved"
+			let id = "user/\(userID)/tag/global.saved"
 			return FeedlyTagResourceId(id: id)
 		}
 	}

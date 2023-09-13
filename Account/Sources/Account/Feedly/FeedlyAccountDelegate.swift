@@ -352,7 +352,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
             throw FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)
         }
 
-        let feedID = FeedlyFeedResourceId(id: feed.feedID)
+        let feedID = FeedlyFeedResourceID(id: feed.feedID)
         let editedNameBefore = feed.editedName
 
         // optimistically set the name
@@ -383,7 +383,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 			return
 		}
 		
-		let feedId = FeedlyFeedResourceId(id: feed.feedID)
+		let feedId = FeedlyFeedResourceID(id: feed.feedID)
 		let editedNameBefore = feed.editedName
 		
 		// Adding an existing feed updates it.
@@ -410,7 +410,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 				throw FeedlyAccountDelegateError.notLoggedIn
 			}
 			
-			let resource = FeedlyFeedResourceId(id: feed.feedID)
+			let resource = FeedlyFeedResourceID(id: feed.feedID)
             let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
                                                                      credentials: credentials,
                                                                      resource: resource,
