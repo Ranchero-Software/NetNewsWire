@@ -33,7 +33,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 		self.init(account: account, resource: all, service: service, newerThan: newerThan)
 	}
 	
-	var entryIds: Set<String> {
+	var entryIDs: Set<String> {
 		return storedUpdatedArticleIds
 	}
 	

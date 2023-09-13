@@ -13,7 +13,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 
 	private let account: Account
 	
-	private(set) var entryIds = Set<String>()
+	private(set) var entryIDs = Set<String>()
 	
 	init(account: Account) {
 		self.account = account
@@ -23,7 +23,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 			switch result {
 			case .success(let articleIds):
-				self.entryIds.formUnion(articleIds)
+				self.entryIDs.formUnion(articleIds)
 				self.didFinish()
 				
 			case .failure(let error):
