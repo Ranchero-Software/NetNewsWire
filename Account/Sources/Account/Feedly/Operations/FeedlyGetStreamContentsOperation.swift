@@ -27,7 +27,7 @@ protocol FeedlyGetStreamContentsOperationDelegate: AnyObject {
 final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding, Logging {
 	
 	struct ResourceProvider: FeedlyResourceProviding {
-		var resource: FeedlyResourceId
+		var resource: FeedlyResourceID
 	}
 	
 	let resourceProvider: FeedlyResourceProviding
@@ -82,7 +82,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 	
 	weak var streamDelegate: FeedlyGetStreamContentsOperationDelegate?
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.account = account
 		self.resourceProvider = ResourceProvider(resource: resource)
 		self.service = service

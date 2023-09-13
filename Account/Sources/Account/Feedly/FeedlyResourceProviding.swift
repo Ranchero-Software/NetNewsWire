@@ -9,12 +9,12 @@
 import Foundation
 
 protocol FeedlyResourceProviding {
-	var resource: FeedlyResourceId { get }
+	var resource: FeedlyResourceID { get }
 }
 
 extension FeedlyFeedResourceId: FeedlyResourceProviding {
 	
-	var resource: FeedlyResourceId {
+	var resource: FeedlyResourceID {
 		return self
 	}
 }

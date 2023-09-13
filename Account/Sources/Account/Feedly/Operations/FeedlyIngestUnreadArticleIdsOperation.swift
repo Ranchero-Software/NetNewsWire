@@ -21,7 +21,7 @@ import Secrets
 final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
-	private let resource: FeedlyResourceId
+	private let resource: FeedlyResourceID
 	private let service: FeedlyGetStreamIDsService
 	private let database: SyncDatabase
 	private var remoteEntryIDs = Set<String>()
@@ -31,7 +31,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service

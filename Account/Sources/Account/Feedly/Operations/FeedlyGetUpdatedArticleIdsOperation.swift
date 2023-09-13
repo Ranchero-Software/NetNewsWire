@@ -17,11 +17,11 @@ import Secrets
 class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, Logging {
 
 	private let account: Account
-	private let resource: FeedlyResourceId
+	private let resource: FeedlyResourceID
 	private let service: FeedlyGetStreamIDsService
 	private let newerThan: Date?
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService, newerThan: Date?) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service

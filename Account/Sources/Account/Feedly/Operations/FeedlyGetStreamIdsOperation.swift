@@ -29,11 +29,11 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 	let account: Account
 	let service: FeedlyGetStreamIDsService
 	let continuation: String?
-	let resource: FeedlyResourceId
+	let resource: FeedlyResourceID
 	let unreadOnly: Bool?
 	let newerThan: Date?
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?) {
 		self.account = account
 		self.resource = resource
 		self.service = service

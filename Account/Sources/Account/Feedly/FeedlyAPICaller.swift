@@ -605,7 +605,7 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 
 extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 	
-	func getStreamContents(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
+	func getStreamContents(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -673,7 +673,7 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 
 extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 	
-	func streamIDs(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
+	func streamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))

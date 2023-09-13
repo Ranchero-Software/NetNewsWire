@@ -15,14 +15,14 @@ import Secrets
 final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyGetStreamContentsOperationDelegate, FeedlyCheckpointOperationDelegate, Logging {
 
 	private let account: Account
-	private let resource: FeedlyResourceId
+	private let resource: FeedlyResourceID
 	private let operationQueue = MainThreadOperationQueue()
 	private let service: FeedlyGetStreamContentsService
 	private let newerThan: Date?
 	private let isPagingEnabled: Bool
 	private let finishOperation: FeedlyCheckpointOperation
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, isPagingEnabled: Bool, newerThan: Date?) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamContentsService, isPagingEnabled: Bool, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service

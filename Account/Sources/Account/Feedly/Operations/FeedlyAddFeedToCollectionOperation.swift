@@ -33,7 +33,7 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 	
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
 	
-	var resource: FeedlyResourceId {
+	var resource: FeedlyResourceID {
 		return feedResource
 	}
 	

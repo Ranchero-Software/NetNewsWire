@@ -9,14 +9,14 @@
 import Foundation
 
 /// The kinds of Resource Ids is documented here: https://developer.feedly.com/cloud/
-protocol FeedlyResourceId {
+protocol FeedlyResourceID {
 	
 	/// The resource Id from Feedly.
 	var id: String { get }
 }
 
 /// The Feed Resource is documented here: https://developer.feedly.com/cloud/
-struct FeedlyFeedResourceId: FeedlyResourceId {
+struct FeedlyFeedResourceId: FeedlyResourceID {
 	let id: String
 	
 	/// The location of the kind of resource a concrete type represents.
@@ -44,7 +44,7 @@ extension FeedlyFeedResourceId {
 	}
 }
 
-struct FeedlyCategoryResourceID: FeedlyResourceId {
+struct FeedlyCategoryResourceID: FeedlyResourceID {
 	let id: String
 	
 	enum Global {
@@ -71,7 +71,7 @@ struct FeedlyCategoryResourceID: FeedlyResourceId {
 	}
 }
 
-struct FeedlyTagResourceId: FeedlyResourceId {
+struct FeedlyTagResourceId: FeedlyResourceID {
 	let id: String
 	
 	enum Global {

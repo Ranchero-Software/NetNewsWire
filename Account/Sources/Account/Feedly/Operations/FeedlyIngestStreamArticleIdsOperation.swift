@@ -18,10 +18,10 @@ import Secrets
 class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
-	private let resource: FeedlyResourceId
+	private let resource: FeedlyResourceID
 	private let service: FeedlyGetStreamIDsService
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIDsService) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService) {
 		self.account = account
 		self.resource = resource
 		self.service = service
