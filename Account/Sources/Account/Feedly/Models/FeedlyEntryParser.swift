@@ -20,7 +20,7 @@ struct FeedlyEntryParser {
 	}
 	
 	/// When ingesting articles, the feedURL must match a feed's `feedID` for the article to be reachable between it and its matching feed. It reminds me of a foreign key.
-	var feedUrl: String? {
+	var feedURL: String? {
 		guard let id = entry.origin?.streamId else {
 			// At this point, check Feedly's API isn't glitching or the response has not changed structure.
 			assertionFailure("Entries need to be traceable to a feed or this entry will be dropped.")
@@ -31,7 +31,7 @@ struct FeedlyEntryParser {
 	
 	/// Convoluted external URL logic "documented" here:
 	/// https://groups.google.com/forum/#!searchin/feedly-cloud/feed$20url%7Csort:date/feedly-cloud/Rx3dVd4aTFQ/Hf1ZfLJoCQAJ
-	var externalUrl: String? {
+	var externalURL: String? {
 		let multidimensionalArrayOfLinks = [entry.canonical, entry.alternate]
 		let withExistingValues = multidimensionalArrayOfLinks.compactMap { $0 }
 		let flattened = withExistingValues.flatMap { $0 }
@@ -88,15 +88,15 @@ struct FeedlyEntryParser {
 	}
 	
 	var parsedItemRepresentation: ParsedItem? {
-		guard let feedUrl = feedUrl else {
+		guard let feedURL = feedURL else {
 			return nil
 		}
 		
 		return ParsedItem(syncServiceID: id,
 						  uniqueID: id, // This value seems to get ignored or replaced.
-						  feedURL: feedUrl,
+						  feedURL: feedURL,
 						  url: nil,
-						  externalURL: externalUrl,
+						  externalURL: externalURL,
 						  title: title,
 						  language: nil,
 						  contentHTML: contentHMTL,
