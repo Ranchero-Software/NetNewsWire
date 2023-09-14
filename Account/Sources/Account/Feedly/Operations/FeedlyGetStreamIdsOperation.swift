@@ -9,22 +9,22 @@
 import Foundation
 import RSCore
 
-protocol FeedlyGetStreamIdsOperationDelegate: AnyObject {
-	func feedlyGetStreamIdsOperation(_ operation: FeedlyGetStreamIdsOperation, didGet streamIds: FeedlyStreamIDs)
+protocol FeedlyGetStreamIDsOperationDelegate: AnyObject {
+	func feedlyGetStreamIDsOperation(_ operation: FeedlyGetStreamIDsOperation, didGet streamIDs: FeedlyStreamIDs)
 }
 
 /// Single responsibility is to get the stream ids from Feedly.
-final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, Logging {
+final class FeedlyGetStreamIDsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, Logging {
 	
 	var entryIDs: Set<String> {
-		guard let ids = streamIds?.ids else {
+		guard let ids = streamIDs?.ids else {
 			assertionFailure("Has this operation been addeded as a dependency on the caller?")
 			return []
 		}
 		return Set(ids)
 	}
 	
-	private(set) var streamIds: FeedlyStreamIDs?
+	private(set) var streamIDs: FeedlyStreamIDs?
 	
 	let account: Account
 	let service: FeedlyGetStreamIDsService
@@ -42,15 +42,15 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 		self.unreadOnly = unreadOnly
 	}
 	
-	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
+	weak var streamIDsDelegate: FeedlyGetStreamIDsOperationDelegate?
 	
 	override func run() {
 		service.streamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
-				self.streamIds = stream
+				self.streamIDs = stream
 				
-				self.streamIdsDelegate?.feedlyGetStreamIdsOperation(self, didGet: stream)
+				self.streamIDsDelegate?.feedlyGetStreamIDsOperation(self, didGet: stream)
 				
 				self.didFinish()
 				
