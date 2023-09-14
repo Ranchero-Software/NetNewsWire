@@ -33,35 +33,35 @@ class FeedlyIngestStreamArticleIDsOperation: FeedlyOperation, Logging {
 	}
 	
 	override func run() {
-		getStreamIds(nil)
+		getStreamIDs(nil)
 	}
 	
-	private func getStreamIds(_ continuation: String?) {
-		service.streamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
+	private func getStreamIDs(_ continuation: String?) {
+		service.streamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIDs(_:))
 	}
 	
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIDs, Error>) {
+	private func didGetStreamIDs(_ result: Result<FeedlyStreamIDs, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
 		
 		switch result {
-		case .success(let streamIds):
-			account.createStatusesIfNeeded(articleIDs: Set(streamIds.ids)) { databaseError in
+		case .success(let streamIDs):
+			account.createStatusesIfNeeded(articleIDs: Set(streamIDs.ids)) { databaseError in
 				
 				if let error = databaseError {
 					self.didFinish(with: error)
 					return
 				}
 				
-				guard let continuation = streamIds.continuation else {
+				guard let continuation = streamIDs.continuation else {
                     self.logger.debug("Reached end of stream: \(self.resource.id, privacy: .public).")
 					self.didFinish()
 					return
 				}
 				
-				self.getStreamIds(continuation)
+				self.getStreamIDs(continuation)
 			}
 		case .failure(let error):
 			didFinish(with: error)
