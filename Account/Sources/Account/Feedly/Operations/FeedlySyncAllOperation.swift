@@ -65,7 +65,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		createFeedsOperation.addDependency(mirrorCollectionsAsFolders)
 		self.operationQueue.add(createFeedsOperation)
 		
-		let getAllArticleIds = FeedlyIngestStreamArticleIdsOperation(account: account, userId: feedlyUserId, service: getStreamIdsService)
+		let getAllArticleIds = FeedlyIngestStreamArticleIDsOperation(account: account, userId: feedlyUserId, service: getStreamIdsService)
 		getAllArticleIds.delegate = self
 		getAllArticleIds.downloadProgress = downloadProgress
 		getAllArticleIds.addDependency(createFeedsOperation)
