@@ -80,7 +80,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		
 		// Get each page of the article ids which have been update since the last successful fetch start date.
 		// If the date is nil, this operation provides an empty set (everything is new, nothing is updated).
-		let getUpdated = FeedlyGetUpdatedArticleIdsOperation(account: account, userId: feedlyUserId, service: getStreamIdsService, newerThan: lastSuccessfulFetchStartDate)
+		let getUpdated = FeedlyGetUpdatedArticleIDsOperation(account: account, userID: feedlyUserId, service: getStreamIdsService, newerThan: lastSuccessfulFetchStartDate)
 		getUpdated.delegate = self
 		getUpdated.downloadProgress = downloadProgress
 		getUpdated.addDependency(createFeedsOperation)
