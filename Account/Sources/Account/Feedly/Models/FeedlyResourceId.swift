@@ -71,15 +71,15 @@ struct FeedlyCategoryResourceID: FeedlyResourceID {
 	}
 }
 
-struct FeedlyTagResourceId: FeedlyResourceID {
+struct FeedlyTagResourceID: FeedlyResourceID {
 	let id: String
 	
 	enum Global {
 		
-		static func saved(for userID: String) -> FeedlyTagResourceId {
+		static func saved(for userID: String) -> FeedlyTagResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
 			let id = "user/\(userID)/tag/global.saved"
-			return FeedlyTagResourceId(id: id)
+			return FeedlyTagResourceID(id: id)
 		}
 	}
 }
