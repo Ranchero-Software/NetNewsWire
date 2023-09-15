@@ -195,7 +195,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 			
 		}
 		
-		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil)
+		let ingestStarred = FeedlyIngestStarredArticleIDsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil)
 		
 		group.enter()
 		ingestStarred.completionBlock = { _ in

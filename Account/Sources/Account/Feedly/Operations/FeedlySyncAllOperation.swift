@@ -87,7 +87,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		self.operationQueue.add(getUpdated)
 		
 		// Get each page of the article ids for starred articles.
-		let getStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: feedlyUserID, service: getStarredService, database: database, newerThan: nil)
+		let getStarred = FeedlyIngestStarredArticleIDsOperation(account: account, userId: feedlyUserID, service: getStarredService, database: database, newerThan: nil)
 		getStarred.delegate = self
 		getStarred.downloadProgress = downloadProgress
 		getStarred.addDependency(createFeedsOperation)
