@@ -1,5 +1,5 @@
 //
-//  FeedlyIngestUnreadArticleIdsOperation.swift
+//  FeedlyIngestUnreadArticleIDsOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 18/10/19.
@@ -18,7 +18,7 @@ import Secrets
 /// When all the unread article ids are collected, a status is created for each.
 /// The article ids previously marked as unread but not collected become read.
 /// So this operation has side effects *for the entire account* it operates on.
-final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
+final class FeedlyIngestUnreadArticleIDsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
 	private let resource: FeedlyResourceID

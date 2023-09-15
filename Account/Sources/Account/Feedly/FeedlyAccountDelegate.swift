@@ -187,7 +187,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		
 		let group = DispatchGroup()
 		
-		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userID: credentials.username, service: caller, database: database, newerThan: nil)
+		let ingestUnread = FeedlyIngestUnreadArticleIDsOperation(account: account, userID: credentials.username, service: caller, database: database, newerThan: nil)
 		
 		group.enter()
 		ingestUnread.completionBlock = { _ in
