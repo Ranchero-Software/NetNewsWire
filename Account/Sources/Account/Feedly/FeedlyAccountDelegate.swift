@@ -122,7 +122,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 			return
 		}
 		
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserID: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
 		
 		syncAllOperation.downloadProgress = refreshProgress
 		
