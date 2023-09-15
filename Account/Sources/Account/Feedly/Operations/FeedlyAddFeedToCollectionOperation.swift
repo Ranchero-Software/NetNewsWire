@@ -10,24 +10,24 @@ import Foundation
 import AccountError
 
 protocol FeedlyAddFeedToCollectionService {
-	func addFeed(with feedId: FeedlyFeedResourceID, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
+	func addFeed(with feedID: FeedlyFeedResourceID, title: String?, toCollectionWith collectionID: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
 }
 
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
 
 	let feedName: String?
-	let collectionId: String
+	let collectionID: String
 	let service: FeedlyAddFeedToCollectionService
 	let account: Account
 	let folder: Folder
 	let feedResource: FeedlyFeedResourceID
 
-	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceID, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
+	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceID, feedName: String? = nil, collectionID: String, service: FeedlyAddFeedToCollectionService) {
 		self.account = account
 		self.folder = folder
 		self.feedResource = feedResource
 		self.feedName = feedName
-		self.collectionId = collectionId
+		self.collectionID = collectionID
 		self.service = service
 	}
 	
@@ -38,7 +38,7 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 	}
 	
 	override func run() {
-		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
+		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionID) { [weak self] result in
 			guard let self = self else {
 				return
 			}
@@ -58,9 +58,9 @@ private extension FeedlyAddFeedToCollectionOperation {
 		case .success(let feedlyFeeds):
 			feedsAndFolders = [(feedlyFeeds, folder)]
 			
-			let feedsWithCreatedFeedId = feedlyFeeds.filter { $0.id == resource.id }
+			let feedsWithCreatedFeedID = feedlyFeeds.filter { $0.id == resource.id }
 			
-			if feedsWithCreatedFeedId.isEmpty {
+			if feedsWithCreatedFeedID.isEmpty {
 				didFinish(with: AccountError.createErrorNotFound)
 			} else {
 				didFinish()

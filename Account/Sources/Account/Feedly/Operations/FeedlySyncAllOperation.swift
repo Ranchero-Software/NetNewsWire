@@ -32,7 +32,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 	///
 	/// Download articles for statuses at the union of those statuses without its corresponding article and those included in 3 (changed since last successful sync).
 	///
-	init(account: Account, feedlyUserID: String, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIDsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredService: FeedlyGetStreamIDsService, getStreamIdsService: FeedlyGetStreamIDsService, getEntriesService: FeedlyGetEntriesService, database: SyncDatabase, downloadProgress: DownloadProgress) {
+	init(account: Account, feedlyUserID: String, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIDsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredService: FeedlyGetStreamIDsService, getStreamIDsService: FeedlyGetStreamIDsService, getEntriesService: FeedlyGetEntriesService, database: SyncDatabase, downloadProgress: DownloadProgress) {
 		self.syncUUID = UUID()
 		self.operationQueue.suspend()
 		
@@ -65,7 +65,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		createFeedsOperation.addDependency(mirrorCollectionsAsFolders)
 		self.operationQueue.add(createFeedsOperation)
 		
-		let getAllArticleIDs = FeedlyIngestStreamArticleIDsOperation(account: account, userId: feedlyUserID, service: getStreamIdsService)
+		let getAllArticleIDs = FeedlyIngestStreamArticleIDsOperation(account: account, userId: feedlyUserID, service: getStreamIDsService)
 		getAllArticleIDs.delegate = self
 		getAllArticleIDs.downloadProgress = downloadProgress
 		getAllArticleIDs.addDependency(createFeedsOperation)
@@ -80,7 +80,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		
 		// Get each page of the article ids which have been update since the last successful fetch start date.
 		// If the date is nil, this operation provides an empty set (everything is new, nothing is updated).
-		let getUpdated = FeedlyGetUpdatedArticleIDsOperation(account: account, userID: feedlyUserID, service: getStreamIdsService, newerThan: lastSuccessfulFetchStartDate)
+		let getUpdated = FeedlyGetUpdatedArticleIDsOperation(account: account, userID: feedlyUserID, service: getStreamIDsService, newerThan: lastSuccessfulFetchStartDate)
 		getUpdated.delegate = self
 		getUpdated.downloadProgress = downloadProgress
 		getUpdated.addDependency(createFeedsOperation)
@@ -94,7 +94,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		self.operationQueue.add(getStarred)
 		
 		// Now all the possible article ids we need have a status, fetch the article ids for missing articles.
-		let getMissingIDs = FeedlyFetchIdsForMissingArticlesOperation(account: account)
+		let getMissingIDs = FeedlyFetchIDsForMissingArticlesOperation(account: account)
 		getMissingIDs.delegate = self
 		getMissingIDs.downloadProgress = downloadProgress
 		getMissingIDs.addDependency(getAllArticleIDs)
@@ -105,8 +105,8 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		
 		// Download all the missing and updated articles
 		let downloadMissingArticles = FeedlyDownloadArticlesOperation(account: account,
-																	  missingArticleEntryIdProvider: getMissingIDs,
-																	  updatedArticleEntryIdProvider: getUpdated,
+																	  missingArticleEntryIDProvider: getMissingIDs,
+																	  updatedArticleEntryIDProvider: getUpdated,
 																	  getEntriesService: getEntriesService)
 		downloadMissingArticles.delegate = self
 		downloadMissingArticles.downloadProgress = downloadProgress
@@ -123,7 +123,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 	}
 	
 	convenience init(account: Account, feedlyUserID: String, caller: FeedlyAPICaller, database: SyncDatabase, lastSuccessfulFetchStartDate: Date?, downloadProgress: DownloadProgress) {
-		self.init(account: account, feedlyUserID: feedlyUserID, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, markArticlesService: caller, getUnreadService: caller, getCollectionsService: caller, getStreamContentsService: caller, getStarredService: caller, getStreamIdsService: caller, getEntriesService: caller, database: database, downloadProgress: downloadProgress)
+		self.init(account: account, feedlyUserID: feedlyUserID, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, markArticlesService: caller, getUnreadService: caller, getCollectionsService: caller, getStreamContentsService: caller, getStarredService: caller, getStreamIDsService: caller, getEntriesService: caller, database: database, downloadProgress: downloadProgress)
 	}
 	
 	override func run() {

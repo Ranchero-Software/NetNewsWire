@@ -13,17 +13,17 @@ import RSWeb
 class FeedlyDownloadArticlesOperation: FeedlyOperation, Logging {
 
 	private let account: Account
-	private let missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding
-	private let updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding
+	private let missingArticleEntryIDProvider: FeedlyEntryIdentifierProviding
+	private let updatedArticleEntryIDProvider: FeedlyEntryIdentifierProviding
 	private let getEntriesService: FeedlyGetEntriesService
 	private let operationQueue = MainThreadOperationQueue()
 	private let finishOperation: FeedlyCheckpointOperation
 	
-	init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService) {
+	init(account: Account, missingArticleEntryIDProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIDProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService) {
 		self.account = account
 		self.operationQueue.suspend()
-		self.missingArticleEntryIdProvider = missingArticleEntryIdProvider
-		self.updatedArticleEntryIdProvider = updatedArticleEntryIdProvider
+		self.missingArticleEntryIDProvider = missingArticleEntryIDProvider
+		self.updatedArticleEntryIDProvider = updatedArticleEntryIDProvider
 		self.getEntriesService = getEntriesService
 		self.finishOperation = FeedlyCheckpointOperation()
 		super.init()
@@ -32,8 +32,8 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation, Logging {
 	}
 	
 	override func run() {
-		var articleIds = missingArticleEntryIdProvider.entryIDs
-		articleIds.formUnion(updatedArticleEntryIdProvider.entryIDs)
+		var articleIds = missingArticleEntryIDProvider.entryIDs
+		articleIds.formUnion(updatedArticleEntryIDProvider.entryIDs)
 		
         self.logger.debug("Requesting \(articleIds.count, privacy: .public) articles.")
 		

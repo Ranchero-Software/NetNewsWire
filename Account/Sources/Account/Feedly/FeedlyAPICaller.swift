@@ -132,7 +132,7 @@ final class FeedlyAPICaller {
 		}
 	}
 	
-	func importOpml(_ opmlData: Data, completion: @escaping (Result<Void, Error>) -> ()) {
+	func importOPML(_ opmlData: Data, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))

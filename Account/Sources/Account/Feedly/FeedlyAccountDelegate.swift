@@ -223,7 +223,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		isOPMLImportInProgress = true
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
-		caller.importOpml(data) { result in
+		caller.importOPML(data) { result in
 			switch result {
 			case .success:
                 self.logger.debug("Import OPML done.")
@@ -326,7 +326,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 														   feedName: name,
 														   searchService: caller,
 														   addToCollectionService: caller,
-														   syncUnreadIdsService: caller,
+														   syncUnreadIDsService: caller,
 														   getStreamContentsService: caller,
 														   database: database,
 														   container: container,

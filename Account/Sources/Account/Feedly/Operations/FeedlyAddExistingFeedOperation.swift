@@ -27,7 +27,7 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		
 		self.downloadProgress = progress
 		
-		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: customFeedName, collectionId: collectionId, service: service)
+		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: customFeedName, collectionID: collectionId, service: service)
 		addRequest.delegate = self
 		addRequest.downloadProgress = progress
 		self.operationQueue.add(addRequest)

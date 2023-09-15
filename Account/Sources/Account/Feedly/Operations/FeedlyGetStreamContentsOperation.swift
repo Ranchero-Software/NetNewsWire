@@ -55,9 +55,9 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 		})
 		
 		if parsed.count != entries.count {
-			let entryIds = Set(entries.map { $0.id })
-			let parsedIds = Set(parsed.map { $0.uniqueID })
-			let difference = entryIds.subtracting(parsedIds)
+			let entryIDs = Set(entries.map { $0.id })
+			let parsedIDs = Set(parsed.map { $0.uniqueID })
+			let difference = entryIDs.subtracting(parsedIDs)
             logger.debug("Dropping articles with ids: \(difference, privacy: .public)")
 		}
 		

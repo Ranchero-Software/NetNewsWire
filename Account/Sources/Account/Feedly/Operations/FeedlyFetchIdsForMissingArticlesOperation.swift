@@ -1,5 +1,5 @@
 //
-//  FeedlyFetchIdsForMissingArticlesOperation.swift
+//  FeedlyFetchIDsForMissingArticlesOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 7/1/20.
@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 
-final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, Logging {
+final class FeedlyFetchIDsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, Logging {
 
 	private let account: Account
 	

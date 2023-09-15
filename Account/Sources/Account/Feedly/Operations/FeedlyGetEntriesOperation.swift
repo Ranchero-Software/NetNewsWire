@@ -37,9 +37,9 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 		})
 		
 		if parsed.count != entries.count {
-			let entryIds = Set(entries.map { $0.id })
-			let parsedIds = Set(parsed.map { $0.uniqueID })
-			let difference = entryIds.subtracting(parsedIds)
+			let entryIDs = Set(entries.map { $0.id })
+			let parsedIDs = Set(parsed.map { $0.uniqueID })
+			let difference = entryIDs.subtracting(parsedIDs)
             self.logger.debug("\(String(describing: self), privacy: .public) dropping articles with ids: \(difference)).")
 		}
 		
