@@ -86,9 +86,9 @@ class FeedlyGetStreamContentsOperationTests: XCTestCase {
 		XCTAssertEqual(stream.updated, mockStream.updated)
 		XCTAssertEqual(stream.continuation, mockStream.continuation)
 		
-		let streamIds = stream.items.map { $0.id }
-		let mockStreamIds = mockStream.items.map { $0.id }
-		XCTAssertEqual(streamIds, mockStreamIds)
+		let streamIDs = stream.items.map { $0.id }
+		let mockStreamIDs = mockStream.items.map { $0.id }
+		XCTAssertEqual(streamIDs, mockStreamIDs)
 	}
 	
 	func testGetStreamContentsFromJSON() {

@@ -144,7 +144,7 @@ import RSCore
 						do {
 							do {
 								try self.account?.removeCredentials(type: .newsBlurBasic)
-								try self.account?.removeCredentials(type: .newsBlurSessionId)
+								try self.account?.removeCredentials(type: .newsBlurSessionID)
 							} catch {
 								NewsBlurAddAccountView.logger.error("\(error.localizedDescription)")
 							}

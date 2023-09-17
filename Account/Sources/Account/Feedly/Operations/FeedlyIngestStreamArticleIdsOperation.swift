@@ -27,8 +27,8 @@ class FeedlyIngestStreamArticleIDsOperation: FeedlyOperation, Logging {
 		self.service = service
 	}
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIDsService) {
-		let all = FeedlyCategoryResourceID.Global.all(for: userId)
+	convenience init(account: Account, userID: String, service: FeedlyGetStreamIDsService) {
+		let all = FeedlyCategoryResourceID.Global.all(for: userID)
 		self.init(account: account, resource: all, service: service)
 	}
 	

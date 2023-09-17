@@ -22,8 +22,8 @@ final class FeedlyFetchIDsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 	override func run() {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 			switch result {
-			case .success(let articleIds):
-				self.entryIDs.formUnion(articleIds)
+			case .success(let articleIDs):
+				self.entryIDs.formUnion(articleIDs)
 				self.didFinish()
 				
 			case .failure(let error):

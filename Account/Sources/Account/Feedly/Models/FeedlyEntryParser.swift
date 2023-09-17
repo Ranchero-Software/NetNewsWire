@@ -21,7 +21,7 @@ struct FeedlyEntryParser {
 	
 	/// When ingesting articles, the feedURL must match a feed's `feedID` for the article to be reachable between it and its matching feed. It reminds me of a foreign key.
 	var feedURL: String? {
-		guard let id = entry.origin?.streamId else {
+		guard let id = entry.origin?.streamID else {
 			// At this point, check Feedly's API isn't glitching or the response has not changed structure.
 			assertionFailure("Entries need to be traceable to a feed or this entry will be dropped.")
 			return nil

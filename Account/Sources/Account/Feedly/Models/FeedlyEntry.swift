@@ -41,7 +41,7 @@ struct FeedlyEntry: Decodable {
     /// the timestamp, in ms, when this article was re-processed and updated by the feedly Cloud servers.
     let recrawled: Date?
 
-	/// the feed from which this article was crawled. If present, “streamId” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
+	/// the feed from which this article was crawled. If present, “streamID” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
 	let origin: FeedlyOrigin?
 	
 	/// Used to help find the URL to visit an article on a web site.

@@ -23,7 +23,7 @@ final class FeedlyAPICaller {
 		case sandbox
 		case cloud
 		
-		var baseUrlComponents: URLComponents {
+		var baseURLComponents: URLComponents {
 			var components = URLComponents()
 			components.scheme = "https"
 			switch self{
@@ -48,12 +48,12 @@ final class FeedlyAPICaller {
 	}
 	
 	private let transport: Transport
-	private let baseUrlComponents: URLComponents
+	private let baseURLComponents: URLComponents
 	private let uriComponentAllowed: CharacterSet
 	
 	init(transport: Transport, api: API) {
 		self.transport = transport
-		self.baseUrlComponents = api.baseUrlComponents
+		self.baseURLComponents = api.baseURLComponents
 		
 		var urlHostAllowed = CharacterSet.urlHostAllowed
 		urlHostAllowed.remove("+")
@@ -65,7 +65,7 @@ final class FeedlyAPICaller {
 	var credentials: Credentials?
 	
 	var server: String? {
-		return baseUrlComponents.host
+		return baseURLComponents.host
 	}
 	
 	func cancelAll() {
@@ -144,7 +144,7 @@ final class FeedlyAPICaller {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/opml"
 		
 		guard let url = components.url else {
@@ -184,7 +184,7 @@ final class FeedlyAPICaller {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/collections"
 		
 		guard let url = components.url else {
@@ -236,7 +236,7 @@ final class FeedlyAPICaller {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/collections"
 		
 		guard let url = components.url else {
@@ -293,13 +293,13 @@ final class FeedlyAPICaller {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		guard let encodedId = encodeForURLPath(id) else {
+		guard let encodedID = encodeForURLPath(id) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(id)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(id)))
 			}
 		}
-		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedId)"
+		var components = baseURLComponents
+		components.percentEncodedPath = "/v3/collections/\(encodedID)"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -325,7 +325,7 @@ final class FeedlyAPICaller {
 		}
 	}
 	
-	func removeFeed(_ feedId: String, fromCollectionWith collectionId: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	func removeFeed(_ feedID: String, fromCollectionWith collectionID: String, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -338,14 +338,14 @@ final class FeedlyAPICaller {
 			}
 		}
 
-		guard let encodedCollectionId = encodeForURLPath(collectionId) else {
+		guard let encodedCollectionID = encodeForURLPath(collectionID) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(collectionId)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionID)))
 			}
 		}
 		
-		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/.mdelete"
+		var components = baseURLComponents
+		components.percentEncodedPath = "/v3/collections/\(encodedCollectionID)/feeds/.mdelete"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -362,7 +362,7 @@ final class FeedlyAPICaller {
 				let id: String
 			}
 			let encoder = JSONEncoder()
-			let data = try encoder.encode([RemovableFeed(id: feedId)])
+			let data = try encoder.encode([RemovableFeed(id: feedID)])
 			request.httpBody = data
 		} catch {
 			return DispatchQueue.main.async {
@@ -389,7 +389,7 @@ final class FeedlyAPICaller {
 
 extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 	
-	func addFeed(with feedId: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
+	func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -402,13 +402,13 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 			}
 		}
 
-		guard let encodedId = encodeForURLPath(collectionId) else {
+		guard let encodedID = encodeForURLPath(collectionID) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(collectionId)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionID)))
 			}
 		}
-		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedId)/feeds"
+		var components = baseURLComponents
+		components.percentEncodedPath = "/v3/collections/\(encodedID)/feeds"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -426,7 +426,7 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 				var title: String?
 			}
 			let encoder = JSONEncoder()
-			let data = try encoder.encode(AddFeedBody(id: feedId.id, title: title))
+			let data = try encoder.encode(AddFeedBody(id: feedID.id, title: title))
 			request.httpBody = data
 		} catch {
 			return DispatchQueue.main.async {
@@ -451,8 +451,8 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 
 extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 	
-	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest {
-		var components = baseUrlComponents
+	static func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseURLComponents: URLComponents) -> URLRequest {
+		var components = baseURLComponents
 		components.path = "/v3/auth/auth"
 		components.queryItems = request.queryItems
 		
@@ -477,7 +477,7 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/auth/token"
 		
 		guard let url = components.url else {
@@ -524,7 +524,7 @@ extension FeedlyAPICaller: OAuthAcessTokenRefreshRequesting {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/auth/token"
 		
 		guard let url = components.url else {
@@ -576,7 +576,7 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/collections"
 		
 		guard let url = components.url else {
@@ -618,7 +618,7 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/streams/contents"
 		
 		var queryItems = [URLQueryItem]()
@@ -686,7 +686,7 @@ extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/streams/ids"
 
 		var queryItems = [URLQueryItem]()
@@ -754,7 +754,7 @@ extension FeedlyAPICaller: FeedlyGetEntriesService {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/entries/.mget"
 		
 		guard let url = components.url else {
@@ -799,10 +799,10 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 	private struct MarkerEntriesBody: Encodable {
 		let type = "entries"
 		var action: String
-		var entryIds: [String]
+		var entryIDs: [String]
 	}
 	
-	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
+	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -814,18 +814,18 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/markers"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 		
-		let articleIdChunks = Array(articleIds).chunked(into: 300)
+		let articleIDChunks = Array(articleIDs).chunked(into: 300)
 		let dispatchGroup = DispatchGroup()
 		var groupError: Error? = nil
 
-		for articleIdChunk in articleIdChunks {
+		for articleIDChunk in articleIDChunks {
 			
 			var request = URLRequest(url: url)
 			request.httpMethod = "POST"
@@ -834,7 +834,7 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 			request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 			
 			do {
-				let body = MarkerEntriesBody(action: action.actionValue, entryIds: Array(articleIdChunk))
+				let body = MarkerEntriesBody(action: action.actionValue, entryIDs: Array(articleIDChunk))
 				let encoder = JSONEncoder()
 				let data = try encoder.encode(body)
 				request.httpBody = data
@@ -878,7 +878,7 @@ extension FeedlyAPICaller: FeedlySearchService {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/search/feeds"
 		
 		components.queryItems = [
@@ -926,7 +926,7 @@ extension FeedlyAPICaller: FeedlyLogoutService {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/auth/logout"
 		
 		guard let url = components.url else {

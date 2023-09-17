@@ -1,5 +1,5 @@
 //
-//  FeedlyResourceId.swift
+//  FeedlyResourceID.swift
 //  Account
 //
 //  Created by Kiel Gillard on 3/10/19.
@@ -8,10 +8,10 @@
 
 import Foundation
 
-/// The kinds of Resource Ids is documented here: https://developer.feedly.com/cloud/
+/// The kinds of Resource IDs is documented here: https://developer.feedly.com/cloud/
 protocol FeedlyResourceID {
 	
-	/// The resource Id from Feedly.
+	/// The resource ID from Feedly.
 	var id: String { get }
 }
 
@@ -20,8 +20,8 @@ struct FeedlyFeedResourceID: FeedlyResourceID {
 	let id: String
 	
 	/// The location of the kind of resource a concrete type represents.
-	/// If the concrete type cannot strip the resource type from the Id, it should just return the Id
-	/// since the Id is a legitimate URL.
+	/// If the concrete type cannot strip the resource type from the ID, it should just return the ID
+	/// since the ID is a legitimate URL.
 	/// This is basically assuming Feedly prefixes source feed URLs with `feed/`.
 	/// It is not documented as such and could potentially change.
 	/// Feedly does not include the source feed URL as a separate field.

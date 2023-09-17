@@ -15,7 +15,7 @@ extension URL {
 		scheme == "mailto" ? URLComponents(url: self, resolvingAgainstBaseURL: false)?.path : nil
 	}
 	
-	/// Percent encoded `mailto` URL for use with `canOpenUrl`. If the URL doesn't contain the `mailto` scheme, this is `nil`.
+	/// Percent encoded `mailto` URL for use with `canOpenURL`. If the URL doesn't contain the `mailto` scheme, this is `nil`.
 	var percentEncodedEmailAddress: URL? {
 		guard scheme == "mailto" else {
 			return nil

@@ -45,9 +45,9 @@ public class ArticleThemeDownloader: Logging {
 	private func moveTheme(from location: URL) throws -> URL {
 		var tmpFileName = location.lastPathComponent
 		tmpFileName = tmpFileName.replacingOccurrences(of: ".tmp", with: ".zip")
-		let fileUrl = downloadDirectory().appendingPathComponent("\(tmpFileName)")
-		try FileManager.default.moveItem(at: location, to: fileUrl)
-		return fileUrl
+		let fileURL = downloadDirectory().appendingPathComponent("\(tmpFileName)")
+		try FileManager.default.moveItem(at: location, to: fileURL)
+		return fileURL
 	}
 	
 	/// Unzips the zip file

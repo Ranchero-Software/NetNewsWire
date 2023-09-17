@@ -25,8 +25,8 @@ final class FeedlyIngestStarredArticleIDsOperation: FeedlyOperation, Logging {
 	private let database: SyncDatabase
 	private var remoteEntryIDs = Set<String>()
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?) {
-		let resource = FeedlyTagResourceID.Global.saved(for: userId)
+	convenience init(account: Account, userID: String, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?) {
+		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
 	

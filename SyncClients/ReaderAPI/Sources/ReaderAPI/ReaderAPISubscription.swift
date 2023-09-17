@@ -82,11 +82,11 @@ public struct ReaderAPISubscription: Codable {
 }
 
 public struct ReaderAPICategory: Codable {
-	public let categoryId: String
+	public let categoryID: String
 	let categoryLabel: String
 	
 	enum CodingKeys: String, CodingKey {
-		case categoryId = "id"
+		case categoryID = "id"
 		case categoryLabel = "label"
 	}
 }

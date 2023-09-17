@@ -116,7 +116,7 @@ extension Article {
 		return IconImageCache.shared.imageForArticle(self)
 	}
 	
-	@MainActor func iconImageUrl(feed: Feed) -> URL? {
+	@MainActor func iconImageURL(feed: Feed) -> URL? {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]

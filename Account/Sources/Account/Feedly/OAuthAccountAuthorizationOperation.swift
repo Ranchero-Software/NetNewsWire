@@ -59,8 +59,8 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 			}
 		}
 		
-		guard let redirectUri = URL(string: oauthClient.redirectUri), let scheme = redirectUri.scheme else {
-			assertionFailure("Could not get callback URL scheme from \(oauthClient.redirectUri)")
+		guard let redirectURI = URL(string: oauthClient.redirectURI), let scheme = redirectURI.scheme else {
+			assertionFailure("Could not get callback URL scheme from \(oauthClient.redirectURI)")
 			return DispatchQueue.main.async {
 				self.didEndAuthentication(url: nil, error: URLError(.badURL))
 			}

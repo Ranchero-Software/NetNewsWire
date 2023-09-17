@@ -81,7 +81,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 			return didFinish(with: AccountError.createErrorNotFound)
 		}
 		
-		let feedResourceID = FeedlyFeedResourceID(id: first.feedId)
+		let feedResourceID = FeedlyFeedResourceID(id: first.feedID)
 		self.feedResourceID = feedResourceID
 		
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: feedResourceID, feedName: feedName, collectionID: collectionID, service: addToCollectionService)

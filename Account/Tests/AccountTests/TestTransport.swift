@@ -11,7 +11,7 @@ import RSWeb
 import XCTest
 
 protocol TestTransportMockResponseProviding: AnyObject {
-	func mockResponseFileUrl(for components: URLComponents) -> URL?
+	func mockResponseFileURL(for components: URLComponents) -> URL?
 }
 
 final class TestTransport: Transport {
@@ -23,7 +23,7 @@ final class TestTransport: Transport {
 	var testFiles = [String: String]()
 	var testStatusCodes = [String: Int]()
 	
-	weak var mockResponseFileUrlProvider: TestTransportMockResponseProviding?
+	weak var mockResponseFileURLProvider: TestTransportMockResponseProviding?
 	
 	private func httpResponse(for request: URLRequest, statusCode: Int = 200) -> HTTPURLResponse {
 		guard let url = request.url else {
@@ -45,12 +45,12 @@ final class TestTransport: Transport {
 		let response = httpResponse(for: request, statusCode: testStatusCodes[urlString] ?? 200)
 		let testFileURL: URL
 		
-		if let provider = mockResponseFileUrlProvider {
-			guard let providerUrl = provider.mockResponseFileUrl(for: components) else {
+		if let provider = mockResponseFileURLProvider {
+			guard let providerURL = provider.mockResponseFileURL(for: components) else {
 				XCTFail("Test behaviour undefined. Mock provider failed to provide non-nil URL for \(components).")
 				return
 			}
-			testFileURL = providerUrl
+			testFileURL = providerURL
 			
 		} else if let testKeyAndFileName = testFiles.first(where: { urlString.contains($0.key) }) {
 			testFileURL = Bundle.module.resourceURL!.appendingPathComponent(testKeyAndFileName.value)

@@ -16,7 +16,7 @@ extension OAuthAuthorizationClient {
 		/// These placeholders are substituted at build time using a Run Script phase with build settings.
 		/// https://developer.feedly.com/v3/auth/#authenticating-a-user-and-obtaining-an-auth-code
 		return OAuthAuthorizationClient(id: SecretsManager.provider.feedlyClientId,
-										redirectUri: "netnewswire://auth/feedly",
+										redirectURI: "netnewswire://auth/feedly",
 										state: nil,
 										secret: SecretsManager.provider.feedlyClientSecret)
 	}
@@ -27,9 +27,9 @@ extension OAuthAuthorizationClient {
 		/// The return value models public sandbox API values found at:
 		/// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
 		/// They are due to expire on May 31st 2020.
-		/// Verify the sandbox URL host in the FeedlyAPICaller.API.baseUrlComponents method, too.
+		/// Verify the sandbox URL host in the FeedlyAPICaller.API.baseURLComponents method, too.
 		return OAuthAuthorizationClient(id: "sandbox",
-										redirectUri: "urn:ietf:wg:oauth:2.0:oob",
+										redirectURI: "urn:ietf:wg:oauth:2.0:oob",
 										state: nil,
 										secret: "4ZfZ5DvqmJ8vKgMj")
 	}

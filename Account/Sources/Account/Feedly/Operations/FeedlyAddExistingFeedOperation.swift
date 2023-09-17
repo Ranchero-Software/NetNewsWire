@@ -19,7 +19,7 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
     init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceID, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, customFeedName: String? = nil) throws {
 		
 		let validator = FeedlyFeedContainerValidator(container: container)
-		let (folder, collectionId) = try validator.getValidContainer()
+		let (folder, collectionID) = try validator.getValidContainer()
 		
 		self.operationQueue.suspend()
 
@@ -27,7 +27,7 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		
 		self.downloadProgress = progress
 		
-		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: customFeedName, collectionID: collectionId, service: service)
+		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: customFeedName, collectionID: collectionID, service: service)
 		addRequest.delegate = self
 		addRequest.downloadProgress = progress
 		self.operationQueue.add(addRequest)

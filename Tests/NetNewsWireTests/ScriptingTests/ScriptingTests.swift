@@ -32,11 +32,11 @@ class ScriptingTests: AppleScriptXCTestCase {
         XCTAssert( scriptResult?.stringValue == "Geoducks!")
     }
     
-    func testGetUrlScript() {
+    func testGetURLScript() {
         _ = doIndividualScript(filename: "testGetURL")
     }
     
-    func testNameAndUrlOfEveryFeedScript() {
+    func testNameAndURLOfEveryFeedScript() {
         _ = doIndividualScript(filename: "testNameAndUrlOfEveryFeed")
     }
     

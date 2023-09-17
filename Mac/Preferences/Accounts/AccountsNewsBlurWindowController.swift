@@ -98,7 +98,7 @@ import Secrets
 
 				do {
 					try self.account?.removeCredentials(type: .newsBlurBasic)
-					try self.account?.removeCredentials(type: .newsBlurSessionId)
+					try self.account?.removeCredentials(type: .newsBlurSessionID)
 					try self.account?.storeCredentials(credentials)
 					try self.account?.storeCredentials(validatedCredentials)
 

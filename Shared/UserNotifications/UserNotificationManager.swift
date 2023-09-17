@@ -80,7 +80,7 @@ private extension UserNotificationManager {
 	/// - Returns: A `UNNotificationAttachment` if an icon is available. Otherwise nil.
 	/// - Warning: In certain scenarios, this will return the `faviconTemplateImage`.
 	@MainActor func thumbnailAttachment(for article: Article, feed: Feed) -> UNNotificationAttachment? {
-		if let imageURL = article.iconImageUrl(feed: feed) {
+		if let imageURL = article.iconImageURL(feed: feed) {
 			let thumbnail = try? UNNotificationAttachment(identifier: feed.feedID, url: imageURL, options: nil)
 			return thumbnail
 		}

@@ -14,13 +14,13 @@ import Secrets
 /// Accounts are responsible for the scope.
 public struct OAuthAuthorizationClient: Equatable {
 	public var id: String
-	public var redirectUri: String
+	public var redirectURI: String
 	public var state: String?
 	public var secret: String
 	
-	public init(id: String, redirectUri: String, state: String?, secret: String) {
+	public init(id: String, redirectURI: String, state: String?, secret: String) {
 		self.id = id
-		self.redirectUri = redirectUri
+		self.redirectURI = redirectURI
 		self.state = state
 		self.secret = secret
 	}
@@ -30,14 +30,14 @@ public struct OAuthAuthorizationClient: Equatable {
 /// https://tools.ietf.org/html/rfc6749#section-4.1.1
 public struct OAuthAuthorizationRequest {
 	public let responseType = "code"
-	public var clientId: String
-	public var redirectUri: String
+	public var clientID: String
+	public var redirectURI: String
 	public var scope: String
 	public var state: String?
 	
-	public init(clientId: String, redirectUri: String, scope: String, state: String?) {
-		self.clientId = clientId
-		self.redirectUri = redirectUri
+	public init(clientID: String, redirectURI: String, scope: String, state: String?) {
+		self.clientID = clientID
+		self.redirectURI = redirectURI
 		self.scope = scope
 		self.state = state
 	}
@@ -45,9 +45,9 @@ public struct OAuthAuthorizationRequest {
 	public var queryItems: [URLQueryItem] {
 		return [
 			URLQueryItem(name: "response_type", value: responseType),
-			URLQueryItem(name: "client_id", value: clientId),
+			URLQueryItem(name: "client_id", value: clientID),
 			URLQueryItem(name: "scope", value: scope),
-			URLQueryItem(name: "redirect_uri", value: redirectUri),
+			URLQueryItem(name: "redirect_uri", value: redirectURI),
 		]
 	}
 }
@@ -62,7 +62,7 @@ public struct OAuthAuthorizationResponse {
 public extension OAuthAuthorizationResponse {
 	
 	init(url: URL, client: OAuthAuthorizationClient) throws {
-		guard let scheme = url.scheme, client.redirectUri.hasPrefix(scheme) else {
+		guard let scheme = url.scheme, client.redirectURI.hasPrefix(scheme) else {
 			throw URLError(.unsupportedURL)
 		}
 		guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
@@ -112,19 +112,29 @@ public enum OAuthAuthorizationError: String {
 public struct OAuthAccessTokenRequest: Encodable {
 	public let grantType = "authorization_code"
 	public var code: String
-	public var redirectUri: String
+	public var redirectURI: String
 	public var state: String?
-	public var clientId: String
+	public var clientID: String
 	
 	// Possibly not part of the standard but specific to certain implementations (e.g.: Feedly).
 	public var clientSecret: String
 	public var scope: String
-	
+
+	enum CodingKeys: String, CodingKey {
+		case grantType = "grantType"
+		case code = "code"
+		case redirectURI = "redirectUri"
+		case state = "state"
+		case clientID = "clientId"
+		case clientSecret = "clientSecret"
+		case scope = "scope"
+	}
+
 	public init(authorizationResponse: OAuthAuthorizationResponse, scope: String, client: OAuthAuthorizationClient) {
 		self.code = authorizationResponse.code
-		self.redirectUri = client.redirectUri
+		self.redirectURI = client.redirectURI
 		self.state = authorizationResponse.state
-		self.clientId = client.id
+		self.clientID = client.id
 		self.clientSecret = client.secret
 		self.scope = scope
 	}
@@ -155,8 +165,8 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 	
 	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
 	/// - Parameter request: The information about the client requesting authorization to be granted access tokens.
-	/// - Parameter baseUrlComponents: The scheme and host of the url except for the path.
-	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest
+	/// - Parameter baseURLComponents: The scheme and host of the url except for the path.
+	static func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseURLComponents: URLComponents) -> URLRequest
 		
 	
 	/// Performs the request for the access token given an authorization code.

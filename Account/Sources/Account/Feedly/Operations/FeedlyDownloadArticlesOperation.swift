@@ -32,15 +32,15 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation, Logging {
 	}
 	
 	override func run() {
-		var articleIds = missingArticleEntryIDProvider.entryIDs
-		articleIds.formUnion(updatedArticleEntryIDProvider.entryIDs)
+		var articleIDs = missingArticleEntryIDProvider.entryIDs
+		articleIDs.formUnion(updatedArticleEntryIDProvider.entryIDs)
 		
-        self.logger.debug("Requesting \(articleIds.count, privacy: .public) articles.")
+        self.logger.debug("Requesting \(articleIDs.count, privacy: .public) articles.")
 		
 		let feedlyAPILimitBatchSize = 1000
-		for articleIds in Array(articleIds).chunked(into: feedlyAPILimitBatchSize) {
+		for articleIDs in Array(articleIDs).chunked(into: feedlyAPILimitBatchSize) {
 			
-			let provider = FeedlyEntryIdentifierProvider(entryIDs: Set(articleIds))
+			let provider = FeedlyEntryIdentifierProvider(entryIDs: Set(articleIDs))
 			let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider)
 			getEntries.delegate = self
 			self.operationQueue.add(getEntries)

@@ -30,12 +30,12 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 	
 	static func oauthAuthorizationCodeGrantRequest() -> URLRequest {
 		let client = environment.oauthAuthorizationClient
-		let authorizationRequest = OAuthAuthorizationRequest(clientId: client.id,
-															 redirectUri: client.redirectUri,
+		let authorizationRequest = OAuthAuthorizationRequest(clientID: client.id,
+															 redirectURI: client.redirectURI,
 															 scope: oauthAuthorizationGrantScope,
 															 state: client.state)
-		let baseURLComponents = environment.baseUrlComponents
-		return FeedlyAPICaller.authorizationCodeUrlRequest(for: authorizationRequest, baseUrlComponents: baseURLComponents)
+		let baseURLComponents = environment.baseURLComponents
+		return FeedlyAPICaller.authorizationCodeURLRequest(for: authorizationRequest, baseURLComponents: baseURLComponents)
 	}
 	
 	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {

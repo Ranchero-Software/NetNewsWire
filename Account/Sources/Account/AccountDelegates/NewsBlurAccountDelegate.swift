@@ -641,7 +641,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveCredentials(type: .newsBlurSessionId)
+		credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
 		refreshProgress.name = account.nameForDisplay
 	}
 

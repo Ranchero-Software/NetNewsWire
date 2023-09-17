@@ -528,7 +528,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 			addFeed(for: account, with: feed, to: to, completion: completion)
 		} else {
 			guard
-				let subscriptionId = feed.externalID,
+				let subscriptionID = feed.externalID,
 				let fromTag = (from as? Folder)?.name,
 				let toTag = (to as? Folder)?.name
 			else {
@@ -537,7 +537,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 			}
 			
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			caller.moveSubscription(subscriptionID: subscriptionId, fromTag: fromTag, toTag: toTag) { result in
+			caller.moveSubscription(subscriptionID: subscriptionID, fromTag: fromTag, toTag: toTag) { result in
 				self.refreshProgress.completeTask()
 				switch result {
 				case .success:
@@ -784,13 +784,13 @@ private extension ReaderAPIAccountDelegate {
 
         logger.debug("Syncing feeds with \(subscriptions.count, privacy: .public) subscriptions")
 		
-		let subFeedIds = subscriptions.map { $0.feedID }
+		let subFeedIDs = subscriptions.map { $0.feedID }
 		
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
-					if !subFeedIds.contains(feed.feedID) {
+					if !subFeedIDs.contains(feed.feedID) {
 						folder.removeFeed(feed)
 					}
 				}
@@ -798,7 +798,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 		
 		for feed in account.topLevelFeeds {
-			if !subFeedIds.contains(feed.feedID) {
+			if !subFeedIDs.contains(feed.feedID) {
 				account.clearFeedMetadata(feed)
 				account.removeFeed(feed)
 			}
@@ -832,11 +832,11 @@ private extension ReaderAPIAccountDelegate {
 			var taggedFeeds = dict
 			
             for category in subscription.categories {
-				if var taggedFeed = taggedFeeds[category.categoryId] {
+				if var taggedFeed = taggedFeeds[category.categoryID] {
 					taggedFeed.append(subscription)
-					taggedFeeds[category.categoryId] = taggedFeed
+					taggedFeeds[category.categoryID] = taggedFeed
 				} else {
-					taggedFeeds[category.categoryId] = [subscription]
+					taggedFeeds[category.categoryID] = [subscription]
 				}
 			}
 			
@@ -858,11 +858,11 @@ private extension ReaderAPIAccountDelegate {
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
+			let folderFeedIDs = folder.topLevelFeeds.map { $0.feedID }
 			
 			for subscription in groupedTaggings {
 				let taggingFeedID = subscription.feedID
-				if !folderFeedIds.contains(taggingFeedID) {
+				if !folderFeedIDs.contains(taggingFeedID) {
 					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
 						continue
 					}
@@ -1080,7 +1080,7 @@ private extension ReaderAPIAccountDelegate {
 		// Hope the compiler is happy.
 		var parsedItems = Set<ParsedItem>()
 		for entry in entries {
-			guard let streamID = entry.origin.streamId else {
+			guard let streamID = entry.origin.streamID else {
 				continue
 			}
 

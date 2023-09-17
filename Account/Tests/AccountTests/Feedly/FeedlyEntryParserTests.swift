@@ -14,7 +14,7 @@ class FeedlyEntryParserTests: XCTestCase {
 	func testParsing() {
 		let content = FeedlyEntry.Content(content: "Test Content", direction: .leftToRight)
 		let summary = FeedlyEntry.Content(content: "Test Summary", direction: .leftToRight)
-		let origin = FeedlyOrigin(title: "Test Feed", streamId: "tests://feeds/1", htmlUrl: nil)
+		let origin = FeedlyOrigin(title: "Test Feed", streamID: "tests://feeds/1", htmlURL: nil)
 		let canonicalLink = FeedlyLink(href: "tests://feeds/1/entries/1", type: "text/html")
 		let tags = [
 			FeedlyTag(id: "tests/tags/1", label: "Tag 1"),
@@ -38,8 +38,8 @@ class FeedlyEntryParserTests: XCTestCase {
 		let parser = FeedlyEntryParser(entry: entry)
 		
 		XCTAssertEqual(parser.id, entry.id)
-		XCTAssertEqual(parser.feedUrl, origin.streamId)
-		XCTAssertEqual(parser.externalUrl, canonicalLink.href)
+		XCTAssertEqual(parser.feedURL, origin.streamID)
+		XCTAssertEqual(parser.externalURL, canonicalLink.href)
 		XCTAssertEqual(parser.title, entry.title)
 		XCTAssertEqual(parser.contentHMTL, content.content)
 		XCTAssertEqual(parser.summary, summary.content)
@@ -56,7 +56,7 @@ class FeedlyEntryParserTests: XCTestCase {
 		
 		// The following is not an error.
 		// The feedURL must match the feedID for the article to be connected to its matching feed.
-		XCTAssertEqual(item.feedURL, origin.streamId)
+		XCTAssertEqual(item.feedURL, origin.streamID)
 		XCTAssertEqual(item.title, entry.title)
 		XCTAssertEqual(item.contentHTML, content.content)
 		XCTAssertEqual(item.contentText, nil, "Is it now free of HTML characters?")
@@ -76,7 +76,7 @@ class FeedlyEntryParserTests: XCTestCase {
 		let content = FeedlyEntry.Content(content: "<div style=\"direction:rtl;text-align:right\">Test Content</div>", direction: .rightToLeft)
 		let summaryContent = "Test Summary"
 		let summary = FeedlyEntry.Content(content: "<div style=\"direction:rtl;text-align:right\">\(summaryContent)</div>", direction: .rightToLeft)
-		let origin = FeedlyOrigin(title: "Test Feed", streamId: "tests://feeds/1", htmlUrl: nil)
+		let origin = FeedlyOrigin(title: "Test Feed", streamID: "tests://feeds/1", htmlURL: nil)
 		let title = "Test Entry 1"
 		let entry = FeedlyEntry(id: "tests/feeds/1/entries/1",
 								title: "<div style=\"direction:rtl;text-align:right\">\(title)</div>",
@@ -103,7 +103,7 @@ class FeedlyEntryParserTests: XCTestCase {
 		XCTAssertEqual(parser.contentHMTL, content.content)
 	}
 	
-	func testLocatesCanonicalExternalUrl() {
+	func testLocatesCanonicalExternalURL() {
 		let canonicalLink = FeedlyLink(href: "tests://feeds/1/entries/1", type: "text/html")
 		let alternateLink = FeedlyLink(href: "tests://feeds/1/entries/alternate/1", type: "text/html")
 		let entry = FeedlyEntry(id: "tests/feeds/1/entries/1",
@@ -123,10 +123,10 @@ class FeedlyEntryParserTests: XCTestCase {
 		
 		let parser = FeedlyEntryParser(entry: entry)
 		
-		XCTAssertEqual(parser.externalUrl, canonicalLink.href)
+		XCTAssertEqual(parser.externalURL, canonicalLink.href)
 	}
 	
-	func testLocatesAlternateExternalUrl() {
+	func testLocatesAlternateExternalURL() {
 		let canonicalLink = FeedlyLink(href: "tests://feeds/1/entries/1", type: "text/json")
 		let alternateLink = FeedlyLink(href: "tests://feeds/1/entries/alternate/1", type: nil)
 		let entry = FeedlyEntry(id: "tests/feeds/1/entries/1",
@@ -146,7 +146,7 @@ class FeedlyEntryParserTests: XCTestCase {
 		
 		let parser = FeedlyEntryParser(entry: entry)
 		
-		XCTAssertEqual(parser.externalUrl, alternateLink.href)
+		XCTAssertEqual(parser.externalURL, alternateLink.href)
 	}
 	
 	func testContentPreferredToSummary() {

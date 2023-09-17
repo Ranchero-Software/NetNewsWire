@@ -44,7 +44,12 @@ struct FeedlyFeedsSearchResponse: Decodable {
 
 	struct Feed: Decodable {
 		let title: String
-		let feedId: String
+		let feedID: String
+
+		enum CodingKeys: String, CodingKey {
+			case title = "title"
+			case feedID = "feedId"
+		}
 	}
 
 	let results: [Feed]
@@ -61,8 +66,14 @@ struct FeedlyLink: Decodable {
 
 struct FeedlyOrigin: Decodable {
 	let title: String?
-	let streamId: String?
-	let htmlUrl: String?
+	let streamID: String?
+	let htmlURL: String?
+
+	enum CodingKeys: String, CodingKey {
+		case title = "title"
+		case streamID = "streamId"
+		case htmlURL = "htmlUrl"
+	}
 }
 
 struct FeedlyStream: Decodable {

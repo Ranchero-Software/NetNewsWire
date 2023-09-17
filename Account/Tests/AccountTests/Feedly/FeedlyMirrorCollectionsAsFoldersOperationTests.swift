@@ -48,16 +48,16 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		
 		let folders = account.folders ?? Set()
 		let folderNames = Set(folders.compactMap { $0.nameForDisplay })
-		let folderExternalIds = Set(folders.compactMap { $0.externalID })
+		let folderExternalIDs = Set(folders.compactMap { $0.externalID })
 		
 		let collectionLabels = Set(provider.collections.map { $0.label })
-		let collectionIds = Set(provider.collections.map { $0.id })
+		let collectionIDs = Set(provider.collections.map { $0.id })
 		
 		let missingNames = collectionLabels.subtracting(folderNames)
-		let missingIds = collectionIds.subtracting(folderExternalIds)
+		let missingIDs = collectionIDs.subtracting(folderExternalIDs)
 		
 		XCTAssertTrue(missingNames.isEmpty, "Collections with these labels have no corresponding folder.")
-		XCTAssertTrue(missingIds.isEmpty, "Collections with these ids have no corresponding folder.")
+		XCTAssertTrue(missingIDs.isEmpty, "Collections with these ids have no corresponding folder.")
 //		XCTAssertEqual(mirrorOperation.collectionsAndFolders.count, provider.collections.count, "Mismatch between collections and folders.")
 	}
 	
@@ -91,16 +91,16 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		
 		let folders = account.folders ?? Set()
 		let folderNames = Set(folders.compactMap { $0.nameForDisplay })
-		let folderExternalIds = Set(folders.compactMap { $0.externalID })
+		let folderExternalIDs = Set(folders.compactMap { $0.externalID })
 		
 		let collectionLabels = Set(provider.collections.map { $0.label })
-		let collectionIds = Set(provider.collections.map { $0.id })
+		let collectionIDs = Set(provider.collections.map { $0.id })
 		
 		let remainingNames = folderNames.subtracting(collectionLabels)
-		let remainingIds = folderExternalIds.subtracting(collectionIds)
+		let remainingIDs = folderExternalIDs.subtracting(collectionIDs)
 		
 		XCTAssertTrue(remainingNames.isEmpty, "Folders with these names remain with no corresponding collection.")
-		XCTAssertTrue(remainingIds.isEmpty, "Folders with these ids remain with no corresponding collection.")
+		XCTAssertTrue(remainingIDs.isEmpty, "Folders with these ids remain with no corresponding collection.")
 		
 		XCTAssertTrue(removeFolders.feedsAndFolders.isEmpty)
 	}
@@ -138,29 +138,29 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		
 		let folders = account.folders ?? Set()
 		let folderNames = Set(folders.compactMap { $0.nameForDisplay })
-		let folderExternalIds = Set(folders.compactMap { $0.externalID })
+		let folderExternalIDs = Set(folders.compactMap { $0.externalID })
 		
 		let collectionLabels = Set(provider.collections.map { $0.label })
-		let collectionIds = Set(provider.collections.map { $0.id })
+		let collectionIDs = Set(provider.collections.map { $0.id })
 		
 		let missingNames = collectionLabels.subtracting(folderNames)
-		let missingIds = collectionIds.subtracting(folderExternalIds)
+		let missingIDs = collectionIDs.subtracting(folderExternalIDs)
 		
 		XCTAssertTrue(missingNames.isEmpty, "Collections with these labels have no corresponding folder.")
-		XCTAssertTrue(missingIds.isEmpty, "Collections with these ids have no corresponding folder.")
+		XCTAssertTrue(missingIDs.isEmpty, "Collections with these ids have no corresponding folder.")
 		
-		let collectionIdsAndFeedIds = provider.collections.map { collection -> [String:[String]] in
+		let collectionIDsAndFeedIDs = provider.collections.map { collection -> [String:[String]] in
 			return [collection.id: collection.feeds.map { $0.id }.sorted(by: <)]
 		}
 		
-		let folderIdsAndFeedIds = mirrorOperation.feedsAndFolders.compactMap { feeds, folder -> [String:[String]]? in
+		let folderIDsAndFeedIDs = mirrorOperation.feedsAndFolders.compactMap { feeds, folder -> [String:[String]]? in
 			guard let id = folder.externalID else {
 				return nil
 			}
 			return [id: feeds.map { $0.id }.sorted(by: <)]
 		}
 		
-		XCTAssertEqual(collectionIdsAndFeedIds, folderIdsAndFeedIds, "Did not map folders to feeds correctly.")
+		XCTAssertEqual(collectionIDsAndFeedIDs, folderIDsAndFeedIDs, "Did not map folders to feeds correctly.")
 	}
 	
 	func testRemovingFolderRemovesFeeds() {

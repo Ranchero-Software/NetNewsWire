@@ -121,11 +121,11 @@ public struct ReaderAPIAlternateLocation: Codable {
 }
 
 public struct ReaderAPIEntryOrigin: Codable {
-	public let streamId: String?
+	public let streamID: String?
 	let title: String?
 
 	enum CodingKeys: String, CodingKey {
-		case streamId = "streamId"
+		case streamID = "streamId"
 		case title = "title"
 	}
 }

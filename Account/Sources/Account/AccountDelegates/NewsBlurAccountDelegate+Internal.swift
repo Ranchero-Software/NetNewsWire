@@ -81,13 +81,13 @@ extension NewsBlurAccountDelegate {
 
         logger.debug("Syncing feeds with \(feeds.count, privacy: .public) feeds.")
 
-		let newsBlurFeedIds = feeds.map { String($0.feedID) }
+		let newsBlurFeedIDs = feeds.map { String($0.feedID) }
 
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
-					if !newsBlurFeedIds.contains(feed.feedID) {
+					if !newsBlurFeedIDs.contains(feed.feedID) {
 						folder.removeFeed(feed)
 					}
 				}
@@ -95,7 +95,7 @@ extension NewsBlurAccountDelegate {
 		}
 
 		for feed in account.topLevelFeeds {
-			if !newsBlurFeedIds.contains(feed.feedID) {
+			if !newsBlurFeedIDs.contains(feed.feedID) {
 				account.removeFeed(feed)
 			}
 		}
@@ -166,11 +166,11 @@ extension NewsBlurAccountDelegate {
 			}
 
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
+			let folderFeedIDs = folder.topLevelFeeds.map { $0.feedID }
 
 			for relationship in folderRelationships {
 				let folderFeedID = String(relationship.feedID)
-				if !folderFeedIds.contains(folderFeedID) {
+				if !folderFeedIDs.contains(folderFeedID) {
 					guard let feed = account.existingFeed(withFeedID: folderFeedID) else {
 						continue
 					}

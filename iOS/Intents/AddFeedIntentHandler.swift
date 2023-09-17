@@ -27,7 +27,7 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 		super.init()
 	}
 	
-	public func resolveUrl(for intent: AddFeedIntent, with completion: @escaping (AddFeedUrlResolutionResult) -> Void) {
+	public func resolveURL(for intent: AddFeedIntent, with completion: @escaping (AddFeedURLResolutionResult) -> Void) {
 		guard let url = intent.url else {
 			completion(.unsupported(forReason: .required))
 			return

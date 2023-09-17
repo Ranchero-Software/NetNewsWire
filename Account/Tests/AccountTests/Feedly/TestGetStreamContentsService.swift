@@ -12,10 +12,10 @@ import XCTest
 final class TestGetStreamContentsService: FeedlyGetStreamContentsService {
 	
 	var mockResult: Result<FeedlyStream, Error>?
-	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
+	var parameterTester: ((FeedlyResourceID, String?, Date?, Bool?) -> ())?
 	var getStreamContentsExpectation: XCTestExpectation?
 	
-	func getStreamContents(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
+	func getStreamContents(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		guard let result = mockResult else {
 			XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 			return
@@ -28,7 +28,7 @@ final class TestGetStreamContentsService: FeedlyGetStreamContentsService {
 	}
 	
 	func makeMockFeedlyEntryItem() -> [FeedlyEntry] {
-		let origin = FeedlyOrigin(title: "XCTest@localhost", streamId: "user/12345/category/67890", htmlUrl: "http://localhost/nnw/xctest")
+		let origin = FeedlyOrigin(title: "XCTest@localhost", streamID: "user/12345/category/67890", htmlURL: "http://localhost/nnw/xctest")
 		let content = FeedlyEntry.Content(content: "In the beginning...", direction: .leftToRight)
 		let items = [FeedlyEntry(id: "feeds/0/article/0",
 								 title: "RSS Reader Ingests Man",

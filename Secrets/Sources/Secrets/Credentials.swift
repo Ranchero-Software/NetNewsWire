@@ -16,7 +16,7 @@ public enum CredentialsError: Error {
 public enum CredentialsType: String {
 	case basic = "password"
 	case newsBlurBasic = "newsBlurBasic"
-	case newsBlurSessionId = "newsBlurSessionId"
+	case newsBlurSessionID = "newsBlurSessionId"
 	case readerBasic = "readerBasic"
 	case readerAPIKey = "readerAPIKey"
 	case oauthAccessToken = "oauthAccessToken"

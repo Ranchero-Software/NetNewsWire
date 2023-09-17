@@ -16,7 +16,7 @@ class FeedlyMockResponseProvider: TestTransportMockResponseProviding {
 		self.subdirectory = subdirectory
 	}
 	
-	func mockResponseFileUrl(for components: URLComponents) -> URL? {
+	func mockResponseFileURL(for components: URLComponents) -> URL? {
 		let bundle = Bundle(for: FeedlyMockResponseProvider.self)
 		
 		// Match request for collections to build a list of folders.

@@ -1,5 +1,5 @@
 //
-//  TestGetStreamIdsService.swift
+//  TestGetStreamIDsService.swift
 //  AccountTests
 //
 //  Created by Kiel Gillard on 29/10/19.
@@ -9,13 +9,13 @@
 import XCTest
 @testable import Account
 
-final class TestGetStreamIdsService: FeedlyGetStreamIDsService {
+final class TestGetStreamIDsService: FeedlyGetStreamIDsService {
 	
 	var mockResult: Result<FeedlyStreamIDs, Error>?
-	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
-	var getStreamIdsExpectation: XCTestExpectation?
+	var parameterTester: ((FeedlyResourceID, String?, Date?, Bool?) -> ())?
+	var getStreamIDsExpectation: XCTestExpectation?
 	
-	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
+	func getStreamIDs(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
 		guard let result = mockResult else {
 			XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 			return
@@ -23,7 +23,7 @@ final class TestGetStreamIdsService: FeedlyGetStreamIDsService {
 		parameterTester?(resource, continuation, newerThan, unreadOnly)
 		DispatchQueue.main.async {
 			completion(result)
-			self.getStreamIdsExpectation?.fulfill()
+			self.getStreamIDsExpectation?.fulfill()
 		}
 	}
 }

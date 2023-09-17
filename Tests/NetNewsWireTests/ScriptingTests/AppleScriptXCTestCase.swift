@@ -32,12 +32,12 @@ class AppleScriptXCTestCase: XCTestCase {
         var errorDict: NSDictionary? = nil
         let testBundle = Bundle(for: type(of: self))
         let url = testBundle.url(forResource:filename, withExtension:"scpt")
-        guard let testScriptUrl = url  else {
+        guard let testScriptURL = url  else {
             XCTFail("Failed Getting script URL")
             return nil
         }
         
-        guard let testScript = NSAppleScript(contentsOf: testScriptUrl, error: &errorDict) else {
+        guard let testScript = NSAppleScript(contentsOf: testScriptURL, error: &errorDict) else {
             print ("error is \(String(describing: errorDict))")
             XCTFail("Failed initializing NSAppleScript")
             return nil

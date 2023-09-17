@@ -22,7 +22,7 @@ import RSCore
 	@State private var accountCredentials: Credentials?
 	@State private var accountUserName: String = ""
 	@State private var accountSecret: String = ""
-	@State private var accountAPIUrl: String = ""
+	@State private var accountAPIURL: String = ""
 	@State private var showProgressIndicator: Bool = false
 	@State private var accountError: (Error?, Bool) = (nil, false)
 	
@@ -88,7 +88,7 @@ import RSCore
 			SecureField("Password", text: $accountSecret, prompt: Text("textfield.placeholder.password", comment: "Password"))
 				.textContentType(.password)
 			if accountType == .freshRSS && accountCredentials == nil {
-				TextField("FreshRSS URL", text: $accountAPIUrl, prompt: Text(verbatim: "fresh.rss.net/api/greader.php"))
+				TextField("FreshRSS URL", text: $accountAPIURL, prompt: Text(verbatim: "fresh.rss.net/api/greader.php"))
 					.autocorrectionDisabled()
 					.autocapitalization(.none)
 			}
@@ -147,7 +147,7 @@ import RSCore
 		if accountType == nil { return false }
 		switch accountType! {
 		case .freshRSS:
-			if (accountUserName.trimmingWhitespace.count == 0) || (accountSecret.trimmingWhitespace.count == 0) || (accountAPIUrl.trimmingWhitespace.count == 0) {
+			if (accountUserName.trimmingWhitespace.count == 0) || (accountSecret.trimmingWhitespace.count == 0) || (accountAPIURL.trimmingWhitespace.count == 0) {
 				return false
 			}
 		default:
@@ -215,7 +215,7 @@ import RSCore
 	private func apiURL() -> URL? {
 		switch accountType! {
 		case .freshRSS:
-			return URL(string: accountAPIUrl)!
+			return URL(string: accountAPIURL)!
 		case .inoreader:
 			return URL(string: ReaderAPIVariant.inoreader.host)!
 		case .bazQux:

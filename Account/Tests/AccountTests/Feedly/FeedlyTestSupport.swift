@@ -43,7 +43,7 @@ class FeedlyTestSupport {
 	}
 	
 	func makeMockOAuthClient() -> OAuthAuthorizationClient {
-		return OAuthAuthorizationClient(id: "test", redirectUri: "test://test/auth", state: nil, secret: "password")
+		return OAuthAuthorizationClient(id: "test", redirectURI: "test://test/auth", state: nil, secret: "password")
 	}
 	
 	func removeCredentials(matching type: CredentialsType, from account: Account) {
@@ -103,18 +103,18 @@ class FeedlyTestSupport {
 	func checkFoldersAndFeeds(in account: Account, againstCollectionsAndFeedsInJSONNamed name: String, subdirectory: String? = nil) {
 		let collections = testJSON(named: name, subdirectory: subdirectory) as! [[String:Any]]
 		let collectionNames = Set(collections.map { $0["label"] as! String })
-		let collectionIds = Set(collections.map { $0["id"] as! String })
+		let collectionIDs = Set(collections.map { $0["id"] as! String })
 		
 		let folders = account.folders ?? Set()
 		let folderNames = Set(folders.compactMap { $0.name })
-		let folderIds = Set(folders.compactMap { $0.externalID })
+		let folderIDs = Set(folders.compactMap { $0.externalID })
 		
 		let missingNames = collectionNames.subtracting(folderNames)
-		let missingIds = collectionIds.subtracting(folderIds)
+		let missingIDs = collectionIDs.subtracting(folderIDs)
 		
 		XCTAssertEqual(folders.count, collections.count, "Mismatch between collections and folders.")
 		XCTAssertTrue(missingNames.isEmpty, "Collections with these names did not have a corresponding folder with the same name.")
-		XCTAssertTrue(missingIds.isEmpty, "Collections with these ids did not have a corresponding folder with the same id.")
+		XCTAssertTrue(missingIDs.isEmpty, "Collections with these ids did not have a corresponding folder with the same id.")
 		
 		for collection in collections {
 			checkSingleFolderAndFeeds(in: account, againstOneCollectionAndFeedsInJSONPayload: collection)
@@ -138,11 +138,11 @@ class FeedlyTestSupport {
 		
 		XCTAssertEqual(collectionFeeds.count, folderFeeds.count)
 		
-		let collectionFeedIds = Set(collectionFeeds.map { $0["id"] as! String })
-		let folderFeedIds = Set(folderFeeds.map { $0.feedID })
-		let missingFeedIds = collectionFeedIds.subtracting(folderFeedIds)
+		let collectionFeedIDs = Set(collectionFeeds.map { $0["id"] as! String })
+		let folderFeedIDs = Set(folderFeeds.map { $0.feedID })
+		let missingFeedIDs = collectionFeedIDs.subtracting(folderFeedIDs)
 		
-		XCTAssertTrue(missingFeedIds.isEmpty, "Feeds with these ids were not found in the \"\(label)\" folder.")
+		XCTAssertTrue(missingFeedIDs.isEmpty, "Feeds with these ids were not found in the \"\(label)\" folder.")
 	}
 	
 	func checkArticles(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil) throws {
@@ -156,14 +156,14 @@ class FeedlyTestSupport {
 	
 	private struct ArticleItem {
 		var id: String
-		var feedId: String
+		var feedID: String
 		var content: String
 		var JSON: [String: Any]
 		var unread: Bool
 		
 		/// Convoluted external URL logic "documented" here:
 		/// https://groups.google.com/forum/#!searchin/feedly-cloud/feed$20url%7Csort:date/feedly-cloud/Rx3dVd4aTFQ/Hf1ZfLJoCQAJ
-		var externalUrl: String? {
+		var externalURL: String? {
 			return ((JSON["canonical"] as? [[String: Any]]) ?? (JSON["alternate"] as? [[String: Any]]))?.compactMap { link -> String? in
 				let href = link["href"] as? String
 				if let type = link["type"] as? String {
@@ -181,7 +181,7 @@ class FeedlyTestSupport {
 			self.id = item["id"] as! String
 			
 			let origin = item["origin"] as! [String: Any]
-			self.feedId = origin["streamId"] as! String
+			self.feedID = origin["streamId"] as! String
 			
 			let content = item["content"] as? [String: Any]
 			let summary = item["summary"] as? [String: Any]
@@ -196,12 +196,12 @@ class FeedlyTestSupport {
 
 		let items = stream["items"] as! [[String: Any]]
 		let articleItems = items.map { ArticleItem(item: $0) }
-		let itemIds = Set(articleItems.map { $0.id })
+		let itemIDs = Set(articleItems.map { $0.id })
 		
-		let articles = try testAccount.fetchArticles(.articleIDs(itemIds))
-		let articleIds = Set(articles.map { $0.articleID })
+		let articles = try testAccount.fetchArticles(.articleIDs(itemIDs))
+		let articleIDs = Set(articles.map { $0.articleID })
 		
-		let missing = itemIds.subtracting(articleIds)
+		let missing = itemIDs.subtracting(articleIDs)
 		
 		XCTAssertEqual(items.count, articles.count)
 		XCTAssertTrue(missing.isEmpty, "Items with these ids did not have a corresponding article with the same id.")
@@ -210,67 +210,67 @@ class FeedlyTestSupport {
 			for item in articleItems where item.id == article.articleID {
 				XCTAssertEqual(article.uniqueID, item.id)
 				XCTAssertEqual(article.contentHTML, item.content)
-				XCTAssertEqual(article.feedID, item.feedId)
-				XCTAssertEqual(article.rawExternalLink, item.externalUrl)
+				XCTAssertEqual(article.feedID, item.feedID)
+				XCTAssertEqual(article.rawExternalLink, item.externalURL)
 			}
 		}
 	}
 	
-	func checkUnreadStatuses(in account: Account, againstIdsInStreamInJSONNamed name: String, subdirectory: String? = nil, testCase: XCTestCase) {
-		let streamIds = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
-		checkUnreadStatuses(in: account, correspondToIdsInJSONPayload: streamIds, testCase: testCase)
+	func checkUnreadStatuses(in account: Account, againstIDsInStreamInJSONNamed name: String, subdirectory: String? = nil, testCase: XCTestCase) {
+		let streamIDs = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
+		checkUnreadStatuses(in: account, correspondToIDsInJSONPayload: streamIDs, testCase: testCase)
 	}
 	
-	func checkUnreadStatuses(in testAccount: Account, correspondToIdsInJSONPayload streamIds: [String: Any], testCase: XCTestCase) {
-		let ids = Set(streamIds["ids"] as! [String])
-		let fetchIdsExpectation = testCase.expectation(description: "Fetch Article Ids")
-		testAccount.fetchUnreadArticleIDs { articleIdsResult in
+	func checkUnreadStatuses(in testAccount: Account, correspondToIDsInJSONPayload streamIDs: [String: Any], testCase: XCTestCase) {
+		let ids = Set(streamIDs["ids"] as! [String])
+		let fetchIDsExpectation = testCase.expectation(description: "Fetch Article IDs")
+		testAccount.fetchUnreadArticleIDs { articleIDsResult in
 			do {
-				let articleIds = try articleIdsResult.get()
+				let articleIDs = try articleIDsResult.get()
 				// Unread statuses can be paged from Feedly.
 				// Instead of joining test data, the best we can do is
 				// make sure that these ids are marked as unread (a subset of the total).
-				XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as unread.")
-				fetchIdsExpectation.fulfill()
+				XCTAssertTrue(ids.isSubset(of: articleIDs), "Some articles in `ids` are not marked as unread.")
+				fetchIDsExpectation.fulfill()
 			} catch {
 				XCTFail("Error unwrapping article IDs: \(error)")
 			}
 		}
-		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
+		testCase.wait(for: [fetchIDsExpectation], timeout: 2)
 	}
 	
 	func checkStarredStatuses(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil, testCase: XCTestCase) {
-		let streamIds = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
-		checkStarredStatuses(in: account, correspondToStreamItemsIn: streamIds, testCase: testCase)
+		let streamIDs = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
+		checkStarredStatuses(in: account, correspondToStreamItemsIn: streamIDs, testCase: testCase)
 	}
 	
 	func checkStarredStatuses(in testAccount: Account, correspondToStreamItemsIn stream: [String: Any], testCase: XCTestCase) {
 		let items = stream["items"] as! [[String: Any]]
 		let ids = Set(items.map { $0["id"] as! String })
-		let fetchIdsExpectation = testCase.expectation(description: "Fetch Article Ids")
-		testAccount.fetchStarredArticleIDs { articleIdsResult in
+		let fetchIDsExpectation = testCase.expectation(description: "Fetch Article IDs")
+		testAccount.fetchStarredArticleIDs { articleIDsResult in
 			do {
-				let articleIds = try articleIdsResult.get()
+				let articleIDs = try articleIDsResult.get()
 				// Starred articles can be paged from Feedly.
 				// Instead of joining test data, the best we can do is
 				// make sure that these articles are marked as starred (a subset of the total).
-				XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as starred.")
-				fetchIdsExpectation.fulfill()
+				XCTAssertTrue(ids.isSubset(of: articleIDs), "Some articles in `ids` are not marked as starred.")
+				fetchIDsExpectation.fulfill()
 			} catch {
 				XCTFail("Error unwrapping article IDs: \(error)")
 			}
 		}
-		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
+		testCase.wait(for: [fetchIDsExpectation], timeout: 2)
 	}
 	
 	func check(_ entries: [FeedlyEntry], correspondToStreamItemsIn stream: [String: Any]) {
 		
 		let items = stream["items"] as! [[String: Any]]
-		let itemIds = Set(items.map { $0["id"] as! String })
+		let itemIDs = Set(items.map { $0["id"] as! String })
 		
-		let articleIds = Set(entries.map { $0.id })
+		let articleIDs = Set(entries.map { $0.id })
 		
-		let missing = itemIds.subtracting(articleIds)
+		let missing = itemIDs.subtracting(articleIDs)
 		
 		XCTAssertEqual(items.count, entries.count)
 		XCTAssertTrue(missing.isEmpty, "Failed to create \(FeedlyEntry.self) values from objects in the JSON with these ids.")
@@ -278,10 +278,10 @@ class FeedlyTestSupport {
 	
 	func makeParsedItemTestDataFor(numberOfFeeds: Int, numberOfItemsInFeeds: Int) -> [String: Set<ParsedItem>] {
 		let ids = (0..<numberOfFeeds).map { "feed/\($0)" }
-		let feedIdsAndItemCounts = ids.map { ($0, numberOfItemsInFeeds) }
+		let feedIDsAndItemCounts = ids.map { ($0, numberOfItemsInFeeds) }
 		
-		let entries = feedIdsAndItemCounts.map { (feedId, count) -> (String, [Int]) in
-			return (feedId, (0..<count).map { $0 })
+		let entries = feedIDsAndItemCounts.map { (feedID, count) -> (String, [Int]) in
+			return (feedID, (0..<count).map { $0 })
 			
 		}.map { pair -> (String, Set<ParsedItem>) in
 			let items = pair.1.map { index -> ParsedItem in
@@ -304,7 +304,7 @@ class FeedlyTestSupport {
 					attachments: nil)
 			}
 			return (pair.0, Set(items))
-		}.reduce([String: Set<ParsedItem>](minimumCapacity: feedIdsAndItemCounts.count)) { (dict, pair) in
+		}.reduce([String: Set<ParsedItem>](minimumCapacity: feedIDsAndItemCounts.count)) { (dict, pair) in
 			var mutant = dict
 			mutant[pair.0] = pair.1
 			return mutant

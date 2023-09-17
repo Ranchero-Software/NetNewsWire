@@ -1,5 +1,5 @@
 //
-//  FeedlyResourceIdTests.swift
+//  FeedlyResourceIDTests.swift
 //  AccountTests
 //
 //  Created by Kiel Gillard on 3/10/19.
@@ -9,18 +9,18 @@
 import XCTest
 @testable import Account
 
-class FeedlyResourceIdTests: XCTestCase {
+class FeedlyResourceIDTests: XCTestCase {
 	
-	func testFeedResourceId() {
-		let expectedUrl = "http://ranchero.com/blog/atom.xml"
+	func testFeedResourceID() {
+		let expectedURL = "http://ranchero.com/blog/atom.xml"
 		
-		let feedResource = FeedlyFeedResourceId(id: "feed/\(expectedUrl)")
-		let urlResource = FeedlyFeedResourceId(id: expectedUrl)
-		let otherResource = FeedlyFeedResourceId(id: "whiskey/\(expectedUrl)")
-		let invalidResource = FeedlyFeedResourceId(id: "")
+		let feedResource = FeedlyFeedResourceID(id: "feed/\(expectedURL)")
+		let urlResource = FeedlyFeedResourceID(id: expectedURL)
+		let otherResource = FeedlyFeedResourceID(id: "whiskey/\(expectedURL)")
+		let invalidResource = FeedlyFeedResourceID(id: "")
 		
-		XCTAssertEqual(feedResource.url, expectedUrl)
-		XCTAssertEqual(urlResource.url, expectedUrl)
+		XCTAssertEqual(feedResource.url, expectedURL)
+		XCTAssertEqual(urlResource.url, expectedURL)
 		XCTAssertEqual(otherResource.url, otherResource.id)
 		XCTAssertEqual(invalidResource.url, invalidResource.id)
 	}

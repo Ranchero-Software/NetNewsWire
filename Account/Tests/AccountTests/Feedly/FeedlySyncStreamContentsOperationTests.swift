@@ -56,9 +56,9 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let expectedArticleIds = Set(items.map { $0.id })
-		let expectedArticles = try account.fetchArticles(.articleIDs(expectedArticleIds))
-		XCTAssertEqual(expectedArticles.count, expectedArticleIds.count, "Did not fetch all the articles.")
+		let expectedArticleIDs = Set(items.map { $0.id })
+		let expectedArticles = try account.fetchArticles(.articleIDs(expectedArticleIDs))
+		XCTAssertEqual(expectedArticles.count, expectedArticleIDs.count, "Did not fetch all the articles.")
 	}
 	
 	func testIngestsOnePageFailure() {
@@ -132,8 +132,8 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 		waitForExpectations(timeout: 30)
 		
 		// Find articles inserted.
-		let articleIds = Set(service.pages.values.map { $0.items }.flatMap { $0 }.map { $0.id })
-		let articles = try account.fetchArticles(.articleIDs(articleIds))
-		XCTAssertEqual(articleIds.count, articles.count)
+		let articleIDs = Set(service.pages.values.map { $0.items }.flatMap { $0 }.map { $0.id })
+		let articles = try account.fetchArticles(.articleIDs(articleIDs))
+		XCTAssertEqual(articleIDs.count, articles.count)
 	}
 }

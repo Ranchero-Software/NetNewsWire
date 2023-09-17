@@ -65,7 +65,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		createFeedsOperation.addDependency(mirrorCollectionsAsFolders)
 		self.operationQueue.add(createFeedsOperation)
 		
-		let getAllArticleIDs = FeedlyIngestStreamArticleIDsOperation(account: account, userId: feedlyUserID, service: getStreamIDsService)
+		let getAllArticleIDs = FeedlyIngestStreamArticleIDsOperation(account: account, userID: feedlyUserID, service: getStreamIDsService)
 		getAllArticleIDs.delegate = self
 		getAllArticleIDs.downloadProgress = downloadProgress
 		getAllArticleIDs.addDependency(createFeedsOperation)
@@ -87,7 +87,7 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 		self.operationQueue.add(getUpdated)
 		
 		// Get each page of the article ids for starred articles.
-		let getStarred = FeedlyIngestStarredArticleIDsOperation(account: account, userId: feedlyUserID, service: getStarredService, database: database, newerThan: nil)
+		let getStarred = FeedlyIngestStarredArticleIDsOperation(account: account, userID: feedlyUserID, service: getStarredService, database: database, newerThan: nil)
 		getStarred.delegate = self
 		getStarred.downloadProgress = downloadProgress
 		getStarred.addDependency(createFeedsOperation)

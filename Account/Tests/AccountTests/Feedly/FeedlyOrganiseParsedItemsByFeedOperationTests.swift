@@ -30,7 +30,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	
 	struct TestParsedItemsProvider: FeedlyParsedItemProviding {
 		let parsedItemProviderName = "TestParsedItemsProvider"
-		var resource: FeedlyResourceId
+		var resource: FeedlyResourceID
 		var parsedEntries: Set<ParsedItem>
 	}
 	
@@ -51,11 +51,11 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
-		XCTAssertEqual(itemsAndFeedIds, entries)
+		let itemsAndFeedIDs = organise.parsedItemsKeyedByFeedID
+		XCTAssertEqual(itemsAndFeedIDs, entries)
 	}
 	
-	func testGroupsOneEntryByFeedId() {
+	func testGroupsOneEntryByFeedID() {
 		let entries = support.makeParsedItemTestDataFor(numberOfFeeds: 1, numberOfItemsInFeeds: 1)
 		let resource = FeedlyCategoryResourceID(id: "user/12345/category/6789")
 		let parsedEntries = Set(entries.values.flatMap { $0 })
@@ -72,11 +72,11 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
-		XCTAssertEqual(itemsAndFeedIds, entries)
+		let itemsAndFeedIDs = organise.parsedItemsKeyedByFeedID
+		XCTAssertEqual(itemsAndFeedIDs, entries)
 	}
 	
-	func testGroupsManyEntriesByFeedId() {
+	func testGroupsManyEntriesByFeedID() {
 		let entries = support.makeParsedItemTestDataFor(numberOfFeeds: 100, numberOfItemsInFeeds: 100)
 		let resource = FeedlyCategoryResourceID(id: "user/12345/category/6789")
 		let parsedEntries = Set(entries.values.flatMap { $0 })
@@ -93,7 +93,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
-		XCTAssertEqual(itemsAndFeedIds, entries)
+		let itemsAndFeedIDs = organise.parsedItemsKeyedByFeedID
+		XCTAssertEqual(itemsAndFeedIDs, entries)
 	}
 }
