@@ -132,7 +132,7 @@ struct AppAssets {
 		return RSImage(named: "legacyArticleExtractorProgress4")
 	}()
 	
-	static var masterFolderImage: IconImage {
+	static var folderImage: IconImage {
 		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
