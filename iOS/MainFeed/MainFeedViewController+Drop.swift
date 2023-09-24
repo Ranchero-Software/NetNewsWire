@@ -11,7 +11,7 @@ import RSCore
 import Account
 import RSTree
 
-extension MasterFeedViewController: UITableViewDropDelegate {
+extension MainFeedViewController: UITableViewDropDelegate {
 	
 	func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
 		return session.localDragSession != nil
@@ -125,7 +125,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	
 }
 
-private extension MasterFeedViewController {
+private extension MainFeedViewController {
 
 	func correctDestinationIndexPath(session: UIDropSession) -> IndexPath? {
 		let location = session.location(in: tableView)

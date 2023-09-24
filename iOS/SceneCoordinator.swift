@@ -21,8 +21,8 @@ protocol MainControllerIdentifiable {
 
 enum MainControllerIdentifier {
 	case none
-	case masterFeed
-	case masterTimeline
+	case mainFeed
+	case mainTimeline
 	case article
 }
 
@@ -63,8 +63,8 @@ struct FeedNode: Hashable {
 	private var activityManager = ActivityManager()
 	
 	private var rootSplitViewController: RootSplitViewController!
-	private var masterFeedViewController: MasterFeedViewController!
-	private var masterTimelineViewController: MasterTimelineViewController?
+	private var mainFeedViewController: MainFeedViewController!
+	private var mainTimelineViewController: MainTimelineViewController?
 	private var articleViewController: ArticleViewController?
 
 	private var lastMainControllerToAppear = MainControllerIdentifier.none
@@ -292,16 +292,16 @@ struct FeedNode: Hashable {
 
 		super.init()
 
-		self.masterFeedViewController = rootSplitViewController.viewController(for: .primary) as? MasterFeedViewController
-		self.masterFeedViewController.coordinator = self
-		if let navController = self.masterFeedViewController?.navigationController {
+		self.mainFeedViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedViewController
+		self.mainFeedViewController.coordinator = self
+		if let navController = self.mainFeedViewController?.navigationController {
 			navController.delegate = self
 			configureNavigationController(navController)
 		}
 
-		self.masterTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MasterTimelineViewController
-		self.masterTimelineViewController?.coordinator = self
-		if let navController = self.masterTimelineViewController?.navigationController {
+		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MainTimelineViewController
+		self.mainTimelineViewController?.coordinator = self
+		if let navController = self.mainTimelineViewController?.navigationController {
 			navController.delegate = self
 			configureNavigationController(navController)
 		}
@@ -397,9 +397,9 @@ struct FeedNode: Hashable {
 	
 	func resetFocus() {
 		if currentArticle != nil {
-			masterTimelineViewController?.focus()
+			mainTimelineViewController?.focus()
 		} else {
-			masterFeedViewController?.focus()
+			mainFeedViewController?.focus()
 		}
 	}
 	
@@ -416,7 +416,7 @@ struct FeedNode: Hashable {
 		selectFeed(indexPath: nil) {
 			self.rootSplitViewController.show(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
-				self.masterTimelineViewController!.showSearchAll()
+				self.mainTimelineViewController!.showSearchAll()
 			}
 		}
 	}
@@ -449,7 +449,7 @@ struct FeedNode: Hashable {
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
 			fetchAndMergeArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores()
 			}
 		} else {
@@ -468,7 +468,7 @@ struct FeedNode: Hashable {
 	@objc func accountStateDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores()
 			}
 		} else {
@@ -486,7 +486,7 @@ struct FeedNode: Hashable {
 		
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores(updateExpandedNodes: expandNewAccount)
 			}
 		} else {
@@ -504,7 +504,7 @@ struct FeedNode: Hashable {
 		
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores(updateExpandedNodes: cleanupAccount)
 			}
 		} else {
@@ -601,7 +601,7 @@ struct FeedNode: Hashable {
 			treeControllerDelegate.isReadFiltered = true
 		}
 		rebuildBackingStores()
-		masterFeedViewController?.updateUI()
+		mainFeedViewController?.updateUI()
 	}
 	
 	func toggleReadArticlesFilter() {
@@ -696,7 +696,7 @@ struct FeedNode: Hashable {
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
 		}
 		fetchAndReplaceArticlesAsync(animated: true) {
-			self.masterTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
+			self.mainTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
 		}
 	}
 	
@@ -769,7 +769,7 @@ struct FeedNode: Hashable {
 		clearTimelineIfNoLongerAvailable()
 	}
 	
-	func masterFeedIndexPathForCurrentTimeline() -> IndexPath? {
+	func mainFeedIndexPathForCurrentTimeline() -> IndexPath? {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(timelineFeed as AnyObject) else {
 			return nil
 		}
@@ -794,7 +794,7 @@ struct FeedNode: Hashable {
 		}
 		
 		currentFeedIndexPath = indexPath
-		masterFeedViewController.updateFeedSelection(animations: animations)
+		mainFeedViewController.updateFeedSelection(animations: animations)
 
 		if deselectArticle {
 			selectArticle(nil)
@@ -867,7 +867,7 @@ struct FeedNode: Hashable {
 		
 		if article == nil {
 			rootSplitViewController.show(.supplementary)
-			masterTimelineViewController?.updateArticleSelection(animations: animations)
+			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			articleViewController?.article = nil
 			return
 		}
@@ -876,7 +876,7 @@ struct FeedNode: Hashable {
 		
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
-		masterTimelineViewController?.updateArticleSelection(animations: animations)
+		mainTimelineViewController?.updateArticleSelection(animations: animations)
 		articleViewController?.article = article
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
 			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
@@ -897,7 +897,7 @@ struct FeedNode: Hashable {
 			emptyTheTimeline()
 			timelineFeed = oldTimelineFeed
 			replaceArticles(with: savedSearchArticles!, animated: true)
-			masterTimelineViewController?.reinitializeArticles(resetScroll: true)
+			mainTimelineViewController?.reinitializeArticles(resetScroll: true)
 		} else {
 			setTimelineFeed(nil, animated: true)
 		}
@@ -909,7 +909,7 @@ struct FeedNode: Hashable {
 		savedSearchArticles = nil
 		isSearching = false
 		selectArticle(nil)
-		masterTimelineViewController?.focus()
+		mainTimelineViewController?.focus()
 	}
 	
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
@@ -1007,7 +1007,7 @@ struct FeedNode: Hashable {
 		}
 
 		if self.isSearching {
-			self.masterTimelineViewController?.hideSearch()
+			self.mainTimelineViewController?.hideSearch()
 		}
 
 		selectNextUnreadFeed() {
@@ -1129,7 +1129,7 @@ struct FeedNode: Hashable {
 
 	func discloseFeed(_ feed: Feed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
-			masterTimelineViewController?.hideSearch()
+			mainTimelineViewController?.hideSearch()
 		}
 		
 		guard let account = feed.account else {
@@ -1212,14 +1212,14 @@ struct FeedNode: Hashable {
 		
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		masterFeedViewController.present(addNavViewController, animated: true)
+		mainFeedViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
-		masterFeedViewController.present(addNavViewController, animated: true)
+		mainFeedViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
@@ -1268,12 +1268,12 @@ struct FeedNode: Hashable {
 			articleViewController?.openInAppBrowser()
 		}
 		else {
-			masterFeedViewController.openInAppBrowser()
+			mainFeedViewController.openInAppBrowser()
 		}
 	}
 
 	@MainActor func navigateToFeeds() {
-		masterFeedViewController?.focus()
+		mainFeedViewController?.focus()
 		selectArticle(nil)
 	}
 	
@@ -1281,7 +1281,7 @@ struct FeedNode: Hashable {
 		if currentArticle == nil && articles.count > 0 {
 			selectArticle(articles[0])
 		}
-		masterTimelineViewController?.focus()
+		mainTimelineViewController?.focus()
 	}
 	
 	func navigateToDetail() {
@@ -1310,7 +1310,7 @@ struct FeedNode: Hashable {
 	/// `SFSafariViewController` or `SettingsViewController`,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
-		guard let presentedController = masterFeedViewController.presentedViewController else { return }
+		guard let presentedController = mainFeedViewController.presentedViewController else { return }
 		
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
@@ -1379,7 +1379,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		}
 
 		// If we are showing the Feeds and only the feeds start clearing stuff
-		if viewController === masterFeedViewController && lastMainControllerToAppear == .masterTimeline {
+		if viewController === mainFeedViewController && lastMainControllerToAppear == .mainTimeline {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil, animations: [.scroll, .select, .navigation])
 			return
@@ -1389,7 +1389,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
-		if viewController === masterTimelineViewController && lastMainControllerToAppear == .article {
+		if viewController === mainTimelineViewController && lastMainControllerToAppear == .article {
 			selectArticle(nil, animations: [.scroll, .select, .navigation])
 
 			// Restore any bars hidden by the article controller
@@ -1539,7 +1539,7 @@ private extension SceneCoordinator {
 			
 			updateExpandedNodes?()
 			let changes = rebuildShadowTable()
-			masterFeedViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
+			mainFeedViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
 		}
 	}
 	
@@ -1669,7 +1669,7 @@ private extension SceneCoordinator {
 		timelineFeed = feed
 		
 		fetchAndReplaceArticlesAsync(animated: animated) {
-			self.masterTimelineViewController?.reinitializeArticles(resetScroll: true)
+			self.mainTimelineViewController?.reinitializeArticles(resetScroll: true)
 			completion?()
 		}
 	}
@@ -1984,7 +1984,7 @@ private extension SceneCoordinator {
 			articles = sortedArticles
 			updateShowNamesAndIcons()
 			updateUnreadCount()
-			masterTimelineViewController?.reloadArticles(animated: animated)
+			mainTimelineViewController?.reloadArticles(animated: animated)
 		}
 	}
 	
@@ -1994,8 +1994,8 @@ private extension SceneCoordinator {
 
 	@objc func fetchAndMergeArticlesAsync() {
 		fetchAndMergeArticlesAsync(animated: true) {
-			self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
-			self.masterTimelineViewController?.restoreSelectionIfNecessary(adjustScroll: false)
+			self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
+			self.mainTimelineViewController?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
 	
@@ -2146,7 +2146,7 @@ private extension SceneCoordinator {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
 					self.selectFeed(indexPath: indexPath) {
-						self.masterFeedViewController.focus()
+						self.mainFeedViewController.focus()
 					}
 				}
 			})
@@ -2167,7 +2167,7 @@ private extension SceneCoordinator {
 				
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
 					self.selectFeed(indexPath: indexPath) {
-						self.masterFeedViewController.focus()
+						self.mainFeedViewController.focus()
 					}
 				}
 			})
@@ -2180,7 +2180,7 @@ private extension SceneCoordinator {
 			}
 			
 			self.discloseFeed(feed, initialLoad: true) {
-				self.masterFeedViewController.focus()
+				self.mainFeedViewController.focus()
 			}
 		}
 	}

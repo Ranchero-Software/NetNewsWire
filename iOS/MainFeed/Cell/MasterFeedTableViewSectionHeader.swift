@@ -8,13 +8,13 @@
 
 import UIKit
 
-protocol MasterFeedTableViewSectionHeaderDelegate {
-	func masterFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MasterFeedTableViewSectionHeader)
+protocol MainFeedTableViewSectionHeaderDelegate {
+	func mainFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MasterFeedTableViewSectionHeader)
 }
 
 @MainActor class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
-	var delegate: MasterFeedTableViewSectionHeaderDelegate?
+	var delegate: MainFeedTableViewSectionHeaderDelegate?
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -95,14 +95,14 @@ protocol MasterFeedTableViewSectionHeaderDelegate {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView)
+		let layout = MainFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView)
 		return CGSize(width: bounds.width, height: layout.height)
 		
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: contentView.bounds.size.width,
+		let layout = MainFeedTableViewSectionHeaderLayout(cellWidth: contentView.bounds.size.width,
 															insets: contentView.safeAreaInsets,
 															label: titleView)
 		layoutWith(layout)
@@ -113,7 +113,7 @@ protocol MasterFeedTableViewSectionHeaderDelegate {
 private extension MasterFeedTableViewSectionHeader {
 	
 	@objc func toggleDisclosure() {
-		delegate?.masterFeedTableViewSectionHeaderDisclosureDidToggle(self)
+		delegate?.mainFeedTableViewSectionHeaderDisclosureDidToggle(self)
 	}
 	
 	func commonInit() {
@@ -152,7 +152,7 @@ private extension MasterFeedTableViewSectionHeader {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
-	func layoutWith(_ layout: MasterFeedTableViewSectionHeaderLayout) {
+	func layoutWith(_ layout: MainFeedTableViewSectionHeaderLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		disclosureButton.setFrameIfNotEqual(layout.disclosureButtonRect)
 		

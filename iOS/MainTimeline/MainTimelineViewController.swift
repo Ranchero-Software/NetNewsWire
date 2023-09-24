@@ -1,5 +1,5 @@
 //
-//  MasterTimelineViewController.swift
+//  MainTimelineViewController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/8/19.
@@ -13,7 +13,7 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
+class MainTimelineViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -37,8 +37,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private var markAsReadOnScrollEnd: Int?
 	private var lastVerticalPosition: CGFloat = 0
 
-	var mainControllerIdentifier = MainControllerIdentifier.masterTimeline
-	
+	var mainControllerIdentifier = MainControllerIdentifier.mainTimeline
+
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
 
@@ -98,7 +98,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
 
-		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
+		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
 			navigationItem.titleView = titleView
 		}
 		
@@ -460,7 +460,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
-				if let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell {
 					configure(cell, article: article, indexPath: indexPath)
 				}
 			}
@@ -469,7 +469,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		
@@ -483,7 +483,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				continue
 			}
-			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
 				cell.setIconImage(image)
 			}
 		}
@@ -501,7 +501,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				continue
 			}
 			for author in authors {
-				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
 					cell.setIconImage(image)
 				}
 			}
@@ -509,7 +509,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		if coordinator.showIcons {
@@ -534,7 +534,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 		}
 	}
@@ -566,19 +566,19 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	private func resetEstimatedRowHeight() {
 		
-		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
+		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the architect of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
-		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: false)
+		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: false)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = MainTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		} else {
-			let layout = MasterTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = MainTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		}
 		
@@ -588,7 +588,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 // MARK: Searching
 
-extension MasterTimelineViewController: UISearchControllerDelegate {
+extension MainTimelineViewController: UISearchControllerDelegate {
 
 	func willPresentSearchController(_ searchController: UISearchController) {
 		coordinator.beginSearching()
@@ -602,7 +602,7 @@ extension MasterTimelineViewController: UISearchControllerDelegate {
 
 }
 
-extension MasterTimelineViewController: UISearchResultsUpdating {
+extension MainTimelineViewController: UISearchResultsUpdating {
 
 	func updateSearchResults(for searchController: UISearchController) {
 		let searchScope = SearchScope(rawValue: searchController.searchBar.selectedScopeButtonIndex)!
@@ -611,7 +611,7 @@ extension MasterTimelineViewController: UISearchResultsUpdating {
 
 }
 
-extension MasterTimelineViewController: UISearchBarDelegate {
+extension MainTimelineViewController: UISearchBarDelegate {
 	func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
 		let searchScope = SearchScope(rawValue: selectedScope)!
 		coordinator.searchArticles(searchBar.text!, searchScope)
@@ -620,7 +620,7 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 // MARK: Private
 
-private extension MasterTimelineViewController {
+private extension MainTimelineViewController {
 
 	func configureToolbar() {		
 		guard splitViewController?.isCollapsed ?? true else {
@@ -634,7 +634,7 @@ private extension MasterTimelineViewController {
 		
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
 
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			let timelineIconImage = coordinator.timelineIconImage
 			titleView.iconView.iconImage = timelineIconImage
 			if let preferredColor = timelineIconImage?.preferredColor {
@@ -698,7 +698,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateTitleUnreadCount() {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.unreadCountView.unreadCount = coordinator.timelineUnreadCount
 		}
 	}
@@ -724,8 +724,8 @@ private extension MasterTimelineViewController {
 	
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
-			MasterTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
-				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
+			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
+				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainTimelineTableViewCell
 				self?.configure(cell, article: article, indexPath: indexPath)
 				return cell
 			})
@@ -733,7 +733,7 @@ private extension MasterTimelineViewController {
 		return dataSource
     }
 	
-	func configure(_ cell: MasterTimelineTableViewCell, article: Article, indexPath: IndexPath) {
+	func configure(_ cell: MainTimelineTableViewCell, article: Article, indexPath: IndexPath) {
 		let iconImage = iconImageFor(article)
 		let featuredImage = featuredImageFor(article)
 		
@@ -741,7 +741,7 @@ private extension MasterTimelineViewController {
 		let showIcon = coordinator.showIcons && iconImage != nil
 		let hideSeparater = indexPath.row == coordinator.articles.count - 1
 		
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: hideSeparater)
+		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: hideSeparater)
 	}
 	
 	func iconImageFor(_ article: Article) -> IconImage? {

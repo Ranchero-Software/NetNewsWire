@@ -8,11 +8,11 @@
 
 import UIKit
 
-@MainActor final class MasterTimelineTitleView: UIView {
+@MainActor final class MainTimelineTitleView: UIView {
 
 	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var label: UILabel!
-	@IBOutlet weak var unreadCountView: MasterTimelineUnreadCountView!
+	@IBOutlet weak var unreadCountView: MainTimelineUnreadCountView!
 
 	private lazy var pointerInteraction: UIPointerInteraction = {
 		UIPointerInteraction(delegate: self)
@@ -45,7 +45,7 @@ import UIKit
 	
 }
 
-extension MasterTimelineTitleView: UIPointerInteractionDelegate {
+extension MainTimelineTitleView: UIPointerInteractionDelegate {
 	
 	func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
 		var rect = self.frame

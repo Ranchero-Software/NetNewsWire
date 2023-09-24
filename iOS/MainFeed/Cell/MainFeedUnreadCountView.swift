@@ -8,7 +8,7 @@
 
 import UIKit
 
-@MainActor class MasterFeedUnreadCountView : UIView {
+@MainActor class MainFeedUnreadCountView : UIView {
 	
 	var padding: UIEdgeInsets {
 		return UIEdgeInsets(top: 1.0, left: 9.0, bottom: 1.0, right: 9.0)

@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-@MainActor struct MasterFeedTableViewSectionHeaderLayout {
+@MainActor struct MainFeedTableViewSectionHeaderLayout {
 
 	private static let labelMarginRight = CGFloat(integerLiteral: 8)
 	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
@@ -28,35 +28,35 @@ import RSCore
 		
 		// Disclosure Button
 		var rDisclosure = CGRect.zero
-		rDisclosure.size = MasterFeedTableViewSectionHeaderLayout.disclosureButtonSize
+		rDisclosure.size = MainFeedTableViewSectionHeaderLayout.disclosureButtonSize
 		rDisclosure.origin.x = bounds.maxX - rDisclosure.size.width
 
 
 		// Title
 		let rLabelx = 15.0
-		let rLabely = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewSectionHeaderLayout.verticalPadding)
+		let rLabely = UIFontMetrics.default.scaledValue(for: MainFeedTableViewSectionHeaderLayout.verticalPadding)
 		
 		var labelWidth = CGFloat.zero
-		labelWidth = cellWidth - (rLabelx + MasterFeedTableViewSectionHeaderLayout.labelMarginRight)
+		labelWidth = cellWidth - (rLabelx + MainFeedTableViewSectionHeaderLayout.labelMarginRight)
 		
 		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
 		var rLabel = CGRect(x: rLabelx, y: rLabely, width: labelWidth, height: labelSizeInfo.size.height)
 		
 		// Determine cell height
-		let paddedLabelHeight = rLabel.maxY + UIFontMetrics.default.scaledValue(for: MasterFeedTableViewSectionHeaderLayout.verticalPadding)
+		let paddedLabelHeight = rLabel.maxY + UIFontMetrics.default.scaledValue(for: MainFeedTableViewSectionHeaderLayout.verticalPadding)
 		let maxGraphicsHeight = [rDisclosure].maxY()
 		var cellHeight = max(paddedLabelHeight, maxGraphicsHeight)
-		if cellHeight < MasterFeedTableViewSectionHeaderLayout.minRowHeight {
-			cellHeight = MasterFeedTableViewSectionHeaderLayout.minRowHeight
+		if cellHeight < MainFeedTableViewSectionHeaderLayout.minRowHeight {
+			cellHeight = MainFeedTableViewSectionHeaderLayout.minRowHeight
 		}
 		
 		// Center in Cell
 		let newBounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.width, height: cellHeight)
-		rDisclosure = MasterFeedTableViewCellLayout.centerVertically(rDisclosure, newBounds)
+		rDisclosure = MainFeedTableViewCellLayout.centerVertically(rDisclosure, newBounds)
 
 		// Small fonts need centered if we hit the minimum row height
-		if cellHeight == MasterFeedTableViewSectionHeaderLayout.minRowHeight {
-			rLabel = MasterFeedTableViewCellLayout.centerVertically(rLabel, newBounds)
+		if cellHeight == MainFeedTableViewSectionHeaderLayout.minRowHeight {
+			rLabel = MainFeedTableViewCellLayout.centerVertically(rLabel, newBounds)
 		}
 		
 		//  Assign the properties

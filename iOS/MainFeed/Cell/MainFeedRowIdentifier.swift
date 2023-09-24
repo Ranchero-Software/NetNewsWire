@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MasterFeedRowIdentifier: NSObject, NSCopying {
+class MainFeedRowIdentifier: NSObject, NSCopying {
 
 	var indexPath: IndexPath
 	

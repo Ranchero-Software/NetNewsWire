@@ -11,13 +11,13 @@ import RSCore
 import Account
 import RSTree
 
-protocol MasterFeedTableViewCellDelegate: AnyObject {
-	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MasterFeedTableViewCell, expanding: Bool)
+protocol MainFeedTableViewCellDelegate: AnyObject {
+	func mainFeedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool)
 }
 
-@MainActor final class MasterFeedTableViewCell : VibrantTableViewCell {
+@MainActor final class MainFeedTableViewCell : VibrantTableViewCell {
 
-	weak var delegate: MasterFeedTableViewCellDelegate?
+	weak var delegate: MainFeedTableViewCellDelegate?
 
 	override var accessibilityLabel: String? {
 		set {}
@@ -111,7 +111,7 @@ protocol MasterFeedTableViewCellDelegate: AnyObject {
 	
 	private var isDisclosureExpanded = false
 	private var disclosureButton: UIButton?
-	private var unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
+	private var unreadCountView = MainFeedUnreadCountView(frame: CGRect.zero)
 	private var isShowingEditControl = false
 	
 	required init?(coder: NSCoder) {
@@ -147,13 +147,13 @@ protocol MasterFeedTableViewCellDelegate: AnyObject {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable, itemIsInFolder: itemIsInFolder)
+		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable, itemIsInFolder: itemIsInFolder)
 		return CGSize(width: bounds.width, height: layout.height)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable, itemIsInFolder: itemIsInFolder)
+		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable, itemIsInFolder: itemIsInFolder)
 		layoutWith(layout)
 		if isDisclosureAvailable {
 			titleView.font = .preferredFont(forTextStyle: .body).bold()
@@ -165,7 +165,7 @@ protocol MasterFeedTableViewCellDelegate: AnyObject {
 	@objc func buttonPressed(_ sender: UIButton) {
 		if isDisclosureAvailable {
 			setDisclosure(isExpanded: !isDisclosureExpanded, animated: true)
-			delegate?.masterFeedTableViewCellDisclosureDidToggle(self, expanding: isDisclosureExpanded)
+			delegate?.mainFeedTableViewCellDisclosureDidToggle(self, expanding: isDisclosureExpanded)
 		}
 	}
 	
@@ -198,7 +198,7 @@ protocol MasterFeedTableViewCellDelegate: AnyObject {
 	
 }
 
-private extension MasterFeedTableViewCell {
+private extension MainFeedTableViewCell {
 
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
@@ -224,7 +224,7 @@ private extension MasterFeedTableViewCell {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 
-	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
+	func layoutWith(_ layout: MainFeedTableViewCellLayout) {
 		iconView.setFrameIfNotEqual(layout.faviconRect)
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)

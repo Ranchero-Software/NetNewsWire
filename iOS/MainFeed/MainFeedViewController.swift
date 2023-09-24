@@ -15,7 +15,7 @@ import RSCore
 import RSTree
 import SafariServices
 
-class MasterFeedViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
+class MainFeedViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
@@ -27,8 +27,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	let refreshProgressModel = RefreshProgressModel()
 	lazy var progressBarViewController = UIHostingController(rootView: RefreshProgressView(progressBarMode: refreshProgressModel))
 	
-	var mainControllerIdentifier = MainControllerIdentifier.masterFeed
-	
+	var mainControllerIdentifier = MainControllerIdentifier.mainFeed
+
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
 
@@ -134,7 +134,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		node = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
 
 		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
-		if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
+		if let cell = tableView.cellForRow(at: indexPath) as? MainFeedTableViewCell {
 			cell.unreadCount = unreadCountProvider.unreadCount
 		}
 	}
@@ -186,7 +186,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainFeedTableViewCell
 		configure(cell, indexPath)
 		return cell
 	}
@@ -352,7 +352,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	}
 	
 	override func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-		guard let identifier = configuration.identifier as? MasterFeedRowIdentifier,
+		guard let identifier = configuration.identifier as? MainFeedRowIdentifier,
 			  let cell = tableView.cellForRow(at: identifier.indexPath) else {
 				  return nil
 			  }
@@ -531,7 +531,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	// MARK: API
 	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
-		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
+		if let indexPath = coordinator.mainFeedIndexPathForCurrentTimeline() {
 			if adjustScroll {
 				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
@@ -718,7 +718,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 
 // MARK: UIContextMenuInteractionDelegate
 
-extension MasterFeedViewController: UIContextMenuInteractionDelegate {
+extension MainFeedViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
 
 		guard let sectionIndex = interaction.view?.tag,
@@ -759,9 +759,9 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 
 // MARK: MasterFeedTableViewSectionHeaderDelegate
 
-extension MasterFeedViewController: MasterFeedTableViewSectionHeaderDelegate {
+extension MainFeedViewController: MainFeedTableViewSectionHeaderDelegate {
 	
-	func masterFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MasterFeedTableViewSectionHeader) {
+	func mainFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MasterFeedTableViewSectionHeader) {
 		toggle(sender)
 	}
 	
@@ -769,9 +769,9 @@ extension MasterFeedViewController: MasterFeedTableViewSectionHeaderDelegate {
 
 // MARK: MasterTableViewCellDelegate
 
-extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
+extension MainFeedViewController: MainFeedTableViewCellDelegate {
 	
-	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MasterFeedTableViewCell, expanding: Bool) {
+	func mainFeedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool) {
 		if expanding {
 			expand(sender)
 		} else {
@@ -783,7 +783,7 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 
 // MARK: Private
 
-private extension MasterFeedViewController {
+private extension MainFeedViewController {
 	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
@@ -799,14 +799,14 @@ private extension MasterFeedViewController {
 		let titleLabel = NonIntrinsicLabel()
 		titleLabel.text = "But I must explain"
 		
-		let unreadCountView = MasterFeedUnreadCountView()
+		let unreadCountView = MainFeedUnreadCountView()
 		unreadCountView.unreadCount = 10
 		
-		let layout = MasterFeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false, itemIsInFolder: false)
+		let layout = MainFeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false, itemIsInFolder: false)
 		tableView.estimatedRowHeight = layout.height
 	}
 	
-	func configure(_ cell: MasterFeedTableViewCell, _ indexPath: IndexPath) {
+	func configure(_ cell: MainFeedTableViewCell, _ indexPath: IndexPath) {
 		guard let node = coordinator.nodeFor(indexPath) else { return }
 
 		cell.delegate = self
@@ -849,7 +849,7 @@ private extension MasterFeedViewController {
 		
 	}
 	
-	func configureIcon(_ cell: MasterFeedTableViewCell, _ indexPath: IndexPath) {
+	func configureIcon(_ cell: MainFeedTableViewCell, _ indexPath: IndexPath) {
 		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? FeedProtocol, let feedID = feed.itemID else {
 			return
 		}
@@ -867,7 +867,7 @@ private extension MasterFeedViewController {
 		applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
-	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MasterFeedTableViewCell, IndexPath) -> Void) {
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedTableViewCell, IndexPath) -> Void) {
 		applyToAvailableCells { (cell, indexPath) in
 			if let node = coordinator.nodeFor(indexPath),
 			   let representedFeed = representedObject as? FeedProtocol,
@@ -878,12 +878,12 @@ private extension MasterFeedViewController {
 		}
 	}
 	
-	func applyToAvailableCells(_ completion: (MasterFeedTableViewCell, IndexPath) -> Void) {
+	func applyToAvailableCells(_ completion: (MainFeedTableViewCell, IndexPath) -> Void) {
 		for cell in tableView.visibleCells {
 			guard let indexPath = tableView.indexPath(for: cell) else {
 				continue
 			}
-			completion(cell as! MasterFeedTableViewCell, indexPath)
+			completion(cell as! MainFeedTableViewCell, indexPath)
 		}
 	}
 	
@@ -926,14 +926,14 @@ private extension MasterFeedViewController {
 		}
 	}
 
-	func expand(_ cell: MasterFeedTableViewCell) {
+	func expand(_ cell: MainFeedTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
 			return
 		}
 		coordinator.expand(node)
 	}
 
-	func collapse(_ cell: MasterFeedTableViewCell) {
+	func collapse(_ cell: MainFeedTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
 			return
 		}
@@ -941,7 +941,7 @@ private extension MasterFeedViewController {
 	}
 
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: MasterFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
 			
 			guard let self = self else { return nil }
 			
@@ -991,7 +991,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: MasterFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
 			guard let self = self else { return nil }
 			
@@ -1018,7 +1018,7 @@ private extension MasterFeedViewController {
 	}
 
 	func makePseudoFeedContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: MasterFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
 			guard let self = self else { return nil }
 
@@ -1527,7 +1527,7 @@ private extension MasterFeedViewController {
 	
 }
 
-extension MasterFeedViewController: UIGestureRecognizerDelegate {
+extension MainFeedViewController: UIGestureRecognizerDelegate {
 	func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 		guard let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
 			return false

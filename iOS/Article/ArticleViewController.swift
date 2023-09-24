@@ -617,7 +617,7 @@ private extension ArticleViewController {
 	
 	func updateUnreadCountIndicator() {
 		if currentUnreadCount > 0 && (traitCollection.userInterfaceIdiom == .phone || lastKnownDisplayMode == .secondaryOnly) {
-			let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
+			let unreadCountView = MainTimelineUnreadCountView(frame: .zero)
 			unreadCountView.unreadCount = currentUnreadCount
 			unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
 			navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
