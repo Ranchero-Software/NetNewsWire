@@ -55,7 +55,9 @@
 			this.popover = footnoteMarkup(content);
 			this.style = window.getComputedStyle(this.popover);
 			this.fnref = fnref;
-			this.fnref.closest(`.${CONTAINER_CLS}`).insertBefore(this.popover, fnref);
+			let container = this.fnref.closest(`.${CONTAINER_CLS}`);
+			container.insertBefore(this.popover, fnref);
+			container.style.zIndex = 1;
 			/** @type {HTMLElement} */
 		    this.arrow = this.popover.querySelector(`.${POPOVER_ARROW_CLS}`);
 			this.reposition();
@@ -77,6 +79,7 @@
 		}
   
 		cleanup() {
+			this.fnref.closest(`.${CONTAINER_CLS}`).style.zIndex = 0;
 			remove(this.popover);
 			document.removeEventListener("click", this.clickoutHandler, {capture: true});
 			window.removeEventListener("resize", this.resizeHandler);
