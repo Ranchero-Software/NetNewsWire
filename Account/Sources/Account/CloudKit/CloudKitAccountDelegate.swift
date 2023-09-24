@@ -629,11 +629,12 @@ private extension CloudKitAccountDelegate {
 		}
 
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
-		FeedFinder.find(url: url) { result in
-			
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success(let feedSpecifiers):
+
+		Task { @MainActor in
+			do {
+				let feedSpecifiers = try await FeedFinder.find(url: url)
+				self.refreshProgress.completeTask()
+
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
 					self.refreshProgress.completeTasks(3)
 					if validateFeed {
@@ -644,13 +645,13 @@ private extension CloudKitAccountDelegate {
 					}
 					return
 				}
-				
+
 				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
 					self.refreshProgress.completeTasks(4)
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
 				}
-				
+
 				let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 				feed.editedName = editedName
 				container.addFeed(feed)
@@ -662,12 +663,12 @@ private extension CloudKitAccountDelegate {
 						account.update(feed, with: parsedFeed) { result in
 							switch result {
 							case .success:
-								
+
 								self.accountZone.createFeed(url: bestFeedSpecifier.urlString,
-															   name: parsedFeed.title,
-															   editedName: editedName,
-															   homePageURL: parsedFeed.homePageURL,
-															   container: container) { result in
+															name: parsedFeed.title,
+															editedName: editedName,
+															homePageURL: parsedFeed.homePageURL,
+															container: container) { result in
 
 									self.refreshProgress.completeTask()
 									switch result {
@@ -680,7 +681,7 @@ private extension CloudKitAccountDelegate {
 										self.refreshProgress.completeTasks(2)
 										completion(.failure(error))
 									}
-									
+
 								}
 
 							case .failure(let error):
@@ -688,18 +689,17 @@ private extension CloudKitAccountDelegate {
 								self.refreshProgress.completeTasks(3)
 								completion(.failure(error))
 							}
-							
+
 						}
 					} else {
 						self.refreshProgress.completeTasks(3)
 						container.removeFeed(feed)
 						completion(.failure(AccountError.createErrorNotFound))
 					}
-						
+
 				}
-								
-			case .failure:
-				self.refreshProgress.completeTasks(3)
+			} catch {
+				self.refreshProgress.completeTasks(4)
 				if validateFeed {
 					self.refreshProgress.completeTask()
 					completion(.failure(AccountError.createErrorNotFound))

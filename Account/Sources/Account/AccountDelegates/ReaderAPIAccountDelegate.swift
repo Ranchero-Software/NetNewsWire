@@ -389,19 +389,20 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	}
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
-		guard let url = URL(string: url) else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			return
-		}
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		
-		FeedFinder.find(url: url) { result in
-			self.refreshProgress.completeTask()
 
-			switch result {
-			case .success(let feedSpecifiers):
-				let feedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
+		Task { @MainActor in
+
+			guard let url = URL(string: url) else {
+				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+				return
+			}
+
+			refreshProgress.addToNumberOfTasksAndRemaining(2)
+
+			do {
+				var feedSpecifiers = try await FeedFinder.find(url: url)
+				self.refreshProgress.completeTask()
+				feedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
 					self.refreshProgress.clear()
 					completion(.failure(AccountError.createErrorNotFound))
@@ -409,32 +410,24 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 				}
 
 				self.caller.createSubscription(url: bestFeedSpecifier.urlString, name: name) { result in
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success(let subResult):
-						switch subResult {
-						case .created(let subscription):
-							self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
-						case .notFound:
-							DispatchQueue.main.async {
+					Task { @MainActor in
+						self.refreshProgress.completeTask()
+						switch result {
+						case .success(let subResult):
+							switch subResult {
+							case .created(let subscription):
+								self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
+							case .notFound:
 								completion(.failure(AccountError.createErrorNotFound))
 							}
-						}
-					case .failure(let error):
-						DispatchQueue.main.async {
+						case .failure(let error):
 							let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
 							completion(.failure(wrappedError))
 						}
 					}
-					
 				}
-			case .failure:
-				self.refreshProgress.clear()
-				completion(.failure(AccountError.createErrorNotFound))
 			}
-			
 		}
-		
 	}
 
     func renameFeed(for account: Account, feed: Feed, name: String) async throws {

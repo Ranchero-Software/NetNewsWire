@@ -14,9 +14,27 @@ import AccountError
 
 public final class FeedFinder {
 	
-	public static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
+	@MainActor public static func find(url: URL) async throws -> Set<FeedSpecifier> {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			find(url: url) { result in
+				switch result {
+				case .success(let feedSpecifiers):
+					continuation.resume(returning: feedSpecifiers)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+}
+
+private extension FeedFinder {
+
+	@MainActor static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		downloadAddingToCache(url) { (data, response, error) in
-			
+
 			if response?.forcedStatusCode == 404 {
 				if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
 					urlComponents.path = "\(urlComponents.path).json"
@@ -29,39 +47,36 @@ public final class FeedFinder {
 				}
 				return
 			}
-			
+
 			if let error = error {
 				completion(.failure(error))
 				return
 			}
-			
+
 			guard let data = data, let response = response else {
 				completion(.failure(AccountError.createErrorNotFound))
 				return
 			}
-			
+
 			if !response.statusIsOK || data.isEmpty {
 				completion(.failure(AccountError.createErrorNotFound))
 				return
 			}
-			
+
 			if FeedFinder.isFeed(data, url.absoluteString) {
 				let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
 				completion(.success(Set([feedSpecifier])))
 				return
 			}
-			
+
 			if !FeedFinder.isHTML(data) {
 				completion(.failure(AccountError.createErrorNotFound))
 				return
 			}
-			
+
 			FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString, completion: completion)
 		}
 	}
-}
-
-private extension FeedFinder {
 
 	static func addFeedSpecifier(_ feedSpecifier: FeedSpecifier, feedSpecifiers: inout [String: FeedSpecifier]) {
 		// If there’s an existing feed specifier, merge the two so that we have the best data. If one has a title and one doesn’t, use that non-nil title. Use the better source.

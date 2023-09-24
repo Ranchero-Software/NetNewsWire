@@ -275,25 +275,26 @@ private extension LocalAccountDelegate {
 		// with an Untitled name if we don't delay it being added to the sidebar.
 		BatchUpdate.shared.start()
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		FeedFinder.find(url: url) { result in
-			
-			switch result {
-			case .success(let feedSpecifiers):
+
+		Task { @MainActor in
+
+			do {
+				let feedSpecifiers = try await FeedFinder.find(url: url)
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-					let url = URL(string: bestFeedSpecifier.urlString) else {
-						self.refreshProgress.completeTask()
-						BatchUpdate.shared.end()
-						completion(.failure(AccountError.createErrorNotFound))
-						return
+					  let url = URL(string: bestFeedSpecifier.urlString) else {
+					self.refreshProgress.completeTask()
+					BatchUpdate.shared.end()
+					completion(.failure(AccountError.createErrorNotFound))
+					return
 				}
-				
+
 				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
 					self.refreshProgress.completeTask()
 					BatchUpdate.shared.end()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
 				}
-				
+
 				InitialFeedDownloader.download(url) { parsedFeed in
 					self.refreshProgress.completeTask()
 
@@ -310,10 +311,9 @@ private extension LocalAccountDelegate {
 						BatchUpdate.shared.end()
 						completion(.failure(AccountError.createErrorNotFound))
 					}
-					
+
 				}
-				
-			case .failure:
+			} catch {
 				BatchUpdate.shared.end()
 				self.refreshProgress.completeTask()
 				completion(.failure(AccountError.createErrorNotFound))
