@@ -140,10 +140,6 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
         try await articlesTable.articlesForFeed(feedID)
     }
 
-    public func fetchArticlesAsync(_ feedID: String, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchArticlesAsync(feedID, completion)
-	}
-
 	public func fetchArticlesAsync(_ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
 		articlesTable.fetchArticlesAsync(feedIDs, completion)
 	}

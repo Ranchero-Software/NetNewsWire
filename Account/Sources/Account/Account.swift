@@ -1178,16 +1178,13 @@ private extension Account {
 	}
 
 	func fetchArticlesAsync(feed: Feed, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchArticlesAsync(feed.feedID) { [weak self] articleSetResult in
-            Task { @MainActor [weak self] in
-                switch articleSetResult {
-                case .success(let articles):
-                    self?.validateUnreadCount(feed, articles)
-                    completion(.success(articles))
-                case .failure(let databaseError):
-                    completion(.failure(databaseError))
-                }
-            }
+		Task { @MainActor in
+			do {
+				let articles = try await self.articlesForFeed(feed)
+				completion(.success(articles))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
 		}
 	}
 
