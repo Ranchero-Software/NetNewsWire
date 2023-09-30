@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.5 TestFlight build 6121 - 29 Sep 2023
+
+Build using Xcode 15 to make sure there are no regressions.
+
 ### 6.1.4 TestFlight build 6120 - 1 July 2023
 
 Build using Xcode 14.3.1 so the app won’t crash on launch on iOS 13.
