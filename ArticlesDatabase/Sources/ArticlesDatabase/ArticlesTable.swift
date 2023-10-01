@@ -88,8 +88,8 @@ final class ArticlesTable: DatabaseTable {
 		return try fetchArticles{ self.fetchUnreadArticlesBetween(feedIDs, limit, $0, before, after) }
 	}
 
-	func fetchUnreadArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchUnreadArticles(feedIDs, limit, $0) }, completion)
+	func unreadArticlesForFeeds(_ feedIDs: Set<String>, _ limit: Int?) async throws -> Set<Article> {
+		try await articlesWithFetchMethod { self.fetchUnreadArticles(feedIDs, limit, $0) }
 	}
 
 	// MARK: - Fetching Today Articles
@@ -98,8 +98,8 @@ final class ArticlesTable: DatabaseTable {
 		return try fetchArticles{ self.fetchArticlesSince(feedIDs, cutoffDate, limit, $0) }
 	}
 
-	func fetchArticlesSinceAsync(_ feedIDs: Set<String>, _ cutoffDate: Date, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchArticlesSince(feedIDs, cutoffDate, limit, $0) }, completion)
+	func articlesForFeedIDsSince(_ feedIDs: Set<String>, _ cutoffDate: Date, _ limit: Int?) async throws -> Set<Article> {
+		try await articlesWithFetchMethod { self.fetchArticlesSince(feedIDs, cutoffDate, limit, $0) }
 	}
 
 	// MARK: - Fetching Starred Articles

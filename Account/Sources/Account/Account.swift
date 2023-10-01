@@ -1152,7 +1152,16 @@ private extension Account {
 	}
 
 	func fetchTodayArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchTodayArticlesAsync(flattenedFeeds().feedIDs(), limit, completion)
+		Task { @MainActor in
+			let feedIDs = flattenedFeeds().feedIDs()
+
+			do {
+				let articles = try await database.todayArticlesForFeeds(feedIDs, limit)
+				completion(.success(articles))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
+		}
 	}
 
     @MainActor func fetchArticles(folder: Folder) throws -> Set<Article> {
@@ -1225,7 +1234,7 @@ private extension Account {
 				Task { @MainActor in
 					completion(.failure(error as! DatabaseError))
 				}
-			}	
+			}
 		}
 	}
 
@@ -1277,25 +1286,26 @@ private extension Account {
 	}
 
     func fetchUnreadArticlesAsync(forContainer container: Container, limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-        let feeds = container.flattenedFeeds()
-        database.fetchUnreadArticlesAsync(feeds.feedIDs(), limit) { [weak self] (articleSetResult) in
-            Task { @MainActor [weak self] in
-                switch articleSetResult {
-                case .success(let articles):
+		Task { @MainActor in
+			
+			let feeds = container.flattenedFeeds()
+			let feedIDs = feeds.feedIDs()
 
-                    // We don't validate limit queries because they, by definition, won't correctly match the
-                    // complete unread state for the given container.
-                    if limit == nil {
-                        self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-                    }
+			do {
+				let articles = try await database.unreadArticlesForFeeds(feedIDs, limit)
 
-                    completion(.success(articles))
-                case .failure(let databaseError):
-                    completion(.failure(databaseError))
-                }
-            }
-        }
-    }
+				// We don't validate limit queries because they, by definition, won't correctly match the
+				// complete unread state for the given container.
+				if limit == nil {
+					self.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+				}
+
+				completion(.success(articles))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
+		}
+	}
 
 	@MainActor func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
 		// Validate unread counts. This was the site of a performance slowdown:

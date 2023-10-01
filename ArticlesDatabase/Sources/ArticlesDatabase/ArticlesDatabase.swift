@@ -148,12 +148,12 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		try await articlesTable.articlesForArticleIDs(articleIDs)
 	}
 
-	public func fetchUnreadArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchUnreadArticlesAsync(feedIDs, limit, completion)
+	public func unreadArticlesForFeeds(_ feedIDs: Set<String>, _ limit: Int?) async throws -> Set<Article> {
+		try await articlesTable.unreadArticlesForFeeds(feedIDs, limit)
 	}
 
-	public func fetchTodayArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchArticlesSinceAsync(feedIDs, todayCutoffDate(), limit, completion)
+	public func todayArticlesForFeeds(_ feedIDs: Set<String>, _ limit: Int?) async throws -> Set<Article> {
+		try await articlesTable.articlesForFeedIDsSince(feedIDs, todayCutoffDate(), limit)
 	}
 
 	public func fetchedStarredArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
