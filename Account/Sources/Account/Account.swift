@@ -1221,7 +1221,21 @@ private extension Account {
 	}
 	
 	func fetchArticlesMatchingAsync(_ searchString: String, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs(), completion)
+		Task { @MainActor in
+
+			let feedIDs = flattenedFeeds().feedIDs()
+			
+			do {
+				let articles = try await database.articlesForSearchStringInFeeds(searchString, feedIDs)
+				Task { @MainActor in
+					completion(.success(articles))
+				}
+			} catch {
+				Task { @MainActor in
+					completion(.failure(error as! DatabaseError))
+				}
+			}
+		}
 	}
 
 	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {

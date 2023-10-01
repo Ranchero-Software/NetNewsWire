@@ -160,8 +160,8 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		try await articlesTable.starredArticlesForFeedIDs(feedIDs, limit)
 	}
 
-	public func fetchArticlesMatchingAsync(_ searchString: String, _ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchArticlesMatchingAsync(searchString, feedIDs, completion)
+	public func articlesForSearchStringInFeeds(_ searchString: String, _ feedIDs: Set<String>) async throws -> Set<Article> {
+		try await articlesTable.articleForSearchStringInFeeds(searchString, feedIDs)
 	}
 
 	public func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {

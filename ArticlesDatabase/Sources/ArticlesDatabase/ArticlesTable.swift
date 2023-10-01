@@ -149,8 +149,8 @@ final class ArticlesTable: DatabaseTable {
 		return articles
 	}
 
-	func fetchArticlesMatchingAsync(_ searchString: String, _ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchArticlesMatching(searchString, feedIDs, $0) }, completion)
+	func articleForSearchStringInFeeds(_ searchString: String, _ feedIDs: Set<String>) async throws -> Set<Article> {
+		try await articlesWithFetchMethod { self.fetchArticlesMatching(searchString, feedIDs, $0) }
 	}
 
 	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
