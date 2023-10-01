@@ -144,8 +144,8 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		try await articlesTable.articlesForFeeds(feedIDs)
 	}
 
-	public func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping  ArticleSetResultBlock) {
-		articlesTable.fetchArticlesAsync(articleIDs: articleIDs, completion)
+	public func articlesForArticleIDs(_ articleIDs: Set<String>) async throws -> Set<Article> {
+		try await articlesTable.articlesForArticleIDs(articleIDs)
 	}
 
 	public func fetchUnreadArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {

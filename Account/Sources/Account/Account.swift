@@ -1215,7 +1215,18 @@ private extension Account {
 	}
 
 	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		return database.fetchArticlesAsync(articleIDs: articleIDs, completion)
+		Task { @MainActor in
+			do {
+				let articles = try await database.articlesForArticleIDs(articleIDs)
+				Task { @MainActor in
+					completion(.success(articles))
+				}
+			} catch {
+				Task { @MainActor in
+					completion(.failure(error as! DatabaseError))
+				}
+			}	
+		}
 	}
 
     @MainActor func fetchUnreadArticles(feed: Feed) throws -> Set<Article> {

@@ -49,59 +49,33 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Fetching Articles for Feed
 
     func articlesForFeed(_ feedID: String) async throws -> Set<Article> {
-        return try await withCheckedThrowingContinuation { continuation in
-            fetchArticlesAsync({ self.fetchArticlesForFeedID(feedID, $0) }) { articleSetResult in
-                switch articleSetResult {
-                case .success(let articles):
-                    continuation.resume(returning: articles)
-                case .failure(let error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
+		try await articlesWithFetchMethod { self.fetchArticlesForFeedID(feedID, $0) }
     }
     
 	func articlesForFeeds(_ feedIDs: Set<String>) async throws -> Set<Article> {
-		return try await withCheckedThrowingContinuation { continuation in
-			fetchArticlesAsync({ self.fetchArticlesForFeedIDs(feedIDs, $0) }) { articleSetResult in
-				switch articleSetResult {
-				case .success(let articles):
-					continuation.resume(returning: articles)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
+		try await articlesWithFetchMethod { self.fetchArticlesForFeedIDs(feedIDs, $0) }
 	}
 
 	func fetchArticles(_ feedID: String) throws -> Set<Article> {
 		return try fetchArticles{ self.fetchArticlesForFeedID(feedID, $0) }
 	}
 
-	func fetchArticlesAsync(_ feedID: String, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchArticlesForFeedID(feedID, $0) }, completion)
-	}
-
 	func fetchArticles(_ feedIDs: Set<String>) throws -> Set<Article> {
 		return try fetchArticles{ self.fetchArticlesForFeedIDs(feedIDs, $0) }
-	}
-
-	func fetchArticlesAsync(_ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchArticlesForFeedIDs(feedIDs, $0) }, completion)
 	}
 
 	// MARK: - Fetching Articles by articleID
 
 	func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchArticles(articleIDs: articleIDs, $0) }
+		try fetchArticles{ self.fetchArticlesForArticleIDs(articleIDs, $0) }
 	}
 
 	func fetchArticlesBetween(articleIDs: Set<String>, before: Date?, after: Date?) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchArticlesBetween(articleIDs: articleIDs, before: before, after: after, $0) }
+		try fetchArticles{ self.fetchArticlesBetween(articleIDs: articleIDs, before: before, after: after, $0) }
 	}
 
-	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		return fetchArticlesAsync({ self.fetchArticles(articleIDs: articleIDs, $0) }, completion)
+	func articlesForArticleIDs(_ articleIDs: Set<String>) async throws -> Set<Article> {
+		try await articlesWithFetchMethod { self.fetchArticlesForArticleIDs(articleIDs, $0) }
 	}
 
 	// MARK: - Fetching Unread Articles
@@ -349,7 +323,7 @@ final class ArticlesTable: DatabaseTable {
 				}
 
 				let incomingArticleIDs = incomingArticles.articleIDs()
-				let fetchedArticles = self.fetchArticles(articleIDs: incomingArticleIDs, database) //4
+				let fetchedArticles = self.fetchArticlesForArticleIDs(incomingArticleIDs, database) //4
 				let fetchedArticlesDictionary = fetchedArticles.dictionary()
 
 				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
@@ -761,6 +735,22 @@ private extension ArticlesTable {
         return articlesCount
     }
     
+	private func articlesWithFetchMethod(_ fetchMethod: @escaping ArticlesFetchMethod) async throws -> Set<Article> {
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInDatabase { databaseResult in
+
+				switch databaseResult {
+				case .success(let database):
+					let articles = fetchMethod(database)
+					continuation.resume(returning: articles)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
+				}
+			}
+		}
+	}
+
+
 	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ completion: @escaping ArticleSetResultBlock) {
 		queue.runInDatabase { databaseResult in
 
@@ -941,7 +931,7 @@ private extension ArticlesTable {
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [feedID as AnyObject])
 	}
 
-	func fetchArticles(articleIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+	func fetchArticlesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
 		if articleIDs.isEmpty {
 			return Set<Article>()
 		}
