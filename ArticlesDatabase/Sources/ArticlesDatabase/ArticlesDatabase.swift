@@ -161,13 +161,13 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 	}
 
 	public func articlesForSearchStringInFeeds(_ searchString: String, _ feedIDs: Set<String>) async throws -> Set<Article> {
-		try await articlesTable.articleForSearchStringInFeeds(searchString, feedIDs)
+		try await articlesTable.articlesForSearchStringInFeeds(searchString, feedIDs)
 	}
 
-	public func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		articlesTable.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
+	public func articlesForSearchStringInArticleIDs(_ searchString: String, _ articleIDs: Set<String>) async throws -> Set<Article> {
+		try await articlesTable.articlesForSearchStringInArticleIDs(searchString, articleIDs)
 	}
-
+	
 	// MARK: - Unread Counts
 
 	/// Fetch all non-zero unread counts.

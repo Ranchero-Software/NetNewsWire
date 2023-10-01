@@ -149,12 +149,12 @@ final class ArticlesTable: DatabaseTable {
 		return articles
 	}
 
-	func articleForSearchStringInFeeds(_ searchString: String, _ feedIDs: Set<String>) async throws -> Set<Article> {
+	func articlesForSearchStringInFeeds(_ searchString: String, _ feedIDs: Set<String>) async throws -> Set<Article> {
 		try await articlesWithFetchMethod { self.fetchArticlesMatching(searchString, feedIDs, $0) }
 	}
 
-	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs, $0) }, completion)
+	func articlesForSearchStringInArticleIDs(_ searchString: String, _ articleIDs: Set<String>) async throws -> Set<Article> {
+		try await articlesWithFetchMethod { self.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs, $0) }
 	}
 
 	// MARK: - Fetching Articles for Indexer
