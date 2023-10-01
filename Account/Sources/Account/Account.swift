@@ -1231,18 +1231,18 @@ private extension Account {
 		return articles
 	}
 
-	func fetchArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
+	@MainActor func fetchArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
+
 		let feeds = container.flattenedFeeds()
-		database.fetchArticlesAsync(feeds.feedIDs()) { [weak self] (articleSetResult) in
-            Task { @MainActor [weak self] in
-                switch articleSetResult {
-                case .success(let articles):
-                    self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-                    completion(.success(articles))
-                case .failure(let databaseError):
-                    completion(.failure(databaseError))
-                }
-            }
+
+		Task { @MainActor in
+			do {
+				let articles = try await self.database.articlesForFeeds(feeds.feedIDs())
+				self.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+				completion(.success(articles))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
 		}
 	}
 

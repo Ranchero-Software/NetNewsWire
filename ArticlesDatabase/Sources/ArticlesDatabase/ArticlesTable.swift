@@ -61,6 +61,19 @@ final class ArticlesTable: DatabaseTable {
         }
     }
     
+	func articlesForFeeds(_ feedIDs: Set<String>) async throws -> Set<Article> {
+		return try await withCheckedThrowingContinuation { continuation in
+			fetchArticlesAsync({ self.fetchArticlesForFeedIDs(feedIDs, $0) }) { articleSetResult in
+				switch articleSetResult {
+				case .success(let articles):
+					continuation.resume(returning: articles)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	func fetchArticles(_ feedID: String) throws -> Set<Article> {
 		return try fetchArticles{ self.fetchArticlesForFeedID(feedID, $0) }
 	}
@@ -70,11 +83,11 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	func fetchArticles(_ feedIDs: Set<String>) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchArticles(feedIDs, $0) }
+		return try fetchArticles{ self.fetchArticlesForFeedIDs(feedIDs, $0) }
 	}
 
 	func fetchArticlesAsync(_ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchArticles(feedIDs, $0) }, completion)
+		fetchArticlesAsync({ self.fetchArticlesForFeedIDs(feedIDs, $0) }, completion)
 	}
 
 	// MARK: - Fetching Articles by articleID
@@ -875,7 +888,7 @@ private extension ArticlesTable {
 		return articlesWithResultSet(resultSet, database)
 	}
 
-	func fetchArticles(_ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+	func fetchArticlesForFeedIDs(_ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
 		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read=0
 		if feedIDs.isEmpty {
 			return Set<Article>()
