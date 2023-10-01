@@ -32,8 +32,8 @@ final class ArticlesTable: DatabaseTable {
 	let articleCutoffDate = Date().bySubtracting(days: 90)
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
-    private typealias ArticlesCountFetchMethod = (FMDatabase) -> Int
-    
+	private typealias ArticlesCountFetchMethod = (FMDatabase) -> Int
+
 	init(name: String, accountID: String, queue: DatabaseQueue, retentionStyle: ArticlesDatabase.RetentionStyle) {
 
 		self.name = name
@@ -41,17 +41,17 @@ final class ArticlesTable: DatabaseTable {
 		self.queue = queue
 		self.statusesTable = StatusesTable(queue: queue)
 		self.retentionStyle = retentionStyle
-		
+
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 	}
 
 	// MARK: - Fetching Articles for Feed
 
-    func articlesForFeed(_ feedID: String) async throws -> Set<Article> {
+	func articlesForFeed(_ feedID: String) async throws -> Set<Article> {
 		try await articlesWithFetchMethod { self.fetchArticlesForFeedID(feedID, $0) }
-    }
-    
+	}
+
 	func articlesForFeeds(_ feedIDs: Set<String>) async throws -> Set<Article> {
 		try await articlesWithFetchMethod { self.fetchArticlesForFeedIDs(feedIDs, $0) }
 	}
@@ -108,8 +108,8 @@ final class ArticlesTable: DatabaseTable {
 		return try fetchArticles{ self.fetchStarredArticles(feedIDs, limit, $0) }
 	}
 
-	func fetchStarredArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchStarredArticles(feedIDs, limit, $0) }, completion)
+	func starredArticlesForFeedIDs(_ feedIDs: Set<String>, _ limit: Int?) async throws -> Set<Article> {
+		try await articlesWithFetchMethod { self.fetchStarredArticles(feedIDs, limit, $0) }
 	}
 
     func fetchStarredArticlesCount(_ feedIDs: Set<String>) throws -> Int {

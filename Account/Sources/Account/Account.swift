@@ -1136,7 +1136,16 @@ private extension Account {
 	}
 
 	func fetchStarredArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchedStarredArticlesAsync(flattenedFeeds().feedIDs(), limit, completion)
+		Task { @MainActor in
+			let feedIDs = flattenedFeeds().feedIDs()
+
+			do {
+				let articles = try await database.starredArticlesForFeeds(feedIDs, limit)
+				completion(.success(articles))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
+		}
 	}
 
     @MainActor func fetchUnreadArticles(limit: Int?) throws -> Set<Article> {
