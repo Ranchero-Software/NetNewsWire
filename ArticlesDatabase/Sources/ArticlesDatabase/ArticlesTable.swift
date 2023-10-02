@@ -396,6 +396,30 @@ final class ArticlesTable: DatabaseTable {
 	
 	// MARK: - Unread Counts
 	
+	func r async throws -> Int {
+
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInDatabase { databaseResult in
+
+				func readUnreadCount(_ database: FMDatabase) -> Int {
+					let sql = "select count(*) from articles natural join statuses where feedID=? and read=0;"
+					guard let resultSet = database.executeQuery(sql, withArgumentsIn: [feedID]) else {
+						return 0
+					}
+					return self.numberWithCountResultSet(resultSet)
+				}
+
+				switch databaseResult {
+				case .success(let database):
+					let unreadCount = readUnreadCount(database)
+					continuation.resume(returning: unreadCount)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
+				}
+			}
+		}
+	}
+
 	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		// Get unread count for today, for instance.
 		if feedIDs.isEmpty {

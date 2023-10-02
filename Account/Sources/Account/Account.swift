@@ -1471,14 +1471,12 @@ private extension Account {
 	}
 
     func fetchUnreadCount(_ feed: Feed, _ completion: VoidCompletionBlock?) {
-        database.fetchUnreadCount(feed.feedID) { result in
-            Task { @MainActor in
-                if let unreadCount = try? result.get() {
-                    feed.unreadCount = unreadCount
-                }
-                completion?()
-            }
-        }
+		Task { @MainActor in
+			if let unreadCount = try? await database.unreadCountForFeed(feed.feedID) {
+				feed.unreadCount = unreadCount
+			}
+			completion?()
+		}
     }
 
 	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: VoidCompletionBlock?) {

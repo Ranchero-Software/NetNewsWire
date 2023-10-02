@@ -181,14 +181,8 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		operationQueue.add(operation)
 	}
 
-	/// Fetch unread count for a single feed.
-	public func fetchUnreadCount(_ feedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
-		let operation = FetchFeedUnreadCountOperation(feedID: feedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
-		operation.completionBlock = { operation in
-			let fetchOperation = operation as! FetchFeedUnreadCountOperation
-			completion(fetchOperation.result)
-		}
-		operationQueue.add(operation)
+	public func unreadCountForFeed(_ feedID: String) async throws -> Int {
+		try await articlesTable.unreadCountForFeedID(feedID)
 	}
 
 	/// Fetch non-zero unread counts for given feedIDs.
