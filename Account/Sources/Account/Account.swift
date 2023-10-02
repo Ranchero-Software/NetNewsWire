@@ -668,8 +668,8 @@ public enum FetchType {
 		structureDidChange()
 	}
 	
-	public func updateUnreadCounts(for feeds: Set<Feed>, completion: VoidCompletionBlock? = nil) {
-		fetchUnreadCounts(for: feeds, completion: completion)
+	public func updateUnreadCounts(for feeds: Set<Feed>) {
+		fetchUnreadCounts(for: feeds)
 	}
 
 	public func fetchUnreadArticlesBetween(limit: Int?, before: Date?, after: Date?) throws -> Set<Article> {
@@ -1454,50 +1454,46 @@ private extension Account {
 	/// Fetch unread counts for zero or more feeds.
 	///
 	/// Uses the most efficient method based on how many feeds were passed in.
-	func fetchUnreadCounts(for feeds: Set<Feed>, completion: VoidCompletionBlock?) {
+	func fetchUnreadCounts(for feeds: Set<Feed>) {
 		if feeds.isEmpty {
-			completion?()
 			return
 		}
 		if feeds.count == 1, let feed = feeds.first {
-			fetchUnreadCount(feed, completion)
+			fetchUnreadCount(feed)
 		}
 		else if feeds.count < 10 {
-			fetchUnreadCounts(feeds, completion)
+			fetchUnreadCounts(feeds)
 		}
 		else {
-			fetchAllUnreadCounts(completion)
+			fetchAllUnreadCounts()
 		}
 	}
 
-    func fetchUnreadCount(_ feed: Feed, _ completion: VoidCompletionBlock?) {
+    func fetchUnreadCount(_ feed: Feed) {
 		Task { @MainActor in
 			if let unreadCount = try? await database.unreadCountForFeed(feed.feedID) {
 				feed.unreadCount = unreadCount
 			}
-			completion?()
 		}
     }
 
-	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: VoidCompletionBlock?) {
-		let feedIDs = Set(feeds.map { $0.feedID })
-		database.fetchUnreadCounts(for: feedIDs) { result in
-            Task { @MainActor in
-                if let unreadCountDictionary = try? result.get() {
-                    self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
-                }
-                completion?()
-            }
+	func fetchUnreadCounts(_ feeds: Set<Feed>) {
+
+		Task { @MainActor in
+			let feedIDs = Set(feeds.map { $0.feedID })
+
+			if let unreadCountDictionary = try? await database.unreadCountsForFeedIDs(feedIDs) {
+				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+			}
 		}
 	}
 
-	func fetchAllUnreadCounts(_ completion: VoidCompletionBlock? = nil) {
+	func fetchAllUnreadCounts() {
 		fetchingAllUnreadCounts = true
 		database.fetchAllUnreadCounts { result in
             Task { @MainActor in
                 guard let unreadCountDictionary = try? result.get() else {
-                    completion?()
-                    return
+                     return
                 }
                 self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
 
@@ -1508,7 +1504,6 @@ private extension Account {
                     self.isUnreadCountsInitialized = true
                     self.postUnreadCountDidInitializeNotification()
                 }
-                completion?()
             }
 		}
 	}

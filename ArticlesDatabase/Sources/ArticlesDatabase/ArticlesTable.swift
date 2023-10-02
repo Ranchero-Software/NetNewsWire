@@ -420,6 +420,44 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func unreadCountsForFeedIDs(_ feedIDs: Set<String>) async throws -> UnreadCountDictionary {
+
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInDatabase { databaseResult in
+
+				func fetchUnreadCounts(_ database: FMDatabase) -> UnreadCountDictionary {
+
+					let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+					let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 group by feedID;"
+					let parameters = Array(feedIDs) as [Any]
+
+					guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+						return UnreadCountDictionary()
+					}
+
+					var unreadCountDictionary = UnreadCountDictionary()
+					while resultSet.next() {
+						let unreadCount = resultSet.long(forColumnIndex: 1)
+						if let feedID = resultSet.string(forColumnIndex: 0) {
+							unreadCountDictionary[feedID] = unreadCount
+						}
+					}
+					resultSet.close()
+
+					return unreadCountDictionary
+				}
+
+				switch databaseResult {
+				case .success(let database):
+					let unreadCountDictionary = fetchUnreadCounts(database)
+					continuation.resume(returning: unreadCountDictionary)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
+				}
+			}
+		}
+	}
+
 	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		// Get unread count for today, for instance.
 		if feedIDs.isEmpty {

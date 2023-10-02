@@ -185,14 +185,8 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		try await articlesTable.unreadCountForFeedID(feedID)
 	}
 
-	/// Fetch non-zero unread counts for given feedIDs.
-	public func fetchUnreadCounts(for feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		let operation = FetchUnreadCountsForFeedsOperation(feedIDs: feedIDs, databaseQueue: queue)
-		operation.completionBlock = { operation in
-			let fetchOperation = operation as! FetchUnreadCountsForFeedsOperation
-			completion(fetchOperation.result)
-		}
-		operationQueue.add(operation)
+	public func unreadCountsForFeedIDs(_ feedIDs: Set<String>) async throws -> UnreadCountDictionary {
+		try await articlesTable.unreadCountsForFeedIDs(feedIDs)
 	}
 
 	public func fetchUnreadCountForToday(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
