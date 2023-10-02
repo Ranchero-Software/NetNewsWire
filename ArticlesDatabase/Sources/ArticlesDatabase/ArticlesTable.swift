@@ -396,7 +396,7 @@ final class ArticlesTable: DatabaseTable {
 	
 	// MARK: - Unread Counts
 	
-	func r async throws -> Int {
+	func unreadCountForFeedID(_ feedID: String) async throws -> Int {
 
 		try await withCheckedThrowingContinuation { continuation in
 			queue.runInDatabase { databaseResult in
