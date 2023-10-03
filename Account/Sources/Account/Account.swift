@@ -340,7 +340,7 @@ public enum FetchType {
 				self.metadata.performedApril2020RetentionPolicyChange = true
 			}
 
-			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
+			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeedIDs())
 			self.fetchAllUnreadCounts()
 		}
 
@@ -754,15 +754,22 @@ public enum FetchType {
 	}
 
 	public func fetchUnreadCountForToday(_ completion: @escaping SingleUnreadCountCompletionBlock) {
-		database.fetchUnreadCountForToday(for: flattenedFeeds().feedIDs(), completion: completion)
+		Task { @MainActor in
+			do {
+				let unreadCount = try await database.unreadCountForTodayForFeedIDs(flattenedFeedIDs())
+				completion(.success(unreadCount))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
+		}
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ completion: @escaping SingleUnreadCountCompletionBlock) {
-		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), completion: completion)
+		database.fetchStarredAndUnreadCount(for: flattenedFeedIDs(), completion: completion)
 	}
 
     public func fetchCountForStarredArticles() throws -> Int {
-        return try database.fetchStarredArticlesCount(flattenedFeeds().feedIDs())
+        return try database.fetchStarredArticlesCount(flattenedFeedIDs())
     }
     
 	public func fetchUnreadArticleIDs() async throws -> Set<String> {
@@ -991,6 +998,10 @@ public enum FetchType {
 		return _flattenedFeeds
 	}
 
+	public func flattenedFeedIDs() -> Set<String> {
+		flattenedFeeds().feedIDs()
+	}
+
 	public func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		structureDidChange()
@@ -1132,12 +1143,12 @@ extension Account: FeedMetadataDelegate {
 private extension Account {
 
 	func fetchStarredArticles(limit: Int?) throws -> Set<Article> {
-		return try database.fetchStarredArticles(flattenedFeeds().feedIDs(), limit)
+		return try database.fetchStarredArticles(flattenedFeedIDs(), limit)
 	}
 
 	func fetchStarredArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		Task { @MainActor in
-			let feedIDs = flattenedFeeds().feedIDs()
+			let feedIDs = flattenedFeedIDs()
 
 			do {
 				let articles = try await database.starredArticlesForFeeds(feedIDs, limit)
@@ -1157,15 +1168,13 @@ private extension Account {
 	}
 
 	func fetchTodayArticles(limit: Int?) throws -> Set<Article> {
-		return try database.fetchTodayArticles(flattenedFeeds().feedIDs(), limit)
+		return try database.fetchTodayArticles(flattenedFeedIDs(), limit)
 	}
 
 	func fetchTodayArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		Task { @MainActor in
-			let feedIDs = flattenedFeeds().feedIDs()
-
 			do {
-				let articles = try await database.todayArticlesForFeeds(feedIDs, limit)
+				let articles = try await database.todayArticlesForFeeds(flattenedFeedIDs(), limit)
 				completion(.success(articles))
 			} catch {
 				completion(.failure(error as! DatabaseError))
@@ -1213,7 +1222,7 @@ private extension Account {
     }
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
-		return try database.fetchArticlesMatching(searchString, flattenedFeeds().feedIDs())
+		return try database.fetchArticlesMatching(searchString, flattenedFeedIDs())
 	}
 
 	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
@@ -1223,8 +1232,8 @@ private extension Account {
 	func fetchArticlesMatchingAsync(_ searchString: String, _ completion: @escaping ArticleSetResultBlock) {
 		Task { @MainActor in
 
-			let feedIDs = flattenedFeeds().feedIDs()
-			
+			let feedIDs = flattenedFeedIDs()
+
 			do {
 				let articles = try await database.articlesForSearchStringInFeeds(searchString, feedIDs)
 				Task { @MainActor in

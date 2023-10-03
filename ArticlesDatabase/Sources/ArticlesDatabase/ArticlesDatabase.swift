@@ -189,12 +189,12 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		try await articlesTable.unreadCountsForFeedIDs(feedIDs)
 	}
 
-	public func fetchUnreadCountForToday(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
-		fetchUnreadCount(for: feedIDs, since: todayCutoffDate(), completion: completion)
+	public func unreadCountForTodayForFeedIDs(_ feedIDs: Set<String>) async throws -> Int {
+		try await unreadCountForFeedIDsSince(feedIDs, todayCutoffDate())
 	}
 
-	public func fetchUnreadCount(for feedIDs: Set<String>, since: Date, completion: @escaping SingleUnreadCountCompletionBlock) {
-		articlesTable.fetchUnreadCount(feedIDs, since, completion)
+	public func unreadCountForFeedIDsSince(_ feedIDs: Set<String>, _ since: Date)  async throws -> Int {
+		try await articlesTable.unreadCountForFeedIDsSince(feedIDs, since)
 	}
 
 	public func fetchStarredAndUnreadCount(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {

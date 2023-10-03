@@ -458,37 +458,34 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+	func unreadCountForFeedIDsSince(_ feedIDs: Set<String>, _ since: Date) async throws -> Int {
 		// Get unread count for today, for instance.
 		if feedIDs.isEmpty {
-			completion(.success(0))
-			return
+			return 0
 		}
-		
-		queue.runInDatabase { databaseResult in
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
+		return try await withCheckedThrowingContinuation { continuation in
+			queue.runInDatabase { databaseResult in
 
-				var parameters = [Any]()
-				parameters += Array(feedIDs) as [Any]
-				parameters += [since] as [Any]
-				parameters += [since] as [Any]
+				func fetchUnreadCount(_ database: FMDatabase) -> Int {
+					let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+					let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
 
-				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
+					var parameters = [Any]()
+					parameters += Array(feedIDs) as [Any]
+					parameters += [since] as [Any]
+					parameters += [since] as [Any]
 
-				DispatchQueue.main.async {
-					completion(.success(unreadCount))
+					let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
+					return unreadCount
 				}
-			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
+				switch databaseResult {
+				case .success(let database):
+					let unreadCount = fetchUnreadCount(database)
+					continuation.resume(returning: unreadCount)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}
