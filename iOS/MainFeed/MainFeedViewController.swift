@@ -1427,7 +1427,7 @@ private extension MainFeedViewController {
 	func rename(indexPath: IndexPath) {
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? FeedProtocol else { return	}
 
-	let formatString = NSLocalizedString("alert.title.rename-feed.%@", comment: "Rename feed. The variable provided is the feed name. In English: Rename “%@”")
+		let formatString = NSLocalizedString("alert.title.rename-feed.%@", comment: "Rename feed. The variable provided is the feed name. In English: Rename “%@”")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, feed.nameForDisplay) as String
 		
 		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
@@ -1443,11 +1443,13 @@ private extension MainFeedViewController {
 			}
 			
 			if let feed = feed as? Feed {
-				do {
-					try await feed.rename(to: name)
-				} catch let error {
-					self?.presentError(error)
-				}
+				Task.init(operation: {
+					do {
+						try await feed.rename(to: name)
+					} catch let error {
+						self?.presentError(error)
+					}
+				})
 			} else if let folder = feed as? Folder {
 				folder.rename(to: name) { result in
 					switch result {

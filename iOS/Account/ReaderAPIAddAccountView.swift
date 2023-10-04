@@ -12,6 +12,7 @@ import Secrets
 import RSWeb
 import SafariServices
 import RSCore
+import ReaderAPI
 
 @MainActor struct ReaderAPIAddAccountView: View {
 	

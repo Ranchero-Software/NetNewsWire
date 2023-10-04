@@ -27,12 +27,12 @@ public class AddFeedIntentHandler: NSObject, AddFeedIntentHandling {
 		super.init()
 	}
 	
-	public func resolveURL(for intent: AddFeedIntent, with completion: @escaping (AddFeedURLResolutionResult) -> Void) {
-		guard let url = intent.url else {
+	public func resolveUrl(for intent: AddFeedIntent, with completion: @escaping (AddFeedUrlResolutionResult) -> Void) {
+		if let url = intent.url {
+			completion(.success(with: url))
+		} else {
 			completion(.unsupported(forReason: .required))
-			return
 		}
-		completion(.success(with: url))
 	}
 	
 	public func resolveTitle(for intent: AddFeedIntent, with completion: @escaping (INStringResolutionResult) -> Void) {
