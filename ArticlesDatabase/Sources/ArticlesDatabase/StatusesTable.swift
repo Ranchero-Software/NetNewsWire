@@ -133,34 +133,25 @@ final class StatusesTable: DatabaseTable {
         }
     }
 
-	func fetchArticleIDsForStatusesWithoutArticlesNewerThan(_ cutoffDate: Date, _ completion: @escaping ArticleIDsCompletionBlock) {
-		queue.runInDatabase { databaseResult in
-			
-			var error: DatabaseError?
-			var articleIDs = Set<String>()
-			
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
-				if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
-					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
+	func fetchArticleIDsForStatusesWithoutArticlesNewerThan(_ cutoffDate: Date) async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInDatabase { databaseResult in
+
+				func fetchArticleIDs(_ database: FMDatabase) -> Set<String> {
+					let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
+					if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
+						let articleIDs = resultSet.mapToSet(self.articleIDWithRow)
+						return articleIDs
+					}
+					return Set<String>()
 				}
-			}
-			
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-			case .failure(let databaseError):
-				error = databaseError
-			}
-			
-			if let error = error {
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			else {
-				DispatchQueue.main.async {
-					completion(.success(articleIDs))
+
+				switch databaseResult {
+				case .success(let database):
+					let articleIDs = fetchArticleIDs(database)
+					continuation.resume(returning: articleIDs)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}

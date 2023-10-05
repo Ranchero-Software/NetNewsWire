@@ -538,8 +538,8 @@ final class ArticlesTable: DatabaseTable {
 		return try statusesTable.fetchStarredArticleIDs()
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-		statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate, completion)
+	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() async throws -> Set<String> {
+		try await statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate)
 	}
 
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleStatusesResultBlock) {

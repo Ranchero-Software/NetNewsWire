@@ -235,8 +235,8 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-		articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() async throws -> Set<String> {
+		try await articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
 
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
