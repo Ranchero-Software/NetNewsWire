@@ -873,15 +873,17 @@ public enum FetchType {
 			return
 		}
 		
-		database.mark(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let updatedStatuses):
+		Task { @MainActor in
+			do {
+				let updatedStatuses = try await self.database.mark(articles, statusKey: statusKey, flag: flag)
 				let updatedArticleIDs = updatedStatuses.articleIDs()
 				let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-				self.noteStatusesForArticlesDidChange(updatedArticles)
+				if !updatedArticles.isEmpty {
+					self.noteStatusesForArticlesDidChange(updatedArticles)
+				}
 				completion(.success(updatedArticles))
-			case .failure(let error):
-				completion(.failure(error))
+			} catch {
+				completion(.failure(error as! DatabaseError))
 			}
 		}
 	}

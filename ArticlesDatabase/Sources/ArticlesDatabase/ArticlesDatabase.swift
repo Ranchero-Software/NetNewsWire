@@ -239,8 +239,8 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		try await articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
 
-	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
-		return articlesTable.mark(articles, statusKey, flag, completion)
+	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<ArticleStatus> {
+		try await articlesTable.mark(articles, statusKey, flag)
 	}
 
     public func markArticleIDs(_ articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {

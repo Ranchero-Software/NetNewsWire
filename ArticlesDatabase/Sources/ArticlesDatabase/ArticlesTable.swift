@@ -542,17 +542,16 @@ final class ArticlesTable: DatabaseTable {
 		try await statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate)
 	}
 
-	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
-		self.queue.runInTransaction { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
-				DispatchQueue.main.async {
-					completion(.success(statuses ?? Set<ArticleStatus>()))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
+	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) async throws -> Set<ArticleStatus> {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.queue.runInTransaction { databaseResult in
+				switch databaseResult {
+				case .success(let database):
+					let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
+					continuation.resume(returning: statuses)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}

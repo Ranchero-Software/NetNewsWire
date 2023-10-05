@@ -62,7 +62,7 @@ final class StatusesTable: DatabaseTable {
 	// MARK: - Marking
 
 	@discardableResult
-	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<ArticleStatus>? {
+	func mark(_ statuses: Set<ArticleStatus>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<ArticleStatus> {
 		// Sets flag in both memory and in database.
 
 		var updatedStatuses = Set<ArticleStatus>()
@@ -75,13 +75,11 @@ final class StatusesTable: DatabaseTable {
 			updatedStatuses.insert(status)
 		}
 
-		if updatedStatuses.isEmpty {
-			return nil
-		}
 		let articleIDs = updatedStatuses.articleIDs()
-		
-		self.markArticleIDs(articleIDs, statusKey, flag, database)
-		
+		if !articleIDs.isEmpty {
+			markArticleIDs(articleIDs, statusKey, flag, database)
+		}
+
 		return updatedStatuses
 	}
 
