@@ -765,7 +765,14 @@ public enum FetchType {
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ completion: @escaping SingleUnreadCountCompletionBlock) {
-		database.fetchStarredAndUnreadCount(for: flattenedFeedIDs(), completion: completion)
+		Task { @MainActor in
+			do {
+				let unreadCount = try await database.unreadCountForStarredArticlesForFeedIDs(flattenedFeedIDs())
+				completion(.success(unreadCount))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
+		}
 	}
 
     public func fetchCountForStarredArticles() throws -> Int {
@@ -820,14 +827,14 @@ public enum FetchType {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
-		
-		database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { updateArticlesResult in
-			switch updateArticlesResult {
-			case .success(let articleChanges):
+
+		Task { @MainActor in
+			do {
+				let articleChanges = try await database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
 				self.sendNotificationAbout(articleChanges)
 				completion(.success(articleChanges))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			} catch {
+				completion(.failure(error as! DatabaseError))
 			}
 		}
 	}
@@ -841,13 +848,13 @@ public enum FetchType {
 			return
 		}
 
-		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
-			switch updateArticlesResult {
-			case .success(let newAndUpdatedArticles):
-				self.sendNotificationAbout(newAndUpdatedArticles)
+		Task { @MainActor in
+			do {
+				let articleChanges = try await database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
+				self.sendNotificationAbout(articleChanges)
 				completion(nil)
-			case .failure(let databaseError):
-				completion(databaseError)
+			} catch {
+				completion(error as? DatabaseError)
 			}
 		}
 	}
@@ -975,13 +982,6 @@ public enum FetchType {
     }
 
 	// Delete the articles associated with the given set of articleIDs
-	func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
-		guard !articleIDs.isEmpty else {
-			completion?(nil)
-			return
-		}
-		database.delete(articleIDs: articleIDs, completion: completion)
-	}
 	
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
 	func emptyCaches() {
@@ -1501,9 +1501,9 @@ private extension Account {
 		fetchingAllUnreadCounts = true
 		database.fetchAllUnreadCounts { result in
             Task { @MainActor in
-                guard let unreadCountDictionary = try? result.get() else {
-                     return
-                }
+				guard let unreadCountDictionary = try? result.get() else {
+					return
+				}
                 self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
 
                 self.fetchingAllUnreadCounts = false

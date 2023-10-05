@@ -25,9 +25,12 @@ public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
 public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) -> Void
 
 public struct ArticleChanges {
+	
 	public let newArticles: Set<Article>?
 	public let updatedArticles: Set<Article>?
 	public let deletedArticles: Set<Article>?
+
+	static let empty = ArticleChanges(newArticles: nil, updatedArticles: nil, deletedArticles: nil)
 
 	public init() {
 		self.newArticles = Set<Article>()
@@ -197,34 +200,28 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		try await articlesTable.unreadCountForFeedIDsSince(feedIDs, since)
 	}
 
-	public func fetchStarredAndUnreadCount(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
-		articlesTable.fetchStarredAndUnreadCount(feedIDs, completion)
+	public func unreadCountForStarredArticlesForFeedIDs(_ feedIDs: Set<String>) async throws -> Int {
+		try await articlesTable.unreadCountForStarredArticlesForFeedIDs(feedIDs)
 	}
 
 	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
-	public func update(with parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+	public func update(with parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool) async throws -> ArticleChanges {
 		precondition(retentionStyle == .feedBased)
-		articlesTable.update(parsedItems, feedID, deleteOlder, completion)
+		return try await articlesTable.update(parsedItems, feedID, deleteOlder)
 	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
-	public func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+	public func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws -> ArticleChanges {
 		precondition(retentionStyle == .syncSystem)
-		articlesTable.update(feedIDsAndItems, defaultRead, completion)
+		return try await articlesTable.update(feedIDsAndItems, defaultRead)
 	}
 
     /// Delete articles
     public func deleteArticleIDs(_ articleIDs: Set<String>) async throws {
         try await articlesTable.deleteArticleIDs(articleIDs)
     }
-
-	/// Delete articles
-	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
-		articlesTable.delete(articleIDs: articleIDs, completion: completion)
-	}
-
 	// MARK: - Status
 
 	/// Fetch the articleIDs of unread articles.
