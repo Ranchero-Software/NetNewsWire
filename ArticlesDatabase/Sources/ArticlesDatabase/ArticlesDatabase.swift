@@ -249,8 +249,8 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
 	/// For newly-created statuses, mark them as read and not-starred.
-	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
-		articlesTable.createStatusesIfNeeded(articleIDs, completion)
+	public func createStatusesIfNeeded(articleIDs: Set<String>) async throws {
+		try await articlesTable.createStatusesIfNeeded(articleIDs)
 	}
 
 #if os(iOS)
