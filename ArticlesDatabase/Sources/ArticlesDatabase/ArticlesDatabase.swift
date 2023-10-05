@@ -247,10 +247,6 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
         try await articlesTable.markArticleIDs(articleIDs, statusKey, flag)
     }
 
-	public func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock?) {
-		articlesTable.mark(articleIDs, statusKey, flag, completion)
-	}
-
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
 	/// For newly-created statuses, mark them as read and not-starred.
 	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {

@@ -911,12 +911,14 @@ public enum FetchType {
 			completion?(nil)
 			return
 		}
-		database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { databaseError in
-			if let databaseError = databaseError {
-				completion?(databaseError)
-			} else {
+
+		Task { @MainActor in
+			do {
+				try await database.markArticleIDs(articleIDs, statusKey: statusKey, flag: flag)
 				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 				completion?(nil)
+			} catch {
+				completion?(error as? DatabaseError)
 			}
 		}
 	}
