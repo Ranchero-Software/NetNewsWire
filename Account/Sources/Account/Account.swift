@@ -896,16 +896,17 @@ public enum FetchType {
 			completion?(nil)
 			return
 		}
-		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
-			if let error = error {
-				completion?(error)
-				return
+
+		Task { @MainActor in
+			do {
+				let statusesDictionary = try await database.createStatusesIfNeeded(articleIDs: articleIDs)
+				completion?(nil)
+			} catch {
+				completion?(error as? DatabaseError)
 			}
-			self.noteStatusesForArticleIDsDidChange(articleIDs)
-			completion?(nil)
 		}
 	}
-	
+
 	/// Mark articleIDs statuses based on statusKey and flag.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {

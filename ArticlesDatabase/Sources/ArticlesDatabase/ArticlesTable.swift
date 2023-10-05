@@ -493,37 +493,6 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchStarredAndUnreadCount(_ feedIDs: Set<String>, _ completion: @escaping SingleUnreadCountCompletionBlock) {
-		if feedIDs.isEmpty {
-			completion(.success(0))
-			return
-		}
-
-		queue.runInDatabase { databaseResult in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
-				let parameters = Array(feedIDs) as [Any]
-
-				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
-
-				DispatchQueue.main.async {
-					completion(.success(unreadCount))
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
-			}
-		}
-	}
-
 	// MARK: - Statuses
 	
 	func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
@@ -574,30 +543,14 @@ final class ArticlesTable: DatabaseTable {
         }
     }
 
-	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: DatabaseCompletionBlock?) {
-		queue.runInTransaction { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				self.statusesTable.mark(articleIDs, statusKey, flag, database)
-				DispatchQueue.main.async {
-					completion?(nil)
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion?(databaseError)
-				}
-			}
-		}
-	}
-
-	func createStatusesIfNeeded(_ articleIDs: Set<String>) async throws {
+	func createStatusesIfNeeded(_ articleIDs: Set<String>) async throws -> [String: ArticleStatus]{
 
 		try await withCheckedThrowingContinuation { continuation in
 			queue.runInTransaction { databaseResult in
 				switch databaseResult {
 				case .success(let database):
-					let _ = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
-					continuation.resume(returning: nil)
+					let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
+					continuation.resume(returning: statusesDictionary)
 				case .failure(let databaseError):
 					continuation.resume(throwing: databaseError)
 				}
@@ -804,24 +757,6 @@ private extension ArticlesTable {
 					continuation.resume(returning: articles)
 				case .failure(let databaseError):
 					continuation.resume(throwing: databaseError)
-				}
-			}
-		}
-	}
-
-
-	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ completion: @escaping ArticleSetResultBlock) {
-		queue.runInDatabase { databaseResult in
-
-			switch databaseResult {
-			case .success(let database):
-				let articles = fetchMethod(database)
-				DispatchQueue.main.async {
-					completion(.success(articles))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
 				}
 			}
 		}
