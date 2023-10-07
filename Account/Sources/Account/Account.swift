@@ -373,16 +373,16 @@ public enum FetchType {
 		try CredentialsManager.removeCredentials(type: type, server: server, username: username)
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
 		switch type {
 		case .feedbin:
-			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+			return try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials)
 		case .newsBlur:
-			NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+			return try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials)
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
-			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
+			return try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
 		default:
-			break
+			return nil
 		}
 	}
 	

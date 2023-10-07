@@ -649,14 +649,21 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		caller.logout() { _ in }
 	}
 
-	class func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> ()) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
+
 		let caller = NewsBlurAPICaller(transport: transport) { url, credentials in
 			URLRequest(url: url, credentials: credentials)
 		}
 		caller.credentials = credentials
-		caller.validateCredentials() { result in
-			DispatchQueue.main.async {
-				completion(result)
+
+		return try await withCheckedThrowingContinuation { continuation in
+			caller.validateCredentials() { result in
+				switch result {
+				case .success(let credentials):
+					continuation.resume(returning: credentials)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
 	}

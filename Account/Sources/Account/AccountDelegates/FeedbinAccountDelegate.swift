@@ -612,16 +612,21 @@ public enum FeedbinAccountDelegateError: String, Error {
 	func accountWillBeDeleted(_ account: Account) {
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
 		
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials
-		caller.validateCredentials() { result in
-			DispatchQueue.main.async {
-				completion(result)
+		
+		return try await withCheckedThrowingContinuation { continuation in
+			caller.validateCredentials() { result in
+				switch result {
+				case .success(let credentials):
+					continuation.resume(returning: credentials)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
-		
 	}
 
 	// MARK: Suspend and Resume (for iOS)
