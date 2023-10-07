@@ -630,10 +630,6 @@ public enum FetchType {
         try await delegate.renameFeed(for: self, feed: feed, name: name)
     }
 
-	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
-	}
-	
 	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}

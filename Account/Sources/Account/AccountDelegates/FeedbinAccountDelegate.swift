@@ -1092,34 +1092,33 @@ private extension FeedbinAccountDelegate {
 	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
-			
+
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.externalID = String(sub.subscriptionID)
 			feed.iconURL = sub.jsonFeed?.icon
 			feed.faviconURL = sub.jsonFeed?.favicon
-		
+
 			account.addFeed(feed, to: container) { result in
-				switch result {
-				case .success:
-					if let name = name {
-						account.renameFeed(feed, to: name) { result in
-							switch result {
-							case .success:
+				Task { @MainActor in
+					switch result {
+					case .success:
+						if let name {
+							do {
+								try await account.rename(feed, to: name)
 								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							case .failure(let error):
+							} catch {
 								completion(.failure(error))
 							}
 						}
-					} else {
-						self.initialFeedDownload(account: account, feed: feed, completion: completion)
+						else {
+							self.initialFeedDownload(account: account, feed: feed, completion: completion)
+						}
+					case .failure(let error):
+						completion(.failure(error))
 					}
-				case .failure(let error):
-					completion(.failure(error))
 				}
 			}
-			
 		}
-		
 	}
 
 	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {

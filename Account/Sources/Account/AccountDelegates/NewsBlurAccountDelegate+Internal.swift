@@ -390,34 +390,36 @@ extension NewsBlurAccountDelegate {
         }
     }
 
-    func createFeed(account: Account, newsBlurFeed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(account: Account, newsBlurFeed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let newsBlurFeed = newsBlurFeed else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
 		}
-
+		
 		DispatchQueue.main.async {
 			let feed = account.createFeed(with: newsBlurFeed.name, url: newsBlurFeed.feedURL, feedID: String(newsBlurFeed.feedID), homePageURL: newsBlurFeed.homePageURL)
-            feed.externalID = String(newsBlurFeed.feedID)
-            feed.faviconURL = newsBlurFeed.faviconURL
-
+			feed.externalID = String(newsBlurFeed.feedID)
+			feed.faviconURL = newsBlurFeed.faviconURL
+			
 			account.addFeed(feed, to: container) { result in
-				switch result {
-				case .success:
-					if let name = name {
-						account.renameFeed(feed, to: name) { result in
-							switch result {
-							case .success:
+				
+				Task { @MainActor in
+					switch result {
+					case .success:
+						if let name {
+							do {
+								try await account.rename(feed, to: name)
 								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							case .failure(let error):
+							} catch {
 								completion(.failure(error))
 							}
 						}
-					} else {
-						self.initialFeedDownload(account: account, feed: feed, completion: completion)
+						else {
+							self.initialFeedDownload(account: account, feed: feed, completion: completion)
+						}
+					case .failure(let error):
+						completion(.failure(error))
 					}
-				case .failure(let error):
-					completion(.failure(error))
 				}
 			}
 		}
