@@ -133,54 +133,50 @@ import ReaderAPI
 		progressIndicator.startAnimation(self)
 		
 		let credentials = Credentials(type: .readerBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL) { [weak self] result in
-			
-			guard let self = self else { return }
-			
+
+		Task { @MainActor in
+
+			do {
+				let validatedCredentials = try await Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL)
+				if let validatedCredentials {
+					if self.account == nil {
+						self.account = AccountManager.shared.createAccount(type: self.accountType!)
+					}
+
+					do {
+						self.account?.endpointURL = apiURL
+
+						try self.account?.removeCredentials(type: .readerBasic)
+						try self.account?.removeCredentials(type: .readerAPIKey)
+						try self.account?.storeCredentials(credentials)
+						try self.account?.storeCredentials(validatedCredentials)
+
+						self.account?.refreshAll() { result in
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								NSApplication.shared.presentError(error)
+							}
+						}
+
+						self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+					} catch {
+						self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.keychainError.localizedDescription
+						self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public)")
+					}
+				}
+				else {
+					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.invalidUsernameOrPassword.localizedDescription
+				}
+			} catch {
+				self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.networkError.localizedDescription
+			}
+
 			self.actionButton.isEnabled = true
 			self.progressIndicator.isHidden = true
 			self.progressIndicator.stopAnimation(self)
-			
-			switch result {
-			case .success(let validatedCredentials):
-				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.invalidUsernameOrPassword.localizedDescription
-					return
-				}
-				
-				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: self.accountType!)
-				}
-				
-				do {
-					self.account?.endpointURL = apiURL
-
-					try self.account?.removeCredentials(type: .readerBasic)
-					try self.account?.removeCredentials(type: .readerAPIKey)
-					try self.account?.storeCredentials(credentials)
-					try self.account?.storeCredentials(validatedCredentials)
-					
-					self.account?.refreshAll() { result in
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
-						}
-					}
-					
-					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
-				} catch {
-					self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.keychainError.localizedDescription
-					self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public)")
-				}
-				
-			case .failure:
-				self.errorMessageLabel.stringValue = LocalizedNetNewsWireError.networkError.localizedDescription
-			}
-			
 		}
-		
 	}
 	
 	@IBAction func createAccountWithProvider(_ sender: Any) {

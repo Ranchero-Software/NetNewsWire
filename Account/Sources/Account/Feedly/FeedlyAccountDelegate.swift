@@ -573,9 +573,9 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		MainThreadOperationQueue.shared.add(logout)
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
 		assertionFailure("An `account` instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
-		completion(.success(credentials))
+		return credentials
 	}
 
 	// MARK: Suspend and Resume (for iOS)

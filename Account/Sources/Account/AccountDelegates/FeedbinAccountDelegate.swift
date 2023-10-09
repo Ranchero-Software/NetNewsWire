@@ -612,16 +612,21 @@ public enum FeedbinAccountDelegateError: String, Error {
 	func accountWillBeDeleted(_ account: Account) {
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
 		
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials
-		caller.validateCredentials() { result in
-			DispatchQueue.main.async {
-				completion(result)
+		
+		return try await withCheckedThrowingContinuation { continuation in
+			caller.validateCredentials() { result in
+				switch result {
+				case .success(let credentials):
+					continuation.resume(returning: credentials)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
-		
 	}
 
 	// MARK: Suspend and Resume (for iOS)
@@ -1087,34 +1092,33 @@ private extension FeedbinAccountDelegate {
 	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
-			
+
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.externalID = String(sub.subscriptionID)
 			feed.iconURL = sub.jsonFeed?.icon
 			feed.faviconURL = sub.jsonFeed?.favicon
-		
+
 			account.addFeed(feed, to: container) { result in
-				switch result {
-				case .success:
-					if let name = name {
-						account.renameFeed(feed, to: name) { result in
-							switch result {
-							case .success:
+				Task { @MainActor in
+					switch result {
+					case .success:
+						if let name {
+							do {
+								try await account.rename(feed, to: name)
 								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							case .failure(let error):
+							} catch {
 								completion(.failure(error))
 							}
 						}
-					} else {
-						self.initialFeedDownload(account: account, feed: feed, completion: completion)
+						else {
+							self.initialFeedDownload(account: account, feed: feed, completion: completion)
+						}
+					case .failure(let error):
+						completion(.failure(error))
 					}
-				case .failure(let error):
-					completion(.failure(error))
 				}
 			}
-			
 		}
-		
 	}
 
 	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {

@@ -25,9 +25,12 @@ public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
 public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) -> Void
 
 public struct ArticleChanges {
+	
 	public let newArticles: Set<Article>?
 	public let updatedArticles: Set<Article>?
 	public let deletedArticles: Set<Article>?
+
+	static let empty = ArticleChanges(newArticles: nil, updatedArticles: nil, deletedArticles: nil)
 
 	public init() {
 		self.newArticles = Set<Article>()
@@ -197,34 +200,28 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 		try await articlesTable.unreadCountForFeedIDsSince(feedIDs, since)
 	}
 
-	public func fetchStarredAndUnreadCount(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
-		articlesTable.fetchStarredAndUnreadCount(feedIDs, completion)
+	public func unreadCountForStarredArticlesForFeedIDs(_ feedIDs: Set<String>) async throws -> Int {
+		try await articlesTable.unreadCountForStarredArticlesForFeedIDs(feedIDs)
 	}
 
 	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
-	public func update(with parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+	public func update(with parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool) async throws -> ArticleChanges {
 		precondition(retentionStyle == .feedBased)
-		articlesTable.update(parsedItems, feedID, deleteOlder, completion)
+		return try await articlesTable.update(parsedItems, feedID, deleteOlder)
 	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
-	public func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+	public func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws -> ArticleChanges {
 		precondition(retentionStyle == .syncSystem)
-		articlesTable.update(feedIDsAndItems, defaultRead, completion)
+		return try await articlesTable.update(feedIDsAndItems, defaultRead)
 	}
 
     /// Delete articles
     public func deleteArticleIDs(_ articleIDs: Set<String>) async throws {
         try await articlesTable.deleteArticleIDs(articleIDs)
     }
-
-	/// Delete articles
-	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
-		articlesTable.delete(articleIDs: articleIDs, completion: completion)
-	}
-
 	// MARK: - Status
 
 	/// Fetch the articleIDs of unread articles.
@@ -238,26 +235,22 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-		articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() async throws -> Set<String> {
+		try await articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
 
-	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
-		return articlesTable.mark(articles, statusKey, flag, completion)
+	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<ArticleStatus> {
+		try await articlesTable.mark(articles, statusKey, flag)
 	}
 
     public func markArticleIDs(_ articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
         try await articlesTable.markArticleIDs(articleIDs, statusKey, flag)
     }
 
-	public func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock?) {
-		articlesTable.mark(articleIDs, statusKey, flag, completion)
-	}
-
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
 	/// For newly-created statuses, mark them as read and not-starred.
-	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
-		articlesTable.createStatusesIfNeeded(articleIDs, completion)
+	public func createStatusesIfNeeded(articleIDs: Set<String>) async throws -> [String: ArticleStatus] {
+		try await articlesTable.createStatusesIfNeeded(articleIDs)
 	}
 
 #if os(iOS)

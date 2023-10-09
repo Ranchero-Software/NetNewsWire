@@ -373,16 +373,16 @@ public enum FetchType {
 		try CredentialsManager.removeCredentials(type: type, server: server, username: username)
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
 		switch type {
 		case .feedbin:
-			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+			return try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials)
 		case .newsBlur:
-			NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+			return try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials)
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
-			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
+			return try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
 		default:
-			break
+			return nil
 		}
 	}
 	
@@ -630,10 +630,6 @@ public enum FetchType {
         try await delegate.renameFeed(for: self, feed: feed, name: name)
     }
 
-	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
-	}
-	
 	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
@@ -765,7 +761,14 @@ public enum FetchType {
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ completion: @escaping SingleUnreadCountCompletionBlock) {
-		database.fetchStarredAndUnreadCount(for: flattenedFeedIDs(), completion: completion)
+		Task { @MainActor in
+			do {
+				let unreadCount = try await database.unreadCountForStarredArticlesForFeedIDs(flattenedFeedIDs())
+				completion(.success(unreadCount))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
+		}
 	}
 
     public func fetchCountForStarredArticles() throws -> Int {
@@ -782,7 +785,14 @@ public enum FetchType {
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
+		Task { @MainActor in
+			do {
+				let articleIDs = try await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
+				completion(.success(articleIDs))
+			} catch {
+				completion(.failure(error as! DatabaseError))
+			}
+		}
 	}
 	
 	public func unreadCount(for feed: Feed) -> Int {
@@ -820,14 +830,14 @@ public enum FetchType {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
-		
-		database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { updateArticlesResult in
-			switch updateArticlesResult {
-			case .success(let articleChanges):
+
+		Task { @MainActor in
+			do {
+				let articleChanges = try await database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
 				self.sendNotificationAbout(articleChanges)
 				completion(.success(articleChanges))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			} catch {
+				completion(.failure(error as! DatabaseError))
 			}
 		}
 	}
@@ -841,13 +851,13 @@ public enum FetchType {
 			return
 		}
 
-		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
-			switch updateArticlesResult {
-			case .success(let newAndUpdatedArticles):
-				self.sendNotificationAbout(newAndUpdatedArticles)
+		Task { @MainActor in
+			do {
+				let articleChanges = try await database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
+				self.sendNotificationAbout(articleChanges)
 				completion(nil)
-			case .failure(let databaseError):
-				completion(databaseError)
+			} catch {
+				completion(error as? DatabaseError)
 			}
 		}
 	}
@@ -859,15 +869,17 @@ public enum FetchType {
 			return
 		}
 		
-		database.mark(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let updatedStatuses):
+		Task { @MainActor in
+			do {
+				let updatedStatuses = try await self.database.mark(articles, statusKey: statusKey, flag: flag)
 				let updatedArticleIDs = updatedStatuses.articleIDs()
 				let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-				self.noteStatusesForArticlesDidChange(updatedArticles)
+				if !updatedArticles.isEmpty {
+					self.noteStatusesForArticlesDidChange(updatedArticles)
+				}
 				completion(.success(updatedArticles))
-			case .failure(let error):
-				completion(.failure(error))
+			} catch {
+				completion(.failure(error as! DatabaseError))
 			}
 		}
 	}
@@ -880,16 +892,17 @@ public enum FetchType {
 			completion?(nil)
 			return
 		}
-		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
-			if let error = error {
-				completion?(error)
-				return
+
+		Task { @MainActor in
+			do {
+				let statusesDictionary = try await database.createStatusesIfNeeded(articleIDs: articleIDs)
+				completion?(nil)
+			} catch {
+				completion?(error as? DatabaseError)
 			}
-			self.noteStatusesForArticleIDsDidChange(articleIDs)
-			completion?(nil)
 		}
 	}
-	
+
 	/// Mark articleIDs statuses based on statusKey and flag.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {
@@ -897,12 +910,14 @@ public enum FetchType {
 			completion?(nil)
 			return
 		}
-		database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { databaseError in
-			if let databaseError = databaseError {
-				completion?(databaseError)
-			} else {
+
+		Task { @MainActor in
+			do {
+				try await database.markArticleIDs(articleIDs, statusKey: statusKey, flag: flag)
 				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 				completion?(nil)
+			} catch {
+				completion?(error as? DatabaseError)
 			}
 		}
 	}
@@ -975,13 +990,6 @@ public enum FetchType {
     }
 
 	// Delete the articles associated with the given set of articleIDs
-	func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
-		guard !articleIDs.isEmpty else {
-			completion?(nil)
-			return
-		}
-		database.delete(articleIDs: articleIDs, completion: completion)
-	}
 	
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
 	func emptyCaches() {
@@ -1501,9 +1509,9 @@ private extension Account {
 		fetchingAllUnreadCounts = true
 		database.fetchAllUnreadCounts { result in
             Task { @MainActor in
-                guard let unreadCountDictionary = try? result.get() else {
-                     return
-                }
+				guard let unreadCountDictionary = try? result.get() else {
+					return
+				}
                 self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
 
                 self.fetchingAllUnreadCounts = false

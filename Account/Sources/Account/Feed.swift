@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class Feed: FeedProtocol, Renamable, Hashable, ObservableObject {
+public final class Feed: FeedProtocol, Hashable, ObservableObject {
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .none
@@ -216,11 +216,6 @@ public final class Feed: FeedProtocol, Renamable, Hashable, ObservableObject {
         }
         try await account.rename(self, to: newName)
     }
-
-    @MainActor public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let account = account else { return }
-		account.renameFeed(self, to: newName, completion: completion)
-	}
 
 	// MARK: - UnreadCountProvider
 	

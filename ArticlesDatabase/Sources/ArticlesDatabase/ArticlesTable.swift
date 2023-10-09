@@ -203,11 +203,10 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Updating and Deleting
 
-	func update(_ parsedItems: Set<ParsedItem>, _ feedID: String, _ deleteOlder: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
+	func update(_ parsedItems: Set<ParsedItem>, _ feedID: String, _ deleteOlder: Bool) async throws -> ArticleChanges {
 		precondition(retentionStyle == .feedBased)
 		if parsedItems.isEmpty {
-			callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
-			return
+			return ArticleChanges.empty
 		}
 
 		// 1. Ensure statuses for all the incoming articles.
@@ -220,74 +219,74 @@ final class ArticlesTable: DatabaseTable {
 		// 8. Delete Articles in database no longer present in the feed.
 		// 9. Update search index.
 
-		self.queue.runInTransaction { (databaseResult) in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let articleIDs = parsedItems.articleIDs()
-
-				let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) //1
-				assert(statusesDictionary.count == articleIDs.count)
-
-				let incomingArticles = Article.articlesWithParsedItems(parsedItems, feedID, self.accountID, statusesDictionary) //2
-				if incomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
-					return
-				}
-
-				let fetchedArticles = self.fetchArticlesForFeedID(feedID, database) //4
-				let fetchedArticlesDictionary = fetchedArticles.dictionary()
-
-				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
-				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
-
-				// Articles to delete are 1) not starred and 2) older than 30 days and 3) no longer in feed.
-				let articlesToDelete: Set<Article>
-				if deleteOlder {
-					let cutoffDate = Date().bySubtracting(days: 30)
-					articlesToDelete = fetchedArticles.filter { (article) -> Bool in
-						return !article.status.starred && article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
+		return try await withCheckedThrowingContinuation { continuation in
+			self.queue.runInTransaction { (databaseResult) in
+				
+				func updateArticlesInDatabase(_ database: FMDatabase) -> ArticleChanges {
+					let articleIDs = parsedItems.articleIDs()
+					
+					let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) //1
+					assert(statusesDictionary.count == articleIDs.count)
+					
+					let incomingArticles = Article.articlesWithParsedItems(parsedItems, feedID, self.accountID, statusesDictionary) //2
+					if incomingArticles.isEmpty {
+						return ArticleChanges.empty
 					}
-				} else {
-					articlesToDelete = Set<Article>()
+					
+					let fetchedArticles = self.fetchArticlesForFeedID(feedID, database) //4
+					let fetchedArticlesDictionary = fetchedArticles.dictionary()
+					
+					let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
+					let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
+					
+					// Articles to delete are 1) not starred and 2) older than 30 days and 3) no longer in feed.
+					let articlesToDelete: Set<Article>
+					if deleteOlder {
+						let cutoffDate = Date().bySubtracting(days: 30)
+						articlesToDelete = fetchedArticles.filter { (article) -> Bool in
+							return !article.status.starred && article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
+						}
+					} else {
+						articlesToDelete = Set<Article>()
+					}
+					
+					self.addArticlesToCache(newArticles)
+					self.addArticlesToCache(updatedArticles)
+					
+					// 8. Delete articles no longer in feed.
+					let articleIDsToDelete = articlesToDelete.articleIDs()
+					if !articleIDsToDelete.isEmpty {
+						self.removeArticles(articleIDsToDelete, database)
+						self.removeArticleIDsFromCache(articleIDsToDelete)
+					}
+					
+					// 9. Update search index.
+					if let newArticles = newArticles {
+						self.searchTable.indexNewArticles(newArticles, database)
+					}
+					if let updatedArticles = updatedArticles {
+						self.searchTable.indexUpdatedArticles(updatedArticles, database)
+					}
+					
+					let articleChanges = ArticleChanges(newArticles: newArticles, updatedArticles: updatedArticles, deletedArticles: articlesToDelete)
+					return articleChanges
 				}
-
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) //7
-
-				self.addArticlesToCache(newArticles)
-				self.addArticlesToCache(updatedArticles)
-
-				// 8. Delete articles no longer in feed.
-				let articleIDsToDelete = articlesToDelete.articleIDs()
-				if !articleIDsToDelete.isEmpty {
-					self.removeArticles(articleIDsToDelete, database)
-					self.removeArticleIDsFromCache(articleIDsToDelete)
-				}
-
-				// 9. Update search index.
-				if let newArticles = newArticles {
-					self.searchTable.indexNewArticles(newArticles, database)
-				}
-				if let updatedArticles = updatedArticles {
-					self.searchTable.indexUpdatedArticles(updatedArticles, database)
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
+				
+				switch databaseResult {
+				case .success(let database):
+					let articleChanges = updateArticlesInDatabase(database)
+					continuation.resume(returning: articleChanges)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}
 	}
 
-	func update(_ feedIDsAndItems: [String: Set<ParsedItem>], _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
+	func update(_ feedIDsAndItems: [String: Set<ParsedItem>], _ read: Bool) async throws -> ArticleChanges {
 		precondition(retentionStyle == .syncSystem)
 		if feedIDsAndItems.isEmpty {
-			callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
-			return
+			return ArticleChanges.empty
 		}
 
 		// 1. Ensure statuses for all the incoming articles.
@@ -299,56 +298,56 @@ final class ArticlesTable: DatabaseTable {
 		// 7. Call back with new and updated Articles.
 		// 8. Update search index.
 
-		self.queue.runInTransaction { (databaseResult) in
+		return try await withCheckedThrowingContinuation { continuation in
+			self.queue.runInTransaction { (databaseResult) in
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				var articleIDs = Set<String>()
-				for (_, parsedItems) in feedIDsAndItems {
-					articleIDs.formUnion(parsedItems.articleIDs())
+				func updateArticlesInDatabase(_ database: FMDatabase) -> ArticleChanges {
+					var articleIDs = Set<String>()
+					for (_, parsedItems) in feedIDsAndItems {
+						articleIDs.formUnion(parsedItems.articleIDs())
+					}
+
+					let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
+					assert(statusesDictionary.count == articleIDs.count)
+
+					let allIncomingArticles = Article.articlesWithFeedIDsAndItems(feedIDsAndItems, self.accountID, statusesDictionary) //2
+					if allIncomingArticles.isEmpty {
+						return ArticleChanges.empty
+					}
+
+					let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
+					if incomingArticles.isEmpty {
+						return ArticleChanges.empty
+					}
+
+					let incomingArticleIDs = incomingArticles.articleIDs()
+					let fetchedArticles = self.fetchArticlesForArticleIDs(incomingArticleIDs, database) //4
+					let fetchedArticlesDictionary = fetchedArticles.dictionary()
+
+					let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
+					let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
+
+					self.addArticlesToCache(newArticles)
+					self.addArticlesToCache(updatedArticles)
+
+					// 8. Update search index.
+					if let newArticles = newArticles {
+						self.searchTable.indexNewArticles(newArticles, database)
+					}
+					if let updatedArticles = updatedArticles {
+						self.searchTable.indexUpdatedArticles(updatedArticles, database)
+					}
+
+					let articleChanges = ArticleChanges(newArticles: newArticles, updatedArticles: updatedArticles, deletedArticles: nil)
+					return articleChanges
 				}
 
-				let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
-				assert(statusesDictionary.count == articleIDs.count)
-
-				let allIncomingArticles = Article.articlesWithFeedIDsAndItems(feedIDsAndItems, self.accountID, statusesDictionary) //2
-				if allIncomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
-					return
-				}
-
-				let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
-				if incomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
-					return
-				}
-
-				let incomingArticleIDs = incomingArticles.articleIDs()
-				let fetchedArticles = self.fetchArticlesForArticleIDs(incomingArticleIDs, database) //4
-				let fetchedArticlesDictionary = fetchedArticles.dictionary()
-
-				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
-				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
-
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, nil, completion) //7
-
-				self.addArticlesToCache(newArticles)
-				self.addArticlesToCache(updatedArticles)
-
-				// 8. Update search index.
-				if let newArticles = newArticles {
-					self.searchTable.indexNewArticles(newArticles, database)
-				}
-				if let updatedArticles = updatedArticles {
-					self.searchTable.indexUpdatedArticles(updatedArticles, database)
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
+				switch databaseResult {
+				case .success(let database):
+					let articleChanges = updateArticlesInDatabase(database)
+					continuation.resume(returning: articleChanges)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}
@@ -356,44 +355,19 @@ final class ArticlesTable: DatabaseTable {
 
     public func deleteArticleIDs(_ articleIDs: Set<String>) async throws {
 
-        try await withCheckedThrowingContinuation { continuation in
-            Task { @MainActor in
-                queue.runInTransaction { databaseResult in
-                    switch databaseResult {
-                    case .success(let database):
-                        self.removeArticles(articleIDs, database)
-                        continuation.resume()
-                    case .failure(let databaseError):
-                        continuation.resume(throwing: databaseError)
-                    }
-                }
-            }
-        }
-    }
-    
-	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
-		self.queue.runInTransaction { (databaseResult) in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				self.removeArticles(articleIDs, database)
-				DispatchQueue.main.async {
-					completion?(nil)
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInTransaction { databaseResult in
+				switch databaseResult {
+				case .success(let database):
+					self.removeArticles(articleIDs, database)
+					continuation.resume()
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion?(databaseError)
-				}
-			}
-			
 		}
-		
 	}
-	
+
 	// MARK: - Unread Counts
 	
 	func unreadCountForFeedID(_ feedID: String) async throws -> Int {
@@ -491,32 +465,29 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchStarredAndUnreadCount(_ feedIDs: Set<String>, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+	func unreadCountForStarredArticlesForFeedIDs(_ feedIDs: Set<String>) async throws -> Int {
 		if feedIDs.isEmpty {
-			completion(.success(0))
-			return
+			return 0
 		}
 
-		queue.runInDatabase { databaseResult in
+		return try await withCheckedThrowingContinuation { continuation in
+			queue.runInDatabase { databaseResult in
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
-				let parameters = Array(feedIDs) as [Any]
+				func fetchUnreadCount(_ database: FMDatabase) -> Int {
+					let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+					let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
+					let parameters = Array(feedIDs) as [Any]
 
-				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
-
-				DispatchQueue.main.async {
-					completion(.success(unreadCount))
+					let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
+					return unreadCount
 				}
-			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
+				switch databaseResult {
+				case .success(let database):
+					let unreadCount = fetchUnreadCount(database)
+					continuation.resume(returning: unreadCount)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}
@@ -536,21 +507,20 @@ final class ArticlesTable: DatabaseTable {
 		return try statusesTable.fetchStarredArticleIDs()
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-		statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate, completion)
+	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() async throws -> Set<String> {
+		try await statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate)
 	}
 
-	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
-		self.queue.runInTransaction { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
-				DispatchQueue.main.async {
-					completion(.success(statuses ?? Set<ArticleStatus>()))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
+	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) async throws -> Set<ArticleStatus> {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.queue.runInTransaction { databaseResult in
+				switch databaseResult {
+				case .success(let database):
+					let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
+					continuation.resume(returning: statuses)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}
@@ -573,33 +543,16 @@ final class ArticlesTable: DatabaseTable {
         }
     }
 
-	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: DatabaseCompletionBlock?) {
-		queue.runInTransaction { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				self.statusesTable.mark(articleIDs, statusKey, flag, database)
-				DispatchQueue.main.async {
-					completion?(nil)
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion?(databaseError)
-				}
-			}
-		}
-	}
+	func createStatusesIfNeeded(_ articleIDs: Set<String>) async throws -> [String: ArticleStatus]{
 
-	func createStatusesIfNeeded(_ articleIDs: Set<String>, _ completion: @escaping DatabaseCompletionBlock) {
-		queue.runInTransaction { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				let _ = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
-				DispatchQueue.main.async {
-					completion(nil)
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(databaseError)
+		try await withCheckedThrowingContinuation { continuation in
+			queue.runInTransaction { databaseResult in
+				switch databaseResult {
+				case .success(let database):
+					let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
+					continuation.resume(returning: statusesDictionary)
+				case .failure(let databaseError):
+					continuation.resume(throwing: databaseError)
 				}
 			}
 		}
@@ -804,24 +757,6 @@ private extension ArticlesTable {
 					continuation.resume(returning: articles)
 				case .failure(let databaseError):
 					continuation.resume(throwing: databaseError)
-				}
-			}
-		}
-	}
-
-
-	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ completion: @escaping ArticleSetResultBlock) {
-		queue.runInDatabase { databaseResult in
-
-			switch databaseResult {
-			case .success(let database):
-				let articles = fetchMethod(database)
-				DispatchQueue.main.async {
-					completion(.success(articles))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
 				}
 			}
 		}
@@ -1073,15 +1008,6 @@ private extension ArticlesTable {
 		return articles.filter{ articleIDs.contains($0.articleID) }
 	}
 
-	// MARK: - Saving Parsed Items
-	
-	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ deletedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
-		let articleChanges = ArticleChanges(newArticles: newArticles, updatedArticles: updatedArticles, deletedArticles: deletedArticles)
-		DispatchQueue.main.async {
-			completion(.success(articleChanges))
-		}
-	}
-	
 	// MARK: - Saving New Articles
 
 	func findNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
