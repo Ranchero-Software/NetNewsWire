@@ -82,16 +82,13 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
 				return
 			}
 
-
-			account.addFolder(name) { result in
-				switch result {
-				case .success(let folder):
-					let scriptableAccount = ScriptableAccount(account)
-					let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
-					command.resumeExecution(withResult:scriptableFolder.objectSpecifier)
-				case .failure:
-					command.resumeExecution(withResult:nil)
-				}
+			do {
+				let folder = try await account.addFolder(name)
+				let scriptableAccount = ScriptableAccount(account)
+				let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
+				command.resumeExecution(withResult:scriptableFolder.objectSpecifier)
+			} catch {
+				command.resumeExecution(withResult:nil)
 			}
 		}
 

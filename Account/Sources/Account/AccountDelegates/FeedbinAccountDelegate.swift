@@ -282,11 +282,13 @@ public enum FeedbinAccountDelegateError: String, Error {
 		
 	}
 	
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+	func createFolder(for account: Account, name: String) async throws -> Folder {
+		try await withCheckedThrowingContinuation { continuation in
+			if let folder = account.ensureFolder(with: name) {
+				continuation.resume(returning: folder)
+			} else {
+				continuation.resume(throwing: FeedbinAccountDelegateError.invalidParameter)
+			}
 		}
 	}
 

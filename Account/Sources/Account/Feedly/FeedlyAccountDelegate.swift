@@ -244,25 +244,27 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		
+	func createFolder(for account: Account, name: String) async throws -> Folder {
+
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
 		
-		caller.createCollection(named: name) { result in
-			progress.completeTask()
-			
-			switch result {
-			case .success(let collection):
-				if let folder = account.ensureFolder(with: collection.label) {
-					folder.externalID = collection.id
-					completion(.success(folder))
-				} else {
-					// Is the name empty? Or one of the global resource names?
-					completion(.failure(FeedlyAccountDelegateError.unableToAddFolder(name)))
+		return try await withCheckedThrowingContinuation { continuation in
+			caller.createCollection(named: name) { result in
+				progress.completeTask()
+
+				switch result {
+				case .success(let collection):
+					if let folder = account.ensureFolder(with: collection.label) {
+						folder.externalID = collection.id
+						continuation.resume(returning: folder)
+					} else {
+						// Is the name empty? Or one of the global resource names?
+						continuation.resume(throwing: FeedlyAccountDelegateError.unableToAddFolder(name))
+					}
+				case .failure(let error):
+					continuation.resume(throwing: error)
 				}
-			case .failure(let error):
-				completion(.failure(error))
 			}
 		}
 	}

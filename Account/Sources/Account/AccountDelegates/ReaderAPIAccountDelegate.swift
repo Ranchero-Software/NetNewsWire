@@ -290,11 +290,13 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 	}
 	
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+	func createFolder(for account: Account, name: String) async throws -> Folder {
+		try await withCheckedThrowingContinuation { continuation in
+			if let folder = account.ensureFolder(with: name) {
+				continuation.resume(returning: folder)
+			} else {
+				continuation.resume(throwing: ReaderAPIAccountDelegateError.invalidParameter)
+			}
 		}
 	}
 	

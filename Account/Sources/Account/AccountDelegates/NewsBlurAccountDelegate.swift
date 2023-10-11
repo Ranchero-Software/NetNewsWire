@@ -352,21 +352,23 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		completion(.success(()))
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
+	func createFolder(for account: Account, name: String) async throws -> Folder {
 		self.refreshProgress.addToNumberOfTasksAndRemaining(1)
 
-		caller.addFolder(named: name) { result in
-			self.refreshProgress.completeTask()
+		return try await withCheckedThrowingContinuation { continuation in
+			caller.addFolder(named: name) { result in
+				self.refreshProgress.completeTask()
 
-			switch result {
-			case .success():
-				if let folder = account.ensureFolder(with: name) {
-					completion(.success(folder))
-				} else {
-					completion(.failure(NewsBlurError.invalidParameter))
+				switch result {
+				case .success():
+					if let folder = account.ensureFolder(with: name) {
+						continuation.resume(returning: folder)
+					} else {
+						continuation.resume(throwing: NewsBlurError.invalidParameter)
+					}
+				case .failure(let error):
+					continuation.resume(throwing: error)
 				}
-			case .failure(let error):
-				completion(.failure(error))
 			}
 		}
 	}
@@ -584,12 +586,11 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 
 		let group = DispatchGroup()
-
 		group.enter()
-		createFolder(for: account, name: folderName) { result in
-			group.leave()
-			switch result {
-			case .success(let folder):
+
+		Task { @MainActor in
+			do {
+				let folder = try await createFolder(for: account, name: folderName)
 				for feed in feedsToRestore {
 					group.enter()
 					self.restoreFeed(for: account, feed: feed, container: folder) { result in
@@ -598,12 +599,15 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 						case .success:
 							break
 						case .failure(let error):
-                            self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
+							self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 				}
-			case .failure(let error):
-                self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
+				group.leave()
+				
+			} catch {
+				self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
+				group.leave()
 			}
 		}
 

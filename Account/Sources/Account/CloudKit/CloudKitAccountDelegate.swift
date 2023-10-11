@@ -286,21 +286,24 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+	func createFolder(for account: Account, name: String) async throws -> Folder {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.createFolder(name: name) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success(let externalID):
-				if let folder = account.ensureFolder(with: name) {
-					folder.externalID = externalID
-					completion(.success(folder))
-				} else {
-					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+
+		return try await withCheckedThrowingContinuation { continuation in
+			accountZone.createFolder(name: name) { result in
+				self.refreshProgress.completeTask()
+				switch result {
+				case .success(let externalID):
+					if let folder = account.ensureFolder(with: name) {
+						folder.externalID = externalID
+						continuation.resume(returning: folder)
+					} else {
+						continuation.resume(throwing: FeedbinAccountDelegateError.invalidParameter)
+					}
+				case .failure(let error):
+					self.processAccountError(account, error)
+					continuation.resume(throwing: error)
 				}
-			case .failure(let error):
-				self.processAccountError(account, error)
-				completion(.failure(error))
 			}
 		}
 	}
