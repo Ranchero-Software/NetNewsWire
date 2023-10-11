@@ -373,29 +373,29 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		guard let folderToRename = folder.name else {
-			completion(.failure(NewsBlurError.invalidParameter))
-			return
+			throw NewsBlurError.invalidParameter
 		}
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		let nameBefore = folder.name
+		folder.name = name
 
-		caller.renameFolder(with: folderToRename, to: name) { result in
-			self.refreshProgress.completeTask()
+		try await withCheckedThrowingContinuation { continuation in
+			caller.renameFolder(with: folderToRename, to: name) { result in
+				self.refreshProgress.completeTask()
 
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				folder.name = nameBefore
-				completion(.failure(error))
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					folder.name = nameBefore
+					continuation.resume(throwing: error)
+				}
 			}
 		}
-
-		folder.name = name
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {

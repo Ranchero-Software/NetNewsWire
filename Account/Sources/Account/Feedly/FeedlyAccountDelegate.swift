@@ -269,29 +269,29 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		guard let id = folder.externalID else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)))
-			}
+			throw FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)
 		}
-		
+
 		let nameBefore = folder.name
-		
-		caller.renameCollection(with: id, to: name) { result in
-			switch result {
-			case .success(let collection):
-				folder.name = collection.label
-				completion(.success(()))
-			case .failure(let error):
-				folder.name = nameBefore
-				completion(.failure(error))
+
+		try await withCheckedThrowingContinuation { continuation in
+			caller.renameCollection(with: id, to: name) { result in
+				switch result {
+				case .success(let collection):
+					folder.name = collection.label
+					continuation.resume()
+				case .failure(let error):
+					folder.name = nameBefore
+					continuation.resume(throwing: error)
+				}
 			}
+
+			folder.name = name
 		}
-		
-		folder.name = name
 	}
-	
+
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
 			return DispatchQueue.main.async {

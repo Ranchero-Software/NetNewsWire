@@ -66,9 +66,9 @@ public final class Folder: FeedProtocol, Container, Hashable {
 
 	// MARK: - Renamable
 
-    @MainActor public func rename(to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor public func rename(to name: String) async throws {
 		guard let account = account else { return }
-		account.renameFolder(self, to: name, completion: completion)
+		try await account.renameFolder(self, to: name)
 	}
 	
 	// MARK: - Init

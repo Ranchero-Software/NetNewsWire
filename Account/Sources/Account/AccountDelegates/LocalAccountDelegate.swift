@@ -173,9 +173,8 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		folder.name = name
-		completion(.success(()))
 	}
 	
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

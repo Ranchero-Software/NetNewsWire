@@ -310,17 +310,20 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.renameFolder(folder, to: name) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				folder.name = name
-				completion(.success(()))
-			case .failure(let error):
-				self.processAccountError(account, error)
-				completion(.failure(error))
+
+		try await withCheckedThrowingContinuation { continuation in
+			accountZone.renameFolder(folder, to: name) { result in
+				self.refreshProgress.completeTask()
+				switch result {
+				case .success:
+					folder.name = name
+					continuation.resume()
+				case .failure(let error):
+					self.processAccountError(account, error)
+					continuation.resume(throwing: error)
+				}
 			}
 		}
 	}

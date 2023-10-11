@@ -292,7 +292,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 
 		guard folder.hasAtLeastOneFeed() else {
 			folder.name = name
@@ -300,23 +300,25 @@ public enum FeedbinAccountDelegateError: String, Error {
 		}
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					self.renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
-					folder.name = name
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
-					completion(.failure(wrappedError))
+
+		try await withCheckedThrowingContinuation { continuation in
+			caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
+				self.refreshProgress.completeTask()
+				switch result {
+				case .success:
+					Task { @MainActor in
+						self.renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
+						folder.name = name
+						continuation.resume()
+					}
+				case .failure(let error):
+					Task { @MainActor in
+						let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
+						continuation.resume(throwing: wrappedError)
+					}
 				}
 			}
 		}
-		
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

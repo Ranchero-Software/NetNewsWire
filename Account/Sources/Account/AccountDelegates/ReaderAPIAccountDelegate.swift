@@ -300,26 +300,24 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 		}
 	}
 	
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
+
+		try await withCheckedThrowingContinuation { continuation in
+			caller.renameTag(oldName: folder.name ?? "", newName: name) { @MainActor result in
+				self.refreshProgress.completeTask()
+				switch result {
+				case .success:
 					folder.externalID = "user/-/label/\(name)"
 					folder.name = name
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
+					continuation.resume()
+				case .failure(let error):
 					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
-					completion(.failure(wrappedError))
+					continuation.resume(throwing: wrappedError)
 				}
 			}
 		}
-		
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

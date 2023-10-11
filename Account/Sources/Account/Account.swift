@@ -642,8 +642,8 @@ public enum FetchType {
 		delegate.removeFolder(for: self, with: folder, completion: completion)
 	}
 	
-	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.renameFolder(for: self, with: folder, to: name, completion: completion)
+	public func renameFolder(_ folder: Folder, to name: String) async throws {
+		try await delegate.renameFolder(for: self, with: folder, to: name)
 	}
 
 	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -895,7 +895,7 @@ public enum FetchType {
 
 		Task { @MainActor in
 			do {
-				let statusesDictionary = try await database.createStatusesIfNeeded(articleIDs: articleIDs)
+				_ = try await database.createStatusesIfNeeded(articleIDs: articleIDs)
 				completion?(nil)
 			} catch {
 				completion?(error as? DatabaseError)
