@@ -557,6 +557,7 @@ private extension WebViewController {
 		
 		// Add the webview - using autolayout will cause fullscreen video to fail and lose the web view
 		webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		self.webView?.removeFromSuperview()
 		self.view.insertSubview(webView, at: 0)
 		
 		// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
