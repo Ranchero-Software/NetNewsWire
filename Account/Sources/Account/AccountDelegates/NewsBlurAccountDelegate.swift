@@ -398,10 +398,9 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
+	func removeFolder(for account: Account, with folder: Folder) async throws {
 		guard let folderToRemove = folder.name else {
-			completion(.failure(NewsBlurError.invalidParameter))
-			return
+			throw NewsBlurError.invalidParameter
 		}
 
 		var feedIDs: [String] = []
@@ -415,15 +414,17 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
-		caller.removeFolder(named: folderToRemove, feedIDs: feedIDs) { result in
-			self.refreshProgress.completeTask()
+		try await withCheckedThrowingContinuation { continuation in
+			caller.removeFolder(named: folderToRemove, feedIDs: feedIDs) { result in
+				self.refreshProgress.completeTask()
 
-			switch result {
-			case .success:
-				account.removeFolder(folder)
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
+				switch result {
+				case .success:
+					account.removeFolder(folder)
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
 	}

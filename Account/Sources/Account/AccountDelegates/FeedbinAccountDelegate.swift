@@ -321,67 +321,65 @@ public enum FeedbinAccountDelegateError: String, Error {
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFolder(for account: Account, with folder: Folder) async throws {
 
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
-			account.removeFolder(folder)
-			completion(.success(()))
+			try await account.removeFolder(folder)
 			return
 		}
 		
-		let group = DispatchGroup()
-		
-		for feed in folder.topLevelFeeds {
-			
-			if feed.folderRelationship?.count ?? 0 > 1 {
-				
-				if let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
-					group.enter()
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
-					caller.deleteTagging(taggingID: feedTaggingID) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							DispatchQueue.main.async {
-								self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+		try await withCheckedThrowingContinuation { continuation in
+
+			let group = DispatchGroup()
+
+			for feed in folder.topLevelFeeds {
+
+				if feed.folderRelationship?.count ?? 0 > 1 {
+
+					if let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+						group.enter()
+						refreshProgress.addToNumberOfTasksAndRemaining(1)
+						caller.deleteTagging(taggingID: feedTaggingID) { result in
+							self.refreshProgress.completeTask()
+							group.leave()
+							switch result {
+							case .success:
+								DispatchQueue.main.async {
+									self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+								}
+							case .failure(let error):
+								self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
 							}
-						case .failure(let error):
-                            self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
+						}
+					}
+
+				} else {
+
+					if let subscriptionID = feed.externalID {
+						group.enter()
+						refreshProgress.addToNumberOfTasksAndRemaining(1)
+						caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+							self.refreshProgress.completeTask()
+							group.leave()
+							switch result {
+							case .success:
+								DispatchQueue.main.async {
+									account.clearFeedMetadata(feed)
+								}
+							case .failure(let error):
+								self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
+							}
 						}
 					}
 				}
-				
-			} else {
-				
-				if let subscriptionID = feed.externalID {
-					group.enter()
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
-					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							DispatchQueue.main.async {
-								account.clearFeedMetadata(feed)
-							}
-						case .failure(let error):
-                            self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
-						}
-					}
-					
-				}
-				
 			}
-			
+
+			group.notify(queue: DispatchQueue.main) {
+				account.removeFolder(folder)
+				continuation.resume()
+			}
 		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			account.removeFolder(folder)
-			completion(.success(()))
-		}
-		
 	}
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {

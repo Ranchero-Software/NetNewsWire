@@ -292,25 +292,25 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFolder(for account: Account, with folder: Folder) async throws {
 		guard let id = folder.externalID else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)))
-			}
+			throw FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)
 		}
 		
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
 		
-		caller.deleteCollection(with: id) { result in
-			progress.completeTask()
-			
-			switch result {
-			case .success:
-				account.removeFolder(folder)
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
+		try await withCheckedThrowingContinuation { continuation in
+			caller.deleteCollection(with: id) { result in
+				progress.completeTask()
+
+				switch result {
+				case .success:
+					account.removeFolder(folder)
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
 	}

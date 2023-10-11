@@ -69,9 +69,10 @@ import RSCore
     
 	func deleteElement(_ element:ScriptingObject) {
 		if let scriptableFolder = element as? ScriptableFolder {
-			BatchUpdate.shared.perform {
-				account.removeFolder(scriptableFolder.folder) { result in
-				}
+			BatchUpdate.shared.start()
+			Task { @MainActor in
+				try? await account.removeFolder(scriptableFolder.folder)
+				BatchUpdate.shared.end()
 			}
 		} else if let scriptableFeed = element as? ScriptableFeed {
 			BatchUpdate.shared.perform {

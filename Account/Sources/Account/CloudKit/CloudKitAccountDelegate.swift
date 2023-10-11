@@ -328,58 +328,62 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		accountZone.findFeedExternalIDs(for: folder) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success(let feedExternalIDs):
+	func removeFolder(for account: Account, with folder: Folder) async throws {
 
-				let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
-				let group = DispatchGroup()
-				var errorOccurred = false
-				
-				for feed in feeds {
-					group.enter()
-					self.removeFeedFromCloud(for: account, with: feed, from: folder) { [weak self] result in
-						group.leave()
-						if case .failure(let error) = result {
-                            self?.logger.error("Remove folder, remove feed error: \(error.localizedDescription, privacy: .public)")
-							errorOccurred = true
-						}
-					}
-				}
-				
-				group.notify(queue: DispatchQueue.global(qos: .background)) {
-					DispatchQueue.main.async {
-						guard !errorOccurred else {
-							self.refreshProgress.completeTask()
-							completion(.failure(CloudKitAccountDelegateError.unknown))
-							return
-						}
-						
-						self.accountZone.removeFolder(folder) { result in
-							self.refreshProgress.completeTask()
-							switch result {
-							case .success:
-								account.removeFolder(folder)
-								completion(.success(()))
-							case .failure(let error):
-								completion(.failure(error))
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) -> Void in
+
+			accountZone.findFeedExternalIDs(for: folder) { result in
+				self.refreshProgress.completeTask()
+				switch result {
+				case .success(let feedExternalIDs):
+
+					let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
+					let group = DispatchGroup()
+					var errorOccurred = false
+
+					for feed in feeds {
+						group.enter()
+						self.removeFeedFromCloud(for: account, with: feed, from: folder) { [weak self] result in
+							group.leave()
+							if case .failure(let error) = result {
+								self?.logger.error("Remove folder, remove feed error: \(error.localizedDescription, privacy: .public)")
+								errorOccurred = true
 							}
 						}
 					}
+
+					group.notify(queue: DispatchQueue.global(qos: .background)) {
+						DispatchQueue.main.async {
+							guard !errorOccurred else {
+								self.refreshProgress.completeTask()
+								continuation.resume(throwing: CloudKitAccountDelegateError.unknown)
+								return
+							}
+
+							self.accountZone.removeFolder(folder) { result in
+								self.refreshProgress.completeTask()
+								switch result {
+								case .success:
+									account.removeFolder(folder)
+									continuation.resume()
+								case .failure(let error):
+									continuation.resume(throwing: error)
+								}
+							}
+						}
+					}
+
+				case .failure(let error):
+					self.refreshProgress.completeTask()
+					self.refreshProgress.completeTask()
+					self.processAccountError(account, error)
+					continuation.resume(throwing: error)
 				}
-				
-			case .failure(let error):
-				self.refreshProgress.completeTask()
-				self.refreshProgress.completeTask()
-				self.processAccountError(account, error)
-				completion(.failure(error))
 			}
 		}
-		
+
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

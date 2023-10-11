@@ -638,8 +638,8 @@ public enum FetchType {
 		try await delegate.createFolder(for: self, name: name)
 	}
 	
-	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFolder(for: self, with: folder, completion: completion)
+	public func removeFolder(_ folder: Folder) async throws {
+		try await delegate.removeFolder(for: self, with: folder)
 	}
 	
 	public func renameFolder(_ folder: Folder, to name: String) async throws {

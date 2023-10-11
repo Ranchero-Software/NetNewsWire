@@ -163,12 +163,16 @@ private struct SidebarItemSpecifier {
 		} else if let folder = folder {
 			
 			BatchUpdate.shared.start()
-			account?.removeFolder(folder) { result in
+			Task { @MainActor in
+				do {
+					try await account?.removeFolder(folder)
+				} catch {
+					errorHandler(error)
+				}
+				
 				BatchUpdate.shared.end()
 				completion()
-				self.checkResult(result)
 			}
-			
 		}
 	}
 

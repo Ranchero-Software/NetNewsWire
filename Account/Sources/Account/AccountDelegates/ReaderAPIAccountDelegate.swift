@@ -320,72 +320,70 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFolder(for account: Account, with folder: Folder) async throws {
 
-		let group = DispatchGroup()
-		
-		for feed in folder.topLevelFeeds {
-			
-			if feed.folderRelationship?.count ?? 0 > 1 {
-				
-				if let feedExternalID = feed.externalID {
-					group.enter()
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
-					caller.deleteTagging(subscriptionID: feedExternalID, tagName: folder.nameForDisplay) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							DispatchQueue.main.async {
-								self.clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
+		try await withCheckedThrowingContinuation { continuation in
+			let group = DispatchGroup()
+
+			for feed in folder.topLevelFeeds {
+
+				if feed.folderRelationship?.count ?? 0 > 1 {
+
+					if let feedExternalID = feed.externalID {
+						group.enter()
+						refreshProgress.addToNumberOfTasksAndRemaining(1)
+						caller.deleteTagging(subscriptionID: feedExternalID, tagName: folder.nameForDisplay) { result in
+							self.refreshProgress.completeTask()
+							group.leave()
+							switch result {
+							case .success:
+								Task { @MainActor in
+									self.clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
+								}
+							case .failure(let error):
+								self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
 							}
-						case .failure(let error):
-                            self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
+						}
+					}
+
+				} else {
+
+					if let subscriptionID = feed.externalID {
+						group.enter()
+						refreshProgress.addToNumberOfTasksAndRemaining(1)
+						caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+							self.refreshProgress.completeTask()
+							group.leave()
+							switch result {
+							case .success:
+								Task { @MainActor in
+									account.clearFeedMetadata(feed)
+								}
+							case .failure(let error):
+								self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
+							}
 						}
 					}
 				}
-				
-			} else {
-				
-				if let subscriptionID = feed.externalID {
-					group.enter()
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
-					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
+			}
+
+			group.notify(queue: DispatchQueue.main) {
+				if self.variant == .theOldReader {
+					account.removeFolder(folder)
+					continuation.resume()
+				} else {
+					self.caller.deleteTag(folderExternalID: folder.externalID) { result in
 						switch result {
 						case .success:
-							DispatchQueue.main.async {
-								account.clearFeedMetadata(feed)
-							}
+							account.removeFolder(folder)
+							continuation.resume()
 						case .failure(let error):
-                            self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
+							continuation.resume(throwing: error)
 						}
 					}
-					
-				}
-				
-			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			if self.variant == .theOldReader {
-				account.removeFolder(folder)
-				completion(.success(()))
-			} else {
-				self.caller.deleteTag(folderExternalID: folder.externalID) { result in
-					switch result {
-					case .success:
-						account.removeFolder(folder)
-						completion(.success(()))
-					case .failure(let error):
-						completion(.failure(error))
-					}
 				}
 			}
 		}
-		
 	}
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
