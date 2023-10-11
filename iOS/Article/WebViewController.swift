@@ -81,6 +81,28 @@ class WebViewController: UIViewController {
 
 	}
 	
+	override func viewWillAppear(_ animated: Bool) {
+		updateScrollIndicatorStyle()
+	}
+	
+	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+		updateScrollIndicatorStyle()
+	}
+	
+	
+	// See https://shadowfacts.net/2022/wkwebview-scroll-indicators-again/ for why this is necessary.
+	private func updateScrollIndicatorStyle() {
+		guard #available(iOS 15.4, *) else {
+			return
+		}
+		
+		if traitCollection.userInterfaceStyle == .dark {
+			webView?.scrollView.indicatorStyle = .white
+		} else {
+			webView?.scrollView.indicatorStyle = .black
+		}
+	}
+	
 	// MARK: Notifications
 	
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
