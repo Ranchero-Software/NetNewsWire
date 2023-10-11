@@ -318,7 +318,9 @@ var appDelegate: AppDelegate!
 	}
 
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-		AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
+		Task { @MainActor in
+			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
+		}
 	}
 
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {

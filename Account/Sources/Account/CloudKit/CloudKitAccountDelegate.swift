@@ -68,14 +68,16 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
 	}
 	
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
-		op.completionBlock = { mainThreadOperaion in
-			completion()
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+		await withCheckedContinuation { continuation in
+			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
+			op.completionBlock = { mainThreadOperation in
+				continuation.resume()
+			}
+			mainThreadOperationQueue.add(op)
 		}
-		mainThreadOperationQueue.add(op)
 	}
-	
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard refreshProgress.isComplete else {
 			completion(.success(()))

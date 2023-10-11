@@ -99,10 +99,10 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 		self.caller.variant = variant
 	}
 	
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		completion()
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+		return
 	}
-	
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		

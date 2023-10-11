@@ -71,8 +71,8 @@ public enum FeedbinAccountDelegateError: String, Error {
 		self.caller.delegate = self
 	}
 		
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		completion()
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+		return
 	}
 
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {

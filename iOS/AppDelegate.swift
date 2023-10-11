@@ -124,15 +124,14 @@ var appDelegate: AppDelegate!
 	}
 	
 	func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			self.resumeDatabaseProcessingIfNecessary()
-			AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
-				self.suspendApplication()
-				completionHandler(.newData)
-			}
+			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
+			self.suspendApplication()
+			completionHandler(.newData)
 		}
-    }
-	
+	}
+
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
 	}

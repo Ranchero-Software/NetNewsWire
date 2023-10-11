@@ -239,18 +239,9 @@ import RSDatabase
         }
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
-
+	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
         for account in activeAccounts {
-			group.enter()
-			account.receiveRemoteNotification(userInfo: userInfo) { 
-				group.leave()
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion?()
+			await account.receiveRemoteNotification(userInfo: userInfo)
 		}
 	}
 

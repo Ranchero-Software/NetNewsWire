@@ -424,8 +424,8 @@ public enum FetchType {
 		grantingType.requestOAuthAccessToken(with: response, transport: transport, completion: completion)
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		delegate.receiveRemoteNotification(for: self, userInfo: userInfo, completion: completion)
+	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+		await delegate.receiveRemoteNotification(for: self, userInfo: userInfo)
 	}
 	
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
