@@ -166,11 +166,22 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 					}
 				}
 			}
-			
 		}
-		
 	}
 
+	func refreshAll(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshAll(for: account) { result in
+				switch result {
+				case .success():
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+	
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
 		guard variant != .inoreader else {
 			completion?(.success(()))

@@ -75,37 +75,37 @@ public enum FeedbinAccountDelegateError: String, Error {
 		return
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	func refreshAll(for account: Account) async throws {
+
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
-		refreshAccount(account) { result in
-			switch result {
-			case .success():
+		try await withCheckedThrowingContinuation { continuation in
+			refreshAccount(account) { result in
+				switch result {
+				case .success():
 
-				self.refreshArticlesAndStatuses(account) { result in
-					switch result {
-					case .success():
-						completion(.success(()))
-					case .failure(let error):
-						DispatchQueue.main.async {
-							self.refreshProgress.clear()
-							let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
-							completion(.failure(wrappedError))
+					self.refreshArticlesAndStatuses(account) { result in
+						switch result {
+						case .success():
+							continuation.resume()
+						case .failure(let error):
+							Task { @MainActor in
+								self.refreshProgress.clear()
+								let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
+								continuation.resume(throwing: wrappedError)
+							}
 						}
 					}
-				}
-				
-			case .failure(let error):
-				DispatchQueue.main.async {
-					self.refreshProgress.clear()
-					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
-					completion(.failure(wrappedError))
+
+				case .failure(let error):
+					Task { @MainActor in
+						self.refreshProgress.clear()
+						let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
+						continuation.resume(throwing: wrappedError)
+					}
 				}
 			}
-			
 		}
-		
 	}
 
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {

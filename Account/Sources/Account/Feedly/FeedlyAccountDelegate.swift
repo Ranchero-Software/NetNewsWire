@@ -107,19 +107,17 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		return
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
 		assert(Thread.isMainThread)
 		
 		guard currentSyncAllOperation == nil else {
             self.logger.debug("Ignoring refreshAll: Feedly sync already in progress.")
-			completion(.success(()))
 			return
 		}
 		
 		guard let credentials = credentials else {
             self.logger.debug("Ignoring refreshAll: Feedly account has no credentials.")
-			completion(.failure(FeedlyAccountDelegateError.notLoggedIn))
-			return
+			throw FeedlyAccountDelegateError.notLoggedIn
 		}
 		
 		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserID: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
@@ -127,19 +125,25 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		syncAllOperation.downloadProgress = refreshProgress
 		
 		let date = Date()
-		syncAllOperation.syncCompletionHandler = { [weak self] result in
-			if case .success = result {
-				self?.accountMetadata?.lastArticleFetchStartTime = date
-				self?.accountMetadata?.lastArticleFetchEndTime = Date()
+
+		try await withCheckedThrowingContinuation { continuation in
+			syncAllOperation.syncCompletionHandler = { result in
+				self.logger.debug("Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds.")
+
+				switch result {
+				case .success():
+					self.accountMetadata?.lastArticleFetchStartTime = date
+					self.accountMetadata?.lastArticleFetchEndTime = Date()
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
-			
-            self?.logger.debug("Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds.")
-			completion(result)
+
+			currentSyncAllOperation = syncAllOperation
+
+			operationQueue.add(syncAllOperation)
 		}
-		
-		currentSyncAllOperation = syncAllOperation
-		
-		operationQueue.add(syncAllOperation)
 	}
 	
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {

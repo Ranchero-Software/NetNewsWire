@@ -78,20 +78,27 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
 		guard refreshProgress.isComplete else {
-			completion(.success(()))
 			return
 		}
 
 		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
 		var flags = SCNetworkReachabilityFlags()
 		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
-			completion(.success(()))
 			return
 		}
-			
-		standardRefreshAll(for: account, completion: completion)
+
+		try await withCheckedThrowingContinuation { continuation in
+			standardRefreshAll(for: account) { result in
+				switch result {
+				case .success():
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
 	}
 
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {

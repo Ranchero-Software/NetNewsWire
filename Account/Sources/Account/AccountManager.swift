@@ -245,28 +245,23 @@ import RSDatabase
 		}
 	}
 
-	public func refreshAll(errorHandler: @escaping @MainActor (Error) -> Void, completion: (() -> Void)? = nil) {
+	public func refreshAll(errorHandler: @escaping @MainActor (Error) -> Void) async {
+
 		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
 
-		let group = DispatchGroup()
-		
-        for account in activeAccounts {
-			group.enter()
-			account.refreshAll() { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-                    Task { @MainActor in
-                        errorHandler(error)
-                    }
+		await withTaskGroup(of: Void.self) { group in
+			for account in activeAccounts {
+				group.addTask {
+					do {
+						try await account.refreshAll()
+					} catch {
+						Task { @MainActor in
+							errorHandler(error)
+						}
+					}
 				}
 			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion?()
+			await group.waitForAll()
 		}
 	}
 	

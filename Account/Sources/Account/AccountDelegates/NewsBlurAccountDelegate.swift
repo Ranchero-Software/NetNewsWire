@@ -66,7 +66,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		return
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+	private func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 		self.refreshProgress.addToNumberOfTasksAndRemaining(4)
 
 		refreshFeeds(for: account) { result in
@@ -114,6 +114,19 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 			case .failure(let error):
 				completion(.failure(error))
+			}
+		}
+	}
+
+	func refreshAll(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshAll(for: account) { result in
+				switch result {
+				case .success():
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
 	}

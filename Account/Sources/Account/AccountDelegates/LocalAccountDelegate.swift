@@ -24,7 +24,7 @@ public enum LocalAccountDelegateError: String, Error {
 final class LocalAccountDelegate: AccountDelegate, Logging {
 
 	weak var account: Account?
-	
+
 	private lazy var refresher: LocalAccountRefresher? = {
 		let refresher = LocalAccountRefresher()
 		refresher.delegate = self
@@ -44,28 +44,31 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
 		return
 	}
 
-    func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
         guard refreshProgress.isComplete else {
-            completion(.success(()))
             return
         }
 
-        let feeds = account.flattenedFeeds()
-		let feedURLs = Set(feeds.map{ $0.url })
-        refreshProgress.addToNumberOfTasksAndRemaining(feedURLs.count)
+		try await withCheckedThrowingContinuation { continuation in
+			Task { @MainActor in
+				let feeds = account.flattenedFeeds()
+				let feedURLs = Set(feeds.map{ $0.url })
+				refreshProgress.addToNumberOfTasksAndRemaining(feedURLs.count)
 
-        let group = DispatchGroup()
+				let group = DispatchGroup()
 
-        group.enter()
-        refresher?.refreshFeedURLs(feedURLs) {
-            group.leave()
-        }
+				group.enter()
+				refresher?.refreshFeedURLs(feedURLs) {
+					group.leave()
+				}
 
-        group.notify(queue: DispatchQueue.main) {
-            self.refreshProgress.clear()
-            account.metadata.lastArticleFetchEndTime = Date()
-            completion(.success(()))
-        }
+				group.notify(queue: DispatchQueue.main) {
+					self.refreshProgress.clear()
+					account.metadata.lastArticleFetchEndTime = Date()
+					continuation.resume()
+				}
+			}
+		}
     }
 
 
