@@ -146,22 +146,25 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-                        self.logger.error("Failed to refresh article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
-						completion?(.failure(error))
+	func syncArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			sendArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					self.refreshArticleStatus(for: account) { result in
+						switch result {
+						case .success:
+							continuation.resume()
+						case .failure(let error):
+							self.logger.error("Failed to refresh article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
+							continuation.resume(throwing: error)
+						}
 					}
+				case .failure(let error):
+					self.logger.error("Failed to send article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
+					continuation.resume(throwing: error)
 				}
-			case .failure(let error):
-                self.logger.error("Failed to send article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
-				completion?(.failure(error))
 			}
 		}
 	}

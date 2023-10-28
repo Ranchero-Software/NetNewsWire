@@ -280,18 +280,16 @@ import RSDatabase
 		}
 	}
 
-	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
-		
-		for account in activeAccounts {
-			group.enter()
-            account.syncArticleStatus() { _ in
-				group.leave()
-			}
-		}
+	public func syncArticleStatusAll() async {
 
-		group.notify(queue: DispatchQueue.global(qos: .background)) {
-			completion?()
+		await withTaskGroup(of: Void.self) { group in
+			for account in activeAccounts {
+				group.addTask {
+					try? await account.syncArticleStatus()
+				}
+			}
+			
+			await group.waitForAll()
 		}
 	}
 	
