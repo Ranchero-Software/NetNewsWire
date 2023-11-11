@@ -46,4 +46,3 @@ import Foundation
 		super.sendEvent(event)
 	}
 }
-s
