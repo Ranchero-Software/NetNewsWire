@@ -10,7 +10,7 @@ import AppKit
 import Account
 import RSCore
 
-@MainActor struct ErrorHandler: Logging {
+struct ErrorHandler: Logging {
 
 	public static func present(_ error: Error) {
 		NSApplication.shared.presentError(error)
