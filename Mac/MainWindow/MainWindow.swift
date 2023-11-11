@@ -41,7 +41,9 @@ import Foundation
 				
 			}
 			
-			super.sendEvent(event)
 		}
+		
+		super.sendEvent(event)
 	}
 }
+s
