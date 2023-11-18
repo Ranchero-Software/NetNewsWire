@@ -28,6 +28,22 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 		self.articlesZone = articlesZone
 	}
 	
+	func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			cloudKitWasChanged(updated: updated, deleted: deleted) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+}
+
+private extension CloudKitArticlesZoneDelegate {
+
 	func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 
 		Task { @MainActor in
@@ -54,9 +70,6 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 			}
 		}
 	}
-}
-
-private extension CloudKitArticlesZoneDelegate {
 
 	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Error?) -> Void) {
 		let receivedRecordIDs = recordKeys.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticleStatus.recordType }).map({ $0.recordID })

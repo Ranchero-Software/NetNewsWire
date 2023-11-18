@@ -76,14 +76,14 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
 		return
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		completion(.success(()))
+	func sendArticleStatus(for account: Account) async throws {
+		return
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		completion(.success(()))
+	func refreshArticleStatus(for account: Account) async throws {
+		return
 	}
-	
+
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		var fileData: Data?
 		

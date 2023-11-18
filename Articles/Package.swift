@@ -11,7 +11,7 @@ let package = Package(
             targets: ["Articles"]),
     ],
     dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMajor(from: "2.0.1")),
+		.package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMajor(from: "3.0.0")),
     ],
     targets: [
         .target(

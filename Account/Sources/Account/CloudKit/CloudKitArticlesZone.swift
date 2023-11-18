@@ -84,7 +84,30 @@ final class CloudKitArticlesZone: CloudKitZone {
 			self.save(compressedRecords, completion: completion)
 		}
 	}
-	
+
+	@MainActor func saveNewArticles(_ articles: Set<Article>) async throws {
+		guard !articles.isEmpty else {
+			return
+		}
+
+		let records: [CKRecord] = {
+			var recordsAccumulator = [CKRecord]()
+
+			let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
+			for saveArticle in saveArticles {
+				recordsAccumulator.append(makeStatusRecord(saveArticle))
+				recordsAccumulator.append(makeArticleRecord(saveArticle))
+			}
+			return recordsAccumulator
+		}()
+
+		compressionQueue.async {
+			let compressedRecords = self.compressArticleRecords(records)
+			self.save(compressedRecords, completion: completion)
+		}
+	}
+
+
 	func deleteArticles(_ feedExternalID: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		let predicate = NSPredicate(format: "webFeedExternalID = %@", feedExternalID)
 		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)

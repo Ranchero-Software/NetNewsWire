@@ -25,7 +25,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 @MainActor final class FeedbinAccountDelegate: AccountDelegate, Logging {
 
 	private let database: SyncDatabase
-	
+
 	private let caller: FeedbinAPICaller
 
 	let behaviors: AccountBehaviors = [.disallowFeedCopyInRootFolder]
@@ -128,7 +128,20 @@ public enum FeedbinAccountDelegateError: String, Error {
 		}
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func sendArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.sendArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
 		Task { @MainActor in
 			logger.debug("Sending article statuses")
@@ -190,7 +203,21 @@ public enum FeedbinAccountDelegateError: String, Error {
 		}
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func refreshArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
         logger.debug("Refreshing article statuses...")
 		

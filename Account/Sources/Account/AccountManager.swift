@@ -267,10 +267,12 @@ import RSDatabase
 	
 	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
-		
+
 		for account in activeAccounts {
 			group.enter()
-            account.sendArticleStatus() { _ in
+
+			Task { @MainActor in
+				try? await account.sendArticleStatus()
 				group.leave()
 			}
 		}
@@ -279,6 +281,7 @@ import RSDatabase
 			completion?()
 		}
 	}
+
 
 	public func syncArticleStatusAll() async {
 

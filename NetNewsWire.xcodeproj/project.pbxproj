@@ -5272,7 +5272,7 @@
 			repositoryURL = "https://github.com/Ranchero-Software/RSCore.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.1;
+				minimumVersion = 3.0.0;
 			};
 		};
 		510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */ = {

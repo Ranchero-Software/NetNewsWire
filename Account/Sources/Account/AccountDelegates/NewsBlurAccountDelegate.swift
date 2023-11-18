@@ -151,7 +151,21 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+	func sendArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.sendArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 		Task { @MainActor in
 			logger.debug("Sending story statuses")
 
@@ -223,7 +237,21 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+	func refreshArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
         logger.debug("Refreshing story statuses...")
 
 		let group = DispatchGroup()

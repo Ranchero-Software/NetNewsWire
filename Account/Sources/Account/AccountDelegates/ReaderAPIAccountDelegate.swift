@@ -39,7 +39,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 @MainActor final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 
 	private let variant: ReaderAPIVariant
-	
+
 	private let database: SyncDatabase
 	
 	private let caller: ReaderAPICaller
@@ -206,7 +206,21 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 		}
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func sendArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.sendArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		logger.debug("Sending article statuses")
 
 		@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
@@ -253,7 +267,21 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 		}
 	}
 
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func refreshArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
         logger.debug("Refreshing article statuses...")
 
 		let group = DispatchGroup()
