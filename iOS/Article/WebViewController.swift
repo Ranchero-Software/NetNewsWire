@@ -529,6 +529,20 @@ private extension WebViewController {
 		}
 		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		
+		let userContentController = WKUserContentController()
+		let baseURL = ArticleRenderer.page.baseURL
+		let appScriptsWorld = WKContentWorld.world(name: "NetNewsWire")
+		for fileName in ["main.js", "main_ios.js", "newsfoot.js"] {
+			userContentController.addUserScript(
+				.init(source: try! String(contentsOf: baseURL.appending(path: fileName,
+																		directoryHint: .notDirectory)),
+					  injectionTime: .atDocumentStart,
+					  forMainFrameOnly: true,
+					  in: appScriptsWorld))
+		}
+
+		configuration.userContentController = userContentController
+
 		let webView = WKWebView(frame: self.view.bounds, configuration: configuration)
 		webView.isOpaque = false;
 		webView.backgroundColor = .clear;
@@ -591,8 +605,8 @@ private extension WebViewController {
 		]
 
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
-		
+		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
+
 	}
 	
 	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
