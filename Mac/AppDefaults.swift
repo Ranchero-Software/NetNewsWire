@@ -41,6 +41,7 @@ final class AppDefaults {
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
+		static let javascriptEnabled = "javascriptEnabled"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -299,6 +300,15 @@ final class AppDefaults {
 		}
 	}
 
+	var isJavascriptEnabled: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.javascriptEnabled)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.javascriptEnabled)
+		}
+	}
+
 	func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
@@ -306,15 +316,18 @@ final class AppDefaults {
  		let showDebugMenu = false
  		#endif
 
-		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue,
-										Key.timelineFontSize: FontSize.medium.rawValue,
-										Key.detailFontSize: FontSize.medium.rawValue,
-										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-										Key.timelineGroupByFeed: false,
-										"NSScrollViewShouldScrollUnderTitlebar": false,
-										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
-										Key.showDebugMenu: showDebugMenu,
-										Key.currentThemeName: Self.defaultThemeName]
+		let defaults: [String : Any] = [
+			Key.sidebarFontSize: FontSize.medium.rawValue,
+			Key.timelineFontSize: FontSize.medium.rawValue,
+			Key.detailFontSize: FontSize.medium.rawValue,
+			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+			Key.timelineGroupByFeed: false,
+			"NSScrollViewShouldScrollUnderTitlebar": false,
+			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+			Key.showDebugMenu: showDebugMenu,
+			Key.currentThemeName: Self.defaultThemeName,
+			Key.javascriptEnabled: false
+		]
 
 		UserDefaults.standard.register(defaults: defaults)
 
