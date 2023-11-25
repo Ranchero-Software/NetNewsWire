@@ -445,31 +445,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				self.coordinator.showAddWebFeed()
 			}
 			
-			let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			let addRedditFeedAction = UIAlertAction(title: addRedditFeedActionTitle, style: .default) { _ in
-				self.coordinator.showAddRedditFeed()
-			}
-			
-			let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
-			let addTwitterFeedAction = UIAlertAction(title: addTwitterFeedActionTitle, style: .default) { _ in
-				self.coordinator.showAddTwitterFeed()
-			}
-			
 			let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
 			let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
 				self.coordinator.showAddFolder()
 			}
 			
 			alertController.addAction(addWebFeedAction)
-			
-			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
-					alertController.addAction(addRedditFeedAction)
-				}
-				if ExtensionPointManager.shared.isTwitterEnabled {
-					alertController.addAction(addTwitterFeedAction)
-				}
-			}
 			
 			alertController.addAction(addWebFolderAction)
 			alertController.addAction(cancelAction)
@@ -649,9 +630,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			/*
 				Context Menu Order:
 				1. Add Web Feed
-				2. Add Reddit Feed
-				3. Add Twitter Feed
-				4. Add Folder
+				2. Add Folder
 			*/
 			
 			var menuItems: [UIAction] = []
@@ -662,23 +641,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 			menuItems.append(addWebFeedAction)
 			
-			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
-					let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-					let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
-						self.coordinator.showAddRedditFeed()
-					}
-					menuItems.append(addRedditFeedAction)
-				}
-				if ExtensionPointManager.shared.isTwitterEnabled {
-					let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
-					let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter.tinted(color: .label)) { _ in
-						self.coordinator.showAddTwitterFeed()
-					}
-					menuItems.append(addTwitterFeedAction)
-				}
-			}
-						
 			let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
 			let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
 				self.coordinator.showAddFolder()

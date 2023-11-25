@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -121,15 +121,6 @@
 		511D43EF231FBDE900FB1562 /* LaunchScreenPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 511D43ED231FBDE800FB1562 /* LaunchScreenPad.storyboard */; };
 		511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511D4410231FC02D00FB1562 /* KeyboardManager.swift */; };
 		51236339236915B100951F16 /* RoundedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512363372369155100951F16 /* RoundedProgressView.swift */; };
-		512392BE24E33A3C00F11704 /* RedditSelectAccountTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE603246AF37B00731738 /* RedditSelectAccountTableViewController.swift */; };
-		512392BF24E33A3C00F11704 /* RedditSelectSortTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE607246AFC9900731738 /* RedditSelectSortTableViewController.swift */; };
-		512392C024E33A3C00F11704 /* RedditAdd.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 516AE5FF246AF34100731738 /* RedditAdd.storyboard */; };
-		512392C124E33A3C00F11704 /* RedditSelectTypeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE601246AF36100731738 /* RedditSelectTypeTableViewController.swift */; };
-		512392C224E33A3C00F11704 /* RedditEnterDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE605246AF3A900731738 /* RedditEnterDetailTableViewController.swift */; };
-		512392C324E3451400F11704 /* TwitterAdd.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */; };
-		512392C424E3451400F11704 /* TwitterSelectTypeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */; };
-		512392C524E3451400F11704 /* TwitterEnterDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */; };
-		512392C624E3451400F11704 /* TwitterSelectAccountTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */; };
 		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
@@ -1126,9 +1117,6 @@
 		3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
 		510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectComboTableViewCell.swift; sourceTree = "<group>"; };
-		510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TwitterAdd.storyboard; sourceTree = "<group>"; };
-		510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectTypeTableViewController.swift; sourceTree = "<group>"; };
-		510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectAccountTableViewController.swift; sourceTree = "<group>"; };
 		5103A9972421643300410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsAddCloudKit.xib; sourceTree = "<group>"; };
@@ -1206,11 +1194,6 @@
 		516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsTableViewCell.xib; sourceTree = "<group>"; };
 		516A093F2361240900EAE89B /* Account.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Account.storyboard; sourceTree = "<group>"; };
 		516A09412361248000EAE89B /* Inspector.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Inspector.storyboard; sourceTree = "<group>"; };
-		516AE5FF246AF34100731738 /* RedditAdd.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RedditAdd.storyboard; sourceTree = "<group>"; };
-		516AE601246AF36100731738 /* RedditSelectTypeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSelectTypeTableViewController.swift; sourceTree = "<group>"; };
-		516AE603246AF37B00731738 /* RedditSelectAccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSelectAccountTableViewController.swift; sourceTree = "<group>"; };
-		516AE605246AF3A900731738 /* RedditEnterDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditEnterDetailTableViewController.swift; sourceTree = "<group>"; };
-		516AE607246AFC9900731738 /* RedditSelectSortTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSelectSortTableViewController.swift; sourceTree = "<group>"; };
 		516AE9B22371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeaderLayout.swift; sourceTree = "<group>"; };
 		516AE9DE2372269A007DEEAA /* IconImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImage.swift; sourceTree = "<group>"; };
 		51707438232AA97100A461A3 /* ShareFolderPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerController.swift; sourceTree = "<group>"; };
@@ -1262,7 +1245,6 @@
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
-		51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterEnterDetailTableViewController.swift; sourceTree = "<group>"; };
 		51C03080257D815A00609262 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/UnifiedWindow.storyboard; sourceTree = SOURCE_ROOT; };
 		51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreviewViewController.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
@@ -1760,17 +1742,6 @@
 			path = 1Password;
 			sourceTree = "<group>";
 		};
-		510289CE2451BA1E00426DDF /* Twitter */ = {
-			isa = PBXGroup;
-			children = (
-				510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */,
-				510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */,
-				510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */,
-				51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */,
-			);
-			path = Twitter;
-			sourceTree = "<group>";
-		};
 		510C415D24E5CDE3008226FD /* ShareExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -1894,18 +1865,6 @@
 				177A0C2C25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift */,
 			);
 			path = Account;
-			sourceTree = "<group>";
-		};
-		516AE5DD246AF2DD00731738 /* Reddit */ = {
-			isa = PBXGroup;
-			children = (
-				516AE5FF246AF34100731738 /* RedditAdd.storyboard */,
-				516AE601246AF36100731738 /* RedditSelectTypeTableViewController.swift */,
-				516AE603246AF37B00731738 /* RedditSelectAccountTableViewController.swift */,
-				516AE605246AF3A900731738 /* RedditEnterDetailTableViewController.swift */,
-				516AE607246AFC9900731738 /* RedditSelectSortTableViewController.swift */,
-			);
-			path = Reddit;
 			sourceTree = "<group>";
 		};
 		5183CCEA226F70350010922C /* Timer */ = {
@@ -2092,8 +2051,6 @@
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
 				510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */,
 				51E36E8B239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib */,
-				516AE5DD246AF2DD00731738 /* Reddit */,
-				510289CE2451BA1E00426DDF /* Twitter */,
 			);
 			path = Add;
 			sourceTree = "<group>";
@@ -3364,7 +3321,6 @@
 				511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
 				51BB7C312335ACDE008E8144 /* page.html in Resources */,
-				512392C324E3451400F11704 /* TwitterAdd.storyboard in Resources */,
 				516A093723609A3600EAE89B /* SettingsComboTableViewCell.xib in Resources */,
 				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
 				51077C5627A86C9E000C71DB /* Hyperlegible.nnwtheme in Resources */,
@@ -3385,7 +3341,6 @@
 				511D43CF231FA62200FB1562 /* DetailKeyboardShortcuts.plist in Resources */,
 				51A1699A235E10D700EB091F /* Settings.storyboard in Resources */,
 				49F40DF92335B71000552BF4 /* newsfoot.js in Resources */,
-				512392C024E33A3C00F11704 /* RedditAdd.storyboard in Resources */,
 				51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */,
 				51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
@@ -4034,7 +3989,6 @@
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
 				51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */,
 				176813E92564BAE200D98635 /* WidgetDeepLinks.swift in Sources */,
-				512392C424E3451400F11704 /* TwitterSelectTypeTableViewController.swift in Sources */,
 				51B5C87723F22B8200032075 /* ExtensionContainers.swift in Sources */,
 				51C45292226509C800C03939 /* TodayFeedDelegate.swift in Sources */,
 				51C452A222650A1900C03939 /* RSHTMLMetadata+Extension.swift in Sources */,
@@ -4069,17 +4023,13 @@
 				C5A6ED6D23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift in Sources */,
 				5108F6D42375EEEF001ABC45 /* TimelinePreviewTableViewController.swift in Sources */,
 				84CAFCA522BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
-				512392BE24E33A3C00F11704 /* RedditSelectAccountTableViewController.swift in Sources */,
 				51C4529C22650A1000C03939 /* SingleFaviconDownloader.swift in Sources */,
 				17D643B226F8A436008D4C05 /* ArticleThemeDownloader.swift in Sources */,
 				51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				51F9F3F723DF6DB200A314FD /* ArticleIconSchemeHandler.swift in Sources */,
-				512392C524E3451400F11704 /* TwitterEnterDetailTableViewController.swift in Sources */,
 				512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */,
-				512392C124E33A3C00F11704 /* RedditSelectTypeTableViewController.swift in Sources */,
 				51A1699F235E10D700EB091F /* AboutViewController.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
-				512392C624E3451400F11704 /* TwitterSelectAccountTableViewController.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,
@@ -4089,7 +4039,6 @@
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
 				51A1699B235E10D700EB091F /* AccountInspectorViewController.swift in Sources */,
 				512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */,
-				512392C224E33A3C00F11704 /* RedditEnterDetailTableViewController.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5195C1DC2720BD3000888867 /* MasterFeedRowIdentifier.swift in Sources */,
 				5108F6D823763094001ABC45 /* TickMarkSlider.swift in Sources */,
@@ -4114,7 +4063,6 @@
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,
-				512392BF24E33A3C00F11704 /* RedditSelectSortTableViewController.swift in Sources */,
 				516AE9E02372269A007DEEAA /* IconImage.swift in Sources */,
 				519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */,
 				51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */,

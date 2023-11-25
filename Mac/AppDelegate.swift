@@ -131,13 +131,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
 		appDelegate = self
-		
-		if shouldShowTwitterDeprecationAlert() {
-			showTwitterDeprecationAlert()
-		}
-		else if shouldShowRedditDeprecationAlert() {
-			showRedditDeprecationAlert()
-		}
 	}
 
 	// MARK: - API
@@ -940,60 +933,6 @@ internal extension AppDelegate {
 			button?.action = #selector(self.openThemesFolder(_:))
 			alert.buttons[0].keyEquivalent = "\033"
 			alert.buttons[1].keyEquivalent = "\r"
-			alert.runModal()
-		}
-	}
-
-	private func shouldShowTwitterDeprecationAlert() -> Bool {
-		if AppDefaults.shared.twitterDeprecationAlertShown { return false }
-
-		let expiryDate = Date(timeIntervalSince1970: 1691539200) // August 9th 2023, 00:00 UTC
-		let currentDate = Date()
-		if currentDate > expiryDate {
-			return false // If after August 9th, don't show
-		}
-
-		return AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneTwitterFeed()
-	}
-
-	private func showTwitterDeprecationAlert() {
-		assert(shouldShowTwitterDeprecationAlert())
-
-		AppDefaults.shared.twitterDeprecationAlertShown = true
-		DispatchQueue.main.async {
-			let alert = NSAlert()
-			alert.alertStyle = .warning
-			alert.messageText = NSLocalizedString("Twitter Integration Removed", comment: "Twitter Integration Removed")
-			alert.informativeText = NSLocalizedString("Twitter has ended free access to the parts of the Twitter API that we need.\n\nSince Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.\n\nWe’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded. However, those feeds will no longer update.", comment: "Twitter deprecation informative text.")
-			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
-			alert.buttons[0].keyEquivalent = "\r"
-			alert.runModal()
-		}
-	}
-
-	private func shouldShowRedditDeprecationAlert() -> Bool {
-		if AppDefaults.shared.redditDeprecationAlertShown { return false }
-
-		let expiryDate = Date(timeIntervalSince1970: 1701331200) // Thu Nov 30 2023 00:00:00 GMT-0800 (Pacific Standard Time)
-		let currentDate = Date()
-		if currentDate > expiryDate {
-			return false
-		}
-
-		return AccountManager.shared.anyLocalOriCloudAccountHasAtLeastOneRedditAPIFeed()
-	}
-
-	private func showRedditDeprecationAlert() {
-		assert(shouldShowRedditDeprecationAlert())
-		AppDefaults.shared.redditDeprecationAlertShown = true
-
-		DispatchQueue.main.async {
-			let alert = NSAlert()
-			alert.alertStyle = .warning
-			alert.messageText = NSLocalizedString("Reddit API Integration Removed", comment: "Reddit API Integration Removed")
-			alert.informativeText = NSLocalizedString("Reddit has ended free access to their API.\n\nThough Reddit does provide RSS feeds, we used the Reddit API to get more and better data. But, without free access to that API, we have had to stop using it.\n\nWe’ve left your Reddit feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.\n\nYou can still read whatever you have already downloaded.\n\nAlso, importantly — Reddit still provides RSS feeds, and you can follow Reddit activity through RSS.", comment: "Reddit deprecation message")
-			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
-			alert.buttons[0].keyEquivalent = "\r"
 			alert.runModal()
 		}
 	}

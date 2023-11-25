@@ -14,7 +14,7 @@ Supporting all these things takes *work*.
 
 In no particular order …
 
-* Write a blog instead of posting to Twitter or Facebook. (You can always re-post to those places if you want to extend your reach.) [Micro.blog](https://micro.blog/) is one good place to get going, but it’s not the only one.
+* Write a blog instead of posting to Threads or Facebook or any other corporate social media. (You can always re-post to those places if you want to extend your reach.) [Micro.blog](https://micro.blog/) is one good place to get going, but it’s not the only one.
 * Use an RSS reader even if it’s not NetNewsWire. (There are a bunch of good ones!)
 * Teach other people to use RSS readers. Blog about RSS readers. And about other open web technologies and apps.
 * Suggest apps for [macopenweb.com](https://macopenweb.com/).
