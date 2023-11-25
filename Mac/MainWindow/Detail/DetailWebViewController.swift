@@ -73,6 +73,17 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 
+	static let userScripts: [WKUserScript] = {
+		let appScriptsWorld = WKContentWorld.world(name: "NetNewsWire")
+		let filenames = ["main", "main_mac", "newsfoot"]
+		let scripts = filenames.map { filename in
+			let scriptURL = Bundle.main.url(forResource: filename, withExtension: ".js")!
+			let scriptSource = try! String(contentsOf: scriptURL)
+			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true, in: appScriptsWorld)
+		}
+		return scripts
+	}()
+
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
@@ -83,17 +94,22 @@ final class DetailWebViewController: NSViewController {
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
-		preferences.javaScriptEnabled = true
+
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = false
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.windowDidScroll)
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
+		for script in Self.userScripts {
+			userContentController.addUserScript(script)
+		}
 		configuration.userContentController = userContentController
+
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self
@@ -327,7 +343,7 @@ private extension DetailWebViewController {
 		]
 		
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 
 	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
