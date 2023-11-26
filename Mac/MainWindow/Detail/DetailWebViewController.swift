@@ -63,6 +63,11 @@ final class DetailWebViewController: NSViewController {
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	private var windowScrollY: CGFloat?
+	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled {
+		didSet {
+			reloadHTML()
+		}
+	}
 
 	private var isShowingExtractedArticle: Bool {
 		switch state {
@@ -97,7 +102,7 @@ final class DetailWebViewController: NSViewController {
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = isArticleContentJavascriptEnabled
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
@@ -167,8 +172,19 @@ final class DetailWebViewController: NSViewController {
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
+
+		var shouldReloadHTML = false
+
 		if articleTextSize != AppDefaults.shared.articleTextSize {
 			articleTextSize = AppDefaults.shared.articleTextSize
+			shouldReloadHTML = true
+		}
+		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+			shouldReloadHTML = true
+		}
+
+		if shouldReloadHTML {
 			reloadHTMLMaintainingScrollPosition()
 		}
 	}
@@ -250,6 +266,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			return
 		}
 
+		webView.configuration.defaultWebpagePreferences.allowsContentJavaScript = isArticleContentJavascriptEnabled
 		decisionHandler(.allow)
 	}
 	
