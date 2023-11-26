@@ -326,7 +326,7 @@ final class AppDefaults {
 			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
-			Key.javascriptEnabled: false
+			Key.javascriptEnabled: true
 		]
 
 		UserDefaults.standard.register(defaults: defaults)
