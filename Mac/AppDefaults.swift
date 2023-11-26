@@ -41,7 +41,7 @@ final class AppDefaults {
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
-		static let javascriptEnabled = "javascriptEnabled"
+		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -300,12 +300,12 @@ final class AppDefaults {
 		}
 	}
 
-	var isJavascriptEnabled: Bool {
+	var isArticleContentJavascriptEnabled: Bool {
 		get {
-			UserDefaults.standard.bool(forKey: Key.javascriptEnabled)
+			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Key.javascriptEnabled)
+			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
 		}
 	}
 
@@ -326,7 +326,7 @@ final class AppDefaults {
 			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
-			Key.javascriptEnabled: true
+			Key.articleContentJavascriptEnabled: true
 		]
 
 		UserDefaults.standard.register(defaults: defaults)

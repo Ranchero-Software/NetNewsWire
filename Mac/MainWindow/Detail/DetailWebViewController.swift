@@ -97,7 +97,7 @@ final class DetailWebViewController: NSViewController {
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isJavascriptEnabled
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
@@ -108,7 +108,6 @@ final class DetailWebViewController: NSViewController {
 			userContentController.addUserScript(script)
 		}
 		configuration.userContentController = userContentController
-
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self
@@ -133,7 +132,6 @@ final class DetailWebViewController: NSViewController {
 			]
 			NSLayoutConstraint.activate(constraints)
 		}
-
 
 		// Hide the web view until the first reload (navigation) is complete (plus some delay) to avoid the awful white flash that happens on the initial display in dark mode.
 		// See bug #901.
