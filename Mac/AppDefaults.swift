@@ -5,6 +5,7 @@
 //  Created by Brent Simmons on 9/22/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
+
 import AppKit
 
 enum FontSize: Int {
@@ -17,9 +18,8 @@ enum FontSize: Int {
 final class AppDefaults {
 	
 	static let defaultThemeName = "Default"
-	
-	static var shared = AppDefaults()
-	private init() {}
+
+	static let shared = AppDefaults()
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"

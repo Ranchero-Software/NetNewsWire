@@ -25,15 +25,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	@IBOutlet var containerView: DetailContainerView!
 	@IBOutlet var statusBarView: DetailStatusBarView!
 
-	lazy var regularWebViewController = {
-		return createWebViewController()
-	}()
+	private lazy var regularWebViewController = createWebViewController()
+	private var searchWebViewController: DetailWebViewController?
 
-	lazy var searchWebViewController = {
-		return createWebViewController()
-	}()
-
-	var currentWebViewController: DetailWebViewController! {
+	private var currentWebViewController: DetailWebViewController! {
 		didSet {
 			let webview = currentWebViewController.view
 			if containerView.contentView === webview {
@@ -44,18 +39,44 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		}
 	}
 
+	private var currentSourceMode: TimelineSourceMode = .regular {
+		didSet {
+			currentWebViewController = webViewController(for: currentSourceMode)
+		}
+	}
+
+	private var detailStateForRegular: DetailState = .noSelection {
+		didSet {
+			webViewController(for: .regular).state = detailStateForRegular
+		}
+	}
+
+	private var detailStateForSearch: DetailState = .noSelection {
+		didSet {
+			webViewController(for: .search).state = detailStateForSearch
+		}
+	}
+
+	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 	}
 
 	// MARK: - API
 
 	func setState(_ state: DetailState, mode: TimelineSourceMode) {
-		webViewController(for: mode).state = state
+		switch mode {
+		case .regular:
+			detailStateForRegular = state
+		case .search:
+			detailStateForSearch = state
+		}
 	}
 
 	func showDetail(for mode: TimelineSourceMode) {
-		currentWebViewController = webViewController(for: mode)
+		currentSourceMode = mode
 	}
 
 	func stopMediaPlayback() {
@@ -130,7 +151,32 @@ private extension DetailViewController {
 		case .regular:
 			return regularWebViewController
 		case .search:
-			return searchWebViewController
+			if searchWebViewController == nil {
+				searchWebViewController = createWebViewController()
+			}
+			return searchWebViewController!
+		}
+	}
+
+	@objc func userDefaultsDidChange(_ : Notification) {
+		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+			createNewWebViewsAndRestoreState()
+		}
+	}
+
+	func createNewWebViewsAndRestoreState() {
+
+		regularWebViewController = createWebViewController()
+		currentWebViewController = regularWebViewController
+		regularWebViewController.state = detailStateForRegular
+
+		searchWebViewController = nil
+
+		if currentSourceMode == .search {
+			searchWebViewController = createWebViewController()
+			currentWebViewController = searchWebViewController
+			searchWebViewController!.state = detailStateForSearch
 		}
 	}
 }
