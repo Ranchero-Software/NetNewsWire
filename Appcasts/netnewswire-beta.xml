@@ -6,7 +6,21 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
-       <item>
+        <item>
+            <title>NetNewsWire 6.1.5b1</title>
+            <description><![CDATA[
+			<p>This builds adds a new setting — you can turn on/off JavaScript for the article pane. It’s on by default, which matches previous behavior.</p>
+			<p>Note that some content — videos and embedded social media posts, for instance — will often require JavaScript to be <i>on</i> in order to work properly.</p>
+			<p>However, for those who want or need greater security and privacy, we’ve made this setting available.</p>
+
+			<p>This build also fixes a case where images might not load in the article pane.</p>
+           ]]></description>
+            <pubDate>Fri, 01 Dec 2023 17:30:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.5b1/NetNewsWire6.1.5b1.zip" sparkle:version="6121" sparkle:shortVersionString="6.1.5b1" length="10098688" type="application/zip" />
+            <sparkle:minimumSystemVersion>11.0.0</sparkle:minimumSystemVersion>
+        </item>
+
+      <item>
             <title>NetNewsWire 6.1.4b1</title>
             <description><![CDATA[
             <p><b>This build removes Reddit API integration! Don’t install it if you’re not ready for that to happen!</b></p>
