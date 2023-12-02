@@ -170,6 +170,5 @@ function processPage() {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
-	window.scrollTo(0, [[windowScrollY]]);
 	processPage();
 })

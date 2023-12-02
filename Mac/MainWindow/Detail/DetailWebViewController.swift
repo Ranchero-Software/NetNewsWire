@@ -74,12 +74,11 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	static let userScripts: [WKUserScript] = {
-		let appScriptsWorld = WKContentWorld.world(name: "NetNewsWire")
 		let filenames = ["main", "main_mac", "newsfoot"]
 		let scripts = filenames.map { filename in
 			let scriptURL = Bundle.main.url(forResource: filename, withExtension: ".js")!
 			let scriptSource = try! String(contentsOf: scriptURL)
-			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true, in: appScriptsWorld)
+			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
 		}
 		return scripts
 	}()
