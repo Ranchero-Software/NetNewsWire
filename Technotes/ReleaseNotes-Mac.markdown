@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+## 6.1.5b1 build 6121 1 Dec 2023
+
+Add new setting — turn on/off JavaScript for the article pane. It’s on by default, which matches previous behavior. Note that some content — videos and embedded social media posts, for instance — will often require JavaScript to be _on_ in order to work properly. However, for those who want or need greater security and privacy, we’ve made this setting available.
+
+Fix a case where images might not load in the article pane.
+
 ## 6.1.4 build 6120 27 June 2023
 
 Same as 6.1.4b1 but as final release.
