@@ -6,7 +6,7 @@ It supports [RSS](https://cyber.harvard.edu/rss/rss.html), [Atom](https://datatr
 
 More info: [https://netnewswire.com/](https://netnewswire.com/)
 
-Also see the [Technotes](Technotes/) and the [Roadmap](Technotes/Roadmap.md).
+Also see the [Technotes](Technotes/) and the [Roadmap/Milestones](https://github.com/Ranchero-Software/NetNewsWire/milestones).
 
 Note: NetNewsWire’s Help menu has a bunch of these links, so you don’t have to remember to come back to this page.
 
