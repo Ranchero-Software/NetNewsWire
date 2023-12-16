@@ -25,6 +25,10 @@ enum DetailState: Equatable {
 	@IBOutlet var containerView: DetailContainerView!
 	@IBOutlet var statusBarView: DetailStatusBarView!
 
+	var windowState: DetailWindowState {
+		return currentWebViewController.windowState
+	}
+	
 	lazy var regularWebViewController = {
 		return createWebViewController()
 	}()
@@ -89,12 +93,6 @@ enum DetailState: Equatable {
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(currentWebViewController.webView)
 	}
 	
-	// MARK: State Restoration
-	
-	func saveState(to state: inout [AnyHashable : Any]) {
-		currentWebViewController.saveState(to: &state)
-	}
-
 	// MARK: Find in Article
 
 	private var didLoadTextFinder = false
