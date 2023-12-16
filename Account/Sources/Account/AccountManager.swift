@@ -245,37 +245,34 @@ import RSDatabase
 		}
 	}
 
-	public func refreshAll(errorHandler: @escaping @MainActor (Error) -> Void, completion: (() -> Void)? = nil) {
+	public func refreshAll(errorHandler: @escaping @MainActor (Error) -> Void) async {
+
 		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
 
-		let group = DispatchGroup()
-		
-        for account in activeAccounts {
-			group.enter()
-			account.refreshAll() { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-                    Task { @MainActor in
-                        errorHandler(error)
-                    }
+		await withTaskGroup(of: Void.self) { group in
+			for account in activeAccounts {
+				group.addTask {
+					do {
+						try await account.refreshAll()
+					} catch {
+						Task { @MainActor in
+							errorHandler(error)
+						}
+					}
 				}
 			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion?()
+			await group.waitForAll()
 		}
 	}
 	
 	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
-		
+
 		for account in activeAccounts {
 			group.enter()
-            account.sendArticleStatus() { _ in
+
+			Task { @MainActor in
+				try? await account.sendArticleStatus()
 				group.leave()
 			}
 		}
@@ -285,18 +282,17 @@ import RSDatabase
 		}
 	}
 
-	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
-		
-		for account in activeAccounts {
-			group.enter()
-            account.syncArticleStatus() { _ in
-				group.leave()
-			}
-		}
 
-		group.notify(queue: DispatchQueue.global(qos: .background)) {
-			completion?()
+	public func syncArticleStatusAll() async {
+
+		await withTaskGroup(of: Void.self) { group in
+			for account in activeAccounts {
+				group.addTask {
+					try? await account.syncArticleStatus()
+				}
+			}
+			
+			await group.waitForAll()
 		}
 	}
 	

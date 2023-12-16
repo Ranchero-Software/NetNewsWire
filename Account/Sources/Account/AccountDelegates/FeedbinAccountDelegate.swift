@@ -25,7 +25,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 @MainActor final class FeedbinAccountDelegate: AccountDelegate, Logging {
 
 	private let database: SyncDatabase
-	
+
 	private let caller: FeedbinAPICaller
 
 	let behaviors: AccountBehaviors = [.disallowFeedCopyInRootFolder]
@@ -75,58 +75,73 @@ public enum FeedbinAccountDelegateError: String, Error {
 		return
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	func refreshAll(for account: Account) async throws {
+
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
-		refreshAccount(account) { result in
-			switch result {
-			case .success():
+		try await withCheckedThrowingContinuation { continuation in
+			refreshAccount(account) { result in
+				switch result {
+				case .success():
 
-				self.refreshArticlesAndStatuses(account) { result in
-					switch result {
-					case .success():
-						completion(.success(()))
-					case .failure(let error):
-						DispatchQueue.main.async {
-							self.refreshProgress.clear()
-							let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
-							completion(.failure(wrappedError))
+					self.refreshArticlesAndStatuses(account) { result in
+						switch result {
+						case .success():
+							continuation.resume()
+						case .failure(let error):
+							Task { @MainActor in
+								self.refreshProgress.clear()
+								let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
+								continuation.resume(throwing: wrappedError)
+							}
 						}
 					}
-				}
-				
-			case .failure(let error):
-				DispatchQueue.main.async {
-					self.refreshProgress.clear()
-					let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
-					completion(.failure(wrappedError))
-				}
-			}
-			
-		}
-		
-	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
+				case .failure(let error):
+					Task { @MainActor in
+						self.refreshProgress.clear()
+						let wrappedError = WrappedAccountError(accountID: account.accountID, accountNameForDisplay: account.nameForDisplay, underlyingError: error)
+						continuation.resume(throwing: wrappedError)
 					}
 				}
-			case .failure(let error):
-				completion?(.failure(error))
+			}
+		}
+	}
+
+	func syncArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			sendArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					self.refreshArticleStatus(for: account) { result in
+						switch result {
+						case .success:
+							continuation.resume()
+						case .failure(let error):
+							continuation.resume(throwing: error)
+						}
+					}
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func sendArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.sendArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
 		Task { @MainActor in
 			logger.debug("Sending article statuses")
@@ -188,7 +203,21 @@ public enum FeedbinAccountDelegateError: String, Error {
 		}
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func refreshArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
         logger.debug("Refreshing article statuses...")
 		

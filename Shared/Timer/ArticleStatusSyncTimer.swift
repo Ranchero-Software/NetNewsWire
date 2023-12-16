@@ -68,8 +68,8 @@ class ArticleStatusSyncTimer {
 		lastTimedRefresh = Date()
 		update()
 		
-		AccountManager.shared.syncArticleStatusAll()
-		
+		Task {
+			await AccountManager.shared.syncArticleStatusAll()
+		}
 	}
-	
 }

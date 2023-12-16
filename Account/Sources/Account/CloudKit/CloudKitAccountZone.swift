@@ -253,6 +253,29 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
+	func findOrCreateAccount() async throws -> String {
+
+		guard let database else {
+			return
+		}
+
+		let predicate = NSPredicate(format: "isAccount = \"1\"")
+		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
+
+		do {
+			let records = try await database.perform(ckQuery, inZoneWith: zoneID)
+			if records.count > 0 {
+				return records[0].externalID
+			} else {
+				createContainer(name: "Account", isAccount: true, completion: completion)
+			}
+		} catch {
+			switch CloudKitZoneResult.resolve(error) {
+			}
+		}
+
+	}
+
 	func findOrCreateAccount(completion: @escaping (Result<String, Error>) -> Void) {
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
@@ -343,6 +366,21 @@ private extension CloudKitAccountZone {
 		return record
 	}
 	
+	func createContainer(name: String, isAccount: Bool) async throws -> String {
+		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
+		record[CloudKitContainer.Fields.name] = name
+		record[CloudKitContainer.Fields.isAccount] = isAccount ? "1" : "0"
+
+		save(record) { result in
+			switch result {
+			case .success:
+				completion(.success(record.externalID))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
 	func createContainer(name: String, isAccount: Bool, completion: @escaping (Result<String, Error>) -> Void) {
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
 		record[CloudKitContainer.Fields.name] = name

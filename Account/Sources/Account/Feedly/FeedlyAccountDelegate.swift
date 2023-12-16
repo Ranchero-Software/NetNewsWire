@@ -107,19 +107,17 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		return
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
 		assert(Thread.isMainThread)
 		
 		guard currentSyncAllOperation == nil else {
             self.logger.debug("Ignoring refreshAll: Feedly sync already in progress.")
-			completion(.success(()))
 			return
 		}
 		
 		guard let credentials = credentials else {
             self.logger.debug("Ignoring refreshAll: Feedly account has no credentials.")
-			completion(.failure(FeedlyAccountDelegateError.notLoggedIn))
-			return
+			throw FeedlyAccountDelegateError.notLoggedIn
 		}
 		
 		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserID: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
@@ -127,51 +125,62 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 		syncAllOperation.downloadProgress = refreshProgress
 		
 		let date = Date()
-		syncAllOperation.syncCompletionHandler = { [weak self] result in
-			if case .success = result {
-				self?.accountMetadata?.lastArticleFetchStartTime = date
-				self?.accountMetadata?.lastArticleFetchEndTime = Date()
-			}
-			
-            self?.logger.debug("Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds.")
-			completion(result)
-		}
-		
-		currentSyncAllOperation = syncAllOperation
-		
-		operationQueue.add(syncAllOperation)
-	}
-	
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-                        self.logger.error("Failed to refresh article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
-						completion?(.failure(error))
-					}
+
+		try await withCheckedThrowingContinuation { continuation in
+			syncAllOperation.syncCompletionHandler = { result in
+				self.logger.debug("Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds.")
+
+				switch result {
+				case .success():
+					self.accountMetadata?.lastArticleFetchStartTime = date
+					self.accountMetadata?.lastArticleFetchEndTime = Date()
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
 				}
-			case .failure(let error):
-                self.logger.error("Failed to send article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
-				completion?(.failure(error))
 			}
+
+			currentSyncAllOperation = syncAllOperation
+
+			operationQueue.add(syncAllOperation)
 		}
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func syncArticleStatus(for account: Account) async throws {
+
+		do {
+			try await sendArticleStatus(for: account)
+			try await refreshArticleStatus(for: account)
+		} catch {
+			self.logger.error("Failed to send article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
+			throw error
+		}
+	}
+	
+	func sendArticleStatus(for account: Account) async throws {
 		// Ensure remote articles have the same status as they do locally.
-		let send = FeedlySendArticleStatusesOperation(database: database, service: caller)
-		send.completionBlock = { operation in
-			// TODO: not call with success if operation was canceled? Not sure.
-			DispatchQueue.main.async {
-				completion(.success(()))
+
+		try await withCheckedThrowingContinuation { continuation in
+			let send = FeedlySendArticleStatusesOperation(database: database, service: caller)
+			send.completionBlock = { operation in
+				continuation.resume()
+			}
+
+			operationQueue.add(send)
+		}
+	}
+	
+	func refreshArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
-		operationQueue.add(send)
 	}
 	
 	/// Attempts to ensure local articles have the same status as they do remotely.
@@ -180,7 +189,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 	///
 	/// - Parameter account: The account whose articles have a remote status.
 	/// - Parameter completion: Call on the main queue.
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	private func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard let credentials = credentials else {
 			return completion(.success(()))
 		}
@@ -550,7 +559,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 						try await self.database.insertStatuses(syncStatuses)
 						let count = try await self.database.selectPendingCount()
 						if count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
+							try? await self.sendArticleStatus(for: account)
 						}
 						completion(.success(()))
 					} catch {

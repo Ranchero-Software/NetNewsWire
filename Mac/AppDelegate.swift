@@ -581,7 +581,9 @@ var appDelegate: AppDelegate!
 	}
 
 	@IBAction func refreshAll(_ sender: Any?) {
-		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
+		Task {
+			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
+		}
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {

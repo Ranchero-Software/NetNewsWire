@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Ranchero-Software/RSCore.git",
       "state" : {
-        "revision" : "dcaa40ceb2c8acd182fbcd69d1f8e56df97e38b1",
-        "version" : "2.0.1"
+        "revision" : "cee6d96e036cc4ad08ad5f79364f87f9c291c43c",
+        "version" : "3.0.0"
       }
     },
     {

@@ -32,16 +32,15 @@ class CloudKitReceiveStatusOperation: MainThreadOperation, Logging {
 		
         logger.debug("Refreshing article statuses...")
 		
- 		articlesZone.fetchChangesInZone() { result in
-            self.logger.debug("Done refreshing article statuses.")
-			switch result {
-			case .success:
+		Task { @MainActor in
+			do {
+				try await articlesZone.fetchChangesInZone()
+				self.logger.debug("Done refreshing article statuses.")
 				self.operationDelegate?.operationDidComplete(self)
-			case .failure(let error):
-                self.logger.error("Receive status error: \(error.localizedDescription, privacy: .public)")
+			} catch {
+				self.logger.error("Receive status error: \(error.localizedDescription, privacy: .public)")
 				self.operationDelegate?.cancelOperation(self)
 			}
 		}
 	}
-	
 }

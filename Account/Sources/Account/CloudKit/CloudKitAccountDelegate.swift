@@ -78,54 +78,52 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		}
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
 		guard refreshProgress.isComplete else {
-			completion(.success(()))
 			return
 		}
 
 		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
 		var flags = SCNetworkReachabilityFlags()
 		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
-			completion(.success(()))
 			return
 		}
-			
-		standardRefreshAll(for: account, completion: completion)
+
+		try await withCheckedThrowingContinuation { continuation in
+			standardRefreshAll(for: account) { result in
+				switch result {
+				case .success():
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
+	func syncArticleStatus(for account: Account) async throws {
+		try await sendArticleStatus(for: account)
+	}
+	
+	func sendArticleStatus(for account: Account) async throws {
+		try await sendArticleStatus(for: account, showProgress: false)
+	}
+	
+	func refreshArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			let op = CloudKitReceiveStatusOperation(articlesZone: self.articlesZone)
+			op.completionBlock = { mainThreadOperaion in
+				if mainThreadOperaion.isCanceled {
+					continuation.resume(throwing: CloudKitAccountDelegateError.unknown)
+				} else {
+					continuation.resume()
 				}
-			case .failure(let error):
-				completion?(.failure(error))
 			}
+
+			mainThreadOperationQueue.add(op)
 		}
-	}
-	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		sendArticleStatus(for: account, showProgress: false, completion: completion)
-	}
-	
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
-		op.completionBlock = { mainThreadOperaion in
-			if mainThreadOperaion.isCanceled {
-				completion(.failure(CloudKitAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
-			}
-		}
-		mainThreadOperationQueue.add(op)
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -444,7 +442,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 
 					try? await self.database.insertStatuses(syncStatuses)
 					if let count = try? await self.database.selectPendingCount(), count > 100 {
-						self.sendArticleStatus(for: account, showProgress: false)  { _ in }
+						try? await self.sendArticleStatus(for: account, showProgress: false)
 					}
 					completion(.success(()))
 				case .failure(let error):
@@ -507,51 +505,91 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 }
 
 private extension CloudKitAccountDelegate {
-	
-	func initialRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		func fail(_ error: Error) {
-			self.processAccountError(account, error)
-			self.refreshProgress.clear()
-			completion(.failure(error))
-		}
-		
-		refreshProgress.isIndeterminate = true
-		refreshProgress.addToNumberOfTasksAndRemaining(3)
-		accountZone.fetchChangesInZone() { result in
-			self.refreshProgress.completeTask()
 
-			let feeds = account.flattenedFeeds()
-			self.refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
+	func fetchChangesInZone() async throws {
 
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					self.refreshProgress.completeTask()
-					self.refreshProgress.isIndeterminate = false
-					switch result {
-					case .success:
-						
-						self.combinedRefresh(account, feeds) { result in
-							self.refreshProgress.clear()
-							switch result {
-							case .success:
-								account.metadata.lastArticleFetchEndTime = Date()
-							case .failure(let error):
-								fail(error)
-							}
-						}
-
-					case .failure(let error):
-						fail(error)
-					}
+		try await withCheckedThrowingContinuation { continuation in
+			self.accountZone.fetchChangesInZone { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
 				}
-			case .failure(let error):
-				fail(error)
 			}
 		}
-
 	}
+
+	@MainActor func initialRefreshAll(for account : Account) async throws {
+
+		refreshProgress.isIndeterminate = true
+		refreshProgress.addToNumberOfTasksAndRemaining(3)
+
+		do {
+			try await fetchChangesInZone()
+			refreshProgress.completeTask()
+
+			let feeds = account.flattenedFeeds()
+			refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
+
+			try await refreshArticleStatus(for: account)
+			refreshProgress.completeTask()
+			refreshProgress.isIndeterminate = false
+
+			await combinedRefresh(account, feeds)
+			refreshProgress.clear()
+			account.metadata.lastArticleFetchEndTime = Date()
+		} catch {
+			processAccountError(account, error)
+			refreshProgress.clear()
+			throw error
+		}
+	}
+
+//	func initialRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+//		
+//		func fail(_ error: Error) {
+//			self.processAccountError(account, error)
+//			self.refreshProgress.clear()
+//			completion(.failure(error))
+//		}
+//		
+//		refreshProgress.isIndeterminate = true
+//		refreshProgress.addToNumberOfTasksAndRemaining(3)
+//		accountZone.fetchChangesInZone() { result in
+//			self.refreshProgress.completeTask()
+//
+//			let feeds = account.flattenedFeeds()
+//			self.refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
+//
+//			switch result {
+//			case .success:
+//				self.refreshArticleStatus(for: account) { result in
+//					self.refreshProgress.completeTask()
+//					self.refreshProgress.isIndeterminate = false
+//					switch result {
+//					case .success:
+//						
+//						self.combinedRefresh(account, feeds) { result in
+//							self.refreshProgress.clear()
+//							switch result {
+//							case .success:
+//								account.metadata.lastArticleFetchEndTime = Date()
+//							case .failure(let error):
+//								fail(error)
+//							}
+//						}
+//
+//					case .failure(let error):
+//						fail(error)
+//					}
+//				}
+//			case .failure(let error):
+//				fail(error)
+//			}
+//		}
+//
+//	}
 
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
@@ -573,6 +611,36 @@ private extension CloudKitAccountDelegate {
 				let feeds = account.flattenedFeeds()
 				self.refreshProgress.addToNumberOfTasksAndRemaining(feeds.count - intialFeedsCount)
 				
+				Task { @MainActor in
+					do {
+						try await self.refreshArticleStatus(for: account)
+						self.refreshProgress.completeTask()
+						self.refreshProgress.isIndeterminate = false
+
+						self.combinedRefresh(account, feeds) { result in
+							do {
+								try await self.sendArticleStatus(for: account, showProgress: true)
+								if case .failure(let error) = result {
+									fail(error)
+								} else {
+									account.metadata.lastArticleFetchEndTime = Date()
+									completion(.success(()))
+								}
+							} catch {
+								fail(error)
+							}
+						}
+
+					} catch {
+						self.refreshProgress.completeTask()
+						self.refreshProgress.isIndeterminate = false
+					}
+
+
+
+
+				}
+
 				self.refreshArticleStatus(for: account) { result in
 					switch result {
 					case .success:
@@ -601,20 +669,31 @@ private extension CloudKitAccountDelegate {
 		
 	}
 
-    func combinedRefresh(_ account: Account, _ feeds: Set<Feed>, completion: @escaping (Result<Void, Error>) -> Void) {
+	func combinedRefresh(_ account: Account, _ feeds: Set<Feed>) async {
 
 		let feedURLs = Set(feeds.map{ $0.url })
-        let group = DispatchGroup()
+		
+		try await withCheckedContinuation { continuation in
+			refresher.refreshFeedURLs(feedURLs) {
+				continuation.resume()
+			}
+		}
+	}
 
-        group.enter()
-        refresher.refreshFeedURLs(feedURLs) {
-            group.leave()
-        }
-
-        group.notify(queue: DispatchQueue.main) {
-            completion(.success(()))
-        }
-    }
+//    func combinedRefresh(_ account: Account, _ feeds: Set<Feed>, completion: @escaping (Result<Void, Error>) -> Void) {
+//
+//		let feedURLs = Set(feeds.map{ $0.url })
+//        let group = DispatchGroup()
+//
+//        group.enter()
+//        refresher.refreshFeedURLs(feedURLs) {
+//            group.leave()
+//        }
+//
+//        group.notify(queue: DispatchQueue.main) {
+//            completion(.success(()))
+//        }
+//    }
 	
 	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
@@ -729,12 +808,13 @@ private extension CloudKitAccountDelegate {
 			case .success(let articles):
 				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
 					self.refreshProgress.completeTask()
-					self.sendArticleStatus(for: account, showProgress: true) { result in
-						switch result {
-						case .success:
-							self.refreshArticleStatus(for: account) { _ in }
-						case .failure(let error):
-                            self.logger.error("CloudKit Feed send articles error: \(error.localizedDescription, privacy: .public)")
+
+					Task { @MainActor in
+						do {
+							try await self.sendArticleStatus(for: account, showProgress: true)
+							try await self.refreshArticleStatus(for: account)
+						} catch {
+							self.logger.error("CloudKit Feed send articles error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 				}
@@ -795,20 +875,24 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func sendArticleStatus(for account: Account, showProgress: Bool, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		let op = CloudKitSendStatusOperation(account: account,
-											 articlesZone: articlesZone,
-											 refreshProgress: refreshProgress,
-											 showProgress: showProgress,
-											 database: database)
-		op.completionBlock = { mainThreadOperaion in
-			if mainThreadOperaion.isCanceled {
-				completion(.failure(CloudKitAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
+	func sendArticleStatus(for account: Account, showProgress: Bool) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			let op = CloudKitSendStatusOperation(account: account,
+												 articlesZone: self.articlesZone,
+												 refreshProgress: self.refreshProgress,
+												 showProgress: showProgress,
+												 database: self.database)
+			op.completionBlock = { mainThreadOperation in
+				if mainThreadOperation.isCanceled {
+					continuation.resume(throwing: CloudKitAccountDelegateError.unknown)
+				} else {
+					continuation.resume()
+				}
 			}
+
+			mainThreadOperationQueue.add(op)
 		}
-		mainThreadOperationQueue.add(op)
 	}
 	
 

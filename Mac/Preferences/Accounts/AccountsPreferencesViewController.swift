@@ -272,12 +272,11 @@ extension AccountsPreferencesViewController: OAuthAccountAuthorizationOperationD
 		// because the user probably wants to see the result of authorizing NetNewsWire to act on their behalf.
 		NSApp.activate(ignoringOtherApps: true)
 		
-		account.refreshAll { [weak self] result in
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
-				self?.presentError(error)
+		Task {
+			do {
+				try await account.refreshAll()
+			} catch {
+				self.presentError(error)
 			}
 		}
 	}

@@ -151,13 +151,10 @@ import ReaderAPI
 						try self.account?.storeCredentials(credentials)
 						try self.account?.storeCredentials(validatedCredentials)
 
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								NSApplication.shared.presentError(error)
-							}
+						do {
+							try await self.account?.refreshAll()
+						} catch {
+							NSApplication.shared.presentError(error)
 						}
 
 						self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)

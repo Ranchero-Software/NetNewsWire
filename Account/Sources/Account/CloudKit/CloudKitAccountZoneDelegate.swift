@@ -31,32 +31,19 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		self.articlesZone = articlesZone
 	}
 	
-    @MainActor func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
-		for deletedRecordKey in deleted {
-			switch deletedRecordKey.recordType {
-			case CloudKitAccountZone.CloudKitFeed.recordType:
-				removeFeed(deletedRecordKey.recordID.externalID)
-			case CloudKitAccountZone.CloudKitContainer.recordType:
-				removeContainer(deletedRecordKey.recordID.externalID)
-			default:
-				assertionFailure("Unknown record type: \(deletedRecordKey.recordType)")
+	@MainActor func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.cloudKitWasChanged(updated: updated, deleted: deleted) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
-		
-		for changedRecord in updated {
-			switch changedRecord.recordType {
-			case CloudKitAccountZone.CloudKitFeed.recordType:
-				addOrUpdateFeed(changedRecord)
-			case CloudKitAccountZone.CloudKitContainer.recordType:
-				addOrUpdateContainer(changedRecord)
-			default:
-				assertionFailure("Unknown record type: \(changedRecord.recordType)")
-			}
-		}
-		
-		completion(.success(()))
 	}
-	
+
     @MainActor func addOrUpdateFeed(_ record: CKRecord) {
 		guard let account = account,
 			let urlString = record[CloudKitAccountZone.CloudKitFeed.Fields.url] as? String,
@@ -140,7 +127,33 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 private extension CloudKitAcountZoneDelegate {
 	
-    @MainActor func updateFeed(_ feed: Feed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
+	@MainActor func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+		for deletedRecordKey in deleted {
+			switch deletedRecordKey.recordType {
+			case CloudKitAccountZone.CloudKitFeed.recordType:
+				removeFeed(deletedRecordKey.recordID.externalID)
+			case CloudKitAccountZone.CloudKitContainer.recordType:
+				removeContainer(deletedRecordKey.recordID.externalID)
+			default:
+				assertionFailure("Unknown record type: \(deletedRecordKey.recordType)")
+			}
+		}
+
+		for changedRecord in updated {
+			switch changedRecord.recordType {
+			case CloudKitAccountZone.CloudKitFeed.recordType:
+				addOrUpdateFeed(changedRecord)
+			case CloudKitAccountZone.CloudKitContainer.recordType:
+				addOrUpdateContainer(changedRecord)
+			default:
+				assertionFailure("Unknown record type: \(changedRecord.recordType)")
+			}
+		}
+
+		completion(.success(()))
+	}
+
+	@MainActor func updateFeed(_ feed: Feed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
 		guard let account = account else { return }
 		
         feed.name = name

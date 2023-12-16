@@ -428,23 +428,16 @@ public enum FetchType {
 		await delegate.receiveRemoteNotification(for: self, userInfo: userInfo)
 	}
 	
-	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.refreshAll(for: self, completion: completion)
+	public func refreshAll() async throws {
+		try await delegate.refreshAll(for: self)
 	}
 
-	public func sendArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
-		delegate.sendArticleStatus(for: self) { result in
-			switch result {
-			case .success:
-				completion?(.success(()))
-			case .failure(let error):
-				completion?(.failure(error))
-			}
-		}
+	public func sendArticleStatus() async throws {
+		try await delegate.sendArticleStatus(for: self)
 	}
 	
-	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
-		delegate.syncArticleStatus(for: self, completion: completion)
+	public func syncArticleStatus() async throws {
+		try await delegate.syncArticleStatus(for: self)
 	}
 	
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -453,18 +446,23 @@ public enum FetchType {
 			return
 		}
 		
-		delegate.importOPML(for: self, opmlFile: opmlFile) { [weak self] result in
-			switch result {
-			case .success:
-				guard let self = self else { return }
-				// Reset the last fetch date to get the article history for the added feeds.
-				self.metadata.lastArticleFetchStartTime = nil
-				self.delegate.refreshAll(for: self, completion: completion)
-			case .failure(let error):
-				completion(.failure(error))
+		delegate.importOPML(for: self, opmlFile: opmlFile) { result in
+			Task { @MainActor in
+				switch result {
+				case .success:
+					// Reset the last fetch date to get the article history for the added feeds.
+					self.metadata.lastArticleFetchStartTime = nil
+					do {
+						try await self.delegate.refreshAll(for: self)
+						completion(result)
+					} catch {
+						completion(.failure(error))
+					}
+				case .failure:
+					completion(result)
+				}
 			}
 		}
-		
 	}
 	
 	public func suspendNetwork() {

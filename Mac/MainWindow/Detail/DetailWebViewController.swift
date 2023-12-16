@@ -100,6 +100,18 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 		userContentController.add(self, name: MessageName.windowDidScroll)
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
+
+		let baseURL = ArticleRenderer.page.baseURL
+		let appScriptsWorld = WKContentWorld.world(name: "NetNewsWire")
+		for fileName in ["main.js", "main_mac.js", "newsfoot.js"] {
+			userContentController.addUserScript(
+				.init(source: try! String(contentsOf: baseURL.appending(path: fileName,
+																		directoryHint: .notDirectory)),
+					  injectionTime: .atDocumentStart,
+					  forMainFrameOnly: true,
+					  in: appScriptsWorld))
+		}
+
 		configuration.userContentController = userContentController
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
@@ -323,7 +335,7 @@ private extension DetailWebViewController {
 		]
 		
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 
 	func scrollInfo() async -> ScrollInfo? {
