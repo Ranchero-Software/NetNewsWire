@@ -8,7 +8,7 @@
 
 import UIKit
 import RSCore
-import Account
+import AccountError
 
 extension UIViewController {
 	
