@@ -12,10 +12,10 @@ to openTabInSafari(theUrl)
 		if (my safariWindow is missing value) then
 			-- first time through, make a new window with the given url in the only tab
 			set newdoc to make new document at front with properties {URL:theUrl}
-			-- because we created the doucument "at front", we know it is window 1
+			-- because we created the document "at front", we know it is window 1
 			set safariWindow to window 1
 		else
-			-- after the first time, make a new tab in the wndow we created the first tim
+			-- after the first time, make a new tab in the window we created the first tim
 			tell safariWindow
 				make new tab with properties {URL:theUrl}
 			end tell
@@ -25,7 +25,7 @@ end openTabInSafari
 
 
 -- the script starts here
--- First, initialize safariWindow to be missing value, so that the first time through 
+-- First, initialize safariWindow to be missing value, so that the first time through
 -- openTabInSafari() we'll make a new window to hold all our articles
 
 set safariWindow to missing value
@@ -36,9 +36,9 @@ set safariWindow to missing value
 --for each one of those, open a new tab in Safari
 
 tell application "NetNewsWire"
-	set allAccounts to every account
-	repeat with nthAccount in allAccounts
-		set userFeeds to allFeeds of nthAccount
+	set allActiveAccounts to every account where active is true
+	repeat with nthAccount in allActiveAccounts
+		set userFeeds to allWebFeeds of nthAccount
 		repeat with nthFeed in userFeeds
 			set starredArticles to (get every article of nthFeed where starred is true)
 			repeat with nthArticle in starredArticles

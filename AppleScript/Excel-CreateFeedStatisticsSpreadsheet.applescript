@@ -1,4 +1,4 @@
--- This script creates an Excel spreadsheet with statistics about all the feeds in your NetNewsWire 
+-- This script creates an Excel spreadsheet with statistics about all the feeds in your NetNewsWire
 
 -- the exportToExcel() function creates a single line of data in a spreadsheet
 
@@ -34,9 +34,9 @@ end tell
 
 set totalFeeds to 0
 tell application "NetNewsWire"
-	set allAccounts to every account
-	repeat with nthAccount in allAccounts
-		set userFeeds to allFeeds of nthAccount
+	set allActiveAccounts to every account where active is true
+	repeat with nthAccount in allActiveAccounts
+		set userFeeds to allWebFeeds of nthAccount
 		repeat with nthFeed in userFeeds
 			set feedname to name of nthFeed
 			set articleCount to count (get every article of nthFeed)
