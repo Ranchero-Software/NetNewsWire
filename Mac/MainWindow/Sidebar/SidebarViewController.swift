@@ -31,6 +31,12 @@ protocol SidebarDelegate: AnyObject {
 
 	weak var splitViewItem: NSSplitViewItem?
 
+	var windowState: SidebarWindowState {
+		let expandedContainers = expandedTable.compactMap { $0.userInfo as? [String: String] }
+		let selectedFeeds = selectedFeeds.compactMap { $0.itemID?.userInfo as? [String: String] }
+		return SidebarWindowState(isReadFiltered: isReadFiltered, expandedContainers: expandedContainers, selectedFeeds: selectedFeeds)
+	}
+	
 	private let rebuildTreeAndRestoreSelectionQueue = CoalescingQueue(name: "Rebuild Tree Queue", interval: 1.0)
 	let treeControllerDelegate = FeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
@@ -97,27 +103,14 @@ protocol SidebarDelegate: AnyObject {
 
 	// MARK: State Restoration
 	
-	func saveState(to state: inout [AnyHashable : Any]) {
-		state[UserInfoKey.readFeedsFilterState] = isReadFiltered
-		state[UserInfoKey.containerExpandedWindowState] = expandedTable.map { $0.userInfo }
-		state[UserInfoKey.selectedFeedsState] = selectedFeeds.compactMap { $0.itemID?.userInfo }
-	}
-	
-	func restoreState(from state: [AnyHashable : Any]) {
+	func restoreState(from state: SidebarWindowState?) {
+		guard let state else { return }
 		
-		if let containerExpandedWindowState = state[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-			let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
-			expandedTable = Set(containerIdentifers)
-		}
+		let containerIdentifers = state.expandedContainers.compactMap( { ContainerIdentifier(userInfo: $0) })
+		expandedTable = Set(containerIdentifers)
 
-		guard let selectedFeedsState = state[UserInfoKey.selectedFeedsState] as? [[AnyHashable: AnyHashable]] else {
-			return
-		}
-
-		let selectedItemIdentifers = Set(selectedFeedsState.compactMap( { ItemIdentifier(userInfo: $0) }))
-		for selectedItemIdentifier in selectedItemIdentifers {
-			treeControllerDelegate.addFilterException(selectedItemIdentifier)
-		}
+		let selectedItemIdentifers = Set(state.selectedFeeds.compactMap( { ItemIdentifier(userInfo: $0) }))
+		selectedItemIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
 		
 		rebuildTreeAndReloadDataIfNeeded()
 		
@@ -135,9 +128,7 @@ protocol SidebarDelegate: AnyObject {
 		outlineView.selectRowIndexes(selectIndexes, byExtendingSelection: false)
 		focus()
 		
-		if let readFeedsFilterState = state[UserInfoKey.readFeedsFilterState] as? Bool {
-			isReadFiltered = readFeedsFilterState
-		}
+		isReadFiltered = state.isReadFiltered
 	}
 	
 	// MARK: - Notifications

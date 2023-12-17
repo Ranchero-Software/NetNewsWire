@@ -35,6 +35,10 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 		}
 	}
 	
+	var windowState: DetailWindowState {
+		return DetailWindowState(isShowingExtractedArticle: isShowingExtractedArticle, windowScrollY: windowScrollY ?? 0)
+	}
+	
 	var article: Article? {
 		switch state {
 		case .article(let article, _):
@@ -189,13 +193,6 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
-	}
-
-	// MARK: State Restoration
-	
-	func saveState(to state: inout [AnyHashable : Any]) {
-		state[UserInfoKey.isShowingExtractedArticle] = isShowingExtractedArticle
-		state[UserInfoKey.articleWindowScrollY] = windowScrollY
 	}
 
 	// MARK: Find in Article

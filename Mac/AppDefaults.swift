@@ -76,10 +76,10 @@ final class AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
-
-	var windowState: [AnyHashable : Any]? {
+	
+	var windowState: Data? {
 		get {
-			return UserDefaults.standard.object(forKey: Key.windowState) as? [AnyHashable : Any]
+			return UserDefaults.standard.object(forKey: Key.windowState) as? Data
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.windowState)
