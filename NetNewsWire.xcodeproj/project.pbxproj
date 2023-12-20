@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3384,6 +3384,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		1701E1BF25689B44009453D8 /* SwiftGen Localization */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -3420,6 +3421,7 @@
 		};
 		5170CA5A279E468000702605 /* Delete Unnecessary Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
