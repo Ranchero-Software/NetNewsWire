@@ -1,5 +1,11 @@
 # iOS Release Notes
 
+### 6.1.5 TestFlight build 6122 - 19 Dec 2023
+
+Remove code for showing Twitter and Reddit deprecation alerts.
+
+Build using Xcode 15.1.
+
 ### 6.1.5 TestFlight build 6121 - 29 Sep 2023
 
 Build using Xcode 15 to make sure there are no regressions.
