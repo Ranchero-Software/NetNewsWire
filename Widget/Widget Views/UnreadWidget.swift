@@ -22,22 +22,16 @@ struct UnreadWidgetView : View {
 				.widgetURL(WidgetDeepLink.unread.url)
 		}
 		else {
-			GeometryReader { metrics in
-				HStack {
-					VStack {
-						unreadImage
-							.padding(.vertical, 12)
-							.padding(.leading, 8)
-						Spacer()
-					
-					}
+			HStack(alignment: .top) {
+				VStack {
+					unreadImage
+					Spacer()
 				}
-				.frame(width: metrics.size.width * 0.15)
 				
 				Spacer()
 				
 				VStack(alignment:.leading, spacing: 0) {
-					ForEach(0..<maxCount(), content: { i in
+					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
@@ -51,26 +45,18 @@ struct UnreadWidgetView : View {
 						}
 					})
 					Spacer()
-				}
-				.padding(.leading, metrics.size.width * 0.175)
-				.padding([.bottom, .trailing])
-				.padding(.top, 12)
-				.overlay(
-					 VStack {
+					HStack {
 						Spacer()
-						HStack {
-							Spacer()
-							if entry.widgetData.currentUnreadCount - maxCount() > 0 {
-								Text(L10n.unreadCount(entry.widgetData.currentUnreadCount - maxCount()))
-									.font(.caption2)
-									.bold()
-									.foregroundColor(.secondary)
-							}
+						if entry.widgetData.currentUnreadCount - maxCount() > 0 {
+							Text(L10n.unreadCount(entry.widgetData.currentUnreadCount - maxCount()))
+								.font(.caption2)
+								.bold()
+								.foregroundColor(.secondary)
 						}
 					}
-					.padding(.horizontal)
-					.padding(.bottom, 6)
-				)
+					
+					.padding(.top, -4)
+				}
 			}
 			.widgetURL(WidgetDeepLink.unread.url)
 		}
@@ -114,8 +100,8 @@ struct UnreadWidgetView : View {
 			Spacer()
 		}
 		.multilineTextAlignment(.center)
-		.padding()
 	}
 	
 }
+
 
