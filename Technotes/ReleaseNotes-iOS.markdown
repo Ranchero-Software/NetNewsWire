@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.5 TestFlight build 6123 - 21 Dec 2023
+
+Building with Xcode 14.2 on macOS 13 to see if that makes the new-in-iOS-17 crashing bug go away.
+
 ### 6.1.5 TestFlight build 6122 - 19 Dec 2023
 
 Remove code for showing Twitter and Reddit deprecation alerts.
