@@ -22,22 +22,16 @@ struct StarredWidgetView : View {
 				.widgetURL(WidgetDeepLink.starred.url)
 		}
 		else {
-			GeometryReader { metrics in
-				HStack {
-					VStack {
-						starredImage
-							.padding(.vertical, 12)
-							.padding(.leading, 8)
-						Spacer()
-					
-					}
+			HStack(alignment: .top) {
+				VStack {
+					starredImage
+					Spacer()
 				}
-				.frame(width: metrics.size.width * 0.15)
 				
 				Spacer()
 				
 				VStack(alignment:.leading, spacing: 0) {
-					ForEach(0..<maxCount(), content: { i in
+					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.starredArticles[i],
@@ -51,28 +45,20 @@ struct StarredWidgetView : View {
 						}
 					})
 					Spacer()
-				}
-				.padding(.leading, metrics.size.width * 0.175)
-				.padding([.bottom, .trailing])
-				.padding(.top, 12)
-				.overlay(
-					 VStack {
+					HStack {
 						Spacer()
-						HStack {
-							Spacer()
-							if entry.widgetData.currentStarredCount - maxCount() > 0 {
-								Text(L10n.starredCount(entry.widgetData.currentStarredCount - maxCount()))
-									.font(.caption2)
-									.bold()
-									.foregroundColor(.secondary)
-							}
+						if entry.widgetData.currentStarredCount - maxCount() > 0 {
+							Text(L10n.starredCount(entry.widgetData.currentStarredCount - maxCount()))
+								.font(.caption2)
+								.bold()
+								.foregroundColor(.secondary)
 						}
 					}
-					.padding(.horizontal)
-					.padding(.bottom, 6)
-				)
-			
-			}.widgetURL(WidgetDeepLink.starred.url)
+					
+					.padding(.top, -4)
+				}
+			}
+			.widgetURL(WidgetDeepLink.unread.url)
 			
 		}
 	}
@@ -105,8 +91,8 @@ struct StarredWidgetView : View {
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 30)
 				.foregroundColor(.yellow)
-				
-
+			
+			
 			Text(L10n.starredWidgetNoItemsTitle)
 				.font(.headline)
 				.foregroundColor(.primary)
@@ -117,7 +103,6 @@ struct StarredWidgetView : View {
 			Spacer()
 		}
 		.multilineTextAlignment(.center)
-		.padding()
 	}
 	
 }
