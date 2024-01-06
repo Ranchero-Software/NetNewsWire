@@ -1,0 +1,24 @@
+
+/* Class = "NSTextFieldCell"; title = "Choose the account to get the imported subscriptions. This requires an OPML file, which most RSS readers can create."; ObjectID = "1Vu-Te-PGl"; */
+"1Vu-Te-PGl.title" = "Escoge la cuenta donde importar las suscripciones. Esto requiere un archivo OPML, que pueden generar la mayoría de lectores RSS.";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "92e-hX-kYj"; */
+"92e-hX-kYj.title" = "Item 3";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "9ab-cB-hex"; */
+"9ab-cB-hex.title" = "Cancel";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "JGa-5R-SV5"; */
+"JGa-5R-SV5.title" = "Item 2";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Window";
+
+/* Class = "NSButtonCell"; title = "Import from OPML…"; ObjectID = "dhV-on-ayM"; */
+"dhV-on-ayM.title" = "Import from OPML…";
+
+/* Class = "NSTextFieldCell"; title = "Account:"; ObjectID = "e9g-7H-VWa"; */
+"e9g-7H-VWa.title" = "Account:";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "xsd-12-2yb"; */
+"xsd-12-2yb.title" = "Item 1";

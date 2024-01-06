@@ -1324,6 +1324,41 @@
 		51FE10022345529D0056195D /* UserNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationManager.swift; sourceTree = "<group>"; };
 		51FFF0C3235EE8E5002762AA /* VibrantButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantButton.swift; sourceTree = "<group>"; };
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
+		5BD5DDFA2B49E2A70037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
+		5BD5DDFB2B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../es.lproj/MainWindow.strings; sourceTree = "<group>"; };
+		5BD5DDFC2B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../../../es.lproj/RenameSheet.strings; sourceTree = "<group>"; };
+		5BD5DDFD2B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../es.lproj/AddFeedSheet.strings; sourceTree = "<group>"; };
+		5BD5DDFE2B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../../es.lproj/AddFolderSheet.strings; sourceTree = "<group>"; };
+		5BD5DDFF2B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/ImportOPMLSheet.strings; sourceTree = "<group>"; };
+		5BD5DE002B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/ExportOPMLSheet.strings; sourceTree = "<group>"; };
+		5BD5DE012B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/NNW3OpenPanelAccessoryView.strings; sourceTree = "<group>"; };
+		5BD5DE022B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Inspector.strings; sourceTree = "<group>"; };
+		5BD5DE032B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = ../es.lproj/Preferences.strings; sourceTree = "<group>"; };
+		5BD5DE042B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AccountsAddCloudKit.strings; sourceTree = "<group>"; };
+		5BD5DE052B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AccountsAddLocal.strings; sourceTree = "<group>"; };
+		5BD5DE062B49E2A80037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AccountsDetail.strings; sourceTree = "<group>"; };
+		5BD5DE072B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AccountsFeedbin.strings; sourceTree = "<group>"; };
+		5BD5DE082B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AccountsNewsBlur.strings; sourceTree = "<group>"; };
+		5BD5DE092B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AccountsReaderAPI.strings; sourceTree = "<group>"; };
+		5BD5DE0A2B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CrashReporterWindow.strings; sourceTree = "<group>"; };
+		5BD5DE0B2B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SafariExtensionViewController.strings; sourceTree = "<group>"; };
+		5BD5DE0C2B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/ShareViewController.strings; sourceTree = "<group>"; };
+		5BD5DE0D2B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreenPhone.strings; sourceTree = "<group>"; };
+		5BD5DE0E2B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreenPad.strings; sourceTree = "<group>"; };
+		5BD5DE0F2B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
+		5BD5DE102B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainTimelineTitleView.strings; sourceTree = "<group>"; };
+		5BD5DE112B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Add.strings; sourceTree = "<group>"; };
+		5BD5DE122B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AddFeedSelectFolderTableViewCell.strings; sourceTree = "<group>"; };
+		5BD5DE132B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Intents.strings; sourceTree = "<group>"; };
+		5BD5DE142B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainInterface.strings; sourceTree = "<group>"; };
+		5BD5DE152B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5BD5DE162B49E2A90037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5BD5DE172B49E2AA0037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5BD5DE182B49E2AA0037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5BD5DE192B49E2AA0037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5BD5DE1A2B49E2AA0037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5BD5DE1B2B49E2AA0037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5BD5DE1C2B49E2AA0037CD6A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantTableViewCell.swift; sourceTree = "<group>"; };
 		653813592680E2DA007A082C /* NetNewsWire Share Extension MAS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire Share Extension MAS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_shareextension_target_macappstore.xcconfig; sourceTree = "<group>"; };
@@ -3325,7 +3360,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
@@ -3368,6 +3402,7 @@
 				Base,
 				"en-GB",
 				"zh-Hans",
+				es,
 			);
 			mainGroup = 849C64571ED37A5D003D8FC0;
 			packageReferences = (
@@ -4559,6 +4594,7 @@
 				1701E1B62568983D009453D8 /* en */,
 				DF93DB33296A4A8F00586C0E /* en-GB */,
 				C473703A2A232A0300E77890 /* zh-Hans */,
+				5BD5DE1B2B49E2AA0037CD6A /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4569,6 +4605,7 @@
 				510C416324E5CDE3008226FD /* Base */,
 				DFB616B729653A0600A359AB /* en-GB */,
 				C473702E2A232A0200E77890 /* zh-Hans */,
+				5BD5DE0C2B49E2A90037CD6A /* es */,
 			);
 			name = ShareViewController.xib;
 			sourceTree = "<group>";
@@ -4580,6 +4617,7 @@
 				DF332716295BBBBF00BFD911 /* en */,
 				DFB616B929653A0700A359AB /* en-GB */,
 				C47370302A232A0200E77890 /* zh-Hans */,
+				5BD5DE0E2B49E2A90037CD6A /* es */,
 			);
 			name = LaunchScreenPad.storyboard;
 			sourceTree = "<group>";
@@ -4591,6 +4629,7 @@
 				51314714235C420900387FDC /* en */,
 				DFB616BB29653A0700A359AB /* en-GB */,
 				C47370322A232A0200E77890 /* zh-Hans */,
+				5BD5DE132B49E2A90037CD6A /* es */,
 			);
 			name = Intents.intentdefinition;
 			sourceTree = "<group>";
@@ -4601,6 +4640,7 @@
 				513C5CEB232571C2003D4054 /* Base */,
 				DFB616BC29653A0700A359AB /* en-GB */,
 				C47370332A232A0200E77890 /* zh-Hans */,
+				5BD5DE142B49E2A90037CD6A /* es */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -4610,6 +4650,7 @@
 			children = (
 				8FBBEE432304CC00007279FB /* Base */,
 				C4A3967E2A2AEC5400C89D55 /* zh-Hans */,
+				5BD5DDFF2B49E2A80037CD6A /* es */,
 			);
 			name = ImportOPMLSheet.xib;
 			sourceTree = "<group>";
@@ -4620,6 +4661,7 @@
 				6581C73C20CED60100F4AD34 /* Base */,
 				DFB616B629653A0600A359AB /* en-GB */,
 				C473702D2A232A0200E77890 /* zh-Hans */,
+				5BD5DE0B2B49E2A90037CD6A /* es */,
 			);
 			name = SafariExtensionViewController.xib;
 			sourceTree = "<group>";
@@ -4630,6 +4672,7 @@
 				848363012262A3BC00DA1D35 /* Base */,
 				DFB616B329653A0600A359AB /* en-GB */,
 				C473702A2A232A0200E77890 /* zh-Hans */,
+				5BD5DDFD2B49E2A80037CD6A /* es */,
 			);
 			name = AddFeedSheet.xib;
 			sourceTree = "<group>";
@@ -4640,6 +4683,7 @@
 				848363042262A3CC00DA1D35 /* Base */,
 				DFB616B429653A0600A359AB /* en-GB */,
 				C473702B2A232A0200E77890 /* zh-Hans */,
+				5BD5DDFE2B49E2A80037CD6A /* es */,
 			);
 			name = AddFolderSheet.xib;
 			sourceTree = "<group>";
@@ -4650,6 +4694,7 @@
 				848363072262A3DD00DA1D35 /* Base */,
 				DFB616AE29653A0600A359AB /* en-GB */,
 				C47370262A232A0100E77890 /* zh-Hans */,
+				5BD5DDFA2B49E2A70037CD6A /* es */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -4660,6 +4705,7 @@
 				8483630A2262A3F000DA1D35 /* Base */,
 				DFB616B029653A0600A359AB /* en-GB */,
 				C47370282A232A0100E77890 /* zh-Hans */,
+				5BD5DDFC2B49E2A80037CD6A /* es */,
 			);
 			name = RenameSheet.xib;
 			sourceTree = "<group>";
@@ -4670,6 +4716,7 @@
 				8483630D2262A3FE00DA1D35 /* Base */,
 				DFB616AF29653A0600A359AB /* en-GB */,
 				C47370272A232A0100E77890 /* zh-Hans */,
+				5BD5DDFB2B49E2A80037CD6A /* es */,
 			);
 			name = MainWindow.storyboard;
 			sourceTree = "<group>";
@@ -4679,6 +4726,7 @@
 			children = (
 				8FB3CBC9235D307E0026324C /* Base */,
 				C4A3967C2A2AEC5400C89D55 /* zh-Hans */,
+				5BD5DE012B49E2A80037CD6A /* es */,
 			);
 			name = NNW3OpenPanelAccessoryView.xib;
 			sourceTree = "<group>";
@@ -4688,6 +4736,7 @@
 			children = (
 				8FBBEE4E2304CC06007279FB /* Base */,
 				C4A3967D2A2AEC5400C89D55 /* zh-Hans */,
+				5BD5DE002B49E2A80037CD6A /* es */,
 			);
 			name = ExportOPMLSheet.xib;
 			sourceTree = "<group>";
@@ -4698,6 +4747,7 @@
 				84C9FC8122629E4800D921D6 /* Base */,
 				DFB616B529653A0600A359AB /* en-GB */,
 				C473702C2A232A0200E77890 /* zh-Hans */,
+				5BD5DE032B49E2A80037CD6A /* es */,
 			);
 			name = Preferences.storyboard;
 			sourceTree = "<group>";
@@ -4709,6 +4759,7 @@
 				DF332714295BBBB900BFD911 /* en */,
 				DFB616BA29653A0700A359AB /* en-GB */,
 				C47370312A232A0200E77890 /* zh-Hans */,
+				5BD5DE0F2B49E2A90037CD6A /* es */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -4720,6 +4771,7 @@
 				DF332718295BBBC200BFD911 /* en */,
 				DFB616B829653A0600A359AB /* en-GB */,
 				C473702F2A232A0200E77890 /* zh-Hans */,
+				5BD5DE0D2B49E2A90037CD6A /* es */,
 			);
 			name = LaunchScreenPhone.storyboard;
 			sourceTree = "<group>";
@@ -4730,6 +4782,7 @@
 				DF5124CF2A230FC100BBAB1F /* Base */,
 				DF5124D22A230FC700BBAB1F /* en-GB */,
 				C4A3966A2A2AE82600C89D55 /* zh-Hans */,
+				5BD5DE022B49E2A80037CD6A /* es */,
 			);
 			name = Inspector.storyboard;
 			sourceTree = "<group>";
@@ -4740,6 +4793,7 @@
 				DF5124D52A230FE400BBAB1F /* Base */,
 				DF5124D82A230FE700BBAB1F /* en-GB */,
 				C4A3966C2A2AE85300C89D55 /* zh-Hans */,
+				5BD5DE042B49E2A80037CD6A /* es */,
 			);
 			name = AccountsAddCloudKit.xib;
 			sourceTree = "<group>";
@@ -4750,6 +4804,7 @@
 				DF5124DB2A23107300BBAB1F /* Base */,
 				DF5124DE2A23107600BBAB1F /* en-GB */,
 				C4A3966E2A2AE85700C89D55 /* zh-Hans */,
+				5BD5DE052B49E2A80037CD6A /* es */,
 			);
 			name = AccountsAddLocal.xib;
 			sourceTree = "<group>";
@@ -4760,6 +4815,7 @@
 				DF5124E12A23108000BBAB1F /* Base */,
 				DF5124E42A23108200BBAB1F /* en-GB */,
 				C4A396702A2AE85A00C89D55 /* zh-Hans */,
+				5BD5DE062B49E2A80037CD6A /* es */,
 			);
 			name = AccountsDetail.xib;
 			sourceTree = "<group>";
@@ -4770,6 +4826,7 @@
 				DF5124E72A23108F00BBAB1F /* Base */,
 				DF5124EA2A23109400BBAB1F /* en-GB */,
 				C4A396722A2AE85E00C89D55 /* zh-Hans */,
+				5BD5DE072B49E2A90037CD6A /* es */,
 			);
 			name = AccountsFeedbin.xib;
 			sourceTree = "<group>";
@@ -4780,6 +4837,7 @@
 				DF5124ED2A23109900BBAB1F /* Base */,
 				DF5124F02A23109C00BBAB1F /* en-GB */,
 				C4A396742A2AE86100C89D55 /* zh-Hans */,
+				5BD5DE082B49E2A90037CD6A /* es */,
 			);
 			name = AccountsNewsBlur.xib;
 			sourceTree = "<group>";
@@ -4790,6 +4848,7 @@
 				DF5124F32A2310A100BBAB1F /* Base */,
 				DF5124F62A2310A500BBAB1F /* en-GB */,
 				C4A396762A2AE86500C89D55 /* zh-Hans */,
+				5BD5DE092B49E2A90037CD6A /* es */,
 			);
 			name = AccountsReaderAPI.xib;
 			sourceTree = "<group>";
@@ -4800,6 +4859,7 @@
 				DF5124FF2A23110F00BBAB1F /* Base */,
 				DF5125022A23111200BBAB1F /* en-GB */,
 				C4A396682A2AE80A00C89D55 /* zh-Hans */,
+				5BD5DE0A2B49E2A90037CD6A /* es */,
 			);
 			name = CrashReporterWindow.xib;
 			sourceTree = "<group>";
@@ -4810,6 +4870,7 @@
 				DF5125042A23116B00BBAB1F /* Base */,
 				DF5125072A23116F00BBAB1F /* en-GB */,
 				C4A3967A2A2AE8E100C89D55 /* zh-Hans */,
+				5BD5DE102B49E2A90037CD6A /* es */,
 			);
 			name = MainTimelineTitleView.xib;
 			sourceTree = "<group>";
@@ -4820,6 +4881,7 @@
 				DF5125092A23118300BBAB1F /* Base */,
 				DF51250C2A23118700BBAB1F /* en-GB */,
 				C4A396782A2AE8B400C89D55 /* zh-Hans */,
+				5BD5DE112B49E2A90037CD6A /* es */,
 			);
 			name = Add.storyboard;
 			sourceTree = "<group>";
@@ -4830,6 +4892,7 @@
 				DF51250E2A23119800BBAB1F /* Base */,
 				DF5125112A23119B00BBAB1F /* en-GB */,
 				C4A3967B2A2AE96D00C89D55 /* zh-Hans */,
+				5BD5DE122B49E2A90037CD6A /* es */,
 			);
 			name = AddFeedSelectFolderTableViewCell.xib;
 			sourceTree = "<group>";
@@ -4840,6 +4903,7 @@
 				DF6DE5092965907A002EC085 /* en */,
 				DF6DE5112965924C002EC085 /* en-GB */,
 				C47370372A232A0200E77890 /* zh-Hans */,
+				5BD5DE182B49E2AA0037CD6A /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4895,6 +4959,7 @@
 				DF6DE51F2965924D002EC085 /* en-GB */,
 				DF6DE5222965937C002EC085 /* en */,
 				C47370342A232A0200E77890 /* zh-Hans */,
+				5BD5DE152B49E2A90037CD6A /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4923,6 +4988,7 @@
 				DF93DB2C296A319000586C0E /* en */,
 				DF93DB2E296A324100586C0E /* en-GB */,
 				C47370352A232A0200E77890 /* zh-Hans */,
+				5BD5DE162B49E2A90037CD6A /* es */,
 			);
 			name = Localizable.stringsdict;
 			sourceTree = "<group>";
@@ -4933,6 +4999,7 @@
 				DF93DB30296A42BD00586C0E /* en */,
 				DF93DB34296A4A9300586C0E /* en-GB */,
 				C473703B2A232A0300E77890 /* zh-Hans */,
+				5BD5DE1C2B49E2AA0037CD6A /* es */,
 			);
 			name = Localizable.stringsdict;
 			sourceTree = "<group>";
@@ -4943,6 +5010,7 @@
 				DFB616A82965300400A359AB /* en */,
 				DFB616BE29653A0700A359AB /* en-GB */,
 				C47370382A232A0200E77890 /* zh-Hans */,
+				5BD5DE192B49E2AA0037CD6A /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4953,6 +5021,7 @@
 				DFB616AB2965300400A359AB /* en */,
 				DFB616BD29653A0700A359AB /* en-GB */,
 				C47370362A232A0200E77890 /* zh-Hans */,
+				5BD5DE172B49E2AA0037CD6A /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4963,6 +5032,7 @@
 				DFD86797295D553D0070D62D /* en */,
 				DFB616BF29653A0700A359AB /* en-GB */,
 				C47370392A232A0200E77890 /* zh-Hans */,
+				5BD5DE1A2B49E2AA0037CD6A /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -5072,6 +5142,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				PRODUCT_BUNDLE_IDENTIFIER = net.martingonzalez;
 			};
 			name = Debug;
 		};
@@ -5079,6 +5151,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				DEVELOPMENT_TEAM = VQHMNMD5GL;
+				PRODUCT_BUNDLE_IDENTIFIER = net.martingonzalez;
 			};
 			name = Release;
 		};

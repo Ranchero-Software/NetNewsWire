@@ -1,0 +1,120 @@
+
+/* Class = "NSWindow"; title = "Preferences"; ObjectID = "2C0-LP-36T"; */
+"2C0-LP-36T.title" = "Preferencias";
+
+/* Class = "NSMenuItem"; title = "Extra Extra Large"; ObjectID = "4Pi-2Y-XmV"; */
+"4Pi-2Y-XmV.title" = "Extra extra grande";
+
+/* Class = "NSTextFieldCell"; title = "Download:"; ObjectID = "6bb-c0-guo"; */
+"6bb-c0-guo.title" = "Descargar:";
+
+/* Class = "NSMenuItem"; title = "Every 4 hours"; ObjectID = "7e2-TV-hth"; */
+"7e2-TV-hth.title" = "Cada 4 horas";
+
+/* Class = "NSMenuItem"; title = "Every 8 hours"; ObjectID = "7gV-gL-Nue"; */
+"7gV-gL-Nue.title" = "Cada 8 horas";
+
+/* Class = "NSButtonCell"; title = "Mark articles as read on scroll"; ObjectID = "ANv-PZ-pn6"; */
+"ANv-PZ-pn6.title" = "Marcar artículos como leídos al desplazarse";
+
+/* Class = "NSButtonCell"; title = "Check for Updates"; ObjectID = "AaA-Rr-UYD"; */
+"AaA-Rr-UYD.title" = "Buscar actualizaciones";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "CcS-BO-sdv"; */
+"CcS-BO-sdv.title" = "Table View Cell";
+
+/* Class = "NSTextFieldCell"; title = "Browser:"; ObjectID = "CgU-dE-Qtb"; */
+"CgU-dE-Qtb.title" = "Navegador:";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Djh-3Q-J0Q"; */
+"Djh-3Q-J0Q.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Press the Shift key to do the opposite."; ObjectID = "EMq-9M-zTJ"; */
+"EMq-9M-zTJ.title" = "Presiona la tecla Shift para hacer lo contrario.";
+
+/* Class = "NSTextFieldCell"; title = "Safari Extension:"; ObjectID = "Eth-o0-pWM"; */
+"Eth-o0-pWM.title" = "Extensión de Safari:";
+
+/* Class = "NSTextFieldCell"; title = "Refresh Feeds:"; ObjectID = "F7c-lm-g97"; */
+"F7c-lm-g97.title" = "Refrescar fuentes:";
+
+/* Class = "NSButtonCell"; title = "Release builds"; ObjectID = "F8M-rS-und"; */
+"F8M-rS-und.title" = "Versiones estables";
+
+/* Class = "NSButtonCell"; title = "Test builds"; ObjectID = "Fuf-rU-D6M"; */
+"Fuf-rU-D6M.title" = "Versiones de desarrollo";
+
+/* Class = "NSTextFieldCell"; title = "Article Theme:"; ObjectID = "MQe-Za-N8J"; */
+"MQe-Za-N8J.title" = "Tema de artículo:";
+
+/* Class = "NSMenuItem"; title = "Safari"; ObjectID = "ObP-qK-qDJ"; */
+"ObP-qK-qDJ.title" = "Safari";
+
+/* Class = "NSMenuItem"; title = "Default"; ObjectID = "Pkl-EA-Goa"; */
+"Pkl-EA-Goa.title" = "Por defecto";
+
+/* Class = "NSMenuItem"; title = "Every hour"; ObjectID = "Qjt-qr-WER"; */
+"Qjt-qr-WER.title" = "Cada hora";
+
+/* Class = "NSButtonCell"; title = "Open feeds in default news reader"; ObjectID = "SkZ-tE-blK"; */
+"SkZ-tE-blK.title" = "Abrir fuentes en el lector de noticias por defecto";
+
+/* Class = "NSMenuItem"; title = "Large"; ObjectID = "ckZ-0Q-rNz"; */
+"ckZ-0Q-rNz.title" = "Grande";
+
+/* Class = "NSButtonCell"; title = "Check automatically"; ObjectID = "dm8-Xy-0Ba"; */
+"dm8-Xy-0Ba.title" = "Buscar automáticamente";
+
+/* Class = "NSMenuItem"; title = "Manually only"; ObjectID = "doa-Wq-4Uq"; */
+"doa-Wq-4Uq.title" = "Sólo manualmente";
+
+/* Class = "NSTextFieldCell"; title = "If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss."; ObjectID = "fOZ-zv-QTc"; */
+"fOZ-zv-QTc.title" = "Si no estás seguro escoge las versiones estables. Las versiones de desarrollo pueden tener errores y provocar pérdida de datos.";
+
+/* Class = "NSViewController"; title = "General"; ObjectID = "iuH-lz-18x"; */
+"iuH-lz-18x.title" = "General";
+
+/* Class = "NSMenuItem"; title = "Medium"; ObjectID = "jMV-2o-5Oh"; */
+"jMV-2o-5Oh.title" = "Medio";
+
+/* Class = "NSButtonCell"; title = "Send automatically"; ObjectID = "jnc-C5-4oI"; */
+"jnc-C5-4oI.title" = "Enviar automáticamente";
+
+/* Class = "NSButtonCell"; title = "Privacy Policy"; ObjectID = "kSv-Wu-NYx"; */
+"kSv-Wu-NYx.title" = "Política de privacidad";
+
+/* Class = "NSMenuItem"; title = "Every 2 hours"; ObjectID = "o1h-xo-elW"; */
+"o1h-xo-elW.title" = "Cada dos horas";
+
+/* Class = "NSMenuItem"; title = "Extra Large"; ObjectID = "qMe-6g-Vme"; */
+"qMe-6g-Vme.title" = "Extra grande";
+
+/* Class = "NSTextFieldCell"; title = "Crash logs:"; ObjectID = "qcq-fU-Ks0"; */
+"qcq-fU-Ks0.title" = "Registro de errores:";
+
+/* Class = "NSMenuItem"; title = "Every 30 minutes"; ObjectID = "rZU-Tg-xwo"; */
+"rZU-Tg-xwo.title" = "Cada 30 minutos";
+
+/* Class = "NSMenuItem"; title = "Small"; ObjectID = "roB-Mu-Ht7"; */
+"roB-Mu-Ht7.title" = "Pequeño";
+
+/* Class = "NSButtonCell"; title = "Open web pages in background in browser"; ObjectID = "t0a-LN-rCv"; */
+"t0a-LN-rCv.title" = "Abrir páginas web en segundo plano en el navegador";
+
+/* Class = "NSButtonCell"; title = "Open feeds in NetNewsWire"; ObjectID = "uvx-O8-HvU"; */
+"uvx-O8-HvU.title" = "Abrir fuentes en NetNewsWire";
+
+/* Class = "NSTextFieldCell"; title = "Timeline:"; ObjectID = "wi9-yM-Ri0"; */
+"wi9-yM-Ri0.title" = "Línea de tiempo:";
+
+/* Class = "NSTextFieldCell"; title = "Article Text Size:"; ObjectID = "xQu-QV-91i"; */
+"xQu-QV-91i.title" = "Tamaño de texto del artículo:";
+
+/* Class = "NSButtonCell"; title = "Open Themes Folder"; ObjectID = "ySX-5i-SP1"; */
+"ySX-5i-SP1.title" = "Abrir carpeta de temas";
+
+/* Class = "NSMenuItem"; title = "Every 10 minutes"; ObjectID = "zmy-xe-mVw"; */
+"zmy-xe-mVw.title" = "Cada 10 minutos";
+
+/* Class = "NSTextFieldCell"; title = "App Updates:"; ObjectID = "zqG-X2-E9b"; */
+"zqG-X2-E9b.title" = "Actualizaciones de la aplicación:";

@@ -1,0 +1,372 @@
+
+/* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
+"1UK-8n-QPP.title" = "Personalizar barra de herramientas…";
+
+/* Class = "NSMenuItem"; title = "NetNewsWire"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "NetNewsWire";
+
+/* Class = "NSMenu"; title = "Find"; ObjectID = "1b7-l0-nxx"; */
+"1b7-l0-nxx.title" = "Buscar";
+
+/* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "1nF-7O-aKU"; */
+"1nF-7O-aKU.title" = "Buscar actualizaciones…";
+
+/* Class = "NSMenuItem"; title = "Info"; ObjectID = "24r-2i-fXR"; */
+"24r-2i-fXR.title" = "Información";
+
+/* Class = "NSMenuItem"; title = "Transformations"; ObjectID = "2oI-Rn-ZJC"; */
+"2oI-Rn-ZJC.title" = "Transformaciones";
+
+/* Class = "NSMenu"; title = "Spelling"; ObjectID = "3IN-sU-3Bg"; */
+"3IN-sU-3Bg.title" = "Ortografía y gramática";
+
+/* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
+"3rS-ZA-NoH.title" = "Habla";
+
+/* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
+"4EN-yA-p0u.title" = "Buscar";
+
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
+"4J7-dP-txa.title" = "Entrar a pantalla completa";
+
+/* Class = "NSMenuItem"; title = "Open in Browser"; ObjectID = "4iQ-1v-dTa"; */
+"4iQ-1v-dTa.title" = "Abrir en navegador";
+
+/* Class = "NSMenuItem"; title = "Quit NetNewsWire"; ObjectID = "4sb-4s-VLi"; */
+"4sb-4s-VLi.title" = "Salir de NetNewsWire";
+
+/* Class = "NSMenu"; title = "Article"; ObjectID = "57V-gv-vEw"; */
+"57V-gv-vEw.title" = "Artículo";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
+"5QF-Oa-p0T.title" = "Editar";
+
+/* Class = "NSMenuItem"; title = "About NetNewsWire"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "Acerca de NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
+"6dh-zS-Vam.title" = "Rehacer";
+
+/* Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "78Y-hA-62v"; */
+"78Y-hA-62v.title" = "Corregir ortografía automáticamente";
+
+/* Class = "NSMenuItem"; title = "All Unread"; ObjectID = "8ZT-ew-JNc"; */
+"8ZT-ew-JNc.title" = "No leídos";
+
+/* Class = "NSMenuItem"; title = "Mark Below as Read"; ObjectID = "8lZ-XI-I4y"; */
+"8lZ-XI-I4y.title" = "Marcar los siguientes como leídos";
+
+/* Class = "NSMenuItem"; title = "Debug Search"; ObjectID = "9Ot-wC-s5U"; */
+"9Ot-wC-s5U.title" = "Depurar búsqueda";
+
+/* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
+"9ic-FL-obx.title" = "Sustituciones";
+
+/* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
+"9yt-4B-nSM.title" = "Copiado/pegado inteligente";
+
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
+"AYu-sK-qS6.title" = "Menú principal";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
+"BOF-NM-1cW.title" = "Preferencias…";
+
+/* Class = "NSMenuItem"; title = "Item"; ObjectID = "CZA-zr-llF"; */
+"CZA-zr-llF.title" = "Ítem";
+
+/* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "DVo-aG-piG"; */
+"DVo-aG-piG.title" = "Cerrar ventana";
+
+/* Class = "NSMenu"; title = "Share"; ObjectID = "Dbl-YW-bmb"; */
+"Dbl-YW-bmb.title" = "Compartir";
+
+/* Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "Dv1-io-Yv7"; */
+"Dv1-io-Yv7.title" = "Ortografía y gramática";
+
+/* Class = "NSMenuItem"; title = "Hide Read Feeds"; ObjectID = "E9K-zV-nLv"; */
+"E9K-zV-nLv.title" = "Esconder feeds leídos";
+
+/* Class = "NSMenuItem"; title = "Open in Browser Inverted"; ObjectID = "EjD-X9-Pjf"; */
+"EjD-X9-Pjf.title" = "Abrir en navegador invertido";
+
+/* Class = "NSMenuItem"; title = "Enable Web Inspector"; ObjectID = "EwI-z4-ZA3"; */
+"EwI-z4-ZA3.title" = "Activar inspector web";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
+"F2S-fz-NVQ.title" = "Ayuda";
+
+/* Class = "NSMenuItem"; title = "NetNewsWire Help"; ObjectID = "FKE-Sm-Kum"; */
+"FKE-Sm-Kum.title" = "Ayuda de NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Go"; ObjectID = "FPs-q4-hLT"; */
+"FPs-q4-hLT.title" = "Ir";
+
+/* Class = "NSMenuItem"; title = "Mark as Read"; ObjectID = "Fc9-c7-2AY"; */
+"Fc9-c7-2AY.title" = "Marcar como leído";
+
+/* Class = "NSMenu"; title = "Substitutions"; ObjectID = "FeM-D8-WVr"; */
+"FeM-D8-WVr.title" = "Sustituciones";
+
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
+"H8h-7b-M4v.title" = "Visualización";
+
+/* Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "HFQ-gK-NFA"; */
+"HFQ-gK-NFA.title" = "Reemplazo de texto";
+
+/* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
+"HFo-cy-zxI.title" = "Mostrar ortografía y gramática";
+
+/* Class = "NSMenuItem"; title = "Mark All as Read"; ObjectID = "HdN-Ks-cwh"; */
+"HdN-Ks-cwh.title" = "Marcar todo como leído";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
+"HyV-fh-RgO.title" = "Visualización";
+
+/* Class = "NSMenuItem"; title = "Clean Up Articles"; ObjectID = "J5h-uQ-57w"; */
+"J5h-uQ-57w.title" = "Limpiar artículos";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
+"Kd2-mp-pUS.title" = "Mostrar todo";
+
+/* Class = "NSMenuItem"; title = "Today"; ObjectID = "L20-jv-7c9"; */
+"L20-jv-7c9.title" = "Hoy";
+
+/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
+"LE2-aR-0XJ.title" = "Mostrar en primer plano";
+
+/* Class = "NSMenuItem"; title = "Main Window"; ObjectID = "LSZ-ci-Jb5"; */
+"LSZ-ci-Jb5.title" = "Ventana principal";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
+"NMo-om-nkz.title" = "Servicios";
+
+/* Class = "NSMenu"; title = "Debug"; ObjectID = "NOT-8E-ykF"; */
+"NOT-8E-ykF.title" = "Depurar";
+
+/* Class = "NSMenu"; title = "Go"; ObjectID = "NQW-Ph-lw2"; */
+"NQW-Ph-lw2.title" = "Ir";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
+"OY7-WF-poV.title" = "Minimizar";
+
+/* Class = "NSMenu"; title = "Sort Articles By"; ObjectID = "OlJ-93-6OP"; */
+"OlJ-93-6OP.title" = "Ordenar artículos por";
+
+/* Class = "NSMenuItem"; title = "Hide NetNewsWire"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "Esconder NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
+"OwM-mh-QMV.title" = "Buscar anterior";
+
+/* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
+"Oyz-dy-DGm.title" = "Detener locución";
+
+/* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Ppm-uh-K5n"; */
+"Ppm-uh-K5n.title" = "Recargar";
+
+/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
+"R4o-n2-Eq4.title" = "Tamaño";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
+"Ruw-6m-B2m.title" = "Seleccionar todo";
+
+/* Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "S0p-oC-mLd"; */
+"S0p-oC-mLd.title" = "Ir a selección";
+
+/* Class = "NSMenuItem"; title = "Newest Article on Top"; ObjectID = "TNS-TV-n0U"; */
+"TNS-TV-n0U.title" = "Artículo más reciente primero";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
+"Td7-aD-5lo.title" = "Ventana";
+
+/* Class = "NSMenuItem"; title = "Article"; ObjectID = "TzI-3g-N0v"; */
+"TzI-3g-N0v.title" = "Artículo";
+
+/* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
+"UEZ-Bs-lqG.title" = "Capitalizar";
+
+/* Class = "NSMenuItem"; title = "Debug"; ObjectID = "UqE-mp-gtV"; */
+"UqE-mp-gtV.title" = "Depurar";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
+"Vdr-fp-XzO.title" = "Esconder otros";
+
+/* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Veh-SV-KWy"; */
+"Veh-SV-KWy.title" = "Recargar";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
+"W48-6f-4Dl.title" = "Editar";
+
+/* Class = "NSMenuItem"; title = "New Feed…"; ObjectID = "Was-JA-tGl"; */
+"Was-JA-tGl.title" = "Nueva fuente…";
+
+/* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
+"WeT-3V-zwk.title" = "Pegar y mantener estilo";
+
+/* Class = "NSMenuItem"; title = "Test Crash Log Sender"; ObjectID = "XJG-gO-OKi"; */
+"XJG-gO-OKi.title" = "Testear envío del registro de fallos";
+
+/* Class = "NSMenuItem"; title = "Export Subscriptions…"; ObjectID = "Xy2-v8-Lj8"; */
+"Xy2-v8-Lj8.title" = "Exportar suscripciones…";
+
+/* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
+"Xz5-n4-O0W.title" = "Buscar…";
+
+/* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "Ynk-f8-cLZ"; */
+"Ynk-f8-cLZ.title" = "Iniciar locución";
+
+/* Class = "NSMenuItem"; title = "Starred"; ObjectID = "ZRx-me-QXO"; */
+"ZRx-me-QXO.title" = "Favoritos";
+
+/* Class = "NSMenuItem"; title = "Group By Feed"; ObjectID = "Zxm-O6-NRE"; */
+"Zxm-O6-NRE.title" = "Agrupar por fuente";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
+"aUF-d1-5bR.title" = "Ventana";
+
+/* Class = "NSMenuItem"; title = "Hide Read Articles"; ObjectID = "b10-sA-Yzi"; */
+"b10-sA-Yzi.title" = "Esconder artículos leídos";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
+"bib-Uj-vzu.title" = "Archivo";
+
+/* Class = "NSMenuItem"; title = "Drop Conditional Get Info"; ObjectID = "btO-Tb-2qS"; */
+"btO-Tb-2qS.title" = "Omitir obtención condicional de información";
+
+/* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
+"buJ-ug-pKt.title" = "Usar selección para la búsqueda";
+
+/* Class = "NSMenu"; title = "Transformations"; ObjectID = "c8a-y6-VQd"; */
+"c8a-y6-VQd.title" = "Transformaciones";
+
+/* Class = "NSMenuItem"; title = "Add NetNewsWire News Feed"; ObjectID = "cmP-uH-mS8"; */
+"cmP-uH-mS8.title" = "Añadir fuente de noticias NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "cwL-P1-jid"; */
+"cwL-P1-jid.title" = "Enlaces inteligentes";
+
+/* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
+"d9M-CD-aMd.title" = "Todo en minúsculas";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "dMs-cI-mzQ"; */
+"dMs-cI-mzQ.title" = "Archivo";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Yzg"; */
+"dRJ-4n-Yzg.title" = "Deshacer";
+
+/* Class = "NSMenuItem"; title = "Import NNW 3 Subscriptions…"; ObjectID = "ely-yi-STg"; */
+"ely-yi-STg.title" = "Importar suscripciones de NNW 3…";
+
+/* Class = "NSMenuItem"; title = "Copy External URL"; ObjectID = "fOF-99-6Iv"; */
+"fOF-99-6Iv.title" = "Copiar URL externa";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
+"gVA-U4-sdL.title" = "Pegar";
+
+/* Class = "NSMenuItem"; title = "Test Crash Reporter Window"; ObjectID = "gVd-kQ-efj"; */
+"gVd-kQ-efj.title" = "Testear ventana del reporte de fallos";
+
+/* Class = "NSMenuItem"; title = "Force Crash"; ObjectID = "gVt-cz-eoJ"; */
+"gVt-cz-eoJ.title" = "Forzar error";
+
+/* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
+"hQb-2v-fYv.title" = "Comillas tipográficas";
+
+/* Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "hz2-CU-CR7"; */
+"hz2-CU-CR7.title" = "Inspeccionar documento ahora";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
+"hz9-B4-Xy5.title" = "Servicios";
+
+/* Class = "NSMenuItem"; title = "Oldest Article on Top"; ObjectID = "iii-kP-qoF"; */
+"iii-kP-qoF.title" = "Artículo más antiguo primero";
+
+/* Class = "NSMenuItem"; title = "Share"; ObjectID = "jaf-gh-gSi"; */
+"jaf-gh-gSi.title" = "Compartir";
+
+/* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
+"kIP-vf-haE.title" = "Mostrar barra lateral";
+
+/* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
+"mK6-2p-4JG.title" = "Comprobar gramática y ortografía";
+
+/* Class = "NSMenuItem"; title = "Article Search…"; ObjectID = "nB2-mv-2i5"; */
+"nB2-mv-2i5.title" = "Búsqueda de artículo…";
+
+/* Class = "NSMenuItem"; title = "Sort Articles By"; ObjectID = "nLP-fa-KUi"; */
+"nLP-fa-KUi.title" = "Ordenar artículos por";
+
+/* Class = "NSMenuItem"; title = "Clear Image Caches"; ObjectID = "o1k-E6-ctu"; */
+"o1k-E6-ctu.title" = "Borrar caché de imágenes";
+
+/* Class = "NSMenuItem"; title = "Mark Above as Read"; ObjectID = "p1o-EG-Uo8"; */
+"p1o-EG-Uo8.title" = "Marcar anterior como leídos";
+
+/* Class = "NSMenuItem"; title = "Show Reader View"; ObjectID = "p5x-Xq-1fW"; */
+"p5x-Xq-1fW.title" = "Mostrar vista de lectura";
+
+/* Class = "NSMenuItem"; title = "New Window"; ObjectID = "pGg-Gc-PU2"; */
+"pGg-Gc-PU2.title" = "Nueva ventana";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "pa3-QI-u2k"; */
+"pa3-QI-u2k.title" = "Borrar";
+
+/* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
+"q09-fT-Sye.title" = "Buscar siguiente";
+
+/* Class = "NSMenuItem"; title = "NetNewsWire Website"; ObjectID = "q2Z-9K-GBd"; */
+"q2Z-9K-GBd.title" = "Sitio web de NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Next Unread"; ObjectID = "q3p-nE-m2k"; */
+"q3p-nE-m2k.title" = "Siguiente no leído";
+
+/* Class = "NSMenuItem"; title = "Copy Article URL"; ObjectID = "qNk-By-jKp"; */
+"qNk-By-jKp.title" = "Copiar URL de artículo";
+
+/* Class = "NSMenuItem"; title = "Import Subscriptions…"; ObjectID = "rSl-F4-qo7"; */
+"rSl-F4-qo7.title" = "Importar suscripciones…";
+
+/* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
+"rbD-Rh-wIN.title" = "Comprobar ortografía mientras se escribe";
+
+/* Class = "NSMenuItem"; title = "Open Application Support Folder"; ObjectID = "rg6-L6-JUr"; */
+"rg6-L6-JUr.title" = "Open Application Support Folder";
+
+/* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
+"rgM-f4-ycn.title" = "Guiones inteligentes";
+
+/* Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "snW-S8-Cw5"; */
+"snW-S8-Cw5.title" = "Mostrar barra de herramientas";
+
+/* Class = "NSMenuItem"; title = "Data Detectors"; ObjectID = "tRr-pd-1PS"; */
+"tRr-pd-1PS.title" = "Detectores de datos";
+
+/* Class = "NSMenu"; title = "NetNewsWire"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "uRl-iY-unG"; */
+"uRl-iY-unG.title" = "Pegar";
+
+/* Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "vmV-6d-7jI"; */
+"vmV-6d-7jI.title" = "Todo en mayúsculas";
+
+/* Class = "NSMenuItem"; title = "Mark as Starred"; ObjectID = "vvo-ZM-8kl"; */
+"vvo-ZM-8kl.title" = "Marcar como favorito";
+
+/* Class = "NSMenuItem"; title = "Keyboard Shortcuts"; ObjectID = "w6o-j8-cda"; */
+"w6o-j8-cda.title" = "Atajos de teclado";
+
+/* Class = "NSMenuItem"; title = "New Folder…"; ObjectID = "wkh-LX-Xp1"; */
+"wkh-LX-Xp1.title" = "Nueva carpeta…";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
+"wpr-3q-Mcd.title" = "Ayuda";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x3v-GG-iWU"; */
+"x3v-GG-iWU.title" = "Copiar";
+
+/* Class = "NSMenuItem"; title = "Speech"; ObjectID = "xrE-MZ-jX0"; */
+"xrE-MZ-jX0.title" = "Habla";
+
+/* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
+"z6F-FW-3nz.title" = "Mostrar sustituciones";

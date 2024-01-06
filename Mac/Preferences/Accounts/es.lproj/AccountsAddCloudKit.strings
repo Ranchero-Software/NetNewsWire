@@ -1,0 +1,18 @@
+
+/* Class = "NSTextFieldCell"; title = "Use your iCloud account."; ObjectID = "1d2-Mx-TKe"; */
+"1d2-Mx-TKe.title" = "Usar tu cuenta iCloud.";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Ventana";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "iVd-bO-4LN"; */
+"iVd-bO-4LN.title" = "Cancelar";
+
+/* Class = "NSButtonCell"; title = "Use iCloud"; ObjectID = "oih-6c-KbS"; */
+"oih-6c-KbS.title" = "Usar iCloud";
+
+/* Class = "NSTextFieldCell"; title = "iCloud Syncing Limitations & Solutions"; ObjectID = "rON-0r-jBU"; */
+"rON-0r-jBU.title" = "Limitaciones y soluciones para sincronizar con iCloud";
+
+/* Class = "NSTextFieldCell"; title = "NetNewsWire will use your iCloud account to sync your feeds across your Mac and iOS devices."; ObjectID = "wfr-Dv-UIF"; */
+"wfr-Dv-UIF.title" = "NetNewsWire usará tu cuenta iCloud para sincronizar tus fuentes en tus dispositivos Mac y iOS..";

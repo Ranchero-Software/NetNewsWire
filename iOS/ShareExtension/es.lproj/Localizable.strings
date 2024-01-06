@@ -1,0 +1,18 @@
+/* Automatic */
+"appdefaults.colorpalette.automatic" = "Automático";
+
+/* Dark */
+"appdefaults.colorpalette.dark" = "Oscuro";
+
+/* Light */
+"appdefaults.colorpalette.light" = "Claro";
+
+/* Add Feed */
+"button.title.add-feed" = "Añadir fuente";
+
+/* Folder */
+"navigation.title.folder" = "Carpeta";
+
+/* Feed Name (Optional) */
+"textfield.placeholder.feed-name" = "Nombre de la fuente (opcional)";
+

@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  NetNewsWire
+
+  Created by Stuart Breckenridge on 21/11/2020.
+  Copyright © 2020 Ranchero Software. All rights reserved.
+*/
+
+/* Bundle */
+"widget.title.unread" = "Your Unread Articles";
+"widget.description.unread" = "A sneak peek at your unread articles.";
+
+"widget.title.today" = "Your Today Articles";
+"widget.description.today" = "A sneak peek at recently published unread articles.";
+
+"widget.title.starred" = "Your Starred Articles";
+"widget.description.starred" = "A sneak peek at your starred articles.";
+
+"widget.title.smart-feed-summary" = "Your Smart Feed Summary";
+"widget.description.smart-feed-summary" = "Your smart feeds, summarized.";
+
+/* Unread Widget */
+"widget.title.unread-no-items" = "Unread";
+"widget.description.unread-no-items" = "There are no unread articles left to read.";
+
+/* Today Widget */
+"widget.title.today-no-items" = "Today";
+"widget.description.today-no-items" = "There are no recent unread articles left to read.";
+
+/* Starred Widget */
+"widget.title.starred-no-items" = "Starred";
+"widget.description.starred-no-items" = "When you mark articles as Starred, they'll appear here.";
+
+/* Smart Feed Summary Widget */
+"label.text.unread" = "Unread";
+"label.text.today" = "Today";
+"label.text.starred" = "Starred";
