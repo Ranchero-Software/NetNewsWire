@@ -1,0 +1,36 @@
+/* Every 2 Hours */
+"button.title.2-hours" = "Cada 2 horas";
+
+/* Every 4 Hours */
+"button.title.4-hours" = "Cada 4 horas";
+
+/* Every 8 Hours */
+"button.title.8-hours" = "Cada 8 horas";
+
+/* Every 10 Minutes */
+"button.title.10-minutes" = "Cada 10 minutos";
+
+/* Every 30 Minutes */
+"button.title.30-minutes" = "Cada 30 minutos";
+
+/* Every Hour */
+"button.title.every-hour" = "Cada hora";
+
+/* Manually */
+"button.title.manually" = "Manualmente";
+
+/* XX-Large */
+"label.text.extra-extra-large" = "Extra-extra-grande";
+
+/* X-Large */
+"label.text.extra-large" = "Extra-grande";
+
+/* Large */
+"label.text.large" = "Grande";
+
+/* Medium */
+"label.text.medium" = "Medio";
+
+/* Small */
+"label.text.small" = "Pequeño";
+

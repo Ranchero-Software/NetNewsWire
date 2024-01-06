@@ -1,0 +1,24 @@
+
+/* Class = "NSTextFieldCell"; title = "iCloud Syncing Limitations & Solutions"; ObjectID = "0XE-hc-x09"; */
+"0XE-hc-x09.title" = "Limitaciones y soluciones para sincronizar con iCloud";
+
+/* Class = "NSTabViewItem"; label = "Account"; ObjectID = "35c-I3-wfs"; */
+"35c-I3-wfs.label" = "Cuenta";
+
+/* Class = "NSTextFieldCell"; title = "On My Mac"; ObjectID = "6yI-bV-1Sh"; */
+"6yI-bV-1Sh.title" = "En mi Mac";
+
+/* Class = "NSTextFieldCell"; title = "The name appears in the sidebar. It can be anything you want. You can even use emoji. 🎸"; ObjectID = "MW0-mH-Gaa"; */
+"MW0-mH-Gaa.title" = "El nombre aparece en la barra lateral. Puede ser cualquier cosa que quieras. Incluso puedes usar emoji. 🥘";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "tC5-Vt-gBc"; */
+"tC5-Vt-gBc.title" = "Tipo:";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "uyQ-Zi-QCr"; */
+"uyQ-Zi-QCr.title" = "Nombre:";
+
+/* Class = "NSButtonCell"; title = "Credentials"; ObjectID = "vYg-ZC-o4W"; */
+"vYg-ZC-o4W.title" = "Credenciales";
+
+/* Class = "NSButtonCell"; title = "Active"; ObjectID = "wxB-dX-nGt"; */
+"wxB-dX-nGt.title" = "Activo";
