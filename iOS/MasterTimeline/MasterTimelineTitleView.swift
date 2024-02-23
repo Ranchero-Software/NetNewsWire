@@ -51,7 +51,6 @@ class MasterTimelineTitleView: UIView {
 
 extension MasterTimelineTitleView: UIPointerInteractionDelegate {
 	
-	@available(iOS 13.4, *)
 	func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
 		var rect = self.frame
 		rect.origin.x = rect.origin.x - 10

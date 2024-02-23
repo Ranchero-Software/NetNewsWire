@@ -52,7 +52,6 @@ struct AppAssets {
 		return RSImage(named: "accountTheOldReader")
 	}()
 
-	@available(macOS 11.0, *)
 	static var addNewSidebarItemImage: RSImage = {
 		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 	}()
@@ -69,12 +68,10 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorOn")!
 	}()
 
-	@available(macOS 11.0, *)
 	static var articleTheme: RSImage = {
 		return NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
 	static var cleanUpImage: RSImage = {
 		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
 	}()
@@ -162,12 +159,10 @@ struct AppAssets {
 		return RSImage(named: "markAllAsRead")!
 	}()
 
-	@available(macOS 11.0, *)
 	static var nextUnreadImage: RSImage = {
 		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
 	static var openInBrowserImage: RSImage = {
 		return NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
 	}()
@@ -204,17 +199,14 @@ struct AppAssets {
 		}
 	}()
 
-	@available(macOS 11.0, *)
 	static var readClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
 	static var readOpenImage: RSImage = {
 		return NSImage(systemSymbolName: "circle", accessibilityDescription: nil)!
 	}()
 	
-	@available(macOS 11.0, *)
 	static var refreshImage: RSImage = {
 		return NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
 	}()
@@ -223,22 +215,18 @@ struct AppAssets {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSupressed: true)
 	}()
 	
-	@available(macOS 11.0, *)
 	static var shareImage: RSImage = {
 		return NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
 	static var sidebarToggleImage: RSImage = {
 		return NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
 	}()
 	
-	@available(macOS 11.0, *)
 	static var starClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
 	static var starOpenImage: RSImage = {
 		return NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
 	}()

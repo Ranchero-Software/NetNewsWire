@@ -28,7 +28,6 @@ public final class WidgetDataEncoder {
 	static let shared = WidgetDataEncoder()
 	private init () {}
 	
-	@available(iOS 14, *)
 	func encodeWidgetData() throws {
 		os_log(.debug, log: log, "Starting encoding widget data.")
 		
