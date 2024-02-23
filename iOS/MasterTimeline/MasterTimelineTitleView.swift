@@ -14,7 +14,6 @@ class MasterTimelineTitleView: UIView {
 	@IBOutlet weak var label: UILabel!
 	@IBOutlet weak var unreadCountView: MasterTimelineUnreadCountView!
 
-	@available(iOS 13.4, *)
 	private lazy var pointerInteraction: UIPointerInteraction = {
 		UIPointerInteraction(delegate: self)
 	}()
