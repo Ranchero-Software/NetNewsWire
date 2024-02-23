@@ -10,19 +10,9 @@ import Foundation
 import WebKit
 
 class PreloadedWebView: WKWebView {
-	
+
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?
-
-	static let userScripts: [WKUserScript] = {
-		var scripts = [WKUserScript]()
-		for fileName in ["main.js", "main_ios.js", "newsfoot.js"] {
-			let scriptSource = try! String(contentsOf: baseURL.appending(path: fileName, directoryHint: .notDirectory))
-			let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true, in: appScriptsWorld)
-			scripts.append(script)
-		}
-		return scripts
-	}()
 
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let preferences = WKPreferences()
@@ -35,26 +25,19 @@ class PreloadedWebView: WKWebView {
 		configuration.allowsInlineMediaPlayback = true
 		configuration.mediaTypesRequiringUserActionForPlayback = .audio
 		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
-		
-		let userContentController = WKUserContentController()
-		let appScriptsWorld = WKContentWorld.world(name: "NetNewsWire")
-		for script in Self.userScripts {
-			userContentController.addUserScript(script)
-		}
-		configuration.userContentController = userContentController
 
 		super.init(frame: .zero, configuration: configuration)
 	}
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 	}
-	
+
 	func preload() {
 		navigationDelegate = self
 		loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
-	
+
 	func ready(completion: @escaping () -> Void) {
 		if isReady {
 			completeRequest(completion: completion)
@@ -62,7 +45,7 @@ class PreloadedWebView: WKWebView {
 			readyCompletion = completion
 		}
 	}
-	
+
 }
 
 // MARK: WKScriptMessageHandler
@@ -76,17 +59,18 @@ extension PreloadedWebView: WKNavigationDelegate {
 			readyCompletion = nil
 		}
 	}
-		
+
 }
 
 // MARK: Private
 
 private extension PreloadedWebView {
-	
+
 	func completeRequest(completion: @escaping () -> Void) {
 		isReady = false
 		navigationDelegate = nil
 		completion()
 	}
-	
+
 }
+
