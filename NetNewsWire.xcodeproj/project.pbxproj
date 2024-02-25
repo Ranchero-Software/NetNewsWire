@@ -661,6 +661,9 @@
 		845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
 		845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7C01FC2488C00854A1F /* SmartFeed.swift */; };
 		84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
+		847120D72B8AE6AF00BBFC34 /* UTType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */; };
+		847120D82B8AE6AF00BBFC34 /* UTType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */; };
+		847120D92B8AE6AF00BBFC34 /* UTType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */; };
 		8472058120142E8900AD578B /* WebFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* WebFeedInspectorViewController.swift */; };
 		8477ACBE22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */; };
 		847CD6CA232F4CBF00FAC46D /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847CD6C9232F4CBF00FAC46D /* IconView.swift */; };
@@ -1365,6 +1368,7 @@
 		845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarredFeedDelegate.swift; sourceTree = "<group>"; };
 		845EE7C01FC2488C00854A1F /* SmartFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeed.swift; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkStatusCommand.swift; sourceTree = "<group>"; };
+		847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+Extensions.swift"; sourceTree = "<group>"; };
 		8472058020142E8900AD578B /* WebFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedInspectorViewController.swift; sourceTree = "<group>"; };
 		847752FE2008879500D93690 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFeedDelegate.swift; sourceTree = "<group>"; };
@@ -2271,6 +2275,7 @@
 				51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */,
 				84411E701FE5FBFA004B527F /* SmallIconProvider.swift */,
 				51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */,
+				847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -3862,6 +3867,7 @@
 				65ED402F235DEF6C0081F399 /* PreferencesWindowController.swift in Sources */,
 				65ED4030235DEF6C0081F399 /* SmallIconProvider.swift in Sources */,
 				653813192680E15B007A082C /* CacheCleaner.swift in Sources */,
+				847120D82B8AE6AF00BBFC34 /* UTType+Extensions.swift in Sources */,
 				510C417E24E5D1AE008226FD /* ExtensionFeedAddRequest.swift in Sources */,
 				65ED4031235DEF6C0081F399 /* ArticleExtractor.swift in Sources */,
 				51868BF2254386630011A17B /* SidebarDeleteItemsAlert.swift in Sources */,
@@ -3899,6 +3905,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				847120D92B8AE6AF00BBFC34 /* UTType+Extensions.swift in Sources */,
 				51E36E71239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift in Sources */,
 				512DD4C92430086400C17B1F /* CloudKitAccountViewController.swift in Sources */,
 				840D617F2029031C009BC708 /* AppDelegate.swift in Sources */,
@@ -4213,6 +4220,7 @@
 				51A052CE244FB9D7006C2024 /* AddFeedWIndowController.swift in Sources */,
 				84C9FC7922629E1200D921D6 /* PreferencesWindowController.swift in Sources */,
 				84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */,
+				847120D72B8AE6AF00BBFC34 /* UTType+Extensions.swift in Sources */,
 				51FA73A42332BE110090D516 /* ArticleExtractor.swift in Sources */,
 				84CAFCA422BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
 				844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */,
