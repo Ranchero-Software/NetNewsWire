@@ -7,3 +7,9 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
+
+extension UTType {
+	
+	static let opml = UTType("public.opml")!
+}

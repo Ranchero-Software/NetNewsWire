@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import UniformTypeIdentifiers
 
 struct NNW3ImportController {
 
@@ -69,7 +70,7 @@ private extension NNW3ImportController {
 		panel.canChooseDirectories = false
 		panel.resolvesAliases = true
 		panel.directoryURL = NNW3ImportController.defaultFileURL
-		panel.allowedFileTypes = ["plist"]
+		panel.allowedContentTypes = [UTType.propertyList]
 		panel.allowsOtherFileTypes = false
 		panel.accessoryView = accessoryViewController.view
 		panel.isAccessoryViewDisclosed = true

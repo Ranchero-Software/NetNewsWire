@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import UniformTypeIdentifiers
 
 class ImportOPMLWindowController: NSWindowController {
 
@@ -85,7 +86,7 @@ class ImportOPMLWindowController: NSWindowController {
 		panel.allowsMultipleSelection = false
 		panel.canChooseDirectories = false
 		panel.resolvesAliases = true
-		panel.allowedFileTypes = ["opml", "xml"]
+		panel.allowedContentTypes = [UTType.opml, UTType.xml]
 		panel.allowsOtherFileTypes = false
 		
 		panel.beginSheetModal(for: hostWindow!) { modalResult in
