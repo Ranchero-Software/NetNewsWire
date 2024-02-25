@@ -61,14 +61,14 @@ class ShareViewController: NSViewController {
 		// Try to get the URL if it is passed in as a URL
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
 			for itemProvider in item.attachments! {
-				if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
+				if itemProvider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
 					provider = itemProvider
 				}
 			}
 		}
 
 		if provider != nil  {
-			provider!.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil, completionHandler: { [weak self] (urlCoded, error) in
+			provider!.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil, completionHandler: { [weak self] (urlCoded, error) in
 				if error != nil {
 					return
 				}
