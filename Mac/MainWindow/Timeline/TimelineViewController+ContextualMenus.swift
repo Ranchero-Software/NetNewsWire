@@ -200,6 +200,9 @@ private extension TimelineViewController {
 
 		let sortedArticles = articles.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
+
+		// There’s no replacement for the deprecated `NSSharingService.sharingServices` —
+		// and we need it in order to create a custom menu.
 		let standardServices = NSSharingService.sharingServices(forItems: items)
 		let customServices = SharingServicePickerDelegate.customSharingServices(for: items)
 		let services = standardServices + customServices
