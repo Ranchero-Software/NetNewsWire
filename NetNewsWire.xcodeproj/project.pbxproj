@@ -2514,6 +2514,7 @@
 		84C9FC6F22629E1200D921D6 /* Accounts */ = {
 			isa = PBXGroup;
 			children = (
+				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
 				51386A8D25673276005F3762 /* AccountCell.swift */,
 				5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */,
 				5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */,
@@ -2525,7 +2526,6 @@
 				5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */,
 				BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */,
 				179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */,
-				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
 				55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */,
 				55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */,
 				1710B9122552354E00679C0D /* AddAccountHelpView.swift */,
