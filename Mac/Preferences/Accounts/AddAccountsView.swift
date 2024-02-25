@@ -222,7 +222,7 @@ struct AddAccountsView: View {
 				.padding(.top, 8)
 			
 			HStack {
-				ForEach(0..<chunkedWebAccounts().count, content: { chunk in
+				ForEach(0..<chunkedWebAccounts().count, id: \.self, content: { chunk in
 					VStack {
 						Picker(selection: $selectedAccount, label: Text(""), content: {
 							ForEach(chunkedWebAccounts()[chunk], id: \.self, content: { account in
