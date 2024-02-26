@@ -33,20 +33,18 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		self.hostWindow = hostWindow
 	}
 
-	func showAddFeedSheet(_ type: AddFeedWindowControllerType, _ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
+	func showAddFeedSheet(_ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
+
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
-		switch type {
-		case .webFeed:
-			addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
-																 name: name,
-																 account: account,
-																 folder: folder,
-																 folderTreeController: folderTreeController,
-																 delegate: self)
-		}
-		
+		addFeedWindowController = AddFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
+														  name: name,
+														  account: account,
+														  folder: folder,
+														  folderTreeController: folderTreeController,
+														  delegate: self)
+
 		addFeedWindowController!.runSheetOnWindow(hostWindow)
 	}
 
@@ -60,12 +58,12 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		}
 		let account = accountAndFolderSpecifier.account
 
-		if account.hasWebFeed(withURL: url.absoluteString) {
+		if account.hasFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError(url.absoluteString)
 			return
 		}
 
-		account.createWebFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
+		account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
 			
 			DispatchQueue.main.async {
 				self.endShowingProgress()
@@ -73,7 +71,7 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 			
 			switch result {
 			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
 				switch error {
 				case AccountError.createErrorAlreadySubscribed:

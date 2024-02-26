@@ -22,7 +22,7 @@ class FeedlyFeedParserTests: XCTestCase {
 		XCTAssertEqual(parser.title, name)
 		XCTAssertEqual(parser.homePageURL, website)
 		XCTAssertEqual(parser.url, url)
-		XCTAssertEqual(parser.webFeedID, id)
+		XCTAssertEqual(parser.feedID, id)
 	}
 	
 	func testSanitization() {
@@ -36,6 +36,6 @@ class FeedlyFeedParserTests: XCTestCase {
 		XCTAssertEqual(parser.title, name)
 		XCTAssertEqual(parser.homePageURL, website)
 		XCTAssertEqual(parser.url, url)
-		XCTAssertEqual(parser.webFeedID, id)
+		XCTAssertEqual(parser.feedID, id)
 	}
 }

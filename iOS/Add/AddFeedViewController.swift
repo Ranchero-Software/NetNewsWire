@@ -64,7 +64,7 @@ class AddFeedViewController: UITableViewController {
 		nameTextField.text = initialFeedName
 		nameTextField.delegate = self
 		
-		if let defaultContainer = AddWebFeedDefaultContainer.defaultContainer {
+		if let defaultContainer = AddFeedDefaultContainer.defaultContainer {
 			container = defaultContainer
 		} else {
 			addButton.isEnabled = false
@@ -104,7 +104,7 @@ class AddFeedViewController: UITableViewController {
 			account = containerAccount
 		}
 		
-		if account!.hasWebFeed(withURL: url.absoluteString) {
+		if account!.hasFeed(withURL: url.absoluteString) {
 			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}
@@ -117,14 +117,14 @@ class AddFeedViewController: UITableViewController {
 		
 		BatchUpdate.shared.start()
 		
-		account!.createWebFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
+		account!.createFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
 
 			BatchUpdate.shared.end()
 			
 			switch result {
 			case .success(let feed):
 				self.dismiss(animated: true)
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
 				self.addButton.isEnabled = true
 				self.activityIndicator.isHidden = true
@@ -152,7 +152,7 @@ class AddFeedViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.row == 2 {
-			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedFolderNavViewController") as! UINavigationController
+			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedFolderNavViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
 			let folderViewController = navController.topViewController as! AddFeedFolderViewController
 			folderViewController.delegate = self
@@ -164,13 +164,13 @@ class AddFeedViewController: UITableViewController {
 	
 }
 
-// MARK: AddWebFeedFolderViewControllerDelegate
+// MARK: AddFeedFolderViewControllerDelegate
 
 extension AddFeedViewController: AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container) {
 		self.container = container
 		updateFolderLabel()
-		AddWebFeedDefaultContainer.saveDefaultContainer(container)
+		AddFeedDefaultContainer.saveDefaultContainer(container)
 	}
 }
 

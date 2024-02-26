@@ -63,8 +63,8 @@ private extension FetchAllUnreadCountsOperation {
 				return
 			}
 			let unreadCount = resultSet.long(forColumnIndex: 1)
-			if let webFeedID = resultSet.string(forColumnIndex: 0) {
-				unreadCountDictionary[webFeedID] = unreadCount
+			if let feedID = resultSet.string(forColumnIndex: 0) {
+				unreadCountDictionary[feedID] = unreadCount
 			}
 		}
 		resultSet.close()

@@ -73,7 +73,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 				account.removeFolder(scriptableFolder.folder) { result in
 				}
 			}
-		} else if let scriptableFeed = element as? ScriptableWebFeed {
+		} else if let scriptableFeed = element as? ScriptableFeed {
 			BatchUpdate.shared.perform {
 				var container: Container? = nil
 				if let scriptableFolder = scriptableFeed.container as? ScriptableFolder {
@@ -81,7 +81,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 				} else {
 					container = account
 				}
-				account.removeWebFeed(scriptableFeed.webFeed, from: container!) { result in
+				account.removeFeed(scriptableFeed.feed, from: container!) { result in
 				}
 			}
 		}
@@ -94,22 +94,22 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     // MARK: --- Scriptable elements ---
     
-    @objc(webFeeds)
-    var webFeeds:NSArray  {
-        return account.topLevelWebFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
+    @objc(feeds)
+    var feeds:NSArray  {
+        return account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
     
-    @objc(valueInWebFeedsWithUniqueID:)
-    func valueInWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
-		guard let feed = account.existingWebFeed(withWebFeedID: id) else { return nil }
-        return ScriptableWebFeed(feed, container:self)
+    @objc(valueInFeedsWithUniqueID:)
+    func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
+		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
+        return ScriptableFeed(feed, container:self)
     }
     
-    @objc(valueInWebFeedsWithName:)
-    func valueInWebFeeds(withName name:String) -> ScriptableWebFeed? {
-		let feeds = Array(account.flattenedWebFeeds())
+    @objc(valueInFeedsWithName:)
+    func valueInFeeds(withName name:String) -> ScriptableFeed? {
+		let feeds = Array(account.flattenedFeeds())
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
-        return ScriptableWebFeed(feed, container:self)
+        return ScriptableFeed(feed, container:self)
     }
 
     @objc(folders)
@@ -130,21 +130,21 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     // MARK: --- Scriptable properties ---
 
-    @objc(allWebFeeds)
-    var allWebFeeds: NSArray  {
-		var webFeeds = [ScriptableWebFeed]()
-		for webFeed in account.topLevelWebFeeds {
-			webFeeds.append(ScriptableWebFeed(webFeed, container: self))
+    @objc(allFeeds)
+    var allFeeds: NSArray  {
+		var feeds = [ScriptableFeed]()
+		for feed in account.topLevelFeeds {
+			feeds.append(ScriptableFeed(feed, container: self))
 		}
 		if let folders = account.folders {
 			for folder in folders {
 				let scriptableFolder = ScriptableFolder(folder, container: self)
-				for webFeed in folder.topLevelWebFeeds {
-					webFeeds.append(ScriptableWebFeed(webFeed, container: scriptableFolder))
+				for feed in folder.topLevelFeeds {
+					feeds.append(ScriptableFeed(feed, container: scriptableFolder))
 				}
 			}
 		}
-		return webFeeds as NSArray
+		return feeds as NSArray
     }
 
     @objc(opmlRepresentation)

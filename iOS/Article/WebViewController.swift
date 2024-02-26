@@ -68,7 +68,7 @@ class WebViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
@@ -83,7 +83,7 @@ class WebViewController: UIViewController {
 	
 	// MARK: Notifications
 	
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
 	}
 
@@ -113,7 +113,7 @@ class WebViewController: UIViewController {
 		if article != self.article {
 			self.article = article
 			if updateView {
-				if article?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+				if article?.feed?.isArticleExtractorAlwaysOn ?? false {
 					startArticleExtractor()
 				}
 				windowScrollY = 0
@@ -451,8 +451,8 @@ extension WebViewController: WKScriptMessageHandler {
 		case MessageName.imageWasClicked:
 			imageWasClicked(body: message.body as? String)
 		case MessageName.showFeedInspector:
-			if let webFeed = article?.webFeed {
-				coordinator.showFeedInspector(for: webFeed)
+			if let feed = article?.feed {
+				coordinator.showFeedInspector(for: feed)
 			}
 		default:
 			return

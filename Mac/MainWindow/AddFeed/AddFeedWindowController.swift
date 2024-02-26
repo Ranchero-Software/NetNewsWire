@@ -12,7 +12,14 @@ import RSTree
 import Articles
 import Account
 
-class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
+protocol AddFeedWindowControllerDelegate: AnyObject {
+
+	// userEnteredURL will have already been validated and normalized.
+	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
+	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)
+}
+
+class AddFeedWindowController : NSWindowController {
     
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
@@ -38,7 +45,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
     var hostWindow: NSWindow!
 
 	convenience init(urlString: String?, name: String?, account: Account?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
-		self.init(windowNibName: NSNib.Name("AddWebFeedSheet"))
+		self.init(windowNibName: NSNib.Name("AddFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
 		self.initialAccount = account
@@ -64,7 +71,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 		
 		if let account = initialAccount {
 			FolderTreeMenu.select(account: account, folder: initialFolder, in: folderPopupButton)
-		} else if let container = AddWebFeedDefaultContainer.defaultContainer {
+		} else if let container = AddFeedDefaultContainer.defaultContainer {
 			if let folder = container as? Folder, let account = folder.account {
 				FolderTreeMenu.select(account: account, folder: folder, in: folderPopupButton)
 			} else {
@@ -97,7 +104,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 		}
 		
 		guard let container = selectedContainer() else { return }
-		AddWebFeedDefaultContainer.saveDefaultContainer(container)
+		AddFeedDefaultContainer.saveDefaultContainer(container)
 
 		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
 		
@@ -119,7 +126,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 	}
 }
 
-private extension AddWebFeedWindowController {
+private extension AddFeedWindowController {
 	
 	private func updateUI() {
 		addButton.isEnabled = urlTextField.stringValue.mayBeURL && selectedContainer() != nil

@@ -241,8 +241,8 @@ private extension ArticleRenderer {
 			d["dateline_style"] = "articleDateline"
 		}
 
-		d["feed_link_title"] = article.webFeed?.nameForDisplay ?? ""
-		d["feed_link"] = article.webFeed?.homePageURL ?? ""
+		d["feed_link_title"] = article.feed?.nameForDisplay ?? ""
+		d["feed_link"] = article.feed?.homePageURL ?? ""
 
 		d["byline"] = byline()
 
@@ -261,7 +261,7 @@ private extension ArticleRenderer {
 	}
 
 	func byline() -> String {
-		guard let authors = article?.authors ?? article?.webFeed?.authors, !authors.isEmpty else {
+		guard let authors = article?.authors ?? article?.feed?.authors, !authors.isEmpty else {
 			return ""
 		}
 
@@ -269,7 +269,7 @@ private extension ArticleRenderer {
 		// This code assumes that multiple authors would never match the feed name so that
 		// if there feed owner has an article co-author all authors are given the byline.
 		if authors.count == 1, let author = authors.first {
-			if author.name == article?.webFeed?.nameForDisplay {
+			if author.name == article?.feed?.nameForDisplay {
 				return ""
 			}
 		}
@@ -333,10 +333,10 @@ private extension Article {
 	var baseURL: URL? {
 		var s = link
 		if s == nil {
-			s = webFeed?.homePageURL
+			s = feed?.homePageURL
 		}
 		if s == nil {
-			s = webFeed?.url
+			s = feed?.url
 		}
 
 		guard let urlString = s else {

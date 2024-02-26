@@ -1,5 +1,5 @@
 //
-//  AddWebFeedDefaultContainer.swift
+//  AddFeedDefaultContainer.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/16/19.
@@ -9,12 +9,12 @@
 import Foundation
 import Account
 
-struct AddWebFeedDefaultContainer {
+struct AddFeedDefaultContainer {
 	
 	static var defaultContainer: Container? {
 		
-		if let accountID = AppDefaults.shared.addWebFeedAccountID, let account = AccountManager.shared.activeAccounts.first(where: { $0.accountID == accountID }) {
-			if let folderName = AppDefaults.shared.addWebFeedFolderName, let folder = account.existingFolder(withDisplayName: folderName) {
+		if let accountID = AppDefaults.shared.addFeedAccountID, let account = AccountManager.shared.activeAccounts.first(where: { $0.accountID == accountID }) {
+			if let folderName = AppDefaults.shared.addFeedFolderName, let folder = account.existingFolder(withDisplayName: folderName) {
 				return folder
 			} else {
 				return substituteContainerIfNeeded(account: account)
@@ -28,11 +28,11 @@ struct AddWebFeedDefaultContainer {
 	}
 	
 	static func saveDefaultContainer(_ container: Container) {
-		AppDefaults.shared.addWebFeedAccountID = container.account?.accountID
+		AppDefaults.shared.addFeedAccountID = container.account?.accountID
 		if let folder = container as? Folder {
-			AppDefaults.shared.addWebFeedFolderName = folder.nameForDisplay
+			AppDefaults.shared.addFeedFolderName = folder.nameForDisplay
 		} else {
-			AppDefaults.shared.addWebFeedFolderName = nil
+			AppDefaults.shared.addFeedFolderName = nil
 		}
 	}
 	

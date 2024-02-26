@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
-	var webFeedIconDownloader: WebFeedIconDownloader!
+	var feedIconDownloader: FeedIconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	
@@ -241,7 +241,7 @@ private extension AppDelegate {
 		
 		let tempFolder = tempDir.absoluteString
 		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
-		webFeedIconDownloader = WebFeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
+		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
 	}
 	
 	private func initializeHomeScreenQuickActions() {
