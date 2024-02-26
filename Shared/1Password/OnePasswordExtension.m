@@ -19,6 +19,7 @@
 //SOFTWARE.
 
 #import "OnePasswordExtension.h"
+@import UniformTypeIdentifiers;
 
 NSString *const AppExtensionURLStringKey                            = @"url_string";
 NSString *const AppExtensionUsernameKey                             = @"username";
@@ -435,7 +436,7 @@ static NSString *const AppExtensionWebViewPageDetails = @"pageDetails";
 	}
 
 	NSItemProvider *itemProvider = extensionItem.attachments.firstObject;
-	if (NO == [itemProvider hasItemConformingToTypeIdentifier:(__bridge NSString *)kUTTypePropertyList]) {
+	if (NO == [itemProvider hasItemConformingToTypeIdentifier:UTTypePropertyList.identifier]) {
 		NSDictionary *userInfo = @{ NSLocalizedDescriptionKey: @"Unexpected data returned by App Extension: extension item attachment does not conform to kUTTypePropertyList type identifier" };
 		NSError *error = [[NSError alloc] initWithDomain:AppExtensionErrorDomain code:AppExtensionErrorCodeUnexpectedData userInfo:userInfo];
 		if (completion) {
@@ -445,7 +446,7 @@ static NSString *const AppExtensionWebViewPageDetails = @"pageDetails";
 	}
 
 
-	[itemProvider loadItemForTypeIdentifier:(__bridge NSString *)kUTTypePropertyList options:nil completionHandler:^(NSDictionary *itemDictionary, NSError *itemProviderError) {
+	[itemProvider loadItemForTypeIdentifier:UTTypePropertyList.identifier options:nil completionHandler:^(NSDictionary *itemDictionary, NSError *itemProviderError) {
 		 NSError *error = nil;
 		 if (itemDictionary.count == 0) {
 			 NSLog(@"Failed to loadItemForTypeIdentifier: %@", itemProviderError);

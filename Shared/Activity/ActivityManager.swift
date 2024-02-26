@@ -13,6 +13,7 @@ import RSCore
 import Account
 import Articles
 import Intents
+import UniformTypeIdentifiers
 
 class ActivityManager {
 	
@@ -218,7 +219,7 @@ private extension ActivityManager {
 	#if os(iOS)
 	func updateReadArticleSearchAttributes(with article: Article) {
 		
-		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeCompositeContent as String)
+		let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.compositeContent.identifier)
 		attributeSet.title = ArticleStringFormatter.truncatedTitle(article)
 		attributeSet.contentDescription = article.summary
 		attributeSet.keywords = makeKeywords(article)
