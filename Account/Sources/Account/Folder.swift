@@ -10,12 +10,8 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: SidebarItem, Renamable, Container, Hashable {
+public final class Folder: Renamable, Container, DisplayNameProvider, UnreadCountProvider, Hashable {
 
-	public var defaultReadFilterType: ReadFilterType {
-		return .read
-	}
-	
 	public var containerID: ContainerIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
@@ -24,14 +20,6 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		return ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 	
-	public var sidebarItemID: SidebarItemIdentifier? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return SidebarItemIdentifier.folder(accountID, nameForDisplay)
-	}
-
 	public weak var account: Account?
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil

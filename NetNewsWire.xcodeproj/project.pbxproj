@@ -648,6 +648,12 @@
 		844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
 		844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B661FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift */; };
 		844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
+		8451226F2B8CEA9100480DB0 /* SidebarItemIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451226D2B8CEA9100480DB0 /* SidebarItemIdentifier.swift */; };
+		845122702B8CEA9100480DB0 /* SidebarItemIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451226D2B8CEA9100480DB0 /* SidebarItemIdentifier.swift */; };
+		845122712B8CEA9100480DB0 /* SidebarItemIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451226D2B8CEA9100480DB0 /* SidebarItemIdentifier.swift */; };
+		845122722B8CEA9100480DB0 /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451226E2B8CEA9100480DB0 /* SidebarItem.swift */; };
+		845122732B8CEA9100480DB0 /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451226E2B8CEA9100480DB0 /* SidebarItem.swift */; };
+		845122742B8CEA9100480DB0 /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451226E2B8CEA9100480DB0 /* SidebarItem.swift */; };
 		845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845213221FCA5B10003B6E93 /* ImageDownloader.swift */; };
 		845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
 		8454C3F3263F2D8700E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
@@ -1355,6 +1361,8 @@
 		844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = GlobalKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		844B5B661FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWIndowKeyboardHandler.swift; sourceTree = "<group>"; };
 		844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SidebarKeyboardShortcuts.plist; sourceTree = "<group>"; };
+		8451226D2B8CEA9100480DB0 /* SidebarItemIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SidebarItemIdentifier.swift; path = Shared/SidebarItem/SidebarItemIdentifier.swift; sourceTree = SOURCE_ROOT; };
+		8451226E2B8CEA9100480DB0 /* SidebarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SidebarItem.swift; path = Shared/SidebarItem/SidebarItem.swift; sourceTree = SOURCE_ROOT; };
 		845213221FCA5B10003B6E93 /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TimelineKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImageCache.swift; sourceTree = "<group>"; };
@@ -2181,6 +2189,15 @@
 			path = Keyboard;
 			sourceTree = "<group>";
 		};
+		845122752B8CEA9B00480DB0 /* SidebarItem */ = {
+			isa = PBXGroup;
+			children = (
+				8451226E2B8CEA9100480DB0 /* SidebarItem.swift */,
+				8451226D2B8CEA9100480DB0 /* SidebarItemIdentifier.swift */,
+			);
+			path = SidebarItem;
+			sourceTree = "<group>";
+		};
 		845213211FCA5B10003B6E93 /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -2451,6 +2468,7 @@
 				51C4CFEF24D37D1F00AF9874 /* Secrets.swift */,
 				511B9805237DCAC90028BCAA /* UserInfoKey.swift */,
 				8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */,
+				845122752B8CEA9B00480DB0 /* SidebarItem */,
 				51C452AD2265102800C03939 /* Timeline */,
 				84702AB31FA27AE8006B8943 /* Commands */,
 				51934CCC231078DC006127BE /* Activity */,
@@ -3759,6 +3777,7 @@
 				65ED3FD1235DEF6C0081F399 /* PseudoFeed.swift in Sources */,
 				65ED3FD3235DEF6C0081F399 /* NSScriptCommand+NetNewsWire.swift in Sources */,
 				65ED3FD4235DEF6C0081F399 /* Article+Scriptability.swift in Sources */,
+				845122702B8CEA9100480DB0 /* SidebarItemIdentifier.swift in Sources */,
 				65ED3FD5235DEF6C0081F399 /* SmartFeed.swift in Sources */,
 				65ED3FD6235DEF6C0081F399 /* MarkStatusCommand.swift in Sources */,
 				65ED3FD7235DEF6C0081F399 /* NSApplication+Scriptability.swift in Sources */,
@@ -3877,6 +3896,7 @@
 				65ED4035235DEF6C0081F399 /* FolderTreeMenu.swift in Sources */,
 				65ED4036235DEF6C0081F399 /* NNW3ImportController.swift in Sources */,
 				65ED4037235DEF6C0081F399 /* FolderTreeControllerDelegate.swift in Sources */,
+				845122732B8CEA9100480DB0 /* SidebarItem.swift in Sources */,
 				65ED4038235DEF6C0081F399 /* RSImage-Extensions.swift in Sources */,
 				65ED4039235DEF6C0081F399 /* SingleFaviconDownloader.swift in Sources */,
 				65ED403A235DEF6C0081F399 /* Feed+Scriptability.swift in Sources */,
@@ -3970,6 +3990,7 @@
 				51FE10042345529D0056195D /* UserNotificationManager.swift in Sources */,
 				51C4CFF224D37D1F00AF9874 /* Secrets.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
+				845122712B8CEA9100480DB0 /* SidebarItemIdentifier.swift in Sources */,
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
 				51A66685238075AE00CB272D /* AddFeedDefaultContainer.swift in Sources */,
 				176813E92564BAE200D98635 /* WidgetDeepLinks.swift in Sources */,
@@ -4016,6 +4037,7 @@
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
+				845122742B8CEA9100480DB0 /* SidebarItem.swift in Sources */,
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,
 				5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */,
 				51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */,
@@ -4178,6 +4200,7 @@
 				84F2D5381FC22FCC00998D64 /* TodayFeedDelegate.swift in Sources */,
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
 				84DEE56522C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
+				845122722B8CEA9100480DB0 /* SidebarItem.swift in Sources */,
 				845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */,
 				51FA73B72332D5F70090D516 /* LegacyArticleExtractorButton.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
@@ -4200,6 +4223,7 @@
 				841ABA6020145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift in Sources */,
 				D5E4CC54202C1361009B4FFC /* AppDelegate+Scriptability.swift in Sources */,
 				8454C3F8263F3AD400E3F9C7 /* IconImageCache.swift in Sources */,
+				8451226F2B8CEA9100480DB0 /* SidebarItemIdentifier.swift in Sources */,
 				518651B223555EB20078E021 /* NNW3Document.swift in Sources */,
 				D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */,
 				D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */,

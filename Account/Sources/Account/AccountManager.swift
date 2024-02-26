@@ -197,22 +197,6 @@ public final class AccountManager: UnreadCountProvider {
 		return nil
 	}
 	
-	public func existingFeed(with feedID: SidebarItemIdentifier) -> SidebarItem? {
-		switch feedID {
-		case .folder(let accountID, let folderName):
-			if let account = existingAccount(with: accountID) {
-				return account.existingFolder(with: folderName)
-			}
-		case .feed(let accountID, let feedID):
-			if let account = existingAccount(with: accountID) {
-				return account.existingFeed(withFeedID: feedID)
-			}
-		default:
-			break
-		}
-		return nil
-	}
-	
 	public func suspendNetworkAll() {
 		isSuspended = true
 		accounts.forEach { $0.suspendNetwork() }

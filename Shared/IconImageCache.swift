@@ -24,7 +24,7 @@ class IconImageCache {
 		if let smartFeed = SmartFeedsController.shared.find(by: feedID) {
 			return imageForFeed(smartFeed)
 		}
-		if let feed = AccountManager.shared.existingFeed(with: feedID) {
+		if let feed = AccountManager.shared.existingSidebarItem(with: feedID) {
 			return imageForFeed(feed)
 		}
 		return nil

@@ -7,19 +7,20 @@
 //
 
 import Foundation
+import Account
 
-public protocol SidebarItemIdentifiable {
+protocol SidebarItemIdentifiable {
 	var sidebarItemID: SidebarItemIdentifier? { get }
 }
 
-public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable {
+enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable {
 	
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
 	case feed(String, String) // accountID, feedID
 	case folder(String, String) // accountID, folderName
 	
-	public var description: String {
+	var description: String {
 		switch self {
 		case .smartFeed(let id):
 			return "smartFeed: \(id)"
@@ -32,7 +33,7 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 		}
 	}
 	
-	public var userInfo: [AnyHashable: AnyHashable] {
+	var userInfo: [AnyHashable: AnyHashable] {
 		switch self {
 		case .smartFeed(let id):
 			return [
@@ -59,7 +60,7 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 		}
 	}
 	
-	public init?(userInfo: [AnyHashable: AnyHashable]) {
+	init?(userInfo: [AnyHashable: AnyHashable]) {
 		guard let type = userInfo["type"] as? String else { return nil }
 		
 		switch type {
@@ -80,4 +81,26 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 		}
 	}
 
+}
+
+extension Feed: SidebarItemIdentifiable {
+
+	var sidebarItemID: SidebarItemIdentifier? {
+		guard let accountID = account?.accountID else {
+			assertionFailure("Expected feed.account, but got nil.")
+			return nil
+		}
+		return SidebarItemIdentifier.feed(accountID, feedID)
+	}
+}
+
+extension Folder: SidebarItemIdentifiable {
+	
+	var sidebarItemID: SidebarItemIdentifier? {
+		guard let accountID = account?.accountID else {
+			assertionFailure("Expected feed.account, but got nil.")
+			return nil
+		}
+		return SidebarItemIdentifier.folder(accountID, nameForDisplay)
+	}
 }

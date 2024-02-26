@@ -16,7 +16,7 @@ final class SmartFeed: PseudoFeed {
 
 	var account: Account? = nil
 
-	public var defaultReadFilterType: ReadFilterType {
+	var defaultReadFilterType: ReadFilterType {
 		return .none
 	}
 

@@ -11,19 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class Feed: SidebarItem, Renamable, Hashable {
-
-	public var defaultReadFilterType: ReadFilterType {
-		return .none
-	}
-
-	public var sidebarItemID: SidebarItemIdentifier? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return SidebarItemIdentifier.feed(accountID, feedID)
-	}
+public final class Feed: Renamable, DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	public weak var account: Account?
 	public let url: String
