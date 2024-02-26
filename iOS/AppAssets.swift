@@ -145,11 +145,11 @@ struct AppAssets {
 		return UIImage(systemName: "arrowtriangle.up.circle")!
 	}()
 	
-	static var masterFolderImage: IconImage = {
+	static var folderImage: IconImage = {
 		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
 	
-	static var masterFolderImageNonIcon: UIImage = {
+	static var folderImageNonIcon: UIImage = {
 		return UIImage(systemName: "folder.fill")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
 	}()
 	
