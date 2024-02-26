@@ -798,10 +798,10 @@ private extension MasterFeedViewController {
 	}
 	
 	func configureIcon(_ cell: MasterFeedTableViewCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? SidebarItem, let feedID = feed.feedID else {
+		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID else {
 			return
 		}
-		cell.iconImage = IconImageCache.shared.imageFor(feedID)
+		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
 	}
 
 	func nameFor(_ node: Node) -> String {
@@ -820,7 +820,7 @@ private extension MasterFeedViewController {
 			if let node = coordinator.nodeFor(indexPath),
 			   let representedFeed = representedObject as? SidebarItem,
 			   let candidate = node.representedObject as? SidebarItem,
-			   representedFeed.feedID == candidate.feedID {
+			   representedFeed.sidebarItemID == candidate.sidebarItemID {
 				completion(cell, indexPath)
 			}
 		}

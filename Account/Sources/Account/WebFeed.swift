@@ -17,7 +17,7 @@ public final class WebFeed: SidebarItem, Renamable, Hashable {
 		return .none
 	}
 
-	public var feedID: SidebarItemIdentifier? {
+	public var sidebarItemID: SidebarItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil

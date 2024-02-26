@@ -172,16 +172,16 @@ private extension ActivityManager {
 		activity.keywords = Set(makeKeywords(title))
 		activity.isEligibleForSearch = true
 		
-		let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
+		let articleFetcherIdentifierUserInfo = feed.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
 		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo]
 		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 
-		activity.persistentIdentifier = feed.feedID?.description ?? ""
+		activity.persistentIdentifier = feed.sidebarItemID?.description ?? ""
 
 		#if os(iOS)
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
-		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.feedID?.description ?? ""
+		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.sidebarItemID?.description ?? ""
 		#endif
 
 		return activity
@@ -192,7 +192,7 @@ private extension ActivityManager {
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
 		
 		if let feed = feed {
-			let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
+			let articleFetcherIdentifierUserInfo = feed.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
 			let articlePathUserInfo = article.pathUserInfo
 			activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
 		} else {

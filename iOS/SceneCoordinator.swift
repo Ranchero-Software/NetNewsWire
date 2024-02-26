@@ -34,10 +34,10 @@ enum ShowFeedName {
 struct FeedNode: Hashable {
 	var node: Node
 	var feedID: SidebarItemIdentifier
-	
+
 	init(_ node: Node) {
 		self.node = node
-		self.feedID = (node.representedObject as! SidebarItem).feedID!
+		self.feedID = (node.representedObject as! SidebarItem).sidebarItemID!
 	}
 	
 	func hash(into hasher: inout Hasher) {
@@ -149,7 +149,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	var isReadArticlesFiltered: Bool {
-		if let feedID = timelineFeed?.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+		if let sidebarItemID = timelineFeed?.sidebarItemID, let readFilterEnabled = readFilterEnabledTable[sidebarItemID] {
 			return readFilterEnabled
 		} else {
 			return timelineDefaultReadFilterType != .none
@@ -617,23 +617,23 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func toggleReadArticlesFilter() {
-		guard let feedID = timelineFeed?.feedID else {
+		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
 			return
 		}
 
 		if isReadArticlesFiltered {
-			readFilterEnabledTable[feedID] = false
+			readFilterEnabledTable[sidebarItemID] = false
 		} else {
-			readFilterEnabledTable[feedID] = true
+			readFilterEnabledTable[sidebarItemID] = true
 		}
 		
 		refreshTimeline(resetScroll: false)
 	}
 
-	func nodeFor(feedID: SidebarItemIdentifier) -> Node? {
+	func nodeFor(sidebarItemID: SidebarItemIdentifier) -> Node? {
 		return treeController.rootNode.descendantNode(where: { node in
 			if let feed = node.representedObject as? SidebarItem {
-				return feed.feedID == feedID
+				return feed.sidebarItemID == sidebarItemID
 			} else {
 				return false
 			}
@@ -1128,10 +1128,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			markExpanded(parentFolder)
 		}
 	
-		if let webFeedFeedID = webFeed.feedID {
+		if let webFeedFeedID = webFeed.sidebarItemID {
 			self.treeControllerDelegate.addFilterException(webFeedFeedID)
 		}
-		if let parentFolderFeedID = parentFolder?.feedID {
+		if let parentFolderFeedID = parentFolder?.sidebarItemID {
 			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 		}
 
@@ -1450,16 +1450,16 @@ private extension SceneCoordinator {
 	}
 
 	func addToFilterExeptionsIfNecessary(_ feed: SidebarItem?) {
-		if isReadFeedsFiltered, let feedID = feed?.feedID {
+		if isReadFeedsFiltered, let sidebarItemID = feed?.sidebarItemID {
 			if feed is SmartFeed {
-				treeControllerDelegate.addFilterException(feedID)
+				treeControllerDelegate.addFilterException(sidebarItemID)
 			} else if let folderFeed = feed as? Folder {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
-					treeControllerDelegate.addFilterException(feedID)
+					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
 			} else if let webFeed = feed as? WebFeed {
 				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
-					treeControllerDelegate.addFilterException(feedID)
+					treeControllerDelegate.addFilterException(sidebarItemID)
 					addParentFolderToFilterExceptions(webFeed)
 				}
 			}
@@ -1469,7 +1469,7 @@ private extension SceneCoordinator {
 	func addParentFolderToFilterExceptions(_ feed: SidebarItem) {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
 			let folder = node.parent?.representedObject as? Folder,
-			let folderFeedID = folder.feedID else {
+			let folderFeedID = folder.sidebarItemID else {
 				return
 		}
 		
@@ -1479,7 +1479,7 @@ private extension SceneCoordinator {
 	func addShadowTableToFilterExceptions() {
 		for section in shadowTable {
 			for feedNode in section.feedNodes {
-				if let feed = feedNode.node.representedObject as? SidebarItem, let feedID = feed.feedID {
+				if let feed = feedNode.node.representedObject as? SidebarItem, let feedID = feed.sidebarItemID {
 					treeControllerDelegate.addFilterException(feedID)
 				}
 			}
@@ -1598,7 +1598,7 @@ private extension SceneCoordinator {
 	func shadowTableContains(_ feed: SidebarItem) -> Bool {
 		for section in shadowTable {
 			for feedNode in section.feedNodes {
-				if let nodeFeed = feedNode.node.representedObject as? SidebarItem, nodeFeed.feedID == feed.feedID {
+				if let nodeFeed = feedNode.node.representedObject as? SidebarItem, nodeFeed.sidebarItemID == feed.sidebarItemID {
 					return true
 				}
 			}
@@ -2316,7 +2316,7 @@ private extension SceneCoordinator {
 			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
-				if let webFeedNode = nodeFor(feedID: feedIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
+				if let webFeedNode = nodeFor(sidebarItemID: feedIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.sidebarItemID {
 					treeControllerDelegate.addFilterException(folderFeedID)
 				}
 			}
@@ -2353,7 +2353,7 @@ private extension SceneCoordinator {
 	}
 	
 	func selectFeedAndArticle(feedIdentifier: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
-		guard let feedNode = nodeFor(feedID: feedIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
+		guard let feedNode = nodeFor(sidebarItemID: feedIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
 		
 		selectFeed(indexPath: feedIndexPath) {
 			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)

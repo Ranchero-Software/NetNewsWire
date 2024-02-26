@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol SidebarItemIdentifiable {
-	var feedID: SidebarItemIdentifier? { get }
+	var sidebarItemID: SidebarItemIdentifier? { get }
 }
 
 public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable {

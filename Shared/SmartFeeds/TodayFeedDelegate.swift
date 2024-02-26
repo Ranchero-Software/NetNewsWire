@@ -14,7 +14,7 @@ import Account
 
 struct TodayFeedDelegate: SmartFeedDelegate {
 
-	var feedID: SidebarItemIdentifier? {
+	var sidebarItemID: SidebarItemIdentifier? {
 		return SidebarItemIdentifier.smartFeed(String(describing: TodayFeedDelegate.self))
 	}
 	

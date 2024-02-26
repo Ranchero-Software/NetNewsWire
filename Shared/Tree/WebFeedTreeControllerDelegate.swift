@@ -67,14 +67,14 @@ private extension WebFeedTreeControllerDelegate {
 		var children = [AnyObject]()
 		
 		for webFeed in container.topLevelWebFeeds {
-			if let feedID = webFeed.feedID, !(!filterExceptions.contains(feedID) && isReadFiltered && webFeed.unreadCount == 0) {
+			if let sidebarItemID = webFeed.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && webFeed.unreadCount == 0) {
 				children.append(webFeed)
 			}
 		}
 		
 		if let folders = container.folders {
 			for folder in folders {
-				if let feedID = folder.feedID, !(!filterExceptions.contains(feedID) && isReadFiltered && folder.unreadCount == 0) {
+				if let sidebarItemID = folder.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && folder.unreadCount == 0) {
 					children.append(folder)
 				}
 			}

@@ -28,7 +28,7 @@ public extension SidebarItem {
 		guard defaultReadFilterType != .alwaysRead else {
 			return true
 		}
-		if let feedID = feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+		if let sidebarItemID, let readFilterEnabled = readFilterEnabledTable[sidebarItemID] {
 			return readFilterEnabled
 		} else {
 			return defaultReadFilterType == .read

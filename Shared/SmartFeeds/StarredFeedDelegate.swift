@@ -16,7 +16,7 @@ import Account
 
 struct StarredFeedDelegate: SmartFeedDelegate {
 
-	var feedID: SidebarItemIdentifier? {
+	var sidebarItemID: SidebarItemIdentifier? {
 		return SidebarItemIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))
 	}
 

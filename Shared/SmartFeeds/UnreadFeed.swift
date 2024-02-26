@@ -26,7 +26,7 @@ final class UnreadFeed: PseudoFeed {
 		return .alwaysRead
 	}
 
-	var feedID: SidebarItemIdentifier? {
+	var sidebarItemID: SidebarItemIdentifier? {
 		return SidebarItemIdentifier.smartFeed(String(describing: UnreadFeed.self))
 	}
 

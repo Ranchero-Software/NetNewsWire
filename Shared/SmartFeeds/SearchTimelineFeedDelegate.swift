@@ -14,7 +14,7 @@ import ArticlesDatabase
 
 struct SearchTimelineFeedDelegate: SmartFeedDelegate {
 
-	var feedID: SidebarItemIdentifier? {
+	var sidebarItemID: SidebarItemIdentifier? {
 		return SidebarItemIdentifier.smartFeed(String(describing: SearchTimelineFeedDelegate.self))
 	}
 

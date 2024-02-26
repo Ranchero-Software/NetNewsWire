@@ -24,7 +24,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		return ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 	
-	public var feedID: SidebarItemIdentifier? {
+	public var sidebarItemID: SidebarItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil

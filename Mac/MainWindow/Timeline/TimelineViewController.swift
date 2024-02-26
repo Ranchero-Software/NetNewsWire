@@ -36,7 +36,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let feedID = timelineFeed.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+		if let sidebarItemID = timelineFeed.sidebarItemID, let readFilterEnabled = readFilterEnabledTable[sidebarItemID] {
 			return readFilterEnabled
 		} else {
 			return timelineFeed.defaultReadFilterType == .read
@@ -263,8 +263,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func toggleReadFilter() {
-		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? SidebarItem)?.feedID else { return }
-		readFilterEnabledTable[feedID] = !filter
+		guard let filter = isReadFiltered, let sidebarItemID = (representedObjects?.first as? SidebarItem)?.sidebarItemID else { return }
+		readFilterEnabledTable[sidebarItemID] = !filter
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
 	}
