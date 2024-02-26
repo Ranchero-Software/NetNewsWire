@@ -17,12 +17,12 @@ public final class WebFeed: SidebarItem, Renamable, Hashable {
 		return .none
 	}
 
-	public var feedID: FeedIdentifier? {
+	public var feedID: SidebarItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
 		}
-		return FeedIdentifier.webFeed(accountID, webFeedID)
+		return SidebarItemIdentifier.webFeed(accountID, webFeedID)
 	}
 
 	public weak var account: Account?

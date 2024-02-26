@@ -28,7 +28,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
 	var isReadFiltered: Bool? {
 		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem else {
 			return nil
@@ -287,7 +287,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 
 		for i in 0..<readArticlesFilterStateKeys.count {
-			if let feedIdentifier = FeedIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
+			if let feedIdentifier = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
 				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
 			}
 		}

@@ -28,7 +28,7 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}
 	
-	func find(by identifier: FeedIdentifier) -> PseudoFeed? {
+	func find(by identifier: SidebarItemIdentifier) -> PseudoFeed? {
 		switch identifier {
 		case .smartFeed(let stringIdentifer):
 			switch stringIdentifer {

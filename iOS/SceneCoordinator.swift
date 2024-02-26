@@ -33,7 +33,7 @@ enum ShowFeedName {
 
 struct FeedNode: Hashable {
 	var node: Node
-	var feedID: FeedIdentifier
+	var feedID: SidebarItemIdentifier
 	
 	init(_ node: Node) {
 		self.node = node
@@ -88,7 +88,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private let fetchRequestQueue = FetchRequestQueue()
 	
 	private var expandedTable = Set<ContainerIdentifier>()
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 	
 	private(set) var preSearchTimelineFeed: SidebarItem?
@@ -355,7 +355,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			
 			if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
 				for key in readArticlesFilterState.keys {
-					if let feedIdentifier = FeedIdentifier(userInfo: key) {
+					if let feedIdentifier = SidebarItemIdentifier(userInfo: key) {
 						readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
 					}
 				}
@@ -630,7 +630,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		refreshTimeline(resetScroll: false)
 	}
 
-	func nodeFor(feedID: FeedIdentifier) -> Node? {
+	func nodeFor(feedID: SidebarItemIdentifier) -> Node? {
 		return treeController.rootNode.descendantNode(where: { node in
 			if let feed = node.representedObject as? SidebarItem {
 				return feed.feedID == feedID
@@ -2209,7 +2209,7 @@ private extension SceneCoordinator {
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
 			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
-			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
+			let feedIdentifier = SidebarItemIdentifier(userInfo: feedIdentifierUserInfo) else {
 				return
 		}
 
@@ -2294,7 +2294,7 @@ private extension SceneCoordinator {
 	
 	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
 		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
-			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo),
+			  let feedIdentifier = SidebarItemIdentifier(userInfo: feedIdentifierUserInfo),
 			  let isShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool,
 			  let articleWindowScrollY = userInfo[UserInfoKey.articleWindowScrollY] as? Int else {
 				  return false
@@ -2352,7 +2352,7 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-	func selectFeedAndArticle(feedIdentifier: FeedIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+	func selectFeedAndArticle(feedIdentifier: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
 		guard let feedNode = nodeFor(feedID: feedIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
 		
 		selectFeed(indexPath: feedIndexPath) {

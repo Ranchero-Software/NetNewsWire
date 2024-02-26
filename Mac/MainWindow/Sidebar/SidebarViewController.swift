@@ -111,7 +111,7 @@ protocol SidebarDelegate: AnyObject {
 			return
 		}
 
-		let selectedFeedIdentifers = Set(selectedFeedsState.compactMap( { FeedIdentifier(userInfo: $0) }))
+		let selectedFeedIdentifers = Set(selectedFeedsState.compactMap( { SidebarItemIdentifier(userInfo: $0) }))
 		selectedFeedIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
 		
 		rebuildTreeAndReloadDataIfNeeded()
@@ -119,7 +119,7 @@ protocol SidebarDelegate: AnyObject {
 		var selectIndexes = IndexSet()
 
 		func selectFeedsVisitor(node: Node) {
-			if let feedID = (node.representedObject as? FeedIdentifiable)?.feedID {
+			if let feedID = (node.representedObject as? SidebarItemIdentifiable)?.feedID {
 				if selectedFeedIdentifers.contains(feedID) {
 					selectIndexes.insert(outlineView.row(forItem: node) )
 				}

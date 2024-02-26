@@ -13,15 +13,15 @@ import Account
 
 final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 
-	private var filterExceptions = Set<FeedIdentifier>()
+	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
 	
-	func addFilterException(_ feedID: FeedIdentifier) {
+	func addFilterException(_ feedID: SidebarItemIdentifier) {
 		filterExceptions.insert(feedID)
 	}
 	
 	func resetFilterExceptions() {
-		filterExceptions = Set<FeedIdentifier>()
+		filterExceptions = Set<SidebarItemIdentifier>()
 	}
 	
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {

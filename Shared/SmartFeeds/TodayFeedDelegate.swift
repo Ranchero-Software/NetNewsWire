@@ -14,8 +14,8 @@ import Account
 
 struct TodayFeedDelegate: SmartFeedDelegate {
 
-	var feedID: FeedIdentifier? {
-		return FeedIdentifier.smartFeed(String(describing: TodayFeedDelegate.self))
+	var feedID: SidebarItemIdentifier? {
+		return SidebarItemIdentifier.smartFeed(String(describing: TodayFeedDelegate.self))
 	}
 	
 	let nameForDisplay = NSLocalizedString("Today", comment: "Today pseudo-feed title")
