@@ -324,7 +324,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func start(for size: CGSize) -> UIViewController {
 		rootSplitViewController = RootSplitViewController()
 		rootSplitViewController.coordinator = self
-		rootSplitViewController.preferredDisplayMode = .allVisible
+		rootSplitViewController.preferredDisplayMode = .oneBesideSecondary
 		rootSplitViewController.viewControllers = [InteractiveNavigationController.template()]
 		rootSplitViewController.delegate = self
 		
@@ -1285,7 +1285,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	func toggleSidebar() {
-		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .allVisible ? .primaryHidden : .allVisible
+		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .oneBesideSecondary ? .secondaryOnly : .oneBesideSecondary
 	}
 	
 	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
@@ -2128,7 +2128,7 @@ private extension SceneCoordinator {
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
 		
 		subSplitViewController = UISplitViewController()
-		subSplitViewController!.preferredDisplayMode = .allVisible
+		subSplitViewController!.preferredDisplayMode = .oneBesideSecondary
 		subSplitViewController!.viewControllers = [InteractiveNavigationController.template()]
 		subSplitViewController!.preferredPrimaryColumnWidthFraction = 0.4285
 		
