@@ -447,7 +447,7 @@ protocol SidebarDelegate: AnyObject {
 
 	// MARK: - API
 	
-	func selectFeed(_ feed: Feed) {
+	func selectFeed(_ feed: SidebarItem) {
 		if isReadFiltered, let feedID = feed.feedID {
 			self.treeControllerDelegate.addFilterException(feedID)
 			
@@ -468,7 +468,7 @@ protocol SidebarDelegate: AnyObject {
 	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
 		guard let accountNode = findAccountNode(userInfo),
 			let feedNode = findFeedNode(userInfo, beginningAt: accountNode),
-			let feed = feedNode.representedObject as? Feed else {
+			let feed = feedNode.representedObject as? SidebarItem else {
 			return
 		}
 		selectFeed(feed)
@@ -513,8 +513,8 @@ private extension SidebarViewController {
 		return [Node]()
 	}
 	
-	var selectedFeeds: [Feed] {
-		selectedNodes.compactMap { $0.representedObject as? Feed }
+	var selectedFeeds: [SidebarItem] {
+		selectedNodes.compactMap { $0.representedObject as? SidebarItem }
 	}
 
 	var singleSelectedNode: Node? {
@@ -535,7 +535,7 @@ private extension SidebarViewController {
 		selectedFeeds.forEach { addToFilterExeptionsIfNecessary($0) }
 	}
 	
-	func addToFilterExeptionsIfNecessary(_ feed: Feed?) {
+	func addToFilterExeptionsIfNecessary(_ feed: SidebarItem?) {
 		if isReadFiltered, let feedID = feed?.feedID {
 			if feed is PseudoFeed {
 				treeControllerDelegate.addFilterException(feedID)
@@ -552,7 +552,7 @@ private extension SidebarViewController {
 		}
 	}
 	
-	func addParentFolderToFilterExceptions(_ feed: Feed) {
+	func addParentFolderToFilterExceptions(_ feed: SidebarItem) {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
 			let folder = node.parent?.representedObject as? Folder,
 			let folderFeedID = folder.feedID else {
@@ -613,7 +613,7 @@ private extension SidebarViewController {
 	}
 
 	func addTreeControllerToFilterExceptionsVisitor(node: Node) {
-		if let feed = node.representedObject as? Feed, let feedID = feed.feedID {
+		if let feed = node.representedObject as? SidebarItem, let feedID = feed.feedID {
 			treeControllerDelegate.addFilterException(feedID)
 		}
 	}

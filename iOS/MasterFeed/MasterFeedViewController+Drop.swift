@@ -22,7 +22,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 			
-		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? Feed,
+		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? SidebarItem,
 			  let destAccount = destFeed.account,
 			  let destCell = tableView.cellForRow(at: destIndexPath) else {
 				  return UITableViewDropProposal(operation: .forbidden)
