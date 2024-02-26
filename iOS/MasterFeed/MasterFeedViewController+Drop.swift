@@ -31,7 +31,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		// Validate account specific behaviors...
 		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
 		   let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
-		   let sourceWebFeed = sourceNode.representedObject as? WebFeed,
+		   let sourceWebFeed = sourceNode.representedObject as? Feed,
 		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasWebFeed(withURL: sourceWebFeed.url) {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
@@ -91,7 +91,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			}
 		}()
 		
-		guard let destination = destinationContainer, let webFeed = dragNode.representedObject as? WebFeed else { return }
+		guard let destination = destinationContainer, let webFeed = dragNode.representedObject as? Feed else { return }
 		
 		if source.account == destination.account {
 			moveWebFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
@@ -100,7 +100,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		}
 	}
 
-	func moveWebFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
+	func moveWebFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		guard sourceContainer !== destinationContainer else { return }
 		
 		BatchUpdate.shared.start()
@@ -115,7 +115,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		}
 	}
 	
-	func moveWebFeedBetweenAccounts(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
+	func moveWebFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		
 		if let existingFeed = destinationContainer.account?.existingWebFeed(withURL: feed.url) {
 			

@@ -100,7 +100,7 @@ private extension WebFeedTreeControllerDelegate {
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {
-		if let webFeed = representedObject as? WebFeed {
+		if let webFeed = representedObject as? Feed {
 			return createNode(webFeed: webFeed, parent: parent)
 		}
 
@@ -115,7 +115,7 @@ private extension WebFeedTreeControllerDelegate {
 		return nil
 	}
 	
-	func createNode(webFeed: WebFeed, parent: Node) -> Node {
+	func createNode(webFeed: Feed, parent: Node) -> Node {
 		return parent.createChildNode(webFeed)
 	}
 	

@@ -33,7 +33,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	}
 
 	public weak var account: Account?
-	public var topLevelWebFeeds: Set<WebFeed> = Set<WebFeed>()
+	public var topLevelWebFeeds: Set<Feed> = Set<Feed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
 	
 	public var name: String? {
@@ -100,25 +100,25 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 
 	// MARK: Container
 
-	public func flattenedWebFeeds() -> Set<WebFeed> {
+	public func flattenedWebFeeds() -> Set<Feed> {
 		// Since sub-folders are not supported, it’s always the top-level feeds.
 		return topLevelWebFeeds
 	}
 
 	public func objectIsChild(_ object: AnyObject) -> Bool {
 		// Folders contain Feed objects only, at least for now.
-		guard let feed = object as? WebFeed else {
+		guard let feed = object as? Feed else {
 			return false
 		}
 		return topLevelWebFeeds.contains(feed)
 	}
 
-	public func addWebFeed(_ feed: WebFeed) {
+	public func addWebFeed(_ feed: Feed) {
 		topLevelWebFeeds.insert(feed)
 		postChildrenDidChangeNotification()
 	}
 	
-	public func addFeeds(_ feeds: Set<WebFeed>) {
+	public func addFeeds(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
 		}
@@ -126,12 +126,12 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		postChildrenDidChangeNotification()
 	}
 	
-	public func removeWebFeed(_ feed: WebFeed) {
+	public func removeWebFeed(_ feed: Feed) {
 		topLevelWebFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}
 	
-	public func removeFeeds(_ feeds: Set<WebFeed>) {
+	public func removeFeeds(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
 		}
@@ -164,7 +164,7 @@ private extension Folder {
 		unreadCount = updatedUnreadCount
 	}
 
-	func childrenContain(_ feed: WebFeed) -> Bool {
+	func childrenContain(_ feed: Feed) -> Bool {
 		return topLevelWebFeeds.contains(feed)
 	}
 }

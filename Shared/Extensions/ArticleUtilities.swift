@@ -42,7 +42,7 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 
 extension Article {
 	
-	var webFeed: WebFeed? {
+	var webFeed: Feed? {
 		return account?.existingWebFeed(withWebFeedID: webFeedID)
 	}
 	
@@ -121,7 +121,7 @@ extension Article {
 		return IconImageCache.shared.imageForArticle(self)
 	}
 	
-	func iconImageUrl(webFeed: WebFeed) -> URL? {
+	func iconImageUrl(webFeed: Feed) -> URL? {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]

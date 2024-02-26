@@ -17,7 +17,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	
 	private typealias UnclaimedWebFeed = (url: URL, name: String?, editedName: String?, homePageURL: String?, webFeedExternalID: String)
 	private var newUnclaimedWebFeeds = [String: [UnclaimedWebFeed]]()
-	private var existingUnclaimedWebFeeds = [String: [WebFeed]]()
+	private var existingUnclaimedWebFeeds = [String: [Feed]]()
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
@@ -140,7 +140,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 private extension CloudKitAcountZoneDelegate {
 	
-	func updateWebFeed(_ webFeed: WebFeed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
+	func updateWebFeed(_ webFeed: Feed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
 		guard let account = account else { return }
 		
 		webFeed.name = name
@@ -192,12 +192,12 @@ private extension CloudKitAcountZoneDelegate {
 		}
 	}
 	
-	func addExistingUnclaimedWebFeed(_ webFeed: WebFeed, containerExternalID: String) {
+	func addExistingUnclaimedWebFeed(_ webFeed: Feed, containerExternalID: String) {
 		if var unclaimedWebFeeds = self.existingUnclaimedWebFeeds[containerExternalID] {
 			unclaimedWebFeeds.append(webFeed)
 			self.existingUnclaimedWebFeeds[containerExternalID] = unclaimedWebFeeds
 		} else {
-			var unclaimedWebFeeds = [WebFeed]()
+			var unclaimedWebFeeds = [Feed]()
 			unclaimedWebFeeds.append(webFeed)
 			self.existingUnclaimedWebFeeds[containerExternalID] = unclaimedWebFeeds
 		}

@@ -53,7 +53,7 @@ final class UserNotificationManager: NSObject {
 
 private extension UserNotificationManager {
 	
-	func sendNotification(webFeed: WebFeed, article: Article) {
+	func sendNotification(webFeed: Feed, article: Article) {
 		let content = UNMutableNotificationContent()
 						
 		content.title = webFeed.nameForDisplay
@@ -79,7 +79,7 @@ private extension UserNotificationManager {
 	///   - webFeed: `WebFeed`
 	/// - Returns: A `UNNotifcationAttachment` if an icon is available. Otherwise nil.
 	/// - Warning: In certain scenarios, this will return the `faviconTemplateImage`.
-	func thumbnailAttachment(for article: Article, webFeed: WebFeed) -> UNNotificationAttachment? {
+	func thumbnailAttachment(for article: Article, webFeed: Feed) -> UNNotificationAttachment? {
 		if let imageURL = article.iconImageUrl(webFeed: webFeed) {
 			let thumbnail = try? UNNotificationAttachment(identifier: webFeed.webFeedID, url: imageURL, options: nil)
 			return thumbnail

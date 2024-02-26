@@ -450,7 +450,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		
-		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in
@@ -641,7 +641,7 @@ private extension MasterTimelineViewController {
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 			updateTitleUnreadCount()
 
-			if coordinator.timelineFeed is WebFeed {
+			if coordinator.timelineFeed is Feed {
 				titleView.buttonize()
 				titleView.addGestureRecognizer(feedTapGestureRecognizer)
 			} else {
