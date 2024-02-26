@@ -315,7 +315,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					self.removeFeedFromCloud(for: account, with: feed, from: folder) { result in
 						group.leave()
 						if case .failure(let error) = result {
-							os_log(.error, log: self.log, "Remove folder, remove webfeed error: %@.", error.localizedDescription)
+							os_log(.error, log: self.log, "Remove folder, remove feed error: %@.", error.localizedDescription)
 							errorOccurred = true
 						}
 					}
