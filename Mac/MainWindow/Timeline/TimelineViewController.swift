@@ -287,8 +287,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 
 		for i in 0..<readArticlesFilterStateKeys.count {
-			if let feedIdentifier = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
-				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
+			if let sidebarItemID = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
+				readFilterEnabledTable[sidebarItemID] = readArticlesFilterStateValues[i]
 			}
 		}
 		

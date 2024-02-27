@@ -16,8 +16,8 @@ final class FeedTreeControllerDelegate: TreeControllerDelegate {
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
 	
-	func addFilterException(_ feedID: SidebarItemIdentifier) {
-		filterExceptions.insert(feedID)
+	func addFilterException(_ sidebarItemID: SidebarItemIdentifier) {
+		filterExceptions.insert(sidebarItemID)
 	}
 	
 	func resetFilterExceptions() {

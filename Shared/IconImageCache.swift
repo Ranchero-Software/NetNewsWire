@@ -20,11 +20,11 @@ class IconImageCache {
 	private var smallIconImageCache = [SidebarItemIdentifier: IconImage]()
 	private var authorIconImageCache = [Author: IconImage]()
 
-	func imageFor(_ feedID: SidebarItemIdentifier) -> IconImage? {
-		if let smartFeed = SmartFeedsController.shared.find(by: feedID) {
+	func imageFor(_ sidebarItemID: SidebarItemIdentifier) -> IconImage? {
+		if let smartFeed = SmartFeedsController.shared.find(by: sidebarItemID) {
 			return imageForFeed(smartFeed)
 		}
-		if let feed = AccountManager.shared.existingSidebarItem(with: feedID) {
+		if let feed = AccountManager.shared.existingSidebarItem(with: sidebarItemID) {
 			return imageForFeed(feed)
 		}
 		return nil
@@ -69,41 +69,41 @@ class IconImageCache {
 
 private extension IconImageCache {
 	
-	func imageForSmartFeed(_ smartFeed: PseudoFeed, _ feedID: SidebarItemIdentifier) -> IconImage? {
-		if let iconImage = smartFeedIconImageCache[feedID] {
+	func imageForSmartFeed(_ smartFeed: PseudoFeed, _ sidebarItemID: SidebarItemIdentifier) -> IconImage? {
+		if let iconImage = smartFeedIconImageCache[sidebarItemID] {
 			return iconImage
 		}
 		if let iconImage = smartFeed.smallIcon {
-			smartFeedIconImageCache[feedID] = iconImage
+			smartFeedIconImageCache[sidebarItemID] = iconImage
 			return iconImage
 		}
 		return nil
 	}
 
-	func imageForFeed(_ feed: Feed, _ feedID: SidebarItemIdentifier) -> IconImage? {
-		if let iconImage = feedIconImageCache[feedID] {
+	func imageForFeed(_ feed: Feed, _ sidebarItemID: SidebarItemIdentifier) -> IconImage? {
+		if let iconImage = feedIconImageCache[sidebarItemID] {
 			return iconImage
 		}
 		if let iconImage = appDelegate.feedIconDownloader.icon(for: feed) {
-			feedIconImageCache[feedID] = iconImage
+			feedIconImageCache[sidebarItemID] = iconImage
 			return iconImage
 		}
-		if let faviconImage = faviconImageCache[feedID] {
+		if let faviconImage = faviconImageCache[sidebarItemID] {
 			return faviconImage
 		}
 		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
-			faviconImageCache[feedID] = faviconImage
+			faviconImageCache[sidebarItemID] = faviconImage
 			return faviconImage
 		}
 		return nil
 	}
 
-	func imageForSmallIconProvider(_ provider: SmallIconProvider, _ feedID: SidebarItemIdentifier) -> IconImage? {
-		if let iconImage = smallIconImageCache[feedID] {
+	func imageForSmallIconProvider(_ provider: SmallIconProvider, _ sidebarItemID: SidebarItemIdentifier) -> IconImage? {
+		if let iconImage = smallIconImageCache[sidebarItemID] {
 			return iconImage
 		}
 		if let iconImage = provider.smallIcon {
-			smallIconImageCache[feedID] = iconImage
+			smallIconImageCache[sidebarItemID] = iconImage
 			return iconImage
 		}
 		return nil
