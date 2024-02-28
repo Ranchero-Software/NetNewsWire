@@ -149,8 +149,6 @@ struct AppAssets {
 
 	static var preferencesToolbarAccountsImage = NSImage(systemSymbolName: "at", accessibilityDescription: nil)!
 
-	static var preferencesToolbarExtensionsImage = RSImage(named: "preferencesToolbarExtensions")!
-
 	static var preferencesToolbarGeneralImage = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
 
 	static var preferencesToolbarAdvancedImage = NSImage(systemSymbolName: "gearshape.2", accessibilityDescription: nil)!
