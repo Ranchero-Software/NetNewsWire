@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -15,7 +15,10 @@ let package = Package(
     targets: [
         .target(
             name: "Secrets",
-            dependencies: []
-        )
+            dependencies: [],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]
+       )
     ]
 )

@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 import PackageDescription
 
 var dependencies: [Package.Dependency] = [
@@ -25,14 +25,18 @@ let package = Package(
 			type: .dynamic,
             targets: ["SyncDatabase"]),
     ],
-    dependencies: dependencies,
-    targets: [
-        .target(
-            name: "SyncDatabase",
-            dependencies: [
+	dependencies: dependencies,
+	targets: [
+		.target(
+			name: "SyncDatabase",
+			dependencies: [
 				"RSCore",
 				"RSDatabase",
 				"Articles",
-			]),
-    ]
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]
+		)
+	]
 )
