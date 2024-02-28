@@ -34,19 +34,14 @@ class TimelineTitleView: UIView {
 	func buttonize() {
 		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
 		accessibilityTraits = .button
-		if #available(iOS 13.4, *) {
-			addInteraction(pointerInteraction)
-		}
+		addInteraction(pointerInteraction)
 	}
 	
 	func debuttonize() {
 		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
 		accessibilityTraits.remove(.button)
-		if #available(iOS 13.4, *) {
-			removeInteraction(pointerInteraction)
-		}
+		removeInteraction(pointerInteraction)
 	}
-	
 }
 
 extension TimelineTitleView: UIPointerInteractionDelegate {
@@ -58,5 +53,4 @@ extension TimelineTitleView: UIPointerInteractionDelegate {
 
 		return UIPointerStyle(effect: .automatic(UITargetedPreview(view: self)), shape: .roundedRect(rect))
 	}
-	
 }

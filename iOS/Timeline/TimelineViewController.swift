@@ -99,17 +99,14 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 				self.tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
 			}
 		}
-		
+
 		// Disable swipe back on iPad Mice
-		if #available(iOS 13.4, *) {
-			guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
-				return
-			}
-			gesture.allowedScrollTypesMask = []
+		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
+			return
 		}
-		
+		gesture.allowedScrollTypesMask = []
 	}
-	
+
 	override func viewWillAppear(_ animated: Bool) {
 		// If the nav bar is hidden, fade it in to avoid it showing stuff as it is getting laid out
 		if navigationController?.navigationBar.isHidden ?? false {
@@ -525,12 +522,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc private func reloadAllVisibleCells() {
-		if #available(iOS 15, *) {
-			reconfigureCells(coordinator.articles)
-		} else {
-			let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
-			reloadCells(visibleArticles)
-		}
+		reconfigureCells(coordinator.articles)
 	}
 	
 	private func reloadCells(_ articles: [Article]) {
@@ -542,9 +534,10 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	private func reconfigureCells(_ articles: [Article]) {
-		guard #available(iOS 15, *) else { return }
+
 		var snapshot = dataSource.snapshot()
 		snapshot.reconfigureItems(articles)
+		
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
