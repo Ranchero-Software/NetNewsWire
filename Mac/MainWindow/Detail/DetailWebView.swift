@@ -73,27 +73,25 @@ final class DetailWebView: WKWebView {
 		
 		This code adjusts the height of the window by -1pt/+1pt,
 		which puts the webview back in the correct place.
-		*/
-		if #available(macOS 11, *) {
-			guard var frame = window?.frame else {
-				return
-			}
-
-			guard !inBigSurOffsetFix else {
-				return
-			}
-			
-			inBigSurOffsetFix = true
-			
-			defer {
-				inBigSurOffsetFix = false
-			}
-
-			frame.size = NSSize(width: window!.frame.width, height: window!.frame.height - 1)
-			window!.setFrame(frame, display: false)
-			frame.size = NSSize(width: window!.frame.width, height: window!.frame.height + 1)
-			window!.setFrame(frame, display: false)
+		 */
+		guard var frame = window?.frame else {
+			return
 		}
+
+		guard !inBigSurOffsetFix else {
+			return
+		}
+
+		inBigSurOffsetFix = true
+
+		defer {
+			inBigSurOffsetFix = false
+		}
+
+		frame.size = NSSize(width: window!.frame.width, height: window!.frame.height - 1)
+		window!.setFrame(frame, display: false)
+		frame.size = NSSize(width: window!.frame.width, height: window!.frame.height + 1)
+		window!.setFrame(frame, display: false)
 	}
 }
 
