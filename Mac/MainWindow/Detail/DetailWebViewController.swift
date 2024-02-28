@@ -64,6 +64,17 @@ final class DetailWebViewController: NSViewController {
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	private var windowScrollY: CGFloat?
 
+	private let appIsInApplicationsFolder: Bool = {
+#if DEBUG
+		return true // We want the same experience most people have. Search in this file for appIsInApplicationsFolder for more details.
+#else
+		let appPath = Bundle.main.bundlePath
+		let applicationsFolderURL = try! FileManager.default.url(for: .applicationDirectory, in: .localDomainMask, appropriateFor: nil, create: false)
+		let applicationsFolderPath = applicationsFolderURL.path
+		return appPath.hasPrefix(applicationsFolderPath)
+#endif
+	}()
+
 	private var isShowingExtractedArticle: Bool {
 		switch state {
 		case .extracted(_, _, _):
@@ -327,7 +338,22 @@ private extension DetailWebViewController {
 		]
 		
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
+
+		// When the app is in /Applications, we want the baseURL to be a local folder in the app bundle. This gives us best performance.
+		//
+		// When the app is *not* in /Applications — in ~/Applications, for instance — we don’t want the baseURL to be a local folder —
+		// because we could up sending referers with a URL like file:///Users/harvey/Applications/NetNewsWire/Contents/Resources
+		// and obviously we don’t want to send people’s names.
+		// (A URL like file:///Applications/NetNewsWire/Contents/Resources is fine — obviously not exposing a name.)
+		//
+		// So, when outside of the /Applications folder, the baseURL is the permalink of the article.
+		// Which is what we’d really want all the time, right? Except that we’ve had a report of a performance issue
+		// when we do that all the time, so we prefer the local baseURL when we can.
+		let localBaseURL = ArticleRenderer.page.baseURL
+		let articleBaseURL = URL(string: rendering.baseURL)
+		let baseURL = appIsInApplicationsFolder ? localBaseURL : articleBaseURL
+
+		webView.loadHTMLString(html, baseURL: baseURL)
 	}
 
 	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
