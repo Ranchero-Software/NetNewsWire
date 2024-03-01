@@ -31,14 +31,15 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	private var webView: PreloadedWebView? {
-		return view.subviews[0] as? PreloadedWebView
+	var webView: WKWebView? {
+		return view.subviews[0] as? WKWebView
 	}
-	
+
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
 		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
+	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator);
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
 
@@ -374,14 +375,6 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 
 extension WebViewController: WKNavigationDelegate {
 	
-	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		for (index, view) in view.subviews.enumerated() {
-			if index != 0, let oldWebView = view as? PreloadedWebView {
-				oldWebView.removeFromSuperview()
-			}
-		}
-	}
-	
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 		
 		if navigationAction.navigationType == .linkActivated {
@@ -537,55 +530,77 @@ private extension WebViewController {
 
 	func loadWebView(replaceExistingWebView: Bool = false) {
 		guard isViewLoaded else { return }
-		
+
 		if !replaceExistingWebView, let webView = webView {
 			self.renderPage(webView)
 			return
 		}
-		
-		coordinator.webViewProvider.dequeueWebView() { webView in
-			
-			webView.ready {
-				
-				// Add the webview
-				webView.translatesAutoresizingMaskIntoConstraints = false
-				self.view.insertSubview(webView, at: 0)
-				NSLayoutConstraint.activate([
-					self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
-					self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
-					self.view.topAnchor.constraint(equalTo: webView.topAnchor),
-					self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
-				])
-			
-				// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
-				// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
-				// us from easily swiping between WKWebViews.  This hack fixes that.
-				webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
 
-				webView.scrollView.setZoomScale(1.0, animated: false)
+		let preferences = WKPreferences()
+		preferences.javaScriptCanOpenWindowsAutomatically = false
 
-				self.view.setNeedsLayout()
-				self.view.layoutIfNeeded()
+		/// The defaults for `preferredContentMode` and `allowsContentJavaScript` are suitable
+		/// and don't need to be explicitly set.
+		/// `allowsContentJavaScript` replaces `WKPreferences.javascriptEnabled`.
+		let webpagePreferences = WKWebpagePreferences()
 
-				// Configure the webview
-				webView.navigationDelegate = self
-				webView.uiDelegate = self
-				webView.scrollView.delegate = self
-				self.configureContextMenuInteraction()
-
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
-
-				self.renderPage(webView)
-				
-			}
-			
+		let configuration = WKWebViewConfiguration()
+		configuration.defaultWebpagePreferences = webpagePreferences
+		configuration.preferences = preferences
+		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
+		configuration.allowsInlineMediaPlayback = true
+		configuration.mediaTypesRequiringUserActionForPlayback = .audio
+		if #available(iOS 15.4, *) {
+			configuration.preferences.isElementFullscreenEnabled = true
 		}
-		
+		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
+
+		let userContentController = WKUserContentController()
+		let baseURL = ArticleRenderer.page.baseURL
+		let appScriptsWorld = WKContentWorld.world(name: "NetNewsWire")
+		for fileName in ["main.js", "main_ios.js", "newsfoot.js"] {
+			userContentController.addUserScript(
+				.init(source: try! String(contentsOf: baseURL.appending(path: fileName,
+																		directoryHint: .notDirectory)),
+					  injectionTime: .atDocumentStart,
+					  forMainFrameOnly: true,
+					  in: appScriptsWorld))
+		}
+
+		configuration.userContentController = userContentController
+
+		let webView = WKWebView(frame: self.view.bounds, configuration: configuration)
+		webView.isOpaque = false;
+		webView.backgroundColor = .clear;
+
+		// Add the webview - using autolayout will cause fullscreen video to fail and lose the web view
+		webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		self.view.insertSubview(webView, at: 0)
+
+		// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
+		// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
+		// us from easily swiping between WKWebViews.  This hack fixes that.
+		webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
+
+		webView.scrollView.setZoomScale(1.0, animated: false)
+
+		self.view.setNeedsLayout()
+		self.view.layoutIfNeeded()
+
+		// Configure the webview
+		webView.navigationDelegate = self
+		webView.uiDelegate = self
+		webView.scrollView.delegate = self
+		self.configureContextMenuInteraction()
+
+		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
+		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
+		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
+
+		self.renderPage(webView)
 	}
 
-	func renderPage(_ webView: PreloadedWebView?) {
+	func renderPage(_ webView: WKWebView?) {
 		guard let webView = webView else { return }
 		 
 		let theme = ArticleThemesManager.shared.currentTheme
