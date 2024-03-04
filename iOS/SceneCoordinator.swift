@@ -37,7 +37,7 @@ enum ShowFeedName {
 	case feed
 }
 
-struct FeedNode: Hashable {
+struct SidebarItemNode: Hashable {
 	var node: Node
 	var sidebarItemID: SidebarItemIdentifier
 
@@ -82,8 +82,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
 
 	/// Flattened tree structure for the Sidebar
-	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
-	
+	private var shadowTable = [(sectionID: String, sidebarItemNodes: [SidebarItemNode])]()
+
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
@@ -178,8 +178,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		let prevIndexPath: IndexPath? = {
 			if indexPath.row - 1 < 0 {
 				for i in (0..<indexPath.section).reversed() {
-					if shadowTable[i].feedNodes.count > 0 {
-						return IndexPath(row: shadowTable[i].feedNodes.count - 1, section: i)
+					if shadowTable[i].sidebarItemNodes.count > 0 {
+						return IndexPath(row: shadowTable[i].sidebarItemNodes.count - 1, section: i)
 					}
 				}
 				return nil
@@ -197,9 +197,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		
 		let nextIndexPath: IndexPath? = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].feedNodes.count {
+			if indexPath.row + 1 >= shadowTable[indexPath.section].sidebarItemNodes.count {
 				for i in indexPath.section + 1..<shadowTable.count {
-					if shadowTable[i].feedNodes.count > 0 {
+					if shadowTable[i].sidebarItemNodes.count > 0 {
 						return IndexPath(row: 0, section: i)
 					}
 				}
@@ -310,7 +310,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
-			shadowTable.append((sectionID: "", feedNodes: [FeedNode]()))
+			shadowTable.append((sectionID: "", sidebarItemNodes: [SidebarItemNode]()))
 		}
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
@@ -616,7 +616,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func numberOfRows(in section: Int) -> Int {
-		return shadowTable[section].feedNodes.count
+		return shadowTable[section].sidebarItemNodes.count
 	}
 	
 	func nodeFor(_ section: Int) -> Node? {
@@ -627,10 +627,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		guard indexPath.section > -1 &&
 				indexPath.row > -1 &&
 				indexPath.section < shadowTable.count &&
-				indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
+				indexPath.row < shadowTable[indexPath.section].sidebarItemNodes.count else {
 			return nil
 		}
-		return shadowTable[indexPath.section].feedNodes[indexPath.row].node
+		return shadowTable[indexPath.section].sidebarItemNodes[indexPath.row].node
 	}
 
 	func indexPathFor(_ object: AnyObject) -> IndexPath? {
@@ -642,10 +642,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	func indexPathFor(_ node: Node) -> IndexPath? {
 
-		let feedNode = FeedNode(node)
+		let sidebarItemNode = SidebarItemNode(node)
 
 		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].feedNodes.firstIndex(of: feedNode) {
+			if let row = shadowTable[i].sidebarItemNodes.firstIndex(of: sidebarItemNode) {
 				return IndexPath(row: row, section: i)
 			}
 		}
@@ -657,8 +657,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
-			return IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].sidebarItemNodes.count else {
+			return IndexPath(row: shadowTable[shadowTable.count - 1].sidebarItemNodes.count - 1, section: shadowTable.count - 1)
 		}
 		return indexPath
 	}
@@ -1492,9 +1492,9 @@ private extension SceneCoordinator {
 	
 	func addShadowTableToFilterExceptions() {
 		for section in shadowTable {
-			for feedNode in section.feedNodes {
-				if let feed = feedNode.node.representedObject as? SidebarItem, let feedID = feed.sidebarItemID {
-					treeControllerDelegate.addFilterException(feedID)
+			for sidebarItemNode in section.sidebarItemNodes {
+				if let sidebarItem = sidebarItemNode.node.representedObject as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID {
+					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
 			}
 		}
@@ -1521,28 +1521,28 @@ private extension SceneCoordinator {
 	}
 	
 	func rebuildShadowTable() -> ShadowTableChanges {
-		var newShadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
+		var newShadowTable = [(sectionID: String, sidebarItemNodes: [SidebarItemNode])]()
 
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
 			
-			var feedNodes = [FeedNode]()
+			var sidebarItemNodes = [SidebarItemNode]()
 			let sectionNode = treeController.rootNode.childAtIndex(i)!
 			
 			if isExpanded(sectionNode) {
 				for node in sectionNode.childNodes {
-					let feedNode = FeedNode(node)
-					feedNodes.append(feedNode)
+					let sidebarItemNode = SidebarItemNode(node)
+					sidebarItemNodes.append(sidebarItemNode)
 					if isExpanded(node) {
 						for child in node.childNodes {
-							let childNode = FeedNode(child)
-							feedNodes.append(childNode)
+							let childNode = SidebarItemNode(child)
+							sidebarItemNodes.append(childNode)
 						}
 					}
 				}
 			}
 
 			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
-			newShadowTable.append((sectionID: sectionID, feedNodes: feedNodes))
+			newShadowTable.append((sectionID: sectionID, sidebarItemNodes: sidebarItemNodes))
 		}
 		
 		// If we have a current Feed IndexPath it is no longer valid and needs reset.
@@ -1559,9 +1559,9 @@ private extension SceneCoordinator {
 			var inserts = Set<Int>()
 			var deletes = Set<Int>()
 			
-			let oldFeedNodes = shadowTable.first(where: { $0.sectionID == newSectionRows.sectionID })?.feedNodes ?? [FeedNode]()
-			
-			let diff = newSectionRows.feedNodes.difference(from: oldFeedNodes).inferringMoves()
+			let oldFeedNodes = shadowTable.first(where: { $0.sectionID == newSectionRows.sectionID })?.sidebarItemNodes ?? [SidebarItemNode]()
+
+			let diff = newSectionRows.sidebarItemNodes.difference(from: oldFeedNodes).inferringMoves()
 			for change in diff {
 				switch change {
 				case .insert(let offset, _, let associated):
@@ -1582,7 +1582,7 @@ private extension SceneCoordinator {
 			// We need to reload the difference in expanded rows to get the disclosure arrows correct when programmatically changing their state
 			var reloads = Set<Int>()
 
-			for (index, newFeedNode) in newSectionRows.feedNodes.enumerated() {
+			for (index, newFeedNode) in newSectionRows.sidebarItemNodes.enumerated() {
 				if let newFeedNodeContainerID = (newFeedNode.node.representedObject as? Container)?.containerID {
 					if expandedTableDifference.contains(newFeedNodeContainerID) {
 						reloads.insert(index)
@@ -1625,10 +1625,10 @@ private extension SceneCoordinator {
 		return ShadowTableChanges(deletes: deletes, inserts: inserts, moves: moves, rowChanges: changes)
 	}
 	
-	func shadowTableContains(_ feed: SidebarItem) -> Bool {
+	func shadowTableContains(_ sidebarItem: SidebarItem) -> Bool {
 		for section in shadowTable {
-			for feedNode in section.feedNodes {
-				if let nodeFeed = feedNode.node.representedObject as? SidebarItem, nodeFeed.sidebarItemID == feed.sidebarItemID {
+			for sidebarItemNode in section.sidebarItemNodes {
+				if let node = sidebarItemNode.node.representedObject as? SidebarItem, node.sidebarItemID == sidebarItem.sidebarItemID {
 					return true
 				}
 			}
@@ -1769,9 +1769,9 @@ private extension SceneCoordinator {
 		let nextIndexPath: IndexPath = {
 			if indexPath.row - 1 < 0 {
 				if indexPath.section - 1 < 0 {
-					return IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+					return IndexPath(row: shadowTable[shadowTable.count - 1].sidebarItemNodes.count - 1, section: shadowTable.count - 1)
 				} else {
-					return IndexPath(row: shadowTable[indexPath.section - 1].feedNodes.count - 1, section: indexPath.section - 1)
+					return IndexPath(row: shadowTable[indexPath.section - 1].sidebarItemNodes.count - 1, section: indexPath.section - 1)
 				}
 			} else {
 				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
@@ -1781,7 +1781,7 @@ private extension SceneCoordinator {
 		if selectPrevUnreadFeedFetcher(startingWith: nextIndexPath) {
 			return
 		}
-		let maxIndexPath = IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+		let maxIndexPath = IndexPath(row: shadowTable[shadowTable.count - 1].sidebarItemNodes.count - 1, section: shadowTable.count - 1)
 		selectPrevUnreadFeedFetcher(startingWith: maxIndexPath)
 		
 	}
@@ -1795,7 +1795,7 @@ private extension SceneCoordinator {
 				if indexPath.section == i {
 					return indexPath.row
 				} else {
-					return shadowTable[i].feedNodes.count - 1
+					return shadowTable[i].sidebarItemNodes.count - 1
 				}
 			}()
 			
@@ -1874,7 +1874,7 @@ private extension SceneCoordinator {
 		
 		// Increment or wrap around the IndexPath
 		let nextIndexPath: IndexPath = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].feedNodes.count {
+			if indexPath.row + 1 >= shadowTable[indexPath.section].sidebarItemNodes.count {
 				if indexPath.section + 1 >= shadowTable.count {
 					return IndexPath(row: 0, section: 0)
 				} else {
@@ -1909,7 +1909,7 @@ private extension SceneCoordinator {
 				}
 			}()
 
-			for j in startingRow..<shadowTable[i].feedNodes.count {
+			for j in startingRow..<shadowTable[i].sidebarItemNodes.count {
 
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
@@ -2213,7 +2213,7 @@ private extension SceneCoordinator {
 			let found = selectFeedAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
-				if let feedNode = nodeFor(sidebarItemID: sidebarItemID), let folder = feedNode.parent?.representedObject as? Folder, let folderFeedID = folder.sidebarItemID {
+				if let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let folder = sidebarItemNode.parent?.representedObject as? Folder, let folderFeedID = folder.sidebarItemID {
 					treeControllerDelegate.addFilterException(folderFeedID)
 				}
 			}
@@ -2250,9 +2250,9 @@ private extension SceneCoordinator {
 	}
 	
 	func selectFeedAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
-		guard let feedNode = nodeFor(sidebarItemID: sidebarItemID), let feedIndexPath = indexPathFor(feedNode) else { return false }
-		
-		selectFeed(indexPath: feedIndexPath) {
+		guard let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let indexPath = indexPathFor(sidebarItemNode) else { return false }
+
+		selectFeed(indexPath: indexPath) {
 			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 		}
 		
