@@ -13,11 +13,17 @@ import Articles
 import RSCore
 import RSTree
 import SafariServices
+import SwiftUI
 
-enum PanelMode {
-	case unset
-	case three
-	case standard
+protocol MainControllerIdentifiable {
+	var mainControllerIdentifier: MainControllerIdentifier { get }
+}
+
+enum MainControllerIdentifier {
+	case none
+	case mainFeed
+	case mainTimeline
+	case article
 }
 
 enum SearchScope: Int {
@@ -52,41 +58,30 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return rootSplitViewController.undoManager
 	}
 	
-	private var panelMode: PanelMode = .unset
-	
 	private var activityManager = ActivityManager()
 	
 	private var rootSplitViewController: RootSplitViewController!
-	private var navigationController: UINavigationController!
-	private var feedsViewController: FeedsViewController!
+	private var sidebarViewController: SidebarViewController!
 	private var timelineViewController: TimelineViewController?
-	private var subSplitViewController: UISplitViewController?
-	
-	private var articleViewController: ArticleViewController? {
-		if let detail = navigationController.viewControllers.last as? ArticleViewController {
-			return detail
-		}
-		if let subSplit = subSplitViewController {
-			if let navController = subSplit.viewControllers.last as? UINavigationController {
-				return navController.topViewController as? ArticleViewController
-			}
-		} else {
-			if let navController = rootSplitViewController.viewControllers.last as? UINavigationController {
-				return navController.topViewController as? ArticleViewController
-			}
-		}
-		return nil
-	}
-	
-	private var wasRootSplitViewControllerCollapsed = false
-	
+	private var articleViewController: ArticleViewController?
+
+	private var lastMainControllerToAppear = MainControllerIdentifier.none
+
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 0.5)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	
+	/// Which Containers are expanded
 	private var expandedTable = Set<ContainerIdentifier>()
+
+	/// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
+	private var lastExpandedTable = Set<ContainerIdentifier>()
+
+	/// Which Feeds have the Read Articles Filter enabled
 	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
+
+	/// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 	
 	private(set) var preSearchTimelineFeed: SidebarItem?
@@ -95,10 +90,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var isSearching: Bool = false
 	private var savedSearchArticles: ArticleArray? = nil
 	private var savedSearchArticleIds: Set<String>? = nil
-	
-	var isTimelineViewControllerPending = false
-	var isArticleViewControllerPending = false
-	
+
 	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
@@ -134,14 +126,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return activity
 	}
 	
+	var isNavigationDisabled = false
+
 	var isRootSplitCollapsed: Bool {
 		return rootSplitViewController.isCollapsed
 	}
-	
-	var isThreePanelMode: Bool {
-		return panelMode == .three
-	}
-	
+
 	var isReadFeedsFiltered: Bool {
 		return treeControllerDelegate.isReadFiltered
 	}
@@ -292,11 +282,32 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	var timelineUnreadCount: Int = 0
 	
-	override init() {
-		treeController = TreeController(delegate: treeControllerDelegate)
+	init(rootSplitViewController: RootSplitViewController) {
+		self.rootSplitViewController = rootSplitViewController
+		self.treeController = TreeController(delegate: treeControllerDelegate)
 
 		super.init()
 		
+		self.sidebarViewController = rootSplitViewController.viewController(for: .primary) as? SidebarViewController
+		self.sidebarViewController.coordinator = self
+		if let navController = self.sidebarViewController?.navigationController {
+			navController.delegate = self
+			configureNavigationController(navController)
+		}
+
+		self.timelineViewController = rootSplitViewController.viewController(for: .supplementary) as? TimelineViewController
+		self.timelineViewController?.coordinator = self
+		if let navController = self.timelineViewController?.navigationController {
+			navController.delegate = self
+			configureNavigationController(navController)
+		}
+
+		self.articleViewController = rootSplitViewController.viewController(for: .secondary) as? ArticleViewController
+		self.articleViewController?.coordinator = self
+		if let navController = self.articleViewController?.navigationController {
+			configureNavigationController(navController)
+		}
+
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
 			shadowTable.append((sectionID: "", feedNodes: [FeedNode]()))
@@ -319,30 +330,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 	}
 	
-	func start(for size: CGSize) -> UIViewController {
-		rootSplitViewController = RootSplitViewController()
-		rootSplitViewController.coordinator = self
-		rootSplitViewController.preferredDisplayMode = .oneBesideSecondary
-		rootSplitViewController.viewControllers = [InteractiveNavigationController.template()]
-		rootSplitViewController.delegate = self
-		
-		navigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
-		navigationController.delegate = self
-
-		feedsViewController = UIStoryboard.main.instantiateController(ofType: FeedsViewController.self)
-		feedsViewController.coordinator = self
-		navigationController.pushViewController(feedsViewController, animated: false)
-
-		let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-		articleViewController.coordinator = self
-		let detailNavigationController = addNavControllerIfNecessary(articleViewController, showButton: true)
-		rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
-
-		configurePanelMode(for: size)
-		
-		return rootSplitViewController
-	}
-	
 	func restoreWindowState(_ activity: NSUserActivity?) {
 		if let activity = activity, let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
 			
@@ -358,6 +345,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					}
 				}
 			}
+
+//			if let isSidebarHidden = windowState[UserInfoKey.isSidebarHidden] as? Bool, isSidebarHidden {
+//				DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//					self.rootSplitViewController.preferredDisplayMode = .secondaryOnly
+//				}
+//			}
 
 			rebuildBackingStores(initialLoad: true)
 
@@ -397,31 +390,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		handleReadArticle(userInfo)
 	}
 	
-	func configurePanelMode(for size: CGSize) {
-		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad else {
-			return
-		}
-		
-		if (size.width / size.height) > 1.2 {
-			if panelMode == .unset || panelMode == .standard {
-				panelMode = .three
-				configureThreePanelMode()
-			}
-		} else {
-			if panelMode == .unset || panelMode == .three {
-				panelMode = .standard
-				configureStandardPanelMode()
-			}
-		}
-		
-		wasRootSplitViewControllerCollapsed = rootSplitViewController.isCollapsed
-	}
-	
 	func resetFocus() {
 		if currentArticle != nil {
 			timelineViewController?.focus()
 		} else {
-			feedsViewController?.focus()
+			sidebarViewController?.focus()
 		}
 	}
 	
@@ -436,7 +409,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	func showSearch() {
 		selectFeed(indexPath: nil) {
-			self.installTimelineControllerIfNecessary(animated: false)
+			self.rootSplitViewController.show(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
 				self.timelineViewController!.showSearchAll()
 			}
@@ -611,7 +584,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			treeControllerDelegate.isReadFiltered = true
 		}
 		rebuildBackingStores()
-		feedsViewController?.updateUI()
+		sidebarViewController?.updateUI()
 	}
 	
 	func toggleReadArticlesFilter() {
@@ -646,16 +619,33 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return shadowTable[section].feedNodes.count
 	}
 	
+	func nodeFor(_ section: Int) -> Node? {
+		return treeController.rootNode.childAtIndex(section)
+	}
+
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
+		guard indexPath.section > -1 &&
+				indexPath.row > -1 &&
+				indexPath.section < shadowTable.count &&
+				indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
 			return nil
 		}
 		return shadowTable[indexPath.section].feedNodes[indexPath.row].node
 	}
-	
+
+	func indexPathFor(_ object: AnyObject) -> IndexPath? {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
+			return nil
+		}
+		return indexPathFor(node)
+	}
+
 	func indexPathFor(_ node: Node) -> IndexPath? {
+
+		let feedNode = FeedNode(node)
+
 		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].feedNodes.firstIndex(of: FeedNode(node)) {
+			if let row = shadowTable[i].feedNodes.firstIndex(of: feedNode) {
 				return IndexPath(row: row, section: i)
 			}
 		}
@@ -717,8 +707,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		rebuildBackingStores()
 	}
 	
+	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
+	/// Failure to do so will get the Sidebar into an invalid state.
 	func expand(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		lastExpandedTable.insert(containerID)
 		expand(containerID)
 	}
 	
@@ -740,8 +733,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		clearTimelineIfNoLongerAvailable()
 	}
 	
+	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
+	/// Failure to do so will get the Sidebar into an invalid state.
 	func collapse(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		lastExpandedTable.remove(containerID)
 		collapse(containerID)
 	}
 	
@@ -782,7 +778,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		
 		currentFeedIndexPath = indexPath
-		feedsViewController.updateFeedSelection(animations: animations)
+		sidebarViewController.updateFeedSelection(animations: animations)
 
 		if deselectArticle {
 			selectArticle(nil)
@@ -791,7 +787,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? SidebarItem {
 			
 			self.activityManager.selecting(feed: feed)
-			self.installTimelineControllerIfNecessary(animated: animations.contains(.navigation))
+			self.rootSplitViewController.show(.supplementary)
 			setTimelineFeed(feed, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
@@ -806,14 +802,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
-				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is TimelineViewController {
-					self.navControllerForTimeline().popViewController(animated: animations.contains(.navigation))
-				}
+				self.rootSplitViewController.show(.primary)
 				completion?()
 			}
-			
 		}
-		
 	}
 	
 	func selectPrevFeed() {
@@ -856,31 +848,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		activityManager.reading(feed: timelineFeed, article: article)
 		
 		if article == nil {
-			if rootSplitViewController.isCollapsed {
-				if navigationController.children.last is ArticleViewController {
-					navigationController.popViewController(animated: animations.contains(.navigation))
-				}
-			} else {
-				articleViewController?.article = nil
-			}
+			rootSplitViewController.show(.supplementary)
 			timelineViewController?.updateArticleSelection(animations: animations)
+			articleViewController?.article = nil
 			return
 		}
-		
-		let currentArticleViewController: ArticleViewController
-		if articleViewController == nil {
-			currentArticleViewController = installArticleController(animated: animations.contains(.navigation))
-		} else {
-			currentArticleViewController = articleViewController!
-		}
-		
+
+		rootSplitViewController.show(.secondary)
+
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
-
 		timelineViewController?.updateArticleSelection(animations: animations)
-		currentArticleViewController.article = article
+		articleViewController?.article = article
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
-			currentArticleViewController.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
+			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
 		}
 	}
 	
@@ -897,8 +878,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if let oldTimelineFeed = preSearchTimelineFeed {
 			emptyTheTimeline()
 			timelineFeed = oldTimelineFeed
-			timelineViewController?.reinitializeArticles(resetScroll: true)
 			replaceArticles(with: savedSearchArticles!, animated: true)
+			timelineViewController?.reinitializeArticles(resetScroll: true)
 		} else {
 			setTimelineFeed(nil, animated: true)
 		}
@@ -972,11 +953,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func selectPrevUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
 		
+		isNavigationDisabled = true
+		defer {
+			isNavigationDisabled = false
+		}
+
 		if selectPrevUnreadArticleInTimeline() {
 			return
 		}
@@ -988,11 +974,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
 		
+		isNavigationDisabled = true
+		defer {
+			isNavigationDisabled = false
+		}
+
 		if selectNextUnreadArticleInTimeline() {
 			return
 		}
@@ -1027,7 +1018,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	func markAllAsReadInTimeline(completion: (() -> Void)? = nil) {
 		markAllAsRead(articles) {
-			self.navigationController.popViewController(animated: true)
+			self.rootSplitViewController.show(.primary)
 			completion?()
 		}
 	}
@@ -1109,7 +1100,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return timelineFeed == feed
 	}
 
-	func discloseFeed(_ feed: Feed, animations: Animations = [], completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: Feed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
 			timelineViewController?.hideSearch()
 		}
@@ -1133,7 +1124,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 		}
 
-		rebuildBackingStores(completion:  {
+		rebuildBackingStores(initialLoad: initialLoad, completion:  {
 			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(feed, animations: animations, completion: completion)
 		})
@@ -1162,7 +1153,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		settingsViewController.presentingParentController = rootSplitViewController
 		rootSplitViewController.present(settingsNavController, animated: true)
 	}
-	
+
 	func showAccountInspector(for account: Account) {
 		let accountInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
@@ -1173,7 +1164,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		accountInspectorController.account = account
 		rootSplitViewController.present(accountInspectorNavController, animated: true)
 	}
-	
+
 	func showFeedInspector() {
 		let timelineFeed = timelineFeed as? Feed
 		let articleFeed = currentArticle?.feed
@@ -1192,7 +1183,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		feedInspectorController.feed = feed
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
-	
+
 	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
 		
 		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
@@ -1206,14 +1197,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		feedsViewController.present(addNavViewController, animated: true)
+		sidebarViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
-		feedsViewController.present(addNavViewController, animated: true)
+		sidebarViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
@@ -1262,12 +1253,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			articleViewController?.openInAppBrowser()
 		}
 		else {
-			feedsViewController.openInAppBrowser()
+			sidebarViewController.openInAppBrowser()
 		}
 	}
 
 	func navigateToFeeds() {
-		feedsViewController?.focus()
+		sidebarViewController?.focus()
 		selectArticle(nil)
 	}
 	
@@ -1309,75 +1300,74 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	/// `SFSafariViewController` or `SettingsViewController`,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
-		guard let presentedController = feedsViewController.presentedViewController else { return }
+		guard let presentedController = sidebarViewController.presentedViewController else { return }
 
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else { return }
-		settings.dismiss(animated: true, completion: nil)
+
+		// There's no obvious way to detect if the presented controller
+		// is the SwiftUI UIHostingController<SettingsView>. Posting a notification
+		// which it can react to seems to be the simplest solution.
+		NotificationCenter.default.post(name: .LaunchedFromExternalAction, object: nil)
 	}
-	
 }
 
 // MARK: UISplitViewControllerDelegate
 
 extension SceneCoordinator: UISplitViewControllerDelegate {
-	
-	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-		timelineViewController?.updateUI()
 
-		guard !isThreePanelMode else {
-			return true
-		}
-		
-		if let articleViewController = (secondaryViewController as? UINavigationController)?.topViewController as? ArticleViewController {
-			if currentArticle != nil {
-				navigationController.pushViewController(articleViewController, animated: false)
+	func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
+		switch proposedTopColumn {
+		case .supplementary:
+			if currentFeedIndexPath != nil {
+				return .supplementary
+			} else {
+				return .primary
 			}
+		case .secondary:
+			if currentArticle != nil {
+				return .secondary
+			} else {
+				if currentFeedIndexPath != nil {
+					return .supplementary
+				} else {
+					return .primary
+				}
+			}
+		default:
+			return .primary
 		}
-		
-		return true
 	}
-	
-	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-		timelineViewController?.updateUI()
 
-		guard !isThreePanelMode else {
-			return subSplitViewController
-		}
-		
-		if let articleViewController = navigationController.viewControllers.last as? ArticleViewController {
-			articleViewController.showBars(self)
-			navigationController.popViewController(animated: false)
-			let controller = addNavControllerIfNecessary(articleViewController, showButton: true)
-			return controller
-		}
-		
-		if currentArticle == nil {
-			let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-			articleViewController.coordinator = self
-			let controller = addNavControllerIfNecessary(articleViewController, showButton: true)
-			return controller
-		}
-		
-		return nil
+	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+		articleViewController?.splitViewControllerWillChangeTo(displayMode: displayMode)
 	}
-	
 }
 
 // MARK: UINavigationControllerDelegate
 
 extension SceneCoordinator: UINavigationControllerDelegate {
-	
+
 	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-		
-		if UIApplication.shared.applicationState == .background {
+		guard UIApplication.shared.applicationState != .background else {
 			return
 		}
 
+		guard rootSplitViewController.isCollapsed else {
+			return
+		}
+
+		defer {
+			if let mainController = viewController as? MainControllerIdentifiable {
+				lastMainControllerToAppear = mainController.mainControllerIdentifier
+			} else if let mainController = (viewController as? UINavigationController)?.topViewController as? MainControllerIdentifiable {
+				lastMainControllerToAppear = mainController.mainControllerIdentifier
+			}
+		}
+
 		// If we are showing the Feeds and only the feeds start clearing stuff
-		if viewController === feedsViewController && !isThreePanelMode && !isTimelineViewControllerPending {
+		if viewController === sidebarViewController && lastMainControllerToAppear == .mainTimeline {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil, animations: [.scroll, .select, .navigation])
 			return
@@ -1387,25 +1377,51 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
-		if viewController === timelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
-			currentArticle = nil
-			timelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])
-			activityManager.invalidateReading()
+		if viewController === timelineViewController && lastMainControllerToAppear == .article {
+			selectArticle(nil, animations: [.scroll, .select, .navigation])
 
 			// Restore any bars hidden by the article controller
 			showStatusBar()
-			navigationController.setNavigationBarHidden(false, animated: true)
+
+			// We delay the showing of the navigation bars because it freaks out on iOS 15 with the new split view controller
+			// if it is trying to show at the same time as the show timeline animation
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+				navigationController.setNavigationBarHidden(false, animated: true)
+			}
 			navigationController.setToolbarHidden(false, animated: true)
 			return
 		}
-		
 	}
-	
 }
 
 // MARK: Private
 
 private extension SceneCoordinator {
+
+	func configureNavigationController(_ navController: UINavigationController) {
+
+		let scrollEdge = UINavigationBarAppearance()
+		scrollEdge.configureWithOpaqueBackground()
+		scrollEdge.shadowColor = nil
+		scrollEdge.shadowImage = UIImage()
+
+		let standard = UINavigationBarAppearance()
+		standard.shadowColor = .opaqueSeparator
+		standard.shadowImage = UIImage()
+
+		navController.navigationBar.standardAppearance = standard
+		navController.navigationBar.compactAppearance = standard
+		navController.navigationBar.scrollEdgeAppearance = scrollEdge
+		navController.navigationBar.compactScrollEdgeAppearance = scrollEdge
+
+		navController.navigationBar.tintColor = AppAssets.primaryAccentColor
+
+		let toolbarAppearance = UIToolbarAppearance()
+		navController.toolbar.standardAppearance = toolbarAppearance
+		navController.toolbar.compactAppearance = toolbarAppearance
+		navController.toolbar.scrollEdgeAppearance = toolbarAppearance
+		navController.toolbar.tintColor = AppAssets.primaryAccentColor
+	}
 
 	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager,
@@ -1429,7 +1445,7 @@ private extension SceneCoordinator {
 	func rebuildArticleDictionaries() {
 		var idDictionary = [String: Article]()
 
-		articles.forEach { article in
+		for article in articles {
 			idDictionary[article.articleID] = article
 		}
 
@@ -1500,7 +1516,7 @@ private extension SceneCoordinator {
 			
 			updateExpandedNodes?()
 			let changes = rebuildShadowTable()
-			feedsViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
+			sidebarViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
 		}
 	}
 	
@@ -1514,15 +1530,17 @@ private extension SceneCoordinator {
 			
 			if isExpanded(sectionNode) {
 				for node in sectionNode.childNodes {
-					feedNodes.append(FeedNode(node))
+					let feedNode = FeedNode(node)
+					feedNodes.append(feedNode)
 					if isExpanded(node) {
 						for child in node.childNodes {
-							feedNodes.append(FeedNode(child))
+							let childNode = FeedNode(child)
+							feedNodes.append(childNode)
 						}
 					}
 				}
 			}
-			
+
 			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
 			newShadowTable.append((sectionID: sectionID, feedNodes: feedNodes))
 		}
@@ -1532,9 +1550,10 @@ private extension SceneCoordinator {
 			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
 		
-		// Compute the differences in the shadow table rows
+		// Compute the differences in the shadow table rows and the expanded table entries
 		var changes = [ShadowTableChanges.RowChanges]()
-		
+		let expandedTableDifference = lastExpandedTable.symmetricDifference(expandedTable)
+
 		for (section, newSectionRows) in newShadowTable.enumerated() {
 			var moves = Set<ShadowTableChanges.Move>()
 			var inserts = Set<Int>()
@@ -1560,8 +1579,21 @@ private extension SceneCoordinator {
 				}
 			}
 			
-			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, moves: moves))
+			// We need to reload the difference in expanded rows to get the disclosure arrows correct when programmatically changing their state
+			var reloads = Set<Int>()
+
+			for (index, newFeedNode) in newSectionRows.feedNodes.enumerated() {
+				if let newFeedNodeContainerID = (newFeedNode.node.representedObject as? Container)?.containerID {
+					if expandedTableDifference.contains(newFeedNodeContainerID) {
+						reloads.insert(index)
+					}
+				}
+			}
+
+			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, reloads: reloads, moves: moves))
 		}
+
+		lastExpandedTable = expandedTable
 
 		// Compute the difference in the shadow table sections
 		var moves = Set<ShadowTableChanges.Move>()
@@ -1610,13 +1642,6 @@ private extension SceneCoordinator {
 		}
 	}
 
-	func indexPathFor(_ object: AnyObject) -> IndexPath? {
-		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
-			return nil
-		}
-		return indexPathFor(node)
-	}
-	
 	func setTimelineFeed(_ feed: SidebarItem?, animated: Bool, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
 		
@@ -1986,9 +2011,11 @@ private extension SceneCoordinator {
 	func fetchAndReplaceArticlesAsync(animated: Bool, completion: @escaping () -> Void) {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
+
 		cancelPendingAsyncFetches()
+		emptyTheTimeline()
+
 		guard let timelineFeed = timelineFeed else {
-			emptyTheTimeline()
 			completion()
 			return
 		}
@@ -2004,7 +2031,6 @@ private extension SceneCoordinator {
 			self?.replaceArticles(with: articles, animated: animated)
 			completion()
 		}
-		
 	}
 
 	func fetchUnsortedArticlesAsync(for representedObjects: [Any], completion: @escaping ArticleSetBlock) {
@@ -2060,137 +2086,9 @@ private extension SceneCoordinator {
 		return false
 		
 	}
-	
-	// MARK: Three Panel Mode
-	
-	func installTimelineControllerIfNecessary(animated: Bool) {
-		if navControllerForTimeline().viewControllers.filter({ $0 is TimelineViewController }).count < 1 {
-			isTimelineViewControllerPending = true
-			timelineViewController = UIStoryboard.main.instantiateController(ofType: TimelineViewController.self)
-			timelineViewController!.coordinator = self
-			navControllerForTimeline().pushViewController(timelineViewController!, animated: animated)
-		}
-	}
-	
-	@discardableResult
-	func installArticleController(state: ArticleViewController.State? = nil, animated: Bool) -> ArticleViewController {
 
-		isArticleViewControllerPending = true
-
-		let articleController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-		articleController.coordinator = self
-		articleController.article = currentArticle
-		articleController.restoreState = state
-				
-		if let subSplit = subSplitViewController {
-			let controller = addNavControllerIfNecessary(articleController, showButton: false)
-			subSplit.showDetailViewController(controller, sender: self)
-		} else if rootSplitViewController.isCollapsed || wasRootSplitViewControllerCollapsed {
-			navigationController.pushViewController(articleController, animated: animated)
-		} else {
-			let controller = addNavControllerIfNecessary(articleController, showButton: true)
-			rootSplitViewController.showDetailViewController(controller, sender: self)
-  	 	}
-		
-		return articleController
-		
-	}
-	
-	func addNavControllerIfNecessary(_ controller: UIViewController, showButton: Bool) -> UIViewController {
-		
-		// You will sometimes get a compact horizontal size class while in three panel mode.  Dunno why it lies.
-		if rootSplitViewController.traitCollection.horizontalSizeClass == .compact && !isThreePanelMode {
-			
-			return controller
-			
-		} else {
-			
-			let navController = InteractiveNavigationController.template(rootViewController: controller)
-			navController.isToolbarHidden = false
-			
-			if showButton {
-				controller.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
-				controller.navigationItem.leftItemsSupplementBackButton = true
-			} else {
-				controller.navigationItem.leftBarButtonItem = nil
-				controller.navigationItem.leftItemsSupplementBackButton = false
-			}
-			
-			return navController
-			
-		}
-		
-	}
-
-	func installSubSplit() {
-		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
-		
-		subSplitViewController = UISplitViewController()
-		subSplitViewController!.preferredDisplayMode = .oneBesideSecondary
-		subSplitViewController!.viewControllers = [InteractiveNavigationController.template()]
-		subSplitViewController!.preferredPrimaryColumnWidthFraction = 0.4285
-		
-		rootSplitViewController.showDetailViewController(subSplitViewController!, sender: self)
-		rootSplitViewController.setOverrideTraitCollection(UITraitCollection(horizontalSizeClass: .regular), forChild: subSplitViewController!)
-	}
-	
-	func navControllerForTimeline() -> UINavigationController {
-		if let subSplit = subSplitViewController {
-			return subSplit.viewControllers.first as! UINavigationController
-		} else {
-			return navigationController
-		}
-	}
-	
-	func configureThreePanelMode() {
-		articleViewController?.stopArticleExtractorIfProcessing()
-		let articleViewControllerState = articleViewController?.currentState
-		defer {
-			navigationController.viewControllers = [feedsViewController]
-		}
-		
-		if rootSplitViewController.viewControllers.last is InteractiveNavigationController {
-			_ = rootSplitViewController.viewControllers.popLast()
-		}
-
-		installSubSplit()
-		installTimelineControllerIfNecessary(animated: false)
-		timelineViewController?.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
-		timelineViewController?.navigationItem.leftItemsSupplementBackButton = true
-
-		installArticleController(state: articleViewControllerState, animated: false)
-		
-		feedsViewController.restoreSelectionIfNecessary(adjustScroll: true)
-		timelineViewController!.restoreSelectionIfNecessary(adjustScroll: false)
-	}
-	
-	func configureStandardPanelMode() {
-		articleViewController?.stopArticleExtractorIfProcessing()
-		let articleViewControllerState = articleViewController?.currentState
-		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
-		
-		// Set the is Pending flags early to prevent the navigation controller delegate from thinking that we
-		// swiping around in the user interface
-		isTimelineViewControllerPending = true
-		isArticleViewControllerPending = true
-
-		navigationController.viewControllers = [feedsViewController]
-		if rootSplitViewController.viewControllers.last is UISplitViewController {
-			subSplitViewController = nil
-			_ = rootSplitViewController.viewControllers.popLast()
-		}
-			
-		if currentFeedIndexPath != nil {
-			timelineViewController = UIStoryboard.main.instantiateController(ofType: TimelineViewController.self)
-			timelineViewController!.coordinator = self
-			navigationController.pushViewController(timelineViewController!, animated: false)
-		}
-
-		installArticleController(state: articleViewControllerState, animated: false)
-	}
-	
 	// MARK: NSUserActivity
-	
+
 	func windowState() -> [AnyHashable: Any] {
 		let containerExpandedWindowState = expandedTable.map( { $0.userInfo })
 		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
@@ -2200,7 +2098,8 @@ private extension SceneCoordinator {
 		return [
 			UserInfoKey.readFeedsFilterState: isReadFeedsFiltered,
 			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
-			UserInfoKey.readArticlesFilterState: readArticlesFilterState
+			UserInfoKey.readArticlesFilterState: readArticlesFilterState,
+			UserInfoKey.isSidebarHidden: rootSplitViewController.displayMode == .secondaryOnly
 		]
 	}
 	
@@ -2223,7 +2122,7 @@ private extension SceneCoordinator {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
 					self.selectFeed(indexPath: indexPath) {
-						self.feedsViewController.focus()
+						self.sidebarViewController.focus()
 					}
 				}
 			})
@@ -2244,7 +2143,7 @@ private extension SceneCoordinator {
 				
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
 					self.selectFeed(indexPath: indexPath) {
-						self.feedsViewController.focus()
+						self.sidebarViewController.focus()
 					}
 				}
 			})
@@ -2256,8 +2155,8 @@ private extension SceneCoordinator {
 				return
 			}
 			
-			self.discloseFeed(feed) {
-				self.feedsViewController.focus()
+			self.discloseFeed(feed, initialLoad: true) {
+				self.sidebarViewController.focus()
 			}
 		}
 	}
@@ -2281,11 +2180,11 @@ private extension SceneCoordinator {
 			return
 		}
 		
-		guard let Feed = account.existingFeed(withFeedID: feedID) else {
+		guard let feed = account.existingFeed(withFeedID: feedID) else {
 			return
 		}
 		
-		discloseFeed(Feed) {
+		discloseFeed(feed) {
 			self.selectArticleInCurrentFeed(articleID)
 		}
 	}

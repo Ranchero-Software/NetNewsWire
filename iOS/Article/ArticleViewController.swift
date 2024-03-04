@@ -45,6 +45,8 @@ class ArticleViewController: UIViewController {
 	
 	weak var coordinator: SceneCoordinator!
 	
+	private let poppableDelegate = PoppableGestureRecognizerDelegate()
+
 	var article: Article? {
 		didSet {
 			if let controller = currentWebViewController, controller.article != article {
@@ -82,6 +84,8 @@ class ArticleViewController: UIViewController {
 		return keyboardManager.keyCommands
 	}
 	
+	private var lastKnownDisplayMode : UISplitViewController.DisplayMode?
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
@@ -100,7 +104,14 @@ class ArticleViewController: UIViewController {
 		
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
-		
+
+		if let parentNavController = navigationController?.parent as? UINavigationController {
+			poppableDelegate.navigationController = parentNavController
+			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
+		}
+
+		navigationItem.leftItemsSupplementBackButton = true
+
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
@@ -155,12 +166,17 @@ class ArticleViewController: UIViewController {
 		updateUI()
 	}
 
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(true)
-		coordinator.isArticleViewControllerPending = false
+	override func viewWillAppear(_ animated: Bool) {
+		navigationController?.isToolbarHidden = false
+		if AppDefaults.shared.articleFullscreenEnabled {
+			currentWebViewController?.hideBars()
+		}
+
+		super.viewWillAppear(animated)
 	}
-	
+
 	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
 		if searchBar != nil && !searchBar.isHidden {
 			endFind()
 		}
@@ -211,9 +227,12 @@ class ArticleViewController: UIViewController {
 			starBarButtonItem.image = AppAssets.starOpenImage
 			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
 		}
-		
 	}
-	
+
+	override func contentScrollView(for edge: NSDirectionalRectEdge) -> UIScrollView? {
+		return currentWebViewController?.webView?.scrollView
+	}
+
 	// MARK: Notifications
 	
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
@@ -323,6 +342,10 @@ class ArticleViewController: UIViewController {
 	
 	func setScrollPosition(isShowingExtractedArticle: Bool, articleWindowScrollY: Int) {
 		currentWebViewController?.setScrollPosition(isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+	}
+
+	public func splitViewControllerWillChangeTo(displayMode: UISplitViewController.DisplayMode) {
+		lastKnownDisplayMode = displayMode
 	}
 }
 
@@ -447,9 +470,11 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 		coordinator.selectArticle(article, animations: [.select, .scroll, .navigation])
 		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
 		
-		previousViewControllers.compactMap({ $0 as? WebViewController }).forEach({ $0.stopWebViewActivity() })
+		let webViewControllers = previousViewControllers.compactMap{ $0 as? WebViewController }
+		for webViewController in webViewControllers {
+			webViewController.stopWebViewActivity()
+		}
 	}
-	
 }
 
 // MARK: UIGestureRecognizerDelegate

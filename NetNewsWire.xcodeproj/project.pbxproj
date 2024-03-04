@@ -299,7 +299,7 @@
 		51C45268226508F600C03939 /* FeedUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45261226508F600C03939 /* FeedUnreadCountView.swift */; };
 		51C45269226508F600C03939 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45262226508F600C03939 /* FeedTableViewCell.swift */; };
 		51C4526A226508F600C03939 /* FeedTableViewCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45263226508F600C03939 /* FeedTableViewCellLayout.swift */; };
-		51C4526B226508F600C03939 /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45264226508F600C03939 /* FeedsViewController.swift */; };
+		51C4526B226508F600C03939 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45264226508F600C03939 /* SidebarViewController.swift */; };
 		51C452762265091600C03939 /* TimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4526E2265091600C03939 /* TimelineViewController.swift */; };
 		51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452702265091600C03939 /* MultilineUILabelSizer.swift */; };
 		51C452782265091600C03939 /* TimelineCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452712265091600C03939 /* TimelineCellData.swift */; };
@@ -1241,7 +1241,7 @@
 		51C45261226508F600C03939 /* FeedUnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedUnreadCountView.swift; sourceTree = "<group>"; };
 		51C45262226508F600C03939 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
 		51C45263226508F600C03939 /* FeedTableViewCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewCellLayout.swift; sourceTree = "<group>"; };
-		51C45264226508F600C03939 /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsViewController.swift; sourceTree = "<group>"; };
+		51C45264226508F600C03939 /* SidebarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
 		51C4526E2265091600C03939 /* TimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineViewController.swift; sourceTree = "<group>"; };
 		51C452702265091600C03939 /* MultilineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultilineUILabelSizer.swift; sourceTree = "<group>"; };
 		51C452712265091600C03939 /* TimelineCellData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineCellData.swift; sourceTree = "<group>"; };
@@ -1950,7 +1950,7 @@
 		51C4525D226508F600C03939 /* Feeds */ = {
 			isa = PBXGroup;
 			children = (
-				51C45264226508F600C03939 /* FeedsViewController.swift */,
+				51C45264226508F600C03939 /* SidebarViewController.swift */,
 				51627A6623861DA3007B3B4B /* FeedsViewController+Drag.swift */,
 				51627A6823861DED007B3B4B /* FeedsViewController+Drop.swift */,
 				51CE1C0A23622006005548FC /* RefreshProgressView.swift */,
@@ -3961,7 +3961,7 @@
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51F9F3F923DFB16300A314FD /* UITableView-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* TimelineTableViewCell.swift in Sources */,
-				51C4526B226508F600C03939 /* FeedsViewController.swift in Sources */,
+				51C4526B226508F600C03939 /* SidebarViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,

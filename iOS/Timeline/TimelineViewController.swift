@@ -116,7 +116,6 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
-		coordinator.isTimelineViewControllerPending = false
 
 		if navigationController?.navigationBar.alpha == 0 {
 			UIView.animate(withDuration: 0.5) {
@@ -604,10 +603,6 @@ extension TimelineViewController: UISearchBarDelegate {
 private extension TimelineViewController {
 
 	func configureToolbar() {
-		
-		guard !coordinator.isThreePanelMode else {
-			return
-		}
 		
 		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
 			return

@@ -11,7 +11,7 @@ import MobileCoreServices
 import Account
 import UniformTypeIdentifiers
 
-extension FeedsViewController: UITableViewDragDelegate {
+extension SidebarViewController: UITableViewDragDelegate {
 	
 	func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
 		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed else {

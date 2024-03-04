@@ -11,7 +11,7 @@ import RSCore
 import Account
 import RSTree
 
-extension FeedsViewController: UITableViewDropDelegate {
+extension SidebarViewController: UITableViewDropDelegate {
 	
 	func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
 		return session.localDragSession != nil

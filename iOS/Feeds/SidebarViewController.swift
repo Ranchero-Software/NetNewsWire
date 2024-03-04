@@ -13,7 +13,7 @@ import RSCore
 import RSTree
 import SafariServices
 
-class FeedsViewController: UITableViewController, UndoableCommandRunner {
+class SidebarViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
@@ -628,7 +628,7 @@ class FeedsViewController: UITableViewController, UndoableCommandRunner {
 
 // MARK: UIContextMenuInteractionDelegate
 
-extension FeedsViewController: UIContextMenuInteractionDelegate {
+extension SidebarViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
 
 		guard let sectionIndex = interaction.view?.tag,
@@ -666,7 +666,7 @@ extension FeedsViewController: UIContextMenuInteractionDelegate {
 
 // MARK: FeedTableViewSectionHeaderDelegate
 
-extension FeedsViewController: FeedTableViewSectionHeaderDelegate {
+extension SidebarViewController: FeedTableViewSectionHeaderDelegate {
 	
 	func FeedTableViewSectionHeaderDisclosureDidToggle(_ sender: FeedTableViewSectionHeader) {
 		toggle(sender)
@@ -676,7 +676,7 @@ extension FeedsViewController: FeedTableViewSectionHeaderDelegate {
 
 // MARK: TableViewCellDelegate
 
-extension FeedsViewController: FeedTableViewCellDelegate {
+extension SidebarViewController: FeedTableViewCellDelegate {
 	
 	func feedTableViewCellDisclosureDidToggle(_ sender: FeedTableViewCell, expanding: Bool) {
 		if expanding {
@@ -690,7 +690,7 @@ extension FeedsViewController: FeedTableViewCellDelegate {
 
 // MARK: Private
 
-private extension FeedsViewController {
+private extension SidebarViewController {
 	
 	func configureToolbar() {
 		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
@@ -1230,7 +1230,7 @@ private extension FeedsViewController {
 	
 }
 
-extension FeedsViewController: UIGestureRecognizerDelegate {
+extension SidebarViewController: UIGestureRecognizerDelegate {
 	func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 		guard let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
 			return false
