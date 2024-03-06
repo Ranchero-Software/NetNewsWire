@@ -8,19 +8,23 @@
 
 import Foundation
 import WebKit
-import Articles
 
-class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
+protocol ArticleIconSchemeHandlerDelegate: AnyObject {
 	
-	weak var coordinator: SceneCoordinator?
-	
-	init(coordinator: SceneCoordinator) {
-		self.coordinator = coordinator
+	func iconImage(for articleID: String) -> IconImage?
+}
+
+final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
+
+	weak var delegate: ArticleIconSchemeHandlerDelegate?
+
+	init(delegate: ArticleIconSchemeHandlerDelegate) {
+		self.delegate = delegate
 	}
 	
 	func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
 
-		guard let url = urlSchemeTask.request.url, let coordinator = coordinator else {
+		guard let url = urlSchemeTask.request.url, let delegate else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}
@@ -29,7 +33,7 @@ class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 			return
 		}
 		let articleID = components.path
-		guard let iconImage = coordinator.articleFor(articleID)?.iconImage() else {
+		guard let iconImage = delegate.iconImage(for: articleID) else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}
@@ -49,12 +53,10 @@ class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 			urlSchemeTask.didReceive(data)
 			urlSchemeTask.didFinish()
 		}
-
 	}
 	
 	func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
 		urlSchemeTask.didFailWithError(URLError(.unknown))
 	}
-	
 }
 

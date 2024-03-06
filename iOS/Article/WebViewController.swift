@@ -39,7 +39,7 @@ class WebViewController: UIViewController {
 	private var isFullScreenAvailable: Bool {
 		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
-	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator);
+	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(delegate: self);
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
 
@@ -324,6 +324,16 @@ extension WebViewController: ArticleExtractorDelegate {
 		}
 	}
 
+}
+
+
+// MARK: ArticleIconSchemeHandlerDelegate
+
+extension WebViewController: ArticleIconSchemeHandlerDelegate {
+
+	func iconImage(for articleID: String) -> IconImage? {
+		coordinator.articleFor(articleID)?.iconImage()
+	}
 }
 
 // MARK: UIContextMenuInteractionDelegate
