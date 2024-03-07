@@ -33,9 +33,6 @@ let package = Package(
 				"RSCore",
 				"RSDatabase",
 				"Articles",
-			],
-			swiftSettings: [
-				.enableExperimentalFeature("StrictConcurrency")
 			]
 		)
 	]

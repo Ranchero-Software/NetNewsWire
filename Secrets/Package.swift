@@ -15,10 +15,7 @@ let package = Package(
     targets: [
         .target(
             name: "Secrets",
-            dependencies: [],
-			swiftSettings: [
-				.enableExperimentalFeature("StrictConcurrency")
-			]
+            dependencies: []
        )
     ]
 )
