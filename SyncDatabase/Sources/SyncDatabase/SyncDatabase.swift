@@ -8,60 +8,185 @@
 
 import Foundation
 import RSCore
-import RSDatabase
+import Database
 
-public typealias SyncStatusesResult = Result<Array<SyncStatus>, DatabaseError>
-public typealias SyncStatusesCompletionBlock = (SyncStatusesResult) -> Void
-
-public typealias SyncStatusArticleIDsResult = Result<Set<String>, DatabaseError>
-public typealias SyncStatusArticleIDsCompletionBlock = (SyncStatusArticleIDsResult) -> Void
-
-public struct SyncDatabase {
+public struct SyncDatabase: Sendable {
 
 	private let syncStatusTable: SyncStatusTable
-	private let queue: DatabaseQueue
 
 	public init(databaseFilePath: String) {
-		let queue = DatabaseQueue(databasePath: databaseFilePath)
-		try! queue.runCreateStatements(SyncDatabase.tableCreationStatements)
-		queue.vacuumIfNeeded(daysBetweenVacuums: 11)
-		self.queue = queue
 
-		self.syncStatusTable = SyncStatusTable(queue: queue)
+		self.syncStatusTable = SyncStatusTable(databasePath: databaseFilePath)
 	}
 
 	// MARK: - API
 
-	public func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
-		syncStatusTable.insertStatuses(statuses, completion: completion)
+	public func insertStatuses(_ statuses: [SyncStatus]) async throws {
+		try await syncStatusTable.insertStatuses(statuses)
 	}
 	
+	public func selectForProcessing(limit: Int? = nil) async throws -> Set<SyncStatus>? {
+		try await syncStatusTable.selectForProcessing(limit: limit)
+	}
+
+	public func selectPendingCount() async throws -> Int? {
+		try await syncStatusTable.selectPendingCount()
+	}
+	
+	public func selectPendingReadStatusArticleIDs() async throws -> Set<String>? {
+		try await syncStatusTable.selectPendingReadStatusArticleIDs()
+	}
+
+	public func selectPendingStarredStatusArticleIDs() async throws -> Set<String>? {
+		try await syncStatusTable.selectPendingStarredStatusArticleIDs()
+	}
+
+	public func resetAllSelectedForProcessing() async throws {
+		try await syncStatusTable.resetAllSelectedForProcessing()
+	}
+
+	public func resetSelectedForProcessing(_ articleIDs: [String]) async throws {
+		try await syncStatusTable.resetSelectedForProcessing(articleIDs)
+	}
+	
+    public func deleteSelectedForProcessing(_ articleIDs: [String]) async throws {
+		try await syncStatusTable.deleteSelectedForProcessing(articleIDs)
+	}
+
+	// MARK: - Suspend and Resume (for iOS)
+
+	/// Close the database and stop running database calls.
+	///
+	/// On Macs, suspend() and resume() do nothing. They’re not needed.
+	public func suspend() async {
+		await syncStatusTable.suspend()
+	}
+
+	/// Open the database and allow for running database calls again.
+	public func resume() async {
+		await syncStatusTable.resume()
+	}
+}
+
+// MARK: - Compatibility
+
+// Use the below until switching to the async version of the API.
+
+public typealias SyncStatusesResult = Result<Array<SyncStatus>, DatabaseError>
+public typealias SyncStatusesCompletionBlock = @Sendable (SyncStatusesResult) -> Void
+
+public typealias SyncStatusArticleIDsResult = Result<Set<String>, DatabaseError>
+public typealias SyncStatusArticleIDsCompletionBlock = @Sendable (SyncStatusArticleIDsResult) -> Void
+
+extension SyncDatabase {
+
+	public func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
+
+		Task {
+			do {
+				try await self.insertStatuses(statuses)
+				completion(nil)
+			} catch {
+				completion(DatabaseError.isSuspended)
+			}
+		}
+	}
+
 	public func selectForProcessing(limit: Int? = nil, completion: @escaping SyncStatusesCompletionBlock) {
-		return syncStatusTable.selectForProcessing(limit: limit, completion: completion)
+
+		Task {
+			do {
+				if let syncStatuses = try await self.selectForProcessing(limit: limit) {
+					completion(.success(Array(syncStatuses)))
+				} else {
+					completion(.success([SyncStatus]()))
+				}
+			} catch {
+				completion(.failure(DatabaseError.isSuspended))
+			}
+		}
 	}
 
 	public func selectPendingCount(completion: @escaping DatabaseIntCompletionBlock) {
-		syncStatusTable.selectPendingCount(completion)
+
+		Task {
+			do {
+				if let count = try await self.selectPendingCount() {
+					completion(.success(count))
+				} else {
+					completion(.success(0))
+				}
+
+			} catch {
+				completion(.failure(DatabaseError.isSuspended))
+			}
+		}
 	}
 
-    public func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
-        syncStatusTable.selectPendingReadStatusArticleIDs(completion: completion)
-    }
-    
-    public func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
-        syncStatusTable.selectPendingStarredStatusArticleIDs(completion: completion)
-    }
-    
+	public func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
+
+		Task {
+			do {
+				if let articleIDs = try await self.selectPendingReadStatusArticleIDs() {
+					completion(.success(articleIDs))
+				} else {
+					completion(.success(Set<String>()))
+				}
+			} catch {
+				completion(.failure(DatabaseError.isSuspended))
+			}
+		}
+	}
+
+	public func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
+
+		Task {
+			do {
+				if let articleIDs = try await self.selectPendingStarredStatusArticleIDs() {
+					completion(.success(articleIDs))
+				} else {
+					completion(.success(Set<String>()))
+				}
+			} catch {
+				completion(.failure(DatabaseError.isSuspended))
+			}
+		}
+	}
+
 	public func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
-		syncStatusTable.resetAllSelectedForProcessing(completion: completion)
+
+		Task {
+			do {
+				try await self.resetAllSelectedForProcessing()
+				completion?(nil)
+			} catch {
+				completion?(DatabaseError.isSuspended)
+			}
+		}
 	}
 
 	public func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
-		syncStatusTable.resetSelectedForProcessing(articleIDs, completion: completion)
+
+		Task {
+			do {
+				try await self.resetSelectedForProcessing(articleIDs)
+				completion?(nil)
+			} catch {
+				completion?(DatabaseError.isSuspended)
+			}
+		}
 	}
-	
-    public func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
-		syncStatusTable.deleteSelectedForProcessing(articleIDs, completion: completion)
+
+	public func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
+
+		Task {
+			do {
+				try await self.deleteSelectedForProcessing(articleIDs)
+				completion?(nil)
+			} catch {
+				completion?(DatabaseError.isSuspended)
+			}
+		}
 	}
 
 	// MARK: - Suspend and Resume (for iOS)
@@ -69,20 +194,17 @@ public struct SyncDatabase {
 	/// Close the database and stop running database calls.
 	/// Any pending calls will complete first.
 	public func suspend() {
-		queue.suspend()
+
+		Task {
+			await self.suspend()
+		}
 	}
 
 	/// Open the database and allow for running database calls again.
 	public func resume() {
-		queue.resume()
+
+		Task {
+			await self.resume()
+		}
 	}
-}
-
-// MARK: - Private
-
-private extension SyncDatabase {
-	
-	static let tableCreationStatements = """
-	CREATE TABLE if not EXISTS syncStatus (articleID TEXT NOT NULL, key TEXT NOT NULL, flag BOOL NOT NULL DEFAULT 0, selected BOOL NOT NULL DEFAULT 0, PRIMARY KEY (articleID, key));
-	"""
 }

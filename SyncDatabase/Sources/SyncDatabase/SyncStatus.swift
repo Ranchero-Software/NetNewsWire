@@ -8,11 +8,11 @@
 
 import Foundation
 import Articles
-import RSDatabase
+import Database
 
-public struct SyncStatus: Hashable, Equatable {
-	
-	public enum Key: String {
+public struct SyncStatus: Hashable, Equatable, Sendable {
+
+	public enum Key: String, Sendable {
 		case read = "read"
 		case starred = "starred"
 		case deleted = "deleted"
