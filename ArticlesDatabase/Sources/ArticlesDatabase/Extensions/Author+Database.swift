@@ -10,6 +10,7 @@ import Foundation
 import Articles
 import Database
 import RSParser
+import FMDB
 
 // MARK: - DatabaseObject
 

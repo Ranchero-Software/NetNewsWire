@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import Database
+import FMDB
 
 public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 

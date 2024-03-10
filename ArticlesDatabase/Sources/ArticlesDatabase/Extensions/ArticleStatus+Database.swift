@@ -9,6 +9,7 @@
 import Foundation
 import Database
 import Articles
+import FMDB
 
 extension ArticleStatus {
 	

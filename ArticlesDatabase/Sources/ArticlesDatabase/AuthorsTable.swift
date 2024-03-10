@@ -9,6 +9,7 @@
 import Foundation
 import Database
 import Articles
+import FMDB
 
 // article->authors is a many-to-many relationship.
 // There’s a lookup table relating authorID and articleID.

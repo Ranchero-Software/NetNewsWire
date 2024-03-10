@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import Database
 import Articles
+import FMDB
 
 // Article->ArticleStatus is a to-one relationship.
 //

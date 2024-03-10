@@ -11,6 +11,7 @@ import RSCore
 import Database
 import Articles
 import RSParser
+import FMDB
 
 final class ArticleSearchInfo: Hashable {
 

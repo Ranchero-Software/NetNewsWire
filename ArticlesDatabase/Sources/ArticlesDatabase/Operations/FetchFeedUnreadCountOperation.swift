@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import Database
+import FMDB
 
 /// Fetch the unread count for a single feed.
 public final class FetchFeedUnreadCountOperation: MainThreadOperation {

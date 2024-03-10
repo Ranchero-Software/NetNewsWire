@@ -10,6 +10,7 @@ import Foundation
 import Database
 import Articles
 import RSParser
+import FMDB
 
 extension Article {
 	

@@ -11,6 +11,7 @@ import RSCore
 import Database
 import RSParser
 import Articles
+import FMDB
 
 final class ArticlesTable: DatabaseTable {
 
