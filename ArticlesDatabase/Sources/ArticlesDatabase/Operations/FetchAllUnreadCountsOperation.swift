@@ -8,8 +8,7 @@
 
 import Foundation
 import RSCore
-import RSDatabase
-import RSDatabaseObjC
+import Database
 
 public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 

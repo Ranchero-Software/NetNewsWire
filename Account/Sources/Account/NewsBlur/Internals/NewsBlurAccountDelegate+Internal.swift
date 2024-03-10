@@ -9,7 +9,7 @@
 
 import Articles
 import RSCore
-import RSDatabase
+import Database
 import RSParser
 import RSWeb
 import SyncDatabase

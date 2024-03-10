@@ -7,8 +7,7 @@
 //
 
 import Foundation
-import RSDatabase
-import RSDatabaseObjC
+import Database
 import Articles
 
 // article->authors is a many-to-many relationship.

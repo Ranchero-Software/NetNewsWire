@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 import ArticlesDatabase
-import RSDatabase
+import Database
 
 // Main thread only.
 

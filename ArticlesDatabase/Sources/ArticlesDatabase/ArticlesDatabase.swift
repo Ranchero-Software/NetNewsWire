@@ -8,7 +8,7 @@
 
 import Foundation
 import RSCore
-import RSDatabase
+import Database
 import RSParser
 import Articles
 

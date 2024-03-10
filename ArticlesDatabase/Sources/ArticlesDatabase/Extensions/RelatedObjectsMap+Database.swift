@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSDatabase
+import Database
 import Articles
 
 extension RelatedObjectsMap {

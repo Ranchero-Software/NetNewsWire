@@ -14,7 +14,7 @@ import Foundation
 import RSCore
 import Articles
 import RSParser
-import RSDatabase
+import Database
 import ArticlesDatabase
 import RSWeb
 import os.log

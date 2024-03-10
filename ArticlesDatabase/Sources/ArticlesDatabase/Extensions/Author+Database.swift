@@ -8,8 +8,7 @@
 
 import Foundation
 import Articles
-import RSDatabase
-import RSDatabaseObjC
+import Database
 import RSParser
 
 // MARK: - DatabaseObject

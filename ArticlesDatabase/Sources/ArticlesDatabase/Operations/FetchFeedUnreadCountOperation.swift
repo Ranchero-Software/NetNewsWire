@@ -8,8 +8,7 @@
 
 import Foundation
 import RSCore
-import RSDatabase
-import RSDatabaseObjC
+import Database
 
 /// Fetch the unread count for a single feed.
 public final class FetchFeedUnreadCountOperation: MainThreadOperation {

@@ -1,14 +1,14 @@
-// swift-tools-version:5.9
+// swift-tools-version: 5.10
 import PackageDescription
 
 var dependencies: [Package.Dependency] = [
     .package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMinor(from: "1.0.0")),
-    .package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0")),
 ]
 
 #if swift(>=5.6)
 dependencies.append(contentsOf: [
-    .package(path: "../Articles"),
+	.package(path: "../Articles"),
+	.package(path: "../Database"),
 ])
 #else
 dependencies.append(contentsOf: [
@@ -18,11 +18,10 @@ dependencies.append(contentsOf: [
 
 let package = Package(
     name: "SyncDatabase",
-	platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
+	platforms: [.macOS(.v14), .iOS(.v17)],
     products: [
         .library(
             name: "SyncDatabase",
-			type: .dynamic,
             targets: ["SyncDatabase"]),
     ],
 	dependencies: dependencies,
@@ -31,9 +30,12 @@ let package = Package(
 			name: "SyncDatabase",
 			dependencies: [
 				"RSCore",
-				"RSDatabase",
+				"Database",
 				"Articles",
-			]
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			  ]
 		)
 	]
 )
