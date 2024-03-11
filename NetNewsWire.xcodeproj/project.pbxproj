@@ -334,7 +334,6 @@
 		51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		51C452AE2265104D00C03939 /* ArticleStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97731ED9EC04007D329B /* ArticleStringFormatter.swift */; };
 		51C452AF2265108300C03939 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
-		51C452B42265141B00C03939 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C452B32265141B00C03939 /* WebKit.framework */; };
 		51C4CFF024D37D1F00AF9874 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4CFEF24D37D1F00AF9874 /* Secrets.swift */; };
 		51C4CFF124D37D1F00AF9874 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4CFEF24D37D1F00AF9874 /* Secrets.swift */; };
 		51C4CFF224D37D1F00AF9874 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4CFEF24D37D1F00AF9874 /* Secrets.swift */; };
@@ -366,7 +365,6 @@
 		51E43962238037C400015C31 /* AddFeedFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E43961238037C400015C31 /* AddFeedFolderViewController.swift */; };
 		51E4398023805EBC00015C31 /* AddComboTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397F23805EBC00015C31 /* AddComboTableViewCell.swift */; };
 		51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4DAEC2425F6940091EB5B /* CloudKit.framework */; };
-		51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4DB072425F9EB0091EB5B /* CloudKit.framework */; };
 		51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */; };
@@ -1247,7 +1245,6 @@
 		51C452822265093600C03939 /* Add.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Add.storyboard; sourceTree = "<group>"; };
 		51C452842265093600C03939 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
-		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C4CFEF24D37D1F00AF9874 /* Secrets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperScriptMessageHandler.swift; sourceTree = "<group>"; };
 		51CD32A824D2CB25009ABAEF /* SyncDatabase */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SyncDatabase; sourceTree = "<group>"; };
@@ -1269,11 +1266,8 @@
 		51E3EB3C229AB08300645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E43961238037C400015C31 /* AddFeedFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedFolderViewController.swift; sourceTree = "<group>"; };
 		51E4397F23805EBC00015C31 /* AddComboTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddComboTableViewCell.swift; sourceTree = "<group>"; };
-		51E4989624A8065700B667CB /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
-		51E4989824A8067000B667CB /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51E498B224A806AA00B667CB /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		51E4DAEC2425F6940091EB5B /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		51E4DB072425F9EB0091EB5B /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStatusSyncTimer.swift; sourceTree = "<group>"; };
 		51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicButton.swift; sourceTree = "<group>"; };
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
@@ -1615,10 +1609,8 @@
 				179D280B26F6F93D003B2E0A /* Zip in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
 				5138E95224D3418100AFF0FE /* RSParser in Frameworks */,
-				51C452B42265141B00C03939 /* WebKit.framework in Frameworks */,
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
 				513F32772593EE6F0003048F /* Secrets in Frameworks */,
-				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
 				513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */,
 				513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */,
 				848565512B9E910200F4BAE0 /* FMDB in Frameworks */,
@@ -2063,12 +2055,8 @@
 		51C452B22265141B00C03939 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				51E4989824A8067000B667CB /* WebKit.framework */,
 				51E498B224A806AA00B667CB /* WebKit.framework */,
-				51E4DB072425F9EB0091EB5B /* CloudKit.framework */,
 				51E4DAEC2425F6940091EB5B /* CloudKit.framework */,
-				51E4989624A8065700B667CB /* CloudKit.framework */,
-				51C452B32265141B00C03939 /* WebKit.framework */,
 				176813F42564BB2C00D98635 /* WidgetKit.framework */,
 				176813F62564BB2C00D98635 /* SwiftUI.framework */,
 			);
