@@ -87,7 +87,7 @@ extension SyncDatabase {
 				try await self.insertStatuses(statuses)
 				completion(nil)
 			} catch {
-				completion(DatabaseError.isSuspended)
+				completion(DatabaseError.suspended)
 			}
 		}
 	}
@@ -102,7 +102,7 @@ extension SyncDatabase {
 					completion(.success([SyncStatus]()))
 				}
 			} catch {
-				completion(.failure(DatabaseError.isSuspended))
+				completion(.failure(DatabaseError.suspended))
 			}
 		}
 	}
@@ -118,7 +118,7 @@ extension SyncDatabase {
 				}
 
 			} catch {
-				completion(.failure(DatabaseError.isSuspended))
+				completion(.failure(DatabaseError.suspended))
 			}
 		}
 	}
@@ -133,7 +133,7 @@ extension SyncDatabase {
 					completion(.success(Set<String>()))
 				}
 			} catch {
-				completion(.failure(DatabaseError.isSuspended))
+				completion(.failure(DatabaseError.suspended))
 			}
 		}
 	}
@@ -148,7 +148,7 @@ extension SyncDatabase {
 					completion(.success(Set<String>()))
 				}
 			} catch {
-				completion(.failure(DatabaseError.isSuspended))
+				completion(.failure(DatabaseError.suspended))
 			}
 		}
 	}
@@ -160,7 +160,7 @@ extension SyncDatabase {
 				try await self.resetAllSelectedForProcessing()
 				completion?(nil)
 			} catch {
-				completion?(DatabaseError.isSuspended)
+				completion?(DatabaseError.suspended)
 			}
 		}
 	}
@@ -172,7 +172,7 @@ extension SyncDatabase {
 				try await self.resetSelectedForProcessing(articleIDs)
 				completion?(nil)
 			} catch {
-				completion?(DatabaseError.isSuspended)
+				completion?(DatabaseError.suspended)
 			}
 		}
 	}
@@ -184,7 +184,7 @@ extension SyncDatabase {
 				try await self.deleteSelectedForProcessing(articleIDs)
 				completion?(nil)
 			} catch {
-				completion?(DatabaseError.isSuspended)
+				completion?(DatabaseError.suspended)
 			}
 		}
 	}

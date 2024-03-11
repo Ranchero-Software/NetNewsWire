@@ -13,7 +13,7 @@ import FMDB
 
 public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 
-	var result: UnreadCountDictionaryCompletionResult = .failure(.isSuspended)
+	var result: UnreadCountDictionaryCompletionResult = .failure(.suspended)
 
 	// MainThreadOperation
 	public var isCanceled = false

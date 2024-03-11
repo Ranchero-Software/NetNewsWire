@@ -14,7 +14,7 @@ import FMDB
 /// Fetch the unread count for a single feed.
 public final class FetchFeedUnreadCountOperation: MainThreadOperation {
 
-	var result: SingleUnreadCountResult = .failure(.isSuspended)
+	var result: SingleUnreadCountResult = .failure(.suspended)
 
 	// MainThreadOperation
 	public var isCanceled = false

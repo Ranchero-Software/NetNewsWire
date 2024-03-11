@@ -10,7 +10,7 @@ import Foundation
 import FMDB
 
 public enum DatabaseError: Error, Sendable {
-	case isSuspended // On iOS, to support background refreshing, a database may be suspended.
+	case suspended // On iOS, to support background refreshing, a database may be suspended.
 }
 
 /// Result type that provides an FMDatabase or a DatabaseError.

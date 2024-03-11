@@ -12,61 +12,6 @@ import Articles
 import Database
 import FMDB
 
-extension FMDatabase {
-
-	static func openAndSetUpDatabase(path: String) -> FMDatabase {
-
-		let database = FMDatabase(path: path)!
-
-		database.open()
-		database.executeStatements("PRAGMA synchronous = 1;")
-		database.setShouldCacheStatements(true)
-
-		return database
-	}
-
-	func executeUpdateInTransaction(_ sql : String, withArgumentsIn parameters: [Any]?) {
-
-		beginTransaction()
-		executeUpdate(sql, withArgumentsIn: parameters)
-		commit()
-	}
-
-	func vacuum() {
-
-		executeStatements("vacuum;")
-	}
-
-	func runCreateStatements(_ statements: String) {
-
-		statements.enumerateLines { (line, stop) in
-			if line.lowercased().hasPrefix("create") {
-				self.executeStatements(line)
-			}
-			stop = false
-		}
-	}
-
-	func insertRows(_ dictionaries: [DatabaseDictionary], insertType: RSDatabaseInsertType, tableName: String) {
-
-		for dictionary in dictionaries {
-			_ = rs_insertRow(with: dictionary, insertType: insertType, tableName: tableName)
-		}
-	}
-}
-
-extension FMResultSet {
-
-	func intWithCountResult() -> Int? {
-
-		guard next() else {
-			return nil
-		}
-
-		return Int(long(forColumnIndex: 0))
-	}
-}
-
 actor SyncStatusTable {
 
 	static private let tableName = "syncStatus"
@@ -107,7 +52,7 @@ actor SyncStatusTable {
 	func selectForProcessing(limit: Int?) throws -> Set<SyncStatus>? {
 
 		guard let database else {
-			throw DatabaseError.isSuspended
+			throw DatabaseError.suspended
 		}
 
 		let updateSQL = "update syncStatus set selected = true"
@@ -131,7 +76,7 @@ actor SyncStatusTable {
 	func selectPendingCount() throws -> Int? {
 
 		guard let database else {
-			throw DatabaseError.isSuspended
+			throw DatabaseError.suspended
 		}
 
 		let sql = "select count(*) from syncStatus"
@@ -154,7 +99,7 @@ actor SyncStatusTable {
 	func resetAllSelectedForProcessing() throws {
 
 		guard let database else {
-			throw DatabaseError.isSuspended
+			throw DatabaseError.suspended
 		}
 
 		let updateSQL = "update syncStatus set selected = false"
@@ -167,7 +112,7 @@ actor SyncStatusTable {
 			return
 		}
 		guard let database else {
-			throw DatabaseError.isSuspended
+			throw DatabaseError.suspended
 		}
 
 		let parameters = articleIDs.map { $0 as AnyObject }
@@ -183,7 +128,7 @@ actor SyncStatusTable {
 			return
 		}
 		guard let database else {
-			throw DatabaseError.isSuspended
+			throw DatabaseError.suspended
 		}
 
 		let parameters = articleIDs.map { $0 as AnyObject }
@@ -196,7 +141,7 @@ actor SyncStatusTable {
 	func insertStatuses(_ statuses: [SyncStatus]) throws {
 
 		guard let database else {
-			throw DatabaseError.isSuspended
+			throw DatabaseError.suspended
 		}
 
 		database.beginTransaction()
@@ -231,7 +176,7 @@ private extension SyncStatusTable {
 	func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key) throws -> Set<String>? {
 
 		guard let database else {
-			throw DatabaseError.isSuspended
+			throw DatabaseError.suspended
 		}
 
 		let sql = "select articleID from syncStatus where selected == false and key = \"\(statusKey.rawValue)\";"

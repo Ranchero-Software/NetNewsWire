@@ -235,7 +235,7 @@ private extension DatabaseQueue {
 		isCallingDatabase = true
 		autoreleasepool {
 			if _isSuspended {
-				databaseBlock(.failure(.isSuspended))
+				databaseBlock(.failure(.suspended))
 			}
 			else {
 				if useTransaction {
