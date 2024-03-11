@@ -9,6 +9,7 @@
 import Foundation
 import RSParser
 import os.log
+import Database
 
 /// Combine the articles with their feeds for a specific account.
 final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {

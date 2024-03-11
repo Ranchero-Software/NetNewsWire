@@ -7,7 +7,8 @@ let package = Package(
     products: [
         .library(
             name: "Account",
-            targets: ["Account"]),
+			type: .dynamic,
+			targets: ["Account"]),
     ],
     dependencies: [
 		.package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMinor(from: "1.0.0")),

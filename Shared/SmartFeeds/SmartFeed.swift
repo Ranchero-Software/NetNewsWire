@@ -11,6 +11,7 @@ import RSCore
 import Articles
 import ArticlesDatabase
 import Account
+import Database
 
 final class SmartFeed: PseudoFeed {
 

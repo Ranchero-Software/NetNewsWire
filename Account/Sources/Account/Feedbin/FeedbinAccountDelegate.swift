@@ -1163,53 +1163,62 @@ private extension FeedbinAccountDelegate {
 		os_log(.debug, log: log, "Refreshing missing articles...")
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
-			
-			func process(_ fetchedArticleIDs: Set<String>) {
-				let group = DispatchGroup()
-				var errorOccurred = false
-				
-				let articleIDs = Array(fetchedArticleIDs)
-				let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
-				for chunk in chunkedArticleIDs {
-					group.enter()
-					self.caller.retrieveEntries(articleIDs: chunk) { result in
+			Task { @MainActor in
 
-						switch result {
-						case .success(let entries):
+				@MainActor func process(_ fetchedArticleIDs: Set<String>) {
+					let group = DispatchGroup()
+					var errorOccurred = false
 
-							self.processEntries(account: account, entries: entries) { error in
-								group.leave()
-								if error != nil {
-									errorOccurred = true
+					let articleIDs = Array(fetchedArticleIDs)
+					let chunkedArticleIDs = articleIDs.chunked(into: 100)
+
+					for chunk in chunkedArticleIDs {
+						group.enter()
+						self.caller.retrieveEntries(articleIDs: chunk) { result in
+
+							switch result {
+							case .success(let entries):
+
+								self.processEntries(account: account, entries: entries) { error in
+
+									Task { @MainActor in
+
+										group.leave()
+										if error != nil {
+											errorOccurred = true
+										}
+									}
 								}
-							}
 
-						case .failure(let error):
-							errorOccurred = true
-							os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
-							group.leave()
+							case .failure(let error):
+								errorOccurred = true
+								os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
+								group.leave()
+							}
+						}
+					}
+
+					group.notify(queue: DispatchQueue.main) {
+						Task { @MainActor in
+							self.refreshProgress.completeTask()
+							os_log(.debug, log: self.log, "Done refreshing missing articles.")
+							if errorOccurred {
+								completion(.failure(FeedbinAccountDelegateError.unknown))
+							} else {
+								completion(.success(()))
+							}
 						}
 					}
 				}
 
-				group.notify(queue: DispatchQueue.main) {
+				switch result {
+				case .success(let fetchedArticleIDs):
+					process(fetchedArticleIDs)
+				case .failure(let error):
 					self.refreshProgress.completeTask()
-					os_log(.debug, log: self.log, "Done refreshing missing articles.")
-					if errorOccurred {
-						completion(.failure(FeedbinAccountDelegateError.unknown))
-					} else {
-						completion(.success(()))
-					}
+					completion(.failure(error))
 				}
-			}
-
-			switch result {
-			case .success(let fetchedArticleIDs):
-				process(fetchedArticleIDs)
-			case .failure(let error):
-				self.refreshProgress.completeTask()
-				completion(.failure(error))
 			}
 		}
 	}

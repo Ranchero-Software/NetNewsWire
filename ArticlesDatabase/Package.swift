@@ -12,6 +12,7 @@ var dependencies: [Package.Dependency] = [
 dependencies.append(contentsOf: [
 	.package(path: "../Articles"),
 	.package(path: "../Database"),
+	.package(path: "../FMDB"),
 ])
 #else
 dependencies.append(contentsOf: [
@@ -25,6 +26,7 @@ let package = Package(
     products: [
         .library(
             name: "ArticlesDatabase",
+			type: .dynamic,
             targets: ["ArticlesDatabase"]),
     ],
     dependencies: dependencies,
@@ -36,6 +38,7 @@ let package = Package(
 				"Database",
 				"RSParser",
 				"Articles",
+				"FMDB",
 			]),
     ]
 )

@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import Account
 import Articles
+import Database
 
 // Main thread only.
 // Runs an asynchronous fetch.

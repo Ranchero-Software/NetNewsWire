@@ -661,6 +661,8 @@
 		847120D92B8AE6AF00BBFC34 /* UTType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */; };
 		8472058120142E8900AD578B /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472058020142E8900AD578B /* FeedInspectorViewController.swift */; };
 		8477ACBE22238E9500DF7F37 /* SearchFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */; };
+		8479ABE32B9E906E00F84C4D /* Database in Frameworks */ = {isa = PBXBuildFile; productRef = 8479ABE22B9E906E00F84C4D /* Database */; };
+		8479ABE52B9E907400F84C4D /* FMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 8479ABE42B9E907400F84C4D /* FMDB */; };
 		847CD6CA232F4CBF00FAC46D /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847CD6C9232F4CBF00FAC46D /* IconView.swift */; };
 		847E64A02262783000E00365 /* NSAppleEventDescriptor+UserRecordFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E64942262782F00E00365 /* NSAppleEventDescriptor+UserRecordFields.swift */; };
 		848362FF2262A30E00DA1D35 /* template.html in Resources */ = {isa = PBXBuildFile; fileRef = 848362FE2262A30E00DA1D35 /* template.html */; };
@@ -668,6 +670,8 @@
 		848363052262A3CC00DA1D35 /* AddFolderSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848363032262A3CC00DA1D35 /* AddFolderSheet.xib */; };
 		848363082262A3DD00DA1D35 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 848363062262A3DD00DA1D35 /* Main.storyboard */; };
 		8483630B2262A3F000DA1D35 /* RenameSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848363092262A3F000DA1D35 /* RenameSheet.xib */; };
+		8485654F2B9E90FD00F4BAE0 /* Database in Frameworks */ = {isa = PBXBuildFile; productRef = 8485654E2B9E90FD00F4BAE0 /* Database */; };
+		848565512B9E910200F4BAE0 /* FMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 848565502B9E910200F4BAE0 /* FMDB */; };
 		848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
 		848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D578D21543519005FFAD5 /* PasteboardFeed.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
@@ -1617,6 +1621,8 @@
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
 				513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */,
 				513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */,
+				848565512B9E910200F4BAE0 /* FMDB in Frameworks */,
+				8485654F2B9E90FD00F4BAE0 /* Database in Frameworks */,
 				5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1630,6 +1636,7 @@
 				51A737C524DB19B50015FA66 /* RSWeb in Frameworks */,
 				514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */,
 				5132775E2590FC640064F1E7 /* Articles in Frameworks */,
+				8479ABE32B9E906E00F84C4D /* Database in Frameworks */,
 				513277612590FC640064F1E7 /* ArticlesDatabase in Frameworks */,
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
 				51A737AE24DB19730015FA66 /* RSCore in Frameworks */,
@@ -1637,6 +1644,7 @@
 				179C39EA26F76B0500D4E741 /* Zip in Frameworks */,
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				514C16E124D2EF38009A3AFA /* RSCoreResources in Frameworks */,
+				8479ABE52B9E907400F84C4D /* FMDB in Frameworks */,
 				514C16CE24D2E63F009A3AFA /* Account in Frameworks */,
 				519CA8E525841DB700EB079A /* CrashReporter in Frameworks */,
 			);
@@ -2975,6 +2983,8 @@
 				513F32762593EE6F0003048F /* Secrets */,
 				513F32792593EE6F0003048F /* SyncDatabase */,
 				179D280A26F6F93D003B2E0A /* Zip */,
+				8485654E2B9E90FD00F4BAE0 /* Database */,
+				848565502B9E910200F4BAE0 /* FMDB */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -3016,6 +3026,8 @@
 				513277602590FC640064F1E7 /* ArticlesDatabase */,
 				513277632590FC640064F1E7 /* SyncDatabase */,
 				179C39E926F76B0500D4E741 /* Zip */,
+				8479ABE22B9E906E00F84C4D /* Database */,
+				8479ABE42B9E907400F84C4D /* FMDB */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -5016,6 +5028,22 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 653813412680E2DA007A082C /* XCRemoteSwiftPackageReference "RSCore" */;
 			productName = RSCore;
+		};
+		8479ABE22B9E906E00F84C4D /* Database */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Database;
+		};
+		8479ABE42B9E907400F84C4D /* FMDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FMDB;
+		};
+		8485654E2B9E90FD00F4BAE0 /* Database */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Database;
+		};
+		848565502B9E910200F4BAE0 /* FMDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FMDB;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

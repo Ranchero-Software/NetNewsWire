@@ -9,6 +9,7 @@ var dependencies: [Package.Dependency] = [
 dependencies.append(contentsOf: [
 	.package(path: "../Articles"),
 	.package(path: "../Database"),
+	.package(path: "../FMDB"),
 ])
 #else
 dependencies.append(contentsOf: [
@@ -22,6 +23,7 @@ let package = Package(
     products: [
         .library(
             name: "SyncDatabase",
+			type: .dynamic,
             targets: ["SyncDatabase"]),
     ],
 	dependencies: dependencies,
@@ -32,6 +34,7 @@ let package = Package(
 				"RSCore",
 				"Database",
 				"Articles",
+				"FMDB"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")

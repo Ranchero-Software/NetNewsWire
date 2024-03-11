@@ -12,6 +12,7 @@ import os.log
 import RSCore
 import RSWeb
 import SyncDatabase
+import Database
 
 class CloudKitSendStatusOperation: MainThreadOperation {
 	

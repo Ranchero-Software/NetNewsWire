@@ -11,6 +11,7 @@ import Account
 import Articles
 import ArticlesDatabase
 import RSCore
+import Database
 
 protocol SmartFeedDelegate: SidebarItemIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 	var fetchType: FetchType { get }
