@@ -583,7 +583,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	func accountWillBeDeleted(_ account: Account) {
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials

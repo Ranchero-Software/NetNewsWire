@@ -74,12 +74,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
+	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant, secretsProvider: SecretsProvider) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
 		
 		if transport != nil {
-			caller = ReaderAPICaller(transport: transport!)
+			caller = ReaderAPICaller(transport: transport!, secretsProvider: secretsProvider)
 		} else {
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -94,7 +94,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 			}
 			
-			caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
+			caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration), secretsProvider: secretsProvider)
 		}
 		
 		caller.variant = variant
@@ -636,13 +636,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func accountWillBeDeleted(_ account: Account) {
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		guard let endpoint = endpoint else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
 		
-		let caller = ReaderAPICaller(transport: transport)
+		let caller = ReaderAPICaller(transport: transport, secretsProvider: secretsProvider)
 		caller.credentials = credentials
 		caller.validateCredentials(endpoint: endpoint) { result in
 			DispatchQueue.main.async {

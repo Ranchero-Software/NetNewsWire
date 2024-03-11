@@ -9,6 +9,7 @@
 import Foundation
 import AuthenticationServices
 import RSCore
+import Secrets
 
 public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)
@@ -42,17 +43,19 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	private let accountType: AccountType
 	private let oauthClient: OAuthAuthorizationClient
 	private var session: ASWebAuthenticationSession?
-	
-	public init(accountType: AccountType) {
+	private let secretsProvider: SecretsProvider
+
+	public init(accountType: AccountType, secretsProvider: SecretsProvider) {
 		self.accountType = accountType
-		self.oauthClient = Account.oauthAuthorizationClient(for: accountType)
+		self.secretsProvider = secretsProvider
+		self.oauthClient = Account.oauthAuthorizationClient(for: accountType, secretsProvider: secretsProvider)
 	}
 	
 	public func run() {
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 		
-		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType)
-		
+		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType, secretsProvider: secretsProvider)
+
 		guard let url = request.url else {
 			return DispatchQueue.main.async {
 				self.didEndAuthentication(url: nil, error: URLError(.badURL))
@@ -113,7 +116,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 			
 			let response = try OAuthAuthorizationResponse(url: url, client: oauthClient)
 			
-			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, completion: didEndRequestingAccessToken(_:))
+			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, secretsProvider: secretsProvider, completion: didEndRequestingAccessToken(_:))
 			
 		} catch is ASWebAuthenticationSessionError {
 			didFinish() // Primarily, cancellation.

@@ -37,12 +37,12 @@ final class FeedlyAPICaller {
 			return components
 		}
 		
-		var oauthAuthorizationClient: OAuthAuthorizationClient {
+		func oauthAuthorizationClient(secretsProvider: SecretsProvider) -> OAuthAuthorizationClient {
 			switch self {
 			case .sandbox:
 				return .feedlySandboxClient
 			case .cloud:
-				return .feedlyCloudClient
+				return OAuthAuthorizationClient.feedlyCloudClient(secretsProvider: secretsProvider)
 			}
 		}
 	}
@@ -50,11 +50,13 @@ final class FeedlyAPICaller {
 	private let transport: Transport
 	private let baseUrlComponents: URLComponents
 	private let uriComponentAllowed: CharacterSet
+	private let secretsProvider: SecretsProvider
 	
-	init(transport: Transport, api: API) {
+	init(transport: Transport, api: API, secretsProvider: SecretsProvider) {
 		self.transport = transport
 		self.baseUrlComponents = api.baseUrlComponents
-		
+		self.secretsProvider = secretsProvider
+
 		var urlHostAllowed = CharacterSet.urlHostAllowed
 		urlHostAllowed.remove("+")
 		uriComponentAllowed = urlHostAllowed

@@ -67,15 +67,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private weak var currentSyncAllOperation: MainThreadOperation?
 	private let operationQueue = MainThreadOperationQueue()
 	
-	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
+	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API, secretsProvider: SecretsProvider) {
 		// Many operations have their own operation queues, such as the sync all operation.
 		// Making this a serial queue at this higher level of abstraction means we can ensure,
 		// for example, a `FeedlyRefreshAccessTokenOperation` occurs before a `FeedlySyncAllOperation`,
 		// improving our ability to debug, reason about and predict the behaviour of the code.
 		
 		if let transport = transport {
-			self.caller = FeedlyAPICaller(transport: transport, api: api)
-			
+			self.caller = FeedlyAPICaller(transport: transport, api: api, secretsProvider: secretsProvider)
+
 		} else {
 			
 			let sessionConfiguration = URLSessionConfiguration.default
@@ -92,12 +92,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 			
 			let session = URLSession(configuration: sessionConfiguration)
-			self.caller = FeedlyAPICaller(transport: session, api: api)
+			self.caller = FeedlyAPICaller(transport: session, api: api, secretsProvider: secretsProvider)
 		}
 				
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
-		self.oauthAuthorizationClient = api.oauthAuthorizationClient
+		self.oauthAuthorizationClient = api.oauthAuthorizationClient(secretsProvider: secretsProvider)
 		
 		self.caller.delegate = self
 	}
@@ -539,7 +539,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		MainThreadOperationQueue.shared.add(logout)
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		assertionFailure("An `account` instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
 		completion(.success(credentials))
 	}

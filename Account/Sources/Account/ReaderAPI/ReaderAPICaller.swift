@@ -48,6 +48,7 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	private var transport: Transport!
+	private let secretsProvider: SecretsProvider
 	private let uriComponentAllowed: CharacterSet
 
 	private var accessToken: String?
@@ -77,9 +78,10 @@ final class ReaderAPICaller: NSObject {
 		}
 	}
 	
-	init(transport: Transport) {
+	init(transport: Transport, secretsProvider: SecretsProvider) {
 		self.transport = transport
-		
+		self.secretsProvider = secretsProvider
+
 		var urlHostAllowed = CharacterSet.urlHostAllowed
 		urlHostAllowed.remove("+")
 		urlHostAllowed.remove("&")
@@ -693,8 +695,8 @@ private extension ReaderAPICaller {
 	
 	func addVariantHeaders(_ request: inout URLRequest) {
 		if variant == .inoreader {
-			request.addValue(SecretsManager.provider.inoreaderAppId, forHTTPHeaderField: "AppId")
-			request.addValue(SecretsManager.provider.inoreaderAppKey, forHTTPHeaderField: "AppKey")
+			request.addValue(secretsProvider.inoreaderAppId, forHTTPHeaderField: "AppId")
+			request.addValue(secretsProvider.inoreaderAppKey, forHTTPHeaderField: "AppKey")
 		}
 	}
 

@@ -29,7 +29,7 @@ class NewsBlurAccountViewController: UITableViewController {
 
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
-
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setupFooter()
@@ -105,7 +105,7 @@ class NewsBlurAccountViewController: UITableViewController {
 		disableNavigation()
 
 		let basicCredentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
-		Account.validateCredentials(type: .newsBlur, credentials: basicCredentials) { result in
+		Account.validateCredentials(type: .newsBlur, credentials: basicCredentials, secretsProvider: Secrets()) { result in
 
 			self.stopAnimatingActivityIndicator()
 			self.enableNavigation()
@@ -147,7 +147,6 @@ class NewsBlurAccountViewController: UITableViewController {
 			case .failure(let error):
 				self.showError(error.localizedDescription)
 			}
-
 		}
 	}
 	

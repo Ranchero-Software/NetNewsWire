@@ -108,6 +108,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	#endif
 	
 	private var themeImportPath: String?
+	private let secretsProvider = Secrets()
 
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
@@ -119,8 +120,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		crashReporter.enable()
 		#endif
 
-		SecretsManager.provider = Secrets()
-		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
+		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!, secretsProvider: secretsProvider)
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)

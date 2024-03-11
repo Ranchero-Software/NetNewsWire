@@ -657,7 +657,7 @@ private extension WebViewController {
 	
 	func startArticleExtractor() {
 		guard articleExtractor == nil else { return }
-		if let link = article?.preferredLink, let extractor = ArticleExtractor(link) {
+		if let link = article?.preferredLink, let extractor = ArticleExtractor(link, secretsProvider: Secrets()) {
 			extractor.delegate = self
 			extractor.process()
 			articleExtractor = extractor

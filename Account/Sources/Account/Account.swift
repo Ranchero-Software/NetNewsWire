@@ -258,7 +258,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.refreshProgress
 	}
 
-	init(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
+	init(dataFolder: String, type: AccountType, accountID: String, secretsProvider: SecretsProvider, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
@@ -267,17 +267,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .feedly:
-			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
+			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment, secretsProvider: secretsProvider)
 		case .newsBlur:
 			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .freshRSS:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .freshRSS)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .freshRSS, secretsProvider: secretsProvider)
 		case .inoreader:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .inoreader)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .inoreader, secretsProvider: secretsProvider)
 		case .bazQux:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .bazQux)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .bazQux, secretsProvider: secretsProvider)
 		case .theOldReader:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .theOldReader)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .theOldReader, secretsProvider: secretsProvider)
 		}
 
 		self.delegate.accountMetadata = metadata
@@ -367,29 +367,29 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		try CredentialsManager.removeCredentials(type: type, server: server, username: username)
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		switch type {
 		case .feedbin:
-			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, secretsProvider: secretsProvider, completion: completion)
 		case .newsBlur:
-			NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+			NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, secretsProvider: secretsProvider, completion: completion)
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
-			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
+			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider, completion: completion)
 		default:
 			break
 		}
 	}
 	
-	internal static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
+	internal static func oauthAuthorizationClient(for type: AccountType, secretsProvider: SecretsProvider) -> OAuthAuthorizationClient {
 		switch type {
 		case .feedly:
-			return FeedlyAccountDelegate.environment.oauthAuthorizationClient
+			return FeedlyAccountDelegate.environment.oauthAuthorizationClient(secretsProvider: secretsProvider)
 		default:
 			fatalError("\(type) is not a client for OAuth authorization code granting.")
 		}
 	}
 		
-	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType) -> URLRequest {
+	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType, secretsProvider: SecretsProvider) -> URLRequest {
 		let grantingType: OAuthAuthorizationGranting.Type
 		switch type {
 		case .feedly:
@@ -398,13 +398,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fatalError("\(type) does not support OAuth authorization code granting.")
 		}
 		
-		return grantingType.oauthAuthorizationCodeGrantRequest()
+		return grantingType.oauthAuthorizationCodeGrantRequest(secretsProvider: secretsProvider)
 	}
 	
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
 											   client: OAuthAuthorizationClient,
 											   accountType: AccountType,
 											   transport: Transport = URLSession.webserviceTransport(),
+											   secretsProvider: SecretsProvider,
 											   completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
 		let grantingType: OAuthAuthorizationGranting.Type
 		
@@ -415,7 +416,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}
 		
-		grantingType.requestOAuthAccessToken(with: response, transport: transport, completion: completion)
+		grantingType.requestOAuthAccessToken(with: response, transport: transport, secretsProvider: secretsProvider, completion: completion)
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {

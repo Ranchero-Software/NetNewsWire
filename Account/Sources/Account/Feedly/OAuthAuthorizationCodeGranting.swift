@@ -17,7 +17,7 @@ public struct OAuthAuthorizationClient: Equatable {
 	public var redirectUri: String
 	public var state: String?
 	public var secret: String
-	
+
 	public init(id: String, redirectUri: String, state: String?, secret: String) {
 		self.id = id
 		self.redirectUri = redirectUri
@@ -167,7 +167,7 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 
 protocol OAuthAuthorizationGranting: AccountDelegate {
 		
-	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
+	static func oauthAuthorizationCodeGrantRequest(secretsProvider: SecretsProvider) -> URLRequest
 	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, secretsProvider: SecretsProvider, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
 }

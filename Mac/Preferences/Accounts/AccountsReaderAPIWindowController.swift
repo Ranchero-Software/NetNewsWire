@@ -131,8 +131,8 @@ class AccountsReaderAPIWindowController: NSWindowController {
 		progressIndicator.startAnimation(self)
 		
 		let credentials = Credentials(type: .readerBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL) { [weak self] result in
-			
+		Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL, secretsProvider: Secrets()) { [weak self] result in
+
 			guard let self = self else { return }
 			
 			self.actionButton.isEnabled = true

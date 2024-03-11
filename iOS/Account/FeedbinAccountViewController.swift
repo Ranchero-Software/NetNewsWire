@@ -30,6 +30,8 @@ class FeedbinAccountViewController: UITableViewController {
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
 
+	var secretsProvider: SecretsProvider!
+
 	override func viewDidLoad() {
         super.viewDidLoad()
 		setupFooter()
@@ -120,7 +122,7 @@ class FeedbinAccountViewController: UITableViewController {
 		setNavigationEnabled(to: false)
 
 		let credentials = Credentials(type: .basic, username: trimmedEmail, secret: password)
-		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
+		Account.validateCredentials(type: .feedbin, credentials: credentials, secretsProvider: secretsProvider) { result in
 			self.toggleActivityIndicatorAnimation(visible: false)
 			self.setNavigationEnabled(to: true)
 			

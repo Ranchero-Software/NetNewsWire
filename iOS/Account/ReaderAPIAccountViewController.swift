@@ -157,7 +157,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 		disableNavigation()
 
 		let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: password)
-		Account.validateCredentials(type: type, credentials: credentials, endpoint: url) { result in
+		Account.validateCredentials(type: type, credentials: credentials, endpoint: url, secretsProvider: Secrets()) { result in
 
 			self.stopAnimatingActivityIndicator()
 			self.enableNavigation()
@@ -199,7 +199,6 @@ class ReaderAPIAccountViewController: UITableViewController {
 			case .failure(let error):
 				self.showError(error.localizedDescription)
 			}
-
 		}
 	}
 	

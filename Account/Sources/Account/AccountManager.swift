@@ -12,6 +12,7 @@ import RSWeb
 import Articles
 import ArticlesDatabase
 import Database
+import Secrets
 
 // Main thread only.
 
@@ -28,6 +29,8 @@ public final class AccountManager: UnreadCountProvider {
 
 	private let defaultAccountFolderName = "OnMyMac"
 	private let defaultAccountIdentifier = "OnMyMac"
+
+	private let secretsProvider: SecretsProvider
 
 	public var isSuspended = false
 	public var isUnreadCountsInitialized: Bool {
@@ -94,9 +97,11 @@ public final class AccountManager: UnreadCountProvider {
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
-	public init(accountsFolder: String) {
-		self.accountsFolder = accountsFolder
+	public init(accountsFolder: String, secretsProvider: SecretsProvider) {
 		
+		self.accountsFolder = accountsFolder
+		self.secretsProvider = secretsProvider
+
 		// The local "On My Mac" account must always exist, even if it's empty.
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
 		do {
@@ -107,7 +112,7 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 
-		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier, secretsProvider: secretsProvider)
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
@@ -134,7 +139,7 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 		
-		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID, secretsProvider: secretsProvider)
 		accountsDictionary[accountID] = account
 		
 		var userInfo = [String: Any]()
@@ -430,7 +435,7 @@ private extension AccountManager {
 	}
 
 	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
+		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier, secretsProvider: secretsProvider)
 	}
 
 	func loadAccount(_ filename: String) -> Account? {

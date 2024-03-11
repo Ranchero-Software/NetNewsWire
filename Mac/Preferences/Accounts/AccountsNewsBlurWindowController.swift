@@ -76,7 +76,7 @@ class AccountsNewsBlurWindowController: NSWindowController {
 		progressIndicator.startAnimation(self)
 
 		let credentials = Credentials(type: .newsBlurBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: .newsBlur, credentials: credentials) { [weak self] result in
+		Account.validateCredentials(type: .newsBlur, credentials: credentials, secretsProvider: Secrets()) { [weak self] result in
 
 			guard let self = self else { return }
 

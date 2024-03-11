@@ -34,15 +34,15 @@ class ArticleExtractor {
 	
     private var url: URL!
     
-    public init?(_ articleLink: String) {
+	public init?(_ articleLink: String, secretsProvider: SecretsProvider) {
 		self.articleLink = articleLink
 		
 		let clientURL = "https://extract.feedbin.com/parser"
-		let username = SecretsManager.provider.mercuryClientId
-		let signiture = articleLink.hmacUsingSHA1(key: SecretsManager.provider.mercuryClientSecret)
-		
+		let username = secretsProvider.mercuryClientId
+		let signature = articleLink.hmacUsingSHA1(key: secretsProvider.mercuryClientSecret)
+
 		if let base64URL = articleLink.data(using: .utf8)?.base64EncodedString() {
-			let fullURL = "\(clientURL)/\(username)/\(signiture)?base64_url=\(base64URL)"
+			let fullURL = "\(clientURL)/\(username)/\(signature)?base64_url=\(base64URL)"
 			if let url = URL(string: fullURL) {
 				self.url = url
 				return
