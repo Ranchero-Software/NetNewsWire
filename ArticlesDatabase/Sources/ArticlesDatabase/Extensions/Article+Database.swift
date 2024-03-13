@@ -108,11 +108,6 @@ extension Article {
 		return d.count < 1 ? nil : d
 	}
 
-//	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ accountID: String, _ feedID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
-//		let maximumDateAllowed = Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
-//		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
-//	}
-
 	private static func _maximumDateAllowed() -> Date {
 		return Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
 	}

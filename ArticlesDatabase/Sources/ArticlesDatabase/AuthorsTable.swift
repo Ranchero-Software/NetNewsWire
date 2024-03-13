@@ -20,13 +20,9 @@ import FMDB
 
 final class AuthorsTable: DatabaseRelatedObjectsTable {
 	
-	let name: String
+	let name = DatabaseTableName.authors
 	let databaseIDKey = DatabaseKey.authorID
 	var cache = DatabaseObjectCache()
-
-	init(name: String) {
-		self.name = name
-	}
 	
 	// MARK: - DatabaseRelatedObjectsTable
 

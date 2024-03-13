@@ -16,6 +16,7 @@ struct DatabaseTableName {
 	static let authors = "authors"
 	static let authorsLookup = "authorsLookup"
 	static let statuses = "statuses"
+	static let search = "search"
 }
 
 struct DatabaseKey {

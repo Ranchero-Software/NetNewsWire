@@ -77,34 +77,14 @@ final class ArticleSearchInfo: Hashable {
 	}
 }
 
-final class SearchTable: DatabaseTable {
+final class SearchTable {
 
-	let name = "search"
-	private let queue: DatabaseQueue
-	private weak var articlesTable: ArticlesTable?
-
-	init(queue: DatabaseQueue, articlesTable: ArticlesTable) {
-		self.queue = queue
-		self.articlesTable = articlesTable
-	}
-
-	func ensureIndexedArticles(for articleIDs: Set<String>) {
-		guard !articleIDs.isEmpty else {
-			return
-		}
-		queue.runInTransaction { databaseResult in
-			if let database = databaseResult.database {
-				self.ensureIndexedArticles(articleIDs, database)
-			}
-		}
-	}
+	let name = DatabaseTableName.search
 
 	/// Add to, or update, the search index for articles with specified IDs.
-	func ensureIndexedArticles(_ articleIDs: Set<String>, _ database: FMDatabase) {
-		guard let articlesTable = articlesTable else {
-			return
-		}
-		guard let articleSearchInfos = articlesTable.fetchArticleSearchInfos(articleIDs, in: database) else {
+	func ensureIndexedArticles(articleIDs: Set<String>, database: FMDatabase) {
+
+		guard let articleSearchInfos = fetchArticleSearchInfos(articleIDs: articleIDs, database: database) else {
 			return
 		}
 
@@ -117,13 +97,15 @@ final class SearchTable: DatabaseTable {
 
 	/// Index new articles.
 	func indexNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
+
 		let articleSearchInfos = Set(articles.map{ ArticleSearchInfo(article: $0) })
 		performInitialIndexForArticles(articleSearchInfos, database)
 	}
 
 	/// Index updated articles.
 	func indexUpdatedArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-		ensureIndexedArticles(articles.articleIDs(), database)
+
+		ensureIndexedArticles(articleIDs: articles.articleIDs(), database: database)
 	}
 }
 
@@ -132,17 +114,22 @@ final class SearchTable: DatabaseTable {
 private extension SearchTable {
 
 	func performInitialIndexForArticles(_ articles: Set<ArticleSearchInfo>, _ database: FMDatabase) {
-		articles.forEach { performInitialIndex($0, database) }
+
+		for article in articles {
+			performInitialIndex(article, database)
+		}
 	}
 
 	func performInitialIndex(_ article: ArticleSearchInfo, _ database: FMDatabase) {
+		
 		let rowid = insert(article, database)
-		articlesTable?.updateRowsWithValue(rowid, valueKey: DatabaseKey.searchRowID, whereKey: DatabaseKey.articleID, matches: [article.articleID], database: database)
+		database.updateRowsWithValue(rowid, valueKey: DatabaseKey.searchRowID, whereKey: DatabaseKey.articleID, equals: article.articleID, tableName: DatabaseTableName.articles)
 	}
 
 	func insert(_ article: ArticleSearchInfo, _ database: FMDatabase) -> Int {
+
 		let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.title ?? ""]
-		insertRow(rowDictionary, insertType: .normal, in: database)
+		database.insertRow(rowDictionary, insertType: .normal, tableName: name)
 		return Int(database.lastInsertRowId())
 	}
 
@@ -206,7 +193,7 @@ private extension SearchTable {
 		if article.bodyForIndex != searchInfo.body {
 			updateDictionary[DatabaseKey.body] = article.bodyForIndex
 		}
-		updateRowsWithDictionary(updateDictionary, whereKey: DatabaseKey.rowID, matches: searchInfo.rowID, database: database)
+		database.updateRowsWithDictionary(updateDictionary, whereKey: DatabaseKey.rowID, equals: searchInfo.rowID, tableName: name)
 	}
 
 	private func fetchSearchInfos(_ articles: Set<ArticleSearchInfo>, _ database: FMDatabase) -> Set<SearchInfo>? {
@@ -220,5 +207,53 @@ private extension SearchTable {
 			return nil
 		}
 		return resultSet.mapToSet { SearchInfo(row: $0) }
+	}
+
+	func fetchArticleSearchInfos(articleIDs: Set<String>, database: FMDatabase) -> Set<ArticleSearchInfo>? {
+
+		let parameters = articleIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+
+		guard let resultSet = database.executeQuery(articleSearchInfosQuery(with: placeholders), withArgumentsIn: parameters) else {
+			return nil
+		}
+
+		let articleSearchInfo = resultSet.mapToSet { (row) -> ArticleSearchInfo? in
+			let articleID = row.string(forColumn: DatabaseKey.articleID)!
+			let title = row.string(forColumn: DatabaseKey.title)
+			let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
+			let contentText = row.string(forColumn: DatabaseKey.contentText)
+			let summary = row.string(forColumn: DatabaseKey.summary)
+			let authorsNames = row.string(forColumn: DatabaseKey.authors)
+
+			let searchRowIDObject = row.object(forColumnName: DatabaseKey.searchRowID)
+			var searchRowID: Int? = nil
+			if searchRowIDObject != nil && !(searchRowIDObject is NSNull) {
+				searchRowID = Int(row.longLongInt(forColumn: DatabaseKey.searchRowID))
+			}
+
+			return ArticleSearchInfo(articleID: articleID, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, authorsNames: authorsNames, searchRowID: searchRowID)
+		}
+
+		return articleSearchInfo
+	}
+
+	private func articleSearchInfosQuery(with placeholders: String) -> String {
+		return """
+		SELECT
+			art.articleID,
+			art.title,
+			art.contentHTML,
+			art.contentText,
+			art.summary,
+			art.searchRowID,
+			(SELECT GROUP_CONCAT(name, ' ')
+				FROM authorsLookup as autL
+				JOIN authors as aut ON autL.authorID = aut.authorID
+				WHERE art.articleID = autL.articleID
+				GROUP BY autl.articleID) as authors
+		FROM articles as art
+		WHERE articleID in \(placeholders);
+		"""
 	}
 }

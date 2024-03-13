@@ -46,7 +46,47 @@ public extension FMDatabase {
 	func insertRows(_ dictionaries: [DatabaseDictionary], insertType: RSDatabaseInsertType, tableName: String) {
 
 		for dictionary in dictionaries {
-			_ = rs_insertRow(with: dictionary, insertType: insertType, tableName: tableName)
+			insertRow(dictionary, insertType: insertType, tableName: tableName)
 		}
+	}
+
+	func insertRow(_ dictionary: DatabaseDictionary, insertType: RSDatabaseInsertType, tableName: String) {
+
+		rs_insertRow(with: dictionary, insertType: insertType, tableName: tableName)
+	}
+
+	func updateRowsWithValue(_ value: Any, valueKey: String, whereKey: String, equalsAnyValue values: [Any], tableName: String) {
+
+		rs_updateRows(withValue: value, valueKey: valueKey, whereKey: whereKey, inValues: values, tableName: tableName)
+	}
+
+	func updateRowsWithValue(_ value: Any, valueKey: String, whereKey: String, equals match: Any, tableName: String) {
+
+		updateRowsWithValue(value, valueKey: valueKey, whereKey: whereKey, equalsAnyValue: [match], tableName: tableName)
+	}
+
+	func updateRowsWithDictionary(_ dictionary: [String: Any], whereKey: String, equals value: Any, tableName: String) {
+
+		rs_updateRows(with: dictionary, whereKey: whereKey, equalsValue: value, tableName: tableName)
+	}
+
+	func deleteRowsWhere(key: String, equalsAnyValue values: [Any], tableName: String) {
+
+		rs_deleteRowsWhereKey(key, inValues: values, tableName: tableName)
+	}
+
+	func selectRowsWhere(key: String, equalsAnyValue values: [Any], tableName: String) -> FMResultSet? {
+		
+		rs_selectRowsWhereKey(key, inValues: values, tableName: tableName)
+	}
+
+	func count(sql: String, parameters: [Any]?, tableName: String) -> Int? {
+
+		guard let resultSet = executeQuery(sql, withArgumentsIn: parameters) else {
+			return nil
+		}
+		
+		let count = resultSet.intWithCountResult()
+		return count
 	}
 }

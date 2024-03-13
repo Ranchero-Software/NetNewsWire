@@ -24,7 +24,6 @@ final class AccountMetadata: Codable {
 		case lastArticleFetchEndTime
 		case endpointURL
 		case externalID
-		case performedApril2020RetentionPolicyChange
 	}
 
 	var name: String? {
@@ -79,14 +78,6 @@ final class AccountMetadata: Codable {
 		didSet {
 			if endpointURL != oldValue {
 				valueDidChange(.endpointURL)
-			}
-		}
-	}
-
-	var performedApril2020RetentionPolicyChange: Bool? {
-		didSet {
-			if performedApril2020RetentionPolicyChange != oldValue {
-				valueDidChange(.performedApril2020RetentionPolicyChange)
 			}
 		}
 	}

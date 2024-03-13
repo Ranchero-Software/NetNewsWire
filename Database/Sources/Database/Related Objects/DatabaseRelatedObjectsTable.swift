@@ -11,8 +11,9 @@ import FMDB
 
 // Protocol for a database table for related objects — authors and attachments in NetNewsWire, for instance.
 
-public protocol DatabaseRelatedObjectsTable: DatabaseTable {
+public protocol DatabaseRelatedObjectsTable {
 
+	var name: String { get }
 	var databaseIDKey: String { get}
 	var cache: DatabaseObjectCache { get }
 	
@@ -49,7 +50,7 @@ public extension DatabaseRelatedObjectsTable {
 			return cachedObjects
 		}
 
-		guard let resultSet = selectRowsWhere(key: databaseIDKey, inValues: Array(databaseIDsToFetch), in: database) else {
+		guard let resultSet = database.selectRowsWhere(key: databaseIDKey, equalsAnyValue: Array(databaseIDsToFetch), tableName: name) else {
 			return cachedObjects
 		}
 
@@ -76,7 +77,7 @@ public extension DatabaseRelatedObjectsTable {
 
 		cache.add(objectsToSave)
 		if let databaseDictionaries = objectsToSave.databaseDictionaries() {
-			insertRows(databaseDictionaries, insertType: .orIgnore, in: database)
+			database.insertRows(databaseDictionaries, insertType: .orIgnore, tableName: name)
 		}
 	}
 

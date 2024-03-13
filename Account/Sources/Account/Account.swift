@@ -321,21 +321,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feedMetadataFile.load()
 		opmlFile.load()
 
-		var shouldHandleRetentionPolicyChange = false
-		if type == .onMyMac {
-			let didHandlePolicyChange = metadata.performedApril2020RetentionPolicyChange ?? false
-			shouldHandleRetentionPolicyChange = !didHandlePolicyChange
-		}
+		Task {
+			await self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
 
-		DispatchQueue.main.async {
-			if shouldHandleRetentionPolicyChange {
-				// Handle one-time database changes made necessary by April 2020 retention policy change.
-				self.database.performApril2020RetentionPolicyChange()
-				self.metadata.performedApril2020RetentionPolicyChange = true
+			Task { @MainActor in
+				self.fetchAllUnreadCounts()
 			}
-
-			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
-			self.fetchAllUnreadCounts()
 		}
 
 		self.delegate.accountDidInitialize(self)
@@ -884,7 +875,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
 	func emptyCaches() {
-		database.emptyCaches()
+
+		Task.detached {
+			await self.database.emptyCaches()
+		}
 	}
 
 	// MARK: - Container

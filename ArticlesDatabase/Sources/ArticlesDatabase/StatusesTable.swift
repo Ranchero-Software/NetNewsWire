@@ -16,24 +16,20 @@ import FMDB
 //
 // CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 
-final class StatusesTable: DatabaseTable {
+final class StatusesTable {
 
 	let name = DatabaseTableName.statuses
 	private let cache = StatusCache()
-	private let queue: DatabaseQueue
-	
-	init(queue: DatabaseQueue) {
-		self.queue = queue
-	}
 
 	// MARK: - Creating/Updating
 
+	@discardableResult
 	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ read: Bool, _ database: FMDatabase) -> ([String: ArticleStatus], Set<String>) {
 
 		#if DEBUG
 		// Check for missing statuses  — this asserts that all the passed-in articleIDs exist in the statuses table.
 		defer {
-			if let resultSet = self.selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) {
+			if let resultSet = database.selectRowsWhere(key: DatabaseKey.articleID, equalsAnyValue: Array(articleIDs), tableName: name) {
 				let fetchedStatuses = resultSet.mapToSet(statusWithRow)
 				let fetchedArticleIDs = Set(fetchedStatuses.map{ $0.articleID })
 				assert(fetchedArticleIDs == articleIDs)
@@ -94,96 +90,29 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: - Fetching
 
-	func fetchUnreadArticleIDs() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses where read=0;")
-	}
+	func articleIDs(key: ArticleStatus.Key, value: Bool, database: FMDatabase) -> Set<String>? {
 
-	func fetchStarredArticleIDs() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses where starred=1;")
-	}
-	
-	func fetchArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ value: Bool, _ completion: @escaping ArticleIDsCompletionBlock) {
-		queue.runInDatabase { databaseResult in
+		var sql = "select articleID from statuses where \(key.rawValue)="
+		sql += value ? "1" : "0"
+		sql += ";"
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				var sql = "select articleID from statuses where \(statusKey.rawValue)="
-				sql += value ? "1" : "0"
-				sql += ";"
-
-				guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-					DispatchQueue.main.async {
-						completion(.success(Set<String>()))
-					}
-					return
-				}
-
-				let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
-				DispatchQueue.main.async {
-					completion(.success(articleIDs))
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
-			}
-		}
-	}
-
-	func fetchArticleIDsForStatusesWithoutArticlesNewerThan(_ cutoffDate: Date, _ completion: @escaping ArticleIDsCompletionBlock) {
-		queue.runInDatabase { databaseResult in
-			
-			var error: DatabaseError?
-			var articleIDs = Set<String>()
-			
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
-				if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
-					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
-				}
-			}
-			
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-			case .failure(let databaseError):
-				error = databaseError
-			}
-			
-			if let error = error {
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			else {
-				DispatchQueue.main.async {
-					completion(.success(articleIDs))
-				}
-			}
-		}
-	}
-	
-	func fetchArticleIDs(_ sql: String) throws -> Set<String> {
-		var error: DatabaseError?
-		var articleIDs = Set<String>()
-		queue.runInDatabaseSync { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
-					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
-				}
-			case .failure(let databaseError):
-				error = databaseError
-			}
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
+			return nil
 		}
 
-		if let error = error {
-			throw(error)
+		let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
+		return articleIDs
+	}
+
+
+	func articleIDsForStatusesWithoutArticlesNewerThan(cutoffDate: Date, database: FMDatabase) -> Set<String>? {
+
+		let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
+			return nil
 		}
+
+		let articleIDs = resultSet.mapToSet(articleIDWithRow)
 		return articleIDs
 	}
 	
@@ -228,7 +157,8 @@ final class StatusesTable: DatabaseTable {
 	// MARK: - Cleanup
 
 	func removeStatuses(_ articleIDs: Set<String>, _ database: FMDatabase) {
-		deleteRowsWhere(key: DatabaseKey.articleID, equalsAnyValue: Array(articleIDs), in: database)
+		
+		database.deleteRowsWhere(key: DatabaseKey.articleID, equalsAnyValue: Array(articleIDs), tableName: name)
 	}
 }
 
@@ -246,7 +176,7 @@ private extension StatusesTable {
 
 	func saveStatuses(_ statuses: Set<ArticleStatus>, _ database: FMDatabase) {
 		let statusArray = statuses.map { $0.databaseDictionary()! }
-		self.insertRows(statusArray, insertType: .orIgnore, in: database)
+		database.insertRows(statusArray, insertType: .orIgnore, tableName: name)
 	}
 
 	func createAndSaveStatusesForArticleIDs(_ articleIDs: Set<String>, _ read: Bool, _ database: FMDatabase) {
@@ -258,7 +188,7 @@ private extension StatusesTable {
 	}
 
 	func fetchAndCacheStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) {
-		guard let resultSet = self.selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) else {
+		guard let resultSet = database.selectRowsWhere(key: DatabaseKey.articleID, equalsAnyValue: Array(articleIDs), tableName: name) else {
 			return
 		}
 		
@@ -269,7 +199,8 @@ private extension StatusesTable {
 	// MARK: - Marking
 
 	func markArticleIDs(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) {
-		updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey.rawValue, whereKey: DatabaseKey.articleID, matches: Array(articleIDs), database: database)
+
+		database.updateRowsWithValue(NSNumber(value: flag), valueKey: statusKey.rawValue, whereKey: DatabaseKey.articleID, equalsAnyValue: Array(articleIDs), tableName: name)
 	}
 }
 
