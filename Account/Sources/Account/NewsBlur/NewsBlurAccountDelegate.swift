@@ -55,7 +55,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			caller = NewsBlurAPICaller(transport: session)
 		}
 
-		database = SyncDatabase(databaseFilePath: dataFolder.appending("/DB.sqlite3"))
+		database = SyncDatabase(databasePath: dataFolder.appending("/DB.sqlite3"))
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {

@@ -95,8 +95,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			self.caller = FeedlyAPICaller(transport: session, api: api, secretsProvider: secretsProvider)
 		}
 				
-		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
+		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
+		self.database = SyncDatabase(databasePath: databasePath)
 		self.oauthAuthorizationClient = api.oauthAuthorizationClient(secretsProvider: secretsProvider)
 		
 		self.caller.delegate = self
@@ -554,13 +554,17 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+		Task {
+			await database.suspend()
+		}
 	}
 	
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
-		database.resume()
-		caller.resume()
+		Task {
+			await database.resume()
+			caller.resume()
+		}
 	}
 }
 

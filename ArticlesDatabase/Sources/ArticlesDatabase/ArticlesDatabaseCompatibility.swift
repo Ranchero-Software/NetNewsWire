@@ -16,19 +16,19 @@ import Articles
 // It will go away as we adopt structured concurrency.
 
 public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary,DatabaseError>
-public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCompletionResult) -> Void
+public typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionaryCompletionResult) -> Void
 
 public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
-public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) -> Void
+public typealias SingleUnreadCountCompletionBlock = @Sendable (SingleUnreadCountResult) -> Void
 
 public typealias UpdateArticlesResult = Result<ArticleChanges, DatabaseError>
-public typealias UpdateArticlesCompletionBlock = (UpdateArticlesResult) -> Void
+public typealias UpdateArticlesCompletionBlock = @Sendable (UpdateArticlesResult) -> Void
 
 public typealias ArticleSetResult = Result<Set<Article>, DatabaseError>
 public typealias ArticleSetResultBlock = (ArticleSetResult) -> Void
 
 public typealias ArticleIDsResult = Result<Set<String>, DatabaseError>
-public typealias ArticleIDsCompletionBlock = (ArticleIDsResult) -> Void
+public typealias ArticleIDsCompletionBlock = @Sendable (ArticleIDsResult) -> Void
 
 public typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseError>
 public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void

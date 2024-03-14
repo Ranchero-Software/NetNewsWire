@@ -102,7 +102,7 @@ public actor SyncDatabase {
 #endif
 	}
 
-	func resume() {
+	public func resume() {
 #if os(iOS)
 		if database == nil {
 			self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)

@@ -296,13 +296,17 @@ extension NewsBlurAccountDelegate {
 			apiCall(storyHashGroup) { result in
 				switch result {
 				case .success:
-					self.database.deleteSelectedForProcessing(storyHashGroup.map { String($0) } )
-					group.leave()
+					Task {
+						try? await self.database.deleteSelectedForProcessing(storyHashGroup.map { String($0) } )
+						group.leave()
+					}
 				case .failure(let error):
 					errorOccurred = true
 					os_log(.error, log: self.log, "Story status sync call failed: %@.", error.localizedDescription)
-					self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
-					group.leave()
+					Task {
+						try? await self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
+						group.leave()
+					}
 				}
 			}
 		}
