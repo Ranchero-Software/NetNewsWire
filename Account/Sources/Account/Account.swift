@@ -286,9 +286,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.type = type
 		self.dataFolder = dataFolder
 
-		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
+		let databasePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
 		let retentionStyle: ArticlesDatabase.RetentionStyle = (type == .onMyMac || type == .cloudKit) ? .feedBased : .syncSystem
-		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID, retentionStyle: retentionStyle)
+		self.database = ArticlesDatabase(databasePath: databasePath, accountID: accountID, retentionStyle: retentionStyle)
 
 		switch type {
 		case .onMyMac:
@@ -322,7 +322,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		opmlFile.load()
 
 		Task {
-			await self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
+			try? await self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
 
 			Task { @MainActor in
 				self.fetchAllUnreadCounts()
