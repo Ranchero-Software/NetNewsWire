@@ -631,12 +631,18 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+		
+		Task {
+			await database.suspend()
+		}
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
-		caller.resume()
-		database.resume()
+
+		Task {
+			caller.resume()
+			await database.resume()
+		}
 	}
 }

@@ -47,9 +47,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	init(dataFolder: String, transport: Transport?) {
 		
-		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databaseFilePath: databaseFilePath)
-		
+		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
+		database = SyncDatabase(databasePath: databasePath)
+
 		if transport != nil {
 			
 			caller = FeedbinAPICaller(transport: transport!)

@@ -43,10 +43,12 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 					case .success(let pendingStarredStatusArticleIDs):
 
 						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-							self.update(records: changed,
-										 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-										 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-										 completion: completion)
+							Task { @MainActor in
+								self.update(records: changed,
+											 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+											 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+											 completion: completion)
+							}
 						}
 						
 					case .failure(let error):
@@ -58,11 +60,8 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 				os_log(.error, log: self.log, "Error occurred getting pending read status records: %@", error.localizedDescription)
 				completion(.failure(CloudKitZoneError.unknown))
 			}
-
 		}
-		
 	}
-	
 }
 
 private extension CloudKitArticlesZoneDelegate {
@@ -84,7 +83,7 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 	}
 
-	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ stripPrefix($0.externalID) }))
 		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ stripPrefix($0.externalID) }))
@@ -101,40 +100,48 @@ private extension CloudKitArticlesZoneDelegate {
 		
 		group.enter()
 		account?.markAsUnread(updateableUnreadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", databaseError.localizedDescription)
+			MainActor.assumeIsolated {
+				if case .failure(let databaseError) = result {
+					errorOccurred = true
+					os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", databaseError.localizedDescription)
+				}
+				group.leave()
 			}
-			group.leave()
 		}
-		
+
 		group.enter()
 		account?.markAsRead(updateableReadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", databaseError.localizedDescription)
+			MainActor.assumeIsolated {
+				if case .failure(let databaseError) = result {
+					errorOccurred = true
+					os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", databaseError.localizedDescription)
+				}
+				group.leave()
 			}
-			group.leave()
 		}
-		
+
 		group.enter()
 		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", databaseError.localizedDescription)
+			MainActor.assumeIsolated {
+				if case .failure(let databaseError) = result {
+					errorOccurred = true
+					os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", databaseError.localizedDescription)
+				}
+				group.leave()
 			}
-			group.leave()
 		}
-		
+
 		group.enter()
 		account?.markAsStarred(updateableStarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", databaseError.localizedDescription)
+			MainActor.assumeIsolated {
+				if case .failure(let databaseError) = result {
+					errorOccurred = true
+					os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", databaseError.localizedDescription)
+				}
+				group.leave()
 			}
-			group.leave()
 		}
-		
+
 		group.enter()
 		compressionQueue.async {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
@@ -144,26 +151,27 @@ private extension CloudKitArticlesZoneDelegate {
 				for (feedID, parsedItems) in feedIDsAndItems {
 					group.enter()
 					self.account?.update(feedID, with: parsedItems, deleteOlder: false) { result in
-						switch result {
-						case .success(let articleChanges):
-							guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
+						MainActor.assumeIsolated {
+							switch result {
+							case .success(let articleChanges):
+								guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
+									group.leave()
+									return
+								}
+								let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
+								self.database.insertStatuses(syncStatuses) { _ in
+									group.leave()
+								}
+							case .failure(let databaseError):
+								errorOccurred = true
+								os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
 								group.leave()
-								return
 							}
-							let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
-							self.database.insertStatuses(syncStatuses) { _ in
-								group.leave()
-							}
-						case .failure(let databaseError):
-							errorOccurred = true
-							os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
-							group.leave()
 						}
+						group.leave()
 					}
 				}
-				group.leave()
 			}
-			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {

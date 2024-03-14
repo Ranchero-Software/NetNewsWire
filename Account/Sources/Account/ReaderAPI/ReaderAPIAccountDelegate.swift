@@ -75,9 +75,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
 	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant, secretsProvider: SecretsProvider) {
-		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databaseFilePath: databaseFilePath)
-		
+		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
+		database = SyncDatabase(databasePath: databasePath)
+
 		if transport != nil {
 			caller = ReaderAPICaller(transport: transport!, secretsProvider: secretsProvider)
 		} else {
