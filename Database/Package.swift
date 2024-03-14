@@ -19,10 +19,10 @@ let package = Package(
 			name: "Database",
 			dependencies: [
 				"FMDB"
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
 			]
-//			swiftSettings: [
-//				.enableExperimentalFeature("StrictConcurrency")
-//			]
 		),
 		.testTarget(
 			name: "DatabaseTests",
