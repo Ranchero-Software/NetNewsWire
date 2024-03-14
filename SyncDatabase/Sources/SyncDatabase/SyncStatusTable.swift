@@ -12,48 +12,11 @@ import Articles
 import Database
 import FMDB
 
-actor SyncStatusTable {
+struct SyncStatusTable {
 
-	static private let tableName = "syncStatus"
+	static private let name = "syncStatus"
 
-	private var database: FMDatabase?
-	private let databasePath: String
-
-	init(databasePath: String) {
-
-		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
-		database.runCreateStatements(SyncStatusTable.creationStatements)
-		database.vacuum()
-
-		self.database = database
-		self.databasePath = databasePath
-	}
-
-	func suspend() {
-#if os(iOS)
-		database?.close()
-		database = nil
-#endif
-	}
-
-	func resume() {
-#if os(iOS)
-		if database == nil {
-			self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
-		}
-#endif
-	}
-
-	func close() {
-		
-		database?.close()
-	}
-
-	func selectForProcessing(limit: Int?) throws -> Set<SyncStatus>? {
-
-		guard let database else {
-			throw DatabaseError.suspended
-		}
+	func selectForProcessing(limit: Int?, database: FMDatabase) -> Set<SyncStatus>? {
 
 		let updateSQL = "update syncStatus set selected = true"
 		database.executeUpdateInTransaction(updateSQL, withArgumentsIn: nil)
@@ -73,11 +36,7 @@ actor SyncStatusTable {
 		return statuses
 	}
 
-	func selectPendingCount() throws -> Int? {
-
-		guard let database else {
-			throw DatabaseError.suspended
-		}
+	func selectPendingCount(database: FMDatabase) -> Int? {
 
 		let sql = "select count(*) from syncStatus"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
@@ -88,31 +47,26 @@ actor SyncStatusTable {
 		return count
 	}
 
-	func selectPendingReadStatusArticleIDs() throws -> Set<String>? {
-		try selectPendingArticleIDs(.read)
+	func selectPendingReadStatusArticleIDs(database: FMDatabase) -> Set<String>? {
+
+		selectPendingArticleIDs(.read, database: database)
 	}
 
-	func selectPendingStarredStatusArticleIDs() throws -> Set<String>? {
-		try selectPendingArticleIDs(.starred)
+	func selectPendingStarredStatusArticleIDs(database: FMDatabase) -> Set<String>? {
+
+		selectPendingArticleIDs(.starred, database: database)
 	}
 
-	func resetAllSelectedForProcessing() throws {
-
-		guard let database else {
-			throw DatabaseError.suspended
-		}
+	func resetAllSelectedForProcessing(database: FMDatabase) {
 
 		let updateSQL = "update syncStatus set selected = false"
 		database.executeUpdateInTransaction(updateSQL, withArgumentsIn: nil)
 	}
 
-	func resetSelectedForProcessing(_ articleIDs: [String]) throws {
+	func resetSelectedForProcessing(_ articleIDs: [String], database: FMDatabase) {
 
 		guard !articleIDs.isEmpty else {
 			return
-		}
-		guard let database else {
-			throw DatabaseError.suspended
 		}
 
 		let parameters = articleIDs.map { $0 as AnyObject }
@@ -122,13 +76,10 @@ actor SyncStatusTable {
 		database.executeUpdateInTransaction(updateSQL, withArgumentsIn: parameters)
 	}
 
-	func deleteSelectedForProcessing(_ articleIDs: [String]) throws {
+	func deleteSelectedForProcessing(_ articleIDs: [String], database: FMDatabase) {
 
 		guard !articleIDs.isEmpty else {
 			return
-		}
-		guard let database else {
-			throw DatabaseError.suspended
 		}
 
 		let parameters = articleIDs.map { $0 as AnyObject }
@@ -138,26 +89,18 @@ actor SyncStatusTable {
 		database.executeUpdateInTransaction(deleteSQL, withArgumentsIn: parameters)
 	}
 
-	func insertStatuses(_ statuses: [SyncStatus]) throws {
-
-		guard let database else {
-			throw DatabaseError.suspended
-		}
+	func insertStatuses(_ statuses: [SyncStatus], database: FMDatabase) {
 
 		database.beginTransaction()
 
 		let statusArray = statuses.map { $0.databaseDictionary() }
-		database.insertRows(statusArray, insertType: .orReplace, tableName: Self.tableName)
+		database.insertRows(statusArray, insertType: .orReplace, tableName: Self.name)
 
 		database.commit()
 	}
 }
 
 private extension SyncStatusTable {
-
-	static let creationStatements = """
-	CREATE TABLE if not EXISTS syncStatus (articleID TEXT NOT NULL, key TEXT NOT NULL, flag BOOL NOT NULL DEFAULT 0, selected BOOL NOT NULL DEFAULT 0, PRIMARY KEY (articleID, key));
-	"""
 
 	func statusWithRow(_ row: FMResultSet) -> SyncStatus? {
 
@@ -173,11 +116,7 @@ private extension SyncStatusTable {
 		return SyncStatus(articleID: articleID, key: key, flag: flag, selected: selected)
 	}
 
-	func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key) throws -> Set<String>? {
-
-		guard let database else {
-			throw DatabaseError.suspended
-		}
+	func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key, database: FMDatabase) -> Set<String>? {
 
 		let sql = "select articleID from syncStatus where selected == false and key = \"\(statusKey.rawValue)\";"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
