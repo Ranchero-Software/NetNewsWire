@@ -645,31 +645,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		fetchUnreadCounts(for: feeds, completion: completion)
 	}
 
-	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
-		switch fetchType {
-		case .starred(let limit):
-			return try fetchStarredArticles(limit: limit)
-		case .unread(let limit):
-			return try fetchUnreadArticles(limit: limit)
-		case .today(let limit):
-			return try fetchTodayArticles(limit: limit)
-		case .folder(let folder, let readFilter):
-			if readFilter {
-				return try fetchUnreadArticles(folder: folder)
-			} else {
-				return try fetchArticles(folder: folder)
-			}
-		case .feed(let feed):
-			return try fetchArticles(feed: feed)
-		case .articleIDs(let articleIDs):
-			return try fetchArticles(articleIDs: articleIDs)
-		case .search(let searchString):
-			return try fetchArticlesMatching(searchString)
-		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return try fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
-		}
-	}
-
 	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
 		switch fetchType {
 		case .starred(let limit):
@@ -934,11 +909,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func debugRunSearch() {
 		#if DEBUG
+		Task {
 			let t1 = Date()
-			let articles = try! fetchArticlesMatching("Brent NetNewsWire")
+			let articles = try! await fetchArticlesMatching("Brent NetNewsWire")
 			let t2 = Date()
 			print(t2.timeIntervalSince(t1))
 			print(articles.count)
+		}
 		#endif
 	}
 
@@ -1022,50 +999,24 @@ extension Account: FeedMetadataDelegate {
 
 private extension Account {
 
-	func fetchStarredArticles(limit: Int?) throws -> Set<Article> {
-		return try database.fetchStarredArticles(flattenedFeeds().feedIDs(), limit)
-	}
-
 	func fetchStarredArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchedStarredArticlesAsync(flattenedFeeds().feedIDs(), limit, completion)
-	}
-
-	func fetchUnreadArticles(limit: Int?) throws -> Set<Article> {
-		return try fetchUnreadArticles(forContainer: self, limit: limit)
 	}
 
 	func fetchUnreadArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		fetchUnreadArticlesAsync(forContainer: self, limit: limit, completion)
 	}
 
-	func fetchTodayArticles(limit: Int?) throws -> Set<Article> {
-		return try database.fetchTodayArticles(flattenedFeeds().feedIDs(), limit)
-	}
-
 	func fetchTodayArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchTodayArticlesAsync(flattenedFeeds().feedIDs(), limit, completion)
-	}
-
-	func fetchArticles(folder: Folder) throws -> Set<Article> {
-		return try fetchArticles(forContainer: folder)
 	}
 
 	func fetchArticlesAsync(folder: Folder, _ completion: @escaping ArticleSetResultBlock) {
 		fetchArticlesAsync(forContainer: folder, completion)
 	}
 
-	func fetchUnreadArticles(folder: Folder) throws -> Set<Article> {
-		return try fetchUnreadArticles(forContainer: folder, limit: nil)
-	}
-
 	func fetchUnreadArticlesAsync(folder: Folder, _ completion: @escaping ArticleSetResultBlock) {
 		fetchUnreadArticlesAsync(forContainer: folder, limit: nil, completion)
-	}
-
-	func fetchArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchArticles(feed.feedID)
-		validateUnreadCount(feed, articles)
-		return articles
 	}
 
 	func fetchArticlesAsync(feed: Feed, _ completion: @escaping ArticleSetResultBlock) {
@@ -1080,14 +1031,12 @@ private extension Account {
 		}
 	}
 
-	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
-		return try database.fetchArticlesMatching(searchString, flattenedFeeds().feedIDs())
+	func fetchArticlesMatching(_ searchString: String) async throws -> Set<Article> {
+
+		let feedIDs = flattenedFeeds().feedIDs()
+		return try await database.articlesMatching(searchString: searchString, feedIDs: feedIDs)
 	}
 
-	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
-		return try database.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
-	}
-	
 	func fetchArticlesMatchingAsync(_ searchString: String, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs(), completion)
 	}
@@ -1096,25 +1045,8 @@ private extension Account {
 		database.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
 	}
 
-	func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
-		return try database.fetchArticles(articleIDs: articleIDs)
-	}
-
 	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
 		return database.fetchArticlesAsync(articleIDs: articleIDs, completion)
-	}
-
-	func fetchUnreadArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchUnreadArticles(Set([feed.feedID]), nil)
-		validateUnreadCount(feed, articles)
-		return articles
-	}
-
-	func fetchArticles(forContainer container: Container) throws -> Set<Article> {
-		let feeds = container.flattenedFeeds()
-		let articles = try database.fetchArticles(feeds.feedIDs())
-		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-		return articles
 	}
 
 	func fetchArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
@@ -1128,19 +1060,6 @@ private extension Account {
 				completion(.failure(databaseError))
 			}
 		}
-	}
-
-	func fetchUnreadArticles(forContainer container: Container, limit: Int?) throws -> Set<Article> {
-		let feeds = container.flattenedFeeds()
-		let articles = try database.fetchUnreadArticles(feeds.feedIDs(), limit)
-		
-		// We don't validate limit queries because they, by definition, won't correctly match the
-		// complete unread state for the given container.
-		if limit == nil {
-			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-		}
-		
-		return articles
 	}
 
 	func fetchUnreadArticlesAsync(forContainer container: Container, limit: Int?, _ completion: @escaping ArticleSetResultBlock) {

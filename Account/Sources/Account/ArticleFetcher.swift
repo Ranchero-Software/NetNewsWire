@@ -12,18 +12,12 @@ import ArticlesDatabase
 
 public protocol ArticleFetcher {
 
-	func fetchArticles() throws -> Set<Article>
 	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
-	func fetchUnreadArticles() throws -> Set<Article>
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
 }
 
 extension Feed: ArticleFetcher {
 	
-	public func fetchArticles() throws -> Set<Article> {
-		return try account?.fetchArticles(.feed(self)) ?? Set<Article>()
-	}
-
 	public func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		guard let account = account else {
 			assertionFailure("Expected feed.account, but got nil.")
@@ -31,10 +25,6 @@ extension Feed: ArticleFetcher {
 			return
 		}
 		account.fetchArticlesAsync(.feed(self), completion)
-	}
-
-	public func fetchUnreadArticles() throws -> Set<Article> {
-		return try fetchArticles().unreadArticles()
 	}
 
 	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
@@ -56,14 +46,6 @@ extension Feed: ArticleFetcher {
 
 extension Folder: ArticleFetcher {
 	
-	public func fetchArticles() throws -> Set<Article> {
-		guard let account = account else {
-			assertionFailure("Expected folder.account, but got nil.")
-			return Set<Article>()
-		}
-		return try account.fetchArticles(.folder(self, false))
-	}
-
 	public func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		guard let account = account else {
 			assertionFailure("Expected folder.account, but got nil.")
@@ -71,14 +53,6 @@ extension Folder: ArticleFetcher {
 			return
 		}
 		account.fetchArticlesAsync(.folder(self, false), completion)
-	}
-
-	public func fetchUnreadArticles() throws -> Set<Article> {
-		guard let account = account else {
-			assertionFailure("Expected folder.account, but got nil.")
-			return Set<Article>()
-		}
-		return try account.fetchArticles(.folder(self, true))
 	}
 
 	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {

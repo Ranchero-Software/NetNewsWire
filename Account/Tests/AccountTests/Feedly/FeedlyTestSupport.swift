@@ -61,7 +61,7 @@ class FeedlyTestSupport {
 		init() {
 			let dataFolder = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 			path = dataFolder.appendingPathComponent("\(UUID().uuidString)-Sync.sqlite3").path
-			database = SyncDatabase(databaseFilePath: path)
+			database = SyncDatabase(databasePath: path)
 		}
 		
 		deinit {

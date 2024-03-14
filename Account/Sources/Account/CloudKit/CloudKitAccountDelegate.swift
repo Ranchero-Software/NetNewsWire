@@ -64,8 +64,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		accountZone = CloudKitAccountZone(container: container)
 		articlesZone = CloudKitArticlesZone(container: container)
 		
-		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databaseFilePath: databaseFilePath)
+		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
+		database = SyncDatabase(databasePath: databasePath)
 	}
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
@@ -427,8 +427,10 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress, articlesZone: articlesZone)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
 		
-		database.resetAllSelectedForProcessing()
-		
+		Task {
+			try await database.resetAllSelectedForProcessing()
+		}
+
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
 			accountZone.findOrCreateAccount() { result in
@@ -443,7 +445,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			accountZone.subscribeToZoneChanges()
 			articlesZone.subscribeToZoneChanges()
 		}
-		
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
@@ -458,16 +459,24 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	// MARK: Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
+		
 		refresher.suspend()
 	}
 
 	func suspendDatabase() {
-		database.suspend()
+
+		Task {
+			await database.suspend()
+		}
 	}
 	
 	func resume() {
+
 		refresher.resume()
-		database.resume()
+
+		Task {
+			await database.resume()
+		}
 	}
 }
 

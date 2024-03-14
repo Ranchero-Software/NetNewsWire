@@ -84,16 +84,8 @@ final class SmartFeed: PseudoFeed {
 
 extension SmartFeed: ArticleFetcher {
 
-	func fetchArticles() throws -> Set<Article> {
-		return try delegate.fetchArticles()
-	}
-
 	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		delegate.fetchArticlesAsync(completion)
-	}
-
-	func fetchUnreadArticles() throws -> Set<Article> {
-		return try delegate.fetchUnreadArticles()
 	}
 
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {

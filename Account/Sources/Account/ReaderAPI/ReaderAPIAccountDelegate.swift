@@ -661,12 +661,18 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+
+		Task {
+			await database.suspend()
+		}
 	}
 	
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
-		database.resume()
+
+		Task {
+			await database.resume()
+		}
 	}
 }
 
@@ -885,12 +891,16 @@ private extension ReaderAPIAccountDelegate {
 			apiCall(articleIDGroup) { result in
 				switch result {
 				case .success:
-					self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
-					group.leave()
+					Task {
+						try? await self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
+						group.leave()
+					}
 				case .failure(let error):
 					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
-					self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
-					group.leave()
+					Task {
+						try? await self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
+						group.leave()
+					}
 				}
 			}
 			

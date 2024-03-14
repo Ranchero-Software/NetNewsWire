@@ -60,7 +60,7 @@ struct SyncStatusTable {
 	func resetAllSelectedForProcessing(database: FMDatabase) {
 
 		let updateSQL = "update syncStatus set selected = false"
-		database.executeUpdateInTransaction(updateSQL, withArgumentsIn: nil)
+		database.executeUpdateInTransaction(updateSQL)
 	}
 
 	func resetSelectedForProcessing(_ articleIDs: [String], database: FMDatabase) {

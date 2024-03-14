@@ -344,17 +344,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
 
-	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
-		precondition(Thread.isMainThread)
-
-		var articles = Set<Article>()
-		for account in activeAccounts {
-			articles.formUnion(try account.fetchArticles(fetchType))
-		}
-		return articles
-	}
-
-    public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
+	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
         precondition(Thread.isMainThread)
         
         guard activeAccounts.count > 0 else {

@@ -21,7 +21,7 @@ public extension FMDatabase {
 		return database
 	}
 
-	func executeUpdateInTransaction(_ sql : String, withArgumentsIn parameters: [Any]?) {
+	func executeUpdateInTransaction(_ sql : String, withArgumentsIn parameters: [Any]? = nil) {
 
 		beginTransaction()
 		executeUpdate(sql, withArgumentsIn: parameters)

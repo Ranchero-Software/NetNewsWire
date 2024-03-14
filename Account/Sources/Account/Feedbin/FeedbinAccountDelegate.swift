@@ -604,13 +604,19 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+
+		Task {
+			await database.suspend()
+		}
 	}
 	
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
+
 		caller.resume()
-		database.resume()
+		Task {
+			await database.resume()
+		}
 	}
 }
 
@@ -957,13 +963,17 @@ private extension FeedbinAccountDelegate {
 			apiCall(articleIDGroup) { result in
 				switch result {
 				case .success:
-					self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
-					group.leave()
+					Task {
+						try? await self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
+						group.leave()
+					}
 				case .failure(let error):
 					errorOccurred = true
 					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
-					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
-					group.leave()
+					Task {
+						try? await self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
+						group.leave()
+					}
 				}
 			}
 			
@@ -976,7 +986,6 @@ private extension FeedbinAccountDelegate {
 				completion(.success(()))
 			}
 		}
-		
 	}
 	
 	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
