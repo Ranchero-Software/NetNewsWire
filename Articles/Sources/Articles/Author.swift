@@ -33,7 +33,7 @@ public struct Author: Codable, Hashable {
 			s += url ?? ""
 			s += avatarURL ?? ""
 			s += emailAddress ?? ""
-			self.authorID = databaseIDWithString(s)
+			self.authorID = DatabaseIDCache.shared.databaseIDWithString(s)
 		}
 	}
 

@@ -53,7 +53,7 @@ public struct Article: Hashable {
 	}
 
 	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
-		return databaseIDWithString("\(feedID) \(uniqueID)")
+		return DatabaseIDCache.shared.databaseIDWithString("\(feedID) \(uniqueID)")
 	}
 
 	// MARK: - Hashable

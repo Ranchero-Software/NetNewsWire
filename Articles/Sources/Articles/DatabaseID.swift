@@ -9,23 +9,30 @@
 import Foundation
 import RSCore
 
-// MD5 works because:
-// * It’s fast
-// * Collisions aren’t going to happen with feed data
+class DatabaseIDCache: @unchecked Sendable {
 
-private var databaseIDCache = [String: String]()
-private var databaseIDCacheLock = NSLock()
-public func databaseIDWithString(_ s: String) -> String {
-    databaseIDCacheLock.lock()
-    defer {
-        databaseIDCacheLock.unlock()
-    }
-	
-	if let identifier = databaseIDCache[s] {
+	static let shared = DatabaseIDCache()
+
+	private var databaseIDCache = [String: String]()
+	private let databaseIDCacheLock = NSLock()
+
+	/// Generates — or retrieves from cache — a database-suitable ID based on a String.
+	func databaseIDWithString(_ s: String) -> String {
+
+		databaseIDCacheLock.lock()
+		defer {
+			databaseIDCacheLock.unlock()
+		}
+
+		if let identifier = databaseIDCache[s] {
+			return identifier
+		}
+
+		// MD5 works because:
+		// * It’s fast
+		// * Collisions aren’t going to happen with feed data
+		let identifier = s.md5String
+		databaseIDCache[s] = identifier
 		return identifier
 	}
-	
-	let identifier = s.md5String
-	databaseIDCache[s] = identifier
-	return identifier
 }
