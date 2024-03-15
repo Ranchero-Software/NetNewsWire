@@ -777,7 +777,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .sidebarToggle:
 			let title = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
-			return buildToolbarButton(.toggleSidebar, title, AppAssets.sidebarToggleImage, "toggleTheSidebar:")
+			return buildToolbarButton(.sidebarToggle, title, AppAssets.sidebarToggleImage, "toggleTheSidebar:")
 
 		case .refresh:
 			let title = NSLocalizedString("Refresh", comment: "Refresh")
