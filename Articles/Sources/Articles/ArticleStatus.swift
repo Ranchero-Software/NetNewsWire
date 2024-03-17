@@ -7,15 +7,16 @@
 //
 
 import Foundation
+import os
 
-// Threading rules:
-// * Main-thread only
-// * Except: may be created on background thread by StatusesTable.
-// Which is safe, because at creation time it’s not yet shared,
-// and it won’t be mutated ever on a background thread.
+/// Read and starred status for an Article.
+///
+/// These are uniqued — there is never more than one instance per articleID.
+///
+/// Its two Bool properties, `read` and `starred`, are both protected
+/// by an internal lock, which makes `ArticleStatus` thread-safe.
+public final class ArticleStatus: Hashable, @unchecked Sendable {
 
-public final class ArticleStatus: Hashable {
-	
 	public enum Key: String {
 		case read = "read"
 		case starred = "starred"
@@ -24,14 +25,54 @@ public final class ArticleStatus: Hashable {
 	public let articleID: String
 	public let dateArrived: Date
 
-	public var read = false
-	public var starred = false
+	// Sharing one lock for all instances is preferred to having one (or two)
+	// locks per instance — that could means thousands of locks in memory.
+	private static let lock = OSAllocatedUnfairLock()
+
+	public var read: Bool {
+		get {
+			Self.lock.lock()
+			defer {
+				Self.lock.unlock()
+			}
+
+			return _read
+		}
+		set {
+			Self.lock.lock()
+			defer {
+				Self.lock.unlock()
+			}
+			_read = newValue
+		}
+	}
+
+	public var starred: Bool {
+		get {
+			Self.lock.lock()
+			defer {
+				Self.lock.unlock()
+			}
+
+			return _starred
+		}
+		set {
+			Self.lock.lock()
+			defer {
+				Self.lock.unlock()
+			}
+			_starred = newValue
+		}
+	}
+
+	private var _read = false
+	private var _starred = false
 
 	public init(articleID: String, read: Bool, starred: Bool, dateArrived: Date) {
 		self.articleID = articleID
-		self.read = read
-		self.starred = starred
 		self.dateArrived = dateArrived
+		self._read = read
+		self._starred = starred
 	}
 
 	public convenience init(articleID: String, read: Bool, dateArrived: Date) {
