@@ -7,13 +7,18 @@
 //
 
 import Foundation
-import CoreSpotlight
 import CoreServices
 import RSCore
 import Account
 import Articles
 import Intents
 import UniformTypeIdentifiers
+
+#if os(iOS)
+@preconcurrency import CoreSpotlight
+#else
+import CoreSpotlight
+#endif
 
 class ActivityManager {
 	
@@ -109,34 +114,45 @@ class ActivityManager {
 	
 	#if os(iOS)
 	static func cleanUp(_ account: Account) {
-		var ids = [String]()
-		
-		if let folders = account.folders {
-			for folder in folders {
-				ids.append(identifier(for: folder))
+
+		Task { @MainActor in
+			var ids = [String]()
+
+			if let folders = account.folders {
+				for folder in folders {
+					ids.append(identifier(for: folder))
+				}
 			}
+
+			for feed in account.flattenedFeeds() {
+				let feedIdentifiers = await identifiers(for: feed)
+				ids.append(contentsOf: feedIdentifiers)
+			}
+
+			try? await CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 		}
-		
-		for feed in account.flattenedFeeds() {
-			ids.append(contentsOf: identifiers(for: feed))
-		}
-		
-		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
 	static func cleanUp(_ folder: Folder) {
-		var ids = [String]()
-		ids.append(identifier(for: folder))
-		
-		for feed in folder.flattenedFeeds() {
-			ids.append(contentsOf: identifiers(for: feed))
+
+		Task { @MainActor in
+			var ids = [String]()
+			ids.append(identifier(for: folder))
+
+			for feed in folder.flattenedFeeds() {
+				let feedIdentifiers = await identifiers(for: feed)
+				ids.append(contentsOf: feedIdentifiers)
+			}
+
+			try? await CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 		}
-		
-		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
 	static func cleanUp(_ feed: Feed) {
-		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: feed))
+		Task { @MainActor in
+			let feedIdentifiers = await identifiers(for: feed)
+			try? await CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: feedIdentifiers)
+		}
 	}
 	#endif
 

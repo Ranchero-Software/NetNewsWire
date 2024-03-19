@@ -456,7 +456,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	public func suspendDatabase() {
 		#if os(iOS)
-		database.cancelAndSuspend()
+		Task {
+			await database.suspend()
+		}
 		#endif
 		save()
 	}
@@ -465,7 +467,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	/// Call this *before* calling resume.
 	public func resumeDatabaseAndDelegate() {
 		#if os(iOS)
-		database.resume()
+		Task {
+			await database.resume()
+		}
 		#endif
 		delegate.resume()
 	}

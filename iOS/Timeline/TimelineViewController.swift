@@ -867,36 +867,37 @@ private extension TimelineViewController {
 	}
 	
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let feed = article.feed else { return nil }
-		guard let fetchedArticles = try? feed.fetchArticles() else {
-			return nil
-		}
 
-		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+		guard let feed = article.feed, feed.unreadCount > 0 else {
 			return nil
 		}
-		
+		guard let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+			return nil
+		}
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				self?.coordinator.markAllAsRead(articles)
+
+				Task { @MainActor in
+					if let articles = try? await feed.fetchArticles() {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+				}
+
 			}
 		}
 		return action
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = article.feed else { return nil }
-		guard let fetchedArticles = try? feed.fetchArticles() else {
+
+		guard let feed = article.feed, feed.unreadCount > 0 else {
 			return nil
 		}
-		
-		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+		guard let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
 		
@@ -908,8 +909,15 @@ private extension TimelineViewController {
 		
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
-				self?.coordinator.markAllAsRead(articles)
-				completion(true)
+
+				Task { @MainActor in
+					if let articles = try? await feed.fetchArticles() {
+						self?.coordinator.markAllAsRead(Array(articles))
+						completion(true)
+					} else {
+						completion(false)
+					}
+				}
 			}
 		}
 		return action

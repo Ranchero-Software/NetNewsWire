@@ -51,8 +51,8 @@ struct SidebarItemNode: Hashable {
 	}
 }
 
-class SceneCoordinator: NSObject, UndoableCommandRunner {
-	
+@MainActor final class SceneCoordinator: NSObject, UndoableCommandRunner {
+
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
 		return rootSplitViewController.undoManager

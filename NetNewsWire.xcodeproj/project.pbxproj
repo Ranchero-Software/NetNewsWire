@@ -632,6 +632,9 @@
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
 		8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
+		844933D22BA953590068AC51 /* ArticlePathInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844933D12BA953590068AC51 /* ArticlePathInfo.swift */; };
+		844933D32BA953590068AC51 /* ArticlePathInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844933D12BA953590068AC51 /* ArticlePathInfo.swift */; };
+		844933D42BA953590068AC51 /* ArticlePathInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844933D12BA953590068AC51 /* ArticlePathInfo.swift */; };
 		844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */; };
 		844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */; };
 		844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
@@ -1341,6 +1344,7 @@
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		84411E701FE5FBFA004B527F /* SmallIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallIconProvider.swift; sourceTree = "<group>"; };
 		8444C8F11FED81840051386C /* OPMLExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLExporter.swift; sourceTree = "<group>"; };
+		844933D12BA953590068AC51 /* ArticlePathInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlePathInfo.swift; sourceTree = "<group>"; };
 		844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarKeyboardDelegate.swift; sourceTree = "<group>"; };
 		844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineKeyboardDelegate.swift; sourceTree = "<group>"; };
 		844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = GlobalKeyboardShortcuts.plist; sourceTree = "<group>"; };
@@ -2445,6 +2449,7 @@
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
 				51C4CFEF24D37D1F00AF9874 /* Secrets.swift */,
 				511B9805237DCAC90028BCAA /* UserInfoKey.swift */,
+				844933D12BA953590068AC51 /* ArticlePathInfo.swift */,
 				8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */,
 				845122752B8CEA9B00480DB0 /* SidebarItem */,
 				51C452AD2265102800C03939 /* Timeline */,
@@ -3802,6 +3807,7 @@
 				65ED3FFB235DEF6C0081F399 /* AccountsReaderAPIWindowController.swift in Sources */,
 				65ED3FFC235DEF6C0081F399 /* AccountsAddLocalWindowController.swift in Sources */,
 				65ED3FFD235DEF6C0081F399 /* PasteboardFolder.swift in Sources */,
+				844933D32BA953590068AC51 /* ArticlePathInfo.swift in Sources */,
 				51386A8F25673277005F3762 /* AccountCell.swift in Sources */,
 				65ED3FFE235DEF6C0081F399 /* AccountsFeedbinWindowController.swift in Sources */,
 				65ED3FFF235DEF6C0081F399 /* SidebarOutlineDataSource.swift in Sources */,
@@ -4039,6 +4045,7 @@
 				B24E9ADE245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */,
 				C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */,
 				17D7586F2679C21800B17787 /* OnePasswordExtension.m in Sources */,
+				844933D42BA953590068AC51 /* ArticlePathInfo.swift in Sources */,
 				17071EF126F8137400F5E71D /* ArticleTheme+Notifications.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
@@ -4139,6 +4146,7 @@
 				51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleThemesManager.swift in Sources */,
 				8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */,
+				844933D22BA953590068AC51 /* ArticlePathInfo.swift in Sources */,
 				519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */,
 				FF3ABF1523259DDB0074C542 /* ArticleSorter.swift in Sources */,
 				84E8E0DB202EC49300562D8F /* TimelineViewController+ContextualMenus.swift in Sources */,

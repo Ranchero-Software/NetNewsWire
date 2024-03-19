@@ -986,6 +986,7 @@ private extension SidebarViewController {
 	}
 	
 	func copyHomePageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let homePageURL = feed.homePageURL,
 			  let url = URL(string: homePageURL) else {
@@ -1001,9 +1002,12 @@ private extension SidebarViewController {
 	}
 	
 	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
-			feed.unreadCount > 0,
-			let articles = try? feed.fetchArticles(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+			  feed.unreadCount > 0 else {
+			return nil
+		}
+		guard let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 				return nil
 		}
 		
@@ -1016,8 +1020,13 @@ private extension SidebarViewController {
 
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
-				self?.coordinator.markAllAsRead(Array(articles))
-				completion(true)
+
+				Task { @MainActor in
+					if let articles = try? await feed.fetchUnreadArticles() {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+					completion(true)
+				}
 			}
 		}
 		return action
@@ -1092,8 +1101,11 @@ private extension SidebarViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
-					self?.coordinator.markAllAsRead(Array(articles))
+
+				Task { @MainActor in
+					if let articles = try? await feed.fetchUnreadArticles() {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
 				}
 			}
 		}
@@ -1112,8 +1124,11 @@ private extension SidebarViewController {
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-					if let articles = try? account.fetchArticles(.unread()) {
-						self?.coordinator.markAllAsRead(Array(articles))
+
+					Task { @MainActor in
+						if let articles = try? await account.articles(for: .unread()) {
+							self?.coordinator.markAllAsRead(Array(articles))
+						}
 					}
 				}
 			}

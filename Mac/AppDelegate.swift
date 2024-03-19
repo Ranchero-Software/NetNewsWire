@@ -968,28 +968,6 @@ extension AppDelegate: NSWindowRestoration {
 
 private extension AppDelegate {
 	
-	struct ArticlePathInfo {
-
-		let accountID: String
-		let articleID: String
-
-		init?(userInfo: [AnyHashable: Any]) {
-
-			guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [String: String] else {
-				return nil
-			}
-			guard let accountID = articlePathUserInfo[ArticlePathKey.accountID] else {
-				return nil
-			}
-			guard let articleID = articlePathUserInfo[ArticlePathKey.articleID] else {
-				return nil
-			}
-
-			self.accountID = accountID
-			self.articleID = articleID
-		}
-	}
-
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
 
 		guard let articlePathInfo = ArticlePathInfo(userInfo: userInfo) else {
