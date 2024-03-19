@@ -12,7 +12,7 @@ import Account
 import Articles
 
 @objc(ScriptableFeed)
-class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@objcMembers class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let feed:Feed
     let container:ScriptingObjectContainer
@@ -163,21 +163,21 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return ScriptableAuthor(author, container:self)
     }
     
-    @objc(articles)
-    var articles:NSArray {
-        let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
-        // the articles are a set, use the sorting algorithm from the viewer
-        let sortedArticles = feedArticles.sorted(by:{
-            return $0.logicalDatePublished > $1.logicalDatePublished
-        })
-        return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
-    }
+//    @objc(articles)
+//    var articles:NSArray {
+//        let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
+//        // the articles are a set, use the sorting algorithm from the viewer
+//        let sortedArticles = feedArticles.sorted(by:{
+//            return $0.logicalDatePublished > $1.logicalDatePublished
+//        })
+//        return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
+//    }
     
-    @objc(valueInArticlesWithUniqueID:)
-    func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
-        let articles = (try? feed.fetchArticles()) ?? Set<Article>()
-        guard let article = articles.first(where:{$0.uniqueID == id}) else { return nil }
-        return ScriptableArticle(article, container:self)
-    }
+//    @objc(valueInArticlesWithUniqueID:)
+//    func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
+//        let articles = (try? feed.fetchArticles()) ?? Set<Article>()
+//        guard let article = articles.first(where:{$0.uniqueID == id}) else { return nil }
+//        return ScriptableArticle(article, container:self)
+//    }
 
 }

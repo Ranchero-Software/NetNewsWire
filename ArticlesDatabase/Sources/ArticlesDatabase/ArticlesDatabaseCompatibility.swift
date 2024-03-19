@@ -42,9 +42,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articles = try await articles(feedID: feedID)
-				completion(.success(articles))
+				callArticleSetCompletion(completion, .success(articles))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleSetCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -54,9 +54,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articles = try await articles(feedIDs: feedIDs)
-				completion(.success(articles))
+				callArticleSetCompletion(completion, .success(articles))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleSetCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -66,9 +66,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articles = try await articles(articleIDs: articleIDs)
-				completion(.success(articles))
+				callArticleSetCompletion(completion, .success(articles))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleSetCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -78,9 +78,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articles = try await unreadArticles(feedIDs: feedIDs, limit: limit)
-				completion(.success(articles))
+				callArticleSetCompletion(completion, .success(articles))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleSetCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -90,9 +90,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articles = try await todayArticles(feedIDs: feedIDs, limit: limit)
-				completion(.success(articles))
+				callArticleSetCompletion(completion, .success(articles))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleSetCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -102,9 +102,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articles = try await starredArticles(feedIDs: feedIDs, limit: limit)
-				completion(.success(articles))
+				callArticleSetCompletion(completion, .success(articles))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleSetCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -114,9 +114,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articles = try await articlesMatching(searchString: searchString, feedIDs: feedIDs)
-				completion(.success(articles))
+				callArticleSetCompletion(completion, .success(articles))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleSetCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -126,9 +126,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articles = try await articlesMatching(searchString: searchString, articleIDs: articleIDs)
-				completion(.success(articles))
+				callArticleSetCompletion(completion, .success(articles))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleSetCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -141,9 +141,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let unreadCountDictionary = try await allUnreadCounts()
-				completion(.success(unreadCountDictionary))
+				callUnreadCountDictionaryCompletion(completion, .success(unreadCountDictionary))
 			} catch {
-				completion(.failure(.suspended))
+				callUnreadCountDictionaryCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -154,9 +154,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let unreadCount = try await unreadCount(feedID: feedID) ?? 0
-				completion(.success(unreadCount))
+				callSingleUnreadCountCompletion(completion, .success(unreadCount))
 			} catch {
-				completion(.failure(.suspended))
+				callSingleUnreadCountCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -167,9 +167,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let unreadCountDictionary = try await unreadCounts(feedIDs: feedIDs)
-				completion(.success(unreadCountDictionary))
+				callUnreadCountDictionaryCompletion(completion, .success(unreadCountDictionary))
 			} catch {
-				completion(.failure(.suspended))
+				callUnreadCountDictionaryCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -179,9 +179,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let unreadCount = try await unreadCountForToday(feedIDs: feedIDs)!
-				completion(.success(unreadCount))
+				callSingleUnreadCountCompletion(completion, .success(unreadCount))
 			} catch {
-				completion(.failure(.suspended))
+				callSingleUnreadCountCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -191,9 +191,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let unreadCount = try await unreadCount(feedIDs: feedIDs, since: since)!
-				completion(.success(unreadCount))
+				callSingleUnreadCountCompletion(completion, .success(unreadCount))
 			} catch {
-				completion(.failure(.suspended))
+				callSingleUnreadCountCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -203,9 +203,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let unreadCount = try await starredAndUnreadCount(feedIDs: feedIDs)!
-				completion(.success(unreadCount))
+				callSingleUnreadCountCompletion(completion, .success(unreadCount))
 			} catch {
-				completion(.failure(.suspended))
+				callSingleUnreadCountCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -218,9 +218,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articleChanges = try await update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
-				completion(.success(articleChanges))
+				callUpdateArticlesCompletion(completion, .success(articleChanges))
 			} catch {
-				completion(.failure(.suspended))
+				callUpdateArticlesCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -231,9 +231,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articleChanges = try await update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
-				completion(.success(articleChanges))
+				callUpdateArticlesCompletion(completion, .success(articleChanges))
 			} catch {
-				completion(.failure(.suspended))
+				callUpdateArticlesCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -244,9 +244,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				try await delete(articleIDs: articleIDs)
-				completion?(nil)
+				callDatabaseCompletion(completion)
 			} catch {
-				completion?(.suspended)
+				callDatabaseCompletion(completion, .suspended)
 			}
 		}
 	}
@@ -259,9 +259,9 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articleIDs = try await unreadArticleIDs()!
-				completion(.success(articleIDs))
+				callArticleIDsCompletion(completion, .success(articleIDs))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleIDsCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -272,46 +272,46 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				let articleIDs = try await starredArticleIDs()!
-				completion(.success(articleIDs))
+				callArticleIDsCompletion(completion, .success(articleIDs))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleIDsCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
 	nonisolated func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-
+		
 		Task {
 			do {
 				let articleIDs = try await articleIDsForStatusesWithoutArticlesNewerThanCutoffDate()!
-				completion(.success(articleIDs))
+				callArticleIDsCompletion(completion, .success(articleIDs))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleIDsCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
 
 	nonisolated func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
-
+		
 		Task {
 			do {
 				let statuses = try await mark(articles: articles, statusKey: statusKey, flag: flag)!
-				completion(.success(statuses))
+				callArticleStatusesCompletion(completion, .success(statuses))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleStatusesCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
-
+	
 	nonisolated func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
 
 		Task {
 			do {
 				let statuses = try await markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-				completion(.success(statuses))
+				callArticleIDsCompletion(completion, .success(statuses))
 			} catch {
-				completion(.failure(.suspended))
+				callArticleIDsCompletion(completion, .failure(.suspended))
 			}
 		}
 	}
@@ -323,10 +323,63 @@ public extension ArticlesDatabase {
 		Task {
 			do {
 				try await createStatusesIfNeeded(articleIDs: articleIDs)
-				completion(nil)
+				callDatabaseCompletion(completion)
 			} catch {
-				completion(.suspended)
+				callDatabaseCompletion(completion, .suspended)
 			}
+		}
+	}
+
+	nonisolated private func callUnreadCountDictionaryCompletion(_ completion: @escaping UnreadCountDictionaryCompletionBlock, _ result: UnreadCountDictionaryCompletionResult) {
+
+		Task { @MainActor in
+			completion(result)
+		}
+	}
+
+	nonisolated private func callSingleUnreadCountCompletion(_ completion: @escaping SingleUnreadCountCompletionBlock, _ result: SingleUnreadCountResult) {
+
+		Task { @MainActor in
+			completion(result)
+		}
+	}
+
+	nonisolated private func callUpdateArticlesCompletion(_ completion: @escaping UpdateArticlesCompletionBlock, _ result: UpdateArticlesResult) {
+
+		Task { @MainActor in
+			completion(result)
+		}
+	}
+
+	nonisolated private func callArticleSetCompletion(_ completion: @escaping ArticleSetResultBlock, _ result: ArticleSetResult) {
+
+		Task { @MainActor in
+			completion(result)
+		}
+	}
+
+	nonisolated private func callArticleStatusesCompletion(_ completion: @escaping ArticleStatusesResultBlock, _ result: ArticleStatusesResult) {
+
+		Task { @MainActor in
+			completion(result)
+		}
+	}
+
+	nonisolated private func callArticleIDsCompletion(_ completion: @escaping ArticleIDsCompletionBlock, _ result: ArticleIDsResult) {
+
+		Task { @MainActor in
+			completion(result)
+		}
+	}
+
+	nonisolated private func callDatabaseCompletion(_ completion: DatabaseCompletionBlock?, _ error: DatabaseError? = nil) {
+
+		guard let completion else {
+			return
+		}
+		
+		Task { @MainActor in
+			completion(error)
 		}
 	}
 }

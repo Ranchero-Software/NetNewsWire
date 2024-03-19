@@ -38,13 +38,6 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 
 			return _read
 		}
-		set {
-			Self.lock.lock()
-			defer {
-				Self.lock.unlock()
-			}
-			_read = newValue
-		}
 	}
 
 	public var starred: Bool {
@@ -55,13 +48,6 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 			}
 
 			return _starred
-		}
-		set {
-			Self.lock.lock()
-			defer {
-				Self.lock.unlock()
-			}
-			_starred = newValue
 		}
 	}
 
@@ -89,11 +75,17 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 	}
 	
 	public func setBoolStatus(_ status: Bool, forKey key: ArticleStatus.Key) {
+
+		Self.lock.lock()
+		defer {
+			Self.lock.unlock()
+		}
+
 		switch key {
 		case .read:
-			read = status
+			_read = status
 		case .starred:
-			starred = status
+			_starred = status
 		}
 	}
 

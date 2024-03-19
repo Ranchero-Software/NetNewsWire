@@ -75,7 +75,7 @@ public extension Set where Element == Article {
 		return Set<String>(map { $0.articleID })
 	}
 
-	func unreadArticles() -> Set<Article> {
+	@MainActor func unreadArticles() -> Set<Article> {
 		let articles = self.filter { !$0.status.read }
 		return Set(articles)
 	}

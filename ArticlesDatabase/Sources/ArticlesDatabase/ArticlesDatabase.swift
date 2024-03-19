@@ -97,7 +97,7 @@ public actor ArticlesDatabase {
 		return articlesTable.articles(articleIDs: articleIDs, database: database)
 	}
 
-	public func unreadArticles(feedIDs: Set<String>, limit: Int?) throws -> Set<Article> {
+	public func unreadArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
 
 		guard let database else {
 			throw DatabaseError.suspended
@@ -105,7 +105,7 @@ public actor ArticlesDatabase {
 		return articlesTable.unreadArticles(feedIDs: feedIDs, limit: limit, database: database)
 	}
 
-	public func todayArticles(feedIDs: Set<String>, limit: Int?) throws -> Set<Article> {
+	public func todayArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
 
 		guard let database else {
 			throw DatabaseError.suspended
@@ -113,7 +113,7 @@ public actor ArticlesDatabase {
 		return articlesTable.todayArticles(feedIDs: feedIDs, cutoffDate: todayCutoffDate(), limit: limit, database: database)
 	}
 
-	public func starredArticles(feedIDs: Set<String>, limit: Int?) throws -> Set<Article> {
+	public func starredArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
 
 		guard let database else {
 			throw DatabaseError.suspended

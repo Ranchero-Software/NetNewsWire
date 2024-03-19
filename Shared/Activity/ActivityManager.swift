@@ -286,10 +286,12 @@ private extension ActivityManager {
 		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
 	}
 	
-	static func identifiers(for feed: Feed) -> [String] {
+	@MainActor static func identifiers(for feed: Feed) async -> [String] {
+
 		var ids = [String]()
 		ids.append(identifier(for: feed))
-		if let articles = try? feed.fetchArticles() {
+
+		if let articles = try? await feed.fetchArticles() {
 			for article in articles {
 				ids.append(identifier(for: article))
 			}

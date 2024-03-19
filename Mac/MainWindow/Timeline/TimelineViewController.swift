@@ -63,14 +63,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	var representedObjects: [AnyObject]? {
 		didSet {
-			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
-				unreadCount = 0
+			guard !representedObjectArraysAreEqual(oldValue, representedObjects) else {
+				return
+			}
 
-				selectionDidChange(nil)
-				if showsSearchResults {
-					fetchAndReplaceArticlesAsync()
-				} else {
-					fetchAndReplaceArticlesSync()
+			unreadCount = 0
+			selectionDidChange(nil)
+
+			Task {
+				await fetchAndReplaceArticles()
+				if !showsSearchResults {
 					if articles.count > 0 {
 						tableView.scrollRowToVisible(0)
 					}
@@ -290,29 +292,31 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		
 		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let account = AccountManager.shared.existingAccount(with: accountID),
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String {
-			
+		   let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+		   let account = AccountManager.shared.existingAccount(with: accountID),
+		   let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String {
+
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
-			fetchAndReplaceArticlesSync()
-			
-			if let selectedIndex = articles.firstIndex(where: { $0.articleID == articleID }) {
-				tableView.selectRow(selectedIndex)
-				DispatchQueue.main.async {
-					self.tableView.scrollTo(row: selectedIndex)
+
+			Task {
+				await fetchAndReplaceArticles()
+
+				Task { @MainActor in
+					if let selectedIndex = articles.firstIndex(where: { $0.articleID == articleID }) {
+
+						tableView.selectRow(selectedIndex)
+						self.tableView.scrollTo(row: selectedIndex)
+						focus()
+					}
 				}
-				focus()
 			}
-
 		} else {
-			
-			fetchAndReplaceArticlesSync()
-
+			Task {
+				await fetchAndReplaceArticles()
+			}
 		}
-		
 	}
-	
+
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
@@ -534,19 +538,21 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	func goToDeepLink(for userInfo: [AnyHashable : Any]) {
 		guard let articleID = userInfo[ArticlePathKey.articleID] as? String else { return }
 
-		if isReadFiltered ?? false {
-			if let accountName = userInfo[ArticlePathKey.accountName] as? String,
-				let account = AccountManager.shared.existingActiveAccount(forDisplayName: accountName) {
-				exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
-				fetchAndReplaceArticlesSync()
+		Task {
+			if isReadFiltered ?? false {
+				if let accountName = userInfo[ArticlePathKey.accountName] as? String,
+					let account = AccountManager.shared.existingActiveAccount(forDisplayName: accountName) {
+					exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
+					await fetchAndReplaceArticles()
+				}
 			}
-		}
 
-		guard let ix = articles.firstIndex(where: { $0.articleID == articleID }) else {	return }
-		
-		NSCursor.setHiddenUntilMouseMoves(true)
-		tableView.selectRow(ix)
-		tableView.scrollTo(row: ix)
+			guard let ix = articles.firstIndex(where: { $0.articleID == articleID }) else {	return }
+
+			NSCursor.setHiddenUntilMouseMoves(true)
+			tableView.selectRow(ix)
+			tableView.scrollTo(row: ix)
+		}
 	}
 	
 	func goToNextUnread(wrappingToTop wrapping: Bool = false) {
@@ -645,19 +651,25 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func accountStateDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync()
+			Task {
+				await fetchAndReplaceArticles()
+			}
 		}
 	}
 	
 	@objc func accountsDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync()
+			Task {
+				await fetchAndReplaceArticles()
+			}
 		}
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() || representedObjectsContainAnyFolder() {
-			fetchAndReplaceArticlesAsync()
+			Task {
+				await fetchAndReplaceArticles()
+			}
 		}
 	}
 
@@ -949,8 +961,10 @@ private extension TimelineViewController {
 		if let article = oneSelectedArticle, let account = article.account {
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
 		}
-		performBlockAndRestoreSelection {
-			fetchAndReplaceArticlesSync()
+		Task {
+			await performAsyncBlockAndRestoreSelection {
+				await fetchAndReplaceArticles()
+			}
 		}
 	}
 	
@@ -1033,6 +1047,12 @@ private extension TimelineViewController {
 		restoreSelection(savedSelection)
 	}
 
+	func performAsyncBlockAndRestoreSelection(_ block: (() async -> Void)) async {
+		let savedSelection = selectedArticleIDs()
+		await block()
+		restoreSelection(savedSelection)
+	}
+
 	func rows(for articleID: String) -> [Int]? {
 		updateArticleRowMapIfNeeded()
 		return articleRowMap[articleID]
@@ -1091,44 +1111,43 @@ private extension TimelineViewController {
 
 	// MARK: - Fetching Articles
 	
-	func fetchAndReplaceArticlesSync() {
-		// To be called when the user has made a change of selection in the sidebar.
-		// It blocks the main thread, so that there’s no async delay,
-		// so that the entire display refreshes at once.
-		// It’s a better user experience this way.
+	func fetchAndReplaceArticles() async {
+
 		cancelPendingAsyncFetches()
+
 		guard var representedObjects = representedObjects else {
 			emptyTheTimeline()
 			return
 		}
-		
-		if exceptionArticleFetcher != nil {
+
+		if let exceptionArticleFetcher {
 			representedObjects.append(exceptionArticleFetcher as AnyObject)
-			exceptionArticleFetcher = nil
+			self.exceptionArticleFetcher = nil
 		}
-		
-		let fetchedArticles = fetchUnsortedArticlesSync(for: representedObjects)
+
+		let fetchedArticles = await unsortedArticles(for: representedObjects)
 		replaceArticles(with: fetchedArticles)
 	}
 
-	func fetchAndReplaceArticlesAsync() {
-		// To be called when we need to do an entire fetch, but an async delay is okay.
-		// Example: we have the Today feed selected, and the calendar day just changed.
-		cancelPendingAsyncFetches()
-		guard var representedObjects = representedObjects else {
-			emptyTheTimeline()
-			return
-		}
-		
-		if exceptionArticleFetcher != nil {
-			representedObjects.append(exceptionArticleFetcher as AnyObject)
-			exceptionArticleFetcher = nil
-		}
-		
-		fetchUnsortedArticlesAsync(for: representedObjects) { [weak self] (articles) in
-			self?.replaceArticles(with: articles)
-		}
-	}
+//	func fetchAndReplaceArticlesSync() {
+//		// To be called when the user has made a change of selection in the sidebar.
+//		// It blocks the main thread, so that there’s no async delay,
+//		// so that the entire display refreshes at once.
+//		// It’s a better user experience this way.
+//		cancelPendingAsyncFetches()
+//		guard var representedObjects = representedObjects else {
+//			emptyTheTimeline()
+//			return
+//		}
+//		
+//		if exceptionArticleFetcher != nil {
+//			representedObjects.append(exceptionArticleFetcher as AnyObject)
+//			exceptionArticleFetcher = nil
+//		}
+//		
+//		let fetchedArticles = fetchUnsortedArticlesSync(for: representedObjects)
+//		replaceArticles(with: fetchedArticles)
+//	}
 
 	func cancelPendingAsyncFetches() {
 		fetchSerialNumber += 1
@@ -1139,27 +1158,27 @@ private extension TimelineViewController {
 		articles = Array(unsortedArticles).sortedByDate(sortDirection, groupByFeed: groupByFeed)
 	}
 
-	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
-		cancelPendingAsyncFetches()
-		let fetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
-		if fetchers.isEmpty {
-			return Set<Article>()
-		}
-
-		var fetchedArticles = Set<Article>()
-		for fetchers in fetchers {
-			if (fetchers as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
-				if let articles = try? fetchers.fetchUnreadArticles() {
-					fetchedArticles.formUnion(articles)
-				}
-			} else {
-				if let articles = try? fetchers.fetchArticles() {
-					fetchedArticles.formUnion(articles)
-				}
-			}
-		}
-		return fetchedArticles
-	}
+//	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
+//		cancelPendingAsyncFetches()
+//		let fetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+//		if fetchers.isEmpty {
+//			return Set<Article>()
+//		}
+//
+//		var fetchedArticles = Set<Article>()
+//		for fetchers in fetchers {
+//			if (fetchers as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+//				if let articles = try? fetchers.fetchUnreadArticles() {
+//					fetchedArticles.formUnion(articles)
+//				}
+//			} else {
+//				if let articles = try? fetchers.fetchArticles() {
+//					fetchedArticles.formUnion(articles)
+//				}
+//			}
+//		}
+//		return fetchedArticles
+//	}
 
 	func fetchUnsortedArticlesAsync(for representedObjects: [Any], completion: @escaping ArticleSetBlock) {
 		// The callback will *not* be called if the fetch is no longer relevant — that is,
@@ -1175,6 +1194,29 @@ private extension TimelineViewController {
 			completion(articles)
 		}
 		fetchRequestQueue.add(fetchOperation)
+	}
+
+	func unsortedArticles(for representedObjects: [Any]) async -> Set<Article> {
+
+		let fetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+		if fetchers.isEmpty {
+			return Set<Article>()
+		}
+
+		var fetchedArticles = Set<Article>()
+		for fetcher in fetchers {
+			if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+				if let articles = try? await fetcher.fetchUnreadArticles() {
+					fetchedArticles.formUnion(articles)
+				}
+			} else {
+				if let articles = try? await fetcher.fetchArticles() {
+					fetchedArticles.formUnion(articles)
+				}
+			}
+		}
+		
+		return fetchedArticles
 	}
 
 	func selectArticles(_ articleIDs: [String]) {

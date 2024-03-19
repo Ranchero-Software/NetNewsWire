@@ -253,16 +253,31 @@ protocol SidebarDelegate: AnyObject {
 		}
 	}
 	
-	@IBAction func doubleClickedSidebar(_ sender: Any?) {
+	@MainActor @IBAction func doubleClickedSidebar(_ sender: Any?) {
+
 		guard outlineView.clickedRow == outlineView.selectedRow else {
 			return
 		}
-		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = try? singleSelectedFeed?.fetchUnreadArticles() {
-			if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) {
-				runCommand(markReadCommand)
+
+		if AppDefaults.shared.feedDoubleClickMarkAsRead, let feed = singleSelectedFeed {
+			Task { @MainActor in
+				await markArticlesInFeedAsRead(feed: feed)
 			}
 		}
+
 		openInBrowser(sender)
+	}
+
+	@MainActor private func markArticlesInFeedAsRead(feed: Feed) async {
+
+		guard let articles = try? await feed.fetchUnreadArticles() else {
+			return
+		}
+		guard let undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+			return
+		}
+
+		runCommand(markReadCommand)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {

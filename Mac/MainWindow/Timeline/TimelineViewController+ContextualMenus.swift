@@ -258,11 +258,8 @@ private extension TimelineViewController {
 	}
 
 	func markAllAsReadMenuItem(_ feed: Feed) -> NSMenuItem? {
-		guard let articlesSet = try? feed.fetchArticles() else {
-			return nil
-		}
-		let articles = Array(articlesSet)
-		guard articles.canMarkAllAsRead() else {
+
+		guard feed.unreadCount > 0 else {
 			return nil
 		}
 

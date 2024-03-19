@@ -69,11 +69,13 @@ extension SidebarViewController {
 			return
 		}
 		
-		let articles = unreadArticles(for: objects)
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
-			return
+		Task {
+			let articles = await unreadArticles(for: objects)
+			guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+				return
+			}
+			runCommand(markReadCommand)
 		}
-		runCommand(markReadCommand)
 	}
 
 	@objc func deleteFromContextualMenu(_ sender: Any?) {
@@ -349,12 +351,12 @@ private extension SidebarViewController {
 		return item
 	}
 
-	func unreadArticles(for objects: [Any]) -> Set<Article> {
+	@MainActor func unreadArticles(for objects: [Any]) async -> Set<Article> {
 
 		var articles = Set<Article>()
 		for object in objects {
 			if let articleFetcher = object as? ArticleFetcher {
-				if let unreadArticles = try? articleFetcher.fetchUnreadArticles() {
+				if let unreadArticles = try? await articleFetcher.fetchUnreadArticles() {
 					articles.formUnion(unreadArticles)
 				}
 			}

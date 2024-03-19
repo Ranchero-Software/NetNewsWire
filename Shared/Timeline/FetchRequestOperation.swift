@@ -34,7 +34,7 @@ final class FetchRequestOperation {
 		self.resultBlock = resultBlock
 	}
 
-	func run(_ completion: @escaping (FetchRequestOperation) -> Void) {
+	@MainActor func run(_ completion: @escaping (FetchRequestOperation) -> Void) {
 		precondition(Thread.isMainThread)
 		precondition(!isFinished)
 

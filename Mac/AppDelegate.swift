@@ -968,42 +968,68 @@ extension AppDelegate: NSWindowRestoration {
 
 private extension AppDelegate {
 	
-	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
+	struct ArticlePathInfo {
+
+		let accountID: String
+		let articleID: String
+
+		init?(userInfo: [AnyHashable: Any]) {
+
+			guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [String: String] else {
+				return nil
+			}
+			guard let accountID = articlePathUserInfo[ArticlePathKey.accountID] else {
+				return nil
+			}
+			guard let articleID = articlePathUserInfo[ArticlePathKey.articleID] else {
+				return nil
+			}
+
+			self.accountID = accountID
+			self.articleID = articleID
 		}
-		
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
+	}
+
+	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
+
+		guard let articlePathInfo = ArticlePathInfo(userInfo: userInfo) else {
+			return
+		}
+		guard let account = AccountManager.shared.existingAccount(with: articlePathInfo.accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
-			return
+		let articleID = articlePathInfo.articleID
+
+		Task {
+			guard let articles = try? await account.articles(for: .articleIDs([articleID])) else {
+				os_log(.debug, "No article found from search using %@", articleID)
+				return
+			}
+
+			account.markArticles(articles, statusKey: .read, flag: true) { _ in }
 		}
-		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
 	}
 	
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
+
+		guard let articlePathInfo = ArticlePathInfo(userInfo: userInfo) else {
+			return
 		}
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
+		guard let account = AccountManager.shared.existingAccount(with: articlePathInfo.accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
-			return
+		let articleID = articlePathInfo.articleID
+
+		Task {
+
+			guard let articles = try? await account.articles(for: .articleIDs([articleID])) else {
+				os_log(.debug, "No article found from search using %@", articleID)
+				return
+			}
+
+			account.markArticles(articles, statusKey: .starred, flag: true) { _ in }
 		}
-		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
 	}
 }
