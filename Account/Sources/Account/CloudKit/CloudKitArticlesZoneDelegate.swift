@@ -99,9 +99,9 @@ private extension CloudKitArticlesZoneDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { result in
+		account?.markAsUnread(updateableUnreadArticleIDs) { databaseError in
 			MainActor.assumeIsolated {
-				if case .failure(let databaseError) = result {
+				if let databaseError {
 					errorOccurred = true
 					os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", databaseError.localizedDescription)
 				}
@@ -110,9 +110,9 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 
 		group.enter()
-		account?.markAsRead(updateableReadArticleIDs) { result in
+		account?.markAsRead(updateableReadArticleIDs) { databaseError in
 			MainActor.assumeIsolated {
-				if case .failure(let databaseError) = result {
+				if let databaseError {
 					errorOccurred = true
 					os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", databaseError.localizedDescription)
 				}
@@ -121,9 +121,9 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 
 		group.enter()
-		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
+		account?.markAsUnstarred(updateableUnstarredArticleIDs) { databaseError in
 			MainActor.assumeIsolated {
-				if case .failure(let databaseError) = result {
+				if let databaseError {
 					errorOccurred = true
 					os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", databaseError.localizedDescription)
 				}
@@ -132,9 +132,9 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 
 		group.enter()
-		account?.markAsStarred(updateableStarredArticleIDs) { result in
+		account?.markAsStarred(updateableStarredArticleIDs) { databaseError in
 			MainActor.assumeIsolated {
-				if case .failure(let databaseError) = result {
+				if let databaseError {
 					errorOccurred = true
 					os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", databaseError.localizedDescription)
 				}

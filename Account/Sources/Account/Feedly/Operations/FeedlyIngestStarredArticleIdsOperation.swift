@@ -125,8 +125,8 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 		let results = StarredStatusResults()
 		
 		group.enter()
-		account.markAsStarred(remoteStarredArticleIDs) { result in
-			if case .failure(let error) = result {
+		account.markAsStarred(remoteStarredArticleIDs) { error in
+			if let error {
 				results.markAsStarredError = error
 			}
 			group.leave()
@@ -134,8 +134,8 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 
 		let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
 		group.enter()
-		account.markAsUnstarred(deltaUnstarredArticleIDs) { result in
-			if case .failure(let error) = result {
+		account.markAsUnstarred(deltaUnstarredArticleIDs) { error in
+			if let error {
 				results.markAsUnstarredError = error
 			}
 			group.leave()

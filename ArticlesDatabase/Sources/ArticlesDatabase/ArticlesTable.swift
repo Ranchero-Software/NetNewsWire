@@ -368,10 +368,9 @@ final class ArticlesTable {
 		return statuses
 	}
 
-	func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, database: FMDatabase) -> Set<String> {
+	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, database: FMDatabase) {
 
-		let newStatusIDs = statusesTable.markAndFetchNew(articleIDs, statusKey, flag, database)
-		return newStatusIDs
+		statusesTable.mark(articleIDs, statusKey, flag, database)
 	}
 
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.

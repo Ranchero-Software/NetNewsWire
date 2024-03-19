@@ -255,12 +255,12 @@ public actor ArticlesDatabase {
 		return articlesTable.mark(articles: articles, statusKey: statusKey, flag: flag, database: database)
 	}
 
-	public func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) throws -> Set<String> {
+	public func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) throws {
 
 		guard let database else {
 			throw DatabaseError.suspended
 		}
-		return articlesTable.markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag, database: database)
+		articlesTable.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag, database: database)
 	}
 
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.

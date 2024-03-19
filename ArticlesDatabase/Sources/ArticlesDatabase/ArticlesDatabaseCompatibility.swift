@@ -304,14 +304,14 @@ public extension ArticlesDatabase {
 		}
 	}
 	
-	nonisolated func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
+	nonisolated func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping DatabaseCompletionBlock) {
 
 		Task {
 			do {
-				let statuses = try await markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-				callArticleIDsCompletion(completion, .success(statuses))
+				try await mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+				callDatabaseCompletion(completion)
 			} catch {
-				callArticleIDsCompletion(completion, .failure(.suspended))
+				callDatabaseCompletion(completion, .suspended)
 			}
 		}
 	}
