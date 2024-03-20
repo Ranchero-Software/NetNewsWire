@@ -14,7 +14,7 @@ import RSCore
 import Articles
 import Account
 
-struct ArticleRenderer {
+@MainActor struct ArticleRenderer {
 
 	typealias Rendering = (style: String, html: String, title: String, baseURL: String)
 	
@@ -30,10 +30,10 @@ struct ArticleRenderer {
 		}
 	}
 
-	static var imageIconScheme = "nnwImageIcon"
-	
-	static var blank = Page(name: "blank")
-	static var page = Page(name: "page")
+	static let imageIconScheme = "nnwImageIcon"
+
+	static let blank = Page(name: "blank")
+	static let page = Page(name: "page")
 	
 	private let article: Article?
 	private let extractedArticle: ExtractedArticle?
@@ -328,7 +328,7 @@ private extension ArticleRenderer {
 
 // MARK: - Article extension
 
-private extension Article {
+@MainActor private extension Article {
 
 	var baseURL: URL? {
 		var s = link

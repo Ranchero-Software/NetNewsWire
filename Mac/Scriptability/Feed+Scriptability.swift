@@ -81,7 +81,7 @@ import Articles
         }
     }
     
-    class func handleCreateElement(command:NSCreateCommand) -> Any?  {
+	@MainActor class func handleCreateElement(command:NSCreateCommand) -> Any?  {
         guard command.isCreateCommand(forClass:"Feed") else { return nil }
         guard let arguments = command.arguments else {return nil}
         let titleFromArgs = command.property(forKey:"name") as? String

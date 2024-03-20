@@ -216,13 +216,26 @@ final class DetailWebViewController: NSViewController {
 
 extension DetailWebViewController: WKScriptMessageHandler {
 
-	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+	nonisolated func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+
 		if message.name == MessageName.windowDidScroll {
-			windowScrollY = message.body as? CGFloat
+
+			let updatedWindowScrollY = message.body as? CGFloat
+			Task { @MainActor in
+				windowScrollY = updatedWindowScrollY
+			}
+
 		} else if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
-			delegate?.mouseDidEnter(self, link: link)
+
+			Task { @MainActor in
+				delegate?.mouseDidEnter(self, link: link)
+			}
+
 		} else if message.name == MessageName.mouseDidExit {
-			delegate?.mouseDidExit(self)
+
+			Task { @MainActor in
+				delegate?.mouseDidExit(self)
+			}
 		}
 	}
 }
@@ -239,10 +252,13 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 
 	// WKNavigationDelegate
 
-	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+	nonisolated public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 		if navigationAction.navigationType == .linkActivated {
 			if let url = navigationAction.request.url {
-				self.openInBrowser(url, flags: navigationAction.modifierFlags)
+				let flags = navigationAction.modifierFlags
+				Task { @MainActor in
+					self.openInBrowser(url, flags: flags)
+				}
 			}
 			decisionHandler(.cancel)
 			return
@@ -251,35 +267,42 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 		decisionHandler(.allow)
 	}
 	
-	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		// See note in viewDidLoad()
-		if waitingForFirstReload {
-			assert(webView.isHidden)
-			waitingForFirstReload = false
-			reloadHTML()
+	nonisolated public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
 
-			// Waiting for the first navigation to complete isn't long enough to avoid the flash of white.
-			// A hard coded value is awful, but 5/100th of a second seems to be enough.
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-				webView.isHidden = false
-			}
-		} else {
-			if let windowScrollY = windowScrollY {
-				webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
-				self.windowScrollY = nil
+		Task { @MainActor in
+			// See note in viewDidLoad()
+			if waitingForFirstReload {
+				assert(webView.isHidden)
+				waitingForFirstReload = false
+				reloadHTML()
+
+				// Waiting for the first navigation to complete isn't long enough to avoid the flash of white.
+				// A hard coded value is awful, but 5/100th of a second seems to be enough.
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+					webView.isHidden = false
+				}
+			} else {
+				if let windowScrollY = windowScrollY {
+					_ = try? await webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
+					self.windowScrollY = nil
+				}
 			}
 		}
 	}
 
 	// WKUIDelegate
 	
-	func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+	nonisolated func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
 		// This method is reached when WebKit handles a JavaScript based window.open() invocation, for example. One
 		// example where this is used is in YouTube's embedded video player when a user clicks on the video's title
 		// or on the "Watch in YouTube" button. For our purposes we'll handle such window.open calls the same way we
 		// handle clicks on a URL.
 		if let url = navigationAction.request.url {
-			self.openInBrowser(url, flags: navigationAction.modifierFlags)
+			let flags = navigationAction.modifierFlags
+
+			Task { @MainActor in
+				self.openInBrowser(url, flags: flags)
+			}
 		}
 
 		return nil

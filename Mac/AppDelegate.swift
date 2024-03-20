@@ -27,10 +27,10 @@ protocol SPUUpdaterDelegate {}
 import Sparkle
 #endif
 
-var appDelegate: AppDelegate!
+@MainActor var appDelegate: AppDelegate!
 
 @NSApplicationMain
-final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
+@MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
 	private struct WindowRestorationIdentifiers {
 		static let mainWindow = "mainWindow"
@@ -109,9 +109,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	
 	private var themeImportPath: String?
 	private let secretsProvider = Secrets()
+	private let accountManager: AccountManager
+	private let articleThemesManager: ArticleThemesManager
 
-	override init() {
+	@MainActor override init() {
+
 		NSWindow.allowsAutomaticWindowTabbing = false
+
+		self.accountManager = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!, secretsProvider: secretsProvider)
+		AccountManager.shared = self.accountManager
+
+		self.articleThemesManager = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
+		ArticleThemesManager.shared = self.articleThemesManager
+
 		super.init()
 
 		#if !MAC_APP_STORE
@@ -119,9 +129,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
 		crashReporter.enable()
 		#endif
-
-		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!, secretsProvider: secretsProvider)
-		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
@@ -199,9 +206,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		if isFirstRun {
 			os_log(.debug, "Is first run.")
 		}
-		let localAccount = AccountManager.shared.defaultAccount
+		let localAccount = accountManager.defaultAccount
 
-		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
+		if isFirstRun && !accountManager.anyAccountHasAtLeastOneFeed() {
 			// Import feeds. Either old NNW 3 feeds or the default feeds.
 			if !NNW3ImportController.importSubscriptionsIfFileExists(account: localAccount) {
 				DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
@@ -223,8 +230,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
-		DispatchQueue.main.async {
-			self.unreadCount = AccountManager.shared.unreadCount
+		Task { @MainActor in
+			self.unreadCount = self.accountManager.unreadCount
 		}
 
 		if InspectorWindowController.shouldOpenAtStartup {
@@ -241,7 +248,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			if settings.authorizationStatus == .authorized {
-				DispatchQueue.main.async {
+				Task { @MainActor in
 					NSApplication.shared.registerForRemoteNotifications()
 				}
 			}
@@ -258,7 +265,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			refreshTimer!.update()
 			syncTimer!.update()
 		} else {
-			DispatchQueue.main.async {
+			Task { @MainActor in
 				self.refreshTimer!.timedRefresh(nil)
 				self.syncTimer!.timedRefresh(nil)
 			}
@@ -279,7 +286,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 
 		#if !MAC_APP_STORE
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			CrashReporter.check(crashReporter: self.crashReporter)
 		}
 		#endif
@@ -318,7 +325,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-		AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
+		accountManager.receiveRemoteNotification(userInfo: userInfo)
 	}
 	
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
@@ -333,7 +340,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		
 		ArticleThemeDownloader.shared.cleanUp()
 		
-		AccountManager.shared.sendArticleStatusAll() {
+		accountManager.sendArticleStatusAll() {
 			self.isShutDownSyncDone = true
 		}
 		
@@ -344,7 +351,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	// MARK: Notifications
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
-			unreadCount = AccountManager.shared.unreadCount
+			unreadCount = accountManager.unreadCount
 		}
 	}
 
@@ -385,7 +392,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			let url = userInfo["url"] as? URL else {
 			return
 		}
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			self.importTheme(filename: url.path)
 		}
 	}
@@ -444,15 +451,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
 
 		if item.action == #selector(refreshAll(_:)) {
-			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty
+			return !accountManager.refreshInProgress && !accountManager.activeAccounts.isEmpty
 		}
 		
 		if item.action == #selector(importOPMLFromFile(_:)) {
-			return AccountManager.shared.activeAccounts.contains(where: { !$0.behaviors.contains(where: { $0 == .disallowOPMLImports }) })
+			return accountManager.activeAccounts.contains(where: { !$0.behaviors.contains(where: { $0 == .disallowOPMLImports }) })
 		}
 		
 		if item.action == #selector(addAppNews(_:)) {
-			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() && !AccountManager.shared.activeAccounts.isEmpty
+			return !isDisplayingSheet && !accountManager.anyAccountHasNetNewsWireNewsSubscription() && !accountManager.activeAccounts.isEmpty
 		}
 		
 		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
@@ -460,7 +467,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 		
 		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
-			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
+			return !isDisplayingSheet && !accountManager.activeAccounts.isEmpty
 		}
 		
 		#if !MAC_APP_STORE
@@ -474,23 +481,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	// MARK: UNUserNotificationCenterDelegate
 	
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+	nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .badge, .sound])
     }
 	
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+	nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 		
 		let userInfo = response.notification.request.content.userInfo
-		
-		switch response.actionIdentifier {
-		case "MARK_AS_READ":
-			handleMarkAsRead(userInfo: userInfo)
-		case "MARK_AS_STARRED":
-			handleMarkAsStarred(userInfo: userInfo)
-		default:
-			mainWindowController?.handle(response)
+		guard let articlePathInfo = ArticlePathInfo(userInfo: userInfo) else {
+			completionHandler()
+			return
 		}
-		completionHandler()
+
+		let actionIdentifier = response.actionIdentifier
+
+		Task { @MainActor in
+			switch actionIdentifier {
+			case "MARK_AS_READ":
+				handleMarkAsRead(articlePathInfo: articlePathInfo)
+			case "MARK_AS_STARRED":
+				handleMarkAsStarred(articlePathInfo: articlePathInfo)
+			default:
+				mainWindowController?.handle(articlePathInfo: articlePathInfo)
+			}
+			completionHandler()
+		}
     }
 	
 	// MARK: Add Feed
@@ -529,7 +544,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	@IBAction func refreshAll(_ sender: Any?) {
-		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
+		accountManager.refreshAll(errorHandler: ErrorHandler.present)
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {
@@ -603,7 +618,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 	
 	@IBAction func addAppNews(_ sender: Any?) {
-		if AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() {
+		if accountManager.anyAccountHasNetNewsWireNewsSubscription() {
 			return
 		}
 		addFeed(AccountManager.netNewsWireNewsURL, name: "NetNewsWire News")
@@ -700,12 +715,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 extension AppDelegate {
 
 	@IBAction func debugSearch(_ sender: Any?) {
-		AccountManager.shared.defaultAccount.debugRunSearch()
+		accountManager.defaultAccount.debugRunSearch()
 	}
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
 		#if DEBUG
-			AccountManager.shared.activeAccounts.forEach{ $0.debugDropConditionalGetInfo() }
+			accountManager.activeAccounts.forEach{ $0.debugDropConditionalGetInfo() }
 		#endif
 	}
 
@@ -817,7 +832,7 @@ internal extension AppDelegate {
 				
 			func importTheme() {
 				do {
-					try ArticleThemesManager.shared.importTheme(filename: filename)
+					try articleThemesManager.importTheme(filename: filename)
 					confirmImportSuccess(themeName: theme.name)
 				} catch {
 					NSApplication.shared.presentError(error)
@@ -827,7 +842,7 @@ internal extension AppDelegate {
 			alert.beginSheetModal(for: window) { result in
 				if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 
-					if ArticleThemesManager.shared.themeExists(filename: filename) {
+					if self.articleThemesManager.themeExists(filename: filename) {
 						let alert = NSAlert()
 						alert.alertStyle = .warning
 
@@ -901,14 +916,14 @@ internal extension AppDelegate {
 			informativeText = error.localizedDescription
 		}
 		
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
 			alert.informativeText = informativeText
 			alert.addButton(withTitle: NSLocalizedString("Open Theme Folder", comment: "Open Theme Folder"))
 			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
-			
+
 			let button = alert.buttons.first
 			button?.target = self
 			button?.action = #selector(self.openThemesFolder(_:))
@@ -920,7 +935,7 @@ internal extension AppDelegate {
 
 	@objc func openThemesFolder(_ sender: Any) {
 		if themeImportPath == nil {
-			let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
+			let url = URL(fileURLWithPath: articleThemesManager.folderPath)
 			NSWorkspace.shared.open(url)
 		} else {
 			let url = URL(fileURLWithPath: themeImportPath!)
@@ -968,16 +983,15 @@ extension AppDelegate: NSWindowRestoration {
 
 private extension AppDelegate {
 	
-	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
+	func handleMarkAsRead(articlePathInfo: ArticlePathInfo) {
 
-		guard let articlePathInfo = ArticlePathInfo(userInfo: userInfo) else {
-			return
-		}
-		guard let account = AccountManager.shared.existingAccount(with: articlePathInfo.accountID) else {
+		guard let accountID = articlePathInfo.accountID, let account = accountManager.existingAccount(with: accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
-		let articleID = articlePathInfo.articleID
+		guard let articleID = articlePathInfo.articleID else {
+			return
+		}
 
 		Task {
 			guard let articles = try? await account.articles(for: .articleIDs([articleID])) else {
@@ -989,16 +1003,15 @@ private extension AppDelegate {
 		}
 	}
 	
-	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+	func handleMarkAsStarred(articlePathInfo: ArticlePathInfo) {
 
-		guard let articlePathInfo = ArticlePathInfo(userInfo: userInfo) else {
-			return
-		}
-		guard let account = AccountManager.shared.existingAccount(with: articlePathInfo.accountID) else {
+		guard let accountID = articlePathInfo.accountID, let account = accountManager.existingAccount(with: accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
-		let articleID = articlePathInfo.articleID
+		guard let articleID = articlePathInfo.articleID else {
+			return
+		}
 
 		Task {
 

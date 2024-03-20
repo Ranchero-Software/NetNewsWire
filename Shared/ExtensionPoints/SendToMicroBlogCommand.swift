@@ -29,7 +29,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 		return true
 	}
 	
-	func sendObject(_ object: Any?, selectedText: String?) {
+	@MainActor func sendObject(_ object: Any?, selectedText: String?) {
 
 		guard canSendObject(object, selectedText: selectedText) else {
 			return
@@ -60,7 +60,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 
 private extension Article {
 
-	var attributionString: String {
+	@MainActor var attributionString: String {
 
 		// Feed name, or feed name + author name (if author is specified per-article).
 		// Includes trailing space.

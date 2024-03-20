@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSParser
 
-struct ArticleStringFormatter {
+@MainActor struct ArticleStringFormatter {
 
 	private static var feedNameCache = [String: String]()
 	private static var titleCache = [String: String]()

@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import Account
 
-final class FaviconGenerator {
+@MainActor final class FaviconGenerator {
 
 	private static var faviconGeneratorCache = [String: IconImage]() // feedURL: RSImage
 

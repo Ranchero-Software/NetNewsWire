@@ -19,11 +19,12 @@ public enum ArticleExtractorState {
 }
 
 protocol ArticleExtractorDelegate {
-    func articleExtractionDidFail(with: Error)
-    func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
+
+	@MainActor func articleExtractionDidFail(with: Error)
+	@MainActor func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }
 
-class ArticleExtractor {
+final class ArticleExtractor {
 	
 	private var dataTask: URLSessionDataTask? = nil
     

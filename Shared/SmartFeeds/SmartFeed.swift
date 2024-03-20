@@ -62,7 +62,7 @@ final class SmartFeed: PseudoFeed {
 		}
 	}
 
-	@objc func fetchUnreadCounts() {
+	@objc @MainActor func fetchUnreadCounts() {
 		let activeAccounts = AccountManager.shared.activeAccounts
 		
 		// Remove any accounts that are no longer active or have been deleted
@@ -113,15 +113,18 @@ private extension SmartFeed {
 
 	func fetchUnreadCount(for account: Account) {
 		delegate.fetchUnreadCount(for: account) { singleUnreadCountResult in
-			guard let accountUnreadCount = try? singleUnreadCountResult.get() else {
-				return
+
+			MainActor.assumeIsolated {
+				guard let accountUnreadCount = try? singleUnreadCountResult.get() else {
+					return
+				}
+				self.unreadCounts[account.accountID] = accountUnreadCount
+				self.updateUnreadCount()
 			}
-			self.unreadCounts[account.accountID] = accountUnreadCount
-			self.updateUnreadCount()
 		}
 	}
 
-	func updateUnreadCount() {
+	@MainActor func updateUnreadCount() {
 		unreadCount = AccountManager.shared.activeAccounts.reduce(0) { (result, account) -> Int in
 			if let oneUnreadCount = unreadCounts[account.accountID] {
 				return result + oneUnreadCount

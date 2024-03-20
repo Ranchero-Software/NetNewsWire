@@ -12,7 +12,7 @@ import AppKit
 // Uses a cache.
 // Main thready only.
 
-final class SingleLineTextFieldSizer {
+@MainActor final class SingleLineTextFieldSizer {
 
 	let font: NSFont
 	private let textField: NSTextField

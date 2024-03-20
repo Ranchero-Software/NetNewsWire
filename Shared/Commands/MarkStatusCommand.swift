@@ -12,7 +12,7 @@ import Articles
 
 // Mark articles read/unread, starred/unstarred, deleted/undeleted.
 
-final class MarkStatusCommand: UndoableCommand {
+@MainActor final class MarkStatusCommand: UndoableCommand {
     
 	let undoActionName: String
 	let redoActionName: String
@@ -50,12 +50,12 @@ final class MarkStatusCommand: UndoableCommand {
 		self.init(initialArticles: initialArticles, statusKey: .starred, flag: markingStarred, undoManager: undoManager, completion: completion)
 	}
 
-    func perform() {
+	@MainActor func perform() {
 		mark(statusKey, flag)
  		registerUndo()
     }
     
-    func undo() {
+	@MainActor func undo() {
 		mark(statusKey, !flag)
 		registerRedo()
     }
@@ -63,7 +63,7 @@ final class MarkStatusCommand: UndoableCommand {
 
 private extension MarkStatusCommand {
     
-	func mark(_ statusKey: ArticleStatus.Key, _ flag: Bool) {
+	@MainActor func mark(_ statusKey: ArticleStatus.Key, _ flag: Bool) {
         markArticles(articles, statusKey: statusKey, flag: flag, completion: completion)
 		completion = nil
     }
@@ -83,7 +83,7 @@ private extension MarkStatusCommand {
 		}
 	}
 
-	static func filteredArticles(_ articles: [Article], _ statusKey: ArticleStatus.Key, _ flag: Bool) -> [Article] {
+	@MainActor static func filteredArticles(_ articles: [Article], _ statusKey: ArticleStatus.Key, _ flag: Bool) -> [Article] {
 
 		return articles.filter{ article in
 			guard article.status.boolStatus(forKey: statusKey) != flag else { return false }

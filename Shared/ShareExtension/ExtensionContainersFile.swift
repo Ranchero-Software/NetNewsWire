@@ -14,9 +14,9 @@ import Account
 
 final class ExtensionContainersFile {
 	
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionContainersFile")
+	private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionContainersFile")
 
-	private static var filePath: String = {
+	private static let filePath: String = {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 		return containerURL!.appendingPathComponent("extension_containers.plist").path

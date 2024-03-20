@@ -10,8 +10,8 @@ import Foundation
 import os.log
 import Account
 
-final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
-	
+final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
+
 	private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionFeedAddRequestFile")
 
 	private static let filePath: String = {
@@ -30,7 +30,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 		return operationQueue
 	}
 	
-	override init() {
+	@MainActor override init() {
 		operationQueue = OperationQueue()
 		operationQueue.maxConcurrentOperationCount = 1
 		
@@ -41,14 +41,16 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 	}
 
 	func presentedItemDidChange() {
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			self.process()
 		}
 	}
 
 	func resume() {
 		NSFileCoordinator.addFilePresenter(self)
-		process()
+		Task { @MainActor in
+			process()
+		}
 	}
 	
 	func suspend() {
@@ -95,8 +97,8 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 
 private extension ExtensionFeedAddRequestFile {
 	
-	func process() {
-		
+	@MainActor func process() {
+
 		let decoder = PropertyListDecoder()
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
@@ -130,7 +132,7 @@ private extension ExtensionFeedAddRequestFile {
 		requests?.forEach { processRequest($0) }
 	}
 	
-	func processRequest(_ request: ExtensionFeedAddRequest) {
+	@MainActor func processRequest(_ request: ExtensionFeedAddRequest) {
 		var destinationAccountID: String? = nil
 		switch request.destinationContainerID {
 		case .account(let accountID):

@@ -20,8 +20,8 @@ import UniformTypeIdentifiers
 import CoreSpotlight
 #endif
 
-class ActivityManager {
-	
+@MainActor final class ActivityManager {
+
 	private var nextUnreadActivity: NSUserActivity?
 	private var selectingActivity: NSUserActivity?
 	private var readingActivity: NSUserActivity?
@@ -264,8 +264,8 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
-		
+	@MainActor func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
+
 		let attributeSet = CSSearchableItemAttributeSet(contentType: UTType.item)
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)

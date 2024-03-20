@@ -115,16 +115,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		return sidebarViewController?.selectedObjects
 	}
 
-	func handle(_ response: UNNotificationResponse) {
-		let userInfo = response.notification.request.content.userInfo
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
-		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
-		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
+	func handle(articlePathInfo: ArticlePathInfo) {
+		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathInfo)
+		currentTimelineViewController?.goToDeepLink(for: articlePathInfo)
 	}
 
 	func handle(_ activity: NSUserActivity) {
-		guard let userInfo = activity.userInfo else { return }
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+
+		guard let userInfo = activity.userInfo, let articlePathUserInfo = ArticlePathInfo(userInfo: userInfo) else {
+			return
+		}
+
 		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
 		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}

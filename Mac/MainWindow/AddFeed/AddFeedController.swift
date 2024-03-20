@@ -22,7 +22,7 @@ import RSParser
 //   Else,
 //      display error sheet.
 
-class AddFeedController: AddFeedWindowControllerDelegate {
+@MainActor final class AddFeedController: AddFeedWindowControllerDelegate {
 
 	private let hostWindow: NSWindow
 	private var addFeedWindowController: AddFeedWindowController?

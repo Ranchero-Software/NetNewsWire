@@ -9,8 +9,8 @@
 import Foundation
 import Account
 
-class ArticleStatusSyncTimer {
-	
+@MainActor final class ArticleStatusSyncTimer {
+
 	private static let intervalSeconds = Double(120)
 	
 	var shuttingDown = false

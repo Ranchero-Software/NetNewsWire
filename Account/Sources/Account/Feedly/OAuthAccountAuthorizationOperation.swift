@@ -133,7 +133,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 		return anchor
 	}
 	
-	private func didEndRequestingAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
+	@MainActor private func didEndRequestingAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
@@ -147,7 +147,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 		}
 	}
 	
-	private func saveAccount(for grant: OAuthAuthorizationGrant) {
+	@MainActor private func saveAccount(for grant: OAuthAuthorizationGrant) {
 		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
 			didFinish(OAuthAccountAuthorizationOperationError.duplicateAccount)
 			return

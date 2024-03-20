@@ -111,7 +111,9 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 			return article.status.boolStatus(forKey:.read)
 		}
 		set {
-			markArticles([self.article], statusKey: .read, flag: newValue)
+			Task { @MainActor in
+				markArticles([self.article], statusKey: .read, flag: newValue)
+			}
 		}
     }
 
@@ -121,7 +123,9 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 			return article.status.boolStatus(forKey:.starred)
 		}
 		set {
-			markArticles([self.article], statusKey: .starred, flag: newValue)
+			Task { @MainActor in
+				markArticles([self.article], statusKey: .starred, flag: newValue)
+			}
 		}
     }
 
@@ -142,7 +146,7 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     }
 
 	@objc(feed)
-	var feed: ScriptableFeed? {
+	@MainActor var feed: ScriptableFeed? {
 		guard let parentFeed = self.article.feed,
 			let account = parentFeed.account
 			else { return nil }

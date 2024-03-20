@@ -161,7 +161,7 @@ struct AddAccountsView: View {
 		
 	}
 	
-	var icloudAccount: some View {
+	@MainActor var icloudAccount: some View {
 		VStack(alignment: .leading) {
 			Text("iCloud")
 				.font(.headline)
@@ -260,7 +260,7 @@ struct AddAccountsView: View {
 		}
 	}
 	
-	private func isCloudInUse() -> Bool {
+	@MainActor private func isCloudInUse() -> Bool {
 		AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit })
 	}
 	

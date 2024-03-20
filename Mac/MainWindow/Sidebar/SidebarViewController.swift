@@ -17,13 +17,13 @@ extension Notification.Name {
 }
 
 protocol SidebarDelegate: AnyObject {
-	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?)
-	func unreadCount(for: AnyObject) -> Int
-	func sidebarInvalidatedRestorationState(_: SidebarViewController)
+	@MainActor func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?)
+	@MainActor func unreadCount(for: AnyObject) -> Int
+	@MainActor func sidebarInvalidatedRestorationState(_: SidebarViewController)
 }
 
-@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
-    
+@objc @MainActor class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
+
 	@IBOutlet weak var outlineView: NSOutlineView!
 	
 	weak var delegate: SidebarDelegate?
@@ -483,9 +483,9 @@ protocol SidebarDelegate: AnyObject {
 		revealAndSelectRepresentedObject(feed as AnyObject)
 	}
 
-	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
-		guard let accountNode = findAccountNode(userInfo),
-			let feedNode = findFeedNode(userInfo, beginningAt: accountNode),
+	func deepLinkRevealAndSelect(for articlePathInfo: ArticlePathInfo) {
+		guard let accountNode = findAccountNode(articlePathInfo),
+			let feedNode = findFeedNode(articlePathInfo, beginningAt: accountNode),
 			let feed = feedNode.representedObject as? SidebarItem else {
 			return
 		}
@@ -738,16 +738,17 @@ private extension SidebarViewController {
 		return nil
 	}
 
-	func findAccountNode(_ userInfo: [AnyHashable : Any]?) -> Node? {
-		guard let accountID = userInfo?[ArticlePathKey.accountID] as? String else {
+	func findAccountNode(_ articlePathInfo: ArticlePathInfo) -> Node? {
+
+		guard let accountID = articlePathInfo.accountID else {
 			return nil
 		}
-		
+
 		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.accountID == accountID }) {
 			return node
 		}
 
-		guard let accountName = userInfo?[ArticlePathKey.accountName] as? String else {
+		guard let accountName = articlePathInfo.accountName else {
 			return nil
 		}
 
@@ -758,8 +759,8 @@ private extension SidebarViewController {
 		return nil
 	}
 	
-	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
-		guard let feedID = userInfo?[ArticlePathKey.feedID] as? String else {
+	func findFeedNode(_ articlePathInfo: ArticlePathInfo, beginningAt startingNode: Node) -> Node? {
+		guard let feedID = articlePathInfo.feedID else {
 			return nil
 		}
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {

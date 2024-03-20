@@ -86,7 +86,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 	
-	func saveNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func saveNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard !articles.isEmpty else {
 			completion(.success(()))
 			return
@@ -112,7 +112,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		delete(ckQuery: ckQuery, completion: completion)
 	}
 	
-	func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard !statusUpdates.isEmpty else {
 			completion(.success(()))
 			return
@@ -164,7 +164,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 private extension CloudKitArticlesZone {
 
-	func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			self.createZoneRecord() { result in
 				switch result {
@@ -187,7 +187,7 @@ private extension CloudKitArticlesZone {
 		return "a|\(id)"
 	}
 	
-	func makeStatusRecord(_ article: Article) -> CKRecord {
+	@MainActor func makeStatusRecord(_ article: Article) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
 		if let feedExternalID = article.feed?.externalID {
@@ -198,7 +198,7 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 	
-	func makeStatusRecord(_ statusUpdate: CloudKitArticleStatusUpdate) -> CKRecord {
+	@MainActor func makeStatusRecord(_ statusUpdate: CloudKitArticleStatusUpdate) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
 		
@@ -212,7 +212,7 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 	
-	func makeArticleRecord(_ article: Article) -> CKRecord {
+	@MainActor func makeArticleRecord(_ article: Article) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: articleID(article.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticle.recordType, recordID: recordID)
 

@@ -10,7 +10,7 @@ import AppKit
 import Account
 import RSCore
 
-final class FolderInspectorViewController: NSViewController, Inspector {
+@MainActor final class FolderInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet var nameTextField: NSTextField?
 	@IBOutlet weak var folderImageView: NSImageView!

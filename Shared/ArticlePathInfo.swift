@@ -10,22 +10,20 @@ import Foundation
 
 struct ArticlePathInfo {
 
-	let accountID: String
-	let articleID: String
+	let accountID: String?
+	let accountName: String?
+	let articleID: String?
+	let feedID: String?
 
 	init?(userInfo: [AnyHashable: Any]) {
 
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [String: String] else {
 			return nil
 		}
-		guard let accountID = articlePathUserInfo[ArticlePathKey.accountID] else {
-			return nil
-		}
-		guard let articleID = articlePathUserInfo[ArticlePathKey.articleID] else {
-			return nil
-		}
 
-		self.accountID = accountID
-		self.articleID = articleID
+		self.accountID = articlePathUserInfo[ArticlePathKey.accountID]
+		self.accountName = articlePathUserInfo[ArticlePathKey.accountName]
+		self.articleID = articlePathUserInfo[ArticlePathKey.articleID]
+		self.feedID = articlePathUserInfo[ArticlePathKey.feedID]
 	}
 }

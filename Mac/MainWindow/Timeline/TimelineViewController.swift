@@ -13,9 +13,10 @@ import Account
 import os.log
 
 protocol TimelineDelegate: AnyObject  {
-	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
-	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
-	func timelineInvalidatedRestorationState(_: TimelineViewController)
+	
+	@MainActor func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
+	@MainActor func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
+	@MainActor func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
 enum TimelineShowFeedName {
@@ -535,12 +536,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	// MARK: - Navigation
 	
-	func goToDeepLink(for userInfo: [AnyHashable : Any]) {
-		guard let articleID = userInfo[ArticlePathKey.articleID] as? String else { return }
+	func goToDeepLink(for articlePathInfo: ArticlePathInfo) {
+
+		guard let articleID = articlePathInfo.articleID else {
+			return
+		}
 
 		Task {
 			if isReadFiltered ?? false {
-				if let accountName = userInfo[ArticlePathKey.accountName] as? String,
+				if let accountName = articlePathInfo.accountName,
 					let account = AccountManager.shared.existingActiveAccount(forDisplayName: accountName) {
 					exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 					await fetchAndReplaceArticles()

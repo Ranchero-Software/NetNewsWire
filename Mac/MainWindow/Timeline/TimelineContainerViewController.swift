@@ -11,10 +11,10 @@ import Account
 import Articles
 
 protocol TimelineContainerViewControllerDelegate: AnyObject {
-	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
-	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed)
-	func timelineInvalidatedRestorationState(_: TimelineContainerViewController)
-
+	
+	@MainActor func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
+	@MainActor func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed)
+	@MainActor func timelineInvalidatedRestorationState(_: TimelineContainerViewController)
 }
 
 final class TimelineContainerViewController: NSViewController {

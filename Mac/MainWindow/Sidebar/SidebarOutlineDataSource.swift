@@ -12,7 +12,7 @@ import Articles
 import RSCore
 import Account
 
-@objc final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
+@objc @MainActor final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
 
 	let treeController: TreeController
 	static let dragOperationNone = NSDragOperation(rawValue: 0)

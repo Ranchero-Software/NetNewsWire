@@ -12,226 +12,144 @@ import Account
 
 struct AppAssets {
 
-	static var accountBazQux: RSImage! = {
-		return RSImage(named: "accountBazQux")
-	}()
+	static let accountBazQux = RSImage(named: "accountBazQux")
 
-	static var accountCloudKit: RSImage! = {
-		return RSImage(named: "accountCloudKit")
-	}()
+	static let accountCloudKit = RSImage(named: "accountCloudKit")
 
-	static var accountFeedbin: RSImage! = {
-		return RSImage(named: "accountFeedbin")
-	}()
+	static let accountFeedbin = RSImage(named: "accountFeedbin")
+
+	static let accountFeedly = RSImage(named: "accountFeedly")
 	
-	static var accountFeedly: RSImage! = {
-		return RSImage(named: "accountFeedly")
-	}()
-	
-	static var accountFreshRSS: RSImage! = {
-		return RSImage(named: "accountFreshRSS")
-	}()
+	static let accountFreshRSS = RSImage(named: "accountFreshRSS")
 
-	static var accountInoreader: RSImage! = {
-		return RSImage(named: "accountInoreader")
-	}()
+	static let accountInoreader = RSImage(named: "accountInoreader")
 
-	static var accountLocal: RSImage! = {
-		return RSImage(named: "accountLocal")
-	}()
+	static let accountLocal = RSImage(named: "accountLocal")
 
-	static var accountNewsBlur: RSImage! = {
-		return RSImage(named: "accountNewsBlur")
-	}()
-	
-	static var accountTheOldReader: RSImage! = {
-		return RSImage(named: "accountTheOldReader")
-	}()
+	static let accountNewsBlur = RSImage(named: "accountNewsBlur")
 
-	static var addNewSidebarItemImage: RSImage = {
-		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
-	}()
+	static let accountTheOldReader = RSImage(named: "accountTheOldReader")
 
-	static var articleExtractorError: RSImage = {
-		return RSImage(named: "articleExtractorError")!
-	}()
+	static let addNewSidebarItemImage = NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 
-	static var articleExtractorOff: RSImage = {
-		return RSImage(named: "articleExtractorOff")!
-	}()
+	static let articleExtractorError = RSImage(named: "articleExtractorError")!
 
-	static var articleExtractorOn: RSImage = {
-		return RSImage(named: "articleExtractorOn")!
-	}()
+	static let articleExtractorOff = RSImage(named: "articleExtractorOff")!
 
-	static var articleTheme: RSImage = {
-		return NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
-	}()
+	static let articleExtractorOn = RSImage(named: "articleExtractorOn")!
 
-	static var cleanUpImage: RSImage = {
-		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
-	}()
+	static let articleTheme = NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
 
-	static var marsEditIcon: RSImage = {
-		return RSImage(named: "MarsEditIcon")!
-	}()
-	
-	static var microblogIcon: RSImage = {
-		return RSImage(named: "MicroblogIcon")!
-	}()
-	
-	static var faviconTemplateImage: RSImage = {
-		return RSImage(named: "faviconTemplateImage")!
-	}()
+	static let cleanUpImage = NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
 
-	static var filterActive = NSImage(systemSymbolName: "line.horizontal.3.decrease.circle.fill", accessibilityDescription: nil)!
+	static let marsEditIcon = RSImage(named: "MarsEditIcon")!
 
-	static var filterInactive = NSImage(systemSymbolName: "line.horizontal.3.decrease.circle", accessibilityDescription: nil)!
+	static let microblogIcon = RSImage(named: "MicroblogIcon")!
 
-	static var iconLightBackgroundColor: NSColor = {
-		return NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
-	}()
+	static let faviconTemplateImage = RSImage(named: "faviconTemplateImage")!
 
-	static var iconDarkBackgroundColor: NSColor = {
-		return NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
-	}()
-	
-	static var legacyArticleExtractor: RSImage! = {
-		return RSImage(named: "legacyArticleExtractor")
-	}()
-	
-	static var legacyArticleExtractorError: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorError")
-	}()
-	
-	static var legacyArticleExtractorInactiveDark: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorInactiveDark")
-	}()
-	
-	static var legacyArticleExtractorInactiveLight: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorInactiveLight")
-	}()
-	
-	static var legacyArticleExtractorProgress1: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorProgress1")
-	}()
-	
-	static var legacyArticleExtractorProgress2: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorProgress2")
-	}()
-	
-	static var legacyArticleExtractorProgress3: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorProgress3")
-	}()
-	
-	static var legacyArticleExtractorProgress4: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorProgress4")
-	}()
-	
-	static var folderImage: IconImage = {
+	static let filterActive = NSImage(systemSymbolName: "line.horizontal.3.decrease.circle.fill", accessibilityDescription: nil)!
+
+	static let filterInactive = NSImage(systemSymbolName: "line.horizontal.3.decrease.circle", accessibilityDescription: nil)!
+
+	static let iconLightBackgroundColor = NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
+
+	static let iconDarkBackgroundColor = NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
+
+	static let legacyArticleExtractor = RSImage(named: "legacyArticleExtractor")!
+
+	static let legacyArticleExtractorError = RSImage(named: "legacyArticleExtractorError")!
+
+	static let legacyArticleExtractorInactiveDark = RSImage(named: "legacyArticleExtractorInactiveDark")!
+
+	static let legacyArticleExtractorInactiveLight = RSImage(named: "legacyArticleExtractorInactiveLight")!
+
+	static let legacyArticleExtractorProgress1 = RSImage(named: "legacyArticleExtractorProgress1")
+
+	static let legacyArticleExtractorProgress2 = RSImage(named: "legacyArticleExtractorProgress2")
+
+	static let legacyArticleExtractorProgress3 = RSImage(named: "legacyArticleExtractorProgress3")
+
+	static let legacyArticleExtractorProgress4 = RSImage(named: "legacyArticleExtractorProgress4")
+
+	static let folderImage: IconImage = {
 		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!
 		let coloredImage = image.tinted(with: preferredColor)
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
-	static var markAllAsReadImage: RSImage = {
-		return RSImage(named: "markAllAsRead")!
-	}()
+	static let markAllAsReadImage = RSImage(named: "markAllAsRead")!
 
-	static var nextUnreadImage: RSImage = {
-		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
-	}()
+	static let nextUnreadImage = NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
 
-	static var openInBrowserImage: RSImage = {
-		return NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
-	}()
+	static let openInBrowserImage = NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
 
-	static var preferencesToolbarAccountsImage = NSImage(systemSymbolName: "at", accessibilityDescription: nil)!
+	static let preferencesToolbarAccountsImage = NSImage(systemSymbolName: "at", accessibilityDescription: nil)!
 
-	static var preferencesToolbarGeneralImage = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
+	static let preferencesToolbarGeneralImage = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
 
-	static var preferencesToolbarAdvancedImage = NSImage(systemSymbolName: "gearshape.2", accessibilityDescription: nil)!
+	static let preferencesToolbarAdvancedImage = NSImage(systemSymbolName: "gearshape.2", accessibilityDescription: nil)!
 
-	static var readClosedImage = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
+	static let readClosedImage = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 
-	static var readOpenImage: RSImage = {
-		return NSImage(systemSymbolName: "circle", accessibilityDescription: nil)!
-	}()
+	static let readOpenImage = NSImage(systemSymbolName: "circle", accessibilityDescription: nil)!
 	
-	static var refreshImage: RSImage = {
-		return NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
-	}()
-	
-	static var searchFeedImage: IconImage = {
+	static let refreshImage = NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
+
+	static let searchFeedImage: IconImage = {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSupressed: true)
 	}()
 	
-	static var shareImage: RSImage = {
-		return NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
-	}()
+	static let shareImage = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
 
-	static var sidebarToggleImage: RSImage = {
-		return NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
-	}()
-	
-	static var starClosedImage: RSImage = {
-		return NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
-	}()
+	static let sidebarToggleImage = NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
 
-	static var starOpenImage: RSImage = {
-		return NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
-	}()
-	
-	static var starredFeedImage: IconImage = {
+	static let starClosedImage = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
+
+	static let starOpenImage = NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
+
+	static let starredFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "StarColor")!
 		let coloredImage = image.tinted(with: preferredColor)
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
-	static var timelineSeparatorColor: NSColor = {
-		return NSColor(named: "timelineSeparatorColor")!
-	}()
-	
-	static var timelineStarSelected: RSImage! = {
-		return RSImage(named: "timelineStar")?.tinted(with: .white)
-	}()
+	static let timelineSeparatorColor = NSColor(named: "timelineSeparatorColor")!
 
-	static var timelineStarUnselected: RSImage! = {
-		return RSImage(named: "timelineStar")?.tinted(with: starColor)
-	}()
+	static let timelineStarSelected = RSImage(named: "timelineStar")?.tinted(with: .white)
 
-	static var todayFeedImage: IconImage = {
+	static let timelineStarUnselected = RSImage(named: "timelineStar")?.tinted(with: starColor)
+
+	static let todayFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
 		let preferredColor = NSColor.orange
 		let coloredImage = image.tinted(with: preferredColor)
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
-	static var unreadFeedImage: IconImage = {
+	static let unreadFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!
 		let coloredImage = image.tinted(with: preferredColor)
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
-	static var swipeMarkReadImage = RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
+	static let swipeMarkReadImage = RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
 		.withSymbolConfiguration(.init(scale: .large))
 
-	static var swipeMarkUnreadImage = RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
+	static let swipeMarkUnreadImage = RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
 		.withSymbolConfiguration(.init(scale: .large))
 
-	static var swipeMarkStarredImage = RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
+	static let swipeMarkStarredImage = RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
 		.withSymbolConfiguration(.init(scale: .large))
 
-	static var swipeMarkUnstarredImage = RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
+	static let swipeMarkUnstarredImage = RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
 		.withSymbolConfiguration(.init(scale: .large))!
 
-	static var starColor: NSColor = {
-		return NSColor(named: NSColor.Name("StarColor"))!
-	}()
-	
+	static let starColor = NSColor(named: NSColor.Name("StarColor"))!
+
 	static func image(for accountType: AccountType) -> NSImage? {
 		switch accountType {
 		case .onMyMac:
@@ -254,5 +172,4 @@ struct AppAssets {
 			return AppAssets.accountTheOldReader
 		}
 	}
-	
 }

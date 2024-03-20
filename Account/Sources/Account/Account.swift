@@ -709,7 +709,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func articles(feed: Feed) async throws -> Set<Article> {
 
 		let articles = try await database.articles(feedID: feed.feedID)
-		validateUnreadCount(feed, articles)
+		await validateUnreadCount(feed, articles)
 		return articles
 	}
 	
@@ -801,12 +801,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		precondition(type == .onMyMac || type == .cloudKit)
 		
 		database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { updateArticlesResult in
-			switch updateArticlesResult {
-			case .success(let articleChanges):
-				self.sendNotificationAbout(articleChanges)
-				completion(.success(articleChanges))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+
+			MainActor.assumeIsolated {
+				switch updateArticlesResult {
+				case .success(let articleChanges):
+					self.sendNotificationAbout(articleChanges)
+					completion(.success(articleChanges))
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
+				}
 			}
 		}
 	}
@@ -821,12 +824,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 
 		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
-			switch updateArticlesResult {
-			case .success(let newAndUpdatedArticles):
-				self.sendNotificationAbout(newAndUpdatedArticles)
-				completion(nil)
-			case .failure(let databaseError):
-				completion(databaseError)
+
+			MainActor.assumeIsolated {
+				switch updateArticlesResult {
+				case .success(let newAndUpdatedArticles):
+					self.sendNotificationAbout(newAndUpdatedArticles)
+					completion(nil)
+				case .failure(let databaseError):
+					completion(databaseError)
+				}
 			}
 		}
 	}
@@ -839,14 +845,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		
 		database.mark(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let updatedStatuses):
-				let updatedArticleIDs = updatedStatuses.articleIDs()
-				let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-				self.noteStatusesForArticlesDidChange(updatedArticles)
-				completion(.success(updatedArticles))
-			case .failure(let error):
-				completion(.failure(error))
+
+			MainActor.assumeIsolated {
+				switch result {
+				case .success(let updatedStatuses):
+					let updatedArticleIDs = updatedStatuses.articleIDs()
+					let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+					self.noteStatusesForArticlesDidChange(updatedArticles)
+					completion(.success(updatedArticles))
+				case .failure(let error):
+					completion(.failure(error))
+				}
 			}
 		}
 	}
@@ -1118,12 +1127,15 @@ private extension Account {
 
 	func fetchArticlesAsync(feed: Feed, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchArticlesAsync(feed.feedID) { [weak self] articleSetResult in
-			switch articleSetResult {
-			case .success(let articles):
-				self?.validateUnreadCount(feed, articles)
-				completion(.success(articles))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+
+			MainActor.assumeIsolated {
+				switch articleSetResult {
+				case .success(let articles):
+					self?.validateUnreadCount(feed, articles)
+					completion(.success(articles))
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
+				}
 			}
 		}
 	}
@@ -1227,7 +1239,7 @@ private extension Account {
 		}
 	}
 
-	func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
+	@MainActor func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
 		// articles must contain all the unread articles for the feed.
 		// The unread number should match the feed’s unread count.
 
@@ -1301,7 +1313,7 @@ private extension Account {
 		unreadCount = updatedUnreadCount
     }
     
-    func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
+	@MainActor func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
 		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
 		let articleIDs = Set(articles.map { $0.articleID })
@@ -1389,7 +1401,7 @@ private extension Account {
 		}
 	}
 
-	func sendNotificationAbout(_ articleChanges: ArticleChanges) {
+	@MainActor func sendNotificationAbout(_ articleChanges: ArticleChanges) {
 		var feeds = Set<Feed>()
 
 		if let newArticles = articleChanges.newArticles {

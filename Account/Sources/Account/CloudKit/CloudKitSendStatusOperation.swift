@@ -139,22 +139,24 @@ private extension CloudKitSendStatusOperation {
 						return
 					}
 				} else {
-					articlesZone.modifyArticles(statusUpdates) { result in
-						switch result {
-						case .success:
-							self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
-								done(false)
-							}
-						case .failure(let error):
-							self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-								self.processAccountError(account, error)
-								os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
-								completion(true)
+					
+					Task { @MainActor in
+						articlesZone.modifyArticles(statusUpdates) { result in
+							switch result {
+							case .success:
+								self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
+									done(false)
+								}
+							case .failure(let error):
+								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+									self.processAccountError(account, error)
+									os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
+									completion(true)
+								}
 							}
 						}
 					}
 				}
-				
 			}
 
 			switch result {

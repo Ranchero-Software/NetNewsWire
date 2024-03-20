@@ -25,9 +25,11 @@ final class UserNotificationManager: NSObject {
 			return
 		}
 		
-		for article in articles {
-			if !article.status.read, let feed = article.feed, feed.isNotifyAboutNewArticles ?? false {
-				sendNotification(feed: feed, article: article)
+		Task { @MainActor in
+			for article in articles {
+				if !article.status.read, let feed = article.feed, feed.isNotifyAboutNewArticles ?? false {
+					sendNotification(feed: feed, article: article)
+				}
 			}
 		}
 	}
@@ -53,7 +55,7 @@ final class UserNotificationManager: NSObject {
 
 private extension UserNotificationManager {
 	
-	func sendNotification(feed: Feed, article: Article) {
+	@MainActor func sendNotification(feed: Feed, article: Article) {
 		let content = UNMutableNotificationContent()
 						
 		content.title = feed.nameForDisplay
@@ -79,7 +81,7 @@ private extension UserNotificationManager {
 	///   - feed: `Feed`
 	/// - Returns: A `UNNotifcationAttachment` if an icon is available. Otherwise nil.
 	/// - Warning: In certain scenarios, this will return the `faviconTemplateImage`.
-	func thumbnailAttachment(for article: Article, feed: Feed) -> UNNotificationAttachment? {
+	@MainActor func thumbnailAttachment(for article: Article, feed: Feed) -> UNNotificationAttachment? {
 		if let imageURL = article.iconImageUrl(feed: feed) {
 			let thumbnail = try? UNNotificationAttachment(identifier: feed.feedID, url: imageURL, options: nil)
 			return thumbnail

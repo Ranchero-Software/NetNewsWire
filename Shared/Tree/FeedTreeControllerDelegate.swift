@@ -24,7 +24,7 @@ final class FeedTreeControllerDelegate: TreeControllerDelegate {
 		filterExceptions = Set<SidebarItemIdentifier>()
 	}
 	
-	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
+	@MainActor func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 		if node.isRoot {
 			return childNodesForRootNode(node)
 		}
@@ -41,7 +41,7 @@ final class FeedTreeControllerDelegate: TreeControllerDelegate {
 
 private extension FeedTreeControllerDelegate {
 	
-	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
+	@MainActor func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()
 
 		let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
@@ -132,7 +132,7 @@ private extension FeedTreeControllerDelegate {
 		return node
 	}
 
-	func sortedAccountNodes(_ parent: Node) -> [Node] {
+	@MainActor func sortedAccountNodes(_ parent: Node) -> [Node] {
 		let nodes = AccountManager.shared.sortedActiveAccounts.compactMap { (account) -> Node? in
 			let accountNode = parent.existingOrNewChildNode(with: account)
 			accountNode.canHaveChildNodes = true

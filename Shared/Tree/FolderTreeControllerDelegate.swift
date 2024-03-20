@@ -14,7 +14,7 @@ import Account
 
 final class FolderTreeControllerDelegate: TreeControllerDelegate {
 	
-	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
+	@MainActor func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 
 		return node.isRoot ? childNodesForRootNode(node) : childNodes(node)
 	}
@@ -22,8 +22,8 @@ final class FolderTreeControllerDelegate: TreeControllerDelegate {
 
 private extension FolderTreeControllerDelegate {
 	
-	func childNodesForRootNode(_ node: Node) -> [Node]? {
-		
+	@MainActor func childNodesForRootNode(_ node: Node) -> [Node]? {
+
 		let accountNodes: [Node] = AccountManager.shared.sortedActiveAccounts.map { account in
 			let accountNode = Node(representedObject: account, parent: node)
 			accountNode.canHaveChildNodes = true

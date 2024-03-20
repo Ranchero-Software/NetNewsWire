@@ -9,7 +9,7 @@
 import Foundation
 import Account
 
-class AccountRefreshTimer {
+@MainActor final class AccountRefreshTimer {
 	
 	var shuttingDown = false
 
@@ -64,7 +64,7 @@ class AccountRefreshTimer {
 		
 	}
 	
-	@objc func timedRefresh(_ sender: Timer?) {
+	@objc @MainActor func timedRefresh(_ sender: Timer?) {
 		
 		guard !shuttingDown else {
 			return

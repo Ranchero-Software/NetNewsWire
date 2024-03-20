@@ -18,7 +18,7 @@ import Secrets
 
 public final class AccountManager: UnreadCountProvider {
 
-	public static var shared: AccountManager!
+	@MainActor public static var shared: AccountManager!
     public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
     private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
 
@@ -79,7 +79,7 @@ public final class AccountManager: UnreadCountProvider {
 		return lastArticleFetchEndTime
 	}
 
-	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
+	@MainActor public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
 		return AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
 	}
 	

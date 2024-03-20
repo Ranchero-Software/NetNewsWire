@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-struct TimelineCellLayout {
+@MainActor struct TimelineCellLayout {
 	
 	let width: CGFloat
 	let height: CGFloat

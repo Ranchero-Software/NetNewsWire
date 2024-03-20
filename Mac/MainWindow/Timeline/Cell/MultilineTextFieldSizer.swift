@@ -26,7 +26,7 @@ struct TextFieldSizeInfo {
 	let numberOfLinesUsed: Int // A two-line text field may only use one line, for instance. This would equal 1, then.
 }
 
-final class MultilineTextFieldSizer {
+@MainActor final class MultilineTextFieldSizer {
 
 	private let numberOfLines: Int
 	private let font: NSFont
@@ -35,7 +35,7 @@ final class MultilineTextFieldSizer {
 	private let doubleLineHeightEstimate: Int
 	private var cache = [String: WidthHeightCache]() // Each string has a cache.
 	private var attributedCache = [NSAttributedString: WidthHeightCache]()
-	private static var sizers = [TextFieldSizerSpecifier: MultilineTextFieldSizer]()
+	@MainActor private static var sizers = [TextFieldSizerSpecifier: MultilineTextFieldSizer]()
 
 	private init(numberOfLines: Int, font: NSFont) {
 

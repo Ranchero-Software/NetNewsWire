@@ -21,7 +21,7 @@ final class SendToMarsEditCommand: SendToCommand {
 		appToUse() != nil
 	}
 
-	func sendObject(_ object: Any?, selectedText: String?) {
+	@MainActor func sendObject(_ object: Any?, selectedText: String?) {
 
 		guard canSendObject(object, selectedText: selectedText) else {
 			return
@@ -39,7 +39,7 @@ final class SendToMarsEditCommand: SendToCommand {
 
 private extension SendToMarsEditCommand {
 
-	func send(_ article: Article, to app: UserApp) {
+	@MainActor func send(_ article: Article, to app: UserApp) {
 
 		// App has already been launched.
 

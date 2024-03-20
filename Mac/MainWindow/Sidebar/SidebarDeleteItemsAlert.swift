@@ -10,7 +10,7 @@ import AppKit
 import RSTree
 import Account
 
-enum SidebarDeleteItemsAlert {
+@MainActor struct SidebarDeleteItemsAlert {
 	
 	/// Builds a delete confirmation dialog for the supplied nodes
 	static func build(_ nodes: [Node]) -> NSAlert {

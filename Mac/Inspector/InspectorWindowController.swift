@@ -10,11 +10,11 @@ import AppKit
 
 protocol Inspector: AnyObject {
 
-	var objects: [Any]? { get set }
-	var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
-	var windowTitle: String { get }
+	@MainActor var objects: [Any]? { get set }
+	@MainActor var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
+	@MainActor var windowTitle: String { get }
 
-	func canInspect(_ objects: [Any]) -> Bool
+	@MainActor func canInspect(_ objects: [Any]) -> Bool
 }
 
 typealias InspectorViewController = Inspector & NSViewController
