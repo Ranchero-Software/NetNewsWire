@@ -38,20 +38,23 @@ final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 			return
 		}
 
-		let iconView = IconView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
-		iconView.iconImage = iconImage
-		let renderedImage = iconView.asImage()
-		
-		guard let data = renderedImage.dataRepresentation() else {
-			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
-			return
-		}
-		
-		let headerFields = ["Cache-Control": "no-cache"]
-		if let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
-			urlSchemeTask.didReceive(response)
-			urlSchemeTask.didReceive(data)
-			urlSchemeTask.didFinish()
+		Task { @MainActor in
+
+			let iconView = IconView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
+			iconView.iconImage = iconImage
+			let renderedImage = iconView.asImage()
+
+			guard let data = renderedImage.dataRepresentation() else {
+				urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
+				return
+			}
+			
+			let headerFields = ["Cache-Control": "no-cache"]
+			if let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
+				urlSchemeTask.didReceive(response)
+				urlSchemeTask.didReceive(data)
+				urlSchemeTask.didFinish()
+			}
 		}
 	}
 	

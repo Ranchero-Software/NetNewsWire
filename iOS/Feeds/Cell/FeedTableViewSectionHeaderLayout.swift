@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-struct FeedTableViewSectionHeaderLayout {
+@MainActor struct FeedTableViewSectionHeaderLayout {
 
 	private static let labelMarginRight = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 16)
