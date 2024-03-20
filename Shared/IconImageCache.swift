@@ -10,9 +10,9 @@ import Foundation
 import Account
 import Articles
 
-class IconImageCache {
+final class IconImageCache {
 
-	static var shared = IconImageCache()
+	static let shared = IconImageCache()
 
 	private var smartFeedIconImageCache = [SidebarItemIdentifier: IconImage]()
 	private var feedIconImageCache = [SidebarItemIdentifier: IconImage]()

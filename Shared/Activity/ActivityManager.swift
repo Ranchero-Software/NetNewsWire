@@ -113,7 +113,7 @@ class ActivityManager {
 	}
 	
 	#if os(iOS)
-	static func cleanUp(_ account: Account) {
+	@MainActor static func cleanUp(_ account: Account) {
 
 		Task { @MainActor in
 			var ids = [String]()
@@ -133,13 +133,15 @@ class ActivityManager {
 		}
 	}
 	
-	static func cleanUp(_ folder: Folder) {
+	@MainActor static func cleanUp(_ folder: Folder) {
 
 		Task { @MainActor in
-			var ids = [String]()
+
+			var ids: [String] = [String]()
 			ids.append(identifier(for: folder))
 
-			for feed in folder.flattenedFeeds() {
+			let feeds = folder.flattenedFeeds()
+			for feed in feeds {
 				let feedIdentifiers = await identifiers(for: feed)
 				ids.append(contentsOf: feedIdentifiers)
 			}
@@ -148,7 +150,8 @@ class ActivityManager {
 		}
 	}
 	
-	static func cleanUp(_ feed: Feed) {
+	@MainActor static func cleanUp(_ feed: Feed) {
+
 		Task { @MainActor in
 			let feedIdentifiers = await identifiers(for: feed)
 			try? await CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: feedIdentifiers)

@@ -11,248 +11,141 @@ import Account
 
 struct AppAssets {
 	
-	static var accountBazQuxImage: UIImage = {
-		return UIImage(named: "accountBazQux")!
-	}()
+	static let accountBazQuxImage = UIImage(named: "accountBazQux")!
 
-	static var accountCloudKitImage: UIImage = {
-		return UIImage(named: "accountCloudKit")!
-	}()
+	static let accountCloudKitImage = UIImage(named: "accountCloudKit")!
 
-	static var accountFeedbinImage: UIImage = {
-		return UIImage(named: "accountFeedbin")!
-	}()
+	static let accountFeedbinImage = UIImage(named: "accountFeedbin")!
 
-	static var accountFeedlyImage: UIImage = {
-		return UIImage(named: "accountFeedly")!
-	}()
-	
-	static var accountFreshRSSImage: UIImage = {
-		return UIImage(named: "accountFreshRSS")!
-	}()
+	static let accountFeedlyImage = UIImage(named: "accountFeedly")!
 
-	static var accountInoreaderImage: UIImage = {
-		return UIImage(named: "accountInoreader")!
-	}()
+	static let accountFreshRSSImage = UIImage(named: "accountFreshRSS")!
 
-	static var accountLocalPadImage: UIImage = {
-		return UIImage(named: "accountLocalPad")!
-	}()
+	static let accountInoreaderImage = UIImage(named: "accountInoreader")!
 
-	static var accountLocalPhoneImage: UIImage = {
-		return UIImage(named: "accountLocalPhone")!
-	}()
+	static let accountLocalPadImage = UIImage(named: "accountLocalPad")!
 
-	static var accountNewsBlurImage: UIImage = {
-		return UIImage(named: "accountNewsBlur")!
-	}()
+	static let accountLocalPhoneImage = UIImage(named: "accountLocalPhone")!
 
-	static var accountTheOldReaderImage: UIImage = {
-		return UIImage(named: "accountTheOldReader")!
-	}()
+	static let accountNewsBlurImage = UIImage(named: "accountNewsBlur")!
 
-	static var articleExtractorError: UIImage = {
-		return UIImage(named: "articleExtractorError")!
-	}()
+	static let accountTheOldReaderImage = UIImage(named: "accountTheOldReader")!
 
-	static var articleExtractorOff: UIImage = {
-		return UIImage(named: "articleExtractorOff")!
-	}()
+	static let articleExtractorError = UIImage(named: "articleExtractorError")!
 
-	static var articleExtractorOffSF: UIImage = {
-		return UIImage(systemName: "doc.plaintext")!
-	}()
+	static let articleExtractorOff = UIImage(named: "articleExtractorOff")!
 
-	static var articleExtractorOffTinted: UIImage = {
+	static let articleExtractorOffSF = UIImage(systemName: "doc.plaintext")!
+
+	static let articleExtractorOffTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOff")!
 		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
 
-	static var articleExtractorOn: UIImage = {
-		return UIImage(named: "articleExtractorOn")!
-	}()
+	static let articleExtractorOn = UIImage(named: "articleExtractorOn")!
 
-	static var articleExtractorOnSF: UIImage = {
-		return UIImage(named: "articleExtractorOnSF")!
-	}()
+	static let articleExtractorOnSF = UIImage(named: "articleExtractorOnSF")!
 
-	static var articleExtractorOnTinted: UIImage = {
+	static let articleExtractorOnTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOn")!
 		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
 
-	static var iconBackgroundColor: UIColor = {
-		return UIColor(named: "iconBackgroundColor")!
-	}()
+	static let iconBackgroundColor = UIColor(named: "iconBackgroundColor")!
 
-	static var circleClosedImage: UIImage = {
-		return UIImage(systemName: "largecircle.fill.circle")!
-	}()
-	
-	static var circleOpenImage: UIImage = {
-		return UIImage(systemName: "circle")!
-	}()
-	
-	static var disclosureImage: UIImage = {
-		return UIImage(named: "disclosure")!
-	}()
-	
-	static var copyImage: UIImage = {
-		return UIImage(systemName: "doc.on.doc")!
-	}()
-	
-	static var deactivateImage: UIImage = {
-		UIImage(systemName: "minus.circle")!
-	}()
-	
-	static var editImage: UIImage = {
-		UIImage(systemName: "square.and.pencil")!
-	}()
-	
-	static var faviconTemplateImage: RSImage = {
-		return RSImage(named: "faviconTemplateImage")!
-	}()
-	
-	static var filterInactiveImage: UIImage = {
-		UIImage(systemName: "line.horizontal.3.decrease.circle")!
-	}()
-	
-	static var filterActiveImage: UIImage = {
-		UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
-	}()
-	
-	static var folderOutlinePlus: UIImage = {
-		UIImage(systemName: "folder.badge.plus")!
-	}()
-	
-	static var fullScreenBackgroundColor: UIColor = {
-		return UIColor(named: "fullScreenBackgroundColor")!
-	}()
+	static let circleClosedImage = UIImage(systemName: "largecircle.fill.circle")!
 
-	static var infoImage: UIImage = {
-		UIImage(systemName: "info.circle")!
-	}()
+	static let circleOpenImage = UIImage(systemName: "circle")!
+
+	static let disclosureImage = UIImage(named: "disclosure")!
+
+	static let copyImage = UIImage(systemName: "doc.on.doc")!
+
+	static let deactivateImage = UIImage(systemName: "minus.circle")!
+
+	static let editImage = UIImage(systemName: "square.and.pencil")!
+
+	static let faviconTemplateImage = RSImage(named: "faviconTemplateImage")!
+
+	static let filterInactiveImage = UIImage(systemName: "line.horizontal.3.decrease.circle")!
 	
-	static var markAllAsReadImage: UIImage = {
-		return UIImage(named: "markAllAsRead")!
-	}()
+	static let filterActiveImage = UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
+
+	static let folderOutlinePlus = UIImage(systemName: "folder.badge.plus")!
+
+	static let fullScreenBackgroundColor = UIColor(named: "fullScreenBackgroundColor")!
+
+	static let infoImage = UIImage(systemName: "info.circle")!
+
+	static let markAllAsReadImage = UIImage(named: "markAllAsRead")!
+
+	static let markBelowAsReadImage = UIImage(systemName: "arrowtriangle.down.circle")!
+
+	static let markAboveAsReadImage = UIImage(systemName: "arrowtriangle.up.circle")!
+
+	static let folderImage = IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+
+	static let folderImageNonIcon = UIImage(systemName: "folder.fill")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
+
+	static let moreImage = UIImage(systemName: "ellipsis.circle")!
+
+	static let nextArticleImage = UIImage(systemName: "chevron.down")!
 	
-	static var markBelowAsReadImage: UIImage = {
-		return UIImage(systemName: "arrowtriangle.down.circle")!
-	}()
-	
-	static var markAboveAsReadImage: UIImage = {
-		return UIImage(systemName: "arrowtriangle.up.circle")!
-	}()
-	
-	static var folderImage: IconImage = {
-		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
-	}()
-	
-	static var folderImageNonIcon: UIImage = {
-		return UIImage(systemName: "folder.fill")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
-	}()
-	
-	static var moreImage: UIImage = {
-		return UIImage(systemName: "ellipsis.circle")!
-	}()
-	
-	static var nextArticleImage: UIImage = {
-		return UIImage(systemName: "chevron.down")!
-	}()
-	
-	static var nextUnreadArticleImage: UIImage = {
-		return UIImage(systemName: "chevron.down.circle")!
-	}()
-	
-	static var plus: UIImage = {
-		UIImage(systemName: "plus")!
-	}()
-	
-	static var prevArticleImage: UIImage = {
-		return UIImage(systemName: "chevron.up")!
-	}()
-	
-	static var openInSidebarImage: UIImage = {
-		return UIImage(systemName: "arrow.turn.down.left")!
-	}()
-	
-	static var primaryAccentColor: UIColor {
-		return UIColor(named: "primaryAccentColor")!
-	}
-	
-	static var safariImage: UIImage = {
-		return UIImage(systemName: "safari")!
-	}()
-	
-	static var searchFeedImage: IconImage = {
-		return IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
-	}()
-	
-	static var secondaryAccentColor: UIColor {
-		return UIColor(named: "secondaryAccentColor")!
-	}
-	
-	static var sectionHeaderColor: UIColor = {
-		return UIColor(named: "sectionHeaderColor")!
-	}()
-	
-	static var shareImage: UIImage = {
-		return UIImage(systemName: "square.and.arrow.up")!
-	}()
-	
-	static var smartFeedImage: UIImage = {
-		return UIImage(systemName: "gear")!
-	}()
-	
-	static var starColor: UIColor = {
-		return UIColor(named: "starColor")!
-	}()
-	
-	static var starClosedImage: UIImage = {
-		return UIImage(systemName: "star.fill")!
-	}()
-	
-	static var starOpenImage: UIImage = {
-		return UIImage(systemName: "star")!
-	}()
-	
-	static var starredFeedImage: IconImage {
+	static let nextUnreadArticleImage = UIImage(systemName: "chevron.down.circle")!
+
+	static let plus = UIImage(systemName: "plus")!
+
+	static let prevArticleImage = UIImage(systemName: "chevron.up")!
+
+	static let openInSidebarImage = UIImage(systemName: "arrow.turn.down.left")!
+
+	static let primaryAccentColor = UIColor(named: "primaryAccentColor")!
+
+	static let safariImage = UIImage(systemName: "safari")!
+
+	static let searchFeedImage = IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
+
+	static let secondaryAccentColor = UIColor(named: "secondaryAccentColor")!
+
+	static let sectionHeaderColor = UIColor(named: "sectionHeaderColor")!
+
+	static let shareImage = UIImage(systemName: "square.and.arrow.up")!
+
+	static let smartFeedImage = UIImage(systemName: "gear")!
+
+	static let starColor = UIColor(named: "starColor")!
+
+	static let starClosedImage = UIImage(systemName: "star.fill")!
+
+	static let starOpenImage = UIImage(systemName: "star")!
+
+	static let starredFeedImage: IconImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.starColor.cgColor)
-	}
-
-	static var tickMarkColor: UIColor = {
-		return UIColor(named: "tickMarkColor")!
 	}()
-	
-	static var timelineStarImage: UIImage = {
+
+	static let tickMarkColor = UIColor(named: "tickMarkColor")!
+
+	static let timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
-	static var todayFeedImage: IconImage {
+	static let todayFeedImage: IconImage = {
 		let image = UIImage(systemName: "sun.max.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: UIColor.systemOrange.cgColor)
-	}
-
-	static var trashImage: UIImage = {
-		return UIImage(systemName: "trash")!
 	}()
-	
-	static var unreadFeedImage: IconImage {
+
+	static let trashImage = UIImage(systemName: "trash")!
+
+	static let unreadFeedImage: IconImage = {
 		let image = UIImage(systemName: "largecircle.fill.circle")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
-	}
-	
-	static var vibrantTextColor: UIColor = {
-		return UIColor(named: "vibrantTextColor")!
 	}()
 
-	static var controlBackgroundColor: UIColor = {
-		return UIColor(named: "controlBackgroundColor")!
-	}()
+	static let vibrantTextColor = UIColor(named: "vibrantTextColor")!
 
+	static let controlBackgroundColor = UIColor(named: "controlBackgroundColor")!
 
 	static func image(for accountType: AccountType) -> UIImage? {
 		switch accountType {
@@ -280,5 +173,4 @@ struct AppAssets {
 			return AppAssets.accountTheOldReaderImage
 		}
 	}
-	
 }

@@ -58,16 +58,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var isSyncArticleStatusRunning = false
 	var isWaitingForSyncTasks = false
 	
+	let accountManager: AccountManager
+
 	private var secretsProvider = Secrets()
 	
 	override init() {
-		super.init()
-		appDelegate = self
 
 		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
-		AccountManager.shared = AccountManager(accountsFolder: documentAccountsFolderPath, secretsProvider: secretsProvider)
+		self.accountManager = AccountManager(accountsFolder: documentAccountsFolderPath, secretsProvider: secretsProvider)
+		AccountManager.shared = accountManager
+
+		super.init()
+
+		appDelegate = self
 
 		let documentThemesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
 		let documentThemesFolderPath = String(documentThemesFolder.suffix(from: documentAccountsFolder.index(documentThemesFolder.startIndex, offsetBy: 7)))
@@ -85,8 +90,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			os_log("Is first run.", log: log, type: .info)
 		}
 		
-		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
-			let localAccount = AccountManager.shared.defaultAccount
+		if isFirstRun && !accountManager.anyAccountHasAtLeastOneFeed() {
+			let localAccount = accountManager.defaultAccount
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
 		
@@ -95,13 +100,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		initializeDownloaders()
 		initializeHomeScreenQuickActions()
 		
-		DispatchQueue.main.async {
-			self.unreadCount = AccountManager.shared.unreadCount
+		Task { @MainActor in
+			self.unreadCount = accountManager.unreadCount
 		}
-		
+
 		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
 			if granted {
-				DispatchQueue.main.async {
+				Task { @MainActor in
 					UIApplication.shared.registerForRemoteNotifications()
 				}
 			}
@@ -126,7 +131,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		DispatchQueue.main.async {
 			self.resumeDatabaseProcessingIfNecessary()
-			AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
+			self.accountManager.receiveRemoteNotification(userInfo: userInfo) {
 				self.suspendApplication()
 				completionHandler(.newData)
 			}
@@ -145,7 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
-			unreadCount = AccountManager.shared.unreadCount
+			unreadCount = accountManager.unreadCount
 		}
 	}
 	
@@ -159,12 +164,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
 			$0.cleanUp(conditional: true)
 		}
-		AccountManager.shared.refreshAll(errorHandler: errorHandler)
+		accountManager.refreshAll(errorHandler: errorHandler)
 	}
 	
 	func resumeDatabaseProcessingIfNecessary() {
-		if AccountManager.shared.isSuspended {
-			AccountManager.shared.resumeAll()
+		if accountManager.isSuspended {
+			accountManager.resumeAll()
 			os_log("Application processing resumed.", log: self.log, type: .info)
 		}
 	}
@@ -183,12 +188,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 		if let lastRefresh = AppDefaults.shared.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
-				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+				accountManager.refreshAll(errorHandler: ErrorHandler.log)
 			} else {
-				AccountManager.shared.syncArticleStatusAll()
+				accountManager.syncArticleStatusAll()
 			}
 		} else {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+			accountManager.refreshAll(errorHandler: ErrorHandler.log)
 		}
 	}
 	
@@ -292,7 +297,7 @@ private extension AppDelegate {
 			return
 		}
 		
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning {
+		if accountManager.refreshInProgress || isSyncArticleStatusRunning {
 			os_log("Waiting for sync to finish...", log: self.log, type: .info)
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)
@@ -328,8 +333,8 @@ private extension AppDelegate {
 			os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
 		}
 		
-		DispatchQueue.main.async {
-			AccountManager.shared.syncArticleStatusAll() {
+		Task { @MainActor in
+			self.accountManager.syncArticleStatusAll() {
 				completeProcessing()
 			}
 		}
@@ -338,8 +343,8 @@ private extension AppDelegate {
 	func suspendApplication() {
 		guard UIApplication.shared.applicationState == .background else { return }
 		
-		AccountManager.shared.suspendNetworkAll()
-		AccountManager.shared.suspendDatabaseAll()
+		accountManager.suspendNetworkAll()
+		accountManager.suspendDatabaseAll()
 		ArticleThemeDownloader.shared.cleanUp()
 
 		CoalescingQueue.standard.performCallsImmediately()
@@ -391,12 +396,12 @@ private extension AppDelegate {
 		
 		os_log("Woken to perform account refresh.", log: self.log, type: .info)
 
-		DispatchQueue.main.async {
-			if AccountManager.shared.isSuspended {
-				AccountManager.shared.resumeAll()
+		Task { @MainActor in
+			if self.accountManager.isSuspended {
+				self.accountManager.resumeAll()
 			}
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
-				if !AccountManager.shared.isSuspended {
+			self.accountManager.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
+				if !self.accountManager.isSuspended {
 					try? WidgetDataEncoder.shared.encodeWidgetData()
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
@@ -429,7 +434,7 @@ private extension AppDelegate {
 
 		resumeDatabaseProcessingIfNecessary()
 
-		guard let account = AccountManager.shared.existingAccount(with: articlePathInfo.accountID) else {
+		guard let account = accountManager.existingAccount(with: articlePathInfo.accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
@@ -445,11 +450,11 @@ private extension AppDelegate {
 
 			self.prepareAccountsForBackground()
 
-			account.syncArticleStatus(completion: { [weak self] _ in
-				if !AccountManager.shared.isSuspended {
+			account.syncArticleStatus(completion: { _ in
+				if !self.accountManager.isSuspended {
 					try? WidgetDataEncoder.shared.encodeWidgetData()
-					self?.prepareAccountsForBackground()
-					self?.suspendApplication()
+					self.prepareAccountsForBackground()
+					self.suspendApplication()
 				}
 			})
 		}
@@ -463,7 +468,7 @@ private extension AppDelegate {
 
 		resumeDatabaseProcessingIfNecessary()
 
-		guard let account = AccountManager.shared.existingAccount(with: articlePathInfo.accountID) else {
+		guard let account = accountManager.existingAccount(with: articlePathInfo.accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
@@ -478,11 +483,11 @@ private extension AppDelegate {
 
 			account.markArticles(articles, statusKey: .starred, flag: true) { _ in }
 
-			account.syncArticleStatus(completion: { [weak self] _ in
-				if !AccountManager.shared.isSuspended {
+			account.syncArticleStatus(completion: { _ in
+				if !self.accountManager.isSuspended {
 					try? WidgetDataEncoder.shared.encodeWidgetData()
-					self?.prepareAccountsForBackground()
-					self?.suspendApplication()
+					self.prepareAccountsForBackground()
+					self.suspendApplication()
 				}
 			})
 		}
