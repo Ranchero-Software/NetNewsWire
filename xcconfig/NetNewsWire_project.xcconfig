@@ -45,6 +45,7 @@ IPHONEOS_DEPLOYMENT_TARGET = 17.0
 SWIFT_SWIFT3_OBJC_INFERENCE = Off
 SWIFT_VERSION = 5.10
 SWIFT_STRICT_CONCURRENCY = complete
+ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO
 
 // https://forums.swift.org/t/swift-packages-in-multiple-targets-results-in-this-will-result-in-duplication-of-library-code-errors/34892/33
 DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES
