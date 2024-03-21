@@ -7,13 +7,13 @@
 //
 
 import Articles
-import RSCore
 import RSParser
 import RSWeb
 import SyncDatabase
 import os.log
 import Secrets
 import Database
+import Core
 
 public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case unknown

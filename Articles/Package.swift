@@ -11,13 +11,13 @@ let package = Package(
 			targets: ["Articles"]),
 	],
 	dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMinor(from: "1.0.0")),
+		.package(path: "../FoundationExtras")
 	],
 	targets: [
 		.target(
 			name: "Articles",
 			dependencies: [
-				"RSCore"
+				"FoundationExtras"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")

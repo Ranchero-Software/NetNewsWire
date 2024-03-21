@@ -8,7 +8,7 @@
 
 import Foundation
 import os.log
-import RSCore
+import Core
 
 final class FeedMetadataFile {
 	

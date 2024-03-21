@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UIKitExtras
 
 protocol FeedTableViewSectionHeaderDelegate {
 	func FeedTableViewSectionHeaderDisclosureDidToggle(_ sender: FeedTableViewSectionHeader)

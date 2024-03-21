@@ -10,8 +10,8 @@ import Foundation
 import os.log
 import SyncDatabase
 import RSWeb
-import RSCore
 import Secrets
+import Core
 
 /// Compose the operations necessary to get the entire set of articles, feeds and folders with the statuses the user expects between now and a certain date in the past.
 final class FeedlySyncAllOperation: FeedlyOperation {

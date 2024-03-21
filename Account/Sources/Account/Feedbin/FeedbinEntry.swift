@@ -8,7 +8,6 @@
 
 import Foundation
 import RSParser
-import RSCore
 
 final class FeedbinEntry: Decodable {
 

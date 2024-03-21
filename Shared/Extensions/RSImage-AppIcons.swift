@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSCore
+import Core
 
 extension RSImage {
 	static var appIconImage: RSImage? {

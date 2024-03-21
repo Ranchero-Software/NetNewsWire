@@ -8,7 +8,6 @@
 
 import XCTest
 @testable import Account
-import RSCore
 import Secrets
 
 class FeedlyLogoutOperationTests: XCTestCase {

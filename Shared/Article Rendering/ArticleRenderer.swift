@@ -10,9 +10,9 @@ import Foundation
 #if os(iOS)
 import UIKit
 #endif
-import RSCore
 import Articles
 import Account
+import Core
 
 @MainActor struct ArticleRenderer {
 

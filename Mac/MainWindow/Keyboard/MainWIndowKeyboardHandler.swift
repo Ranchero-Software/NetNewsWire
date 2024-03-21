@@ -1,5 +1,5 @@
 //
-//  MainWIndowKeyboardHandler.swift
+//  MainWindowKeyboardHandler.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 12/19/17.
@@ -7,9 +7,9 @@
 //
 
 import AppKit
-import RSCore
+import AppKitExtras
 
-final class MainWindowKeyboardHandler: KeyboardDelegate {
+@MainActor final class MainWindowKeyboardHandler: KeyboardDelegate {
 
 	static let shared = MainWindowKeyboardHandler()
 	let globalShortcuts: Set<KeyboardShortcut>

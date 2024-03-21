@@ -8,6 +8,7 @@
 
 import Foundation
 import os.log
+import Core
 
 /// Single responsibility is to accurately reflect Collections and their Feeds as Folders and their Feeds.
 final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {

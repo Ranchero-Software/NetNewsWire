@@ -8,8 +8,8 @@
 
 import Foundation
 import os.log
-import RSCore
 import RSWeb
+import Core
 
 class FeedlyDownloadArticlesOperation: FeedlyOperation {
 

@@ -8,7 +8,6 @@
 
 import Foundation
 import os.log
-import RSCore
 import RSParser
 import RSWeb
 import CloudKit
@@ -16,6 +15,7 @@ import SyncDatabase
 import Articles
 import ArticlesDatabase
 import Database
+import CloudKitExtras
 
 class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 

@@ -9,7 +9,6 @@
 import XCTest
 @testable import Account
 import RSParser
-import RSCore
 
 class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	

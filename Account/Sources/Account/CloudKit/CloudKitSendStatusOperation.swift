@@ -9,10 +9,11 @@
 import Foundation
 import Articles
 import os.log
-import RSCore
 import RSWeb
 import SyncDatabase
 import Database
+import Core
+import CloudKitExtras
 
 class CloudKitSendStatusOperation: MainThreadOperation {
 	

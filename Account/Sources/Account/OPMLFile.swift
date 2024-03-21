@@ -8,8 +8,8 @@
 
 import Foundation
 import os.log
-import RSCore
 import RSParser
+import Core
 
 final class OPMLFile {
 	

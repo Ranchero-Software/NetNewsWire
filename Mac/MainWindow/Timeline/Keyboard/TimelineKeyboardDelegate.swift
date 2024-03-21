@@ -7,11 +7,11 @@
 //
 
 import AppKit
-import RSCore
+import AppKitExtras
 
 // Doesn’t have any shortcuts of its own — they’re all in MainWindowKeyboardHandler.
 
-@objc final class TimelineKeyboardDelegate: NSObject, KeyboardDelegate {
+@objc @MainActor final class TimelineKeyboardDelegate: NSObject, KeyboardDelegate {
 
 	@IBOutlet weak var timelineViewController: TimelineViewController?
 	let shortcuts: Set<KeyboardShortcut>

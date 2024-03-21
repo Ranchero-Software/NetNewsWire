@@ -7,12 +7,12 @@
 //
 
 import Articles
-import RSCore
 import RSParser
 import RSWeb
 import SyncDatabase
 import os.log
 import Secrets
+import Core
 
 final class FeedlyAccountDelegate: AccountDelegate {
 

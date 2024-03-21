@@ -11,7 +11,7 @@
 import AppKit
 import Articles
 import Account
-import RSCore
+import AppKitExtras
 
 protocol PseudoFeed: AnyObject, SidebarItem, SmallIconProvider, PasteboardWriterOwner {
 
@@ -22,7 +22,6 @@ protocol PseudoFeed: AnyObject, SidebarItem, SmallIconProvider, PasteboardWriter
 import UIKit
 import Articles
 import Account
-import RSCore
 
 protocol PseudoFeed: AnyObject, SidebarItem, SmallIconProvider {
 	

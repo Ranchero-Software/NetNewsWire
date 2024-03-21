@@ -7,8 +7,8 @@
 //
 
 import AppKit
-import RSCore
 import RSTree
+import AppKitExtras
 
 class SidebarOutlineView : NSOutlineView {
 

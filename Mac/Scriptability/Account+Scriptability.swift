@@ -9,7 +9,7 @@
 import AppKit
 import Account
 import Articles
-import RSCore
+import Core
 
 @objc(ScriptableAccount)
 class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {

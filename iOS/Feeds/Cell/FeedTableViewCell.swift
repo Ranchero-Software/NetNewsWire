@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import RSCore
 import Account
 import RSTree
 

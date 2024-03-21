@@ -7,13 +7,13 @@
 //
 
 import UIKit
-import RSCore
 import RSWeb
 import Account
 import BackgroundTasks
 import os.log
 import Secrets
 import WidgetKit
+import Core
 
 var appDelegate: AppDelegate!
 

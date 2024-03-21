@@ -10,7 +10,6 @@ import UIKit
 import MobileCoreServices
 import Account
 import Social
-import RSCore
 import RSTree
 import UniformTypeIdentifiers
 

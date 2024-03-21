@@ -7,7 +7,6 @@
 //
 
 import Articles
-import RSCore
 import Database
 import RSParser
 import RSWeb

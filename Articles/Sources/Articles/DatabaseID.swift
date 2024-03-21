@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSCore
+import FoundationExtras
 
 class DatabaseIDCache: @unchecked Sendable {
 

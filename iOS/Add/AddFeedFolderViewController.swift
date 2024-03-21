@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import RSCore
 import Account
+import Core
 
 protocol AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container)

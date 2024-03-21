@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import RSCore
 import RSTree
 import Articles
 import Account

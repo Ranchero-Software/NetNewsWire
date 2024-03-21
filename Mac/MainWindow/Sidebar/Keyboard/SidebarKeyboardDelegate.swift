@@ -7,9 +7,9 @@
 //
 
 import AppKit
-import RSCore
+import AppKitExtras
 
-@objc final class SidebarKeyboardDelegate: NSObject, KeyboardDelegate {
+@objc @MainActor final class SidebarKeyboardDelegate: NSObject, KeyboardDelegate {
 
 	@IBOutlet weak var sidebarViewController: SidebarViewController?
 	let shortcuts: Set<KeyboardShortcut>

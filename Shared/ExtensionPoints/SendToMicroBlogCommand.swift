@@ -8,7 +8,8 @@
 
 import AppKit
 import Articles
-import RSCore
+import Core
+import AppKitExtras
 
 // Not undoable.
 

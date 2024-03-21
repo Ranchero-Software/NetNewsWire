@@ -7,10 +7,10 @@
 //
 
 import AppKit
-import RSCore
 import Articles
 import RSWeb
 import Account
+import Core
 
 final class SidebarStatusBarView: NSView {
 

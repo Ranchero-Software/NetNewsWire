@@ -8,8 +8,9 @@
 
 import Foundation
 import os.log
-import RSCore
 import RSWeb
+import FoundationExtras
+import Core
 
 // The image may be on disk already. If not, download it.
 // Post .DidLoadFavicon notification once it’s in memory.

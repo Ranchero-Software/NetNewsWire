@@ -8,7 +8,6 @@
 
 import SwiftUI
 import Account
-import RSCore
 
 enum AddAccountSections: Int, CaseIterable {
 	case local = 0

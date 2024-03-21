@@ -9,7 +9,7 @@
 import AppKit
 import Account
 import SwiftUI
-import RSCore
+import Core
 
 // MARK: - AccountsPreferencesAddAccountDelegate
 protocol AccountsPreferencesAddAccountDelegate {

@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import RSCore
+import Core
 
 extension Notification.Name {
 

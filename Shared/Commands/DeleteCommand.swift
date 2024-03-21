@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import RSCore
 import RSTree
 import Account
 import Articles
+import Core
 
 final class DeleteCommand: UndoableCommand {
 

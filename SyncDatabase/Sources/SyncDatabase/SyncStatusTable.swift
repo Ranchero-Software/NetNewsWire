@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import RSCore
 import Articles
 import Database
 import FMDB

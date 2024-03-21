@@ -7,7 +7,6 @@
 //
 
 import AppKit
-import RSCore
 
 // image - title - unreadCount
 

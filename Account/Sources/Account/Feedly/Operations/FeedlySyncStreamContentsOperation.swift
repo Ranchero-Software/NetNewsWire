@@ -9,9 +9,9 @@
 import Foundation
 import os.log
 import RSParser
-import RSCore
 import RSWeb
 import Secrets
+import Core
 
 final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyGetStreamContentsOperationDelegate, FeedlyCheckpointOperationDelegate {
 

@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreServices
-import RSCore
 import Account
 import Articles
 import Intents

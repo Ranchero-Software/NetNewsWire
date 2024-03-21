@@ -11,8 +11,7 @@ import AppKit
 #else
 import UIKit
 #endif
-
-import RSCore
+import Core
 
 final class IconImage {
 	

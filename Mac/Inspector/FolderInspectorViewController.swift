@@ -8,7 +8,6 @@
 
 import AppKit
 import Account
-import RSCore
 
 @MainActor final class FolderInspectorViewController: NSViewController, Inspector {
 

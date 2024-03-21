@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import RSCore
 import Account
+import Core
 
 final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 	

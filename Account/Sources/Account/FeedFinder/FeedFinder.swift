@@ -9,7 +9,6 @@
 import Foundation
 import RSParser
 import RSWeb
-import RSCore
 
 class FeedFinder {
 	

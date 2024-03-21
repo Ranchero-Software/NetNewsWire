@@ -7,11 +7,11 @@
 //
 
 import Foundation
-import RSCore
 import Articles
 import ArticlesDatabase
 import Account
 import Database
+import Core
 
 final class SmartFeed: PseudoFeed {
 

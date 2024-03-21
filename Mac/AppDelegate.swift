@@ -12,10 +12,10 @@ import Articles
 import RSTree
 import RSWeb
 import Account
-import RSCore
-import RSCoreResources
+import CoreResources
 import Secrets
 import OSLog
+import Core
 import CrashReporter
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy

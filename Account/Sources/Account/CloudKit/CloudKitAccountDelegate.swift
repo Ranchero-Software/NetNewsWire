@@ -11,12 +11,13 @@ import CloudKit
 import SystemConfiguration
 import os.log
 import SyncDatabase
-import RSCore
 import RSParser
 import Articles
 import ArticlesDatabase
 import RSWeb
 import Secrets
+import Core
+import CloudKitExtras
 
 enum CloudKitAccountDelegateError: LocalizedError {
 	case invalidParameter

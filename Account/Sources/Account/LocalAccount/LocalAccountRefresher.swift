@@ -7,11 +7,11 @@
 //
 
 import Foundation
-import RSCore
 import RSParser
 import RSWeb
 import Articles
 import ArticlesDatabase
+import FoundationExtras
 
 protocol LocalAccountRefresherDelegate {
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed)

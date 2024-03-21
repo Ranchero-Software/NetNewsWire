@@ -8,7 +8,6 @@
 
 import Foundation
 import Account
-import RSCore
 
 struct OPMLExporter {
 

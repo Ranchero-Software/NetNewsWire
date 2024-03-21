@@ -8,9 +8,9 @@
 
 import Foundation
 import os.log
-import RSCore
 import RSParser
 import Account
+import Core
 
 final class ExtensionContainersFile {
 	

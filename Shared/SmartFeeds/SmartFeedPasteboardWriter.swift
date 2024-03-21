@@ -8,7 +8,6 @@
 
 import AppKit
 import Account
-import RSCore
 
 @objc final class SmartFeedPasteboardWriter: NSObject, NSPasteboardWriting {
 

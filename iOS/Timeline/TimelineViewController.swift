@@ -7,9 +7,9 @@
 //
 
 import UIKit
-import RSCore
 import Account
 import Articles
+import Core
 
 class TimelineViewController: UITableViewController, UndoableCommandRunner {
 

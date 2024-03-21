@@ -7,9 +7,9 @@
 //
 
 import AppKit
-import RSCore
 import RSTree
 import Account
+import Core
 
 @MainActor final class FolderTreeMenu {
 

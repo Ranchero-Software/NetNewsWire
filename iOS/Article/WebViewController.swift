@@ -8,11 +8,11 @@
 
 import UIKit
 import WebKit
-import RSCore
 import Account
 import Articles
 import SafariServices
 import MessageUI
+import Core
 
 protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)

@@ -9,9 +9,9 @@
 import UIKit
 import Account
 import Articles
-import RSCore
 import RSTree
 import SafariServices
+import Core
 
 class SidebarViewController: UITableViewController, UndoableCommandRunner {
 

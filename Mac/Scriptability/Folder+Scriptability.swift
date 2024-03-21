@@ -9,7 +9,7 @@
 import Foundation
 import Account
 import Articles
-import RSCore
+import Core
 
 @objc(ScriptableFolder)
 class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {

@@ -10,7 +10,8 @@ import AppKit
 import UserNotifications
 import Articles
 import Account
-import RSCore
+import Core
+import AppKitExtras
 
 enum TimelineSourceMode {
 	case regular, search

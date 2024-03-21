@@ -8,8 +8,8 @@
 
 import Foundation
 import AuthenticationServices
-import RSCore
 import Secrets
+import Core
 
 public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)

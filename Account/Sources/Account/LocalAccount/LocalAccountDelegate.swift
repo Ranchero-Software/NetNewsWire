@@ -8,12 +8,12 @@
 
 import Foundation
 import os.log
-import RSCore
 import RSParser
 import Articles
 import ArticlesDatabase
 import RSWeb
 import Secrets
+import Core
 
 public enum LocalAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."

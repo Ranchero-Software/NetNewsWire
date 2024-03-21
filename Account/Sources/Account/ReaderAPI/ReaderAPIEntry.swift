@@ -8,7 +8,6 @@
 
 import Foundation
 import RSParser
-import RSCore
 
 struct ReaderAPIEntryWrapper: Codable {
 	let id: String

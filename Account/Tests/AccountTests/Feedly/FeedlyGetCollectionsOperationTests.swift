@@ -9,7 +9,6 @@
 import XCTest
 @testable import Account
 import os.log
-import RSCore
 
 class FeedlyGetCollectionsOperationTests: XCTestCase {
 		

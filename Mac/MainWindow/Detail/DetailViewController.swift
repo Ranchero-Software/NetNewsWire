@@ -8,7 +8,6 @@
 
 import Foundation
 import WebKit
-import RSCore
 import Articles
 import RSWeb
 

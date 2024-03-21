@@ -7,8 +7,9 @@
 //
 
 import AppKit
-import RSCore
 import Articles
+import Core
+import AppKitExtras
 
 final class SendToMarsEditCommand: SendToCommand {
 

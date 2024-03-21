@@ -7,7 +7,6 @@
 //
 
 import AppKit
-import RSCore
 import RSWeb
 import UserNotifications
 import UniformTypeIdentifiers

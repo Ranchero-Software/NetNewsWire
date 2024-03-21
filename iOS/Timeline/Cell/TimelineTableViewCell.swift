@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import RSCore
 
 class TimelineTableViewCell: VibrantTableViewCell {
 	

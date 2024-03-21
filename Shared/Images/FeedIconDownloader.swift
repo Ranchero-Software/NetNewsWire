@@ -9,9 +9,9 @@
 import Foundation
 import Articles
 import Account
-import RSCore
 import RSWeb
 import RSParser
+import Core
 
 extension Notification.Name {
 

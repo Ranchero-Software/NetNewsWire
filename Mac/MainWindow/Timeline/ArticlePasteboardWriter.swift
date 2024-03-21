@@ -8,7 +8,7 @@
 
 import AppKit
 import Articles
-import RSCore
+import AppKitExtras
 
 extension Article: PasteboardWriterOwner {
 	

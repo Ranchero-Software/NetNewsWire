@@ -9,8 +9,9 @@
 import AppKit
 import RSTree
 import Articles
-import RSCore
 import Account
+import Core
+import AppKitExtras
 
 @objc @MainActor final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
 

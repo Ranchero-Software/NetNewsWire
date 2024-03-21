@@ -8,7 +8,6 @@
 
 import Foundation
 import Articles
-import RSCore
 import RSParser
 
 final class FeaturedImageDownloader {

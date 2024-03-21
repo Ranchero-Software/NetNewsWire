@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSCore
+import Core
 
 struct NNW3Document {
 

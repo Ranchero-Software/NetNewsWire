@@ -8,10 +8,11 @@
 
 import Foundation
 import os.log
-import RSCore
 import RSWeb
 import RSParser
 import CloudKit
+import FoundationExtras
+import CloudKitExtras
 
 enum CloudKitAccountZoneError: LocalizedError {
 	case unknown

@@ -8,7 +8,7 @@
 
 import Foundation
 import RSWeb
-import RSCore
+import Core
 
 protocol FeedlyOperationDelegate: AnyObject {
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)

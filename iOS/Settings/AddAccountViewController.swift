@@ -8,7 +8,6 @@
 
 import Account
 import UIKit
-import RSCore
 
 protocol AddAccountDismissDelegate: UIViewController {
 	func dismiss()

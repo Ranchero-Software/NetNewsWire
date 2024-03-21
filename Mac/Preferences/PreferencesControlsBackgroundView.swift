@@ -7,7 +7,6 @@
 //
 
 import AppKit
-import RSCore
 
 final class PreferencesControlsBackgroundView: NSView {
 

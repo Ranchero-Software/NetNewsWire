@@ -11,7 +11,6 @@ import UIKit
 #endif
 
 import Foundation
-import RSCore
 import Articles
 import RSParser
 import Database
@@ -19,6 +18,7 @@ import ArticlesDatabase
 import RSWeb
 import os.log
 import Secrets
+import Core
 
 // Main thread only.
 

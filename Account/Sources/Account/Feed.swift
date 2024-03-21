@@ -7,9 +7,9 @@
 //
 
 import Foundation
-import RSCore
 import RSWeb
 import Articles
+import Core
 
 public final class Feed: Renamable, DisplayNameProvider, UnreadCountProvider, Hashable {
 

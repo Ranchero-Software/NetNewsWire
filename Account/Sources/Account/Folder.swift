@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import RSCore
+import Core
 
 public final class Folder: Renamable, Container, DisplayNameProvider, UnreadCountProvider, Hashable {
 

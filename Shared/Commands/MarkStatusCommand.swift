@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import RSCore
 import Articles
+import Core
 
 // Mark articles read/unread, starred/unstarred, deleted/undeleted.
 

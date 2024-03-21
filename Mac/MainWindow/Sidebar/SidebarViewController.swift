@@ -10,7 +10,7 @@ import AppKit
 import RSTree
 import Articles
 import Account
-import RSCore
+import Core
 
 extension Notification.Name {
 	static let appleSideBarDefaultIconSizeChanged = Notification.Name("AppleSideBarDefaultIconSizeChanged")

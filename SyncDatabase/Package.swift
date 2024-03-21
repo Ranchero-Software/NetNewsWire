@@ -2,7 +2,6 @@
 import PackageDescription
 
 var dependencies: [Package.Dependency] = [
-    .package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMinor(from: "1.0.0")),
 ]
 
 #if swift(>=5.6)
@@ -31,7 +30,6 @@ let package = Package(
 		.target(
 			name: "SyncDatabase",
 			dependencies: [
-				"RSCore",
 				"Database",
 				"Articles",
 				"FMDB"

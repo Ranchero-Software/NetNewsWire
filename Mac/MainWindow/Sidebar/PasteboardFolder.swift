@@ -8,7 +8,7 @@
 
 import AppKit
 import Account
-import RSCore
+import AppKitExtras
 
 typealias PasteboardFolderDictionary = [String: String]
 

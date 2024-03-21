@@ -10,7 +10,6 @@ import XCTest
 @testable import Account
 import SyncDatabase
 import Articles
-import RSCore
 
 class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	

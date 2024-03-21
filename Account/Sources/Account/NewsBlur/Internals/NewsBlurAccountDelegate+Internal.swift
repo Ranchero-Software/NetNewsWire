@@ -8,12 +8,12 @@
 //
 
 import Articles
-import RSCore
 import Database
 import RSParser
 import RSWeb
 import SyncDatabase
 import os.log
+import Core
 
 extension NewsBlurAccountDelegate {
 	

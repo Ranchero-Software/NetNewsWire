@@ -8,7 +8,6 @@
 
 import UIKit
 import Account
-import RSCore
 import RSTree
 import RSParser
 

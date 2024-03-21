@@ -11,7 +11,6 @@ import AppKit
 #else
 import Foundation
 #endif
-import RSCore
 import Account
 import Articles
 import ArticlesDatabase

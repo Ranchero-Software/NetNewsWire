@@ -7,9 +7,10 @@
 //
 
 import AppKit
-import RSCore
 import Articles
 import Account
+import Core
+import AppKitExtras
 
 extension TimelineViewController {
 

@@ -7,7 +7,6 @@
 //
 
 import AppKit
-import RSCore
 import RSTree
 import Articles
 import Account

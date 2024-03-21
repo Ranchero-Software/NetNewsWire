@@ -10,7 +10,6 @@ import Foundation
 import WidgetKit
 import os.log
 import UIKit
-import RSCore
 import Articles
 import Account
 

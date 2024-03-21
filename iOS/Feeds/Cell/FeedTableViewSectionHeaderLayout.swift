@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import RSCore
 
 @MainActor struct FeedTableViewSectionHeaderLayout {
 

@@ -9,8 +9,9 @@
 import AppKit
 import Articles
 import Account
-import RSCore
 import UserNotifications
+import AppKitExtras
+import Core
 
 extension Notification.Name {
 	public static let DidUpdateFeedPreferencesFromContextMenu = Notification.Name(rawValue: "DidUpdateFeedPreferencesFromContextMenu")

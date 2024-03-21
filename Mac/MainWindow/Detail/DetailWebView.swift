@@ -8,7 +8,7 @@
 
 import AppKit
 import WebKit
-import RSCore
+import AppKitExtras
 
 final class DetailWebView: WKWebView {
 

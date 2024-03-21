@@ -8,12 +8,12 @@
 
 import Foundation
 import os.log
-import RSCore
 import RSParser
 import RSWeb
 import CloudKit
 import Articles
 import SyncDatabase
+import CloudKitExtras
 
 final class CloudKitArticlesZone: CloudKitZone {
 	

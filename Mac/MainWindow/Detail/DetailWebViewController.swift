@@ -8,9 +8,9 @@
 
 import AppKit
 import WebKit
-import RSCore
 import RSWeb
 import Articles
+import Core
 
 protocol DetailWebViewControllerDelegate: AnyObject {
 	func mouseDidEnter(_: DetailWebViewController, link: String)

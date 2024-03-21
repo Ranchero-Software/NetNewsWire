@@ -7,7 +7,7 @@
 //
 
 import AppKit
-import RSCore
+import Core
 
 @objc final class SharingServicePickerDelegate: NSObject, NSSharingServicePickerDelegate {
 	

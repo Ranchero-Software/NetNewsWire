@@ -9,7 +9,7 @@
 import AppKit
 import Articles
 import Account
-import RSCore
+import AppKitExtras
 
 typealias PasteboardFeedDictionary = [String: String]
 

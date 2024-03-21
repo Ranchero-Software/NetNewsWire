@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import RSCore
 
 public extension Notification.Name {
 	static let ArticleThemeNamesDidChangeNotification = Notification.Name("ArticleThemeNamesDidChangeNotification")
