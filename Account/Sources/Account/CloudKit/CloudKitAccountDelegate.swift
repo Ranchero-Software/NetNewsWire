@@ -74,7 +74,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		op.completionBlock = { mainThreadOperaion in
 			completion()
 		}
-		mainThreadOperationQueue.add(op)
+		Task { @MainActor in
+			mainThreadOperationQueue.add(op)
+		}
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -124,7 +126,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				completion(.success(()))
 			}
 		}
-		mainThreadOperationQueue.add(op)
+		Task { @MainActor in
+			mainThreadOperationQueue.add(op)
+		}
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -777,7 +781,9 @@ private extension CloudKitAccountDelegate {
 				completion(.success(()))
 			}
 		}
-		mainThreadOperationQueue.add(op)
+		Task { @MainActor in
+			mainThreadOperationQueue.add(op)
+		}
 	}
 	
 

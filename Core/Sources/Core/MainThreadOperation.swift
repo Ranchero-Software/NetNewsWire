@@ -15,7 +15,7 @@ import Foundation
 /// When it’s canceled, it should do its best to stop
 /// doing whatever it’s doing. However, it should not
 /// leave data in an inconsistent state.
-public protocol MainThreadOperation: class {
+public protocol MainThreadOperation: AnyObject {
 
 	// These three properties are set by MainThreadOperationQueue. Don’t set them.
 	var isCanceled: Bool { get set } // Check this at appropriate times in case the operation has been canceled.

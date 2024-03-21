@@ -108,7 +108,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		completion()
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		assert(Thread.isMainThread)
 		
 		guard currentSyncAllOperation == nil else {
@@ -145,7 +145,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		operationQueue.add(syncAllOperation)
 	}
 	
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
+	@MainActor func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
 		sendArticleStatus(for: account) { result in
 			switch result {
 			case .success:
@@ -163,7 +163,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
 		let send = FeedlySendArticleStatusesOperation(database: database, service: caller, log: log)
 		send.completionBlock = { operation in
@@ -181,7 +181,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	///
 	/// - Parameter account: The account whose articles have a remote status.
 	/// - Parameter completion: Call on the main queue.
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard let credentials = credentials else {
 			return completion(.success(()))
 		}
@@ -314,8 +314,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 		
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
-		
+	@MainActor func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+
 		do {
 			guard let credentials = credentials else {
 				throw FeedlyAccountDelegateError.notLoggedIn
@@ -374,8 +374,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		feed.editedName = name
 	}
 	
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	@MainActor func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+
 		do {
 			guard let credentials = credentials else {
 				throw FeedlyAccountDelegateError.notLoggedIn
@@ -425,7 +425,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		folder.removeFeed(feed)
 	}
 	
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let from = from as? Folder, let to = to as? Folder else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
@@ -458,7 +458,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		to.addFeed(feed)
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {
@@ -480,7 +480,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelFeeds {
@@ -516,10 +516,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 				self.database.insertStatuses(syncStatuses) { _ in
 					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
+						MainActor.assumeIsolated {
+							if let count = try? result.get(), count > 100 {
+								self.sendArticleStatus(for: account) { _ in }
+							}
+							completion(.success(()))
 						}
-						completion(.success(()))
 					}
 				}
 			case .failure(let error):
@@ -533,7 +535,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 	}
 	
-	func accountWillBeDeleted(_ account: Account) {
+	@MainActor func accountWillBeDeleted(_ account: Account) {
 		let logout = FeedlyLogoutOperation(account: account, service: caller, log: log)
 		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
 		MainThreadOperationQueue.shared.add(logout)
@@ -598,6 +600,8 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			completionHandler(refreshAccessTokenDelegate.didReauthorize && !operation.isCanceled)
 		}
 		
-		MainThreadOperationQueue.shared.add(refreshAccessToken)
+		Task { @MainActor in
+			MainThreadOperationQueue.shared.add(refreshAccessToken)
+		}
 	}
 }

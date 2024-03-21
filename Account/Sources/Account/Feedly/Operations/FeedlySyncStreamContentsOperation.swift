@@ -24,7 +24,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	private let log: OSLog
 	private let finishOperation: FeedlyCheckpointOperation
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, isPagingEnabled: Bool, newerThan: Date?, log: OSLog) {
+	@MainActor init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, isPagingEnabled: Bool, newerThan: Date?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
@@ -41,7 +41,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		enqueueOperations(for: nil)
 	}
 	
-	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamContentsService, newerThan: Date?, log: OSLog) {
+	@MainActor convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamContentsService, newerThan: Date?, log: OSLog) {
 		let all = FeedlyCategoryResourceId.Global.all(for: credentials.username)
 		self.init(account: account, resource: all, service: service, isPagingEnabled: true, newerThan: newerThan, log: log)
 	}
@@ -56,7 +56,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		super.didCancel()
 	}
 
-	func enqueueOperations(for continuation: String?) {
+	@MainActor func enqueueOperations(for continuation: String?) {
 		os_log(.debug, log: log, "Requesting page for %{public}@", resource.id)
 		let operations = pageOperations(for: continuation)
 		operationQueue.addOperations(operations)
@@ -89,7 +89,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		return [getPage, organiseByFeed, updateAccount]
 	}
 	
-	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
+	@MainActor func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
 		guard !isCanceled else {
 			os_log(.debug, log: log, "Cancelled requesting page for %{public}@", resource.id)
 			return

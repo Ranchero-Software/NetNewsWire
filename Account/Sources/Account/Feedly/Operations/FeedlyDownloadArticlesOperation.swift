@@ -21,7 +21,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 	private let operationQueue = MainThreadOperationQueue()
 	private let finishOperation: FeedlyCheckpointOperation
 	
-	init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService, log: OSLog) {
+	@MainActor init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService, log: OSLog) {
 		self.account = account
 		self.operationQueue.suspend()
 		self.missingArticleEntryIdProvider = missingArticleEntryIdProvider
@@ -43,27 +43,29 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 		let feedlyAPILimitBatchSize = 1000
 		for articleIds in Array(articleIds).chunked(into: feedlyAPILimitBatchSize) {
 			
-			let provider = FeedlyEntryIdentifierProvider(entryIds: Set(articleIds))
-			let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider, log: log)
-			getEntries.delegate = self
-			self.operationQueue.add(getEntries)
-			
-			let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
-																		  parsedItemProvider: getEntries,
-																		  log: log)
-			organiseByFeed.delegate = self
-			organiseByFeed.addDependency(getEntries)
-			self.operationQueue.add(organiseByFeed)
-			
-			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
-			organisedItemsProvider: organiseByFeed,
-			log: log)
-			
-			updateAccount.delegate = self
-			updateAccount.addDependency(organiseByFeed)
-			self.operationQueue.add(updateAccount)
+			Task { @MainActor in
+				let provider = FeedlyEntryIdentifierProvider(entryIds: Set(articleIds))
+				let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider, log: log)
+				getEntries.delegate = self
+				self.operationQueue.add(getEntries)
 
-			finishOperation.addDependency(updateAccount)
+				let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
+																			  parsedItemProvider: getEntries,
+																			  log: log)
+				organiseByFeed.delegate = self
+				organiseByFeed.addDependency(getEntries)
+				self.operationQueue.add(organiseByFeed)
+
+				let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
+				organisedItemsProvider: organiseByFeed,
+				log: log)
+
+				updateAccount.delegate = self
+				updateAccount.addDependency(organiseByFeed)
+				self.operationQueue.add(updateAccount)
+
+				finishOperation.addDependency(updateAccount)
+			}
 		}
 		
 		operationQueue.resume()

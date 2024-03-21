@@ -8,19 +8,19 @@
 
 import Foundation
 
-public protocol UndoableCommand: class {
+public protocol UndoableCommand: AnyObject {
 
-	var undoActionName: String { get }
-	var redoActionName: String { get }
-	var undoManager: UndoManager { get }
+	@MainActor var undoActionName: String { get }
+	@MainActor var redoActionName: String { get }
+	@MainActor var undoManager: UndoManager { get }
 
-	func perform() // must call registerUndo()
-	func undo() // must call registerRedo()
+	@MainActor func perform() // must call registerUndo()
+	@MainActor func undo() // must call registerRedo()
 }
 
 extension UndoableCommand {
 
-	public func registerUndo() {
+	@MainActor public func registerUndo() {
 
 		undoManager.setActionName(undoActionName)
 		undoManager.registerUndo(withTarget: self) { (target) in
@@ -28,7 +28,7 @@ extension UndoableCommand {
 		}
 	}
 
-	public func registerRedo() {
+	@MainActor public func registerRedo() {
 		
 		undoManager.setActionName(redoActionName)
 		undoManager.registerUndo(withTarget: self) { (target) in
@@ -39,30 +39,30 @@ extension UndoableCommand {
 
 // Useful for view controllers.
 
-public protocol UndoableCommandRunner: class {
+public protocol UndoableCommandRunner: AnyObject {
     
-    var undoableCommands: [UndoableCommand] { get set }
-    var undoManager: UndoManager? { get }
-    
-    func runCommand(_ undoableCommand: UndoableCommand)
-    func clearUndoableCommands()
+	@MainActor var undoableCommands: [UndoableCommand] { get set }
+	@MainActor var undoManager: UndoManager? { get }
+
+	@MainActor func runCommand(_ undoableCommand: UndoableCommand)
+	@MainActor func clearUndoableCommands()
 }
 
 public extension UndoableCommandRunner {
     
-    func runCommand(_ undoableCommand: UndoableCommand) {
-        
+	@MainActor func runCommand(_ undoableCommand: UndoableCommand) {
+
         pushUndoableCommand(undoableCommand)
         undoableCommand.perform()
     }
     
-    func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
-        
+	@MainActor func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
+
         undoableCommands += [undoableCommand]
     }
     
-    func clearUndoableCommands() {
-        
+	@MainActor func clearUndoableCommands() {
+
         // Useful, for example, when timeline is reloaded and the list of articles changes.
         // Otherwise things like Redo Mark Read are ambiguous.
         // (Do they apply to the previous articles or to the current articles?)

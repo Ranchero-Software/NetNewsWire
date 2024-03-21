@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol MainThreadOperationDelegate: class {
+public protocol MainThreadOperationDelegate: AnyObject {
 	func operationDidComplete(_ operation: MainThreadOperation)
 	func cancelOperation(_ operation: MainThreadOperation)
 	func make(_ childOperation: MainThreadOperation, dependOn parentOperation: MainThreadOperation)
@@ -26,14 +26,14 @@ public protocol MainThreadOperationDelegate: class {
 public final class MainThreadOperationQueue {
 
 	/// Use the shared queue when you don’t need to create a separate queue.
-	public static let shared: MainThreadOperationQueue = {
+	@MainActor public static let shared: MainThreadOperationQueue = {
 		MainThreadOperationQueue()
 	}()
 
 	private var operations = [Int: MainThreadOperation]()
 	private var pendingOperationIDs = [Int]()
 	private var currentOperationID: Int?
-	private static var incrementingID = 0
+	@MainActor private static var incrementingID = 0
 	private var isSuspended = false
 	private let dependencies = MainThreadOperationDependencies()
 
@@ -51,7 +51,7 @@ public final class MainThreadOperationQueue {
 	}
 
 	/// Add an operation to the queue.
-	public func add(_ operation: MainThreadOperation) {
+	@MainActor public func add(_ operation: MainThreadOperation) {
 		precondition(Thread.isMainThread)
 		operation.operationDelegate = self
 		let operationID = ensureOperationID(operation)
@@ -67,12 +67,12 @@ public final class MainThreadOperationQueue {
 
 	/// Add multiple operations to the queue.
 	/// This has the same effect as calling addOperation one-by-one.
-	public func addOperations(_ operations: [MainThreadOperation]) {
+	@MainActor public func addOperations(_ operations: [MainThreadOperation]) {
 		operations.forEach{ add($0) }
 	}
 
 	/// Add a dependency. Do this *before* calling addOperation, since addOperation might run the operation right away.
-	public func make(_ childOperation: MainThreadOperation, dependOn parentOperation: MainThreadOperation) {
+	@MainActor public func make(_ childOperation: MainThreadOperation, dependOn parentOperation: MainThreadOperation) {
 		precondition(Thread.isMainThread)
 		let childOperationID = ensureOperationID(childOperation)
 		let parentOperationID = ensureOperationID(parentOperation)
@@ -91,7 +91,7 @@ public final class MainThreadOperationQueue {
 
 	/// Cancel some operations. If any of them have dependent operations,
 	/// those operations will be canceled also.
-	public func cancelOperations(_ operations: [MainThreadOperation]) {
+	@MainActor public func cancelOperations(_ operations: [MainThreadOperation]) {
 		precondition(Thread.isMainThread)
 		let operationIDsToCancel = operations.map{ ensureOperationID($0) }
 		assert(allOperationIDsArePendingOrCurrent(operationIDsToCancel))
@@ -106,7 +106,7 @@ public final class MainThreadOperationQueue {
 	///
 	/// This will cancel the current operation, not just pending operations,
 	/// if it has the specified name.
-	public func cancelOperations(named name: String) {
+	@MainActor public func cancelOperations(named name: String) {
 		precondition(Thread.isMainThread)
 		guard let operationsToCancel = pendingAndCurrentOperations(named: name) else {
 			return
@@ -137,7 +137,7 @@ extension MainThreadOperationQueue: MainThreadOperationDelegate {
 		operationDidFinish(operation)
 	}
 
-	public func cancelOperation(_ operation: MainThreadOperation) {
+	@MainActor public func cancelOperation(_ operation: MainThreadOperation) {
 		cancelOperations([operation])
 	}
 }
@@ -227,13 +227,13 @@ private extension MainThreadOperationQueue {
 		return !operation.isCanceled && !dependencies.operationIDIsBlockedByDependency(operation.id!)
 	}
 
-	func createOperationID() -> Int {
+	@MainActor func createOperationID() -> Int {
 		precondition(Thread.isMainThread)
 		Self.incrementingID += 1
 		return Self.incrementingID
 	}
 
-	func ensureOperationID(_ operation: MainThreadOperation) -> Int {
+	@MainActor func ensureOperationID(_ operation: MainThreadOperation) -> Int {
 		if let operationID = operation.id {
 			return operationID
 		}

@@ -34,7 +34,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 	///
 	/// Download articles for statuses at the union of those statuses without its corresponding article and those included in 3 (changed since last successful sync).
 	///
-	init(account: Account, feedlyUserId: String, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIdsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredService: FeedlyGetStreamIdsService, getStreamIdsService: FeedlyGetStreamIdsService, getEntriesService: FeedlyGetEntriesService, database: SyncDatabase, downloadProgress: DownloadProgress, log: OSLog) {
+	@MainActor init(account: Account, feedlyUserId: String, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIdsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredService: FeedlyGetStreamIdsService, getStreamIdsService: FeedlyGetStreamIdsService, getEntriesService: FeedlyGetEntriesService, database: SyncDatabase, downloadProgress: DownloadProgress, log: OSLog) {
 		self.syncUUID = UUID()
 		self.log = log
 		self.operationQueue.suspend()
@@ -126,7 +126,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		self.operationQueue.add(finishOperation)
 	}
 	
-	convenience init(account: Account, feedlyUserId: String, caller: FeedlyAPICaller, database: SyncDatabase, lastSuccessfulFetchStartDate: Date?, downloadProgress: DownloadProgress, log: OSLog) {
+	@MainActor convenience init(account: Account, feedlyUserId: String, caller: FeedlyAPICaller, database: SyncDatabase, lastSuccessfulFetchStartDate: Date?, downloadProgress: DownloadProgress, log: OSLog) {
 		self.init(account: account, feedlyUserId: feedlyUserId, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, markArticlesService: caller, getUnreadService: caller, getCollectionsService: caller, getStreamContentsService: caller, getStarredService: caller, getStreamIdsService: caller, getEntriesService: caller, database: database, downloadProgress: downloadProgress, log: log)
 	}
 	

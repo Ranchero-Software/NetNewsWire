@@ -30,8 +30,8 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	private var feedResourceId: FeedlyFeedResourceId?
 	var addCompletionHandler: ((Result<Feed, Error>) -> ())?
 
-	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress, log: OSLog) throws {
-		
+	@MainActor init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress, log: OSLog) throws {
+
 
 		let validator = FeedlyFeedContainerValidator(container: container)
 		(self.folder, self.collectionId) = try validator.getValidContainer()
@@ -75,7 +75,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		super.didFinish(with: error)
 	}
 
-	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse) {
+	@MainActor func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse) {
 		guard !isCanceled else {
 			return
 		}
