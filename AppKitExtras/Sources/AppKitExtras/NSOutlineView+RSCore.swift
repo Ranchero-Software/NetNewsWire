@@ -164,20 +164,5 @@ public extension NSOutlineView {
 		let isSelectable = delegate?.outlineView?(self, shouldSelectItem: item) ?? true
 		return isSelectable
 	}
-
-	func selectItemAndScrollToVisible(_ item: Any) {
-
-		guard canSelectItem(item) else {
-			return
-		}
-
-		let rowToSelect = row(forItem: item)
-		guard rowToSelect != -1 else {
-			return
-		}
-
-		selectRowAndScrollToVisible(rowToSelect)
-	}
 }
 #endif
-
