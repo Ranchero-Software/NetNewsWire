@@ -8,6 +8,7 @@
 
 import Account
 import UIKit
+import Core
 
 protocol AddAccountDismissDelegate: UIViewController {
 	func dismiss()

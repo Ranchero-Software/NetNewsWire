@@ -646,7 +646,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		fetchUnreadCounts(for: feeds, completion: completion)
 	}
 
-	public func articles(for fetchType: FetchType) async throws -> Set<Article> {
+	@MainActor public func articles(for fetchType: FetchType) async throws -> Set<Article> {
 
 		switch fetchType {
 

@@ -434,11 +434,14 @@ private extension AppDelegate {
 
 		resumeDatabaseProcessingIfNecessary()
 
-		guard let account = accountManager.existingAccount(with: articlePathInfo.accountID) else {
+		guard let accountID = articlePathInfo.accountID, let account = accountManager.existingAccount(with: accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
-		let articleID = articlePathInfo.articleID
+		guard let articleID = articlePathInfo.articleID else {
+			os_log(.debug, "No articleID found from notification.")
+			return
+		}
 
 		Task { @MainActor in
 			guard let articles = try? await account.articles(for: .articleIDs([articleID])) else {
@@ -468,11 +471,14 @@ private extension AppDelegate {
 
 		resumeDatabaseProcessingIfNecessary()
 
-		guard let account = accountManager.existingAccount(with: articlePathInfo.accountID) else {
+		guard let accountID = articlePathInfo.accountID, let account = accountManager.existingAccount(with: accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
-		let articleID = articlePathInfo.articleID
+		guard let articleID = articlePathInfo.articleID else {
+			os_log(.debug, "No articleID found from notification.")
+			return
+		}
 
 		Task { @MainActor in
 

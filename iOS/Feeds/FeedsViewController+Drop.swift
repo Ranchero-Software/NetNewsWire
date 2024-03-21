@@ -9,6 +9,7 @@
 import UIKit
 import Account
 import RSTree
+import Core
 
 extension SidebarViewController: UITableViewDropDelegate {
 	

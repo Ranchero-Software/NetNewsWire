@@ -13,6 +13,7 @@ import Articles
 import RSTree
 import SafariServices
 import SwiftUI
+import Core
 
 protocol MainControllerIdentifiable {
 	var mainControllerIdentifier: MainControllerIdentifier { get }
