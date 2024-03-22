@@ -22,7 +22,7 @@ extension RSImage {
 	}
 
 	static func scaledForIcon(_ data: Data) -> RSImage? {
-		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.maxIconSize) * RSScreen.maxScreenScale))
+		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.maxIconSize) * maxScreenScale))
 		guard var cgImage = RSImage.scaleImage(data, maxPixelSize: scaledMaxPixelSize) else {
 			return nil
 		}
