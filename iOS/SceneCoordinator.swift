@@ -41,7 +41,7 @@ struct SidebarItemNode: Hashable {
 	var node: Node
 	var sidebarItemID: SidebarItemIdentifier
 
-	init(_ node: Node) {
+	@MainActor init(_ node: Node) {
 		self.node = node
 		self.sidebarItemID = (node.representedObject as! SidebarItem).sidebarItemID!
 	}

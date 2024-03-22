@@ -600,6 +600,7 @@
 		841CECD82BAD04B20001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECD72BAD04B20001EE72 /* Tree */; };
 		841CECDA2BAD04B80001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECD92BAD04B80001EE72 /* Tree */; };
 		841CECDC2BAD04BF0001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECDB2BAD04BF0001EE72 /* Tree */; };
+		841CECDE2BAD06D10001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECDD2BAD06D10001EE72 /* Tree */; };
 		84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */; };
 		8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611891FCB67AA0086A189 /* FeedIconDownloader.swift */; };
 		8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
@@ -1531,6 +1532,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				841CECDE2BAD06D10001EE72 /* Tree in Frameworks */,
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
 				84D9582C2BABE53B0053E7B2 /* FoundationExtras in Frameworks */,
 			);
@@ -2818,6 +2820,7 @@
 			packageProductDependencies = (
 				51BC2F3724D3439A00E90810 /* Account */,
 				84D9582B2BABE53B0053E7B2 /* FoundationExtras */,
+				841CECDD2BAD06D10001EE72 /* Tree */,
 			);
 			productName = "NetNewsWire iOS Share Extension";
 			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
@@ -4927,6 +4930,10 @@
 			productName = Tree;
 		};
 		841CECDB2BAD04BF0001EE72 /* Tree */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Tree;
+		};
+		841CECDD2BAD06D10001EE72 /* Tree */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Tree;
 		};
