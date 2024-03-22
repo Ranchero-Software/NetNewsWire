@@ -20,6 +20,14 @@ public typealias RSImage = UIImage
 
 public extension RSImage {
 
+#if os(macOS)
+    static let maxScreenScale = CGFloat(2)
+#endif
+
+#if os(iOS)
+    static let maxScreenScale = CGFloat(3)
+#endif
+
 	/// Create a colored image from the source image using a specified color.
 	///
 	/// - Parameter color: The color with which to fill the mask image.

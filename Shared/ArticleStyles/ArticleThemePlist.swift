@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ArticleThemePlist: Codable, Equatable {
+public struct ArticleThemePlist: Codable, Equatable, Sendable {
 	public var name: String
 	public var themeIdentifier: String
 	public var creatorHomePage: String
