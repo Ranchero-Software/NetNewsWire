@@ -10,7 +10,7 @@ import AppKit
 
 @MainActor final class UnreadCountView : NSView {
 
-	struct Appearance {
+	@MainActor struct Appearance {
 		static let padding = NSEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
 		static let cornerRadius: CGFloat = 8.0
 		static let backgroundColor = NSColor(named: "SidebarUnreadCountBackground")!
