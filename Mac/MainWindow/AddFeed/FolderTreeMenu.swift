@@ -7,7 +7,7 @@
 //
 
 import AppKit
-import RSTree
+import Tree
 import Account
 import Core
 

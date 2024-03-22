@@ -10,7 +10,7 @@ import Foundation
 
 public protocol TreeControllerDelegate: AnyObject {
 	
-	func treeController(treeController: TreeController, childNodesFor: Node) -> [Node]?
+	@MainActor func treeController(treeController: TreeController, childNodesFor: Node) -> [Node]?
 }
 
 public typealias NodeVisitBlock = (_ : Node) -> Void

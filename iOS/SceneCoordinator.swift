@@ -10,7 +10,7 @@ import UIKit
 import UserNotifications
 import Account
 import Articles
-import RSTree
+import Tree
 import SafariServices
 import SwiftUI
 import Core

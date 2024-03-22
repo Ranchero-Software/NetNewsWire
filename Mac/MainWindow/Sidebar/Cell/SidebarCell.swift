@@ -8,7 +8,7 @@
 
 import Foundation
 import Account
-import RSTree
+import Tree
 
 class SidebarCell : NSTableCellView {
 

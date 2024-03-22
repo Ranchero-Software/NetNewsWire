@@ -7,12 +7,12 @@
 //
 
 import Foundation
-import RSTree
+import Tree
 import Articles
 import Account
 
-final class FolderTreeControllerDelegate: TreeControllerDelegate {
-	
+@MainActor final class FolderTreeControllerDelegate: TreeControllerDelegate {
+
 	@MainActor func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 
 		return node.isRoot ? childNodesForRootNode(node) : childNodes(node)
@@ -21,15 +21,15 @@ final class FolderTreeControllerDelegate: TreeControllerDelegate {
 
 private extension FolderTreeControllerDelegate {
 	
-	@MainActor func childNodesForRootNode(_ node: Node) -> [Node]? {
+	func childNodesForRootNode(_ node: Node) -> [Node]? {
 
 		let accountNodes: [Node] = AccountManager.shared.sortedActiveAccounts.map { account in
 			let accountNode = Node(representedObject: account, parent: node)
 			accountNode.canHaveChildNodes = true
 			return accountNode
 		}
+
 		return accountNodes
-		
 	}
 	
 	func childNodes(_ node: Node) -> [Node]? {
@@ -40,7 +40,6 @@ private extension FolderTreeControllerDelegate {
 		
 		let folderNodes: [Node] = folders.map { createNode($0, parent: node) }
 		return folderNodes.sortedAlphabetically()
-		
 	}
 
 	func createNode(_ folder: Folder, parent: Node) -> Node {
@@ -48,5 +47,4 @@ private extension FolderTreeControllerDelegate {
 		node.canHaveChildNodes = false
 		return node
 	}
-	
 }

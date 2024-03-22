@@ -7,18 +7,18 @@
 //
 
 import Foundation
-import RSTree
+import Tree
 import Articles
 import Core
 
 extension Array where Element == Node {
 
-	func sortedAlphabetically() -> [Node] {
+	@MainActor func sortedAlphabetically() -> [Node] {
 
 		return Node.nodesSortedAlphabetically(self)
 	}
 
-	func sortedAlphabeticallyWithFoldersAtEnd() -> [Node] {
+	@MainActor func sortedAlphabeticallyWithFoldersAtEnd() -> [Node] {
 
 		return Node.nodesSortedAlphabeticallyWithFoldersAtEnd(self)
 	}

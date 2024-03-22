@@ -9,7 +9,7 @@
 import UIKit
 import Account
 import Articles
-import RSTree
+import Tree
 import SafariServices
 import Core
 

@@ -9,7 +9,7 @@
 import AppKit
 import UserNotifications
 import Articles
-import RSTree
+import Tree
 import RSWeb
 import Account
 import CoreResources

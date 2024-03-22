@@ -7,12 +7,12 @@
 //
 
 import Foundation
-import RSTree
+import Tree
 import Account
 import Articles
 import Core
 
-final class DeleteCommand: UndoableCommand {
+@MainActor final class DeleteCommand: UndoableCommand {
 
 	let treeController: TreeController?
 	let undoManager: UndoManager
@@ -67,7 +67,7 @@ final class DeleteCommand: UndoableCommand {
 		registerRedo()
 	}
 
-	static func canDelete(_ nodes: [Node]) -> Bool {
+	@MainActor static func canDelete(_ nodes: [Node]) -> Bool {
 
 		// Return true if all nodes are feeds and folders.
 		// Any other type: return false.
@@ -93,7 +93,7 @@ final class DeleteCommand: UndoableCommand {
 // Remember as much as we can now about the items being deleted,
 // so they can be restored to the correct place.
 
-private struct SidebarItemSpecifier {
+@MainActor private struct SidebarItemSpecifier {
 
 	private weak var account: Account?
 	private let parentFolder: Folder?
@@ -265,7 +265,7 @@ private struct DeleteActionName {
 	private static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
 	private static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
 
-	static func name(for nodes: [Node]) -> String? {
+	@MainActor static func name(for nodes: [Node]) -> String? {
 
 		var numberOfFeeds = 0
 		var numberOfFolders = 0

@@ -7,7 +7,7 @@
 //
 
 import AppKit
-import RSTree
+import Tree
 import AppKitExtras
 
 class SidebarOutlineView : NSOutlineView {

@@ -7,11 +7,11 @@
 //
 
 import Foundation
-import RSTree
+import Tree
 import Articles
 import Account
 
-final class FeedTreeControllerDelegate: TreeControllerDelegate {
+@MainActor final class FeedTreeControllerDelegate: TreeControllerDelegate {
 
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
@@ -54,14 +54,14 @@ private extension FeedTreeControllerDelegate {
 		return topLevelNodes
 	}
 
-	func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
+	@MainActor func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
 		return SmartFeedsController.shared.smartFeeds.compactMap { (feed) -> Node? in
 			// All Smart Feeds should remain visible despite the Hide Read Feeds setting
 			return parentNode.existingOrNewChildNode(with: feed as AnyObject)
 		}
 	}
 
-	func childNodesForContainerNode(_ containerNode: Node) -> [Node]? {
+	@MainActor func childNodesForContainerNode(_ containerNode: Node) -> [Node]? {
 		let container = containerNode.representedObject as! Container
 
 		var children = [AnyObject]()

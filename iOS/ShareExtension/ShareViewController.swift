@@ -10,7 +10,7 @@ import UIKit
 import MobileCoreServices
 import Account
 import Social
-import RSTree
+import Tree
 import UniformTypeIdentifiers
 
 class ShareViewController: SLComposeServiceViewController, ShareFolderPickerControllerDelegate {

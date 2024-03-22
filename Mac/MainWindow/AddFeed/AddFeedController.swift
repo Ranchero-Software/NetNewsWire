@@ -8,7 +8,7 @@
 
 import AppKit
 import CoreResources
-import RSTree
+import Tree
 import Articles
 import Account
 import RSParser
