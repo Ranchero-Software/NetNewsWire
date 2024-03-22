@@ -10,7 +10,7 @@
 import AppKit
 
 public class RSScreen {
-	public static var maxScreenScale = CGFloat(2)
+	public static let maxScreenScale = CGFloat(2)
 }
 
 #endif
@@ -19,7 +19,7 @@ public class RSScreen {
 import UIKit
 
 public class RSScreen {
-	public static var maxScreenScale = CGFloat(3)
+	public static let maxScreenScale = CGFloat(3)
 }
 
 #endif

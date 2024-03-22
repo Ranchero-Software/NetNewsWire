@@ -71,6 +71,7 @@ struct AppAssets {
 
 	static let legacyArticleExtractorProgress4 = NSImage(named: "legacyArticleExtractorProgress4")
 
+	@MainActor
 	static let folderImage: IconImage = {
 		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!
@@ -96,6 +97,7 @@ struct AppAssets {
 	
 	static let refreshImage = NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
 
+	@MainActor
 	static let searchFeedImage: IconImage = {
 		return IconImage(NSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSupressed: true)
 	}()
@@ -108,6 +110,7 @@ struct AppAssets {
 
 	static let starOpenImage = NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
 
+	@MainActor
 	static let starredFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "StarColor")!
@@ -121,6 +124,7 @@ struct AppAssets {
 
 	static let timelineStarUnselected = NSImage(named: "timelineStar")?.tinted(with: starColor)
 
+	@MainActor
 	static let todayFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
 		let preferredColor = NSColor.orange
@@ -128,6 +132,7 @@ struct AppAssets {
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
+	@MainActor
 	static let unreadFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!

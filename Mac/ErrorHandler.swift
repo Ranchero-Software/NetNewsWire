@@ -10,6 +10,11 @@ import AppKit
 import Account
 import os.log
 
+// asserts that OSLog is a sendable type
+// @preconcurrency import os.log _should_ resolve the warning in this scenario, but does
+// not due to a bug (in Swift 5.10)
+extension OSLog: @unchecked Sendable { }
+
 struct ErrorHandler {
 
 	private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Account")

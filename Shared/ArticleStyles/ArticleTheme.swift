@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ArticleTheme: Equatable {
+struct ArticleTheme: Equatable, Sendable {
 	
 	static let defaultTheme = ArticleTheme()
 	static let nnwThemeSuffix = ".nnwtheme"
