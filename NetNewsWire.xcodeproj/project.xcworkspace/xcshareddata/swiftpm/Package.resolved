@@ -1,5 +1,5 @@
 {
-  "originHash" : "4d91e68a1cd512b0fa806978f5c3b759c8c6defc0a648d1e0fb0db9e944c07c1",
+  "originHash" : "143979811fdacc63ea101f03b6eeae2ff838828510390a5acdd415b90ffc549f",
   "pins" : [
     {
       "identity" : "plcrashreporter",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
         "version" : "2.0.3"
-      }
-    },
-    {
-      "identity" : "rstree",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ranchero-Software/RSTree.git",
-      "state" : {
-        "revision" : "9d051f42cfc4faa991fd79cdb32e4cc8c545e334",
-        "version" : "1.0.0"
       }
     },
     {

@@ -143,8 +143,6 @@
 		5137C2EA26F63AE6009EFEDB /* ArticleThemeImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */; };
 		51386A8E25673277005F3762 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51386A8D25673276005F3762 /* AccountCell.swift */; };
 		51386A8F25673277005F3762 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51386A8D25673276005F3762 /* AccountCell.swift */; };
-		5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93924D33E5600AFF0FE /* RSTree */; };
-		5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93924D33E5600AFF0FE /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5138E95224D3418100AFF0FE /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95124D3418100AFF0FE /* RSParser */; };
 		5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95124D3418100AFF0FE /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5138E95824D3419000AFF0FE /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95724D3419000AFF0FE /* RSWeb */; };
@@ -177,8 +175,6 @@
 		5148F4552336DB7000F8CD8B /* TimelineTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5148F4542336DB7000F8CD8B /* TimelineTitleView.swift */; };
 		514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */; };
 		514C16CE24D2E63F009A3AFA /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16CD24D2E63F009A3AFA /* Account */; };
-		514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16DD24D2EF15009A3AFA /* RSTree */; };
-		514C16DF24D2EF15009A3AFA /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 514C16DD24D2EF15009A3AFA /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
 		515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */ = {isa = PBXBuildFile; fileRef = 515D4FCB2325815A00EE1167 /* SafariExt.js */; };
@@ -263,10 +259,6 @@
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
 		51BC2F3824D3439A00E90810 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F3724D3439A00E90810 /* Account */; };
-		51BC2F4824D3439E00E90810 /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4724D3439E00E90810 /* RSTree */; };
-		51BC2F4924D3439E00E90810 /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4724D3439E00E90810 /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		51BC2F4D24D343AB00E90810 /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4C24D343AB00E90810 /* RSTree */; };
-		51BC2F4E24D343AB00E90810 /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4C24D343AB00E90810 /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
 		51BC4B00247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
 		51BC4B01247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
@@ -401,8 +393,6 @@
 		653813282680E1EC007A082C /* CrashReporter in Frameworks */ = {isa = PBXBuildFile; productRef = 653813272680E1EC007A082C /* CrashReporter */; };
 		653813302680E20C007A082C /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 6538132F2680E20C007A082C /* RSParser */; };
 		653813312680E20C007A082C /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6538132F2680E20C007A082C /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		653813332680E220007A082C /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 653813322680E220007A082C /* RSTree */; };
-		653813342680E220007A082C /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 653813322680E220007A082C /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		653813362680E224007A082C /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 653813352680E224007A082C /* RSWeb */; };
 		653813372680E224007A082C /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 653813352680E224007A082C /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		653813392680E22B007A082C /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 653813382680E22B007A082C /* Secrets */; };
@@ -607,6 +597,9 @@
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
 		841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */; };
 		841ABA6020145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */; };
+		841CECD82BAD04B20001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECD72BAD04B20001EE72 /* Tree */; };
+		841CECDA2BAD04B80001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECD92BAD04B80001EE72 /* Tree */; };
+		841CECDC2BAD04BF0001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECDB2BAD04BF0001EE72 /* Tree */; };
 		84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */; };
 		8426118A1FCB67AA0086A189 /* FeedIconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611891FCB67AA0086A189 /* FeedIconDownloader.swift */; };
 		8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
@@ -903,7 +896,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				51BC2F4924D3439E00E90810 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -914,7 +906,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				51BC2F4E24D343AB00E90810 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -954,7 +945,6 @@
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
 				513F32812593EF180003048F /* Account in Embed Frameworks */,
-				5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */,
 				513F32752593EE6F0003048F /* ArticlesDatabase in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -992,7 +982,6 @@
 				653813312680E20C007A082C /* RSParser in Embed Frameworks */,
 				6538133A2680E22B007A082C /* Secrets in Embed Frameworks */,
 				653813252680E1D6007A082C /* ArticlesDatabase in Embed Frameworks */,
-				653813342680E220007A082C /* RSTree in Embed Frameworks */,
 				653813222680E1D0007A082C /* Articles in Embed Frameworks */,
 				6538131F2680E1CA007A082C /* Account in Embed Frameworks */,
 			);
@@ -1038,7 +1027,6 @@
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
 				513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */,
 				51A737C924DB19CC0015FA66 /* RSParser in Embed Frameworks */,
-				514C16DF24D2EF15009A3AFA /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1325,6 +1313,7 @@
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinSmartFeedInspectorViewController.swift; sourceTree = "<group>"; };
+		841CECD62BAD03C60001EE72 /* Tree */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Tree; sourceTree = "<group>"; };
 		84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWebViewController.swift; sourceTree = "<group>"; };
 		842611891FCB67AA0086A189 /* FeedIconDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIconDownloader.swift; sourceTree = "<group>"; };
 		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
@@ -1535,7 +1524,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				27B86EEB25A53AAB00264340 /* Account in Frameworks */,
-				51BC2F4D24D343AB00E90810 /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1544,7 +1532,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
-				51BC2F4824D3439E00E90810 /* RSTree in Frameworks */,
 				84D9582C2BABE53B0053E7B2 /* FoundationExtras in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1579,11 +1566,11 @@
 				653813362680E224007A082C /* RSWeb in Frameworks */,
 				84DCA51C2BABB78E00792720 /* CloudKitExtras in Frameworks */,
 				84DCA5272BABBB6200792720 /* Core in Frameworks */,
+				841CECDA2BAD04B80001EE72 /* Tree in Frameworks */,
 				84DCA5182BABB77E00792720 /* FoundationExtras in Frameworks */,
 				653813302680E20C007A082C /* RSParser in Frameworks */,
 				6538131E2680E1CA007A082C /* Account in Frameworks */,
 				653813282680E1EC007A082C /* CrashReporter in Frameworks */,
-				653813332680E220007A082C /* RSTree in Frameworks */,
 				84DCA51A2BABB78700792720 /* AppKitExtras in Frameworks */,
 				653813262680E1E4007A082C /* CloudKit.framework in Frameworks */,
 				653813242680E1D6007A082C /* ArticlesDatabase in Frameworks */,
@@ -1614,9 +1601,9 @@
 				84DCA5222BABB7A800792720 /* CloudKitExtras in Frameworks */,
 				513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */,
 				513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */,
+				841CECDC2BAD04BF0001EE72 /* Tree in Frameworks */,
 				848565512B9E910200F4BAE0 /* FMDB in Frameworks */,
 				8485654F2B9E90FD00F4BAE0 /* Database in Frameworks */,
-				5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1628,7 +1615,6 @@
 				17192ADA2567B3D500AAEACA /* RSSparkle in Frameworks */,
 				51A737C524DB19B50015FA66 /* RSWeb in Frameworks */,
 				8438C2DB2BABE0B00040C9EE /* CoreResources in Frameworks */,
-				514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */,
 				5132775E2590FC640064F1E7 /* Articles in Frameworks */,
 				84DCA5252BABBB5A00792720 /* Core in Frameworks */,
 				8479ABE32B9E906E00F84C4D /* Database in Frameworks */,
@@ -1643,6 +1629,7 @@
 				84DCA5162BABB76B00792720 /* CloudKitExtras in Frameworks */,
 				514C16CE24D2E63F009A3AFA /* Account in Frameworks */,
 				519CA8E525841DB700EB079A /* CrashReporter in Frameworks */,
+				841CECD82BAD04B20001EE72 /* Tree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2375,6 +2362,7 @@
 				841550F52B9E4D6800D4B345 /* FMDB */,
 				84DCA50F2BABB65600792720 /* CloudKitExtras */,
 				84DCA5232BABBA8100792720 /* Core */,
+				841CECD62BAD03C60001EE72 /* Tree */,
 				84DCA5102BABB6A100792720 /* UIKitExtras */,
 				84DCA50E2BABB5D800792720 /* AppKitExtras */,
 				84DCA50D2BAB643700792720 /* FoundationExtras */,
@@ -2807,7 +2795,6 @@
 			name = "NetNewsWire iOS Intents Extension";
 			packageProductDependencies = (
 				51BC2F4A24D343A500E90810 /* Account */,
-				51BC2F4C24D343AB00E90810 /* RSTree */,
 			);
 			productName = "NetNewsWire iOS Intents Extension";
 			productReference = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */;
@@ -2830,7 +2817,6 @@
 			name = "NetNewsWire iOS Share Extension";
 			packageProductDependencies = (
 				51BC2F3724D3439A00E90810 /* Account */,
-				51BC2F4724D3439E00E90810 /* RSTree */,
 				84D9582B2BABE53B0053E7B2 /* FoundationExtras */,
 			);
 			productName = "NetNewsWire iOS Share Extension";
@@ -2920,13 +2906,13 @@
 				653813232680E1D6007A082C /* ArticlesDatabase */,
 				653813272680E1EC007A082C /* CrashReporter */,
 				6538132F2680E20C007A082C /* RSParser */,
-				653813322680E220007A082C /* RSTree */,
 				653813352680E224007A082C /* RSWeb */,
 				653813382680E22B007A082C /* Secrets */,
 				84DCA5172BABB77E00792720 /* FoundationExtras */,
 				84DCA5192BABB78700792720 /* AppKitExtras */,
 				84DCA51B2BABB78E00792720 /* CloudKitExtras */,
 				84DCA5262BABBB6200792720 /* Core */,
+				841CECD92BAD04B80001EE72 /* Tree */,
 			);
 			productName = NetNewsWire;
 			productReference = 65ED4083235DEF6C0081F399 /* NetNewsWire.app */;
@@ -2970,7 +2956,6 @@
 			name = "NetNewsWire-iOS";
 			packageProductDependencies = (
 				516B695E24D2F33B00B5702F /* Account */,
-				5138E93924D33E5600AFF0FE /* RSTree */,
 				5138E95124D3418100AFF0FE /* RSParser */,
 				5138E95724D3419000AFF0FE /* RSWeb */,
 				513F32702593EE6F0003048F /* Articles */,
@@ -2984,6 +2969,7 @@
 				84DCA51F2BABB7A200792720 /* UIKitExtras */,
 				84DCA5212BABB7A800792720 /* CloudKitExtras */,
 				84DCA5282BABBB6A00792720 /* Core */,
+				841CECDB2BAD04BF0001EE72 /* Tree */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -3013,7 +2999,6 @@
 			name = NetNewsWire;
 			packageProductDependencies = (
 				514C16CD24D2E63F009A3AFA /* Account */,
-				514C16DD24D2EF15009A3AFA /* RSTree */,
 				51C4CFF524D37DD500AF9874 /* Secrets */,
 				51A737C424DB19B50015FA66 /* RSWeb */,
 				51A737C724DB19CC0015FA66 /* RSParser */,
@@ -3030,6 +3015,7 @@
 				84DCA5152BABB76B00792720 /* CloudKitExtras */,
 				84DCA5242BABBB5A00792720 /* Core */,
 				8438C2DA2BABE0B00040C9EE /* CoreResources */,
+				841CECD72BAD04B20001EE72 /* Tree */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -3143,7 +3129,6 @@
 			);
 			mainGroup = 849C64571ED37A5D003D8FC0;
 			packageReferences = (
-				510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */,
 				51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */,
 				51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */,
 				17192AD82567B3D500AAEACA /* XCRemoteSwiftPackageReference "Sparkle-Binary" */,
@@ -4770,14 +4755,6 @@
 				revision = 059e7346082d02de16220cd79df7db18ddeba8c3;
 			};
 		};
-		510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Ranchero-Software/RSTree.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Ranchero-Software/RSWeb.git";
@@ -4845,11 +4822,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SyncDatabase;
 		};
-		5138E93924D33E5600AFF0FE /* RSTree */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
-			productName = RSTree;
-		};
 		5138E95124D3418100AFF0FE /* RSParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
@@ -4880,11 +4852,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Account;
 		};
-		514C16DD24D2EF15009A3AFA /* RSTree */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
-			productName = RSTree;
-		};
 		516B695E24D2F33B00B5702F /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Account;
@@ -4908,19 +4875,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Account;
 		};
-		51BC2F4724D3439E00E90810 /* RSTree */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
-			productName = RSTree;
-		};
 		51BC2F4A24D343A500E90810 /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Account;
-		};
-		51BC2F4C24D343AB00E90810 /* RSTree */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
-			productName = RSTree;
 		};
 		51C4CFF524D37DD500AF9874 /* Secrets */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4948,11 +4905,6 @@
 			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
 			productName = RSParser;
 		};
-		653813322680E220007A082C /* RSTree */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
-			productName = RSTree;
-		};
 		653813352680E224007A082C /* RSWeb */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
@@ -4965,6 +4917,18 @@
 		6538133F2680E2DA007A082C /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Account;
+		};
+		841CECD72BAD04B20001EE72 /* Tree */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Tree;
+		};
+		841CECD92BAD04B80001EE72 /* Tree */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Tree;
+		};
+		841CECDB2BAD04BF0001EE72 /* Tree */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Tree;
 		};
 		8438C2DA2BABE0B00040C9EE /* CoreResources */ = {
 			isa = XCSwiftPackageProductDependency;
