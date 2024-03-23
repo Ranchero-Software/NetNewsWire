@@ -18,7 +18,7 @@ extension Notification.Name {
 	static let FeedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailableNotification") // UserInfoKey.feed
 }
 
-public final class FeedIconDownloader {
+@MainActor public final class FeedIconDownloader {
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -81,14 +81,16 @@ public final class FeedIconDownloader {
 			return IconImage.appIcon
 		}
 
-		func checkHomePageURL() {
+		@MainActor func checkHomePageURL() {
 			guard let homePageURL = feed.homePageURL else {
 				return
 			}
 			icon(forHomePageURL: homePageURL, feed: feed) { (image) in
-				if let image = image {
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-					self.cache[feed] = IconImage(image)
+				Task { @MainActor in
+					if let image = image {
+						self.postFeedIconDidBecomeAvailableNotification(feed)
+						self.cache[feed] = IconImage(image)
+					}
 				}
 			}
 		}
@@ -96,11 +98,13 @@ public final class FeedIconDownloader {
 		func checkFeedIconURL() {
 			if let iconURL = feed.iconURL {
 				icon(forURL: iconURL, feed: feed) { (image) in
-					if let image = image {
-						self.postFeedIconDidBecomeAvailableNotification(feed)
-						self.cache[feed] = IconImage(image)
-					} else {
-						checkHomePageURL()
+					Task { @MainActor in
+						if let image = image {
+							self.postFeedIconDidBecomeAvailableNotification(feed)
+							self.cache[feed] = IconImage(image)
+						} else {
+							checkHomePageURL()
+						}
 					}
 				}
 			} else {
@@ -110,9 +114,11 @@ public final class FeedIconDownloader {
 		
 		if let feedProviderURL = feedURLToIconURLCache[feed.url] {
 			self.icon(forURL: feedProviderURL, feed: feed) { (image) in
-				if let image = image {
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-					self.cache[feed] = IconImage(image)
+				Task { @MainActor in
+					if let image = image {
+						self.postFeedIconDidBecomeAvailableNotification(feed)
+						self.cache[feed] = IconImage(image)
+					}
 				}
 			}
 			return nil
@@ -153,7 +159,7 @@ public final class FeedIconDownloader {
 
 private extension FeedIconDownloader {
 
-	func icon(forHomePageURL homePageURL: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forHomePageURL homePageURL: String, feed: Feed, _ imageResultBlock: @Sendable @escaping (RSImage?) -> Void) {
 
 		if homePagesWithNoIconURLCache.contains(homePageURL) || homePagesWithUglyIcons.contains(homePageURL) {
 			imageResultBlock(nil)
@@ -168,7 +174,7 @@ private extension FeedIconDownloader {
 		findIconURLForHomePageURL(homePageURL, feed: feed)
 	}
 
-	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @Sendable @escaping (RSImage?) -> Void) {
 		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {
 			imageResultBlock(nil)
@@ -255,15 +261,15 @@ private extension FeedIconDownloader {
 		homePagesWithNoIconURLCache = Set(decoded)
 	}
 
-	func queueSaveFeedURLToIconURLCacheIfNeeded() {
+	@MainActor func queueSaveFeedURLToIconURLCacheIfNeeded() {
 		FeedIconDownloader.saveQueue.add(self, #selector(saveFeedURLToIconURLCacheIfNeeded))
 	}
 
-	func queueSaveHomePageToIconURLCacheIfNeeded() {
+	@MainActor func queueSaveHomePageToIconURLCacheIfNeeded() {
 		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePageToIconURLCacheIfNeeded))
 	}
 
-	func queueHomePagesWithNoIconURLCacheIfNeeded() {
+	@MainActor func queueHomePagesWithNoIconURLCacheIfNeeded() {
 		FeedIconDownloader.saveQueue.add(self, #selector(saveHomePagesWithNoIconURLCacheIfNeeded))
 	}
 

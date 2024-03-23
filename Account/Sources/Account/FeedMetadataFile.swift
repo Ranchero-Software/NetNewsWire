@@ -17,19 +17,19 @@ final class FeedMetadataFile {
 	private let fileURL: URL
 	private let account: Account
 
-	private var isDirty = false {
+	@MainActor private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
 		}
 	}
-	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+	@MainActor private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
 
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
 	
-	func markAsDirty() {
+	@MainActor func markAsDirty() {
 		isDirty = true
 	}
 	
@@ -61,11 +61,11 @@ final class FeedMetadataFile {
 
 private extension FeedMetadataFile {
 
-	func queueSaveToDiskIfNeeded() {
+	@MainActor func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 
-	@objc func saveToDiskIfNeeded() {
+	@MainActor @objc func saveToDiskIfNeeded() {
 		if isDirty {
 			isDirty = false
 			save()

@@ -30,9 +30,9 @@ struct QueueCall: Equatable {
 	}
 }
 
-@objc public final class CoalescingQueue: NSObject {
+@MainActor @objc public final class CoalescingQueue: NSObject {
 
-	public static let standard = CoalescingQueue(name: "Standard", interval: 0.05, maxInterval: 0.1)
+	@MainActor public static let standard = CoalescingQueue(name: "Standard", interval: 0.05, maxInterval: 0.1)
 	public let name: String
 	public var isPaused = false
 	private let interval: TimeInterval

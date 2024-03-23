@@ -10,8 +10,8 @@ import Foundation
 import os.log
 import Core
 
-final class AccountMetadataFile {
-	
+@MainActor final class AccountMetadataFile {
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "accountMetadataFile")
 
 	private let fileURL: URL

@@ -209,15 +209,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	let dataFolder: String
 	let database: ArticlesDatabase
 	var delegate: AccountDelegate
-	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
+	@MainActor static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
 	private var unreadCounts = [String: Int]() // [feedID: Int]
 
 	private var _flattenedFeeds = Set<Feed>()
 	private var flattenedFeedsNeedUpdate = true
 
-	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
-	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
+	@MainActor private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
+	@MainActor private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
 	var metadata = AccountMetadata() {
 		didSet {
 			delegate.accountMetadata = metadata
@@ -248,7 +248,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				}
 				else {
 					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
-					opmlFile.markAsDirty()
+					Task { @MainActor in
+						opmlFile.markAsDirty()
+					}
 				}
 			}
 		}
@@ -258,7 +260,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.refreshProgress
 	}
 
-	init(dataFolder: String, type: AccountType, accountID: String, secretsProvider: SecretsProvider, transport: Transport? = nil) {
+	@MainActor init(dataFolder: String, type: AccountType, accountID: String, secretsProvider: SecretsProvider, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
@@ -480,9 +482,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func save() {
-		metadataFile.save()
-		feedMetadataFile.save()
-		opmlFile.save()
+		Task { @MainActor in
+			metadataFile.save()
+			feedMetadataFile.save()
+			opmlFile.save()
+		}
 	}
 	
 	public func prepareForDeletion() {
@@ -775,9 +779,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func structureDidChange() {
 		// Feeds were added or deleted. Or folders added or deleted.
 		// Or feeds inside folders were added or deleted.
-		opmlFile.markAsDirty()
-		flattenedFeedsNeedUpdate = true
-		feedDictionariesNeedUpdate = true
+		Task { @MainActor in
+			opmlFile.markAsDirty()
+			flattenedFeedsNeedUpdate = true
+			feedDictionariesNeedUpdate = true
+		}
 	}
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesCompletionBlock) {
@@ -1059,7 +1065,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 extension Account: AccountMetadataDelegate {
 	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
-		metadataFile.markAsDirty()
+		Task { @MainActor in
+			metadataFile.markAsDirty()
+		}
 	}
 }
 
@@ -1068,11 +1076,14 @@ extension Account: AccountMetadataDelegate {
 extension Account: FeedMetadataDelegate {
 
 	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
-		feedMetadataFile.markAsDirty()
-		guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
-			return
+
+		Task { @MainActor in
+			feedMetadataFile.markAsDirty()
+			guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
+				return
+			}
+			feed.postFeedSettingDidChangeNotification(key)
 		}
-		feed.postFeedSettingDidChangeNotification(key)
 	}
 }
 

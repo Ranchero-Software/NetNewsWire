@@ -108,7 +108,9 @@ extension SmartFeed: ArticleFetcher {
 private extension SmartFeed {
 
 	func queueFetchUnreadCounts() {
-		CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
+		Task { @MainActor in
+			CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
+		}
 	}
 
 	func fetchUnreadCount(for account: Account) {

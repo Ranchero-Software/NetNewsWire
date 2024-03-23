@@ -96,8 +96,8 @@ public final class AccountManager: UnreadCountProvider {
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
-	public init(accountsFolder: String, secretsProvider: SecretsProvider) {
-		
+	@MainActor public init(accountsFolder: String, secretsProvider: SecretsProvider) {
+
 		self.accountsFolder = accountsFolder
 		self.secretsProvider = secretsProvider
 
@@ -127,7 +127,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	// MARK: - API
 	
-	public func createAccount(type: AccountType) -> Account {
+	@MainActor public func createAccount(type: AccountType) -> Account {
 		let accountID = type == .cloudKit ? "iCloud" : UUID().uuidString
 		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
 
@@ -438,11 +438,11 @@ private extension AccountManager {
 		unreadCount = calculateUnreadCount(activeAccounts)
 	}
 
-	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
+	@MainActor func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
 		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier, secretsProvider: secretsProvider)
 	}
 
-	func loadAccount(_ filename: String) -> Account? {
+	@MainActor func loadAccount(_ filename: String) -> Account? {
 		let folderPath = (accountsFolder as NSString).appendingPathComponent(filename)
 		if let accountSpecifier = AccountSpecifier(folderPath: folderPath) {
 			return loadAccount(accountSpecifier)
@@ -450,7 +450,7 @@ private extension AccountManager {
 		return nil
 	}
 
-	func readAccountsFromDisk() {
+	@MainActor func readAccountsFromDisk() {
 		var filenames: [String]?
 
 		do {

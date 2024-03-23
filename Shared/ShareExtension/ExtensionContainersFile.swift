@@ -22,7 +22,7 @@ final class ExtensionContainersFile {
 		return containerURL!.appendingPathComponent("extension_containers.plist").path
 	}()
 	
-	private var isDirty = false {
+	@MainActor private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
 		}
@@ -65,15 +65,15 @@ final class ExtensionContainersFile {
 
 private extension ExtensionContainersFile {
 
-	@objc func markAsDirty() {
+	@MainActor @objc func markAsDirty() {
 		isDirty = true
 	}
 	
-	func queueSaveToDiskIfNeeded() {
+	@MainActor func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 
-	@objc func saveToDiskIfNeeded() {
+	@MainActor @objc func saveToDiskIfNeeded() {
 		if isDirty {
 			isDirty = false
 			save()

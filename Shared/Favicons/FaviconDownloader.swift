@@ -278,11 +278,15 @@ private extension FaviconDownloader {
 	}
 
 	func queueSaveHomePageToFaviconURLCacheIfNeeded() {
-		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageToFaviconURLCacheIfNeeded))
+		Task { @MainActor in
+			FaviconDownloader.saveQueue.add(self, #selector(saveHomePageToFaviconURLCacheIfNeeded))
+		}
 	}
 
 	func queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
-		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageURLsWithNoFaviconURLCacheIfNeeded))
+		Task { @MainActor in
+			FaviconDownloader.saveQueue.add(self, #selector(saveHomePageURLsWithNoFaviconURLCacheIfNeeded))
+		}
 	}
 
 	func saveHomePageToFaviconURLCache() {

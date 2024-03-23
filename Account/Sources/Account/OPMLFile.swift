@@ -11,8 +11,8 @@ import os.log
 import RSParser
 import Core
 
-final class OPMLFile {
-	
+@MainActor final class OPMLFile {
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "opmlFile")
 
 	private let fileURL: URL
