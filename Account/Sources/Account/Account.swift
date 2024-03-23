@@ -723,7 +723,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		try await database.unreadArticles(feedIDs: Set([feed.feedID]))
 	}
 
-	public func unreadArticles(feeds: Set<Feed>) async throws -> Set<Article> {
+	@MainActor public func unreadArticles(feeds: Set<Feed>) async throws -> Set<Article> {
 
 		if feeds.isEmpty {
 			return Set<Article>()
@@ -1011,19 +1011,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
 	}
 	
-	@objc func unreadCountDidChange(_ note: Notification) {
+	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
 		if let feed = note.object as? Feed, feed.account === self {
 			updateUnreadCount()
 		}
 	}
     
-    @objc func batchUpdateDidPerform(_ note: Notification) {
+	@MainActor @objc func batchUpdateDidPerform(_ note: Notification) {
 		flattenedFeedsNeedUpdate = true
 		rebuildFeedDictionaries()
         updateUnreadCount()
     }
 
-	@objc func childrenDidChange(_ note: Notification) {
+	@MainActor @objc func childrenDidChange(_ note: Notification) {
 		guard let object = note.object else {
 			return
 		}
@@ -1165,7 +1165,7 @@ private extension Account {
 		return database.fetchArticlesAsync(articleIDs: articleIDs, completion)
 	}
 
-	func articles(container: Container) async throws -> Set<Article> {
+	@MainActor func articles(container: Container) async throws -> Set<Article> {
 
 		let feeds = container.flattenedFeeds()
 		let articles = try await database.articles(feedIDs: allFeedIDs())
@@ -1178,17 +1178,20 @@ private extension Account {
 	func fetchArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
 		let feeds = container.flattenedFeeds()
 		database.fetchArticlesAsync(feeds.feedIDs()) { [weak self] (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-				completion(.success(articles))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+
+			Task { @MainActor [weak self] in
+				switch articleSetResult {
+				case .success(let articles):
+					self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+					completion(.success(articles))
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
+				}
 			}
 		}
 	}
 
-	func unreadArticles(container: Container, limit: Int? = nil) async throws -> Set<Article> {
+	@MainActor func unreadArticles(container: Container, limit: Int? = nil) async throws -> Set<Article> {
 
 		let feeds = container.flattenedFeeds()
 		let feedIDs = feeds.feedIDs()
@@ -1206,23 +1209,26 @@ private extension Account {
 	func fetchUnreadArticlesAsync(forContainer container: Container, limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		let feeds = container.flattenedFeeds()
 		database.fetchUnreadArticlesAsync(feeds.feedIDs(), limit) { [weak self] (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				
-				// We don't validate limit queries because they, by definition, won't correctly match the
-				// complete unread state for the given container.
-				if limit == nil {
-					self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+
+			Task { @MainActor [weak self] in
+				switch articleSetResult {
+				case .success(let articles):
+
+					// We don't validate limit queries because they, by definition, won't correctly match the
+					// complete unread state for the given container.
+					if limit == nil {
+						self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+					}
+
+					completion(.success(articles))
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
 				}
-				
-				completion(.success(articles))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
 			}
 		}
 	}
 
-	func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
+	@MainActor func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
 		// Validate unread counts. This was the site of a performance slowdown:
 		// it was calling going through the entire list of articles once per feed:
 		// feeds.forEach { validateUnreadCount($0, articles) }
@@ -1302,7 +1308,7 @@ private extension Account {
 		feedDictionariesNeedUpdate = false
 	}
     
-    func updateUnreadCount() {
+	@MainActor func updateUnreadCount() {
 		if fetchingAllUnreadCounts {
 			return
 		}
@@ -1356,44 +1362,52 @@ private extension Account {
 
 	func fetchUnreadCount(_ feed: Feed, _ completion: VoidCompletionBlock?) {
 		database.fetchUnreadCount(feed.feedID) { result in
-			if let unreadCount = try? result.get() {
-				feed.unreadCount = unreadCount
+			Task { @MainActor in
+				if let unreadCount = try? result.get() {
+					feed.unreadCount = unreadCount
+				}
+				completion?()
 			}
-			completion?()
 		}
 	}
 
 	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: VoidCompletionBlock?) {
 		let feedIDs = Set(feeds.map { $0.feedID })
 		database.fetchUnreadCounts(for: feedIDs) { result in
-			if let unreadCountDictionary = try? result.get() {
-				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+
+			Task { @MainActor in
+				if let unreadCountDictionary = try? result.get() {
+					self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+				}
+				completion?()
 			}
-			completion?()
 		}
 	}
 
 	func fetchAllUnreadCounts(_ completion: VoidCompletionBlock? = nil) {
 		fetchingAllUnreadCounts = true
 		database.fetchAllUnreadCounts { result in
-			guard let unreadCountDictionary = try? result.get() else {
+
+			Task { @MainActor in
+				guard let unreadCountDictionary = try? result.get() else {
+					completion?()
+					return
+				}
+				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
+
+				self.fetchingAllUnreadCounts = false
+				self.updateUnreadCount()
+
+				if !self.isUnreadCountsInitialized {
+					self.isUnreadCountsInitialized = true
+					self.postUnreadCountDidInitializeNotification()
+				}
 				completion?()
-				return
 			}
-			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
-
-			self.fetchingAllUnreadCounts = false
-			self.updateUnreadCount()
-
-			if !self.isUnreadCountsInitialized {
-				self.isUnreadCountsInitialized = true
-				self.postUnreadCountDidInitializeNotification()
-			}
-			completion?()
 		}
 	}
 
-	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<Feed>) {
+	@MainActor func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<Feed>) {
 		for feed in feeds {
 			// When the unread count is zero, it won’t appear in unreadCountDictionary.
 			let unreadCount = unreadCountDictionary[feed.feedID] ?? 0

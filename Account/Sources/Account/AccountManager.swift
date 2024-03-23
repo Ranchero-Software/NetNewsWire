@@ -148,7 +148,7 @@ public final class AccountManager: UnreadCountProvider {
 		return account
 	}
 	
-	public func deleteAccount(_ account: Account) {
+	@MainActor public func deleteAccount(_ account: Account) {
 		guard !account.refreshInProgress else {
 			return
 		}
@@ -409,7 +409,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	// MARK: - Notifications
 	
-	@objc func unreadCountDidInitialize(_ notification: Notification) {
+	@MainActor @objc func unreadCountDidInitialize(_ notification: Notification) {
 		guard let _ = notification.object as? Account else {
 			return
 		}
@@ -418,14 +418,14 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 	
-	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
+	@MainActor @objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		guard let _ = notification.object as? Account else {
 			return
 		}
 		updateUnreadCount()
 	}
 	
-	@objc func accountStateDidChange(_ notification: Notification) {
+	@MainActor @objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
 }
@@ -434,7 +434,7 @@ public final class AccountManager: UnreadCountProvider {
 
 private extension AccountManager {
 
-	func updateUnreadCount() {
+	@MainActor func updateUnreadCount() {
 		unreadCount = calculateUnreadCount(activeAccounts)
 	}
 

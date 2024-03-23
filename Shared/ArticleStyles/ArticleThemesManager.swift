@@ -15,7 +15,7 @@ public extension Notification.Name {
 
 final class ArticleThemesManager: NSObject, NSFilePresenter {
 
-	static var shared: ArticleThemesManager!
+	@MainActor static var shared: ArticleThemesManager!
 	public let folderPath: String
 
 	lazy var presentedItemOperationQueue = OperationQueue.main

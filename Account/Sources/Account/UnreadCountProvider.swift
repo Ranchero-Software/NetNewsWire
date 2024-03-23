@@ -15,24 +15,24 @@ public extension Notification.Name {
 
 public protocol UnreadCountProvider {
 
-	var unreadCount: Int { get }
+	@MainActor var unreadCount: Int { get }
 
-	func postUnreadCountDidChangeNotification()
-	func calculateUnreadCount<T: Collection>(_ children: T) -> Int
+	@MainActor func postUnreadCountDidChangeNotification()
+	@MainActor func calculateUnreadCount<T: Collection>(_ children: T) -> Int
 }
 
 
 public extension UnreadCountProvider {
 	
-	func postUnreadCountDidInitializeNotification() {
+	@MainActor func postUnreadCountDidInitializeNotification() {
 		NotificationCenter.default.post(name: .UnreadCountDidInitialize, object: self, userInfo: nil)
 	}
 
-	func postUnreadCountDidChangeNotification() {
+	@MainActor func postUnreadCountDidChangeNotification() {
 		NotificationCenter.default.post(name: .UnreadCountDidChange, object: self, userInfo: nil)
 	}
 
-	func calculateUnreadCount<T: Collection>(_ children: T) -> Int {
+	@MainActor func calculateUnreadCount<T: Collection>(_ children: T) -> Int {
 		let updatedUnreadCount = children.reduce(0) { (result, oneChild) -> Int in
 			if let oneUnreadCountProvider = oneChild as? UnreadCountProvider {
 				return result + oneUnreadCountProvider.unreadCount

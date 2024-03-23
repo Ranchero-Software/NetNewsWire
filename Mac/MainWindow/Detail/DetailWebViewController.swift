@@ -13,8 +13,9 @@ import Articles
 import Core
 
 protocol DetailWebViewControllerDelegate: AnyObject {
-	func mouseDidEnter(_: DetailWebViewController, link: String)
-	func mouseDidExit(_: DetailWebViewController)
+	
+	@MainActor func mouseDidEnter(_: DetailWebViewController, link: String)
+	@MainActor func mouseDidExit(_: DetailWebViewController)
 }
 
 final class DetailWebViewController: NSViewController {

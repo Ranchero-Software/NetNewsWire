@@ -13,7 +13,8 @@ import Core
 
 // MARK: - AccountsPreferencesAddAccountDelegate
 protocol AccountsPreferencesAddAccountDelegate {
-	func presentSheetForAccount(_ accountType: AccountType)
+
+	@MainActor func presentSheetForAccount(_ accountType: AccountType)
 }
 
 // MARK: - AccountsPreferencesViewController

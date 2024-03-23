@@ -74,7 +74,7 @@ public final class Folder: Renamable, Container, DisplayNameProvider, UnreadCoun
 
 	// MARK: - Notifications
 
-	@objc func unreadCountDidChange(_ note: Notification) {
+	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
 		if let object = note.object {
 			if objectIsChild(object as AnyObject) {
 				updateUnreadCount()
@@ -82,7 +82,7 @@ public final class Folder: Renamable, Container, DisplayNameProvider, UnreadCoun
 		}
 	}
 
-	@objc func childrenDidChange(_ note: Notification) {
+	@MainActor @objc func childrenDidChange(_ note: Notification) {
 		updateUnreadCount()
 	}
 
@@ -144,7 +144,7 @@ public final class Folder: Renamable, Container, DisplayNameProvider, UnreadCoun
 
 private extension Folder {
 
-	func updateUnreadCount() {
+	@MainActor func updateUnreadCount() {
 		var updatedUnreadCount = 0
 		for feed in topLevelFeeds {
 			updatedUnreadCount += feed.unreadCount
