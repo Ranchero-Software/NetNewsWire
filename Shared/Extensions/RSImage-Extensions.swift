@@ -15,15 +15,26 @@ import Core
 
 extension RSImage {
 	
-	static let maxIconSize = 48
-	
+	private static let scaledMaxPixelSize: Int = {
+
+		let maxIconSize = 48
+#if os(iOS)
+		let maxScreenScale = 3
+#elseif os(macOS)
+		let maxScreenScale = 2
+#endif
+
+		return maxIconSize * maxScreenScale
+	}()
+
+
 	static func scaledForIcon(_ data: Data, imageResultBlock: @escaping ImageResultBlock) {
 		IconScalerQueue.shared.scaledForIcon(data, imageResultBlock)
 	}
 
 	static func scaledForIcon(_ data: Data) -> RSImage? {
-		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.maxIconSize) * maxScreenScale))
-		guard var cgImage = RSImage.scaleImage(data, maxPixelSize: scaledMaxPixelSize) else {
+
+		guard var cgImage = RSImage.scaleImage(data, maxPixelSize: Self.scaledMaxPixelSize) else {
 			return nil
 		}
 
@@ -38,7 +49,7 @@ extension RSImage {
 
 // MARK: - IconScalerQueue
 
-private class IconScalerQueue {
+private final class IconScalerQueue: @unchecked Sendable {
 
 	static let shared = IconScalerQueue()
 
