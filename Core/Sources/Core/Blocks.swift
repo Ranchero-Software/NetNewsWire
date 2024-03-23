@@ -14,4 +14,4 @@ public typealias VoidCompletionBlock = VoidBlock
 public typealias VoidResult = Result<Void, Error>
 public typealias VoidResultCompletionBlock = (VoidResult) -> Void
 
-public typealias ImageResultBlock = (RSImage?) -> Void
+public typealias ImageResultBlock = @Sendable (RSImage?) -> Void
