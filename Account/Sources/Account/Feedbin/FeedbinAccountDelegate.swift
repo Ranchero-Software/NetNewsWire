@@ -675,22 +675,24 @@ private extension FeedbinAccountDelegate {
 						self.refreshProgress.completeTask()
 						self.forceExpireFolderFeedRelationship(account, tags)
 						self.caller.retrieveTaggings { result in
-							switch result {
-							case .success(let taggings):
-								
-								BatchUpdate.shared.perform {
-									self.syncFolders(account, tags)
-									self.syncFeeds(account, subscriptions)
-									self.syncFeedFolderRelationship(account, taggings)
-								}
 
-								self.refreshProgress.completeTask()
-								completion(.success(()))
-								
-							case .failure(let error):
-								completion(.failure(error))
+							MainActor.assumeIsolated {
+								switch result {
+								case .success(let taggings):
+
+									BatchUpdate.shared.perform {
+										self.syncFolders(account, tags)
+										self.syncFeeds(account, subscriptions)
+										self.syncFeedFolderRelationship(account, taggings)
+									}
+
+									self.refreshProgress.completeTask()
+									completion(.success(()))
+
+								case .failure(let error):
+									completion(.failure(error))
+								}
 							}
-							
 						}
 						
 					case .failure(let error):

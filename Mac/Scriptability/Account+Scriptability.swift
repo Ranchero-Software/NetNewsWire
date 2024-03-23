@@ -67,7 +67,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         return self.classDescription as! NSScriptClassDescription
     }
     
-	func deleteElement(_ element:ScriptingObject) {
+	@MainActor func deleteElement(_ element:ScriptingObject) {
 		if let scriptableFolder = element as? ScriptableFolder {
 			BatchUpdate.shared.perform {
 				account.removeFolder(scriptableFolder.folder) { result in

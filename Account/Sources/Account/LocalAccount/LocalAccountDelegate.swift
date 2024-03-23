@@ -81,45 +81,47 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		var fileData: Data?
-		
-		do {
-			fileData = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		guard let opmlData = fileData else {
+
+		Task { @MainActor in
+			var fileData: Data?
+
+			do {
+				fileData = try Data(contentsOf: opmlFile)
+			} catch {
+				completion(.failure(error))
+				return
+			}
+
+			guard let opmlData = fileData else {
+				completion(.success(()))
+				return
+			}
+
+			let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
+			var opmlDocument: RSOPMLDocument?
+
+			do {
+				opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+			} catch {
+				completion(.failure(error))
+				return
+			}
+
+			guard let loadDocument = opmlDocument else {
+				completion(.success(()))
+				return
+			}
+
+			guard let children = loadDocument.children else {
+				return
+			}
+
+			BatchUpdate.shared.perform {
+				account.loadOPMLItems(children)
+			}
+
 			completion(.success(()))
-			return
 		}
-		
-		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
-		
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		guard let loadDocument = opmlDocument else {
-			completion(.success(()))
-			return
-		}
-
-		guard let children = loadDocument.children else {
-			return
-		}
-
-		BatchUpdate.shared.perform {
-			account.loadOPMLItems(children)
-		}
-		
-		completion(.success(()))
-
 	}
 	
 	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
@@ -233,57 +235,60 @@ private extension LocalAccountDelegate {
 	
 	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 
-		// We need to use a batch update here because we need to assign add the feed to the
-		// container before the name has been downloaded.  This will put it in the sidebar
-		// with an Untitled name if we don't delay it being added to the sidebar.
-		BatchUpdate.shared.start()
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		FeedFinder.find(url: url) { result in
-			
-			switch result {
-			case .success(let feedSpecifiers):
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-					let url = URL(string: bestFeedSpecifier.urlString) else {
-						self.refreshProgress.completeTask()
-						BatchUpdate.shared.end()
-						completion(.failure(AccountError.createErrorNotFound))
-						return
-				}
+		Task { @MainActor in
+			// We need to use a batch update here because we need to assign add the feed to the
+			// container before the name has been downloaded.  This will put it in the sidebar
+			// with an Untitled name if we don't delay it being added to the sidebar.
+			BatchUpdate.shared.start()
+			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			FeedFinder.find(url: url) { result in
 				
-				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
-					self.refreshProgress.completeTask()
-					BatchUpdate.shared.end()
-					completion(.failure(AccountError.createErrorAlreadySubscribed))
-					return
-				}
-				
-				InitialFeedDownloader.download(url) { parsedFeed in
-					self.refreshProgress.completeTask()
-
-					if let parsedFeed = parsedFeed {
-						let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
-						feed.editedName = editedName
-						container.addFeed(feed)
-
-						account.update(feed, with: parsedFeed, {_ in
+				MainActor.assumeIsolated {
+					switch result {
+					case .success(let feedSpecifiers):
+						guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+							  let url = URL(string: bestFeedSpecifier.urlString) else {
+							self.refreshProgress.completeTask()
 							BatchUpdate.shared.end()
-							completion(.success(feed))
-						})
-					} else {
+							completion(.failure(AccountError.createErrorNotFound))
+							return
+						}
+						
+						if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
+							self.refreshProgress.completeTask()
+							BatchUpdate.shared.end()
+							completion(.failure(AccountError.createErrorAlreadySubscribed))
+							return
+						}
+						
+						InitialFeedDownloader.download(url) { parsedFeed in
+							self.refreshProgress.completeTask()
+							
+							if let parsedFeed = parsedFeed {
+								let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
+								feed.editedName = editedName
+								container.addFeed(feed)
+								
+								account.update(feed, with: parsedFeed, {_ in
+									MainActor.assumeIsolated {
+										BatchUpdate.shared.end()
+										completion(.success(feed))
+									}
+								})
+							} else {
+								BatchUpdate.shared.end()
+								completion(.failure(AccountError.createErrorNotFound))
+							}
+							
+						}
+						
+					case .failure:
 						BatchUpdate.shared.end()
+						self.refreshProgress.completeTask()
 						completion(.failure(AccountError.createErrorNotFound))
 					}
-					
 				}
-				
-			case .failure:
-				BatchUpdate.shared.end()
-				self.refreshProgress.completeTask()
-				completion(.failure(AccountError.createErrorNotFound))
 			}
-			
 		}
-		
 	}
-	
 }

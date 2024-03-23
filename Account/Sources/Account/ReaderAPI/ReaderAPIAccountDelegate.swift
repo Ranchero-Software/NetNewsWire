@@ -689,10 +689,12 @@ private extension ReaderAPIAccountDelegate {
 					self.refreshProgress.completeTask()
 					switch result {
 					case .success(let subscriptions):
-						BatchUpdate.shared.perform {
-							self.syncFolders(account, tags)
-							self.syncFeeds(account, subscriptions)
-							self.syncFeedFolderRelationship(account, subscriptions)
+						MainActor.assumeIsolated {
+							BatchUpdate.shared.perform {
+								self.syncFolders(account, tags)
+								self.syncFeeds(account, subscriptions)
+								self.syncFeedFolderRelationship(account, subscriptions)
+							}
 						}
 						completion(.success(()))
 					case .failure(let error):

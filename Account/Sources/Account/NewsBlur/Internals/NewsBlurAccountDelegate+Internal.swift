@@ -21,16 +21,19 @@ extension NewsBlurAccountDelegate {
 		os_log(.debug, log: log, "Refreshing feeds...")
 
 		caller.retrieveFeeds { result in
-			switch result {
-			case .success((let feeds, let folders)):
-				BatchUpdate.shared.perform {
-					self.syncFolders(account, folders)
-					self.syncFeeds(account, feeds)
-					self.syncFeedFolderRelationship(account, folders)
+
+			MainActor.assumeIsolated {
+				switch result {
+				case .success((let feeds, let folders)):
+					BatchUpdate.shared.perform {
+						self.syncFolders(account, folders)
+						self.syncFeeds(account, feeds)
+						self.syncFeedFolderRelationship(account, folders)
+					}
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
 				}
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
 			}
 		}
 	}
