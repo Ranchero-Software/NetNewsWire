@@ -481,33 +481,28 @@ import Sparkle
 
 	// MARK: UNUserNotificationCenterDelegate
 	
-	nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .badge, .sound])
-    }
-	
-	nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-		
+	nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+
+		[.banner, .badge, .sound]
+	}
+
+	nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+
 		let userInfo = response.notification.request.content.userInfo
 		guard let articlePathInfo = ArticlePathInfo(userInfo: userInfo) else {
-			completionHandler()
 			return
 		}
 
-		let actionIdentifier = response.actionIdentifier
-
-		Task { @MainActor in
-			switch actionIdentifier {
-			case "MARK_AS_READ":
-				handleMarkAsRead(articlePathInfo: articlePathInfo)
-			case "MARK_AS_STARRED":
-				handleMarkAsStarred(articlePathInfo: articlePathInfo)
-			default:
-				mainWindowController?.handle(articlePathInfo: articlePathInfo)
-			}
-			completionHandler()
+		switch response.actionIdentifier {
+		case "MARK_AS_READ":
+			await handleMarkAsRead(articlePathInfo: articlePathInfo)
+		case "MARK_AS_STARRED":
+			await handleMarkAsStarred(articlePathInfo: articlePathInfo)
+		default:
+			await mainWindowController?.handle(articlePathInfo: articlePathInfo)
 		}
-    }
-	
+	}
+
 	// MARK: Add Feed
 	func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
 		createAndShowMainWindowIfNecessary()
