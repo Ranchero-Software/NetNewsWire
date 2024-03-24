@@ -10,6 +10,6 @@ import AppKit
 
 public protocol PasteboardWriterOwner {
 
-	var pasteboardWriter: NSPasteboardWriting { get }
+	@MainActor var pasteboardWriter: NSPasteboardWriting { get }
 }
 #endif

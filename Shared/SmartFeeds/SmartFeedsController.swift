@@ -10,16 +10,14 @@ import Foundation
 import Account
 import Core
 
-final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
-	
-	var containerID: ContainerIdentifier? {
-		return ContainerIdentifier.smartFeedController
-	}
+@MainActor final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
+
+	let containerID: ContainerIdentifier? = ContainerIdentifier.smartFeedController
 
 	public static let shared = SmartFeedsController()
 	let nameForDisplay = NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")
 
-	var smartFeeds = [SidebarItem]()
+	let smartFeeds: [SidebarItem]
 	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 	let unreadFeed = UnreadFeed()
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())

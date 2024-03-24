@@ -10,7 +10,8 @@ import Foundation
 import Articles
 
 protocol ScriptingMainWindowController {
-    var scriptingCurrentArticle: Article? { get }
-    var scriptingSelectedArticles: [Article] { get }
+    
+	@MainActor var scriptingCurrentArticle: Article? { get }
+	@MainActor var scriptingSelectedArticles: [Article] { get }
 }
 

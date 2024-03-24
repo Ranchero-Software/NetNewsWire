@@ -12,7 +12,7 @@ public protocol ContainerIdentifiable {
 	var containerID: ContainerIdentifier? { get }
 }
 
-public enum ContainerIdentifier: Hashable, Equatable {
+public enum ContainerIdentifier: Hashable, Equatable, Sendable {
 	case smartFeedController
 	case account(String) // accountID
 	case folder(String, String) // accountID, folderName
