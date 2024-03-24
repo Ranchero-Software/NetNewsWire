@@ -27,7 +27,7 @@ class CloudKitReceiveStatusOperation: MainThreadOperation {
 		self.articlesZone = articlesZone
 	}
 	
-	func run() {
+	@MainActor func run() {
 		guard let articlesZone = articlesZone else {
 			self.operationDelegate?.operationDidComplete(self)
 			return

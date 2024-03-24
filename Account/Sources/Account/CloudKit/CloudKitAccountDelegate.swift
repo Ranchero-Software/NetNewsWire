@@ -42,7 +42,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	private let accountZone: CloudKitAccountZone
 	private let articlesZone: CloudKitArticlesZone
 	
-	private let mainThreadOperationQueue = MainThreadOperationQueue()
+	@MainActor private let mainThreadOperationQueue = MainThreadOperationQueue()
 
 	private lazy var refresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()

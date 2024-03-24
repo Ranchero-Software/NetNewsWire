@@ -41,20 +41,22 @@ class CloudKitSendStatusOperation: MainThreadOperation {
 		self.database = database
 	}
 	
-	func run() {
+	@MainActor func run() {
 		os_log(.debug, log: log, "Sending article statuses...")
 		
 		if showProgress {
 			
 			database.selectPendingCount() { result in
-				switch result {
-				case .success(let count):
-					let ticks = count / self.blockSize
-					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
-					self.selectForProcessing()
-				case .failure(let databaseError):
-					os_log(.error, log: self.log, "Send status count pending error: %@.", databaseError.localizedDescription)
-					self.operationDelegate?.cancelOperation(self)
+				MainActor.assumeIsolated {
+					switch result {
+					case .success(let count):
+						let ticks = count / self.blockSize
+						self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
+						self.selectForProcessing()
+					case .failure(let databaseError):
+						os_log(.error, log: self.log, "Send status count pending error: %@.", databaseError.localizedDescription)
+						self.operationDelegate?.cancelOperation(self)
+					}
 				}
 			}
 			
@@ -72,33 +74,36 @@ private extension CloudKitSendStatusOperation {
 	
 	func selectForProcessing() {
 		database.selectForProcessing(limit: blockSize) { result in
-			switch result {
-			case .success(let syncStatuses):
-				
-				func stopProcessing() {
-					if self.showProgress {
-						self.refreshProgress?.completeTask()
+
+			MainActor.assumeIsolated {
+				switch result {
+				case .success(let syncStatuses):
+
+					@MainActor func stopProcessing() {
+						if self.showProgress {
+							self.refreshProgress?.completeTask()
+						}
+						os_log(.debug, log: self.log, "Done sending article statuses.")
+						self.operationDelegate?.operationDidComplete(self)
 					}
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					self.operationDelegate?.operationDidComplete(self)
-				}
-				
-				guard syncStatuses.count > 0 else {
-					stopProcessing()
-					return
-				}
-				
-				self.processStatuses(syncStatuses) { stop in
-					if stop {
+
+					guard syncStatuses.count > 0 else {
 						stopProcessing()
-					} else {
-						self.selectForProcessing()
+						return
 					}
+
+					self.processStatuses(syncStatuses) { stop in
+						if stop {
+							stopProcessing()
+						} else {
+							self.selectForProcessing()
+						}
+					}
+
+				case .failure(let databaseError):
+					os_log(.error, log: self.log, "Send status error: %@.", databaseError.localizedDescription)
+					self.operationDelegate?.cancelOperation(self)
 				}
-				
-			case .failure(let databaseError):
-				os_log(.error, log: self.log, "Send status error: %@.", databaseError.localizedDescription)
-				self.operationDelegate?.cancelOperation(self)
 			}
 		}
 	}

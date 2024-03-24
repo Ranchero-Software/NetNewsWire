@@ -29,16 +29,18 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 		os_log(.debug, log: log, "Sending article statuses...")
 
 		database.selectForProcessing { result in
-			if self.isCanceled {
-				self.didFinish()
-				return
-			}
-			
-			switch result {
-			case .success(let syncStatuses):
-				self.processStatuses(syncStatuses)
-			case .failure:
-				self.didFinish()
+			MainActor.assumeIsolated {
+				if self.isCanceled {
+					self.didFinish()
+					return
+				}
+
+				switch result {
+				case .success(let syncStatuses):
+					self.processStatuses(syncStatuses)
+				case .failure:
+					self.didFinish()
+				}
 			}
 		}
 	}

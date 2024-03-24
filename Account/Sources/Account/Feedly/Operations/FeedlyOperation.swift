@@ -18,7 +18,7 @@ protocol FeedlyOperationDelegate: AnyObject {
 ///
 /// Normally we don’t do inheritance — but in this case
 /// it’s the best option.
-class FeedlyOperation: MainThreadOperation {
+@MainActor class FeedlyOperation: MainThreadOperation {
 
 	weak var delegate: FeedlyOperationDelegate?
 	var downloadProgress: DownloadProgress? {

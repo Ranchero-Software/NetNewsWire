@@ -51,7 +51,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 		self.oauthClient = Account.oauthAuthorizationClient(for: accountType, secretsProvider: secretsProvider)
 	}
 	
-	public func run() {
+	@MainActor public func run() {
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 		
 		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType, secretsProvider: secretsProvider)
@@ -101,28 +101,30 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	}
 	
 	private func didEndAuthentication(url: URL?, error: Error?) {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
-		
-		do {
-			guard let url = url else {
-				if let error = error {
-					throw error
-				}
-				throw URLError(.badURL)
+		MainActor.assumeIsolated {
+			guard !isCanceled else {
+				didFinish()
+				return
 			}
-			
-			let response = try OAuthAuthorizationResponse(url: url, client: oauthClient)
-			
-			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, secretsProvider: secretsProvider, completion: didEndRequestingAccessToken(_:))
-			
-		} catch is ASWebAuthenticationSessionError {
-			didFinish() // Primarily, cancellation.
-			
-		} catch {
-			didFinish(error)
+
+			do {
+				guard let url = url else {
+					if let error = error {
+						throw error
+					}
+					throw URLError(.badURL)
+				}
+
+				let response = try OAuthAuthorizationResponse(url: url, client: oauthClient)
+
+				Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, secretsProvider: secretsProvider, completion: didEndRequestingAccessToken(_:))
+
+			} catch is ASWebAuthenticationSessionError {
+				didFinish() // Primarily, cancellation.
+
+			} catch {
+				didFinish(error)
+			}
 		}
 	}
 	
@@ -174,12 +176,12 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	
 	// MARK: Managing Operation State
 	
-	private func didFinish() {
+	@MainActor private func didFinish() {
 		assert(Thread.isMainThread)
 		operationDelegate?.operationDidComplete(self)
 	}
 	
-	private func didFinish(_ error: Error) {
+	@MainActor private func didFinish(_ error: Error) {
 		assert(Thread.isMainThread)
 		delegate?.oauthAccountAuthorizationOperation(self, didFailWith: error)
 		didFinish()

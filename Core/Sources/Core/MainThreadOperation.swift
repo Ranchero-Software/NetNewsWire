@@ -75,15 +75,15 @@ public protocol MainThreadOperation: AnyObject {
 
 public extension MainThreadOperation {
 
-	func cancel() {
+	@MainActor func cancel() {
 		operationDelegate?.cancelOperation(self)
 	}
 
-	func addDependency(_ parentOperation: MainThreadOperation) {
+	@MainActor func addDependency(_ parentOperation: MainThreadOperation) {
 		operationDelegate?.make(self, dependOn: parentOperation)
 	}
 
-	func informOperationDelegateOfCompletion() {
+	@MainActor func informOperationDelegateOfCompletion() {
 		guard !isCanceled else {
 			return
 		}

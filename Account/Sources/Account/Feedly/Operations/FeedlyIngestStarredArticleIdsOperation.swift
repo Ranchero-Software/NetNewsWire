@@ -78,14 +78,16 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 		}
 		
 		database.selectPendingStarredStatusArticleIDs { result in
-			switch result {
-			case .success(let pendingArticleIds):
-				self.remoteEntryIds.subtract(pendingArticleIds)
-				
-				self.updateStarredStatuses()
-				
-			case .failure(let error):
-				self.didFinish(with: error)
+			MainActor.assumeIsolated {
+				switch result {
+				case .success(let pendingArticleIds):
+					self.remoteEntryIds.subtract(pendingArticleIds)
+
+					self.updateStarredStatuses()
+
+				case .failure(let error):
+					self.didFinish(with: error)
+				}
 			}
 		}
 	}
@@ -97,12 +99,14 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 		}
 		
 		account.fetchStarredArticleIDs { result in
-			switch result {
-			case .success(let localStarredArticleIDs):
-				self.processStarredArticleIDs(localStarredArticleIDs)
-				
-			case .failure(let error):
-				self.didFinish(with: error)
+			MainActor.assumeIsolated {
+				switch result {
+				case .success(let localStarredArticleIDs):
+					self.processStarredArticleIDs(localStarredArticleIDs)
+
+				case .failure(let error):
+					self.didFinish(with: error)
+				}
 			}
 		}
 	}

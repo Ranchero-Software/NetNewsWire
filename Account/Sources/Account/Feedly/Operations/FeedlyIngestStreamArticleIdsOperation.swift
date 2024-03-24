@@ -52,19 +52,22 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 		switch result {
 		case .success(let streamIds):
 			account.createStatusesIfNeeded(articleIDs: Set(streamIds.ids)) { databaseError in
-				
-				if let error = databaseError {
-					self.didFinish(with: error)
-					return
+
+				MainActor.assumeIsolated {
+					if let error = databaseError {
+						self.didFinish(with: error)
+						return
+					}
+
+					guard let continuation = streamIds.continuation else {
+						os_log(.debug, log: self.log, "Reached end of stream for %@", self.resource.id)
+						self.didFinish()
+						return
+					}
+
+					self.getStreamIds(continuation)
 				}
-				
-				guard let continuation = streamIds.continuation else {
-					os_log(.debug, log: self.log, "Reached end of stream for %@", self.resource.id)
-					self.didFinish()
-					return
-				}
-				
-				self.getStreamIds(continuation)
+
 			}
 		case .failure(let error):
 			didFinish(with: error)

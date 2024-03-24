@@ -23,13 +23,15 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 	
 	override func run() {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
-			switch result {
-			case .success(let articleIds):
-				self.entryIds.formUnion(articleIds)
-				self.didFinish()
-				
-			case .failure(let error):
-				self.didFinish(with: error)
+			MainActor.assumeIsolated {
+				switch result {
+				case .success(let articleIds):
+					self.entryIds.formUnion(articleIds)
+					self.didFinish()
+
+				case .failure(let error):
+					self.didFinish(with: error)
+				}
 			}
 		}
 	}

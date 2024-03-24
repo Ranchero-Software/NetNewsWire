@@ -79,14 +79,16 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 		}
 		
 		database.selectPendingReadStatusArticleIDs { result in
-			switch result {
-			case .success(let pendingArticleIds):
-				self.remoteEntryIds.subtract(pendingArticleIds)
-				
-				self.updateUnreadStatuses()
-				
-			case .failure(let error):
-				self.didFinish(with: error)
+			MainActor.assumeIsolated {
+				switch result {
+				case .success(let pendingArticleIds):
+					self.remoteEntryIds.subtract(pendingArticleIds)
+
+					self.updateUnreadStatuses()
+
+				case .failure(let error):
+					self.didFinish(with: error)
+				}
 			}
 		}
 	}
@@ -98,12 +100,14 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 		}
 		
 		account.fetchUnreadArticleIDs { result in
-			switch result {
-			case .success(let localUnreadArticleIDs):
-				self.processUnreadArticleIDs(localUnreadArticleIDs)
-				
-			case .failure(let error):
-				self.didFinish(with: error)
+			MainActor.assumeIsolated {
+				switch result {
+				case .success(let localUnreadArticleIDs):
+					self.processUnreadArticleIDs(localUnreadArticleIDs)
+
+				case .failure(let error):
+					self.didFinish(with: error)
+				}
 			}
 		}
 	}

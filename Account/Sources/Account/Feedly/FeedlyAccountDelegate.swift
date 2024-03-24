@@ -65,8 +65,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private let database: SyncDatabase
 	
 	private weak var currentSyncAllOperation: MainThreadOperation?
-	private let operationQueue = MainThreadOperationQueue()
-	
+	@MainActor private let operationQueue = MainThreadOperationQueue()
+
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API, secretsProvider: SecretsProvider) {
 		// Many operations have their own operation queues, such as the sync all operation.
 		// Making this a serial queue at this higher level of abstraction means we can ensure,
@@ -550,8 +550,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	/// Suspend all network activity
 	func suspendNetwork() {
-		caller.suspend()
-		operationQueue.cancelAllOperations()
+		MainActor.assumeIsolated {
+			caller.suspend()
+			operationQueue.cancelAllOperations()
+		}
 	}
 	
 	/// Suspend the SQLLite databases
@@ -572,7 +574,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 	
-	func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ()) {
+	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ()) {
 		guard let account = initializedAccount else {
 			completionHandler(false)
 			return
@@ -600,8 +602,6 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			completionHandler(refreshAccessTokenDelegate.didReauthorize && !operation.isCanceled)
 		}
 		
-		Task { @MainActor in
-			MainThreadOperationQueue.shared.add(refreshAccessToken)
-		}
+		MainThreadOperationQueue.shared.add(refreshAccessToken)
 	}
 }

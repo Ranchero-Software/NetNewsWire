@@ -31,7 +31,7 @@ class CloudKitRemoteNotificationOperation: MainThreadOperation {
 		self.userInfo = userInfo
 	}
 
-	func run() {
+	@MainActor func run() {
 		guard let accountZone = accountZone, let articlesZone = articlesZone else {
 			self.operationDelegate?.operationDidComplete(self)
 			return
