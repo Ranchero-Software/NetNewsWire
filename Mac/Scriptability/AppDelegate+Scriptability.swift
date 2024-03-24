@@ -20,14 +20,16 @@ import Foundation
 import Articles
 
 protocol AppDelegateAppleEvents {
-    func installAppleEventHandlers()
-    func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor)
+    
+	@MainActor func installAppleEventHandlers()
+	@MainActor func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor)
 }
 
 protocol ScriptingAppDelegate {
-    var  scriptingCurrentArticle: Article?  {get}
-    var  scriptingSelectedArticles: [Article]  {get}
-    var  scriptingMainWindowController:ScriptingMainWindowController? {get}
+    
+	@MainActor var  scriptingCurrentArticle: Article?  {get}
+	@MainActor var  scriptingSelectedArticles: [Article]  {get}
+	@MainActor var  scriptingMainWindowController:ScriptingMainWindowController? {get}
 }
 
 extension AppDelegate : AppDelegateAppleEvents {
