@@ -1,15 +1,16 @@
 //
 //  RSAppMovementMonitor.swift
 //
-//	https:://github.com/RedSweater/RSAppMovementMonitor
+//	https://github.com/RedSweater/RSAppMovementMonitor
 //
 //  Created by Daniel Jalkut on 8/28/19.
 //  Copyright © 2019 Red Sweater Software. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 
-public class RSAppMovementMonitor: NSObject {
+@MainActor public class RSAppMovementMonitor: NSObject {
 
 	// If provided, the handler will be consulted when the app is moved.
 	// Return true to indicate that the default handler should be invoked.
@@ -77,18 +78,17 @@ public class RSAppMovementMonitor: NSObject {
 			// every time the app becomes active. This catches a good number of edge-case
 			// changes to the app bundle's path, such as when a containing folder or the
 			// volume name changes.
-			NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: nil) { notification in
-				// Removing observer in invalidate doesn't seem to prevent this getting called? Maybe
-				// because it's on the same invocation of the runloop?
-				if self.isValid() && self.originalAppURL != self.appTrackingURL?.absoluteURL {
-					self.invokeEventHandler()
-				}
-			}
+			NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive(_:)), name: NSApplication.didBecomeActiveNotification, object: nil)
 		}
 	}
 
-	deinit {
-		self.invalidate()
+	@objc func appDidBecomeActive(_ notification: Notification) {
+
+		// Removing observer in invalidate doesn't seem to prevent this getting called? Maybe
+		// because it's on the same invocation of the runloop?
+		if isValid() && originalAppURL != appTrackingURL?.absoluteURL {
+			invokeEventHandler()
+		}
 	}
 
 	func invokeEventHandler() {
