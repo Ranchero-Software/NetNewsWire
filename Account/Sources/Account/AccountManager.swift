@@ -216,7 +216,7 @@ public final class AccountManager: UnreadCountProvider {
 		accounts.forEach { $0.resume() }
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+	@MainActor public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
 
 		for account in activeAccounts {
 			await account.receiveRemoteNotification(userInfo: userInfo)
