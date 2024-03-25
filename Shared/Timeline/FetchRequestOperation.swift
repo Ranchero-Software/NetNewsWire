@@ -62,7 +62,7 @@ final class FetchRequestOperation {
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
 		
-		func process(_ articles: Set<Article>) {
+		func process(_ articles: Set<Article>?) {
 			precondition(Thread.isMainThread)
 			guard !self.isCanceled else {
 				callCompletionIfNeeded()
@@ -71,7 +71,10 @@ final class FetchRequestOperation {
 			
 			assert(!self.isFinished)
 
-			fetchedArticles.formUnion(articles)
+			if let articles {
+				fetchedArticles.formUnion(articles)
+			}
+
 			fetchersReturned += 1
 			if fetchersReturned == numberOfFetchers {
 				self.isFinished = true
@@ -80,19 +83,16 @@ final class FetchRequestOperation {
 			}
 		}
 		
-		for fetcher in fetchers {
-			if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
-				fetcher.fetchUnreadArticlesAsync { articleSetResult in
-					let articles = (try? articleSetResult.get()) ?? Set<Article>()
+		Task { @MainActor in
+			for fetcher in fetchers {
+				if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+					let articles = try? await fetcher.fetchUnreadArticles()
 					process(articles)
-				}
-			} else {
-				fetcher.fetchArticlesAsync { articleSetResult in
-					let articles = (try? articleSetResult.get()) ?? Set<Article>()
+				} else {
+					let articles = try? await fetcher.fetchArticles()
 					process(articles)
 				}
 			}
-			
 		}
 	}
 }
