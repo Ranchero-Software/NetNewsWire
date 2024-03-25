@@ -2,15 +2,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "Account",
+	name: "Account",
 	platforms: [.macOS(.v14), .iOS(.v17)],
-    products: [
-        .library(
-            name: "Account",
+	products: [
+		.library(
+			name: "Account",
 			type: .dynamic,
 			targets: ["Account"]),
-    ],
-    dependencies: [
+	],
+	dependencies: [
 		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.2")),
 		.package(url: "https://github.com/Ranchero-Software/RSWeb.git", .upToNextMajor(from: "1.0.0")),
 		.package(path: "../Articles"),
@@ -21,10 +21,10 @@ let package = Package(
 		.package(path: "../Core"),
 		.package(path: "../CloudKitExtras")
 	],
-    targets: [
-        .target(
-            name: "Account",
-            dependencies: [
+	targets: [
+		.target(
+			name: "Account",
+			dependencies: [
 				"RSParser",
 				"RSWeb",
 				"Articles",
@@ -34,12 +34,16 @@ let package = Package(
 				"Database",
 				"Core",
 				"CloudKitExtras"
-			]),
-        .testTarget(
-            name: "AccountTests",
-            dependencies: ["Account"],
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]
+		),
+		.testTarget(
+			name: "AccountTests",
+			dependencies: ["Account"],
 			resources: [
 				.copy("JSON"),
 			]),
-    ]
+	]
 )

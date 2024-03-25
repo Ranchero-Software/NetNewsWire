@@ -325,9 +325,12 @@ import Sparkle
 	}
 
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-		accountManager.receiveRemoteNotification(userInfo: userInfo)
+
+		Task { @MainActor in
+			await self.accountManager.receiveRemoteNotification(userInfo: userInfo)
+		}
 	}
-	
+
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
 		guard filename.hasSuffix(ArticleTheme.nnwThemeSuffix) else { return false }
 		importTheme(filename: filename)

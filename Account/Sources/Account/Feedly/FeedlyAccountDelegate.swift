@@ -65,7 +65,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private let database: SyncDatabase
 	
 	private weak var currentSyncAllOperation: MainThreadOperation?
-	@MainActor private let operationQueue = MainThreadOperationQueue()
+	private let operationQueue = MainThreadOperationQueue()
 
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API, secretsProvider: SecretsProvider) {
 		// Many operations have their own operation queues, such as the sync all operation.

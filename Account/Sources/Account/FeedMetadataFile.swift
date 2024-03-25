@@ -10,9 +10,9 @@ import Foundation
 import os.log
 import Core
 
-final class FeedMetadataFile {
+@MainActor final class FeedMetadataFile {
 	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "feedMetadataFile")
+	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "feedMetadataFile")
 
 	private let fileURL: URL
 	private let account: Account

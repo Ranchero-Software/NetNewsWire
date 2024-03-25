@@ -216,18 +216,10 @@ public final class AccountManager: UnreadCountProvider {
 		accounts.forEach { $0.resume() }
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
-		
-		activeAccounts.forEach { account in
-			group.enter()
-			account.receiveRemoteNotification(userInfo: userInfo) { 
-				group.leave()
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion?()
+	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+
+		for account in activeAccounts {
+			await account.receiveRemoteNotification(userInfo: userInfo)
 		}
 	}
 

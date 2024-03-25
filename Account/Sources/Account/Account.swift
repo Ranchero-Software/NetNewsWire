@@ -409,10 +409,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		grantingType.requestOAuthAccessToken(with: response, transport: transport, secretsProvider: secretsProvider, completion: completion)
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+	private func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		delegate.receiveRemoteNotification(for: self, userInfo: userInfo, completion: completion)
 	}
 	
+	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
+		await withCheckedContinuation { continuation in
+			self.receiveRemoteNotification(userInfo: userInfo) {
+				continuation.resume()
+			}
+		}
+	}
+
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.refreshAll(for: self, completion: completion)
 	}
