@@ -17,12 +17,10 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 	let feedName: String?
 	let collectionId: String
 	let service: FeedlyAddFeedToCollectionService
-	let account: Account
 	let folder: Folder
 	let feedResource: FeedlyFeedResourceId
 
-	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
-		self.account = account
+	init(folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
 		self.folder = folder
 		self.feedResource = feedResource
 		self.feedName = feedName

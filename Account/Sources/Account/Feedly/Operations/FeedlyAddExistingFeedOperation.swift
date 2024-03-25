@@ -28,7 +28,7 @@ import Core
 		
 		self.downloadProgress = progress
 		
-		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: customFeedName, collectionId: collectionId, service: service)
+		let addRequest = FeedlyAddFeedToCollectionOperation(folder: folder, feedResource: resource, feedName: customFeedName, collectionId: collectionId, service: service)
 		addRequest.delegate = self
 		addRequest.downloadProgress = progress
 		self.operationQueue.add(addRequest)
