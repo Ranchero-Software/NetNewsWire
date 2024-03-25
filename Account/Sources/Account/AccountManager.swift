@@ -350,46 +350,6 @@ public final class AccountManager: UnreadCountProvider {
 		return allFetchedArticles
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
-        precondition(Thread.isMainThread)
-        
-        guard activeAccounts.count > 0 else {
-            completion(.success(Set<Article>()))
-            return
-        }
-        
-        var allFetchedArticles = Set<Article>()
-        var databaseError: DatabaseError?
-        let dispatchGroup = DispatchGroup()
-        
-        for account in activeAccounts {
-            
-            dispatchGroup.enter()
-            
-            account.fetchArticlesAsync(fetchType) { (articleSetResult) in
-                precondition(Thread.isMainThread)
-                
-                switch articleSetResult {
-                case .success(let articles):
-                    allFetchedArticles.formUnion(articles)
-                case .failure(let error):
-                    databaseError = error
-                }
-                
-                dispatchGroup.leave()
-            }
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            if let databaseError {
-                completion(.failure(databaseError))
-            }
-            else {
-                completion(.success(allFetchedArticles))
-            }
-        }
-    }
-
 	// MARK: - Caches
 
 	/// Empty caches that can reasonably be emptied — when the app moves to the background, for instance.

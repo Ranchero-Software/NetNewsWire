@@ -718,10 +718,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func articles(feed: Feed) async throws -> Set<Article> {
+	@MainActor public func articles(feed: Feed) async throws -> Set<Article> {
 
 		let articles = try await database.articles(feedID: feed.feedID)
-		await validateUnreadCount(feed, articles)
+		validateUnreadCount(feed, articles)
 		return articles
 	}
 	
@@ -730,7 +730,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		try await database.articles(articleIDs: articleIDs)
 	}
 
-	public func unreadArticles(feed: Feed) async throws -> Set<Article> {
+	@MainActor public func unreadArticles(feed: Feed) async throws -> Set<Article> {
 
 		try await database.unreadArticles(feedIDs: Set([feed.feedID]))
 	}

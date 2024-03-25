@@ -94,11 +94,6 @@ extension SmartFeed: ArticleFetcher {
 		try await delegate.fetchArticles()
 	}
 	
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-
-		delegate.fetchArticlesAsync(completion)
-	}
-
 	func fetchUnreadArticles() async throws -> Set<Article> {
 
 		try await delegate.fetchUnreadArticles()

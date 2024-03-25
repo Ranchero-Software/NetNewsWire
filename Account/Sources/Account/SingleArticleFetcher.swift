@@ -28,20 +28,10 @@ extension SingleArticleFetcher: ArticleFetcher {
 		try await account.articles(articleIDs: Set([articleID]))
 	}
 
-	public func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-
-		return account.fetchArticlesAsync(.articleIDs(Set([articleID])), completion)
-	}
-
 	// Doesn’t actually fetch unread articles. Fetches whatever articleID it is asked to fetch.
 
 	public func fetchUnreadArticles() async throws -> Set<Article> {
 
 		try await fetchArticles()
-	}
-
-	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-
-		return account.fetchArticlesAsync(.articleIDs(Set([articleID])), completion)
 	}
 }

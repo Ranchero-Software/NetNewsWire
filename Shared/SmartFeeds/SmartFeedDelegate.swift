@@ -28,24 +28,8 @@ extension SmartFeedDelegate {
 		try await AccountManager.shared.fetchArticles(fetchType: fetchType)
 	}
 
-	@MainActor func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		AccountManager.shared.fetchArticlesAsync(fetchType, completion)
-	}
-
 	@MainActor func fetchUnreadArticles() async throws -> Set<Article> {
 
 		try await AccountManager.shared.fetchArticles(fetchType: fetchType)
-	}
-
-	@MainActor func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		
-		fetchArticlesAsync{ articleSetResult in
-			switch articleSetResult {
-			case .success(let articles):
-				completion(.success(articles.unreadArticles()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
 	}
 }
