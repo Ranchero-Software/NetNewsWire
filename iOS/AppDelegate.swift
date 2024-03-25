@@ -345,7 +345,7 @@ private extension AppDelegate {
 		
 		accountManager.suspendNetworkAll()
 		accountManager.suspendDatabaseAll()
-		ArticleThemeDownloader.shared.cleanUp()
+		ArticleThemeDownloader.cleanUp()
 
 		CoalescingQueue.standard.performCallsImmediately()
 		for scene in UIApplication.shared.connectedScenes {

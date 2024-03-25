@@ -192,7 +192,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 							  let location = location else { return }
 						
 						do {
-							try ArticleThemeDownloader.shared.handleFile(at: location)
+							try ArticleThemeDownloader.handleFile(at: location)
 						} catch {
 							NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
 						}

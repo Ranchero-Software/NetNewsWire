@@ -9,11 +9,11 @@
 import Foundation
 import Zip
 
-public class ArticleThemeDownloader {
-	
+struct ArticleThemeDownloader {
+
 	public enum ArticleThemeDownloaderError: LocalizedError {
 		case noThemeFile
-		
+
 		public var errorDescription: String? {
 			switch self {
 			case .noThemeFile:
@@ -21,27 +21,42 @@ public class ArticleThemeDownloader {
 			}
 		}
 	}
-	
-	public static let shared = ArticleThemeDownloader()
-	private init() {}
-	
-	public func handleFile(at location: URL) throws {
+
+	static func handleFile(at location: URL) throws {
 		createDownloadDirectoryIfRequired()
 		let movedFileLocation = try moveTheme(from: location)
 		let unzippedFileLocation = try unzipFile(at: movedFileLocation)
 		NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil, userInfo: ["url" : unzippedFileLocation])
 	}
-	
-	
+
+	/// Removes downloaded themes, where themes == folders, from `Application Support/NetNewsWire/Downloads`.
+	static func cleanUp() {
+		guard let filenames = try? FileManager.default.contentsOfDirectory(atPath: downloadDirectory().path) else {
+			return
+		}
+		for path in filenames {
+			do {
+				if FileManager.default.isFolder(atPath: downloadDirectory().appendingPathComponent(path).path) {
+					try FileManager.default.removeItem(atPath: downloadDirectory().appendingPathComponent(path).path)
+				}
+			} catch {
+				print(error)
+			}
+		}
+	}
+}
+
+private extension ArticleThemeDownloader {
+
 	/// Creates `Application Support/NetNewsWire/Downloads` if needed.
-	private func createDownloadDirectoryIfRequired() {
+	static func createDownloadDirectoryIfRequired() {
 		try? FileManager.default.createDirectory(at: downloadDirectory(), withIntermediateDirectories: true, attributes: nil)
 	}
 	
 	/// Moves the downloaded `.tmp` file to the `downloadDirectory` and renames it a `.zip`
 	/// - Parameter location: The temporary file location.
 	/// - Returns: Destination `URL`.
-	private func moveTheme(from location: URL) throws -> URL {
+	static func moveTheme(from location: URL) throws -> URL {
 		var tmpFileName = location.lastPathComponent
 		tmpFileName = tmpFileName.replacingOccurrences(of: ".tmp", with: ".zip")
 		let fileUrl = downloadDirectory().appendingPathComponent("\(tmpFileName)")
@@ -52,7 +67,7 @@ public class ArticleThemeDownloader {
 	/// Unzips the zip file
 	/// - Parameter location: Location of the zip archive.
 	/// - Returns: Enclosed `.nnwtheme` file.
-	private func unzipFile(at location: URL) throws -> URL {
+	static func unzipFile(at location: URL) throws -> URL {
 		do {
 			let unzipDirectory = URL(fileURLWithPath: location.path.replacingOccurrences(of: ".zip", with: ""))
 			try Zip.unzipFile(location, destination: unzipDirectory, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil) // Unzips to folder in Application Support/NetNewsWire/Downloads
@@ -68,11 +83,10 @@ public class ArticleThemeDownloader {
 		}
 	}
 	
-	
 	/// Performs a deep search of the unzipped directory to find the theme file.
 	/// - Parameter searchPath: directory to search
 	/// - Returns: optional `String`
-	private func findThemeFile(in searchPath: String) -> String? {
+	static func findThemeFile(in searchPath: String) -> String? {
 		if let directoryContents = FileManager.default.enumerator(atPath: searchPath) {
 			while let file = directoryContents.nextObject() as? String {
 				if file.hasSuffix(".nnwtheme") {
@@ -86,23 +100,7 @@ public class ArticleThemeDownloader {
 	
 	/// The download directory used by the theme downloader: `Application Support/NetNewsWire/Downloads`
 	/// - Returns: `URL`
-	private func downloadDirectory() -> URL {
+	static func downloadDirectory() -> URL {
 		FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("NetNewsWire/Downloads", isDirectory: true)
-	}
-	
-	/// Removes downloaded themes, where themes == folders, from `Application Support/NetNewsWire/Downloads`.
-	public func cleanUp() {
-		guard let filenames = try? FileManager.default.contentsOfDirectory(atPath: downloadDirectory().path) else {
-			return
-		}
-		for path in filenames {
-			do {
-				if FileManager.default.isFolder(atPath: downloadDirectory().appendingPathComponent(path).path) {
-					try FileManager.default.removeItem(atPath: downloadDirectory().appendingPathComponent(path).path)
-				}
-			} catch {
-				print(error)
-			}
-		}
 	}
 }

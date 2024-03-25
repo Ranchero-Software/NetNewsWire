@@ -338,7 +338,7 @@ import Sparkle
 		shuttingDown = true
 		saveState()
 		
-		ArticleThemeDownloader.shared.cleanUp()
+		ArticleThemeDownloader.cleanUp()
 		
 		accountManager.sendArticleStatusAll() {
 			self.isShutDownSyncDone = true
