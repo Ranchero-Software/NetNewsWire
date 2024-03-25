@@ -18,12 +18,12 @@ import Foundation
 public protocol MainThreadOperation: AnyObject {
 
 	// These three properties are set by MainThreadOperationQueue. Don’t set them.
-	var isCanceled: Bool { get set } // Check this at appropriate times in case the operation has been canceled.
-	var id: Int? { get set }
-	var operationDelegate: MainThreadOperationDelegate? { get set } // Make this weak.
+	@MainActor var isCanceled: Bool { get set } // Check this at appropriate times in case the operation has been canceled.
+	@MainActor var id: Int? { get set }
+	@MainActor var operationDelegate: MainThreadOperationDelegate? { get set } // Make this weak.
 
 	/// Name may be useful for debugging. Unused otherwise.
-	var name: String? { get set }
+	@MainActor var name: String? { get set }
 
 	typealias MainThreadOperationCompletionBlock = (MainThreadOperation) -> Void
 
@@ -50,7 +50,7 @@ public protocol MainThreadOperation: AnyObject {
 	/// When this is called, you don’t need to check isCanceled:
 	/// it’s guaranteed to not be canceled. However, if you run code
 	/// in another thread, you should check isCanceled in that code.
-	func run()
+	@MainActor func run()
 
 	/// Cancel this operation.
 	///
@@ -59,7 +59,7 @@ public protocol MainThreadOperation: AnyObject {
 	///
 	/// This function has a default implementation. It’s super-rare
 	/// to need to provide your own.
-	func cancel()
+	@MainActor func cancel()
 
 	/// Make this operation dependent on an other operation.
 	///
@@ -70,7 +70,7 @@ public protocol MainThreadOperation: AnyObject {
 	///
 	/// This function has a default implementation. It’s super-rare
 	/// to need to provide your own.
-	func addDependency(_ parentOperation: MainThreadOperation)
+	@MainActor func addDependency(_ parentOperation: MainThreadOperation)
 }
 
 public extension MainThreadOperation {

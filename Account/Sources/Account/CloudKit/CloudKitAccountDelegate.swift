@@ -120,10 +120,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
 		op.completionBlock = { mainThreadOperation in
-			if mainThreadOperation.isCanceled {
-				completion(.failure(CloudKitAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
+			Task { @MainActor in
+				if mainThreadOperation.isCanceled {
+					completion(.failure(CloudKitAccountDelegateError.unknown))
+				} else {
+					completion(.success(()))
+				}
 			}
 		}
 		Task { @MainActor in
@@ -775,10 +777,12 @@ private extension CloudKitAccountDelegate {
 											 showProgress: showProgress,
 											 database: database)
 		op.completionBlock = { mainThreadOperaion in
-			if mainThreadOperaion.isCanceled {
-				completion(.failure(CloudKitAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
+			Task { @MainActor in
+				if mainThreadOperaion.isCanceled {
+					completion(.failure(CloudKitAccountDelegateError.unknown))
+				} else {
+					completion(.success(()))
+				}
 			}
 		}
 		Task { @MainActor in
