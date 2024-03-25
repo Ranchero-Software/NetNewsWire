@@ -218,18 +218,6 @@ public extension SyncDatabase {
 			}
 		}
 	}
-
-	nonisolated func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
-
-		Task {
-			do {
-				try await self.deleteSelectedForProcessing(articleIDs)
-				completion?(nil)
-			} catch {
-				completion?(DatabaseError.suspended)
-			}
-		}
-	}
 }
 
 private extension SyncDatabase {

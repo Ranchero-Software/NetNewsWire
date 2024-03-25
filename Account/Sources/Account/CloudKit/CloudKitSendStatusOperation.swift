@@ -140,9 +140,9 @@ private extension CloudKitSendStatusOperation {
 				// but the articles didn't come back in the fetch.  We need to clean up those sync records
 				// and stop processing.
 				if statusUpdates.isEmpty {
-					self.database.deleteSelectedForProcessing(articleIDs) { _ in
+					Task { @MainActor in
+						try? await self.database.deleteSelectedForProcessing(articleIDs)
 						done(true)
-						return
 					}
 				} else {
 					
@@ -150,7 +150,8 @@ private extension CloudKitSendStatusOperation {
 						articlesZone.modifyArticles(statusUpdates) { result in
 							switch result {
 							case .success:
-								self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
+								Task { @MainActor in
+									try? await self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID }))
 									done(false)
 								}
 							case .failure(let error):
@@ -164,7 +165,7 @@ private extension CloudKitSendStatusOperation {
 					}
 				}
 			}
-
+			
 			switch result {
 			case .success(let articles):
 				processWithArticles(articles)
@@ -174,10 +175,9 @@ private extension CloudKitSendStatusOperation {
 					completion(true)
 				}
 			}
-
 		}
 	}
-	
+
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeeds(account.topLevelFeeds)

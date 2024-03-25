@@ -76,7 +76,8 @@ private extension CloudKitArticlesZoneDelegate {
 			return
 		}
 		
-		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
+		Task { @MainActor in
+			try? await self.database.deleteSelectedForProcessing(Array(deletableArticleIDs))
 			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
 				completion()
 			}

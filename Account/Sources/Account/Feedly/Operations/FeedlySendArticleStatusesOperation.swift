@@ -71,7 +71,8 @@ private extension FeedlySendArticleStatusesOperation {
 				assert(Thread.isMainThread)
 				switch result {
 				case .success:
-					database.deleteSelectedForProcessing(Array(ids)) { _ in
+					Task { @MainActor in
+						try? await database.deleteSelectedForProcessing(Array(ids))
 						group.leave()
 					}
 				case .failure:

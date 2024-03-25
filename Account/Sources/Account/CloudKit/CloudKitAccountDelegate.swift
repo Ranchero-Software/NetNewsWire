@@ -700,9 +700,11 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
-		account.fetchArticlesAsync(.feed(feed)) { result in
-			switch result {
-			case .success(let articles):
+		
+		Task { @MainActor in
+			
+			do {
+				let articles = try await account.articles(for: .feed(feed))
 				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
 					self.refreshProgress.completeTask()
 					self.sendArticleStatus(for: account, showProgress: true) { result in
@@ -714,12 +716,13 @@ private extension CloudKitAccountDelegate {
 						}
 					}
 				}
-			case .failure(let error):
+				
+			} catch {
 				os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
 			}
 		}
 	}
-	
+
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeeds(account.topLevelFeeds)
