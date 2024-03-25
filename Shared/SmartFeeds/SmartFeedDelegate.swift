@@ -15,10 +15,9 @@ import Core
 
 protocol SmartFeedDelegate: SidebarItemIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 
-	var fetchType: FetchType { get }
+	@MainActor var fetchType: FetchType { get }
 
-	func unreadCount(account: Account) async -> Int
-//	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock)
+	@MainActor func unreadCount(account: Account) async -> Int
 }
 
 extension SmartFeedDelegate {
