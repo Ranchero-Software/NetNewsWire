@@ -119,8 +119,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
-		op.completionBlock = { mainThreadOperaion in
-			if mainThreadOperaion.isCanceled {
+		op.completionBlock = { mainThreadOperation in
+			if mainThreadOperation.isCanceled {
 				completion(.failure(CloudKitAccountDelegateError.unknown))
 			} else {
 				completion(.success(()))
