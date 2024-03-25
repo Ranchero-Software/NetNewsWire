@@ -13,13 +13,11 @@ import RSParser
 /// Get full entries for the entry identifiers.
 final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
 
-	let account: Account
 	let service: FeedlyGetEntriesService
 	let provider: FeedlyEntryIdentifierProviding
 	let log: OSLog
 
-	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding, log: OSLog) {
-		self.account = account
+	init(service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding, log: OSLog) {
 		self.service = service
 		self.provider = provider
 		self.log = log

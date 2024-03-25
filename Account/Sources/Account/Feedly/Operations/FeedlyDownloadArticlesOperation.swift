@@ -45,7 +45,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 			
 			Task { @MainActor in
 				let provider = FeedlyEntryIdentifierProvider(entryIds: Set(articleIds))
-				let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider, log: log)
+				let getEntries = FeedlyGetEntriesOperation(service: getEntriesService, provider: provider, log: log)
 				getEntries.delegate = self
 				self.operationQueue.add(getEntries)
 
