@@ -10,7 +10,7 @@ import AppKit
 import Tree
 import AppKitExtras
 
-class SidebarOutlineView : NSOutlineView {
+final class SidebarOutlineView : NSOutlineView {
 
 	@IBOutlet var keyboardDelegate: KeyboardDelegate!
 
