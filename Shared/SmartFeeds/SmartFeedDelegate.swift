@@ -17,7 +17,8 @@ protocol SmartFeedDelegate: SidebarItemIdentifiable, DisplayNameProvider, Articl
 
 	var fetchType: FetchType { get }
 
-	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock)
+	func unreadCount(account: Account) async -> Int
+//	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock)
 }
 
 extension SmartFeedDelegate {

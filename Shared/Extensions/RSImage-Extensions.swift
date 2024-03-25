@@ -27,9 +27,9 @@ extension RSImage {
 		return maxIconSize * maxScreenScale
 	}()
 
+	static func scaledForIcon(_ data: Data) async -> RSImage? {
 
-	static func scaledForIcon(_ data: Data, imageResultBlock: @escaping ImageResultBlock) {
-		IconScalerQueue.shared.scaledForIcon(data, imageResultBlock)
+		await IconScalerQueue.shared.scaledForIcon(data)
 	}
 
 	static func scaledForIcon(_ data: Data) -> RSImage? {
@@ -60,11 +60,19 @@ private final class IconScalerQueue: @unchecked Sendable {
 		return q
 	}()
 
-	func scaledForIcon(_ data: Data, _ imageResultBlock: @escaping ImageResultBlock) {
+	private func scaledForIcon(_ data: Data, _ imageResultBlock: @escaping ImageResultBlock) {
 		queue.async {
 			let image = RSImage.scaledForIcon(data)
-			DispatchQueue.main.async {
-				imageResultBlock(image)
+			imageResultBlock(image)
+		}
+	}
+
+	func scaledForIcon(_ data: Data) async -> RSImage? {
+
+		await withCheckedContinuation { continuation in
+
+			self.scaledForIcon(data) { image in
+				continuation.resume(returning: image)
 			}
 		}
 	}

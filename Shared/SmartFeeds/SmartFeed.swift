@@ -50,21 +50,22 @@ final class SmartFeed: PseudoFeed {
 	private let delegate: SmartFeedDelegate
 	private var unreadCounts = [String: Int]()
 
-	init(delegate: SmartFeedDelegate) {
+	@MainActor init(delegate: SmartFeedDelegate) {
 		self.delegate = delegate
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		queueFetchUnreadCounts() // Fetch unread count at startup
 	}
 
-	@objc func unreadCountDidChange(_ note: Notification) {
+	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AppDelegate {
 			queueFetchUnreadCounts()
 		}
 	}
 
-	@objc @MainActor func fetchUnreadCounts() {
+	@MainActor @objc func fetchUnreadCounts() {
+
 		let activeAccounts = AccountManager.shared.activeAccounts
-		
+
 		// Remove any accounts that are no longer active or have been deleted
 		let activeAccountIDs = activeAccounts.map { $0.accountID }
 		unreadCounts.keys.forEach { accountID in
@@ -72,14 +73,18 @@ final class SmartFeed: PseudoFeed {
 				unreadCounts.removeValue(forKey: accountID)
 			}
 		}
-		
+
 		if activeAccounts.isEmpty {
 			updateUnreadCount()
-		} else {
-			activeAccounts.forEach { self.fetchUnreadCount(for: $0) }
+			return
+		}
+		
+		Task { @MainActor in
+			for account in activeAccounts {
+				await fetchUnreadCount(for: account)
+			}
 		}
 	}
-	
 }
 
 extension SmartFeed: ArticleFetcher {
@@ -107,31 +112,25 @@ extension SmartFeed: ArticleFetcher {
 
 private extension SmartFeed {
 
-	func queueFetchUnreadCounts() {
-		Task { @MainActor in
-			CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
-		}
+	@MainActor func queueFetchUnreadCounts() {
+		CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
 	}
 
-	func fetchUnreadCount(for account: Account) {
-		delegate.fetchUnreadCount(for: account) { singleUnreadCountResult in
+	@MainActor func fetchUnreadCount(for account: Account) async {
 
-			MainActor.assumeIsolated {
-				guard let accountUnreadCount = try? singleUnreadCountResult.get() else {
-					return
-				}
-				self.unreadCounts[account.accountID] = accountUnreadCount
-				self.updateUnreadCount()
-			}
-		}
+		let unreadCount = await delegate.unreadCount(account: account)
+		unreadCounts[account.accountID] = unreadCount
+		
+		updateUnreadCount()
 	}
 
 	@MainActor func updateUnreadCount() {
-		unreadCount = AccountManager.shared.activeAccounts.reduce(0) { (result, account) -> Int in
-			if let oneUnreadCount = unreadCounts[account.accountID] {
-				return result + oneUnreadCount
-			}
-			return result
+
+		var unread = 0
+		for account in AccountManager.shared.activeAccounts {
+			unread = unread + (unreadCounts[account.accountID] ?? 0)
 		}
+
+		unreadCount = unread
 	}
 }

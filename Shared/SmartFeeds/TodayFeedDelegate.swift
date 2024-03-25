@@ -23,8 +23,9 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 		return AppAssets.todayFeedImage
 	}
 	
-	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
-		account.fetchUnreadCountForToday(completion)
+	func unreadCount(account: Account) async -> Int {
+
+		(try? await account.unreadCountForToday()) ?? 0
 	}
 }
 

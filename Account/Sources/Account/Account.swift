@@ -747,8 +747,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return try await unreadArticles(feeds: feeds)
 	}
 
+	public func unreadCountForToday() async throws -> Int {
+		
+		try await database.unreadCountForToday(feedIDs: allFeedIDs()) ?? 0
+	}
+
 	public func fetchUnreadCountForToday(_ completion: @escaping SingleUnreadCountCompletionBlock) {
+		
 		database.fetchUnreadCountForToday(for: flattenedFeeds().feedIDs(), completion: completion)
+	}
+
+	public func unreadCountForStarredArticles() async throws -> Int {
+
+		try await database.starredAndUnreadCount(feedIDs: allFeedIDs()) ?? 0
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ completion: @escaping SingleUnreadCountCompletionBlock) {

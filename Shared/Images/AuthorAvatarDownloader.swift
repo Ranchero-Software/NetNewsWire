@@ -68,8 +68,9 @@ final class AuthorAvatarDownloader {
 private extension AuthorAvatarDownloader {
 
 	func scaleAndCacheImageData(_ imageData: Data, _ avatarURL: String) {
-		RSImage.scaledForIcon(imageData) { (image) in
-			if let image = image {
+
+		Task { @MainActor in
+			if let image = await RSImage.scaledForIcon(imageData) {
 				self.handleImageDidBecomeAvailable(avatarURL, image)
 			}
 		}
