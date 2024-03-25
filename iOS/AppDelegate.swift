@@ -125,19 +125,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		#endif
 			
 		return true
-		
 	}
 	
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-		DispatchQueue.main.async {
-			self.resumeDatabaseProcessingIfNecessary()
-			self.accountManager.receiveRemoteNotification(userInfo: userInfo) {
-				self.suspendApplication()
-				completionHandler(.newData)
-			}
-		}
-    }
-	
+	func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
+
+		resumeDatabaseProcessingIfNecessary()
+		await accountManager.receiveRemoteNotification(userInfo: userInfo)
+		suspendApplication()
+		return .newData
+	}
+
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
 	}
