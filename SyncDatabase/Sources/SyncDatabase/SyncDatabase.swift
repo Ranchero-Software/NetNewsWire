@@ -206,18 +206,6 @@ public extension SyncDatabase {
 			}
 		}
 	}
-
-	nonisolated func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
-
-		Task { @MainActor in
-			do {
-				try await self.resetSelectedForProcessing(articleIDs)
-				completion?(nil)
-			} catch {
-				completion?(DatabaseError.suspended)
-			}
-		}
-	}
 }
 
 private extension SyncDatabase {

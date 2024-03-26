@@ -68,15 +68,13 @@ private extension FeedlySendArticleStatusesOperation {
 			let database = self.database
 			group.enter()
 			service.mark(ids, as: pairing.action) { result in
-				assert(Thread.isMainThread)
-				switch result {
-				case .success:
-					Task { @MainActor in
+				Task { @MainActor in
+					switch result {
+					case .success:
 						try? await database.deleteSelectedForProcessing(Array(ids))
 						group.leave()
-					}
-				case .failure:
-					database.resetSelectedForProcessing(Array(ids)) { _ in
+					case .failure:
+						try? await database.resetSelectedForProcessing(Array(ids))
 						group.leave()
 					}
 				}

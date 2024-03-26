@@ -148,31 +148,29 @@ private extension CloudKitSendStatusOperation {
 					
 					Task { @MainActor in
 						articlesZone.modifyArticles(statusUpdates) { result in
-							switch result {
-							case .success:
-								Task { @MainActor in
+							Task { @MainActor in
+								switch result {
+								case .success:
 									try? await self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID }))
 									done(false)
-								}
-							case .failure(let error):
-								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-									MainActor.assumeIsolated {
-										self.processAccountError(account, error)
-										os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
-										completion(true)
-									}
+								case .failure(let error):
+									try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
+									self.processAccountError(account, error)
+									os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
+									completion(true)
 								}
 							}
 						}
 					}
 				}
 			}
-			
+
 			switch result {
 			case .success(let articles):
 				processWithArticles(articles)
 			case .failure(let databaseError):
-				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+				Task { @MainActor in
+					try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
 					os_log(.error, log: self.log, "Send article status fetch articles error: %@.", databaseError.localizedDescription)
 					completion(true)
 				}
