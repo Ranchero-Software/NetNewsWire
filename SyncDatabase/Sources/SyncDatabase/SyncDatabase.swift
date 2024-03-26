@@ -124,7 +124,7 @@ public extension SyncDatabase {
 
 	nonisolated func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
 
-		Task {
+		Task { @MainActor in
 			do {
 				try await self.insertStatuses(statuses)
 				completion(nil)
@@ -136,7 +136,7 @@ public extension SyncDatabase {
 
 	nonisolated func selectForProcessing(limit: Int? = nil, completion: @escaping SyncStatusesCompletionBlock) {
 
-		Task {
+		Task { @MainActor in
 			do {
 				if let syncStatuses = try await self.selectForProcessing(limit: limit) {
 					completion(.success(Array(syncStatuses)))
@@ -151,7 +151,7 @@ public extension SyncDatabase {
 
 	nonisolated func selectPendingCount(completion: @escaping DatabaseIntCompletionBlock) {
 
-		Task {
+		Task { @MainActor in
 			do {
 				if let count = try await self.selectPendingCount() {
 					completion(.success(count))
@@ -167,7 +167,7 @@ public extension SyncDatabase {
 
 	nonisolated func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
 
-		Task {
+		Task { @MainActor in
 			do {
 				if let articleIDs = try await self.selectPendingReadStatusArticleIDs() {
 					completion(.success(articleIDs))
@@ -182,7 +182,7 @@ public extension SyncDatabase {
 
 	nonisolated func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
 
-		Task {
+		Task { @MainActor in
 			do {
 				if let articleIDs = try await self.selectPendingStarredStatusArticleIDs() {
 					completion(.success(articleIDs))
@@ -197,7 +197,7 @@ public extension SyncDatabase {
 
 	nonisolated func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
 
-		Task {
+		Task { @MainActor in
 			do {
 				try await self.resetAllSelectedForProcessing()
 				completion?(nil)
@@ -209,7 +209,7 @@ public extension SyncDatabase {
 
 	nonisolated func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 
-		Task {
+		Task { @MainActor in
 			do {
 				try await self.resetSelectedForProcessing(articleIDs)
 				completion?(nil)

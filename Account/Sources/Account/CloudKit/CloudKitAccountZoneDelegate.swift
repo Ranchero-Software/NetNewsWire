@@ -13,8 +13,8 @@ import CloudKit
 import Articles
 import CloudKitExtras
 
-class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
-	
+@MainActor final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
+
 	private typealias UnclaimedFeed = (url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String)
 	private var newUnclaimedFeeds = [String: [UnclaimedFeed]]()
 	private var existingUnclaimedFeeds = [String: [Feed]]()
@@ -135,7 +135,6 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			account?.removeFolder(folder)
 		}
 	}
-	
 }
 
 private extension CloudKitAcountZoneDelegate {

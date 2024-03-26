@@ -23,7 +23,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 		return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
 	}
 }
-@objc public final class OAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
+@MainActor @objc public final class OAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
 
 	public var isCanceled: Bool = false {
 		didSet {

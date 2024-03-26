@@ -14,12 +14,12 @@ enum FeedlyAccountDelegateError: LocalizedError {
 	case unableToAddFolder(String)
 	case unableToRenameFolder(String, String)
 	case unableToRemoveFolder(String)
-	case unableToMoveFeedBetweenFolders(Feed, Folder, Folder)
+	case unableToMoveFeedBetweenFolders(String, String, String)
 	case addFeedChooseFolder
-	case addFeedInvalidFolder(Folder)
+	case addFeedInvalidFolder(String)
 	case unableToRenameFeed(String, String)
-	case unableToRemoveFeed(Feed)
-	
+	case unableToRemoveFeed(String)
+
 	var errorDescription: String? {
 		switch self {
 		case .notLoggedIn:
@@ -41,24 +41,24 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			let template = NSLocalizedString("Could not remove the folder named “%@”.", comment: "Feedly – Could not remove a folder/collection.")
 			return String(format: template, name)
 			
-		case .unableToMoveFeedBetweenFolders(let feed, _, let to):
+		case .unableToMoveFeedBetweenFolders(let feedName, _, let destinationFolderName):
 			let template = NSLocalizedString("Could not move “%@” to “%@”.", comment: "Feedly – Could not move a feed between folders/collections.")
-			return String(format: template, feed.nameForDisplay, to.nameForDisplay)
-			
+			return String(format: template, feedName, destinationFolderName)
+
 		case .addFeedChooseFolder:
 			return NSLocalizedString("Please choose a folder to contain the feed.", comment: "Feedly – Feed can only be added to folders.")
 			
-		case .addFeedInvalidFolder(let invalidFolder):
+		case .addFeedInvalidFolder(let folderName):
 			let template = NSLocalizedString("Feeds cannot be added to the “%@” folder.", comment: "Feedly – Feed can only be added to folders.")
-			return String(format: template, invalidFolder.nameForDisplay)
-			
+			return String(format: template, folderName)
+
 		case .unableToRenameFeed(let from, let to):
 			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Feedly – Could not rename a feed.")
 			return String(format: template, from, to)
 			
-		case .unableToRemoveFeed(let feed):
+		case .unableToRemoveFeed(let feedName):
 			let template = NSLocalizedString("Could not remove “%@”.", comment: "Feedly – Could not remove a feed.")
-			return String(format: template, feed.nameForDisplay)
+			return String(format: template, feedName)
 		}
 	}
 	
@@ -80,10 +80,10 @@ enum FeedlyAccountDelegateError: LocalizedError {
 		case .unableToRemoveFolder:
 			return nil
 			
-		case .unableToMoveFeedBetweenFolders(let feed, let from, let to):
+		case .unableToMoveFeedBetweenFolders(let feedName, let sourceFolderName, let destinationFolderName):
 			let template = NSLocalizedString("“%@” may be in both “%@” and “%@”.", comment: "Feedly – Could not move a feed between folders/collections.")
-			return String(format: template, feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)
-			
+			return String(format: template, feedName, sourceFolderName, destinationFolderName)
+
 		case .addFeedChooseFolder:
 			return nil
 			

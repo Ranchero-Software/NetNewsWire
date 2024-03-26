@@ -12,7 +12,7 @@ import Foundation
 // Mainly used with deleting objects and undo/redo.
 // Especially redo. The idea is to put something back in the right place.
 
-public struct ContainerPath {
+@MainActor public struct ContainerPath {
 
 	private weak var account: Account?
 	private let names: [String] // empty if top-level of account

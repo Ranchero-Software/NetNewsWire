@@ -8,7 +8,7 @@
 
 import Articles
 import Database
-import RSParser
+@preconcurrency import RSParser
 import RSWeb
 import SyncDatabase
 import os.log
@@ -136,70 +136,73 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 		database.selectForProcessing { result in
 
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter {
-					$0.key == SyncStatus.Key.read && $0.flag == false
-				}
-				let deleteUnreadStatuses = syncStatuses.filter {
-					$0.key == SyncStatus.Key.read && $0.flag == true
-				}
-				let createStarredStatuses = syncStatuses.filter {
-					$0.key == SyncStatus.Key.starred && $0.flag == true
-				}
-				let deleteStarredStatuses = syncStatuses.filter {
-					$0.key == SyncStatus.Key.starred && $0.flag == false
-				}
-
-				let group = DispatchGroup()
-				var errorOccurred = false
-
-				group.enter()
-				self.sendStoryStatuses(createUnreadStatuses, throttle: true, apiCall: self.caller.markAsUnread) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
+			MainActor.assumeIsolated {
+				
+				@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
+					let createUnreadStatuses = syncStatuses.filter {
+						$0.key == SyncStatus.Key.read && $0.flag == false
+					}
+					let deleteUnreadStatuses = syncStatuses.filter {
+						$0.key == SyncStatus.Key.read && $0.flag == true
+					}
+					let createStarredStatuses = syncStatuses.filter {
+						$0.key == SyncStatus.Key.starred && $0.flag == true
+					}
+					let deleteStarredStatuses = syncStatuses.filter {
+						$0.key == SyncStatus.Key.starred && $0.flag == false
+					}
+					
+					let group = DispatchGroup()
+					var errorOccurred = false
+					
+					group.enter()
+					self.sendStoryStatuses(createUnreadStatuses, throttle: true, apiCall: self.caller.markAsUnread) { result in
+						group.leave()
+						if case .failure = result {
+							errorOccurred = true
+						}
+					}
+					
+					group.enter()
+					self.sendStoryStatuses(deleteUnreadStatuses, throttle: false, apiCall: self.caller.markAsRead) { result in
+						group.leave()
+						if case .failure = result {
+							errorOccurred = true
+						}
+					}
+					
+					group.enter()
+					self.sendStoryStatuses(createStarredStatuses, throttle: true, apiCall: self.caller.star) { result in
+						group.leave()
+						if case .failure = result {
+							errorOccurred = true
+						}
+					}
+					
+					group.enter()
+					self.sendStoryStatuses(deleteStarredStatuses, throttle: true, apiCall: self.caller.unstar) { result in
+						group.leave()
+						if case .failure = result {
+							errorOccurred = true
+						}
+					}
+					
+					group.notify(queue: DispatchQueue.main) {
+						os_log(.debug, log: self.log, "Done sending article statuses.")
+						if errorOccurred {
+							completion(.failure(NewsBlurError.unknown))
+						} else {
+							completion(.success(()))
+						}
 					}
 				}
-
-				group.enter()
-				self.sendStoryStatuses(deleteUnreadStatuses, throttle: false, apiCall: self.caller.markAsRead) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
+				
+				switch result {
+				case .success(let syncStatuses):
+					processStatuses(syncStatuses)
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
 				}
-
-				group.enter()
-				self.sendStoryStatuses(createStarredStatuses, throttle: true, apiCall: self.caller.star) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
-
-				group.enter()
-				self.sendStoryStatuses(deleteStarredStatuses, throttle: true, apiCall: self.caller.unstar) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
-
-				group.notify(queue: DispatchQueue.main) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					if errorOccurred {
-						completion(.failure(NewsBlurError.unknown))
-					} else {
-						completion(.success(()))
-					}
-				}
-			}
-
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
 			}
 		}
 	}
@@ -272,52 +275,54 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 
-			func process(_ fetchedHashes: Set<String>) {
-				let group = DispatchGroup()
-				var errorOccurred = false
+			MainActor.assumeIsolated {
+				@MainActor func process(_ fetchedHashes: Set<String>) {
+					let group = DispatchGroup()
+					var errorOccurred = false
 
-				let storyHashes = Array(fetchedHashes).map {
-					NewsBlurStoryHash(hash: $0, timestamp: Date())
-				}
-				let chunkedStoryHashes = storyHashes.chunked(into: 100)
+					let storyHashes = Array(fetchedHashes).map {
+						NewsBlurStoryHash(hash: $0, timestamp: Date())
+					}
+					let chunkedStoryHashes = storyHashes.chunked(into: 100)
 
-				for chunk in chunkedStoryHashes {
-					group.enter()
-					self.caller.retrieveStories(hashes: chunk) { result in
+					for chunk in chunkedStoryHashes {
+						group.enter()
+						self.caller.retrieveStories(hashes: chunk) { result in
 
-						switch result {
-						case .success((let stories, _)):
-							self.processStories(account: account, stories: stories) { result in
-								group.leave()
-								if case .failure = result {
-									errorOccurred = true
+							switch result {
+							case .success((let stories, _)):
+								self.processStories(account: account, stories: stories) { result in
+									group.leave()
+									if case .failure = result {
+										errorOccurred = true
+									}
 								}
+							case .failure(let error):
+								errorOccurred = true
+								os_log(.error, log: self.log, "Refresh missing stories failed: %@.", error.localizedDescription)
+								group.leave()
 							}
-						case .failure(let error):
-							errorOccurred = true
-							os_log(.error, log: self.log, "Refresh missing stories failed: %@.", error.localizedDescription)
-							group.leave()
+						}
+					}
+
+					group.notify(queue: DispatchQueue.main) {
+						self.refreshProgress.completeTask()
+						os_log(.debug, log: self.log, "Done refreshing missing stories.")
+						if errorOccurred {
+							completion(.failure(NewsBlurError.unknown))
+						} else {
+							completion(.success(()))
 						}
 					}
 				}
 
-				group.notify(queue: DispatchQueue.main) {
+				switch result {
+				case .success(let fetchedArticleIDs):
+					process(fetchedArticleIDs)
+				case .failure(let error):
 					self.refreshProgress.completeTask()
-					os_log(.debug, log: self.log, "Done refreshing missing stories.")
-					if errorOccurred {
-						completion(.failure(NewsBlurError.unknown))
-					} else {
-						completion(.success(()))
-					}
+					completion(.failure(error))
 				}
-			}
-
-			switch result {
-			case .success(let fetchedArticleIDs):
-				process(fetchedArticleIDs)
-			case .failure(let error):
-				self.refreshProgress.completeTask()
-				completion(.failure(error))
 			}
 		}
 	}
@@ -591,10 +596,12 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 				self.database.insertStatuses(syncStatuses) { _ in
 					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
+						MainActor.assumeIsolated {
+							if let count = try? result.get(), count > 100 {
+								self.sendArticleStatus(for: account) { _ in }
+							}
+							completion(.success(()))
 						}
-						completion(.success(()))
 					}
 				}
 			case .failure(let error):

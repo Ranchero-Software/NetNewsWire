@@ -39,7 +39,7 @@ public protocol MainThreadOperation: AnyObject {
 	///
 	/// The completionBlock is always called on the main thread.
 	/// The queue will clear the completionBlock after calling it.
-	var completionBlock: MainThreadOperationCompletionBlock? { get set }
+	@MainActor var completionBlock: MainThreadOperationCompletionBlock? { get set }
 
 	/// Do the thing this operation does.
 	///

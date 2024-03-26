@@ -28,7 +28,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 }
 
-final class CloudKitAccountDelegate: AccountDelegate {
+@MainActor final class CloudKitAccountDelegate: AccountDelegate {
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
@@ -416,10 +416,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 				self.database.insertStatuses(syncStatuses) { _ in
 					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account, showProgress: false)  { _ in }
+						MainActor.assumeIsolated {
+							if let count = try? result.get(), count > 100 {
+								self.sendArticleStatus(for: account, showProgress: false)  { _ in }
+							}
+							completion(.success(()))
 						}
-						completion(.success(()))
 					}
 				}
 			case .failure(let error):
@@ -648,35 +650,36 @@ private extension CloudKitAccountDelegate {
 
 					if let parsedFeed = parsedFeed {
 						account.update(feed, with: parsedFeed) { result in
-							switch result {
-							case .success:
-								
-								self.accountZone.createFeed(url: bestFeedSpecifier.urlString,
-															   name: parsedFeed.title,
-															   editedName: editedName,
-															   homePageURL: parsedFeed.homePageURL,
-															   container: container) { result in
-
-									self.refreshProgress.completeTask()
-									switch result {
-									case .success(let externalID):
-										feed.externalID = externalID
-										self.sendNewArticlesToTheCloud(account, feed)
-										completion(.success(feed))
-									case .failure(let error):
-										container.removeFeed(feed)
-										self.refreshProgress.completeTasks(2)
-										completion(.failure(error))
+							MainActor.assumeIsolated {
+								switch result {
+								case .success:
+									
+									self.accountZone.createFeed(url: bestFeedSpecifier.urlString,
+																name: parsedFeed.title,
+																editedName: editedName,
+																homePageURL: parsedFeed.homePageURL,
+																container: container) { result in
+										
+										self.refreshProgress.completeTask()
+										switch result {
+										case .success(let externalID):
+											feed.externalID = externalID
+											self.sendNewArticlesToTheCloud(account, feed)
+											completion(.success(feed))
+										case .failure(let error):
+											container.removeFeed(feed)
+											self.refreshProgress.completeTasks(2)
+											completion(.failure(error))
+										}
+										
 									}
 									
+								case .failure(let error):
+									container.removeFeed(feed)
+									self.refreshProgress.completeTasks(3)
+									completion(.failure(error))
 								}
-
-							case .failure(let error):
-								container.removeFeed(feed)
-								self.refreshProgress.completeTasks(3)
-								completion(.failure(error))
 							}
-							
 						}
 					} else {
 						self.refreshProgress.completeTasks(3)
@@ -700,9 +703,9 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
-		
+
 		Task { @MainActor in
-			
+
 			do {
 				let articles = try await account.articles(for: .feed(feed))
 				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
@@ -716,7 +719,7 @@ private extension CloudKitAccountDelegate {
 						}
 					}
 				}
-				
+
 			} catch {
 				os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
 			}

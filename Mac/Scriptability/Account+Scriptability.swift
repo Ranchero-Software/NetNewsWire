@@ -12,7 +12,7 @@ import Articles
 import Core
 
 @objc(ScriptableAccount)
-class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
     
     let account:Account
     init (_ account:Account) {

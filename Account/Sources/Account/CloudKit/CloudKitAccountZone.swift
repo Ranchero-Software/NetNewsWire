@@ -20,7 +20,8 @@ enum CloudKitAccountZoneError: LocalizedError {
 		return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
 	}
 }
-final class CloudKitAccountZone: CloudKitZone {
+
+@MainActor final class CloudKitAccountZone: CloudKitZone {
 
 	var zoneID: CKRecordZone.ID
 	

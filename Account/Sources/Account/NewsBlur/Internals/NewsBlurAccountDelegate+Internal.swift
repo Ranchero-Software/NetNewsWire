@@ -328,45 +328,49 @@ extension NewsBlurAccountDelegate {
 			completion()
 			return
 		}
-
+		
 		database.selectPendingReadStatusArticleIDs() { result in
-			func process(_ pendingStoryHashes: Set<String>) {
-
-				let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
-				let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
-
-				account.fetchUnreadArticleIDs { articleIDsResult in
-					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
-
-					let group = DispatchGroup()
+			MainActor.assumeIsolated {
+				@MainActor func process(_ pendingStoryHashes: Set<String>) {
 					
-					// Mark articles as unread
-					let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-					group.enter()
-					account.markAsUnread(deltaUnreadArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as read
-					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-					group.enter()
-					account.markAsRead(deltaReadArticleIDs) { _ in
-						group.leave()
-					}
+					let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
+					let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
 					
-					group.notify(queue: DispatchQueue.main) {
-						completion()
+					account.fetchUnreadArticleIDs { articleIDsResult in
+						MainActor.assumeIsolated {
+							guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
+								return
+							}
+							
+							let group = DispatchGroup()
+							
+							// Mark articles as unread
+							let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
+							group.enter()
+							account.markAsUnread(deltaUnreadArticleIDs) { _ in
+								group.leave()
+							}
+							
+							// Mark articles as read
+							let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+							group.enter()
+							account.markAsRead(deltaReadArticleIDs) { _ in
+								group.leave()
+							}
+							
+							group.notify(queue: DispatchQueue.main) {
+								completion()
+							}
+						}
 					}
 				}
-			}
-
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Story Read Status failed: %@.", error.localizedDescription)
+				
+				switch result {
+				case .success(let pendingArticleIDs):
+					process(pendingArticleIDs)
+				case .failure(let error):
+					os_log(.error, log: self.log, "Sync Story Read Status failed: %@.", error.localizedDescription)
+				}
 			}
 		}
 	}
@@ -378,43 +382,47 @@ extension NewsBlurAccountDelegate {
 		}
 
 		database.selectPendingStarredStatusArticleIDs() { result in
-			func process(_ pendingStoryHashes: Set<String>) {
+			MainActor.assumeIsolated {
+				@MainActor func process(_ pendingStoryHashes: Set<String>) {
 
-				let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
-				let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
+					let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
+					let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
 
-				account.fetchStarredArticleIDs { articleIDsResult in
-					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
-
-					let group = DispatchGroup()
-					
-					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-					group.enter()
-					account.markAsStarred(deltaStarredArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-					group.enter()
-					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-						group.leave()
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						completion()
+					account.fetchStarredArticleIDs { articleIDsResult in
+						MainActor.assumeIsolated {
+							guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
+								return
+							}
+							
+							let group = DispatchGroup()
+							
+							// Mark articles as starred
+							let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
+							group.enter()
+							account.markAsStarred(deltaStarredArticleIDs) { _ in
+								group.leave()
+							}
+							
+							// Mark articles as unstarred
+							let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+							group.enter()
+							account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
+								group.leave()
+							}
+							
+							group.notify(queue: DispatchQueue.main) {
+								completion()
+							}
+						}
 					}
 				}
-			}
 
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
+				switch result {
+				case .success(let pendingArticleIDs):
+					process(pendingArticleIDs)
+				case .failure(let error):
+					os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
+				}
 			}
 		}
 	}

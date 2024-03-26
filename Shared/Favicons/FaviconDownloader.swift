@@ -71,7 +71,7 @@ final class FaviconDownloader {
 		cache = [Feed: IconImage]()
 	}
 	
-	func favicon(for feed: Feed) -> IconImage? {
+	@MainActor func favicon(for feed: Feed) -> IconImage? {
 
 		assert(Thread.isMainThread)
 
@@ -93,7 +93,7 @@ final class FaviconDownloader {
 		return nil
 	}
 	
-	func faviconAsIcon(for feed: Feed) -> IconImage? {
+	@MainActor func faviconAsIcon(for feed: Feed) -> IconImage? {
 		
 		if let image = cache[feed] {
 			return image

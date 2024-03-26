@@ -17,12 +17,12 @@ extension Notification.Name {
 
 public protocol DisplayNameProvider {
 	
-	var nameForDisplay: String { get }
+	@MainActor var nameForDisplay: String { get }
 }
 
 public extension DisplayNameProvider {
 
-	func postDisplayNameDidChangeNotification() {
+	@MainActor func postDisplayNameDidChangeNotification() {
 
 		NotificationCenter.default.post(name: .DisplayNameDidChange, object: self, userInfo: nil)
 	}

@@ -153,7 +153,7 @@ extension Feed: PasteboardWriterOwner {
 	}
 }
 
-@objc final class FeedPasteboardWriter: NSObject, NSPasteboardWriting {
+@MainActor @objc final class FeedPasteboardWriter: NSObject, NSPasteboardWriting {
 
 	private let feed: Feed
 	static let feedUTI = "com.ranchero.feed"

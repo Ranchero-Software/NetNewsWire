@@ -37,7 +37,7 @@ struct ExtensionContainers: Codable {
 	
 }
 
-struct ExtensionAccount: ExtensionContainer {
+@MainActor struct ExtensionAccount: ExtensionContainer {
 
 	enum CodingKeys: String, CodingKey {
 		case name
@@ -70,7 +70,7 @@ struct ExtensionAccount: ExtensionContainer {
 	
 }
 
-struct ExtensionFolder: ExtensionContainer {
+@MainActor struct ExtensionFolder: ExtensionContainer {
 
 	enum CodingKeys: String, CodingKey {
 		case accountName

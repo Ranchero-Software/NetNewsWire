@@ -12,8 +12,8 @@ import AppKitExtras
 
 typealias PasteboardFolderDictionary = [String: String]
 
-struct PasteboardFolder: Hashable {
-	
+@MainActor struct PasteboardFolder: Hashable {
+
 	private struct Key {
 		static let name = "name"
 		// Internal
@@ -91,7 +91,7 @@ extension Folder: PasteboardWriterOwner {
 	}
 }
 
-@objc final class FolderPasteboardWriter: NSObject, NSPasteboardWriting {
+@MainActor @objc final class FolderPasteboardWriter: NSObject, NSPasteboardWriting {
 
 	private let folder: Folder
 	static let folderUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.folder"

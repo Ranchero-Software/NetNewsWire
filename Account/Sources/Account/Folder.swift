@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import Core
 
-public final class Folder: Renamable, Container, DisplayNameProvider, UnreadCountProvider, Hashable {
+@MainActor public final class Folder: Renamable, Container, DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	public var containerID: ContainerIdentifier? {
 		guard let accountID = account?.accountID else {
@@ -198,7 +198,7 @@ extension Folder: OPMLRepresentable {
 
 extension Set where Element == Folder {
 	
-	func sorted() -> Array<Folder> {
+	@MainActor func sorted() -> Array<Folder> {
 		return sorted(by: { (folder1, folder2) -> Bool in
 			return folder1.nameForDisplay.localizedStandardCompare(folder2.nameForDisplay) == .orderedAscending
 		})

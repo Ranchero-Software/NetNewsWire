@@ -52,7 +52,7 @@ final class LocalAccountRefresher {
 
 extension LocalAccountRefresher: DownloadSessionDelegate {
 
-	func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
 		guard let feed = representedObject as? Feed else {
 			return nil
 		}
@@ -68,7 +68,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		return request
 	}
 	
-	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void) {
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void) {
 		let feed = representedObject as! Feed
 		
 		guard !data.isEmpty, !isSuspended else {
@@ -101,18 +101,20 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			}
 			
 			account.update(feed, with: parsedFeed) { result in
-				if case .success(let articleChanges) = result {
-					if let httpResponse = response as? HTTPURLResponse {
-						feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
-					}
-					feed.contentHash = dataHash
-					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
+				MainActor.assumeIsolated {
+					if case .success(let articleChanges) = result {
+						if let httpResponse = response as? HTTPURLResponse {
+							feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+						}
+						feed.contentHash = dataHash
+						self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+						self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
+							completion()
+						}
+					} else {
 						completion()
+						self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 					}
-				} else {
-					completion()
-					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 				}
 			}
 			

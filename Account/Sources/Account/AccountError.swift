@@ -14,18 +14,22 @@ public enum AccountError: LocalizedError {
 	case createErrorNotFound
 	case createErrorAlreadySubscribed
 	case opmlImportInProgress
-	case wrappedError(error: Error, account: Account)
-	
-	public var account: Account? {
-		if case .wrappedError(_, let account) = self {
-			return account
+	case wrappedError(error: Error, accountID: String, accountName: String)
+
+	@MainActor public var account: Account? {
+		if case .wrappedError(_, let accountID, _) = self {
+			return AccountManager.shared.existingAccount(with: accountID)
 		} else {
 			return nil
 		}
 	}
 	
-	public var isCredentialsError: Bool {
-		if case .wrappedError(let error, _) = self {
+	@MainActor public static func wrappedError(error: Error, account: Account) -> AccountError {
+		wrappedError(error: error, accountID: account.accountID, accountName: account.nameForDisplay)
+	}
+
+	@MainActor public var isCredentialsError: Bool {
+		if case .wrappedError(let error, _, _) = self {
 			if case TransportError.httpError(let status) = error {
 				return isCredentialsError(status: status)
 			}
@@ -41,17 +45,17 @@ public enum AccountError: LocalizedError {
 			return NSLocalizedString("You are already subscribed to this feed and can’t add it again.", comment: "Already subscribed")
 		case .opmlImportInProgress:
 			return NSLocalizedString("An OPML import for this account is already running.", comment: "Import running")
-		case .wrappedError(let error, let account):
+		case .wrappedError(let error, _, let accountName):
 			switch error {
 			case TransportError.httpError(let status):
 				if isCredentialsError(status: status) {
 					let localizedText = NSLocalizedString("Your “%@” credentials are invalid or expired.", comment: "Invalid or expired")
-					return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay) as String
+					return NSString.localizedStringWithFormat(localizedText as NSString, accountName) as String
 				} else {
-					return unknownError(error, account)
+					return unknownError(error, accountName)
 				}
 			default:
-				return unknownError(error, account)
+				return unknownError(error, accountName)
 			}
 		}
 	}
@@ -62,7 +66,7 @@ public enum AccountError: LocalizedError {
 			return nil
 		case .createErrorAlreadySubscribed:
 			return nil
-		case .wrappedError(let error, _):
+		case .wrappedError(let error, _, _):
 			switch error {
 			case TransportError.httpError(let status):
 				if isCredentialsError(status: status) {
@@ -84,9 +88,9 @@ public enum AccountError: LocalizedError {
 
 private extension AccountError {
 	
-	func unknownError(_ error: Error, _ account: Account) -> String {
+	func unknownError(_ error: Error, _ accountName: String) -> String {
 		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
-		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
+		return NSString.localizedStringWithFormat(localizedText as NSString, accountName, error.localizedDescription) as String
 	}
 	
 	func isCredentialsError(status: Int) -> Bool {

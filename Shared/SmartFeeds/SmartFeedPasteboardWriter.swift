@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-@objc final class SmartFeedPasteboardWriter: NSObject, NSPasteboardWriting {
+@MainActor @objc final class SmartFeedPasteboardWriter: NSObject, NSPasteboardWriting {
 
 	private let smartFeed: PseudoFeed
 

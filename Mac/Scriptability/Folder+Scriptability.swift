@@ -12,7 +12,7 @@ import Articles
 import Core
 
 @objc(ScriptableFolder)
-class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let folder:Folder
     let container:ScriptingObjectContainer

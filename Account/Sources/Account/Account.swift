@@ -62,7 +62,7 @@ public enum FetchType {
 	case searchWithArticleIDs(String, Set<String>)
 }
 
-public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
+@MainActor public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
@@ -894,12 +894,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
-			if let error = error {
-				completion?(error)
-				return
+
+			MainActor.assumeIsolated {
+				if let error = error {
+					completion?(error)
+					return
+				}
+				self.noteStatusesForArticleIDsDidChange(articleIDs)
+				completion?(nil)
 			}
-			self.noteStatusesForArticleIDsDidChange(articleIDs)
-			completion?(nil)
 		}
 	}
 
@@ -912,11 +915,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 		database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { error in
-			if let error {
-				completion?(error)
-			} else {
-				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-				completion?(nil)
+			MainActor.assumeIsolated {
+				if let error {
+					completion?(error)
+				} else {
+					self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+					completion?(nil)
+				}
 			}
 		}
 	}

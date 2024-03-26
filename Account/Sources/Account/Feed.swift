@@ -11,7 +11,7 @@ import RSWeb
 import Articles
 import Core
 
-public final class Feed: Renamable, DisplayNameProvider, UnreadCountProvider, Hashable {
+@MainActor public final class Feed: Renamable, DisplayNameProvider, UnreadCountProvider, Hashable {
 
 	public weak var account: Account?
 	public let url: String
@@ -294,11 +294,11 @@ extension Feed: OPMLRepresentable {
 
 extension Set where Element == Feed {
 
-	func feedIDs() -> Set<String> {
+	@MainActor func feedIDs() -> Set<String> {
 		return Set<String>(map { $0.feedID })
 	}
 	
-	func sorted() -> Array<Feed> {
+	@MainActor func sorted() -> Array<Feed> {
 		return sorted(by: { (feed1, feed2) -> Bool in
 			if feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedSame {
 				return feed1.url < feed2.url

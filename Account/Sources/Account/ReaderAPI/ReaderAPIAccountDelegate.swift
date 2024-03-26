@@ -118,12 +118,14 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 						switch result {
 						case .success(let articleIDs):
 							account.markAsRead(Set(articleIDs)) { _ in
-								self.refreshArticleStatus(for: account) { _ in
-									self.refreshProgress.completeTask()
-									self.refreshMissingArticles(account) {
-										self.refreshProgress.clear()
-										DispatchQueue.main.async {
-											completion(.success(()))
+								MainActor.assumeIsolated {
+									self.refreshArticleStatus(for: account) { _ in
+										self.refreshProgress.completeTask()
+										self.refreshMissingArticles(account) {
+											self.refreshProgress.clear()
+											DispatchQueue.main.async {
+												completion(.success(()))
+											}
 										}
 									}
 								}
@@ -201,45 +203,48 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		database.selectForProcessing { result in
 
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
-				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
-				let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
-				let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
-
-				let group = DispatchGroup()
-
-				group.enter()
-				self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) {
-					group.leave()
+			MainActor.assumeIsolated {
+				
+				@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
+					let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
+					let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
+					let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
+					let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
+					
+					let group = DispatchGroup()
+					
+					group.enter()
+					self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) {
+						group.leave()
+					}
+					
+					group.enter()
+					self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) {
+						group.leave()
+					}
+					
+					group.enter()
+					self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) {
+						group.leave()
+					}
+					
+					group.enter()
+					self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) {
+						group.leave()
+					}
+					
+					group.notify(queue: DispatchQueue.main) {
+						os_log(.debug, log: self.log, "Done sending article statuses.")
+						completion(.success(()))
+					}
 				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) {
-					group.leave()
+				
+				switch result {
+				case .success(let syncStatuses):
+					processStatuses(syncStatuses)
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
 				}
-
-				group.enter()
-				self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) {
-					group.leave()
-				}
-
-				group.notify(queue: DispatchQueue.main) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					completion(.success(()))
-				}
-			}
-
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
 			}
 		}
 	}
@@ -617,10 +622,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 				self.database.insertStatuses(syncStatuses) { _ in
 					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
+						MainActor.assumeIsolated {
+							if let count = try? result.get(), count > 100 {
+								self.sendArticleStatus(for: account) { _ in }
+							}
+							completion(.success(()))
 						}
-						completion(.success(()))
 					}
 				}
 			case .failure(let error):
@@ -970,18 +977,19 @@ private extension ReaderAPIAccountDelegate {
 			switch result {
 			case .success(let articleIDs):
 				account.markAsRead(Set(articleIDs)) { _ in
-					self.refreshProgress.completeTask()
-					self.refreshArticleStatus(for: account) { _ in
+					MainActor.assumeIsolated {
 						self.refreshProgress.completeTask()
-						self.refreshMissingArticles(account) {
-							self.refreshProgress.clear()
-							DispatchQueue.main.async {
-								completion(.success(feed))
+						self.refreshArticleStatus(for: account) { _ in
+							self.refreshProgress.completeTask()
+							self.refreshMissingArticles(account) {
+								self.refreshProgress.clear()
+								DispatchQueue.main.async {
+									completion(.success(feed))
+								}
+								
 							}
-
 						}
 					}
-
 				}
 			case .failure(let error):
 				completion(.failure(error))
@@ -994,51 +1002,53 @@ private extension ReaderAPIAccountDelegate {
 	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDsResult in
 
-			func process(_ fetchedArticleIDs: Set<String>) {
-				guard !fetchedArticleIDs.isEmpty else {
-					completion()
-					return
-				}
-				
-				os_log(.debug, log: self.log, "Refreshing missing articles...")
-				let group = DispatchGroup()
+			MainActor.assumeIsolated {
+				@MainActor func process(_ fetchedArticleIDs: Set<String>) {
+					guard !fetchedArticleIDs.isEmpty else {
+						completion()
+						return
+					}
 
-				let articleIDs = Array(fetchedArticleIDs)
-				let chunkedArticleIDs = articleIDs.chunked(into: 150)
+					os_log(.debug, log: self.log, "Refreshing missing articles...")
+					let group = DispatchGroup()
 
-				self.refreshProgress.addToNumberOfTasksAndRemaining(chunkedArticleIDs.count - 1)
+					let articleIDs = Array(fetchedArticleIDs)
+					let chunkedArticleIDs = articleIDs.chunked(into: 150)
 
-				for chunk in chunkedArticleIDs {
-					group.enter()
-					self.caller.retrieveEntries(articleIDs: chunk) { result in
-						self.refreshProgress.completeTask()
+					self.refreshProgress.addToNumberOfTasksAndRemaining(chunkedArticleIDs.count - 1)
 
-						switch result {
-						case .success(let entries):
-							self.processEntries(account: account, entries: entries) {
+					for chunk in chunkedArticleIDs {
+						group.enter()
+						self.caller.retrieveEntries(articleIDs: chunk) { result in
+							self.refreshProgress.completeTask()
+
+							switch result {
+							case .success(let entries):
+								self.processEntries(account: account, entries: entries) {
+									group.leave()
+								}
+
+							case .failure(let error):
+								os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
 								group.leave()
 							}
-
-						case .failure(let error):
-							os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
-							group.leave()
 						}
+					}
+
+					group.notify(queue: DispatchQueue.main) {
+						self.refreshProgress.completeTask()
+						os_log(.debug, log: self.log, "Done refreshing missing articles.")
+						completion()
 					}
 				}
 
-				group.notify(queue: DispatchQueue.main) {
+				switch articleIDsResult {
+				case .success(let articleIDs):
+					process(articleIDs)
+				case .failure:
 					self.refreshProgress.completeTask()
-					os_log(.debug, log: self.log, "Done refreshing missing articles.")
 					completion()
 				}
-			}
-
-			switch articleIDsResult {
-			case .success(let articleIDs):
-				process(articleIDs)
-			case .failure:
-				self.refreshProgress.completeTask()
-				completion()
 			}
 		}
 	}
@@ -1100,43 +1110,47 @@ private extension ReaderAPIAccountDelegate {
 
 		database.selectPendingReadStatusArticleIDs() { result in
 
-			func process(_ pendingArticleIDs: Set<String>) {
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-				
-				account.fetchUnreadArticleIDs { articleIDsResult in
-					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+			MainActor.assumeIsolated {
+				@MainActor func process(_ pendingArticleIDs: Set<String>) {
+					let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
-					let group = DispatchGroup()
-					
-					// Mark articles as unread
-					let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-					group.enter()
-					account.markAsUnread(deltaUnreadArticleIDs) { _ in
-						group.leave()
-					}
+					account.fetchUnreadArticleIDs { articleIDsResult in
 
-					// Mark articles as read
-					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					group.enter()
-					account.markAsRead(deltaReadArticleIDs) { _ in
-						group.leave()
-					}
-					
-					group.notify(queue: DispatchQueue.main) {
-						completion()
+						MainActor.assumeIsolated {
+							guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
+								return
+							}
+
+							let group = DispatchGroup()
+
+							// Mark articles as unread
+							let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+							group.enter()
+							account.markAsUnread(deltaUnreadArticleIDs) { _ in
+								group.leave()
+							}
+
+							// Mark articles as read
+							let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+							group.enter()
+							account.markAsRead(deltaReadArticleIDs) { _ in
+								group.leave()
+							}
+
+							group.notify(queue: DispatchQueue.main) {
+								completion()
+							}
+						}
 					}
 				}
+
+				switch result {
+				case .success(let pendingArticleIDs):
+					process(pendingArticleIDs)
+				case .failure(let error):
+					os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
+				}
 			}
-			
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
-			}
-			
 		}
 		
 	}
@@ -1149,43 +1163,47 @@ private extension ReaderAPIAccountDelegate {
 
 		database.selectPendingStarredStatusArticleIDs() { result in
 
-			func process(_ pendingArticleIDs: Set<String>) {
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+			MainActor.assumeIsolated {
+				@MainActor func process(_ pendingArticleIDs: Set<String>) {
+					let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
-				account.fetchStarredArticleIDs { articleIDsResult in
-					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+					account.fetchStarredArticleIDs { articleIDsResult in
 
-					let group = DispatchGroup()
-					
-					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-					group.enter()
-					account.markAsStarred(deltaStarredArticleIDs) { _ in
-						group.leave()
-					}
+						MainActor.assumeIsolated {
+							guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
+								return
+							}
 
-					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					group.enter()
-					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-						group.leave()
-					}
+							let group = DispatchGroup()
 
-					group.notify(queue: DispatchQueue.main) {
-						completion()
+							// Mark articles as starred
+							let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+							group.enter()
+							account.markAsStarred(deltaStarredArticleIDs) { _ in
+								group.leave()
+							}
+
+							// Mark articles as unstarred
+							let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+							group.enter()
+							account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
+								group.leave()
+							}
+
+							group.notify(queue: DispatchQueue.main) {
+								completion()
+							}
+						}
 					}
 				}
-			}
-			
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
-			}
 
+				switch result {
+				case .success(let pendingArticleIDs):
+					process(pendingArticleIDs)
+				case .failure(let error):
+					os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
+				}
+			}
 		}
 		
 	}

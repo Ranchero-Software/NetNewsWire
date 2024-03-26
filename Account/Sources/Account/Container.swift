@@ -15,20 +15,20 @@ extension Notification.Name {
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
 
-public protocol Container: AnyObject, ContainerIdentifiable {
+@MainActor public protocol Container: AnyObject, ContainerIdentifiable {
 
 	var account: Account? { get }
 	var topLevelFeeds: Set<Feed> { get set }
 	var folders: Set<Folder>? { get set }
 	var externalID: String? { get set }
-	
+
 	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
 	func hasChildFolder(with: String) -> Bool
 	func childFolder(with: String) -> Folder?
 
-    func removeFeed(_ feed: Feed)
+	func removeFeed(_ feed: Feed)
 	func addFeed(_ feed: Feed)
 
 	//Recursive — checks subfolders

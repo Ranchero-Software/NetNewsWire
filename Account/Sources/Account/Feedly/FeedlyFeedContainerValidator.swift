@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedlyFeedContainerValidator {
+@MainActor struct FeedlyFeedContainerValidator {
 	var container: Container
 	
 	func getValidContainer() throws -> (Folder, String) {
@@ -17,7 +17,7 @@ struct FeedlyFeedContainerValidator {
 		}
 		
 		guard let collectionId = folder.externalID else {
-			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder)
+			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder.nameForDisplay)
 		}
 		
 		return (folder, collectionId)

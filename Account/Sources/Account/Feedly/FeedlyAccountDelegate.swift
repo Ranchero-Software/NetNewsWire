@@ -408,7 +408,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder, let collectionId = folder.externalID else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed)))
+				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed.nameForDisplay)))
 			}
 		}
 		
@@ -442,7 +442,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 						completion(.success(()))
 					case .failure:
 						from.addFeed(feed)
-						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed, from, to)))
+						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)))
 					}
 				}
 			case .failure(let error):

@@ -44,7 +44,7 @@ import Articles
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+	@MainActor var scriptingUniqueId:Any {
         return feed.feedID
     }
 
@@ -71,7 +71,7 @@ import Articles
         return url
     }
     
-    class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableFeed  {
+	@MainActor class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
             let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
@@ -120,27 +120,27 @@ import Articles
     // MARK: --- Scriptable properties ---
 
     @objc(url)
-    var url:String  {
+	@MainActor var url:String  {
         return self.feed.url
     }
     
     @objc(name)
-    var name:String  {
+	@MainActor var name:String  {
         return self.feed.name ?? ""
     }
 
     @objc(homePageURL)
-    var homePageURL:String  {
+	@MainActor var homePageURL:String  {
         return self.feed.homePageURL ?? ""
     }
 
     @objc(iconURL)
-    var iconURL:String  {
+	@MainActor var iconURL:String  {
         return self.feed.iconURL ?? ""
     }
 
     @objc(faviconURL)
-    var faviconURL:String  {
+	@MainActor var faviconURL:String  {
         return self.feed.faviconURL ?? ""
     }
 
@@ -152,13 +152,13 @@ import Articles
     // MARK: --- scriptable elements ---
 
     @objc(authors)
-    var authors:NSArray {
+	@MainActor var authors:NSArray {
         let feedAuthors = feed.authors ?? []
         return feedAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
     }
      
     @objc(valueInAuthorsWithUniqueID:)
-    func valueInAuthors(withUniqueID id:String) -> ScriptableAuthor? {
+	@MainActor func valueInAuthors(withUniqueID id:String) -> ScriptableAuthor? {
         guard let author = feed.authors?.first(where:{$0.authorID == id}) else { return nil }
         return ScriptableAuthor(author, container:self)
     }

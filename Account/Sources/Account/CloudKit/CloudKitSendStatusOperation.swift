@@ -108,7 +108,7 @@ private extension CloudKitSendStatusOperation {
 		}
 	}
 	
-	func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
+	@MainActor func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
 		guard let account = account, let articlesZone = articlesZone else {
 			completion(true)
 			return
@@ -156,9 +156,11 @@ private extension CloudKitSendStatusOperation {
 								}
 							case .failure(let error):
 								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-									self.processAccountError(account, error)
-									os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
-									completion(true)
+									MainActor.assumeIsolated {
+										self.processAccountError(account, error)
+										os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
+										completion(true)
+									}
 								}
 							}
 						}
@@ -178,7 +180,7 @@ private extension CloudKitSendStatusOperation {
 		}
 	}
 
-	func processAccountError(_ account: Account, _ error: Error) {
+	@MainActor func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeeds(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
