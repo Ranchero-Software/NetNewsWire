@@ -148,37 +148,6 @@ public extension SyncDatabase {
 			}
 		}
 	}
-
-	nonisolated func selectPendingCount(completion: @escaping DatabaseIntCompletionBlock) {
-
-		Task { @MainActor in
-			do {
-				if let count = try await self.selectPendingCount() {
-					completion(.success(count))
-				} else {
-					completion(.success(0))
-				}
-
-			} catch {
-				completion(.failure(DatabaseError.suspended))
-			}
-		}
-	}
-
-	nonisolated func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
-
-		Task { @MainActor in
-			do {
-				if let articleIDs = try await self.selectPendingReadStatusArticleIDs() {
-					completion(.success(articleIDs))
-				} else {
-					completion(.success(Set<String>()))
-				}
-			} catch {
-				completion(.failure(DatabaseError.suspended))
-			}
-		}
-	}
 }
 
 private extension SyncDatabase {

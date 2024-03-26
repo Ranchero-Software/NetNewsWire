@@ -563,15 +563,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				let syncStatuses = articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
-
+				
 				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						MainActor.assumeIsolated {
-							if let count = try? result.get(), count > 100 {
-								self.sendArticleStatus(for: account) { _ in }
-							}
-							completion(.success(()))
+					
+					Task { @MainActor in
+						if let count = try? await self.database.selectPendingCount(), count > 100 {
+							self.sendArticleStatus(for: account) { _ in }
 						}
+						completion(.success(()))
 					}
 				}
 			case .failure(let error):
@@ -1304,9 +1303,10 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
-		database.selectPendingReadStatusArticleIDs() { result in
+		Task { @MainActor in
+			do {
 
-			MainActor.assumeIsolated {
+				let pendingArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 
 				@MainActor func process(_ pendingArticleIDs: Set<String>) {
 
@@ -1340,18 +1340,14 @@ private extension FeedbinAccountDelegate {
 							}
 						}
 					}
-
 				}
 
-				switch result {
-				case .success(let pendingArticleIDs):
-					process(pendingArticleIDs)
-				case .failure(let error):
-					os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
-				}
+				process(pendingArticleIDs)
+
+			} catch {
+				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
 			}
 		}
-		
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {

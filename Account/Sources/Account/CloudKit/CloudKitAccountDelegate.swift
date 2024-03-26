@@ -415,13 +415,11 @@ enum CloudKitAccountDelegateError: LocalizedError {
 				}
 
 				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						MainActor.assumeIsolated {
-							if let count = try? result.get(), count > 100 {
-								self.sendArticleStatus(for: account, showProgress: false)  { _ in }
-							}
-							completion(.success(()))
+					Task { @MainActor in
+						if let count = try? await self.database.selectPendingCount(), count > 100 {
+							self.sendArticleStatus(for: account, showProgress: false)  { _ in }
 						}
+						completion(.success(()))
 					}
 				}
 			case .failure(let error):

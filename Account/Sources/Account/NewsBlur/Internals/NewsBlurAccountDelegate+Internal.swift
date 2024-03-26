@@ -324,24 +324,27 @@ extension NewsBlurAccountDelegate {
 	}
 
 	func syncStoryReadState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
+
 		guard let hashes = hashes else {
 			completion()
 			return
 		}
-		
-		database.selectPendingReadStatusArticleIDs() { result in
-			MainActor.assumeIsolated {
+
+		Task { @MainActor in
+			do {
+				let pendingArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+
 				@MainActor func process(_ pendingStoryHashes: Set<String>) {
-					
+
 					let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
 					let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
-					
+
 					account.fetchUnreadArticleIDs { articleIDsResult in
 						MainActor.assumeIsolated {
 							guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
 								return
 							}
-							
+
 							let group = DispatchGroup()
 							
 							// Mark articles as unread
@@ -350,27 +353,24 @@ extension NewsBlurAccountDelegate {
 							account.markAsUnread(deltaUnreadArticleIDs) { _ in
 								group.leave()
 							}
-							
+
 							// Mark articles as read
 							let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
 							group.enter()
 							account.markAsRead(deltaReadArticleIDs) { _ in
 								group.leave()
 							}
-							
+
 							group.notify(queue: DispatchQueue.main) {
 								completion()
 							}
 						}
 					}
 				}
-				
-				switch result {
-				case .success(let pendingArticleIDs):
-					process(pendingArticleIDs)
-				case .failure(let error):
-					os_log(.error, log: self.log, "Sync Story Read Status failed: %@.", error.localizedDescription)
-				}
+
+				process(pendingArticleIDs)
+			} catch {
+				os_log(.error, log: self.log, "Sync Story Read Status failed: %@.", error.localizedDescription)
 			}
 		}
 	}

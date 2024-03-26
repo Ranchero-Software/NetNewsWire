@@ -34,31 +34,23 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 
-		database.selectPendingReadStatusArticleIDs() { result in
-			switch result {
-			case .success(let pendingReadStatusArticleIDs):
+		Task { @MainActor in
+			do {
 
-				Task { @MainActor in
+				let pendingReadStatusArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+				let pendingStarredStatusArticleIDs = (try await self.database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 
-					do {
-
-						let pendingStarredStatusArticleIDs = (try await self.database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
-						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-							Task { @MainActor in
-								self.update(records: changed,
-											pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-											pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-											completion: completion)
-							}
-						}
-
-					} catch {
-						os_log(.error, log: self.log, "Error occurred getting pending starred records: %@", error.localizedDescription)
-						completion(.failure(CloudKitZoneError.unknown))
+				self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
+					Task { @MainActor in
+						self.update(records: changed,
+									pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+									pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+									completion: completion)
 					}
 				}
-			case .failure(let error):
-				os_log(.error, log: self.log, "Error occurred getting pending read status records: %@", error.localizedDescription)
+
+			} catch {
+				os_log(.error, log: self.log, "Error occurred getting pending status records: %@", error.localizedDescription)
 				completion(.failure(CloudKitZoneError.unknown))
 			}
 		}

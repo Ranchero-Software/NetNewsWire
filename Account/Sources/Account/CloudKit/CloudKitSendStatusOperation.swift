@@ -16,10 +16,10 @@ import Core
 import CloudKitExtras
 
 class CloudKitSendStatusOperation: MainThreadOperation {
-	
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 	private let blockSize = 150
-	
+
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -40,34 +40,30 @@ class CloudKitSendStatusOperation: MainThreadOperation {
 		self.showProgress = showProgress
 		self.database = database
 	}
-	
+
 	@MainActor func run() {
 		os_log(.debug, log: log, "Sending article statuses...")
-		
+
 		if showProgress {
-			
-			database.selectPendingCount() { result in
-				MainActor.assumeIsolated {
-					switch result {
-					case .success(let count):
-						let ticks = count / self.blockSize
-						self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
-						self.selectForProcessing()
-					case .failure(let databaseError):
-						os_log(.error, log: self.log, "Send status count pending error: %@.", databaseError.localizedDescription)
-						self.operationDelegate?.cancelOperation(self)
-					}
+
+			Task { @MainActor in
+
+				do {
+					let count = (try await self.database.selectPendingCount()) ?? 0
+					let ticks = count / self.blockSize
+					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
+					self.selectForProcessing()
+				} catch {
+					os_log(.error, log: self.log, "Send status count pending error: %@.", error.localizedDescription)
+					self.operationDelegate?.cancelOperation(self)
 				}
 			}
 			
 		} else {
-			
+
 			selectForProcessing()
-			
 		}
-		
 	}
-	
 }
 
 private extension CloudKitSendStatusOperation {
