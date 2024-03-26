@@ -68,7 +68,7 @@ public actor SyncDatabase {
 		return syncStatusTable.selectPendingStarredStatusArticleIDs(database: database)
 	}
 
-	public func resetAllSelectedForProcessing()  throws {
+	public func resetAllSelectedForProcessing() throws {
 
 		guard let database else {
 			throw DatabaseError.suspended
@@ -176,33 +176,6 @@ public extension SyncDatabase {
 				}
 			} catch {
 				completion(.failure(DatabaseError.suspended))
-			}
-		}
-	}
-
-	nonisolated func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
-
-		Task { @MainActor in
-			do {
-				if let articleIDs = try await self.selectPendingStarredStatusArticleIDs() {
-					completion(.success(articleIDs))
-				} else {
-					completion(.success(Set<String>()))
-				}
-			} catch {
-				completion(.failure(DatabaseError.suspended))
-			}
-		}
-	}
-
-	nonisolated func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
-
-		Task { @MainActor in
-			do {
-				try await self.resetAllSelectedForProcessing()
-				completion?(nil)
-			} catch {
-				completion?(DatabaseError.suspended)
 			}
 		}
 	}

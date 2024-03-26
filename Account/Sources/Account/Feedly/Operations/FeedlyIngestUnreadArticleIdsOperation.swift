@@ -78,17 +78,15 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 			return
 		}
 		
-		database.selectPendingReadStatusArticleIDs { result in
-			MainActor.assumeIsolated {
-				switch result {
-				case .success(let pendingArticleIds):
-					self.remoteEntryIds.subtract(pendingArticleIds)
+		Task { @MainActor in
 
-					self.updateUnreadStatuses()
-
-				case .failure(let error):
-					self.didFinish(with: error)
+			do {
+				if let pendingArticleIDs = try await self.database.selectPendingReadStatusArticleIDs() {
+					self.remoteEntryIds.subtract(pendingArticleIDs)
 				}
+				self.updateUnreadStatuses()
+			} catch {
+				self.didFinish(with: error)
 			}
 		}
 	}

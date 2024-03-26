@@ -1360,54 +1360,52 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
-		database.selectPendingStarredStatusArticleIDs() { result in
+		Task { @MainActor in
 
-			MainActor.assumeIsolated {
+			do {
+				let pendingArticleIDs = (try await self.database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+
 				@MainActor func process(_ pendingArticleIDs: Set<String>) {
-					
+
 					let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
 					let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
-					
+
 					account.fetchStarredArticleIDs { articleIDsResult in
-						
+
 						MainActor.assumeIsolated {
 							guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
 								return
 							}
-							
+
 							let group = DispatchGroup()
-							
+
 							// Mark articles as starred
 							let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
 							group.enter()
 							account.markAsStarred(deltaStarredArticleIDs) { _ in
 								group.leave()
 							}
-							
+
 							// Mark articles as unstarred
 							let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
 							group.enter()
 							account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
 								group.leave()
 							}
-							
+
 							group.notify(queue: DispatchQueue.main) {
 								completion()
 							}
 						}
 					}
-					
 				}
-				
-				switch result {
-				case .success(let pendingArticleIDs):
-					process(pendingArticleIDs)
-				case .failure(let error):
-					os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
-				}
+
+				process(pendingArticleIDs)
+
+			} catch {
+				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
 			}
 		}
-		
 	}
 
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {

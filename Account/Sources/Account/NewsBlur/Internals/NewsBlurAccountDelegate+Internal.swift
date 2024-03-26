@@ -381,8 +381,11 @@ extension NewsBlurAccountDelegate {
 			return
 		}
 
-		database.selectPendingStarredStatusArticleIDs() { result in
-			MainActor.assumeIsolated {
+		Task { @MainActor in
+
+			do {
+				let pendingArticleIDs = (try await database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+
 				@MainActor func process(_ pendingStoryHashes: Set<String>) {
 
 					let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
@@ -393,23 +396,23 @@ extension NewsBlurAccountDelegate {
 							guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
 								return
 							}
-							
+
 							let group = DispatchGroup()
-							
+
 							// Mark articles as starred
 							let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
 							group.enter()
 							account.markAsStarred(deltaStarredArticleIDs) { _ in
 								group.leave()
 							}
-							
+
 							// Mark articles as unstarred
 							let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
 							group.enter()
 							account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
 								group.leave()
 							}
-							
+
 							group.notify(queue: DispatchQueue.main) {
 								completion()
 							}
@@ -417,12 +420,10 @@ extension NewsBlurAccountDelegate {
 					}
 				}
 
-				switch result {
-				case .success(let pendingArticleIDs):
-					process(pendingArticleIDs)
-				case .failure(let error):
-					os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
-				}
+				process(pendingArticleIDs)
+
+			} catch {
+				os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
 			}
 		}
 	}

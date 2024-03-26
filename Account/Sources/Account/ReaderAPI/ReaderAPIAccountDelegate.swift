@@ -1161,9 +1161,12 @@ private extension ReaderAPIAccountDelegate {
 			return
 		}
 
-		database.selectPendingStarredStatusArticleIDs() { result in
+		Task { @MainActor in
 
-			MainActor.assumeIsolated {
+			do {
+
+				let pendingArticleIDs = (try await self.database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+
 				@MainActor func process(_ pendingArticleIDs: Set<String>) {
 					let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
@@ -1197,15 +1200,11 @@ private extension ReaderAPIAccountDelegate {
 					}
 				}
 
-				switch result {
-				case .success(let pendingArticleIDs):
-					process(pendingArticleIDs)
-				case .failure(let error):
-					os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
-				}
+				process(pendingArticleIDs)
+
+			} catch {
+				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
 			}
 		}
-		
 	}
-
 }
