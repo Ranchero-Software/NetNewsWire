@@ -274,18 +274,15 @@ import Secrets
 		
 	}
 
-	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
-		
-		activeAccounts.forEach {
-			group.enter()
-			$0.sendArticleStatus() { _ in
-				group.leave()
-			}
-		}
+	public func sendArticleStatusAll() async {
 
-		group.notify(queue: DispatchQueue.global(qos: .background)) {
-			completion?()
+		await withTaskGroup(of: Void.self) { taskGroup in
+
+			for account in activeAccounts {
+				taskGroup.addTask {
+					try? await account.sendArticleStatus()
+				}
+			}
 		}
 	}
 

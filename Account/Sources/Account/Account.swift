@@ -436,6 +436,20 @@ public enum FetchType {
 		}
 	}
 	
+	public func sendArticleStatus() async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.sendArticleStatus { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
 		delegate.syncArticleStatus(for: self, completion: completion)
 	}

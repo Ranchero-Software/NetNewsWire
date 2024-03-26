@@ -343,7 +343,8 @@ import Sparkle
 		
 		ArticleThemeDownloader.cleanUp()
 		
-		accountManager.sendArticleStatusAll() {
+		Task { @MainActor in
+			await accountManager.sendArticleStatusAll()
 			self.isShutDownSyncDone = true
 		}
 		
