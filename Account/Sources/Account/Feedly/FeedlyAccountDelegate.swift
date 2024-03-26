@@ -145,20 +145,23 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		operationQueue.add(syncAllOperation)
 	}
 	
-	@MainActor func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
+	@MainActor func syncArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			sendArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					self.refreshArticleStatus(for: account) { result in
+						switch result {
+						case .success:
+							continuation.resume()
+						case .failure(let error):
+							continuation.resume(throwing: error)
+						}
 					}
+				case .failure(let error):
+					continuation.resume(throwing: error)
 				}
-			case .failure(let error):
-				completion?(.failure(error))
 			}
 		}
 	}

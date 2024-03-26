@@ -33,7 +33,7 @@ final class AppDefaults {
 	static let shared = AppDefaults()
 	private init() {}
 	
-	static var store: UserDefaults = {
+	static let store: UserDefaults = {
 		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
 		let suiteName = "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
 		return UserDefaults.init(suiteName: suiteName)!

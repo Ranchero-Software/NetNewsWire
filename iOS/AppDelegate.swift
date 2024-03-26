@@ -453,16 +453,15 @@ private extension AppDelegate {
 
 			self.prepareAccountsForBackground()
 
-			account.syncArticleStatus(completion: { _ in
-				if !self.accountManager.isSuspended {
-					try? WidgetDataEncoder.shared.encodeWidgetData()
-					self.prepareAccountsForBackground()
-					self.suspendApplication()
-				}
-			})
+			try? await account.syncArticleStatus
+			if !self.accountManager.isSuspended {
+				try? WidgetDataEncoder.shared.encodeWidgetData()
+				self.prepareAccountsForBackground()
+				self.suspendApplication()
+			}
 		}
 	}
-	
+
 	@MainActor func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
 
 		guard let articlePathInfo = ArticlePathInfo(userInfo: userInfo) else {
@@ -489,13 +488,12 @@ private extension AppDelegate {
 
 			account.markArticles(articles, statusKey: .starred, flag: true) { _ in }
 
-			account.syncArticleStatus(completion: { _ in
-				if !self.accountManager.isSuspended {
-					try? WidgetDataEncoder.shared.encodeWidgetData()
-					self.prepareAccountsForBackground()
-					self.suspendApplication()
-				}
-			})
+			try? await account.syncArticleStatus()
+			if !self.accountManager.isSuspended {
+				try? WidgetDataEncoder.shared.encodeWidgetData()
+				self.prepareAccountsForBackground()
+				self.suspendApplication()
+			}
 		}
 	}
 }

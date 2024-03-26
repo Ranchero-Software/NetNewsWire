@@ -464,24 +464,11 @@ public enum FetchType {
 		}
 	}
 
-	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
-		delegate.syncArticleStatus(for: self, completion: completion)
-	}
-	
 	public func syncArticleStatus() async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.syncArticleStatus { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
+		try await delegate.syncArticleStatus(for: self)
 	}
-
+	
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard !delegate.isOPMLImportInProgress else {
 			completion(.failure(AccountError.opmlImportInProgress))
