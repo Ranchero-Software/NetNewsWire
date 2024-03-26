@@ -73,8 +73,9 @@ import Account
 		lastTimedRefresh = Date()
 		update()
 		
-		//AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
-		AccountManager.shared.refreshAll(completion: nil)
+		Task { @MainActor in
+			await AccountManager.shared.refreshAll()
+		}
 	}
 	
 }

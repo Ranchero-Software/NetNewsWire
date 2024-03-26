@@ -161,7 +161,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
 			$0.cleanUp(conditional: true)
 		}
-		accountManager.refreshAll(errorHandler: errorHandler)
+
+		Task { @MainActor in
+			await self.accountManager.refreshAll(errorHandler: errorHandler)
+		}
 	}
 	
 	func resumeDatabaseProcessingIfNecessary() {
@@ -183,19 +186,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
 
-		if let lastRefresh = AppDefaults.shared.lastRefresh {
-			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
-				accountManager.refreshAll(errorHandler: ErrorHandler.log)
-			} else {
-				Task { @MainActor in
+		Task { @MainActor in
+			if let lastRefresh = AppDefaults.shared.lastRefresh {
+				if Date() > lastRefresh.addingTimeInterval(15 * 60) {
+					await accountManager.refreshAll(errorHandler: ErrorHandler.log)
+				} else {
 					await accountManager.syncArticleStatusAll()
 				}
+			} else {
+				await accountManager.refreshAll(errorHandler: ErrorHandler.log)
 			}
-		} else {
-			accountManager.refreshAll(errorHandler: ErrorHandler.log)
 		}
 	}
-	
+
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 		completionHandler([.list, .banner, .badge, .sound])
     }
@@ -398,13 +401,12 @@ private extension AppDelegate {
 			if self.accountManager.isSuspended {
 				self.accountManager.resumeAll()
 			}
-			self.accountManager.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
-				if !self.accountManager.isSuspended {
-					try? WidgetDataEncoder.shared.encodeWidgetData()
-					self.suspendApplication()
-					os_log("Account refresh operation completed.", log: self.log, type: .info)
-					task.setTaskCompleted(success: true)
-				}
+			await self.accountManager.refreshAll(errorHandler: ErrorHandler.log)
+			if !self.accountManager.isSuspended {
+				try? WidgetDataEncoder.shared.encodeWidgetData()
+				self.suspendApplication()
+				os_log("Account refresh operation completed.", log: self.log, type: .info)
+				task.setTaskCompleted(success: true)
 			}
 		}
 

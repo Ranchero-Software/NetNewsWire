@@ -543,7 +543,10 @@ import Sparkle
 	}
 
 	@IBAction func refreshAll(_ sender: Any?) {
-		accountManager.refreshAll(errorHandler: ErrorHandler.present)
+
+		Task { @MainActor in
+			await accountManager.refreshAll(errorHandler: ErrorHandler.present)
+		}
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {
