@@ -13,8 +13,6 @@ import ArticlesDatabase
 import Database
 import Secrets
 
-// Main thread only.
-
 @MainActor public final class AccountManager: UnreadCountProvider {
 
 	@MainActor public static var shared: AccountManager!
@@ -78,7 +76,7 @@ import Secrets
 		return lastArticleFetchEndTime
 	}
 
-	@MainActor public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
+	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
 		return AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
 	}
 	
@@ -96,7 +94,7 @@ import Secrets
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
-	@MainActor public init(accountsFolder: String, secretsProvider: SecretsProvider) {
+	public init(accountsFolder: String, secretsProvider: SecretsProvider) {
 
 		self.accountsFolder = accountsFolder
 		self.secretsProvider = secretsProvider
@@ -127,7 +125,7 @@ import Secrets
 
 	// MARK: - API
 	
-	@MainActor public func createAccount(type: AccountType) -> Account {
+	public func createAccount(type: AccountType) -> Account {
 		let accountID = type == .cloudKit ? "iCloud" : UUID().uuidString
 		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
 
@@ -148,7 +146,7 @@ import Secrets
 		return account
 	}
 	
-	@MainActor public func deleteAccount(_ account: Account) {
+	public func deleteAccount(_ account: Account) {
 		guard !account.refreshInProgress else {
 			return
 		}
@@ -216,7 +214,7 @@ import Secrets
 		accounts.forEach { $0.resume() }
 	}
 
-	@MainActor public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
 
 		for account in activeAccounts {
 			await account.receiveRemoteNotification(userInfo: userInfo)
@@ -329,7 +327,7 @@ import Secrets
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
 
-	@MainActor public func fetchArticles(fetchType: FetchType) async throws -> Set<Article> {
+	public func fetchArticles(fetchType: FetchType) async throws -> Set<Article> {
 
 		guard activeAccounts.count > 0 else {
 			return Set<Article>()
@@ -355,7 +353,7 @@ import Secrets
 
 	// MARK: - Notifications
 	
-	@MainActor @objc func unreadCountDidInitialize(_ notification: Notification) {
+	@objc func unreadCountDidInitialize(_ notification: Notification) {
 		guard let _ = notification.object as? Account else {
 			return
 		}
@@ -364,14 +362,14 @@ import Secrets
 		}
 	}
 	
-	@MainActor @objc dynamic func unreadCountDidChange(_ notification: Notification) {
+	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		guard let _ = notification.object as? Account else {
 			return
 		}
 		updateUnreadCount()
 	}
 	
-	@MainActor @objc func accountStateDidChange(_ notification: Notification) {
+	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
 }
@@ -380,15 +378,15 @@ import Secrets
 
 private extension AccountManager {
 
-	@MainActor func updateUnreadCount() {
+	func updateUnreadCount() {
 		unreadCount = calculateUnreadCount(activeAccounts)
 	}
 
-	@MainActor func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
+	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
 		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier, secretsProvider: secretsProvider)
 	}
 
-	@MainActor func loadAccount(_ filename: String) -> Account? {
+	func loadAccount(_ filename: String) -> Account? {
 		let folderPath = (accountsFolder as NSString).appendingPathComponent(filename)
 		if let accountSpecifier = AccountSpecifier(folderPath: folderPath) {
 			return loadAccount(accountSpecifier)
@@ -396,7 +394,7 @@ private extension AccountManager {
 		return nil
 	}
 
-	@MainActor func readAccountsFromDisk() {
+	func readAccountsFromDisk() {
 		var filenames: [String]?
 
 		do {
