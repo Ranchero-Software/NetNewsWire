@@ -134,10 +134,11 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 		os_log(.debug, log: log, "Sending story statuses...")
 
-		database.selectForProcessing { result in
+		Task { @MainActor in
 
-			MainActor.assumeIsolated {
-				
+			do {
+				let syncStatuses = (try await self.database.selectForProcessing()) ?? Set<SyncStatus>()
+
 				@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
 					let createUnreadStatuses = syncStatuses.filter {
 						$0.key == SyncStatus.Key.read && $0.flag == false
@@ -151,10 +152,10 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 					let deleteStarredStatuses = syncStatuses.filter {
 						$0.key == SyncStatus.Key.starred && $0.flag == false
 					}
-					
+
 					let group = DispatchGroup()
 					var errorOccurred = false
-					
+
 					group.enter()
 					self.sendStoryStatuses(createUnreadStatuses, throttle: true, apiCall: self.caller.markAsUnread) { result in
 						group.leave()
@@ -162,7 +163,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 							errorOccurred = true
 						}
 					}
-					
+
 					group.enter()
 					self.sendStoryStatuses(deleteUnreadStatuses, throttle: false, apiCall: self.caller.markAsRead) { result in
 						group.leave()
@@ -170,7 +171,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 							errorOccurred = true
 						}
 					}
-					
+
 					group.enter()
 					self.sendStoryStatuses(createStarredStatuses, throttle: true, apiCall: self.caller.star) { result in
 						group.leave()
@@ -178,7 +179,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 							errorOccurred = true
 						}
 					}
-					
+
 					group.enter()
 					self.sendStoryStatuses(deleteStarredStatuses, throttle: true, apiCall: self.caller.unstar) { result in
 						group.leave()
@@ -186,7 +187,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 							errorOccurred = true
 						}
 					}
-					
+
 					group.notify(queue: DispatchQueue.main) {
 						os_log(.debug, log: self.log, "Done sending article statuses.")
 						if errorOccurred {
@@ -196,13 +197,10 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 						}
 					}
 				}
-				
-				switch result {
-				case .success(let syncStatuses):
-					processStatuses(syncStatuses)
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
+
+				processStatuses(Array(syncStatuses))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}

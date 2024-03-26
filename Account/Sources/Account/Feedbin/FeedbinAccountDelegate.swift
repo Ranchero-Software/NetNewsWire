@@ -134,18 +134,21 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 		os_log(.debug, log: log, "Sending article statuses...")
 
-		database.selectForProcessing { result in
+		Task { @MainActor in
 
-			MainActor.assumeIsolated {
+			do {
+
+				let syncStatuses = (try await self.database.selectForProcessing()) ?? Set<SyncStatus>()
+
 				@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
 					let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 					let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
 					let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
 					let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
-					
+
 					let group = DispatchGroup()
 					var errorOccurred = false
-					
+
 					group.enter()
 					self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) { result in
 						group.leave()
@@ -153,7 +156,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 							errorOccurred = true
 						}
 					}
-					
+
 					group.enter()
 					self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) { result in
 						group.leave()
@@ -161,7 +164,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 							errorOccurred = true
 						}
 					}
-					
+
 					group.enter()
 					self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) { result in
 						group.leave()
@@ -169,7 +172,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 							errorOccurred = true
 						}
 					}
-					
+
 					group.enter()
 					self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) { result in
 						group.leave()
@@ -177,7 +180,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 							errorOccurred = true
 						}
 					}
-					
+
 					group.notify(queue: DispatchQueue.main) {
 						os_log(.debug, log: self.log, "Done sending article statuses.")
 						if errorOccurred {
@@ -187,13 +190,11 @@ final class FeedbinAccountDelegate: AccountDelegate {
 						}
 					}
 				}
-				
-				switch result {
-				case .success(let syncStatuses):
-					processStatuses(syncStatuses)
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
+
+				processStatuses(Array(syncStatuses))
+
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}

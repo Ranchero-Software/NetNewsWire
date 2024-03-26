@@ -110,34 +110,6 @@ public actor SyncDatabase {
 	}
 }
 
-// MARK: - Compatibility
-
-// Use the below until switching to the async version of the API.
-
-public typealias SyncStatusesResult = Result<Array<SyncStatus>, DatabaseError>
-public typealias SyncStatusesCompletionBlock = @Sendable (SyncStatusesResult) -> Void
-
-public typealias SyncStatusArticleIDsResult = Result<Set<String>, DatabaseError>
-public typealias SyncStatusArticleIDsCompletionBlock = @Sendable (SyncStatusArticleIDsResult) -> Void
-
-public extension SyncDatabase {
-
-	nonisolated func selectForProcessing(limit: Int? = nil, completion: @escaping SyncStatusesCompletionBlock) {
-
-		Task { @MainActor in
-			do {
-				if let syncStatuses = try await self.selectForProcessing(limit: limit) {
-					completion(.success(Array(syncStatuses)))
-				} else {
-					completion(.success([SyncStatus]()))
-				}
-			} catch {
-				completion(.failure(DatabaseError.suspended))
-			}
-		}
-	}
-}
-
 private extension SyncDatabase {
 
 	static let creationStatements = """

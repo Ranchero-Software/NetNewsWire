@@ -67,43 +67,39 @@ class CloudKitSendStatusOperation: MainThreadOperation {
 }
 
 private extension CloudKitSendStatusOperation {
-	
+
 	func selectForProcessing() {
-		database.selectForProcessing(limit: blockSize) { result in
 
-			MainActor.assumeIsolated {
-				switch result {
-				case .success(let syncStatuses):
+		Task { @MainActor in
 
-					@MainActor func stopProcessing() {
-						if self.showProgress {
-							self.refreshProgress?.completeTask()
-						}
-						os_log(.debug, log: self.log, "Done sending article statuses.")
-						self.operationDelegate?.operationDidComplete(self)
-					}
-
-					guard syncStatuses.count > 0 else {
-						stopProcessing()
-						return
-					}
-
-					self.processStatuses(syncStatuses) { stop in
-						if stop {
-							stopProcessing()
-						} else {
-							self.selectForProcessing()
-						}
-					}
-
-				case .failure(let databaseError):
-					os_log(.error, log: self.log, "Send status error: %@.", databaseError.localizedDescription)
-					self.operationDelegate?.cancelOperation(self)
+			@MainActor func stopProcessing() {
+				if self.showProgress {
+					self.refreshProgress?.completeTask()
 				}
+				os_log(.debug, log: self.log, "Done sending article statuses.")
+				self.operationDelegate?.operationDidComplete(self)
+			}
+
+			do {
+				guard let syncStatuses = try await self.database.selectForProcessing(limit: blockSize), !syncStatuses.isEmpty else {
+					stopProcessing()
+					return
+				}
+
+				self.processStatuses(Array(syncStatuses)) { stop in
+					if stop {
+						stopProcessing()
+					} else {
+						self.selectForProcessing()
+					}
+				}
+			} catch {
+				os_log(.error, log: self.log, "Send status error: %@.", error.localizedDescription)
+				self.operationDelegate?.cancelOperation(self)
 			}
 		}
 	}
-	
+
 	@MainActor func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
 		guard let account = account, let articlesZone = articlesZone else {
 			completion(true)

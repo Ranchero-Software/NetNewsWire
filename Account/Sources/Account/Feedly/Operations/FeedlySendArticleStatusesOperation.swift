@@ -28,19 +28,13 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 	override func run() {
 		os_log(.debug, log: log, "Sending article statuses...")
 
-		database.selectForProcessing { result in
-			MainActor.assumeIsolated {
-				if self.isCanceled {
-					self.didFinish()
-					return
-				}
+		Task { @MainActor in
 
-				switch result {
-				case .success(let syncStatuses):
-					self.processStatuses(syncStatuses)
-				case .failure:
-					self.didFinish()
-				}
+			do {
+				let syncStatuses = (try await self.database.selectForProcessing()) ?? Set<SyncStatus>()
+				self.processStatuses(Array(syncStatuses))
+			} catch {
+				self.didFinish()
 			}
 		}
 	}

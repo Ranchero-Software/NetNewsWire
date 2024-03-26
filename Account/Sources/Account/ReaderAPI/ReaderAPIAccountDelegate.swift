@@ -199,52 +199,53 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+
 		os_log(.debug, log: log, "Sending article statuses...")
 
-		database.selectForProcessing { result in
+		Task { @MainActor in
 
-			MainActor.assumeIsolated {
-				
+			do {
+
+				let syncStatuses = (try await self.database.selectForProcessing()) ?? Set<SyncStatus>()
+
 				@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
+					
 					let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 					let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
 					let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
 					let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
-					
+
 					let group = DispatchGroup()
-					
+
 					group.enter()
 					self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) {
 						group.leave()
 					}
-					
+
 					group.enter()
 					self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) {
 						group.leave()
 					}
-					
+
 					group.enter()
 					self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) {
 						group.leave()
 					}
-					
+
 					group.enter()
 					self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) {
 						group.leave()
 					}
-					
+
 					group.notify(queue: DispatchQueue.main) {
 						os_log(.debug, log: self.log, "Done sending article statuses.")
 						completion(.success(()))
 					}
 				}
-				
-				switch result {
-				case .success(let syncStatuses):
-					processStatuses(syncStatuses)
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
+
+				processStatuses(Array(syncStatuses))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}
