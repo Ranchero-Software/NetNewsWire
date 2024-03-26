@@ -514,14 +514,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
 
-				self.database.insertStatuses(syncStatuses) { _ in
+				Task { @MainActor in
 
-					Task { @MainActor in
-						if let count = try? await self.database.selectPendingCount(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
+					try? await self.database.insertStatuses(syncStatuses)
+
+					if let count = try? await self.database.selectPendingCount(), count > 100 {
+						self.sendArticleStatus(for: account) { _ in }
 					}
+					completion(.success(()))
 				}
 			case .failure(let error):
 				completion(.failure(error))

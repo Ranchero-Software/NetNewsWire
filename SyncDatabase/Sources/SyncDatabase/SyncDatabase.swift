@@ -122,18 +122,6 @@ public typealias SyncStatusArticleIDsCompletionBlock = @Sendable (SyncStatusArti
 
 public extension SyncDatabase {
 
-	nonisolated func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
-
-		Task { @MainActor in
-			do {
-				try await self.insertStatuses(statuses)
-				completion(nil)
-			} catch {
-				completion(DatabaseError.suspended)
-			}
-		}
-	}
-
 	nonisolated func selectForProcessing(limit: Int? = nil, completion: @escaping SyncStatusesCompletionBlock) {
 
 		Task { @MainActor in

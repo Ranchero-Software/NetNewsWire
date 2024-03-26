@@ -619,22 +619,24 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				let syncStatuses = articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
-				
-				self.database.insertStatuses(syncStatuses) { _ in
-					
-					Task { @MainActor in
-						if let count = try? await self.database.selectPendingCount(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
+
+				Task { @MainActor in
+
+					try? await self.database.insertStatuses(syncStatuses)
+
+					if let count = try? await self.database.selectPendingCount(), count > 100 {
+						self.sendArticleStatus(for: account) { _ in }
 					}
+					
+					completion(.success(()))
 				}
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
 		}
 	}
-	
+
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
 	}

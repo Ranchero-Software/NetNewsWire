@@ -145,24 +145,23 @@ private extension CloudKitArticlesZoneDelegate {
 				for (feedID, parsedItems) in feedIDsAndItems {
 					group.enter()
 					self.account?.update(feedID, with: parsedItems, deleteOlder: false) { result in
-						MainActor.assumeIsolated {
+						Task { @MainActor in
 							switch result {
 							case .success(let articleChanges):
 								guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
 									group.leave()
 									return
 								}
+								
 								let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
-								self.database.insertStatuses(syncStatuses) { _ in
-									group.leave()
-								}
+								try? await self.database.insertStatuses(syncStatuses)
+								group.leave()
 							case .failure(let databaseError):
 								errorOccurred = true
 								os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
 								group.leave()
 							}
 						}
-						group.leave()
 					}
 				}
 			}
