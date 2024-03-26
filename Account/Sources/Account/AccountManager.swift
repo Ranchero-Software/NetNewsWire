@@ -289,21 +289,18 @@ import Secrets
 		}
 	}
 
-	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
-		
-		activeAccounts.forEach {
-			group.enter()
-			$0.syncArticleStatus() { _ in
-				group.leave()
+	public func syncArticleStatusAll() async {
+
+		await withTaskGroup(of: Void.self) { taskGroup in
+
+			for account in activeAccounts {
+				taskGroup.addTask {
+					try? await account.syncArticleStatus()
+				}
 			}
 		}
-
-		group.notify(queue: DispatchQueue.global(qos: .background)) {
-			completion?()
-		}
 	}
-	
+
 	public func saveAll() {
 		accounts.forEach { $0.save() }
 	}

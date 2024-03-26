@@ -187,7 +187,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				accountManager.refreshAll(errorHandler: ErrorHandler.log)
 			} else {
-				accountManager.syncArticleStatusAll()
+				Task { @MainActor in
+					await accountManager.syncArticleStatusAll()
+				}
 			}
 		} else {
 			accountManager.refreshAll(errorHandler: ErrorHandler.log)
@@ -331,9 +333,8 @@ private extension AppDelegate {
 		}
 		
 		Task { @MainActor in
-			self.accountManager.syncArticleStatusAll() {
-				completeProcessing()
-			}
+			await self.accountManager.syncArticleStatusAll()
+			completeProcessing()
 		}
 	}
 	
