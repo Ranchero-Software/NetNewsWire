@@ -69,7 +69,16 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		database = SyncDatabase(databasePath: databasePath)
 	}
 	
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+
+		await withCheckedContinuation { continuation in
+			self.receiveRemoteNotification(for: account, userInfo: userInfo) {
+				continuation.resume()
+			}
+		}
+	}
+
+	private func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
 		op.completionBlock = { mainThreadOperaion in
 			completion()

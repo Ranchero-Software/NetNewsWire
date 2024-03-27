@@ -40,8 +40,7 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	let refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		completion()
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 	
 	func refreshAll(for account: Account) async throws {

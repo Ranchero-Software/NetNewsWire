@@ -57,10 +57,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		database = SyncDatabase(databasePath: dataFolder.appending("/DB.sqlite3"))
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		completion()
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
-	
+
 	func refreshAll(for account: Account) async throws {
 
 		try await withCheckedThrowingContinuation { continuation in
