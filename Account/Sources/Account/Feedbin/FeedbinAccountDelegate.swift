@@ -590,7 +590,21 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.markArticles(for: account, articles: articles, statusKey: statusKey, flag: flag) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		account.update(articles, statusKey: statusKey, flag: flag) { result in
 			switch result {
 			case .success(let articles):

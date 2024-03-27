@@ -23,11 +23,12 @@ import Account
 			continue
 		}
 		group.enter()
-		account.markArticles(accountArticles, statusKey: statusKey, flag: flag) { _ in
+		Task { @MainActor in
+			try? await account.markArticles(accountArticles, statusKey: statusKey, flag: flag)
 			group.leave()
 		}
 	}
-	
+
 	group.notify(queue: .main) {
 		completion?()
 	}

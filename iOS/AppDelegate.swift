@@ -449,11 +449,11 @@ private extension AppDelegate {
 				return
 			}
 
-			account.markArticles(articles, statusKey: .read, flag: true) { _ in }
+			try? await account.markArticles(articles, statusKey: .read, flag: true)
 
 			self.prepareAccountsForBackground()
 
-			try? await account.syncArticleStatus
+			try? await account.syncArticleStatus()
 			if !self.accountManager.isSuspended {
 				try? WidgetDataEncoder.shared.encodeWidgetData()
 				self.prepareAccountsForBackground()
@@ -486,7 +486,7 @@ private extension AppDelegate {
 				return
 			}
 
-			account.markArticles(articles, statusKey: .starred, flag: true) { _ in }
+			try? await account.markArticles(articles, statusKey: .starred, flag: true)
 
 			try? await account.syncArticleStatus()
 			if !self.accountManager.isSuspended {

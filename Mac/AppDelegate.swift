@@ -1001,7 +1001,7 @@ private extension AppDelegate {
 				return
 			}
 
-			account.markArticles(articles, statusKey: .read, flag: true) { _ in }
+			try? await account.markArticles(articles, statusKey: .read, flag: true)
 		}
 	}
 	
@@ -1022,7 +1022,7 @@ private extension AppDelegate {
 				return
 			}
 
-			account.markArticles(articles, statusKey: .starred, flag: true) { _ in }
+			try? await account.markArticles(articles, statusKey: .starred, flag: true)
 		}
 	}
 }
