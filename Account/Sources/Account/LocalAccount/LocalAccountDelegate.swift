@@ -161,8 +161,9 @@ final class LocalAccountDelegate: AccountDelegate {
 	func accountWillBeDeleted(_ account: Account) {
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider, completion: (Result<Credentials?, Error>) -> Void) {
-		return completion(.success(nil))
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
+
+		return nil
 	}
 
 	// MARK: Suspend and Resume (for iOS)

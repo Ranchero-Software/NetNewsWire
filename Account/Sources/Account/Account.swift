@@ -358,15 +358,34 @@ public enum FetchType {
 	}
 	
 	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		switch type {
-		case .feedbin:
-			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, secretsProvider: secretsProvider, completion: completion)
-		case .newsBlur:
-			NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, secretsProvider: secretsProvider, completion: completion)
-		case .freshRSS, .inoreader, .bazQux, .theOldReader:
-			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider, completion: completion)
-		default:
-			break
+
+		Task { @MainActor in
+
+			do {
+				switch type {
+
+				case .feedbin:
+
+					let credentials = try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
+					completion(.success(credentials))
+
+				case .newsBlur:
+
+					let credentials = try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
+					completion(.success(credentials))
+
+				case .freshRSS, .inoreader, .bazQux, .theOldReader:
+
+					let credentials = try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
+					completion(.success(credentials))
+
+				default:
+					completion(.success(nil))
+				}
+
+			} catch {
+				completion(.failure(error))
+			}
 		}
 	}
 	

@@ -647,8 +647,23 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	func accountWillBeDeleted(_ account: Account) {
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider) { result in
+				switch result {
+				case .success(let credentials):
+					continuation.resume(returning: credentials)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials
 		caller.validateCredentials() { result in
