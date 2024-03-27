@@ -25,7 +25,7 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	weak var account: Account?
 	
-	private lazy var refresher: LocalAccountRefresher? = {
+	private lazy var refresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()
 		refresher.delegate = self
 		return refresher
@@ -44,28 +44,19 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion()
 	}
 	
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
+
 		guard refreshProgress.isComplete else {
-			completion(.success(()))
 			return
 		}
 
 		let feeds = account.flattenedFeeds()
 		refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
 
-		let group = DispatchGroup()
+		await refresher.refreshFeeds(feeds)
 
-		group.enter()
-		refresher?.refreshFeeds(feeds) {
-			group.leave()
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			self.refreshProgress.clear()
-			account.metadata.lastArticleFetchEndTime = Date()
-			completion(.success(()))
-		}
-		
+		self.refreshProgress.clear()
+		account.metadata.lastArticleFetchEndTime = Date()
 	}
 
 	func syncArticleStatus(for account: Account) async throws {
@@ -205,7 +196,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	// MARK: Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
-		refresher?.suspend()
+		refresher.suspend()
 	}
 
 	func suspendDatabase() {
@@ -213,7 +204,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func resume() {
-		refresher?.resume()
+		refresher.resume()
 	}
 }
 

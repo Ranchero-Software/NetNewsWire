@@ -79,37 +79,38 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		completion()
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
-		
-		refreshAccount(account) { result in
-			switch result {
-			case .success():
 
-				self.refreshArticlesAndStatuses(account) { result in
-					switch result {
-					case .success():
-						completion(.success(()))
-					case .failure(let error):
-						DispatchQueue.main.async {
-							self.refreshProgress.clear()
-							let wrappedError = AccountError.wrappedError(error: error, account: account)
-							completion(.failure(wrappedError))
+		try await withCheckedThrowingContinuation { continuation in
+
+			refreshAccount(account) { result in
+				switch result {
+				case .success():
+
+					self.refreshArticlesAndStatuses(account) { result in
+						switch result {
+						case .success():
+							continuation.resume()
+						case .failure(let error):
+							DispatchQueue.main.async {
+								self.refreshProgress.clear()
+								let wrappedError = AccountError.wrappedError(error: error, account: account)
+								continuation.resume(throwing: wrappedError)
+							}
 						}
 					}
-				}
-				
-			case .failure(let error):
-				DispatchQueue.main.async {
-					self.refreshProgress.clear()
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+
+				case .failure(let error):
+					DispatchQueue.main.async {
+						self.refreshProgress.clear()
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						continuation.resume(throwing: wrappedError)
+					}
 				}
 			}
-			
 		}
-		
 	}
 
 	func syncArticleStatus(for account: Account) async throws {

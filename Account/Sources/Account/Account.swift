@@ -421,22 +421,9 @@ public enum FetchType {
 		}
 	}
 
-	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.refreshAll(for: self, completion: completion)
-	}
-
 	public func refreshAll() async throws {
-
-		try await withCheckedThrowingContinuation { continuation in
-			self.refreshAll { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
+		
+		try await delegate.refreshAll(for: self)
 	}
 
 	public func sendArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
@@ -481,7 +468,9 @@ public enum FetchType {
 				guard let self = self else { return }
 				// Reset the last fetch date to get the article history for the added feeds.
 				self.metadata.lastArticleFetchStartTime = nil
-				self.delegate.refreshAll(for: self, completion: completion)
+				Task { @MainActor in
+					try? await self.refreshAll()
+				}
 			case .failure(let error):
 				completion(.failure(error))
 			}

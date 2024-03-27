@@ -180,15 +180,14 @@ class ReaderAPIAccountViewController: UITableViewController {
 
 						self.dismiss(animated: true, completion: nil)
 						
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
+						Task { @MainActor in
+							do {
+								try await self.account?.refreshAll()
+							} catch {
 								self.showError(NSLocalizedString(error.localizedDescription, comment: "Accoount Refresh Error"))
 							}
 						}
-						
+
 						self.delegate?.dismiss()
 					} catch {
 						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))

@@ -108,7 +108,21 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		completion()
 	}
 
-	@MainActor func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshAll(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		assert(Thread.isMainThread)
 		
 		guard currentSyncAllOperation == nil else {

@@ -139,16 +139,15 @@ class FeedbinAccountViewController: UITableViewController {
 							try self.account?.removeCredentials(type: .basic)
 						} catch {}
 						try self.account?.storeCredentials(credentials)
-						
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
+
+						Task { @MainActor in
+							do {
+								try await self.account?.refreshAll()
+							} catch {
 								self.presentError(error)
 							}
 						}
-						
+
 						self.dismiss(animated: true, completion: nil)
 						self.delegate?.dismiss()
 					} catch {

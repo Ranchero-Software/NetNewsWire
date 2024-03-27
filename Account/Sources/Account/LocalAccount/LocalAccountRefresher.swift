@@ -28,7 +28,7 @@ final class LocalAccountRefresher {
 		return DownloadSession(delegate: self)
 	}()
 
-	public func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
+	private func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
 		guard !feeds.isEmpty else {
 			completion?()
 			return
@@ -37,6 +37,15 @@ final class LocalAccountRefresher {
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
 	
+	public func refreshFeeds(_ feeds: Set<Feed>) async {
+
+		await withCheckedContinuation { continuation in
+			self.refreshFeeds(feeds) {
+				continuation.resume()
+			}
+		}
+	}
+
 	public func suspend() {
 		downloadSession.cancelAll()
 		isSuspended = true

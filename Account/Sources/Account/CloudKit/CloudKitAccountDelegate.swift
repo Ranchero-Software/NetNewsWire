@@ -79,20 +79,28 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 	}
 	
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
+		
 		guard refreshProgress.isComplete else {
-			completion(.success(()))
 			return
 		}
 
 		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
 		var flags = SCNetworkReachabilityFlags()
 		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
-			completion(.success(()))
 			return
 		}
 			
-		standardRefreshAll(for: account, completion: completion)
+		try await withCheckedThrowingContinuation { continuation in
+			self.standardRefreshAll(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
 	}
 
 	func syncArticleStatus(for account: Account) async throws {
@@ -582,15 +590,9 @@ private extension CloudKitAccountDelegate {
 
 	func combinedRefresh(_ account: Account, _ feeds: Set<Feed>, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		let group = DispatchGroup()
-
-		group.enter()
-		refresher.refreshFeeds(feeds) {
-			group.leave()
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-            completion(.success(()))
+		Task { @MainActor in
+			await self.refresher.refreshFeeds(feeds)
+			completion(.success(()))
 		}
 	}
 	

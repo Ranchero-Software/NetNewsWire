@@ -127,11 +127,10 @@ class NewsBlurAccountViewController: UITableViewController {
 						try self.account?.storeCredentials(basicCredentials)
 						try self.account?.storeCredentials(sessionCredentials)
 
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
+						Task { @MainActor in
+							do {
+								try await self.account?.refreshAll()
+							} catch {
 								self.presentError(error)
 							}
 						}
