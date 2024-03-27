@@ -339,12 +339,12 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+	func createFolder(for account: Account, name: String) async throws -> Folder {
+
+		guard let folder = account.ensureFolder(with: name) else {
+			throw FeedbinAccountDelegateError.invalidParameter
 		}
+		return folder
 	}
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {

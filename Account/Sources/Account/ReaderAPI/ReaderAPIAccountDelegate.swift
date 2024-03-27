@@ -340,15 +340,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	func importOPML(for account:Account, opmlFile: URL) async throws {
 	}
-	
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+
+	func createFolder(for account: Account, name: String) async throws -> Folder {
+
+		guard let folder = account.ensureFolder(with: name) else {
+			throw ReaderAPIAccountDelegateError.invalidParameter
 		}
+		return folder
 	}
-	
+
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(1)

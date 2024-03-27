@@ -620,8 +620,8 @@ public enum FetchType {
 		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
 	
-	public func addFolder(_ name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		delegate.createFolder(for: self, name: name, completion: completion)
+	public func addFolder(_ name: String) async throws -> Folder {
+		try await delegate.createFolder(for: self, name: name)
 	}
 	
 	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

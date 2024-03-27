@@ -396,7 +396,22 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	func importOPML(for account: Account, opmlFile: URL) async throws {
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
+	func createFolder(for account: Account, name: String) async throws -> Folder {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.createFolder(for: account, name: name) { result in
+				switch result {
+				case .success(let folder):
+					continuation.resume(returning: folder)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
 		self.refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		caller.addFolder(named: name) { result in

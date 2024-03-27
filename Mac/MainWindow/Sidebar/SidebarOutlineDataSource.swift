@@ -424,14 +424,17 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func copyFolderBetweenAccounts(node: Node, to parentNode: Node) {
+		
 		guard let folder = node.representedObject as? Folder,
 			let destinationAccount = nodeAccount(parentNode) else {
 				return
 		}
 
-		destinationAccount.addFolder(folder.name ?? "") { result in
-			switch result {
-			case .success(let destinationFolder):
+		Task { @MainActor in
+
+			do {
+				let destinationFolder = try await destinationAccount.addFolder(folder.name ?? "")
+
 				for feed in folder.topLevelFeeds {
 					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
@@ -453,11 +456,11 @@ private extension SidebarOutlineDataSource {
 						}
 					}
 				}
-			case .failure(let error):
+
+			} catch {
 				NSApplication.shared.presentError(error)
 			}
 		}
-
 	}
 
 	func acceptLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {

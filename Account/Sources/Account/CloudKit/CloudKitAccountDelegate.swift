@@ -332,7 +332,22 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 	}
 	
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+	func createFolder(for account: Account, name: String) async throws -> Folder {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.createFolder(for: account, name: name) { result in
+				switch result {
+				case .success(let folder):
+					continuation.resume(returning: folder)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.createFolder(name: name) { result in
 			self.refreshProgress.completeTask()
