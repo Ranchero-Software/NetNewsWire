@@ -47,12 +47,12 @@ private extension NNW3ImportController {
 		guard let opmlURL = convertToOPMLFile(subscriptionsPlistURL: subscriptionsPlistURL) else {
 			return
 		}
-		account.importOPML(opmlURL) { result in
-			try? FileManager.default.removeItem(at: opmlURL)
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
+
+		Task { @MainActor in
+			do {
+				try await account.importOPML(opmlURL)
+				try? FileManager.default.removeItem(at: opmlURL)
+			} catch {
 				NSApplication.shared.presentError(error)
 			}
 		}

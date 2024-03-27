@@ -10,7 +10,7 @@ import AppKit
 import Account
 import UniformTypeIdentifiers
 
-class ImportOPMLWindowController: NSWindowController {
+final class ImportOPMLWindowController: NSWindowController {
 
 	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
 	private weak var hostWindow: NSWindow?
@@ -90,18 +90,17 @@ class ImportOPMLWindowController: NSWindowController {
 		panel.allowsOtherFileTypes = false
 		
 		panel.beginSheetModal(for: hostWindow!) { modalResult in
-			if modalResult == NSApplication.ModalResponse.OK, let url = panel.url {
-				account.importOPML(url) { result in
-					switch result {
-					case .success:
-						break
-					case .failure(let error):
-						NSApplication.shared.presentError(error)
-					}
+			guard modalResult == NSApplication.ModalResponse.OK, let url = panel.url else {
+				return
+			}
+
+			Task { @MainActor in
+				do {
+					try await account.importOPML(url)
+				} catch {
+					NSApplication.shared.presentError(error)
 				}
 			}
 		}
-		
 	}
-
 }

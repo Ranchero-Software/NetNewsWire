@@ -67,50 +67,21 @@ final class LocalAccountDelegate: AccountDelegate {
 	func refreshArticleStatus(for account: Account) async throws {
 	}
 	
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+	func importOPML(for account:Account, opmlFile: URL) async throws {
 
-		Task { @MainActor in
-			var fileData: Data?
+		let opmlData = try Data(contentsOf: opmlFile)
+		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
 
-			do {
-				fileData = try Data(contentsOf: opmlFile)
-			} catch {
-				completion(.failure(error))
-				return
-			}
+		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+		guard let children = opmlDocument.children else {
+			return
+		}
 
-			guard let opmlData = fileData else {
-				completion(.success(()))
-				return
-			}
-
-			let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-			var opmlDocument: RSOPMLDocument?
-
-			do {
-				opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-			} catch {
-				completion(.failure(error))
-				return
-			}
-
-			guard let loadDocument = opmlDocument else {
-				completion(.success(()))
-				return
-			}
-
-			guard let children = loadDocument.children else {
-				return
-			}
-
-			BatchUpdate.shared.perform {
-				account.loadOPMLItems(children)
-			}
-
-			completion(.success(()))
+		BatchUpdate.shared.perform {
+			account.loadOPMLItems(children)
 		}
 	}
-	
+
 	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))

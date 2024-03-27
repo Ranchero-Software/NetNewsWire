@@ -30,7 +30,7 @@ import Secrets
 	func sendArticleStatus(for account: Account) async throws
 	func refreshArticleStatus(for account: Account) async throws
 	
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void)
+	func importOPML(for account:Account, opmlFile: URL) async throws
 	
 	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void)
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)

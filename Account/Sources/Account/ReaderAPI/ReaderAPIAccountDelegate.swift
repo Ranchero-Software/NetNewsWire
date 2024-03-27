@@ -338,7 +338,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+	func importOPML(for account:Account, opmlFile: URL) async throws {
 	}
 	
 	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {

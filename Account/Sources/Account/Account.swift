@@ -428,28 +428,22 @@ public enum FetchType {
 		try await delegate.syncArticleStatus(for: self)
 	}
 	
-	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func importOPML(_ opmlFile: URL) async throws {
+
 		guard !delegate.isOPMLImportInProgress else {
-			completion(.failure(AccountError.opmlImportInProgress))
-			return
+			throw AccountError.opmlImportInProgress
 		}
-		
-		delegate.importOPML(for: self, opmlFile: opmlFile) { [weak self] result in
-			switch result {
-			case .success:
-				guard let self = self else { return }
-				// Reset the last fetch date to get the article history for the added feeds.
-				self.metadata.lastArticleFetchStartTime = nil
-				Task { @MainActor in
-					try? await self.refreshAll()
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+
+		try await delegate.importOPML(for: self, opmlFile: opmlFile)
+
+		// Reset the last fetch date to get the article history for the added feeds.
+		metadata.lastArticleFetchStartTime = nil
+
+		Task { @MainActor in
+			try? await self.refreshAll()
 		}
-		
 	}
-	
+
 	public func suspendNetwork() {
 		delegate.suspendNetwork()
 	}

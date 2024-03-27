@@ -12,9 +12,11 @@ import Account
 @MainActor struct DefaultFeedsImporter {
 	
 	static func importDefaultFeeds(account: Account) {
-		let defaultFeedsURL = Bundle.main.url(forResource: "DefaultFeeds", withExtension: "opml")!
-		AccountManager.shared.defaultAccount.importOPML(defaultFeedsURL) { result in }
-	}
-	
-}
 
+		let defaultFeedsURL = Bundle.main.url(forResource: "DefaultFeeds", withExtension: "opml")!
+
+		Task { @MainActor in
+			try? await AccountManager.shared.defaultAccount.importOPML(defaultFeedsURL)
+		}
+	}
+}

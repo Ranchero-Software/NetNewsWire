@@ -349,12 +349,13 @@ class SettingsViewController: UITableViewController {
 extension SettingsViewController: UIDocumentPickerDelegate {
 
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+		
 		for url in urls {
-			opmlAccount?.importOPML(url) { result in
-				switch result {
-				case .success:
-					break
-				case .failure:
+
+			Task { @MainActor in
+				do {
+					try await opmlAccount?.importOPML(url)
+				} catch {
 					let title = NSLocalizedString("Import Failed", comment: "Import Failed")
 					let message = NSLocalizedString("We were unable to process the selected file.  Please ensure that it is a properly formatted OPML file.", comment: "Import Failed Message")
 					self.presentError(title: title, message: message)
@@ -362,7 +363,6 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 			}
 		}
 	}
-
 }
 
 // MARK: Private
