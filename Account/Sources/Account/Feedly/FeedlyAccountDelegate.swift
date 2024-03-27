@@ -207,13 +207,27 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		operationQueue.add(send)
 	}
 	
+	func refreshArticleStatus(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	/// Attempts to ensure local articles have the same status as they do remotely.
 	/// So if the user is using another client roughly simultaneously with this app,
 	/// this app does its part to ensure the articles have a consistent status between both.
 	///
 	/// - Parameter account: The account whose articles have a remote status.
 	/// - Parameter completion: Call on the main queue.
-	@MainActor func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	private func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard let credentials = credentials else {
 			return completion(.success(()))
 		}

@@ -142,7 +142,20 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		sendArticleStatus(for: account, showProgress: false, completion: completion)
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func refreshArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
 		op.completionBlock = { mainThreadOperation in
 			Task { @MainActor in

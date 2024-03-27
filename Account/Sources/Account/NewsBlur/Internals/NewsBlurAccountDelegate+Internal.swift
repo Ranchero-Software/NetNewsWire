@@ -505,9 +505,10 @@ extension NewsBlurAccountDelegate {
 
 		// Download the initial articles
 		downloadFeed(account: account, feed: feed, page: 1) { result in
-			self.refreshArticleStatus(for: account) { result in
-				switch result {
-				case .success:
+
+			Task { @MainActor in
+				do {
+					try await self.refreshArticleStatus(for: account)
 					self.refreshMissingStories(for: account) { result in
 						switch result {
 						case .success:
@@ -521,8 +522,7 @@ extension NewsBlurAccountDelegate {
 							completion(.failure(error))
 						}
 					}
-
-				case .failure(let error):
+				} catch {
 					completion(.failure(error))
 				}
 			}
