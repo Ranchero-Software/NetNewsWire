@@ -555,7 +555,21 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	@MainActor func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFolder(for account: Account, folder: Folder) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.restoreFolder(for: account, folder: folder) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelFeeds {

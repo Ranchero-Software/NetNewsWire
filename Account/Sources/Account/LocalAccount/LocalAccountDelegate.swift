@@ -135,9 +135,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFolder(for account: Account, folder: Folder) async throws {
 		account.addFolder(folder)
-		completion(.success(()))
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {

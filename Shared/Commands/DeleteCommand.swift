@@ -46,7 +46,7 @@ import Core
 	}
 
 	func perform() {
-		
+
 		let group = DispatchGroup()
 		itemSpecifiers.forEach {
 			group.enter()
@@ -54,14 +54,14 @@ import Core
 				group.leave()
 			}
 		}
-	
+
 		group.notify(queue: DispatchQueue.main) {
 			self.treeController?.rebuild()
 			self.registerUndo()
 		}
-		
+
 	}
-	
+
 	func undo() {
 		itemSpecifiers.forEach { $0.restore() }
 		registerRedo()
@@ -137,36 +137,36 @@ import Core
 
 		self.account = account!
 		self.path = ContainerPath(account: account!, folders: node.containingFolders())
-		
+
 		self.errorHandler = errorHandler
-		
+
 	}
 
 	func delete(completion: @escaping () -> Void) {
 
 		if let feed = feed {
-			
+
 			guard let container = path.resolveContainer() else {
 				completion()
 				return
 			}
-			
+
 			BatchUpdate.shared.start()
 			account?.removeFeed(feed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-			
+
 		} else if let folder = folder {
-			
+
 			BatchUpdate.shared.start()
 			account?.removeFolder(folder) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-			
+
 		}
 	}
 
@@ -185,31 +185,36 @@ import Core
 		guard let account = account, let feed = feed, let container = path.resolveContainer() else {
 			return
 		}
-		
+
 		BatchUpdate.shared.start()
 		account.restoreFeed(feed, container: container) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-		
+
 	}
 
 	private func restoreFolder() {
 
-		guard let account = account, let folder = folder else {
+		guard let account, let folder else {
 			return
 		}
-		
-		BatchUpdate.shared.start()
-		account.restoreFolder(folder) { result in
-			BatchUpdate.shared.end()
-			self.checkResult(result)
+
+		Task { @MainActor in
+			BatchUpdate.shared.start()
+			do {
+				try await account.restoreFolder(folder)
+				BatchUpdate.shared.end()
+
+			} catch {
+				BatchUpdate.shared.end()
+				self.errorHandler(error)
+			}
 		}
-		
 	}
 
 	private func checkResult(_ result: Result<Void, Error>) {
-		
+
 		switch result {
 		case .success:
 			break
@@ -218,11 +223,11 @@ import Core
 		}
 
 	}
-	
+
 }
 
 private extension Node {
-	
+
 	func parentFolder() -> Folder? {
 
 		guard let parentNode = self.parent else {

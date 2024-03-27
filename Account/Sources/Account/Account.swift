@@ -651,8 +651,8 @@ public enum FetchType {
 		delegate.renameFolder(for: self, with: folder, to: name, completion: completion)
 	}
 
-	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.restoreFolder(for: self, folder: folder, completion: completion)
+	public func restoreFolder(_ folder: Folder) async throws {
+		try await delegate.restoreFolder(for: self, folder: folder)
 	}
 	
 	func clearFeedMetadata(_ feed: Feed) {
