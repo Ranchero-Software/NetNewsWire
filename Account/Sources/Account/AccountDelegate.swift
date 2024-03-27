@@ -27,7 +27,7 @@ import Secrets
 
 	func refreshAll(for account: Account) async throws
 	func syncArticleStatus(for account: Account) async throws
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void))
+	func sendArticleStatus(for account: Account) async throws
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void))
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void)
