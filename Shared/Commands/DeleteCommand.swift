@@ -187,11 +187,17 @@ import Core
 		}
 
 		BatchUpdate.shared.start()
-		account.restoreFeed(feed, container: container) { result in
-			BatchUpdate.shared.end()
-			self.checkResult(result)
-		}
 
+		Task { @MainActor in
+
+			do {
+				try await account.restoreFeed(feed, container: container)
+				BatchUpdate.shared.end()
+			} catch {
+				BatchUpdate.shared.end()
+				self.errorHandler(error)
+			}
+		}
 	}
 
 	private func restoreFolder() {

@@ -112,11 +112,11 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+
 		container.addFeed(feed)
-		completion(.success(()))
 	}
-	
+
 	func createFolder(for account: Account, name: String) async throws -> Folder {
 
 		guard let folder = account.ensureFolder(with: name) else {

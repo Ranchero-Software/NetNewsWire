@@ -321,17 +321,21 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
+	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
 	}
-	
+
 	func createFolder(for account: Account, name: String) async throws -> Folder {
 
 		try await withCheckedThrowingContinuation { continuation in
@@ -471,17 +475,15 @@ enum CloudKitAccountDelegateError: LocalizedError {
 					folder.topLevelFeeds.remove(feed)
 
 					group.enter()
-					self.restoreFeed(for: account, feed: feed, container: folder) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
+
+					Task { @MainActor in
+						do {
+							try await self.restoreFeed(for: account, feed: feed, container: folder)
+						} catch {
 							os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
 						}
+						group.leave()
 					}
-					
 				}
 				
 				group.notify(queue: DispatchQueue.main) {
