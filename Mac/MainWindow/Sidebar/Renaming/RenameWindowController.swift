@@ -10,7 +10,7 @@ import AppKit
 
 protocol RenameWindowControllerDelegate {
 
-	@MainActor func renameWindowController(_ windowController: RenameWindowController, didRenameObject: Any, withNewName: String)
+	@MainActor func renameWindowController(_ windowController: RenameWindowController, didRenameObject: Any, withNewName: String) async
 }
 
 final class RenameWindowController: NSWindowController {
@@ -54,7 +54,11 @@ final class RenameWindowController: NSWindowController {
 		guard let representedObject = representedObject else {
 			return
 		}
-		delegate?.renameWindowController(self, didRenameObject: representedObject, withNewName: newTitleTextField.stringValue)
+
+		Task { @MainActor in
+			await delegate?.renameWindowController(self, didRenameObject: representedObject, withNewName: newTitleTextField.stringValue)
+		}
+
 		window?.sheetParent?.endSheet(window!, returnCode: .OK)
 	}
 

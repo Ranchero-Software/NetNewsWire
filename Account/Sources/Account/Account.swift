@@ -631,8 +631,9 @@ public enum FetchType {
 		delegate.moveFeed(for: self, with: feed, from: from, to: to, completion: completion)
 	}
 	
-	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
+	public func renameFeed(_ feed: Feed, to name: String) async throws {
+
+		try await delegate.renameFeed(for: self, with: feed, to: name)
 	}
 	
 	public func restoreFeed(_ feed: Feed, container: Container) async throws {
@@ -649,11 +650,13 @@ public enum FetchType {
 		delegate.removeFolder(for: self, with: folder, completion: completion)
 	}
 	
-	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.renameFolder(for: self, with: folder, to: name, completion: completion)
+	public func renameFolder(_ folder: Folder, to name: String) async throws {
+
+		try await delegate.renameFolder(for: self, with: folder, to: name)
 	}
 
 	public func restoreFolder(_ folder: Folder) async throws {
+		
 		try await delegate.restoreFolder(for: self, folder: folder)
 	}
 	

@@ -171,26 +171,16 @@ extension SidebarViewController {
 
 extension SidebarViewController: RenameWindowControllerDelegate {
 
-	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
+	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) async {
 
-		if let feed = object as? Feed {
-			feed.rename(to: name) { result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					NSApplication.shared.presentError(error)
-				}
-			}
-		} else if let folder = object as? Folder {
-			folder.rename(to: name) { result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					NSApplication.shared.presentError(error)
-				}
-			}
+		guard let renamableItem = object as? Renamable else {
+			return
+		}
+		
+		do {
+			try await renamableItem.rename(to: name)
+		} catch {
+			NSApplication.shared.presentError(error)
 		}
 	}
 }

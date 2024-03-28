@@ -430,7 +430,22 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.renameFolder(for: account, with: folder, to: name) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let folderToRename = folder.name else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -504,7 +519,22 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.renameFeed(for: account, with: feed, to: name) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return

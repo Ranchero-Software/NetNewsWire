@@ -91,9 +91,9 @@ final class LocalAccountDelegate: AccountDelegate {
         createRSSFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+
 		feed.editedName = name
-		completion(.success(()))
 	}
 
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -125,9 +125,9 @@ final class LocalAccountDelegate: AccountDelegate {
 		return folder
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+
 		folder.name = name
-		completion(.success(()))
 	}
 	
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

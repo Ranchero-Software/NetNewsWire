@@ -53,9 +53,13 @@ import Core
 
 	// MARK: - Renamable
 
-	public func rename(to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let account = account else { return }
-		account.renameFolder(self, to: name, completion: completion)
+	public func rename(to name: String) async throws {
+
+		guard let account else {
+			return
+		}
+
+		try await account.renameFolder(self, to: name)
 	}
 	
 	// MARK: - Init

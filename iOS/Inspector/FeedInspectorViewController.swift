@@ -62,7 +62,10 @@ class FeedInspectorViewController: UITableViewController {
 		if nameTextField.text != feed.nameForDisplay {
 			let nameText = nameTextField.text ?? ""
 			let newName = nameText.isEmpty ? (feed.name ?? NSLocalizedString("Untitled", comment: "Feed name")) : nameText
-			feed.rename(to: newName) { _ in }
+
+			Task { @MainActor in
+				try? await feed.rename(to: newName)
+			}
 		}
 	}
 	

@@ -347,7 +347,22 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		return folder
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.renameFolder(for: account, with: folder, to: name) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		guard folder.hasAtLeastOneFeed() else {
 			folder.name = name
@@ -469,7 +484,22 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.renameFeed(for: account, with: feed, to: name) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
@@ -1152,17 +1182,19 @@ private extension FeedbinAccountDelegate {
 			feed.externalID = String(sub.subscriptionID)
 			feed.iconURL = sub.jsonFeed?.icon
 			feed.faviconURL = sub.jsonFeed?.favicon
-		
+
 			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameFeed(feed, to: name) { result in
-							switch result {
-							case .success:
+
+						Task { @MainActor in
+							do {
+								try await account.renameFeed(feed, to: name)
 								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							case .failure(let error):
+							} catch {
 								completion(.failure(error))
+
 							}
 						}
 					} else {
@@ -1172,9 +1204,7 @@ private extension FeedbinAccountDelegate {
 					completion(.failure(error))
 				}
 			}
-			
 		}
-		
 	}
 
 	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {

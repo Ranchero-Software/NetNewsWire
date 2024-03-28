@@ -189,9 +189,13 @@ import Core
 
 	// MARK: - Renamable
 
-	public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let account = account else { return }
-		account.renameFeed(self, to: newName, completion: completion)
+	public func rename(to newName: String) async throws {
+		
+		guard let account else {
+			return
+		}
+
+		try await account.renameFeed(self, to: newName)
 	}
 
 	// MARK: - UnreadCountProvider

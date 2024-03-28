@@ -349,7 +349,22 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		return folder
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.renameFolder(for: account, with: folder, to: name) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
@@ -488,8 +503,23 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.renameFeed(for: account, with: feed, to: name) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
 			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))

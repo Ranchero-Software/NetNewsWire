@@ -203,20 +203,22 @@ private extension FeedInspectorViewController {
 	}
 
 	func renameFeedIfNecessary() {
-		guard let feed = feed,
+
+		guard let feed,
 			  let account = feed.account,
-			  let nameTextField = nameTextField,
-			  feed.nameForDisplay != nameTextField.stringValue else {
+			  let newName = nameTextField?.stringValue,
+			  feed.nameForDisplay != newName else {
 			return
 		}
 		
-		account.renameFeed(feed, to: nameTextField.stringValue) { [weak self] result in
-			if case .failure(let error) = result {
-				self?.presentError(error)
-			} else {
-				self?.windowTitle = feed.nameForDisplay
+		Task { @MainActor in
+
+			do {
+				try await account.renameFeed(feed, to: newName)
+				self.windowTitle = feed.nameForDisplay
+			} catch {
+				self.presentError(error)
 			}
 		}
 	}
-	
 }

@@ -1139,59 +1139,51 @@ private extension SidebarViewController {
 
 
 	func rename(indexPath: IndexPath) {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
+
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
+			return
+		}
 
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Rename feed")
-		let title = NSString.localizedStringWithFormat(formatString as NSString, feed.nameForDisplay) as String
-		
+		let title = NSString.localizedStringWithFormat(formatString as NSString, sidebarItem.nameForDisplay) as String
+
 		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-		
+
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
-		
+
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
 		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
-			
+
 			guard let name = alertController.textFields?[0].text, !name.isEmpty else {
 				return
 			}
-			
-			if let feed = feed as? Feed {
-				feed.rename(to: name) { result in
-					switch result {
-					case .success:
-						break
-					case .failure(let error):
-						self?.presentError(error)
-					}
-				}
-			} else if let folder = feed as? Folder {
-				folder.rename(to: name) { result in
-					switch result {
-					case .success:
-						break
-					case .failure(let error):
+
+			Task { @MainActor in
+
+				if let renamableItem = sidebarItem as? Renamable {
+
+					do {
+						try await renamableItem.rename(to: name)
+					} catch {
 						self?.presentError(error)
 					}
 				}
 			}
-			
 		}
-		
+
 		alertController.addAction(renameAction)
 		alertController.preferredAction = renameAction
-		
+
 		alertController.addTextField() { textField in
-			textField.text = feed.nameForDisplay
+			textField.text = sidebarItem.nameForDisplay
 			textField.placeholder = NSLocalizedString("Name", comment: "Name")
 		}
-		
+
 		self.present(alertController, animated: true) {
-			
 		}
-		
 	}
-	
+
 	func delete(indexPath: IndexPath) {
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
 

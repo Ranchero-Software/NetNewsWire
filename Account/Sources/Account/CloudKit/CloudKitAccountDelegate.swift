@@ -254,7 +254,22 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed, completion: completion)
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.renameFeed(for: account, with: feed, to: name) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+	
+	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let editedName = name.isEmpty ? nil : name
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.renameFeed(feed, editedName: editedName) { result in
@@ -370,7 +385,22 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 	}
 	
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.renameFolder(for: account, with: folder, to: name) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.renameFolder(folder, to: name) { result in
 			self.refreshProgress.completeTask()

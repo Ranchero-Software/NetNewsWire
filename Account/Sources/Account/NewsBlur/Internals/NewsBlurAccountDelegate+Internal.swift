@@ -443,11 +443,12 @@ extension NewsBlurAccountDelegate {
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameFeed(feed, to: name) { result in
-							switch result {
-							case .success:
+
+						Task { @MainActor in
+							do {
+								try await account.renameFeed(feed, to: name)
 								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							case .failure(let error):
+							} catch {
 								completion(.failure(error))
 							}
 						}
