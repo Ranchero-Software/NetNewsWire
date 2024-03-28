@@ -607,8 +607,9 @@ public enum FetchType {
 		return feed
 	}
 
-	public func addFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.addFeed(for: self, with: feed, to: container, completion: completion)
+	public func addFeed(_ feed: Feed, to container: Container) async throws {
+
+		try await delegate.addFeed(for: self, with: feed, to: container)
 	}
 
 	public func createFeed(url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {

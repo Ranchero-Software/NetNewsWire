@@ -116,13 +116,16 @@ extension SidebarViewController: UITableViewDropDelegate {
 	}
 	
 	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
-		
+
 		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
-			
+
 			BatchUpdate.shared.start()
-			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
-				switch result {
-				case .success:
+
+			Task { @MainActor in
+
+				do {
+					try await destinationContainer.account?.addFeed(existingFeed, to: destinationContainer)
+					
 					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
@@ -132,14 +135,15 @@ extension SidebarViewController: UITableViewDropDelegate {
 							self.presentError(error)
 						}
 					}
-				case .failure(let error):
+
+				} catch {
 					BatchUpdate.shared.end()
 					self.presentError(error)
 				}
 			}
-			
+
 		} else {
-			
+
 			BatchUpdate.shared.start()
 			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {

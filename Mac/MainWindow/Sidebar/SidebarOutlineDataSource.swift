@@ -308,17 +308,16 @@ private extension SidebarOutlineDataSource {
 		}
 		return localDragOperation(parentNode: parentNode)
 	}
-	
+
 	func copyFeedInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed, let destination = parentNode.representedObject as? Container else {
 			return
 		}
-		
-		destination.account?.addFeed(feed, to: destination) { result in
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
+
+		Task { @MainActor in
+			do {
+				try await destination.account?.addFeed(feed, to: destination)
+			} catch {
 				NSApplication.shared.presentError(error)
 			}
 		}
@@ -351,11 +350,11 @@ private extension SidebarOutlineDataSource {
 		}
 		
 		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
-			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
+
+			Task { @MainActor in
+				do {
+					try await destinationAccount.addFeed(existingFeed, to: destinationContainer)
+				} catch {
 					NSApplication.shared.presentError(error)
 				}
 			}
@@ -437,14 +436,7 @@ private extension SidebarOutlineDataSource {
 
 				for feed in folder.topLevelFeeds {
 					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
-						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								NSApplication.shared.presentError(error)
-							}
-						}
+						try await destinationAccount.addFeed(existingFeed, to: destinationFolder)
 					} else {
 						destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
 							switch result {

@@ -107,11 +107,11 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: any Container) async throws {
+
 		container.addFeed(feed)
-		completion(.success(()))
 	}
-	
+
 	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 
 		container.addFeed(feed)

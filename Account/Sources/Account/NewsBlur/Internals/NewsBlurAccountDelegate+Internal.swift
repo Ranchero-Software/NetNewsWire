@@ -434,30 +434,19 @@ extension NewsBlurAccountDelegate {
 			return
 		}
 
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
 			feed.externalID = String(feed.feedID)
 			feed.faviconURL = feed.faviconURL
 
-			account.addFeed(feed, to: container) { result in
-				switch result {
-				case .success:
-					if let name = name {
-
-						Task { @MainActor in
-							do {
-								try await account.renameFeed(feed, to: name)
-								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							} catch {
-								completion(.failure(error))
-							}
-						}
-					} else {
-						self.initialFeedDownload(account: account, feed: feed, completion: completion)
-					}
-				case .failure(let error):
-					completion(.failure(error))
+			do {
+				try await account.addFeed(feed, to: container)
+				if let name {
+					try await self.renameFeed(for: account, with: feed, to: name)
 				}
+				self.initialFeedDownload(account: account, feed: feed, completion: completion)
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}

@@ -564,7 +564,22 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: any Container) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.addFeed(for: account, with: feed, to: container) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -614,11 +629,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	private func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
-			account.addFeed(existingFeed, to: container) { result in
-				switch result {
-				case .success:
+
+			Task { @MainActor in
+
+				do {
+					try await account.addFeed(existingFeed, to: container)
 					completion(.success(()))
-				case .failure(let error):
+				} catch {
 					completion(.failure(error))
 				}
 			}
@@ -632,9 +649,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			}
 		}
-		
 	}
-	
+
 	func restoreFolder(for account: Account, folder: Folder) async throws {
 
 		try await withCheckedThrowingContinuation { continuation in
@@ -1190,34 +1206,22 @@ private extension FeedbinAccountDelegate {
 	}
 	
 	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-		
-		DispatchQueue.main.async {
-			
+
+		Task { @MainActor in
+
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.externalID = String(sub.subscriptionID)
 			feed.iconURL = sub.jsonFeed?.icon
 			feed.faviconURL = sub.jsonFeed?.favicon
 
-			account.addFeed(feed, to: container) { result in
-				switch result {
-				case .success:
-					if let name = name {
-
-						Task { @MainActor in
-							do {
-								try await account.renameFeed(feed, to: name)
-								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							} catch {
-								completion(.failure(error))
-
-							}
-						}
-					} else {
-						self.initialFeedDownload(account: account, feed: feed, completion: completion)
-					}
-				case .failure(let error):
-					completion(.failure(error))
+			do {
+				try await account.addFeed(feed, to: container)
+				if let name {
+					try await self.renameFeed(for: account, with: feed, to: name)
 				}
+				self.initialFeedDownload(account: account, feed: feed, completion: completion)
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}

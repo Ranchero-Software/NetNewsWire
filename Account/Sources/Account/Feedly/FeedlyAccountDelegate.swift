@@ -494,7 +494,22 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		feed.editedName = name
 	}
 	
-	@MainActor func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: any Container) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.addFeed(for: account, with: feed, to: container) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		do {
 			guard let credentials = credentials else {
@@ -594,12 +609,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	private func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
-			account.addFeed(existingFeed, to: container) { result in
-				switch result {
-				case .success:
+
+			Task { @MainActor in
+				do {
+					try await account.addFeed(existingFeed, to: container)
 					completion(.success(()))
-				case .failure(let error):
+				} catch {
 					completion(.failure(error))
 				}
 			}

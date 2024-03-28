@@ -321,7 +321,22 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 	}
 	
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: any Container) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.addFeed(for: account, with: feed, to: container) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.addFeed(feed, to: container) { result in
 			self.refreshProgress.completeTask()
