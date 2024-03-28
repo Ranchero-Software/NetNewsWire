@@ -130,12 +130,13 @@ final class LocalAccountDelegate: AccountDelegate {
 		folder.name = name
 	}
 	
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.removeFolder(folder)
-		completion(.success(()))
+	func removeFolder(for account: Account, with folder: Folder) async throws {
+
+		account.removeFolder(folder: folder)
 	}
-	
+
 	func restoreFolder(for account: Account, folder: Folder) async throws {
+
 		account.addFolder(folder)
 	}
 

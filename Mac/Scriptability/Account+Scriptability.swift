@@ -68,23 +68,24 @@ import Core
     }
     
 	@MainActor func deleteElement(_ element:ScriptingObject) {
-		if let scriptableFolder = element as? ScriptableFolder {
-			BatchUpdate.shared.perform {
-				account.removeFolder(scriptableFolder.folder) { result in
-				}
-			}
-		} else if let scriptableFeed = element as? ScriptableFeed {
-			BatchUpdate.shared.perform {
-				var container: Container? = nil
-				if let scriptableFolder = scriptableFeed.container as? ScriptableFolder {
-					container = scriptableFolder.folder
-				} else {
-					container = account
-				}
-				account.removeFeed(scriptableFeed.feed, from: container!) { result in
-				}
-			}
-		}
+		// TODO: fix this
+//		if let scriptableFolder = element as? ScriptableFolder {
+//			BatchUpdate.shared.perform {
+//				account.removeFolder(scriptableFolder.folder) { result in
+//				}
+//			}
+//		} else if let scriptableFeed = element as? ScriptableFeed {
+//			BatchUpdate.shared.perform {
+//				var container: Container? = nil
+//				if let scriptableFolder = scriptableFeed.container as? ScriptableFolder {
+//					container = scriptableFolder.folder
+//				} else {
+//					container = account
+//				}
+//				account.removeFeed(scriptableFeed.feed, from: container!) { result in
+//				}
+//			}
+//		}
 	}
 
     @objc(isLocationRequiredToCreateForKey:)

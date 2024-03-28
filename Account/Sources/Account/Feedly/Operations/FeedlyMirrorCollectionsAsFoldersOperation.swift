@@ -54,7 +54,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 		
 		if !foldersWithoutCollections.isEmpty {
 			for unmatched in foldersWithoutCollections {
-				account.removeFolder(unmatched)
+				account.removeFolder(folder: unmatched)
 			}
 			
 			os_log(.debug, log: log, "Removed %i folders: %@", foldersWithoutCollections.count, foldersWithoutCollections.map { $0.externalID ?? $0.nameForDisplay })

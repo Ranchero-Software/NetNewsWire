@@ -174,7 +174,7 @@ private extension CloudKitSendStatusOperation {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeeds(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
-				account.removeFolder(folder)
+				account.removeFolder(folder: folder)
 			}
 		}
 	}

@@ -470,7 +470,22 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		folder.name = name
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
+	func removeFolder(for account: Account, with folder: Folder) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.removeFolder(for: account, with: folder) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let folderToRemove = folder.name else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -492,7 +507,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 			switch result {
 			case .success:
-				account.removeFolder(folder)
+				account.removeFolder(folder: folder)
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))

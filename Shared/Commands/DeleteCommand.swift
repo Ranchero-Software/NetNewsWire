@@ -143,30 +143,36 @@ import Core
 	}
 
 	func delete(completion: @escaping () -> Void) {
-
+		
 		if let feed = feed {
-
+			
 			guard let container = path.resolveContainer() else {
 				completion()
 				return
 			}
-
+			
 			BatchUpdate.shared.start()
 			account?.removeFeed(feed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-
+			
 		} else if let folder = folder {
-
+			
 			BatchUpdate.shared.start()
-			account?.removeFolder(folder) { result in
-				BatchUpdate.shared.end()
-				completion()
-				self.checkResult(result)
+			
+			Task { @MainActor in
+				do {
+					try await account?.removeFolder(folder)
+					BatchUpdate.shared.end()
+					completion()
+				} catch {
+					BatchUpdate.shared.end()
+					completion()
+					self.errorHandler(error)
+				}
 			}
-
 		}
 	}
 

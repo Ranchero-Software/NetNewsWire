@@ -54,7 +54,7 @@ extension NewsBlurAccountDelegate {
 						account.addFeed(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
-					account.removeFolder(folder)
+					account.removeFolder(folder: folder)
 				}
 			}
 		}

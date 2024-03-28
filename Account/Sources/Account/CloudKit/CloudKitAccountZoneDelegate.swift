@@ -132,7 +132,7 @@ import CloudKitExtras
 	
 	func removeContainer(_ externalID: String) {
 		if let folder = account?.existingFolder(withExternalID: externalID) {
-			account?.removeFolder(folder)
+			account?.removeFolder(folder: folder)
 		}
 	}
 }
