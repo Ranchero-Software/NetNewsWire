@@ -152,12 +152,19 @@ import Core
 			}
 			
 			BatchUpdate.shared.start()
-			account?.removeFeed(feed, from: container) { result in
-				BatchUpdate.shared.end()
-				completion()
-				self.checkResult(result)
+
+			Task { @MainActor in
+				do {
+					try await account?.removeFeed(feed, from: container)
+					BatchUpdate.shared.end()
+					completion()
+				} catch {
+					BatchUpdate.shared.end()
+					completion()
+					self.errorHandler(error)
+				}
 			}
-			
+
 		} else if let folder = folder {
 			
 			BatchUpdate.shared.start()

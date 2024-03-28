@@ -39,7 +39,7 @@ import Secrets
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void)
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws
 	func addFeed(for account: Account, with: Feed, to container: Container) async throws
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void)
+	func removeFeed(for account: Account, with feed: Feed, from container: Container) async throws
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void)
 
 	func restoreFeed(for account: Account, feed: Feed, container: Container) async throws

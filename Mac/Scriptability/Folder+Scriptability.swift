@@ -51,11 +51,12 @@ import Core
     }
  
 	@MainActor func deleteElement(_ element:ScriptingObject) {
-       if let scriptableFeed = element as? ScriptableFeed {
-            BatchUpdate.shared.perform {
-				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { result in }
-            }
-        }
+		// TODO: fix this
+//       if let scriptableFeed = element as? ScriptableFeed {
+//            BatchUpdate.shared.perform {
+//				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { result in }
+//            }
+//        }
     }
 
     // MARK: --- handle NSCreateCommand ---

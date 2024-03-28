@@ -125,17 +125,8 @@ extension SidebarViewController: UITableViewDropDelegate {
 
 				do {
 					try await destinationContainer.account?.addFeed(existingFeed, to: destinationContainer)
-					
-					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							self.presentError(error)
-						}
-					}
-
+					try await sourceContainer.account?.removeFeed(feed, from: sourceContainer)
+					BatchUpdate.shared.end()
 				} catch {
 					BatchUpdate.shared.end()
 					self.presentError(error)
@@ -148,23 +139,23 @@ extension SidebarViewController: UITableViewDropDelegate {
 			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
-					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
+
+					Task { @MainActor in
+						do {
+							try await sourceContainer.account?.removeFeed(feed, from: sourceContainer)
+							BatchUpdate.shared.end()
+						} catch {
+							BatchUpdate.shared.end()
 							self.presentError(error)
 						}
 					}
-				case .failure(let error):
-					BatchUpdate.shared.end()
-					self.presentError(error)
+
+					case .failure(let error):
+						BatchUpdate.shared.end()
+						self.presentError(error)
+					}
 				}
+
 			}
-			
 		}
-	}
-
-
 }

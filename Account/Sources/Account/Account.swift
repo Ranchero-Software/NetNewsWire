@@ -624,8 +624,9 @@ public enum FetchType {
 		return feed
 	}
 	
-	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFeed(for: self, with: feed, from: container, completion: completion)
+	public func removeFeed(_ feed: Feed, from container: Container) async throws {
+
+		try await delegate.removeFeed(for: self, with: feed, from: container)
 	}
 	
 	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
