@@ -646,6 +646,7 @@
 		848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
 		848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D578D21543519005FFAD5 /* PasteboardFeed.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
+		849830252BBBA6130024FB5B /* Web in Frameworks */ = {isa = PBXBuildFile; productRef = 849830242BBBA6130024FB5B /* Web */; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97511ED9EAC0007D329B /* AddFeedController.swift */; };
 		849A97541ED9EAC0007D329B /* AddFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97521ED9EAC0007D329B /* AddFeedWindowController.swift */; };
@@ -694,6 +695,7 @@
 		84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84BAE64821CEDAF20046DB56 /* CrashReporterWindow.xib */; };
 		84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84BBB12B20142A4700F054F5 /* Inspector.storyboard */; };
 		84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */; };
+		84C1A8582BBBA5BD006E3E96 /* Web in Frameworks */ = {isa = PBXBuildFile; productRef = 84C1A8572BBBA5BD006E3E96 /* Web */; };
 		84C9FC6722629B9000D921D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC6622629B3900D921D6 /* AppDelegate.swift */; };
 		84C9FC7722629E1200D921D6 /* AdvancedPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC6B22629E1200D921D6 /* AdvancedPreferencesViewController.swift */; };
 		84C9FC7822629E1200D921D6 /* GeneralPrefencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC6D22629E1200D921D6 /* GeneralPrefencesViewController.swift */; };
@@ -1495,6 +1497,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849830252BBBA6130024FB5B /* Web in Frameworks */,
 				176813F72564BB2C00D98635 /* SwiftUI.framework in Frameworks */,
 				176813F52564BB2C00D98635 /* WidgetKit.framework in Frameworks */,
 			);
@@ -1581,6 +1584,7 @@
 				84DCA5202BABB7A200792720 /* UIKitExtras in Frameworks */,
 				179D280B26F6F93D003B2E0A /* Zip in Frameworks */,
 				84DCA51E2BABB79900792720 /* FoundationExtras in Frameworks */,
+				84C1A8582BBBA5BD006E3E96 /* Web in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
 				5138E95224D3418100AFF0FE /* RSParser in Frameworks */,
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
@@ -2739,6 +2743,7 @@
 			);
 			name = "NetNewsWire iOS Widget Extension";
 			packageProductDependencies = (
+				849830242BBBA6130024FB5B /* Web */,
 			);
 			productName = "NetNewsWire WidgetExtension";
 			productReference = 176813F32564BB2C00D98635 /* NetNewsWire iOS Widget Extension.appex */;
@@ -2956,6 +2961,7 @@
 				84DCA5212BABB7A800792720 /* CloudKitExtras */,
 				84DCA5282BABBB6A00792720 /* Core */,
 				841CECDB2BAD04BF0001EE72 /* Tree */,
+				84C1A8572BBBA5BD006E3E96 /* Web */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -4422,6 +4428,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1768140A2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Debug;
 		};
@@ -4429,6 +4436,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1768140A2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Release;
 		};
@@ -4909,6 +4917,14 @@
 		848565502B9E910200F4BAE0 /* FMDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FMDB;
+		};
+		849830242BBBA6130024FB5B /* Web */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Web;
+		};
+		84C1A8572BBBA5BD006E3E96 /* Web */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Web;
 		};
 		84D9582B2BABE53B0053E7B2 /* FoundationExtras */ = {
 			isa = XCSwiftPackageProductDependency;
