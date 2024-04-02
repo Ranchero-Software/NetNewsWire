@@ -10,7 +10,7 @@ import Foundation
 import Core
 
 extension RSImage {
-	static var appIconImage: RSImage? {
+	static let appIconImage: RSImage? = {
 		#if os(macOS)
 		return RSImage(named: NSImage.applicationIconName)
 		#elseif os(iOS)
@@ -23,11 +23,11 @@ extension RSImage {
         }
 		return nil
 		#endif
-	}
+	}()
 }
 
 extension IconImage {
-	static let appIcon: IconImage? = {
+	@MainActor static let appIcon: IconImage? = {
 		if let image = RSImage.appIconImage {
 			return IconImage(image)
 		}
