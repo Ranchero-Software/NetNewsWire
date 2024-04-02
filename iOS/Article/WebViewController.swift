@@ -657,7 +657,8 @@ private extension WebViewController {
 	
 	func startArticleExtractor() {
 		guard articleExtractor == nil else { return }
-		if let link = article?.preferredLink, let extractor = ArticleExtractor(link, secretsProvider: Secrets()) {
+		let secrets = Secrets()
+		if let link = article?.preferredLink, let extractor = ArticleExtractor(link, clientID: secrets.mercuryClientId, clientSecret: secrets.mercuryClientSecret) {
 			extractor.delegate = self
 			extractor.process()
 			articleExtractor = extractor
