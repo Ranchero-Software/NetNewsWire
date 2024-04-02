@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 import Secrets
 
 /// Models the access token response from Feedly.

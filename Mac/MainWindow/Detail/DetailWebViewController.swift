@@ -8,7 +8,7 @@
 
 import AppKit
 import WebKit
-import RSWeb
+import Web
 import Articles
 import Core
 

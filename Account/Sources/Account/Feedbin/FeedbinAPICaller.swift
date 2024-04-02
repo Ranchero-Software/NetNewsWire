@@ -11,7 +11,7 @@
 // IP address will become unblocked and you can use the service again.
 
 import Foundation
-import RSWeb
+import Web
 import Secrets
 
 enum CreateSubscriptionResult {

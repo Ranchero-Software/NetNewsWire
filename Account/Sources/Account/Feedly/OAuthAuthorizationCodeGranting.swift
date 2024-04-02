@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 import Secrets
 
 /// Client-specific information for requesting an authorization code grant.

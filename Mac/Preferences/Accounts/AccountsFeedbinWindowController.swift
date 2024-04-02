@@ -8,7 +8,7 @@
 
 import AppKit
 import Account
-import RSWeb
+import Web
 import Secrets
 
 class AccountsFeedbinWindowController: NSWindowController {

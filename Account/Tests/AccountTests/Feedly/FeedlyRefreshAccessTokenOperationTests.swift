@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import Account
-import RSWeb
+import Web
 import Secrets
 
 class FeedlyRefreshAccessTokenOperationTests: XCTestCase {

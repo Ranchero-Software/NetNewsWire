@@ -9,7 +9,7 @@
 import UIKit
 import Account
 import Secrets
-import RSWeb
+import Web
 import SafariServices
 
 class ReaderAPIAccountViewController: UITableViewController {

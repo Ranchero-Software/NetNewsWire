@@ -7,7 +7,7 @@
 //
 
 import AppKit
-import RSWeb
+import Web
 import UserNotifications
 import UniformTypeIdentifiers
 

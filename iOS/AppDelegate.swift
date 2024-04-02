@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RSWeb
+import Web
 import Account
 import BackgroundTasks
 import os.log

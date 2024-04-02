@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 import Secrets
 
 public extension URLRequest {

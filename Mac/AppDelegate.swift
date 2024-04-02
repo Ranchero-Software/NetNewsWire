@@ -10,7 +10,7 @@ import AppKit
 import UserNotifications
 import Articles
 import Tree
-import RSWeb
+import Web
 import Account
 import CoreResources
 import Secrets

@@ -9,7 +9,7 @@
 import Foundation
 import Articles
 import Account
-import RSWeb
+import Web
 import RSParser
 import Core
 

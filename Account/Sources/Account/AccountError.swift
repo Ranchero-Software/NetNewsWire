@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 
 public enum AccountError: LocalizedError {
 	

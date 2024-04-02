@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 
 @testable import Account
 

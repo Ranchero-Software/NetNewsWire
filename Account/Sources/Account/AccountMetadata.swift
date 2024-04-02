@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 
 protocol AccountMetadataDelegate: AnyObject {
 	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys)

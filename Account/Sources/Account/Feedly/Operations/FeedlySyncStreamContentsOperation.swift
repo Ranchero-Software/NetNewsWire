@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 import RSParser
-import RSWeb
+import Web
 import Secrets
 import Core
 

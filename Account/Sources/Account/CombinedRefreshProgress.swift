@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 
 // Combines the refresh progress of multiple accounts into one struct,
 // for use by refresh status view and so on.

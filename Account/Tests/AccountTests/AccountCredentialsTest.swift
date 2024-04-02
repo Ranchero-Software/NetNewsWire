@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import RSWeb
+import Web
 @testable import Account
 import Secrets
 

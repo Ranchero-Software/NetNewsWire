@@ -1,5 +1,5 @@
 {
-  "originHash" : "143979811fdacc63ea101f03b6eeae2ff838828510390a5acdd415b90ffc549f",
+  "originHash" : "cdabcd707e9a2d05d419a03b18324728290923e8dae1ae2d92a2cdd8f1627191",
   "pins" : [
     {
       "identity" : "plcrashreporter",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
         "version" : "2.0.3"
-      }
-    },
-    {
-      "identity" : "rsweb",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ranchero-Software/RSWeb.git",
-      "state" : {
-        "revision" : "2f7849a9ad2cb461b3d6c9c920e163596e6b5d7b",
-        "version" : "1.0.3"
       }
     },
     {

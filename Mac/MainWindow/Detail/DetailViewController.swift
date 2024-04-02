@@ -9,7 +9,7 @@
 import Foundation
 import WebKit
 import Articles
-import RSWeb
+import Web
 
 enum DetailState: Equatable {
 	case noSelection

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 
 protocol NewsBlurDataConvertible {
 	var asData: Data? { get }

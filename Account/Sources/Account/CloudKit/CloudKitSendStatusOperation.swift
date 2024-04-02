@@ -9,7 +9,7 @@
 import Foundation
 import Articles
 import os.log
-import RSWeb
+import Web
 import SyncDatabase
 import Database
 import Core

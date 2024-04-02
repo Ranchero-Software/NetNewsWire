@@ -9,7 +9,7 @@
 import Articles
 import Database
 @preconcurrency import RSParser
-import RSWeb
+import Web
 import SyncDatabase
 import os.log
 import Secrets

@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import RSWeb
+import Web
 
 struct ArticleItemView: View {
 	

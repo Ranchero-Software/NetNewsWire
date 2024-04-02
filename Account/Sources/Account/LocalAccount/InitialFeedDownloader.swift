@@ -8,7 +8,7 @@
 
 import Foundation
 import RSParser
-import RSWeb
+import Web
 
 struct InitialFeedDownloader {
 

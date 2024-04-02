@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import RSWeb
+import Web
 import Secrets
 
 @MainActor protocol AccountDelegate {

@@ -11,7 +11,7 @@ import os.log
 import RSParser
 import Articles
 import ArticlesDatabase
-import RSWeb
+import Web
 import Secrets
 import Core
 

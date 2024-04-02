@@ -14,7 +14,7 @@ import SyncDatabase
 import RSParser
 import Articles
 import ArticlesDatabase
-import RSWeb
+import Web
 import Secrets
 import Core
 import CloudKitExtras

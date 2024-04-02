@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 import CrashReporter
 
 // Displays a window that shows the crash log — gives the user the chance to add data.

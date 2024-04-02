@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 import XCTest
 
 protocol TestTransportMockResponseProviding: AnyObject {

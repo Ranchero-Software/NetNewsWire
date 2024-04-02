@@ -8,7 +8,7 @@
 
 import Foundation
 import os.log
-import RSWeb
+import Web
 import RSParser
 import CloudKit
 import FoundationExtras

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSWeb
+import Web
 import Articles
 
 protocol FeedMetadataDelegate: AnyObject {
