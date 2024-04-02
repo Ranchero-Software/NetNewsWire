@@ -33,7 +33,7 @@ public extension Notification.Name {
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
 }
 
-public enum AccountType: Int, Codable {
+public enum AccountType: Int, Codable, Sendable {
 	// Raw values should not change since they’re stored on disk.
 	case onMyMac = 1
 	case cloudKit = 2

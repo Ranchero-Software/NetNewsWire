@@ -19,12 +19,12 @@ enum ReadFilterType {
 protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 
 	var account: Account? { get }
-	var defaultReadFilterType: ReadFilterType { get }
+	@MainActor var defaultReadFilterType: ReadFilterType { get }
 }
 
 extension SidebarItem {
 	
-	func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool]) -> Bool {
+	@MainActor func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool]) -> Bool {
 		guard defaultReadFilterType != .alwaysRead else {
 			return true
 		}
