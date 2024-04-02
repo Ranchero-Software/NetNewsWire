@@ -8,14 +8,12 @@
 
 import Foundation
 
-// Main thread only.
-
 public extension Notification.Name {
 	
 	static let DownloadProgressDidChange = Notification.Name(rawValue: "DownloadProgressDidChange")
 }
 
-public final class DownloadProgress {
+@MainActor public final class DownloadProgress {
 	
 	public var numberOfTasks = 0 {
 		didSet {
@@ -94,9 +92,9 @@ public final class DownloadProgress {
 // MARK: - Private
 
 private extension DownloadProgress {
-	
+
 	func postDidChangeNotification() {
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			NotificationCenter.default.post(name: .DownloadProgressDidChange, object: self)
 		}
 	}

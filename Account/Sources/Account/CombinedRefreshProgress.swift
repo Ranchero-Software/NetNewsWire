@@ -12,7 +12,7 @@ import Web
 // Combines the refresh progress of multiple accounts into one struct,
 // for use by refresh status view and so on.
 
-public struct CombinedRefreshProgress {
+@MainActor public struct CombinedRefreshProgress {
 
 	public let numberOfTasks: Int
 	public let numberRemaining: Int

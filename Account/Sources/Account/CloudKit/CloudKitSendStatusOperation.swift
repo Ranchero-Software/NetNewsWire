@@ -119,7 +119,7 @@ private extension CloudKitSendStatusOperation {
 					return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
 				}
 				
-				@Sendable func done(_ stop: Bool) {
+				@MainActor func done(_ stop: Bool) {
 					// Don't clear the last one since we might have had additional ticks added
 					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 						self.refreshProgress?.completeTask()
