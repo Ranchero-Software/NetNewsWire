@@ -12,6 +12,15 @@ import Web
 
 struct InitialFeedDownloader {
 
+	static func download(_ url: URL) async -> ParsedFeed? {
+
+		await withCheckedContinuation { continuation in
+			self.download(url) { parsedFeed in
+				continuation.resume(returning: parsedFeed)
+			}
+		}
+	}
+
 	static func download(_ url: URL,_ completion: @escaping (_ parsedFeed: ParsedFeed?) -> Void) {
 
 		downloadUsingCache(url) { (data, response, error) in
