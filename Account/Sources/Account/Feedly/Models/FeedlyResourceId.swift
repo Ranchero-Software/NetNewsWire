@@ -12,7 +12,7 @@ import Foundation
 protocol FeedlyResourceId {
 	
 	/// The resource Id from Feedly.
-	var id: String { get }
+	@MainActor var id: String { get }
 }
 
 /// The Feed Resource is documented here: https://developer.feedly.com/cloud/

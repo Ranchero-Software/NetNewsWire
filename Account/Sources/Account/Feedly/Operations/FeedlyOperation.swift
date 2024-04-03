@@ -11,7 +11,7 @@ import Web
 import Core
 
 protocol FeedlyOperationDelegate: AnyObject {
-	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)
+	@MainActor func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)
 }
 
 /// Abstract base class for Feedly sync operations.

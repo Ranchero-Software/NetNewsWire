@@ -84,7 +84,7 @@ struct AppAssets {
 
 	static let markAboveAsReadImage = UIImage(systemName: "arrowtriangle.up.circle")!
 
-	static let folderImage = IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+	@MainActor static let folderImage = IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 
 	static let folderImageNonIcon = UIImage(systemName: "folder.fill")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
 
@@ -104,7 +104,7 @@ struct AppAssets {
 
 	static let safariImage = UIImage(systemName: "safari")!
 
-	static let searchFeedImage = IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
+	@MainActor static let searchFeedImage = IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
 
 	static let secondaryAccentColor = UIColor(named: "secondaryAccentColor")!
 
@@ -120,7 +120,7 @@ struct AppAssets {
 
 	static let starOpenImage = UIImage(systemName: "star")!
 
-	static let starredFeedImage: IconImage = {
+	@MainActor static let starredFeedImage: IconImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.starColor.cgColor)
 	}()
@@ -132,14 +132,14 @@ struct AppAssets {
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
-	static let todayFeedImage: IconImage = {
+	@MainActor static let todayFeedImage: IconImage = {
 		let image = UIImage(systemName: "sun.max.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: UIColor.systemOrange.cgColor)
 	}()
 
 	static let trashImage = UIImage(systemName: "trash")!
 
-	static let unreadFeedImage: IconImage = {
+	@MainActor static let unreadFeedImage: IconImage = {
 		let image = UIImage(systemName: "largecircle.fill.circle")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
@@ -148,7 +148,7 @@ struct AppAssets {
 
 	static let controlBackgroundColor = UIColor(named: "controlBackgroundColor")!
 
-	static func image(for accountType: AccountType) -> UIImage? {
+	@MainActor static func image(for accountType: AccountType) -> UIImage? {
 		switch accountType {
 		case .onMyMac:
 			if UIDevice.current.userInterfaceIdiom == .pad {

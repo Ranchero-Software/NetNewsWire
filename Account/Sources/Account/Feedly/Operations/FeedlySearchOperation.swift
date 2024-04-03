@@ -13,7 +13,7 @@ protocol FeedlySearchService: AnyObject {
 }
 
 protocol FeedlySearchOperationDelegate: AnyObject {
-	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse)
+	@MainActor func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse)
 }
 
 /// Find one and only one feed for a given query (usually, a URL).

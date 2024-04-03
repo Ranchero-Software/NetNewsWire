@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlyResourceProviding {
-	var resource: FeedlyResourceId { get }
+	@MainActor var resource: FeedlyResourceId { get }
 }
 
 extension FeedlyFeedResourceId: FeedlyResourceProviding {

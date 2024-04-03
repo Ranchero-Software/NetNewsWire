@@ -78,23 +78,25 @@ private extension SingleFaviconDownloader {
 
 		readFromDisk { (image) in
 
-			if let image = image {
-				self.diskStatus = .onDisk
-				self.iconImage = IconImage(image)
-				self.postDidLoadFaviconNotification()
-				return
-			}
-
-			self.diskStatus = .notOnDisk
-
-			self.downloadFavicon { (image) in
-
+			MainActor.assumeIsolated {
 				if let image = image {
+					self.diskStatus = .onDisk
 					self.iconImage = IconImage(image)
+					self.postDidLoadFaviconNotification()
+					return
 				}
-
-				self.postDidLoadFaviconNotification()
 				
+				self.diskStatus = .notOnDisk
+				
+				self.downloadFavicon { (image) in
+					
+					if let image = image {
+						self.iconImage = IconImage(image)
+					}
+					
+					self.postDidLoadFaviconNotification()
+					
+				}
 			}
 		}
 	}
@@ -133,7 +135,7 @@ private extension SingleFaviconDownloader {
 		}
 	}
 
-	func downloadFavicon(_ completion: @escaping (RSImage?) -> Void) {
+	@MainActor func downloadFavicon(_ completion: @escaping (RSImage?) -> Void) {
 
 		guard let url = URL(string: faviconURL) else {
 			completion(nil)

@@ -133,14 +133,16 @@ final class FaviconDownloader {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
-		findFaviconURLs(with: url) { (faviconURLs) in
-			if let faviconURLs = faviconURLs {
-				// If the site explicitly specifies favicon.ico, it will appear twice.
-				self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
+		Task { @MainActor in
+			findFaviconURLs(with: url) { (faviconURLs) in
+				if let faviconURLs = faviconURLs {
+					// If the site explicitly specifies favicon.ico, it will appear twice.
+					self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 
-				if let firstIconURL = faviconURLs.first {
-					let _ = self.favicon(with: firstIconURL, homePageURL: url)
-					self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
+					if let firstIconURL = faviconURLs.first {
+						let _ = self.favicon(with: firstIconURL, homePageURL: url)
+						self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
+					}
 				}
 			}
 		}
@@ -197,7 +199,7 @@ private extension FaviconDownloader {
 
 	static let localeForLowercasing = Locale(identifier: "en_US")
 
-	func findFaviconURLs(with homePageURL: String, _ completion: @escaping ([String]?) -> Void) {
+	@MainActor func findFaviconURLs(with homePageURL: String, _ completion: @escaping ([String]?) -> Void) {
 
 		guard let url = URL(unicodeString: homePageURL) else {
 			completion(nil)

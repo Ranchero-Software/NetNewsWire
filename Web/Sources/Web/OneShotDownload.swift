@@ -10,9 +10,9 @@ import Foundation
 
 // Main thread only.
 
-public typealias OneShotDownloadCallback = (Data?, URLResponse?, Error?) -> Swift.Void
+public typealias OneShotDownloadCallback = @Sendable (Data?, URLResponse?, Error?) -> Swift.Void
 
-private final class OneShotDownloadManager {
+@MainActor private final class OneShotDownloadManager {
 
 	private let urlSession: URLSession
 	fileprivate static let shared = OneShotDownloadManager()
@@ -61,12 +61,12 @@ private final class OneShotDownloadManager {
 // Call one of these. It’s easier than referring to OneShotDownloadManager.
 // callback is called on the main queue.
 
-public func download(_ url: URL, _ completion: @escaping OneShotDownloadCallback) {
+@MainActor public func download(_ url: URL, _ completion: @escaping OneShotDownloadCallback) {
 	precondition(Thread.isMainThread)
 	OneShotDownloadManager.shared.download(url, completion)
 }
 
-public func download(_ urlRequest: URLRequest, _ completion: @escaping OneShotDownloadCallback) {
+@MainActor public func download(_ urlRequest: URLRequest, _ completion: @escaping OneShotDownloadCallback) {
 	precondition(Thread.isMainThread)
 	OneShotDownloadManager.shared.download(urlRequest, completion)
 }
@@ -136,7 +136,7 @@ private final class DownloadWithCacheManager {
 	private var pendingCallbacks = [CallbackRecord]()
 	private var urlsInProgress = Set<URL>()
 
-	func download(_ url: URL, _ completion: @escaping OneShotDownloadCallback, forceRedownload: Bool = false) {
+	@MainActor func download(_ url: URL, _ completion: @escaping OneShotDownloadCallback, forceRedownload: Bool = false) {
 
 		if lastCleanupDate.timeIntervalSinceNow < -DownloadWithCacheManager.cleanupInterval {
 			lastCleanupDate = Date()
@@ -160,33 +160,35 @@ private final class DownloadWithCacheManager {
 
 		OneShotDownloadManager.shared.download(url) { (data, response, error) in
 
-			self.urlsInProgress.remove(url)
+			MainActor.assumeIsolated {
+				self.urlsInProgress.remove(url)
 
-			if let data = data, let response = response, response.statusIsOK, error == nil {
-				let cacheRecord = WebCacheRecord(url: url, dateDownloaded: Date(), data: data, response: response)
-				self.cache[url] = cacheRecord
-			}
-
-			var callbackCount = 0
-			self.pendingCallbacks.forEach{ (callbackRecord) in
-				if url == callbackRecord.url {
-					callbackRecord.completion(data, response, error)
-					callbackCount += 1
+				if let data = data, let response = response, response.statusIsOK, error == nil {
+					let cacheRecord = WebCacheRecord(url: url, dateDownloaded: Date(), data: data, response: response)
+					self.cache[url] = cacheRecord
 				}
+
+				var callbackCount = 0
+				self.pendingCallbacks.forEach{ (callbackRecord) in
+					if url == callbackRecord.url {
+						callbackRecord.completion(data, response, error)
+						callbackCount += 1
+					}
+				}
+				self.pendingCallbacks.removeAll(where: { (callbackRecord) -> Bool in
+					return callbackRecord.url == url
+				})
 			}
-			self.pendingCallbacks.removeAll(where: { (callbackRecord) -> Bool in
-				return callbackRecord.url == url
-			})
 		}
 	}
 }
 
-public func downloadUsingCache(_ url: URL, _ completion: @escaping OneShotDownloadCallback) {
+@MainActor public func downloadUsingCache(_ url: URL, _ completion: @escaping OneShotDownloadCallback) {
 	precondition(Thread.isMainThread)
 	DownloadWithCacheManager.shared.download(url, completion)
 }
 
-public func downloadAddingToCache(_ url: URL, _ completion: @escaping OneShotDownloadCallback) {
+@MainActor public func downloadAddingToCache(_ url: URL, _ completion: @escaping OneShotDownloadCallback) {
 	precondition(Thread.isMainThread)
 	DownloadWithCacheManager.shared.download(url, completion, forceRedownload: true)
 }

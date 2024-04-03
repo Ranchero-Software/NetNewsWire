@@ -15,7 +15,7 @@ import Secrets
 import WidgetKit
 import Core
 
-var appDelegate: AppDelegate!
+@MainActor var appDelegate: AppDelegate!
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {

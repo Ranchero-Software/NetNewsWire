@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlyEntryIdentifierProviding: AnyObject {
-	var entryIds: Set<String> { get }
+	@MainActor var entryIds: Set<String> { get }
 }
 
 final class FeedlyEntryIdentifierProvider: FeedlyEntryIdentifierProviding {
@@ -19,11 +19,11 @@ final class FeedlyEntryIdentifierProvider: FeedlyEntryIdentifierProviding {
 		self.entryIds = entryIds
 	}
 	
-	func addEntryIds(from provider: FeedlyEntryIdentifierProviding) {
+	@MainActor func addEntryIds(from provider: FeedlyEntryIdentifierProviding) {
 		entryIds.formUnion(provider.entryIds)
 	}
 	
-	func addEntryIds(in articleIds: [String]) {
+	@MainActor func addEntryIds(in articleIds: [String]) {
 		entryIds.formUnion(articleIds)
 	}
 }

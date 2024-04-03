@@ -16,14 +16,14 @@ import UniformTypeIdentifiers
 struct FaviconURLFinder {
 
 	/// Uniform types to ignore when finding favicon URLs.
-	static var ignoredTypes = [UTType.svg]
+	static let ignoredTypes = [UTType.svg]
 
 	/// Finds favicon URLs in a web page.
 	/// - Parameters:
 	///   - homePageURL: The page to search.
 	///   - completion: A closure called when the links have been found.
 	///   - urls: An array of favicon URLs as strings.
-	static func findFaviconURLs(with homePageURL: String, _ completion: @escaping (_ urls: [String]?) -> Void) {
+	@MainActor static func findFaviconURLs(with homePageURL: String, _ completion: @escaping (_ urls: [String]?) -> Void) {
 
 		guard let _ = URL(unicodeString: homePageURL) else {
 			completion(nil)

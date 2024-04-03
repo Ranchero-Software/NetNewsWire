@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlyCheckpointOperationDelegate: AnyObject {
-	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation)
+	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation)
 }
 
 /// Let the delegate know an instance is executing. The semantics are up to the delegate.

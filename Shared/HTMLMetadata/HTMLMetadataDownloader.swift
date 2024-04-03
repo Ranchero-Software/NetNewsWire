@@ -14,7 +14,7 @@ struct HTMLMetadataDownloader {
 
 	static let serialDispatchQueue = DispatchQueue(label: "HTMLMetadataDownloader")
 
-	static func downloadMetadata(for url: String, _ completion: @escaping (RSHTMLMetadata?) -> Void) {
+	@MainActor static func downloadMetadata(for url: String, _ completion: @escaping (RSHTMLMetadata?) -> Void) {
 		guard let actualURL = URL(unicodeString: url) else {
 			completion(nil)
 			return

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedSpecifier: Hashable {
+struct FeedSpecifier: Hashable, Sendable {
 
 	enum Source: Int {
 		case UserEntered = 0, HTMLHead, HTMLLink

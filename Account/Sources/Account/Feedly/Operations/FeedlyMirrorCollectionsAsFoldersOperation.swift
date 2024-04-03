@@ -10,7 +10,7 @@ import Foundation
 import os.log
 
 protocol FeedlyFeedsAndFoldersProviding {
-	var feedsAndFolders: [([FeedlyFeed], Folder)] { get }
+	@MainActor var feedsAndFolders: [([FeedlyFeed], Folder)] { get }
 }
 
 /// Reflect Collections from Feedly as Folders.

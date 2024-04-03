@@ -11,12 +11,12 @@ import Parser
 import os.log
 
 protocol FeedlyEntryProviding {
-	var entries: [FeedlyEntry] { get }
+	@MainActor var entries: [FeedlyEntry] { get }
 }
 
 protocol FeedlyParsedItemProviding {
-	var parsedItemProviderName: String { get }
-	var parsedEntries: Set<ParsedItem> { get }
+	@MainActor var parsedItemProviderName: String { get }
+	@MainActor var parsedEntries: Set<ParsedItem> { get }
 }
 
 protocol FeedlyGetStreamContentsOperationDelegate: AnyObject {
@@ -26,7 +26,7 @@ protocol FeedlyGetStreamContentsOperationDelegate: AnyObject {
 /// Get the stream content of a Collection from Feedly.
 final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
 	
-	struct ResourceProvider: FeedlyResourceProviding {
+	@MainActor struct ResourceProvider: FeedlyResourceProviding {
 		var resource: FeedlyResourceId
 	}
 	
