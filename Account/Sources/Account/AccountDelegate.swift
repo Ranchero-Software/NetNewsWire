@@ -36,7 +36,7 @@ import Secrets
 	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws
 	func removeFolder(for account: Account, with folder: Folder) async throws
 
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void)
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws
 	func addFeed(for account: Account, with: Feed, to container: Container) async throws
 	func removeFeed(for account: Account, with feed: Feed, from container: Container) async throws

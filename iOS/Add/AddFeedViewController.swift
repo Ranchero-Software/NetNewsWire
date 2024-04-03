@@ -117,23 +117,21 @@ class AddFeedViewController: UITableViewController {
 		
 		BatchUpdate.shared.start()
 		
-		account!.createFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
-
-			BatchUpdate.shared.end()
-			
-			switch result {
-			case .success(let feed):
+		Task { @MainActor in
+			do {
+				let feed = try await account!.createFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true)
 				self.dismiss(animated: true)
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-			case .failure(let error):
+
+			} catch {
 				self.addButton.isEnabled = true
 				self.activityIndicator.isHidden = true
 				self.activityIndicator.stopAnimating()
 				self.presentError(error)
 			}
 
+			BatchUpdate.shared.end()
 		}
-
 	}
 	
 	@objc func textDidChange(_ note: Notification) {

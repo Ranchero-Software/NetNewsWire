@@ -346,11 +346,11 @@ private extension SidebarOutlineDataSource {
 
 	func copyFeedBetweenAccounts(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
-			let destinationAccount = nodeAccount(parentNode),
-			let destinationContainer = parentNode.representedObject as? Container else {
+			  let destinationAccount = nodeAccount(parentNode),
+			  let destinationContainer = parentNode.representedObject as? Container else {
 			return
 		}
-		
+
 		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 
 			Task { @MainActor in
@@ -361,11 +361,10 @@ private extension SidebarOutlineDataSource {
 				}
 			}
 		} else {
-			destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
+			Task { @MainActor in
+				do {
+					try await destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false)
+				} catch {
 					NSApplication.shared.presentError(error)
 				}
 			}
@@ -425,10 +424,10 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func copyFolderBetweenAccounts(node: Node, to parentNode: Node) {
-		
+
 		guard let folder = node.representedObject as? Folder,
-			let destinationAccount = nodeAccount(parentNode) else {
-				return
+			  let destinationAccount = nodeAccount(parentNode) else {
+			return
 		}
 
 		Task { @MainActor in
@@ -440,17 +439,9 @@ private extension SidebarOutlineDataSource {
 					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 						try await destinationAccount.addFeed(existingFeed, to: destinationFolder)
 					} else {
-						destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								NSApplication.shared.presentError(error)
-							}
-						}
+						try await destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false)
 					}
 				}
-
 			} catch {
 				NSApplication.shared.presentError(error)
 			}

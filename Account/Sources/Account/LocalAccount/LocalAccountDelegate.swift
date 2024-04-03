@@ -82,6 +82,24 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 	}
 
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+
+		guard let url = URL(string: urlString) else {
+			throw LocalAccountDelegateError.invalidParameter
+		}
+
+		return try await withCheckedThrowingContinuation { continuation in
+			self.createRSSFeed(for: account, url: url, editedName: name, container: container) { result in
+				switch result {
+				case .success(let feed):
+					continuation.resume(returning: feed)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))

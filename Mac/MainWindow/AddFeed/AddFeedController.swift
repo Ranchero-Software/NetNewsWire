@@ -62,31 +62,25 @@ import RSParser
 			return
 		}
 
-		account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
-			
-			DispatchQueue.main.async {
-				self.endShowingProgress()
-			}
-			
-			switch result {
-			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-			case .failure(let error):
-				switch error {
-				case AccountError.createErrorAlreadySubscribed:
-					self.showAlreadySubscribedError(url.absoluteString)
-				case AccountError.createErrorNotFound:
-					self.showNoFeedsErrorMessage()
-				default:
-					DispatchQueue.main.async {
-						NSApplication.shared.presentError(error)
-					}
-				}
-			}
-			
-		}
-		
 		beginShowingProgress()
+
+		Task { @MainActor in
+			do {
+				let feed = try await account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true)
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+
+			} catch AccountError.createErrorAlreadySubscribed {
+				self.showAlreadySubscribedError(url.absoluteString)
+
+			} catch AccountError.createErrorNotFound {
+				self.showNoFeedsErrorMessage()
+
+			} catch {
+				NSApplication.shared.presentError(error)
+			}
+
+			self.endShowingProgress()
+		}
 	}
 
 	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController) {

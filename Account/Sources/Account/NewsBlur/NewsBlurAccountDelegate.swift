@@ -515,7 +515,21 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> ()) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.createFeed(for: account, url: url, name: name, container: container, validateFeed: validateFeed) { result in
+				switch result {
+				case .success(let feed):
+					continuation.resume(returning: feed)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> ()) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		let folderName = (container as? Folder)?.name

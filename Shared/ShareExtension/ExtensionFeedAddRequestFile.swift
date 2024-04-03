@@ -156,7 +156,8 @@ private extension ExtensionFeedAddRequestFile {
 		
 		guard let container = destinationContainer else { return }
 		
-		account.createFeed(url: request.feedURL.absoluteString, name: request.name, container: container, validateFeed: true) { _ in }
-	}
-	
+		Task { @MainActor in
+			try? await account.createFeed(url: request.feedURL.absoluteString, name: request.name, container: container, validateFeed: true)
+		}
+	}	
 }

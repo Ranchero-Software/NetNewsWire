@@ -243,7 +243,21 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		
 	}
 	
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.createFeed(for: account, url: url, name: name, container: container, validateFeed: validateFeed) { result in
+				switch result {
+				case .success(let feed):
+					continuation.resume(returning: feed)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return

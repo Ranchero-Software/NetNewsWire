@@ -102,19 +102,19 @@ import Articles
         // suspendExecution(). When we get the callback, we supply the event result and call resumeExecution().
         command.suspendExecution()
         
-		account.createFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
-			switch result {
-			case .success(let feed):
+		Task { @MainActor in
+
+			do {
+				let feed = try await account.createFeed(url: url, name: titleFromArgs, container: container, validateFeed: true)
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 				let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
 				command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
-			case .failure:
+			} catch {
 				command.resumeExecution(withResult:nil)
 			}
-
 		}
-		
-        return nil
+
+		return nil
     }
 
     // MARK: --- Scriptable properties ---

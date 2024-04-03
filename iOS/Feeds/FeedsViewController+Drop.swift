@@ -109,55 +109,36 @@ extension SidebarViewController: UITableViewDropDelegate {
 
 			do {
 				try await sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer)
-				BatchUpdate.shared.end()
 			} catch {
-				BatchUpdate.shared.end()
 				self.presentError(error)
 			}
+
+			BatchUpdate.shared.end()
 		}
 	}
 	
 	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 
-		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
+		let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url)
 
-			BatchUpdate.shared.start()
+		BatchUpdate.shared.start()
 
-			Task { @MainActor in
+		Task { @MainActor in
 
-				do {
+			do {
+				if let existingFeed {
 					try await destinationContainer.account?.addFeed(existingFeed, to: destinationContainer)
-					try await sourceContainer.account?.removeFeed(feed, from: sourceContainer)
-					BatchUpdate.shared.end()
-				} catch {
-					BatchUpdate.shared.end()
-					self.presentError(error)
-				}
-			}
-
-		} else {
-
-			BatchUpdate.shared.start()
-			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
-				switch result {
-				case .success:
-
-					Task { @MainActor in
-						do {
-							try await sourceContainer.account?.removeFeed(feed, from: sourceContainer)
-							BatchUpdate.shared.end()
-						} catch {
-							BatchUpdate.shared.end()
-							self.presentError(error)
-						}
-					}
-
-					case .failure(let error):
-						BatchUpdate.shared.end()
-						self.presentError(error)
-					}
+				} else {
+					_ = try await destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false)
 				}
 
+				try await sourceContainer.account?.removeFeed(feed, from: sourceContainer)
+
+			} catch {
+				self.presentError(error)
 			}
+
+			BatchUpdate.shared.end()
 		}
+	}
 }
