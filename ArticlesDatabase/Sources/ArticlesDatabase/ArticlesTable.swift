@@ -9,7 +9,7 @@ import Foundation
 import FMDB
 import Database
 import Articles
-import RSParser
+import Parser
 
 final class ArticlesTable {
 

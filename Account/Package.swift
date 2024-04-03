@@ -11,7 +11,7 @@ let package = Package(
 			targets: ["Account"]),
 	],
 	dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.2")),
+		.package(path: "../Parser"),
 		.package(path: "../Articles"),
 		.package(path: "../ArticlesDatabase"),
 		.package(path: "../Web"),
@@ -25,7 +25,7 @@ let package = Package(
 		.target(
 			name: "Account",
 			dependencies: [
-				"RSParser",
+				"Parser",
 				"Web",
 				"Articles",
 				"ArticlesDatabase",

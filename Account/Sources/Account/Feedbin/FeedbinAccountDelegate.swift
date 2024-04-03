@@ -8,7 +8,7 @@
 
 import Articles
 import Database
-import RSParser
+import Parser
 import Web
 import SyncDatabase
 import os.log

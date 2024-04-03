@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 
 private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
 

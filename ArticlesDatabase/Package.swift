@@ -12,7 +12,7 @@ let package = Package(
 			targets: ["ArticlesDatabase"]),
 	],
 	dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.2")),
+		.package(path: "../Parser"),
 		.package(path: "../Articles"),
 		.package(path: "../Database"),
 		.package(path: "../FMDB"),
@@ -23,7 +23,7 @@ let package = Package(
 			name: "ArticlesDatabase",
 			dependencies: [
 				"Database",
-				"RSParser",
+				"Parser",
 				"Articles",
 				"FMDB",
 				"FoundationExtras"

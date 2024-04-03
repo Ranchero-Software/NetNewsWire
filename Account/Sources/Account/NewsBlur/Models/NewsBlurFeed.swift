@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 
 typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
 

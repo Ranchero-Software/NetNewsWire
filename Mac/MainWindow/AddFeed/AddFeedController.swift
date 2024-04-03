@@ -11,7 +11,7 @@ import CoreResources
 import Tree
 import Articles
 import Account
-import RSParser
+import Parser
 
 // Run add-feed sheet.
 // If it returns with URL and optional name,

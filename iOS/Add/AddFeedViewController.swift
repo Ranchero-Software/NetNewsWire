@@ -9,7 +9,7 @@
 import UIKit
 import Account
 import Tree
-import RSParser
+import Parser
 import Core
 
 enum AddFeedType {

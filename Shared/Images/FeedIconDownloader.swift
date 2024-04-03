@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import Account
 import Web
-import RSParser
+import Parser
 import Core
 
 extension Notification.Name {

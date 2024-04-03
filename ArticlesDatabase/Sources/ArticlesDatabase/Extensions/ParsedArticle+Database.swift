@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import Articles
 
 extension ParsedItem {

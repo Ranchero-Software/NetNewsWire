@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 
 extension RSHTMLMetadata {
 

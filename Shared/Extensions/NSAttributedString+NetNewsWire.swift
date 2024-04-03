@@ -6,7 +6,7 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import RSParser
+import Parser
 
 #if canImport(AppKit)
 import AppKit

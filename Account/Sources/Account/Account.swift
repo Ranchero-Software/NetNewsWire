@@ -12,7 +12,7 @@ import UIKit
 
 import Foundation
 import Articles
-import RSParser
+import Parser
 import Database
 import ArticlesDatabase
 import Web

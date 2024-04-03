@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import RSParser
+import Parser
 
 @MainActor struct ArticleStringFormatter {
 

@@ -8,7 +8,7 @@
 
 import Foundation
 import os.log
-import RSParser
+import Parser
 import Articles
 import ArticlesDatabase
 import Web

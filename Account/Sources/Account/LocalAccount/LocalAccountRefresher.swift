@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import Web
 import Articles
 import ArticlesDatabase

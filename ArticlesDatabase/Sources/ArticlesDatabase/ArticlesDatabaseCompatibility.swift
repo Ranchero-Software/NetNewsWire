@@ -8,7 +8,7 @@
 
 import Foundation
 import Database
-import RSParser
+import Parser
 import Articles
 
 // This file exists for compatibility — it provides nonisolated functions and callback-based APIs.

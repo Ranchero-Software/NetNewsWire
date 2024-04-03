@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 
 final class OPMLNormalizer {
 	

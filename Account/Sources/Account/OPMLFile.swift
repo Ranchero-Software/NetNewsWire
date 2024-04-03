@@ -8,7 +8,7 @@
 
 import Foundation
 import os.log
-import RSParser
+import Parser
 import Core
 
 @MainActor final class OPMLFile {

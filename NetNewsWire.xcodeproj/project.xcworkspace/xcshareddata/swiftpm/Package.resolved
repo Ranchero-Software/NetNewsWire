@@ -1,5 +1,5 @@
 {
-  "originHash" : "cdabcd707e9a2d05d419a03b18324728290923e8dae1ae2d92a2cdd8f1627191",
+  "originHash" : "8b50ed607f7b51065653df0252108c35d369c5a0c0753a1f820a72682b56c528",
   "pins" : [
     {
       "identity" : "plcrashreporter",
@@ -8,15 +8,6 @@
       "state" : {
         "revision" : "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
         "version" : "1.11.0"
-      }
-    },
-    {
-      "identity" : "rsparser",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ranchero-Software/RSParser.git",
-      "state" : {
-        "revision" : "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
-        "version" : "2.0.3"
       }
     },
     {

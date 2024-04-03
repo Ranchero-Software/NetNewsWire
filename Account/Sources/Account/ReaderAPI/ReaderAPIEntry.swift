@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 
 struct ReaderAPIEntryWrapper: Codable {
 	let id: String

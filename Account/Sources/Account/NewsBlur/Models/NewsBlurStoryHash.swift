@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 
 typealias NewsBlurStoryHash = NewsBlurStoryHashesResponse.StoryHash
 

@@ -141,8 +141,6 @@
 		5137C2EA26F63AE6009EFEDB /* ArticleThemeImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */; };
 		51386A8E25673277005F3762 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51386A8D25673276005F3762 /* AccountCell.swift */; };
 		51386A8F25673277005F3762 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51386A8D25673276005F3762 /* AccountCell.swift */; };
-		5138E95224D3418100AFF0FE /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95124D3418100AFF0FE /* RSParser */; };
-		5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95124D3418100AFF0FE /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
 		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
 		513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -222,8 +220,6 @@
 		51A1699F235E10D700EB091F /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16995235E10D600EB091F /* AboutViewController.swift */; };
 		51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */; };
 		51A66685238075AE00CB272D /* AddFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */; };
-		51A737C824DB19CC0015FA66 /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C724DB19CC0015FA66 /* RSParser */; };
-		51A737C924DB19CC0015FA66 /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C724DB19CC0015FA66 /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
 		51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */; };
 		51A9A5E62380C8B20033AADF /* ShareFolderPickerFolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */; };
@@ -385,8 +381,6 @@
 		653813252680E1D6007A082C /* ArticlesDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 653813232680E1D6007A082C /* ArticlesDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		653813262680E1E4007A082C /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4DAEC2425F6940091EB5B /* CloudKit.framework */; };
 		653813282680E1EC007A082C /* CrashReporter in Frameworks */ = {isa = PBXBuildFile; productRef = 653813272680E1EC007A082C /* CrashReporter */; };
-		653813302680E20C007A082C /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 6538132F2680E20C007A082C /* RSParser */; };
-		653813312680E20C007A082C /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6538132F2680E20C007A082C /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		653813392680E22B007A082C /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 653813382680E22B007A082C /* Secrets */; };
 		6538133A2680E22B007A082C /* Secrets in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 653813382680E22B007A082C /* Secrets */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		6538133B2680E28D007A082C /* Subscribe to Feed MAS.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 65ED409D235DEF770081F399 /* Subscribe to Feed MAS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -621,6 +615,14 @@
 		8454C3F3263F2D8700E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
 		8454C3F8263F3AD400E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
 		8454C3FD263F3AD600E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
+		8456116B2BBD145200507B73 /* Parser in Frameworks */ = {isa = PBXBuildFile; productRef = 8456116A2BBD145200507B73 /* Parser */; };
+		8456116C2BBD145200507B73 /* Parser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8456116A2BBD145200507B73 /* Parser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8456116E2BBD145200507B73 /* ParserObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 8456116D2BBD145200507B73 /* ParserObjC */; };
+		8456116F2BBD145200507B73 /* ParserObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8456116D2BBD145200507B73 /* ParserObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		845611712BBD145D00507B73 /* Parser in Frameworks */ = {isa = PBXBuildFile; productRef = 845611702BBD145D00507B73 /* Parser */; };
+		845611722BBD145D00507B73 /* Parser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 845611702BBD145D00507B73 /* Parser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		845611742BBD145D00507B73 /* ParserObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 845611732BBD145D00507B73 /* ParserObjC */; };
+		845611752BBD145D00507B73 /* ParserObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 845611732BBD145D00507B73 /* ParserObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		845A29091FC74B8E007B49E3 /* SingleFaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */; };
 		845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */; };
 		845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */; };
@@ -934,11 +936,12 @@
 			dstSubfolderSpec = 10;
 			files = (
 				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
-				5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */,
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
+				845611752BBD145D00507B73 /* ParserObjC in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
 				513F32812593EF180003048F /* Account in Embed Frameworks */,
 				513F32752593EE6F0003048F /* ArticlesDatabase in Embed Frameworks */,
+				845611722BBD145D00507B73 /* Parser in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -971,7 +974,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				653813312680E20C007A082C /* RSParser in Embed Frameworks */,
 				6538133A2680E22B007A082C /* Secrets in Embed Frameworks */,
 				653813252680E1D6007A082C /* ArticlesDatabase in Embed Frameworks */,
 				653813222680E1D0007A082C /* Articles in Embed Frameworks */,
@@ -1014,10 +1016,11 @@
 			files = (
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
+				8456116F2BBD145200507B73 /* ParserObjC in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
 				513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */,
-				51A737C924DB19CC0015FA66 /* RSParser in Embed Frameworks */,
+				8456116C2BBD145200507B73 /* Parser in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1331,6 +1334,7 @@
 		845B14A51FC2299E0013CF92 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarredFeedDelegate.swift; sourceTree = "<group>"; };
 		845EE7C01FC2488C00854A1F /* SmartFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeed.swift; sourceTree = "<group>"; };
+		846799F42BBD120A000854CB /* Parser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Parser; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkStatusCommand.swift; sourceTree = "<group>"; };
 		847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+Extensions.swift"; sourceTree = "<group>"; };
 		8472058020142E8900AD578B /* FeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInspectorViewController.swift; sourceTree = "<group>"; };
@@ -1560,7 +1564,6 @@
 				84DCA5272BABBB6200792720 /* Core in Frameworks */,
 				841CECDA2BAD04B80001EE72 /* Tree in Frameworks */,
 				84DCA5182BABB77E00792720 /* FoundationExtras in Frameworks */,
-				653813302680E20C007A082C /* RSParser in Frameworks */,
 				6538131E2680E1CA007A082C /* Account in Frameworks */,
 				653813282680E1EC007A082C /* CrashReporter in Frameworks */,
 				84DCA51A2BABB78700792720 /* AppKitExtras in Frameworks */,
@@ -1586,7 +1589,8 @@
 				84DCA51E2BABB79900792720 /* FoundationExtras in Frameworks */,
 				84C1A8582BBBA5BD006E3E96 /* Web in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
-				5138E95224D3418100AFF0FE /* RSParser in Frameworks */,
+				845611742BBD145D00507B73 /* ParserObjC in Frameworks */,
+				845611712BBD145D00507B73 /* Parser in Frameworks */,
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
 				513F32772593EE6F0003048F /* Secrets in Frameworks */,
 				84DCA5292BABBB6A00792720 /* Core in Frameworks */,
@@ -1612,7 +1616,6 @@
 				84DCA5122BABB75600792720 /* FoundationExtras in Frameworks */,
 				513277612590FC640064F1E7 /* ArticlesDatabase in Frameworks */,
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
-				51A737C824DB19CC0015FA66 /* RSParser in Frameworks */,
 				179C39EA26F76B0500D4E741 /* Zip in Frameworks */,
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				84DCA5142BABB76100792720 /* AppKitExtras in Frameworks */,
@@ -1621,6 +1624,8 @@
 				514C16CE24D2E63F009A3AFA /* Account in Frameworks */,
 				519CA8E525841DB700EB079A /* CrashReporter in Frameworks */,
 				841CECD82BAD04B20001EE72 /* Tree in Frameworks */,
+				8456116B2BBD145200507B73 /* Parser in Frameworks */,
+				8456116E2BBD145200507B73 /* ParserObjC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2353,6 +2358,7 @@
 				841550F52B9E4D6800D4B345 /* FMDB */,
 				84DCA50F2BABB65600792720 /* CloudKitExtras */,
 				849FEDC32BBB225E0053FB21 /* Web */,
+				846799F42BBD120A000854CB /* Parser */,
 				84DCA5232BABBA8100792720 /* Core */,
 				841CECD62BAD03C60001EE72 /* Tree */,
 				84DCA5102BABB6A100792720 /* UIKitExtras */,
@@ -2898,7 +2904,6 @@
 				653813202680E1D0007A082C /* Articles */,
 				653813232680E1D6007A082C /* ArticlesDatabase */,
 				653813272680E1EC007A082C /* CrashReporter */,
-				6538132F2680E20C007A082C /* RSParser */,
 				653813382680E22B007A082C /* Secrets */,
 				84DCA5172BABB77E00792720 /* FoundationExtras */,
 				84DCA5192BABB78700792720 /* AppKitExtras */,
@@ -2948,7 +2953,6 @@
 			name = "NetNewsWire-iOS";
 			packageProductDependencies = (
 				516B695E24D2F33B00B5702F /* Account */,
-				5138E95124D3418100AFF0FE /* RSParser */,
 				513F32702593EE6F0003048F /* Articles */,
 				513F32732593EE6F0003048F /* ArticlesDatabase */,
 				513F32762593EE6F0003048F /* Secrets */,
@@ -2962,6 +2966,8 @@
 				84DCA5282BABBB6A00792720 /* Core */,
 				841CECDB2BAD04BF0001EE72 /* Tree */,
 				84C1A8572BBBA5BD006E3E96 /* Web */,
+				845611702BBD145D00507B73 /* Parser */,
+				845611732BBD145D00507B73 /* ParserObjC */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -2992,7 +2998,6 @@
 			packageProductDependencies = (
 				514C16CD24D2E63F009A3AFA /* Account */,
 				51C4CFF524D37DD500AF9874 /* Secrets */,
-				51A737C724DB19CC0015FA66 /* RSParser */,
 				17192AD92567B3D500AAEACA /* RSSparkle */,
 				519CA8E425841DB700EB079A /* CrashReporter */,
 				5132775D2590FC640064F1E7 /* Articles */,
@@ -3007,6 +3012,8 @@
 				84DCA5242BABBB5A00792720 /* Core */,
 				8438C2DA2BABE0B00040C9EE /* CoreResources */,
 				841CECD72BAD04B20001EE72 /* Tree */,
+				8456116A2BBD145200507B73 /* Parser */,
+				8456116D2BBD145200507B73 /* ParserObjC */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -3120,7 +3127,6 @@
 			);
 			mainGroup = 849C64571ED37A5D003D8FC0;
 			packageReferences = (
-				51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */,
 				17192AD82567B3D500AAEACA /* XCRemoteSwiftPackageReference "Sparkle-Binary" */,
 				519CA8E325841DB700EB079A /* XCRemoteSwiftPackageReference "plcrashreporter" */,
 				179D280926F6F93D003B2E0A /* XCRemoteSwiftPackageReference "Zip" */,
@@ -4753,14 +4759,6 @@
 				minimumVersion = 1.8.1;
 			};
 		};
-		51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Ranchero-Software/RSParser.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.3;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -4799,11 +4797,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SyncDatabase;
 		};
-		5138E95124D3418100AFF0FE /* RSParser */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
-			productName = RSParser;
-		};
 		513F32702593EE6F0003048F /* Articles */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Articles;
@@ -4832,11 +4825,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 519CA8E325841DB700EB079A /* XCRemoteSwiftPackageReference "plcrashreporter" */;
 			productName = CrashReporter;
-		};
-		51A737C724DB19CC0015FA66 /* RSParser */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
-			productName = RSParser;
 		};
 		51BC2F3724D3439A00E90810 /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4867,11 +4855,6 @@
 			package = 519CA8E325841DB700EB079A /* XCRemoteSwiftPackageReference "plcrashreporter" */;
 			productName = CrashReporter;
 		};
-		6538132F2680E20C007A082C /* RSParser */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
-			productName = RSParser;
-		};
 		653813382680E22B007A082C /* Secrets */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Secrets;
@@ -4899,6 +4882,22 @@
 		8438C2DA2BABE0B00040C9EE /* CoreResources */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CoreResources;
+		};
+		8456116A2BBD145200507B73 /* Parser */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Parser;
+		};
+		8456116D2BBD145200507B73 /* ParserObjC */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ParserObjC;
+		};
+		845611702BBD145D00507B73 /* Parser */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Parser;
+		};
+		845611732BBD145D00507B73 /* ParserObjC */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ParserObjC;
 		};
 		8479ABE22B9E906E00F84C4D /* Database */ = {
 			isa = XCSwiftPackageProductDependency;

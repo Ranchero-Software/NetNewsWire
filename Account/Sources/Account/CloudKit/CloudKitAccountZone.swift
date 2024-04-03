@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 import Web
-import RSParser
+import Parser
 import CloudKit
 import FoundationExtras
 import CloudKitExtras

@@ -8,7 +8,7 @@
 
 import Foundation
 import Web
-import RSParser
+import Parser
 
 struct HTMLMetadataDownloader {
 

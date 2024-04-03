@@ -11,7 +11,7 @@ import CloudKit
 import SystemConfiguration
 import os.log
 import SyncDatabase
-import RSParser
+import Parser
 import Articles
 import ArticlesDatabase
 import Web

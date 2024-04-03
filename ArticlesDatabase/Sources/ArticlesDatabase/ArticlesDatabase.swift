@@ -10,7 +10,7 @@ import Foundation
 import Database
 import FMDB
 import Articles
-import RSParser
+import Parser
 
 public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
 

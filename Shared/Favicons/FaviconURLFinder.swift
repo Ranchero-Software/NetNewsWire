@@ -8,7 +8,7 @@
 
 import Foundation
 import CoreServices
-import RSParser
+import Parser
 import UniformTypeIdentifiers
 
 // The favicon URLs may be specified in the head section of the home page.
