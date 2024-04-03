@@ -676,8 +676,9 @@ public enum FetchType {
 		structureDidChange()
 	}
 	
-	public func updateUnreadCounts(for feeds: Set<Feed>, completion: VoidCompletionBlock? = nil) {
-		fetchUnreadCounts(for: feeds, completion: completion)
+	public func updateUnreadCounts(for feeds: Set<Feed>) {
+
+		fetchUnreadCounts(for: feeds)
 	}
 
 	@MainActor public func articles(for fetchType: FetchType) async throws -> Set<Article> {
@@ -1111,13 +1112,13 @@ public enum FetchType {
 
 	// MARK: - Hashable
 
-	public func hash(into hasher: inout Hasher) {
+	nonisolated public func hash(into hasher: inout Hasher) {
 		hasher.combine(accountID)
 	}
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Account, rhs: Account) -> Bool {
+	nonisolated public class func ==(lhs: Account, rhs: Account) -> Bool {
 		return lhs === rhs
 	}
 }
@@ -1416,65 +1417,65 @@ private extension Account {
 	/// Fetch unread counts for zero or more feeds.
 	///
 	/// Uses the most efficient method based on how many feeds were passed in.
-	func fetchUnreadCounts(for feeds: Set<Feed>, completion: VoidCompletionBlock?) {
-		if feeds.isEmpty {
-			completion?()
+	func fetchUnreadCounts(for feeds: Set<Feed>) {
+
+		guard !feeds.isEmpty else {
 			return
 		}
+
 		if feeds.count == 1, let feed = feeds.first {
-			fetchUnreadCount(feed, completion)
+			fetchUnreadCount(feed)
 		}
 		else if feeds.count < 10 {
-			fetchUnreadCounts(feeds, completion)
+			fetchUnreadCounts(feeds)
 		}
 		else {
-			fetchAllUnreadCounts(completion)
+			fetchAllUnreadCounts()
 		}
 	}
 
-	func fetchUnreadCount(_ feed: Feed, _ completion: VoidCompletionBlock?) {
-		database.fetchUnreadCount(feed.feedID) { result in
-			Task { @MainActor in
-				if let unreadCount = try? result.get() {
-					feed.unreadCount = unreadCount
-				}
-				completion?()
+	func fetchUnreadCount(_ feed: Feed) {
+
+		Task { @MainActor in
+			if let unreadCount = try? await database.unreadCount(feedID: feed.feedID) {
+				feed.unreadCount = unreadCount
 			}
 		}
 	}
 
-	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: VoidCompletionBlock?) {
-		let feedIDs = Set(feeds.map { $0.feedID })
-		database.fetchUnreadCounts(for: feedIDs) { result in
+	func fetchUnreadCounts(_ feeds: Set<Feed>) {
 
-			Task { @MainActor in
-				if let unreadCountDictionary = try? result.get() {
-					self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
-				}
-				completion?()
+		Task { @MainActor in
+
+			let feedIDs = Set(feeds.map { $0.feedID })
+			guard let unreadCountDictionary = try? await database.unreadCounts(feedIDs: feedIDs) else {
+				return
 			}
+
+			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
 		}
 	}
 
-	func fetchAllUnreadCounts(_ completion: VoidCompletionBlock? = nil) {
+	func fetchAllUnreadCounts() {
+
+		guard !fetchingAllUnreadCounts else {
+			return
+		}
 		fetchingAllUnreadCounts = true
-		database.fetchAllUnreadCounts { result in
 
-			Task { @MainActor in
-				guard let unreadCountDictionary = try? result.get() else {
-					completion?()
-					return
-				}
+		Task { @MainActor in
+
+			let unreadCountDictionary = try? await database.allUnreadCounts()
+			self.fetchingAllUnreadCounts = false
+
+			if let unreadCountDictionary {
 				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
+			}
+			self.updateUnreadCount()
 
-				self.fetchingAllUnreadCounts = false
-				self.updateUnreadCount()
-
-				if !self.isUnreadCountsInitialized {
-					self.isUnreadCountsInitialized = true
-					self.postUnreadCountDidInitializeNotification()
-				}
-				completion?()
+			if !self.isUnreadCountsInitialized {
+				self.isUnreadCountsInitialized = true
+				self.postUnreadCountDidInitializeNotification()
 			}
 		}
 	}
