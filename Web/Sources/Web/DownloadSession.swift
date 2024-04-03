@@ -13,17 +13,17 @@ import Foundation
 
 public protocol DownloadSessionDelegate {
 
-	func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject: AnyObject) -> URLRequest?
-	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void)
-	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, representedObject: AnyObject) -> Bool
-	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse: URLResponse, representedObject: AnyObject)
-	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject)
-	func downloadSession(_ downloadSession: DownloadSession, didDiscardDuplicateRepresentedObject: AnyObject)
-	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession)
-	
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject: AnyObject) -> URLRequest?
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void)
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, representedObject: AnyObject) -> Bool
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse: URLResponse, representedObject: AnyObject)
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject)
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, didDiscardDuplicateRepresentedObject: AnyObject)
+	@MainActor func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession)
+
 }
 
-@objc public final class DownloadSession: NSObject {
+@MainActor @objc public final class DownloadSession: NSObject {
 	
 	private var urlSession: URLSession!
 	private var tasksInProgress = Set<URLSessionTask>()
@@ -70,7 +70,7 @@ public protocol DownloadSessionDelegate {
 		}
 	}
 
-	public func downloadObjects(_ objects: NSSet) {
+	@MainActor public func downloadObjects(_ objects: NSSet) {
 		for oneObject in objects {
 			if !representedObjects.contains(oneObject) {
 				representedObjects.add(oneObject)
@@ -175,7 +175,7 @@ extension DownloadSession: URLSessionDataDelegate {
 
 private extension DownloadSession {
 
-	func addDataTask(_ representedObject: AnyObject) {
+	@MainActor func addDataTask(_ representedObject: AnyObject) {
 		guard tasksPending.count < 500 else {
 			queue.insert(representedObject, at: 0)
 			return
@@ -213,7 +213,7 @@ private extension DownloadSession {
 		return taskIdentifierToInfoDictionary[task.taskIdentifier]
 	}
 
-	func removeTask(_ task: URLSessionTask) {
+	@MainActor func removeTask(_ task: URLSessionTask) {
 		tasksInProgress.remove(task)
 		tasksPending.remove(task)
 		taskIdentifierToInfoDictionary[task.taskIdentifier] = nil

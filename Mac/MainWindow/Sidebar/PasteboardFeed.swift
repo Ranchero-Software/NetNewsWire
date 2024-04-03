@@ -13,7 +13,7 @@ import AppKitExtras
 
 typealias PasteboardFeedDictionary = [String: String]
 
-struct PasteboardFeed: Hashable {
+@MainActor struct PasteboardFeed: Hashable {
 
 	private struct Key {
 		static let url = "URL"

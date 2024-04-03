@@ -36,36 +36,42 @@ extension Article: PasteboardWriterOwner {
 
 	// MARK: - NSPasteboardWriting
 
-	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-		var types = [ArticlePasteboardWriter.articleUTIType]
+	nonisolated func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		if let _ = article.preferredURL {
-			types += [.URL]
+		MainActor.assumeIsolated {
+			var types = [ArticlePasteboardWriter.articleUTIType]
+
+			if let _ = article.preferredURL {
+				types += [.URL]
+			}
+			types += [.string, .html, ArticlePasteboardWriter.articleUTIInternalType]
+
+			return types
 		}
-		types += [.string, .html, ArticlePasteboardWriter.articleUTIInternalType]
-
-		return types
 	}
 
-	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
-		let plist: Any?
+	nonisolated func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
 
-		switch type {
-		case .html:
-			return renderedHTML
-		case .string:
-			plist = plainText()
-		case .URL:
-			return article.preferredLink ?? ""
-		case ArticlePasteboardWriter.articleUTIType:
-			plist = exportDictionary()
-		case ArticlePasteboardWriter.articleUTIInternalType:
-			plist = internalDictionary()
-		default:
-			plist = nil
+		MainActor.assumeIsolated {
+			let plist: Any?
+			
+			switch type {
+			case .html:
+				return renderedHTML
+			case .string:
+				plist = plainText()
+			case .URL:
+				return article.preferredLink ?? ""
+			case ArticlePasteboardWriter.articleUTIType:
+				plist = exportDictionary()
+			case ArticlePasteboardWriter.articleUTIInternalType:
+				plist = internalDictionary()
+			default:
+				plist = nil
+			}
+			
+			return plist
 		}
-
-		return plist
 	}
 }
 

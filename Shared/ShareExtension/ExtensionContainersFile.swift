@@ -12,7 +12,7 @@ import Parser
 import Account
 import Core
 
-final class ExtensionContainersFile {
+@MainActor final class ExtensionContainersFile {
 	
 	private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionContainersFile")
 

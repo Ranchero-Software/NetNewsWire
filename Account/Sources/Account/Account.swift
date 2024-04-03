@@ -612,6 +612,7 @@ public enum FetchType {
 		try await delegate.addFeed(for: self, with: feed, to: container)
 	}
 
+	@discardableResult
 	public func createFeed(url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 
 		try await delegate.createFeed(for: self, url: url, name: name, container: container, validateFeed: validateFeed)

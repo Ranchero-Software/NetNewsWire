@@ -12,7 +12,7 @@ import Account
 
 protocol SmallIconProvider {
 
-	var smallIcon: IconImage? { get }
+	@MainActor var smallIcon: IconImage? { get }
 }
 
 extension Account: SmallIconProvider {

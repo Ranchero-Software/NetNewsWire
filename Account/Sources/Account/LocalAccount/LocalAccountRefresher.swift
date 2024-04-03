@@ -14,11 +14,11 @@ import ArticlesDatabase
 import FoundationExtras
 
 protocol LocalAccountRefresherDelegate {
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed)
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void)
+	@MainActor func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed)
+	@MainActor func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void)
 }
 
-final class LocalAccountRefresher {
+@MainActor final class LocalAccountRefresher {
 	
 	private var completion: (() -> Void)? = nil
 	private var isSuspended = false

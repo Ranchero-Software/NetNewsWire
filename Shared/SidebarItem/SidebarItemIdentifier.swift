@@ -10,7 +10,7 @@ import Foundation
 import Account
 
 protocol SidebarItemIdentifiable {
-	var sidebarItemID: SidebarItemIdentifier? { get }
+	@MainActor var sidebarItemID: SidebarItemIdentifier? { get }
 }
 
 enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable {

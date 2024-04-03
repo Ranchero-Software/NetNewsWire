@@ -11,7 +11,7 @@ import Account
 import Articles
 import ArticlesDatabase
 
-struct SearchFeedDelegate: SmartFeedDelegate {
+@MainActor struct SearchFeedDelegate: SmartFeedDelegate {
 
 	var sidebarItemID: SidebarItemIdentifier? {
 		return SidebarItemIdentifier.smartFeed(String(describing: SearchFeedDelegate.self))
