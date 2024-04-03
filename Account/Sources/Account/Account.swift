@@ -826,6 +826,21 @@ public enum FetchType {
 		}
 	}
 
+	@discardableResult
+	func update(_ feed: Feed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.update(feed, with: parsedFeed) { result in
+				switch result {
+				case .success(let articleChanges):
+					continuation.resume(returning: articleChanges)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
