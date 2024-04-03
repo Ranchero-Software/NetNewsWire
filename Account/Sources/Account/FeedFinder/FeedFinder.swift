@@ -12,6 +12,20 @@ import Web
 
 class FeedFinder {
 	
+	static func find(url: URL) async throws -> Set<FeedSpecifier> {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.find(url: url) { result in
+				switch result {
+				case .success(let feedSpecifiers):
+					continuation.resume(returning: feedSpecifiers)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+	
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		downloadAddingToCache(url) { (data, response, error) in
 			
