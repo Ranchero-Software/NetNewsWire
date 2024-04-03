@@ -331,12 +331,14 @@ private extension SidebarOutlineDataSource {
 		}
 
 		BatchUpdate.shared.start()
-		source.account?.moveFeed(feed, from: source, to: destination) { result in
-			BatchUpdate.shared.end()
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
+
+		Task { @MainActor in
+
+			do {
+				try await source.account?.moveFeed(feed, from: source, to: destination)
+				BatchUpdate.shared.end()
+			} catch {
+				BatchUpdate.shared.end()
 				NSApplication.shared.presentError(error)
 			}
 		}

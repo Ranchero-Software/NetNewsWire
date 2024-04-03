@@ -564,7 +564,21 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.moveFeed(for: account, with: feed, from: from, to: to) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if from is Account {
 			addFeed(for: account, with: feed, to: to, completion: completion)
 		} else {

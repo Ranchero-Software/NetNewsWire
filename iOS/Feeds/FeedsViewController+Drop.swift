@@ -104,12 +104,14 @@ extension SidebarViewController: UITableViewDropDelegate {
 		guard sourceContainer !== destinationContainer else { return }
 		
 		BatchUpdate.shared.start()
-		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
-			BatchUpdate.shared.end()
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
+
+		Task { @MainActor in
+
+			do {
+				try await sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer)
+				BatchUpdate.shared.end()
+			} catch {
+				BatchUpdate.shared.end()
 				self.presentError(error)
 			}
 		}
