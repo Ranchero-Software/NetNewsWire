@@ -88,25 +88,7 @@ final class LocalAccountDelegate: AccountDelegate {
 			throw LocalAccountDelegateError.invalidParameter
 		}
 
-		return try await withCheckedThrowingContinuation { continuation in
-			self.createRSSFeed(for: account, url: url, editedName: name, container: container) { result in
-				switch result {
-				case .success(let feed):
-					continuation.resume(returning: feed)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
-		guard let url = URL(string: urlString) else {
-			completion(.failure(LocalAccountDelegateError.invalidParameter))
-			return
-		}
-		
-        createRSSFeed(for: account, url: url, editedName: name, container: container, completion: completion)
+		return try await createRSSFeed(for: account, url: url, editedName: name, container: container)
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
@@ -214,62 +196,39 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 
 private extension LocalAccountDelegate {
 	
-	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container) async throws -> Feed {
 
-		Task { @MainActor in
-			// We need to use a batch update here because we need to assign add the feed to the
-			// container before the name has been downloaded.  This will put it in the sidebar
-			// with an Untitled name if we don't delay it being added to the sidebar.
-			BatchUpdate.shared.start()
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			FeedFinder.find(url: url) { result in
-				
-				MainActor.assumeIsolated {
-					switch result {
-					case .success(let feedSpecifiers):
-						guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-							  let url = URL(string: bestFeedSpecifier.urlString) else {
-							self.refreshProgress.completeTask()
-							BatchUpdate.shared.end()
-							completion(.failure(AccountError.createErrorNotFound))
-							return
-						}
-						
-						if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
-							self.refreshProgress.completeTask()
-							BatchUpdate.shared.end()
-							completion(.failure(AccountError.createErrorAlreadySubscribed))
-							return
-						}
-						
-						InitialFeedDownloader.download(url) { parsedFeed in
-							self.refreshProgress.completeTask()
-							
-							if let parsedFeed = parsedFeed {
-								let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
-								feed.editedName = editedName
-								container.addFeed(feed)
-								
-								account.update(feed, with: parsedFeed, {_ in
-									MainActor.assumeIsolated {
-										BatchUpdate.shared.end()
-										completion(.success(feed))
-									}
-								})
-							} else {
-								BatchUpdate.shared.end()
-								completion(.failure(AccountError.createErrorNotFound))
-							}
-							
-						}
-						
-					case .failure:
-						BatchUpdate.shared.end()
-						self.refreshProgress.completeTask()
-						completion(.failure(AccountError.createErrorNotFound))
-					}
-				}
-			}
+		// We need to use a batch update here because we need to add the feed to the
+		// container before the name has been downloaded. This will put it in the sidebar
+		// with an Untitled name if we don't delay it being added to the sidebar.
+		BatchUpdate.shared.start()
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		defer {
+			refreshProgress.completeTask()
+			BatchUpdate.shared.end()
 		}
+
+		let feedSpecifiers = try await FeedFinder.find(url: url)
+
+		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+			  let url = URL(string: bestFeedSpecifier.urlString) else {
+			throw AccountError.createErrorNotFound
+		}
+
+		guard !account.hasFeed(withURL: bestFeedSpecifier.urlString) else {
+			throw AccountError.createErrorAlreadySubscribed
+		}
+
+		guard let parsedFeed = await InitialFeedDownloader.download(url) else {
+			throw AccountError.createErrorNotFound
+		}
+
+		let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
+		feed.editedName = editedName
+		container.addFeed(feed)
+
+		try await account.update(feed, with: parsedFeed)
+
+		return feed
 	}
 }
