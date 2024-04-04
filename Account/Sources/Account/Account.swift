@@ -941,12 +941,11 @@ public enum FetchType {
 	}
 
 	// Delete the articles associated with the given set of articleIDs
-	func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+	func delete(articleIDs: Set<String>) async throws {
 		guard !articleIDs.isEmpty else {
-			completion?(nil)
 			return
 		}
-		database.delete(articleIDs: articleIDs, completion: completion)
+		try await database.delete(articleIDs: articleIDs)
 	}
 	
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.

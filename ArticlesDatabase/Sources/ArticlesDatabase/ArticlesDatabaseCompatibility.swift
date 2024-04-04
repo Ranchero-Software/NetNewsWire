@@ -56,19 +56,6 @@ public extension ArticlesDatabase {
 		}
 	}
 
-	/// Delete articles
-	nonisolated func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
-
-		Task {
-			do {
-				try await delete(articleIDs: articleIDs)
-				callDatabaseCompletion(completion)
-			} catch {
-				callDatabaseCompletion(completion, .suspended)
-			}
-		}
-	}
-
 	// MARK: - Status
 
 	/// Fetch the articleIDs of unread articles.
