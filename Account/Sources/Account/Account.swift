@@ -702,31 +702,6 @@ public enum FetchType {
 
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
-		switch fetchType {
-		case .starred(let limit):
-			fetchStarredArticlesAsync(limit: limit, completion)
-		case .unread(let limit):
-			fetchUnreadArticlesAsync(limit: limit, completion)
-		case .today(let limit):
-			fetchTodayArticlesAsync(limit: limit, completion)
-		case .folder(let folder, let readFilter):
-			if readFilter {
-				return fetchUnreadArticlesAsync(folder: folder, completion)
-			} else {
-				return fetchArticlesAsync(folder: folder, completion)
-			}
-		case .feed(let feed):
-			fetchArticlesAsync(feed: feed, completion)
-		case .articleIDs(let articleIDs):
-			fetchArticlesAsync(articleIDs: articleIDs, completion)
-		case .search(let searchString):
-			fetchArticlesMatchingAsync(searchString, completion)
-		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
-		}
-	}
-
 	@MainActor public func articles(feed: Feed) async throws -> Set<Article> {
 
 		let articles = try await database.articles(feedID: feed.feedID)
@@ -767,11 +742,6 @@ public enum FetchType {
 	public func unreadCountForToday() async throws -> Int {
 		
 		try await database.unreadCountForToday(feedIDs: allFeedIDs()) ?? 0
-	}
-
-	public func fetchUnreadCountForToday(_ completion: @escaping SingleUnreadCountCompletionBlock) {
-		
-		database.fetchUnreadCountForToday(for: flattenedFeeds().feedIDs(), completion: completion)
 	}
 
 	public func unreadCountForStarredArticles() async throws -> Int {
@@ -1144,19 +1114,9 @@ private extension Account {
 		try await database.starredArticles(feedIDs: allFeedIDs(), limit: limit)
 	}
 
-	func fetchStarredArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-
-		database.fetchedStarredArticlesAsync(allFeedIDs(), limit, completion)
-	}
-
 	func unreadArticles(limit: Int? = nil) async throws -> Set<Article> {
 
 		try await unreadArticles(container: self)
-	}
-
-	func fetchUnreadArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-
-		fetchUnreadArticlesAsync(forContainer: self, limit: limit, completion)
 	}
 
 	func todayArticles(limit: Int? = nil) async throws -> Set<Article> {
@@ -1164,39 +1124,9 @@ private extension Account {
 		try await database.todayArticles(feedIDs: allFeedIDs(), limit: limit)
 	}
 
-	func fetchTodayArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-
-		database.fetchTodayArticlesAsync(allFeedIDs(), limit, completion)
-	}
-
 	func articles(folder: Folder) async throws -> Set<Article> {
 
 		try await articles(container: folder)
-	}
-
-	func fetchArticlesAsync(folder: Folder, _ completion: @escaping ArticleSetResultBlock) {
-
-		fetchArticlesAsync(forContainer: folder, completion)
-	}
-
-	func fetchUnreadArticlesAsync(folder: Folder, _ completion: @escaping ArticleSetResultBlock) {
-
-		fetchUnreadArticlesAsync(forContainer: folder, limit: nil, completion)
-	}
-
-	func fetchArticlesAsync(feed: Feed, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchArticlesAsync(feed.feedID) { [weak self] articleSetResult in
-
-			MainActor.assumeIsolated {
-				switch articleSetResult {
-				case .success(let articles):
-					self?.validateUnreadCount(feed, articles)
-					completion(.success(articles))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
-			}
-		}
 	}
 
 	func articlesMatching(searchString: String) async throws -> Set<Article> {
@@ -1204,24 +1134,9 @@ private extension Account {
 		try await database.articlesMatching(searchString: searchString, feedIDs: allFeedIDs())
 	}
 
-	func fetchArticlesMatchingAsync(_ searchString: String, _ completion: @escaping ArticleSetResultBlock) {
-		
-		database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs(), completion)
-	}
-
 	func articlesMatching(searchString: String, articleIDs: Set<String>) async throws -> Set<Article> {
 
 		try await database.articlesMatching(searchString: searchString, articleIDs: articleIDs)
-	}
-
-	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		
-		database.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
-	}
-
-	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		
-		return database.fetchArticlesAsync(articleIDs: articleIDs, completion)
 	}
 
 	@MainActor func articles(container: Container) async throws -> Set<Article> {
@@ -1232,22 +1147,6 @@ private extension Account {
 		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
 
 		return articles
-	}
-
-	func fetchArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
-		let feeds = container.flattenedFeeds()
-		database.fetchArticlesAsync(feeds.feedIDs()) { [weak self] (articleSetResult) in
-
-			Task { @MainActor [weak self] in
-				switch articleSetResult {
-				case .success(let articles):
-					self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-					completion(.success(articles))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
-			}
-		}
 	}
 
 	@MainActor func unreadArticles(container: Container, limit: Int? = nil) async throws -> Set<Article> {
@@ -1263,28 +1162,6 @@ private extension Account {
 		}
 		
 		return articles
-	}
-
-	func fetchUnreadArticlesAsync(forContainer container: Container, limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		let feeds = container.flattenedFeeds()
-		database.fetchUnreadArticlesAsync(feeds.feedIDs(), limit) { [weak self] (articleSetResult) in
-
-			Task { @MainActor [weak self] in
-				switch articleSetResult {
-				case .success(let articles):
-
-					// We don't validate limit queries because they, by definition, won't correctly match the
-					// complete unread state for the given container.
-					if limit == nil {
-						self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-					}
-
-					completion(.success(articles))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
-			}
-		}
 	}
 
 	@MainActor func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
