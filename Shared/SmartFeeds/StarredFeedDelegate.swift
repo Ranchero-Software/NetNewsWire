@@ -29,8 +29,4 @@ import Account
 		
 		(try? await account.unreadCountForStarredArticles()) ?? 0
 	}
-
-	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
-		account.fetchUnreadCountForStarredArticles(completion)
-	}
 }

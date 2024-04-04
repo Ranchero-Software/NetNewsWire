@@ -749,10 +749,6 @@ public enum FetchType {
 		try await database.starredAndUnreadCount(feedIDs: allFeedIDs()) ?? 0
 	}
 
-	public func fetchUnreadCountForStarredArticles(_ completion: @escaping SingleUnreadCountCompletionBlock) {
-		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), completion: completion)
-	}
-
 	public func fetchUnreadArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
 		database.fetchUnreadArticleIDsAsync(completion: completion)
 	}
@@ -1402,7 +1398,6 @@ extension Account {
 	public func existingFeed(withExternalID externalID: String) -> Feed? {
 		return externalIDToFeedDictionary[externalID]
 	}
-	
 }
 
 // MARK: - OPMLRepresentable

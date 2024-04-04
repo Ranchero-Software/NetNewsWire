@@ -14,9 +14,6 @@ import Articles
 // This file exists for compatibility — it provides nonisolated functions and callback-based APIs.
 // It will go away as we adopt structured concurrency.
 
-public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
-public typealias SingleUnreadCountCompletionBlock = @Sendable (SingleUnreadCountResult) -> Void
-
 public typealias UpdateArticlesResult = Result<ArticleChanges, DatabaseError>
 public typealias UpdateArticlesCompletionBlock = @Sendable (UpdateArticlesResult) -> Void
 
@@ -30,20 +27,6 @@ public typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseErro
 public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 
 public extension ArticlesDatabase {
-
-	// MARK: - Unread Counts
-
-	nonisolated func fetchStarredAndUnreadCount(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
-
-		Task {
-			do {
-				let unreadCount = try await starredAndUnreadCount(feedIDs: feedIDs)!
-				callSingleUnreadCountCompletion(completion, .success(unreadCount))
-			} catch {
-				callSingleUnreadCountCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
 
 	// MARK: - Saving, Updating, and Deleting Articles
 
@@ -162,13 +145,6 @@ public extension ArticlesDatabase {
 			} catch {
 				callDatabaseCompletion(completion, .suspended)
 			}
-		}
-	}
-
-	nonisolated private func callSingleUnreadCountCompletion(_ completion: @escaping SingleUnreadCountCompletionBlock, _ result: SingleUnreadCountResult) {
-
-		Task { @MainActor in
-			completion(result)
 		}
 	}
 
