@@ -14,9 +14,6 @@ import Articles
 // This file exists for compatibility — it provides nonisolated functions and callback-based APIs.
 // It will go away as we adopt structured concurrency.
 
-public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary,DatabaseError>
-public typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionaryCompletionResult) -> Void
-
 public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
 public typealias SingleUnreadCountCompletionBlock = @Sendable (SingleUnreadCountResult) -> Void
 
@@ -34,168 +31,7 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 
 public extension ArticlesDatabase {
 
-	// MARK: - Fetching Articles Async
-
-	nonisolated func fetchArticlesAsync(_ feedID: String, _ completion: @escaping ArticleSetResultBlock) {
-
-		Task {
-			do {
-				let articles = try await articles(feedID: feedID)
-				callArticleSetCompletion(completion, .success(articles))
-			} catch {
-				callArticleSetCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchArticlesAsync(_ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-
-		Task {
-			do {
-				let articles = try await articles(feedIDs: feedIDs)
-				callArticleSetCompletion(completion, .success(articles))
-			} catch {
-				callArticleSetCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping  ArticleSetResultBlock) {
-
-		Task {
-			do {
-				let articles = try await articles(articleIDs: articleIDs)
-				callArticleSetCompletion(completion, .success(articles))
-			} catch {
-				callArticleSetCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchUnreadArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-
-		Task {
-			do {
-				let articles = try await unreadArticles(feedIDs: feedIDs, limit: limit)
-				callArticleSetCompletion(completion, .success(articles))
-			} catch {
-				callArticleSetCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchTodayArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-
-		Task {
-			do {
-				let articles = try await todayArticles(feedIDs: feedIDs, limit: limit)
-				callArticleSetCompletion(completion, .success(articles))
-			} catch {
-				callArticleSetCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchedStarredArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-
-		Task {
-			do {
-				let articles = try await starredArticles(feedIDs: feedIDs, limit: limit)
-				callArticleSetCompletion(completion, .success(articles))
-			} catch {
-				callArticleSetCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchArticlesMatchingAsync(_ searchString: String, _ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-
-		Task {
-			do {
-				let articles = try await articlesMatching(searchString: searchString, feedIDs: feedIDs)
-				callArticleSetCompletion(completion, .success(articles))
-			} catch {
-				callArticleSetCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-
-		Task {
-			do {
-				let articles = try await articlesMatching(searchString: searchString, articleIDs: articleIDs)
-				callArticleSetCompletion(completion, .success(articles))
-			} catch {
-				callArticleSetCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
 	// MARK: - Unread Counts
-
-	/// Fetch all non-zero unread counts.
-	nonisolated func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-
-		Task {
-			do {
-				let unreadCountDictionary = try await allUnreadCounts()
-				callUnreadCountDictionaryCompletion(completion, .success(unreadCountDictionary))
-			} catch {
-				callUnreadCountDictionaryCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	/// Fetch unread count for a single feed.
-	nonisolated func fetchUnreadCount(_ feedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
-
-		Task {
-			do {
-				let unreadCount = try await unreadCount(feedID: feedID) ?? 0
-				callSingleUnreadCountCompletion(completion, .success(unreadCount))
-			} catch {
-				callSingleUnreadCountCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	/// Fetch non-zero unread counts for given feedIDs.
-	nonisolated func fetchUnreadCounts(for feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-
-		Task {
-			do {
-				let unreadCountDictionary = try await unreadCounts(feedIDs: feedIDs)
-				callUnreadCountDictionaryCompletion(completion, .success(unreadCountDictionary))
-			} catch {
-				callUnreadCountDictionaryCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchUnreadCountForToday(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
-
-		Task {
-			do {
-				let unreadCount = try await unreadCountForToday(feedIDs: feedIDs)!
-				callSingleUnreadCountCompletion(completion, .success(unreadCount))
-			} catch {
-				callSingleUnreadCountCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
-	nonisolated func fetchUnreadCount(for feedIDs: Set<String>, since: Date, completion: @escaping SingleUnreadCountCompletionBlock) {
-
-		Task {
-			do {
-				let unreadCount = try await unreadCount(feedIDs: feedIDs, since: since)!
-				callSingleUnreadCountCompletion(completion, .success(unreadCount))
-			} catch {
-				callSingleUnreadCountCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
 
 	nonisolated func fetchStarredAndUnreadCount(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
 
@@ -329,13 +165,6 @@ public extension ArticlesDatabase {
 		}
 	}
 
-	nonisolated private func callUnreadCountDictionaryCompletion(_ completion: @escaping UnreadCountDictionaryCompletionBlock, _ result: UnreadCountDictionaryCompletionResult) {
-
-		Task { @MainActor in
-			completion(result)
-		}
-	}
-
 	nonisolated private func callSingleUnreadCountCompletion(_ completion: @escaping SingleUnreadCountCompletionBlock, _ result: SingleUnreadCountResult) {
 
 		Task { @MainActor in
@@ -344,13 +173,6 @@ public extension ArticlesDatabase {
 	}
 
 	nonisolated private func callUpdateArticlesCompletion(_ completion: @escaping UpdateArticlesCompletionBlock, _ result: UpdateArticlesResult) {
-
-		Task { @MainActor in
-			completion(result)
-		}
-	}
-
-	nonisolated private func callArticleSetCompletion(_ completion: @escaping ArticleSetResultBlock, _ result: ArticleSetResult) {
 
 		Task { @MainActor in
 			completion(result)
