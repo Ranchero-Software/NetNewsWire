@@ -58,19 +58,6 @@ public extension ArticlesDatabase {
 
 	// MARK: - Status
 
-	/// Fetch the articleIDs of unread articles.
-	nonisolated func fetchUnreadArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
-
-		Task {
-			do {
-				let articleIDs = try await unreadArticleIDs()!
-				callArticleIDsCompletion(completion, .success(articleIDs))
-			} catch {
-				callArticleIDsCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
 	/// Fetch the articleIDs of starred articles.
 	nonisolated func fetchStarredArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
 
