@@ -1505,41 +1505,33 @@ private extension FeedbinAccountDelegate {
 
 				let pendingArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 
-				@MainActor func process(_ pendingArticleIDs: Set<String>) {
+				let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+				let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
 
-					let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-					let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
-
-					account.fetchUnreadArticleIDs { articleIDsResult in
-						MainActor.assumeIsolated {
-							guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-								return
-							}
-
-							let group = DispatchGroup()
-
-							// Mark articles as unread
-							let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-							group.enter()
-							account.markAsUnread(deltaUnreadArticleIDs) { _ in
-								group.leave()
-							}
-
-							// Mark articles as read
-							let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-							group.enter()
-							account.markAsRead(deltaReadArticleIDs) { _ in
-								group.leave()
-							}
-
-							group.notify(queue: DispatchQueue.main) {
-								completion()
-							}
-						}
-					}
+				guard let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs() else {
+					completion()
+					return
 				}
 
-				process(pendingArticleIDs)
+				let group = DispatchGroup()
+
+				// Mark articles as unread
+				let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+				group.enter()
+				account.markAsUnread(deltaUnreadArticleIDs) { _ in
+					group.leave()
+				}
+
+				// Mark articles as read
+				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
+				group.enter()
+				account.markAsRead(deltaReadArticleIDs) { _ in
+					group.leave()
+				}
+
+				group.notify(queue: DispatchQueue.main) {
+					completion()
+				}
 
 			} catch {
 				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)

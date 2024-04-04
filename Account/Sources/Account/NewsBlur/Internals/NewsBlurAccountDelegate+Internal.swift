@@ -325,7 +325,7 @@ extension NewsBlurAccountDelegate {
 
 	func syncStoryReadState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
 
-		guard let hashes = hashes else {
+		guard let hashes else {
 			completion()
 			return
 		}
@@ -334,41 +334,33 @@ extension NewsBlurAccountDelegate {
 			do {
 				let pendingArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 
-				@MainActor func process(_ pendingStoryHashes: Set<String>) {
+				let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
+				let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingArticleIDs)
 
-					let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
-					let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
-
-					account.fetchUnreadArticleIDs { articleIDsResult in
-						MainActor.assumeIsolated {
-							guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-								return
-							}
-
-							let group = DispatchGroup()
-							
-							// Mark articles as unread
-							let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-							group.enter()
-							account.markAsUnread(deltaUnreadArticleIDs) { _ in
-								group.leave()
-							}
-
-							// Mark articles as read
-							let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-							group.enter()
-							account.markAsRead(deltaReadArticleIDs) { _ in
-								group.leave()
-							}
-
-							group.notify(queue: DispatchQueue.main) {
-								completion()
-							}
-						}
-					}
+				guard let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs() else {
+					completion()
+					return
 				}
 
-				process(pendingArticleIDs)
+				let group = DispatchGroup()
+
+				// Mark articles as unread
+				let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
+				group.enter()
+				account.markAsUnread(deltaUnreadArticleIDs) { _ in
+					group.leave()
+				}
+
+				// Mark articles as read
+				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+				group.enter()
+				account.markAsRead(deltaReadArticleIDs) { _ in
+					group.leave()
+				}
+
+				group.notify(queue: DispatchQueue.main) {
+					completion()
+				}
 			} catch {
 				os_log(.error, log: self.log, "Sync Story Read Status failed: %@.", error.localizedDescription)
 			}

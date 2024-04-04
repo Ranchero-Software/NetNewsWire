@@ -1302,53 +1302,44 @@ private extension ReaderAPIAccountDelegate {
 			completion()
 			return
 		}
-
+		
 		Task { @MainActor in
 			do {
-
+				
 				let pendingArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
-
-				@MainActor func process(_ pendingArticleIDs: Set<String>) {
-					let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-
-					account.fetchUnreadArticleIDs { articleIDsResult in
-
-						MainActor.assumeIsolated {
-							guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-								return
-							}
-
-							let group = DispatchGroup()
-
-							// Mark articles as unread
-							let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-							group.enter()
-							account.markAsUnread(deltaUnreadArticleIDs) { _ in
-								group.leave()
-							}
-
-							// Mark articles as read
-							let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-							group.enter()
-							account.markAsRead(deltaReadArticleIDs) { _ in
-								group.leave()
-							}
-
-							group.notify(queue: DispatchQueue.main) {
-								completion()
-							}
-						}
-					}
+				
+				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+				
+				guard let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs() else {
+					completion()
+					return
 				}
-
-				process(pendingArticleIDs)
-
+				
+				let group = DispatchGroup()
+				
+				// Mark articles as unread
+				let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+				group.enter()
+				account.markAsUnread(deltaUnreadArticleIDs) { _ in
+					group.leave()
+				}
+				
+				// Mark articles as read
+				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+				group.enter()
+				account.markAsRead(deltaReadArticleIDs) { _ in
+					group.leave()
+				}
+				
+				group.notify(queue: DispatchQueue.main) {
+					completion()
+				}
 			} catch {
 				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
 			}
 		}
 	}
-	
+
 	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
 			completion()

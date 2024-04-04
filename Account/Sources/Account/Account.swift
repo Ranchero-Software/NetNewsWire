@@ -749,8 +749,9 @@ public enum FetchType {
 		try await database.starredAndUnreadCount(feedIDs: allFeedIDs()) ?? 0
 	}
 
-	public func fetchUnreadArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchUnreadArticleIDsAsync(completion: completion)
+	public func fetchUnreadArticleIDs() async throws -> Set<String>? {
+
+		try await database.unreadArticleIDs()
 	}
 
 	public func fetchStarredArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
