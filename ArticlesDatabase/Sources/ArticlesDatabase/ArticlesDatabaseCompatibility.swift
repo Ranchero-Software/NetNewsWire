@@ -58,19 +58,6 @@ public extension ArticlesDatabase {
 
 	// MARK: - Status
 
-	/// Fetch the articleIDs of starred articles.
-	nonisolated func fetchStarredArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
-
-		Task {
-			do {
-				let articleIDs = try await starredArticleIDs()!
-				callArticleIDsCompletion(completion, .success(articleIDs))
-			} catch {
-				callArticleIDsCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
 	nonisolated func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		
