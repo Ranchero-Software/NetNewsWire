@@ -357,35 +357,21 @@ public enum FetchType {
 		try CredentialsManager.removeCredentials(type: type, server: server, username: username)
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider) async throws -> Credentials? {
 
-		Task { @MainActor in
+		switch type {
 
-			do {
-				switch type {
+		case .feedbin:
+			return try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
 
-				case .feedbin:
+		case .newsBlur:
+			return try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
 
-					let credentials = try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
-					completion(.success(credentials))
+		case .freshRSS, .inoreader, .bazQux, .theOldReader:
+			return try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
 
-				case .newsBlur:
-
-					let credentials = try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
-					completion(.success(credentials))
-
-				case .freshRSS, .inoreader, .bazQux, .theOldReader:
-
-					let credentials = try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
-					completion(.success(credentials))
-
-				default:
-					completion(.success(nil))
-				}
-
-			} catch {
-				completion(.failure(error))
-			}
+		default:
+			return nil
 		}
 	}
 	

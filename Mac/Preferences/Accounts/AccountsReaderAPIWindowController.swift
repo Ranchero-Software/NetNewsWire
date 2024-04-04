@@ -91,22 +91,22 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	
 	@IBAction func action(_ sender: Any) {
 		self.errorMessageLabel.stringValue = ""
-		
+
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
 			return
 		}
-		
+
 		guard let accountType = accountType, !(accountType == .freshRSS && apiURLTextField.stringValue.isEmpty) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
 			return
 		}
-		
+
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: usernameTextField.stringValue) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
 			return
 		}
-		
+
 		let apiURL: URL
 		switch accountType {
 		case .freshRSS:
@@ -125,60 +125,70 @@ class AccountsReaderAPIWindowController: NSWindowController {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Unrecognized account type.", comment: "Bad account type")
 			return
 		}
-		
+
 		actionButton.isEnabled = false
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)
-		
-		let credentials = Credentials(type: .readerBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL, secretsProvider: Secrets()) { [weak self] result in
 
-			guard let self = self else { return }
-			
+		let credentials = Credentials(type: .readerBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
+
+		Task { @MainActor in
+
+			var validationDidThrow = false
+			var validatedCredentials: Credentials?
+
+			do {
+				validatedCredentials = try await Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL, secretsProvider: Secrets())
+			} catch {
+				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
+				validationDidThrow = true
+			}
+
 			self.actionButton.isEnabled = true
 			self.progressIndicator.isHidden = true
 			self.progressIndicator.stopAnimation(self)
-			
-			switch result {
-			case .success(let validatedCredentials):
-				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
-					return
-				}
-				
-				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: self.accountType!)
-				}
-				
-				do {
-					self.account?.endpointURL = apiURL
 
-					try self.account?.removeCredentials(type: .readerBasic)
-					try self.account?.removeCredentials(type: .readerAPIKey)
-					try self.account?.storeCredentials(credentials)
-					try self.account?.storeCredentials(validatedCredentials)
-
-					Task { @MainActor in
-						do {
-							try await self.account?.refreshAll()
-						} catch {
-							NSApplication.shared.presentError(error)
-						}
-					}
-
-					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
-				} catch {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
-				}
-				
-			case .failure:
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
+			if validationDidThrow {
+				return
 			}
-			
+
+			guard let validatedCredentials else {
+				self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+				return
+			}
+
+			if self.account == nil {
+				self.account = AccountManager.shared.createAccount(type: self.accountType!)
+			}
+
+			do {
+				self.account?.endpointURL = apiURL
+
+				try self.account?.removeCredentials(type: .readerBasic)
+				try self.account?.removeCredentials(type: .readerAPIKey)
+				try self.account?.storeCredentials(credentials)
+				try self.account?.storeCredentials(validatedCredentials)
+
+				self.refreshAll()
+
+				self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+			} catch {
+				self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+			}
 		}
-		
 	}
 	
+	private func refreshAll() {
+
+		Task { @MainActor in
+			do {
+				try await self.account?.refreshAll()
+			} catch {
+				NSApplication.shared.presentError(error)
+			}
+		}
+	}
+
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		switch accountType {
 		case .freshRSS:

@@ -122,47 +122,61 @@ class FeedbinAccountViewController: UITableViewController {
 		setNavigationEnabled(to: false)
 
 		let credentials = Credentials(type: .basic, username: trimmedEmail, secret: password)
-		Account.validateCredentials(type: .feedbin, credentials: credentials, secretsProvider: secretsProvider) { result in
+
+		Task { @MainActor in
+
+			var validationDidThrow = false
+			var validatedCredentials: Credentials?
+
+			do {
+				validatedCredentials = try await Account.validateCredentials(type: .feedbin, credentials: credentials, secretsProvider: Secrets())
+			} catch {
+				self.showError(error.localizedDescription)
+				validationDidThrow = true
+			}
+
 			self.toggleActivityIndicatorAnimation(visible: false)
 			self.setNavigationEnabled(to: true)
 			
-			switch result {
-			case .success(let credentials):
-				if let credentials = credentials {
-					if self.account == nil {
-						self.account = AccountManager.shared.createAccount(type: .feedbin)
-					}
-					
-					do {
-						
-						do {
-							try self.account?.removeCredentials(type: .basic)
-						} catch {}
-						try self.account?.storeCredentials(credentials)
-
-						Task { @MainActor in
-							do {
-								try await self.account?.refreshAll()
-							} catch {
-								self.presentError(error)
-							}
-						}
-
-						self.dismiss(animated: true, completion: nil)
-						self.delegate?.dismiss()
-					} catch {
-						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
-					}
-				} else {
-					self.showError(NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error"))
-				}
-			case .failure:
-				self.showError(NSLocalizedString("Network error. Try again later.", comment: "Credentials Error"))
+			if validationDidThrow {
+				return
 			}
-			
+
+			guard let validatedCredentials else {
+				self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
+				return
+			}
+
+			if self.account == nil {
+				self.account = AccountManager.shared.createAccount(type: .feedbin)
+			}
+
+			do {
+
+				try self.account?.removeCredentials(type: .basic)
+				try self.account?.storeCredentials(validatedCredentials)
+
+				self.refreshAll()
+
+				self.dismiss(animated: true, completion: nil)
+				self.delegate?.dismiss()
+			} catch {
+				self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+			}
 		}
 	}
-	
+
+	private func refreshAll() {
+
+		Task { @MainActor in
+			do {
+				try await self.account?.refreshAll()
+			} catch {
+				self.presentError(error)
+			}
+		}
+	}
+
 	@IBAction func signUpWithProvider(_ sender: Any) {
 		let url = URL(string: "https://feedbin.com/signup")!
 		let safari = SFSafariViewController(url: url)

@@ -76,52 +76,62 @@ class AccountsNewsBlurWindowController: NSWindowController {
 		progressIndicator.startAnimation(self)
 
 		let credentials = Credentials(type: .newsBlurBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: .newsBlur, credentials: credentials, secretsProvider: Secrets()) { [weak self] result in
 
-			guard let self = self else { return }
+		Task { @MainActor in
+
+			var validationDidThrow = false
+			var validatedCredentials: Credentials?
+
+			do {
+				validatedCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: credentials, secretsProvider: Secrets())
+			} catch {
+				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
+				validationDidThrow = true
+			}
 
 			self.actionButton.isEnabled = true
 			self.progressIndicator.isHidden = true
 			self.progressIndicator.stopAnimation(self)
 
-			switch result {
-			case .success(let validatedCredentials):
-				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
-					return
-				}
+			if validationDidThrow {
+				return
+			}
 
-				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: .newsBlur)
-				}
+			guard let validatedCredentials else {
+				self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+				return
+			}
 
-				do {
-					try self.account?.removeCredentials(type: .newsBlurBasic)
-					try self.account?.removeCredentials(type: .newsBlurSessionId)
-					try self.account?.storeCredentials(credentials)
-					try self.account?.storeCredentials(validatedCredentials)
+			if self.account == nil {
+				self.account = AccountManager.shared.createAccount(type: .newsBlur)
+			}
 
-					Task { @MainActor in
-						do {
-							try await self.account?.refreshAll()
-						} catch {
-							NSApplication.shared.presentError(error)
-						}
-					}
+			do {
+				try self.account?.removeCredentials(type: .newsBlurBasic)
+				try self.account?.removeCredentials(type: .newsBlurSessionId)
+				try self.account?.storeCredentials(credentials)
+				try self.account?.storeCredentials(validatedCredentials)
 
-					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
-				} catch {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
-				}
+				self.refreshAll()
 
-			case .failure:
-
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
-
+				self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+			} catch {
+				self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 			}
 		}
 	}
 	
+	private func refreshAll() {
+
+		Task { @MainActor in
+			do {
+				try await self.account?.refreshAll()
+			} catch {
+				NSApplication.shared.presentError(error)
+			}
+		}
+	}
+
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		NSWorkspace.shared.open(URL(string: "https://newsblur.com")!)
 	}
