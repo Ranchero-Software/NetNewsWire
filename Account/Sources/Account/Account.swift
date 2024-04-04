@@ -754,8 +754,9 @@ public enum FetchType {
 		try await database.unreadArticleIDs()
 	}
 
-	public func fetchStarredArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchStarredArticleIDsAsync(completion: completion)
+	public func fetchStarredArticleIDs() async throws -> Set<String>? {
+
+		try await database.starredArticleIDs()
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).

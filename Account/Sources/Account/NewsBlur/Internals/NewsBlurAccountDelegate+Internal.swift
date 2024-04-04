@@ -378,42 +378,33 @@ extension NewsBlurAccountDelegate {
 			do {
 				let pendingArticleIDs = (try await database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 
-				@MainActor func process(_ pendingStoryHashes: Set<String>) {
+				let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
+				let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingArticleIDs)
 
-					let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
-					let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
-
-					account.fetchStarredArticleIDs { articleIDsResult in
-						MainActor.assumeIsolated {
-							guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-								return
-							}
-
-							let group = DispatchGroup()
-
-							// Mark articles as starred
-							let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-							group.enter()
-							account.markAsStarred(deltaStarredArticleIDs) { _ in
-								group.leave()
-							}
-
-							// Mark articles as unstarred
-							let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-							group.enter()
-							account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-								group.leave()
-							}
-
-							group.notify(queue: DispatchQueue.main) {
-								completion()
-							}
-						}
-					}
+				guard let currentStarredArticleIDs = try await account.fetchStarredArticleIDs() else {
+					completion()
+					return
 				}
 
-				process(pendingArticleIDs)
+				let group = DispatchGroup()
 
+				// Mark articles as starred
+				let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
+				group.enter()
+				account.markAsStarred(deltaStarredArticleIDs) { _ in
+					group.leave()
+				}
+
+				// Mark articles as unstarred
+				let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+				group.enter()
+				account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
+					group.leave()
+				}
+
+				group.notify(queue: DispatchQueue.main) {
+					completion()
+				}
 			} catch {
 				os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
 			}

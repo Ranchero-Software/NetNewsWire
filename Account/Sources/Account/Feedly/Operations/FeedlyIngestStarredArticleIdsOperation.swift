@@ -95,20 +95,19 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 			didFinish()
 			return
 		}
-		
-		account.fetchStarredArticleIDs { result in
-			MainActor.assumeIsolated {
-				switch result {
-				case .success(let localStarredArticleIDs):
-					self.processStarredArticleIDs(localStarredArticleIDs)
 
-				case .failure(let error):
-					self.didFinish(with: error)
+		Task { @MainActor in
+
+			do {
+				if let localStarredArticleIDs = try await account.fetchStarredArticleIDs() {
+					self.processStarredArticleIDs(localStarredArticleIDs)
 				}
+			} catch {
+				self.didFinish(with: error)
 			}
 		}
 	}
-	
+
 	func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
 		guard !isCanceled else {
 			didFinish()
