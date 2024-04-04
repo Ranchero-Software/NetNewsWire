@@ -105,12 +105,14 @@ private extension CloudKitSendStatusOperation {
 			completion(true)
 			return
 		}
-		
+
 		let articleIDs = syncStatuses.map({ $0.articleID })
-		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
-			
-			func processWithArticles(_ articles: Set<Article>) {
-				
+
+		Task { @MainActor in
+
+			do {
+				let articles = try await account.articles(articleIDs: Set(articleIDs))
+
 				let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
 				let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
 					result[article.articleID] = article
@@ -118,7 +120,7 @@ private extension CloudKitSendStatusOperation {
 				let statusUpdates = syncStatusesDict.compactMap { (key, value) in
 					return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
 				}
-				
+
 				@MainActor func done(_ stop: Bool) {
 					// Don't clear the last one since we might have had additional ticks added
 					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
@@ -127,45 +129,34 @@ private extension CloudKitSendStatusOperation {
 					os_log(.debug, log: self.log, "Done sending article status block...")
 					completion(stop)
 				}
-				
+
 				// If this happens, we have somehow gotten into a state where we have new status records
 				// but the articles didn't come back in the fetch.  We need to clean up those sync records
 				// and stop processing.
 				if statusUpdates.isEmpty {
+					try? await self.database.deleteSelectedForProcessing(articleIDs)
+					done(true)
+					return
+				}
+
+				articlesZone.modifyArticles(statusUpdates) { result in
 					Task { @MainActor in
-						try? await self.database.deleteSelectedForProcessing(articleIDs)
-						done(true)
-					}
-				} else {
-					
-					Task { @MainActor in
-						articlesZone.modifyArticles(statusUpdates) { result in
-							Task { @MainActor in
-								switch result {
-								case .success:
-									try? await self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID }))
-									done(false)
-								case .failure(let error):
-									try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
-									self.processAccountError(account, error)
-									os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
-									completion(true)
-								}
-							}
+						switch result {
+						case .success:
+							try? await self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID }))
+							done(false)
+						case .failure(let error):
+							try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
+							self.processAccountError(account, error)
+							os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
+							completion(true)
 						}
 					}
 				}
-			}
-
-			switch result {
-			case .success(let articles):
-				processWithArticles(articles)
-			case .failure(let databaseError):
-				Task { @MainActor in
-					try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
-					os_log(.error, log: self.log, "Send article status fetch articles error: %@.", databaseError.localizedDescription)
-					completion(true)
-				}
+			} catch {
+				try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
+				os_log(.error, log: self.log, "Send article status fetch articles error: %@.", error.localizedDescription)
+				completion(true)
 			}
 		}
 	}
