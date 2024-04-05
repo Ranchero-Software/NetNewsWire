@@ -58,19 +58,6 @@ public extension ArticlesDatabase {
 
 	// MARK: - Status
 
-	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	nonisolated func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-		
-		Task {
-			do {
-				let articleIDs = try await articleIDsForStatusesWithoutArticlesNewerThanCutoffDate()!
-				callArticleIDsCompletion(completion, .success(articleIDs))
-			} catch {
-				callArticleIDsCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
-
 	nonisolated func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
 		
 		Task {
