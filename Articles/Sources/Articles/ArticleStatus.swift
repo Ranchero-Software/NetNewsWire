@@ -17,7 +17,7 @@ import os
 /// by an internal lock, which makes `ArticleStatus` thread-safe.
 public final class ArticleStatus: Hashable, @unchecked Sendable {
 
-	public enum Key: String {
+	public enum Key: String, Sendable {
 		case read = "read"
 		case starred = "starred"
 	}
@@ -38,6 +38,14 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 
 			return _read
 		}
+		set {
+			Self.lock.lock()
+			defer {
+				Self.lock.unlock()
+			}
+
+			_read = newValue
+		}
 	}
 
 	public var starred: Bool {
@@ -48,6 +56,14 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 			}
 
 			return _starred
+		}
+		set {
+			Self.lock.lock()
+			defer {
+				Self.lock.unlock()
+			}
+
+			_starred = newValue
 		}
 	}
 
@@ -66,6 +82,7 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 	}
 
 	public func boolStatus(forKey key: ArticleStatus.Key) -> Bool {
+		
 		switch key {
 		case .read:
 			return read
@@ -75,11 +92,6 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 	}
 	
 	public func setBoolStatus(_ status: Bool, forKey key: ArticleStatus.Key) {
-
-		Self.lock.lock()
-		defer {
-			Self.lock.unlock()
-		}
 
 		switch key {
 		case .read:
