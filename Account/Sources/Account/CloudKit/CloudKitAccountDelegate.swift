@@ -849,45 +849,43 @@ private extension CloudKitAccountDelegate {
 				InitialFeedDownloader.download(url) { parsedFeed in
 					self.refreshProgress.completeTask()
 
-					if let parsedFeed = parsedFeed {
-						account.update(feed, with: parsedFeed) { result in
-							MainActor.assumeIsolated {
-								switch result {
-								case .success:
-									
-									self.accountZone.createFeed(url: bestFeedSpecifier.urlString,
-																name: parsedFeed.title,
-																editedName: editedName,
-																homePageURL: parsedFeed.homePageURL,
-																container: container) { result in
-										
-										self.refreshProgress.completeTask()
-										switch result {
-										case .success(let externalID):
-											feed.externalID = externalID
-											self.sendNewArticlesToTheCloud(account, feed)
-											completion(.success(feed))
-										case .failure(let error):
-											container.removeFeed(feed)
-											self.refreshProgress.completeTasks(2)
-											completion(.failure(error))
-										}
-										
+					if let parsedFeed {
+
+						Task { @MainActor in
+
+							do {
+								try await account.update(feed: feed, with: parsedFeed)
+
+								self.accountZone.createFeed(url: bestFeedSpecifier.urlString,
+															name: parsedFeed.title,
+															editedName: editedName,
+															homePageURL: parsedFeed.homePageURL,
+															container: container) { result in
+
+									self.refreshProgress.completeTask()
+									switch result {
+									case .success(let externalID):
+										feed.externalID = externalID
+										self.sendNewArticlesToTheCloud(account, feed)
+										completion(.success(feed))
+									case .failure(let error):
+										container.removeFeed(feed)
+										self.refreshProgress.completeTasks(2)
+										completion(.failure(error))
 									}
-									
-								case .failure(let error):
-									container.removeFeed(feed)
-									self.refreshProgress.completeTasks(3)
-									completion(.failure(error))
+
 								}
+							} catch {
+								container.removeFeed(feed)
+								self.refreshProgress.completeTasks(3)
+								completion(.failure(error))
 							}
 						}
 					} else {
 						self.refreshProgress.completeTasks(3)
 						container.removeFeed(feed)
 						completion(.failure(AccountError.createErrorNotFound))
-					}
-						
+					}	
 				}
 								
 			case .failure:

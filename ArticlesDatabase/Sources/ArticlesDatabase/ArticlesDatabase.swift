@@ -14,7 +14,7 @@ import Parser
 
 public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
 
-public struct ArticleChanges {
+public struct ArticleChanges: Sendable {
 	public let newArticles: Set<Article>?
 	public let updatedArticles: Set<Article>?
 	public let deletedArticles: Set<Article>?

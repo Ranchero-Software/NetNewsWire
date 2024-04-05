@@ -784,58 +784,36 @@ public enum FetchType {
 	}
 
 	@discardableResult
-	func update(_ feed: Feed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
+	func update(feed: Feed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.update(feed, with: parsedFeed) { result in
-				switch result {
-				case .success(let articleChanges):
-					continuation.resume(returning: articleChanges)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesCompletionBlock) {
-		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
 		feed.takeSettings(from: parsedFeed)
+
 		let parsedItems = parsedFeed.items
-		guard !parsedItems.isEmpty else {
-			completion(.success(ArticleChanges()))
-			return
+		if parsedItems.isEmpty {
+			return ArticleChanges()
 		}
 		
-		update(feed.feedID, with: parsedItems, completion: completion)
+		return try await update(feedID: feed.feedID, with: parsedItems)
 	}
 	
-	func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
-		// Used only by an On My Mac or iCloud account.
+	func update(feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
+
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
-		
-		database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { updateArticlesResult in
 
-			MainActor.assumeIsolated {
-				switch updateArticlesResult {
-				case .success(let articleChanges):
-					self.sendNotificationAbout(articleChanges)
-					completion(.success(articleChanges))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
-			}
-		}
+		let articleChanges = try await database.update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
+		self.sendNotificationAbout(articleChanges)
+		return articleChanges
 	}
 
 	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
-		// Used only by syncing systems.
+
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
+		
 		guard !feedIDsAndItems.isEmpty else {
 			completion(nil)
 			return

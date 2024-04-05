@@ -25,17 +25,17 @@ public extension ArticlesDatabase {
 	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
-	nonisolated func update(with parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
-
-		Task {
-			do {
-				let articleChanges = try await update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
-				callUpdateArticlesCompletion(completion, .success(articleChanges))
-			} catch {
-				callUpdateArticlesCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
+//	nonisolated func update(with parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+//
+//		Task {
+//			do {
+//				let articleChanges = try await update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
+//				callUpdateArticlesCompletion(completion, .success(articleChanges))
+//			} catch {
+//				callUpdateArticlesCompletion(completion, .failure(.suspended))
+//			}
+//		}
+//	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
 	nonisolated func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {

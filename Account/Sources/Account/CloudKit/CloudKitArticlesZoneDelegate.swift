@@ -139,27 +139,27 @@ private extension CloudKitArticlesZoneDelegate {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
 			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 
-			DispatchQueue.main.async {
+			Task { @MainActor in
 				for (feedID, parsedItems) in feedIDsAndItems {
 					group.enter()
-					self.account?.update(feedID, with: parsedItems, deleteOlder: false) { result in
-						Task { @MainActor in
-							switch result {
-							case .success(let articleChanges):
-								guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
-									group.leave()
-									return
-								}
-								
-								let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
-								try? await self.database.insertStatuses(syncStatuses)
-								group.leave()
-							case .failure(let databaseError):
-								errorOccurred = true
-								os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
-								group.leave()
-							}
+
+					do {
+
+						let articleChanges = try await self.account?.update(feedID: feedID, with: parsedItems, deleteOlder: false)
+
+						guard let deletes = articleChanges?.deletedArticles, !deletes.isEmpty else {
+							group.leave()
+							return
 						}
+
+						let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
+						try? await self.database.insertStatuses(syncStatuses)
+						group.leave()
+
+					} catch {
+						errorOccurred = true
+						os_log(.error, log: self.log, "Error occurred while storing articles: %@", error.localizedDescription)
+						group.leave()
 					}
 				}
 			}

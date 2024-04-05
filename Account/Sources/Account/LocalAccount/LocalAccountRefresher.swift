@@ -109,24 +109,26 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 				return
 			}
 			
-			account.update(feed, with: parsedFeed) { result in
-				MainActor.assumeIsolated {
-					if case .success(let articleChanges) = result {
-						if let httpResponse = response as? HTTPURLResponse {
-							feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
-						}
-						feed.contentHash = dataHash
-						self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-						self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
-							completion()
-						}
-					} else {
-						completion()
-						self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+			Task { @MainActor in
+
+				do {
+					let articleChanges = try await account.update(feed: feed, with: parsedFeed)
+
+					if let httpResponse = response as? HTTPURLResponse {
+						feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 					}
+					feed.contentHash = dataHash
+
+					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
+						completion()
+					}
+
+				} catch {
+					completion()
+					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 				}
 			}
-			
 		}
 	}
 	

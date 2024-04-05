@@ -227,7 +227,7 @@ private extension LocalAccountDelegate {
 		feed.editedName = editedName
 		container.addFeed(feed)
 
-		try await account.update(feed, with: parsedFeed)
+		try await account.update(feed: feed, with: parsedFeed)
 
 		return feed
 	}
