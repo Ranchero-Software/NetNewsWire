@@ -856,24 +856,29 @@ public enum FetchType {
 	}
 
 	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleSetResultBlock) {
+
 		// Returns set of Articles whose statuses did change.
+
 		guard !articles.isEmpty else {
 			completion(.success(Set<Article>()))
 			return
 		}
-		
-		database.mark(articles, statusKey: statusKey, flag: flag) { result in
 
-			MainActor.assumeIsolated {
-				switch result {
-				case .success(let updatedStatuses):
+		Task { @MainActor in
+
+			do {
+				var updatedArticles = Set<Article>()
+
+				if let updatedStatuses = try await database.mark(articles: articles, statusKey: statusKey, flag: flag) {
 					let updatedArticleIDs = updatedStatuses.articleIDs()
-					let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+					updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
 					self.noteStatusesForArticlesDidChange(updatedArticles)
-					completion(.success(updatedArticles))
-				case .failure(let error):
-					completion(.failure(error))
 				}
+
+				completion(.success(updatedArticles))
+
+			} catch {
+				completion(.failure(.suspended))
 			}
 		}
 	}
@@ -899,14 +904,14 @@ public enum FetchType {
 			completion?(nil)
 			return
 		}
-		database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { error in
-			MainActor.assumeIsolated {
-				if let error {
-					completion?(error)
-				} else {
-					self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-					completion?(nil)
-				}
+
+		Task { @MainActor in
+			do {
+				try await database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+				completion?(nil)
+			} catch {
+				completion?(.suspended)
 			}
 		}
 	}
