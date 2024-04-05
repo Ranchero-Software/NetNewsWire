@@ -35,7 +35,7 @@ public struct ArticleChanges: Sendable {
 /// Fetch articles and unread counts. Save articles. Mark as read/unread and starred/unstarred.
 public actor ArticlesDatabase {
 
-	public enum RetentionStyle {
+	public enum RetentionStyle: Sendable {
 		/// Local and iCloud: article retention is defined by contents of feed
 		case feedBased
 		/// Feedbin, Feedly, etc.: article retention is defined by external system
