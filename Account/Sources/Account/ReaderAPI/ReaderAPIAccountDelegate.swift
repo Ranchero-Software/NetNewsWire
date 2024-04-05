@@ -1195,55 +1195,52 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
-		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDsResult in
 
-			MainActor.assumeIsolated {
-				@MainActor func process(_ fetchedArticleIDs: Set<String>) {
-					guard !fetchedArticleIDs.isEmpty else {
-						completion()
-						return
-					}
+		Task { @MainActor in
 
-					os_log(.debug, log: self.log, "Refreshing missing articles...")
-					let group = DispatchGroup()
+			do {
+				let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() ?? Set<String>()
 
-					let articleIDs = Array(fetchedArticleIDs)
-					let chunkedArticleIDs = articleIDs.chunked(into: 150)
+				guard !fetchedArticleIDs.isEmpty else {
+					completion()
+					return
+				}
 
-					self.refreshProgress.addToNumberOfTasksAndRemaining(chunkedArticleIDs.count - 1)
+				os_log(.debug, log: self.log, "Refreshing missing articles...")
+				let group = DispatchGroup()
 
-					for chunk in chunkedArticleIDs {
-						group.enter()
-						self.caller.retrieveEntries(articleIDs: chunk) { result in
-							self.refreshProgress.completeTask()
+				let articleIDs = Array(fetchedArticleIDs)
+				let chunkedArticleIDs = articleIDs.chunked(into: 150)
 
-							switch result {
-							case .success(let entries):
-								self.processEntries(account: account, entries: entries) {
-									group.leave()
-								}
+				self.refreshProgress.addToNumberOfTasksAndRemaining(chunkedArticleIDs.count - 1)
 
-							case .failure(let error):
-								os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
+				for chunk in chunkedArticleIDs {
+					group.enter()
+					self.caller.retrieveEntries(articleIDs: chunk) { result in
+						self.refreshProgress.completeTask()
+
+						switch result {
+						case .success(let entries):
+							self.processEntries(account: account, entries: entries) {
 								group.leave()
 							}
+
+						case .failure(let error):
+							os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
+							group.leave()
 						}
 					}
-
-					group.notify(queue: DispatchQueue.main) {
-						self.refreshProgress.completeTask()
-						os_log(.debug, log: self.log, "Done refreshing missing articles.")
-						completion()
-					}
 				}
 
-				switch articleIDsResult {
-				case .success(let articleIDs):
-					process(articleIDs)
-				case .failure:
+				group.notify(queue: DispatchQueue.main) {
 					self.refreshProgress.completeTask()
+					os_log(.debug, log: self.log, "Done refreshing missing articles.")
 					completion()
 				}
+
+			} catch {
+				self.refreshProgress.completeTask()
+				completion()
 			}
 		}
 	}

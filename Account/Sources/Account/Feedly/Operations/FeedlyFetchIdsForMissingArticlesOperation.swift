@@ -12,26 +12,26 @@ import os.log
 final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 
 	private let account: Account
-	private let log: OSLog
-	
+
 	private(set) var entryIds = Set<String>()
 	
-	init(account: Account, log: OSLog) {
+	init(account: Account) {
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {
-		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
-			MainActor.assumeIsolated {
-				switch result {
-				case .success(let articleIds):
-					self.entryIds.formUnion(articleIds)
-					self.didFinish()
 
-				case .failure(let error):
-					self.didFinish(with: error)
+		Task { @MainActor in
+
+			do {
+				if let articleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() {
+					self.entryIds.formUnion(articleIDs)
 				}
+				
+				self.didFinish()
+
+			} catch {
+				self.didFinish(with: error)
 			}
 		}
 	}

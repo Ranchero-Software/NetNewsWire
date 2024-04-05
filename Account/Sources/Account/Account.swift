@@ -760,10 +760,11 @@ public enum FetchType {
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() async throws -> Set<String>? {
+
+		try await database.articleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
-	
+
 	public func unreadCount(for feed: Feed) -> Int {
 		return unreadCounts[feed.feedID] ?? 0
 	}

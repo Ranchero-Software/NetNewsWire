@@ -317,56 +317,52 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	func refreshMissingStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		os_log(.debug, log: log, "Refreshing missing stories...")
 
-		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
+		Task { @MainActor in
 
-			MainActor.assumeIsolated {
-				@MainActor func process(_ fetchedHashes: Set<String>) {
-					let group = DispatchGroup()
-					var errorOccurred = false
+			do {
+				let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() ?? Set<String>()
 
-					let storyHashes = Array(fetchedHashes).map {
-						NewsBlurStoryHash(hash: $0, timestamp: Date())
-					}
-					let chunkedStoryHashes = storyHashes.chunked(into: 100)
+				let group = DispatchGroup()
+				var errorOccurred = false
 
-					for chunk in chunkedStoryHashes {
-						group.enter()
-						self.caller.retrieveStories(hashes: chunk) { result in
+				let storyHashes = Array(fetchedArticleIDs).map {
+					NewsBlurStoryHash(hash: $0, timestamp: Date())
+				}
+				let chunkedStoryHashes = storyHashes.chunked(into: 100)
 
-							switch result {
-							case .success((let stories, _)):
-								self.processStories(account: account, stories: stories) { result in
-									group.leave()
-									if case .failure = result {
-										errorOccurred = true
-									}
-								}
-							case .failure(let error):
-								errorOccurred = true
-								os_log(.error, log: self.log, "Refresh missing stories failed: %@.", error.localizedDescription)
+				for chunk in chunkedStoryHashes {
+					group.enter()
+					self.caller.retrieveStories(hashes: chunk) { result in
+
+						switch result {
+						case .success((let stories, _)):
+							self.processStories(account: account, stories: stories) { result in
 								group.leave()
+								if case .failure = result {
+									errorOccurred = true
+								}
 							}
-						}
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						self.refreshProgress.completeTask()
-						os_log(.debug, log: self.log, "Done refreshing missing stories.")
-						if errorOccurred {
-							completion(.failure(NewsBlurError.unknown))
-						} else {
-							completion(.success(()))
+						case .failure(let error):
+							errorOccurred = true
+							os_log(.error, log: self.log, "Refresh missing stories failed: %@.", error.localizedDescription)
+							group.leave()
 						}
 					}
 				}
 
-				switch result {
-				case .success(let fetchedArticleIDs):
-					process(fetchedArticleIDs)
-				case .failure(let error):
+				group.notify(queue: DispatchQueue.main) {
 					self.refreshProgress.completeTask()
-					completion(.failure(error))
+					os_log(.debug, log: self.log, "Done refreshing missing stories.")
+					if errorOccurred {
+						completion(.failure(NewsBlurError.unknown))
+					} else {
+						completion(.success(()))
+					}
 				}
+
+			} catch {
+				self.refreshProgress.completeTask()
+				completion(.failure(error))
 			}
 		}
 	}
