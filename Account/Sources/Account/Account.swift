@@ -880,22 +880,14 @@ public enum FetchType {
 	/// Make sure statuses exist. Any existing statuses won’t be touched.
 	/// All created statuses will be marked as read and not starred.
 	/// Sends a .StatusesDidChange notification.
-	func createStatusesIfNeeded(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+	func createStatusesIfNeeded(articleIDs: Set<String>) async throws {
+		
 		guard !articleIDs.isEmpty else {
-			completion?(nil)
 			return
 		}
-		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
 
-			MainActor.assumeIsolated {
-				if let error = error {
-					completion?(error)
-					return
-				}
-				self.noteStatusesForArticleIDsDidChange(articleIDs)
-				completion?(nil)
-			}
-		}
+		try await database.createStatusesIfNeeded(articleIDs: articleIDs)
+		noteStatusesForArticleIDsDidChange(articleIDs)
 	}
 
 	/// Mark articleIDs statuses based on statusKey and flag.

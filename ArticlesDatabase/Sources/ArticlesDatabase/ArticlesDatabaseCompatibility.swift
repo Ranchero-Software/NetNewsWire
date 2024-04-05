@@ -95,20 +95,6 @@ public extension ArticlesDatabase {
 		}
 	}
 
-	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
-	/// For newly-created statuses, mark them as read and not-starred.
-	nonisolated func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
-
-		Task {
-			do {
-				try await createStatusesIfNeeded(articleIDs: articleIDs)
-				callDatabaseCompletion(completion)
-			} catch {
-				callDatabaseCompletion(completion, .suspended)
-			}
-		}
-	}
-
 	nonisolated private func callUpdateArticlesCompletion(_ completion: @escaping UpdateArticlesCompletionBlock, _ result: UpdateArticlesResult) {
 
 		Task { @MainActor in
