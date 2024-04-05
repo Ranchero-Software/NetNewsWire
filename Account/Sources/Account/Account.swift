@@ -809,56 +809,34 @@ public enum FetchType {
 		return articleChanges
 	}
 
-	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
+	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
 
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
 		
 		guard !feedIDsAndItems.isEmpty else {
-			completion(nil)
 			return
 		}
 
-		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
-
-			MainActor.assumeIsolated {
-				switch updateArticlesResult {
-				case .success(let newAndUpdatedArticles):
-					self.sendNotificationAbout(newAndUpdatedArticles)
-					completion(nil)
-				case .failure(let databaseError):
-					completion(databaseError)
-				}
-			}
-		}
+		let articleChanges = try await database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
+		sendNotificationAbout(articleChanges)
 	}
 
-	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleSetResultBlock) {
+	func update(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
 
-		// Returns set of Articles whose statuses did change.
+		// Return set of Articles whose statuses did change.
 
-		guard !articles.isEmpty else {
-			completion(.success(Set<Article>()))
-			return
+		if articles.isEmpty {
+			return Set<Article>()
 		}
 
-		Task { @MainActor in
+		let updatedStatuses = try await database.mark(articles: articles, statusKey: statusKey, flag: flag) ?? Set<ArticleStatus>()
 
-			do {
-				var updatedArticles = Set<Article>()
+		let updatedArticleIDs = updatedStatuses.articleIDs()
+		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+		self.noteStatusesForArticlesDidChange(updatedArticles)
 
-				if let updatedStatuses = try await database.mark(articles: articles, statusKey: statusKey, flag: flag) {
-					let updatedArticleIDs = updatedStatuses.articleIDs()
-					updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-					self.noteStatusesForArticlesDidChange(updatedArticles)
-				}
-
-				completion(.success(updatedArticles))
-
-			} catch {
-				completion(.failure(.suspended))
-			}
-		}
+		return updatedArticles
 	}
 
 	/// Make sure statuses exist. Any existing statuses won’t be touched.

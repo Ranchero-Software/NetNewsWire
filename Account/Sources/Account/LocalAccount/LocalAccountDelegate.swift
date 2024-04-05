@@ -142,16 +142,7 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			account.update(articles, statusKey: statusKey, flag: flag) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
+		try await account.update(articles: articles, statusKey: statusKey, flag: flag)
 	}
 
 	func accountDidInitialize(_ account: Account) {

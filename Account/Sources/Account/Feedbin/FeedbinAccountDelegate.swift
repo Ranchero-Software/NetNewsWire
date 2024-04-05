@@ -751,23 +751,25 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	private func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
+
+		Task { @MainActor in
+
+			do {
+
+				let articles = try await account.update(articles: articles, statusKey: statusKey, flag: flag)
+
 				let syncStatuses = articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
 
-				Task { @MainActor in
-					try? await self.database.insertStatuses(syncStatuses)
+				try? await self.database.insertStatuses(syncStatuses)
 
-					if let count = try? await self.database.selectPendingCount(), count > 100 {
-						self.sendArticleStatus(for: account) { _ in }
-					}
-					completion(.success(()))
+				if let count = try? await self.database.selectPendingCount(), count > 100 {
+					self.sendArticleStatus(for: account) { _ in }
 				}
+				completion(.success(()))
 
-			case .failure(let error):
+			} catch {
 				completion(.failure(error))
 			}
 		}
@@ -1467,13 +1469,22 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 	}
-	
+
 	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: @escaping DatabaseCompletionBlock) {
+		
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true, completion: completion)
+
+		Task { @MainActor in
+			do {
+				try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+				completion(nil)
+			} catch {
+				completion(.suspended)
+			}
+		}
 	}
-	
+
 	func mapEntriesToParsedItems(entries: [FeedbinEntry]?) -> Set<ParsedItem> {
 		guard let entries = entries else {
 			return Set<ParsedItem>()

@@ -38,17 +38,17 @@ public extension ArticlesDatabase {
 //	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
-	nonisolated func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
-
-		Task {
-			do {
-				let articleChanges = try await update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
-				callUpdateArticlesCompletion(completion, .success(articleChanges))
-			} catch {
-				callUpdateArticlesCompletion(completion, .failure(.suspended))
-			}
-		}
-	}
+//	nonisolated func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+//
+//		Task {
+//			do {
+//				let articleChanges = try await update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
+//				callUpdateArticlesCompletion(completion, .success(articleChanges))
+//			} catch {
+//				callUpdateArticlesCompletion(completion, .failure(.suspended))
+//			}
+//		}
+//	}
 
 	nonisolated private func callUpdateArticlesCompletion(_ completion: @escaping UpdateArticlesCompletionBlock, _ result: UpdateArticlesResult) {
 

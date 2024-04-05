@@ -368,6 +368,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func processStories(account: Account, stories: [NewsBlurStory]?, since: Date? = nil, completion: @escaping (Result<Bool, DatabaseError>) -> Void) {
+
 		let parsedItems = mapStoriesToParsedItems(stories: stories).filter {
 			guard let datePublished = $0.datePublished, let since = since else {
 				return true
@@ -379,13 +380,13 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			Set($0)
 		}
 
-		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { error in
-			if let error = error {
-				completion(.failure(error))
-				return
+		Task { @MainActor in
+			do {
+				try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+				completion(.success(!feedIDsAndItems.isEmpty))
+			} catch {
+				completion(.failure(.suspended))
 			}
-
-			completion(.success(!feedIDsAndItems.isEmpty))
 		}
 	}
 
@@ -788,23 +789,25 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	private func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
+
+		Task { @MainActor in
+
+			do {
+				
+				let articles = try await account.update(articles: articles, statusKey: statusKey, flag: flag)
+
 				let syncStatuses = articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
 
-				Task { @MainActor in
+				try? await self.database.insertStatuses(syncStatuses)
 
-					try? await self.database.insertStatuses(syncStatuses)
-
-					if let count = try? await self.database.selectPendingCount(), count > 100 {
-						self.sendArticleStatus(for: account) { _ in }
-					}
-					completion(.success(()))
+				if let count = try? await self.database.selectPendingCount(), count > 100 {
+					self.sendArticleStatus(for: account) { _ in }
 				}
-			case .failure(let error):
+				completion(.success(()))
+
+			} catch {
 				completion(.failure(error))
 			}
 		}

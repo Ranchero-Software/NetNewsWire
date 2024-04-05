@@ -19,23 +19,25 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 	private let log: OSLog
 
 	init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding, log: OSLog) {
+
 		self.account = account
 		self.organisedItemsProvider = organisedItemsProvider
 		self.log = log
 	}
 	
 	override func run() {
+
 		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 		
-		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { databaseError in
-			MainActor.assumeIsolated {
-				if let error = databaseError {
-					self.didFinish(with: error)
-					return
-				}
+		Task { @MainActor in
+			do {
 
+				try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 				os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", feedIDsAndItems.count, self.organisedItemsProvider.parsedItemsByFeedProviderName)
 				self.didFinish()
+				
+			} catch {
+				self.didFinish(with: error)
 			}
 		}
 	}
