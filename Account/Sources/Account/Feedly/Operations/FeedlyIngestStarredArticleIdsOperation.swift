@@ -109,46 +109,36 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	}
 
 	func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
+
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
-		
-		let remoteStarredArticleIDs = remoteEntryIds
-		
-		let group = DispatchGroup()
-		
-		final class StarredStatusResults {
+
+		Task { @MainActor in
+
 			var markAsStarredError: Error?
 			var markAsUnstarredError: Error?
-		}
-		
-		let results = StarredStatusResults()
-		
-		group.enter()
-		account.markAsStarred(remoteStarredArticleIDs) { error in
-			if let error {
-				results.markAsStarredError = error
-			}
-			group.leave()
-		}
 
-		let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
-		group.enter()
-		account.markAsUnstarred(deltaUnstarredArticleIDs) { error in
-			if let error {
-				results.markAsUnstarredError = error
+			let remoteStarredArticleIDs = remoteEntryIds
+			do {
+				try await account.markAsStarred(remoteStarredArticleIDs)
+			} catch {
+				markAsStarredError = error
 			}
-			group.leave()
-		}
+			
+			let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
+			do {
+				try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+			} catch {
+				markAsUnstarredError = error
+			}
 
-		group.notify(queue: .main) {
-			let markingError = results.markAsStarredError ?? results.markAsUnstarredError
-			guard let error = markingError else {
-				self.didFinish()
-				return
+			if let markingError = markAsStarredError ?? markAsUnstarredError {
+				self.didFinish(with: markingError)
 			}
-			self.didFinish(with: error)
+
+			self.didFinish()
 		}
 	}
 }

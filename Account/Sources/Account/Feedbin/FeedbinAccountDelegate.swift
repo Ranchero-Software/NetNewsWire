@@ -1518,25 +1518,15 @@ private extension FeedbinAccountDelegate {
 					return
 				}
 
-				let group = DispatchGroup()
-
 				// Mark articles as unread
 				let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-				group.enter()
-				account.markAsUnread(deltaUnreadArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsUnread(deltaUnreadArticleIDs)
 
 				// Mark articles as read
 				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-				group.enter()
-				account.markAsRead(deltaReadArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsRead(deltaReadArticleIDs)
 
-				group.notify(queue: DispatchQueue.main) {
-					completion()
-				}
+				completion()
 
 			} catch {
 				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
@@ -1545,7 +1535,8 @@ private extension FeedbinAccountDelegate {
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
+		
+		guard let articleIDs else {
 			completion()
 			return
 		}
@@ -1563,25 +1554,15 @@ private extension FeedbinAccountDelegate {
 					return
 				}
 
-				let group = DispatchGroup()
-
 				// Mark articles as starred
 				let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-				group.enter()
-				account.markAsStarred(deltaStarredArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsStarred(deltaStarredArticleIDs)
 
 				// Mark articles as unstarred
 				let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
-				group.enter()
-				account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsUnstarred(deltaUnstarredArticleIDs)
 
-				group.notify(queue: DispatchQueue.main) {
-					completion()
-				}
+				completion()
 
 			} catch {
 				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)

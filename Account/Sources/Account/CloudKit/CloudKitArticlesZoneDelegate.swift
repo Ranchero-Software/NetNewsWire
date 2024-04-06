@@ -86,90 +86,79 @@ private extension CloudKitArticlesZoneDelegate {
 		let updateableReadArticleIDs = receivedReadArticleIDs.subtracting(pendingReadStatusArticleIDs)
 		let updateableUnstarredArticleIDs = receivedUnstarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 		let updateableStarredArticleIDs = receivedStarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
+		
+		Task { @MainActor in
 
-		var errorOccurred = false
-		let group = DispatchGroup()
+			var errorOccurred = false
 
-		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { databaseError in
-			MainActor.assumeIsolated {
-				if let databaseError {
-					errorOccurred = true
-					os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", databaseError.localizedDescription)
-				}
-				group.leave()
+			do {
+				try await account?.markAsUnread(updateableUnreadArticleIDs)
+			} catch {
+				errorOccurred = true
+				os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", error.localizedDescription)
 			}
-		}
 
-		group.enter()
-		account?.markAsRead(updateableReadArticleIDs) { databaseError in
-			MainActor.assumeIsolated {
-				if let databaseError {
-					errorOccurred = true
-					os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", databaseError.localizedDescription)
-				}
-				group.leave()
+			do {
+				try await account?.markAsRead(updateableReadArticleIDs)
+			} catch {
+				errorOccurred = true
+				os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", error.localizedDescription)
 			}
-		}
 
-		group.enter()
-		account?.markAsUnstarred(updateableUnstarredArticleIDs) { databaseError in
-			MainActor.assumeIsolated {
-				if let databaseError {
-					errorOccurred = true
-					os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", databaseError.localizedDescription)
-				}
-				group.leave()
+			do {
+				try await account?.markAsUnstarred(updateableUnstarredArticleIDs)
+			} catch {
+				errorOccurred = true
+				os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", error.localizedDescription)
 			}
-		}
 
-		group.enter()
-		account?.markAsStarred(updateableStarredArticleIDs) { databaseError in
-			MainActor.assumeIsolated {
-				if let databaseError {
-					errorOccurred = true
-					os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", databaseError.localizedDescription)
-				}
-				group.leave()
+			do {
+				try await account?.markAsStarred(updateableStarredArticleIDs)
+			} catch {
+				errorOccurred = true
+				os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", error.localizedDescription)
 			}
-		}
 
-		group.enter()
-		compressionQueue.async {
-			let parsedItems = records.compactMap { self.makeParsedItem($0) }
-			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+			let group = DispatchGroup()
+			group.enter()
 
-			Task { @MainActor in
-				for (feedID, parsedItems) in feedIDsAndItems {
-					group.enter()
+			compressionQueue.async {
+				let parsedItems = records.compactMap { Self.makeParsedItem($0) }
+				let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 
-					do {
+				Task { @MainActor in
+					for (feedID, parsedItems) in feedIDsAndItems {
+						group.enter()
 
-						let articleChanges = try await self.account?.update(feedID: feedID, with: parsedItems, deleteOlder: false)
+						do {
 
-						guard let deletes = articleChanges?.deletedArticles, !deletes.isEmpty else {
+							let articleChanges = try await self.account?.update(feedID: feedID, with: parsedItems, deleteOlder: false)
+
+							guard let deletes = articleChanges?.deletedArticles, !deletes.isEmpty else {
+								group.leave()
+								return
+							}
+
+							let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
+							try? await self.database.insertStatuses(syncStatuses)
 							group.leave()
-							return
+
+						} catch {
+							errorOccurred = true
+							os_log(.error, log: self.log, "Error occurred while storing articles: %@", error.localizedDescription)
+							group.leave()
 						}
-
-						let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
-						try? await self.database.insertStatuses(syncStatuses)
-						group.leave()
-
-					} catch {
-						errorOccurred = true
-						os_log(.error, log: self.log, "Error occurred while storing articles: %@", error.localizedDescription)
-						group.leave()
 					}
+					group.leave()
 				}
 			}
-		}
 
-		group.notify(queue: DispatchQueue.main) {
-			if errorOccurred {
-				completion(.failure(CloudKitZoneError.unknown))
-			} else {
-				completion(.success(()))
+			group.notify(queue: DispatchQueue.main) {
+				if errorOccurred {
+					completion(.failure(CloudKitZoneError.unknown))
+				} else {
+					completion(.success(()))
+				}
 			}
 		}
 	}
@@ -178,7 +167,7 @@ private extension CloudKitArticlesZoneDelegate {
 		return String(externalID[externalID.index(externalID.startIndex, offsetBy: 2)..<externalID.endIndex])
 	}
 
-	func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
+	static func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
 		guard articleRecord.recordType == CloudKitArticlesZone.CloudKitArticle.recordType else {
 			return nil
 		}

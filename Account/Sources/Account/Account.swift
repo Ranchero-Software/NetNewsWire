@@ -822,6 +822,7 @@ public enum FetchType {
 		sendNotificationAbout(articleChanges)
 	}
 
+	@discardableResult
 	func update(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
 
 		// Return set of Articles whose statuses did change.
@@ -854,46 +855,38 @@ public enum FetchType {
 
 	/// Mark articleIDs statuses based on statusKey and flag.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
-	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {
-		guard !articleIDs.isEmpty else {
-			completion?(nil)
+	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+
+		if articleIDs.isEmpty {
 			return
 		}
 
-		Task { @MainActor in
-			do {
-				try await database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-				completion?(nil)
-			} catch {
-				completion?(.suspended)
-			}
-		}
+		try await database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 	}
 
 	/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
-	func markAsRead(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
-		mark(articleIDs: articleIDs, statusKey: .read, flag: true, completion: completion)
+	func markAsRead(_ articleIDs: Set<String>) async throws {
+
+		try await mark(articleIDs: articleIDs, statusKey: .read, flag: true)
 	}
 
 	/// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
-	func markAsUnread(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
-		mark(articleIDs: articleIDs, statusKey: .read, flag: false, completion: completion)
+	func markAsUnread(_ articleIDs: Set<String>) async throws {
+		
+		try await mark(articleIDs: articleIDs, statusKey: .read, flag: false)
 	}
 
 	/// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
-	func markAsStarred(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
-		mark(articleIDs: articleIDs, statusKey: .starred, flag: true, completion: completion)
+	func markAsStarred(_ articleIDs: Set<String>) async throws {
+		
+		try await mark(articleIDs: articleIDs, statusKey: .starred, flag: true)
 	}
 
 	/// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
-	func markAsUnstarred(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
-		mark(articleIDs: articleIDs, statusKey: .starred, flag: false, completion: completion)
+	func markAsUnstarred(_ articleIDs: Set<String>) async throws {
+		
+		try await mark(articleIDs: articleIDs, statusKey: .starred, flag: false)
 	}
 
 	// Delete the articles associated with the given set of articleIDs

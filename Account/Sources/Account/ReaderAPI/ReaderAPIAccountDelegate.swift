@@ -128,21 +128,24 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					self.refreshProgress.completeTask()
 					self.caller.retrieveItemIDs(type: .allForAccount) { result in
 						self.refreshProgress.completeTask()
+
 						switch result {
+
 						case .success(let articleIDs):
-							account.markAsRead(Set(articleIDs)) { _ in
-								MainActor.assumeIsolated {
-									self.refreshArticleStatus(for: account) { _ in
-										self.refreshProgress.completeTask()
-										self.refreshMissingArticles(account) {
-											self.refreshProgress.clear()
-											DispatchQueue.main.async {
-												completion(.success(()))
-											}
+
+							Task { @MainActor in
+								try? await account.markAsRead(Set(articleIDs))
+								self.refreshArticleStatus(for: account) { _ in
+									self.refreshProgress.completeTask()
+									self.refreshMissingArticles(account) {
+										self.refreshProgress.clear()
+										DispatchQueue.main.async {
+											completion(.success(()))
 										}
 									}
 								}
 							}
+
 						case .failure(let error):
 							completion(.failure(error))
 						}
@@ -1170,26 +1173,28 @@ private extension ReaderAPIAccountDelegate {
 		self.caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
 			switch result {
+
 			case .success(let articleIDs):
-				account.markAsRead(Set(articleIDs)) { _ in
-					MainActor.assumeIsolated {
+
+				Task { @MainActor in
+					try? await account.markAsRead(Set(articleIDs))
+					self.refreshProgress.completeTask()
+					self.refreshArticleStatus(for: account) { _ in
 						self.refreshProgress.completeTask()
-						self.refreshArticleStatus(for: account) { _ in
-							self.refreshProgress.completeTask()
-							self.refreshMissingArticles(account) {
-								self.refreshProgress.clear()
-								DispatchQueue.main.async {
-									completion(.success(feed))
-								}
-								
+						self.refreshMissingArticles(account) {
+							self.refreshProgress.clear()
+							DispatchQueue.main.async {
+								completion(.success(feed))
 							}
+
 						}
 					}
 				}
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
+
 		}
  
 	}
@@ -1298,7 +1303,8 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func syncArticleReadState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
+
+		guard let articleIDs else {
 			completion()
 			return
 		}
@@ -1314,26 +1320,17 @@ private extension ReaderAPIAccountDelegate {
 					completion()
 					return
 				}
-				
-				let group = DispatchGroup()
-				
+
 				// Mark articles as unread
 				let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-				group.enter()
-				account.markAsUnread(deltaUnreadArticleIDs) { _ in
-					group.leave()
-				}
-				
+				try? await account.markAsUnread(deltaUnreadArticleIDs)
+
 				// Mark articles as read
 				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-				group.enter()
-				account.markAsRead(deltaReadArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsRead(deltaReadArticleIDs)
 				
-				group.notify(queue: DispatchQueue.main) {
-					completion()
-				}
+				completion()
+
 			} catch {
 				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
 			}
@@ -1341,7 +1338,8 @@ private extension ReaderAPIAccountDelegate {
 	}
 
 	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
+
+		guard let articleIDs else {
 			completion()
 			return
 		}
@@ -1359,25 +1357,16 @@ private extension ReaderAPIAccountDelegate {
 					return
 				}
 
-				let group = DispatchGroup()
-
 				// Mark articles as starred
 				let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-				group.enter()
-				account.markAsStarred(deltaStarredArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsStarred(deltaStarredArticleIDs)
 
 				// Mark articles as unstarred
 				let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-				group.enter()
-				account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsUnstarred(deltaUnstarredArticleIDs)
 
-				group.notify(queue: DispatchQueue.main) {
-					completion()
-				}
+				completion()
+
 			} catch {
 				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
 			}

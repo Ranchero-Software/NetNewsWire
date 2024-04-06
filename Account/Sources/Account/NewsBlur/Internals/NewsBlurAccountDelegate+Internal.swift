@@ -342,25 +342,16 @@ extension NewsBlurAccountDelegate {
 					return
 				}
 
-				let group = DispatchGroup()
-
 				// Mark articles as unread
 				let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-				group.enter()
-				account.markAsUnread(deltaUnreadArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsUnread(deltaUnreadArticleIDs)
 
 				// Mark articles as read
 				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-				group.enter()
-				account.markAsRead(deltaReadArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsRead(deltaReadArticleIDs)
 
-				group.notify(queue: DispatchQueue.main) {
-					completion()
-				}
+				completion()
+
 			} catch {
 				os_log(.error, log: self.log, "Sync Story Read Status failed: %@.", error.localizedDescription)
 			}
@@ -376,7 +367,7 @@ extension NewsBlurAccountDelegate {
 		Task { @MainActor in
 
 			do {
-				let pendingArticleIDs = (try await database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+				let pendingArticleIDs = (try await self.database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 
 				let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
 				let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingArticleIDs)
@@ -386,25 +377,16 @@ extension NewsBlurAccountDelegate {
 					return
 				}
 
-				let group = DispatchGroup()
-
 				// Mark articles as starred
 				let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-				group.enter()
-				account.markAsStarred(deltaStarredArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsStarred(deltaStarredArticleIDs)
 
 				// Mark articles as unstarred
 				let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-				group.enter()
-				account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-					group.leave()
-				}
+				try? await account.markAsUnstarred(deltaUnstarredArticleIDs)
 
-				group.notify(queue: DispatchQueue.main) {
-					completion()
-				}
+				completion()
+
 			} catch {
 				os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
 			}
