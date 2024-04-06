@@ -171,10 +171,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
 		let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
 
-		try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
-		try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
-		try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
-		try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+		await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+		await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+		await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+		await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
 
 		os_log(.debug, log: self.log, "Done sending article statuses.")
 	}
