@@ -101,7 +101,8 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	}
 	
 	private func didEndAuthentication(url: URL?, error: Error?) {
-		MainActor.assumeIsolated {
+
+		Task { @MainActor in
 			guard !isCanceled else {
 				didFinish()
 				return
@@ -109,15 +110,16 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 
 			do {
 				guard let url = url else {
-					if let error = error {
+					if let error {
 						throw error
 					}
 					throw URLError(.badURL)
 				}
 
-				let response = try OAuthAuthorizationResponse(url: url, client: oauthClient)
+				let response = try OAuthAuthorizationResponse(url: url, client: self.oauthClient)
 
-				Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, secretsProvider: secretsProvider, completion: didEndRequestingAccessToken(_:))
+				let tokenResponse = try await Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, secretsProvider: secretsProvider)
+				saveAccount(for: tokenResponse)
 
 			} catch is ASWebAuthenticationSessionError {
 				didFinish() // Primarily, cancellation.
@@ -127,26 +129,13 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 			}
 		}
 	}
-	
+
+
 	public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
 		guard let anchor = presentationAnchor else {
 			fatalError("\(self) has outlived presentation anchor.")
 		}
 		return anchor
-	}
-	
-	@MainActor private func didEndRequestingAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
-		
-		switch result {
-		case .success(let tokenResponse):
-			saveAccount(for: tokenResponse)
-		case .failure(let error):
-			didFinish(error)
-		}
 	}
 	
 	@MainActor private func saveAccount(for grant: OAuthAuthorizationGrant) {

@@ -167,7 +167,7 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 
 protocol OAuthAuthorizationGranting: AccountDelegate {
 		
-	static func oauthAuthorizationCodeGrantRequest(secretsProvider: SecretsProvider) -> URLRequest
-	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, secretsProvider: SecretsProvider, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+	@MainActor static func oauthAuthorizationCodeGrantRequest(secretsProvider: SecretsProvider) -> URLRequest
+
+	@MainActor static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, secretsProvider: SecretsProvider) async throws -> OAuthAuthorizationGrant
 }

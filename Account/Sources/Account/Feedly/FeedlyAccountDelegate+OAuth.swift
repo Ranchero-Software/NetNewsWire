@@ -38,30 +38,34 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 		return FeedlyAPICaller.authorizationCodeUrlRequest(for: authorizationRequest, baseUrlComponents: baseURLComponents)
 	}
 	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, secretsProvider: SecretsProvider, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: any Web.Transport, secretsProvider: any Secrets.SecretsProvider) async throws -> OAuthAuthorizationGrant {
+
 		let client = environment.oauthAuthorizationClient(secretsProvider: secretsProvider)
 		let request = OAuthAccessTokenRequest(authorizationResponse: response,
 											  scope: oauthAuthorizationGrantScope,
 											  client: client)
 		let caller = FeedlyAPICaller(transport: transport, api: environment, secretsProvider: secretsProvider)
-		caller.requestAccessToken(request) { result in
-			switch result {
-			case .success(let response):
-				let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
-				
-				let refreshToken: Credentials? = {
-					guard let token = response.refreshToken else {
-						return nil
-					}
-					return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
-				}()
-				
-				let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
-				
-				completion(.success(grant))
-				
-			case .failure(let error):
-				completion(.failure(error))
+
+		return try await withCheckedThrowingContinuation { continuation in
+			caller.requestAccessToken(request) { result in
+				switch result {
+				case .success(let response):
+					let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
+
+					let refreshToken: Credentials? = {
+						guard let token = response.refreshToken else {
+							return nil
+						}
+						return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
+					}()
+
+					let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
+
+					continuation.resume(returning: grant)
+
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
 			}
 		}
 	}
