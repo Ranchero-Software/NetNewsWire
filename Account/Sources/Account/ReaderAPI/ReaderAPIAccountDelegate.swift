@@ -634,11 +634,11 @@ private extension ReaderAPIAccountDelegate {
 			var taggedFeeds = dict
 			
 			subscription.categories.forEach({ (category) in
-				if var taggedFeed = taggedFeeds[category.categoryId] {
+				if var taggedFeed = taggedFeeds[category.categoryID] {
 					taggedFeed.append(subscription)
-					taggedFeeds[category.categoryId] = taggedFeed
+					taggedFeeds[category.categoryID] = taggedFeed
 				} else {
-					taggedFeeds[category.categoryId] = [subscription]
+					taggedFeeds[category.categoryID] = [subscription]
 				}
 			})
 			
@@ -820,11 +820,11 @@ private extension ReaderAPIAccountDelegate {
 			return Set<ParsedItem>()
 		}
 		
-		let entriesWithOriginStreamIDs = entries.filter { $0.origin.streamId != nil }
+		let parsedItems: [ParsedItem] = entries.compactMap { entry in
 
-		let parsedItems: [ParsedItem] = entries.map { entry in
-
-			let streamID = entry.origin.streamId!
+			guard let streamID = entry.origin.streamID else {
+				return nil
+			}
 
 			let authors: Set<ParsedAuthor>? = {
 				guard let name = entry.author else {

@@ -8,11 +8,11 @@
 
 import Foundation
 
-struct ReaderAPITagging: Codable {
+public struct ReaderAPITagging: Codable, Sendable {
 
-	let taggingID: Int
-	let feedID: Int
-	let name: String
+	public let taggingID: Int
+	public let feedID: Int
+	public let name: String
 
 	enum CodingKeys: String, CodingKey {
 		case taggingID = "id"
@@ -22,11 +22,11 @@ struct ReaderAPITagging: Codable {
 
 }
 
-struct ReaderAPICreateTagging: Codable {
-	
-	let feedID: Int
-	let name: String
-	
+public struct ReaderAPICreateTagging: Codable, Sendable {
+
+	public let feedID: Int
+	public let name: String
+
 	enum CodingKeys: String, CodingKey {
 		case feedID = "feed_id"
 		case name = "name"

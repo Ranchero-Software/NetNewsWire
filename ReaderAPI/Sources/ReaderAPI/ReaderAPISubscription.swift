@@ -18,16 +18,16 @@ import FoundationExtras
 
 */
 
-public struct ReaderAPIQuickAddResult: Codable {
+public struct ReaderAPIQuickAddResult: Codable, Sendable {
 
 	public let numResults: Int
 	public let error: String?
-	public let streamId: String?
-	
+	public let streamID: String?
+
 	enum CodingKeys: String, CodingKey {
 		case numResults = "numResults"
 		case error = "error"
-		case streamId = "streamId"
+		case streamID = "streamId"
 	}
 }
 
@@ -85,30 +85,31 @@ public struct ReaderAPISubscription: Codable, Sendable {
 
 public struct ReaderAPICategory: Codable, Sendable {
 
-	public let categoryId: String
+	public let categoryID: String
 	public let categoryLabel: String
 	
 	enum CodingKeys: String, CodingKey {
-		case categoryId = "id"
+		case categoryID = "id"
 		case categoryLabel = "label"
 	}
 }
 
-struct ReaderAPICreateSubscription: Codable {
-	let feedURL: String
+public struct ReaderAPICreateSubscription: Codable, Sendable {
+
+	public let feedURL: String
+
 	enum CodingKeys: String, CodingKey {
 		case feedURL = "feed_url"
 	}
 }
 
-struct ReaderAPISubscriptionChoice: Codable {
-	
-	let name: String?
-	let url: String
-	
+public struct ReaderAPISubscriptionChoice: Codable, Sendable {
+
+	public let name: String?
+	public let url: String
+
 	enum CodingKeys: String, CodingKey {
 		case name = "title"
 		case url = "feed_url"
 	}
-	
 }

@@ -295,7 +295,7 @@ enum CreateReaderAPISubscriptionResult {
 		guard let subscriptions = try await retrieveSubscriptions() else {
 			throw AccountError.createErrorNotFound
 		}
-		guard let subscription = subscriptions.first(where: { $0.feedID == subResult.streamId }) else {
+		guard let subscription = subscriptions.first(where: { $0.feedID == subResult.streamID }) else {
 			throw AccountError.createErrorNotFound
 		}
 
@@ -466,7 +466,7 @@ enum CreateReaderAPISubscriptionResult {
 		}
 
 		let dateInfo = HTTPDateInfo(urlResponse: response)
-		let itemIDs = entriesItemRefs.compactMap { $0.itemId }
+		let itemIDs = entriesItemRefs.compactMap { $0.itemID }
 
 		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation)
 	}
@@ -503,7 +503,7 @@ enum CreateReaderAPISubscriptionResult {
 		}
 
 		var totalItemIDs = itemIDs
-		totalItemIDs.append(contentsOf: entriesItemRefs.compactMap { $0.itemId })
+		totalItemIDs.append(contentsOf: entriesItemRefs.compactMap { $0.itemID })
 
 		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation)
 	}

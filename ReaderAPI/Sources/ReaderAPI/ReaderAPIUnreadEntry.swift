@@ -21,9 +21,9 @@ public struct ReaderAPIReferenceWrapper: Codable, Sendable {
 
 public struct ReaderAPIReference: Codable, Sendable {
 
-	public let itemId: String?
-	
+	public let itemID: String?
+
 	enum CodingKeys: String, CodingKey {
-		case itemId = "id"
+		case itemID = "id"
 	}
 }

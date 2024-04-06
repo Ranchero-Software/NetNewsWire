@@ -33,5 +33,4 @@ public struct ReaderAPITag: Codable, Sendable {
 		}
 		return String(tagID.suffix(from: range.upperBound))
 	}
-	
 }

@@ -100,7 +100,6 @@ public struct ReaderAPIEntry: Codable, Sendable {
 		
 		return String(idNumber, radix: 10, uppercase: false)
 	}
-	
 }
 
 public struct ReaderAPIArticleSummary: Codable, Sendable {
@@ -123,11 +122,11 @@ public struct ReaderAPIAlternateLocation: Codable, Sendable {
 
 public struct ReaderAPIEntryOrigin: Codable, Sendable {
 
-	public let streamId: String?
+	public let streamID: String?
 	public let title: String?
 
 	enum CodingKeys: String, CodingKey {
-		case streamId = "streamId"
+		case streamID = "streamId"
 		case title = "title"
 	}
 }
