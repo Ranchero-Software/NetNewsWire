@@ -10,6 +10,20 @@ import Foundation
 
 extension Transport {
 	
+	public func send<R: Decodable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { result in
+				switch result {
+				case .success(let (response, decoded)):
+					continuation.resume(returning: (response, decoded))
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	/**
 	 Sends an HTTP get and returns JSON object(s)
 	 */
@@ -116,6 +130,22 @@ extension Transport {
 					}
 				case .failure(let error):
 					completion(.failure(error))
+				}
+			}
+		}
+	}
+
+
+	public func send<R: Decodable>(request: URLRequest, method: String, data: Data, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method, data: data, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { result in
+
+				switch result {
+				case .success(let (response, decoded)):
+					continuation.resume(returning: (response, decoded))
+				case .failure(let error):
+					continuation.resume(throwing: error)
 				}
 			}
 		}
