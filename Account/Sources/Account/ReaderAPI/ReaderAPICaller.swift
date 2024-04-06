@@ -15,7 +15,7 @@ enum CreateReaderAPISubscriptionResult {
 	case notFound
 }
 
-final class ReaderAPICaller: NSObject {
+@MainActor final class ReaderAPICaller: NSObject {
 	
 	enum ItemIDType {
 		case unread
@@ -93,55 +93,51 @@ final class ReaderAPICaller: NSObject {
 		transport.cancelAll()
 	}
 	
-	func validateCredentials(endpoint: URL, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		guard let credentials = credentials else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+	func validateCredentials(endpoint: URL) async throws -> Credentials? {
+
+		guard let credentials else {
+			throw CredentialsError.incompleteCredentials
 		}
-		
+
 		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), credentials: credentials)
 		addVariantHeaders(&request)
 
-		transport.send(request: request) { result in
-			switch result {
-			case .success(let (_, data)):
-				guard let resultData = data else {
-					completion(.failure(TransportError.noData))
-					break
+		do {
+			let (_, data) = try await transport.send(request: request)
+
+			guard let data else {
+				throw TransportError.noData
+			}
+
+			// Convert the return data to UTF8 and then parse out the Auth token
+			guard let rawData = String(data: data, encoding: .utf8) else {
+				throw TransportError.noData
+			}
+
+			var authData: [String: String] = [:]
+			rawData.split(separator: "\n").forEach({ (line: Substring) in
+				let items = line.split(separator: "=").map{String($0)}
+				if items.count == 2 {
+					authData[items[0]] = items[1]
 				}
-				
-				// Convert the return data to UTF8 and then parse out the Auth token
-				guard let rawData = String(data: resultData, encoding: .utf8) else {
-					completion(.failure(TransportError.noData))
-					break
-				}
-				
-				var authData: [String: String] = [:]
-				rawData.split(separator: "\n").forEach({ (line: Substring) in
-					let items = line.split(separator: "=").map{String($0)}
-					if items.count == 2 {
-						authData[items[0]] = items[1]
-					}
-				})
-				
-				guard let authString = authData["Auth"] else {
-					completion(.failure(CredentialsError.incompleteCredentials))
-					break
-				}
-				
-				// Save Auth Token for later use
-				self.credentials = Credentials(type: .readerAPIKey, username: credentials.username, secret: authString)
-				
-				completion(.success(self.credentials))
-			case .failure(let error):
-				if let transportError = error as? TransportError, case .httpError(let code) = transportError, code == 404 {
-					completion(.failure(ReaderAPIAccountDelegateError.urlNotFound))
-				} else {
-					completion(.failure(error))
-				}
+			})
+
+			guard let authString = authData["Auth"] else {
+				throw CredentialsError.incompleteCredentials
+			}
+
+			// Save Auth Token for later use
+			self.credentials = Credentials(type: .readerAPIKey, username: credentials.username, secret: authString)
+
+			return self.credentials
+
+		} catch {
+			if let transportError = error as? TransportError, case .httpError(let code) = transportError, code == 404 {
+				throw ReaderAPIAccountDelegateError.urlNotFound
+			} else {
+				throw error
 			}
 		}
-		
 	}
 	
 	func requestAuthorizationToken(endpoint: URL, completion: @escaping (Result<String, Error>) -> Void) {

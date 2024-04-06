@@ -128,11 +128,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					self.refreshProgress.completeTask()
 					self.caller.retrieveItemIDs(type: .allForAccount) { result in
 						self.refreshProgress.completeTask()
-
+						
 						switch result {
-
+							
 						case .success(let articleIDs):
-
+							
 							Task { @MainActor in
 								try? await account.markAsRead(Set(articleIDs))
 								self.refreshArticleStatus(for: account) { _ in
@@ -145,40 +145,33 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 									}
 								}
 							}
-
+							
 						case .failure(let error):
 							completion(.failure(error))
 						}
 					}
 				}
-
+				
 			case .failure(let error):
-				DispatchQueue.main.async {
+				
+				Task { @MainActor in
 					self.refreshProgress.clear()
 					
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
 					if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
 						self.caller.credentials = basicCredentials
 						
-						self.caller.validateCredentials(endpoint: endpoint) { result in
-							switch result {
-							case .success(let apiCredentials):
-								if let apiCredentials = apiCredentials {
-									DispatchQueue.main.async {
-										try? account.storeCredentials(apiCredentials)
-										self.caller.credentials = apiCredentials
-										self.refreshAll(for: account, completion: completion)
-									}
-								} else {
-									DispatchQueue.main.async {
-										completion(.failure(wrappedError))
-									}
-								}
-							case .failure:
-								DispatchQueue.main.async {
-									completion(.failure(wrappedError))
-								}
+						do {
+							if let apiCredentials = try await self.caller.validateCredentials(endpoint: endpoint) {
+								try? account.storeCredentials(apiCredentials)
+								self.caller.credentials = apiCredentials
+								self.refreshAll(for: account, completion: completion)
 							}
+							else {
+								completion(.failure(wrappedError))
+							}
+						} catch {
+							completion(.failure(wrappedError))
 						}
 						
 					} else {
@@ -186,9 +179,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					}
 				}
 			}
-			
 		}
-		
 	}
 
 	func syncArticleStatus(for account: Account) async throws {
@@ -838,35 +829,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
-
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider) { result in
-
-				switch result {
-				case .success(let credentials):
-					continuation.resume(returning: credentials)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		guard let endpoint = endpoint else {
-			completion(.failure(TransportError.noURL))
-			return
+		
+		guard let endpoint else {
+			throw TransportError.noURL
 		}
 		
 		let caller = ReaderAPICaller(transport: transport, secretsProvider: secretsProvider)
 		caller.credentials = credentials
-		caller.validateCredentials(endpoint: endpoint) { result in
-			DispatchQueue.main.async {
-				completion(result)
-			}
-		}
 		
+		return try await caller.validateCredentials(endpoint: endpoint)
 	}
 
 	// MARK: Suspend and Resume (for iOS)
