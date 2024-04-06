@@ -120,12 +120,18 @@ public protocol Transport {
 	func cancelAll()
 	
 	/// Sends URLRequest and returns the HTTP headers and the data payload.
+	func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?)
+
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
 	
 	/// Sends URLRequest that doesn't require any result information.
+	func send(request: URLRequest, method: String) async throws
+
 	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void)
 	
 	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
+	func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?)
+
 	func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
 	
 }
@@ -140,6 +146,20 @@ extension URLSession: Transport {
 		}
 	}
 	
+	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?) {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request) { result in
+				switch result {
+				case .success(let (response, data)):
+					continuation.resume(returning: (response, data))
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	public func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		let task = self.dataTask(with: request) { (data, response, error) in
 			DispatchQueue.main.async {
@@ -160,6 +180,20 @@ extension URLSession: Transport {
 			}
 		}
 		task.resume()
+	}
+
+	public func send(request: URLRequest, method: String) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
 	}
 
 	public func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -188,6 +222,20 @@ extension URLSession: Transport {
 		task.resume()
 	}
 	
+	public func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?) {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method, payload: payload) { result in
+				switch result {
+				case .success(let (response, data)):
+					continuation.resume(returning: (response, data))
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	public func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		
 		var sendRequest = request
