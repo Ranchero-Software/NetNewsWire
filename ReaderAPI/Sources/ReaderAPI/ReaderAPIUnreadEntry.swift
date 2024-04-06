@@ -8,18 +8,20 @@
 
 import Foundation
 
-struct ReaderAPIReferenceWrapper: Codable {
-	let itemRefs: [ReaderAPIReference]?
-	let continuation: String?
-	
+public struct ReaderAPIReferenceWrapper: Codable, Sendable {
+
+	public let itemRefs: [ReaderAPIReference]?
+	public let continuation: String?
+
 	enum CodingKeys: String, CodingKey {
 		case itemRefs = "itemRefs"
 		case continuation = "continuation"
 	}
 }
 
-struct ReaderAPIReference: Codable {
-	let itemId: String?
+public struct ReaderAPIReference: Codable, Sendable {
+
+	public let itemId: String?
 	
 	enum CodingKeys: String, CodingKey {
 		case itemId = "id"

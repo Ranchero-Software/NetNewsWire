@@ -10,6 +10,7 @@ import AppKit
 import Account
 import Web
 import Secrets
+import ReaderAPI
 
 class AccountsReaderAPIWindowController: NSWindowController {
 

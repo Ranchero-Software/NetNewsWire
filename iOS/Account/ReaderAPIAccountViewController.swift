@@ -11,6 +11,7 @@ import Account
 import Secrets
 import Web
 import SafariServices
+import ReaderAPI
 
 class ReaderAPIAccountViewController: UITableViewController {
 

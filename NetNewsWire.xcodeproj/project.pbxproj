@@ -579,6 +579,8 @@
 		840958632201629A002C1579 /* Subscribe to Feed.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840BEE4021D70E64009BBAFA /* CrashReportWindowController.swift */; };
 		840D617F2029031C009BC708 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D617E2029031C009BC708 /* AppDelegate.swift */; };
+		8410C4A32BC1E27A00D4F799 /* ReaderAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 8410C4A22BC1E27A00D4F799 /* ReaderAPI */; };
+		8410C4A52BC1E28200D4F799 /* ReaderAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 8410C4A42BC1E28200D4F799 /* ReaderAPI */; };
 		84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */; };
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
 		841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */; };
@@ -1423,6 +1425,7 @@
 		84CAFCAE22BC8C35007694F0 /* FetchRequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchRequestOperation.swift; sourceTree = "<group>"; };
 		84CBDDAE1FD3674C005A61AA /* Technotes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Technotes; sourceTree = "<group>"; };
 		84CC88171FE59CBF00644329 /* SmartFeedsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedsController.swift; sourceTree = "<group>"; };
+		84CC98D92BC1DD25006A05C9 /* ReaderAPI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ReaderAPI; sourceTree = "<group>"; };
 		84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 		84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStatusBarView.swift; sourceTree = "<group>"; };
 		84DCA50D2BAB643700792720 /* FoundationExtras */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FoundationExtras; sourceTree = "<group>"; };
@@ -1587,6 +1590,7 @@
 				84DCA5202BABB7A200792720 /* UIKitExtras in Frameworks */,
 				179D280B26F6F93D003B2E0A /* Zip in Frameworks */,
 				84DCA51E2BABB79900792720 /* FoundationExtras in Frameworks */,
+				8410C4A52BC1E28200D4F799 /* ReaderAPI in Frameworks */,
 				84C1A8582BBBA5BD006E3E96 /* Web in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
 				845611742BBD145D00507B73 /* ParserObjC in Frameworks */,
@@ -1613,6 +1617,7 @@
 				5132775E2590FC640064F1E7 /* Articles in Frameworks */,
 				84DCA5252BABBB5A00792720 /* Core in Frameworks */,
 				8479ABE32B9E906E00F84C4D /* Database in Frameworks */,
+				8410C4A32BC1E27A00D4F799 /* ReaderAPI in Frameworks */,
 				84DCA5122BABB75600792720 /* FoundationExtras in Frameworks */,
 				513277612590FC640064F1E7 /* ArticlesDatabase in Frameworks */,
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
@@ -2350,6 +2355,7 @@
 				849C64611ED37A5D003D8FC0 /* Products */,
 				51C452B22265141B00C03939 /* Frameworks */,
 				51CD32C624D2DEF9009ABAEF /* Account */,
+				84CC98D92BC1DD25006A05C9 /* ReaderAPI */,
 				51CD32C424D2CF1D009ABAEF /* Articles */,
 				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,
 				51CD32C724D2E06C009ABAEF /* Secrets */,
@@ -2968,6 +2974,7 @@
 				84C1A8572BBBA5BD006E3E96 /* Web */,
 				845611702BBD145D00507B73 /* Parser */,
 				845611732BBD145D00507B73 /* ParserObjC */,
+				8410C4A42BC1E28200D4F799 /* ReaderAPI */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -3014,6 +3021,7 @@
 				841CECD72BAD04B20001EE72 /* Tree */,
 				8456116A2BBD145200507B73 /* Parser */,
 				8456116D2BBD145200507B73 /* ParserObjC */,
+				8410C4A22BC1E27A00D4F799 /* ReaderAPI */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -4862,6 +4870,14 @@
 		6538133F2680E2DA007A082C /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Account;
+		};
+		8410C4A22BC1E27A00D4F799 /* ReaderAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReaderAPI;
+		};
+		8410C4A42BC1E28200D4F799 /* ReaderAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReaderAPI;
 		};
 		841CECD72BAD04B20001EE72 /* Tree */ = {
 			isa = XCSwiftPackageProductDependency;

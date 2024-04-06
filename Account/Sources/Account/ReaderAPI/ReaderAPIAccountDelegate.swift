@@ -14,6 +14,7 @@ import os.log
 import Secrets
 import Database
 import Core
+import ReaderAPI
 
 public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case unknown
@@ -815,22 +816,23 @@ private extension ReaderAPIAccountDelegate {
 	
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
 		
-		guard let entries = entries else {
+		guard let entries else {
 			return Set<ParsedItem>()
 		}
 		
-		let parsedItems: [ParsedItem] = entries.compactMap { entry in
-			guard let streamID = entry.origin.streamId else {
-				return nil
-			}
+		let entriesWithOriginStreamIDs = entries.filter { $0.origin.streamId != nil }
 
-			var authors: Set<ParsedAuthor>? {
+		let parsedItems: [ParsedItem] = entries.map { entry in
+
+			let streamID = entry.origin.streamId!
+
+			let authors: Set<ParsedAuthor>? = {
 				guard let name = entry.author else {
 					return nil
 				}
 				return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
-			}
-			
+			}()
+
 			return ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
 							  uniqueID: entry.uniqueID(variant: variant),
 							  feedURL: streamID,
@@ -851,7 +853,6 @@ private extension ReaderAPIAccountDelegate {
 		}
 		
 		return Set(parsedItems)
-		
 	}
 	
 	func syncArticleReadState(account: Account, articleIDs: [String]?) async throws {

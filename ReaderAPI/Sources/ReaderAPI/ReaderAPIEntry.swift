@@ -7,14 +7,13 @@
 //
 
 import Foundation
-import Parser
 
-struct ReaderAPIEntryWrapper: Codable {
-	let id: String
-	let updated: Int
-	let entries: [ReaderAPIEntry]
-	
-	
+public struct ReaderAPIEntryWrapper: Codable, Sendable {
+
+	public let id: String
+	public let updated: Int
+	public let entries: [ReaderAPIEntry]
+
 	enum CodingKeys: String, CodingKey {
 		case id = "id"
 		case updated = "updated"
@@ -46,20 +45,21 @@ struct ReaderAPIEntryWrapper: Codable {
 }
 }
 */
-struct ReaderAPIEntry: Codable {
 
-	let articleID: String
-	let title: String?
-	let author: String?
+public struct ReaderAPIEntry: Codable, Sendable {
 
-	let publishedTimestamp: Double?
-	let crawledTimestamp: String?
-	let timestampUsec: String?
-	
-	let summary: ReaderAPIArticleSummary
-	let alternates: [ReaderAPIAlternateLocation]?
-	let categories: [String]
-	let origin: ReaderAPIEntryOrigin
+	public let articleID: String
+	public let title: String?
+	public let author: String?
+
+	public let publishedTimestamp: Double?
+	public let crawledTimestamp: String?
+	public let timestampUsec: String?
+
+	public let summary: ReaderAPIArticleSummary
+	public let alternates: [ReaderAPIAlternateLocation]?
+	public let categories: [String]
+	public let origin: ReaderAPIEntryOrigin
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
@@ -74,14 +74,14 @@ struct ReaderAPIEntry: Codable {
 		case timestampUsec = "timestampUsec"
 	}
 	
-	func parseDatePublished() -> Date? {
+	public func parseDatePublished() -> Date? {
 		guard let unixTime = publishedTimestamp else {
 			return nil
 		}
 		return Date(timeIntervalSince1970: unixTime)
 	}
 	
-	func uniqueID(variant: ReaderAPIVariant) -> String {
+	public func uniqueID(variant: ReaderAPIVariant) -> String {
 		// Should look something like "tag:google.com,2005:reader/item/00058b10ce338909"
 		// REGEX feels heavy, I should be able to just split on / and take the last element
 		
@@ -103,25 +103,28 @@ struct ReaderAPIEntry: Codable {
 	
 }
 
-struct ReaderAPIArticleSummary: Codable {
-	let content: String?
+public struct ReaderAPIArticleSummary: Codable, Sendable {
+
+	public let content: String?
 	
 	enum CodingKeys: String, CodingKey {
 		case content = "content"
 	}
 }
 
-struct ReaderAPIAlternateLocation: Codable {
-	let url: String?
-	
+public struct ReaderAPIAlternateLocation: Codable, Sendable {
+
+	public let url: String?
+
 	enum CodingKeys: String, CodingKey {
 		case url = "href"
 	}
 }
 
-struct ReaderAPIEntryOrigin: Codable {
-	let streamId: String?
-	let title: String?
+public struct ReaderAPIEntryOrigin: Codable, Sendable {
+
+	public let streamId: String?
+	public let title: String?
 
 	enum CodingKeys: String, CodingKey {
 		case streamId = "streamId"

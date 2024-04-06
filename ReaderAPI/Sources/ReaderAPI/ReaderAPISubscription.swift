@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Parser
+import FoundationExtras
 
 /*
 
@@ -18,10 +18,11 @@ import Parser
 
 */
 
-struct ReaderAPIQuickAddResult: Codable {
-	let numResults: Int
-	let error: String?
-	let streamId: String?
+public struct ReaderAPIQuickAddResult: Codable {
+
+	public let numResults: Int
+	public let error: String?
+	public let streamId: String?
 	
 	enum CodingKeys: String, CodingKey {
 		case numResults = "numResults"
@@ -30,9 +31,10 @@ struct ReaderAPIQuickAddResult: Codable {
 	}
 }
 
-struct ReaderAPISubscriptionContainer: Codable {
-	let subscriptions: [ReaderAPISubscription]
+public struct ReaderAPISubscriptionContainer: Codable, Sendable {
 	
+	public let subscriptions: [ReaderAPISubscription]
+
 	enum CodingKeys: String, CodingKey {
 		case subscriptions = "subscriptions"
 	}
@@ -54,13 +56,14 @@ struct ReaderAPISubscriptionContainer: Codable {
 }
 
 */
-struct ReaderAPISubscription: Codable {
-	let feedID: String
-	let name: String?
-	let categories: [ReaderAPICategory]
-	let feedURL: String?
-	let homePageURL: String?
-	let iconURL: String?
+public struct ReaderAPISubscription: Codable, Sendable {
+	
+	public let feedID: String
+	public let name: String?
+	public let categories: [ReaderAPICategory]
+	public let feedURL: String?
+	public let homePageURL: String?
+	public let iconURL: String?
 
 	enum CodingKeys: String, CodingKey {
 		case feedID = "id"
@@ -71,7 +74,7 @@ struct ReaderAPISubscription: Codable {
 		case iconURL = "iconUrl"
 	}
 
-	var url: String {
+	public var url: String {
 		if let feedURL = feedURL {
 			return feedURL
 		} else {
@@ -80,9 +83,10 @@ struct ReaderAPISubscription: Codable {
 	}
 }
 
-struct ReaderAPICategory: Codable {
-	let categoryId: String
-	let categoryLabel: String
+public struct ReaderAPICategory: Codable, Sendable {
+
+	public let categoryId: String
+	public let categoryLabel: String
 	
 	enum CodingKeys: String, CodingKey {
 		case categoryId = "id"
