@@ -114,12 +114,13 @@ public enum TransportError: LocalizedError {
 	
 }
 
-public protocol Transport {
+public protocol Transport: Sendable {
 	
 	/// Cancels all pending requests
 	func cancelAll()
 	
 	/// Sends URLRequest and returns the HTTP headers and the data payload.
+	@discardableResult
 	func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?)
 
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
@@ -130,6 +131,7 @@ public protocol Transport {
 	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void)
 	
 	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
+	@discardableResult
 	func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?)
 
 	func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
