@@ -9,7 +9,7 @@
 #if os(macOS)
 import AppKit
 
-public class MacWebBrowser {
+@MainActor public class MacWebBrowser {
 
 	/// Opens a URL in the default browser.
 	@discardableResult public class func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
@@ -22,7 +22,7 @@ public class MacWebBrowser {
 		
 		if (inBackground) {
 
-			Task {
+			Task { @MainActor in
 				let configuration = NSWorkspace.OpenConfiguration()
 				configuration.activates = false
 				_ = try? await NSWorkspace.shared.open(url, configuration: configuration)
@@ -130,25 +130,24 @@ public class MacWebBrowser {
 	///   - url: The URL to open.
 	///   - inBackground: If `true`, attempt to load the URL without bringing the browser to the foreground.
 	@discardableResult public func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
+		
+		// TODO: make this function async.
+
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false
 		}
 
-		let options: NSWorkspace.LaunchOptions = inBackground ? [.withoutActivation] : []
+		Task { @MainActor in
 
-		return NSWorkspace.shared.open([preparedURL], withAppBundleIdentifier: self.bundleIdentifier, options: options, additionalEventParamDescriptor: nil, launchIdentifiers: nil)
-	}
+			let configuration = NSWorkspace.OpenConfiguration()
+			if inBackground {
+				configuration.activates = false
+			}
 
-}
-
-extension MacWebBrowser: CustomDebugStringConvertible {
-
-	public var debugDescription: String {
-		if let name = name, let bundleIdentifier = bundleIdentifier{
-			return "MacWebBrowser: \(name) (\(bundleIdentifier))"
-		} else {
-			return "MacWebBrowser"
+			_ = try? await NSWorkspace.shared.open([preparedURL], withApplicationAt: self.url, configuration: configuration)
 		}
+		
+		return true
 	}
 }
 
