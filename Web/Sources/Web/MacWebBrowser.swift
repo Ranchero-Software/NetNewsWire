@@ -8,29 +8,28 @@
 
 #if os(macOS)
 import AppKit
+import UniformTypeIdentifiers
 
 @MainActor public class MacWebBrowser {
 
 	/// Opens a URL in the default browser.
 	@discardableResult public class func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
-		
+
 		// TODO: make this function async
 
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false
 		}
-		
+
 		if (inBackground) {
 
-			Task { @MainActor in
-				let configuration = NSWorkspace.OpenConfiguration()
-				configuration.activates = false
-				_ = try? await NSWorkspace.shared.open(url, configuration: configuration)
-			}
+			let configuration = NSWorkspace.OpenConfiguration()
+			configuration.activates = false
+			NSWorkspace.shared.open(url, configuration: configuration, completionHandler: nil)
 
 			return true
 		}
-		
+
 		return NSWorkspace.shared.open(preparedURL)
 	}
 
@@ -38,17 +37,12 @@ import AppKit
 	///
 	/// "Browsers" are applications that can both handle `https` URLs, and display HTML documents.
 	public class func sortedBrowsers() -> [MacWebBrowser] {
-		guard let httpsIDs = LSCopyAllHandlersForURLScheme("https" as CFString)?.takeRetainedValue() as? [String] else {
-			return []
-		}
 
-		guard let htmlIDs = LSCopyAllRoleHandlersForContentType(kUTTypeHTML, .viewer)?.takeRetainedValue() as? [String] else {
-			return []
-		}
+		let httpsAppURLs = NSWorkspace.shared.urlsForApplications(toOpen: URL(string: "https://apple.com/")!)
+		let htmlAppURLs = NSWorkspace.shared.urlsForApplications(toOpen: UTType.html)
+		let browserAppURLs = Set(httpsAppURLs).intersection(Set(htmlAppURLs))
 
-		let browserIDs = Set(httpsIDs).intersection(Set(htmlIDs))
-
-		return browserIDs.compactMap { MacWebBrowser(bundleIdentifier: $0) }.sorted {
+		return browserAppURLs.compactMap { MacWebBrowser(url: $0) }.sorted {
 			if let leftName = $0.name, let rightName = $1.name {
 				return leftName < rightName
 			}
@@ -144,7 +138,7 @@ import AppKit
 				configuration.activates = false
 			}
 
-			_ = try? await NSWorkspace.shared.open([preparedURL], withApplicationAt: self.url, configuration: configuration)
+			NSWorkspace.shared.open([preparedURL], withApplicationAt: self.url, configuration: configuration, completionHandler: nil)
 		}
 		
 		return true
