@@ -21,6 +21,7 @@ let package = Package(
 		.package(path: "../Core"),
 		.package(path: "../CloudKitExtras"),
 		.package(path: "../ReaderAPI"),
+		.package(path: "../CloudKitSync"),
 		.package(path: "../CommonErrors")
 	],
 	targets: [
@@ -37,6 +38,7 @@ let package = Package(
 				"Core",
 				"CloudKitExtras",
 				"ReaderAPI",
+				"CloudKitSync",
 				"CommonErrors"
 			],
 			swiftSettings: [

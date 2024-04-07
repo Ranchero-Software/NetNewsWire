@@ -14,6 +14,7 @@ import SyncDatabase
 import Database
 import Core
 import CloudKitExtras
+import CloudKitSync
 
 class CloudKitSendStatusOperation: MainThreadOperation {
 

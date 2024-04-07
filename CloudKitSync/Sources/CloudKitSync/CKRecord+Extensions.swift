@@ -9,16 +9,16 @@
 import Foundation
 import CloudKit
 
-extension CKRecord {
-	
+public extension CKRecord {
+
 	var externalID: String {
 		return recordID.externalID
 	}
 	
 }
 
-extension CKRecord.ID {
-	
+public extension CKRecord.ID {
+
 	var externalID: String {
 		return recordName
 	}

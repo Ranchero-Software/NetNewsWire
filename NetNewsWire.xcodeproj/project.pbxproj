@@ -1337,6 +1337,7 @@
 		845B14A51FC2299E0013CF92 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarredFeedDelegate.swift; sourceTree = "<group>"; };
 		845EE7C01FC2488C00854A1F /* SmartFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeed.swift; sourceTree = "<group>"; };
+		845F3D2B2BC268FE00AEBB68 /* CloudKitSync */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CloudKitSync; sourceTree = "<group>"; };
 		846799F42BBD120A000854CB /* Parser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Parser; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkStatusCommand.swift; sourceTree = "<group>"; };
 		847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+Extensions.swift"; sourceTree = "<group>"; };
@@ -2357,10 +2358,11 @@
 				51C452B22265141B00C03939 /* Frameworks */,
 				51CD32C624D2DEF9009ABAEF /* Account */,
 				84CC98D92BC1DD25006A05C9 /* ReaderAPI */,
+				845F3D2B2BC268FE00AEBB68 /* CloudKitSync */,
 				8410C4A62BC221C900D4F799 /* CommonErrors */,
+				51CD32C724D2E06C009ABAEF /* Secrets */,
 				51CD32C424D2CF1D009ABAEF /* Articles */,
 				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,
-				51CD32C724D2E06C009ABAEF /* Secrets */,
 				51CD32A824D2CB25009ABAEF /* SyncDatabase */,
 				841550F42B9E3F8000D4B345 /* Database */,
 				841550F52B9E4D6800D4B345 /* FMDB */,

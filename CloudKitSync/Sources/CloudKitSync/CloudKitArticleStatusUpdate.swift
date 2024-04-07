@@ -10,20 +10,20 @@ import Foundation
 import SyncDatabase
 import Articles
 
-struct CloudKitArticleStatusUpdate {
+public struct CloudKitArticleStatusUpdate {
 	
-	enum Record {
+	public enum Record: Sendable {
 		case all
 		case new
 		case statusOnly
 		case delete
 	}
 	
-	var articleID: String
-	var statuses: [SyncStatus]
-	var article: Article?
-	
-	init?(articleID: String, statuses: [SyncStatus], article: Article?) {
+	public var articleID: String
+	public var statuses: [SyncStatus]
+	public var article: Article?
+
+	public init?(articleID: String, statuses: [SyncStatus], article: Article?) {
 		self.articleID = articleID
 		self.statuses = statuses
 		self.article = article
@@ -35,7 +35,7 @@ struct CloudKitArticleStatusUpdate {
 		}
 	}
 	
-	var record: Record {
+	public var record: Record {
 		if statuses.contains(where: { $0.key == .deleted }) {
 			return .delete
 		}
@@ -53,18 +53,17 @@ struct CloudKitArticleStatusUpdate {
 		return .statusOnly
 	}
 	
-	var isRead: Bool {
+	public var isRead: Bool {
 		if let article = article {
 			return article.status.read
 		}
 		return true
 	}
 	
-	var isStarred: Bool {
+	public var isStarred: Bool {
 		if let article = article {
 			return article.status.starred
 		}
 		return false
 	}
-	
 }

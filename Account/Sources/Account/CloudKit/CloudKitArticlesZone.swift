@@ -14,6 +14,7 @@ import CloudKit
 import Articles
 import SyncDatabase
 import CloudKitExtras
+import CloudKitSync
 
 final class CloudKitArticlesZone: CloudKitZone {
 	
