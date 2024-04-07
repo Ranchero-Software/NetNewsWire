@@ -13,8 +13,8 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 
 	private let account: Account
 
-	private(set) var entryIds = Set<String>()
-	
+	private(set) var entryIDs = Set<String>()
+
 	init(account: Account) {
 		self.account = account
 	}
@@ -25,7 +25,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 
 			do {
 				if let articleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() {
-					self.entryIds.formUnion(articleIDs)
+					self.entryIDs.formUnion(articleIDs)
 				}
 				
 				self.didFinish()

@@ -9,21 +9,21 @@
 import Foundation
 
 protocol FeedlyEntryIdentifierProviding: AnyObject {
-	@MainActor var entryIds: Set<String> { get }
+	@MainActor var entryIDs: Set<String> { get }
 }
 
 final class FeedlyEntryIdentifierProvider: FeedlyEntryIdentifierProviding {
-	private (set) var entryIds: Set<String>
-	
-	init(entryIds: Set<String> = Set()) {
-		self.entryIds = entryIds
+	private (set) var entryIDs: Set<String>
+
+	init(entryIDs: Set<String> = Set()) {
+		self.entryIDs = entryIDs
 	}
 	
-	@MainActor func addEntryIds(from provider: FeedlyEntryIdentifierProviding) {
-		entryIds.formUnion(provider.entryIds)
+	@MainActor func addEntryIDs(from provider: FeedlyEntryIdentifierProviding) {
+		entryIDs.formUnion(provider.entryIDs)
 	}
 	
-	@MainActor func addEntryIds(in articleIds: [String]) {
-		entryIds.formUnion(articleIds)
+	@MainActor func addEntryIDs(in articleIds: [String]) {
+		entryIDs.formUnion(articleIds)
 	}
 }
