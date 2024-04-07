@@ -8,11 +8,12 @@
 
 import UIKit
 import Account
+import CommonErrors
 
 extension UIViewController {
 	
 	func presentError(_ error: Error, dismiss: (() -> Void)? = nil) {
-		if let accountError = error as? AccountError, accountError.isCredentialsError {
+		if let accountError = error as? CommonError, accountError.isCredentialsError {
 			presentAccountError(accountError, dismiss: dismiss)
 		} else if let decodingError = error as? DecodingError {
 			let errorTitle = NSLocalizedString("Error", comment: "Error")
@@ -55,7 +56,7 @@ extension UIViewController {
 
 private extension UIViewController {
 	
-	func presentAccountError(_ error: AccountError, dismiss: (() -> Void)? = nil) {
+	func presentAccountError(_ error: CommonError, dismiss: (() -> Void)? = nil) {
 		let title = NSLocalizedString("Account Error", comment: "Account Error")
 		let alertController = UIAlertController(title: title, message: error.localizedDescription, preferredStyle: .alert)
 		

@@ -11,6 +11,7 @@ import Account
 import Tree
 import Parser
 import Core
+import CommonErrors
 
 enum AddFeedType {
 	case web
@@ -105,7 +106,7 @@ class AddFeedViewController: UITableViewController {
 		}
 		
 		if account!.hasFeed(withURL: url.absoluteString) {
-			presentError(AccountError.createErrorAlreadySubscribed)
+			presentError(CommonError.createErrorAlreadySubscribed)
  			return
 		}
 		
