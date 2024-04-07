@@ -13,10 +13,10 @@ import CommonErrors
 
 public protocol ReaderAPICallerDelegate: AnyObject {
 
-	var endpointURL: URL? { get }
+	@MainActor var endpointURL: URL? { get }
 
-	var lastArticleFetchStartTime: Date? { get set }
-	var lastArticleFetchEndTime: Date? { get set }
+	@MainActor var lastArticleFetchStartTime: Date? { get set }
+	@MainActor var lastArticleFetchEndTime: Date? { get set }
 }
 
 public enum CreateReaderAPISubscriptionResult: Sendable {
@@ -25,15 +25,26 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 	case notFound
 }
 
-@MainActor final class ReaderAPICaller {
+@MainActor public final class ReaderAPICaller {
 	
-	enum ItemIDType {
+	public enum ItemIDType {
 		case unread
 		case starred
 		case allForAccount
 		case allForFeed
 	}
 	
+	public weak var delegate: ReaderAPICallerDelegate?
+
+	public var variant: ReaderAPIVariant = .generic
+	public var credentials: Credentials?
+
+	public var server: String? {
+		get {
+			return apiBaseURL?.host
+		}
+	}
+
 	private enum ReaderState: String {
 		case read = "user/-/state/com.google/read"
 		case starred = "user/-/state/com.google/starred"
@@ -63,17 +74,6 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 
 	private var accessToken: String?
 	
-	weak var delegate: ReaderAPICallerDelegate?
-
-	var variant: ReaderAPIVariant = .generic
-	var credentials: Credentials?
-
-	var server: String? {
-		get {
-			return apiBaseURL?.host
-		}
-	}
-	
 	private var apiBaseURL: URL? {
 		get {
 			switch variant {
@@ -85,7 +85,8 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		}
 	}
 	
-	init(transport: Transport, secretsProvider: SecretsProvider) {
+	/// The delegate should be set in a subsequent call.
+	public init(transport: Transport, secretsProvider: SecretsProvider) {
 
 		self.transport = transport
 		self.secretsProvider = secretsProvider
@@ -96,11 +97,11 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		self.uriComponentAllowed = urlHostAllowed
 	}
 	
-	func cancelAll() {
+	public func cancelAll() {
 		transport.cancelAll()
 	}
 	
-	func validateCredentials(endpoint: URL) async throws -> Credentials? {
+	public func validateCredentials(endpoint: URL) async throws -> Credentials? {
 
 		guard let credentials else {
 			throw CredentialsError.incompleteCredentials
@@ -173,7 +174,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		return accessToken
 	}
 	
-	func retrieveTags() async throws -> [ReaderAPITag]? {
+	public func retrieveTags() async throws -> [ReaderAPITag]? {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -198,7 +199,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		return wrapper?.tags
 	}
 
-	func renameTag(oldName: String, newName: String) async throws {
+	public func renameTag(oldName: String, newName: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -223,7 +224,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 	}
 
 
-	func deleteTag(folderExternalID: String) async throws {
+	public func deleteTag(folderExternalID: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -241,7 +242,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 	
-	func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
+	public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -262,7 +263,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		return container?.subscriptions
 	}
 	
-	func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
+	public func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -305,12 +306,12 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		return .created(subscription)
 	}
 	
-	func renameSubscription(subscriptionID: String, newName: String) async throws {
+	public func renameSubscription(subscriptionID: String, newName: String) async throws {
 
 		try await changeSubscription(subscriptionID: subscriptionID, title: newName)
 	}
 	
-	func deleteSubscription(subscriptionID: String) async throws {
+	public func deleteSubscription(subscriptionID: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -328,17 +329,17 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
-	func createTagging(subscriptionID: String, tagName: String) async throws {
+	public func createTagging(subscriptionID: String, tagName: String) async throws {
 
 		try await changeSubscription(subscriptionID: subscriptionID, addTagName: tagName)
 	}
 	
-	func deleteTagging(subscriptionID: String, tagName: String) async throws {
+	public func deleteTagging(subscriptionID: String, tagName: String) async throws {
 
 		try await changeSubscription(subscriptionID: subscriptionID, removeTagName: tagName)
 	}
 	
-	func moveSubscription(subscriptionID: String, sourceTag: String, destinationTag: String) async throws {
+	public func moveSubscription(subscriptionID: String, sourceTag: String, destinationTag: String) async throws {
 
 		try await changeSubscription(subscriptionID: subscriptionID, removeTagName: sourceTag, addTagName: destinationTag)
 	}
@@ -374,7 +375,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 	
-	func retrieveEntries(articleIDs: [String]) async throws -> [ReaderAPIEntry]? {
+	public func retrieveEntries(articleIDs: [String]) async throws -> [ReaderAPIEntry]? {
 
 		guard !articleIDs.isEmpty else {
 			return [ReaderAPIEntry]()
@@ -412,7 +413,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		return entryWrapper.entries
 	}
 	
-	func retrieveItemIDs(type: ItemIDType, feedID: String? = nil) async throws -> [String] {
+	public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil) async throws -> [String] {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -510,22 +511,22 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation)
 	}
 	
-	func createUnreadEntries(entries: [String]) async throws {
+	public func createUnreadEntries(entries: [String]) async throws {
 
 		try await updateStateToEntries(entries: entries, state: .read, add: false)
 	}
 	
-	func deleteUnreadEntries(entries: [String]) async throws {
-		
+	public func deleteUnreadEntries(entries: [String]) async throws {
+
 		try await updateStateToEntries(entries: entries, state: .read, add: true)
 	}
 	
-	func createStarredEntries(entries: [String]) async throws {
-		
+	public func createStarredEntries(entries: [String]) async throws {
+
 		try await updateStateToEntries(entries: entries, state: .starred, add: true)
 	}
 	
-	func deleteStarredEntries(entries: [String]) async throws {
+	public func deleteStarredEntries(entries: [String]) async throws {
 		
 		try await updateStateToEntries(entries: entries, state: .starred, add: false)
 	}

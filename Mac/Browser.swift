@@ -15,7 +15,7 @@ struct Browser {
 	///
 	/// The user-assigned default browser, or `nil` if none was assigned
 	/// (i.e., the system default should be used).
-	static var defaultBrowser: MacWebBrowser? {
+	@MainActor static var defaultBrowser: MacWebBrowser? {
 		if let bundleID = AppDefaults.shared.defaultBrowserID, let browser = MacWebBrowser(bundleIdentifier: bundleID) {
 			return browser
 		}

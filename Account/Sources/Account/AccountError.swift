@@ -14,7 +14,7 @@ typealias AccountError = CommonError // Temporary, for compatibility with existi
 
 public extension CommonError {
 
-	@MainActor public var account: Account? {
+	@MainActor var account: Account? {
 		if case .wrappedError(_, let accountID, _) = self {
 			return AccountManager.shared.existingAccount(with: accountID)
 		} else {
@@ -22,7 +22,7 @@ public extension CommonError {
 		}
 	}
 
-	@MainActor public static func wrappedError(error: Error, account: Account) -> AccountError {
+	@MainActor static func wrappedError(error: Error, account: Account) -> CommonError {
 		wrappedError(error: error, accountID: account.accountID, accountName: account.nameForDisplay)
 	}
 }

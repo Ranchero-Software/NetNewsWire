@@ -47,20 +47,19 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	weak var accountMetadata: AccountMetadata? {
-		didSet {
-			caller.accountMetadata = accountMetadata
-		}
-	}
+	weak var accountMetadata: AccountMetadata?
 
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
 	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant, secretsProvider: SecretsProvider) {
+
 		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databasePath: databasePath)
+		self.database = SyncDatabase(databasePath: databasePath)
+
+		self.variant = variant
 
 		if transport != nil {
-			caller = ReaderAPICaller(transport: transport!, secretsProvider: secretsProvider)
+			self.caller = ReaderAPICaller(transport: transport!, secretsProvider: secretsProvider)
 		} else {
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -75,11 +74,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 			}
 			
-			caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration), secretsProvider: secretsProvider)
+			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration), secretsProvider: secretsProvider)
 		}
 		
+		caller.delegate = self
 		caller.variant = variant
-		self.variant = variant
 	}
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
@@ -102,7 +101,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			try? await refreshArticleStatus(for: account)
 			refreshProgress.completeTask()
 
-			try? await refreshMissingArticles(account)
+			await refreshMissingArticles(account)
 			refreshProgress.clear()
 
 		} catch {
@@ -177,7 +176,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		do {
 			let articleIDs = try await caller.retrieveItemIDs(type: .starred)
-			try await syncArticleStarredState(account: account, articleIDs: articleIDs)
+			await syncArticleStarredState(account: account, articleIDs: articleIDs)
 		} catch {
 			errorOccurred = true
 			os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
@@ -185,7 +184,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		os_log(.debug, log: self.log, "Done refreshing article statuses.")
 		if errorOccurred {
-			throw ReaderAPIAccountDelegateError.unknown
+			throw ReaderAPIError.unknown
 		}
 	}
 
@@ -195,7 +194,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func createFolder(for account: Account, name: String) async throws -> Folder {
 
 		guard let folder = account.ensureFolder(with: name) else {
-			throw ReaderAPIAccountDelegateError.invalidParameter
+			throw ReaderAPIError.invalidParameter
 		}
 		return folder
 	}
@@ -260,15 +259,18 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		if self.variant == .theOldReader {
 			account.removeFolder(folder: folder)
 		} else {
-			try await caller.deleteTag(folder: folder)
+			if let folderExternalID = folder.externalID {
+				try await caller.deleteTag(folderExternalID: folderExternalID)
+			}
 			account.removeFolder(folder: folder)
 		}
 	}
 
+	@discardableResult
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 
 		guard let url = URL(string: url) else {
-			throw ReaderAPIAccountDelegateError.invalidParameter
+			throw ReaderAPIError.invalidParameter
 		}
 
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
@@ -284,7 +286,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				throw AccountError.createErrorNotFound
 			}
 
-			let subResult = try await caller.createSubscription(url: bestFeedSpecifier.urlString, name: name, folder: container as? Folder)
+			let subResult = try await caller.createSubscription(url: bestFeedSpecifier.urlString, name: name)
 			refreshProgress.completeTask()
 
 			switch subResult {
@@ -305,7 +307,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
 			assert(feed.externalID != nil)
-			throw ReaderAPIAccountDelegateError.invalidParameter
+			throw ReaderAPIError.invalidParameter
 		}
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -325,7 +327,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		guard let subscriptionID = feed.externalID else {
 			assert(feed.externalID != nil)
-			throw ReaderAPIAccountDelegateError.invalidParameter
+			throw ReaderAPIError.invalidParameter
 		}
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -360,7 +362,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				let sourceTag = (sourceContainer as? Folder)?.name,
 				let destinationTag = (destinationContainer as? Folder)?.name
 			else {
-				throw ReaderAPIAccountDelegateError.invalidParameter
+				throw ReaderAPIError.invalidParameter
 			}
 
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -475,7 +477,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		caller.cancelAll()
 	}
 	
-	/// Suspend the SQLLite databases
+	/// Suspend the SQLite databases
 	func suspendDatabase() {
 
 		Task {
@@ -892,6 +894,31 @@ private extension ReaderAPIAccountDelegate {
 
 		} catch {
 			os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
+		}
+	}
+}
+
+extension ReaderAPIAccountDelegate: ReaderAPICallerDelegate {
+
+	var endpointURL: URL? {
+		accountMetadata?.endpointURL
+	}
+
+	var lastArticleFetchStartTime: Date? {
+		get {
+			accountMetadata?.lastArticleFetchStartTime
+		}
+		set {
+			accountMetadata?.lastArticleFetchStartTime = newValue
+		}
+	}
+
+	var lastArticleFetchEndTime: Date? {
+		get {
+			accountMetadata?.lastArticleFetchEndTime
+		}
+		set {
+			accountMetadata?.lastArticleFetchEndTime = newValue
 		}
 	}
 }

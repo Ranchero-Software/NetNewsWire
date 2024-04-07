@@ -12,6 +12,7 @@ import Tree
 import Articles
 import Account
 import Parser
+import CommonErrors
 
 // Run add-feed sheet.
 // If it returns with URL and optional name,
@@ -69,10 +70,10 @@ import Parser
 				let feed = try await account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true)
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 
-			} catch AccountError.createErrorAlreadySubscribed {
+			} catch CommonError.createErrorAlreadySubscribed {
 				self.showAlreadySubscribedError(url.absoluteString)
 
-			} catch AccountError.createErrorNotFound {
+			} catch CommonError.createErrorNotFound {
 				self.showNoFeedsErrorMessage()
 
 			} catch {
