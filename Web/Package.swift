@@ -18,11 +18,11 @@ let package = Package(
 		.target(
 			name: "Web",
 			dependencies: [],
-			resources: [.copy("UTS46/uts46")]
-//			swiftSettings: [
-//				.define("SWIFT_PACKAGE"),
-//				.enableExperimentalFeature("StrictConcurrency")
-//			]
+			resources: [.copy("UTS46/uts46")],
+			swiftSettings: [
+				.define("SWIFT_PACKAGE"),
+				.enableExperimentalFeature("StrictConcurrency")
+			]
 		),
 		.testTarget(
 			name: "WebTests",
