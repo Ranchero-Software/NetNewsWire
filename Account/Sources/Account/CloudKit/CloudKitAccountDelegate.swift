@@ -20,6 +20,7 @@ import Core
 import CloudKitExtras
 import CommonErrors
 import FeedFinder
+import LocalAccount
 
 enum CloudKitAccountDelegateError: LocalizedError {
 	case invalidParameter
@@ -836,59 +837,61 @@ private extension CloudKitAccountDelegate {
 						}
 						return
 					}
-					
+
 					if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
 						self.refreshProgress.completeTasks(4)
 						completion(.failure(AccountError.createErrorAlreadySubscribed))
 						return
 					}
-					
+
 					let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 					feed.editedName = editedName
 					container.addFeed(feed)
-					
+
 					InitialFeedDownloader.download(url) { parsedFeed in
-						self.refreshProgress.completeTask()
-						
-						if let parsedFeed {
-							
-							Task { @MainActor in
-								
-								do {
-									try await account.update(feed: feed, with: parsedFeed)
-									
-									self.accountZone.createFeed(url: bestFeedSpecifier.urlString,
-																name: parsedFeed.title,
-																editedName: editedName,
-																homePageURL: parsedFeed.homePageURL,
-																container: container) { result in
-										
-										self.refreshProgress.completeTask()
-										switch result {
-										case .success(let externalID):
-											feed.externalID = externalID
-											self.sendNewArticlesToTheCloud(account, feed)
-											completion(.success(feed))
-										case .failure(let error):
-											container.removeFeed(feed)
-											self.refreshProgress.completeTasks(2)
-											completion(.failure(error))
+						MainActor.assumeIsolated {
+							self.refreshProgress.completeTask()
+
+							if let parsedFeed {
+
+								Task { @MainActor in
+
+									do {
+										try await account.update(feed: feed, with: parsedFeed)
+
+										self.accountZone.createFeed(url: bestFeedSpecifier.urlString,
+																	name: parsedFeed.title,
+																	editedName: editedName,
+																	homePageURL: parsedFeed.homePageURL,
+																	container: container) { result in
+
+											self.refreshProgress.completeTask()
+											switch result {
+											case .success(let externalID):
+												feed.externalID = externalID
+												self.sendNewArticlesToTheCloud(account, feed)
+												completion(.success(feed))
+											case .failure(let error):
+												container.removeFeed(feed)
+												self.refreshProgress.completeTasks(2)
+												completion(.failure(error))
+											}
+
 										}
-										
+									} catch {
+										container.removeFeed(feed)
+										self.refreshProgress.completeTasks(3)
+										completion(.failure(error))
 									}
-								} catch {
-									container.removeFeed(feed)
-									self.refreshProgress.completeTasks(3)
-									completion(.failure(error))
 								}
+							} else {
+								self.refreshProgress.completeTasks(3)
+								container.removeFeed(feed)
+								completion(.failure(AccountError.createErrorNotFound))
 							}
-						} else {
-							self.refreshProgress.completeTasks(3)
-							container.removeFeed(feed)
-							completion(.failure(AccountError.createErrorNotFound))
-						}	
+						}
 					}
-					
+
 				case .failure:
 					self.refreshProgress.completeTasks(3)
 					if validateFeed {
