@@ -9,24 +9,24 @@
 import Foundation
 import Parser
 
-final class FeedbinEntry: Decodable {
+public final class FeedbinEntry: Decodable, @unchecked Sendable {
 
-	let articleID: Int
-	let feedID: Int
-	let title: String?
-	let url: String?
-	let authorName: String?
-	let contentHTML: String?
-	let summary: String?
-	let datePublished: String?
-	let dateArrived: String?
-	let jsonFeed: FeedbinEntryJSONFeed?
+	public let articleID: Int
+	public let feedID: Int
+	public let title: String?
+	public let url: String?
+	public let authorName: String?
+	public let contentHTML: String?
+	public let summary: String?
+	public let datePublished: String?
+	public let dateArrived: String?
+	public let jsonFeed: FeedbinEntryJSONFeed?
 
 	// Feedbin dates can't be decoded by the JSONDecoding 8601 decoding strategy. Feedbin
 	// requires a very specific date formatter to work and even then it fails occasionally.
 	// Rather than loose all the entries we only lose the one date by decoding as a string
 	// and letting the one date fail when parsed.
-	lazy var parsedDatePublished: Date? = {
+	public lazy var parsedDatePublished: Date? = {
 		if let datePublished = datePublished {
 			return RSDateWithString(datePublished)
 		}
@@ -49,9 +49,10 @@ final class FeedbinEntry: Decodable {
 	}
 }
 
-struct FeedbinEntryJSONFeed: Decodable {
-	let jsonFeedAuthor: FeedbinEntryJSONFeedAuthor?
-	let jsonFeedExternalURL: String?
+public struct FeedbinEntryJSONFeed: Decodable, Sendable {
+
+	public let jsonFeedAuthor: FeedbinEntryJSONFeedAuthor?
+	public let jsonFeedExternalURL: String?
 
 	enum CodingKeys: String, CodingKey {
 		case jsonFeedAuthor = "author"
@@ -74,9 +75,11 @@ struct FeedbinEntryJSONFeed: Decodable {
 
 }
 
-struct FeedbinEntryJSONFeedAuthor: Decodable {
-	let url: String?
-	let avatarURL: String?
+public struct FeedbinEntryJSONFeedAuthor: Decodable, Sendable {
+
+	public let url: String?
+	public let avatarURL: String?
+	
 	enum CodingKeys: String, CodingKey {
 		case url = "url"
 		case avatarURL = "avatar"

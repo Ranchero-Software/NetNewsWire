@@ -12,7 +12,7 @@ import Secrets
 
 @MainActor public final class NewsBlurAPICaller: NSObject {
 	
-	public static let SessionIdCookie = "newsblur_sessionid"
+	public static let sessionIDCookieKey = "newsblur_sessionid"
 
 	let baseURL = URL(string: "https://www.newsblur.com/")!
 	var transport: Transport!
@@ -55,7 +55,7 @@ import Secrets
 				}
 
 				let cookies = HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
-				for cookie in cookies where cookie.name == Self.SessionIdCookie {
+				for cookie in cookies where cookie.name == Self.sessionIDCookieKey {
 					let credentials = Credentials(type: .newsBlurSessionId, username: username, secret: cookie.value)
 					completion(.success(credentials))
 					return

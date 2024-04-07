@@ -8,28 +8,32 @@
 
 import Foundation
 
-struct FeedbinTagging: Codable {
+public struct FeedbinTagging: Codable, Sendable {
 
-	let taggingID: Int
-	let feedID: Int
-	let name: String
+	public let taggingID: Int
+	public let feedID: Int
+	public let name: String
 
 	enum CodingKeys: String, CodingKey {
 		case taggingID = "id"
 		case feedID = "feed_id"
 		case name = "name"
 	}
-
 }
 
-struct FeedbinCreateTagging: Codable {
-	
-	let feedID: Int
-	let name: String
+public struct FeedbinCreateTagging: Codable, Sendable {
+
+	public let feedID: Int
+	public let name: String
 	
 	enum CodingKeys: String, CodingKey {
 		case feedID = "feed_id"
 		case name = "name"
 	}
-	
+
+	public init(feedID: Int, name: String) {
+
+		self.feedID = feedID
+		self.name = name
+	}
 }

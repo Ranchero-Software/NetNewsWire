@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedbinDate {
+public struct FeedbinDate {
 	
 	public static let formatter: DateFormatter = {
 		let formatter = DateFormatter()
@@ -17,5 +17,4 @@ struct FeedbinDate {
 		formatter.timeZone = TimeZone(abbreviation: "GMT")
 		return formatter
 	}()
-	
 }

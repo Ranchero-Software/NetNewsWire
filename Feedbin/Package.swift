@@ -3,32 +3,29 @@
 import PackageDescription
 
 let package = Package(
-	name: "NewsBlur",
+	name: "Feedbin",
 	platforms: [.macOS(.v14), .iOS(.v17)],
 	products: [
 		.library(
-			name: "NewsBlur",
-			targets: ["NewsBlur"]),
+			name: "Feedbin",
+			targets: ["Feedbin"]),
 	],
 	dependencies: [
-		.package(path: "../Web"),
-		.package(path: "../Secrets"),
 		.package(path: "../Parser"),
 	],
+
 	targets: [
 		.target(
-			name: "NewsBlur",
+			name: "Feedbin",
 			dependencies: [
-				"Web",
-				"Parser",
-				"Secrets"
+				"Parser"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
 			]
 		),
 		.testTarget(
-			name: "NewsBlurTests",
-			dependencies: ["NewsBlur"]),
+			name: "FeedbinTests",
+			dependencies: ["Feedbin"]),
 	]
 )

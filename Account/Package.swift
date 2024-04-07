@@ -23,6 +23,7 @@ let package = Package(
 		.package(path: "../ReaderAPI"),
 		.package(path: "../CloudKitSync"),
 		.package(path: "../NewsBlur"),
+		.package(path: "../Feedbin"),
 		.package(path: "../CommonErrors")
 	],
 	targets: [
@@ -41,6 +42,7 @@ let package = Package(
 				"ReaderAPI",
 				"NewsBlur",
 				"CloudKitSync",
+				"Feedbin",
 				"CommonErrors"
 			],
 			swiftSettings: [

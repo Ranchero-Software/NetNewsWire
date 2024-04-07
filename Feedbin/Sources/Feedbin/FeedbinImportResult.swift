@@ -8,10 +8,10 @@
 
 import Foundation
 
-struct FeedbinImportResult: Codable {
-	
-	let importResultID: Int
-	let complete: Bool
+public struct FeedbinImportResult: Codable, Sendable {
+
+	public let importResultID: Int
+	public let complete: Bool
 	
 	enum CodingKeys: String, CodingKey {
 		case importResultID = "id"

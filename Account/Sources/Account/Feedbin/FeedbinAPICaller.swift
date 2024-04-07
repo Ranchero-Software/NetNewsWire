@@ -13,6 +13,7 @@
 import Foundation
 import Web
 import Secrets
+import Feedbin
 
 enum CreateSubscriptionResult {
 	case created(FeedbinSubscription)

@@ -36,7 +36,7 @@ public extension URLRequest {
 
 		} else if credentialsType == .newsBlurSessionId {
 			
-			setValue("\(NewsBlurAPICaller.SessionIdCookie)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
+			setValue("\(NewsBlurAPICaller.sessionIDCookieKey)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
 			httpShouldHandleCookies = true
 		}
 

@@ -14,6 +14,7 @@ import SyncDatabase
 import os.log
 import Secrets
 import Core
+import Feedbin
 
 public enum FeedbinAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."

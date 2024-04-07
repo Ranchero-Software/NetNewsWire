@@ -10,7 +10,7 @@ import Foundation
 
 public struct FeedParserError: Error, Sendable {
 
-	public enum FeedParserErrorType {
+	public enum FeedParserErrorType: Sendable {
 
 		case rssChannelNotFound
 		case rssItemsNotFound

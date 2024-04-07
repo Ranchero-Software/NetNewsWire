@@ -37,7 +37,7 @@ public extension URLRequest {
 			]
 			httpBody = postData.enhancedPercentEncodedQuery?.data(using: .utf8)
 		case .newsBlurSessionId:
-			setValue("\(NewsBlurAPICaller.SessionIdCookie)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
+			setValue("\(NewsBlurAPICaller.sessionIDCookieKey)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
 			httpShouldHandleCookies = true
 		case .readerBasic:
 			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")

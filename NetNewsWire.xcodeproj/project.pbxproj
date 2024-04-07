@@ -1466,6 +1466,7 @@
 		84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = establishMainWindowStartingState.applescript; sourceTree = "<group>"; };
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84FB9FAC2BC33AFE00B7AFC3 /* NewsBlur */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsBlur; sourceTree = "<group>"; };
+		84FB9FAD2BC344F800B7AFC3 /* Feedbin */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Feedbin; sourceTree = "<group>"; };
 		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
 		B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+NetNewsWire.swift"; sourceTree = "<group>"; };
 		B24EFD482330FF99006C6242 /* NetNewsWire-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -2358,6 +2359,7 @@
 				849C64611ED37A5D003D8FC0 /* Products */,
 				51C452B22265141B00C03939 /* Frameworks */,
 				51CD32C624D2DEF9009ABAEF /* Account */,
+				84FB9FAD2BC344F800B7AFC3 /* Feedbin */,
 				84FB9FAC2BC33AFE00B7AFC3 /* NewsBlur */,
 				84CC98D92BC1DD25006A05C9 /* ReaderAPI */,
 				845F3D2B2BC268FE00AEBB68 /* CloudKitSync */,

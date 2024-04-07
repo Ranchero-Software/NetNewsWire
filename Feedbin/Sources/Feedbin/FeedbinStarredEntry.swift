@@ -8,12 +8,16 @@
 
 import Foundation
 
-struct FeedbinStarredEntry: Codable {
-	
-	let starredEntries: [Int]
+public struct FeedbinStarredEntry: Codable, Sendable {
+
+	public let starredEntries: [Int]
 	
 	enum CodingKeys: String, CodingKey {
 		case starredEntries = "starred_entries"
 	}
+
+	public init(starredEntries: [Int]) {
 	
+		self.starredEntries = starredEntries
+	}
 }
