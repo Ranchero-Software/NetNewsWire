@@ -121,56 +121,60 @@ extension DownloadSession: URLSessionTaskDelegate {
 
 extension DownloadSession: URLSessionDataDelegate {
 
-	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-		
-		tasksInProgress.insert(dataTask)
-		tasksPending.remove(dataTask)
-		
-		if let info = infoForTask(dataTask) {
-			info.urlResponse = response
-		}
+	nonisolated public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 
-		if response.forcedStatusCode == 304 {
+		MainActor.assumeIsolated {
+			tasksInProgress.insert(dataTask)
+			tasksPending.remove(dataTask)
 
-			if let representedObject = infoForTask(dataTask)?.representedObject {
-				delegate.downloadSession(self, didReceiveNotModifiedResponse: response, representedObject: representedObject)
+			if let info = infoForTask(dataTask) {
+				info.urlResponse = response
 			}
 
-			completionHandler(.cancel)
-			removeTask(dataTask)
+			if response.forcedStatusCode == 304 {
 
-			return
-		}
+				if let representedObject = infoForTask(dataTask)?.representedObject {
+					delegate.downloadSession(self, didReceiveNotModifiedResponse: response, representedObject: representedObject)
+				}
 
-		if !response.statusIsOK {
+				completionHandler(.cancel)
+				removeTask(dataTask)
 
-			if let representedObject = infoForTask(dataTask)?.representedObject {
-				delegate.downloadSession(self, didReceiveUnexpectedResponse: response, representedObject: representedObject)
+				return
 			}
 
-			completionHandler(.cancel)
-			removeTask(dataTask)
+			if !response.statusIsOK {
 
-			return
+				if let representedObject = infoForTask(dataTask)?.representedObject {
+					delegate.downloadSession(self, didReceiveUnexpectedResponse: response, representedObject: representedObject)
+				}
+
+				completionHandler(.cancel)
+				removeTask(dataTask)
+
+				return
+			}
+
+			addDataTaskFromQueueIfNecessary()
+
+			completionHandler(.allow)
 		}
-
-		addDataTaskFromQueueIfNecessary()
-		
-		completionHandler(.allow)
 	}
 	
-	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+	nonisolated public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 
-		guard let info = infoForTask(dataTask) else {
-			return
-		}
-		info.addData(data)
-
-		if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, representedObject: info.representedObject) {
+		MainActor.assumeIsolated {
+			guard let info = infoForTask(dataTask) else {
+				return
+			}
+			info.addData(data)
 			
-			info.canceled = true
-			dataTask.cancel()
-			removeTask(dataTask)
+			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, representedObject: info.representedObject) {
+				
+				info.canceled = true
+				dataTask.cancel()
+				removeTask(dataTask)
+			}
 		}
 	}
 		
