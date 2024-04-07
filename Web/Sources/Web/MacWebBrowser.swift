@@ -14,18 +14,21 @@ public class MacWebBrowser {
 	/// Opens a URL in the default browser.
 	@discardableResult public class func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
 		
+		// TODO: make this function async
+
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false
 		}
 		
 		if (inBackground) {
-			do {
-				try NSWorkspace.shared.open(preparedURL, options: [.withoutActivation], configuration: [:])
-				return true
+
+			Task {
+				let configuration = NSWorkspace.OpenConfiguration()
+				configuration.activates = false
+				_ = try? await NSWorkspace.shared.open(url, configuration: configuration)
 			}
-			catch {
-				return false
-			}
+
+			return true
 		}
 		
 		return NSWorkspace.shared.open(preparedURL)
