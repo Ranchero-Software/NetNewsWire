@@ -221,18 +221,9 @@ import Secrets
 		}
 	}
 
-	private func internetIsReachable() -> Bool {
-
-		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else {
-			return false
-		}
-
-		return true
-	}
-
 	public func refreshAll(errorHandler: ((Error) -> Void)? = nil) async {
 
-		guard internetIsReachable() else {
+		guard Reachability.internetIsReachable else {
 			return
 		}
 

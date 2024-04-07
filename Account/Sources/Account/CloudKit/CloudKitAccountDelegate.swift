@@ -90,13 +90,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	
 	func refreshAll(for account: Account) async throws {
 		
-		guard refreshProgress.isComplete else {
-			return
-		}
-
-		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
-		var flags = SCNetworkReachabilityFlags()
-		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
+		guard refreshProgress.isComplete, Reachability.internetIsReachable else {
 			return
 		}
 			
