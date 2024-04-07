@@ -13,6 +13,7 @@ import SyncDatabase
 import os.log
 import Secrets
 import Core
+import CommonErrors
 
 final class FeedlyAccountDelegate: AccountDelegate {
 

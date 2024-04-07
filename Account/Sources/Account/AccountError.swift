@@ -10,9 +10,7 @@ import Foundation
 import Web
 import CommonErrors
 
-typealias AccountError = CommonError // Temporary, for compatibility with existing code
-
-public extension CommonError {
+public extension AccountError {
 
 	@MainActor var account: Account? {
 		if case .wrappedError(_, let accountID, _) = self {
@@ -22,7 +20,7 @@ public extension CommonError {
 		}
 	}
 
-	@MainActor static func wrappedError(error: Error, account: Account) -> CommonError {
+	@MainActor static func wrappedError(error: Error, account: Account) -> AccountError {
 		wrappedError(error: error, accountID: account.accountID, accountName: account.nameForDisplay)
 	}
 }

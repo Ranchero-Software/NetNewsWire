@@ -8,7 +8,7 @@
 import Foundation
 import Web
 
-public enum CommonError: LocalizedError {
+public enum AccountError: LocalizedError {
 
 	case createErrorNotFound
 	case createErrorAlreadySubscribed
@@ -73,7 +73,7 @@ public enum CommonError: LocalizedError {
 
 // MARK: Private
 
-private extension CommonError {
+private extension AccountError {
 
 	func unknownError(_ error: Error, _ accountName: String) -> String {
 		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")

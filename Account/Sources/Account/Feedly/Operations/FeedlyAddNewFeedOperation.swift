@@ -12,6 +12,7 @@ import SyncDatabase
 import Web
 import Secrets
 import Core
+import CommonErrors
 
 class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
 

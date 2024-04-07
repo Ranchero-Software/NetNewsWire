@@ -11,7 +11,6 @@ import Foundation
 struct DatabaseTableName {
 	
 	static let syncStatus = "syncStatus"
-	
 }
 
 struct DatabaseKey {
@@ -21,5 +20,4 @@ struct DatabaseKey {
 	static let key = "key"
 	static let flag = "flag"
 	static let selected = "selected"
-
 }

@@ -14,6 +14,8 @@ import ArticlesDatabase
 import Web
 import Secrets
 import Core
+import CommonErrors
+import FeedFinder
 
 public enum LocalAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."

@@ -24,6 +24,7 @@ let package = Package(
 		.package(path: "../CloudKitSync"),
 		.package(path: "../NewsBlur"),
 		.package(path: "../Feedbin"),
+		.package(path: "../FeedFinder"),
 		.package(path: "../CommonErrors")
 	],
 	targets: [
@@ -43,6 +44,7 @@ let package = Package(
 				"NewsBlur",
 				"CloudKitSync",
 				"Feedbin",
+				"FeedFinder",
 				"CommonErrors"
 			],
 			swiftSettings: [

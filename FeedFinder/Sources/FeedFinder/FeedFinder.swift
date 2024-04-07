@@ -9,10 +9,11 @@
 import Foundation
 import Parser
 import Web
+import CommonErrors
 
-class FeedFinder {
+@MainActor public final class FeedFinder {
 	
-	static func find(url: URL) async throws -> Set<FeedSpecifier> {
+	@MainActor public static func find(url: URL) async throws -> Set<FeedSpecifier> {
 
 		try await withCheckedThrowingContinuation { continuation in
 			Task { @MainActor in
@@ -28,7 +29,7 @@ class FeedFinder {
 		}
 	}
 	
-	@MainActor static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
+	@MainActor public static func find(url: URL, completion: @escaping @Sendable (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		downloadAddingToCache(url) { (data, response, error) in
 			
 			MainActor.assumeIsolated {

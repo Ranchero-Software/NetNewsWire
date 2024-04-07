@@ -15,6 +15,8 @@ import Secrets
 import Database
 import Core
 import ReaderAPI
+import CommonErrors
+import FeedFinder
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
 	

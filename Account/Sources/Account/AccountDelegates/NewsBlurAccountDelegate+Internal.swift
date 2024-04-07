@@ -15,6 +15,7 @@ import SyncDatabase
 import os.log
 import Core
 import NewsBlur
+import CommonErrors
 
 extension NewsBlurAccountDelegate {
 	

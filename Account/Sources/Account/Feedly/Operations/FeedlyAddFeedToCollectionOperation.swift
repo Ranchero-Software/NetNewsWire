@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CommonErrors
 
 protocol FeedlyAddFeedToCollectionService {
 	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())

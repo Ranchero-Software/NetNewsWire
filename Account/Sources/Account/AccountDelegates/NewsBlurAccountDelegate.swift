@@ -14,6 +14,7 @@ import SyncDatabase
 import os.log
 import Secrets
 import NewsBlur
+import CommonErrors
 
 final class NewsBlurAccountDelegate: AccountDelegate {
 

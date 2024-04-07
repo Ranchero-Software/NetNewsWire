@@ -106,7 +106,7 @@ class AddFeedViewController: UITableViewController {
 		}
 		
 		if account!.hasFeed(withURL: url.absoluteString) {
-			presentError(CommonError.createErrorAlreadySubscribed)
+			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}
 		

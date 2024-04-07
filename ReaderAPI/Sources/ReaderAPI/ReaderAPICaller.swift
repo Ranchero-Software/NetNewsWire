@@ -297,10 +297,10 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		// There is no call to get a single subscription entry, so we get them all,
 		// look up the one we just subscribed to and return that
 		guard let subscriptions = try await retrieveSubscriptions() else {
-			throw CommonError.createErrorNotFound
+			throw AccountError.createErrorNotFound
 		}
 		guard let subscription = subscriptions.first(where: { $0.feedID == subResult.streamID }) else {
-			throw CommonError.createErrorNotFound
+			throw AccountError.createErrorNotFound
 		}
 
 		return .created(subscription)

@@ -15,6 +15,8 @@ import os.log
 import Secrets
 import Core
 import Feedbin
+import CommonErrors
+import FeedFinder
 
 public enum FeedbinAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."

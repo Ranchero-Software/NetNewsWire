@@ -70,10 +70,10 @@ import CommonErrors
 				let feed = try await account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true)
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 
-			} catch CommonError.createErrorAlreadySubscribed {
+			} catch AccountError.createErrorAlreadySubscribed {
 				self.showAlreadySubscribedError(url.absoluteString)
 
-			} catch CommonError.createErrorNotFound {
+			} catch AccountError.createErrorNotFound {
 				self.showNoFeedsErrorMessage()
 
 			} catch {
