@@ -123,19 +123,19 @@ public protocol Transport: Sendable {
 	@discardableResult
 	func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?)
 
-	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
-	
+	func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void)
+
 	/// Sends URLRequest that doesn't require any result information.
 	func send(request: URLRequest, method: String) async throws
 
-	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void)
-	
+	func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+
 	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
 	@discardableResult
 	func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?)
 
-	func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
-	
+	func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void)
+
 }
 
 extension URLSession: Transport {
@@ -162,7 +162,7 @@ extension URLSession: Transport {
 		}
 	}
 
-	public func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
+	public func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		let task = self.dataTask(with: request) { (data, response, error) in
 			DispatchQueue.main.async {
 				if let error = error {
@@ -198,8 +198,8 @@ extension URLSession: Transport {
 		}
 	}
 
-	public func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	public func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+
 		var sendRequest = request
 		sendRequest.httpMethod = method
 		
@@ -238,7 +238,7 @@ extension URLSession: Transport {
 		}
 	}
 
-	public func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
+	public func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		
 		var sendRequest = request
 		sendRequest.httpMethod = method
