@@ -11,16 +11,14 @@ import CloudKit
 
 public extension CKRecord {
 
-	var externalID: String {
+	public var externalID: String {
 		return recordID.externalID
 	}
-	
 }
 
 public extension CKRecord.ID {
 
-	var externalID: String {
+	public var externalID: String {
 		return recordName
 	}
-	
 }

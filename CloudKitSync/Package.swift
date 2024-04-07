@@ -13,7 +13,10 @@ let package = Package(
 	dependencies: [
 		.package(path: "../CloudKitExtras"),
 		.package(path: "../SyncDatabase"),
-		.package(path: "../Articles")
+		.package(path: "../Articles"),
+		.package(path: "../Core"),
+		.package(path: "../Web"),
+		.package(path: "../Parser"),
 	],
 	targets: [
 		.target(
@@ -21,7 +24,10 @@ let package = Package(
 			dependencies: [
 				"CloudKitExtras",
 				"SyncDatabase",
-				"Articles"
+				"Articles",
+				"Core",
+				"Web",
+				"Parser"
 			]
 		),
 		.testTarget(
