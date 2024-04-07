@@ -30,13 +30,13 @@ public struct OAuthAuthorizationClient: Equatable {
 /// https://tools.ietf.org/html/rfc6749#section-4.1.1
 public struct OAuthAuthorizationRequest {
 	public let responseType = "code"
-	public var clientId: String
+	public var clientID: String
 	public var redirectUri: String
 	public var scope: String
 	public var state: String?
 	
-	public init(clientId: String, redirectUri: String, scope: String, state: String?) {
-		self.clientId = clientId
+	public init(clientID: String, redirectUri: String, scope: String, state: String?) {
+		self.clientID = clientID
 		self.redirectUri = redirectUri
 		self.scope = scope
 		self.state = state
@@ -45,7 +45,7 @@ public struct OAuthAuthorizationRequest {
 	public var queryItems: [URLQueryItem] {
 		return [
 			URLQueryItem(name: "response_type", value: responseType),
-			URLQueryItem(name: "client_id", value: clientId),
+			URLQueryItem(name: "client_id", value: clientID),
 			URLQueryItem(name: "scope", value: scope),
 			URLQueryItem(name: "redirect_uri", value: redirectUri),
 		]
@@ -114,7 +114,7 @@ public struct OAuthAccessTokenRequest: Encodable {
 	public var code: String
 	public var redirectUri: String
 	public var state: String?
-	public var clientId: String
+	public var clientID: String
 	
 	// Possibly not part of the standard but specific to certain implementations (e.g.: Feedly).
 	public var clientSecret: String
@@ -124,7 +124,7 @@ public struct OAuthAccessTokenRequest: Encodable {
 		self.code = authorizationResponse.code
 		self.redirectUri = client.redirectUri
 		self.state = authorizationResponse.state
-		self.clientId = client.id
+		self.clientID = client.id
 		self.clientSecret = client.secret
 		self.scope = scope
 	}

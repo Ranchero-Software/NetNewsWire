@@ -38,9 +38,9 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 		
 		// TODO: Fix the below. There’s an error on the os.log line: "Expression type '()' is ambiguous without more context"
 //		if parsed.count != entries.count {
-//			let entryIds = Set(entries.map { $0.id })
-//			let parsedIds = Set(parsed.map { $0.uniqueID })
-//			let difference = entryIds.subtracting(parsedIds)
+//			let entryIDs = Set(entries.map { $0.id })
+//			let parsedIDs = Set(parsed.map { $0.uniqueID })
+//			let difference = entryIDs.subtracting(parsedIDs)
 //			os_log(.debug, log: log, "%{public}@ dropping articles with ids: %{public}@.", self, difference)
 //		}
 		

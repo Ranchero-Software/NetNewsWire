@@ -159,17 +159,17 @@ import CoreSpotlight
 	#endif
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedID = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
 			return
 		}
 		
 		#if os(iOS)
-		if let article = readingArticle, activityFeedId == article.feedID {
+		if let article = readingArticle, activityFeedID == article.feedID {
 			updateReadArticleSearchAttributes(with: article)
 		}
 		#endif
 		
-		if activityFeedId == feed.feedID {
+		if activityFeedID == feed.feedID {
 			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
 	}

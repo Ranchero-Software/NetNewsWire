@@ -294,13 +294,13 @@ final class FeedlyAPICaller {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		guard let encodedId = encodeForURLPath(id) else {
+		guard let encodedID = encodeForURLPath(id) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(id)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(id)))
 			}
 		}
 		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedId)"
+		components.percentEncodedPath = "/v3/collections/\(encodedID)"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -326,7 +326,7 @@ final class FeedlyAPICaller {
 		}
 	}
 	
-	func removeFeed(_ feedId: String, fromCollectionWith collectionId: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	func removeFeed(_ feedId: String, fromCollectionWith collectionID: String, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -339,14 +339,14 @@ final class FeedlyAPICaller {
 			}
 		}
 
-		guard let encodedCollectionId = encodeForURLPath(collectionId) else {
+		guard let encodedCollectionID = encodeForURLPath(collectionID) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(collectionId)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionID)))
 			}
 		}
 		
 		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/.mdelete"
+		components.percentEncodedPath = "/v3/collections/\(encodedCollectionID)/feeds/.mdelete"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -390,7 +390,7 @@ final class FeedlyAPICaller {
 
 extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 	
-	func addFeed(with feedId: FeedlyFeedResourceId, title: String? = nil, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
+	func addFeed(with feedId: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -403,13 +403,13 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 			}
 		}
 
-		guard let encodedId = encodeForURLPath(collectionId) else {
+		guard let encodedID = encodeForURLPath(collectionID) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(collectionId)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionID)))
 			}
 		}
 		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedId)/feeds"
+		components.percentEncodedPath = "/v3/collections/\(encodedID)/feeds"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -606,7 +606,7 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 
 extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 	
-	@MainActor func getStreamContents(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
+	@MainActor func getStreamContents(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -672,9 +672,9 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 	}
 }
 
-extension FeedlyAPICaller: FeedlyGetStreamIdsService {
+extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 	
-	@MainActor func getStreamIds(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
+	@MainActor func getStreamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -725,7 +725,7 @@ extension FeedlyAPICaller: FeedlyGetStreamIdsService {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		send(request: request, resultType: FeedlyStreamIds.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: FeedlyStreamIDs.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, collections)):
 				if let response = collections {
@@ -800,10 +800,10 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 	private struct MarkerEntriesBody: Encodable {
 		let type = "entries"
 		var action: String
-		var entryIds: [String]
+		var entryIDs: [String]
 	}
 	
-	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
+	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))
@@ -822,12 +822,12 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 		
-		let articleIdChunks = Array(articleIds).chunked(into: 300)
+		let articleIDChunks = Array(articleIDs).chunked(into: 300)
 		let dispatchGroup = DispatchGroup()
 		var groupError: Error? = nil
 
-		for articleIdChunk in articleIdChunks {
-			
+		for articleIDChunk in articleIDChunks {
+
 			var request = URLRequest(url: url)
 			request.httpMethod = "POST"
 			request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
@@ -835,7 +835,7 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 			request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 			
 			do {
-				let body = MarkerEntriesBody(action: action.actionValue, entryIds: Array(articleIdChunk))
+				let body = MarkerEntriesBody(action: action.actionValue, entryIDs: Array(articleIDChunk))
 				let encoder = JSONEncoder()
 				let data = try encoder.encode(body)
 				request.httpBody = data

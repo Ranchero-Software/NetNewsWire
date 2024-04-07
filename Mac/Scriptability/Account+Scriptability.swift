@@ -122,10 +122,10 @@ import Core
     
     @objc(valueInFoldersWithUniqueID:)
     func valueInFolders(withUniqueID id:NSNumber) -> ScriptableFolder? {
-        let folderId = id.intValue
+        let folderID = id.intValue
 		let foldersSet = account.folders ?? Set<Folder>()
 		let folders = Array(foldersSet)
-        guard let folder = folders.first(where:{$0.folderID == folderId}) else { return nil }
+        guard let folder = folders.first(where:{$0.folderID == folderID}) else { return nil }
         return ScriptableFolder(folder, container:self)
     }    
 

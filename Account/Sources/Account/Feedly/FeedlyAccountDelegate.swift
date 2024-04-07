@@ -139,7 +139,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let log = self.log
 		
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserID: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
 		
 		syncAllOperation.downloadProgress = refreshProgress
 		
@@ -234,15 +234,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil, log: log)
-		
+		let ingestUnread = FeedlyIngestUnreadArticleIDsOperation(account: account, userID: credentials.username, service: caller, database: database, newerThan: nil, log: log)
+
 		group.enter()
 		ingestUnread.completionBlock = { _ in
 			group.leave()
 			
 		}
 		
-		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil, log: log)
+		let ingestStarred = FeedlyIngestStarredArticleIDsOperation(account: account, userID: credentials.username, service: caller, database: database, newerThan: nil, log: log)
 		
 		group.enter()
 		ingestStarred.completionBlock = { _ in
@@ -447,7 +447,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 														   feedName: name,
 														   searchService: caller,
 														   addToCollectionService: caller,
-														   syncUnreadIdsService: caller,
+														   syncUnreadIDsService: caller,
 														   getStreamContentsService: caller,
 														   database: database,
 														   container: container,
@@ -483,18 +483,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
-		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
+		let folderCollectionIDs = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
+		guard let collectionIDs = folderCollectionIDs, let collectionID = collectionIDs.first else {
 			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
 			return
 		}
 		
-		let feedId = FeedlyFeedResourceId(id: feed.feedID)
+		let feedID = FeedlyFeedResourceID(id: feed.feedID)
 		let editedNameBefore = feed.editedName
 		
 		// Adding an existing feed updates it.
 		// Updating feed name in one folder/collection updates it for all folders/collections.
-		caller.addFeed(with: feedId, title: name, toCollectionWith: collectionId) { result in
+		caller.addFeed(with: feedID, title: name, toCollectionWith: collectionID) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -531,7 +531,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				throw FeedlyAccountDelegateError.notLoggedIn
 			}
 			
-			let resource = FeedlyFeedResourceId(id: feed.feedID)
+			let resource = FeedlyFeedResourceID(id: feed.feedID)
             let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
                                                                      credentials: credentials,
                                                                      resource: resource,
@@ -571,13 +571,13 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let folder = container as? Folder, let collectionId = folder.externalID else {
+		guard let folder = container as? Folder, let collectionID = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed.nameForDisplay)))
 			}
 		}
 		
-		caller.removeFeed(feed.feedID, fromCollectionWith: collectionId) { result in
+		caller.removeFeed(feed.feedID, fromCollectionWith: collectionID) { result in
 			switch result {
 			case .success:
 				completion(.success(()))

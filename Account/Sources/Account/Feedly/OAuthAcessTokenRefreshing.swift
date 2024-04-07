@@ -17,13 +17,13 @@ public struct OAuthRefreshAccessTokenRequest: Encodable {
 	public var scope: String?
 	
 	// Possibly not part of the standard but specific to certain implementations (e.g.: Feedly).
-	public var clientId: String
+	public var clientID: String
 	public var clientSecret: String
 	
 	public init(refreshToken: String, scope: String?, client: OAuthAuthorizationClient) {
 		self.refreshToken = refreshToken
 		self.scope = scope
-		self.clientId = client.id
+		self.clientID = client.id
 		self.clientSecret = client.secret
 	}
 }

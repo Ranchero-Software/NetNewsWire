@@ -38,7 +38,7 @@ class FeedlyEntryParserTests: XCTestCase {
 		let parser = FeedlyEntryParser(entry: entry)
 		
 		XCTAssertEqual(parser.id, entry.id)
-		XCTAssertEqual(parser.feedUrl, origin.streamId)
+		XCTAssertEqual(parser.feedUrl, origin.streamID)
 		XCTAssertEqual(parser.externalUrl, canonicalLink.href)
 		XCTAssertEqual(parser.title, entry.title)
 		XCTAssertEqual(parser.contentHMTL, content.content)
@@ -56,7 +56,7 @@ class FeedlyEntryParserTests: XCTestCase {
 		
 		// The following is not an error.
 		// The feedURL must match the feedID for the article to be connected to its matching feed.
-		XCTAssertEqual(item.feedURL, origin.streamId)
+		XCTAssertEqual(item.feedURL, origin.streamID)
 		XCTAssertEqual(item.title, entry.title)
 		XCTAssertEqual(item.contentHTML, content.content)
 		XCTAssertEqual(item.contentText, nil, "Is it now free of HTML characters?")

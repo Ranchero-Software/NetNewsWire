@@ -147,9 +147,9 @@ private extension CloudKitAcountZoneDelegate {
 		feed.homePageURL = homePageURL
 		
 		let existingContainers = account.existingContainers(withFeed: feed)
-		let existingContainerExternalIds = existingContainers.compactMap { $0.externalID }
+		let existingContainerExternalIDs = existingContainers.compactMap { $0.externalID }
 
-		let diff = containerExternalIDs.difference(from: existingContainerExternalIds)
+		let diff = containerExternalIDs.difference(from: existingContainerExternalIDs)
 		
 		for change in diff {
 			switch change {

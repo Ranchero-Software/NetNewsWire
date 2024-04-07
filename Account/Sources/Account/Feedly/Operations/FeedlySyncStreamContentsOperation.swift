@@ -16,7 +16,7 @@ import Core
 final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyGetStreamContentsOperationDelegate, FeedlyCheckpointOperationDelegate {
 
 	private let account: Account
-	private let resource: FeedlyResourceId
+	private let resource: FeedlyResourceID
 	private let operationQueue = MainThreadOperationQueue()
 	private let service: FeedlyGetStreamContentsService
 	private let newerThan: Date?
@@ -24,7 +24,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	private let log: OSLog
 	private let finishOperation: FeedlyCheckpointOperation
 	
-	@MainActor init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, isPagingEnabled: Bool, newerThan: Date?, log: OSLog) {
+	@MainActor init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamContentsService, isPagingEnabled: Bool, newerThan: Date?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
@@ -42,7 +42,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	@MainActor convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamContentsService, newerThan: Date?, log: OSLog) {
-		let all = FeedlyCategoryResourceId.Global.all(for: credentials.username)
+		let all = FeedlyCategoryResourceID.Global.all(for: credentials.username)
 		self.init(account: account, resource: all, service: service, isPagingEnabled: true, newerThan: newerThan, log: log)
 	}
 	

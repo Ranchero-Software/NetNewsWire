@@ -10,33 +10,33 @@ import Foundation
 import CommonErrors
 
 protocol FeedlyAddFeedToCollectionService {
-	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
+	func addFeed(with feedId: FeedlyFeedResourceID, title: String?, toCollectionWith collectionID: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
 }
 
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
 
 	let feedName: String?
-	let collectionId: String
+	let collectionID: String
 	let service: FeedlyAddFeedToCollectionService
 	let folder: Folder
-	let feedResource: FeedlyFeedResourceId
+	let feedResource: FeedlyFeedResourceID
 
-	init(folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
+	init(folder: Folder, feedResource: FeedlyFeedResourceID, feedName: String? = nil, collectionID: String, service: FeedlyAddFeedToCollectionService) {
 		self.folder = folder
 		self.feedResource = feedResource
 		self.feedName = feedName
-		self.collectionId = collectionId
+		self.collectionID = collectionID
 		self.service = service
 	}
 	
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
 	
-	var resource: FeedlyResourceId {
+	var resource: FeedlyResourceID {
 		return feedResource
 	}
 	
 	override func run() {
-		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
+		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionID) { [weak self] result in
 			guard let self = self else {
 				return
 			}
@@ -56,9 +56,9 @@ private extension FeedlyAddFeedToCollectionOperation {
 		case .success(let feedlyFeeds):
 			feedsAndFolders = [(feedlyFeeds, folder)]
 			
-			let feedsWithCreatedFeedId = feedlyFeeds.filter { $0.id == resource.id }
+			let feedsWithCreatedFeedID = feedlyFeeds.filter { $0.id == resource.id }
 			
-			if feedsWithCreatedFeedId.isEmpty {
+			if feedsWithCreatedFeedID.isEmpty {
 				didFinish(with: AccountError.createErrorNotFound)
 			} else {
 				didFinish()

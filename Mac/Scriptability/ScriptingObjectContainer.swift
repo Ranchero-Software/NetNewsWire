@@ -30,9 +30,9 @@ extension ScriptingObjectContainer {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier
         let scriptingKey = object.scriptingKey
-        let uniqueId = object.scriptingUniqueId
+        let uniqueID = object.scriptingUniqueId
         let specifier = NSUniqueIDSpecifier(containerClassDescription:containerClassDescription,
-                                            containerSpecifier:containerScriptObjectSpecifier, key:scriptingKey, uniqueID: uniqueId)
+                                            containerSpecifier:containerScriptObjectSpecifier, key:scriptingKey, uniqueID: uniqueID)
         return specifier
     }
 }

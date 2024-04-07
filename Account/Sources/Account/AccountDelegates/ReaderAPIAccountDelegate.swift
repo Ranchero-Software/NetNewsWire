@@ -570,13 +570,13 @@ private extension ReaderAPIAccountDelegate {
 
 		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
 		
-		let subFeedIds = subscriptions.map { $0.feedID }
+		let subFeedIDs = subscriptions.map { $0.feedID }
 		
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
-					if !subFeedIds.contains(feed.feedID) {
+					if !subFeedIDs.contains(feed.feedID) {
 						folder.removeFeed(feed)
 					}
 				}
@@ -584,7 +584,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 		
 		for feed in account.topLevelFeeds {
-			if !subFeedIds.contains(feed.feedID) {
+			if !subFeedIDs.contains(feed.feedID) {
 				account.clearFeedMetadata(feed)
 				account.removeFeed(feed)
 			}
@@ -644,11 +644,11 @@ private extension ReaderAPIAccountDelegate {
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
+			let folderFeedIDs = folder.topLevelFeeds.map { $0.feedID }
 			
 			for subscription in groupedTaggings {
 				let taggingFeedID = subscription.feedID
-				if !folderFeedIds.contains(taggingFeedID) {
+				if !folderFeedIDs.contains(taggingFeedID) {
 					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
 						continue
 					}

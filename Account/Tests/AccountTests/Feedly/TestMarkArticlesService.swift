@@ -15,10 +15,10 @@ class TestMarkArticlesService: FeedlyMarkArticlesService {
 	var parameterTester: ((Set<String>, FeedlyMarkAction) -> ())?
 	var mockResult: Result<Void, Error> = .success(())
 	
-	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
+	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
 		
 		DispatchQueue.main.async {
-			self.parameterTester?(articleIds, action)
+			self.parameterTester?(articleIDs, action)
 			completion(self.mockResult)
 			self.didMarkExpectation?.fulfill()
 		}

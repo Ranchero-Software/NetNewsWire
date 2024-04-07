@@ -1,5 +1,5 @@
 //
-//  FeedlyIngestStarredArticleIdsOperation.swift
+//  FeedlyIngestStarredArticleIDsOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 15/10/19.
@@ -17,21 +17,21 @@ import Secrets
 /// When all the article ids are collected, a status is created for each.
 /// The article ids previously marked as starred but not collected become unstarred.
 /// So this operation has side effects *for the entire account* it operates on.
-final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
+final class FeedlyIngestStarredArticleIDsOperation: FeedlyOperation {
 
 	private let account: Account
-	private let resource: FeedlyResourceId
-	private let service: FeedlyGetStreamIdsService
+	private let resource: FeedlyResourceID
+	private let service: FeedlyGetStreamIDsService
 	private let database: SyncDatabase
-	private var remoteEntryIds = Set<String>()
+	private var remoteEntryIDs = Set<String>()
 	private let log: OSLog
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
-		let resource = FeedlyTagResourceId.Global.saved(for: userId)
+	convenience init(account: Account, userID: String, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
+		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan, log: log)
 	}
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
@@ -40,30 +40,30 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		getStreamIds(nil)
+		getStreamIDs(nil)
 	}
 	
-	private func getStreamIds(_ continuation: String?) {
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
+	private func getStreamIDs(_ continuation: String?) {
+		service.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIDs(_:))
 	}
 	
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	private func didGetStreamIDs(_ result: Result<FeedlyStreamIDs, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
 		
 		switch result {
-		case .success(let streamIds):
+		case .success(let streamIDs):
+
+			remoteEntryIDs.formUnion(streamIDs.ids)
 			
-			remoteEntryIds.formUnion(streamIds.ids)
-			
-			guard let continuation = streamIds.continuation else {
-				removeEntryIdsWithPendingStatus()
+			guard let continuation = streamIDs.continuation else {
+				removeEntryIDsWithPendingStatus()
 				return
 			}
 			
-			getStreamIds(continuation)
+			getStreamIDs(continuation)
 			
 		case .failure(let error):
 			didFinish(with: error)
@@ -71,7 +71,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	}
 	
 	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
-	private func removeEntryIdsWithPendingStatus() {
+	private func removeEntryIDsWithPendingStatus() {
 		guard !isCanceled else {
 			didFinish()
 			return
@@ -81,7 +81,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 
 			do {
 				if let pendingArticleIDs = try await self.database.selectPendingStarredStatusArticleIDs() {
-					self.remoteEntryIds.subtract(pendingArticleIDs)
+					self.remoteEntryIDs.subtract(pendingArticleIDs)
 				}
 				self.updateStarredStatuses()
 			} catch {
@@ -120,7 +120,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 			var markAsStarredError: Error?
 			var markAsUnstarredError: Error?
 
-			let remoteStarredArticleIDs = remoteEntryIds
+			let remoteStarredArticleIDs = remoteEntryIDs
 			do {
 				try await account.markAsStarred(remoteStarredArticleIDs)
 			} catch {

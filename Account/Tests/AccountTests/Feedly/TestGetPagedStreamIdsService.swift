@@ -1,5 +1,5 @@
 //
-//  TestGetPagedStreamIdsService.swift
+//  TestGetPagedStreadIDsService.swift
 //  AccountTests
 //
 //  Created by Kiel Gillard on 29/10/19.
@@ -9,14 +9,14 @@
 import XCTest
 @testable import Account
 
-final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
+final class TestGetPagedStreadIDsService: FeedlyGetStreamIDsService {
 	
-	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
-	var getStreamIdsExpectation: XCTestExpectation?
-	var pages = [String: FeedlyStreamIds]()
+	var parameterTester: ((FeedlyResourceID, String?, Date?, Bool?) -> ())?
+	var getStreadIDsExpectation: XCTestExpectation?
+	var pages = [String: FeedlyStreamIDs]()
 	
-	func addAtLeastOnePage(for resource: FeedlyResourceId, continuations: [String], numberOfEntriesPerPage count: Int)  {
-		pages = [String: FeedlyStreamIds](minimumCapacity: continuations.count + 1)
+	func addAtLeastOnePage(for resource: FeedlyResourceID, continuations: [String], numberOfEntriesPerPage count: Int)  {
+		pages = [String: FeedlyStreamIDs](minimumCapacity: continuations.count + 1)
 		
 		// A continuation is an identifier for the next page.
 		// The first page has a nil identifier.
@@ -25,24 +25,24 @@ final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
 		for index in -1..<continuations.count {
 			let nextIndex = index + 1
 			let continuation: String? = nextIndex < continuations.count ? continuations[nextIndex] : nil
-			let page = makeStreamIds(for: resource, continuation: continuation, between: 0..<count)
-			let key = TestGetPagedStreamIdsService.getPagingKey(for: resource, continuation: index < 0 ? nil : continuations[index])
+			let page = makeStreadIDs(for: resource, continuation: continuation, between: 0..<count)
+			let key = TestGetPagedStreadIDsService.getPagingKey(for: resource, continuation: index < 0 ? nil : continuations[index])
 			pages[key] = page
 		}
 	}
 	
-	private func makeStreamIds(for resource: FeedlyResourceId, continuation: String?, between range: Range<Int>) -> FeedlyStreamIds {
-		let entryIds = range.map { _ in UUID().uuidString }
-		let stream = FeedlyStreamIds(continuation: continuation, ids: entryIds)
+	private func makeStreadIDs(for resource: FeedlyResourceID, continuation: String?, between range: Range<Int>) -> FeedlyStreamIDs {
+		let entryIDs = range.map { _ in UUID().uuidString }
+		let stream = FeedlyStreamIDs(continuation: continuation, ids: entryIDs)
 		return stream
 	}
 	
-	static func getPagingKey(for stream: FeedlyResourceId, continuation: String?) -> String {
+	static func getPagingKey(for stream: FeedlyResourceID, continuation: String?) -> String {
 		return "\(stream.id)@\(continuation ?? "")"
 	}
 	
-	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
-		let key = TestGetPagedStreamIdsService.getPagingKey(for: resource, continuation: continuation)
+	func getStreamIDs(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
+		let key = TestGetPagedStreadIDsService.getPagingKey(for: resource, continuation: continuation)
 		guard let page = pages[key] else {
 			XCTFail("Missing page for \(resource.id) and continuation \(String(describing: continuation)). Test may time out because the completion will not be called.")
 			return
@@ -50,7 +50,7 @@ final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
 		parameterTester?(resource, continuation, newerThan, unreadOnly)
 		DispatchQueue.main.async {
 			completion(.success(page))
-			self.getStreamIdsExpectation?.fulfill()
+			self.getStreadIDsExpectation?.fulfill()
 		}
 	}
 }

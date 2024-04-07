@@ -28,7 +28,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 	
 	func testIngestsOnePageSuccess() throws {
 		let service = TestGetStreamContentsService()
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 0)
 		let items = service.makeMockFeedlyEntryItem()
 		service.mockResult = .success(FeedlyStream(id: resource.id, updated: nil, continuation: nil, items: items))
@@ -55,14 +55,14 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let expectedArticleIds = Set(items.map { $0.id })
-		let expectedArticles = try account.fetchArticles(.articleIDs(expectedArticleIds))
-		XCTAssertEqual(expectedArticles.count, expectedArticleIds.count, "Did not fetch all the articles.")
+		let expectedArticleIDs = Set(items.map { $0.id })
+		let expectedArticles = try account.fetchArticles(.articleIDs(expectedArticleIDs))
+		XCTAssertEqual(expectedArticles.count, expectedArticleIDs.count, "Did not fetch all the articles.")
 	}
 	
 	func testIngestsOnePageFailure() {
 		let service = TestGetStreamContentsService()
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 0)
 		
 		service.mockResult = .failure(URLError(.timedOut))
@@ -92,7 +92,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 	
 	func testIngestsManyPagesSuccess() throws {
 		let service = TestGetPagedStreamContentsService()
-		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
+		let resource = FeedlyCategoryResourceID(id: "user/1234/category/5678")
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 0)
 		
 		let continuations = (1...10).map { "\($0)" }
@@ -131,8 +131,8 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 		waitForExpectations(timeout: 30)
 		
 		// Find articles inserted.
-		let articleIds = Set(service.pages.values.map { $0.items }.flatMap { $0 }.map { $0.id })
-		let articles = try account.fetchArticles(.articleIDs(articleIds))
-		XCTAssertEqual(articleIds.count, articles.count)
+		let articleIDs = Set(service.pages.values.map { $0.items }.flatMap { $0 }.map { $0.id })
+		let articles = try account.fetchArticles(.articleIDs(articleIDs))
+		XCTAssertEqual(articleIDs.count, articles.count)
 	}
 }

@@ -64,7 +64,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		case subscriptionEdit = "/reader/api/0/subscription/edit"
 		case subscriptionAdd = "/reader/api/0/subscription/quickadd"
 		case contents = "/reader/api/0/stream/items/contents"
-		case itemIds = "/reader/api/0/stream/items/ids"
+		case itemIDs = "/reader/api/0/stream/items/ids"
 		case editTag = "/reader/api/0/edit-tag"
 	}
 	
@@ -452,7 +452,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		}
 
 		let url = baseURL
-			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
+			.appendingPathComponent(ReaderAPIEndpoints.itemIDs.rawValue)
 			.appendingQueryItems(queryItems)
 
 		guard let callURL = url else {

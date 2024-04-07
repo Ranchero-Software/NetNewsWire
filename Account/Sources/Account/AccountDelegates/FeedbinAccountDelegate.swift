@@ -1038,13 +1038,13 @@ private extension FeedbinAccountDelegate {
 
 		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
 		
-		let subFeedIds = subscriptions.map { String($0.feedID) }
+		let subFeedIDs = subscriptions.map { String($0.feedID) }
 		
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
-					if !subFeedIds.contains(feed.feedID) {
+					if !subFeedIDs.contains(feed.feedID) {
 						folder.removeFeed(feed)
 					}
 				}
@@ -1052,7 +1052,7 @@ private extension FeedbinAccountDelegate {
 		}
 		
 		for feed in account.topLevelFeeds {
-			if !subFeedIds.contains(feed.feedID) {
+			if !subFeedIDs.contains(feed.feedID) {
 				account.removeFeed(feed)
 			}
 		}
@@ -1061,9 +1061,9 @@ private extension FeedbinAccountDelegate {
 		var subscriptionsToAdd = Set<FeedbinSubscription>()
 		subscriptions.forEach { subscription in
 
-			let subFeedId = String(subscription.feedID)
+			let subFeedID = String(subscription.feedID)
 
-			if let feed = account.existingFeed(withFeedID: subFeedId) {
+			if let feed = account.existingFeed(withFeedID: subFeedID) {
 				feed.name = subscription.name
 				// If the name has been changed on the server remove the locally edited name
 				feed.editedName = nil
@@ -1122,11 +1122,11 @@ private extension FeedbinAccountDelegate {
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
+			let folderFeedIDs = folder.topLevelFeeds.map { $0.feedID }
 			
 			for tagging in groupedTaggings {
 				let taggingFeedID = String(tagging.feedID)
-				if !folderFeedIds.contains(taggingFeedID) {
+				if !folderFeedIDs.contains(taggingFeedID) {
 					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
 						continue
 					}

@@ -1,5 +1,5 @@
 //
-//  FeedlyGetStreamIdsOperation.swift
+//  FeedlyGetStreamIDsOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 18/10/19.
@@ -9,32 +9,32 @@
 import Foundation
 import os.log
 
-protocol FeedlyGetStreamIdsOperationDelegate: AnyObject {
-	func feedlyGetStreamIdsOperation(_ operation: FeedlyGetStreamIdsOperation, didGet streamIds: FeedlyStreamIds)
+protocol FeedlyGetStreamIDsOperationDelegate: AnyObject {
+	func feedlyGetStreamIDsOperation(_ operation: FeedlyGetStreamIDsOperation, didGet streamIDs: FeedlyStreamIDs)
 }
 
 /// Single responsibility is to get the stream ids from Feedly.
-final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+final class FeedlyGetStreamIDsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 	
 	var entryIDs: Set<String> {
-		guard let ids = streamIds?.ids else {
+		guard let ids = streamIDs?.ids else {
 			assertionFailure("Has this operation been addeded as a dependency on the caller?")
 			return []
 		}
 		return Set(ids)
 	}
 	
-	private(set) var streamIds: FeedlyStreamIds?
+	private(set) var streamIDs: FeedlyStreamIDs?
 	
 	let account: Account
-	let service: FeedlyGetStreamIdsService
+	let service: FeedlyGetStreamIDsService
 	let continuation: String?
-	let resource: FeedlyResourceId
+	let resource: FeedlyResourceID
 	let unreadOnly: Bool?
 	let newerThan: Date?
 	let log: OSLog
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
@@ -44,15 +44,15 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 		self.log = log
 	}
 	
-	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
+	weak var streamIDsDelegate: FeedlyGetStreamIDsOperationDelegate?
 	
 	override func run() {
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
+		service.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
-				self.streamIds = stream
+				self.streamIDs = stream
 				
-				self.streamIdsDelegate?.feedlyGetStreamIdsOperation(self, didGet: stream)
+				self.streamIDsDelegate?.feedlyGetStreamIDsOperation(self, didGet: stream)
 				
 				self.didFinish()
 				

@@ -11,11 +11,11 @@ import XCTest
 
 final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
 	
-	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
+	var parameterTester: ((FeedlyResourceID, String?, Date?, Bool?) -> ())?
 	var getStreamContentsExpectation: XCTestExpectation?
 	var pages = [String: FeedlyStream]()
 	
-	func addAtLeastOnePage(for resource: FeedlyResourceId, continuations: [String], numberOfEntriesPerPage count: Int)  {
+	func addAtLeastOnePage(for resource: FeedlyResourceID, continuations: [String], numberOfEntriesPerPage count: Int)  {
 		pages = [String: FeedlyStream](minimumCapacity: continuations.count + 1)
 		
 		// A continuation is an identifier for the next page.
@@ -31,7 +31,7 @@ final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
 		}
 	}
 	
-	private func makeStreamContents(for resource: FeedlyResourceId, continuation: String?, between range: Range<Int>) -> FeedlyStream {
+	private func makeStreamContents(for resource: FeedlyResourceID, continuation: String?, between range: Range<Int>) -> FeedlyStream {
 		let entries = range.map { index -> FeedlyEntry in
 			let content = FeedlyEntry.Content(content: "Content \(index)",
 				direction: .leftToRight)
@@ -61,11 +61,11 @@ final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
 		return stream
 	}
 	
-	static func getPagingKey(for stream: FeedlyResourceId, continuation: String?) -> String {
+	static func getPagingKey(for stream: FeedlyResourceID, continuation: String?) -> String {
 		return "\(stream.id)@\(continuation ?? "")"
 	}
 	
-	func getStreamContents(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
+	func getStreamContents(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		let key = TestGetPagedStreamContentsService.getPagingKey(for: resource, continuation: continuation)
 		guard let page = pages[key] else {
 			XCTFail("Missing page for \(resource.id) and continuation \(String(describing: continuation)). Test may time out because the completion will not be called.")

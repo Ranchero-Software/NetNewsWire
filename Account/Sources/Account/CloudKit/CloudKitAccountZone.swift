@@ -247,8 +247,8 @@ enum CloudKitAccountZoneError: LocalizedError {
 		query(ckQuery) { result in
 			switch result {
 			case .success(let records):
-				let feedExternalIds = records.map { $0.externalID }
-				completion(.success(feedExternalIds))
+				let feedExternalIDs = records.map { $0.externalID }
+				completion(.success(feedExternalIDs))
 			case .failure(let error):
 				completion(.failure(error))
 			}

@@ -29,13 +29,13 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	
 	struct TestParsedItemsProvider: FeedlyParsedItemProviding {
 		let parsedItemProviderName = "TestParsedItemsProvider"
-		var resource: FeedlyResourceId
+		var resource: FeedlyResourceID
 		var parsedEntries: Set<ParsedItem>
 	}
 	
 	func testNoEntries() {
 		let entries = support.makeParsedItemTestDataFor(numberOfFeeds: 0, numberOfItemsInFeeds: 0)
-		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
+		let resource = FeedlyCategoryResourceID(id: "user/12345/category/6789")
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		
@@ -50,13 +50,13 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
-		XCTAssertEqual(itemsAndFeedIds, entries)
+		let itemsAndFeedIDs = organise.parsedItemsKeyedByFeedID
+		XCTAssertEqual(itemsAndFeedIDs, entries)
 	}
 	
 	func testGroupsOneEntryByFeedId() {
 		let entries = support.makeParsedItemTestDataFor(numberOfFeeds: 1, numberOfItemsInFeeds: 1)
-		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
+		let resource = FeedlyCategoryResourceID(id: "user/12345/category/6789")
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		
@@ -71,13 +71,13 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
-		XCTAssertEqual(itemsAndFeedIds, entries)
+		let itemsAndFeedIDs = organise.parsedItemsKeyedByFeedID
+		XCTAssertEqual(itemsAndFeedIDs, entries)
 	}
 	
 	func testGroupsManyEntriesByFeedId() {
 		let entries = support.makeParsedItemTestDataFor(numberOfFeeds: 100, numberOfItemsInFeeds: 100)
-		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
+		let resource = FeedlyCategoryResourceID(id: "user/12345/category/6789")
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		
@@ -92,7 +92,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
-		XCTAssertEqual(itemsAndFeedIds, entries)
+		let itemsAndFeedIDs = organise.parsedItemsKeyedByFeedID
+		XCTAssertEqual(itemsAndFeedIDs, entries)
 	}
 }

@@ -17,10 +17,10 @@ import Core
 	private let operationQueue = MainThreadOperationQueue()
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
 
-	@MainActor init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, log: OSLog, customFeedName: String? = nil) throws {
+	@MainActor init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceID, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, log: OSLog, customFeedName: String? = nil) throws {
 		
 		let validator = FeedlyFeedContainerValidator(container: container)
-		let (folder, collectionId) = try validator.getValidContainer()
+		let (folder, collectionID) = try validator.getValidContainer()
 		
 		self.operationQueue.suspend()
 
@@ -28,7 +28,7 @@ import Core
 		
 		self.downloadProgress = progress
 		
-		let addRequest = FeedlyAddFeedToCollectionOperation(folder: folder, feedResource: resource, feedName: customFeedName, collectionId: collectionId, service: service)
+		let addRequest = FeedlyAddFeedToCollectionOperation(folder: folder, feedResource: resource, feedName: customFeedName, collectionID: collectionID, service: service)
 		addRequest.delegate = self
 		addRequest.downloadProgress = progress
 		self.operationQueue.add(addRequest)

@@ -27,7 +27,7 @@ protocol FeedlyGetStreamContentsOperationDelegate: AnyObject {
 final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
 	
 	@MainActor struct ResourceProvider: FeedlyResourceProviding {
-		var resource: FeedlyResourceId
+		var resource: FeedlyResourceID
 	}
 	
 	let resourceProvider: FeedlyResourceProviding
@@ -55,9 +55,9 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 		})
 		
 		if parsed.count != entries.count {
-			let entryIds = Set(entries.map { $0.id })
-			let parsedIds = Set(parsed.map { $0.uniqueID })
-			let difference = entryIds.subtracting(parsedIds)
+			let entryIDs = Set(entries.map { $0.id })
+			let parsedIDs = Set(parsed.map { $0.uniqueID })
+			let difference = entryIDs.subtracting(parsedIDs)
 			os_log(.debug, log: log, "Dropping articles with ids: %{public}@.", difference)
 		}
 		
@@ -83,7 +83,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 	
 	weak var streamDelegate: FeedlyGetStreamContentsOperationDelegate?
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil, log: OSLog) {
 		self.account = account
 		self.resourceProvider = ResourceProvider(resource: resource)
 		self.service = service

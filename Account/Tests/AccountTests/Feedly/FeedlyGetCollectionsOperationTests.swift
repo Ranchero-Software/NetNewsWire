@@ -36,21 +36,21 @@ class FeedlyGetCollectionsOperationTests: XCTestCase {
 		let ids = Set(getCollections.collections.map { $0.id })
 		
 		let missingLabels = labelsInJSON.subtracting(labels)
-		let missingIds = idsInJSON.subtracting(ids)
-		
+		let missingIDs = idsInJSON.subtracting(ids)
+
 		XCTAssertEqual(getCollections.collections.count, collections.count, "Mismatch between collections provided by operation and test JSON collections.")
 		XCTAssertTrue(missingLabels.isEmpty, "Collections with these labels did not have a corresponding \(FeedlyCollection.self) value with the same name.")
-		XCTAssertTrue(missingIds.isEmpty, "Collections with these ids did not have a corresponding \(FeedlyCollection.self) with the same id.")
+		XCTAssertTrue(missingIDs.isEmpty, "Collections with these ids did not have a corresponding \(FeedlyCollection.self) with the same id.")
 		
 		for collection in collections {
-			let collectionId = collection["id"] as! String
+			let collectionID = collection["id"] as! String
 			let collectionFeeds = collection["feeds"] as! [[String: Any]]
-			let collectionFeedIds = Set(collectionFeeds.map { $0["id"] as! String })
-			
-			for operationCollection in getCollections.collections where operationCollection.id == collectionId {
-				let feedIds = Set(operationCollection.feeds.map { $0.id })
-				let missingIds = collectionFeedIds.subtracting(feedIds)
-				XCTAssertTrue(missingIds.isEmpty, "Feeds with these ids were not found in the \"\(operationCollection.label)\" \(FeedlyCollection.self).")
+			let collectionFeedIDs = Set(collectionFeeds.map { $0["id"] as! String })
+
+			for operationCollection in getCollections.collections where operationCollection.id == collectionID {
+				let feedIDs = Set(operationCollection.feeds.map { $0.id })
+				let missingIDs = collectionFeedIDs.subtracting(feedIDs)
+				XCTAssertTrue(missingIDs.isEmpty, "Feeds with these ids were not found in the \"\(operationCollection.label)\" \(FeedlyCollection.self).")
 			}
 		}
 	}

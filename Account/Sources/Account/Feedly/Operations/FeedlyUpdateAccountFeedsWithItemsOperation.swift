@@ -27,7 +27,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 	
 	override func run() {
 
-		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
+		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedID
 		
 		Task { @MainActor in
 			do {

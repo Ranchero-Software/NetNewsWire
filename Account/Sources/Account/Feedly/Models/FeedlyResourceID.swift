@@ -1,5 +1,5 @@
 //
-//  FeedlyResourceId.swift
+//  FeedlyResourceID.swift
 //  Account
 //
 //  Created by Kiel Gillard on 3/10/19.
@@ -8,20 +8,20 @@
 
 import Foundation
 
-/// The kinds of Resource Ids is documented here: https://developer.feedly.com/cloud/
-protocol FeedlyResourceId {
+/// The kinds of Resource IDs is documented here: https://developer.feedly.com/cloud/
+protocol FeedlyResourceID {
 	
-	/// The resource Id from Feedly.
+	/// The resource ID from Feedly.
 	@MainActor var id: String { get }
 }
 
 /// The Feed Resource is documented here: https://developer.feedly.com/cloud/
-struct FeedlyFeedResourceId: FeedlyResourceId {
+struct FeedlyFeedResourceID: FeedlyResourceID {
 	let id: String
 	
 	/// The location of the kind of resource a concrete type represents.
-	/// If the concrete type cannot strip the resource type from the Id, it should just return the Id
-	/// since the Id is a legitimate URL.
+	/// If the concrete type cannot strip the resource type from the ID, it should just return the ID
+	/// since the ID is a legitimate URL.
 	/// This is basically assuming Feedly prefixes source feed URLs with `feed/`.
 	/// It is not documented as such and could potentially change.
 	/// Feedly does not include the source feed URL as a separate field.
@@ -38,48 +38,48 @@ struct FeedlyFeedResourceId: FeedlyResourceId {
 	}
 }
 
-extension FeedlyFeedResourceId {
+extension FeedlyFeedResourceID {
 	init(url: String) {
 		self.id = "feed/\(url)"
 	}
 }
 
-struct FeedlyCategoryResourceId: FeedlyResourceId {
+struct FeedlyCategoryResourceID: FeedlyResourceID {
 	let id: String
 	
 	enum Global {
 		
-		static func uncategorized(for userId: String) -> FeedlyCategoryResourceId {
+		static func uncategorized(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.uncategorized"
-			return FeedlyCategoryResourceId(id: id)
+			let id = "user/\(userID)/category/global.uncategorized"
+			return FeedlyCategoryResourceID(id: id)
 		}
 		
 		/// All articles from all the feeds the user subscribes to.
-		static func all(for userId: String) -> FeedlyCategoryResourceId {
+		static func all(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.all"
-			return FeedlyCategoryResourceId(id: id)
+			let id = "user/\(userID)/category/global.all"
+			return FeedlyCategoryResourceID(id: id)
 		}
 		
 		/// All articles from all the feeds the user loves most.
-		static func mustRead(for userId: String) -> FeedlyCategoryResourceId {
+		static func mustRead(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.must"
-			return FeedlyCategoryResourceId(id: id)
+			let id = "user/\(userID)/category/global.must"
+			return FeedlyCategoryResourceID(id: id)
 		}
 	}
 }
 
-struct FeedlyTagResourceId: FeedlyResourceId {
+struct FeedlyTagResourceID: FeedlyResourceID {
 	let id: String
 	
 	enum Global {
 		
-		static func saved(for userId: String) -> FeedlyTagResourceId {
+		static func saved(for userID: String) -> FeedlyTagResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/tag/global.saved"
-			return FeedlyTagResourceId(id: id)
+			let id = "user/\(userID)/tag/global.saved"
+			return FeedlyTagResourceID(id: id)
 		}
 	}
 }

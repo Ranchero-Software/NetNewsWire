@@ -46,8 +46,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendUnreadSuccess() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) }
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
+		let statuses = articleIDs.map { SyncStatus(articleID: $0, key: .read, flag: false) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
 		container.database.insertStatuses(statuses) { error in
@@ -59,8 +59,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
-		service.parameterTester = { serviceArticleIds, action in
-			XCTAssertEqual(serviceArticleIds, articleIds)
+		service.parameterTester = { serviceArticleIDs, action in
+			XCTAssertEqual(serviceArticleIDs, articleIDs)
 			XCTAssertEqual(action, .unread)
 		}
 		
@@ -89,8 +89,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendUnreadFailure() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) }
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
+		let statuses = articleIDs.map { SyncStatus(articleID: $0, key: .read, flag: false) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
 		container.database.insertStatuses(statuses) { error in
@@ -102,8 +102,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
-		service.parameterTester = { serviceArticleIds, action in
-			XCTAssertEqual(serviceArticleIds, articleIds)
+		service.parameterTester = { serviceArticleIDs, action in
+			XCTAssertEqual(serviceArticleIDs, articleIDs)
 			XCTAssertEqual(action, .unread)
 		}
 		
@@ -132,8 +132,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendReadSuccess() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) }
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
+		let statuses = articleIDs.map { SyncStatus(articleID: $0, key: .read, flag: true) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
 		container.database.insertStatuses(statuses) { error in
@@ -145,8 +145,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
-		service.parameterTester = { serviceArticleIds, action in
-			XCTAssertEqual(serviceArticleIds, articleIds)
+		service.parameterTester = { serviceArticleIDs, action in
+			XCTAssertEqual(serviceArticleIDs, articleIDs)
 			XCTAssertEqual(action, .read)
 		}
 		
@@ -175,8 +175,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendReadFailure() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) }
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
+		let statuses = articleIDs.map { SyncStatus(articleID: $0, key: .read, flag: true) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
 		container.database.insertStatuses(statuses) { error in
@@ -188,8 +188,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
-		service.parameterTester = { serviceArticleIds, action in
-			XCTAssertEqual(serviceArticleIds, articleIds)
+		service.parameterTester = { serviceArticleIDs, action in
+			XCTAssertEqual(serviceArticleIDs, articleIDs)
 			XCTAssertEqual(action, .read)
 		}
 		
@@ -218,8 +218,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendStarredSuccess() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) }
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
+		let statuses = articleIDs.map { SyncStatus(articleID: $0, key: .starred, flag: true) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
 		container.database.insertStatuses(statuses) { error in
@@ -231,8 +231,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
-		service.parameterTester = { serviceArticleIds, action in
-			XCTAssertEqual(serviceArticleIds, articleIds)
+		service.parameterTester = { serviceArticleIDs, action in
+			XCTAssertEqual(serviceArticleIDs, articleIDs)
 			XCTAssertEqual(action, .saved)
 		}
 		
@@ -261,8 +261,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendStarredFailure() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) }
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
+		let statuses = articleIDs.map { SyncStatus(articleID: $0, key: .starred, flag: true) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
 		container.database.insertStatuses(statuses) { error in
@@ -274,8 +274,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
-		service.parameterTester = { serviceArticleIds, action in
-			XCTAssertEqual(serviceArticleIds, articleIds)
+		service.parameterTester = { serviceArticleIDs, action in
+			XCTAssertEqual(serviceArticleIDs, articleIDs)
 			XCTAssertEqual(action, .saved)
 		}
 		
@@ -304,8 +304,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendUnstarredSuccess() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) }
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
+		let statuses = articleIDs.map { SyncStatus(articleID: $0, key: .starred, flag: false) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
 		container.database.insertStatuses(statuses) { error in
@@ -317,8 +317,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
-		service.parameterTester = { serviceArticleIds, action in
-			XCTAssertEqual(serviceArticleIds, articleIds)
+		service.parameterTester = { serviceArticleIDs, action in
+			XCTAssertEqual(serviceArticleIDs, articleIDs)
 			XCTAssertEqual(action, .unsaved)
 		}
 		
@@ -347,8 +347,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendUnstarredFailure() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) }
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
+		let statuses = articleIDs.map { SyncStatus(articleID: $0, key: .starred, flag: false) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
 		container.database.insertStatuses(statuses) { error in
@@ -360,8 +360,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
-		service.parameterTester = { serviceArticleIds, action in
-			XCTAssertEqual(serviceArticleIds, articleIds)
+		service.parameterTester = { serviceArticleIDs, action in
+			XCTAssertEqual(serviceArticleIDs, articleIDs)
 			XCTAssertEqual(action, .unsaved)
 		}
 		
@@ -390,13 +390,13 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendAllSuccess() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
 		let keys = [SyncStatus.Key.read, .starred]
 		let flags = [true, false]
-		let statuses = articleIds.map { articleId -> SyncStatus in
+		let statuses = articleIDs.map { articleID -> SyncStatus in
 			let key = keys.randomElement()!
 			let flag = flags.randomElement()!
-			let status = SyncStatus(articleID: articleId, key: key, flag: flag)
+			let status = SyncStatus(articleID: articleID, key: key, flag: flag)
 			return status
 		}
 		
@@ -410,7 +410,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
-		service.parameterTester = { serviceArticleIds, action in
+		service.parameterTester = { serviceArticleIDs, action in
 			let syncStatuses: [SyncStatus]
 			switch action {
 			case .read:
@@ -422,8 +422,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			case .unsaved:
 				syncStatuses = statuses.filter { $0.key == .starred && $0.flag == false }
 			}
-			let expectedArticleIds = Set(syncStatuses.map { $0.articleID })
-			XCTAssertEqual(serviceArticleIds, expectedArticleIds)
+			let expectedArticleIDs = Set(syncStatuses.map { $0.articleID })
+			XCTAssertEqual(serviceArticleIDs, expectedArticleIDs)
 		}
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
@@ -450,13 +450,13 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	}
 	
 	func testSendAllFailure() {
-		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
+		let articleIDs = Set((0..<100).map { "feed/0/article/\($0)" })
 		let keys = [SyncStatus.Key.read, .starred]
 		let flags = [true, false]
-		let statuses = articleIds.map { articleId -> SyncStatus in
+		let statuses = articleIDs.map { articleID -> SyncStatus in
 			let key = keys.randomElement()!
 			let flag = flags.randomElement()!
-			let status = SyncStatus(articleID: articleId, key: key, flag: flag)
+			let status = SyncStatus(articleID: articleID, key: key, flag: flag)
 			return status
 		}
 		
@@ -470,7 +470,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
-		service.parameterTester = { serviceArticleIds, action in
+		service.parameterTester = { serviceArticleIDs, action in
 			let syncStatuses: [SyncStatus]
 			switch action {
 			case .read:
@@ -482,8 +482,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			case .unsaved:
 				syncStatuses = statuses.filter { $0.key == .starred && $0.flag == false }
 			}
-			let expectedArticleIds = Set(syncStatuses.map { $0.articleID })
-			XCTAssertEqual(serviceArticleIds, expectedArticleIds)
+			let expectedArticleIDs = Set(syncStatuses.map { $0.articleID })
+			XCTAssertEqual(serviceArticleIDs, expectedArticleIDs)
 		}
 		
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)

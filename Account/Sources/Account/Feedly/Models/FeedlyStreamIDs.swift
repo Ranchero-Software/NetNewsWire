@@ -1,5 +1,5 @@
 //
-//  FeedlyStreamIds.swift
+//  FeedlyStreamIDs.swift
 //  Account
 //
 //  Created by Kiel Gillard on 18/10/19.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedlyStreamIds: Decodable {
+struct FeedlyStreamIDs: Decodable {
 	let continuation: String?
 	let ids: [String]
 	

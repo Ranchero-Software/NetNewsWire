@@ -23,7 +23,7 @@ final class FeedlyEntryIdentifierProvider: FeedlyEntryIdentifierProviding {
 		entryIDs.formUnion(provider.entryIDs)
 	}
 	
-	@MainActor func addEntryIDs(in articleIds: [String]) {
-		entryIDs.formUnion(articleIds)
+	@MainActor func addEntryIDs(in articleIDs: [String]) {
+		entryIDs.formUnion(articleIDs)
 	}
 }

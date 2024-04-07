@@ -1,5 +1,5 @@
 //
-//  FeedlyGetUpdatedArticleIdsOperation.swift
+//  FeedlyGetUpdatedArticleIDsOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 11/1/20.
@@ -14,15 +14,15 @@ import Secrets
 ///
 /// Typically, it pages through the article ids of the global.all stream.
 /// When all the article ids are collected, it is the responsibility of another operation to download them when appropriate.
-class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+class FeedlyGetUpdatedArticleIDsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 
 	private let account: Account
-	private let resource: FeedlyResourceId
-	private let service: FeedlyGetStreamIdsService
+	private let resource: FeedlyResourceID
+	private let service: FeedlyGetStreamIDsService
 	private let newerThan: Date?
 	private let log: OSLog
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, newerThan: Date?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
@@ -30,48 +30,48 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 		self.log = log
 	}
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
-		let all = FeedlyCategoryResourceId.Global.all(for: userId)
+	convenience init(account: Account, userID: String, service: FeedlyGetStreamIDsService, newerThan: Date?, log: OSLog) {
+		let all = FeedlyCategoryResourceID.Global.all(for: userID)
 		self.init(account: account, resource: all, service: service, newerThan: newerThan, log: log)
 	}
 	
 	var entryIDs: Set<String> {
-		return storedUpdatedArticleIds
+		return storedUpdatedArticleIDs
 	}
 	
-	private var storedUpdatedArticleIds = Set<String>()
+	private var storedUpdatedArticleIDs = Set<String>()
 	
 	override func run() {
-		getStreamIds(nil)
+		getStreamIDs(nil)
 	}
 	
-	private func getStreamIds(_ continuation: String?) {
+	private func getStreamIDs(_ continuation: String?) {
 		guard let date = newerThan else {
 			os_log(.debug, log: log, "No date provided so everything must be new (nothing is updated).")
 			didFinish()
 			return
 		}
 		
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil, completion: didGetStreamIds(_:))
+		service.getStreamIDs(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil, completion: didGetStreamIDs(_:))
 	}
 	
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	private func didGetStreamIDs(_ result: Result<FeedlyStreamIDs, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
 		
 		switch result {
-		case .success(let streamIds):
-			storedUpdatedArticleIds.formUnion(streamIds.ids)
+		case .success(let streamIDs):
+			storedUpdatedArticleIDs.formUnion(streamIDs.ids)
 			
-			guard let continuation = streamIds.continuation else {
-				os_log(.debug, log: log, "%{public}i articles updated since last successful sync start date.", storedUpdatedArticleIds.count)
+			guard let continuation = streamIDs.continuation else {
+				os_log(.debug, log: log, "%{public}i articles updated since last successful sync start date.", storedUpdatedArticleIDs.count)
 				didFinish()
 				return
 			}
 			
-			getStreamIds(continuation)
+			getStreamIDs(continuation)
 			
 		case .failure(let error):
 			didFinish(with: error)

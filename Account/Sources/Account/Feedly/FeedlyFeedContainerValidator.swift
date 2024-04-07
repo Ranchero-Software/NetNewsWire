@@ -16,10 +16,10 @@ import Foundation
 			throw FeedlyAccountDelegateError.addFeedChooseFolder
 		}
 		
-		guard let collectionId = folder.externalID else {
+		guard let collectionID = folder.externalID else {
 			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder.nameForDisplay)
 		}
 		
-		return (folder, collectionId)
+		return (folder, collectionID)
 	}
 }

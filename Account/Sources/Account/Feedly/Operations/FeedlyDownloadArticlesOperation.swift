@@ -15,17 +15,17 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 
 	private let account: Account
 	private let log: OSLog
-	private let missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding
-	private let updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding
+	private let missingArticleEntryIDProvider: FeedlyEntryIdentifierProviding
+	private let updatedArticleEntryIDProvider: FeedlyEntryIdentifierProviding
 	private let getEntriesService: FeedlyGetEntriesService
 	private let operationQueue = MainThreadOperationQueue()
 	private let finishOperation: FeedlyCheckpointOperation
 	
-	@MainActor init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService, log: OSLog) {
+	@MainActor init(account: Account, missingArticleEntryIDProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIDProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService, log: OSLog) {
 		self.account = account
 		self.operationQueue.suspend()
-		self.missingArticleEntryIdProvider = missingArticleEntryIdProvider
-		self.updatedArticleEntryIdProvider = updatedArticleEntryIdProvider
+		self.missingArticleEntryIDProvider = missingArticleEntryIDProvider
+		self.updatedArticleEntryIDProvider = updatedArticleEntryIDProvider
 		self.getEntriesService = getEntriesService
 		self.finishOperation = FeedlyCheckpointOperation()
 		self.log = log
@@ -35,16 +35,16 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		var articleIds = missingArticleEntryIdProvider.entryIDs
-		articleIds.formUnion(updatedArticleEntryIdProvider.entryIDs)
+		var articleIDs = missingArticleEntryIDProvider.entryIDs
+		articleIDs.formUnion(updatedArticleEntryIDProvider.entryIDs)
 
-		os_log(.debug, log: log, "Requesting %{public}i articles.", articleIds.count)
+		os_log(.debug, log: log, "Requesting %{public}i articles.", articleIDs.count)
 		
 		let feedlyAPILimitBatchSize = 1000
-		for articleIds in Array(articleIds).chunked(into: feedlyAPILimitBatchSize) {
+		for articleIDs in Array(articleIDs).chunked(into: feedlyAPILimitBatchSize) {
 			
 			Task { @MainActor in
-				let provider = FeedlyEntryIdentifierProvider(entryIDs: Set(articleIds))
+				let provider = FeedlyEntryIdentifierProvider(entryIDs: Set(articleIDs))
 				let getEntries = FeedlyGetEntriesOperation(service: getEntriesService, provider: provider, log: log)
 				getEntries.delegate = self
 				self.operationQueue.add(getEntries)

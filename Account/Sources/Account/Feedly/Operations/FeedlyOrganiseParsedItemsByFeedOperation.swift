@@ -12,7 +12,7 @@ import os.log
 
 protocol FeedlyParsedItemsByFeedProviding {
 	var parsedItemsByFeedProviderName: String { get }
-	var parsedItemsKeyedByFeedId: [String: Set<ParsedItem>] { get }
+	var parsedItemsKeyedByFeedID: [String: Set<ParsedItem>] { get }
 }
 
 /// Group articles by their feeds.
@@ -26,12 +26,12 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 		return name ?? String(describing: Self.self)
 	}
 	
-	var parsedItemsKeyedByFeedId: [String : Set<ParsedItem>] {
+	var parsedItemsKeyedByFeedID: [String : Set<ParsedItem>] {
 		precondition(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
-		return itemsKeyedByFeedId
+		return itemsKeyedByFeedID
 	}
 	
-	private var itemsKeyedByFeedId = [String: Set<ParsedItem>]()
+	private var itemsKeyedByFeedID = [String: Set<ParsedItem>]()
 	
 	init(account: Account, parsedItemProvider: FeedlyParsedItemProviding, log: OSLog) {
 		self.account = account
@@ -62,6 +62,6 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 		
 		os_log(.debug, log: log, "Grouped %i items by %i feeds for %@", items.count, dict.count, parsedItemProvider.parsedItemProviderName)
 		
-		itemsKeyedByFeedId = dict
+		itemsKeyedByFeedID = dict
 	}
 }

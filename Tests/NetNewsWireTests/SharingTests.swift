@@ -39,11 +39,11 @@ class SharingTests: XCTestCase {
     }
 
     private func article(titled title: String) -> Article {
-        let articleId = randomId()
-		return Article(accountID: randomId(),
-					   articleID: articleId,
-					   feedID: randomId(),
-					   uniqueID: randomId(),
+        let articleID = randomID()
+		return Article(accountID: randomID(),
+					   articleID: articleID,
+					   feedID: randomID(),
+					   uniqueID: randomID(),
 					   title: title,
 					   contentHTML: nil,
 					   contentText: nil,
@@ -54,11 +54,11 @@ class SharingTests: XCTestCase {
 					   datePublished: nil,
 					   dateModified: nil,
 					   authors: nil,
-					   status: ArticleStatus(articleID: articleId, read: true, dateArrived: Date())
+					   status: ArticleStatus(articleID: articleID, read: true, dateArrived: Date())
 		)
     }
 
-    private func randomId() -> String {
+    private func randomID() -> String {
         return UUID().uuidString
     }
 

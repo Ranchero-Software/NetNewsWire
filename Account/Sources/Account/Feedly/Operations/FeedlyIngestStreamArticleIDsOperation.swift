@@ -1,5 +1,5 @@
 //
-//  FeedlyIngestStreamArticleIdsOperation.swift
+//  FeedlyIngestStreamArticleIDsOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 9/1/20.
@@ -16,34 +16,34 @@ import Database
 /// Typically, it pages through the article ids of the global.all stream.
 /// As the article ids are collected, a default read status is created for each.
 /// So this operation has side effects *for the entire account* it operates on.
-class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
+class FeedlyIngestStreamArticleIDsOperation: FeedlyOperation {
 
 	private let account: Account
-	private let resource: FeedlyResourceId
-	private let service: FeedlyGetStreamIdsService
+	private let resource: FeedlyResourceID
+	private let service: FeedlyGetStreamIDsService
 	private let log: OSLog
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.log = log
 	}
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, log: OSLog) {
-		let all = FeedlyCategoryResourceId.Global.all(for: userId)
+	convenience init(account: Account, userID: String, service: FeedlyGetStreamIDsService, log: OSLog) {
+		let all = FeedlyCategoryResourceID.Global.all(for: userID)
 		self.init(account: account, resource: all, service: service, log: log)
 	}
 	
 	override func run() {
-		getStreamIds(nil)
+		getStreamIDs(nil)
 	}
 	
-	private func getStreamIds(_ continuation: String?) {
-		service.getStreamIds(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
+	private func getStreamIDs(_ continuation: String?) {
+		service.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIDs(_:))
 	}
 	
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	private func didGetStreamIDs(_ result: Result<FeedlyStreamIDs, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
@@ -62,7 +62,7 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 						return
 					}
 
-					self.getStreamIds(continuation)
+					self.getStreamIDs(continuation)
 				} catch {
 					self.didFinish(with: error)
 					return

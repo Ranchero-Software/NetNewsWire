@@ -20,7 +20,7 @@ public extension URLRequest {
 		}
 
 		let credentialsType = credentials.type
-		precondition(credentialsType == .newsBlurBasic || credentialsType == .newsBlurSessionId)
+		precondition(credentialsType == .newsBlurBasic || credentialsType == .newsBlurSessionID)
 
 		if credentialsType == .newsBlurBasic {
 
@@ -34,7 +34,7 @@ public extension URLRequest {
 			]
 			httpBody = postData.enhancedPercentEncodedQuery?.data(using: .utf8)
 
-		} else if credentialsType == .newsBlurSessionId {
+		} else if credentialsType == .newsBlurSessionID {
 			
 			setValue("\(NewsBlurAPICaller.sessionIDCookieKey)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
 			httpShouldHandleCookies = true

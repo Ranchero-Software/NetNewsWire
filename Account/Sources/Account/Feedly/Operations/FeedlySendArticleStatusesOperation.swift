@@ -53,12 +53,12 @@ private extension FeedlySendArticleStatusesOperation {
 		let group = DispatchGroup()
 
 		for pairing in statuses {
-			let articleIds = pending.filter { $0.key == pairing.status && $0.flag == pairing.flag }
-			guard !articleIds.isEmpty else {
+			let articleIDs = pending.filter { $0.key == pairing.status && $0.flag == pairing.flag }
+			guard !articleIDs.isEmpty else {
 				continue
 			}
 
-			let ids = Set(articleIds.map { $0.articleID })
+			let ids = Set(articleIDs.map { $0.articleID })
 			let database = self.database
 			group.enter()
 			service.mark(ids, as: pairing.action) { result in

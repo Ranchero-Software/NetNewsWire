@@ -1,5 +1,5 @@
 //
-//  FeedlyFetchIdsForMissingArticlesOperation.swift
+//  FeedlyFetchIDsForMissingArticlesOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 7/1/20.
@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 
-final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+final class FeedlyFetchIDsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 
 	private let account: Account
 
