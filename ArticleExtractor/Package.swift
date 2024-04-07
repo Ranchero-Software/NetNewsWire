@@ -3,34 +3,28 @@
 import PackageDescription
 
 let package = Package(
-	name: "FeedFinder",
+	name: "ArticleExtractor",
 	platforms: [.macOS(.v14), .iOS(.v17)],
 	products: [
 		.library(
-			name: "FeedFinder",
-			targets: ["FeedFinder"]),
+			name: "ArticleExtractor",
+			targets: ["ArticleExtractor"]),
 	],
 	dependencies: [
-		.package(path: "../Web"),
-		.package(path: "../Parser"),
-		.package(path: "../FoundationExtras"),
-		.package(path: "../CommonErrors"),
+		.package(path: "../FoundationExtras")
 	],
 	targets: [
 		.target(
-			name: "FeedFinder",
+			name: "ArticleExtractor",
 			dependencies: [
-				"Parser",
-				"Web",
 				"FoundationExtras",
-				"CommonErrors"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
 			]
 		),
 		.testTarget(
-			name: "FeedFinderTests",
-			dependencies: ["FeedFinder"]),
+			name: "ArticleExtractorTests",
+			dependencies: ["ArticleExtractor"]),
 	]
 )

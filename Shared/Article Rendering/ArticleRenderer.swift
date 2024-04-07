@@ -13,6 +13,7 @@ import UIKit
 import Articles
 import Account
 import Core
+import ArticleExtractor
 
 @MainActor struct ArticleRenderer {
 

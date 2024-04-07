@@ -11,6 +11,7 @@ import WebKit
 import Account
 import Articles
 import SafariServices
+import ArticleExtractor
 
 class ArticleViewController: UIViewController {
 	

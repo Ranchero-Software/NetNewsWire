@@ -13,6 +13,7 @@ import Articles
 import SafariServices
 import MessageUI
 import Core
+import ArticleExtractor
 
 protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)

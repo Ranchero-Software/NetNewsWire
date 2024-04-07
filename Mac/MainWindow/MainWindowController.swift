@@ -12,6 +12,7 @@ import Articles
 import Account
 import Core
 import AppKitExtras
+import ArticleExtractor
 
 enum TimelineSourceMode {
 	case regular, search

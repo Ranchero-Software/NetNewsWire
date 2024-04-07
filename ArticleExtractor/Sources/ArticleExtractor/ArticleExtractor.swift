@@ -9,7 +9,7 @@
 import Foundation
 import FoundationExtras
 
-public enum ArticleExtractorState {
+public enum ArticleExtractorState: Sendable {
     case ready
     case processing
     case failedToParse
@@ -17,22 +17,21 @@ public enum ArticleExtractorState {
 	case cancelled
 }
 
-protocol ArticleExtractorDelegate {
+public protocol ArticleExtractorDelegate {
 
 	@MainActor func articleExtractionDidFail(with: Error)
 	@MainActor func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }
 
-@MainActor final class ArticleExtractor {
+@MainActor public final class ArticleExtractor {
+
+	public var state: ArticleExtractorState!
+	public var article: ExtractedArticle?
+	public var delegate: ArticleExtractorDelegate?
+	public let articleLink: String?
 
 	private var dataTask: URLSessionDataTask? = nil
-    
-    var state: ArticleExtractorState!
-	var article: ExtractedArticle?
-    var delegate: ArticleExtractorDelegate?
-	let articleLink: String?
-
-    private let url: URL!
+	private let url: URL!
 
 	public init?(_ articleLink: String, clientID: String, clientSecret: String) {
 		self.articleLink = articleLink

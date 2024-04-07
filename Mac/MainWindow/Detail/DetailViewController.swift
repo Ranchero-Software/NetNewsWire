@@ -10,6 +10,7 @@ import Foundation
 import WebKit
 import Articles
 import Web
+import ArticleExtractor
 
 enum DetailState: Equatable {
 	case noSelection

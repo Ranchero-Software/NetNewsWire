@@ -8,23 +8,23 @@
 
 import Foundation
 
-struct ExtractedArticle: Codable, Equatable {
+public struct ExtractedArticle: Codable, Equatable, Sendable {
 
-	let title: String?
-	let author: String?
-	let datePublished: String?
-	let dek: String?
-	let leadImageURL: String?
-	let content: String?
-	let nextPageURL: String?
-	let url: String?
-	let domain: String?
-	let excerpt: String?
-	let wordCount: Int?
-	let direction: String?
-	let totalPages: Int?
-	let renderedPages: Int?
-	
+	public let title: String?
+	public let author: String?
+	public let datePublished: String?
+	public let dek: String?
+	public let leadImageURL: String?
+	public let content: String?
+	public let nextPageURL: String?
+	public let url: String?
+	public let domain: String?
+	public let excerpt: String?
+	public let wordCount: Int?
+	public let direction: String?
+	public let totalPages: Int?
+	public let renderedPages: Int?
+
 	enum CodingKeys: String, CodingKey {
 		case title = "title"
 		case author = "author"
@@ -41,5 +41,4 @@ struct ExtractedArticle: Codable, Equatable {
 		case totalPages = "total_pages"
 		case renderedPages = "rendered_pages"
 	}
-	
 }
