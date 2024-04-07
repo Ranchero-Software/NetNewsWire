@@ -13,6 +13,7 @@ import Web
 import SyncDatabase
 import os.log
 import Secrets
+import NewsBlur
 
 final class NewsBlurAccountDelegate: AccountDelegate {
 

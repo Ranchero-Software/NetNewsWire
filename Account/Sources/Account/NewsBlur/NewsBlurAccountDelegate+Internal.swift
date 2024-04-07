@@ -14,6 +14,7 @@ import Web
 import SyncDatabase
 import os.log
 import Core
+import NewsBlur
 
 extension NewsBlurAccountDelegate {
 	

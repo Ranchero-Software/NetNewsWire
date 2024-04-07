@@ -37,10 +37,10 @@ public struct HTTPConditionalGetInfo: Codable, Equatable {
 		// Bug seen in the wild: lastModified with last possible 32-bit date, which is in 2038. Ignore those.
 		// TODO: drop this check in late 2037.
 		if let lastModified = lastModified, !lastModified.contains("2038") {
-			urlRequest.addValue(lastModified, forHTTPHeaderField: HTTPRequestHeader.ifModifiedSince)
+			urlRequest.setValue(lastModified, forHTTPHeaderField: HTTPRequestHeader.ifModifiedSince)
 		}
 		if let etag = etag {
-			urlRequest.addValue(etag, forHTTPHeaderField: HTTPRequestHeader.ifNoneMatch)
+			urlRequest.setValue(etag, forHTTPHeaderField: HTTPRequestHeader.ifNoneMatch)
 		}
 	}
 }

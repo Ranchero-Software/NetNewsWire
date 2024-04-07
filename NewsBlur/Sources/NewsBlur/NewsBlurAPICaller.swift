@@ -10,7 +10,7 @@ import Foundation
 import Web
 import Secrets
 
-final class NewsBlurAPICaller: NSObject {
+@MainActor public final class NewsBlurAPICaller: NSObject {
 	static let SessionIdCookie = "newsblur_sessionid"
 
 	let baseURL = URL(string: "https://www.newsblur.com/")!
@@ -18,7 +18,6 @@ final class NewsBlurAPICaller: NSObject {
 	var suspended = false
 
 	var credentials: Credentials?
-	weak var accountMetadata: AccountMetadata?
 
 	init(transport: Transport!) {
 		super.init()

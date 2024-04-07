@@ -39,17 +39,6 @@ extension URLRequest {
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
 		}
 
-		guard let conditionalGet = conditionalGet else {
-			return
-		}
-
-		// Bug seen in the wild: lastModified with last possible 32-bit date, which is in 2038. Ignore those.
-		// TODO: drop this check in late 2037.
-		if let lastModified = conditionalGet.lastModified, !lastModified.contains("2038") {
-			setValue(lastModified, forHTTPHeaderField: HTTPRequestHeader.ifModifiedSince)
-		}
-		if let etag = conditionalGet.etag {
-			setValue(etag, forHTTPHeaderField: HTTPRequestHeader.ifNoneMatch)
-		}
+		conditionalGet?.addRequestHeadersToURLRequest(&self)
 	}
 }

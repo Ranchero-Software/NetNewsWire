@@ -44,7 +44,7 @@ extension NewsBlurAPICaller {
 	}
 
 	// GET endpoint
-	func requestData<R: Decodable>(
+	func requestData<R: Decodable & Sendable>(
 			endpoint: String,
 			resultType: R.Type,
 			dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601,
@@ -74,7 +74,7 @@ extension NewsBlurAPICaller {
 	}
 
 	// POST to endpoint
-	func sendUpdates<R: Decodable>(
+	func sendUpdates<R: Decodable & Sendable>(
 			endpoint: String,
 			payload: NewsBlurDataConvertible,
 			resultType: R.Type,
@@ -108,25 +108,21 @@ extension NewsBlurAPICaller {
 			return
 		}
 
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = URLRequest(url: callURL, newsBlurCredentials: credentials)
 
-		transport.send(request: request) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
+		Task { @MainActor in
 
-			switch result {
-			case .success:
+			do {
+				try await transport.send(request: request)
 				completion(.success(()))
-			case .failure(let error):
+			} catch {
 				completion(.failure(error))
 			}
 		}
 	}
 
 	// GET URL with params
-	func requestData<R: Decodable>(
+	func requestData<R: Decodable & Sendable>(
 			callURL: URL?,
 			resultType: R.Type,
 			dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601,
@@ -138,23 +134,20 @@ extension NewsBlurAPICaller {
 			return
 		}
 
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let request = URLRequest(url: callURL, newsBlurCredentials: credentials)
 
-		transport.send(
-				request: request,
-				resultType: resultType,
-				dateDecoding: dateDecoding,
-				keyDecoding: keyDecoding
-		) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
+		Task { @MainActor in
 
-			switch result {
-			case .success(let response):
+			do {
+				let response = try await transport.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+
+				if self.suspended {
+					completion(.failure(TransportError.suspended))
+					return
+				}
 				completion(.success(response))
-			case .failure(let error):
+
+			} catch {
 				completion(.failure(error))
 			}
 		}
@@ -162,42 +155,42 @@ extension NewsBlurAPICaller {
 
 	// POST to URL with params, discard response
 	func sendUpdates(
-			callURL: URL?,
-			payload: NewsBlurDataConvertible,
-			completion: @escaping (Result<Void, Error>) -> Void
+		callURL: URL?,
+		payload: NewsBlurDataConvertible,
+		completion: @escaping (Result<Void, Error>) -> Void
 	) {
 		guard let callURL = callURL else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = URLRequest(url: callURL, newsBlurCredentials: credentials)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.httpBody = payload.asData
 
-		transport.send(request: request, method: HTTPMethod.post) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
+		Task { @MainActor in
 
-			switch result {
-			case .success:
+			do {
+				try await transport.send(request: request, method: HTTPMethod.post)
+				if self.suspended {
+					completion(.failure(TransportError.suspended))
+					return
+				}
 				completion(.success(()))
-			case .failure(let error):
+			} catch {
 				completion(.failure(error))
 			}
 		}
 	}
 
 	// POST to URL with params
-	func sendUpdates<R: Decodable>(
-			callURL: URL?,
-			payload: NewsBlurDataConvertible,
-			resultType: R.Type,
-			dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601,
-			keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys,
-			completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void
+	func sendUpdates<R: Decodable & Sendable>(
+		callURL: URL?,
+		payload: NewsBlurDataConvertible,
+		resultType: R.Type,
+		dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601,
+		keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys,
+		completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void
 	) {
 		guard let callURL = callURL else {
 			completion(.failure(TransportError.noURL))
@@ -209,26 +202,23 @@ extension NewsBlurAPICaller {
 			return
 		}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = URLRequest(url: callURL, newsBlurCredentials: credentials)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		transport.send(
-				request: request,
-				method: HTTPMethod.post,
-				data: data,
-				resultType: resultType,
-				dateDecoding: dateDecoding,
-				keyDecoding: keyDecoding
-		) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
+		Task { @MainActor in
 
-			switch result {
-			case .success(let response):
+			do {
+
+				let response = try await transport.send(request: request, method: HTTPMethod.post, data: data, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+
+				if self.suspended {
+					completion(.failure(TransportError.suspended))
+					return
+				}
+
 				completion(.success(response))
-			case .failure(let error):
+
+			} catch {
 				completion(.failure(error))
 			}
 		}

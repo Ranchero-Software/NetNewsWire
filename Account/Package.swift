@@ -22,6 +22,7 @@ let package = Package(
 		.package(path: "../CloudKitExtras"),
 		.package(path: "../ReaderAPI"),
 		.package(path: "../CloudKitSync"),
+		.package(path: "../NewsBlur"),
 		.package(path: "../CommonErrors")
 	],
 	targets: [
@@ -38,6 +39,7 @@ let package = Package(
 				"Core",
 				"CloudKitExtras",
 				"ReaderAPI",
+				"NewsBlur",
 				"CloudKitSync",
 				"CommonErrors"
 			],
