@@ -68,14 +68,15 @@ import Compression
 /// `codepoint-range`: two codepoints, marking the first and last codepoints of a
 /// closed range. Single-codepoint ranges have the same start and end codepoint.
 ///
-class UTS46 {
 
-	static var characterMap: [UInt32: String] = [:]
-	static var ignoredCharacters: CharacterSet = []
-	static var disallowedCharacters: CharacterSet = []
-	static var joiningTypes = [UInt32: JoiningType]()
+final class UTS46: Sendable {
 
-	static var isLoaded = false
+	static let shared = UTS46()
+
+	let characterMap: [UInt32: String]
+	let ignoredCharacters: CharacterSet
+	let disallowedCharacters: CharacterSet
+	let joiningTypes: [UInt32: JoiningType]
 
 	enum Marker {
 		static let characterMap = UInt8.max
@@ -186,4 +187,13 @@ class UTS46 {
 		var debugDescription: String { "has CRC: \(hasCRC); compression: \(String(describing: compression))" }
 	}
 
+	init() {
+
+		let loader = try! UTS46Loader()
+
+		self.characterMap = loader.characterMap
+		self.ignoredCharacters = loader.ignoredCharacters
+		self.disallowedCharacters = loader.disallowedCharacters
+		self.joiningTypes = loader.joiningTypes
+	}
 }

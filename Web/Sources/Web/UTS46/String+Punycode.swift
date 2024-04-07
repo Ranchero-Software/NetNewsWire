@@ -440,20 +440,19 @@ private extension String {
 	/// - Returns: The mapped string.
 	/// - Throws: `UTS46Error`.
 	func mapUTS46() throws -> String {
-		try UTS46.loadIfNecessary()
 
 		var result = ""
 
 		for scalar in self.unicodeScalars {
-			if UTS46.disallowedCharacters.contains(scalar) {
+			if UTS46.shared.disallowedCharacters.contains(scalar) {
 				throw UTS46MapError.disallowedCodepoint(scalar: scalar)
 			}
 
-			if UTS46.ignoredCharacters.contains(scalar) {
+			if UTS46.shared.ignoredCharacters.contains(scalar) {
 				continue
 			}
 
-			if let mapped = UTS46.characterMap[scalar.value] {
+			if let mapped = UTS46.shared.characterMap[scalar.value] {
 				result.append(mapped)
 			} else {
 				result.unicodeScalars.append(scalar)
@@ -479,8 +478,7 @@ private extension String {
 	///
 	/// See [RFC 5892, Appendix A.1 and A.2](https://tools.ietf.org/html/rfc5892#appendix-A).
 	var hasValidJoiners: Bool {
-		try! UTS46.loadIfNecessary()
-		
+
 		let scalars = self.unicodeScalars
 
 		for index in scalars.indices {
@@ -495,7 +493,7 @@ private extension String {
 				if previous.properties.canonicalCombiningClass == .virama { continue }
 
 				while true {
-					guard let joiningType = UTS46.joiningTypes[previous.value] else { return false }
+					guard let joiningType = UTS46.shared.joiningTypes[previous.value] else { return false }
 
 					if joiningType == .transparent {
 						if subindex == scalars.startIndex {
@@ -519,7 +517,7 @@ private extension String {
 						return false
 					}
 
-					guard let joiningType = UTS46.joiningTypes[next.value] else { return false }
+					guard let joiningType = UTS46.shared.joiningTypes[next.value] else { return false }
 
 					if joiningType == .transparent {
 						subindex = scalars.index(after: index)
