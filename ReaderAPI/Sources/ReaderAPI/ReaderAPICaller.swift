@@ -9,14 +9,23 @@
 import Foundation
 import Web
 import Secrets
-import ReaderAPI
+import CommonErrors
 
-enum CreateReaderAPISubscriptionResult {
+public protocol ReaderAPICallerDelegate: AnyObject {
+
+	var endpointURL: URL? { get }
+
+	var lastArticleFetchStartTime: Date? { get set }
+	var lastArticleFetchEndTime: Date? { get set }
+}
+
+public enum CreateReaderAPISubscriptionResult: Sendable {
+	
 	case created(ReaderAPISubscription)
 	case notFound
 }
 
-@MainActor final class ReaderAPICaller: NSObject {
+@MainActor final class ReaderAPICaller {
 	
 	enum ItemIDType {
 		case unread
@@ -54,7 +63,7 @@ enum CreateReaderAPISubscriptionResult {
 
 	private var accessToken: String?
 	
-	weak var accountMetadata: AccountMetadata?
+	weak var delegate: ReaderAPICallerDelegate?
 
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
@@ -69,10 +78,7 @@ enum CreateReaderAPISubscriptionResult {
 		get {
 			switch variant {
 			case .generic, .freshRSS:
-				guard let accountMetadata = accountMetadata else {
-					return nil
-				}
-				return accountMetadata.endpointURL
+				return delegate?.endpointURL
 			default:
 				return URL(string: variant.host)
 			}
@@ -80,14 +86,14 @@ enum CreateReaderAPISubscriptionResult {
 	}
 	
 	init(transport: Transport, secretsProvider: SecretsProvider) {
+
 		self.transport = transport
 		self.secretsProvider = secretsProvider
 
 		var urlHostAllowed = CharacterSet.urlHostAllowed
 		urlHostAllowed.remove("+")
 		urlHostAllowed.remove("&")
-		uriComponentAllowed = urlHostAllowed
-		super.init()
+		self.uriComponentAllowed = urlHostAllowed
 	}
 	
 	func cancelAll() {
@@ -100,7 +106,7 @@ enum CreateReaderAPISubscriptionResult {
 			throw CredentialsError.incompleteCredentials
 		}
 
-		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), credentials: credentials)
+		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
 		do {
@@ -134,7 +140,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		} catch {
 			if let transportError = error as? TransportError, case .httpError(let code) = transportError, code == 404 {
-				throw ReaderAPIAccountDelegateError.urlNotFound
+				throw ReaderAPIError.urlNotFound
 			} else {
 				throw error
 			}
@@ -153,7 +159,7 @@ enum CreateReaderAPISubscriptionResult {
 			throw CredentialsError.incompleteCredentials
 		}
 
-		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.token.rawValue), credentials: credentials)
+		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.token.rawValue), readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
 		let (_, data) = try await transport.send(request: request)
@@ -185,7 +191,7 @@ enum CreateReaderAPISubscriptionResult {
 			throw TransportError.noURL
 		}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
 		let (_, wrapper) = try await transport.send(request: request, resultType: ReaderAPITagContainer.self)
@@ -200,13 +206,13 @@ enum CreateReaderAPISubscriptionResult {
 
 		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
-		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.renameTag.rawValue), credentials: self.credentials)
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.renameTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		guard let encodedOldName = self.encodeForURLPath(oldName), let encodedNewName = self.encodeForURLPath(newName) else {
-			throw ReaderAPIAccountDelegateError.invalidParameter
+			throw ReaderAPIError.invalidParameter
 		}
 
 		let oldTagName = "user/-/label/\(encodedOldName)"
@@ -217,18 +223,15 @@ enum CreateReaderAPISubscriptionResult {
 	}
 
 
-	func deleteTag(folder: Folder) async throws {
+	func deleteTag(folderExternalID: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
 		}
-		guard let folderExternalID = folder.externalID else {
-			throw ReaderAPIAccountDelegateError.invalidParameter
-		}
-		
+
 		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
 
-		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.disableTag.rawValue), credentials: self.credentials)
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.disableTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
@@ -252,14 +255,14 @@ enum CreateReaderAPISubscriptionResult {
 			throw TransportError.noURL
 		}
 		
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
 		let (_, container) = try await transport.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
 		return container?.subscriptions
 	}
 	
-	func createSubscription(url: String, name: String?, folder: Folder?) async throws -> CreateReaderAPISubscriptionResult {
+	func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -270,13 +273,13 @@ enum CreateReaderAPISubscriptionResult {
 		let callURL = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue)
 		
-		var request = URLRequest(url: callURL, credentials: self.credentials)
+		var request = URLRequest(url: callURL, readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		guard let encodedFeedURL = self.encodeForURLPath(url) else {
-			throw ReaderAPIAccountDelegateError.invalidParameter
+			throw ReaderAPIError.invalidParameter
 		}
 
 		let postData = "T=\(token)&quickadd=\(encodedFeedURL)".data(using: String.Encoding.utf8)
@@ -293,10 +296,10 @@ enum CreateReaderAPISubscriptionResult {
 		// There is no call to get a single subscription entry, so we get them all,
 		// look up the one we just subscribed to and return that
 		guard let subscriptions = try await retrieveSubscriptions() else {
-			throw AccountError.createErrorNotFound
+			throw CommonError.createErrorNotFound
 		}
 		guard let subscription = subscriptions.first(where: { $0.feedID == subResult.streamID }) else {
-			throw AccountError.createErrorNotFound
+			throw CommonError.createErrorNotFound
 		}
 
 		return .created(subscription)
@@ -315,7 +318,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
 
-		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
@@ -343,16 +346,15 @@ enum CreateReaderAPISubscriptionResult {
 	private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil) async throws {
 
 		guard removeTagName != nil || addTagName != nil || title != nil else {
-			throw ReaderAPIAccountDelegateError.invalidParameter
+			throw ReaderAPIError.invalidParameter
 		}		
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
-			return
 		}
 		
 		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
-		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
@@ -383,7 +385,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
-		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), credentials: self.credentials)
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
@@ -404,7 +406,7 @@ enum CreateReaderAPISubscriptionResult {
 		let (_, entryWrapper) = try await transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self)
 
 		guard let entryWrapper else {
-			throw ReaderAPIAccountDelegateError.invalidResponse
+			throw ReaderAPIError.invalidResponse
 		}
 
 		return entryWrapper.entries
@@ -424,7 +426,7 @@ enum CreateReaderAPISubscriptionResult {
 		switch type {
 		case .allForAccount:
 			let since: Date = {
-				if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
+				if let lastArticleFetch = delegate?.lastArticleFetchStartTime {
 					return lastArticleFetch
 				} else {
 					return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
@@ -436,7 +438,7 @@ enum CreateReaderAPISubscriptionResult {
 			queryItems.append(URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue))
 		case .allForFeed:
 			guard let feedID else {
-				throw ReaderAPIAccountDelegateError.invalidParameter
+				throw ReaderAPIError.invalidParameter
 			}
 			let sinceTimeInterval = (Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()).timeIntervalSince1970
 			queryItems.append(URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))))
@@ -456,7 +458,7 @@ enum CreateReaderAPISubscriptionResult {
 			throw TransportError.noURL
 		}
 
-		var request: URLRequest = URLRequest(url: callURL, credentials: credentials)
+		var request: URLRequest = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
 		let (response, entries) = try await transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
@@ -475,14 +477,14 @@ enum CreateReaderAPISubscriptionResult {
 
 		guard let continuation else {
 			if type == .allForAccount {
-				self.accountMetadata?.lastArticleFetchStartTime = dateInfo?.date
-				self.accountMetadata?.lastArticleFetchEndTime = Date()
+				delegate?.lastArticleFetchStartTime = dateInfo?.date
+				delegate?.lastArticleFetchEndTime = Date()
 			}
 			return itemIDs
 		}
 		
 		guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-			throw ReaderAPIAccountDelegateError.invalidParameter
+			throw ReaderAPIError.invalidParameter
 		}
 		
 		var queryItems = urlComponents.queryItems!.filter({ $0.name != "c" })
@@ -493,7 +495,7 @@ enum CreateReaderAPISubscriptionResult {
 			throw TransportError.noURL
 		}
 		
-		var request: URLRequest = URLRequest(url: callURL, credentials: credentials)
+		var request: URLRequest = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
 		let (_, entries) = try await self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
@@ -554,7 +556,7 @@ private extension ReaderAPICaller {
 		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
 		// Do POST asking for data about all the new articles
-		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.editTag.rawValue), credentials: self.credentials)
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.editTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"

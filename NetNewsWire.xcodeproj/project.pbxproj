@@ -1303,6 +1303,7 @@
 		840D617E2029031C009BC708 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		840D61952029031D009BC708 /* NetNewsWire_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetNewsWire_iOSTests.swift; sourceTree = "<group>"; };
 		840D61972029031D009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8410C4A62BC221C900D4F799 /* CommonErrors */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CommonErrors; sourceTree = "<group>"; };
 		841550F42B9E3F8000D4B345 /* Database */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Database; sourceTree = "<group>"; };
 		841550F52B9E4D6800D4B345 /* FMDB */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FMDB; sourceTree = "<group>"; };
 		84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkCommandValidationStatus.swift; sourceTree = "<group>"; };
@@ -2356,6 +2357,7 @@
 				51C452B22265141B00C03939 /* Frameworks */,
 				51CD32C624D2DEF9009ABAEF /* Account */,
 				84CC98D92BC1DD25006A05C9 /* ReaderAPI */,
+				8410C4A62BC221C900D4F799 /* CommonErrors */,
 				51CD32C424D2CF1D009ABAEF /* Articles */,
 				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,
 				51CD32C724D2E06C009ABAEF /* Secrets */,

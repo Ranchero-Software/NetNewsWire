@@ -20,7 +20,8 @@ let package = Package(
 		.package(path: "../SyncDatabase"),
 		.package(path: "../Core"),
 		.package(path: "../CloudKitExtras"),
-		.package(path: "../ReaderAPI")
+		.package(path: "../ReaderAPI"),
+		.package(path: "../CommonErrors")
 	],
 	targets: [
 		.target(
@@ -35,7 +36,8 @@ let package = Package(
 				"Database",
 				"Core",
 				"CloudKitExtras",
-				"ReaderAPI"
+				"ReaderAPI",
+				"CommonErrors"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
