@@ -8,18 +8,19 @@
 
 import Foundation
 
-struct NewsBlurGenericCodingKeys: CodingKey {
-	var stringValue: String
+public struct NewsBlurGenericCodingKeys: CodingKey {
 
-	init?(stringValue: String) {
+	public var stringValue: String
+
+	public init?(stringValue: String) {
 		self.stringValue = stringValue
 	}
 
-	var intValue: Int? {
+	public var intValue: Int? {
 		return nil
 	}
 
-	init?(intValue: Int) {
+	public init?(intValue: Int) {
 		return nil
 	}
 }

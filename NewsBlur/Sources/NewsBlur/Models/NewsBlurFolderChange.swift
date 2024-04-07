@@ -8,14 +8,16 @@
 
 import Foundation
 
-enum NewsBlurFolderChange {
+public enum NewsBlurFolderChange: Sendable {
+
 	case add(String)
 	case rename(String, String)
 	case delete(String, [String])
 }
 
 extension NewsBlurFolderChange: NewsBlurDataConvertible {
-	var asData: Data? {
+	
+	public var asData: Data? {
 		var postData = URLComponents()
 		postData.queryItems = {
 			switch self {

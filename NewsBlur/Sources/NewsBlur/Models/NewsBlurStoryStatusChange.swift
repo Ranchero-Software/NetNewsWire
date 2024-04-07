@@ -8,12 +8,14 @@
 
 import Foundation
 
-struct NewsBlurStoryStatusChange {
-	let hashes: [String]
+public struct NewsBlurStoryStatusChange: Sendable {
+
+	public let hashes: [String]
 }
 
 extension NewsBlurStoryStatusChange: NewsBlurDataConvertible {
-	var asData: Data? {
+	
+	public var asData: Data? {
 		var postData = URLComponents()
 		postData.queryItems = hashes.map { URLQueryItem(name: "story_hash", value: $0) }
 

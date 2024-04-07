@@ -8,17 +8,20 @@
 
 import Foundation
 
-struct NewsBlurLoginResponse: Decodable {
-	var code: Int
-	var errors: LoginError?
+public struct NewsBlurLoginResponse: Decodable, Sendable {
 
-	struct LoginError: Decodable {
-		var username: [String]?
-		var others: [String]?
+	public var code: Int
+	public var errors: LoginError?
+
+	public struct LoginError: Decodable, Sendable {
+
+		public var username: [String]?
+		public var others: [String]?
 	}
 }
 
 extension NewsBlurLoginResponse.LoginError {
+	
 	private enum CodingKeys: String, CodingKey {
 		case username = "username"
 		case others = "__all__"

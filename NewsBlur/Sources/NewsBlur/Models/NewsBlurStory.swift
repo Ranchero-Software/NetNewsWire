@@ -9,23 +9,25 @@
 import Foundation
 import Parser
 
-typealias NewsBlurStory = NewsBlurStoriesResponse.Story
+public typealias NewsBlurStory = NewsBlurStoriesResponse.Story
 
-struct NewsBlurStoriesResponse: Decodable {
-	let stories: [Story]
+public struct NewsBlurStoriesResponse: Decodable, Sendable {
 
-	struct Story: Decodable {
-		let storyID: String
-		let feedID: Int
-		let title: String?
-		let url: String?
-		let authorName: String?
-		let contentHTML: String?
-		var imageURL: String? {
+	public let stories: [Story]
+
+	public struct Story: Decodable, Sendable {
+
+		public let storyID: String
+		public let feedID: Int
+		public let title: String?
+		public let url: String?
+		public let authorName: String?
+		public let contentHTML: String?
+		public var imageURL: String? {
 			return imageURLs?.first?.value
 		}
-		var tags: [String]?
-		var datePublished: Date? {
+		public var tags: [String]?
+		public var datePublished: Date? {
 			let interval = (publishedTimestamp as NSString).doubleValue
 			return Date(timeIntervalSince1970: interval)
 		}
@@ -36,12 +38,14 @@ struct NewsBlurStoriesResponse: Decodable {
 }
 
 extension NewsBlurStoriesResponse {
+
 	private enum CodingKeys: String, CodingKey {
 		case stories = "stories"
 	}
 }
 
 extension NewsBlurStoriesResponse.Story {
+	
 	private enum CodingKeys: String, CodingKey {
 		case storyID = "story_hash"
 		case feedID = "story_feed_id"

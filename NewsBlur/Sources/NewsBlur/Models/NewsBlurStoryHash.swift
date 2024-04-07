@@ -9,27 +9,36 @@
 import Foundation
 import Parser
 
-typealias NewsBlurStoryHash = NewsBlurStoryHashesResponse.StoryHash
+public typealias NewsBlurStoryHash = NewsBlurStoryHashesResponse.StoryHash
 
-struct NewsBlurStoryHashesResponse: Decodable {
-	typealias StoryHashDictionary = [String: [StoryHash]]
+public struct NewsBlurStoryHashesResponse: Decodable, Sendable {
 
-	var unread: [StoryHash]?
-	var starred: [StoryHash]?
+	public typealias StoryHashDictionary = [String: [StoryHash]]
 
-	struct StoryHash: Hashable, Codable {
-		var hash: String
-		var timestamp: Date
+	public var unread: [StoryHash]?
+	public var starred: [StoryHash]?
+
+	public struct StoryHash: Hashable, Codable, Sendable {
+
+		public var hash: String
+		public var timestamp: Date
+
+		public init(hash: String, timestamp: Date) {
+
+			self.hash = hash
+			self.timestamp = timestamp
+		}
 	}
 }
 
 extension NewsBlurStoryHashesResponse {
+	
 	private enum CodingKeys: String, CodingKey {
 		case unread = "unread_feed_story_hashes"
 		case starred = "starred_story_hashes"
 	}
 
-	init(from decoder: Decoder) throws {
+	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
 		// Parse unread

@@ -9,36 +9,42 @@
 import Foundation
 import Parser
 
-typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
+public typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
 
-struct NewsBlurFeed: Hashable, Codable {
-	let name: String
-	let feedID: Int
-	let feedURL: String
-	let homePageURL: String?
-	let faviconURL: String?
+public struct NewsBlurFeed: Hashable, Codable, Sendable {
+
+	public let name: String
+	public let feedID: Int
+	public let feedURL: String
+	public let homePageURL: String?
+	public let faviconURL: String?
 }
 
-struct NewsBlurFeedsResponse: Decodable {
-	let feeds: [NewsBlurFeed]
-	let folders: [Folder]
+public struct NewsBlurFeedsResponse: Decodable, Sendable {
 
-	struct Folder: Hashable, Codable {
-		let name: String
-		let feedIDs: [Int]
+	public let feeds: [NewsBlurFeed]
+	public let folders: [Folder]
+
+	public struct Folder: Hashable, Codable, Sendable {
+		
+		public let name: String
+		public let feedIDs: [Int]
 	}
 }
 
-struct NewsBlurAddURLResponse: Decodable {
-	let feed: NewsBlurFeed?
+public struct NewsBlurAddURLResponse: Decodable, Sendable {
+
+	public let feed: NewsBlurFeed?
 }
 
-struct NewsBlurFolderRelationship {
-	let folderName: String
-	let feedID: Int
+public struct NewsBlurFolderRelationship: Sendable {
+	
+	public let folderName: String
+	public let feedID: Int
 }
 
 extension NewsBlurFeed {
+
 	private enum CodingKeys: String, CodingKey {
 		case name = "feed_title"
 		case feedID = "id"
@@ -49,13 +55,14 @@ extension NewsBlurFeed {
 }
 
 extension NewsBlurFeedsResponse {
+
 	private enum CodingKeys: String, CodingKey {
 		case feeds = "feeds"
 		case folders = "flat_folders"
 		// TODO: flat_folders_with_inactive
 	}
 
-	init(from decoder: Decoder) throws {
+	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
 		// Tricky part: Some feeds listed in `feeds` don't exist in `folders` for some reason
@@ -88,7 +95,8 @@ extension NewsBlurFeedsResponse {
 }
 
 extension NewsBlurFeedsResponse.Folder {
-	var asRelationships: [NewsBlurFolderRelationship] {
+	
+	public var asRelationships: [NewsBlurFolderRelationship] {
 		return feedIDs.map { NewsBlurFolderRelationship(folderName: name, feedID: $0) }
 	}
 }

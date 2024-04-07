@@ -8,7 +8,8 @@
 
 import Foundation
 
-enum NewsBlurFeedChange {
+public enum NewsBlurFeedChange: Sendable {
+
 	case add(String, String?)
 	case rename(String, String)
 	case delete(String, String?)
@@ -16,7 +17,8 @@ enum NewsBlurFeedChange {
 }
 
 extension NewsBlurFeedChange: NewsBlurDataConvertible {
-	var asData: Data? {
+	
+	public var asData: Data? {
 		var postData = URLComponents()
 		postData.queryItems = {
 			switch self {
