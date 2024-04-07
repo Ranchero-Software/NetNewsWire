@@ -36,14 +36,20 @@ public enum ReachabilityError: Error {
     case unableToGetFlags(Int32)
 }
 
-@available(*, unavailable, renamed: "Notification.Name.reachabilityChanged")
-public let ReachabilityChangedNotification = NSNotification.Name("ReachabilityChangedNotification")
-
-public extension Notification.Name {
-    static let reachabilityChanged = Notification.Name("reachabilityChanged")
-}
-
 public class Reachability {
+
+	/// Returns true if the internet is reachable.
+	///
+	/// Uses apple.com as an indicator for the internet at large,
+	/// since it’s surely one of the easiest-to-reach domain names.
+	/// Added 6 April 2024. Not part of Ashley Mills’s original code.
+	public static var internetIsReachable: Bool {
+
+		guard let reachability = try? Reachability(hostname: "apple.com") else {
+			return false
+		}
+		return reachability.connection != .unavailable
+	}
 
     public typealias NetworkReachable = (Reachability) -> ()
     public typealias NetworkUnreachable = (Reachability) -> ()
@@ -74,27 +80,8 @@ public class Reachability {
         }
     }
 
-    public var whenReachable: NetworkReachable?
-    public var whenUnreachable: NetworkUnreachable?
-
-    @available(*, deprecated, renamed: "allowsCellularConnection")
-    public let reachableOnWWAN: Bool = true
-
     /// Set to `false` to force Reachability.connection to .none when on cellular connection (default value `true`)
     public var allowsCellularConnection: Bool
-
-    // The notification center on which "reachability changed" events are being posted
-    public var notificationCenter: NotificationCenter = NotificationCenter.default
-
-    @available(*, deprecated, renamed: "connection.description")
-    public var currentReachabilityString: String {
-        return "\(connection)"
-    }
-
-    @available(*, unavailable, renamed: "connection")
-    public var currentReachabilityStatus: Connection {
-        return connection
-    }
 
     public var connection: Connection {
         if flags == nil {
@@ -109,24 +96,11 @@ public class Reachability {
         }
     }
 
-    fileprivate var isRunningOnDevice: Bool = {
-        #if targetEnvironment(simulator)
-            return false
-        #else
-            return true
-        #endif
-    }()
-
     fileprivate(set) var notifierRunning = false
     fileprivate let reachabilityRef: SCNetworkReachability
     fileprivate let reachabilitySerialQueue: DispatchQueue
     fileprivate let notificationQueue: DispatchQueue?
-    fileprivate(set) var flags: SCNetworkReachabilityFlags? {
-        didSet {
-            guard flags != oldValue else { return }
-            notifyReachabilityChanged()
-        }
-    }
+    fileprivate(set) var flags: SCNetworkReachabilityFlags?
 
     required public init(reachabilityRef: SCNetworkReachability,
                          queueQoS: DispatchQoS = .default,
@@ -265,18 +239,6 @@ fileprivate extension Reachability {
             
             self.flags = flags
         }
-    }
-    
-
-    func notifyReachabilityChanged() {
-        let notify = { [weak self] in
-            guard let self = self else { return }
-            self.connection != .unavailable ? self.whenReachable?(self) : self.whenUnreachable?(self)
-            self.notificationCenter.post(name: .reachabilityChanged, object: self)
-        }
-
-        // notify on the configured `notificationQueue`, or the caller's (i.e. `reachabilitySerialQueue`)
-        notificationQueue?.async(execute: notify) ?? notify()
     }
 }
 
