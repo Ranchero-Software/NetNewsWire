@@ -86,29 +86,34 @@ public protocol DownloadSessionDelegate {
 
 extension DownloadSession: URLSessionTaskDelegate {
 
-	public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-		tasksInProgress.remove(task)
-		
-		guard let info = infoForTask(task) else {
-			return
-		}
-		
-		info.error = error
+	nonisolated public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 
-		delegate.downloadSession(self, downloadDidCompleteForRepresentedObject: info.representedObject, response: info.urlResponse, data: info.data as Data, error: error as NSError?) {
-			self.removeTask(task)
+		MainActor.assumeIsolated {
+			tasksInProgress.remove(task)
+
+			guard let info = infoForTask(task) else {
+				return
+			}
+
+			info.error = error
+
+			delegate.downloadSession(self, downloadDidCompleteForRepresentedObject: info.representedObject, response: info.urlResponse, data: info.data as Data, error: error as NSError?) {
+				self.removeTask(task)
+			}
 		}
 	}
 	
-	public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+	nonisolated public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
 		
-		if response.statusCode == 301 || response.statusCode == 308 {
-			if let oldURLString = task.originalRequest?.url?.absoluteString, let newURLString = request.url?.absoluteString {
-				cacheRedirect(oldURLString, newURLString)
+		MainActor.assumeIsolated {
+			if response.statusCode == 301 || response.statusCode == 308 {
+				if let oldURLString = task.originalRequest?.url?.absoluteString, let newURLString = request.url?.absoluteString {
+					cacheRedirect(oldURLString, newURLString)
+				}
 			}
+			
+			completionHandler(request)
 		}
-		
-		completionHandler(request)
 	}
 }
 
