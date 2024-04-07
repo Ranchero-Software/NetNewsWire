@@ -10,9 +10,9 @@ import Foundation
 import Parser
 import Web
 
-struct InitialFeedDownloader {
+public struct InitialFeedDownloader {
 
-	static func download(_ url: URL) async -> ParsedFeed? {
+	@MainActor public static func download(_ url: URL) async -> ParsedFeed? {
 
 		await withCheckedContinuation { @MainActor continuation in
 			self.download(url) { parsedFeed in
@@ -21,7 +21,7 @@ struct InitialFeedDownloader {
 		}
 	}
 
-	@MainActor static func download(_ url: URL,_ completion: @escaping (_ parsedFeed: ParsedFeed?) -> Void) {
+	@MainActor static func download(_ url: URL,_ completion: @escaping @Sendable (_ parsedFeed: ParsedFeed?) -> Void) {
 
 		downloadUsingCache(url) { (data, response, error) in
 			guard let data = data else {

@@ -24,6 +24,7 @@ let package = Package(
 		.package(path: "../CloudKitSync"),
 		.package(path: "../NewsBlur"),
 		.package(path: "../Feedbin"),
+		.package(path: "../LocalAccount"),
 		.package(path: "../FeedFinder"),
 		.package(path: "../CommonErrors")
 	],
@@ -44,6 +45,7 @@ let package = Package(
 				"NewsBlur",
 				"CloudKitSync",
 				"Feedbin",
+				"LocalAccount",
 				"FeedFinder",
 				"CommonErrors"
 			],

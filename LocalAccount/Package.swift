@@ -3,28 +3,30 @@
 import PackageDescription
 
 let package = Package(
-	name: "Feedbin",
+	name: "LocalAccount",
 	platforms: [.macOS(.v14), .iOS(.v17)],
 	products: [
 		.library(
-			name: "Feedbin",
-			targets: ["Feedbin"]),
+			name: "LocalAccount",
+			targets: ["LocalAccount"]),
 	],
 	dependencies: [
 		.package(path: "../Parser"),
+		.package(path: "../Web"),
 	],
 	targets: [
 		.target(
-			name: "Feedbin",
+			name: "LocalAccount",
 			dependencies: [
-				"Parser"
+				"Parser",
+				"Web"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
 			]
 		),
 		.testTarget(
-			name: "FeedbinTests",
-			dependencies: ["Feedbin"]),
+			name: "LocalAccountTests",
+			dependencies: ["LocalAccount"]),
 	]
 )
