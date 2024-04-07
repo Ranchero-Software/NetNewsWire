@@ -126,7 +126,7 @@ private struct CallbackRecord {
 	let completion: OneShotDownloadCallback
 }
 
-private final class DownloadWithCacheManager {
+@MainActor private final class DownloadWithCacheManager {
 
 	static let shared = DownloadWithCacheManager()
 	private var cache = WebCache()
