@@ -28,6 +28,7 @@ public enum CloudKitZoneError: LocalizedError {
 }
 
 public protocol CloudKitZoneDelegate: AnyObject {
+	
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void);
 }
 

@@ -43,5 +43,5 @@ public protocol OAuthAcessTokenRefreshRequesting {
 /// Implemented by concrete types to perform the actual request.
 protocol OAuthAccessTokenRefreshing: AnyObject {
 	
-	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+	@MainActor func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
 }

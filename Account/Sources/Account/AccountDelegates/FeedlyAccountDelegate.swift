@@ -271,7 +271,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	private func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func importOPML(for account: Account, opmlFile: URL, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		let data: Data
 		
 		do {
@@ -286,21 +286,24 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
 		caller.importOpml(data) { result in
-			switch result {
-			case .success:
-				os_log(.debug, log: self.log, "Import OPML done.")
-				self.refreshProgress.completeTask()
-				self.isOPMLImportInProgress = false
-				DispatchQueue.main.async {
-					completion(.success(()))
-				}
-			case .failure(let error):
-				os_log(.debug, log: self.log, "Import OPML failed.")
-				self.refreshProgress.completeTask()
-				self.isOPMLImportInProgress = false
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+
+			MainActor.assumeIsolated {
+				switch result {
+				case .success:
+					os_log(.debug, log: self.log, "Import OPML done.")
+					self.refreshProgress.completeTask()
+					self.isOPMLImportInProgress = false
+					DispatchQueue.main.async {
+						completion(.success(()))
+					}
+				case .failure(let error):
+					os_log(.debug, log: self.log, "Import OPML failed.")
+					self.refreshProgress.completeTask()
+					self.isOPMLImportInProgress = false
+					DispatchQueue.main.async {
+						let wrappedError = AccountError.wrappedError(error: error, account: account)
+						completion(.failure(wrappedError))
+					}
 				}
 			}
 		}

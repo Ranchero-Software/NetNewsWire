@@ -8,7 +8,7 @@
 
 import Articles
 import Database
-@preconcurrency import Parser
+import Parser
 import Web
 import SyncDatabase
 import os.log

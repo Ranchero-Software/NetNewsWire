@@ -14,7 +14,7 @@ struct HTMLMetadataDownloader {
 
 	static let serialDispatchQueue = DispatchQueue(label: "HTMLMetadataDownloader")
 
-	@MainActor static func downloadMetadata(for url: String, _ completion: @escaping (RSHTMLMetadata?) -> Void) {
+	@MainActor static func downloadMetadata(for url: String, _ completion: @escaping @Sendable (RSHTMLMetadata?) -> Void) {
 		guard let actualURL = URL(unicodeString: url) else {
 			completion(nil)
 			return
@@ -32,7 +32,7 @@ struct HTMLMetadataDownloader {
 		}
 	}
 
-	private static func parseMetadata(with parserData: ParserData, _ completion: @escaping (RSHTMLMetadata?) -> Void) {
+	private static func parseMetadata(with parserData: ParserData, _ completion: @escaping @Sendable (RSHTMLMetadata?) -> Void) {
 		serialDispatchQueue.async {
 			let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
 			DispatchQueue.main.async {

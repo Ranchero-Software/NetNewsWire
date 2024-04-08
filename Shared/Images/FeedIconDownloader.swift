@@ -216,11 +216,13 @@ private extension FeedIconDownloader {
 
 		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (metadata) in
 
-			self.urlsInProgress.remove(homePageURL)
-			guard let metadata = metadata else {
-				return
+			MainActor.assumeIsolated {
+				self.urlsInProgress.remove(homePageURL)
+				guard let metadata = metadata else {
+					return
+				}
+				self.pullIconURL(from: metadata, homePageURL: homePageURL, feed: feed)
 			}
-			self.pullIconURL(from: metadata, homePageURL: homePageURL, feed: feed)
 		}
 	}
 

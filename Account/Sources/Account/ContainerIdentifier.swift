@@ -9,7 +9,8 @@
 import Foundation
 
 public protocol ContainerIdentifiable {
-	var containerID: ContainerIdentifier? { get }
+	
+	@MainActor var containerID: ContainerIdentifier? { get }
 }
 
 public enum ContainerIdentifier: Hashable, Equatable, Sendable {
