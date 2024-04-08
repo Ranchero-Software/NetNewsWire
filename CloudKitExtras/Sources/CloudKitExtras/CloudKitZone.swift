@@ -119,6 +119,15 @@ public extension CloudKitZone {
 		})
 	}
 	
+	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+
+		await withCheckedContinuation { continuation in
+			self.receiveRemoteNotification(userInfo: userInfo) {
+				continuation.resume()
+			}
+		}
+	}
+
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == zoneID.zoneName else {

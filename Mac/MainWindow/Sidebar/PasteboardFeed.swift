@@ -168,29 +168,33 @@ extension Feed: PasteboardWriterOwner {
 
 	// MARK: - NSPasteboardWriting
 
-	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
+	nonisolated func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		return [FeedPasteboardWriter.feedUTIType, .URL, .string, FeedPasteboardWriter.feedUTIInternalType]
+		MainActor.assumeIsolated {
+			return [FeedPasteboardWriter.feedUTIType, .URL, .string, FeedPasteboardWriter.feedUTIInternalType]
+		}
 	}
 
-	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+	nonisolated func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
 
-		let plist: Any?
-
-		switch type {
-		case .string:
-			plist = feed.nameForDisplay
-		case .URL:
-			plist = feed.url
-		case FeedPasteboardWriter.feedUTIType:
-			plist = exportDictionary
-		case FeedPasteboardWriter.feedUTIInternalType:
-			plist = internalDictionary
-		default:
-			plist = nil
+		MainActor.assumeIsolated {
+			let plist: Any?
+			
+			switch type {
+			case .string:
+				plist = feed.nameForDisplay
+			case .URL:
+				plist = feed.url
+			case FeedPasteboardWriter.feedUTIType:
+				plist = exportDictionary
+			case FeedPasteboardWriter.feedUTIInternalType:
+				plist = internalDictionary
+			default:
+				plist = nil
+			}
+			
+			return plist
 		}
-
-		return plist
 	}
 }
 

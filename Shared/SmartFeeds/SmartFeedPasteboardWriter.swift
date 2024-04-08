@@ -20,23 +20,25 @@ import Account
 
 	// MARK: - NSPasteboardWriting
 
-	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
+	nonisolated func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
 		return [.string]
 	}
 
-	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+	nonisolated func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
 
-		let plist: Any?
-
-		switch type {
-		case .string:
-			plist = smartFeed.nameForDisplay
-		default:
-			plist = nil
+		MainActor.assumeIsolated {
+			let plist: Any?
+			
+			switch type {
+			case .string:
+				plist = smartFeed.nameForDisplay
+			default:
+				plist = nil
+			}
+			
+			return plist
 		}
-
-		return plist
 	}
 }
 

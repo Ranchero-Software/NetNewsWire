@@ -22,8 +22,7 @@ public struct AccountSyncError {
 	init(account: Account, error: Error) {
 		self.account = account
 		self.error = error
-		os_log(.error, log: AccountSyncError.log, "%@", error.localizedDescription)
+		os_log(.error, log: Self.log, "%@", error.localizedDescription)
 	}
-	
 }
 

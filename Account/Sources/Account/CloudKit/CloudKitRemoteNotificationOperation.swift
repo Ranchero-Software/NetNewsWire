@@ -36,16 +36,16 @@ class CloudKitRemoteNotificationOperation: MainThreadOperation {
 			self.operationDelegate?.operationDidComplete(self)
 			return
 		}
-		
+
 		os_log(.debug, log: log, "Processing remote notification...")
-		
-		accountZone.receiveRemoteNotification(userInfo: userInfo) {
-			articlesZone.receiveRemoteNotification(userInfo: self.userInfo) {
-				os_log(.debug, log: self.log, "Done processing remote notification.")
-				self.operationDelegate?.operationDidComplete(self)
-			}
+
+		Task { @MainActor in
+
+			await accountZone.receiveRemoteNotification(userInfo: userInfo)
+			await articlesZone.receiveRemoteNotification(userInfo: self.userInfo)
+			
+			os_log(.debug, log: self.log, "Done processing remote notification.")
+			self.operationDelegate?.operationDidComplete(self)
 		}
-		
 	}
-	
 }

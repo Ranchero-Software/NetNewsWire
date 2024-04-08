@@ -13,8 +13,9 @@ import Core
 import Feedly
 
 public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
-	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)
-	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
+	
+	@MainActor func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)
+	@MainActor func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
 }
 
 public enum OAuthAccountAuthorizationOperationError: LocalizedError {

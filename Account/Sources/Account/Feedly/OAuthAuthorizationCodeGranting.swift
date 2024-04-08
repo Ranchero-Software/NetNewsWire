@@ -98,7 +98,7 @@ public struct OAuthAuthorizationErrorResponse: Error {
 
 /// Error values as enumerated in section 4.1.2.1 of the OAuth 2.0 Authorization Framework.
 /// https://tools.ietf.org/html/rfc6749#section-4.1.2.1
-public enum OAuthAuthorizationError: String {
+public enum OAuthAuthorizationError: String, Sendable {
 	case invalidRequest = "invalid_request"
 	case unauthorizedClient = "unauthorized_client"
 	case accessDenied = "access_denied"

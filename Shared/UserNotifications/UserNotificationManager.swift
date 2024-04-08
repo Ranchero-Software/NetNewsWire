@@ -11,10 +11,9 @@ import Account
 import Articles
 import UserNotifications
 
-final class UserNotificationManager: NSObject {
-	
-	override init() {
-		super.init()
+final class UserNotificationManager: Sendable {
+
+	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		registerCategoriesAndActions()
@@ -103,5 +102,4 @@ private extension UserNotificationManager {
 		
 		UNUserNotificationCenter.current().setNotificationCategories([newArticleCategory])
 	}
-	
 }

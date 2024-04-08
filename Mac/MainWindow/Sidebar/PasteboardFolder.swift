@@ -104,25 +104,29 @@ extension Folder: PasteboardWriterOwner {
 
 	// MARK: - NSPasteboardWriting
 
-	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
+	nonisolated func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		return [.string, FolderPasteboardWriter.folderUTIInternalType]
+		MainActor.assumeIsolated {
+			return [.string, FolderPasteboardWriter.folderUTIInternalType]
+		}
 	}
 
-	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+	nonisolated func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
 
-		let plist: Any?
-
-		switch type {
-		case .string:
-			plist = folder.nameForDisplay
-		case FolderPasteboardWriter.folderUTIInternalType:
-			plist = internalDictionary
-		default:
-			plist = nil
+		MainActor.assumeIsolated {
+			let plist: Any?
+			
+			switch type {
+			case .string:
+				plist = folder.nameForDisplay
+			case FolderPasteboardWriter.folderUTIInternalType:
+				plist = internalDictionary
+			default:
+				plist = nil
+			}
+			
+			return plist
 		}
-
-		return plist
 	}
 }
 

@@ -10,15 +10,15 @@ import Foundation
 import WebKit
 import Articles
 
-class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
+final class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
 	
 	var currentArticle: Article?
-	
+
 	func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
 
 		Task { @MainActor in
 
-			guard let responseURL = urlSchemeTask.request.url, let iconImage = self.currentArticle?.iconImage() else {
+		guard let responseURL = urlSchemeTask.request.url, let iconImage = self.currentArticle?.iconImage() else {
 				urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 				return
 			}
