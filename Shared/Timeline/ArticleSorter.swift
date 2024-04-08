@@ -10,6 +10,7 @@ import Articles
 import Foundation
 
 protocol SortableArticle {
+	
 	var sortableName: String { get }
 	var sortableDate: Date { get }
 	var sortableArticleID: String { get }
