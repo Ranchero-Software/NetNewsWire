@@ -18,7 +18,7 @@ extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-final class FaviconDownloader {
+@MainActor final class FaviconDownloader {
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -71,7 +71,7 @@ final class FaviconDownloader {
 		cache = [Feed: IconImage]()
 	}
 	
-	@MainActor func favicon(for feed: Feed) -> IconImage? {
+	func favicon(for feed: Feed) -> IconImage? {
 
 		assert(Thread.isMainThread)
 
@@ -93,7 +93,7 @@ final class FaviconDownloader {
 		return nil
 	}
 	
-	@MainActor func faviconAsIcon(for feed: Feed) -> IconImage? {
+	func faviconAsIcon(for feed: Feed) -> IconImage? {
 		
 		if let image = cache[feed] {
 			return image
@@ -199,7 +199,7 @@ private extension FaviconDownloader {
 
 	static let localeForLowercasing = Locale(identifier: "en_US")
 
-	@MainActor func findFaviconURLs(with homePageURL: String, _ completion: @escaping ([String]?) -> Void) {
+	func findFaviconURLs(with homePageURL: String, _ completion: @escaping ([String]?) -> Void) {
 
 		guard let url = URL(unicodeString: homePageURL) else {
 			completion(nil)
@@ -318,5 +318,4 @@ private extension FaviconDownloader {
 			assertionFailure(error.localizedDescription)
 		}
 	}
-
 }
