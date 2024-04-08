@@ -82,28 +82,23 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func refreshAll(for account: Account) async throws {
-		
+
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
+
+		do {
+			try await refreshAccount(account)
+		} catch {
+			refreshProgress.clear()
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
+		}
 
 		try await withCheckedThrowingContinuation { continuation in
 
-			refreshAccount(account) { result in
+			self.refreshArticlesAndStatuses(account) { result in
 				switch result {
 				case .success():
-
-					self.refreshArticlesAndStatuses(account) { result in
-						switch result {
-						case .success():
-							continuation.resume()
-						case .failure(let error):
-							DispatchQueue.main.async {
-								self.refreshProgress.clear()
-								let wrappedError = AccountError.wrappedError(error: error, account: account)
-								continuation.resume(throwing: wrappedError)
-							}
-						}
-					}
-
+					continuation.resume()
 				case .failure(let error):
 					DispatchQueue.main.async {
 						self.refreshProgress.clear()
@@ -253,7 +248,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
 				group.leave()
 			}
-			
 		}
 		
 		group.enter()
@@ -268,7 +262,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
 				group.leave()
 			}
-			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
@@ -279,67 +272,43 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				completion(.success(()))
 			}
 		}
-		
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.importOPML(for: account, opmlFile: opmlFile) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		var fileData: Data?
-		
-		do {
-			fileData = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
+		let opmlData = try Data(contentsOf: opmlFile)
+		if opmlData.isEmpty {
 			return
 		}
-		
-		guard let opmlData = fileData else {
-			completion(.success(()))
-			return
-		}
-		
+
 		os_log(.debug, log: log, "Begin importing OPML...")
 		isOPMLImportInProgress = true
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		
-		caller.importOPML(opmlData: opmlData) { result in
-			switch result {
-			case .success(let importResult):
-				if importResult.complete {
-					os_log(.debug, log: self.log, "Import OPML done.")
-					self.refreshProgress.completeTask()
-					self.isOPMLImportInProgress = false
-					DispatchQueue.main.async {
-						completion(.success(()))
-					}
-				} else {
-					self.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
-				}
-			case .failure(let error):
-				os_log(.debug, log: self.log, "Import OPML failed.")
-				self.refreshProgress.completeTask()
-				self.isOPMLImportInProgress = false
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
+
+		do {
+			let importResult = try await caller.importOPML(opmlData: opmlData)
+
+			if importResult.complete {
+				os_log(.debug, log: self.log, "Import OPML done.")
+
+				refreshProgress.completeTask()
+				isOPMLImportInProgress = false
+			} else {
+				try await checkImportResult(opmlImportResultID: importResult.importResultID)
+
+				refreshProgress.completeTask()
+				isOPMLImportInProgress = false
 			}
+
+		} catch {
+			os_log(.debug, log: self.log, "Import OPML failed.")
+
+			refreshProgress.completeTask()
+			isOPMLImportInProgress = false
+
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
 		}
-		
 	}
 	
 	func createFolder(for account: Account, name: String) async throws -> Folder {
@@ -787,29 +756,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider) { result in
-				switch result {
-				case .success(let credentials):
-					continuation.resume(returning: credentials)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials
-		caller.validateCredentials() { result in
-			DispatchQueue.main.async {
-				completion(result)
-			}
-		}
-		
+		return try await caller.validateCredentials()
 	}
 
 	// MARK: Suspend and Resume (for iOS)
@@ -841,89 +790,67 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 private extension FeedbinAccountDelegate {
 	
+	func checkImportResult(opmlImportResultID: Int) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.checkImportResult(opmlImportResultID: opmlImportResultID) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
 			
 			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
 				
-				os_log(.debug, log: self.log, "Checking status of OPML import...")
-				
-				self.caller.retrieveOPMLImportResult(importID: opmlImportResultID) { result in
-					switch result {
-					case .success(let importResult):
-						if let result = importResult, result.complete {
+				Task { @MainActor in
+
+					os_log(.debug, log: self.log, "Checking status of OPML import...")
+					
+					do {
+						let importResult = try await self.caller.retrieveOPMLImportResult(importID: opmlImportResultID)
+
+						if let importResult, importResult.complete {
 							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
 							timer.invalidate()
-							self.refreshProgress.completeTask()
-							self.isOPMLImportInProgress = false
-							DispatchQueue.main.async {
-								completion(.success(()))
-							}
+							completion(.success(()))
 						}
-					case .failure(let error):
+
+					} catch {
 						os_log(.debug, log: self.log, "Import OPML check failed.")
 						timer.invalidate()
-						self.refreshProgress.completeTask()
-						self.isOPMLImportInProgress = false
-						DispatchQueue.main.async {
-							completion(.failure(error))
-						}
-					}
-				}
-				
-			}
-			
-		}
-		
-	}
-	
-	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		caller.retrieveTags { result in
-			switch result {
-			case .success(let tags):
-				
-				self.refreshProgress.completeTask()
-				self.caller.retrieveSubscriptions { result in
-					switch result {
-					case .success(let subscriptions):
-						
-						self.refreshProgress.completeTask()
-						self.forceExpireFolderFeedRelationship(account, tags)
-						self.caller.retrieveTaggings { result in
-
-							MainActor.assumeIsolated {
-								switch result {
-								case .success(let taggings):
-
-									BatchUpdate.shared.perform {
-										self.syncFolders(account, tags)
-										self.syncFeeds(account, subscriptions)
-										self.syncFeedFolderRelationship(account, taggings)
-									}
-
-									self.refreshProgress.completeTask()
-									completion(.success(()))
-
-								case .failure(let error):
-									completion(.failure(error))
-								}
-							}
-						}
-						
-					case .failure(let error):
 						completion(.failure(error))
 					}
-			
 				}
-					
-			case .failure(let error):
-				completion(.failure(error))
 			}
-				
 		}
-		
+	}
+	
+	func refreshAccount(_ account: Account) async throws {
+
+		let tags = try await caller.retrieveTags()
+		refreshProgress.completeTask()
+
+		let subscriptions = try await caller.retrieveSubscriptions()
+		refreshProgress.completeTask()
+		forceExpireFolderFeedRelationship(account, tags)
+
+		let taggings = try await caller.retrieveTaggings()
+
+		BatchUpdate.shared.perform {
+			self.syncFolders(account, tags)
+			self.syncFeeds(account, subscriptions)
+			self.syncFeedFolderRelationship(account, taggings)
+		}
+
+		refreshProgress.completeTask()
 	}
 
 	func refreshArticlesAndStatuses(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {

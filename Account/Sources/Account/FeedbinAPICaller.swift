@@ -55,119 +55,61 @@ final class FeedbinAPICaller: NSObject {
 		suspended = false
 	}
 	
-	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		
+	func validateCredentials() async throws -> Credentials? {
+
 		let callURL = feedbinBaseURL.appendingPathComponent("authentication.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
-		
-		transport.send(request: request) { result in
-			
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
+
+		do {
+			try await transport.send(request: request)
+			return credentials
+		} catch {
+			if case TransportError.httpError(let status) = error, status == 401 {
+				return nil
 			}
-			
-			switch result {
-			case .success:
-				completion(.success(self.credentials))
-			case .failure(let error):
-				switch error {
-				case TransportError.httpError(let status):
-					if status == 401 {
-						completion(.success(nil))
-					} else {
-						completion(.failure(error))
-					}
-				default:
-					completion(.failure(error))
-				}
-			}
+			throw error
 		}
-		
 	}
-	
-	func importOPML(opmlData: Data, completion: @escaping (Result<FeedbinImportResult, Error>) -> Void) {
-		
+
+	func importOPML(opmlData: Data) async throws -> FeedbinImportResult {
+
 		let callURL = feedbinBaseURL.appendingPathComponent("imports.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		transport.send(request: request, method: HTTPMethod.post, payload: opmlData) { result in
-			
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-			
-			switch result {
-			case .success(let (_, data)):
-				
-				guard let resultData = data else {
-					completion(.failure(TransportError.noData))
-					break
-				}
-				
-				do {
-					let result = try JSONDecoder().decode(FeedbinImportResult.self, from: resultData)
-					completion(.success(result))
-				} catch {
-					completion(.failure(error))
-				}
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
+		let (_, data) = try await transport.send(request: request, method: HTTPMethod.post, payload: opmlData)
+		guard let data else {
+			throw TransportError.noData
 		}
-		
+
+		let parsingTask = Task.detached { () throws -> FeedbinImportResult in
+			try JSONDecoder().decode(FeedbinImportResult.self, from: data)
+		}
+
+		let importResult = try await parsingTask.value
+		return importResult
 	}
-	
-	func retrieveOPMLImportResult(importID: Int, completion: @escaping (Result<FeedbinImportResult?, Error>) -> Void) {
-		
+
+	func retrieveOPMLImportResult(importID: Int) async throws -> FeedbinImportResult? {
+
 		let callURL = feedbinBaseURL.appendingPathComponent("imports/\(importID).json")
 		let request = URLRequest(url: callURL, credentials: credentials)
-		
-		transport.send(request: request, resultType: FeedbinImportResult.self) { result in
-			
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-			
-			switch result {
-			case .success(let (_, importResult)):
-				completion(.success(importResult))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
+
+		let (_, importResult) = try await transport.send(request: request, resultType: FeedbinImportResult.self)
+		return importResult
 	}
-	
-	func retrieveTags(completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {
-		
+
+	func retrieveTags() async throws -> [FeedbinTag]? {
+
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		transport.send(request: request, resultType: [FeedbinTag].self) { result in
-			
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-			
-			switch result {
-			case .success(let (response, tags)):
-				self.storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
-				completion(.success(tags))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
+		let (response, tags) = try await transport.send(request: request, resultType: [FeedbinTag].self)
+
+		storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
+
+		return tags
 	}
 
 	func renameTag(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -190,31 +132,19 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
-		
+	func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
+
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
 
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
 		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
-		
-		transport.send(request: request, resultType: [FeedbinSubscription].self) { result in
-			
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-			
-			switch result {
-			case .success(let (response, subscriptions)):
-				self.storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
-				completion(.success(subscriptions))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
+
+		let (response, subscriptions) = try await transport.send(request: request, resultType: [FeedbinSubscription].self)
+
+		storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
+
+		return subscriptions
 	}
 	
 	func createSubscription(url: String, completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
@@ -334,30 +264,19 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func retrieveTaggings(completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
-		
+	func retrieveTaggings() async throws -> [FeedbinTagging]? {
+
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
-		transport.send(request: request, resultType: [FeedbinTagging].self) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
 
-			switch result {
-			case .success(let (response, taggings)):
-				self.storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
-				completion(.success(taggings))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
+		let (response, taggings) = try await transport.send(request: request, resultType: [FeedbinTagging].self)
+
+		storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
+
+		return taggings
 	}
-	
+
 	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
