@@ -15,7 +15,7 @@ extension Notification.Name {
 	static let AvatarDidBecomeAvailable = Notification.Name("AvatarDidBecomeAvailableNotification") // UserInfoKey.imageURL (which is an avatarURL)
 }
 
-final class AuthorAvatarDownloader {
+@MainActor final class AuthorAvatarDownloader {
 
 	private let imageDownloader: ImageDownloader
 	private var cache = [String: IconImage]() // avatarURL: RSImage
