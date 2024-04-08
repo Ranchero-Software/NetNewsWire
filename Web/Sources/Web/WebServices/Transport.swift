@@ -142,9 +142,15 @@ extension URLSession: Transport {
 	
 	public func cancelAll() {
 		getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
-			dataTasks.forEach { $0.cancel() }
-			uploadTasks.forEach { $0.cancel() }
-			downloadTasks.forEach { $0.cancel() }
+			for dataTask in dataTasks {
+				dataTask.cancel()
+			}
+			for uploadTask in uploadTasks {
+				uploadTask.cancel()
+			}
+			for downloadTask in downloadTasks {
+				downloadTask.cancel()
+			}
 		}
 	}
 	

@@ -70,7 +70,10 @@ public extension UndoableCommandRunner {
         guard let undoManager = undoManager else {
             return
         }
-        undoableCommands.forEach { undoManager.removeAllActions(withTarget: $0) }
+        
+		for command in undoableCommands {
+			undoManager.removeAllActions(withTarget: command)
+		}
         undoableCommands = [UndoableCommand]()
     }
 }

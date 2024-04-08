@@ -985,12 +985,11 @@ private extension FeedbinAccountDelegate {
 		// Feedbin has a tag that we don't have a folder for.  We might not get a new
 		// taggings response for it if it is a folder rename.  Force expire the tagging
 		// so that we will for sure get the new tagging information.
-		tags.forEach { tag in
+		for tag in tags {
 			if !folderNames.contains(tag.name) {
 				accountMetadata?.conditionalGetInfo[FeedbinAPICaller.ConditionalGetKeys.taggings] = nil
 			}
 		}
-
 	}
 	
 	func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
@@ -1003,7 +1002,7 @@ private extension FeedbinAccountDelegate {
 
 		// Delete any folders not at Feedbin
 		if let folders = account.folders {
-			folders.forEach { folder in
+			for folder in folders {
 				if !tagNames.contains(folder.name ?? "") {
 					for feed in folder.topLevelFeeds {
 						account.addFeed(feed)
@@ -1023,12 +1022,11 @@ private extension FeedbinAccountDelegate {
 		}()
 
 		// Make any folders Feedbin has, but we don't
-		tagNames.forEach { tagName in
+		for tagName in tagNames {
 			if !folderNames.contains(tagName) {
 				_ = account.ensureFolder(with: tagName)
 			}
 		}
-		
 	}
 	
 	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
@@ -1059,7 +1057,7 @@ private extension FeedbinAccountDelegate {
 		
 		// Add any feeds we don't have and update any we do
 		var subscriptionsToAdd = Set<FeedbinSubscription>()
-		subscriptions.forEach { subscription in
+		for subscription in subscriptions {
 
 			let subFeedID = String(subscription.feedID)
 
@@ -1078,7 +1076,7 @@ private extension FeedbinAccountDelegate {
 		}
 
 		// Actually add subscriptions all in one go, so we don’t trigger various rebuilding things that Account does.
-		subscriptionsToAdd.forEach { subscription in
+		for subscription in subscriptionsToAdd {
 			let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
 			feed.externalID = String(subscription.subscriptionID)
 			account.addFeed(feed)

@@ -722,7 +722,9 @@ extension AppDelegate {
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
 		#if DEBUG
-			accountManager.activeAccounts.forEach{ $0.debugDropConditionalGetInfo() }
+		for account in accountManager.activeAccounts {
+			account.debugDropConditionalGetInfo()
+		}
 		#endif
 	}
 

@@ -123,12 +123,12 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 			}
 
 			var authData: [String: String] = [:]
-			rawData.split(separator: "\n").forEach({ (line: Substring) in
-				let items = line.split(separator: "=").map{String($0)}
+			for line in rawData.split(separator: "\n") {
+				let items = line.split(separator: "=").map { String($0) }
 				if items.count == 2 {
 					authData[items[0]] = items[1]
 				}
-			})
+			}
 
 			guard let authString = authData["Auth"] else {
 				throw CredentialsError.incompleteCredentials

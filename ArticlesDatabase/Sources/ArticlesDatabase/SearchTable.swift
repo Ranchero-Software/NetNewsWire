@@ -163,7 +163,7 @@ private extension SearchTable {
 		let groupedSearchInfos = Dictionary(grouping: searchInfos, by: { $0.rowID })
 		let searchInfosDictionary = groupedSearchInfos.mapValues { $0.first! }
 
-		articles.forEach { (article) in
+		for article in articles {
 			updateIndexForArticle(article, searchInfosDictionary, database)
 		}
 	}

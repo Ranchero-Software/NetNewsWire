@@ -82,12 +82,12 @@ private extension FeedTreeControllerDelegate {
 
 		var updatedChildNodes = [Node]()
 
-		children.forEach { (representedObject) in
+		for representedObject in children {
 
 			if let existingNode = containerNode.childNodeRepresentingObject(representedObject) {
 				if !updatedChildNodes.contains(existingNode) {
 					updatedChildNodes += [existingNode]
-					return
+					continue
 				}
 			}
 

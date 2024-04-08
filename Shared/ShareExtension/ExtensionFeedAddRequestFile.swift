@@ -111,25 +111,29 @@ private extension ExtensionFeedAddRequestFile {
 
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: [.forMerging], error: errorPointer, byAccessor: { url in
 			do {
-				
+
 				if let fileData = try? Data(contentsOf: url),
-					let decodedRequests = try? decoder.decode([ExtensionFeedAddRequest].self, from: fileData) {
+				   let decodedRequests = try? decoder.decode([ExtensionFeedAddRequest].self, from: fileData) {
 					requests = decodedRequests
 				}
-				
+
 				let data = try encoder.encode([ExtensionFeedAddRequest]())
 				try data.write(to: url)
-				
+
 			} catch let error as NSError {
 				os_log(.error, log: Self.log, "Save to disk failed: %@.", error.localizedDescription)
 			}
 		})
-		
+
 		if let error = errorPointer?.pointee {
 			os_log(.error, log: Self.log, "Save to disk coordination failed: %@.", error.localizedDescription)
 		}
 
-		requests?.forEach { processRequest($0) }
+		if let requests {
+			for request in requests {
+				processRequest(request)
+			}
+		}
 	}
 	
 	@MainActor func processRequest(_ request: ExtensionFeedAddRequest) {

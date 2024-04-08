@@ -449,12 +449,15 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		tableView.indexPathsForVisibleRows?.forEach { indexPath in
-			guard let article = dataSource.itemIdentifier(for: indexPath) else {
-				return
-			}
-			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? TimelineTableViewCell, let image = iconImageFor(article) {
-				cell.setIconImage(image)
+		
+		if let indexPaths = tableView.indexPathsForVisibleRows {
+			for indexPath in indexPaths {
+				guard let article = dataSource.itemIdentifier(for: indexPath) else {
+					continue
+				}
+				if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? TimelineTableViewCell, let image = iconImageFor(article) {
+					cell.setIconImage(image)
+				}
 			}
 		}
 	}
@@ -463,13 +466,16 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		guard coordinator.showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
-		tableView.indexPathsForVisibleRows?.forEach { indexPath in
-			guard let article = dataSource.itemIdentifier(for: indexPath), let authors = article.authors, !authors.isEmpty else {
-				return
-			}
-			for author in authors {
-				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? TimelineTableViewCell, let image = iconImageFor(article) {
-					cell.setIconImage(image)
+		
+		if let indexPaths = tableView.indexPathsForVisibleRows {
+			for indexPath in indexPaths {
+				guard let article = dataSource.itemIdentifier(for: indexPath), let authors = article.authors, !authors.isEmpty else {
+					continue
+				}
+				for author in authors {
+					if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? TimelineTableViewCell, let image = iconImageFor(article) {
+						cell.setIconImage(image)
+					}
 				}
 			}
 		}

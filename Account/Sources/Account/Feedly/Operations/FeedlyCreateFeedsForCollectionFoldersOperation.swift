@@ -96,7 +96,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 			}
 		
 		os_log(.debug, log: log, "Processing %i feeds.", feedsAndFolders.count)
-		feedsAndFolders.forEach { (feed, folder) in
+		for (feed, folder) in feedsAndFolders {
 			if !folder.has(feed) {
 				folder.addFeed(feed)
 			}

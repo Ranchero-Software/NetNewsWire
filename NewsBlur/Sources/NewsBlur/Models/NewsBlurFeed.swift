@@ -84,7 +84,7 @@ extension NewsBlurFeedsResponse {
 		// Parse feeds
 		var feeds: [NewsBlurFeed] = []
 		let feedContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .feeds)
-		try feedContainer.allKeys.forEach { key in
+		for key in feedContainer.allKeys {
 			let feed = try feedContainer.decode(NewsBlurFeed.self, forKey: key)
 			feeds.append(feed)
 		}
