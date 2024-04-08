@@ -10,6 +10,7 @@ import Foundation
 import os.log
 import Web
 import Core
+import Feedly
 
 class FeedlyDownloadArticlesOperation: FeedlyOperation {
 
@@ -45,12 +46,11 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 			
 			Task { @MainActor in
 				let provider = FeedlyEntryIdentifierProvider(entryIDs: Set(articleIDs))
-				let getEntries = FeedlyGetEntriesOperation(service: getEntriesService, provider: provider, log: log)
+				let getEntries = FeedlyGetEntriesOperation(service: self.getEntriesService, provider: provider, log: self.log)
 				getEntries.delegate = self
 				self.operationQueue.add(getEntries)
 
-				let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
-																			  parsedItemProvider: getEntries,
+				let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(parsedItemProvider: getEntries,
 																			  log: log)
 				organiseByFeed.delegate = self
 				organiseByFeed.addDependency(getEntries)

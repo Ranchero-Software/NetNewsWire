@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Feedly
 
 protocol FeedlyCheckpointOperationDelegate: AnyObject {
 	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation)

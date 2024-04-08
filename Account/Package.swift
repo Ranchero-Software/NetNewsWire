@@ -26,6 +26,7 @@ let package = Package(
 		.package(path: "../Feedbin"),
 		.package(path: "../LocalAccount"),
 		.package(path: "../FeedFinder"),
+		.package(path: "../Feedly"),
 		.package(path: "../CommonErrors")
 	],
 	targets: [
@@ -47,7 +48,8 @@ let package = Package(
 				"Feedbin",
 				"LocalAccount",
 				"FeedFinder",
-				"CommonErrors"
+				"CommonErrors",
+				"Feedly"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")

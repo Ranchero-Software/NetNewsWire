@@ -11,6 +11,7 @@ import os.log
 import Web
 import Secrets
 import Core
+import Feedly
 
 @MainActor final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
 

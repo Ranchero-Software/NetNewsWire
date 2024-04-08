@@ -12,6 +12,7 @@ import SyncDatabase
 import Web
 import Secrets
 import Core
+import Feedly
 
 /// Compose the operations necessary to get the entire set of articles, feeds and folders with the statuses the user expects between now and a certain date in the past.
 final class FeedlySyncAllOperation: FeedlyOperation {
@@ -83,7 +84,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		
 		// Get each page of the article ids which have been update since the last successful fetch start date.
 		// If the date is nil, this operation provides an empty set (everything is new, nothing is updated).
-		let getUpdated = FeedlyGetUpdatedArticleIDsOperation(account: account, userID: feedlyUserID, service: getStreamIDsService, newerThan: lastSuccessfulFetchStartDate, log: log)
+		let getUpdated = FeedlyGetUpdatedArticleIDsOperation(userID: feedlyUserID, service: getStreamIDsService, newerThan: lastSuccessfulFetchStartDate, log: log)
 		getUpdated.delegate = self
 		getUpdated.downloadProgress = downloadProgress
 		getUpdated.addDependency(createFeedsOperation)

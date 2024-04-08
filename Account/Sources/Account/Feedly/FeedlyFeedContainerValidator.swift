@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Feedly
 
 @MainActor struct FeedlyFeedContainerValidator {
 	var container: Container

@@ -13,8 +13,9 @@ import Web
 import Secrets
 import Core
 import CommonErrors
+import Feedly
 
-class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
+final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
 
 	private let operationQueue = MainThreadOperationQueue()
 	private let folder: Folder

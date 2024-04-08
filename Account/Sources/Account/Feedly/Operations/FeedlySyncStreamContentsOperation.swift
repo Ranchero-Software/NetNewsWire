@@ -12,6 +12,7 @@ import Parser
 import Web
 import Secrets
 import Core
+import Feedly
 
 final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyGetStreamContentsOperationDelegate, FeedlyCheckpointOperationDelegate {
 
@@ -63,15 +64,14 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	func pageOperations(for continuation: String?) -> [MainThreadOperation] {
-		let getPage = FeedlyGetStreamContentsOperation(account: account,
-													   resource: resource,
+		let getPage = FeedlyGetStreamContentsOperation(resource: resource,
 													   service: service,
 													   continuation: continuation,
 													   newerThan: newerThan,
 													   log: log)
 
 		
-		let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: getPage, log: log)
+		let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(parsedItemProvider: getPage, log: log)
 		
 		let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: organiseByFeed, log: log)
 		

@@ -8,6 +8,7 @@
 
 import Foundation
 import os.log
+import Feedly
 
 final class FeedlyFetchIDsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 

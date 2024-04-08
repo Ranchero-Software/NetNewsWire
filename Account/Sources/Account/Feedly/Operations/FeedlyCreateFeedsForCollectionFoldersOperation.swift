@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import Core
+import Feedly
 
 /// Single responsibility is to accurately reflect Collections and their Feeds as Folders and their Feeds.
 final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
@@ -23,7 +24,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	override func run() {
+	public override func run() {
 		defer {
 			didFinish()
 		}

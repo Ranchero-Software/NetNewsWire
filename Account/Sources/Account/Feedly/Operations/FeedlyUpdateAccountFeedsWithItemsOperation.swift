@@ -10,6 +10,7 @@ import Foundation
 import Parser
 import os.log
 import Database
+import Feedly
 
 /// Combine the articles with their feeds for a specific account.
 final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {

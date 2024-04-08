@@ -9,6 +9,7 @@
 import Foundation
 import Web
 import Secrets
+import Feedly
 
 protocol FeedlyAPICallerDelegate: AnyObject {
 	/// Implemented by the `FeedlyAccountDelegate` reauthorize the client with a fresh OAuth token so the client can retry the unauthorized request.
@@ -390,7 +391,7 @@ final class FeedlyAPICaller {
 
 extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 	
-	func addFeed(with feedId: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
+	@MainActor func addFeed(with feedId: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
 		guard !isSuspended else {
 			return DispatchQueue.main.async {
 				completion(.failure(TransportError.suspended))

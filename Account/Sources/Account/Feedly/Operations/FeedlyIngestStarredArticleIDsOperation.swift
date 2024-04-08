@@ -10,6 +10,7 @@ import Foundation
 import os.log
 import SyncDatabase
 import Secrets
+import Feedly
 
 /// Clone locally the remote starred article state.
 ///

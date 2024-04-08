@@ -10,6 +10,7 @@ import Foundation
 import AuthenticationServices
 import Secrets
 import Core
+import Feedly
 
 public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)

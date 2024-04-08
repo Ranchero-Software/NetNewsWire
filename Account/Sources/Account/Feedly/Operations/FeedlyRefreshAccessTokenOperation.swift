@@ -10,6 +10,7 @@ import Foundation
 import os.log
 import Web
 import Secrets
+import Feedly
 
 final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 

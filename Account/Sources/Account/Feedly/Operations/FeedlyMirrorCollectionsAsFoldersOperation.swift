@@ -8,6 +8,7 @@
 
 import Foundation
 import os.log
+import Feedly
 
 protocol FeedlyFeedsAndFoldersProviding {
 	@MainActor var feedsAndFolders: [([FeedlyFeed], Folder)] { get }

@@ -10,6 +10,7 @@ import Foundation
 import os.log
 import Secrets
 import Database
+import Feedly
 
 /// Ensure a status exists for every article id the user might be interested in.
 ///

@@ -11,6 +11,7 @@ import os.log
 import Parser
 import SyncDatabase
 import Secrets
+import Feedly
 
 /// Clone locally the remote unread article state.
 ///
@@ -27,12 +28,12 @@ final class FeedlyIngestUnreadArticleIDsOperation: FeedlyOperation {
 	private var remoteEntryIDs = Set<String>()
 	private let log: OSLog
 	
-	convenience init(account: Account, userID: String, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
+	public convenience init(account: Account, userID: String, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan, log: log)
 	}
 	
-	init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
+	public init(account: Account, resource: FeedlyResourceID, service: FeedlyGetStreamIDsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service

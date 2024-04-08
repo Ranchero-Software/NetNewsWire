@@ -8,6 +8,7 @@
 
 import Foundation
 import Secrets
+import Feedly
 
 extension OAuthAuthorizationClient {
 	

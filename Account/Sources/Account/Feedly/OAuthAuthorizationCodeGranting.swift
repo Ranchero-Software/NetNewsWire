@@ -9,6 +9,7 @@
 import Foundation
 import Web
 import Secrets
+import Feedly
 
 /// Client-specific information for requesting an authorization code grant.
 /// Accounts are responsible for the scope.
