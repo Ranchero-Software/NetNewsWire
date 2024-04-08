@@ -23,7 +23,7 @@ enum CreateSubscriptionResult {
 }
 
 final class FeedbinAPICaller: NSObject {
-	
+
 	struct ConditionalGetKeys {
 		static let subscriptions = "subscriptions"
 		static let tags = "tags"
@@ -101,6 +101,8 @@ final class FeedbinAPICaller: NSObject {
 
 	func retrieveTags() async throws -> [FeedbinTag]? {
 
+		if suspended { throw TransportError.suspended }
+
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
@@ -118,10 +120,6 @@ final class FeedbinAPICaller: NSObject {
 		let payload = FeedbinRenameTag(oldName: oldName, newName: newName)
 		
 		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
 			
 			switch result {
 			case .success:
@@ -246,25 +244,19 @@ final class FeedbinAPICaller: NSObject {
 		}
 	}
 	
-	func deleteSubscription(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteSubscription(subscriptionID: String) async throws {
+
+		if suspended { throw TransportError.suspended }
+
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID).json")
 		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, method: HTTPMethod.delete) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-			
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		
+		try await transport.send(request: request, method: HTTPMethod.delete)
 	}
 	
 	func retrieveTaggings() async throws -> [FeedbinTagging]? {
+
+		if suspended { throw TransportError.suspended }
 
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
@@ -316,25 +308,17 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func deleteTagging(taggingID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteTagging(taggingID: String) async throws {
+
+		if suspended { throw TransportError.suspended }
+
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings/\(taggingID).json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		transport.send(request: request, method: HTTPMethod.delete) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-			
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+
+		try await transport.send(request: request, method: HTTPMethod.delete)
 	}
-	
+
 	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
 		
 		guard !articleIDs.isEmpty else {
@@ -625,7 +609,7 @@ final class FeedbinAPICaller: NSObject {
 
 // MARK: Private
 
-extension FeedbinAPICaller {
+private extension FeedbinAPICaller {
 	
 	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
 		if var conditionalGet = accountMetadata?.conditionalGetInfo {

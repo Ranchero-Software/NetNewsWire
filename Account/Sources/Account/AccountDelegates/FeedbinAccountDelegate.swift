@@ -394,16 +394,16 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				if let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
 					group.enter()
 					refreshProgress.addToNumberOfTasksAndRemaining(1)
-					caller.deleteTagging(taggingID: feedTaggingID) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							DispatchQueue.main.async {
-								self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-							}
-						case .failure(let error):
+
+					Task { @MainActor in
+
+						do {
+							try await caller.deleteTagging(taggingID: feedTaggingID)
+							self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+							group.leave()
+						} catch {
 							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+							group.leave()
 						}
 					}
 				}
@@ -413,23 +413,19 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				if let subscriptionID = feed.externalID {
 					group.enter()
 					refreshProgress.addToNumberOfTasksAndRemaining(1)
-					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							DispatchQueue.main.async {
-								account.clearFeedMetadata(feed)
-							}
-						case .failure(let error):
+
+					Task { @MainActor in
+						do {
+							try await caller.deleteSubscription(subscriptionID: subscriptionID)
+							account.clearFeedMetadata(feed)
+						} catch {
 							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
 						}
+						self.refreshProgress.completeTask()
+						group.leave()
 					}
-					
 				}
-				
 			}
-			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
@@ -1499,24 +1495,23 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			caller.deleteTagging(taggingID: feedTaggingID) { result in
-				self.refreshProgress.completeTask()
-				switch result {
-				case .success:
-					DispatchQueue.main.async {
-						self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						folder.removeFeed(feed)
-						account.addFeedIfNotInAnyFolder(feed)
-						completion(.success(()))
-					}
-				case .failure(let error):
-					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
-						completion(.failure(wrappedError))
-					}
+
+			Task { @MainActor in
+				do {
+					try await caller.deleteTagging(taggingID: feedTaggingID)
+
+					self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+					folder.removeFeed(feed)
+					account.addFeedIfNotInAnyFolder(feed)
+
+					completion(.success(()))
+				} catch {
+
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
 				}
 			}
 		} else {
@@ -1525,7 +1520,6 @@ private extension FeedbinAccountDelegate {
 			}
 			completion(.success(()))
 		}
-		
 	}
 
 	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -1537,28 +1531,25 @@ private extension FeedbinAccountDelegate {
 		}
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					account.clearFeedMetadata(feed)
-					account.removeFeed(feed)
-					if let folders = account.folders {
-						for folder in folders {
-							folder.removeFeed(feed)
-						}
+
+		Task { @MainActor in
+
+			do {
+				try await caller.deleteSubscription(subscriptionID: subscriptionID)
+
+				account.clearFeedMetadata(feed)
+				account.removeFeed(feed)
+				if let folders = account.folders {
+					for folder in folders {
+						folder.removeFeed(feed)
 					}
-					completion(.success(()))
 				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
+				completion(.success(()))
+
+			} catch {
+				let wrappedError = AccountError.wrappedError(error: error, account: account)
+				completion(.failure(wrappedError))
 			}
 		}
-		
 	}
-	
 }
