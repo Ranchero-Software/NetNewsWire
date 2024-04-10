@@ -23,7 +23,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 	case unknown = "An unknown error occurred."
 }
 
-final class FeedbinAccountDelegate: AccountDelegate {
+@MainActor final class FeedbinAccountDelegate: AccountDelegate {
 
 	private let database: SyncDatabase
 	
@@ -92,185 +92,59 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			let wrappedError = AccountError.wrappedError(error: error, account: account)
 			throw wrappedError
 		}
-
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.refreshArticlesAndStatuses(account) { result in
-				switch result {
-				case .success():
-					continuation.resume()
-				case .failure(let error):
-					DispatchQueue.main.async {
-						self.refreshProgress.clear()
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
-						continuation.resume(throwing: wrappedError)
-					}
-				}
-			}
-		}
 	}
 
 	func syncArticleStatus(for account: Account) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			sendArticleStatus(for: account) { result in
-				switch result {
-				case .success:
-					self.refreshArticleStatus(for: account) { result in
-						switch result {
-						case .success:
-							continuation.resume()
-						case .failure(let error):
-							continuation.resume(throwing: error)
-						}
-					}
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
 	}
-	
+
 	public func sendArticleStatus(for account: Account) async throws {
-
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.sendArticleStatus(for: account) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
 		os_log(.debug, log: log, "Sending article statuses...")
 
-		Task { @MainActor in
+		let syncStatuses = (try await self.database.selectForProcessing()) ?? Set<SyncStatus>()
 
-			do {
+		let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
+		let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
+		let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
+		let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
 
-				let syncStatuses = (try await self.database.selectForProcessing()) ?? Set<SyncStatus>()
+		try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+		try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+		try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+		try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
 
-				@MainActor func processStatuses(_ syncStatuses: [SyncStatus]) {
-					let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
-					let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
-					let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
-					let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
-
-					let group = DispatchGroup()
-					var errorOccurred = false
-
-					group.enter()
-					self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) { result in
-						group.leave()
-						if case .failure = result {
-							errorOccurred = true
-						}
-					}
-
-					group.enter()
-					self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) { result in
-						group.leave()
-						if case .failure = result {
-							errorOccurred = true
-						}
-					}
-
-					group.enter()
-					self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) { result in
-						group.leave()
-						if case .failure = result {
-							errorOccurred = true
-						}
-					}
-
-					group.enter()
-					self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) { result in
-						group.leave()
-						if case .failure = result {
-							errorOccurred = true
-						}
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						os_log(.debug, log: self.log, "Done sending article statuses.")
-						if errorOccurred {
-							completion(.failure(FeedbinAccountDelegateError.unknown))
-						} else {
-							completion(.success(()))
-						}
-					}
-				}
-
-				processStatuses(Array(syncStatuses))
-
-			} catch {
-				completion(.failure(error))
-			}
-		}
+		os_log(.debug, log: self.log, "Done sending article statuses.")
 	}
-	
+
 	func refreshArticleStatus(for account: Account) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.refreshArticleStatus(for: account) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-	
-	private func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-
 		os_log(.debug, log: log, "Refreshing article statuses...")
-		
-		let group = DispatchGroup()
-		var errorOccurred = false
 
-		group.enter()
-		caller.retrieveUnreadEntries() { result in
-			switch result {
-			case .success(let articleIDs):
-				self.syncArticleReadState(account: account, articleIDs: articleIDs) {
-					group.leave()
-				}
-			case .failure(let error):
-				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
-				group.leave()
-			}
+		var readStateSyncError: Error? = nil
+		var starredStateSyncError: Error? = nil
+
+		do {
+			let articleIDs = try await caller.retrieveUnreadEntries()
+			await syncArticleReadState(account: account, articleIDs: articleIDs)
+		} catch {
+			readStateSyncError = error
+			os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
 		}
-		
-		group.enter()
-		caller.retrieveStarredEntries() { result in
-			switch result {
-			case .success(let articleIDs):
-				self.syncArticleStarredState(account: account, articleIDs: articleIDs) {
-					group.leave()
-				}
-			case .failure(let error):
-				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
-				group.leave()
-			}
+
+		do {
+			let articleIDs = try await caller.retrieveStarredEntries()
+			await syncArticleStarredState(account: account, articleIDs: articleIDs)
+		} catch {
+			starredStateSyncError = error
+			os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
 		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			if errorOccurred {
-				completion(.failure(FeedbinAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
-			}
+
+		os_log(.debug, log: self.log, "Done refreshing article statuses.")
+		if let error = readStateSyncError ?? starredStateSyncError {
+			throw error
 		}
 	}
 	
@@ -343,120 +217,76 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func removeFolder(for account: Account, with folder: Folder) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.removeFolder(for: account, with: folder) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
 			account.removeFolder(folder: folder)
-			completion(.success(()))
 			return
 		}
 		
-		let group = DispatchGroup()
-		
-		for feed in folder.topLevelFeeds {
-			
+		let feeds = folder.topLevelFeeds
+		let numberOfFeeds = feeds.count
+		refreshProgress.addToNumberOfTasksAndRemaining(numberOfFeeds)
+
+		for feed in feeds {
+
 			if feed.folderRelationship?.count ?? 0 > 1 {
-				
+
 				if let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
-					group.enter()
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
-
-					Task { @MainActor in
-
-						do {
-							try await caller.deleteTagging(taggingID: feedTaggingID)
-							self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-							group.leave()
-						} catch {
-							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
-							group.leave()
-						}
+					do {
+						try await caller.deleteTagging(taggingID: feedTaggingID)
+						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+					} catch {
+						os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						throw error
 					}
 				}
-				
 			} else {
-				
-				if let subscriptionID = feed.externalID {
-					group.enter()
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
 
-					Task { @MainActor in
-						do {
-							try await caller.deleteSubscription(subscriptionID: subscriptionID)
-							account.clearFeedMetadata(feed)
-						} catch {
-							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
-						}
-						self.refreshProgress.completeTask()
-						group.leave()
+				if let subscriptionID = feed.externalID {
+
+					do {
+						try await caller.deleteSubscription(subscriptionID: subscriptionID)
+						account.clearFeedMetadata(feed)
+					} catch {
+						os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						throw error
 					}
 				}
 			}
+
+			refreshProgress.completeTask()
 		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			account.removeFolder(folder: folder)
-			completion(.success(()))
-		}
-		
+
+		account.removeFolder(folder: folder)
 	}
 	
+	@discardableResult
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.createFeed(for: account, url: url, name: name, container: container, validateFeed: validateFeed) { result in
-				switch result {
-				case .success(let feed):
-					continuation.resume(returning: feed)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
-
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		defer { refreshProgress.completeTask() }
 
-		Task { @MainActor in
-			
-			defer {
-				self.refreshProgress.completeTask()
+		do {
+			let subResult = try await caller.createSubscription(url: url)
+
+			switch subResult {
+
+			case .created(let subscription):
+				return try await createFeed(account: account, subscription: subscription, name: name, container: container)
+
+			case .multipleChoice(let choices):
+				return try await decideBestFeedChoice(account: account, url: url, name: name, container: container, choices: choices)
+
+			case .alreadySubscribed:
+				throw AccountError.createErrorAlreadySubscribed
+
+			case .notFound:
+				throw AccountError.createErrorNotFound
 			}
 
-			do {
-				let subResult = try await caller.createSubscription(url: url)
-
-				switch subResult {
-				case .created(let subscription):
-					self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
-				case .multipleChoice(let choices):
-					self.decideBestFeedChoice(account: account, url: url, name: name, container: container, choices: choices, completion: completion)
-				case .alreadySubscribed:
-					completion(.failure(AccountError.createErrorAlreadySubscribed))
-				case .notFound:
-					completion(.failure(AccountError.createErrorNotFound))
-				}
-
-			} catch {
-				let wrappedError = AccountError.wrappedError(error: error, account: account)
-				completion(.failure(wrappedError))
-			}
+		} catch {
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
 		}
 	}
 
@@ -523,122 +353,42 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.restoreFeed(for: account, feed: feed, container: container) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
-
-			Task { @MainActor in
-
-				do {
-					try await account.addFeed(existingFeed, to: container)
-					completion(.success(()))
-				} catch {
-					completion(.failure(error))
-				}
-			}
+			try await account.addFeed(existingFeed, to: container)
 		} else {
-			createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
-				switch result {
-				case .success:
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+			try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
 
 	func restoreFolder(for account: Account, folder: Folder) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.restoreFolder(for: account, folder: folder) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		let group = DispatchGroup()
-		
 		for feed in folder.topLevelFeeds {
-			
+
 			folder.topLevelFeeds.remove(feed)
-			
-			group.enter()
-			restoreFeed(for: account, feed: feed, container: folder) { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
-				}
-			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			account.addFolder(folder)
-			completion(.success(()))
-		}
-		
-	}
-	
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-
-		try await withCheckedThrowingContinuation { continuation in
-			self.markArticles(for: account, articles: articles, statusKey: statusKey, flag: flag) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		Task { @MainActor in
 
 			do {
-
-				let articles = try await account.update(articles: articles, statusKey: statusKey, flag: flag)
-
-				let syncStatuses = articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
-
-				try? await self.database.insertStatuses(syncStatuses)
-
-				if let count = try? await self.database.selectPendingCount(), count > 100 {
-					self.sendArticleStatus(for: account) { _ in }
-				}
-				completion(.success(()))
-
+				try await restoreFeed(for: account, feed: feed, container: folder)
 			} catch {
-				completion(.failure(error))
+				os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+				throw error
 			}
+		}
+
+		account.addFolder(folder)
+	}
+
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+
+		let articles = try await account.update(articles: articles, statusKey: statusKey, flag: flag)
+
+		let syncStatuses = articles.map { article in
+			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		}
+
+		try? await database.insertStatuses(syncStatuses)
+
+		if let count = try? await database.selectPendingCount(), count > 100 {
+			try? await sendArticleStatus(for: account)
 		}
 	}
 
@@ -700,15 +450,15 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		DispatchQueue.main.async {
-			
+
 			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
-				
+
 				Task { @MainActor in
 
 					os_log(.debug, log: self.log, "Checking status of OPML import...")
-					
+
 					do {
 						let importResult = try await self.caller.retrieveOPMLImportResult(importID: opmlImportResultID)
 
@@ -727,7 +477,7 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 	}
-	
+
 	func refreshAccount(_ account: Account) async throws {
 
 		let tags = try await caller.retrieveTags()
@@ -748,43 +498,12 @@ private extension FeedbinAccountDelegate {
 		refreshProgress.completeTask()
 	}
 
-	func refreshArticlesAndStatuses(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		self.sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						
-						self.refreshArticles(account) { result in
-							switch result {
-							case .success:
-
-								Task { @MainActor in
-									do {
-										try await self.refreshMissingArticles(account)
-										self.refreshProgress.clear()
-										completion(.success(()))
-									} catch {
-										completion(.failure(error))
-									}
-								}
-								
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-						
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				}
-				
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+	func refreshArticlesAndStatuses(_ account: Account) async throws {
+		
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
+		try await refreshArticles(account)
+		try await refreshMissingArticles(account)
 	}
 
 	// This function can be deleted if Feedbin updates their taggings.json service to
@@ -978,48 +697,30 @@ private extension FeedbinAccountDelegate {
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: [SyncStatus],
-							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
-							 completion: @escaping ((Result<Void, Error>) -> Void)) {
-		
+	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int]) async throws -> Void) async throws {
+
 		guard !statuses.isEmpty else {
-			completion(.success(()))
 			return
 		}
 		
-		let group = DispatchGroup()
-		var errorOccurred = false
-		
+		var localError: Error?
+
 		let articleIDs = statuses.compactMap { Int($0.articleID) }
 		let articleIDGroups = articleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
 			
-			group.enter()
-			apiCall(articleIDGroup) { result in
-				switch result {
-				case .success:
-					Task {
-						try? await self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
-						group.leave()
-					}
-				case .failure(let error):
-					errorOccurred = true
-					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
-					Task {
-						try? await self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
-						group.leave()
-					}
-				}
+			do {
+				try await apiCall(articleIDGroup)
+				try? await database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
+			} catch {
+				try? await database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
+				localError = error
+				os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
 			}
-			
 		}
 		
-		group.notify(queue: DispatchQueue.main) {
-			if errorOccurred {
-				completion(.failure(FeedbinAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
-			}
+		if let localError {
+			throw localError
 		}
 	}
 	
@@ -1050,9 +751,10 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice]) async throws -> Feed {
+
 		var orderFound = 0
-		
+
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
 			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
 			orderFound = orderFound + 1
@@ -1061,132 +763,49 @@ private extension FeedbinAccountDelegate {
 		}
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
-			createFeed(for: account, url: bestSpecifier.urlString, name: name, container: container, validateFeed: true, completion: completion)
+			return try await createFeed(for: account, url: bestSpecifier.urlString, name: name, container: container, validateFeed: true)
 		} else {
-			DispatchQueue.main.async {
-				completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-			}
-		}
-	}
-	
-	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-
-		Task { @MainActor in
-
-			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
-			feed.externalID = String(sub.subscriptionID)
-			feed.iconURL = sub.jsonFeed?.icon
-			feed.faviconURL = sub.jsonFeed?.favicon
-
-			do {
-				try await account.addFeed(feed, to: container)
-				if let name {
-					try await self.renameFeed(for: account, with: feed, to: name)
-				}
-				self.initialFeedDownload(account: account, feed: feed, completion: completion)
-			} catch {
-				completion(.failure(error))
-			}
+			throw FeedbinAccountDelegateError.invalidParameter
 		}
 	}
 
-	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container) async throws -> Feed {
 
-		// refreshArticles is being reused and will clear one of the tasks for us
-		refreshProgress.addToNumberOfTasksAndRemaining(4)
+		let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
+		feed.externalID = String(sub.subscriptionID)
+		feed.iconURL = sub.jsonFeed?.icon
+		feed.faviconURL = sub.jsonFeed?.favicon
 
-		// Download the initial articles
-		self.caller.retrieveEntries(feedID: feed.feedID) { result in
-			self.refreshProgress.completeTask()
-
-			switch result {
-			case .success(let (entries, page)):
-
-				Task { @MainActor in
-
-					do {
-						try await self.processEntries(account: account, entries: entries)
-					} catch {
-						completion(.failure(error))
-						return
-					}
-
-					self.refreshArticleStatus(for: account) { result in
-						switch result {
-						case .success:
-
-							self.refreshArticles(account, page: page, updateFetchDate: nil) { result in
-								switch result {
-								case .success:
-
-									self.refreshProgress.completeTask()
-
-									Task { @MainActor in
-										do {
-											try await self.refreshMissingArticles(account)
-											completion(.success(feed))
-										} catch {
-											completion(.failure(error))
-										}
-									}
-
-								case .failure(let error):
-									completion(.failure(error))
-								}
-							}
-
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				}
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		try await account.addFeed(feed, to: container)
+		if let name {
+			try await self.renameFeed(for: account, with: feed, to: name)
 		}
+		return try await initialFeedDownload(account: account, feed: feed)
 	}
-	
-	func refreshArticles(_ account: Account, completion: @escaping VoidResultCompletionBlock) {
+
+	func initialFeedDownload( account: Account, feed: Feed) async throws -> Feed {
+
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		defer { refreshProgress.completeTask() }
+
+		let (entries, page) = try await caller.retrieveEntries(feedID: feed.feedID)
+		try await processEntries(account: account, entries: entries)
+		try await refreshArticleStatus(for: account)
+		try await refreshArticles(account, page: page, updateFetchDate: nil)
+		try await refreshMissingArticles(account)
+
+		return feed
+	}
+
+	func refreshArticles(_ account: Account) async throws {
 
 		os_log(.debug, log: log, "Refreshing articles...")
 
-		caller.retrieveEntries() { result in
+		let (entries, page, updateFetchDate, _) = try await caller.retrieveEntries()
+		try await self.processEntries(account: account, entries: entries)
+		try await refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
 
-			switch result {
-			case .success(let (entries, page, updateFetchDate, lastPageNumber)):
-
-				if let last = lastPageNumber {
-					self.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
-				}
-
-				Task { @MainActor in
-
-					defer {
-						self.refreshProgress.completeTask()
-					}
-
-					do {
-						try await self.processEntries(account: account, entries: entries)
-					} catch {
-						completion(.failure(error))
-						return
-					}
-					self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate) { result in
-						os_log(.debug, log: self.log, "Done refreshing articles.")
-						switch result {
-						case .success:
-							completion(.success(()))
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				}
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		os_log(.debug, log: self.log, "Done refreshing articles.")
 	}
 
 	func refreshMissingArticles(_ account: Account) async throws {
@@ -1215,42 +834,19 @@ private extension FeedbinAccountDelegate {
 		os_log(.debug, log: self.log, "Done refreshing missing articles.")
 	}
 
-	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard let page = page else {
+	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?) async throws {
+
+		guard let page else {
 			if let lastArticleFetch = updateFetchDate {
-				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
-				self.accountMetadata?.lastArticleFetchEndTime = Date()
+				accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
+				accountMetadata?.lastArticleFetchEndTime = Date()
 			}
-			completion(.success(()))
 			return
 		}
 
-		caller.retrieveEntries(page: page) { result in
-
-			switch result {
-			case .success(let (entries, nextPage)):
-
-				Task { @MainActor in
-
-					defer {
-						self.refreshProgress.completeTask()
-					}
-
-					do {
-						try await self.processEntries(account: account, entries: entries)
-
-					} catch {
-						completion(.failure(error))
-					}
-					try await self.processEntries(account: account, entries: entries)
-
-					self.refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate, completion: completion)
-				}
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		let (entries, nextPage) = try await caller.retrieveEntries(page: page)
+		try await processEntries(account: account, entries: entries)
+		try await refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate)
 	}
 
 	func processEntries(account: Account, entries: [FeedbinEntry]?) async throws {
@@ -1275,74 +871,62 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func syncArticleReadState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
+	func syncArticleReadState(account: Account, articleIDs: [Int]?) async {
+
+		guard let articleIDs, !articleIDs.isEmpty else {
 			return
 		}
 
-		Task { @MainActor in
-			do {
+		do {
 
-				let pendingArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+			let pendingArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 
-				let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
+			let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+			let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
 
-				guard let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs() else {
-					completion()
-					return
-				}
-
-				// Mark articles as unread
-				let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-				try? await account.markAsUnread(deltaUnreadArticleIDs)
-
-				// Mark articles as read
-				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-				try? await account.markAsRead(deltaReadArticleIDs)
-
-				completion()
-
-			} catch {
-				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
+			guard let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs() else {
+				return
 			}
+
+			// Mark articles as unread
+			let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+			try? await account.markAsUnread(deltaUnreadArticleIDs)
+
+			// Mark articles as read
+			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
+			try? await account.markAsRead(deltaReadArticleIDs)
+
+		} catch {
+			os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
 		}
 	}
-	
-	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		
-		guard let articleIDs else {
-			completion()
+
+	func syncArticleStarredState(account: Account, articleIDs: [Int]?) async {
+
+		guard let articleIDs, !articleIDs.isEmpty else {
 			return
 		}
 
-		Task { @MainActor in
+		do {
+			let pendingArticleIDs = (try await self.database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 
-			do {
-				let pendingArticleIDs = (try await self.database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+			let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
+			let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
 
-				let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
-
-				guard let currentStarredArticleIDs = try await account.fetchStarredArticleIDs() else {
-					completion()
-					return
-				}
-
-				// Mark articles as starred
-				let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-				try? await account.markAsStarred(deltaStarredArticleIDs)
-
-				// Mark articles as unstarred
-				let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
-				try? await account.markAsUnstarred(deltaUnstarredArticleIDs)
-
-				completion()
-
-			} catch {
-				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
+			guard let currentStarredArticleIDs = try await account.fetchStarredArticleIDs() else {
+				return
 			}
+
+			// Mark articles as starred
+			let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+			try? await account.markAsStarred(deltaStarredArticleIDs)
+
+			// Mark articles as unstarred
+			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
+			try? await account.markAsUnstarred(deltaUnstarredArticleIDs)
+
+		} catch {
+			os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
 		}
 	}
 
