@@ -114,20 +114,15 @@ final class FeedbinAPICaller: NSObject {
 		return tags
 	}
 
-	func renameTag(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameTag(oldName: String, newName: String) async throws {
+
+		if suspended { throw TransportError.suspended }
+
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinRenameTag(oldName: oldName, newName: newName)
 		
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 	
 	func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
@@ -145,103 +140,77 @@ final class FeedbinAPICaller: NSObject {
 		return subscriptions
 	}
 	
-	func createSubscription(url: String, completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
-		
+	func createSubscription(url: String) async throws -> CreateSubscriptionResult {
+
+		if suspended { throw TransportError.suspended }
+
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
 
 		var request = URLRequest(url: callComponents.url!, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		
+
 		let payload: Data
 		do {
 			payload = try JSONEncoder().encode(FeedbinCreateSubscription(feedURL: url))
 		} catch {
-			completion(.failure(error))
-			return
+			throw error
 		}
-		
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-			
-			switch result {
-			case .success(let (response, data)):
-				
-				switch response.forcedStatusCode {
-				case 201:
-					guard let subData = data else {
-						completion(.failure(TransportError.noData))
-						break
-					}
-					do {
-						let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: subData)
-						completion(.success(.created(subscription)))
-					} catch {
-						completion(.failure(error))
-					}
-				case 300:
-					guard let subData = data else {
-						completion(.failure(TransportError.noData))
-						break
-					}
-					do {
-						let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: subData)
-						completion(.success(.multipleChoice(subscriptions)))
-					} catch {
-						completion(.failure(error))
-					}
-				case 302:
-					completion(.success(.alreadySubscribed))
-				default:
-					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
+
+		do {
+			let (response, data) = try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
+
+			switch response.forcedStatusCode {
+
+			case 201:
+				guard let subData = data else {
+					throw TransportError.noData
 				}
-				
-			case .failure(let error):
-				
-				switch error {
-				case TransportError.httpError(let status):
-					switch status {
-					case 401:
-						// I don't know why we get 401's here.  This looks like a Feedbin bug, but it only happens
-						// when you are already subscribed to the feed.
-						completion(.success(.alreadySubscribed))
-					case 404:
-						completion(.success(.notFound))
-					default:
-						completion(.failure(error))
-					}
-				default:
-					completion(.failure(error))
+				let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: subData)
+				return .created(subscription)
+
+			case 300:
+				guard let subData = data else {
+					throw TransportError.noData
 				}
-				
+				let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: subData)
+				return .multipleChoice(subscriptions)
+
+			case 302:
+				return .alreadySubscribed
+
+			default:
+				throw TransportError.httpError(status: response.forcedStatusCode)
 			}
-			
+		} catch {
+
+			switch error {
+			case TransportError.httpError(let status):
+				switch status {
+				case 401:
+					// I don't know why we get 401's here.  This looks like a Feedbin bug, but it only happens
+					// when you are already subscribed to the feed.
+					return .alreadySubscribed
+				case 404:
+					return .notFound
+				default:
+					throw error
+				}
+			default:
+				throw error
+			}
 		}
-		
 	}
-	
-	func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func renameSubscription(subscriptionID: String, newName: String) async throws {
+
+		if suspended { throw TransportError.suspended }
+
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID)/update.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUpdateSubscription(title: newName)
 		
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-			
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 	
 	func deleteSubscription(subscriptionID: String) async throws {
@@ -269,43 +238,26 @@ final class FeedbinAPICaller: NSObject {
 		return taggings
 	}
 
-	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
-		
+	func createTagging(feedID: Int, name: String) async throws -> Int {
+
+		if suspended { throw TransportError.suspended }
+
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		let payload: Data
-		do {
-			payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		transport.send(request: request, method: HTTPMethod.post, payload:payload) { result in
-			
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
+		let payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
 
-			switch result {
-			case .success(let (response, _)):
-				if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
-					let lowerBound = taggingLocation.range(of: "v2/taggings/")?.upperBound,
-					let upperBound = taggingLocation.range(of: ".json")?.lowerBound,
-					let taggingID = Int(taggingLocation[lowerBound..<upperBound]) {
-						completion(.success(taggingID))
-				} else {
-					completion(.failure(TransportError.noData))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
+		let (response, _) = try await transport.send(request: request, method: HTTPMethod.post, payload:payload)
+
+		if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
+		   let lowerBound = taggingLocation.range(of: "v2/taggings/")?.upperBound,
+		   let upperBound = taggingLocation.range(of: ".json")?.lowerBound,
+		   let taggingID = Int(taggingLocation[lowerBound..<upperBound]) {
+			return taggingID
+		} else {
+			throw TransportError.noData
 		}
-		
 	}
 
 	func deleteTagging(taggingID: String) async throws {
@@ -319,11 +271,12 @@ final class FeedbinAPICaller: NSObject {
 		try await transport.send(request: request, method: HTTPMethod.delete)
 	}
 
-	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
-		
+	func retrieveEntries(articleIDs: [String]) async throws -> [FeedbinEntry]? {
+
+		if suspended { throw TransportError.suspended }
+
 		guard !articleIDs.isEmpty else {
-			completion(.success(([FeedbinEntry]())))
-			return
+			return nil
 		}
 		
 		let concatIDs = articleIDs.reduce("") { param, articleID in return param + ",\(articleID)" }
@@ -337,22 +290,8 @@ final class FeedbinAPICaller: NSObject {
 			])
 		let request = URLRequest(url: url!, credentials: credentials)
 		
-		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
-			
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (_, entries)):
-				completion(.success((entries)))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
+		let (_, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		return entries
 	}
 
 	func retrieveEntries(feedID: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {

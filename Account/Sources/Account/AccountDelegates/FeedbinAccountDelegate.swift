@@ -321,44 +321,24 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.renameFolder(for: account, with: folder, to: name) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-
 		guard folder.hasAtLeastOneFeed() else {
 			folder.name = name
 			return
 		}
-		
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
+		defer {
 			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					self.renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
-					folder.name = name
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
 		}
-		
+
+		do {
+			try await caller.renameTag(oldName: folder.name ?? "", newName: name)
+			renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
+			folder.name = name
+		} catch {
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
+		}
 	}
 
 	func removeFolder(for account: Account, with folder: Folder) async throws {
@@ -452,176 +432,95 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	private func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.createSubscription(url: url) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success(let subResult):
+
+		Task { @MainActor in
+			
+			defer {
+				self.refreshProgress.completeTask()
+			}
+
+			do {
+				let subResult = try await caller.createSubscription(url: url)
+
 				switch subResult {
 				case .created(let subscription):
 					self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
 				case .multipleChoice(let choices):
 					self.decideBestFeedChoice(account: account, url: url, name: name, container: container, choices: choices, completion: completion)
 				case .alreadySubscribed:
-					DispatchQueue.main.async {
-						completion(.failure(AccountError.createErrorAlreadySubscribed))
-					}
+					completion(.failure(AccountError.createErrorAlreadySubscribed))
 				case .notFound:
-					DispatchQueue.main.async {
-						completion(.failure(AccountError.createErrorNotFound))
-					}
+					completion(.failure(AccountError.createErrorNotFound))
 				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
 
+			} catch {
+				let wrappedError = AccountError.wrappedError(error: error, account: account)
+				completion(.failure(wrappedError))
+			}
 		}
-		
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.renameFeed(for: account, with: feed, to: name) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-			return
+			throw FeedbinAccountDelegateError.invalidParameter
 		}
-		
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.renameSubscription(subscriptionID: subscriptionID, newName: name) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					feed.editedName = name
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
+		defer { refreshProgress.completeTask() }
+
+		do {
+			try await caller.renameSubscription(subscriptionID: subscriptionID, newName: name)
+			feed.editedName = name
+		} catch {
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
 		}
-		
 	}
 
 	func removeFeed(for account: Account, with feed: Feed, from container: any Container) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.removeFeed(for: account, with: feed, from: container) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if feed.folderRelationship?.count ?? 0 > 1 {
-			deleteTagging(for: account, with: feed, from: container, completion: completion)
+			try await deleteTagging(for: account, with: feed, from: container)
 		} else {
-			deleteSubscription(for: account, with: feed, from: container, completion: completion)
+			try await deleteSubscription(for: account, with: feed, from: container)
 		}
 	}
-	
+
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.moveFeed(for: account, with: feed, from: from, to: to) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if from is Account {
-			addFeed(for: account, with: feed, to: to, completion: completion)
+			try await addFeed(for: account, with: feed, to: to)
 		} else {
-			deleteTagging(for: account, with: feed, from: from) { result in
-				switch result {
-				case .success:
-					self.addFeed(for: account, with: feed, to: to, completion: completion)
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+			try await deleteTagging(for: account, with: feed, from: from)
+			try await addFeed(for: account, with: feed, to: to)
 		}
 	}
 
 	func addFeed(for account: Account, with feed: Feed, to container: any Container) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.addFeed(for: account, with: feed, to: container) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
+
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
-				self.refreshProgress.completeTask()
-				switch result {
-				case .success(let taggingID):
-					DispatchQueue.main.async {
-						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
-						account.removeFeed(feed)
-						folder.addFeed(feed)
-						completion(.success(()))
-					}
-				case .failure(let error):
-					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
-						completion(.failure(wrappedError))
-					}
-				}
+			defer { refreshProgress.completeTask() }
+
+			do {
+				let taggingID = try await caller.createTagging(feedID: feedID, name: folder.name ?? "")
+
+				saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
+				account.removeFeed(feed)
+				folder.addFeed(feed)
+			} catch {
+				let wrappedError = AccountError.wrappedError(error: error, account: account)
+				throw wrappedError
 			}
-		} else {
-			DispatchQueue.main.async {
-				if let account = container as? Account {
-					account.addFeedIfNotInAnyFolder(feed)
-				}
-				completion(.success(()))
-			}
+
+		} else if let account = container as? Account {
+			account.addFeedIfNotInAnyFolder(feed)
 		}
-		
 	}
-	
+
 	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 
 		try await withCheckedThrowingContinuation { continuation in
@@ -862,16 +761,12 @@ private extension FeedbinAccountDelegate {
 							switch result {
 							case .success:
 
-								self.refreshMissingArticles(account) { result in
-									switch result {
-									case .success:
-										
-										DispatchQueue.main.async {
-											self.refreshProgress.clear()
-											completion(.success(()))
-										}
-										
-									case .failure(let error):
+								Task { @MainActor in
+									do {
+										try await self.refreshMissingArticles(account)
+										self.refreshProgress.clear()
+										completion(.success(()))
+									} catch {
 										completion(.failure(error))
 									}
 								}
@@ -1203,95 +1098,87 @@ private extension FeedbinAccountDelegate {
 		// Download the initial articles
 		self.caller.retrieveEntries(feedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
-			
+
 			switch result {
 			case .success(let (entries, page)):
-				
-				self.processEntries(account: account, entries: entries) { error in
 
-					MainActor.assumeIsolated {
-					if let error = error {
+				Task { @MainActor in
+
+					do {
+						try await self.processEntries(account: account, entries: entries)
+					} catch {
 						completion(.failure(error))
 						return
 					}
 
-						self.refreshArticleStatus(for: account) { result in
-							switch result {
-							case .success:
-								
-								self.refreshArticles(account, page: page, updateFetchDate: nil) { result in
-									switch result {
-									case .success:
-										
-										self.refreshProgress.completeTask()
-										self.refreshMissingArticles(account) { result in
-											switch result {
-											case .success:
-												
-												self.refreshProgress.completeTask()
-												DispatchQueue.main.async {
-													completion(.success(feed))
-												}
-												
-											case .failure(let error):
-												completion(.failure(error))
-											}
-											
+					self.refreshArticleStatus(for: account) { result in
+						switch result {
+						case .success:
+
+							self.refreshArticles(account, page: page, updateFetchDate: nil) { result in
+								switch result {
+								case .success:
+
+									self.refreshProgress.completeTask()
+
+									Task { @MainActor in
+										do {
+											try await self.refreshMissingArticles(account)
+											completion(.success(feed))
+										} catch {
+											completion(.failure(error))
 										}
-										
-									case .failure(let error):
-										completion(.failure(error))
 									}
-									
+
+								case .failure(let error):
+									completion(.failure(error))
 								}
-								
-							case .failure(let error):
-								completion(.failure(error))
 							}
+
+						case .failure(let error):
+							completion(.failure(error))
 						}
 					}
 				}
-				
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
- 
 	}
 	
 	func refreshArticles(_ account: Account, completion: @escaping VoidResultCompletionBlock) {
 
 		os_log(.debug, log: log, "Refreshing articles...")
-		
+
 		caller.retrieveEntries() { result in
-			
+
 			switch result {
 			case .success(let (entries, page, updateFetchDate, lastPageNumber)):
-				
+
 				if let last = lastPageNumber {
 					self.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
 				}
-				
-				self.processEntries(account: account, entries: entries) { error in
 
-					MainActor.assumeIsolated {
+				Task { @MainActor in
 
+					defer {
 						self.refreshProgress.completeTask()
+					}
 
-						if let error = error {
+					do {
+						try await self.processEntries(account: account, entries: entries)
+					} catch {
+						completion(.failure(error))
+						return
+					}
+					self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate) { result in
+						os_log(.debug, log: self.log, "Done refreshing articles.")
+						switch result {
+						case .success:
+							completion(.success(()))
+						case .failure(let error):
 							completion(.failure(error))
-							return
-						}
-
-						self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate) { result in
-							os_log(.debug, log: self.log, "Done refreshing articles.")
-							switch result {
-							case .success:
-								completion(.success(()))
-							case .failure(let error):
-								completion(.failure(error))
-							}
 						}
 					}
 				}
@@ -1302,62 +1189,30 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func refreshMissingArticles(_ account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func refreshMissingArticles(_ account: Account) async throws {
+
 		os_log(.debug, log: log, "Refreshing missing articles...")
 
-		Task { @MainActor in
+		defer {
+			refreshProgress.completeTask()
+		}
+
+		let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() ?? Set<String>()
+
+		let articleIDs = Array(fetchedArticleIDs)
+		let chunkedArticleIDs = articleIDs.chunked(into: 100)
+
+		for chunk in chunkedArticleIDs {
 
 			do {
-				let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() ?? Set<String>()
-
-				let group = DispatchGroup()
-				var errorOccurred = false
-
-				let articleIDs = Array(fetchedArticleIDs)
-				let chunkedArticleIDs = articleIDs.chunked(into: 100)
-
-				for chunk in chunkedArticleIDs {
-					group.enter()
-					self.caller.retrieveEntries(articleIDs: chunk) { result in
-
-						switch result {
-						case .success(let entries):
-
-							self.processEntries(account: account, entries: entries) { error in
-
-								Task { @MainActor in
-
-									group.leave()
-									if error != nil {
-										errorOccurred = true
-									}
-								}
-							}
-
-						case .failure(let error):
-							errorOccurred = true
-							os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
-							group.leave()
-						}
-					}
-				}
-
-				group.notify(queue: DispatchQueue.main) {
-					Task { @MainActor in
-						self.refreshProgress.completeTask()
-						os_log(.debug, log: self.log, "Done refreshing missing articles.")
-						if errorOccurred {
-							completion(.failure(FeedbinAccountDelegateError.unknown))
-						} else {
-							completion(.success(()))
-						}
-					}
-				}
+				let entries = try await self.caller.retrieveEntries(articleIDs: chunk)
+				try await self.processEntries(account: account, entries: entries)
 			} catch {
-				self.refreshProgress.completeTask()
-				completion(.failure(error))
+				os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
 			}
 		}
+
+		os_log(.debug, log: self.log, "Done refreshing missing articles.")
 	}
 
 	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -1369,23 +1224,27 @@ private extension FeedbinAccountDelegate {
 			completion(.success(()))
 			return
 		}
-		
+
 		caller.retrieveEntries(page: page) { result in
-			
+
 			switch result {
 			case .success(let (entries, nextPage)):
-				
-				self.processEntries(account: account, entries: entries) { error in
-					MainActor.assumeIsolated {
+
+				Task { @MainActor in
+
+					defer {
 						self.refreshProgress.completeTask()
-
-						if let error = error {
-							completion(.failure(error))
-							return
-						}
-
-						self.refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate, completion: completion)
 					}
+
+					do {
+						try await self.processEntries(account: account, entries: entries)
+
+					} catch {
+						completion(.failure(error))
+					}
+					try await self.processEntries(account: account, entries: entries)
+
+					self.refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate, completion: completion)
 				}
 
 			case .failure(let error):
@@ -1394,19 +1253,12 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: @escaping DatabaseCompletionBlock) {
-		
+	func processEntries(account: Account, entries: [FeedbinEntry]?) async throws {
+
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 
-		Task { @MainActor in
-			do {
-				try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
-				completion(nil)
-			} catch {
-				completion(.suspended)
-			}
-		}
+		try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 
 	func mapEntriesToParsedItems(entries: [FeedbinEntry]?) -> Set<ParsedItem> {
@@ -1494,62 +1346,54 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteTagging(for account: Account, with feed: Feed, from container: Container?) async throws {
 
 		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
+
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			defer { refreshProgress.completeTask() }
 
-			Task { @MainActor in
-				do {
-					try await caller.deleteTagging(taggingID: feedTaggingID)
+			do {
+				try await caller.deleteTagging(taggingID: feedTaggingID)
 
-					self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-					folder.removeFeed(feed)
-					account.addFeedIfNotInAnyFolder(feed)
-
-					completion(.success(()))
-				} catch {
-
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
+				clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+				folder.removeFeed(feed)
+				account.addFeedIfNotInAnyFolder(feed)
+			} catch {
+				let wrappedError = AccountError.wrappedError(error: error, account: account)
+				throw wrappedError
 			}
 		} else {
 			if let account = container as? Account {
 				account.removeFeed(feed)
 			}
-			completion(.success(()))
 		}
 	}
 
-	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?) async throws {
+
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-			return
+			throw FeedbinAccountDelegateError.invalidParameter
 		}
-		
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		defer { refreshProgress.completeTask() }
 
-		Task { @MainActor in
+		do {
+			try await caller.deleteSubscription(subscriptionID: subscriptionID)
 
-			do {
-				try await caller.deleteSubscription(subscriptionID: subscriptionID)
-
-				account.clearFeedMetadata(feed)
-				account.removeFeed(feed)
-				if let folders = account.folders {
-					for folder in folders {
-						folder.removeFeed(feed)
-					}
+			account.clearFeedMetadata(feed)
+			account.removeFeed(feed)
+			if let folders = account.folders {
+				for folder in folders {
+					folder.removeFeed(feed)
 				}
-				completion(.success(()))
-
-			} catch {
-				let wrappedError = AccountError.wrappedError(error: error, account: account)
-				completion(.failure(wrappedError))
 			}
+
+		} catch {
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
 		}
 	}
 }
