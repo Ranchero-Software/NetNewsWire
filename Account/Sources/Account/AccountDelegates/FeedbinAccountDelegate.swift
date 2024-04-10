@@ -40,11 +40,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 		}
 	}
 	
-	weak var accountMetadata: AccountMetadata? {
-		didSet {
-			caller.accountMetadata = accountMetadata
-		}
-	}
+	weak var accountMetadata: AccountMetadata?
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
@@ -73,9 +69,9 @@ public enum FeedbinAccountDelegateError: String, Error {
 			}
 			
 			caller = FeedbinAPICaller(transport: URLSession(configuration: sessionConfiguration))
-			
 		}
-		
+
+		caller.delegate = self
 	}
 		
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
@@ -979,5 +975,21 @@ private extension FeedbinAccountDelegate {
 			let wrappedError = AccountError.wrappedError(error: error, account: account)
 			throw wrappedError
 		}
+	}
+}
+
+extension FeedbinAccountDelegate: FeedbinAPICallerDelegate {
+
+	@MainActor var conditionalGetInfo: [String: HTTPConditionalGetInfo] {
+		get {
+			accountMetadata?.conditionalGetInfo ?? [String: HTTPConditionalGetInfo]()
+		}
+		set {
+			accountMetadata?.conditionalGetInfo = newValue
+		}
+	}
+
+	@MainActor var lastArticleFetchStartTime: Date? {
+		accountMetadata?.lastArticleFetchStartTime
 	}
 }
