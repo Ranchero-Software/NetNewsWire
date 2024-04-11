@@ -183,6 +183,28 @@ private struct CallbackRecord {
 	}
 }
 
+public struct DownloadData: Sendable {
+
+	public let data: Data?
+	public let response: URLResponse?
+}
+
+@MainActor public func downloadUsingCache(_ url: URL) async throws -> DownloadData {
+
+	precondition(Thread.isMainThread)
+
+	return try await withCheckedThrowingContinuation { continuation in
+		downloadUsingCache(url) { data, response, error in
+			if let error {
+				continuation.resume(throwing: error)
+			} else {
+				let downloadData = DownloadData(data: data, response: response)
+				continuation.resume(returning: downloadData)
+			}
+		}
+	}
+}
+
 @MainActor public func downloadUsingCache(_ url: URL, _ completion: @escaping OneShotDownloadCallback) {
 	precondition(Thread.isMainThread)
 	DownloadWithCacheManager.shared.download(url, completion)
