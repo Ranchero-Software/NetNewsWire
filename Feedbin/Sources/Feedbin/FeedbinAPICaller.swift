@@ -14,7 +14,6 @@ import Foundation
 import FoundationExtras
 import Web
 import Secrets
-import Feedbin
 
 public enum CreateSubscriptionResult: Sendable {
 	case created(FeedbinSubscription)
