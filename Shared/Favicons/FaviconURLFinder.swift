@@ -13,7 +13,7 @@ import UniformTypeIdentifiers
 
 // The favicon URLs may be specified in the head section of the home page.
 
-struct FaviconURLFinder {
+@MainActor struct FaviconURLFinder {
 
 	/// Uniform types to ignore when finding favicon URLs.
 	static let ignoredTypes = [UTType.svg]
@@ -22,7 +22,7 @@ struct FaviconURLFinder {
 	/// - Parameters:
 	///   - homePageURL: The page to search.
 	///   - urls: An array of favicon URLs as strings.
-	@MainActor static func findFaviconURLs(with homePageURL: String) async -> [String]? {
+	static func findFaviconURLs(with homePageURL: String) async -> [String]? {
 
 		guard let _ = URL(unicodeString: homePageURL) else {
 			return nil
