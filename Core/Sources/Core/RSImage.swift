@@ -91,6 +91,14 @@ public extension RSImage {
 		#endif
 	}
 
+	static func image(with data: Data) async -> RSImage? {
+
+		let task = Task.detached { () -> RSImage? in
+			RSImage(data: data)
+		}
+		return await task.value
+	}
+
 	/// Asynchronously initializes an image from data.
 	///
 	/// - Parameters:
