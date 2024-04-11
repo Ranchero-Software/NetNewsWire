@@ -21,26 +21,21 @@ struct FaviconURLFinder {
 	/// Finds favicon URLs in a web page.
 	/// - Parameters:
 	///   - homePageURL: The page to search.
-	///   - completion: A closure called when the links have been found.
 	///   - urls: An array of favicon URLs as strings.
-	@MainActor static func findFaviconURLs(with homePageURL: String, _ completion: @escaping (_ urls: [String]?) -> Void) {
+	@MainActor static func findFaviconURLs(with homePageURL: String) async -> [String]? {
 
 		guard let _ = URL(unicodeString: homePageURL) else {
-			completion(nil)
-			return
+			return nil
 		}
 
-		Task { @MainActor in
+		// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.
+		let htmlMetadata = try? await HTMLMetadataDownloader.downloadMetadata(for: homePageURL)
 
-			// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.
-			let htmlMetadata = try? await HTMLMetadataDownloader.downloadMetadata(for: homePageURL)
-
-			let faviconURLs = htmlMetadata?.favicons.compactMap { favicon -> String? in
-				shouldAllowFavicon(favicon) ? favicon.urlString : nil
-			}
-
-			completion(faviconURLs)
+		let faviconURLs = htmlMetadata?.favicons.compactMap { favicon -> String? in
+			shouldAllowFavicon(favicon) ? favicon.urlString : nil
 		}
+
+		return faviconURLs
 	}
 
 	static func shouldAllowFavicon(_ favicon: RSHTMLMetadataFavicon) -> Bool {
