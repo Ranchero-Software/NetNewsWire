@@ -8,9 +8,7 @@
 
 import Foundation
 
-// Thread safety is up to the caller.
-
-public struct BinaryDiskCache {
+public actor BinaryDiskCache {
 
 	public let folder: String
 
