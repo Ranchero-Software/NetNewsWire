@@ -30,14 +30,13 @@ struct FaviconURLFinder {
 			return
 		}
 
-		// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.
-		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { htmlMetadata in
-			let faviconURLs = htmlMetadata?.favicons.compactMap { favicon -> String? in
+		Task { @MainActor in
 
-				guard shouldAllowFavicon(favicon) else {
-					return nil
-				}
-				return favicon.urlString
+			// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.
+			let htmlMetadata = try? await HTMLMetadataDownloader.downloadMetadata(for: homePageURL)
+
+			let faviconURLs = htmlMetadata?.favicons.compactMap { favicon -> String? in
+				shouldAllowFavicon(favicon) ? favicon.urlString : nil
 			}
 
 			completion(faviconURLs)

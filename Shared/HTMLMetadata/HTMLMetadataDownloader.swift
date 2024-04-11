@@ -10,34 +10,35 @@ import Foundation
 import Web
 import Parser
 
+extension RSHTMLMetadata: @unchecked Sendable {}
+
 struct HTMLMetadataDownloader {
 
-	static let serialDispatchQueue = DispatchQueue(label: "HTMLMetadataDownloader")
+	@MainActor static func downloadMetadata(for url: String) async -> RSHTMLMetadata? {
 
-	@MainActor static func downloadMetadata(for url: String, _ completion: @escaping @Sendable (RSHTMLMetadata?) -> Void) {
 		guard let actualURL = URL(unicodeString: url) else {
-			completion(nil)
-			return
+			return nil
 		}
 
-		downloadUsingCache(actualURL) { (data, response, error) in
-			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-				let urlToUse = response.url ?? actualURL
-				let parserData = ParserData(url: urlToUse.absoluteString, data: data)
-				parseMetadata(with: parserData, completion)
-				return
-			}
+		let downloadData = try? await downloadUsingCache(actualURL)
+		let data = downloadData?.data
+		let response = downloadData?.response
 
-			completion(nil)
+		if let data, !data.isEmpty, let response, response.statusIsOK {
+			let urlToUse = response.url ?? actualURL
+			let parserData = ParserData(url: urlToUse.absoluteString, data: data)
+			return await parseMetadata(with: parserData)
 		}
+
+		return nil
 	}
 
-	private static func parseMetadata(with parserData: ParserData, _ completion: @escaping @Sendable (RSHTMLMetadata?) -> Void) {
-		serialDispatchQueue.async {
-			let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
-			DispatchQueue.main.async {
-				completion(htmlMetadata)
-			}
+	@MainActor private static func parseMetadata(with parserData: ParserData) async -> RSHTMLMetadata? {
+
+		let task = Task.detached { () -> RSHTMLMetadata? in
+			RSHTMLMetadataParser.htmlMetadata(with: parserData)
 		}
+
+		return await task.value
 	}
 }
