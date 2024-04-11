@@ -16,11 +16,10 @@ import Core
 // Post .DidLoadFavicon notification once it’s in memory.
 
 extension Notification.Name {
-
 	static let DidLoadFavicon = Notification.Name("DidLoadFaviconNotification")
 }
 
-final class SingleFaviconDownloader {
+@MainActor final class SingleFaviconDownloader {
 
 	enum DiskStatus {
 		case unknown, notOnDisk, onDisk
@@ -35,21 +34,21 @@ final class SingleFaviconDownloader {
 	private var lastDownloadAttemptDate: Date
 	private var diskStatus = DiskStatus.unknown
 	private var diskCache: BinaryDiskCache
-	private let queue: DispatchQueue
 
 	private var diskKey: String {
 		return faviconURL.md5String
 	}
 
-	init(faviconURL: String, homePageURL: String?, diskCache: BinaryDiskCache, queue: DispatchQueue) {
+	init(faviconURL: String, homePageURL: String?, diskCache: BinaryDiskCache) {
 
 		self.faviconURL = faviconURL
 		self.homePageURL = homePageURL
 		self.diskCache = diskCache
-		self.queue = queue
 		self.lastDownloadAttemptDate = Date()
 
-		findFavicon()
+		Task {
+			await findFavicon()
+		}
 	}
 
 	func downloadFaviconIfNeeded() -> Bool {
@@ -66,96 +65,79 @@ final class SingleFaviconDownloader {
 		}
 
 		lastDownloadAttemptDate = Date()
-		findFavicon()
-		
+
+		Task {
+			await findFavicon()
+		}
+
 		return true
 	}
 }
 
 private extension SingleFaviconDownloader {
 
-	func findFavicon() {
+	func findFavicon() async {
 
-		readFromDisk { (image) in
-
-			MainActor.assumeIsolated {
-				if let image = image {
-					self.diskStatus = .onDisk
-					self.iconImage = IconImage(image)
-					self.postDidLoadFaviconNotification()
-					return
-				}
-				
-				self.diskStatus = .notOnDisk
-				
-				self.downloadFavicon { (image) in
-					
-					if let image = image {
-						self.iconImage = IconImage(image)
-					}
-					
-					self.postDidLoadFaviconNotification()
-					
-				}
-			}
-		}
-	}
-
-	func readFromDisk(_ completion: @escaping (RSImage?) -> Void) {
-
-		guard diskStatus != .notOnDisk else {
-			completion(nil)
+		if let image = await readFromDisk() {
+			diskStatus = .onDisk
+			iconImage = IconImage(image)
+			postDidLoadFaviconNotification()
 			return
 		}
 
-		queue.async {
+		diskStatus = .notOnDisk
 
-			if let data = self.diskCache[self.diskKey], !data.isEmpty {
-				RSImage.image(with: data, imageResultBlock: completion)
-				return
-			}
-
-			DispatchQueue.main.async {
-				completion(nil)
-			}
+		if let image = await downloadFavicon() {
+			iconImage = IconImage(image)
+			postDidLoadFaviconNotification()
 		}
+	}
+
+	func readFromDisk() async -> RSImage? {
+
+		guard diskStatus != .notOnDisk else {
+			return nil
+		}
+		guard let data = await diskCache[self.diskKey], !data.isEmpty else {
+			return nil
+		}
+
+		return await RSImage.image(with: data)
 	}
 
 	func saveToDisk(_ data: Data) {
 
-		queue.async {
+		Task.detached {
+			try? await self.diskCache.setData(data, forKey: self.diskKey)
 
-			do {
-				try self.diskCache.setData(data, forKey: self.diskKey)
-				DispatchQueue.main.async {
-					self.diskStatus = .onDisk
-				}
+			Task { @MainActor in
+				self.diskStatus = .onDisk
 			}
-			catch {}
 		}
 	}
 
-	@MainActor func downloadFavicon(_ completion: @escaping (RSImage?) -> Void) {
+	func downloadFavicon() async -> RSImage? {
 
 		guard let url = URL(string: faviconURL) else {
-			completion(nil)
-			return
+			return nil
 		}
 
-		downloadUsingCache(url) { (data, response, error) in
+		do {
+			let downloadData = try await downloadUsingCache(url)
 
-			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-				self.saveToDisk(data)
-				RSImage.image(with: data, imageResultBlock: completion)
-				return
+			let data = downloadData.data
+			let response = downloadData.response
+
+			if let data, !data.isEmpty, let response, response.statusIsOK {
+				saveToDisk(data)
+				return await RSImage.image(with: data)
 			}
 
-			if let error = error {
-				os_log(.info, log: self.log, "Error downloading image at %@: %@.", url.absoluteString, error.localizedDescription)
-			}
-
-			completion(nil)
+		} catch {
+			os_log(.info, log: self.log, "Error downloading image at %@: %@.", url.absoluteString, error.localizedDescription)
 		}
+
+		return nil
 	}
 
 	func postDidLoadFaviconNotification() {
@@ -163,5 +145,4 @@ private extension SingleFaviconDownloader {
 		assert(Thread.isMainThread)
 		NotificationCenter.default.post(name: .DidLoadFavicon, object: self)
 	}
-	
 }

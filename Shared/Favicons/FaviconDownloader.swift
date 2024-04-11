@@ -236,7 +236,7 @@ private extension FaviconDownloader {
 			return downloader
 		}
 
-		let downloader = SingleFaviconDownloader(faviconURL: faviconURL, homePageURL: homePageURL, diskCache: diskCache, queue: queue)
+		let downloader = SingleFaviconDownloader(faviconURL: faviconURL, homePageURL: homePageURL, diskCache: diskCache)
 		singleFaviconDownloaderCache[faviconURL] = downloader
 		return downloader
 	}
