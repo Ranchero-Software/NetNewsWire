@@ -286,8 +286,13 @@ public extension CloudKitZone {
 			op.desiredKeys = desiredKeys
 		}
 		
-		op.recordFetchedBlock = { record in
-			records.append(record)
+		op.recordMatchedBlock = { recordID, recordResult in
+			switch recordResult {
+			case .success(let record):
+				records.append(record)
+			case .failure(let error):
+				os_log(.error, log: self.log, "query recordMatchedBlock error recordID: %@ error: %@", recordID, error.localizedDescription)
+			}
 		}
 		
 		op.queryCompletionBlock = { [weak self] (cursor, error) in
@@ -361,10 +366,15 @@ public extension CloudKitZone {
 			op.desiredKeys = desiredKeys
 		}
 		
-		op.recordFetchedBlock = { record in
-			records.append(record)
+		op.recordMatchedBlock = { recordID, recordResult in
+			switch recordResult {
+			case .success(let record):
+				records.append(record)
+			case .failure(let error):
+				os_log(.error, log: self.log, "query cursor recordMatchedBlock error recordID: %@ error: %@", recordID, error.localizedDescription)
+			}
 		}
-		
+
 		op.queryCompletionBlock = { [weak self] (newCursor, error) in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
@@ -677,10 +687,16 @@ public extension CloudKitZone {
 		
 		let op = CKQueryOperation(query: ckQuery)
 		op.qualityOfService = Self.qualityOfService
-		op.recordFetchedBlock = { record in
-			records.append(record)
+
+		op.recordMatchedBlock = { recordID, recordResult in
+			switch recordResult {
+			case .success(let record):
+				records.append(record)
+			case .failure(let error):
+				os_log(.error, log: self.log, "delete query recordMatchedBlock error recordID: %@ error: %@", recordID, error.localizedDescription)
+			}
 		}
-		
+
 		op.queryCompletionBlock = { [weak self] (cursor, error) in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
@@ -729,10 +745,16 @@ public extension CloudKitZone {
 		
 		let op = CKQueryOperation(cursor: cursor)
 		op.qualityOfService = Self.qualityOfService
-		op.recordFetchedBlock = { record in
-			records.append(record)
+
+		op.recordMatchedBlock = { recordID, recordResult in
+			switch recordResult {
+			case .success(let record):
+				records.append(record)
+			case .failure(let error):
+				os_log(.error, log: self.log, "delete cursor recordMatchedBlock error recordID: %@ error: %@", recordID, error.localizedDescription)
+			}
 		}
-		
+
 		op.queryCompletionBlock = { [weak self] (cursor, error) in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
