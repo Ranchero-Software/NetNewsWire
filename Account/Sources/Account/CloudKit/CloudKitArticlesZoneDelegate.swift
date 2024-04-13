@@ -32,7 +32,21 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		self.articlesZone = articlesZone
 	}
 
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.cloudKitDidModify(changed: changed, deleted: deleted) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 
 		Task { @MainActor in
 			do {

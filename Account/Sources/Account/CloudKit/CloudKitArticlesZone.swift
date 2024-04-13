@@ -66,7 +66,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		migrateChangeToken()
 	}
 	
-	func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
 		fetchChangesInZone() { result in
 			switch result {
 			case .success:
