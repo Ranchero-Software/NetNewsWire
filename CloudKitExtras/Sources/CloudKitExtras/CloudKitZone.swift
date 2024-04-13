@@ -56,8 +56,7 @@ public protocol CloudKitZone: AnyObject {
 	func subscribeToZoneChanges()
 	
 	/// Process a remove notification
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
-	
+	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async
 }
 
 public extension CloudKitZone {
@@ -132,8 +131,10 @@ public extension CloudKitZone {
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
 
 		await withCheckedContinuation { continuation in
-			self.receiveRemoteNotification(userInfo: userInfo) {
-				continuation.resume()
+			Task { @MainActor in
+				self.receiveRemoteNotification(userInfo: userInfo) {
+					continuation.resume()
+				}
 			}
 		}
 	}
