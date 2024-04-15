@@ -596,7 +596,7 @@ public extension CloudKitZone {
 	}
 
 	/// Saves or modifies the records as long as they are unchanged relative to the local version
-	func saveIfNew(_ records: [CKRecord], completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+	func saveIfNew(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
 
 		let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: [CKRecord.ID]())
 		op.savePolicy = .ifServerRecordUnchanged
@@ -978,7 +978,7 @@ public extension CloudKitZone {
 	}
 
 	/// Modify and delete the supplied CKRecords and CKRecord.IDs
-	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 
 		guard !(recordsToSave.isEmpty && recordIDsToDelete.isEmpty) else {
 			DispatchQueue.main.async {
@@ -1115,8 +1115,6 @@ public extension CloudKitZone {
 	/// Fetch all the changes in the CKZone since the last time we checked
 	@MainActor func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
 
-		var savedChangeToken = changeToken
-		
 		var changedRecords = [CKRecord]()
 		var deletedRecordKeys = [CloudKitRecordKey]()
 		
@@ -1127,7 +1125,7 @@ public extension CloudKitZone {
 		op.qualityOfService = Self.qualityOfService
 
         op.recordZoneChangeTokensUpdatedBlock = { zoneID, token, _ in
-			savedChangeToken = token
+			self.changeToken = token
         }
 
 		op.recordWasChangedBlock = { recordID, result in
@@ -1145,7 +1143,7 @@ public extension CloudKitZone {
 		op.recordZoneFetchResultBlock = { recordZoneID, result in
 
 			if let (token, _, _) = try? result.get() {
-				savedChangeToken = token
+				self.changeToken = token
 			}
 		}
 
