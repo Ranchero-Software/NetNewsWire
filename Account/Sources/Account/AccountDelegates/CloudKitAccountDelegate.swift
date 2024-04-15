@@ -179,65 +179,25 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	
 	func importOPML(for account: Account, opmlFile: URL) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.importOPML(for: account, opmlFile: opmlFile) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard refreshProgress.isComplete else {
-			completion(.success(()))
 			return
 		}
 
-		var fileData: Data?
-		
-		do {
-			fileData = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		guard let opmlData = fileData else {
-			completion(.success(()))
-			return
-		}
-		
+		let opmlData = try Data(contentsOf: opmlFile)
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
-		
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		guard let loadDocument = opmlDocument else {
-			completion(.success(()))
-			return
-		}
+		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 
-		guard let opmlItems = loadDocument.children, let rootExternalID = account.externalID else {
+		guard let opmlItems = opmlDocument.children, let rootExternalID = account.externalID else {
 			return
 		}
 
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
-			self.refreshProgress.completeTask()
-			self.standardRefreshAll(for: account, completion: completion)
-		}
-		
+		defer { refreshProgress.completeTask() }
+
+		try await accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems)
+		try await standardRefreshAll(for: account)
 	}
 	
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
@@ -740,6 +700,20 @@ private extension CloudKitAccountDelegate {
 			}
 		}
 
+	}
+
+	func standardRefreshAll(for account: Account) async throws {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.standardRefreshAll(for: account) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
 	}
 
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {

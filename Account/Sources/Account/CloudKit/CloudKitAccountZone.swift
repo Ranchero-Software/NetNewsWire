@@ -58,7 +58,8 @@ enum CloudKitAccountZoneError: LocalizedError {
 		migrateChangeToken()
     }
 	
-	func importOPML(rootExternalID: String, items: [RSOPMLItem], completion: @escaping (Result<Void, Error>) -> Void) {
+	func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
+
 		var records = [CKRecord]()
 		var feedRecords = [String: CKRecord]()
 		
@@ -89,7 +90,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 			}
 		}
 
-		save(records, completion: completion)
+		try await save(records)
 	}
     
 	///  Persist a web feed record to iCloud and return the external key
