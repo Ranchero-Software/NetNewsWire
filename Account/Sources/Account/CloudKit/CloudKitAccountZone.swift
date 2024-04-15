@@ -279,7 +279,9 @@ enum CloudKitAccountZoneError: LocalizedError {
 				self.createZoneRecord() { result in
 					switch result {
 					case .success:
-						self.findOrCreateAccount(completion: completion)
+						MainActor.assumeIsolated {
+							self.findOrCreateAccount(completion: completion)
+						}
 					case .failure(let error):
 						DispatchQueue.main.async {
 							completion(.failure(CloudKitError(error)))

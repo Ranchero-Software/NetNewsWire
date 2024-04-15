@@ -76,7 +76,9 @@ final class CloudKitArticlesZone: CloudKitZone {
 					self.createZoneRecord() { result in
 						switch result {
 						case .success:
-							self.refreshArticles(completion: completion)
+							Task { @MainActor in
+								self.refreshArticles(completion: completion)
+							}
 						case .failure(let error):
 							completion(.failure(error))
 						}
@@ -140,7 +142,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 
-		compressionQueue.async {
+		compressionQueue.async { [newRecords] in
 			let compressedModifyRecords = self.compressArticleRecords(modifyRecords)
 			self.modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
 				switch result {
@@ -155,7 +157,9 @@ final class CloudKitArticlesZone: CloudKitZone {
 						}
 					}
 				case .failure(let error):
-					self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
+					Task { @MainActor in
+						self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
+					}
 				}
 			}
 		}
@@ -171,7 +175,9 @@ private extension CloudKitArticlesZone {
 			self.createZoneRecord() { result in
 				switch result {
 				case .success:
-					self.modifyArticles(statusUpdates, completion: completion)
+					MainActor.assumeIsolated {
+						self.modifyArticles(statusUpdates, completion: completion)
+					}
 				case .failure(let error):
 					completion(.failure(error))
 				}

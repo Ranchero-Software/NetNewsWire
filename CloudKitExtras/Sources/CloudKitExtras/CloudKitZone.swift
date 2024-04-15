@@ -121,10 +121,12 @@ public extension CloudKitZone {
 		}
 	}
 
-	func retryIfPossible(after: Double, block: @escaping @Sendable () -> ()) {
+	func retryIfPossible(after: Double, block: @escaping @MainActor () -> ()) {
 		let delayTime = DispatchTime.now() + after
 		DispatchQueue.main.asyncAfter(deadline: delayTime, execute: {
-			block()
+			Task { @MainActor in
+				block()
+			}
 		})
 	}
 	
@@ -268,8 +270,8 @@ public extension CloudKitZone {
 
 	/// Subscribes to zone changes
 	func subscribeToZoneChanges() {
-		let subscription = CKRecordZoneSubscription(zoneID: zoneID)
-        
+		let subscription = CKRecordZoneSubscription(zoneID: zoneID, subscriptionID: zoneID.zoneName)
+
 		let info = CKSubscription.NotificationInfo()
         info.shouldSendContentAvailable = true
         subscription.notificationInfo = info
@@ -487,7 +489,7 @@ public extension CloudKitZone {
 	}
 
 	/// Fetch a CKRecord by using its externalID
-	func fetch(externalID: String?, completion: @escaping @Sendable (Result<CKRecord, Error>) -> Void) {
+	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
 		guard let externalID = externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -1111,7 +1113,7 @@ public extension CloudKitZone {
 	}
 
 	/// Fetch all the changes in the CKZone since the last time we checked
-	@MainActor func fetchChangesInZone(completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+	@MainActor func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
 
 		var savedChangeToken = changeToken
 		
