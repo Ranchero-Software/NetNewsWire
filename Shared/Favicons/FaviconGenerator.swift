@@ -8,6 +8,7 @@
 
 import Foundation
 import Account
+import Images
 
 @MainActor final class FaviconGenerator {
 

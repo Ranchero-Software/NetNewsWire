@@ -16,8 +16,8 @@ import WatchKit
 import AppKit
 #endif
 
-public class ColorHash {
-	
+public struct ColorHash: Sendable {
+
 	public static let defaultSaturation = [CGFloat(0.35), CGFloat(0.5), CGFloat(0.65)]
 	public static let defaultBrightness = [CGFloat(0.5), CGFloat(0.65), CGFloat(0.80)]
 	
@@ -26,10 +26,10 @@ public class ColorHash {
 	let maxSafeInteger = 9007199254740991.0 / CGFloat(137.0)
 	let full = CGFloat(360.0)
 
-	public private(set) var str: String
-	public private(set) var brightness: [CGFloat]
-	public private(set) var saturation: [CGFloat]
-	
+	public let str: String
+	public let brightness: [CGFloat]
+	public let saturation: [CGFloat]
+
 	public init(_ str: String, _ saturation: [CGFloat] = defaultSaturation, _ brightness: [CGFloat] = defaultBrightness) {
 		self.str = str
 		self.saturation = saturation
@@ -70,5 +70,4 @@ public class ColorHash {
 		return NSColor(hue: H, saturation: S, brightness: B, alpha: 1.0)
 	}
 	#endif
-	
 }
