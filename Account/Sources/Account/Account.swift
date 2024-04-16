@@ -704,7 +704,6 @@ public enum FetchType {
 		case .searchWithArticleIDs(let searchString, let articleIDs):
 			return try await articlesMatching(searchString: searchString, articleIDs: articleIDs)
 		}
-
 	}
 
 	@MainActor public func articles(feed: Feed) async throws -> Set<Article> {

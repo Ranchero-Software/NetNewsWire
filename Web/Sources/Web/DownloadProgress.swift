@@ -63,6 +63,10 @@ public extension Notification.Name {
 		numberOfTasks = numberOfTasks + n
 	}
 	
+	public func addTask() {
+		addToNumberOfTasks(1)
+	}
+	
 	public func addToNumberOfTasksAndRemaining(_ n: Int) {
 		assert(Thread.isMainThread)
 		numberOfTasks = numberOfTasks + n

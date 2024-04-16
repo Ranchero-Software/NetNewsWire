@@ -110,10 +110,12 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 	
-	func deleteArticles(_ feedExternalID: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func deleteArticles(_ feedExternalID: String) async throws {
+
 		let predicate = NSPredicate(format: "webFeedExternalID = %@", feedExternalID)
 		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)
-		delete(ckQuery: ckQuery, completion: completion)
+
+		try await delete(ckQuery: ckQuery)
 	}
 	
 	@MainActor func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
