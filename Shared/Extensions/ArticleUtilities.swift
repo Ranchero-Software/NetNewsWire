@@ -48,15 +48,15 @@ extension Article {
 	}
 	
 	var url: URL? {
-		return URL.reparingIfRequired(rawLink)
+		return URL.repairingIfRequired(rawLink)
 	}
 	
 	var externalURL: URL? {
-		return URL.reparingIfRequired(rawExternalLink)
+		return URL.repairingIfRequired(rawExternalLink)
 	}
 	
 	var imageURL: URL? {
-		return URL.reparingIfRequired(rawImageLink)
+		return URL.repairingIfRequired(rawImageLink)
 	}
 	
 	var link: String? {

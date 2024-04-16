@@ -39,7 +39,7 @@ extension URL {
 		
 	}
 	
-	static func reparingIfRequired(_ link: String?) -> URL? {
+	static func repairingIfRequired(_ link: String?) -> URL? {
 		// If required, we replace any space characters to handle malformed links that are otherwise percent
 		// encoded but contain spaces. For performance reasons, only try this if initial URL init fails.
 		guard let link = link, !link.isEmpty else { return nil }
