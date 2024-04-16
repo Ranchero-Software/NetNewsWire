@@ -14,6 +14,7 @@ import os.log
 import Secrets
 import WidgetKit
 import Core
+import Images
 
 @MainActor var appDelegate: AppDelegate!
 
@@ -95,6 +96,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
 		
+		FaviconGenerator.faviconTemplateImage = AppAssets.faviconTemplateImage
+
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
 		initializeDownloaders()
@@ -241,7 +244,8 @@ private extension AppDelegate {
 		let faviconsFolder = faviconsFolderURL.absoluteString
 		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
 		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
-		
+		faviconDownloader.delegate = self
+
 		let imagesFolder = imagesFolderURL.absoluteString
 		let imagesFolderPath = imagesFolder.suffix(from: imagesFolder.index(imagesFolder.startIndex, offsetBy: 7))
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
@@ -252,6 +256,7 @@ private extension AppDelegate {
 		let tempFolder = tempDir.absoluteString
 		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
+		feedIconDownloader.delegate = self
 	}
 	
 	private func initializeHomeScreenQuickActions() {

@@ -12,12 +12,14 @@ import Web
 import FoundationExtras
 import Core
 
-extension Notification.Name {
+public extension Notification.Name {
 
 	static let ImageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
 }
 
-final class ImageDownloader {
+public final class ImageDownloader {
+
+	public static let imageURLKey = "url"
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
 
@@ -28,7 +30,7 @@ final class ImageDownloader {
 	private var urlsInProgress = Set<String>()
 	private var badURLs = Set<String>() // That return a 404 or whatever. Just skip them in the future.
 
-	init(folder: String) {
+	public init(folder: String) {
 
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
@@ -36,7 +38,7 @@ final class ImageDownloader {
 	}
 
 	@discardableResult
-	func image(for url: String) -> Data? {
+	public func image(for url: String) -> Data? {
 
 		if let data = imageCache[url] {
 			return data
@@ -140,7 +142,7 @@ private extension ImageDownloader {
 	func postImageDidBecomeAvailableNotification(_ url: String) {
 
 		DispatchQueue.main.async {
-			NotificationCenter.default.post(name: .ImageDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: url])
+			NotificationCenter.default.post(name: .ImageDidBecomeAvailable, object: self, userInfo: [Self.imageURLKey: url])
 		}
 	}
 }

@@ -12,6 +12,7 @@ import Account
 import Articles
 import Intents
 import UniformTypeIdentifiers
+import Images
 
 #if os(iOS)
 @preconcurrency import CoreSpotlight
@@ -159,7 +160,7 @@ import CoreSpotlight
 	#endif
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedID = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
+		guard let feed = note.userInfo?[FeedIconDownloader.feedKey] as? Feed, let activityFeedID = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
 			return
 		}
 		

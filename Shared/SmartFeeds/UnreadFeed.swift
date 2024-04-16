@@ -14,6 +14,7 @@ import Foundation
 import Account
 import Articles
 import ArticlesDatabase
+import Images
 
 // This just shows the global unread count, which appDelegate already has. Easy.
 

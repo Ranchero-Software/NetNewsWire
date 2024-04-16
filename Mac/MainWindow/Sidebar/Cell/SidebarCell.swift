@@ -9,6 +9,7 @@
 import Foundation
 import Account
 import Tree
+import Images
 
 class SidebarCell : NSTableCellView {
 

@@ -9,6 +9,7 @@
 import UIKit
 import Account
 import Tree
+import Images
 
 protocol FeedTableViewCellDelegate: AnyObject {
 	func feedTableViewCellDisclosureDidToggle(_ sender: FeedTableViewCell, expanding: Bool)

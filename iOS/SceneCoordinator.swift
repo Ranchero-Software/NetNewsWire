@@ -14,6 +14,7 @@ import Tree
 import SafariServices
 import SwiftUI
 import Core
+import Images
 
 protocol MainControllerIdentifiable {
 	var mainControllerIdentifier: MainControllerIdentifier { get }

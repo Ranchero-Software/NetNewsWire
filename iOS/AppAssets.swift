@@ -9,6 +9,7 @@
 import UIKit
 import Account
 import Core
+import Images
 
 struct AppAssets {
 	

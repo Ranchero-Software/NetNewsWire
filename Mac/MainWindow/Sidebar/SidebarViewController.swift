@@ -11,6 +11,7 @@ import Tree
 import Articles
 import Account
 import Core
+import Images
 
 extension Notification.Name {
 	static let appleSideBarDefaultIconSizeChanged = Notification.Name("AppleSideBarDefaultIconSizeChanged")
@@ -198,7 +199,7 @@ protocol SidebarDelegate: AnyObject {
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else { return }
+		guard let feed = note.userInfo?[FeedIconDownloader.feedKey] as? Feed else { return }
 		configureCellsForRepresentedObject(feed)
 	}
 	

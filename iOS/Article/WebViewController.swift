@@ -14,6 +14,7 @@ import SafariServices
 import MessageUI
 import Core
 import ArticleExtractor
+import Images
 
 protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)

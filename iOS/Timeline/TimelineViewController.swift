@@ -10,6 +10,7 @@ import UIKit
 import Account
 import Articles
 import Core
+import Images
 
 class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
@@ -446,7 +447,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard let feed = note.userInfo?[FeedIconDownloader.feedKey] as? Feed else {
 			return
 		}
 		

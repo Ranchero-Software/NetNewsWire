@@ -12,6 +12,7 @@ import ArticlesDatabase
 import Account
 import Database
 import Core
+import Images
 
 final class SmartFeed: PseudoFeed {
 

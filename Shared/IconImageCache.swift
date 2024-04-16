@@ -9,6 +9,7 @@
 import Foundation
 import Account
 import Articles
+import Images
 
 @MainActor final class IconImageCache {
 

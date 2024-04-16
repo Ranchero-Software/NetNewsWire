@@ -10,11 +10,18 @@ let package = Package(
 			name: "Images",
 			targets: ["Images"]),
 	],
+	dependencies: [
+		.package(path: "../Core"),
+		.package(path: "../Articles"),
+		.package(path: "../Account")
+	],
 	targets: [
 		.target(
 			name: "Images",
 			dependencies: [
-
+				"Core",
+				"Articles",
+				"Account"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")

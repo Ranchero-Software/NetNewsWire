@@ -13,22 +13,22 @@ import UIKit
 #endif
 import Core
 
-final class IconImage {
+public final class IconImage {
 	
-	lazy var isDark: Bool = {
+	public lazy var isDark: Bool = {
 		return image.isDark()
 	}()
 	
-	lazy var isBright: Bool = {
+	public lazy var isBright: Bool = {
 		return image.isBright()
 	}()
 	
-	let image: RSImage
-	let isSymbol: Bool
-	let isBackgroundSupressed: Bool
-	let preferredColor: CGColor?
+	public let image: RSImage
+	public let isSymbol: Bool
+	public let isBackgroundSupressed: Bool
+	public let preferredColor: CGColor?
 
-	init(_ image: RSImage, isSymbol: Bool = false, isBackgroundSupressed: Bool = false, preferredColor: CGColor? = nil) {
+	public init(_ image: RSImage, isSymbol: Bool = false, isBackgroundSupressed: Bool = false, preferredColor: CGColor? = nil) {
 		self.image = image
 		self.isSymbol = isSymbol
 		self.preferredColor = preferredColor
@@ -161,7 +161,7 @@ extension CGImage {
 }
 
 
-enum IconSize: Int, CaseIterable {
+public enum IconSize: Int, CaseIterable {
 	case small = 1
 	case medium = 2
 	case large = 3
@@ -170,7 +170,7 @@ enum IconSize: Int, CaseIterable {
 	private static let mediumDimension = CGFloat(integerLiteral: 36)
 	private static let largeDimension = CGFloat(integerLiteral: 48)
 
-	var size: CGSize {
+	public var size: CGSize {
 		switch self {
 		case .small:
 			return CGSize(width: IconSize.smallDimension, height: IconSize.smallDimension)

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Images
 
 final class IconView: UIView {
 

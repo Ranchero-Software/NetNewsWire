@@ -10,8 +10,7 @@ import Foundation
 import Articles
 import ArticlesDatabase
 import Account
-
-// Main thread only.
+import Images
 
 @MainActor struct StarredFeedDelegate: SmartFeedDelegate {
 

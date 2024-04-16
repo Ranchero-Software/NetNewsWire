@@ -8,6 +8,7 @@
 
 import Foundation
 import WebKit
+import Images
 
 protocol ArticleIconSchemeHandlerDelegate: AnyObject {
 	

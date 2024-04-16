@@ -12,12 +12,20 @@ import Articles
 import Account
 import UniformTypeIdentifiers
 import Core
+import ParserObjC
 
-extension Notification.Name {
+public extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-@MainActor final class FaviconDownloader {
+public protocol FaviconDownloaderDelegate {
+
+	var appIconImage: IconImage? { get }
+
+	func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata?
+}
+
+@MainActor public final class FaviconDownloader {
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -46,11 +54,13 @@ extension Notification.Name {
 	private let queue: DispatchQueue
 	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
+	public var delegate: FaviconDownloaderDelegate?
+
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
 	}
 
-	init(folder: String) {
+	public init(folder: String) {
 
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
@@ -70,7 +80,7 @@ extension Notification.Name {
 		cache = [Feed: IconImage]()
 	}
 	
-	func favicon(for feed: Feed) -> IconImage? {
+	public func favicon(for feed: Feed) -> IconImage? {
 
 		assert(Thread.isMainThread)
 
@@ -92,8 +102,8 @@ extension Notification.Name {
 		return nil
 	}
 	
-	func faviconAsIcon(for feed: Feed) -> IconImage? {
-		
+	public func faviconAsIcon(for feed: Feed) -> IconImage? {
+
 		if let image = cache[feed] {
 			return image
 		}
@@ -120,7 +130,7 @@ extension Notification.Name {
 
 		if let url = URL(string: homePageURL) {
 			if url.host == "nnw.ranchero.com" || url.host == "netnewswire.blog" {
-				return IconImage.appIcon
+				return delegate?.appIconImage
 			}
 		}
 
@@ -203,7 +213,7 @@ private extension FaviconDownloader {
 		guard let url = URL(unicodeString: homePageURL) else {
 			return nil
 		}
-		guard let faviconURLs = await FaviconURLFinder.findFaviconURLs(with: homePageURL) else {
+		guard let faviconURLs = await FaviconURLFinder.findFaviconURLs(with: homePageURL, downloadMetadata: delegate!.downloadMetadata(_:)) else {
 			return nil
 		}
 

@@ -8,6 +8,7 @@
 
 import UIKit
 import Articles
+import Images
 
 class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 

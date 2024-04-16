@@ -12,6 +12,7 @@ import Articles
 import Tree
 import SafariServices
 import Core
+import Images
 
 class SidebarViewController: UITableViewController, UndoableCommandRunner {
 
@@ -126,7 +127,7 @@ class SidebarViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard let feed = note.userInfo?[FeedIconDownloader.feedKey] as? Feed else {
 			return
 		}
 		applyToCellsForRepresentedObject(feed, configureIcon(_:_:))

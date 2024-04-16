@@ -10,28 +10,28 @@ import Foundation
 import Articles
 import Core
 
-extension Notification.Name {
+public extension Notification.Name {
 
 	static let AvatarDidBecomeAvailable = Notification.Name("AvatarDidBecomeAvailableNotification") // UserInfoKey.imageURL (which is an avatarURL)
 }
 
-@MainActor final class AuthorAvatarDownloader {
+@MainActor public final class AuthorAvatarDownloader {
 
 	private let imageDownloader: ImageDownloader
 	private var cache = [String: IconImage]() // avatarURL: RSImage
 	private var waitingForAvatarURLs = Set<String>()
 
-	init(imageDownloader: ImageDownloader) {
+	public init(imageDownloader: ImageDownloader) {
 
 		self.imageDownloader = imageDownloader
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
 	}
 
-	func resetCache() {
+	public func resetCache() {
 		cache = [String: IconImage]()
 	}
 	
-	func image(for author: Author) -> IconImage? {
+	public func image(for author: Author) -> IconImage? {
 
 		guard let avatarURL = author.avatarURL else {
 			return nil
@@ -52,7 +52,7 @@ extension Notification.Name {
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard let avatarURL = note.userInfo?[ImageDownloader.imageURLKey] as? String else {
 			return
 		}
 		guard waitingForAvatarURLs.contains(avatarURL) else {
@@ -88,7 +88,7 @@ private extension AuthorAvatarDownloader {
 
 	func postAvatarDidBecomeAvailableNotification(_ avatarURL: String) {
 		DispatchQueue.main.async {
- 			NotificationCenter.default.post(name: .AvatarDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: avatarURL])
+			NotificationCenter.default.post(name: .AvatarDidBecomeAvailable, object: self, userInfo: [ImageDownloader.imageURLKey: avatarURL])
 		}
 	}
 }

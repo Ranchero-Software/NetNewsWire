@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import Images
 
 struct AppAssets {
 

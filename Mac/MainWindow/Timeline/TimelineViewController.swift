@@ -11,6 +11,7 @@ import Articles
 import Account
 import os.log
 import Core
+import Images
 
 protocol TimelineDelegate: AnyObject  {
 	
@@ -601,7 +602,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard showIcons, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard showIcons, let feed = note.userInfo?[FeedIconDownloader.feedKey] as? Feed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in

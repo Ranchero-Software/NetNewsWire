@@ -8,6 +8,7 @@
 
 import Foundation
 import Core
+import Images
 
 extension RSImage {
 	static let appIconImage: RSImage? = {

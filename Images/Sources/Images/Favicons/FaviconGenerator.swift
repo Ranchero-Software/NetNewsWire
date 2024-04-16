@@ -8,27 +8,26 @@
 
 import Foundation
 import Account
-import Images
+import Core
 
-@MainActor final class FaviconGenerator {
+@MainActor public final class FaviconGenerator {
 
 	private static var faviconGeneratorCache = [String: IconImage]() // feedURL: RSImage
+	public static var faviconTemplateImage: RSImage! // Must be set at startup
 
-	static func favicon(_ feed: Feed) -> IconImage {
+	public static func favicon(_ feed: Feed) -> IconImage {
 		
 		if let favicon = FaviconGenerator.faviconGeneratorCache[feed.url] {
 			return favicon
 		}
 		
 		let colorHash = ColorHash(feed.url)
-		if let favicon = AppAssets.faviconTemplateImage.maskWithColor(color: colorHash.color.cgColor) {
+		if let favicon = faviconTemplateImage.maskWithColor(color: colorHash.color.cgColor) {
 			let iconImage = IconImage(favicon, isBackgroundSupressed: true)
 			FaviconGenerator.faviconGeneratorCache[feed.url] = iconImage
 			return iconImage
 		} else {
-			return IconImage(AppAssets.faviconTemplateImage, isBackgroundSupressed: true)
+			return IconImage(faviconTemplateImage, isBackgroundSupressed: true)
 		}
-		
 	}
-	
 }

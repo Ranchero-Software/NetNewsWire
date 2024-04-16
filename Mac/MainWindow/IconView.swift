@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import Images
 
 final class IconView: NSView {
 

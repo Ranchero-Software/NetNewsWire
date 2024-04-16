@@ -17,6 +17,7 @@ import Secrets
 import OSLog
 import Core
 import CrashReporter
+import Images
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
 // for AppDelegate to comply
@@ -170,7 +171,9 @@ import Sparkle
 		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
 		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
+
 		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
+		faviconDownloader.delegate = self
 
 		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
 		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
@@ -179,7 +182,8 @@ import Sparkle
 
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
-
+		feedIconDownloader.delegate = self
+		
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 	}
 	
@@ -206,6 +210,9 @@ import Sparkle
 		if isFirstRun {
 			os_log(.debug, "Is first run.")
 		}
+
+		FaviconGenerator.faviconTemplateImage = AppAssets.faviconTemplateImage
+
 		let localAccount = accountManager.defaultAccount
 
 		if isFirstRun && !accountManager.anyAccountHasAtLeastOneFeed() {

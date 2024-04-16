@@ -10,6 +10,7 @@ import UIKit
 import Account
 import SafariServices
 import UserNotifications
+import Images
 
 class FeedInspectorViewController: UITableViewController {
 	

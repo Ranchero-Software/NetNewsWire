@@ -13,13 +13,22 @@ import Web
 import Parser
 import Core
 
-extension Notification.Name {
+public extension Notification.Name {
 
 	static let FeedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailableNotification") // UserInfoKey.feed
 }
 
+public protocol FeedIconDownloaderDelegate {
+
+	var appIconImage: IconImage? { get }
+
+	func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata?
+}
+
 @MainActor public final class FeedIconDownloader {
 
+	public static let feedKey = "url"
+	
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
 	private let imageDownloader: ImageDownloader
@@ -56,7 +65,9 @@ extension Notification.Name {
 	private var cache = [Feed: IconImage]()
 	private var waitingForFeedURLs = [String: Feed]()
 	
-	init(imageDownloader: ImageDownloader, folder: String) {
+	public var delegate: FeedIconDownloaderDelegate?
+
+	public init(imageDownloader: ImageDownloader, folder: String) {
 		self.imageDownloader = imageDownloader
 		self.feedURLToIconURLCachePath = (folder as NSString).appendingPathComponent("FeedURLToIconURLCache.plist")
 		self.homePageToIconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToIconURLCache.plist")
@@ -71,14 +82,14 @@ extension Notification.Name {
 		cache = [Feed: IconImage]()
 	}
 
-	func icon(for feed: Feed) -> IconImage? {
+	public func icon(for feed: Feed) -> IconImage? {
 
 		if let cachedImage = cache[feed] {
 			return cachedImage
 		}
 		
 		if let hpURLString = feed.homePageURL, let hpURL = URL(string: hpURLString), (hpURL.host == "nnw.ranchero.com" || hpURL.host == "netnewswire.blog") {
-			return IconImage.appIcon
+			return delegate?.appIconImage
 		}
 
 		@MainActor func checkHomePageURL() {
@@ -87,7 +98,7 @@ extension Notification.Name {
 			}
 			icon(forHomePageURL: homePageURL, feed: feed) { (image) in
 				Task { @MainActor in
-					if let image = image {
+					if let image {
 						self.postFeedIconDidBecomeAvailableNotification(feed)
 						self.cache[feed] = IconImage(image)
 					}
@@ -99,7 +110,7 @@ extension Notification.Name {
 			if let iconURL = feed.iconURL {
 				icon(forURL: iconURL, feed: feed) { (image) in
 					Task { @MainActor in
-						if let image = image {
+						if let image {
 							self.postFeedIconDidBecomeAvailableNotification(feed)
 							self.cache[feed] = IconImage(image)
 						} else {
@@ -130,7 +141,7 @@ extension Notification.Name {
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let url = note.userInfo?[UserInfoKey.url] as? String, let feed = waitingForFeedURLs[url]  else {
+		guard let url = note.userInfo?[ImageDownloader.imageURLKey] as? String, let feed = waitingForFeedURLs[url]  else {
 			return
 		}
 		waitingForFeedURLs[url] = nil
@@ -171,7 +182,7 @@ private extension FeedIconDownloader {
 			return
 		}
 
-		findIconURLForHomePageURL(homePageURL, feed: feed)
+		findIconURLForHomePageURL(homePageURL, feed: feed, downloadMetadata: delegate!.downloadMetadata(_:))
 	}
 
 	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @Sendable @escaping (RSImage?) -> Void) {
@@ -190,7 +201,7 @@ private extension FeedIconDownloader {
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
 
 		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = [UserInfoKey.feed: feed]
+			let userInfo: [AnyHashable: Any] = [Self.feedKey: feed]
 			NotificationCenter.default.post(name: .FeedIconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
 	}
@@ -207,7 +218,7 @@ private extension FeedIconDownloader {
 		homePageToIconURLCacheDirty = true
 	}
 
-	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed) {
+	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed, downloadMetadata: @escaping (String) async throws -> RSHTMLMetadata?) {
 
 		guard !urlsInProgress.contains(homePageURL) else {
 			return
@@ -216,7 +227,7 @@ private extension FeedIconDownloader {
 
 		Task { @MainActor in
 
-			let metadata = try? await HTMLMetadataDownloader.downloadMetadata(for: homePageURL)
+			let metadata = try? await downloadMetadata(homePageURL)
 
 			self.urlsInProgress.remove(homePageURL)
 			guard let metadata else {
