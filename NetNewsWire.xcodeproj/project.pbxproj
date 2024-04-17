@@ -410,7 +410,6 @@
 		65ED3FD5235DEF6C0081F399 /* SmartFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7C01FC2488C00854A1F /* SmartFeed.swift */; };
 		65ED3FD6235DEF6C0081F399 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		65ED3FD7235DEF6C0081F399 /* NSApplication+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */; };
-		65ED3FD8235DEF6C0081F399 /* NSView-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */; };
 		65ED3FD9235DEF6C0081F399 /* SidebarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A979E1ED9F130007D329B /* SidebarCell.swift */; };
 		65ED3FDA235DEF6C0081F399 /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		65ED3FDB235DEF6C0081F399 /* FeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */; };
@@ -540,7 +539,6 @@
 		769F2ED513DA03EE75B993A8 /* NewsBlurAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */; };
 		8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD892213E0E3008CE1BF /* DetailContainerView.swift */; };
 		8405DD9922153B6B008CE1BF /* TimelineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD9822153B6B008CE1BF /* TimelineContainerView.swift */; };
-		8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */; };
 		8405DDA222168920008CE1BF /* TimelineTableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8405DDA122168920008CE1BF /* TimelineTableView.xib */; };
 		8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DDA422168C62008CE1BF /* TimelineContainerViewController.swift */; };
 		840958632201629A002C1579 /* Subscribe to Feed.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1258,7 +1256,6 @@
 		769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurAccountViewController.swift; sourceTree = "<group>"; };
 		8405DD892213E0E3008CE1BF /* DetailContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailContainerView.swift; sourceTree = "<group>"; };
 		8405DD9822153B6B008CE1BF /* TimelineContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContainerView.swift; sourceTree = "<group>"; };
-		8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView-Extensions.swift"; sourceTree = "<group>"; };
 		8405DDA122168920008CE1BF /* TimelineTableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TimelineTableView.xib; sourceTree = "<group>"; };
 		8405DDA422168C62008CE1BF /* TimelineContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContainerViewController.swift; sourceTree = "<group>"; };
 		840BEE4021D70E64009BBAFA /* CrashReportWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReportWindowController.swift; sourceTree = "<group>"; };
@@ -2187,7 +2184,6 @@
 				5108F6B52375E612001ABC45 /* CacheCleaner.swift */,
 				849A97971ED9EFAA007D329B /* Node-Extensions.swift */,
 				B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */,
-				8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */,
 				B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */,
 				84411E701FE5FBFA004B527F /* SmallIconProvider.swift */,
 				51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */,
@@ -2284,8 +2280,8 @@
 				84CBDDAE1FD3674C005A61AA /* Technotes */,
 				84C9FC6522629B3900D921D6 /* Mac */,
 				84C9FC922262A0E600D921D6 /* iOS */,
-				176813F82564BB2C00D98635 /* Widget */,
 				84C9FC6822629C9A00D921D6 /* Shared */,
+				176813F82564BB2C00D98635 /* Widget */,
 				84C9FCA52262A1E600D921D6 /* Tests */,
 				D5907CDA2002F084005947E5 /* xcconfig */,
 				849C64611ED37A5D003D8FC0 /* Products */,
@@ -3705,7 +3701,6 @@
 				65ED3FD5235DEF6C0081F399 /* SmartFeed.swift in Sources */,
 				65ED3FD6235DEF6C0081F399 /* MarkStatusCommand.swift in Sources */,
 				65ED3FD7235DEF6C0081F399 /* NSApplication+Scriptability.swift in Sources */,
-				65ED3FD8235DEF6C0081F399 /* NSView-Extensions.swift in Sources */,
 				5103A9F824225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */,
 				84DC5FFF2BCE37A300F04682 /* AppDelegate+Shared.swift in Sources */,
 				65ED3FD9235DEF6C0081F399 /* SidebarCell.swift in Sources */,
@@ -4035,7 +4030,6 @@
 				51A9A5F32380DE530033AADF /* AddFeedDefaultContainer.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */,
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
-				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				849A97651ED9EB96007D329B /* FeedTreeControllerDelegate.swift in Sources */,
