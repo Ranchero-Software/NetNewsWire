@@ -19,6 +19,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+__attribute__((swift_attr("@Sendable")))
 @interface RSHTMLMetadata : NSObject
 
 - (instancetype)initWithURLString:(NSString *)urlString tags:(NSArray <RSHTMLTag *> *)tags;
