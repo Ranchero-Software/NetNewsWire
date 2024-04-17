@@ -93,24 +93,7 @@ public extension RSImage {
 
 	static func image(with data: Data) async -> RSImage? {
 
-		let task = Task.detached { () -> RSImage? in
-			RSImage(data: data)
-		}
-		return await task.value
-	}
-
-	/// Asynchronously initializes an image from data.
-	///
-	/// - Parameters:
-	///   - data: The data object containing the image data.
-	///   - imageResultBlock: The closure to call when the image has been initialized.
-	static func image(with data: Data, imageResultBlock: @escaping ImageResultBlock) {
-		DispatchQueue.global().async {
-			let image = RSImage(data: data)
-			DispatchQueue.main.async {
-				imageResultBlock(image)
-			}
-		}
+		RSImage(data: data)
 	}
 
 	/// Create a scaled image from image data.
