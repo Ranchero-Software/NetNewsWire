@@ -18,7 +18,7 @@ public extension Notification.Name {
 	static let FeedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailableNotification") // UserInfoKey.feed
 }
 
-public protocol FeedIconDownloaderDelegate {
+public protocol FeedIconDownloaderDelegate: Sendable {
 
 	var appIconImage: IconImage? { get }
 
@@ -96,42 +96,40 @@ public protocol FeedIconDownloaderDelegate {
 			guard let homePageURL = feed.homePageURL else {
 				return
 			}
-			icon(forHomePageURL: homePageURL, feed: feed) { (image) in
-				Task { @MainActor in
-					if let image {
-						self.postFeedIconDidBecomeAvailableNotification(feed)
-						self.cache[feed] = IconImage(image)
-					}
+
+			Task { @MainActor in
+				if let image = await icon(forHomePageURL: homePageURL, feed: feed) {
+					postFeedIconDidBecomeAvailableNotification(feed)
+					cache[feed] = IconImage(image)
 				}
 			}
 		}
 		
 		func checkFeedIconURL() {
-			if let iconURL = feed.iconURL {
-				icon(forURL: iconURL, feed: feed) { (image) in
-					Task { @MainActor in
-						if let image {
-							self.postFeedIconDidBecomeAvailableNotification(feed)
-							self.cache[feed] = IconImage(image)
-						} else {
-							checkHomePageURL()
-						}
-					}
-				}
-			} else {
+			guard let iconURL = feed.iconURL else {
 				checkHomePageURL()
+				return
+			}
+
+			Task { @MainActor in
+				if let image = await icon(forURL: iconURL, feed: feed) {
+					postFeedIconDidBecomeAvailableNotification(feed)
+					cache[feed] = IconImage(image)
+				} else {
+					checkHomePageURL()
+				}
 			}
 		}
-		
+
 		if let feedProviderURL = feedURLToIconURLCache[feed.url] {
-			self.icon(forURL: feedProviderURL, feed: feed) { (image) in
-				Task { @MainActor in
-					if let image = image {
-						self.postFeedIconDidBecomeAvailableNotification(feed)
-						self.cache[feed] = IconImage(image)
-					}
+
+			Task { @MainActor in
+				if let image = await icon(forURL: feedProviderURL, feed: feed) {
+					postFeedIconDidBecomeAvailableNotification(feed)
+					cache[feed] = IconImage(image)
 				}
 			}
+
 			return nil
 		}
 		
@@ -170,32 +168,29 @@ public protocol FeedIconDownloaderDelegate {
 
 private extension FeedIconDownloader {
 
-	func icon(forHomePageURL homePageURL: String, feed: Feed, _ imageResultBlock: @Sendable @escaping (RSImage?) -> Void) {
+	func icon(forHomePageURL homePageURL: String, feed: Feed) async -> RSImage? {
 
 		if homePagesWithNoIconURLCache.contains(homePageURL) || homePagesWithUglyIcons.contains(homePageURL) {
-			imageResultBlock(nil)
-			return
+			return nil
 		}
 
 		if let iconURL = cachedIconURL(for: homePageURL) {
-			icon(forURL: iconURL, feed: feed, imageResultBlock)
-			return
+			return await icon(forURL: iconURL, feed: feed)
 		}
 
 		findIconURLForHomePageURL(homePageURL, feed: feed, downloadMetadata: delegate!.downloadMetadata(_:))
+
+		return nil
 	}
 
-	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @Sendable @escaping (RSImage?) -> Void) {
-		waitingForFeedURLs[url] = feed
-		guard let imageData = imageDownloader.image(for: url) else {
-			imageResultBlock(nil)
-			return
-		}
+	func icon(forURL url: String, feed: Feed) async -> RSImage? {
 
-		Task {
-			let image = await RSImage.scaledForIcon(imageData)
-			imageResultBlock(image)
+		waitingForFeedURLs[url] = feed
+
+		guard let imageData = imageDownloader.image(for: url) else {
+			return nil
 		}
+		return await RSImage.scaledForIcon(imageData)
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
@@ -241,7 +236,8 @@ private extension FeedIconDownloader {
 
 		if let url = metadata.bestWebsiteIconURL() {
 			cacheIconURL(for: homePageURL, url)
-			icon(forURL: url, feed: feed) { (image) in
+			Task { @MainActor in
+				await icon(forURL: url, feed: feed)
 			}
 			return
 		}
@@ -331,5 +327,4 @@ private extension FeedIconDownloader {
 			assertionFailure(error.localizedDescription)
 		}
 	}
-	
 }
