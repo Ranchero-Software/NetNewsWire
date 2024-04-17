@@ -10,7 +10,7 @@ import Foundation
 
 protocol ScriptingObject {
     var objectSpecifier: NSScriptObjectSpecifier?  { get }
-    var scriptingKey: String { get }
+	@MainActor var scriptingKey: String { get }
 }
 
 protocol NamedScriptingObject: ScriptingObject {
@@ -18,5 +18,5 @@ protocol NamedScriptingObject: ScriptingObject {
 }
 
 protocol UniqueIDScriptingObject: ScriptingObject {
-    var scriptingUniqueID:Any { get }
+	@MainActor var scriptingUniqueID:Any { get }
 }

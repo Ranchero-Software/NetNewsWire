@@ -113,7 +113,7 @@ class NetNewsWireCreateElementCommand : NSCreateCommand {
     is ambiguity about whether specifiers are lists or single objects, the code switches
     based on which it is.
 */
-class NetNewsWireDeleteCommand : NSDeleteCommand {
+final class NetNewsWireDeleteCommand : NSDeleteCommand {
 
     /*
         delete(objectToDelete:, from container:)
@@ -122,13 +122,16 @@ class NetNewsWireDeleteCommand : NSDeleteCommand {
         ultimately calling container.deleteElement(element) for each element to delete
     */
     func delete(objectToDelete:Any, from container:ScriptingObjectContainer) {
-        if let objectList = objectToDelete as? [Any] {
-            for nthObject in objectList {
-                self.delete(objectToDelete:nthObject, from:container)
-            }
-        } else if let element = objectToDelete as? ScriptingObject {
-            container.deleteElement(element)
-        }
+
+		MainActor.assumeIsolated {
+			if let objectList = objectToDelete as? [Any] {
+				for nthObject in objectList {
+					self.delete(objectToDelete:nthObject, from:container)
+				}
+			} else if let element = objectToDelete as? ScriptingObject {
+				container.deleteElement(element)
+			}
+		}
     }
     
     /*

@@ -11,11 +11,11 @@ import Account
 import Articles
 
 @objc(ScriptableArticle)
-class ScriptableArticle: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
+@MainActor class ScriptableArticle: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
 
-    let article:Article
-    let container:ScriptingObjectContainer
-    
+    let article: Article
+    let container: ScriptingObjectContainer
+
     init (_ article:Article, container:ScriptingObjectContainer) {
         self.article = article
         self.container = container

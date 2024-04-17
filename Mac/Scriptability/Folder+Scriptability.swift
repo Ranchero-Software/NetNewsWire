@@ -23,9 +23,11 @@ import Core
     }
 
     @objc(objectSpecifier)
-    override var objectSpecifier: NSScriptObjectSpecifier? {
-        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
-        return (scriptObjectSpecifier)
+    nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
+		MainActor.assumeIsolated {
+			let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
+			return (scriptObjectSpecifier)
+		}
     }
 
     // MARK: --- ScriptingObject protocol ---

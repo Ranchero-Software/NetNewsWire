@@ -12,7 +12,7 @@ import Account
 import Articles
 
 @objc(ScriptableFeed)
-@objcMembers class ScriptableFeed: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
+@MainActor @objcMembers class ScriptableFeed: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
 
     let feed:Feed
     let container:ScriptingObjectContainer
@@ -23,7 +23,7 @@ import Articles
     }
 
     @objc(objectSpecifier)
-    override var objectSpecifier: NSScriptObjectSpecifier? {
+	override var objectSpecifier: NSScriptObjectSpecifier? {
         let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
         return (scriptObjectSpecifier)
     }
@@ -44,7 +44,7 @@ import Articles
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueID)
-	@MainActor var scriptingUniqueID:Any {
+	var scriptingUniqueID:Any {
         return feed.feedID
     }
 
@@ -71,7 +71,7 @@ import Articles
         return url
     }
     
-	@MainActor class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableFeed  {
+	class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
             let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
@@ -81,7 +81,7 @@ import Articles
         }
     }
     
-	@MainActor class func handleCreateElement(command:NSCreateCommand) -> Any?  {
+	class func handleCreateElement(command:NSCreateCommand) -> Any?  {
         guard command.isCreateCommand(forClass:"Feed") else { return nil }
         guard let arguments = command.arguments else {return nil}
         let titleFromArgs = command.property(forKey:"name") as? String
@@ -120,27 +120,27 @@ import Articles
     // MARK: --- Scriptable properties ---
 
     @objc(url)
-	@MainActor var url:String  {
+	var url:String  {
         return self.feed.url
     }
     
     @objc(name)
-	@MainActor var name:String  {
+	var name:String  {
         return self.feed.name ?? ""
     }
 
     @objc(homePageURL)
-	@MainActor var homePageURL:String  {
+	var homePageURL:String  {
         return self.feed.homePageURL ?? ""
     }
 
     @objc(iconURL)
-	@MainActor var iconURL:String  {
+	var iconURL:String  {
         return self.feed.iconURL ?? ""
     }
 
     @objc(faviconURL)
-	@MainActor var faviconURL:String  {
+	var faviconURL:String  {
         return self.feed.faviconURL ?? ""
     }
 
@@ -152,13 +152,13 @@ import Articles
     // MARK: --- scriptable elements ---
 
     @objc(authors)
-	@MainActor var authors:NSArray {
+	var authors:NSArray {
         let feedAuthors = feed.authors ?? []
         return feedAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
     }
      
     @objc(valueInAuthorsWithUniqueID:)
-	@MainActor func valueInAuthors(withUniqueID id:String) -> ScriptableAuthor? {
+	func valueInAuthors(withUniqueID id:String) -> ScriptableAuthor? {
         guard let author = feed.authors?.first(where:{$0.authorID == id}) else { return nil }
         return ScriptableAuthor(author, container:self)
     }
