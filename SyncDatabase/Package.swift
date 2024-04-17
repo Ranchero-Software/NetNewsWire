@@ -1,21 +1,6 @@
 // swift-tools-version: 5.10
 import PackageDescription
 
-var dependencies: [Package.Dependency] = [
-]
-
-#if swift(>=5.6)
-dependencies.append(contentsOf: [
-	.package(path: "../Articles"),
-	.package(path: "../Database"),
-	.package(path: "../FMDB"),
-])
-#else
-dependencies.append(contentsOf: [
-    .package(url: "../Articles", .upToNextMajor(from: "1.0.0")),
-])
-#endif
-
 let package = Package(
     name: "SyncDatabase",
 	platforms: [.macOS(.v14), .iOS(.v17)],
@@ -25,7 +10,11 @@ let package = Package(
 			type: .dynamic,
             targets: ["SyncDatabase"]),
     ],
-	dependencies: dependencies,
+	dependencies: [
+		.package(path: "../Articles"),
+		.package(path: "../Database"),
+		.package(path: "../FMDB"),
+	],
 	targets: [
 		.target(
 			name: "SyncDatabase",
