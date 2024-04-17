@@ -12,12 +12,18 @@ let package = Package(
 	],
 	dependencies: [
 		.package(path: "../Parser"),
+		.package(path: "../FoundationExtras"),
+		.package(path: "../Web"),
+		.package(path: "../Secrets"),
 	],
 	targets: [
 		.target(
 			name: "Feedbin",
 			dependencies: [
-				"Parser"
+				"Parser",
+				"FoundationExtras",
+				"Web",
+				"Secrets"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
