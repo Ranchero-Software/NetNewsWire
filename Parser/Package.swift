@@ -25,7 +25,10 @@ let package = Package(
 		.target(
 			name: "Parser",
 			dependencies: ["ParserObjC"],
-			path: "Sources/Swift"),
+			path: "Sources/Swift",
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]),
 		.target(
 			name: "ParserObjC",
 			dependencies: [],
