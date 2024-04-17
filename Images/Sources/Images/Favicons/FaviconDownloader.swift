@@ -20,9 +20,9 @@ public extension Notification.Name {
 
 public protocol FaviconDownloaderDelegate {
 
-	var appIconImage: IconImage? { get }
+	@MainActor var appIconImage: IconImage? { get }
 
-	func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata?
+	@MainActor func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata?
 }
 
 @MainActor public final class FaviconDownloader {
