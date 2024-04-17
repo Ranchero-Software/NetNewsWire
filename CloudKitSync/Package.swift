@@ -28,6 +28,9 @@ let package = Package(
 				"Core",
 				"Web",
 				"Parser"
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
 			]
 		),
 		.testTarget(

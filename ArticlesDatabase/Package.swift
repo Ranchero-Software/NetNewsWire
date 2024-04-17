@@ -27,6 +27,10 @@ let package = Package(
 				"Articles",
 				"FMDB",
 				"FoundationExtras"
-			]),
-    ]
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]
+		)
+	]
 )
