@@ -11,7 +11,7 @@ import Account
 import Articles
 
 @objc(ScriptableAuthor)
-class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
+class ScriptableAuthor: NSObject, UniqueIDScriptingObject {
 
     let author:Author
     let container:ScriptingObjectContainer
@@ -38,10 +38,10 @@ class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
         return "authors"
     }
 
-    // MARK: --- UniqueIdScriptingObject protocol ---
+    // MARK: --- UniqueIDScriptingObject protocol ---
 
-    @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    @objc(uniqueID)
+    var scriptingUniqueID:Any {
         return author.authorID
     }
     

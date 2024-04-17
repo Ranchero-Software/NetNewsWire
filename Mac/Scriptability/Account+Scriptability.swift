@@ -12,7 +12,7 @@ import Articles
 import Core
 
 @objc(ScriptableAccount)
-@MainActor class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor class ScriptableAccount: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
     
     let account:Account
     init (_ account:Account) {
@@ -52,12 +52,12 @@ import Core
         return "accounts"
     }
 
-    // MARK: --- UniqueIdScriptingObject protocol ---
-    
+    // MARK: --- UniqueIDScriptingObject protocol ---
+
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
-    @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    @objc(uniqueID)
+    var scriptingUniqueID:Any {
         return account.accountID
     }
 

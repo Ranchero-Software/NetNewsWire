@@ -11,7 +11,7 @@ import Account
 import Articles
 
 @objc(ScriptableArticle)
-class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+class ScriptableArticle: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
 
     let article:Article
     let container:ScriptingObjectContainer
@@ -33,13 +33,13 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         return "articles"
     }
 
-    // MARK: --- UniqueIdScriptingObject protocol ---
+    // MARK: --- UniqueIDScriptingObject protocol ---
 
     // articles have id in the NetNewsWire database and id in the feed
     // article.uniqueID here is the feed unique id
 
-    @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    @objc(uniqueID)
+    var scriptingUniqueID:Any {
         return article.uniqueID
     }
 

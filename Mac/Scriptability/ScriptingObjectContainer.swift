@@ -26,11 +26,11 @@ extension ScriptingObjectContainer {
         return specifier
     }
     
-    func makeFormUniqueIDScriptObjectSpecifier(forObject object:UniqueIdScriptingObject) -> NSScriptObjectSpecifier? {
+    func makeFormUniqueIDScriptObjectSpecifier(forObject object:UniqueIDScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier
         let scriptingKey = object.scriptingKey
-        let uniqueID = object.scriptingUniqueId
+        let uniqueID = object.scriptingUniqueID
         let specifier = NSUniqueIDSpecifier(containerClassDescription:containerClassDescription,
                                             containerSpecifier:containerScriptObjectSpecifier, key:scriptingKey, uniqueID: uniqueID)
         return specifier

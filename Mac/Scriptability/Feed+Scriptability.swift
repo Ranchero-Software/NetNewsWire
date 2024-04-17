@@ -12,7 +12,7 @@ import Account
 import Articles
 
 @objc(ScriptableFeed)
-@objcMembers class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@objcMembers class ScriptableFeed: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
 
     let feed:Feed
     let container:ScriptingObjectContainer
@@ -39,12 +39,12 @@ import Articles
         return "feeds"
     }
 
-    // MARK: --- UniqueIdScriptingObject protocol ---
+    // MARK: --- UniqueIDScriptingObject protocol ---
 
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
-    @objc(uniqueId)
-	@MainActor var scriptingUniqueId:Any {
+    @objc(uniqueID)
+	@MainActor var scriptingUniqueID:Any {
         return feed.feedID
     }
 

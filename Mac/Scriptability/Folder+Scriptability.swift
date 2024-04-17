@@ -12,7 +12,7 @@ import Articles
 import Core
 
 @objc(ScriptableFolder)
-@MainActor class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor class ScriptableFolder: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
 
     let folder:Folder
     let container:ScriptingObjectContainer
@@ -34,13 +34,13 @@ import Core
         return "folders"
     }
 
-    // MARK: --- UniqueIdScriptingObject protocol ---
+    // MARK: --- UniqueIDScriptingObject protocol ---
 
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
-    @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    @objc(uniqueID)
+    var scriptingUniqueID:Any {
         return folder.folderID
     }
     

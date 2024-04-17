@@ -80,7 +80,7 @@
                 <cocoa key="scriptingName"/>
             </property>
             <property name="id" code="ID  " type="text" access="r" description="The unique id of the account">
-                <cocoa key="uniqueId"/>
+                <cocoa key="uniqueID"/>
             </property>
             <property name="accountType" code="ATyp" type="account type" access="r" description="The type of the account">
                 <cocoa key="accountType"/>
@@ -109,7 +109,7 @@
                 <cocoa key="name"/>
             </property>
             <property name="id" code="ID  " type="text" access="r" description="The unique id of the feed">
-                <cocoa key="uniqueId"/>
+                <cocoa key="uniqueID"/>
             </property>
             <property name="url" code="URL " type="text" access="r" description="The type of the feed">
                 <cocoa key="url"/>
@@ -140,7 +140,7 @@
                 <cocoa key="name"/>
             </property>
             <property name="id" code="ID  " type="text" access="r" description="The unique id of the author">
-                <cocoa key="uniqueId"/>
+                <cocoa key="uniqueID"/>
             </property>
             <property name="url" code="URL " type="text" access="r" description="url for the author">
                 <cocoa key="url"/>
@@ -160,7 +160,7 @@
                 <cocoa key="name"/>
             </property>
             <property name="id" code="ID  " type="integer" access="r" description="The unique id of the account">
-                <cocoa key="uniqueId"/>
+                <cocoa key="uniqueID"/>
             </property>
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the folder">
                 <cocoa key="opmlRepresentation"/>
@@ -173,7 +173,7 @@
         <class name="article" code="Arcl" plural="articles" description="An article in a feed">
             <cocoa class="ScriptableArticle"/>
             <property name="id" code="ID  " type="text" access="r" description="The unique id of the article as set by the feed">
-                <cocoa key="uniqueId"/>
+                <cocoa key="uniqueID"/>
             </property>
             <property name="title" code="titl" type="text" access="r" description="The article title">
                 <cocoa key="title"/>
