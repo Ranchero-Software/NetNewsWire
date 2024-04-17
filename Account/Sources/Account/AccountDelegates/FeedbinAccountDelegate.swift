@@ -445,7 +445,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+	func checkImportResult(opmlImportResultID: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 
 		DispatchQueue.main.async {
 
