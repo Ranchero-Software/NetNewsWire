@@ -52,6 +52,9 @@ public extension Notification.Name {
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
+
+		assert(Thread.isMainThread)
+		
 		guard let avatarURL = note.userInfo?[ImageDownloader.imageURLKey] as? String else {
 			return
 		}
