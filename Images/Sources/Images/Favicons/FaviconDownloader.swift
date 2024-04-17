@@ -163,6 +163,8 @@ public protocol FaviconDownloaderDelegate {
 
 	@objc func didLoadFavicon(_ note: Notification) {
 
+		assert(Thread.isMainThread)
+		
 		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
 			return
 		}
