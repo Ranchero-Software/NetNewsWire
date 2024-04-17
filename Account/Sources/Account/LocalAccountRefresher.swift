@@ -101,36 +101,37 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 
 		let parserData = ParserData(url: feed.url, data: data)
-		FeedParser.parse(parserData) { (parsedFeed, error) in
-			
-			guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
-				completion()
-				self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-				return
-			}
-			
-			Task { @MainActor in
+		Task { @MainActor in
 
-				do {
-					let articleChanges = try await account.update(feed: feed, with: parsedFeed)
+			do {
+				let parsedFeed = try await FeedParser.parse(parserData)
 
-					if let httpResponse = response as? HTTPURLResponse {
-						feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
-					}
-					feed.contentHash = dataHash
-
-					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
-						completion()
-					}
-
-				} catch {
+				guard let account = feed.account, let parsedFeed else {
 					completion()
 					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+					return
 				}
+
+
+				let articleChanges = try await account.update(feed: feed, with: parsedFeed)
+
+				if let httpResponse = response as? HTTPURLResponse {
+					feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+				}
+				feed.contentHash = dataHash
+
+				self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+				self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
+					completion()
+				}
+
+			} catch {
+				completion()
+				self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			}
 		}
 	}
+
 	
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
 		let feed = representedObject as! Feed

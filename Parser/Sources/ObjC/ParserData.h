@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+__attribute__((swift_attr("@Sendable")))
 @interface ParserData : NSObject
 
 @property (nonatomic, readonly) NSString *url;

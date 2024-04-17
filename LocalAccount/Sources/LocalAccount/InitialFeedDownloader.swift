@@ -23,14 +23,25 @@ public struct InitialFeedDownloader {
 
 	@MainActor public static func download(_ url: URL,_ completion: @escaping @Sendable (_ parsedFeed: ParsedFeed?) -> Void) {
 
-		downloadUsingCache(url) { (data, response, error) in
-			guard let data = data else {
+		Task {
+
+			guard let downloadData = try? await downloadUsingCache(url) else {
+				completion(nil)
+				return
+			}
+			guard let data = downloadData.data else {
 				completion(nil)
 				return
 			}
 
 			let parserData = ParserData(url: url.absoluteString, data: data)
-			FeedParser.parse(parserData) { (parsedFeed, error) in
+
+			Task.detached {
+				guard let parsedFeed = try? await FeedParser.parse(parserData) else {
+					completion(nil)
+					return
+				}
+
 				completion(parsedFeed)
 			}
 		}
