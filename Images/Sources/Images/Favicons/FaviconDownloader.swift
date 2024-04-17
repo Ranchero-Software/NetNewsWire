@@ -109,7 +109,7 @@ public protocol FaviconDownloaderDelegate {
 		}
 		
 		if let iconImage = favicon(for: feed), let imageData = iconImage.image.dataRepresentation() {
-			if let scaledImage = RSImage.scaledForIcon(imageData) {
+			if let scaledImage = RSImage.scaledForIconSync(imageData) {
 				let scaledIconImage = IconImage(scaledImage)
 				cache[feed] = scaledIconImage
 				return scaledIconImage
@@ -164,7 +164,7 @@ public protocol FaviconDownloaderDelegate {
 	@objc func didLoadFavicon(_ note: Notification) {
 
 		assert(Thread.isMainThread)
-		
+
 		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
 			return
 		}

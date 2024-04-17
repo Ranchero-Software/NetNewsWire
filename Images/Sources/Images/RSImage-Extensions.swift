@@ -29,10 +29,10 @@ extension RSImage {
 
 	static func scaledForIcon(_ data: Data) async -> RSImage? {
 
-		await IconScalerQueue.shared.scaledForIcon(data)
+		RSImage.scaledForIconSync(data)
 	}
 
-	static func scaledForIcon(_ data: Data) -> RSImage? {
+	static func scaledForIconSync(_ data: Data) -> RSImage? {
 
 		guard var cgImage = RSImage.scaleImage(data, maxPixelSize: Self.scaledMaxPixelSize) else {
 			return nil
@@ -44,36 +44,5 @@ extension RSImage {
 		let size = NSSize(width: cgImage.width, height: cgImage.height)
 		return RSImage(cgImage: cgImage, size: size)
 		#endif		
-	}
-}
-
-// MARK: - IconScalerQueue
-
-private final class IconScalerQueue: @unchecked Sendable {
-
-	static let shared = IconScalerQueue()
-
-	private let queue: DispatchQueue = {
-		let q = DispatchQueue(label: "IconScaler", attributes: .initiallyInactive)
-		q.setTarget(queue: DispatchQueue.global(qos: .default))
-		q.activate()
-		return q
-	}()
-
-	private func scaledForIcon(_ data: Data, _ imageResultBlock: @escaping ImageResultBlock) {
-		queue.async {
-			let image = RSImage.scaledForIcon(data)
-			imageResultBlock(image)
-		}
-	}
-
-	func scaledForIcon(_ data: Data) async -> RSImage? {
-
-		await withCheckedContinuation { continuation in
-
-			self.scaledForIcon(data) { image in
-				continuation.resume(returning: image)
-			}
-		}
 	}
 }
