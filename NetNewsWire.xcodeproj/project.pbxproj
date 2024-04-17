@@ -495,7 +495,7 @@
 		65ED4035235DEF6C0081F399 /* FolderTreeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */; };
 		65ED4036235DEF6C0081F399 /* NNW3ImportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849ADEE02359817D000E1B81 /* NNW3ImportController.swift */; };
 		65ED4037235DEF6C0081F399 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
-		65ED403A235DEF6C0081F399 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
+		65ED403A235DEF6C0081F399 /* ScriptableFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* ScriptableFeed.swift */; };
 		65ED403C235DEF6C0081F399 /* SingleLineTextFieldSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E185B2203B74E500F69BFA /* SingleLineTextFieldSizer.swift */; };
 		65ED403D235DEF6C0081F399 /* TimelineTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97741ED9EC04007D329B /* TimelineTableCellView.swift */; };
 		65ED403E235DEF6C0081F399 /* TimelineCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97701ED9EC04007D329B /* TimelineCellAppearance.swift */; };
@@ -756,7 +756,7 @@
 		D5E4CC54202C1361009B4FFC /* AppDelegate+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */; };
 		D5E4CC64202C1AC1009B4FFC /* MainWindowController+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */; };
 		D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */; };
-		D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */; };
+		D5F4EDB720074D6500B9E363 /* ScriptableFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* ScriptableFeed.swift */; };
 		D5F4EDB920074D7C00B9E363 /* ScriptableFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* ScriptableFolder.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
 		DFD6AACE27ADE86E00463FAD /* NewsFax.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */; };
@@ -1452,7 +1452,7 @@
 		D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Scriptability.swift"; sourceTree = "<group>"; };
 		D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainWindowController+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB4200744A700B9E363 /* ScriptingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptingObject.swift; sourceTree = "<group>"; };
-		D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feed+Scriptability.swift"; sourceTree = "<group>"; };
+		D5F4EDB620074D6500B9E363 /* ScriptableFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptableFeed.swift; sourceTree = "<group>"; };
 		D5F4EDB820074D7C00B9E363 /* ScriptableFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptableFolder.swift; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
@@ -2663,7 +2663,7 @@
 				D5E4CC53202C1361009B4FFC /* AppDelegate+Scriptability.swift */,
 				D553737C20186C1F006D8857 /* Article+Scriptability.swift */,
 				D5A2678B20130ECF00A8D3C0 /* Author+Scriptability.swift */,
-				D5F4EDB620074D6500B9E363 /* Feed+Scriptability.swift */,
+				D5F4EDB620074D6500B9E363 /* ScriptableFeed.swift */,
 				D5F4EDB820074D7C00B9E363 /* ScriptableFolder.swift */,
 				D5E4CC63202C1AC1009B4FFC /* MainWindowController+Scriptability.swift */,
 				D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */,
@@ -3809,7 +3809,7 @@
 				65ED4036235DEF6C0081F399 /* NNW3ImportController.swift in Sources */,
 				65ED4037235DEF6C0081F399 /* FolderTreeControllerDelegate.swift in Sources */,
 				845122732B8CEA9100480DB0 /* SidebarItem.swift in Sources */,
-				65ED403A235DEF6C0081F399 /* Feed+Scriptability.swift in Sources */,
+				65ED403A235DEF6C0081F399 /* ScriptableFeed.swift in Sources */,
 				65ED403C235DEF6C0081F399 /* SingleLineTextFieldSizer.swift in Sources */,
 				65ED403D235DEF6C0081F399 /* TimelineTableCellView.swift in Sources */,
 				65ED403E235DEF6C0081F399 /* TimelineCellAppearance.swift in Sources */,
@@ -4140,7 +4140,7 @@
 				849ADEE42359817E000E1B81 /* NNW3ImportController.swift in Sources */,
 				179C39EB26F76B3800D4E741 /* ArticleThemePlist.swift in Sources */,
 				849A97A31ED9F180007D329B /* FolderTreeControllerDelegate.swift in Sources */,
-				D5F4EDB720074D6500B9E363 /* Feed+Scriptability.swift in Sources */,
+				D5F4EDB720074D6500B9E363 /* ScriptableFeed.swift in Sources */,
 				84E185B3203B74E500F69BFA /* SingleLineTextFieldSizer.swift in Sources */,
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
 				849A97761ED9EC04007D329B /* TimelineCellAppearance.swift in Sources */,
