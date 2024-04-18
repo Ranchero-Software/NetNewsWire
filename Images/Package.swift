@@ -22,10 +22,12 @@ let package = Package(
 				"Core",
 				"Articles",
 				"Account"
-			],
-			swiftSettings: [
-				.enableExperimentalFeature("StrictConcurrency")
 			]
+//			Disabled due to Sendable warnings about RSImage (NSImage).
+//			TODO: check if Swift 6 will allow us to deal with these warnings.
+//			swiftSettings: [
+//				.enableExperimentalFeature("StrictConcurrency")
+//			]
 		),
 		.testTarget(
 			name: "ImagesTests",
