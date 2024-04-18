@@ -17,24 +17,19 @@ public extension Notification.Name {
 	static let ImageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
 }
 
-public final class ImageDownloader {
+@MainActor public final class ImageDownloader {
 
 	public static let imageURLKey = "url"
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
 
-	private let folder: String
-	private var diskCache: BinaryDiskCache
-	private let queue: DispatchQueue
+	private let diskCache: BinaryDiskCache
 	private var imageCache = [String: Data]() // url: image
 	private var urlsInProgress = Set<String>()
 	private var badURLs = Set<String>() // That return a 404 or whatever. Just skip them in the future.
 
 	public init(folder: String) {
-
-		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
-		self.queue = DispatchQueue(label: "ImageDownloader serial queue - \(folder)")
 	}
 
 	@discardableResult
@@ -59,90 +54,71 @@ private extension ImageDownloader {
 
 	func findImage(_ url: String) {
 
-		guard !urlsInProgress.contains(url) && !badURLs.contains(url) else {
-			return
-		}
-		urlsInProgress.insert(url)
+		Task { @MainActor in
 
-		readFromDisk(url) { (image) in
-
-			if let image = image {
-				self.cacheImage(url, image)
-				self.urlsInProgress.remove(url)
+			guard !urlsInProgress.contains(url) && !badURLs.contains(url) else {
 				return
 			}
 
-			self.downloadImage(url) { (image) in
+			urlsInProgress.insert(url)
 
-				if let image = image {
-					self.cacheImage(url, image)
-				}
-				self.urlsInProgress.remove(url)
+			if let imageData = await readFromDisk(url) {
+				cacheImage(url, imageData)
+			} else if let imageData = await downloadImage(url) {
+				cacheImage(url, imageData)
 			}
+
+			urlsInProgress.remove(url)
 		}
 	}
 
-	func readFromDisk(_ url: String, _ completion: @escaping (Data?) -> Void) {
+	func readFromDisk(_ url: String) async -> Data? {
 
-		queue.async {
-
-			if let data = self.diskCache[self.diskKey(url)], !data.isEmpty {
-				DispatchQueue.main.async {
-					completion(data)
-				}
-				return
-			}
-
-			DispatchQueue.main.async {
-				completion(nil)
-			}
+		guard let data = await self.diskCache[Self.diskKey(url)], !data.isEmpty else {
+			return nil
 		}
+
+		return data
 	}
 
-	func downloadImage(_ url: String, _ completion: @escaping (Data?) -> Void) {
+	func downloadImage(_ url: String) async -> Data? {
 
 		guard let imageURL = URL(string: url) else {
-			completion(nil)
-			return
+			return nil
 		}
 
-		Task { @MainActor in
-			downloadUsingCache(imageURL) { (data, response, error) in
-				
-				if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-					self.saveToDisk(url, data)
-					completion(data)
-					return
-				}
-				
-				if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
-					self.badURLs.insert(url)
-				}
-				if let error = error {
-					os_log(.info, log: self.log, "Error downloading image at %@: %@.", url, error.localizedDescription)
-				}
-				
-				completion(nil)
+		do {
+			let downloadData = try await downloadUsingCache(imageURL)
+
+			if let data = downloadData.data, !data.isEmpty, let response = downloadData.response, response.statusIsOK {
+				try await saveToDisk(url, data)
+				return data
 			}
+
+			if let response = downloadData.response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
+				badURLs.insert(url)
+			}
+
+		} catch {
+			os_log(.info, log: self.log, "Error downloading image at %@: %@.", url, error.localizedDescription)
 		}
+
+		return nil
 	}
 
-	func saveToDisk(_ url: String, _ data: Data) {
+	func saveToDisk(_ url: String, _ data: Data) async throws {
 
-		queue.async {
-			self.diskCache[self.diskKey(url)] = data
-		}
+		let key = Self.diskKey(url)
+		try await diskCache.setData(data, forKey: key)
 	}
 
-	func diskKey(_ url: String) -> String {
+	static func diskKey(_ url: String) -> String {
 
-		return url.md5String
+		url.md5String
 	}
 
 	func postImageDidBecomeAvailableNotification(_ url: String) {
 
-		DispatchQueue.main.async {
-			NotificationCenter.default.post(name: .ImageDidBecomeAvailable, object: self, userInfo: [Self.imageURLKey: url])
-		}
+		NotificationCenter.default.post(name: .ImageDidBecomeAvailable, object: self, userInfo: [Self.imageURLKey: url])
 	}
 }
