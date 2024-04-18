@@ -94,5 +94,4 @@ public final class CloudKitError: LocalizedError {
 			return NSLocalizedString("Unhandled Error.", comment: "Unknown iCloud Error")
 		}
 	}
-	
 }

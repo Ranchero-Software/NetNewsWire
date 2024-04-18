@@ -24,9 +24,9 @@ enum CloudKitAccountZoneError: LocalizedError {
 
 @MainActor final class CloudKitAccountZone: CloudKitZone {
 
-	var zoneID: CKRecordZone.ID
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+	let zoneID: CKRecordZone.ID
+
+	let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
     weak var container: CKContainer?
     weak var database: CKDatabase?
@@ -240,7 +240,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 				return try await findOrCreateAccount()
 
 			case .zoneNotFound, .userDeletedZone:
-				try await createZoneRecord()
+				_ = try await createZoneRecord()
 				return try await findOrCreateAccount()
 
 			default:

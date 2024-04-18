@@ -59,7 +59,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 
-	init(container: CKContainer) {
+	@MainActor init(container: CKContainer) {
 		self.container = container
 		self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
@@ -73,16 +73,16 @@ final class CloudKitArticlesZone: CloudKitZone {
 				completion(.success(()))
 			case .failure(let error):
 				if case CloudKitZoneError.userDeletedZone = error {
-					self.createZoneRecord() { result in
-						switch result {
-						case .success:
-							Task { @MainActor in
-								self.refreshArticles(completion: completion)
-							}
-						case .failure(let error):
+
+					Task { @MainActor in
+						do {
+							_ = try await self.createZoneRecord()
+							self.refreshArticles(completion: completion)
+						} catch {
 							completion(.failure(error))
 						}
 					}
+
 				} else {
 					completion(.failure(error))
 				}
@@ -174,16 +174,16 @@ private extension CloudKitArticlesZone {
 
 	@MainActor func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
 		if case CloudKitZoneError.userDeletedZone = error {
-			self.createZoneRecord() { result in
-				switch result {
-				case .success:
-					MainActor.assumeIsolated {
-						self.modifyArticles(statusUpdates, completion: completion)
-					}
-				case .failure(let error):
+
+			Task { @MainActor in
+				do {
+					_ = try await self.createZoneRecord()
+					self.modifyArticles(statusUpdates, completion: completion)
+				} catch {
 					completion(.failure(error))
 				}
 			}
+
 		} else {
 			completion(.failure(error))
 		}
