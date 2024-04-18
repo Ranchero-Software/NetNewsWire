@@ -50,10 +50,10 @@ let package = Package(
 				"FeedFinder",
 				"CommonErrors",
 				"Feedly"
-			],
-			swiftSettings: [
-				.enableExperimentalFeature("StrictConcurrency")
 			]
+//			swiftSettings: [
+//				.enableExperimentalFeature("StrictConcurrency")
+//			]
 		),
 		.testTarget(
 			name: "AccountTests",
