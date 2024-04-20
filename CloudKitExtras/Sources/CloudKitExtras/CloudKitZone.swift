@@ -36,31 +36,31 @@ public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID:
 
 public protocol CloudKitZone: AnyObject {
 	
-	static var qualityOfService: QualityOfService { get }
+	@MainActor static var qualityOfService: QualityOfService { get }
 
 	var zoneID: CKRecordZone.ID { get }
 
-	var log: OSLog { get }
+	@MainActor var log: OSLog { get }
 
 	@MainActor var container: CKContainer? { get }
 	@MainActor var database: CKDatabase? { get }
 	@MainActor var delegate: CloudKitZoneDelegate? { get set }
 
 	/// Reset the change token used to determine what point in time we are doing changes fetches
-	func resetChangeToken()
+	@MainActor func resetChangeToken()
 
 	/// Generates a new CKRecord.ID using a UUID for the record's name
-	func generateRecordID() -> CKRecord.ID
-	
+	@MainActor func generateRecordID() -> CKRecord.ID
+
 	/// Subscribe to changes at a zone level
-	func subscribeToZoneChanges()
+	@MainActor func subscribeToZoneChanges()
 	
 	/// Process a remove notification
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async
+	@MainActor func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async
 }
 
 @MainActor public extension CloudKitZone {
-	
+
 	// My observation has been that QoS is treated differently for CloudKit operations on macOS vs iOS.
 	// .userInitiated is too aggressive on iOS and can lead the UI slowing down and appearing to block.
 	// .default (or lower) on macOS will sometimes hang for extended periods of time and appear to hang.
@@ -71,7 +71,7 @@ public protocol CloudKitZone: AnyObject {
 		return .default
 		#endif
 	}
-	
+
 	var oldChangeTokenKey: String {
 		return "cloudkit.server.token.\(zoneID.zoneName)"
 	}
@@ -130,29 +130,17 @@ public protocol CloudKitZone: AnyObject {
 		})
 	}
 	
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+	@MainActor func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
 
-		await withCheckedContinuation { continuation in
-			Task { @MainActor in
-				self.receiveRemoteNotification(userInfo: userInfo) {
-					continuation.resume()
-				}
-			}
-		}
-	}
-
-	@MainActor func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping @Sendable () -> Void) {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == zoneID.zoneName else {
-			completion()
 			return
 		}
 		
-		fetchChangesInZone() { result in
-			if case .failure(let error) = result {
-				os_log(.error, log: self.log, "%@ zone remote notification fetch error: %@", self.zoneID.zoneName, error.localizedDescription)
-			}
-			completion()
+		do {
+			try await fetchChangesInZone()
+		} catch {
+			os_log(.error, log: log, "%@ zone remote notification fetch error: %@", zoneID.zoneName, error.localizedDescription)
 		}
 	}
 

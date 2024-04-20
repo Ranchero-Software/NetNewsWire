@@ -94,7 +94,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 	}
     
 	///  Persist a web feed record to iCloud and return the external key
-	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container) async throws -> String {
+	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, containerExternalID: String) async throws -> String {
 
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
@@ -107,9 +107,6 @@ enum CloudKitAccountZoneError: LocalizedError {
 			record[CloudKitFeed.Fields.homePageURL] = homePageURL
 		}
 
-		guard let containerExternalID = container.externalID else {
-			throw CloudKitZoneError.corruptAccount
-		}
 		record[CloudKitFeed.Fields.containerExternalIDs] = [containerExternalID]
 
 		try await save(record)
@@ -117,11 +114,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 	}
 	
 	/// Rename the given web feed
-	func renameFeed(_ feed: Feed, editedName: String?) async throws {
-
-		guard let externalID = feed.externalID else {
-			throw CloudKitZoneError.corruptAccount
-		}
+	func renameFeed(externalID: String, editedName: String?) async throws {
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
@@ -132,22 +125,18 @@ enum CloudKitAccountZoneError: LocalizedError {
 	
 	/// Removes a web feed from a container and optionally deletes it, returning true if deleted
 	@discardableResult
-	func removeFeed(_ feed: Feed, from: Container) async throws -> Bool {
-
-		guard let fromContainerExternalID = from.externalID else {
-			throw CloudKitZoneError.corruptAccount
-		}
+	func removeFeed(externalID: String, from containerExternalID: String) async throws -> Bool {
 
 		do {
-			let record = try await fetch(externalID: feed.externalID)
+			let record = try await fetch(externalID: externalID)
 
 			if let containerExternalIDs = record[CloudKitFeed.Fields.containerExternalIDs] as? [String] {
 
 				var containerExternalIDSet = Set(containerExternalIDs)
-				containerExternalIDSet.remove(fromContainerExternalID)
+				containerExternalIDSet.remove(containerExternalID)
 
 				if containerExternalIDSet.isEmpty {
-					try await delete(externalID: feed.externalID)
+					try await delete(externalID: externalID)
 					return true
 				} else {
 					record[CloudKitFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
@@ -166,44 +155,32 @@ enum CloudKitAccountZoneError: LocalizedError {
 		}
 	}
 	
-	func moveFeed(_ feed: Feed, from: Container, to: Container) async throws {
+	func moveFeed(externalID: String, from sourceContainerExternalID: String, to destinationContainerExternalID: String) async throws {
 
-		guard let fromContainerExternalID = from.externalID, let toContainerExternalID = to.externalID else {
-			throw CloudKitZoneError.corruptAccount
-		}
-
-		let record = try await fetch(externalID: feed.externalID)
+		let record = try await fetch(externalID: externalID)
 
 		if let containerExternalIDs = record[CloudKitFeed.Fields.containerExternalIDs] as? [String] {
 			var containerExternalIDSet = Set(containerExternalIDs)
-			containerExternalIDSet.remove(fromContainerExternalID)
-			containerExternalIDSet.insert(toContainerExternalID)
+			containerExternalIDSet.remove(sourceContainerExternalID)
+			containerExternalIDSet.insert(destinationContainerExternalID)
 			record[CloudKitFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
 			try await save(record)
 		}
 	}
 
-	func addFeed(_ feed: Feed, to: Container) async throws {
+	func addFeed(externalID: String, to containerExternalID: String) async throws {
 
-		guard let toContainerExternalID = to.externalID else {
-			throw CloudKitZoneError.corruptAccount
-		}
-
-		let record = try await fetch(externalID: feed.externalID)
+		let record = try await fetch(externalID: externalID)
 
 		if let containerExternalIDs = record[CloudKitFeed.Fields.containerExternalIDs] as? [String] {
 			var containerExternalIDSet = Set(containerExternalIDs)
-			containerExternalIDSet.insert(toContainerExternalID)
+			containerExternalIDSet.insert(containerExternalID)
 			record[CloudKitFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
 			try await save(record)
 		}
 	}
 
-	func findFeedExternalIDs(for folder: Folder) async throws -> [String] {
-
-		guard let folderExternalID = folder.externalID else {
-			throw CloudKitAccountZoneError.unknown
-		}
+	func findFeedExternalIDs(for folderExternalID: String) async throws -> [String] {
 
 		let predicate = NSPredicate(format: "containerExternalIDs CONTAINS %@", folderExternalID)
 		let ckQuery = CKQuery(recordType: CloudKitFeed.recordType, predicate: predicate)
@@ -216,9 +193,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 
 	func findOrCreateAccount() async throws -> String {
 
-		guard let database else {
-			throw CloudKitAccountZoneError.unknown
-		}
+		guard let database else { throw CloudKitAccountZoneError.unknown }
 
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
@@ -254,11 +229,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		return try await createContainer(name: name, isAccount: false)
 	}
 	
-	func renameFolder(_ folder: Folder, to name: String) async throws {
-
-		guard let externalID = folder.externalID else {
-			throw CloudKitZoneError.corruptAccount
-		}
+	func renameFolder(externalID: String, to name: String) async throws {
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: recordID)
@@ -267,9 +238,9 @@ enum CloudKitAccountZoneError: LocalizedError {
 		try await save(record)
 	}
 	
-	func removeFolder(_ folder: Folder) async throws {
+	func removeFolder(externalID: String) async throws {
 
-		try await delete(externalID: folder.externalID)
+		try await delete(externalID: externalID)
 	}
 }
 
