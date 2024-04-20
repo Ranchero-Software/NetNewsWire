@@ -823,48 +823,21 @@ public protocol CloudKitZone: AnyObject {
 	/// Delete a CKSubscription
 	func delete(subscriptionID: String) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.delete(subscriptionID: subscriptionID) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
+		guard let database else { throw CloudKitZoneError.unknown }
 
-	/// Delete a CKSubscription
-	func delete(subscriptionID: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+		do {
+			_ = try await database.deleteSubscription(withID: subscriptionID)
+		} catch {
 
-		guard let database else {
-			completion(.failure(CloudKitZoneError.unknown))
-			return
-		}
+			switch CloudKitZoneResult.resolve(error) {
 
-		database.delete(withSubscriptionID: subscriptionID) { [weak self] _, error in
+			case .retry(let timeToWait):
+				os_log(.error, log: self.log, "%@ zone delete subscription retry in %f seconds.", self.zoneID.zoneName, timeToWait)
+				await self.delay(for: timeToWait)
+				try await delete(subscriptionID: subscriptionID)
 
-			guard let self else {
-				completion(.failure(CloudKitZoneError.unknown))
-				return
-			}
-
-			Task { @MainActor in
-
-				switch CloudKitZoneResult.resolve(error) {
-
-				case .success:
-					completion(.success(()))
-
-				case .retry(let timeToWait):
-					os_log(.error, log: self.log, "%@ zone delete subscription retry in %f seconds.", self.zoneID.zoneName, timeToWait)
-					await self.delay(for: timeToWait)
-					self.delete(subscriptionID: subscriptionID, completion: completion)
-
-				default:
-					completion(.failure(CloudKitError(error!)))
-				}
+			default:
+				throw CloudKitError(error)
 			}
 		}
 	}
