@@ -16,10 +16,10 @@ let package = Package(
 	targets: [
 		.target(
 			name: "CloudKitExtras",
-			dependencies: ["FoundationExtras"]
-			//			swiftSettings: [
-			//				.enableExperimentalFeature("StrictConcurrency")
-			//			]
+			dependencies: ["FoundationExtras"],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]
 		),
 		.testTarget(
 			name: "CloudKitExtrasTests",
