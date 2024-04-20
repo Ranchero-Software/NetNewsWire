@@ -19,7 +19,7 @@ extension AccountType {
 	
 	// TODO: Move this to the Account Package.
 	
-	func localizedAccountName() -> String {
+	@MainActor func localizedAccountName() -> String {
 		
 		switch self {
 		case .onMyMac:
@@ -54,7 +54,7 @@ extension AccountType {
 	}
 	
 	// MARK: - SwiftUI Images
-	func image() -> Image {
+	@MainActor func image() -> Image {
 		switch self {
 		case .onMyMac:
 			// If it's the multiplatform app, the asset catalog contains assets for 

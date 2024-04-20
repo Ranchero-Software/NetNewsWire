@@ -18,7 +18,7 @@ enum ReadFilterType {
 
 protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 
-	var account: Account? { get }
+	@MainActor var account: Account? { get }
 	@MainActor var defaultReadFilterType: ReadFilterType { get }
 }
 
