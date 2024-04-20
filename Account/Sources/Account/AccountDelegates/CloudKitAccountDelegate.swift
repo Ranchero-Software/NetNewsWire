@@ -21,6 +21,7 @@ import CloudKitExtras
 import CommonErrors
 import FeedFinder
 import LocalAccount
+import CloudKitSync
 
 enum CloudKitAccountDelegateError: LocalizedError {
 	case invalidParameter
@@ -204,13 +205,17 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		guard let feedExternalID = feed.externalID else {
+			throw LocalAccountDelegateError.invalidParameter
+		}
+
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		let editedName = name.isEmpty ? nil : name
-
+		
 		do {
-			try await accountZone.renameFeed(feed, editedName: editedName)
+			try await accountZone.renameFeed(externalID: feedExternalID, editedName: editedName)
 			feed.editedName = name
 		} catch {
 			processAccountError(account, error)
@@ -240,11 +245,15 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	
 	func moveFeed(for account: Account, with feed: Feed, from sourceContainer: Container, to destinationContainer: Container) async throws {
 
+		guard let feedExternalID = feed.externalID, let sourceContainerExternalID = sourceContainer.externalID, let destinationContainerExternalID = destinationContainer.externalID else {
+			throw LocalAccountDelegateError.invalidParameter
+		}
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		defer { refreshProgress.completeTask() }
 
 		do {
-			try await accountZone.moveFeed(feed, from: sourceContainer, to: destinationContainer)
+			try await accountZone.moveFeed(externalID: feedExternalID, from: sourceContainerExternalID, to: destinationContainerExternalID)
 			sourceContainer.removeFeed(feed)
 			destinationContainer.addFeed(feed)
 		} catch {
@@ -255,11 +264,15 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	
 	func addFeed(for account: Account, with feed: Feed, to container: any Container) async throws {
 
+		guard let feedExternalID = feed.externalID, let containerExternalID = container.externalID else {
+			throw LocalAccountDelegateError.invalidParameter
+		}
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		defer { refreshProgress.completeTask() }
 
 		do {
-			try await accountZone.addFeed(feed, to: container)
+			try await accountZone.addFeed(externalID: feedExternalID, to: containerExternalID)
 			container.addFeed(feed)
 		} catch {
 			processAccountError(account, error)
@@ -296,11 +309,15 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 
+		guard let folderExternalID = folder.externalID else {
+			throw CloudKitAccountDelegateError.invalidParameter
+		}
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		defer { refreshProgress.completeTask() }
 
 		do {
-			try await accountZone.renameFolder(folder, to: name)
+			try await accountZone.renameFolder(externalID: folderExternalID, to: name)
 			folder.name = name
 		} catch {
 			processAccountError(account, error)
@@ -310,11 +327,15 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	
 	func removeFolder(for account: Account, with folder: Folder) async throws {
 
+		guard let folderExternalID = folder.externalID else {
+			throw CloudKitAccountDelegateError.invalidParameter
+		}
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		defer { refreshProgress.completeTask() }
 
 		do {
-			let feedExternalIDs = try await accountZone.findFeedExternalIDs(for: folder)
+			let feedExternalIDs = try await accountZone.findFeedExternalIDs(for: folderExternalID)
 
 			let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
 			var errorOccurred = false
@@ -334,7 +355,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 				throw CloudKitAccountDelegateError.unknown
 			}
 
-			try await accountZone.removeFolder(folder)
+			try await accountZone.removeFolder(externalID: folderExternalID)
 			account.removeFolder(folder: folder)
 
 		} catch {
@@ -519,6 +540,10 @@ private extension CloudKitAccountDelegate {
 
 	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 
+		guard let containerExternalID = container.externalID else {
+			throw CloudKitAccountDelegateError.invalidParameter
+		}
+
 		func addDeadFeed() async throws -> Feed {
 
 			let feed = account.createFeed(with: editedName,
@@ -531,7 +556,7 @@ private extension CloudKitAccountDelegate {
 				let externalID = try await accountZone.createFeed(url: url.absoluteString,
 																  name: editedName,
 																  editedName: nil, homePageURL: nil,
-																  container: container)
+																  containerExternalID: containerExternalID)
 				feed.externalID = externalID
 				return feed
 			} catch {
@@ -579,11 +604,11 @@ private extension CloudKitAccountDelegate {
 		do {
 			try await account.update(feed: feed, with: parsedFeed)
 
-			let externalID = try await self.accountZone.createFeed(url: bestFeedSpecifier.urlString,
-																   name: parsedFeed.title,
-																   editedName: editedName,
-																   homePageURL: parsedFeed.homePageURL,
-																   container: container)
+			let externalID = try await accountZone.createFeed(url: bestFeedSpecifier.urlString,
+															  name: parsedFeed.title,
+															  editedName: editedName,
+															  homePageURL: parsedFeed.homePageURL,
+															  containerExternalID: containerExternalID)
 
 			feed.externalID = externalID
 			sendNewArticlesToTheCloud(account, feed)
@@ -687,15 +712,15 @@ private extension CloudKitAccountDelegate {
 
 	func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container) async throws {
 
+		guard let feedExternalID = feed.externalID, let containerExternalID = container.externalID else {
+			return
+		}
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		defer { refreshProgress.completeTask() }
 
 		do {
-			try await accountZone.removeFeed(feed, from: container)
-
-			guard let feedExternalID = feed.externalID else {
-				return
-			}
+			try await accountZone.removeFeed(externalID: feedExternalID, from: containerExternalID)
 
 			try await articlesZone.deleteArticles(feedExternalID)
 			feed.dropConditionalGetInfo()

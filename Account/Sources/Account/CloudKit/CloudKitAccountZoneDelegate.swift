@@ -12,6 +12,7 @@ import Web
 import CloudKit
 import Articles
 import CloudKitExtras
+import CloudKitSync
 
 @MainActor final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 

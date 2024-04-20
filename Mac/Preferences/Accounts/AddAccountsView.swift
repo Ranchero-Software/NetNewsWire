@@ -129,7 +129,7 @@ struct AddAccountsView: View {
 		.padding()
     }
 	
-	var localAccount: some View {
+	@MainActor var localAccount: some View {
 		VStack(alignment: .leading) {
 			Text("Local")
 				.font(.headline)
@@ -192,7 +192,7 @@ struct AddAccountsView: View {
 	}
 	
 	@ViewBuilder
-	var webAccounts: some View {
+	@MainActor var webAccounts: some View {
 		VStack(alignment: .leading) {
 			Text("Web")
 				.font(.headline)
@@ -230,7 +230,7 @@ struct AddAccountsView: View {
 		}
 	}
 	
-	var selfhostedAccounts: some View {
+	@MainActor var selfhostedAccounts: some View {
 		VStack(alignment: .leading) {
 			Text("Self-hosted")
 				.font(.headline)

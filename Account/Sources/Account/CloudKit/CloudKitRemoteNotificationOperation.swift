@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import Core
+import CloudKitSync
 
 class CloudKitRemoteNotificationOperation: MainThreadOperation {
 	

@@ -22,43 +22,43 @@ enum CloudKitAccountZoneError: LocalizedError {
 	}
 }
 
-@MainActor final class CloudKitAccountZone: CloudKitZone {
+@MainActor public final class CloudKitAccountZone: CloudKitZone {
 
-	let zoneID: CKRecordZone.ID
+	public let zoneID: CKRecordZone.ID
 
-	let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+	public let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
-    weak var container: CKContainer?
-    weak var database: CKDatabase?
-	var delegate: CloudKitZoneDelegate?
-    
-	struct CloudKitFeed {
-		static let recordType = "AccountWebFeed"
-		struct Fields {
-			static let url = "url"
-			static let name = "name"
-			static let editedName = "editedName"
-			static let homePageURL = "homePageURL"
-			static let containerExternalIDs = "containerExternalIDs"
+	public weak var container: CKContainer?
+	public weak var database: CKDatabase?
+	public var delegate: CloudKitZoneDelegate?
+
+	public struct CloudKitFeed {
+		public static let recordType = "AccountWebFeed"
+		public struct Fields {
+			public static let url = "url"
+			public static let name = "name"
+			public static let editedName = "editedName"
+			public static let homePageURL = "homePageURL"
+			public static let containerExternalIDs = "containerExternalIDs"
 		}
 	}
 	
-	struct CloudKitContainer {
-		static let recordType = "AccountContainer"
-		struct Fields {
-			static let isAccount = "isAccount"
-			static let name = "name"
+	public struct CloudKitContainer {
+		public static let recordType = "AccountContainer"
+		public struct Fields {
+			public static let isAccount = "isAccount"
+			public static let name = "name"
 		}
 	}
 	
-	init(container: CKContainer) {
+	public init(container: CKContainer) {
         self.container = container
         self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Account", ownerName: CKCurrentUserDefaultName)
 		migrateChangeToken()
     }
 	
-	func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
+	public func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
 
 		var records = [CKRecord]()
 		var feedRecords = [String: CKRecord]()
@@ -94,7 +94,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 	}
     
 	///  Persist a web feed record to iCloud and return the external key
-	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, containerExternalID: String) async throws -> String {
+	public func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, containerExternalID: String) async throws -> String {
 
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
@@ -114,7 +114,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 	}
 	
 	/// Rename the given web feed
-	func renameFeed(externalID: String, editedName: String?) async throws {
+	public func renameFeed(externalID: String, editedName: String?) async throws {
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
@@ -125,7 +125,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 	
 	/// Removes a web feed from a container and optionally deletes it, returning true if deleted
 	@discardableResult
-	func removeFeed(externalID: String, from containerExternalID: String) async throws -> Bool {
+	public func removeFeed(externalID: String, from containerExternalID: String) async throws -> Bool {
 
 		do {
 			let record = try await fetch(externalID: externalID)
@@ -155,7 +155,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		}
 	}
 	
-	func moveFeed(externalID: String, from sourceContainerExternalID: String, to destinationContainerExternalID: String) async throws {
+	public func moveFeed(externalID: String, from sourceContainerExternalID: String, to destinationContainerExternalID: String) async throws {
 
 		let record = try await fetch(externalID: externalID)
 
@@ -168,7 +168,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		}
 	}
 
-	func addFeed(externalID: String, to containerExternalID: String) async throws {
+	public func addFeed(externalID: String, to containerExternalID: String) async throws {
 
 		let record = try await fetch(externalID: externalID)
 
@@ -180,7 +180,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		}
 	}
 
-	func findFeedExternalIDs(for folderExternalID: String) async throws -> [String] {
+	public func findFeedExternalIDs(for folderExternalID: String) async throws -> [String] {
 
 		let predicate = NSPredicate(format: "containerExternalIDs CONTAINS %@", folderExternalID)
 		let ckQuery = CKQuery(recordType: CloudKitFeed.recordType, predicate: predicate)
@@ -191,7 +191,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		return feedExternalIDs
 	}
 
-	func findOrCreateAccount() async throws -> String {
+	public func findOrCreateAccount() async throws -> String {
 
 		guard let database else { throw CloudKitAccountZoneError.unknown }
 
@@ -224,12 +224,12 @@ enum CloudKitAccountZoneError: LocalizedError {
 		}
 	}
 	
-	func createFolder(name: String) async throws -> String {
+	public func createFolder(name: String) async throws -> String {
 
 		return try await createContainer(name: name, isAccount: false)
 	}
 	
-	func renameFolder(externalID: String, to name: String) async throws {
+	public func renameFolder(externalID: String, to name: String) async throws {
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: recordID)
@@ -238,7 +238,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		try await save(record)
 	}
 	
-	func removeFolder(externalID: String) async throws {
+	public func removeFolder(externalID: String) async throws {
 
 		try await delete(externalID: externalID)
 	}
