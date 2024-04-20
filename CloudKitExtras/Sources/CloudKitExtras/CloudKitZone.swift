@@ -437,65 +437,36 @@ public protocol CloudKitZone: AnyObject {
 	/// Fetch a CKRecord by using its externalID
 	func fetch(externalID: String?) async throws -> CKRecord {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.fetch(externalID: externalID) { result in
-				switch result {
-				case .success(let record):
-					continuation.resume(returning: record)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	/// Fetch a CKRecord by using its externalID
-	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
-		guard let externalID = externalID else {
-			completion(.failure(CloudKitZoneError.corruptAccount))
-			return
-		}
+		guard let externalID else { throw CloudKitZoneError.corruptAccount }
+		guard let database else { throw CloudKitZoneError.unknown }
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		
-		database?.fetch(withRecordID: recordID) { [weak self] record, error in
+		do {
+			return try await database.record(for: recordID)
+		} catch {
 
-			guard let self else {
-				completion(.failure(CloudKitZoneError.unknown))
-				return
-			}
+			switch CloudKitZoneResult.resolve(error) {
 
-			Task { @MainActor in
+			case .zoneNotFound:
 
-				switch CloudKitZoneResult.resolve(error) {
-
-				case .success:
-					if let record {
-						completion(.success(record))
-					} else {
-						completion(.failure(CloudKitZoneError.unknown))
-					}
-
-				case .zoneNotFound:
-
-					do {
-						_ = try await self.createZoneRecord()
-						self.fetch(externalID: externalID, completion: completion)
-					} catch {
-						completion(.failure(error))
-					}
-
-				case .retry(let timeToWait):
-					os_log(.error, log: self.log, "%@ zone fetch retry in %f seconds.", self.zoneID.zoneName, timeToWait)
-					self.retryIfPossible(after: timeToWait) {
-						self.fetch(externalID: externalID, completion: completion)
-					}
-				case .userDeletedZone:
-					completion(.failure(CloudKitZoneError.userDeletedZone))
-
-				default:
-					completion(.failure(CloudKitError(error!)))
+				do {
+					_ = try await self.createZoneRecord()
+					return try await fetch(externalID: externalID)
+				} catch {
+					throw error
 				}
+
+			case .retry(let timeToWait):
+				os_log(.error, log: self.log, "%@ zone fetch retry in %f seconds.", self.zoneID.zoneName, timeToWait)
+				await delay(for: timeToWait)
+				return try await fetch(externalID: externalID)
+
+			case .userDeletedZone:
+				throw CloudKitZoneError.userDeletedZone
+
+			default:
+				throw CloudKitError(error)
 			}
 		}
 	}
