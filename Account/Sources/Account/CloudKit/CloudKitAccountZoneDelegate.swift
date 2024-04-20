@@ -55,7 +55,7 @@ import CloudKitExtras
 			}
 		}
 
-		completion(.success())
+		completion(.success(()))
 	}
 	
 	func addOrUpdateFeed(_ record: CKRecord) {
