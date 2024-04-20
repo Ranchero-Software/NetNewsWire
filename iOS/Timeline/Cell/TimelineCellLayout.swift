@@ -50,8 +50,8 @@ extension TimelineCellLayout {
 		return r
 	}
 	
-	static func rectForTitle(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> (CGRect, Int) {
-		
+	@MainActor static func rectForTitle(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> (CGRect, Int) {
+
 		var r = CGRect.zero
 		if cellData.title.isEmpty {
 			return (r, 0)
@@ -71,7 +71,7 @@ extension TimelineCellLayout {
 		
 	}
 	
-	static func rectForSummary(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat, _ linesUsed: Int) -> CGRect {
+	@MainActor static func rectForSummary(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat, _ linesUsed: Int) -> CGRect {
 		
 		let linesLeft = cellData.numberOfLines - linesUsed
 		

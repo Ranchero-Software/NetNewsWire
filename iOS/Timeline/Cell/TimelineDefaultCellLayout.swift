@@ -51,7 +51,7 @@ struct TimelineDefaultCellLayout: TimelineCellLayout {
 	let feedNameRect: CGRect
 	let dateRect: CGRect
 
-	init(width: CGFloat, insets: UIEdgeInsets, cellData: TimelineCellData) {
+	@MainActor init(width: CGFloat, insets: UIEdgeInsets, cellData: TimelineCellData) {
 
 		var currentPoint = CGPoint.zero
 		currentPoint.x = TimelineDefaultCellLayout.cellPadding.left + insets.left + TimelineDefaultCellLayout.unreadCircleMarginLeft

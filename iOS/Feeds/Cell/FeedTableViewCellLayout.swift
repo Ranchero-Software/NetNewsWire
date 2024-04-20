@@ -31,7 +31,7 @@ struct FeedTableViewCellLayout {
 	
 	let height: CGFloat
 	
-	init(cellWidth: CGFloat, insets: UIEdgeInsets, label: UILabel, unreadCountView: FeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
+	@MainActor init(cellWidth: CGFloat, insets: UIEdgeInsets, label: UILabel, unreadCountView: FeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
 
 		var initialIndent = insets.left
 		if indent {
