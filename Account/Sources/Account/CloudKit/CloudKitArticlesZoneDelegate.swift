@@ -16,8 +16,9 @@ import Articles
 import ArticlesDatabase
 import Database
 import CloudKitExtras
+import CloudKitSync
 
-class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
+final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 

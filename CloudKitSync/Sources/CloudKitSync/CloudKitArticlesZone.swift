@@ -15,58 +15,64 @@ import CloudKit
 import Articles
 import SyncDatabase
 import CloudKitExtras
-import CloudKitSync
 
-final class CloudKitArticlesZone: CloudKitZone {
-	
-	var zoneID: CKRecordZone.ID
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-	
-	weak var container: CKContainer?
-	weak var database: CKDatabase?
-	var delegate: CloudKitZoneDelegate? = nil
-	
+public protocol CloudKitFeedInfoDelegate {
+
+	@MainActor func feedExternalID(article: Article) -> String?
+	@MainActor func feedURL(article: Article) -> String?
+}
+
+public final class CloudKitArticlesZone: CloudKitZone {
+
+	public var zoneID: CKRecordZone.ID
+
+	public var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+
+	public weak var container: CKContainer?
+	public weak var database: CKDatabase?
+	public var delegate: CloudKitZoneDelegate? = nil
+	public var feedInfoDelegate: CloudKitFeedInfoDelegate? = nil
+
 	var compressionQueue = DispatchQueue(label: "Articles Zone Compression Queue")
 	
-	struct CloudKitArticle {
-		static let recordType = "Article"
-		struct Fields {
-			static let articleStatus = "articleStatus"
-			static let feedURL = "webFeedURL"
-			static let uniqueID = "uniqueID"
-			static let title = "title"
-			static let contentHTML = "contentHTML"
-			static let contentHTMLData = "contentHTMLData"
-			static let contentText = "contentText"
-			static let contentTextData = "contentTextData"
-			static let url = "url"
-			static let externalURL = "externalURL"
-			static let summary = "summary"
-			static let imageURL = "imageURL"
-			static let datePublished = "datePublished"
-			static let dateModified = "dateModified"
-			static let parsedAuthors = "parsedAuthors"
+	public struct CloudKitArticle {
+		public static let recordType = "Article"
+		public struct Fields {
+			public static let articleStatus = "articleStatus"
+			public static let feedURL = "webFeedURL"
+			public static let uniqueID = "uniqueID"
+			public static let title = "title"
+			public static let contentHTML = "contentHTML"
+			public static let contentHTMLData = "contentHTMLData"
+			public static let contentText = "contentText"
+			public static let contentTextData = "contentTextData"
+			public static let url = "url"
+			public static let externalURL = "externalURL"
+			public static let summary = "summary"
+			public static let imageURL = "imageURL"
+			public static let datePublished = "datePublished"
+			public static let dateModified = "dateModified"
+			public static let parsedAuthors = "parsedAuthors"
 		}
 	}
 
-	struct CloudKitArticleStatus {
-		static let recordType = "ArticleStatus"
-		struct Fields {
-			static let feedExternalID = "webFeedExternalID"
-			static let read = "read"
-			static let starred = "starred"
+	public struct CloudKitArticleStatus {
+		public static let recordType = "ArticleStatus"
+		public struct Fields {
+			public static let feedExternalID = "webFeedExternalID"
+			public static let read = "read"
+			public static let starred = "starred"
 		}
 	}
 
-	@MainActor init(container: CKContainer) {
+	@MainActor public init(container: CKContainer) {
 		self.container = container
 		self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
 		migrateChangeToken()
 	}
 	
-	@MainActor func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor public func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
 		fetchChangesInZone() { result in
 			switch result {
 			case .success:
@@ -89,28 +95,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 	}
-	
-	@MainActor func saveNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard !articles.isEmpty else {
-			completion(.success(()))
-			return
-		}
-		
-		var records = [CKRecord]()
-		
-		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
-		for saveArticle in saveArticles {
-			records.append(makeStatusRecord(saveArticle))
-			records.append(makeArticleRecord(saveArticle))
-		}
 
-		compressionQueue.async {
-			let compressedRecords = self.compressArticleRecords(records)
-			self.save(compressedRecords, completion: completion)
-		}
-	}
-	
-	func deleteArticles(_ feedExternalID: String) async throws {
+	public func deleteArticles(_ feedExternalID: String) async throws {
 
 		let predicate = NSPredicate(format: "webFeedExternalID = %@", feedExternalID)
 		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)
@@ -118,7 +104,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		try await delete(ckQuery: ckQuery)
 	}
 	
-	@MainActor func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor public func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard !statusUpdates.isEmpty else {
 			completion(.success(()))
 			return
@@ -200,9 +186,11 @@ private extension CloudKitArticlesZone {
 	@MainActor func makeStatusRecord(_ article: Article) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
-		if let feedExternalID = article.feed?.externalID {
+
+		if let feedExternalID = feedInfoDelegate?.feedExternalID(article: article) {
 			record[CloudKitArticleStatus.Fields.feedExternalID] = feedExternalID
 		}
+
 		record[CloudKitArticleStatus.Fields.read] = article.status.read ? "1" : "0"
 		record[CloudKitArticleStatus.Fields.starred] = article.status.starred ? "1" : "0"
 		return record
@@ -211,8 +199,8 @@ private extension CloudKitArticlesZone {
 	@MainActor func makeStatusRecord(_ statusUpdate: CloudKitArticleStatusUpdate) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
-		
-		if let feedExternalID = statusUpdate.article?.feed?.externalID {
+
+		if let article = statusUpdate.article, let feedExternalID = feedInfoDelegate?.feedExternalID(article: article) {
 			record[CloudKitArticleStatus.Fields.feedExternalID] = feedExternalID
 		}
 		
@@ -228,7 +216,7 @@ private extension CloudKitArticlesZone {
 
 		let articleStatusRecordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		record[CloudKitArticle.Fields.articleStatus] = CKRecord.Reference(recordID: articleStatusRecordID, action: .deleteSelf)
-		record[CloudKitArticle.Fields.feedURL] = article.feed?.url
+		record[CloudKitArticle.Fields.feedURL] = feedInfoDelegate?.feedURL(article: article)
 		record[CloudKitArticle.Fields.uniqueID] = article.uniqueID
 		record[CloudKitArticle.Fields.title] = article.title
 		record[CloudKitArticle.Fields.contentHTML] = article.contentHTML

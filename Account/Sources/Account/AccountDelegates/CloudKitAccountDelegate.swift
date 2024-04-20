@@ -420,6 +420,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress, articlesZone: articlesZone)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
+		articlesZone.feedInfoDelegate = self
 		
 		Task {
 			try await database.resetAllSelectedForProcessing()
@@ -746,5 +747,18 @@ extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 										  updated: articleChanges.updatedArticles,
 										  deleted: articleChanges.deletedArticles)
 		}
+	}
+}
+
+extension CloudKitAccountDelegate: CloudKitFeedInfoDelegate {
+
+	@MainActor func feedExternalID(article: Article) -> String? {
+
+		article.feed?.externalID
+	}
+
+	@MainActor func feedURL(article: Article) -> String? {
+
+		article.feed?.url
 	}
 }

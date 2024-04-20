@@ -9,8 +9,9 @@
 import Foundation
 import os.log
 import Core
+import CloudKitSync
 
-class CloudKitReceiveStatusOperation: MainThreadOperation {
+final class CloudKitReceiveStatusOperation: MainThreadOperation {
 	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
