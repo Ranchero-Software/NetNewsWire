@@ -133,11 +133,14 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	}
 
 
-	public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-		guard let anchor = presentationAnchor else {
-			fatalError("\(self) has outlived presentation anchor.")
+	nonisolated public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+
+		MainActor.assumeIsolated {
+			guard let anchor = presentationAnchor else {
+				fatalError("\(self) has outlived presentation anchor.")
+			}
+			return anchor
 		}
-		return anchor
 	}
 	
 	@MainActor private func saveAccount(for grant: OAuthAuthorizationGrant) {
