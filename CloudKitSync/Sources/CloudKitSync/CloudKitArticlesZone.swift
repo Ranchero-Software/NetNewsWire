@@ -22,9 +22,9 @@ public protocol CloudKitFeedInfoDelegate {
 	@MainActor func feedURL(article: Article) -> String?
 }
 
-public final class CloudKitArticlesZone: CloudKitZone {
+@MainActor public final class CloudKitArticlesZone: CloudKitZone {
 
-	public var zoneID: CKRecordZone.ID
+	public let zoneID: CKRecordZone.ID
 
 	public var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
@@ -72,26 +72,17 @@ public final class CloudKitArticlesZone: CloudKitZone {
 		migrateChangeToken()
 	}
 	
-	@MainActor public func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
-		fetchChangesInZone() { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				if case CloudKitZoneError.userDeletedZone = error {
+	@MainActor public func refreshArticles() async throws {
 
-					Task { @MainActor in
-						do {
-							_ = try await self.createZoneRecord()
-							self.refreshArticles(completion: completion)
-						} catch {
-							completion(.failure(error))
-						}
-					}
+		do {
+			try await fetchChangesInZone()
 
-				} else {
-					completion(.failure(error))
-				}
+		} catch {
+			if case CloudKitZoneError.userDeletedZone = error {
+				_ = try await self.createZoneRecord()
+				try await refreshArticles()
+			} else {
+				throw error
 			}
 		}
 	}
@@ -247,7 +238,7 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 
-	func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
+	nonisolated func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
 		var result = [CKRecord]()
 		
 		for record in records {
@@ -277,5 +268,4 @@ private extension CloudKitArticlesZone {
 		
 		return result
 	}
-
 }

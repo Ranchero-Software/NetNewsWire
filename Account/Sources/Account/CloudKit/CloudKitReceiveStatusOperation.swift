@@ -29,23 +29,24 @@ final class CloudKitReceiveStatusOperation: MainThreadOperation {
 	}
 	
 	@MainActor func run() {
-		guard let articlesZone = articlesZone else {
-			self.operationDelegate?.operationDidComplete(self)
+
+		guard let articlesZone else {
+			operationDelegate?.operationDidComplete(self)
 			return
 		}
 		
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
- 		articlesZone.refreshArticles() { result in
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			switch result {
-			case .success:
+		Task { @MainActor in
+			do {
+				try await articlesZone.refreshArticles()
 				self.operationDelegate?.operationDidComplete(self)
-			case .failure(let error):
+			} catch {
 				os_log(.error, log: self.log, "Receive status error: %@.", error.localizedDescription)
 				self.operationDelegate?.cancelOperation(self)
 			}
+
+			os_log(.debug, log: self.log, "Done refreshing article statuses.")
 		}
 	}
-	
 }
