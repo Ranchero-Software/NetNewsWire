@@ -142,9 +142,7 @@ public protocol CloudKitFeedInfoDelegate {
 				}
 			}
 		}
-		
 	}
-	
 }
 
 private extension CloudKitArticlesZone {

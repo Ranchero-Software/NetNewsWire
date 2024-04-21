@@ -170,5 +170,4 @@ private extension CloudKitSendStatusOperation {
 			}
 		}
 	}
-
 }
