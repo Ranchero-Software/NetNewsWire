@@ -10,7 +10,7 @@ import Foundation
 import os.log
 import Core
 
-public final class CloudKitReceiveStatusOperation: MainThreadOperation {
+@MainActor public final class CloudKitReceiveStatusOperation: MainThreadOperation {
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 

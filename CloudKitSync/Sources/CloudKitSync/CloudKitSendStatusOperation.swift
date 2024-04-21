@@ -14,9 +14,14 @@ import SyncDatabase
 import Database
 import Core
 import CloudKitExtras
-import CloudKitSync
 
-class CloudKitSendStatusOperation: MainThreadOperation {
+public protocol CloudKitSendStatusOperationDelegate: AnyObject {
+
+	@MainActor func cloudKitSendStatusOperation(_ : CloudKitSendStatusOperation, articlesFor articleIDs: Set<String>) async throws -> Set<Article>
+	@MainActor func cloudKitSendStatusOperation(_ : CloudKitSendStatusOperation, userDidDeleteZone: Error)
+}
+
+@MainActor public final class CloudKitSendStatusOperation: MainThreadOperation {
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 	private let blockSize = 150
@@ -28,21 +33,23 @@ class CloudKitSendStatusOperation: MainThreadOperation {
 	public var name: String? = "CloudKitSendStatusOperation"
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
-	private weak var account: Account?
 	private weak var articlesZone: CloudKitArticlesZone?
 	private weak var refreshProgress: DownloadProgress?
 	private var showProgress: Bool
 	private var database: SyncDatabase
 
-	init(account: Account, articlesZone: CloudKitArticlesZone, refreshProgress: DownloadProgress, showProgress: Bool, database: SyncDatabase) {
-		self.account = account
+	private weak var delegate: CloudKitSendStatusOperationDelegate?
+
+	public init(articlesZone: CloudKitArticlesZone, refreshProgress: DownloadProgress, showProgress: Bool, database: SyncDatabase, delegate: CloudKitSendStatusOperationDelegate) {
+
 		self.articlesZone = articlesZone
 		self.refreshProgress = refreshProgress
 		self.showProgress = showProgress
 		self.database = database
+		self.delegate = delegate
 	}
 
-	@MainActor func run() {
+	@MainActor public func run() {
 		os_log(.debug, log: log, "Sending article statuses...")
 
 		if showProgress {
@@ -102,7 +109,8 @@ private extension CloudKitSendStatusOperation {
 	}
 
 	@MainActor func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
-		guard let account = account, let articlesZone = articlesZone else {
+
+		guard let delegate, let articlesZone else {
 			completion(true)
 			return
 		}
@@ -112,7 +120,7 @@ private extension CloudKitSendStatusOperation {
 		Task { @MainActor in
 
 			do {
-				let articles = try await account.articles(articleIDs: Set(articleIDs))
+				let articles = try await delegate.cloudKitSendStatusOperation(self, articlesFor: Set(articleIDs))
 
 				let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
 				let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
@@ -148,7 +156,7 @@ private extension CloudKitSendStatusOperation {
 							done(false)
 						case .failure(let error):
 							try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
-							self.processAccountError(account, error)
+							self.processAccountError(error)
 							os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
 							completion(true)
 						}
@@ -162,12 +170,10 @@ private extension CloudKitSendStatusOperation {
 		}
 	}
 
-	@MainActor func processAccountError(_ account: Account, _ error: Error) {
+	@MainActor func processAccountError(_ error: Error) {
+		
 		if case CloudKitZoneError.userDeletedZone = error {
-			account.removeFeeds(account.topLevelFeeds)
-			for folder in account.folders ?? Set<Folder>() {
-				account.removeFolder(folder: folder)
-			}
+			delegate?.cloudKitSendStatusOperation(self, userDidDeleteZone: error)
 		}
 	}
 }

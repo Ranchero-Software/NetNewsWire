@@ -691,11 +691,11 @@ private extension CloudKitAccountDelegate {
 	}
 
 	private func sendArticleStatus(for account: Account, showProgress: Bool, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		let op = CloudKitSendStatusOperation(account: account,
-											 articlesZone: articlesZone,
+		let op = CloudKitSendStatusOperation(articlesZone: articlesZone,
 											 refreshProgress: refreshProgress,
 											 showProgress: showProgress,
-											 database: database)
+											 database: database,
+											 delegate: self)
 		op.completionBlock = { mainThreadOperaion in
 			Task { @MainActor in
 				if mainThreadOperaion.isCanceled {
@@ -760,5 +760,28 @@ extension CloudKitAccountDelegate: CloudKitFeedInfoDelegate {
 	@MainActor func feedURL(article: Article) -> String? {
 
 		article.feed?.url
+	}
+}
+
+extension CloudKitAccountDelegate: CloudKitSendStatusOperationDelegate {
+
+	@MainActor func cloudKitSendStatusOperation(_ : CloudKitSendStatusOperation, articlesFor articleIDs: Set<String>) async throws -> Set<Article> {
+
+		guard let account else { return Set<Article>() }
+
+		return try await account.articles(articleIDs: articleIDs)
+	}
+
+	@MainActor func cloudKitSendStatusOperation(_ : CloudKitSendStatusOperation, userDidDeleteZone: Error) {
+
+		// Delete feeds and folders
+
+		guard let account else { return }
+
+		account.removeFeeds(account.topLevelFeeds)
+
+		for folder in account.folders ?? Set<Folder>() {
+			account.removeFolder(folder: folder)
+		}
 	}
 }
