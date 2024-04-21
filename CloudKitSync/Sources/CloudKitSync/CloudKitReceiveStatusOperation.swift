@@ -9,10 +9,9 @@
 import Foundation
 import os.log
 import Core
-import CloudKitSync
 
-final class CloudKitReceiveStatusOperation: MainThreadOperation {
-	
+public final class CloudKitReceiveStatusOperation: MainThreadOperation {
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
 	// MainThreadOperation
@@ -24,11 +23,11 @@ final class CloudKitReceiveStatusOperation: MainThreadOperation {
 
 	private weak var articlesZone: CloudKitArticlesZone?
 	
-	init(articlesZone: CloudKitArticlesZone) {
+	public init(articlesZone: CloudKitArticlesZone) {
 		self.articlesZone = articlesZone
 	}
 	
-	@MainActor func run() {
+	@MainActor public func run() {
 
 		guard let articlesZone else {
 			operationDelegate?.operationDidComplete(self)
