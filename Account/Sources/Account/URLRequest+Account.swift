@@ -13,7 +13,7 @@ import NewsBlur
 
 public extension URLRequest {
 
-	init(url: URL, credentials: Credentials?, conditionalGet: HTTPConditionalGetInfo? = nil) {
+	@MainActor init(url: URL, credentials: Credentials?, conditionalGet: HTTPConditionalGetInfo? = nil) {
 
 		self.init(url: url)
 
