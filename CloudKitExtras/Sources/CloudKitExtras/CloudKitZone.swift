@@ -36,11 +36,11 @@ public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID:
 
 public protocol CloudKitZone: AnyObject {
 	
-	@MainActor static var qualityOfService: QualityOfService { get }
+	static var qualityOfService: QualityOfService { get }
 
 	var zoneID: CKRecordZone.ID { get }
 
-	@MainActor var log: OSLog { get }
+	var log: OSLog { get }
 
 	@MainActor var container: CKContainer? { get }
 	@MainActor var database: CKDatabase? { get }
@@ -64,7 +64,7 @@ public protocol CloudKitZone: AnyObject {
 	// My observation has been that QoS is treated differently for CloudKit operations on macOS vs iOS.
 	// .userInitiated is too aggressive on iOS and can lead the UI slowing down and appearing to block.
 	// .default (or lower) on macOS will sometimes hang for extended periods of time and appear to hang.
-	static var qualityOfService: QualityOfService {
+	nonisolated static var qualityOfService: QualityOfService {
 		#if os(macOS) || targetEnvironment(macCatalyst)
 		return .userInitiated
 		#else
@@ -121,7 +121,7 @@ public protocol CloudKitZone: AnyObject {
 		}
 	}
 
-	func retryIfPossible(after: Double, block: @escaping @MainActor () -> ()) {
+	nonisolated func retryIfPossible(after: Double, block: @escaping @Sendable @MainActor () -> ()) {
 		let delayTime = DispatchTime.now() + after
 		DispatchQueue.main.asyncAfter(deadline: delayTime, execute: {
 			Task { @MainActor in
@@ -846,7 +846,7 @@ public protocol CloudKitZone: AnyObject {
 	}
 
 	/// Modify and delete the supplied CKRecords and CKRecord.IDs
-	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 
 		guard !(recordsToSave.isEmpty && recordIDsToDelete.isEmpty) else {
 			DispatchQueue.main.async {
@@ -905,7 +905,7 @@ public protocol CloudKitZone: AnyObject {
 					var recordToSaveChunks = recordsToSave.chunked(into: 200)
 					var recordIDsToDeleteChunks = recordIDsToDelete.chunked(into: 200)
 
-					@MainActor func saveChunks(completion: @escaping (Result<Void, Error>) -> Void) {
+					func saveChunks(completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 						if !recordToSaveChunks.isEmpty {
 							let records = recordToSaveChunks.removeFirst()
 

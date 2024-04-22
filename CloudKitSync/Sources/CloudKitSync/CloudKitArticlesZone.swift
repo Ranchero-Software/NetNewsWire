@@ -95,51 +95,44 @@ public protocol CloudKitFeedInfoDelegate {
 		try await delete(ckQuery: ckQuery)
 	}
 	
-	@MainActor public func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+	public func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard !statusUpdates.isEmpty else {
 			completion(.success(()))
 			return
 		}
-		
-		var modifyRecords = [CKRecord]()
-		var newRecords = [CKRecord]()
-		var deleteRecordIDs = [CKRecord.ID]()
-		
-		for statusUpdate in statusUpdates {
-			switch statusUpdate.record {
-			case .all:
-				modifyRecords.append(self.makeStatusRecord(statusUpdate))
-				modifyRecords.append(self.makeArticleRecord(statusUpdate.article!))
-			case .new:
-				newRecords.append(self.makeStatusRecord(statusUpdate))
-				newRecords.append(self.makeArticleRecord(statusUpdate.article!))
-			case .delete:
-				deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: zoneID))
-			case .statusOnly:
-				modifyRecords.append(self.makeStatusRecord(statusUpdate))
-				deleteRecordIDs.append(CKRecord.ID(recordName: self.articleID(statusUpdate.articleID), zoneID: zoneID))
-			}
-		}
 
-		compressionQueue.async { [newRecords] in
-			let compressedModifyRecords = self.compressArticleRecords(modifyRecords)
-			self.modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
-				switch result {
-				case .success:
-					let compressedNewRecords = self.compressArticleRecords(newRecords)
-					self.saveIfNew(compressedNewRecords) { result in
-						switch result {
-						case .success:
-							completion(.success(()))
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				case .failure(let error):
-					Task { @MainActor in
-						self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
-					}
+		Task { @MainActor in
+
+			var modifyRecords = [CKRecord]()
+			var newRecords = [CKRecord]()
+			var deleteRecordIDs = [CKRecord.ID]()
+
+			for statusUpdate in statusUpdates {
+				switch statusUpdate.record {
+				case .all:
+					modifyRecords.append(self.makeStatusRecord(statusUpdate))
+					modifyRecords.append(self.makeArticleRecord(statusUpdate.article!))
+				case .new:
+					newRecords.append(self.makeStatusRecord(statusUpdate))
+					newRecords.append(self.makeArticleRecord(statusUpdate.article!))
+				case .delete:
+					deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: zoneID))
+				case .statusOnly:
+					modifyRecords.append(self.makeStatusRecord(statusUpdate))
+					deleteRecordIDs.append(CKRecord.ID(recordName: self.articleID(statusUpdate.articleID), zoneID: zoneID))
 				}
+			}
+
+			let compressedModifyRecords = await compressedArticleRecords(modifyRecords)
+
+			do {
+				try await self.modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs)
+
+				let compressedNewRecords = await compressedArticleRecords(newRecords)
+				try await self.saveIfNew(compressedNewRecords)
+
+			} catch {
+				self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
 			}
 		}
 	}
@@ -236,34 +229,47 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 
-	nonisolated func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
-		var result = [CKRecord]()
-		
-		for record in records {
-			
-			if record.recordType == CloudKitArticle.recordType {
-				
-				if let contentHTML = record[CloudKitArticle.Fields.contentHTML] as? String {
-					let data = Data(contentHTML.utf8) as NSData
-					if let compressedData = try? data.compressed(using: .lzfse) {
-						record[CloudKitArticle.Fields.contentHTMLData] = compressedData as Data
-						record[CloudKitArticle.Fields.contentHTML] = nil
-					}
-				}
-				
-				if let contentText = record[CloudKitArticle.Fields.contentText] as? String {
-					let data = Data(contentText.utf8) as NSData
-					if let compressedData = try? data.compressed(using: .lzfse) {
-						record[CloudKitArticle.Fields.contentTextData] = compressedData as Data
-						record[CloudKitArticle.Fields.contentText] = nil
-					}
-				}
-				
+	func compressedArticleRecords(_ records: [CKRecord]) async -> [CKRecord] {
+
+		await withCheckedContinuation { continuation in
+			self._compressedArticleRecords(records) { records in
+				continuation.resume(returning: records)
 			}
-			
-			result.append(record)
 		}
-		
-		return result
+	}
+
+	func _compressedArticleRecords(_ records: [CKRecord], completion: @escaping @Sendable ([CKRecord]) -> Void) {
+
+		compressionQueue.async {
+
+			var result = [CKRecord]()
+
+			for record in records {
+
+				if record.recordType == CloudKitArticle.recordType {
+
+					if let contentHTML = record[CloudKitArticle.Fields.contentHTML] as? String {
+						let data = Data(contentHTML.utf8) as NSData
+						if let compressedData = try? data.compressed(using: .lzfse) {
+							record[CloudKitArticle.Fields.contentHTMLData] = compressedData as Data
+							record[CloudKitArticle.Fields.contentHTML] = nil
+						}
+					}
+
+					if let contentText = record[CloudKitArticle.Fields.contentText] as? String {
+						let data = Data(contentText.utf8) as NSData
+						if let compressedData = try? data.compressed(using: .lzfse) {
+							record[CloudKitArticle.Fields.contentTextData] = compressedData as Data
+							record[CloudKitArticle.Fields.contentText] = nil
+						}
+					}
+
+				}
+
+				result.append(record)
+			}
+
+			completion(result)
+		}
 	}
 }
