@@ -32,14 +32,8 @@ final class FeedMetadata: Codable {
 		case folderRelationship
 	}
 
-	var feedID: String {
-		didSet {
-			if feedID != oldValue {
-				valueDidChange(.feedID)
-			}
-		}
-	}
-	
+	let feedID: String
+
 	var homePageURL: String? {
 		didSet {
 			if homePageURL != oldValue {

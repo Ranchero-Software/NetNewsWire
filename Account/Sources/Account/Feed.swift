@@ -15,15 +15,7 @@ import Core
 
 	public weak var account: Account?
 	public let url: String
-
-	public var feedID: String {
-		get {
-			return metadata.feedID
-		}
-		set {
-			metadata.feedID = newValue
-		}
-	}
+	public let feedID: String
 
 	public var homePageURL: String? {
 		get {
@@ -242,6 +234,7 @@ import Core
 		self.account = account
 		self.accountID = account.accountID
 		self.url = url
+		self.feedID = metadata.feedID
 		self.metadata = metadata
 	}
 
@@ -255,13 +248,13 @@ import Core
 
 	// MARK: - Hashable
 
-	public func hash(into hasher: inout Hasher) {
+	nonisolated public func hash(into hasher: inout Hasher) {
 		hasher.combine(feedID)
 	}
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
+	nonisolated public class func ==(lhs: Feed, rhs: Feed) -> Bool {
 		return lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
 	}
 }
