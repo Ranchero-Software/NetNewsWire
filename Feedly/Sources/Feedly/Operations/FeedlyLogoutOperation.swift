@@ -33,13 +33,13 @@ public final class FeedlyLogoutOperation: FeedlyOperation {
 		switch result {
 		case .success:
 			os_log("Logged out of Feedly account.")
-			do {
-				// TODO: fix removing credentials
-//				try account.removeCredentials(type: .oauthAccessToken)
-//				try account.removeCredentials(type: .oauthRefreshToken)
-			} catch {
-				// oh well, we tried our best.
-			}
+//			do {
+//				// TODO: fix removing credentials
+////				try account.removeCredentials(type: .oauthAccessToken)
+////				try account.removeCredentials(type: .oauthRefreshToken)
+//			} catch {
+//				// oh well, we tried our best.
+//			}
 			didFinish()
 			
 		case .failure(let error):
