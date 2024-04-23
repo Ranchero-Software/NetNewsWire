@@ -48,13 +48,13 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 	}
 	
 	private let transport: Transport
-	private let baseUrlComponents: URLComponents
+	private let baseURLComponents: URLComponents
 	private let uriComponentAllowed: CharacterSet
 	private let secretsProvider: SecretsProvider
 	
 	init(transport: Transport, api: API, secretsProvider: SecretsProvider) {
 		self.transport = transport
-		self.baseUrlComponents = api.baseUrlComponents
+		self.baseURLComponents = api.baseUrlComponents
 		self.secretsProvider = secretsProvider
 
 		var urlHostAllowed = CharacterSet.urlHostAllowed
@@ -67,7 +67,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 	var credentials: Credentials?
 	
 	var server: String? {
-		return baseUrlComponents.host
+		return baseURLComponents.host
 	}
 	
 	func cancelAll() {
@@ -160,7 +160,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 			throw CredentialsError.incompleteCredentials
 		}
 
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/opml"
 
 		guard let url = components.url else {
@@ -189,7 +189,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 			throw CredentialsError.incompleteCredentials
 		}
 
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/collections"
 
 		guard let url = components.url else {
@@ -229,7 +229,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/collections"
 		
 		guard let url = components.url else {
@@ -291,7 +291,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(id)))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.percentEncodedPath = "/v3/collections/\(encodedID)"
 		
 		guard let url = components.url else {
@@ -337,7 +337,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.percentEncodedPath = "/v3/collections/\(encodedCollectionID)/feeds/.mdelete"
 		
 		guard let url = components.url else {
@@ -400,7 +400,7 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionID)))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.percentEncodedPath = "/v3/collections/\(encodedID)/feeds"
 		
 		guard let url = components.url else {
@@ -470,7 +470,7 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/auth/token"
 		
 		guard let url = components.url else {
@@ -517,7 +517,7 @@ extension FeedlyAPICaller: OAuthAcessTokenRefreshRequesting {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/auth/token"
 		
 		guard let url = components.url else {
@@ -569,7 +569,7 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/collections"
 		
 		guard let url = components.url else {
@@ -611,7 +611,7 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/streams/contents"
 		
 		var queryItems = [URLQueryItem]()
@@ -679,7 +679,7 @@ extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/streams/ids"
 
 		var queryItems = [URLQueryItem]()
@@ -747,7 +747,7 @@ extension FeedlyAPICaller: FeedlyGetEntriesService {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/entries/.mget"
 		
 		guard let url = components.url else {
@@ -807,7 +807,7 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/markers"
 		
 		guard let url = components.url else {
@@ -871,7 +871,7 @@ extension FeedlyAPICaller: FeedlySearchService {
 			}
 		}
 		
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/search/feeds"
 		
 		components.queryItems = [
@@ -919,7 +919,7 @@ extension FeedlyAPICaller: FeedlyLogoutService {
 				completion(.failure(CredentialsError.incompleteCredentials))
 			}
 		}
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/auth/logout"
 		
 		guard let url = components.url else {
