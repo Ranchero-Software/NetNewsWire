@@ -282,43 +282,22 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func createFolder(for account: Account, name: String) async throws -> Folder {
 
-		try await withCheckedThrowingContinuation { continuation in
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
+		}
 
-			self.createFolder(for: account, name: name) { result in
-				switch result {
-				case .success(let folder):
-					continuation.resume(returning: folder)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
+		let collection = try await caller.createCollection(named: name)
+
+		if let folder = account.ensureFolder(with: collection.label) {
+			folder.externalID = collection.id
+			return folder
+		} else {
+			// Is the name empty? Or one of the global resource names?
+			throw FeedlyAccountDelegateError.unableToAddFolder(name)
 		}
 	}
 
-
-	private func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-
-		let progress = refreshProgress
-		progress.addToNumberOfTasksAndRemaining(1)
-		
-		caller.createCollection(named: name) { result in
-			progress.completeTask()
-			
-			switch result {
-			case .success(let collection):
-				if let folder = account.ensureFolder(with: collection.label) {
-					folder.externalID = collection.id
-					completion(.success(folder))
-				} else {
-					// Is the name empty? Or one of the global resource names?
-					completion(.failure(FeedlyAccountDelegateError.unableToAddFolder(name)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-	
 	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 
 		try await withCheckedThrowingContinuation { continuation in

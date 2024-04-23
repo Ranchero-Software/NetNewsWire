@@ -180,56 +180,41 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		}
 	}
 	
-	func createCollection(named label: String, completion: @escaping (Result<FeedlyCollection, Error>) -> ()) {
+	func createCollection(named label: String) async throws -> FeedlyCollection {
+
 		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
+			throw TransportError.suspended
 		}
-		
 		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
-			}
+			throw CredentialsError.incompleteCredentials
 		}
+
 		var components = baseUrlComponents
 		components.path = "/v3/collections"
-		
+
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
-		
+
 		var request = URLRequest(url: url)
 		request.httpMethod = "POST"
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-		
-		do {
-			struct CreateCollectionBody: Encodable {
-				var label: String
-			}
-			let encoder = JSONEncoder()
-			let data = try encoder.encode(CreateCollectionBody(label: label))
-			request.httpBody = data
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
+
+		struct CreateCollectionBody: Encodable {
+			var label: String
 		}
-		
-		send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (httpResponse, collections)):
-				if httpResponse.statusCode == 200, let collection = collections?.first {
-					completion(.success(collection))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		let encoder = JSONEncoder()
+		let data = try encoder.encode(CreateCollectionBody(label: label))
+		request.httpBody = data
+
+		let (httpResponse, collections) = try await send(request: request, resultType: [FeedlyCollection].self)
+
+		guard let collection = collections?.first, httpResponse.statusCode == HTTPResponseCode.OK else {
+			throw URLError(.cannotDecodeContentData)
 		}
+		return collection
 	}
 	
 	func renameCollection(with id: String, to name: String, completion: @escaping (Result<FeedlyCollection, Error>) -> ()) {
