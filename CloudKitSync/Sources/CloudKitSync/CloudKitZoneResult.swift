@@ -9,7 +9,7 @@
 import Foundation
 import CloudKit
 
-public enum CloudKitZoneResult {
+enum CloudKitZoneResult {
 	case success
 	case retry(afterSeconds: Double)
 	case limitExceeded
@@ -20,7 +20,7 @@ public enum CloudKitZoneResult {
 	case userDeletedZone
 	case failure(error: Error)
 	
-	public static func resolve(_ error: Error?) -> CloudKitZoneResult {
+	static func resolve(_ error: Error?) -> CloudKitZoneResult {
 		
         guard error != nil else { return .success }
         
