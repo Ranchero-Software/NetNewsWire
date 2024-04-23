@@ -259,56 +259,27 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func importOPML(for account: Account, opmlFile: URL) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.importOPML(for: account, opmlFile: opmlFile) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
+		let data = try Data(contentsOf: opmlFile)
 
-	private func importOPML(for account: Account, opmlFile: URL, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-		let data: Data
-		
-		do {
-			data = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
-		os_log(.debug, log: log, "Begin importing OPML...")
+		os_log(.debug, log: log, "Begin importing OPML…")
+
 		isOPMLImportInProgress = true
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		
-		caller.importOpml(data) { result in
+		refreshProgress.addTask()
+		defer {
+			isOPMLImportInProgress = false
+			refreshProgress.completeTask()
+		}
 
-			MainActor.assumeIsolated {
-				switch result {
-				case .success:
-					os_log(.debug, log: self.log, "Import OPML done.")
-					self.refreshProgress.completeTask()
-					self.isOPMLImportInProgress = false
-					DispatchQueue.main.async {
-						completion(.success(()))
-					}
-				case .failure(let error):
-					os_log(.debug, log: self.log, "Import OPML failed.")
-					self.refreshProgress.completeTask()
-					self.isOPMLImportInProgress = false
-					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
-						completion(.failure(wrappedError))
-					}
-				}
-			}
+		do {
+			try await caller.importOPML(data)
+			os_log(.debug, log: self.log, "Import OPML done.")
+		} catch {
+			os_log(.debug, log: self.log, "Import OPML failed.")
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
 		}
 	}
-	
+
 	func createFolder(for account: Account, name: String) async throws -> Folder {
 
 		try await withCheckedThrowingContinuation { continuation in

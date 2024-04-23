@@ -17,8 +17,8 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ())
 }
 
-final class FeedlyAPICaller {
-	
+@MainActor final class FeedlyAPICaller {
+
 	enum API {
 		case sandbox
 		case cloud
@@ -151,43 +151,32 @@ final class FeedlyAPICaller {
 		}
 	}
 	
-	func importOpml(_ opmlData: Data, completion: @escaping @Sendable (Result<Void, Error>) -> ()) {
+	func importOPML(_ opmlData: Data) async throws {
+
 		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
+			throw TransportError.suspended
 		}
-		
 		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
-			}
+			throw CredentialsError.incompleteCredentials
 		}
+
 		var components = baseUrlComponents
 		components.path = "/v3/opml"
-		
+
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
-		
+
 		var request = URLRequest(url: url)
 		request.httpMethod = "POST"
 		request.addValue("text/xml", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		request.httpBody = opmlData
-		
-		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (httpResponse, _)):
-				if httpResponse.statusCode == 200 {
-					completion(.success(()))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+
+		let (httpResponse, _) = try await send(request: request, resultType: String.self)
+		if httpResponse.statusCode != HTTPResponseCode.OK {
+			throw URLError(.cannotDecodeContentData)
 		}
 	}
 	
