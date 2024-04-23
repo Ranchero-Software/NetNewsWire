@@ -9,11 +9,10 @@
 import Foundation
 import os.log
 import Core
-import CloudKitSync
 
-class CloudKitRemoteNotificationOperation: MainThreadOperation {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+@MainActor public final class CloudKitRemoteNotificationOperation: MainThreadOperation {
+
+	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
 	// MainThreadOperation
 	public var isCanceled = false
@@ -26,13 +25,13 @@ class CloudKitRemoteNotificationOperation: MainThreadOperation {
 	private weak var articlesZone: CloudKitArticlesZone?
 	private var userInfo: [AnyHashable : Any]
 	
-	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable : Any]) {
+	public init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable : Any]) {
 		self.accountZone = accountZone
 		self.articlesZone = articlesZone
 		self.userInfo = userInfo
 	}
 
-	@MainActor func run() {
+	@MainActor public func run() {
 		guard let accountZone = accountZone, let articlesZone = articlesZone else {
 			self.operationDelegate?.operationDidComplete(self)
 			return
