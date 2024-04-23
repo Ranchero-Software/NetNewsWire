@@ -44,6 +44,6 @@ public protocol SendToCommand {
 	///	- Parameters:
 	///   - object: The object whose data to send.
 	///   - selectedText: The currently selected text.
-	func sendObject(_ object: Any?, selectedText: String?)
+	@MainActor func sendObject(_ object: Any?, selectedText: String?)
 }
 

@@ -30,11 +30,17 @@ final class SendToMarsEditCommand: SendToCommand {
 		guard let article = (object as? ArticlePasteboardWriter)?.article else {
 			return
 		}
-		guard let app = appToUse(), app.launchIfNeeded(), app.bringToFront() else {
+		guard let app = appToUse() else {
 			return
 		}
 
-		send(article, to: app)
+		Task { @MainActor in
+			guard await app.launchIfNeeded(), app.bringToFront() else {
+				return
+			}
+
+			send(article, to: app)
+		}
 	}
 }
 
