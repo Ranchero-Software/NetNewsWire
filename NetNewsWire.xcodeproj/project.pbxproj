@@ -693,13 +693,10 @@
 		84DC60042BCE40D000F04682 /* ParserObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 84DC60032BCE40D000F04682 /* ParserObjC */; };
 		84DCA5122BABB75600792720 /* FoundationExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5112BABB75600792720 /* FoundationExtras */; };
 		84DCA5142BABB76100792720 /* AppKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5132BABB76100792720 /* AppKitExtras */; };
-		84DCA5162BABB76B00792720 /* CloudKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5152BABB76B00792720 /* CloudKitExtras */; };
 		84DCA5182BABB77E00792720 /* FoundationExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5172BABB77E00792720 /* FoundationExtras */; };
 		84DCA51A2BABB78700792720 /* AppKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5192BABB78700792720 /* AppKitExtras */; };
-		84DCA51C2BABB78E00792720 /* CloudKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA51B2BABB78E00792720 /* CloudKitExtras */; };
 		84DCA51E2BABB79900792720 /* FoundationExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA51D2BABB79900792720 /* FoundationExtras */; };
 		84DCA5202BABB7A200792720 /* UIKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA51F2BABB7A200792720 /* UIKitExtras */; };
-		84DCA5222BABB7A800792720 /* CloudKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5212BABB7A800792720 /* CloudKitExtras */; };
 		84DCA5252BABBB5A00792720 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5242BABBB5A00792720 /* Core */; };
 		84DCA5272BABBB6200792720 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5262BABBB6200792720 /* Core */; };
 		84DCA5292BABBB6A00792720 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5282BABBB6A00792720 /* Core */; };
@@ -1526,7 +1523,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				653813392680E22B007A082C /* Secrets in Frameworks */,
-				84DCA51C2BABB78E00792720 /* CloudKitExtras in Frameworks */,
 				84DCA5272BABBB6200792720 /* Core in Frameworks */,
 				841CECDA2BAD04B80001EE72 /* Tree in Frameworks */,
 				84DCA5182BABB77E00792720 /* FoundationExtras in Frameworks */,
@@ -1563,7 +1559,6 @@
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
 				513F32772593EE6F0003048F /* Secrets in Frameworks */,
 				84DCA5292BABBB6A00792720 /* Core in Frameworks */,
-				84DCA5222BABB7A800792720 /* CloudKitExtras in Frameworks */,
 				513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */,
 				513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */,
 				841CECDC2BAD04BF0001EE72 /* Tree in Frameworks */,
@@ -1592,7 +1587,6 @@
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				84DCA5142BABB76100792720 /* AppKitExtras in Frameworks */,
 				8479ABE52B9E907400F84C4D /* FMDB in Frameworks */,
-				84DCA5162BABB76B00792720 /* CloudKitExtras in Frameworks */,
 				514C16CE24D2E63F009A3AFA /* Account in Frameworks */,
 				519CA8E525841DB700EB079A /* CrashReporter in Frameworks */,
 				841CECD82BAD04B20001EE72 /* Tree in Frameworks */,
@@ -2852,7 +2846,6 @@
 				653813382680E22B007A082C /* Secrets */,
 				84DCA5172BABB77E00792720 /* FoundationExtras */,
 				84DCA5192BABB78700792720 /* AppKitExtras */,
-				84DCA51B2BABB78E00792720 /* CloudKitExtras */,
 				84DCA5262BABBB6200792720 /* Core */,
 				841CECD92BAD04B80001EE72 /* Tree */,
 			);
@@ -2907,7 +2900,6 @@
 				848565502B9E910200F4BAE0 /* FMDB */,
 				84DCA51D2BABB79900792720 /* FoundationExtras */,
 				84DCA51F2BABB7A200792720 /* UIKitExtras */,
-				84DCA5212BABB7A800792720 /* CloudKitExtras */,
 				84DCA5282BABBB6A00792720 /* Core */,
 				841CECDB2BAD04BF0001EE72 /* Tree */,
 				84C1A8572BBBA5BD006E3E96 /* Web */,
@@ -2956,7 +2948,6 @@
 				8479ABE42B9E907400F84C4D /* FMDB */,
 				84DCA5112BABB75600792720 /* FoundationExtras */,
 				84DCA5132BABB76100792720 /* AppKitExtras */,
-				84DCA5152BABB76B00792720 /* CloudKitExtras */,
 				84DCA5242BABBB5A00792720 /* Core */,
 				8438C2DA2BABE0B00040C9EE /* CoreResources */,
 				841CECD72BAD04B20001EE72 /* Tree */,
@@ -4879,10 +4870,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = AppKitExtras;
 		};
-		84DCA5152BABB76B00792720 /* CloudKitExtras */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CloudKitExtras;
-		};
 		84DCA5172BABB77E00792720 /* FoundationExtras */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FoundationExtras;
@@ -4891,10 +4878,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = AppKitExtras;
 		};
-		84DCA51B2BABB78E00792720 /* CloudKitExtras */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CloudKitExtras;
-		};
 		84DCA51D2BABB79900792720 /* FoundationExtras */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FoundationExtras;
@@ -4902,10 +4885,6 @@
 		84DCA51F2BABB7A200792720 /* UIKitExtras */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = UIKitExtras;
-		};
-		84DCA5212BABB7A800792720 /* CloudKitExtras */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CloudKitExtras;
 		};
 		84DCA5242BABBB5A00792720 /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
