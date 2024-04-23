@@ -86,7 +86,22 @@ final class FeedlyAPICaller {
 		isSuspended = false
 	}
 	
-	func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+	private func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type) async throws -> (HTTPURLResponse, R?) {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, resultType: resultType, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+
+				switch result {
+				case .success(let response):
+					continuation.resume(returning: response)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
 		transport.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { [weak self] result in
 			
 			MainActor.assumeIsolated {
