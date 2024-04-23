@@ -40,7 +40,7 @@ public protocol CloudKitZone: AnyObject {
 
 	var zoneID: CKRecordZone.ID { get }
 
-	var log: OSLog { get }
+	@MainActor var log: OSLog { get }
 
 	@MainActor var container: CKContainer? { get }
 	@MainActor var database: CKDatabase? { get }
@@ -905,7 +905,7 @@ public protocol CloudKitZone: AnyObject {
 					var recordToSaveChunks = recordsToSave.chunked(into: 200)
 					var recordIDsToDeleteChunks = recordIDsToDelete.chunked(into: 200)
 
-					func saveChunks(completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+					@MainActor func saveChunks(completion: @escaping (Result<Void, Error>) -> Void) {
 						if !recordToSaveChunks.isEmpty {
 							let records = recordToSaveChunks.removeFirst()
 
