@@ -14,7 +14,6 @@ import Web
 import CloudKit
 import Articles
 import SyncDatabase
-import CloudKitExtras
 
 public protocol CloudKitFeedInfoDelegate {
 

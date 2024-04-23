@@ -1391,7 +1391,6 @@
 		84DC5FFD2BCE37A300F04682 /* AppDelegate+Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Shared.swift"; sourceTree = "<group>"; };
 		84DCA50D2BAB643700792720 /* FoundationExtras */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FoundationExtras; sourceTree = "<group>"; };
 		84DCA50E2BABB5D800792720 /* AppKitExtras */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AppKitExtras; sourceTree = "<group>"; };
-		84DCA50F2BABB65600792720 /* CloudKitExtras */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CloudKitExtras; sourceTree = "<group>"; };
 		84DCA5102BABB6A100792720 /* UIKitExtras */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = UIKitExtras; sourceTree = "<group>"; };
 		84DCA5232BABBA8100792720 /* Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Core; sourceTree = "<group>"; };
 		84DEE56422C32CA4005FC42C /* SmartFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedDelegate.swift; sourceTree = "<group>"; };
@@ -2303,7 +2302,6 @@
 				51CD32A824D2CB25009ABAEF /* SyncDatabase */,
 				841550F42B9E3F8000D4B345 /* Database */,
 				841550F52B9E4D6800D4B345 /* FMDB */,
-				84DCA50F2BABB65600792720 /* CloudKitExtras */,
 				849FEDC32BBB225E0053FB21 /* Web */,
 				846799F42BBD120A000854CB /* Parser */,
 				84DCA5232BABBA8100792720 /* Core */,

@@ -11,7 +11,6 @@ let package = Package(
 			targets: ["CloudKitSync"]),
 	],
 	dependencies: [
-		.package(path: "../CloudKitExtras"),
 		.package(path: "../SyncDatabase"),
 		.package(path: "../Articles"),
 		.package(path: "../Core"),
@@ -22,7 +21,6 @@ let package = Package(
 		.target(
 			name: "CloudKitSync",
 			dependencies: [
-				"CloudKitExtras",
 				"SyncDatabase",
 				"Articles",
 				"Core",
