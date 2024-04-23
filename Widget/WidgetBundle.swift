@@ -17,15 +17,23 @@ struct UnreadWidget: Widget {
 	var body: some WidgetConfiguration {
 		
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
-			UnreadWidgetView(entry: entry)
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
-			
+			if #available(iOSApplicationExtension 17.0, *) {
+				UnreadWidgetView(entry: entry)
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.containerBackground(Color("WidgetBackground"), for: .widget)
+					.contentTransition(.opacity)
+			} else {
+				UnreadWidgetView(entry: entry)
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.padding()
+					.background(Color("WidgetBackground"))
+					
+					
+			}
 		})
 		.configurationDisplayName(L10n.unreadWidgetTitle)
 		.description(L10n.unreadWidgetDescription)
 		.supportedFamilies([.systemMedium, .systemLarge])
-		
 	}
 }
 
@@ -35,9 +43,17 @@ struct TodayWidget: Widget {
 	var body: some WidgetConfiguration {
 		
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
-			TodayWidgetView(entry: entry)
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
+			if #available(iOSApplicationExtension 17.0, *) {
+				TodayWidgetView(entry: entry)
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.containerBackground(Color("WidgetBackground"), for: .widget)
+					.contentTransition(.opacity)
+			} else {
+				TodayWidgetView(entry: entry)
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.padding()
+					.background(Color("WidgetBackground"))
+			}
 			
 		})
 		.configurationDisplayName(L10n.todayWidgetTitle)
@@ -53,32 +69,22 @@ struct StarredWidget: Widget {
 	var body: some WidgetConfiguration {
 		
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
-			StarredWidgetView(entry: entry)
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
+			if #available(iOSApplicationExtension 17.0, *) {
+				StarredWidgetView(entry: entry)
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.containerBackground(Color("WidgetBackground"), for: .widget)
+					.contentTransition(.opacity)
+			} else {
+				StarredWidgetView(entry: entry)
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.padding()
+					.background(Color("WidgetBackground"))
+			}
 			
 		})
 		.configurationDisplayName(L10n.starredWidgetTitle)
 		.description(L10n.starredWidgetDescription)
 		.supportedFamilies([.systemMedium, .systemLarge])
-		
-	}
-}
-
-struct SmartFeedSummaryWidget: Widget {
-	let kind: String = "com.ranchero.NetNewsWire.SmartFeedSummaryWidget"
-	
-	var body: some WidgetConfiguration {
-		
-		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
-			SmartFeedSummaryWidgetView(entry: entry)
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("AccentColor"))
-			
-		})
-		.configurationDisplayName(L10n.smartFeedSummaryWidgetTitle)
-		.description(L10n.smartFeedSummaryWidgetDescription)
-		.supportedFamilies([.systemSmall])
 		
 	}
 }

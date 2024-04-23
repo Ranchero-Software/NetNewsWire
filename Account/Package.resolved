@@ -1,0 +1,97 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "BrightFutures",
+        "repositoryURL": "https://github.com/Thomvis/BrightFutures.git",
+        "state": {
+          "branch": null,
+          "revision": "fa66fa183dce7196d431244d0215748cd14c5758",
+          "version": "8.2.0"
+        }
+      },
+      {
+        "package": "Erik",
+        "repositoryURL": "https://github.com/phimage/Erik.git",
+        "state": {
+          "branch": null,
+          "revision": "109a130e9cdb00789a43a7a625293eeb12d22989",
+          "version": "5.1.0"
+        }
+      },
+      {
+        "package": "FileKit",
+        "repositoryURL": "https://github.com/nvzqz/FileKit.git",
+        "state": {
+          "branch": null,
+          "revision": "9006d2888025fbe893c3c396327b2fe45a8c177b",
+          "version": "6.1.0"
+        }
+      },
+      {
+        "package": "Kanna",
+        "repositoryURL": "https://github.com/tid-kijyun/Kanna.git",
+        "state": {
+          "branch": null,
+          "revision": "f9e4922223dd0d3dfbf02ca70812cf5531fc0593",
+          "version": "5.2.7"
+        }
+      },
+      {
+        "package": "OAuthSwift",
+        "repositoryURL": "https://github.com/OAuthSwift/OAuthSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "fde77955e6983fbfaabd491709d52b8a82fda4d0",
+          "version": "2.1.2"
+        }
+      },
+      {
+        "package": "RSCore",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSCore.git",
+        "state": {
+          "branch": null,
+          "revision": "917610ce4af5a22d1f1647ace571cc1b359839ba",
+          "version": "1.1.4"
+        }
+      },
+      {
+        "package": "RSDatabase",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSDatabase.git",
+        "state": {
+          "branch": null,
+          "revision": "a6c5f1622320f745cc9a0a910d1bed1e2eaf15e3",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "RSParser",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSParser.git",
+        "state": {
+          "branch": null,
+          "revision": "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
+          "version": "2.0.3"
+        }
+      },
+      {
+        "package": "RSWeb",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSWeb.git",
+        "state": {
+          "branch": null,
+          "revision": "aca2db763e3404757b273821f058bed2bbe02fcf",
+          "version": "1.0.7"
+        }
+      },
+      {
+        "package": "Swifter",
+        "repositoryURL": "https://github.com/httpswift/swifter.git",
+        "state": {
+          "branch": null,
+          "revision": "9483a5d459b45c3ffd059f7b55f9638e268632fd",
+          "version": "1.5.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
