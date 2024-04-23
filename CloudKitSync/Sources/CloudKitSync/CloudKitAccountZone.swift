@@ -193,37 +193,81 @@ enum CloudKitAccountZoneError: LocalizedError {
 
 	public func findOrCreateAccount() async throws -> String {
 
-		guard let database else { throw CloudKitAccountZoneError.unknown }
+		try await withCheckedThrowingContinuation { continuation in
+
+			self.findOrCreateAccount { result in
+				switch result {
+				case .success(let externalID):
+					continuation.resume(returning: externalID)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
+	private func findOrCreateAccount(completion: @escaping @Sendable (Result<String, Error>) -> Void) {
+
+		guard let database else {
+			completion(.failure(CloudKitAccountZoneError.unknown))
+			return
+		}
 
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 
-		do {
-			let records = try await database.perform(ckQuery, inZoneWith: zoneID)
-			if records.count > 0 {
-				return records[0].externalID
-			} else {
-				return try await createContainer(name: "Account", isAccount: true)
-			}
+		database.fetch(withQuery: ckQuery, inZoneWith: zoneID) { result in
 
-		} catch {
+			switch result {
 
-			switch CloudKitZoneResult.resolve(error) {
+			case .success((let matchResults, _)):
 
-			case .retry(let timeToWait):
-				await delay(for: timeToWait)
-				return try await findOrCreateAccount()
+				for result in matchResults {
+					let (_, recordResult) = result
+					switch recordResult {
 
-			case .zoneNotFound, .userDeletedZone:
-				_ = try await createZoneRecord()
-				return try await findOrCreateAccount()
+					case .success(let record):
+						completion(.success(record.externalID))
+						return
 
-			default:
-				return try await createContainer(name: "Account", isAccount: true)
+					case .failure(_):
+						continue
+					}
+				}
+
+				// If no records in matchResults
+				completion(.failure(CloudKitAccountZoneError.unknown))
+
+			case .failure(let error):
+
+				switch CloudKitZoneResult.resolve(error) {
+
+				case .retry(let timeToWait):
+					self.retryIfPossible(after: timeToWait) {
+						self.findOrCreateAccount(completion: completion)
+					}
+
+				case .zoneNotFound, .userDeletedZone:
+					Task { @MainActor in
+						_ = try await self.createZoneRecord()
+						self.findOrCreateAccount(completion: completion)
+					}
+
+				default:
+					Task { @MainActor in
+
+						do {
+							let externalID = try await self.createContainer(name: "Account", isAccount: true)
+							completion(.success(externalID))
+						} catch {
+							completion(.failure(error))
+						}
+					}
+				}
 			}
 		}
 	}
-	
+
 	public func createFolder(name: String) async throws -> String {
 
 		return try await createContainer(name: name, isAccount: false)
