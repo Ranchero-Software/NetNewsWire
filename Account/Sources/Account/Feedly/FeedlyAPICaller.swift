@@ -553,42 +553,15 @@ extension FeedlyAPICaller: FeedlySearchService {
 
 extension FeedlyAPICaller: FeedlyLogoutService {
 	
-	func logout(completion: @escaping (Result<Void, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-		
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
-			}
-		}
-		var components = baseURLComponents
-		components.path = "/v3/auth/logout"
-		
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-		
-		var request = URLRequest(url: url)
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-		
-		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (httpResponse, _)):
-				if httpResponse.statusCode == 200 {
-					completion(.success(()))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+	func logout() async throws {
+
+		guard !isSuspended else { throw TransportError.suspended }
+
+		let request = try urlRequest(path: "/v3/auth/logout", method: HTTPMethod.post, includeJSONHeaders: true, includeOAuthToken: true)
+
+		let (httpResponse, _) = try await send(request: request, resultType: String.self)
+		if httpResponse.statusCode != HTTPResponseCode.OK {
+			throw URLError(.cannotDecodeContentData)
 		}
 	}
 }

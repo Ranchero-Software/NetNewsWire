@@ -10,7 +10,8 @@ import Foundation
 import os.log
 
 public protocol FeedlyLogoutService {
-	func logout(completion: @escaping (Result<Void, Error>) -> ())
+
+	@MainActor func logout() async throws
 }
 
 public final class FeedlyLogoutOperation: FeedlyOperation {
@@ -24,27 +25,24 @@ public final class FeedlyLogoutOperation: FeedlyOperation {
 	}
 	
 	public override func run() {
-		os_log("Requesting logout of Feedly account.")
-		service.logout(completion: didCompleteLogout(_:))
-	}
-	
-	func didCompleteLogout(_ result: Result<Void, Error>) {
-		assert(Thread.isMainThread)
-		switch result {
-		case .success:
-			os_log("Logged out of Feedly account.")
-//			do {
-//				// TODO: fix removing credentials
-////				try account.removeCredentials(type: .oauthAccessToken)
-////				try account.removeCredentials(type: .oauthRefreshToken)
-//			} catch {
-//				// oh well, we tried our best.
-//			}
-			didFinish()
-			
-		case .failure(let error):
-			os_log("Logout failed because %{public}@.", error as NSError)
-			didFinish(with: error)
+
+		Task { @MainActor in
+
+			do {
+				os_log("Requesting logout of Feedly account.")
+				try await service.logout()
+				os_log("Logged out of Feedly account.")
+
+				// TODO: fix removing credentials
+//				try account.removeCredentials(type: .oauthAccessToken)
+//				try account.removeCredentials(type: .oauthRefreshToken)
+
+				didFinish()
+
+			} catch {
+				os_log("Logout failed because %{public}@.", error as NSError)
+				didFinish(with: error)
+			}
 		}
 	}
 }
