@@ -11,7 +11,7 @@ import CommonErrors
 import Feedly
 
 protocol FeedlyAddFeedToCollectionService {
-	func addFeed(with feedId: FeedlyFeedResourceID, title: String?, toCollectionWith collectionID: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
+	func addFeed(with feedID: FeedlyFeedResourceID, title: String?, toCollectionWith collectionID: String) async throws -> [FeedlyFeed]
 }
 
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
@@ -37,36 +37,24 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 	}
 	
 	override func run() {
-		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionID) { [weak self] result in
-			guard let self = self else {
-				return
-			}
-			if self.isCanceled {
-				self.didFinish()
-				return
-			}
-			self.didCompleteRequest(result)
-		}
-	}
-}
 
-private extension FeedlyAddFeedToCollectionOperation {
+		Task { @MainActor in
 
-	func didCompleteRequest(_ result: Result<[FeedlyFeed], Error>) {
-		switch result {
-		case .success(let feedlyFeeds):
-			feedsAndFolders = [(feedlyFeeds, folder)]
-			
-			let feedsWithCreatedFeedID = feedlyFeeds.filter { $0.id == resource.id }
-			
-			if feedsWithCreatedFeedID.isEmpty {
-				didFinish(with: AccountError.createErrorNotFound)
-			} else {
-				didFinish()
+			do {
+				let feedlyFeeds = try await service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionID)
+
+				feedsAndFolders = [(feedlyFeeds, folder)]
+
+				let feedsWithCreatedFeedID = feedlyFeeds.filter { $0.id == resource.id }
+				if feedsWithCreatedFeedID.isEmpty {
+					didFinish(with: AccountError.createErrorNotFound)
+				} else {
+					didFinish()
+				}
+
+			} catch {
+				didFinish(with: error)
 			}
-			
-		case .failure(let error):
-			didFinish(with: error)
 		}
 	}
 }

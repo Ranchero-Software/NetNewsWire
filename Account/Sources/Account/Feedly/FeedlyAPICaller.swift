@@ -155,7 +155,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
-		var request = try urlRequest(path: "/v3/opml", method: HTTPMethod.post, addJSONHeaders: false, addOauthToken: true)
+		var request = try urlRequest(path: "/v3/opml", method: HTTPMethod.post, includeJSONHeaders: false, includeOauthToken: true)
 		request.addValue("text/xml", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.acceptType)
 		request.httpBody = opmlData
@@ -170,7 +170,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
-		var request = try urlRequest(path: "/v3/collections", method: HTTPMethod.post, addJSONHeaders: true, addOauthToken: true)
+		var request = try urlRequest(path: "/v3/collections", method: HTTPMethod.post, includeJSONHeaders: true, includeOauthToken: true)
 
 		struct CreateCollectionBody: Encodable {
 			var label: String
@@ -191,7 +191,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
-		var request = try urlRequest(path: "/v3/collections", method: HTTPMethod.post, addJSONHeaders: true, addOauthToken: true)
+		var request = try urlRequest(path: "/v3/collections", method: HTTPMethod.post, includeJSONHeaders: true, includeOauthToken: true)
 
 		struct RenameCollectionBody: Encodable {
 			var id: String
@@ -220,7 +220,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		guard let encodedID = encodeForURLPath(id) else {
 			throw FeedlyAccountDelegateError.unexpectedResourceID(id)
 		}
-		let request = try urlRequest(path: "/v3/collections/\(encodedID)", method: HTTPMethod.delete, addJSONHeaders: true, addOauthToken: true)
+		let request = try urlRequest(path: "/v3/collections/\(encodedID)", method: HTTPMethod.delete, includeJSONHeaders: true, includeOauthToken: true)
 
 		let (httpResponse, _) = try await send(request: request, resultType: Optional<FeedlyCollection>.self)
 
@@ -245,7 +245,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		
 		var request = URLRequest(url: url)
 		request.httpMethod = HTTPMethod.delete
-		_addJSONHeaders(&request)
+		addJSONHeaders(&request)
 		try addOauthAccessToken(&request)
 
 		struct RemovableFeed: Encodable {
@@ -267,63 +267,38 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 	
-	@MainActor func addFeed(with feedId: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-		
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
-			}
-		}
+	@MainActor func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String) async throws -> [FeedlyFeed] {
+
+		guard !isSuspended else { throw TransportError.suspended }
 
 		guard let encodedID = encodeForURLPath(collectionID) else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionID)))
-			}
+			throw FeedlyAccountDelegateError.unexpectedResourceID(collectionID)
 		}
 		var components = baseURLComponents
 		components.percentEncodedPath = "/v3/collections/\(encodedID)/feeds"
-		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 		
 		var request = URLRequest(url: url)
-		request.httpMethod = "PUT"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-		
-		do {
-			struct AddFeedBody: Encodable {
-				var id: String
-				var title: String?
-			}
-			let encoder = JSONEncoder()
-			let data = try encoder.encode(AddFeedBody(id: feedId.id, title: title))
-			request.httpBody = data
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
+		request.httpMethod = HTTPMethod.put
+		addJSONHeaders(&request)
+		try addOauthAccessToken(&request)
+
+		struct AddFeedBody: Encodable {
+			var id: String
+			var title: String?
 		}
-		
-		send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success((_, let collectionFeeds)):
-				if let feeds = collectionFeeds {
-					completion(.success(feeds))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		let encoder = JSONEncoder()
+		let data = try encoder.encode(AddFeedBody(id: feedID.id, title: title))
+		request.httpBody = data
+
+		let (_, collectionFeeds) = try await send(request: request, resultType: [FeedlyFeed].self)
+		guard let collectionFeeds else {
+			throw URLError(.cannotDecodeContentData)
 		}
+
+		return collectionFeeds
 	}
 }
 
@@ -834,24 +809,24 @@ extension FeedlyAPICaller: FeedlyLogoutService {
 
 private extension FeedlyAPICaller {
 
-	func urlRequest(path: String, method: String, addJSONHeaders: Bool, addOauthToken: Bool) throws -> URLRequest {
+	func urlRequest(path: String, method: String, includeJSONHeaders: Bool, includeOauthToken: Bool) throws -> URLRequest {
 
 		let url = apiURL(path)
 		var request = URLRequest(url: url)
 
 		request.httpMethod = method
 
-		if addJSONHeaders {
-			_addJSONHeaders(&request)
+		if includeJSONHeaders {
+			addJSONHeaders(&request)
 		}
-		if addOauthToken {
+		if includeOauthToken {
 			try addOauthAccessToken(&request)
 		}
 
 		return request
 	}
 
-	func _addJSONHeaders(_ request: inout URLRequest) {
+	func addJSONHeaders(_ request: inout URLRequest) {
 
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")

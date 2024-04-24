@@ -377,44 +377,24 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.renameFeed(for: account, with: feed, to: name) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let folderCollectionIDs = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIDs = folderCollectionIDs, let collectionID = collectionIDs.first else {
-			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
-			return
+			throw FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)
 		}
 		
 		let feedID = FeedlyFeedResourceID(id: feed.feedID)
 		let editedNameBefore = feed.editedName
 		
-		// Adding an existing feed updates it.
-		// Updating feed name in one folder/collection updates it for all folders/collections.
-		caller.addFeed(with: feedID, title: name, toCollectionWith: collectionID) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-				
-			case .failure(let error):
-				feed.editedName = editedNameBefore
-				completion(.failure(error))
-			}
-		}
-		
-		// optimistically set the name
+		// Optimistically set the name
 		feed.editedName = name
+
+		do {
+			// Adding an existing feed updates it.
+			// Updating feed name in one folder/collection updates it for all folders/collections.
+			try await caller.addFeed(with: feedID, title: name, toCollectionWith: collectionID)
+		} catch {
+			feed.editedName = editedNameBefore
+		}
 	}
 	
 	func addFeed(for account: Account, with feed: Feed, to container: any Container) async throws {
