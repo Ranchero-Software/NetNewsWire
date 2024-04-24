@@ -45,101 +45,64 @@ final class FeedlyIngestStarredArticleIDsOperation: FeedlyOperation {
 	}
 	
 	private func getStreamIDs(_ continuation: String?) {
-		service.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIDs(_:))
-	}
-	
-	private func didGetStreamIDs(_ result: Result<FeedlyStreamIDs, Error>) {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
-		
-		switch result {
-		case .success(let streamIDs):
 
-			remoteEntryIDs.formUnion(streamIDs.ids)
-			
-			guard let continuation = streamIDs.continuation else {
-				removeEntryIDsWithPendingStatus()
-				return
+		Task { @MainActor in
+
+			do {
+				let streamIDs = try await service.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil)
+				remoteEntryIDs.formUnion(streamIDs.ids)
+
+				guard let continuation = streamIDs.continuation else {
+					try await removeEntryIDsWithPendingStatus()
+					didFinish()
+					return
+				}
+
+				getStreamIDs(continuation)
+
+			} catch {
+				didFinish(with: error)
 			}
-			
-			getStreamIDs(continuation)
-			
-		case .failure(let error):
-			didFinish(with: error)
 		}
 	}
 	
 	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
-	private func removeEntryIDsWithPendingStatus() {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
-		
-		Task { @MainActor in
+	private func removeEntryIDsWithPendingStatus() async throws {
 
-			do {
-				if let pendingArticleIDs = try await self.database.selectPendingStarredStatusArticleIDs() {
-					self.remoteEntryIDs.subtract(pendingArticleIDs)
-				}
-				self.updateStarredStatuses()
-			} catch {
-				self.didFinish(with: error)
-			}
+		if let pendingArticleIDs = try await database.selectPendingStarredStatusArticleIDs() {
+			remoteEntryIDs.subtract(pendingArticleIDs)
 		}
+		try await updateStarredStatuses()
 	}
-	
-	private func updateStarredStatuses() {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
 
-		Task { @MainActor in
+	private func updateStarredStatuses() async throws {
 
-			do {
-				if let localStarredArticleIDs = try await account.fetchStarredArticleIDs() {
-					self.processStarredArticleIDs(localStarredArticleIDs)
-				}
-			} catch {
-				self.didFinish(with: error)
-			}
+		if let localStarredArticleIDs = try await account.fetchStarredArticleIDs() {
+			try await processStarredArticleIDs(localStarredArticleIDs)
 		}
 	}
 
-	func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
+	func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) async throws {
 
-		guard !isCanceled else {
-			didFinish()
-			return
+		var markAsStarredError: Error?
+		var markAsUnstarredError: Error?
+
+		let remoteStarredArticleIDs = remoteEntryIDs
+		do {
+			try await account.markAsStarred(remoteStarredArticleIDs)
+		} catch {
+			markAsStarredError = error
 		}
 
-		Task { @MainActor in
+		let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
+		do {
+			try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+		} catch {
+			markAsUnstarredError = error
+		}
 
-			var markAsStarredError: Error?
-			var markAsUnstarredError: Error?
-
-			let remoteStarredArticleIDs = remoteEntryIDs
-			do {
-				try await account.markAsStarred(remoteStarredArticleIDs)
-			} catch {
-				markAsStarredError = error
-			}
-			
-			let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
-			do {
-				try await account.markAsUnstarred(deltaUnstarredArticleIDs)
-			} catch {
-				markAsUnstarredError = error
-			}
-
-			if let markingError = markAsStarredError ?? markAsUnstarredError {
-				self.didFinish(with: markingError)
-			}
-
-			self.didFinish()
+		if let markingError = markAsStarredError ?? markAsUnstarredError {
+			throw markingError
 		}
 	}
 }

@@ -41,36 +41,24 @@ class FeedlyIngestStreamArticleIDsOperation: FeedlyOperation {
 	}
 	
 	private func getStreamIDs(_ continuation: String?) {
-		service.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIDs(_:))
-	}
-	
-	private func didGetStreamIDs(_ result: Result<FeedlyStreamIDs, Error>) {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
 
-		switch result {
-		case .success(let streamIDs):
+		Task { @MainActor in
 
-			Task { @MainActor in
-				do {
-					try await account.createStatusesIfNeeded(articleIDs: Set(streamIDs.ids))
+			do {
+				let streamIDs = try await service.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil)
 
-					guard let continuation = streamIDs.continuation else {
-						os_log(.debug, log: self.log, "Reached end of stream for %@", self.resource.id)
-						self.didFinish()
-						return
-					}
+				try await account.createStatusesIfNeeded(articleIDs: Set(streamIDs.ids))
 
-					self.getStreamIDs(continuation)
-				} catch {
-					self.didFinish(with: error)
+				guard let continuation = streamIDs.continuation else {
+					os_log(.debug, log: self.log, "Reached end of stream for %@", self.resource.id)
+					self.didFinish()
 					return
 				}
+				self.getStreamIDs(continuation)
+
+			} catch {
+				didFinish(with: error)
 			}
-		case .failure(let error):
-			didFinish(with: error)
 		}
 	}
 }

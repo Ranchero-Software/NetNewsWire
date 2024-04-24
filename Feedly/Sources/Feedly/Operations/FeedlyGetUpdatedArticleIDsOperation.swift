@@ -45,35 +45,29 @@ public final class FeedlyGetUpdatedArticleIDsOperation: FeedlyOperation, FeedlyE
 	}
 	
 	private func getStreamIDs(_ continuation: String?) {
-		guard let date = newerThan else {
-			os_log(.debug, log: log, "No date provided so everything must be new (nothing is updated).")
-			didFinish()
-			return
-		}
-		
-		service.getStreamIDs(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil, completion: didGetStreamIDs(_:))
-	}
-	
-	private func didGetStreamIDs(_ result: Result<FeedlyStreamIDs, Error>) {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
-		
-		switch result {
-		case .success(let streamIDs):
-			storedUpdatedArticleIDs.formUnion(streamIDs.ids)
-			
-			guard let continuation = streamIDs.continuation else {
-				os_log(.debug, log: log, "%{public}i articles updated since last successful sync start date.", storedUpdatedArticleIDs.count)
+
+		Task { @MainActor in
+			guard let date = newerThan else {
+				os_log(.debug, log: log, "No date provided so everything must be new (nothing is updated).")
 				didFinish()
 				return
 			}
-			
-			getStreamIDs(continuation)
-			
-		case .failure(let error):
-			didFinish(with: error)
+
+			do {
+				let streamIDs = try await service.getStreamIDs(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil)
+
+				storedUpdatedArticleIDs.formUnion(streamIDs.ids)
+				guard let continuation = streamIDs.continuation else {
+					os_log(.debug, log: log, "%{public}i articles updated since last successful sync start date.", storedUpdatedArticleIDs.count)
+					didFinish()
+					return
+				}
+
+				getStreamIDs(continuation)
+
+			} catch {
+				didFinish(with: error)
+			}
 		}
 	}
 }

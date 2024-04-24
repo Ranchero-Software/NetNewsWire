@@ -422,19 +422,10 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 
 extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 	
-	@MainActor func getStreamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIDs, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-		
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
-			}
-		}
-		
+	@MainActor func getStreamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStreamIDs {
+
+		guard !isSuspended else { throw TransportError.suspended }
+
 		var components = baseURLComponents
 		components.path = "/v3/streams/ids"
 
@@ -469,22 +460,16 @@ extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 		}
 		
 		var request = URLRequest(url: url)
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-		
-		send(request: request, resultType: FeedlyStreamIDs.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, collections)):
-				if let response = collections {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		addJSONHeaders(&request)
+		try addOAuthAccessToken(&request)
+
+		let (_, collections) = try await send(request: request, resultType: FeedlyStreamIDs.self)
+
+		guard let collections else {
+			throw URLError(.cannotDecodeContentData)
 		}
+
+		return collections
 	}
 }
 

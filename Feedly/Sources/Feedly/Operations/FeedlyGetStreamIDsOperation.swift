@@ -10,6 +10,7 @@ import Foundation
 import os.log
 
 public protocol FeedlyGetStreamIDsOperationDelegate: AnyObject {
+
 	func feedlyGetStreamIDsOperation(_ operation: FeedlyGetStreamIDsOperation, didGet streamIDs: FeedlyStreamIDs)
 }
 
@@ -46,16 +47,15 @@ public final class FeedlyGetStreamIDsOperation: FeedlyOperation, FeedlyEntryIden
 	weak var streamIDsDelegate: FeedlyGetStreamIDsOperationDelegate?
 	
 	public override func run() {
-		service.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
-			switch result {
-			case .success(let stream):
+
+		Task { @MainActor in
+
+			do {
+				let stream = try await service.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly)
 				self.streamIDs = stream
-				
 				self.streamIDsDelegate?.feedlyGetStreamIDsOperation(self, didGet: stream)
-				
 				self.didFinish()
-				
-			case .failure(let error):
+			} catch {
 				os_log(.debug, log: self.log, "Unable to get stream ids: %{public}@.", error as NSError)
 				self.didFinish(with: error)
 			}
