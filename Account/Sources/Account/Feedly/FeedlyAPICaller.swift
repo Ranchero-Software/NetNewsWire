@@ -12,9 +12,10 @@ import Secrets
 import Feedly
 
 protocol FeedlyAPICallerDelegate: AnyObject {
+
 	/// Implemented by the `FeedlyAccountDelegate` reauthorize the client with a fresh OAuth token so the client can retry the unauthorized request.
 	/// Pass `true` to the completion handler if the failing request should be retried with a fresh token or `false` if the unauthorized request should complete with the original failure error.
-	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ())
+	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller) async -> Bool
 }
 
 @MainActor final class FeedlyAPICaller {
@@ -102,47 +103,46 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 	}
 
 	private func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+
 		transport.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { [weak self] result in
-			
-			MainActor.assumeIsolated {
-				
+
+			Task { @MainActor [weak self] in
+
 				switch result {
 				case .success:
 					completion(result)
 				case .failure(let error):
 					switch error {
 					case TransportError.httpError(let statusCode) where statusCode == 401:
-						
+
 						assert(self == nil ? true : self?.delegate != nil, "Check the delegate is set to \(FeedlyAccountDelegate.self).")
-						
+
 						guard let self = self, let delegate = self.delegate else {
 							completion(result)
 							return
 						}
-						
+
 						/// Capture the credentials before the reauthorization to check for a change.
 						let credentialsBefore = self.credentials
-						
-						delegate.reauthorizeFeedlyAPICaller(self) { [weak self] isReauthorizedAndShouldRetry in
-							assert(Thread.isMainThread)
-							
-							guard isReauthorizedAndShouldRetry, let self = self else {
-								completion(result)
-								return
-							}
-							
-							// Check for a change. Not only would it help debugging, but it'll also catch an infinitely recursive attempt to refresh.
-							guard let accessToken = self.credentials?.secret, accessToken != credentialsBefore?.secret else {
-								assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: self.delegate)) set them on \(self)?")
-								completion(result)
-								return
-							}
-							
-							var reauthorizedRequest = request
-							reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-							
-							self.send(request: reauthorizedRequest, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding, completion: completion)
+
+						let isReauthorizedAndShouldRetry = await delegate.reauthorizeFeedlyAPICaller(self)
+						guard isReauthorizedAndShouldRetry else {
+							completion(result)
+							return
 						}
+
+						// Check for a change. Not only would it help debugging, but it'll also catch an infinitely recursive attempt to refresh.
+						guard let accessToken = self.credentials?.secret, accessToken != credentialsBefore?.secret else {
+							assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: self.delegate)) set them on \(self)?")
+							completion(result)
+							return
+						}
+
+						var reauthorizedRequest = request
+						reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+
+						self.send(request: reauthorizedRequest, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding, completion: completion)
+
 					default:
 						completion(result)
 					}
@@ -150,7 +150,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 			}
 		}
 	}
-	
+
 	func importOPML(_ opmlData: Data) async throws {
 
 		guard !isSuspended else { throw TransportError.suspended }

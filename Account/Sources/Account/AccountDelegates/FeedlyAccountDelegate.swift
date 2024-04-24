@@ -610,7 +610,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
 
-		assertionFailure("An `account` instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
+		assertionFailure("An `account` instance should refresh the access token first instead.")
 		return credentials
 	}
 
@@ -642,34 +642,36 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 	
-	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ()) {
+	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller) async -> Bool {
+
 		guard let account = initializedAccount else {
-			completionHandler(false)
-			return
+			return false
 		}
-		
-		/// Captures a failure to refresh a token, assuming that it was refreshed unless told otherwise.
-		final class RefreshAccessTokenOperationDelegate: FeedlyOperationDelegate {
-			
-			private(set) var didReauthorize = true
-			
-			func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
-				didReauthorize = false
-			}
+
+		do {
+			try await refreshAccessToken(account: account)
+			return true
+		} catch {
+			return false
 		}
-		
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
-		refreshAccessToken.downloadProgress = refreshProgress
-		
-		/// This must be strongly referenced by the completionBlock of the `FeedlyRefreshAccessTokenOperation`.
-		let refreshAccessTokenDelegate = RefreshAccessTokenOperationDelegate()
-		refreshAccessToken.delegate = refreshAccessTokenDelegate
-		
-		refreshAccessToken.completionBlock = { operation in
-			assert(Thread.isMainThread)
-			completionHandler(refreshAccessTokenDelegate.didReauthorize && !operation.isCanceled)
+	}
+
+	private func refreshAccessToken(account: Account) async throws {
+
+		guard let credentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
+			os_log(.debug, log: log, "Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
+			throw TransportError.httpError(status: 403)
 		}
-		
-		MainThreadOperationQueue.shared.add(refreshAccessToken)
+
+		os_log(.debug, log: log, "Refreshing access token.")
+		let grant = try await refreshAccessToken(with: credentials.secret, client: oauthAuthorizationClient)
+
+		os_log(.debug, log: log, "Storing refresh token.")
+		if let refreshToken = grant.refreshToken {
+			try account.storeCredentials(refreshToken)
+		}
+
+		os_log(.debug, log: log, "Storing access token.")
+		try account.storeCredentials(grant.accessToken)
 	}
 }
