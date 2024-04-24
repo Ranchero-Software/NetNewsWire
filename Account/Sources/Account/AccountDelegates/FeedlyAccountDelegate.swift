@@ -300,78 +300,32 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.renameFolder(for: account, with: folder, to: name) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)))
-			}
+			throw FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)
 		}
-		
+
 		let nameBefore = folder.name
 		
-		caller.renameCollection(with: id, to: name) { result in
-			switch result {
-			case .success(let collection):
-				folder.name = collection.label
-				completion(.success(()))
-			case .failure(let error):
-				folder.name = nameBefore
-				completion(.failure(error))
-			}
+		do {
+			let collection = try await caller.renameCollection(with: id, to: name)
+			folder.name = collection.label
+		} catch {
+			folder.name = nameBefore
+			throw error
 		}
-		
-		folder.name = name
 	}
 	
 	func removeFolder(for account: Account, with folder: Folder) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.removeFolder(for: account, with: folder) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)))
-			}
+			throw FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)
 		}
 		
-		let progress = refreshProgress
-		progress.addToNumberOfTasksAndRemaining(1)
-		
-		caller.deleteCollection(with: id) { result in
-			progress.completeTask()
-			
-			switch result {
-			case .success:
-				account.removeFolder(folder: folder)
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		refreshProgress.addTask()
+		defer { refreshProgress.completeTask() }
+
+		try await caller.deleteCollection(with: id)
+		account.removeFolder(folder: folder)
 	}
 		
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
@@ -511,84 +465,38 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func removeFeed(for account: Account, with feed: Feed, from container: any Container) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-
-			self.removeFeed(for: account, with: feed, from: container) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder, let collectionID = folder.externalID else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed.nameForDisplay)))
-			}
+			throw FeedlyAccountDelegateError.unableToRemoveFeed(feed.nameForDisplay)
 		}
 		
-		caller.removeFeed(feed.feedID, fromCollectionWith: collectionID) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				folder.addFeed(feed)
-				completion(.failure(error))
-			}
-		}
-		
+		try await caller.removeFeed(feed.feedID, fromCollectionWith: collectionID)
 		folder.removeFeed(feed)
 	}
 	
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.moveFeed(for: account, with: feed, from: from, to: to) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
+		guard let sourceFolder = from as? Folder, let destinationFolder = to as? Folder else {
+			throw FeedlyAccountDelegateError.addFeedChooseFolder
 		}
-	}
+		
+		// Optimistically move the feed, undoing as appropriate to the failure
+		sourceFolder.removeFeed(feed)
+		destinationFolder.addFeed(feed)
 
-	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let from = from as? Folder, let to = to as? Folder else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
-			}
+		do {
+			try await addFeed(for: account, with: feed, to: destinationFolder)
+		} catch {
+			destinationFolder.removeFeed(feed)
+			throw FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, sourceFolder.nameForDisplay, destinationFolder.nameForDisplay)
 		}
-		
-		addFeed(for: account, with: feed, to: to) { [weak self] addResult in
-			switch addResult {
-				// now that we have added the feed, remove it from the other collection
-			case .success:
-				self?.removeFeed(for: account, with: feed, from: from) { removeResult in
-					switch removeResult {
-					case .success:
-						completion(.success(()))
-					case .failure:
-						from.addFeed(feed)
-						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)))
-					}
-				}
-			case .failure(let error):
-				from.addFeed(feed)
-				to.removeFeed(feed)
-				completion(.failure(error))
-			}
-			
+
+		// Now that we have added the feed, remove it from the source folder
+		do {
+			try await removeFeed(for: account, with: feed, from: sourceFolder)
+		} catch {
+			sourceFolder.addFeed(feed)
+			throw FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, sourceFolder.nameForDisplay, destinationFolder.nameForDisplay)
 		}
-		
-		// optimistically move the feed, undoing as appropriate to the failure
-		from.removeFeed(feed)
-		to.addFeed(feed)
 	}
 	
 	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
