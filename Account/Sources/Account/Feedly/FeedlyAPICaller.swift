@@ -475,56 +475,21 @@ extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 
 extension FeedlyAPICaller: FeedlyGetEntriesService {
 	
-	func getEntries(for ids: Set<String>, completion: @escaping (Result<[FeedlyEntry], Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
+	@MainActor func getEntries(for ids: Set<String>) async throws -> [FeedlyEntry] {
+
+		guard !isSuspended else { throw TransportError.suspended }
+
+		var request = try urlRequest(path: "/v3/entries/.mget", method: HTTPMethod.post, includeJSONHeaders: true, includeOAuthToken: true)
+		let body = Array(ids)
+		try addObject(body, to: &request)
+
+		let (_, entries) = try await send(request: request, resultType: [FeedlyEntry].self)
+
+		guard let entries else {
+			throw URLError(.cannotDecodeContentData)
 		}
-		
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
-			}
-		}
-		
-		var components = baseURLComponents
-		components.path = "/v3/entries/.mget"
-		
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-		
-		var request = URLRequest(url: url)
-		
-		do {
-			let body = Array(ids)
-			let encoder = JSONEncoder()
-			let data = try encoder.encode(body)
-			request.httpBody = data
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-		}
-		
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-		
-		send(request: request, resultType: [FeedlyEntry].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, entries)):
-				if let response = entries {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+
+		return entries
 	}
 }
 
@@ -604,14 +569,10 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 
 extension FeedlyAPICaller: FeedlySearchService {
 	
-	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> ()) {
-		
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-		
+	@MainActor func getFeeds(for query: String, count: Int, locale: String) async throws -> FeedlyFeedsSearchResponse {
+
+		guard !isSuspended else { throw TransportError.suspended }
+
 		var components = baseURLComponents
 		components.path = "/v3/search/feeds"
 		
@@ -620,29 +581,22 @@ extension FeedlyAPICaller: FeedlySearchService {
 			URLQueryItem(name: "count", value: String(count)),
 			URLQueryItem(name: "locale", value: locale)
 		]
-		
-		
+				
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 		
 		var request = URLRequest(url: url)
 		request.httpMethod = "GET"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		
-		send(request: request, resultType: FeedlyFeedsSearchResponse.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, searchResponse)):
-				if let response = searchResponse {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		addJSONHeaders(&request)
+
+		let (_, searchResponse) = try await send(request: request, resultType: FeedlyFeedsSearchResponse.self)
+
+		guard let searchResponse else {
+			throw URLError(.cannotDecodeContentData)
 		}
+
+		return searchResponse
 	}
 }
 

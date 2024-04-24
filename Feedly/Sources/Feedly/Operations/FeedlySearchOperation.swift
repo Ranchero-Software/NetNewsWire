@@ -9,16 +9,18 @@
 import Foundation
 
 public protocol FeedlySearchService: AnyObject {
-	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> ())
+	
+	@MainActor func getFeeds(for query: String, count: Int, locale: String) async throws -> FeedlyFeedsSearchResponse
 }
 
 public protocol FeedlySearchOperationDelegate: AnyObject {
+
 	@MainActor func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse)
 }
 
 /// Find one and only one feed for a given query (usually, a URL).
 /// What happens when a feed is found for the URL is delegated to the `searchDelegate`.
-public class FeedlySearchOperation: FeedlyOperation {
+public final class FeedlySearchOperation: FeedlyOperation {
 
 	let query: String
 	let locale: Locale
@@ -32,14 +34,15 @@ public class FeedlySearchOperation: FeedlyOperation {
 	}
 	
 	public override func run() {
-		searchService.getFeeds(for: query, count: 1, locale: locale.identifier) { result in
-			switch result {
-			case .success(let response):
-				assert(Thread.isMainThread)
-				self.searchDelegate?.feedlySearchOperation(self, didGet: response)
+
+		Task { @MainActor in
+
+			do {
+				let searchResponse = try await searchService.getFeeds(for: query, count: 1, locale: locale.identifier)
+				self.searchDelegate?.feedlySearchOperation(self, didGet: searchResponse)
 				self.didFinish()
 				
-			case .failure(let error):
+			} catch {
 				self.didFinish(with: error)
 			}
 		}

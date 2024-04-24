@@ -9,5 +9,6 @@
 import Foundation
 
 public protocol FeedlyGetEntriesService: AnyObject {
-	func getEntries(for ids: Set<String>, completion: @escaping (Result<[FeedlyEntry], Error>) -> ())
+	
+	@MainActor func getEntries(for ids: Set<String>) async throws -> [FeedlyEntry]
 }

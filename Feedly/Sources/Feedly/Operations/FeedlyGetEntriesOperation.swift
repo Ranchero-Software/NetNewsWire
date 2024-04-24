@@ -54,13 +54,14 @@ public final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProvid
 	}
 	
 	public override func run() {
-		service.getEntries(for: provider.entryIDs) { result in
-			switch result {
-			case .success(let entries):
+
+		Task { @MainActor in
+
+			do {
+				let entries = try await service.getEntries(for: provider.entryIDs)
 				self.entries = entries
 				self.didFinish()
-				
-			case .failure(let error):
+			} catch {
 				os_log(.debug, log: self.log, "Unable to get entries: %{public}@.", error as NSError)
 				self.didFinish(with: error)
 			}
