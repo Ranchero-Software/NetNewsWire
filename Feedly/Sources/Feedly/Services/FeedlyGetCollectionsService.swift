@@ -9,5 +9,6 @@
 import Foundation
 
 public protocol FeedlyGetCollectionsService: AnyObject {
-	func getCollections(completion: @escaping @Sendable (Result<[FeedlyCollection], Error>) -> ())
+	
+	@MainActor func getCollections() async throws -> [FeedlyCollection]
 }

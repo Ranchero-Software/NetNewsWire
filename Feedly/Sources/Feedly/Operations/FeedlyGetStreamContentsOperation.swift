@@ -98,16 +98,17 @@ public final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntr
 	}
 	
 	public override func run() {
-		service.getStreamContents(for: resourceProvider.resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
-			switch result {
-			case .success(let stream):
+
+		Task { @MainActor in
+
+			do {
+				let stream = try await service.getStreamContents(for: resourceProvider.resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly)
+
 				self.stream = stream
-				
 				self.streamDelegate?.feedlyGetStreamContentsOperation(self, didGetContentsOf: stream)
-				
 				self.didFinish()
-				
-			case .failure(let error):
+
+			} catch {
 				os_log(.debug, log: self.log, "Unable to get stream contents: %{public}@.", error as NSError)
 				self.didFinish(with: error)
 			}

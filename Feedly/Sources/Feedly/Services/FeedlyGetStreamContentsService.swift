@@ -9,5 +9,6 @@
 import Foundation
 
 public protocol FeedlyGetStreamContentsService: AnyObject {
-	func getStreamContents(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ())
+
+	@MainActor func getStreamContents(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStream
 }

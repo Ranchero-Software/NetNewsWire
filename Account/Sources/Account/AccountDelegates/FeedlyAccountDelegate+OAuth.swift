@@ -12,7 +12,7 @@ import Secrets
 
 /// Models the access token response from Feedly.
 /// https://developer.feedly.com/v3/auth/#exchanging-an-auth-code-for-a-refresh-token-and-an-access-token
-public struct FeedlyOAuthAccessTokenResponse: Decodable, OAuthAccessTokenResponse {
+public struct FeedlyOAuthAccessTokenResponse: Decodable, OAuthAccessTokenResponse, Sendable {
 	/// The ID of the Feedly user.
 	public var id: String
 
@@ -45,55 +45,38 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 											  scope: oauthAuthorizationGrantScope,
 											  client: client)
 		let caller = FeedlyAPICaller(transport: transport, api: environment, secretsProvider: secretsProvider)
+		let response = try await caller.requestAccessToken(request)
 
-		return try await withCheckedThrowingContinuation { continuation in
-			caller.requestAccessToken(request) { result in
-				switch result {
-				case .success(let response):
-					let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
-
-					let refreshToken: Credentials? = {
-						guard let token = response.refreshToken else {
-							return nil
-						}
-						return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
-					}()
-
-					let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
-
-					continuation.resume(returning: grant)
-
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
+		let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
+		let refreshToken: Credentials? = {
+			guard let token = response.refreshToken else {
+				return nil
 			}
-		}
+			return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
+		}()
+
+		let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
+		
+		return grant
 	}
 }
 
 extension FeedlyAccountDelegate: OAuthAccessTokenRefreshing {
-	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient) async throws -> OAuthAuthorizationGrant {
+
 		let request = OAuthRefreshAccessTokenRequest(refreshToken: refreshToken, scope: nil, client: client)
-		
-		caller.refreshAccessToken(request) { result in
-			switch result {
-			case .success(let response):
-				let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
-				
-				let refreshToken: Credentials? = {
-					guard let token = response.refreshToken else {
-						return nil
-					}
-					return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
-				}()
-				
-				let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
-				
-				completion(.success(grant))
-				
-			case .failure(let error):
-				completion(.failure(error))
+		let response = try await caller.refreshAccessToken(request)
+
+		let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
+		let refreshToken: Credentials? = {
+			guard let token = response.refreshToken else {
+				return nil
 			}
-		}
+			return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
+		}()
+
+		let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
+
+		return grant
 	}
 }

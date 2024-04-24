@@ -27,52 +27,34 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		let refreshToken: Credentials
-		
-		do {
-			guard let credentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
-				os_log(.debug, log: log, "Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
-				throw TransportError.httpError(status: 403)
-			}
-			
-			refreshToken = credentials
-			
-		} catch {
-			didFinish(with: error)
-			return
-		}
-		
-		os_log(.debug, log: log, "Refreshing access token.")
-		
-		// Ignore cancellation after the request is resumed otherwise we may continue storing a potentially invalid token!
-		service.refreshAccessToken(with: refreshToken.secret, client: oauthClient) { result in
-			self.didRefreshAccessToken(result)
-		}
-	}
-	
-	private func didRefreshAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
-		assert(Thread.isMainThread)
-		
-		switch result {
-		case .success(let grant):
+
+		Task { @MainActor in
+
 			do {
-				os_log(.debug, log: log, "Storing refresh token.")
-				// Store the refresh token first because it sends this token to the account delegate.
-				if let token = grant.refreshToken {
-					try account.storeCredentials(token)
+				guard let credentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
+					os_log(.debug, log: log, "Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
+					throw TransportError.httpError(status: 403)
 				}
-				
-				os_log(.debug, log: log, "Storing access token.")
+
+				// Ignore cancellation after the request is resumed otherwise we may continue storing a potentially invalid token!
+				os_log(.debug, log: log, "Refreshing access token.")
+				let grant = try await service.refreshAccessToken(with: credentials.secret, client: oauthClient)
+
+				// Store the refresh token first because it sends this token to the account delegate.
+				os_log(.debug, log: log, "Storing refresh token.")
+				if let refreshToken = grant.refreshToken {
+					try account.storeCredentials(refreshToken)
+				}
+
 				// Now store the access token because we want the account delegate to use it.
+				os_log(.debug, log: log, "Storing access token.")
 				try account.storeCredentials(grant.accessToken)
-				
+
 				didFinish()
+
 			} catch {
 				didFinish(with: error)
 			}
-			
-		case .failure(let error):
-			didFinish(with: error)
 		}
 	}
 }
