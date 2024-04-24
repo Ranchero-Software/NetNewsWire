@@ -304,7 +304,7 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 
 extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 	
-	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest {
+	static func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest {
 		var components = baseUrlComponents
 		components.path = "/v3/auth/auth"
 		components.queryItems = request.queryItems

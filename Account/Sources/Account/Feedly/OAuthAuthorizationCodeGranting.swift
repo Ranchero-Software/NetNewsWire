@@ -157,7 +157,7 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
 	/// - Parameter request: The information about the client requesting authorization to be granted access tokens.
 	/// - Parameter baseUrlComponents: The scheme and host of the url except for the path.
-	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest
+	static func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest
 		
 	
 	/// Performs the request for the access token given an authorization code.
