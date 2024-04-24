@@ -42,6 +42,7 @@ public final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 private extension FeedlySendArticleStatusesOperation {
 
 	func processStatuses(_ pending: [SyncStatus]) {
+
 		let statuses: [(status: SyncStatus.Key, flag: Bool, action: FeedlyMarkAction)] = [
 			(.read, false, .unread),
 			(.read, true, .read),
@@ -49,32 +50,25 @@ private extension FeedlySendArticleStatusesOperation {
 			(.starred, false, .unsaved),
 		]
 
-		let group = DispatchGroup()
+		Task { @MainActor in
 
-		for pairing in statuses {
-			let articleIDs = pending.filter { $0.key == pairing.status && $0.flag == pairing.flag }
-			guard !articleIDs.isEmpty else {
-				continue
-			}
+			for pairing in statuses {
 
-			let ids = Set(articleIDs.map { $0.articleID })
-			let database = self.database
-			group.enter()
-			service.mark(ids, as: pairing.action) { result in
-				Task { @MainActor in
-					switch result {
-					case .success:
-						try? await database.deleteSelectedForProcessing(Array(ids))
-						group.leave()
-					case .failure:
-						try? await database.resetSelectedForProcessing(Array(ids))
-						group.leave()
-					}
+				let articleIDs = pending.filter { $0.key == pairing.status && $0.flag == pairing.flag }
+				guard !articleIDs.isEmpty else {
+					continue
+				}
+
+				let ids = Set(articleIDs.map { $0.articleID })
+
+				do {
+					try await service.mark(ids, as: pairing.action)
+					try? await database.deleteSelectedForProcessing(Array(ids))
+				} catch {
+					try? await database.resetSelectedForProcessing(Array(ids))
 				}
 			}
-		}
 
-		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done sending article statuses.")
 			self.didFinish()
 		}

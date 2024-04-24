@@ -501,67 +501,21 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 		var entryIDs: [String]
 	}
 	
-	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction, completion: @escaping @Sendable (Result<Void, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-		
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
-			}
-		}
-		var components = baseURLComponents
-		components.path = "/v3/markers"
-		
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-		
+	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction) async throws {
+
+		guard !isSuspended else { throw TransportError.suspended }
+
 		let articleIDChunks = Array(articleIDs).chunked(into: 300)
-		let dispatchGroup = DispatchGroup()
-		var groupError: Error? = nil
 
 		for articleIDChunk in articleIDChunks {
 
-			var request = URLRequest(url: url)
-			request.httpMethod = "POST"
-			request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-			request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-			request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-			
-			do {
-				let body = MarkerEntriesBody(action: action.actionValue, entryIDs: Array(articleIDChunk))
-				let encoder = JSONEncoder()
-				let data = try encoder.encode(body)
-				request.httpBody = data
-			} catch {
-				return DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			
-			dispatchGroup.enter()
-			send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-				switch result {
-				case .success(let (httpResponse, _)):
-					if httpResponse.statusCode != 200 {
-						groupError = URLError(.cannotDecodeContentData)
-					}
-				case .failure(let error):
-					groupError = error
-				}
-				dispatchGroup.leave()
-			}
-		}
-		
-		dispatchGroup.notify(queue: .main) {
-			if let groupError = groupError {
-				completion(.failure(groupError))
-			} else {
-				completion(.success(()))
+			var request = try urlRequest(path: "/v3/markers", method: HTTPMethod.post, includeJSONHeaders: true, includeOAuthToken: true)
+			let body = MarkerEntriesBody(action: action.actionValue, entryIDs: Array(articleIDChunk))
+			try addObject(body, to: &request)
+
+			let (httpResponse, _) = try await send(request: request, resultType: String.self)
+			if httpResponse.statusCode != 200 {
+				throw URLError(.cannotDecodeContentData)
 			}
 		}
 	}
@@ -569,25 +523,22 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 
 extension FeedlyAPICaller: FeedlySearchService {
 	
-	@MainActor func getFeeds(for query: String, count: Int, locale: String) async throws -> FeedlyFeedsSearchResponse {
+	func getFeeds(for query: String, count: Int, locale: String) async throws -> FeedlyFeedsSearchResponse {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
 		var components = baseURLComponents
 		components.path = "/v3/search/feeds"
-		
 		components.queryItems = [
 			URLQueryItem(name: "query", value: query),
 			URLQueryItem(name: "count", value: String(count)),
 			URLQueryItem(name: "locale", value: locale)
 		]
-				
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 		
 		var request = URLRequest(url: url)
-		request.httpMethod = "GET"
 		addJSONHeaders(&request)
 
 		let (_, searchResponse) = try await send(request: request, resultType: FeedlyFeedsSearchResponse.self)

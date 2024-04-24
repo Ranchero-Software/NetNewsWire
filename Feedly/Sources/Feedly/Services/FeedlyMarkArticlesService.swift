@@ -33,5 +33,5 @@ public enum FeedlyMarkAction: String, Sendable {
 
 public protocol FeedlyMarkArticlesService: AnyObject {
 
-	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction, completion: @escaping @Sendable (Result<Void, Error>) -> ())
+	@MainActor func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction) async throws
 }
