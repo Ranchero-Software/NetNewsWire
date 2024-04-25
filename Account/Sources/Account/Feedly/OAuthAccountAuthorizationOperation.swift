@@ -56,7 +56,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	@MainActor public func run() {
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 		
-		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType, secretsProvider: secretsProvider)
+		let request = FeedlyAccountDelegate.oauthAuthorizationCodeGrantRequest(secretsProvider: secretsProvider)
 
 		guard let url = request.url else {
 			return DispatchQueue.main.async {

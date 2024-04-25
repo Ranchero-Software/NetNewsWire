@@ -24,7 +24,7 @@ public struct FeedlyOAuthAccessTokenResponse: Decodable, OAuthAccessTokenRespons
 	public var scope: String
 }
 
-extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
+extension FeedlyAccountDelegate {
 
 	private static let oauthAuthorizationGrantScope = "https://cloud.feedly.com/subscriptions"
 

@@ -165,10 +165,3 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 	/// - Returns: On success, the access token response appropriate for concrete type's service. On failure, throws possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
 	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse
 }
-
-protocol OAuthAuthorizationGranting: AccountDelegate {
-		
-	@MainActor static func oauthAuthorizationCodeGrantRequest(secretsProvider: SecretsProvider) -> URLRequest
-
-	@MainActor static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, secretsProvider: SecretsProvider) async throws -> OAuthAuthorizationGrant
-}

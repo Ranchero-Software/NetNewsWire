@@ -385,33 +385,16 @@ public enum FetchType {
 		}
 	}
 		
-	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType, secretsProvider: SecretsProvider) -> URLRequest {
-		let grantingType: OAuthAuthorizationGranting.Type
-		switch type {
-		case .feedly:
-			grantingType = FeedlyAccountDelegate.self
-		default:
-			fatalError("\(type) does not support OAuth authorization code granting.")
-		}
-		
-		return grantingType.oauthAuthorizationCodeGrantRequest(secretsProvider: secretsProvider)
-	}
-	
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
 											   client: OAuthAuthorizationClient,
 											   accountType: AccountType,
 											   transport: Transport = URLSession.webserviceTransport(),
 											   secretsProvider: SecretsProvider) async throws -> OAuthAuthorizationGrant {
-		let grantingType: OAuthAuthorizationGranting.Type
-		
-		switch accountType {
-		case .feedly:
-			grantingType = FeedlyAccountDelegate.self
-		default:
+
+		guard accountType == .feedly else {
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}
-		
-		return try await grantingType.requestOAuthAccessToken(with: response, transport: transport, secretsProvider: secretsProvider)
+		return try await FeedlyAccountDelegate.requestOAuthAccessToken(with: response, transport: transport, secretsProvider: secretsProvider)
 	}
 	
 	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
