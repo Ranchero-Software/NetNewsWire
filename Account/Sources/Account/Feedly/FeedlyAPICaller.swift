@@ -294,8 +294,13 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 	}
 }
 
-extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
+extension FeedlyAPICaller {
 	
+	/// https://tools.ietf.org/html/rfc6749#section-4.1
+
+	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
+	/// - Parameter request: The information about the client requesting authorization to be granted access tokens.
+	/// - Parameter baseUrlComponents: The scheme and host of the url except for the path.
 	static func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest {
 
 		var components = baseUrlComponents
@@ -314,8 +319,9 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 		return request
 	}
 	
-	typealias AccessTokenResponse = FeedlyOAuthAccessTokenResponse
-	
+	/// Performs the request for the access token given an authorization code.
+	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokens on the user's behalf.
+	/// - Returns: On success, the access token response appropriate for concrete type's service. On failure, throws possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
 	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
 
 		guard !isSuspended else { throw TransportError.suspended }
@@ -323,7 +329,7 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 		var request = try urlRequest(path: "/v3/auth/token", method: HTTPMethod.post, includeJSONHeaders: true, includeOAuthToken: false)
 		try addObject(authorizationRequest, keyEncodingStrategy: .convertToSnakeCase, to: &request)
 
-		let (_, tokenResponse) = try await send(request: request, resultType: AccessTokenResponse.self)
+		let (_, tokenResponse) = try await send(request: request, resultType: FeedlyOAuthAccessTokenResponse.self)
 		guard let tokenResponse else {
 			throw URLError(.cannotDecodeContentData)
 		}

@@ -148,20 +148,3 @@ public struct OAuthAuthorizationGrant: Equatable {
 	public var accessToken: Credentials
 	public var refreshToken: Credentials?
 }
-
-/// Conformed to by API callers to provide a consistent interface for `AccountDelegate` types to enable OAuth Authorization Grants. Conformers provide an associated type that models any custom parameters/properties, as well as the standard ones, in the response to a request for an access token.
-/// https://tools.ietf.org/html/rfc6749#section-4.1
-public protocol OAuthAuthorizationCodeGrantRequesting {
-	associatedtype AccessTokenResponse: OAuthAccessTokenResponse
-	
-	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
-	/// - Parameter request: The information about the client requesting authorization to be granted access tokens.
-	/// - Parameter baseUrlComponents: The scheme and host of the url except for the path.
-	@MainActor static func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest
-		
-	
-	/// Performs the request for the access token given an authorization code.
-	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokens on the user's behalf.
-	/// - Returns: On success, the access token response appropriate for concrete type's service. On failure, throws possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
-	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse
-}
