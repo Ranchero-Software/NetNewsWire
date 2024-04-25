@@ -31,7 +31,7 @@ extension FeedlyAccountDelegate {
 	static func oauthAuthorizationCodeGrantRequest(secretsProvider: SecretsProvider) -> URLRequest {
 		let client = environment.oauthAuthorizationClient(secretsProvider: secretsProvider)
 		let authorizationRequest = OAuthAuthorizationRequest(clientID: client.id,
-															 redirectUri: client.redirectUri,
+															 redirectURI: client.redirectURI,
 															 scope: oauthAuthorizationGrantScope,
 															 state: client.state)
 		let baseURLComponents = environment.baseUrlComponents

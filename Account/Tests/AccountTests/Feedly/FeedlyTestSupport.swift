@@ -39,7 +39,7 @@ class FeedlyTestSupport {
 	}
 	
 	func makeMockOAuthClient() -> OAuthAuthorizationClient {
-		return OAuthAuthorizationClient(id: "test", redirectUri: "test://test/auth", state: nil, secret: "password")
+		return OAuthAuthorizationClient(id: "test", redirectURI: "test://test/auth", state: nil, secret: "password")
 	}
 	
 	func removeCredentials(matching type: CredentialsType, from account: Account) {

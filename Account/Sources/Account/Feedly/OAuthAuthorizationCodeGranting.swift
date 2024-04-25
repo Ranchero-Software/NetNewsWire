@@ -15,13 +15,13 @@ import Feedly
 /// Accounts are responsible for the scope.
 public struct OAuthAuthorizationClient: Equatable {
 	public var id: String
-	public var redirectUri: String
+	public var redirectURI: String
 	public var state: String?
 	public var secret: String
 
-	public init(id: String, redirectUri: String, state: String?, secret: String) {
+	public init(id: String, redirectURI: String, state: String?, secret: String) {
 		self.id = id
-		self.redirectUri = redirectUri
+		self.redirectURI = redirectURI
 		self.state = state
 		self.secret = secret
 	}
@@ -32,13 +32,13 @@ public struct OAuthAuthorizationClient: Equatable {
 public struct OAuthAuthorizationRequest {
 	public let responseType = "code"
 	public var clientID: String
-	public var redirectUri: String
+	public var redirectURI: String
 	public var scope: String
 	public var state: String?
 	
-	public init(clientID: String, redirectUri: String, scope: String, state: String?) {
+	public init(clientID: String, redirectURI: String, scope: String, state: String?) {
 		self.clientID = clientID
-		self.redirectUri = redirectUri
+		self.redirectURI = redirectURI
 		self.scope = scope
 		self.state = state
 	}
@@ -48,7 +48,7 @@ public struct OAuthAuthorizationRequest {
 			URLQueryItem(name: "response_type", value: responseType),
 			URLQueryItem(name: "client_id", value: clientID),
 			URLQueryItem(name: "scope", value: scope),
-			URLQueryItem(name: "redirect_uri", value: redirectUri),
+			URLQueryItem(name: "redirect_uri", value: redirectURI),
 		]
 	}
 }
@@ -63,7 +63,7 @@ public struct OAuthAuthorizationResponse {
 public extension OAuthAuthorizationResponse {
 	
 	init(url: URL, client: OAuthAuthorizationClient) throws {
-		guard let scheme = url.scheme, client.redirectUri.hasPrefix(scheme) else {
+		guard let scheme = url.scheme, client.redirectURI.hasPrefix(scheme) else {
 			throw URLError(.unsupportedURL)
 		}
 		guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
@@ -113,7 +113,7 @@ public enum OAuthAuthorizationError: String, Sendable {
 public struct OAuthAccessTokenRequest: Encodable, Sendable {
 	public let grantType = "authorization_code"
 	public var code: String
-	public var redirectUri: String
+	public var redirectURI: String
 	public var state: String?
 	public var clientID: String
 	
@@ -123,7 +123,7 @@ public struct OAuthAccessTokenRequest: Encodable, Sendable {
 	
 	public init(authorizationResponse: OAuthAuthorizationResponse, scope: String, client: OAuthAuthorizationClient) {
 		self.code = authorizationResponse.code
-		self.redirectUri = client.redirectUri
+		self.redirectURI = client.redirectURI
 		self.state = authorizationResponse.state
 		self.clientID = client.id
 		self.clientSecret = client.secret
