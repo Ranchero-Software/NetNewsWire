@@ -61,7 +61,7 @@ extension FeedlyAccountDelegate {
 	}
 }
 
-extension FeedlyAccountDelegate: OAuthAccessTokenRefreshing {
+extension FeedlyAccountDelegate {
 	
 	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient) async throws -> OAuthAuthorizationGrant {
 

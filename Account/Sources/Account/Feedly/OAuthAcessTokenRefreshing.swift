@@ -28,9 +28,3 @@ public struct OAuthRefreshAccessTokenRequest: Encodable, Sendable {
 		self.clientSecret = client.secret
 	}
 }
-
-/// Implemented by concrete types to perform the actual request.
-protocol OAuthAccessTokenRefreshing: AnyObject {
-
-	@MainActor func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient) async throws -> OAuthAuthorizationGrant
-}
