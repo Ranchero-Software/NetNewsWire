@@ -332,16 +332,22 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 	}
 }
 
-extension FeedlyAPICaller: OAuthAcessTokenRefreshRequesting {
+extension FeedlyAPICaller {
 		
-	func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
+	/// Access tokens expire. Perform a request for a fresh access token given the long life refresh token received when authorization was granted.
+	///
+	/// [Documentation](https://tools.ietf.org/html/rfc6749#section-6)
+	///
+	/// - Parameter refreshRequest: The refresh token and other information the authorization server requires to grant the client fresh access tokens on the user's behalf.
+	/// - Returns: On success, the access token response appropriate for concrete type's service. Both the access and refresh token should be stored, preferably on the Keychain. On failure, throws an Error.
+func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
 		var request = try urlRequest(path: "/v3/auth/token", method: HTTPMethod.post, includeJSONHeaders: true, includeOAuthToken: false)
 		try addObject(refreshRequest, keyEncodingStrategy: .convertToSnakeCase, to: &request)
 
-		let (_, tokenResponse) = try await send(request: request, resultType: AccessTokenResponse.self)
+		let (_, tokenResponse) = try await send(request: request, resultType: FeedlyOAuthAccessTokenResponse.self)
 		guard let tokenResponse else {
 			throw URLError(.cannotDecodeContentData)
 		}
