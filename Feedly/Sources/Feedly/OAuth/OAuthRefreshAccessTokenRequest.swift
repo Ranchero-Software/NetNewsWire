@@ -1,5 +1,5 @@
 //
-//  OAuthAcessTokenRefreshing.swift
+//  OAuthRefreshAccessTokenRequest.swift
 //  Account
 //
 //  Created by Kiel Gillard on 4/11/19.
