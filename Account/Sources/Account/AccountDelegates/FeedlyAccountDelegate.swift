@@ -617,7 +617,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func fetchUpdatedArticleIDs(newerThan date: Date) async throws -> Set<String> {
 
 		// To replace FeedlyGetUpdatedArticleIDsOperation
-		
+
 		guard let userID = credentials?.username else { return Set<String>() }
 
 		var articleIDs = Set<String>()
@@ -638,6 +638,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 
 		return articleIDs
+	}
+
+	func updateAccountFeedsWithItems(account: Account, feedIDsAndItems: [String: Set<ParsedItem>]) async throws {
+
+		// To replace FeedlyUpdateAccountFeedsWithItemsOperation
+
+		try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		os_log(.debug, log: self.log, "Updated %i feeds", feedIDsAndItems.count)
 	}
 
 	// MARK: Suspend and Resume (for iOS)
