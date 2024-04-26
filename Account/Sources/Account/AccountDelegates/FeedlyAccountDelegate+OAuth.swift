@@ -9,10 +9,14 @@
 import Foundation
 import Web
 import Secrets
+import Feedly
 
 /// Models the access token response from Feedly.
-/// https://developer.feedly.com/v3/auth/#exchanging-an-auth-code-for-a-refresh-token-and-an-access-token
-public struct FeedlyOAuthAccessTokenResponse: Decodable, OAuthAccessTokenResponse, Sendable {
+/// <https://developer.feedly.com/v3/auth/#exchanging-an-auth-code-for-a-refresh-token-and-an-access-token>
+///
+/// Also see: <https://tools.ietf.org/html/rfc6749#section-4.1.4>
+public struct FeedlyOAuthAccessTokenResponse: Decodable, Sendable {
+
 	/// The ID of the Feedly user.
 	public var id: String
 

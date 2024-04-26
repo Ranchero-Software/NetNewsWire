@@ -8,9 +8,8 @@
 
 import Foundation
 import Secrets
-import Feedly
 
-extension OAuthAuthorizationClient {
+public extension OAuthAuthorizationClient {
 	
 	static func feedlyCloudClient(secretsProvider: SecretsProvider) -> OAuthAuthorizationClient {
 		/// Models private NetNewsWire client secrets.

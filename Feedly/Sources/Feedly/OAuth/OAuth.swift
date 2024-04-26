@@ -9,7 +9,6 @@
 import Foundation
 import Web
 import Secrets
-import Feedly
 
 /// Client-specific information for requesting an authorization code grant.
 /// Accounts are responsible for the scope.
@@ -131,20 +130,14 @@ public struct OAuthAccessTokenRequest: Encodable, Sendable {
 	}
 }
 
-/// Models the minimum subset of properties of a response in section 4.1.4 of the OAuth 2.0 Authorization Framework
-/// Concrete types model other parameters beyond the scope of the OAuth spec.
-/// For example, Feedly provides the ID of the user who has consented to the grant.
-/// https://tools.ietf.org/html/rfc6749#section-4.1.4
-public protocol OAuthAccessTokenResponse {
-	var accessToken: String { get }
-	var tokenType: String { get }
-	var expiresIn: Int { get }
-	var refreshToken: String? { get }
-	var scope: String { get }
-}
-
 /// The access and refresh tokens from a successful authorization grant.
 public struct OAuthAuthorizationGrant: Equatable {
+	
 	public var accessToken: Credentials
 	public var refreshToken: Credentials?
+
+	public init(accessToken: Credentials, refreshToken: Credentials? = nil) {
+		self.accessToken = accessToken
+		self.refreshToken = refreshToken
+	}
 }

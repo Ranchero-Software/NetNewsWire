@@ -8,7 +8,6 @@
 
 import Foundation
 import Web
-import Feedly
 
 /// Models section 6 of the OAuth 2.0 Authorization Framework
 /// https://tools.ietf.org/html/rfc6749#section-6

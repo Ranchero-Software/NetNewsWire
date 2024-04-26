@@ -20,6 +20,7 @@ import os.log
 import Secrets
 import Core
 import CommonErrors
+import Feedly
 
 // Main thread only.
 
