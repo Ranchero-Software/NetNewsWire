@@ -614,6 +614,32 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return credentials
 	}
 
+	func fetchUpdatedArticleIDs(newerThan date: Date) async throws -> Set<String> {
+
+		// To replace FeedlyGetUpdatedArticleIDsOperation
+		
+		guard let userID = credentials?.username else { return Set<String>() }
+
+		var articleIDs = Set<String>()
+		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
+
+		func fetchStreamIDs(_ continuation: String?) async throws {
+
+			let streamIDs = try await caller.getStreamIDs(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil)
+
+			articleIDs.formUnion(streamIDs.ids)
+
+			guard let continuation = streamIDs.continuation else {
+				os_log(.debug, log: log, "%{public}i articles updated since last successful sync start date.", articleIDs.count)
+				return
+			}
+
+			try await fetchStreamIDs(continuation)
+		}
+
+		return articleIDs
+	}
+
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
