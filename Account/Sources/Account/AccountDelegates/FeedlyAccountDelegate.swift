@@ -648,6 +648,62 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		os_log(.debug, log: self.log, "Updated %i feeds", feedIDsAndItems.count)
 	}
 
+	func logout(account: Account) async throws {
+
+		// To replace FeedlyLogoutOperation
+
+		do {
+			os_log("Requesting logout of Feedly account.")
+			try await caller.logout()
+			os_log("Logged out of Feedly account.")
+
+			try account.removeCredentials(type: .oauthAccessToken)
+			try account.removeCredentials(type: .oauthRefreshToken)
+
+		} catch {
+			os_log("Logout failed because %{public}@.", error as NSError)
+			throw error
+		}
+	}
+
+	func parsedItemsKeyedByFeedURL(_ parsedItems: Set<ParsedItem>) -> [String: Set<ParsedItem>] {
+
+		// To replace FeedlyOrganiseParsedItemsByFeedOperation
+
+		var d = [String: Set<ParsedItem>]()
+
+		for parsedItem in parsedItems {
+			let key = parsedItem.feedURL
+			let value: Set<ParsedItem> = {
+				if var items = d[key] {
+					items.insert(parsedItem)
+					return items
+				} else {
+					return [parsedItem]
+				}
+			}()
+			d[key] = value
+		}
+
+		return d
+	}
+
+	func addFeedToCollection(feedResource: FeedlyFeedResourceID, feedName: String? = nil, collectionID: String, folder: Folder) async throws -> [([FeedlyFeed], Folder)] {
+
+		// To replace FeedlyAddFeedToCollectionOperation
+
+		let feedlyFeeds = try await caller.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionID)
+
+		let feedsWithCreatedFeedID = feedlyFeeds.filter { $0.id == feedResource.id }
+		if feedsWithCreatedFeedID.isEmpty {
+			throw AccountError.createErrorNotFound
+		}
+
+		let feedsAndFolders = [(feedlyFeeds, folder)]
+		return feedsAndFolders
+	}
+
+
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
