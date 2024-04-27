@@ -744,6 +744,22 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
+	func fetchCollections() async throws -> Set<FeedlyCollection> {
+
+		// To replace FeedlyGetCollectionsOperation
+
+		os_log(.debug, log: log, "Requesting collections.")
+
+		do {
+			let collections = try await caller.getCollections()
+			os_log(.debug, log: self.log, "Received collections: %{public}@", collections.map { $0.id })
+			return collections
+		} catch {
+			os_log(.debug, log: self.log, "Unable to request collections: %{public}@.", error as NSError)
+			throw error
+		}
+	}
+	
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity

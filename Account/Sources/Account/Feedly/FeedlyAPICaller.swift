@@ -364,7 +364,7 @@ func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest) async 
 
 extension FeedlyAPICaller: FeedlyGetCollectionsService {
 	
-	func getCollections() async throws -> [FeedlyCollection] {
+	func getCollections() async throws -> Set<FeedlyCollection> {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -375,7 +375,7 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 			throw URLError(.cannotDecodeContentData)
 		}
 		
-		return collections
+		return Set(collections)
 	}
 }
 

@@ -35,7 +35,7 @@ public final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollect
 			do {
 				let collections = try await service.getCollections()
 				os_log(.debug, log: self.log, "Received collections: %{public}@", collections.map { $0.id })
-				self.collections = collections
+				self.collections = Array(collections)
 				self.didFinish()
 
 			} catch {

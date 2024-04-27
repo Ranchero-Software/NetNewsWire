@@ -20,11 +20,19 @@ public struct FeedlyCategory: Decodable, Sendable, Equatable {
 	}
 }
 
-public struct FeedlyCollection: Codable, Sendable {
+public struct FeedlyCollection: Codable, Sendable, Hashable {
 
 	public let feeds: [FeedlyFeed]
 	public let label: String
 	public let id: String
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(id)
+	}
+
+	public static func ==(lhs: FeedlyCollection, rhs: FeedlyCollection) -> Bool {
+		lhs.id == rhs.id && lhs.label == rhs.label && lhs.feeds == rhs.feeds
+	}
 }
 
 public struct FeedlyCollectionParser: Sendable {
@@ -244,12 +252,16 @@ public struct FeedlyEntryParser: Sendable {
 	}
 }
 
-public struct FeedlyFeed: Codable, Sendable {
+public struct FeedlyFeed: Codable, Sendable, Equatable {
 
 	public let id: String
 	public let title: String?
 	public let updated: Date?
 	public let website: String?
+
+	public static func ==(lhs: FeedlyFeed, rhs: FeedlyFeed) -> Bool {
+		lhs.id == rhs.id && lhs.title == rhs.title && lhs.updated == rhs.updated && lhs.website == rhs.website
+	}
 }
 
 public struct FeedlyFeedParser: Sendable {

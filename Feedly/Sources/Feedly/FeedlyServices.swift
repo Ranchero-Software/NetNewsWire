@@ -10,7 +10,7 @@ import Foundation
 
 public protocol FeedlyGetCollectionsService: AnyObject {
 
-	@MainActor func getCollections() async throws -> [FeedlyCollection]
+	@MainActor func getCollections() async throws -> Set<FeedlyCollection>
 }
 
 public protocol FeedlyGetEntriesService: AnyObject {
