@@ -59,8 +59,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	/// Set on `accountDidInitialize` for the purposes of refreshing OAuth tokens when they expire.
 	/// See the implementation for `FeedlyAPICallerDelegate`.
-	private weak var initializedAccount: Account?
-	
+	private weak var account: Account?
+
 	internal let caller: FeedlyAPICaller
 	
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
@@ -598,7 +598,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		initializedAccount = account
+		self.account = account
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 	}
 	
@@ -640,9 +640,11 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return articleIDs
 	}
 
-	func updateAccountFeedsWithItems(account: Account, feedIDsAndItems: [String: Set<ParsedItem>]) async throws {
+	func updateAccountFeedsWithItems(feedIDsAndItems: [String: Set<ParsedItem>]) async throws {
 
 		// To replace FeedlyUpdateAccountFeedsWithItemsOperation
+
+		guard let account else { return }
 
 		try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 		os_log(.debug, log: self.log, "Updated %i feeds", feedIDsAndItems.count)
@@ -664,6 +666,21 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			os_log("Logout failed because %{public}@.", error as NSError)
 			throw error
 		}
+	}
+
+	func addFeedToCollection(feedResource: FeedlyFeedResourceID, feedName: String? = nil, collectionID: String, folder: Folder) async throws -> [([FeedlyFeed], Folder)] {
+
+		// To replace FeedlyAddFeedToCollectionOperation
+
+		let feedlyFeeds = try await caller.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionID)
+
+		let feedsWithCreatedFeedID = feedlyFeeds.filter { $0.id == feedResource.id }
+		if feedsWithCreatedFeedID.isEmpty {
+			throw AccountError.createErrorNotFound
+		}
+
+		let feedsAndFolders = [(feedlyFeeds, folder)]
+		return feedsAndFolders
 	}
 
 	func parsedItemsKeyedByFeedURL(_ parsedItems: Set<ParsedItem>) -> [String: Set<ParsedItem>] {
@@ -688,22 +705,45 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return d
 	}
 
-	func addFeedToCollection(feedResource: FeedlyFeedResourceID, feedName: String? = nil, collectionID: String, folder: Folder) async throws -> [([FeedlyFeed], Folder)] {
+	func downloadArticles(missingArticleIDs: Set<String>, updatedArticleIDs: Set<String>) async throws {
 
-		// To replace FeedlyAddFeedToCollectionOperation
+		// To replace FeedlyDownloadArticlesOperation
+		
+		let allArticleIDs = missingArticleIDs.union(updatedArticleIDs)
 
-		let feedlyFeeds = try await caller.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionID)
+		os_log(.debug, log: log, "Requesting %{public}i articles.", allArticleIDs.count)
 
-		let feedsWithCreatedFeedID = feedlyFeeds.filter { $0.id == feedResource.id }
-		if feedsWithCreatedFeedID.isEmpty {
-			throw AccountError.createErrorNotFound
+		let feedlyAPILimitBatchSize = 1000
+
+		for articleIDs in Array(allArticleIDs).chunked(into: feedlyAPILimitBatchSize) {
+
+			let parsedItems = try await fetchParsedItems(articleIDs: Set(articleIDs))
+			let feedIDsAndItems = parsedItemsKeyedByFeedURL(parsedItems)
+
+			try await updateAccountFeedsWithItems(feedIDsAndItems: feedIDsAndItems)
 		}
-
-		let feedsAndFolders = [(feedlyFeeds, folder)]
-		return feedsAndFolders
 	}
 
+	func fetchParsedItems(articleIDs: Set<String>) async throws -> Set<ParsedItem> {
 
+		// To replace FeedlyGetEntriesOperation
+
+		do {
+			let entries = try await caller.getEntries(for: articleIDs)
+
+			// TODO: convert directly from FeedlyEntry to ParsedItem without having to use FeedlyEntryParser.
+			let parsedItems = Set(entries.compactMap {
+				FeedlyEntryParser(entry: $0).parsedItemRepresentation
+			})
+
+			return parsedItems
+
+		} catch {
+			os_log(.debug, log: self.log, "Unable to get entries: %{public}@.", error as NSError)
+			throw error
+		}
+	}
+	
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
@@ -734,7 +774,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 	
 	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller) async -> Bool {
 
-		guard let account = initializedAccount else {
+		guard let account else {
 			return false
 		}
 

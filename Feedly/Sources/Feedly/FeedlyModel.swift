@@ -238,6 +238,10 @@ public struct FeedlyEntryParser: Sendable {
 						  tags: tags,
 						  attachments: attachments)
 	}
+
+	public init(entry: FeedlyEntry) {
+		self.entry = entry
+	}
 }
 
 public struct FeedlyFeed: Codable, Sendable {
