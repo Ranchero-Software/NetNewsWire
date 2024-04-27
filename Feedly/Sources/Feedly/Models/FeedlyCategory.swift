@@ -8,8 +8,12 @@
 
 import Foundation
 
-public struct FeedlyCategory: Decodable, Sendable {
+public struct FeedlyCategory: Decodable, Sendable, Equatable {
 
     public let label: String
 	public let id: String
+
+	public static func ==(lhs: FeedlyCategory, rhs: FeedlyCategory) -> Bool {
+		lhs.label == rhs.label && lhs.id == rhs.id
+	}
 }

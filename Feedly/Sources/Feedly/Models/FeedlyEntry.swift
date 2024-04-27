@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct FeedlyEntry: Decodable, Sendable {
+public struct FeedlyEntry: Decodable, Sendable, Hashable {
 
     /// the unique, immutable ID for this particular article.
 	public let id: String
@@ -16,7 +16,7 @@ public struct FeedlyEntry: Decodable, Sendable {
     /// the article’s title. This string does not contain any HTML markup.
 	public let title: String?
 
-	public struct Content: Decodable, Sendable {
+	public struct Content: Decodable, Sendable, Equatable {
 
 		public enum Direction: String, Decodable, Sendable {
 			case leftToRight = "ltr"
@@ -25,6 +25,10 @@ public struct FeedlyEntry: Decodable, Sendable {
 		
 		public let content: String?
 		public let direction: Direction?
+
+		public static func ==(lhs: Content, rhs: Content) -> Bool {
+			lhs.content == rhs.content && lhs.direction == rhs.direction
+		}
     }
     
     /// This object typically has two values: “content” for the content itself, and “direction” (“ltr” for left-to-right, “rtl” for right-to-left). The content itself contains sanitized HTML markup.
@@ -63,4 +67,13 @@ public struct FeedlyEntry: Decodable, Sendable {
 
 	/// A list of media links (videos, images, sound etc) provided by the feed. Some entries do not have a summary or content, only a collection of media links.
 	public let enclosure: [FeedlyLink]?
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(id)
+	}
+
+	public static func ==(lhs: FeedlyEntry, rhs: FeedlyEntry) -> Bool {
+
+		lhs.id == rhs.id && lhs.title == rhs.title && lhs.content == rhs.content && lhs.summary == rhs.summary && lhs.author == rhs.author && lhs.crawled == rhs.crawled && lhs.recrawled == rhs.recrawled && lhs.origin == rhs.origin && lhs.canonical == rhs.canonical && lhs.alternate == rhs.alternate && lhs.unread == rhs.unread && lhs.tags == rhs.tags && lhs.categories == rhs.categories && lhs.enclosure == rhs.enclosure
+	}
 }

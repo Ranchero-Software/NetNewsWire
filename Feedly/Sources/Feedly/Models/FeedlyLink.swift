@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct FeedlyLink: Decodable, Sendable {
+public struct FeedlyLink: Decodable, Sendable, Equatable {
 
 	public let href: String
 
@@ -16,4 +16,8 @@ public struct FeedlyLink: Decodable, Sendable {
 	/// When `nil`, it's probably a web page?
 	/// https://groups.google.com/forum/#!searchin/feedly-cloud/feed$20url%7Csort:date/feedly-cloud/Rx3dVd4aTFQ/Hf1ZfLJoCQAJ
 	public let type: String?
+
+	public static func ==(lhs: FeedlyLink, rhs: FeedlyLink) -> Bool {
+		lhs.href == rhs.href && lhs.type == rhs.type
+	}
 }
