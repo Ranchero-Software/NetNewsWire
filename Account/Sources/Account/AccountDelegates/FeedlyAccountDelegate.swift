@@ -808,7 +808,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		try await caller.getFeeds(for: url, count: 1, localeIdentifier: Locale.current.identifier)
 	}
 
-	func featchStreamContents(resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) async throws -> Set<ParsedItem> {
+	func fetchStreamContents(resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) async throws -> Set<ParsedItem> {
 
 		// To replace FeedlyGetStreamContentsOperation
 
