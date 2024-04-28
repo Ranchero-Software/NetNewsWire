@@ -821,6 +821,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
+	func idsforMissingArticles() async throws -> Set<String>? {
+
+		// To replace FeedlyFetchIDsForMissingArticlesOperation
+
+		guard let account else { return nil }
+
+		return try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
+	}
+
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
