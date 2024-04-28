@@ -730,20 +730,23 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		do {
 			let entries = try await caller.getEntries(for: articleIDs)
-
-			// TODO: convert directly from FeedlyEntry to ParsedItem without having to use FeedlyEntryParser.
-			let parsedItems = Set(entries.compactMap {
-				FeedlyEntryParser(entry: $0).parsedItemRepresentation
-			})
-
-			return parsedItems
-
+			return parsedItems(with: Set(entries))
 		} catch {
 			os_log(.debug, log: self.log, "Unable to get entries: %{public}@.", error as NSError)
 			throw error
 		}
 	}
 	
+	func parsedItems(with entries: Set<FeedlyEntry>) -> Set<ParsedItem> {
+
+		// TODO: convert directly from FeedlyEntry to ParsedItem without having to use FeedlyEntryParser.
+
+		let parsedItems = Set(entries.compactMap {
+			FeedlyEntryParser(entry: $0).parsedItemRepresentation
+		})
+		return parsedItems
+	}
+
 	func fetchCollections() async throws -> Set<FeedlyCollection> {
 
 		// To replace FeedlyGetCollectionsOperation
@@ -805,6 +808,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		try await caller.getFeeds(for: url, count: 1, localeIdentifier: Locale.current.identifier)
 	}
 
+	func featchStreamContents(resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) async throws -> Set<ParsedItem> {
+
+		// To replace FeedlyGetStreamContentsOperation
+
+		do {
+			let stream = try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly)
+			return parsedItems(with: Set(stream.items))
+		} catch {
+			os_log(.debug, log: self.log, "Unable to get stream contents: %{public}@.", error as NSError)
+			throw error
+		}
+	}
 
 	// MARK: Suspend and Resume (for iOS)
 
