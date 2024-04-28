@@ -798,6 +798,13 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		os_log(.debug, log: self.log, "Done sending article statuses.")
 	}
 
+	func searchForFeed(url: String) async throws -> FeedlyFeedsSearchResponse {
+
+		// To replace FeedlySearchOperation
+
+		try await caller.getFeeds(for: url, count: 1, localeIdentifier: Locale.current.identifier)
+	}
+
 
 	// MARK: Suspend and Resume (for iOS)
 

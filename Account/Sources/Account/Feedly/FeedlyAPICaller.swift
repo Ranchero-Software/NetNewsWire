@@ -535,7 +535,7 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 
 extension FeedlyAPICaller: FeedlySearchService {
 	
-	func getFeeds(for query: String, count: Int, locale: String) async throws -> FeedlyFeedsSearchResponse {
+	func getFeeds(for query: String, count: Int, localeIdentifier: String) async throws -> FeedlyFeedsSearchResponse {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -544,7 +544,7 @@ extension FeedlyAPICaller: FeedlySearchService {
 		components.queryItems = [
 			URLQueryItem(name: "query", value: query),
 			URLQueryItem(name: "count", value: String(count)),
-			URLQueryItem(name: "locale", value: locale)
+			URLQueryItem(name: "locale", value: localeIdentifier)
 		]
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")

@@ -298,7 +298,7 @@ public struct FeedlyFeedsSearchResponse: Decodable, Sendable {
 	public struct Feed: Decodable, Sendable {
 
 		public let title: String
-		public let feedId: String
+		public let feedID: String
 	}
 
 	public let results: [Feed]

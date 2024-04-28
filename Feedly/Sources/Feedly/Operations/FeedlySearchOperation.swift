@@ -10,7 +10,7 @@ import Foundation
 
 public protocol FeedlySearchService: AnyObject {
 	
-	@MainActor func getFeeds(for query: String, count: Int, locale: String) async throws -> FeedlyFeedsSearchResponse
+	@MainActor func getFeeds(for query: String, count: Int, localeIdentifier: String) async throws -> FeedlyFeedsSearchResponse
 }
 
 public protocol FeedlySearchOperationDelegate: AnyObject {
@@ -38,7 +38,7 @@ public final class FeedlySearchOperation: FeedlyOperation {
 		Task { @MainActor in
 
 			do {
-				let searchResponse = try await searchService.getFeeds(for: query, count: 1, locale: locale.identifier)
+				let searchResponse = try await searchService.getFeeds(for: query, count: 1, localeIdentifier: locale.identifier)
 				self.searchDelegate?.feedlySearchOperation(self, didGet: searchResponse)
 				self.didFinish()
 				
