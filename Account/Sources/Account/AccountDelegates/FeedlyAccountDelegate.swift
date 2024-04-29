@@ -57,6 +57,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
+	private var userID: String? {
+		credentials?.username
+	}
+
 	/// Set on `accountDidInitialize` for the purposes of refreshing OAuth tokens when they expire.
 	/// See the implementation for `FeedlyAPICallerDelegate`.
 	private weak var account: Account?
@@ -829,6 +833,80 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		return try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
+
+	func fetchRemoteStarredArticleIDs() async throws -> Set<String> {
+
+		guard let userID else { return Set<String>() }
+
+		let resource = FeedlyTagResourceID.Global.saved(for: userID)
+		var remoteArticleIDs = Set<String>()
+
+		func fetchIDs(_ continuation: String? = nil) async throws {
+			let streamIDs = try await caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil)
+			remoteArticleIDs.formUnion(streamIDs.ids)
+
+			guard let continuation = streamIDs.continuation else { // finished fetching article IDs?
+				return
+			}
+
+			try await fetchIDs(continuation)
+		}
+
+		try await fetchIDs()
+		return remoteArticleIDs
+	}
+
+	func processStarredArticleIDs(remoteArticleIDs: Set<String>) async throws {
+
+		guard let account else { return }
+		
+		var remoteArticleIDs = remoteArticleIDs
+
+		func removeEntryIDsWithPendingStatus() async throws {
+
+			if let pendingArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() {
+				remoteArticleIDs.subtract(pendingArticleIDs)
+			}
+		}
+
+		func process() async throws {
+
+			let localStarredArticleIDs = (try await account.fetchStarredArticleIDs()) ?? Set<String>()
+
+			var markAsStarredError: Error?
+			var markAsUnstarredError: Error?
+
+			let remoteStarredArticleIDs = remoteArticleIDs
+			do {
+				try await account.markAsStarred(remoteStarredArticleIDs)
+			} catch {
+				markAsStarredError = error
+			}
+
+			let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
+			do {
+				try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+			} catch {
+				markAsUnstarredError = error
+			}
+
+			if let markingError = markAsStarredError ?? markAsUnstarredError {
+				throw markingError
+			}
+		}
+
+		try await removeEntryIDsWithPendingStatus()
+		try await process()
+	}
+
+	func fetchAndProcessStarredArticleIDs() async throws {
+
+		// To replace FeedlyIngestStarredArticleIDsOperation
+		
+		let remoteArticleIDs = try await fetchRemoteStarredArticleIDs()
+		try await processStarredArticleIDs(remoteArticleIDs: remoteArticleIDs)
+	}
+
 
 	// MARK: Suspend and Resume (for iOS)
 
