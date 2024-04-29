@@ -986,6 +986,39 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		try await addFeedToCollection(feedResource: resourceID, feedName: customFeedName, collectionID: collectionID, folder: folder)
 	}
 
+	func mirrorCollectionsAsFolders(collections: [FeedlyCollection]) {
+
+		// To replace FeedlyMirrorCollectionsAsFoldersOperation
+
+		guard let account else { return }
+
+		let localFolders = account.folders ?? Set()
+
+		let feedsAndFolders: [([FeedlyFeed], Folder)] = collections.compactMap { collection -> ([FeedlyFeed], Folder)? in
+			let parser = FeedlyCollectionParser(collection: collection)
+			guard let folder = account.ensureFolder(with: parser.folderName) else {
+				assertionFailure("Why wasn't a folder created?")
+				return nil
+			}
+			folder.externalID = parser.externalID
+			return (collection.feeds, folder)
+		}
+
+		os_log(.debug, log: log, "Ensured %i folders for %i collections.", feedsAndFolders.count, collections.count)
+
+		// Remove folders without a corresponding collection
+		let collectionFolders = Set(feedsAndFolders.map { $0.1 })
+		let foldersWithoutCollections = localFolders.subtracting(collectionFolders)
+
+		if !foldersWithoutCollections.isEmpty {
+			for unmatched in foldersWithoutCollections {
+				account.removeFolder(folder: unmatched)
+			}
+
+			os_log(.debug, log: log, "Removed %i folders: %@", foldersWithoutCollections.count, foldersWithoutCollections.map { $0.externalID ?? $0.nameForDisplay })
+		}
+	}
+
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
