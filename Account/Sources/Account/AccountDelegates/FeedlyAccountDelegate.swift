@@ -902,11 +902,44 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func fetchAndProcessStarredArticleIDs() async throws {
 
 		// To replace FeedlyIngestStarredArticleIDsOperation
-		
+
 		let remoteArticleIDs = try await fetchRemoteStarredArticleIDs()
 		try await processStarredArticleIDs(remoteArticleIDs: remoteArticleIDs)
 	}
 
+	func fetchAllArticleIDs() async throws -> Set<String> {
+
+		guard let userID else { return Set<String>() }
+
+		var allArticleIDs = Set<String>()
+		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
+
+		func fetchStreamIDs(_ continuation: String?) async throws {
+
+			let streamIDs = try await caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil)
+
+			allArticleIDs.formUnion(streamIDs.ids)
+
+			guard let continuation = streamIDs.continuation else {
+				os_log(.debug, log: self.log, "Reached end of stream for %@", resource.id)
+				return
+			}
+
+			try await fetchStreamIDs(continuation)
+		}
+
+		return allArticleIDs
+	}
+
+	func fetchAndProcessAllArticleIDs() async throws {
+
+		// To replace FeedlyIngestStreamArticleIDsOperation
+
+		guard let account else { return }
+		
+		let allArticleIDs = try await fetchAllArticleIDs()
+		try await account.createStatusesIfNeeded(articleIDs: allArticleIDs)
+	}
 
 	// MARK: Suspend and Resume (for iOS)
 
@@ -918,7 +951,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	/// Suspend the SQLLite databases
+	/// Suspend the SQLite databases
 	func suspendDatabase() {
 		Task {
 			await syncDatabase.suspend()
