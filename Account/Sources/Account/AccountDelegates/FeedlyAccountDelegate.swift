@@ -644,6 +644,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return articleIDs
 	}
 
+	func updateAccountFeeds(parsedItems: Set<ParsedItem>) async throws {
+
+		let feedIDsAndItems = parsedItemsKeyedByFeedURL(parsedItems)
+		try await updateAccountFeedsWithItems(feedIDsAndItems: feedIDsAndItems)
+	}
+
 	func updateAccountFeedsWithItems(feedIDsAndItems: [String: Set<ParsedItem>]) async throws {
 
 		// To replace FeedlyUpdateAccountFeedsWithItemsOperation
@@ -722,9 +728,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		for articleIDs in Array(allArticleIDs).chunked(into: feedlyAPILimitBatchSize) {
 
 			let parsedItems = try await fetchParsedItems(articleIDs: Set(articleIDs))
-			let feedIDsAndItems = parsedItemsKeyedByFeedURL(parsedItems)
-
-			try await updateAccountFeedsWithItems(feedIDsAndItems: feedIDsAndItems)
+			try await updateAccountFeeds(parsedItems: parsedItems)
 		}
 	}
 
@@ -812,12 +816,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		try await caller.getFeeds(for: url, count: 1, localeIdentifier: Locale.current.identifier)
 	}
 
-	func fetchStreamContents(resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) async throws -> Set<ParsedItem> {
+	func fetchStreamContents(resourceID: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) async throws -> Set<ParsedItem> {
 
 		// To replace FeedlyGetStreamContentsOperation
 
 		do {
-			let stream = try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly)
+			let stream = try await caller.getStreamContents(for: resourceID, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly)
 			return parsedItems(with: Set(stream.items))
 		} catch {
 			os_log(.debug, log: self.log, "Unable to get stream contents: %{public}@.", error as NSError)
@@ -936,9 +940,17 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		// To replace FeedlyIngestStreamArticleIDsOperation
 
 		guard let account else { return }
-		
+
 		let allArticleIDs = try await fetchAllArticleIDs()
 		try await account.createStatusesIfNeeded(articleIDs: allArticleIDs)
+	}
+
+	func syncStreamContents(feedResourceID: FeedlyFeedResourceID) async throws {
+
+		// To replace FeedlySyncStreamContentsOperation
+
+		let parsedItems = try await fetchStreamContents(resourceID: feedResourceID, newerThan: nil)
+		try await updateAccountFeeds(parsedItems: parsedItems)
 	}
 
 	// MARK: Suspend and Resume (for iOS)
