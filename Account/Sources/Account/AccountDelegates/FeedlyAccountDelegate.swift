@@ -839,15 +839,13 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
 
-	func fetchRemoteStarredArticleIDs() async throws -> Set<String> {
+	func fetchRemoteArticleIDs(resource: FeedlyResourceID, unreadOnly: Bool? = nil) async throws -> Set<String> {
 
-		guard let userID else { return Set<String>() }
-
-		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		var remoteArticleIDs = Set<String>()
 
 		func fetchIDs(_ continuation: String? = nil) async throws {
-			let streamIDs = try await caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil)
+
+			let streamIDs = try await caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: unreadOnly)
 			remoteArticleIDs.formUnion(streamIDs.ids)
 
 			guard let continuation = streamIDs.continuation else { // finished fetching article IDs?
@@ -859,6 +857,22 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		try await fetchIDs()
 		return remoteArticleIDs
+	}
+
+	func fetchRemoteUnreadArticleIDs() async throws -> Set<String> {
+
+		guard let userID else { return Set<String>() }
+
+		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
+		return try await fetchRemoteArticleIDs(resource: resource, unreadOnly: true)
+	}
+
+	func fetchRemoteStarredArticleIDs() async throws -> Set<String> {
+
+		guard let userID else { return Set<String>() }
+
+		let resource = FeedlyTagResourceID.Global.saved(for: userID)
+		return try await fetchRemoteArticleIDs(resource: resource)
 	}
 
 	func processStarredArticleIDs(remoteArticleIDs: Set<String>) async throws {
