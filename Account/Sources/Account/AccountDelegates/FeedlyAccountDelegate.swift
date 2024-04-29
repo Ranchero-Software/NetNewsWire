@@ -954,7 +954,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		try await updateAccountFeeds(parsedItems: parsedItems)
 	}
 
-	func addNewFeed(url: String, feedName: String?) async throws {
+	func addNewFeed(url: String, feedName: String?, container: Container) async throws {
 
 		// To replace FeedlyAddNewFeedOperation
 
@@ -962,7 +962,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		let (folder, collectionID) = try validator.getValidContainer()
 
 		let searchResponse = try await searchForFeed(url: url)
-		guard let firstFeed = response.results.first else {
+		guard let firstFeed = searchResponse.results.first else {
 			throw AccountError.createErrorNotFound
 		}
 		let feedResourceID = FeedlyFeedResourceID(id: firstFeed.feedID)
@@ -972,8 +972,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		// TODO: FeedlyCreateFeedsForCollectionFoldersOperation replacement
 //		let createFeeds = TODO
 
-		try await fetchAndProcessUnreadArticleIDs()
+		//try await fetchAndProcessUnreadArticleIDs() // TODO
 		try await syncStreamContents(feedResourceID: feedResourceID)
+	}
+
+	func addExistingFeed(resourceID: FeedlyFeedResourceID, container: Container, customFeedName: String? = nil) async throws {
+
+		// To replace FeedlyAddExistingFeedOperation
+
+		let validator = FeedlyFeedContainerValidator(container: container)
+		let (folder, collectionID) = try validator.getValidContainer()
+
+		try await addFeedToCollection(feedResource: resourceID, feedName: customFeedName, collectionID: collectionID, folder: folder)
 	}
 
 	// MARK: Suspend and Resume (for iOS)
