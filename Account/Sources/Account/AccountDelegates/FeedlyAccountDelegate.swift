@@ -64,6 +64,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	/// Set on `accountDidInitialize` for the purposes of refreshing OAuth tokens when they expire.
 	/// See the implementation for `FeedlyAPICallerDelegate`.
 	private weak var account: Account?
+	private var refreshing = false
 
 	internal let caller: FeedlyAPICaller
 
@@ -115,16 +116,47 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func refreshAll(for account: Account) async throws {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.refreshAll(for: account) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
+		// To replace FeedlySyncAllOperation
+		
+		if refreshing {
+			os_log(.debug, log: log, "Ignoring refreshAll: Feedly sync already in progress.")
+			return
+
 		}
+
+		// TODO: update/clear refreshProgress
+
+		refreshing = true
+		defer { refreshing = false }
+
+		// Send any read/unread/starred article statuses to Feedly before anything else.
+		try await sendArticleStatuses()
+
+		// Get all the Collections the user has.
+		let collections = try await fetchCollections()
+
+		// Ensure a folder exists for each Collection, removing Folders without a corresponding Collection.
+		guard let feedsAndFolders = mirrorCollectionsAsFolders(collections: collections) else {
+			return
+		}
+
+		// Ensure feeds are created and grouped by their folders.
+		createFeedsForCollectionFolders(feedsAndFolders: feedsAndFolders)
+
+		try await fetchAndProcessAllArticleIDs()
+
+		// Get each page of unread article ids in the global.all stream for the last 31 days (Feedly API default).
+		try await fetchAndProcessUnreadArticleIDs()
+
+		// Get each page of the article ids which have been updated since the last successful fetch start date.
+		let updatedArticleIDs = try await fetchUpdatedArticleIDs()
+
+		// Get each page of the article ids for starred articles.
+		try await fetchAndProcessStarredArticleIDs()
+
+		let missingArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
+
+		try await downloadArticles(missingArticleIDs: missingArticleIDs, updatedArticleIDs: updatedArticleIDs)
 	}
 
 	private func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -618,11 +650,16 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return credentials
 	}
 
-	func fetchUpdatedArticleIDs(newerThan date: Date) async throws -> Set<String> {
+	func fetchUpdatedArticleIDs() async throws -> Set<String>? {
 
 		// To replace FeedlyGetUpdatedArticleIDsOperation
 
-		guard let userID = credentials?.username else { return Set<String>() }
+		guard let userID = credentials?.username else {
+			return nil
+		}
+		guard let date = accountMetadata?.lastArticleFetchStartTime else {
+			return nil // Everything is new; nothing is updated.
+		}
 
 		var articleIDs = Set<String>()
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
@@ -716,11 +753,24 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		return d
 	}
 
-	func downloadArticles(missingArticleIDs: Set<String>, updatedArticleIDs: Set<String>) async throws {
+	func downloadArticles(missingArticleIDs: Set<String>?, updatedArticleIDs: Set<String>?) async throws {
 
 		// To replace FeedlyDownloadArticlesOperation
 
-		let allArticleIDs = missingArticleIDs.union(updatedArticleIDs)
+		let allArticleIDs: Set<String> = {
+			var articleIDs = Set<String>()
+			if let missingArticleIDs {
+				articleIDs.formUnion(missingArticleIDs)
+			}
+			if let updatedArticleIDs {
+				articleIDs.formUnion(updatedArticleIDs)
+			}
+			return articleIDs
+		}()
+
+		if allArticleIDs.isEmpty {
+			return
+		}
 
 		os_log(.debug, log: log, "Requesting %{public}i articles.", allArticleIDs.count)
 
@@ -828,15 +878,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			os_log(.debug, log: self.log, "Unable to get stream contents: %{public}@.", error as NSError)
 			throw error
 		}
-	}
-
-	func idsforMissingArticles() async throws -> Set<String>? {
-
-		// To replace FeedlyFetchIDsForMissingArticlesOperation
-
-		guard let account else { return nil }
-
-		return try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
 
 	func fetchRemoteArticleIDs(resource: FeedlyResourceID, unreadOnly: Bool? = nil) async throws -> Set<String> {
@@ -1052,11 +1093,11 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		try await addFeedToCollection(feedResource: resourceID, feedName: customFeedName, collectionID: collectionID, folder: folder)
 	}
 
-	func mirrorCollectionsAsFolders(collections: [FeedlyCollection]) {
+	func mirrorCollectionsAsFolders(collections: Set<FeedlyCollection>) -> [([FeedlyFeed], Folder)]? {
 
 		// To replace FeedlyMirrorCollectionsAsFoldersOperation
 
-		guard let account else { return }
+		guard let account else { return nil }
 
 		let localFolders = account.folders ?? Set()
 
@@ -1083,6 +1124,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 			os_log(.debug, log: log, "Removed %i folders: %@", foldersWithoutCollections.count, foldersWithoutCollections.map { $0.externalID ?? $0.nameForDisplay })
 		}
+
+		return feedsAndFolders
 	}
 
 	func createFeedsForCollectionFolders(feedsAndFolders: [([FeedlyFeed], Folder)]) {
