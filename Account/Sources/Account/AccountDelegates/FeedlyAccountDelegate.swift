@@ -926,6 +926,58 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		try await processStarredArticleIDs(remoteArticleIDs: remoteArticleIDs)
 	}
 
+	func processUnreadArticleIDs(remoteArticleIDs: Set<String>) async throws {
+
+		guard let account else { return }
+
+		var remoteArticleIDs = remoteArticleIDs
+
+		func removeEntryIDsWithPendingStatus() async throws {
+
+			if let pendingArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() {
+				remoteArticleIDs.subtract(pendingArticleIDs)
+			}
+		}
+
+		func process() async throws {
+
+			let localUnreadArticleIDs = try await account.fetchUnreadArticleIDs() ?? Set<String>()
+
+			var markAsUnreadError: Error?
+			var markAsReadError: Error?
+
+			let remoteUnreadArticleIDs = remoteArticleIDs
+
+			do {
+				try await account.markAsUnread(remoteUnreadArticleIDs)
+			} catch {
+				markAsUnreadError = error
+			}
+
+			let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
+			do {
+				try await account.markAsRead(articleIDsToMarkRead)
+			} catch {
+				markAsReadError = error
+			}
+
+			if let markingError = markAsReadError ?? markAsUnreadError {
+				throw markingError
+			}
+		}
+
+		try await removeEntryIDsWithPendingStatus()
+		try await process()
+	}
+
+	func fetchAndProcessUnreadArticleIDs() async throws {
+
+		// To replace FeedlyIngestUnreadArticleIDsOperation
+
+		let remoteArticleIDs = try await fetchRemoteUnreadArticleIDs()
+		try await processUnreadArticleIDs(remoteArticleIDs: remoteArticleIDs)
+	}
+
 	func fetchAllArticleIDs() async throws -> Set<String> {
 
 		guard let userID else { return Set<String>() }
