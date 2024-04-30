@@ -116,12 +116,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func refreshAll(for account: Account) async throws {
 
-		// To replace FeedlySyncAllOperation
-		
 		if refreshing {
 			os_log(.debug, log: log, "Ignoring refreshAll: Feedly sync already in progress.")
 			return
-
 		}
 
 		// TODO: update/clear refreshProgress
@@ -388,8 +385,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func fetchUpdatedArticleIDs() async throws -> Set<String>? {
 
-		// To replace FeedlyGetUpdatedArticleIDsOperation
-
 		guard let userID = credentials?.username else {
 			return nil
 		}
@@ -425,8 +420,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func updateAccountFeedsWithItems(feedIDsAndItems: [String: Set<ParsedItem>]) async throws {
 
-		// To replace FeedlyUpdateAccountFeedsWithItemsOperation
-
 		guard let account else { return }
 
 		try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
@@ -434,8 +427,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func logout(account: Account) async throws {
-
-		// To replace FeedlyLogoutOperation
 
 		do {
 			os_log("Requesting logout of Feedly account.")
@@ -454,8 +445,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	@discardableResult
 	func addFeedToCollection(feedResource: FeedlyFeedResourceID, feedName: String? = nil, collectionID: String, folder: Folder) async throws -> [([FeedlyFeed], Folder)] {
 
-		// To replace FeedlyAddFeedToCollectionOperation
-
 		let feedlyFeeds = try await caller.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionID)
 
 		let feedsWithCreatedFeedID = feedlyFeeds.filter { $0.id == feedResource.id }
@@ -468,8 +457,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func parsedItemsKeyedByFeedURL(_ parsedItems: Set<ParsedItem>) -> [String: Set<ParsedItem>] {
-
-		// To replace FeedlyOrganiseParsedItemsByFeedOperation
 
 		var d = [String: Set<ParsedItem>]()
 
@@ -490,8 +477,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func downloadArticles(missingArticleIDs: Set<String>?, updatedArticleIDs: Set<String>?) async throws {
-
-		// To replace FeedlyDownloadArticlesOperation
 
 		let allArticleIDs: Set<String> = {
 			var articleIDs = Set<String>()
@@ -521,8 +506,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func fetchParsedItems(articleIDs: Set<String>) async throws -> Set<ParsedItem> {
 
-		// To replace FeedlyGetEntriesOperation
-
 		do {
 			let entries = try await caller.getEntries(for: articleIDs)
 			return parsedItems(with: Set(entries))
@@ -544,8 +527,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func fetchCollections() async throws -> Set<FeedlyCollection> {
 
-		// To replace FeedlyGetCollectionsOperation
-
 		os_log(.debug, log: log, "Requesting collections.")
 
 		do {
@@ -559,8 +540,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatuses() async throws {
-
-		// To replace FeedlySendArticleStatusesOperation
 
 		guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
 			return
@@ -598,14 +577,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func searchForFeed(url: String) async throws -> FeedlyFeedsSearchResponse {
 
-		// To replace FeedlySearchOperation
-
 		try await caller.getFeeds(for: url, count: 1, localeIdentifier: Locale.current.identifier)
 	}
 
 	func fetchStreamContents(resourceID: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) async throws -> Set<ParsedItem> {
-
-		// To replace FeedlyGetStreamContentsOperation
 
 		do {
 			let stream = try await caller.getStreamContents(for: resourceID, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly)
@@ -697,8 +672,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func fetchAndProcessStarredArticleIDs() async throws {
 
-		// To replace FeedlyIngestStarredArticleIDsOperation
-
 		let remoteArticleIDs = try await fetchRemoteStarredArticleIDs()
 		try await processStarredArticleIDs(remoteArticleIDs: remoteArticleIDs)
 	}
@@ -749,8 +722,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func fetchAndProcessUnreadArticleIDs() async throws {
 
-		// To replace FeedlyIngestUnreadArticleIDsOperation
-
 		let remoteArticleIDs = try await fetchRemoteUnreadArticleIDs()
 		try await processUnreadArticleIDs(remoteArticleIDs: remoteArticleIDs)
 	}
@@ -781,8 +752,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func fetchAndProcessAllArticleIDs() async throws {
 
-		// To replace FeedlyIngestStreamArticleIDsOperation
-
 		guard let account else { return }
 
 		let allArticleIDs = try await fetchAllArticleIDs()
@@ -791,15 +760,11 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func syncStreamContents(feedResourceID: FeedlyFeedResourceID) async throws {
 
-		// To replace FeedlySyncStreamContentsOperation
-
 		let parsedItems = try await fetchStreamContents(resourceID: feedResourceID, newerThan: nil)
 		try await updateAccountFeeds(parsedItems: parsedItems)
 	}
 
 	func addNewFeed(url: String, feedName: String?, container: Container) async throws {
-
-		// To replace FeedlyAddNewFeedOperation
 
 		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionID) = try validator.getValidContainer()
@@ -821,8 +786,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func addExistingFeed(resourceID: FeedlyFeedResourceID, container: Container, customFeedName: String? = nil) async throws {
 
-		// To replace FeedlyAddExistingFeedOperation
-
 		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionID) = try validator.getValidContainer()
 
@@ -830,8 +793,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func mirrorCollectionsAsFolders(collections: Set<FeedlyCollection>) -> [([FeedlyFeed], Folder)]? {
-
-		// To replace FeedlyMirrorCollectionsAsFoldersOperation
 
 		guard let account else { return nil }
 
@@ -865,8 +826,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func createFeedsForCollectionFolders(feedsAndFolders: [([FeedlyFeed], Folder)]) {
-
-		// To replace FeedlyCreateFeedsForCollectionFoldersOperation
 
 		guard let account else { return }
 
