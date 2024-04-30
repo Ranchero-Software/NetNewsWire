@@ -124,27 +124,6 @@ public struct FeedlyEntry: Decodable, Sendable, Hashable {
 	}
 }
 
-public protocol FeedlyEntryIdentifierProviding: AnyObject {
-	@MainActor var entryIDs: Set<String> { get }
-}
-
-public final class FeedlyEntryIdentifierProvider: FeedlyEntryIdentifierProviding {
-
-	private (set) public var entryIDs: Set<String>
-
-	public init(entryIDs: Set<String> = Set()) {
-		self.entryIDs = entryIDs
-	}
-
-	@MainActor public func addEntryIDs(from provider: FeedlyEntryIdentifierProviding) {
-		entryIDs.formUnion(provider.entryIDs)
-	}
-
-	@MainActor public func addEntryIDs(in articleIDs: [String]) {
-		entryIDs.formUnion(articleIDs)
-	}
-}
-
 public struct FeedlyEntryParser: Sendable {
 
 	public let entry: FeedlyEntry
@@ -469,5 +448,28 @@ public struct FeedlyTag: Decodable, Sendable, Equatable {
 
 	public static func ==(lhs: FeedlyTag, rhs: FeedlyTag) -> Bool {
 		lhs.id == rhs.id && lhs.label == rhs.label
+	}
+}
+
+public enum FeedlyMarkAction: String, Sendable {
+
+	case read
+	case unread
+	case saved
+	case unsaved
+
+	/// These values are paired with the "action" key in POST requests to the markers API.
+	/// See for example: https://developer.feedly.com/v3/markers/#mark-one-or-multiple-articles-as-read
+	public var actionValue: String {
+		switch self {
+		case .read:
+			return "markAsRead"
+		case .unread:
+			return "keepUnread"
+		case .saved:
+			return "markAsSaved"
+		case .unsaved:
+			return "markAsUnsaved"
+		}
 	}
 }

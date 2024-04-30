@@ -362,7 +362,7 @@ func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest) async 
 	}
 }
 
-extension FeedlyAPICaller: FeedlyGetCollectionsService {
+extension FeedlyAPICaller {
 	
 	func getCollections() async throws -> Set<FeedlyCollection> {
 
@@ -379,7 +379,7 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 	}
 }
 
-extension FeedlyAPICaller: FeedlyGetStreamContentsService {
+extension FeedlyAPICaller {
 	
 	@MainActor func getStreamContents(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStream {
 
@@ -432,7 +432,7 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 	}
 }
 
-extension FeedlyAPICaller: FeedlyGetStreamIDsService {
+extension FeedlyAPICaller {
 	
 	@MainActor func getStreamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStreamIDs {
 
@@ -485,7 +485,7 @@ extension FeedlyAPICaller: FeedlyGetStreamIDsService {
 	}
 }
 
-extension FeedlyAPICaller: FeedlyGetEntriesService {
+extension FeedlyAPICaller {
 	
 	@MainActor func getEntries(for ids: Set<String>) async throws -> [FeedlyEntry] {
 
@@ -505,7 +505,7 @@ extension FeedlyAPICaller: FeedlyGetEntriesService {
 	}
 }
 
-extension FeedlyAPICaller: FeedlyMarkArticlesService {
+extension FeedlyAPICaller {
 	
 	private struct MarkerEntriesBody: Encodable {
 		let type = "entries"
