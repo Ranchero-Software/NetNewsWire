@@ -259,7 +259,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 	}
 }
 
-extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
+extension FeedlyAPICaller {
 	
 	@MainActor func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String) async throws -> [FeedlyFeed] {
 
@@ -533,7 +533,7 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 	}
 }
 
-extension FeedlyAPICaller: FeedlySearchService {
+extension FeedlyAPICaller {
 	
 	func getFeeds(for query: String, count: Int, localeIdentifier: String) async throws -> FeedlyFeedsSearchResponse {
 
@@ -563,7 +563,7 @@ extension FeedlyAPICaller: FeedlySearchService {
 	}
 }
 
-extension FeedlyAPICaller: FeedlyLogoutService {
+extension FeedlyAPICaller {
 	
 	func logout() async throws {
 
