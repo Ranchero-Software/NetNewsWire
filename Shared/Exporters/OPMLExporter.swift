@@ -11,7 +11,7 @@ import Account
 
 struct OPMLExporter {
 
-	static func OPMLString(with account: Account, title: String) -> String {
+	@MainActor static func OPMLString(with account: Account, title: String) -> String {
 
 		let escapedTitle = title.escapingSpecialXMLCharacters
 		let openingText =
