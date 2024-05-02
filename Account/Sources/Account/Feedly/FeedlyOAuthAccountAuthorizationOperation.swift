@@ -12,20 +12,20 @@ import Secrets
 import Core
 import Feedly
 
-public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
+public protocol FeedlyOAuthAccountAuthorizationOperationDelegate: AnyObject {
 	
-	@MainActor func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)
-	@MainActor func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
+	@MainActor func oauthAccountAuthorizationOperation(_ operation: FeedlyOAuthAccountAuthorizationOperation, didCreate account: Account)
+	@MainActor func oauthAccountAuthorizationOperation(_ operation: FeedlyOAuthAccountAuthorizationOperation, didFailWith error: Error)
 }
 
-public enum OAuthAccountAuthorizationOperationError: LocalizedError {
+public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 	case duplicateAccount
 	
 	public var errorDescription: String? {
 		return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
 	}
 }
-@MainActor @objc public final class OAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
+@MainActor @objc public final class FeedlyOAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
 
 	public var isCanceled: Bool = false {
 		didSet {
@@ -40,7 +40,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	public weak var presentationAnchor: ASPresentationAnchor?
-	public weak var delegate: OAuthAccountAuthorizationOperationDelegate?
+	public weak var delegate: FeedlyOAuthAccountAuthorizationOperationDelegate?
 	
 	private let accountType: AccountType
 	private let oauthClient: OAuthAuthorizationClient
@@ -145,7 +145,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	
 	@MainActor private func saveAccount(for grant: OAuthAuthorizationGrant) {
 		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
-			didFinish(OAuthAccountAuthorizationOperationError.duplicateAccount)
+			didFinish(FeedlyOAuthAccountAuthorizationOperationError.duplicateAccount)
 			return
 		}
 		

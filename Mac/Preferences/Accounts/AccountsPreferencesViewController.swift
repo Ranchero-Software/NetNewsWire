@@ -175,7 +175,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsReaderAPIWindowController
 		case .feedly:
-			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly, secretsProvider: Secrets())
+			let addAccount = FeedlyOAuthAccountAuthorizationOperation(accountType: .feedly, secretsProvider: Secrets())
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
@@ -187,7 +187,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 		}
 	}
 	
-	private func runAwaitingFeedlyLoginAlertModal(forLifetimeOf operation: OAuthAccountAuthorizationOperation) {
+	private func runAwaitingFeedlyLoginAlertModal(forLifetimeOf operation: FeedlyOAuthAccountAuthorizationOperation) {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
 		alert.messageText = NSLocalizedString("Waiting for access to Feedly",
@@ -262,9 +262,9 @@ private extension AccountsPreferencesViewController {
 	
 }
 
-extension AccountsPreferencesViewController: OAuthAccountAuthorizationOperationDelegate {
+extension AccountsPreferencesViewController: FeedlyOAuthAccountAuthorizationOperationDelegate {
 	
-	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+	func oauthAccountAuthorizationOperation(_ operation: FeedlyOAuthAccountAuthorizationOperation, didCreate account: Account) {
 		// `OAuthAccountAuthorizationOperation` is using `ASWebAuthenticationSession` which bounces the user
 		// to their browser on macOS for authorizing NetNewsWire to access the user's Feedly account.
 		// When this authorization is granted, the browser remains the foreground app which is unfortunate
@@ -280,7 +280,7 @@ extension AccountsPreferencesViewController: OAuthAccountAuthorizationOperationD
 		}
 	}
 	
-	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+	func oauthAccountAuthorizationOperation(_ operation: FeedlyOAuthAccountAuthorizationOperation, didFailWith error: Error) {
 		// `OAuthAccountAuthorizationOperation` is using `ASWebAuthenticationSession` which bounces the user
 		// to their browser on macOS for authorizing NetNewsWire to access the user's Feedly account.
 		NSApp.activate(ignoringOtherApps: true)

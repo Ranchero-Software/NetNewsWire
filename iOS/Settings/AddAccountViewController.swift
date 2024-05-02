@@ -197,7 +197,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			addViewController.delegate = self
 			present(navController, animated: true)
 		case .feedly:
-			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly, secretsProvider: Secrets())
+			let addAccount = FeedlyOAuthAccountAuthorizationOperation(accountType: .feedly, secretsProvider: Secrets())
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			MainThreadOperationQueue.shared.add(addAccount)
@@ -223,9 +223,9 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	
 }
 
-extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
+extension AddAccountViewController: FeedlyOAuthAccountAuthorizationOperationDelegate {
 	
-	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+	func oauthAccountAuthorizationOperation(_ operation: FeedlyOAuthAccountAuthorizationOperation, didCreate account: Account) {
 
 		let rootViewController = view.window?.rootViewController
 
@@ -240,7 +240,7 @@ extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
 		dismiss()
 	}
 	
-	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+	func oauthAccountAuthorizationOperation(_ operation: FeedlyOAuthAccountAuthorizationOperation, didFailWith error: Error) {
 		presentError(error)
 	}
 }
