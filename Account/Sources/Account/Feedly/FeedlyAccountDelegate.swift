@@ -765,6 +765,22 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		try await updateAccountFeeds(parsedItems: parsedItems)
 	}
 
+	@MainActor struct FeedlyFeedContainerValidator {
+		var container: Container
+
+		func getValidContainer() throws -> (Folder, String) {
+			guard let folder = container as? Folder else {
+				throw FeedlyAccountDelegateError.addFeedChooseFolder
+			}
+
+			guard let collectionID = folder.externalID else {
+				throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder.nameForDisplay)
+			}
+
+			return (folder, collectionID)
+		}
+	}
+
 	func addNewFeed(url: String, feedName: String?, container: Container) async throws {
 
 		let validator = FeedlyFeedContainerValidator(container: container)
