@@ -51,11 +51,13 @@ public protocol FeedlyAPICallerDelegate: AnyObject {
 	private let baseURLComponents: URLComponents
 	private let uriComponentAllowed: CharacterSet
 	private let secretsProvider: SecretsProvider
-	
+	private let api: FeedlyAPICaller.API
+
 	public init(transport: Transport, api: API, secretsProvider: SecretsProvider) {
 		self.transport = transport
 		self.baseURLComponents = api.baseUrlComponents
 		self.secretsProvider = secretsProvider
+		self.api = api
 
 		var urlHostAllowed = CharacterSet.urlHostAllowed
 		urlHostAllowed.remove("+")
@@ -575,6 +577,45 @@ extension FeedlyAPICaller {
 		if httpResponse.statusCode != HTTPResponseCode.OK {
 			throw URLError(.cannotDecodeContentData)
 		}
+	}
+}
+
+// MARK: - OAuth
+
+extension FeedlyAPICaller {
+
+	private static let oauthAuthorizationGrantScope = "https://cloud.feedly.com/subscriptions"
+
+	public static func oauthAuthorizationCodeGrantRequest(secretsProvider: SecretsProvider) -> URLRequest {
+		let client = API.cloud.oauthAuthorizationClient(secretsProvider: secretsProvider)
+		let authorizationRequest = OAuthAuthorizationRequest(clientID: client.id,
+															 redirectURI: client.redirectURI,
+															 scope: oauthAuthorizationGrantScope,
+															 state: client.state)
+		let baseURLComponents = API.cloud.baseUrlComponents
+		return FeedlyAPICaller.authorizationCodeURLRequest(for: authorizationRequest, baseUrlComponents: baseURLComponents)
+	}
+
+	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: any Web.Transport, secretsProvider: any Secrets.SecretsProvider) async throws -> OAuthAuthorizationGrant {
+
+		let client = API.cloud.oauthAuthorizationClient(secretsProvider: secretsProvider)
+		let request = OAuthAccessTokenRequest(authorizationResponse: response,
+											  scope: oauthAuthorizationGrantScope,
+											  client: client)
+		let caller = FeedlyAPICaller(transport: transport, api: .cloud, secretsProvider: secretsProvider)
+		let response = try await caller.requestAccessToken(request)
+
+		let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
+		let refreshToken: Credentials? = {
+			guard let token = response.refreshToken else {
+				return nil
+			}
+			return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
+		}()
+
+		let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
+
+		return grant
 	}
 }
 

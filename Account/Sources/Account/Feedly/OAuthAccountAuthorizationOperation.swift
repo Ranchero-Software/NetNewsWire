@@ -50,13 +50,13 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	public init(accountType: AccountType, secretsProvider: SecretsProvider) {
 		self.accountType = accountType
 		self.secretsProvider = secretsProvider
-		self.oauthClient = Account.oauthAuthorizationClient(for: accountType, secretsProvider: secretsProvider)
+		self.oauthClient = FeedlyAPICaller.API.cloud.oauthAuthorizationClient(secretsProvider: secretsProvider)
 	}
 	
 	@MainActor public func run() {
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 		
-		let request = FeedlyAccountDelegate.oauthAuthorizationCodeGrantRequest(secretsProvider: secretsProvider)
+		let request = FeedlyAPICaller.oauthAuthorizationCodeGrantRequest(secretsProvider: secretsProvider)
 
 		guard let url = request.url else {
 			return DispatchQueue.main.async {
@@ -120,7 +120,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 
 				let response = try OAuthAuthorizationResponse(url: url, client: self.oauthClient)
 
-				let tokenResponse = try await Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, secretsProvider: secretsProvider)
+				let tokenResponse = try await FeedlyAPICaller.requestOAuthAccessToken(with: response, transport: URLSession.webserviceTransport(), secretsProvider: secretsProvider)
 				saveAccount(for: tokenResponse)
 
 			} catch is ASWebAuthenticationSessionError {
