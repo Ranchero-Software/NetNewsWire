@@ -40,14 +40,12 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 				let pendingReadStatusArticleIDs = (try await self.database.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 				let pendingStarredStatusArticleIDs = (try await self.database.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 
-				self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-					Task { @MainActor in
-						self.update(records: changed,
-									pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-									pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-									completion: completion)
-					}
-				}
+				await self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
+
+				self.update(records: changed,
+							pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+							pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+							completion: completion)
 
 			} catch {
 				os_log(.error, log: self.log, "Error occurred getting pending status records: %@", error.localizedDescription)
@@ -59,20 +57,18 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
 private extension CloudKitArticlesZoneDelegate {
 
-	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping () -> Void) {
+	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>) async {
+
 		let receivedRecordIDs = recordKeys.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticleStatus.recordType }).map({ $0.recordID })
 		let receivedArticleIDs = Set(receivedRecordIDs.map({ stripPrefix($0.externalID) }))
 		let deletableArticleIDs = receivedArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 
 		guard !deletableArticleIDs.isEmpty else {
-			completion()
 			return
 		}
 
-		Task { @MainActor in
-			try? await self.database.deleteSelectedForProcessing(Array(deletableArticleIDs))
-			try? await self.account?.delete(articleIDs: deletableArticleIDs)
-		}
+		try? await database.deleteSelectedForProcessing(Array(deletableArticleIDs))
+		try? await account?.delete(articleIDs: deletableArticleIDs)
 	}
 
 	@MainActor func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
