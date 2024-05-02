@@ -11,11 +11,11 @@ import os
 
 /// Read and starred status for an Article.
 ///
-/// These are uniqued — there is never more than one instance per articleID.
+/// These are uniqued — there is never more than one instance per articleID per account.
 ///
-/// Its two Bool properties, `read` and `starred`, are both protected
-/// by an internal lock, which makes `ArticleStatus` thread-safe.
-public final class ArticleStatus: Hashable, @unchecked Sendable {
+/// Its two mutable Bool properties, `read` and `starred`, are each protected
+/// by an OSAllocatedUnfairLock, which makes `ArticleStatus` Sendable.
+public final class ArticleStatus: Hashable, Sendable {
 
 	public enum Key: String, Sendable {
 		case read = "read"
@@ -25,56 +25,32 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 	public let articleID: String
 	public let dateArrived: Date
 
-	// Sharing one lock for all instances is preferred to having one (or two)
-	// locks per instance — that could means thousands of locks in memory.
-	private static let lock = OSAllocatedUnfairLock()
+	private let _read: OSAllocatedUnfairLock<Bool>
+	private let _starred: OSAllocatedUnfairLock<Bool>
 
 	public var read: Bool {
 		get {
-			Self.lock.lock()
-			defer {
-				Self.lock.unlock()
-			}
-
-			return _read
+			_read.withLock { $0 }
 		}
 		set {
-			Self.lock.lock()
-			defer {
-				Self.lock.unlock()
-			}
-
-			_read = newValue
+			_read.withLock { $0 = newValue }
 		}
 	}
 
 	public var starred: Bool {
 		get {
-			Self.lock.lock()
-			defer {
-				Self.lock.unlock()
-			}
-
-			return _starred
+			_starred.withLock { $0 }
 		}
 		set {
-			Self.lock.lock()
-			defer {
-				Self.lock.unlock()
-			}
-
-			_starred = newValue
+			_starred.withLock { $0 = newValue }
 		}
 	}
-
-	private var _read = false
-	private var _starred = false
 
 	public init(articleID: String, read: Bool, starred: Bool, dateArrived: Date) {
 		self.articleID = articleID
 		self.dateArrived = dateArrived
-		self._read = read
-		self._starred = starred
+		self._read = OSAllocatedUnfairLock(initialState: read)
+		self._starred = OSAllocatedUnfairLock(initialState: starred)
 	}
 
 	public convenience init(articleID: String, read: Bool, dateArrived: Date) {
@@ -95,9 +71,9 @@ public final class ArticleStatus: Hashable, @unchecked Sendable {
 
 		switch key {
 		case .read:
-			_read = status
+			read = status
 		case .starred:
-			_starred = status
+			starred = status
 		}
 	}
 
