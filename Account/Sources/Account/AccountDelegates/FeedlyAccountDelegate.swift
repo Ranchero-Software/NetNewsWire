@@ -254,6 +254,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		account.removeFolder(folder: folder)
 	}
 
+	@discardableResult
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 
 		// TODO: make this work

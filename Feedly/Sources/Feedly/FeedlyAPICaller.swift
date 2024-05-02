@@ -9,22 +9,21 @@
 import Foundation
 import Web
 import Secrets
-import Feedly
 
-protocol FeedlyAPICallerDelegate: AnyObject {
+public protocol FeedlyAPICallerDelegate: AnyObject {
 
 	/// Implemented by the `FeedlyAccountDelegate` reauthorize the client with a fresh OAuth token so the client can retry the unauthorized request.
 	/// Pass `true` to the completion handler if the failing request should be retried with a fresh token or `false` if the unauthorized request should complete with the original failure error.
 	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller) async -> Bool
 }
 
-@MainActor final class FeedlyAPICaller {
+@MainActor public final class FeedlyAPICaller {
 
-	enum API {
+	public enum API {
 		case sandbox
 		case cloud
-		
-		var baseUrlComponents: URLComponents {
+
+		public var baseUrlComponents: URLComponents {
 			var components = URLComponents()
 			components.scheme = "https"
 			switch self{
@@ -38,7 +37,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 			return components
 		}
 		
-		func oauthAuthorizationClient(secretsProvider: SecretsProvider) -> OAuthAuthorizationClient {
+		public func oauthAuthorizationClient(secretsProvider: SecretsProvider) -> OAuthAuthorizationClient {
 			switch self {
 			case .sandbox:
 				return .feedlySandboxClient
@@ -53,7 +52,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 	private let uriComponentAllowed: CharacterSet
 	private let secretsProvider: SecretsProvider
 	
-	init(transport: Transport, api: API, secretsProvider: SecretsProvider) {
+	public init(transport: Transport, api: API, secretsProvider: SecretsProvider) {
 		self.transport = transport
 		self.baseURLComponents = api.baseUrlComponents
 		self.secretsProvider = secretsProvider
@@ -63,11 +62,11 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		uriComponentAllowed = urlHostAllowed
 	}
 	
-	weak var delegate: FeedlyAPICallerDelegate?
+	public weak var delegate: FeedlyAPICallerDelegate?
+
+	public var credentials: Credentials?
 	
-	var credentials: Credentials?
-	
-	var server: String? {
+	public var server: String? {
 		return baseURLComponents.host
 	}
 	
@@ -78,12 +77,12 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 	private var isSuspended = false
 	
 	/// Cancels all pending requests rejects any that come in later
-	func suspend() {
+	public func suspend() {
 		transport.cancelAll()
 		isSuspended = true
 	}
 	
-	func resume() {
+	public func resume() {
 		isSuspended = false
 	}
 	
@@ -115,7 +114,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 					switch error {
 					case TransportError.httpError(let statusCode) where statusCode == 401:
 
-						assert(self == nil ? true : self?.delegate != nil, "Check the delegate is set to \(FeedlyAccountDelegate.self).")
+						assert(self == nil ? true : self?.delegate != nil, "Check the delegate is set.")
 
 						guard let self = self, let delegate = self.delegate else {
 							completion(result)
@@ -151,7 +150,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		}
 	}
 
-	func importOPML(_ opmlData: Data) async throws {
+	public func importOPML(_ opmlData: Data) async throws {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -166,7 +165,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		}
 	}
 	
-	func createCollection(named label: String) async throws -> FeedlyCollection {
+	public func createCollection(named label: String) async throws -> FeedlyCollection {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -185,7 +184,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		return collection
 	}
 
-	func renameCollection(with id: String, to name: String) async throws -> FeedlyCollection {
+	public func renameCollection(with id: String, to name: String) async throws -> FeedlyCollection {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -209,7 +208,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		return pathComponent.addingPercentEncoding(withAllowedCharacters: uriComponentAllowed)
 	}
 	
-	func deleteCollection(with id: String) async throws {
+	public func deleteCollection(with id: String) async throws {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -225,7 +224,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		}
 	}
 	
-	func removeFeed(_ feedID: String, fromCollectionWith collectionID: String) async throws {
+	public func removeFeed(_ feedID: String, fromCollectionWith collectionID: String) async throws {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -261,7 +260,8 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 extension FeedlyAPICaller {
 	
-	@MainActor func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String) async throws -> [FeedlyFeed] {
+	@discardableResult
+	@MainActor public func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String) async throws -> [FeedlyFeed] {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -301,7 +301,7 @@ extension FeedlyAPICaller {
 	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
 	/// - Parameter request: The information about the client requesting authorization to be granted access tokens.
 	/// - Parameter baseUrlComponents: The scheme and host of the url except for the path.
-	static func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest {
+	static public func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest {
 
 		var components = baseUrlComponents
 		components.path = "/v3/auth/auth"
@@ -322,7 +322,7 @@ extension FeedlyAPICaller {
 	/// Performs the request for the access token given an authorization code.
 	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokens on the user's behalf.
 	/// - Returns: On success, the access token response appropriate for concrete type's service. On failure, throws possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
-	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
+	public func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
 
 		guard !isSuspended else { throw TransportError.suspended }
 		
@@ -346,7 +346,7 @@ extension FeedlyAPICaller {
 	///
 	/// - Parameter refreshRequest: The refresh token and other information the authorization server requires to grant the client fresh access tokens on the user's behalf.
 	/// - Returns: On success, the access token response appropriate for concrete type's service. Both the access and refresh token should be stored, preferably on the Keychain. On failure, throws an Error.
-func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
+	public func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -364,7 +364,7 @@ func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest) async 
 
 extension FeedlyAPICaller {
 	
-	func getCollections() async throws -> Set<FeedlyCollection> {
+	public func getCollections() async throws -> Set<FeedlyCollection> {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -381,7 +381,7 @@ extension FeedlyAPICaller {
 
 extension FeedlyAPICaller {
 	
-	@MainActor func getStreamContents(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStream {
+	@MainActor public func getStreamContents(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStream {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -434,7 +434,7 @@ extension FeedlyAPICaller {
 
 extension FeedlyAPICaller {
 	
-	@MainActor func getStreamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStreamIDs {
+	@MainActor public func getStreamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStreamIDs {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -487,7 +487,7 @@ extension FeedlyAPICaller {
 
 extension FeedlyAPICaller {
 	
-	@MainActor func getEntries(for ids: Set<String>) async throws -> [FeedlyEntry] {
+	@MainActor public func getEntries(for ids: Set<String>) async throws -> [FeedlyEntry] {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -513,7 +513,7 @@ extension FeedlyAPICaller {
 		var entryIDs: [String]
 	}
 	
-	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction) async throws {
+	public func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction) async throws {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -535,7 +535,7 @@ extension FeedlyAPICaller {
 
 extension FeedlyAPICaller {
 	
-	func getFeeds(for query: String, count: Int, localeIdentifier: String) async throws -> FeedlyFeedsSearchResponse {
+	public func getFeeds(for query: String, count: Int, localeIdentifier: String) async throws -> FeedlyFeedsSearchResponse {
 
 		guard !isSuspended else { throw TransportError.suspended }
 
@@ -565,7 +565,7 @@ extension FeedlyAPICaller {
 
 extension FeedlyAPICaller {
 	
-	func logout() async throws {
+	public func logout() async throws {
 
 		guard !isSuspended else { throw TransportError.suspended }
 

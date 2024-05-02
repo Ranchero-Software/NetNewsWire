@@ -11,22 +11,6 @@ import Web
 import Secrets
 import Feedly
 
-/// Models the access token response from Feedly.
-/// <https://developer.feedly.com/v3/auth/#exchanging-an-auth-code-for-a-refresh-token-and-an-access-token>
-///
-/// Also see: <https://tools.ietf.org/html/rfc6749#section-4.1.4>
-public struct FeedlyOAuthAccessTokenResponse: Decodable, Sendable {
-
-	/// The ID of the Feedly user.
-	public var id: String
-
-	// Required properties of the OAuth 2.0 Authorization Framework section 4.1.4.
-	public var accessToken: String
-	public var tokenType: String
-	public var expiresIn: Int
-	public var refreshToken: String?
-	public var scope: String
-}
 
 extension FeedlyAccountDelegate {
 
