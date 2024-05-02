@@ -964,7 +964,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 		}
 
 		os_log(.debug, log: log, "Refreshing access token.")
-		let grant = try await refreshAccessToken(with: credentials.secret, client: oauthAuthorizationClient)
+		let grant = try await caller.refreshAccessToken(with: credentials.secret, client: oauthAuthorizationClient)
 
 		os_log(.debug, log: log, "Storing refresh token.")
 		if let refreshToken = grant.refreshToken {

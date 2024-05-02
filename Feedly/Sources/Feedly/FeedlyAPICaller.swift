@@ -617,6 +617,23 @@ extension FeedlyAPICaller {
 
 		return grant
 	}
+
+	public func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient) async throws -> OAuthAuthorizationGrant {
+
+		let request = OAuthRefreshAccessTokenRequest(refreshToken: refreshToken, scope: nil, client: client)
+		let response = try await refreshAccessToken(request)
+
+		let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
+		let refreshToken: Credentials? = {
+			guard let token = response.refreshToken else {
+				return nil
+			}
+			return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
+		}()
+
+		let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
+		return grant
+	}
 }
 
 private extension FeedlyAPICaller {
