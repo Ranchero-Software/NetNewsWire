@@ -10,12 +10,12 @@ import Foundation
 
 public protocol OPMLRepresentable {
 
-	func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String
+	@MainActor func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String
 }
 
 public extension OPMLRepresentable {
 
-	func OPMLString(indentLevel: Int) -> String {
+	@MainActor func OPMLString(indentLevel: Int) -> String {
 		return OPMLString(indentLevel: indentLevel, allowCustomAttributes: false)
 	}
 }
