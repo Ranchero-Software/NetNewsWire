@@ -12,7 +12,7 @@ import Account
 
 final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 
-	private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionFeedAddRequestFile")
+	nonisolated(unsafe) private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionFeedAddRequestFile")
 
 	private static let filePath: String = {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
