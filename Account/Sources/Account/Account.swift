@@ -995,7 +995,8 @@ public enum FetchType {
 // MARK: - AccountMetadataDelegate
 
 extension Account: AccountMetadataDelegate {
-	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
+
+	nonisolated func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
 		Task { @MainActor in
 			metadataFile.markAsDirty()
 		}
@@ -1006,11 +1007,13 @@ extension Account: AccountMetadataDelegate {
 
 extension Account: FeedMetadataDelegate {
 
-	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
+	nonisolated func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
+
+		let feedID = feedMetadata.feedID
 
 		Task { @MainActor in
 			feedMetadataFile.markAsDirty()
-			guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
+			guard let feed = existingFeed(withFeedID: feedID) else {
 				return
 			}
 			feed.postFeedSettingDidChangeNotification(key)

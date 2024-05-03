@@ -445,32 +445,59 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
+	private func delay(seconds: Double) async {
+
+		await withCheckedContinuation { continuation in
+			self.performBlockAfter(seconds: seconds) {
+				continuation.resume()
+			}
+		}
+	}
+
+	nonisolated private func performBlockAfter(seconds: Double, block: @escaping @Sendable @MainActor () -> ()) {
+
+		let delayTime = DispatchTime.now() + seconds
+		DispatchQueue.main.asyncAfter(deadline: delayTime) {
+			Task { @MainActor in
+				block()
+			}
+		}
+	}
+
 	func checkImportResult(opmlImportResultID: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 
-		DispatchQueue.main.async {
+		Task { @MainActor in
 
-			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
+			var retry = 0
+			let maxRetries = 6 // a guess at a good number
 
-				Task { @MainActor in
+			@MainActor func checkResult() async {
 
-					os_log(.debug, log: self.log, "Checking status of OPML import...")
+				if retry >= maxRetries {
+					return
+				}
+				retry = retry + 1
 
-					do {
-						let importResult = try await self.caller.retrieveOPMLImportResult(importID: opmlImportResultID)
+				await delay(seconds: 15)
+				os_log(.debug, log: self.log, "Checking status of OPML import...")
 
-						if let importResult, importResult.complete {
-							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
-							timer.invalidate()
-							completion(.success(()))
-						}
+				do {
+					let importResult = try await self.caller.retrieveOPMLImportResult(importID: opmlImportResultID)
 
-					} catch {
-						os_log(.debug, log: self.log, "Import OPML check failed.")
-						timer.invalidate()
-						completion(.failure(error))
+					if let importResult, importResult.complete {
+						os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
+						completion(.success(()))
+					} else {
+						await checkResult()
 					}
+
+				} catch {
+					os_log(.debug, log: self.log, "Import OPML check failed.")
+					completion(.failure(error))
 				}
 			}
+
+			await checkResult()
 		}
 	}
 
