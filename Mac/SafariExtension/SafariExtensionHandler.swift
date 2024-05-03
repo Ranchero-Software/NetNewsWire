@@ -7,8 +7,9 @@
 //
 
 import SafariServices
+import os
 
-class SafariExtensionHandler: SFSafariExtensionHandler {
+final class SafariExtensionHandler: SFSafariExtensionHandler {
 
 	// Safari App Extensions don't support any reasonable means of detecting whether a
 	// specific Safari page was loaded with the benefit of the extension's injected
@@ -19,8 +20,9 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 
 	// I tried to use a NSMapTable from String to the closure directly, but Swift
 	// complains that the object has to be a class type.
-	typealias ValidationHandler = (Bool, String) -> Void
-	class ValidationWrapper {
+	typealias ValidationHandler = @Sendable (Bool, String) -> Void
+
+	final class ValidationWrapper: Sendable {
 		let validationHandler: ValidationHandler
 
 		init(validationHandler: @escaping ValidationHandler) {
@@ -29,7 +31,16 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 	}
 
 	// Maps from UUID to a validation wrapper
-	static var gPingPongMap = Dictionary<String, ValidationWrapper>()
+	private static let _gPingPongMap: OSAllocatedUnfairLock<Dictionary<String, ValidationWrapper>> = OSAllocatedUnfairLock(initialState: [String: ValidationWrapper]())
+	static var gPingPongMap: [String: ValidationWrapper] {
+		get {
+			_gPingPongMap.withLock { $0 }
+		}
+		set {
+			_gPingPongMap.withLock { $0 = newValue }
+		}
+	}
+
 	static let validationQueue = DispatchQueue(label: "Toolbar Validation")
 
 	// Bottleneck for calling through to a validation handler we have saved, and removing it from the list.
@@ -79,7 +90,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 		}
     }
 
-    override func validateToolbarItem(in window: SFSafariWindow, validationHandler: @escaping ((Bool, String) -> Void)) {
+    override func validateToolbarItem(in window: SFSafariWindow, validationHandler: @escaping (Bool, String) -> Void) {
 
 		let uniqueValidationID = NSUUID().uuidString
 
