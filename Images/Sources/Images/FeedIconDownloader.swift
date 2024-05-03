@@ -20,7 +20,7 @@ public extension Notification.Name {
 
 public protocol FeedIconDownloaderDelegate: Sendable {
 
-	var appIconImage: IconImage? { get }
+	@MainActor var appIconImage: IconImage? { get }
 
 	func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata?
 }

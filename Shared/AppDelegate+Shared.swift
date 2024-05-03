@@ -18,6 +18,6 @@ extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
 
 	func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata? {
 
-		try await HTMLMetadataDownloader.downloadMetadata(for: url)
+		await HTMLMetadataDownloader.downloadMetadata(for: url)
 	}
 }

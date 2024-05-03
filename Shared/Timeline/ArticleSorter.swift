@@ -11,7 +11,7 @@ import Foundation
 
 protocol SortableArticle {
 	
-	var sortableName: String { get }
+	@MainActor var sortableName: String { get }
 	var sortableDate: Date { get }
 	var sortableArticleID: String { get }
 	var sortableFeedID: String { get }
@@ -19,7 +19,7 @@ protocol SortableArticle {
 
 struct ArticleSorter {
 		
-	static func sortedByDate<T: SortableArticle>(articles: [T],
+	@MainActor static func sortedByDate<T: SortableArticle>(articles: [T],
 												 sortDirection: ComparisonResult,
 												 groupByFeed: Bool) -> [T] {
 		if groupByFeed {
@@ -31,7 +31,7 @@ struct ArticleSorter {
 	
 	// MARK: -
 		
-	private static func sortedByFeedName<T: SortableArticle>(articles: [T],
+	@MainActor private static func sortedByFeedName<T: SortableArticle>(articles: [T],
 															 sortByDateDirection: ComparisonResult) -> [T] {
 		// Group articles by "feed-feedID" - feed ID is used to differentiate between
 		// two feeds that have the same name
