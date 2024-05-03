@@ -15,7 +15,7 @@ final class ShareViewController: NSViewController {
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var folderPopUpButton: NSPopUpButton!
 	
-	private var url: URL?
+	nonisolated(unsafe) private var url: URL?
 	private var extensionContainers: ExtensionContainers?
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ShareViewController")
 
