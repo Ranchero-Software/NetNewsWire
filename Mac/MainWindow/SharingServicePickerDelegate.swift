@@ -18,15 +18,18 @@ import Core
 	}
 	
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
-		let filteredServices = proposedServices.filter { $0.menuItemTitle != "NetNewsWire" }
-		return filteredServices + SharingServicePickerDelegate.customSharingServices(for: items)
+
+		MainActor.assumeIsolated {
+			let filteredServices = proposedServices.filter { $0.menuItemTitle != "NetNewsWire" }
+			return filteredServices + SharingServicePickerDelegate.customSharingServices(for: items)
+		}
 	}
 
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, delegateFor sharingService: NSSharingService) -> NSSharingServiceDelegate? {
 		return sharingServiceDelegate
 	}
 
-	static func customSharingServices(for items: [Any]) -> [NSSharingService] {
+	@MainActor static func customSharingServices(for items: [Any]) -> [NSSharingService] {
 		let customServices: [SendToCommand] = [SendToMarsEditCommand(), SendToMicroBlogCommand()]
 
 		return customServices.compactMap { (sendToCommand) -> NSSharingService? in

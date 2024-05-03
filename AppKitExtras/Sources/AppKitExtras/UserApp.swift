@@ -12,7 +12,7 @@ import AppKit
 ///
 /// The app may or may not be running. It may or may not exist.
 
-public final class UserApp {
+@MainActor public final class UserApp {
 
 	public let bundleID: String
 	public var icon: NSImage? = nil

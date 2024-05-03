@@ -11,7 +11,7 @@ import Articles
 import Core
 import AppKitExtras
 
-final class SendToMarsEditCommand: SendToCommand {
+@MainActor final class SendToMarsEditCommand: SendToCommand {
 
 	let title = "MarsEdit"
 	let image: RSImage? = AppAssets.marsEditIcon
@@ -44,9 +44,9 @@ final class SendToMarsEditCommand: SendToCommand {
 	}
 }
 
-private extension SendToMarsEditCommand {
+@MainActor private extension SendToMarsEditCommand {
 
-	@MainActor func send(_ article: Article, to app: UserApp) {
+	func send(_ article: Article, to app: UserApp) {
 
 		// App has already been launched.
 

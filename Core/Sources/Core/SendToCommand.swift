@@ -37,7 +37,7 @@ public protocol SendToCommand {
 	///   - object: The object to test.
 	///   - selectedText: The currently selected text.
 	/// - Returns: `true` if the object can be sent, `false` otherwise.
-	func canSendObject(_ object: Any?, selectedText: String?) -> Bool
+	@MainActor func canSendObject(_ object: Any?, selectedText: String?) -> Bool
 
 	/// Send an object to the target application.
 	///

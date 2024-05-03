@@ -13,7 +13,7 @@ import AppKitExtras
 
 // Not undoable.
 
-final class SendToMicroBlogCommand: SendToCommand {
+@MainActor final class SendToMicroBlogCommand: SendToCommand {
 
 	let title = "Micro.blog"
 	let image: RSImage? = AppAssets.microblogIcon
@@ -30,7 +30,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 		return true
 	}
 	
-	@MainActor func sendObject(_ object: Any?, selectedText: String?) {
+	func sendObject(_ object: Any?, selectedText: String?) {
 
 		guard canSendObject(object, selectedText: selectedText) else {
 			return
