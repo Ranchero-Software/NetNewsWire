@@ -9,7 +9,7 @@
 import UIKit
 import Web
 import Account
-import BackgroundTasks
+@preconcurrency import BackgroundTasks
 import os.log
 import Secrets
 import WidgetKit
