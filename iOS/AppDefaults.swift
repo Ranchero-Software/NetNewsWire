@@ -31,7 +31,7 @@ final class AppDefaults {
 
 	static let defaultThemeName = "Defaults"
 	
-	static let shared = AppDefaults()
+	@MainActor static let shared = AppDefaults()
 	private init() {}
 	
 	static let store: UserDefaults = {
