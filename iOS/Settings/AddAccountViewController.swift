@@ -11,7 +11,8 @@ import UIKit
 import Core
 
 protocol AddAccountDismissDelegate: UIViewController {
-	func dismiss()
+	
+	@MainActor func dismiss()
 }
 
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
