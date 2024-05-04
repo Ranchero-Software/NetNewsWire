@@ -11,7 +11,8 @@ import Account
 import Core
 
 protocol AddFeedFolderViewControllerDelegate {
-	func didSelect(container: Container)
+	
+	@MainActor func didSelect(container: Container)
 }
 
 class AddFeedFolderViewController: UITableViewController {

@@ -166,6 +166,7 @@ class AddFeedViewController: UITableViewController {
 // MARK: AddFeedFolderViewControllerDelegate
 
 extension AddFeedViewController: AddFeedFolderViewControllerDelegate {
+	
 	func didSelect(container: Container) {
 		self.container = container
 		updateFolderLabel()
