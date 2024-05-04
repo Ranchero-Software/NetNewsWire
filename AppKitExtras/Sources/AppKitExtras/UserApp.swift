@@ -15,10 +15,7 @@ import AppKit
 @MainActor public final class UserApp {
 
 	public let bundleID: String
-	public var icon: NSImage? = nil
 	public var existsOnDisk = false
-	public var path: String? = nil
-	public var runningApplication: NSRunningApplication? = nil
 
 	public var isRunning: Bool {
 
@@ -28,6 +25,10 @@ import AppKit
 		}
 		return false
 	}
+
+	private var icon: NSImage? = nil
+	private var path: String? = nil
+	private var runningApplication: NSRunningApplication? = nil
 
 	public init(bundleID: String) {
 
