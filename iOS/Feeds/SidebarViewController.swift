@@ -669,7 +669,7 @@ extension SidebarViewController: UIContextMenuInteractionDelegate {
 
 extension SidebarViewController: FeedTableViewSectionHeaderDelegate {
 	
-	func FeedTableViewSectionHeaderDisclosureDidToggle(_ sender: FeedTableViewSectionHeader) {
+	func feedTableViewSectionHeaderDisclosureDidToggle(_ sender: FeedTableViewSectionHeader) {
 		toggle(sender)
 	}
 	

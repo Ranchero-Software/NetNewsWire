@@ -10,7 +10,8 @@ import UIKit
 import UIKitExtras
 
 protocol FeedTableViewSectionHeaderDelegate {
-	func FeedTableViewSectionHeaderDisclosureDidToggle(_ sender: FeedTableViewSectionHeader)
+
+	@MainActor func feedTableViewSectionHeaderDisclosureDidToggle(_ sender: FeedTableViewSectionHeader)
 }
 
 class FeedTableViewSectionHeader: UITableViewHeaderFooterView {
@@ -139,7 +140,7 @@ class FeedTableViewSectionHeader: UITableViewHeaderFooterView {
 private extension FeedTableViewSectionHeader {
 	
 	@objc func toggleDisclosure() {
-		delegate?.FeedTableViewSectionHeaderDisclosureDidToggle(self)
+		delegate?.feedTableViewSectionHeaderDisclosureDidToggle(self)
 	}
 	
 	func commonInit() {
