@@ -11,9 +11,10 @@ import os.log
 
 struct ErrorHandler {
 
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	nonisolated(unsafe) private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
-	public static func present(_ viewController: UIViewController) -> (Error) -> () {
+	public static func present(_ viewController: UIViewController) -> @MainActor (Error) -> () {
+		
 		return { @MainActor [weak viewController] error in
 			if UIApplication.shared.applicationState == .active {
 				viewController?.presentError(error)
