@@ -10,7 +10,7 @@ import Foundation
 
 struct ShareDefaultContainer {
 	
-	static func defaultContainer(containers: ExtensionContainers) -> ExtensionContainer? {
+	@MainActor static func defaultContainer(containers: ExtensionContainers) -> ExtensionContainer? {
 		
 		if let accountID = AppDefaults.shared.addFeedAccountID, let account = containers.accounts.first(where: { $0.accountID == accountID }) {
 			if let folderName = AppDefaults.shared.addFeedFolderName, let folder = account.folders.first(where: { $0.name == folderName }) {
@@ -26,7 +26,7 @@ struct ShareDefaultContainer {
 		
 	}
 	
-	static func saveDefaultContainer(_ container: ExtensionContainer) {
+	@MainActor static func saveDefaultContainer(_ container: ExtensionContainer) {
 		AppDefaults.shared.addFeedAccountID = container.accountID
 		if let folder = container as? ExtensionFolder {
 			AppDefaults.shared.addFeedFolderName = folder.name
