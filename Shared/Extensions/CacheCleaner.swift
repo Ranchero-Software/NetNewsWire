@@ -12,9 +12,9 @@ import Web
 
 struct CacheCleaner {
 
-	static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
+	nonisolated(unsafe) static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
 
-	static func purgeIfNecessary() {
+	@MainActor static func purgeIfNecessary() {
 
 		guard let flushDate = AppDefaults.shared.lastImageCacheFlushDate else {
 			AppDefaults.shared.lastImageCacheFlushDate = Date()
