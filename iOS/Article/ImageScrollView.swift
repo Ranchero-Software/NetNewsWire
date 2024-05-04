@@ -9,8 +9,9 @@
 import UIKit
 
 @objc public protocol ImageScrollViewDelegate: UIScrollViewDelegate {
-	func imageScrollViewDidGestureSwipeUp(imageScrollView: ImageScrollView)
-	func imageScrollViewDidGestureSwipeDown(imageScrollView: ImageScrollView)
+	
+	@MainActor func imageScrollViewDidGestureSwipeUp(imageScrollView: ImageScrollView)
+	@MainActor func imageScrollViewDidGestureSwipeDown(imageScrollView: ImageScrollView)
 }
 
 open class ImageScrollView: UIScrollView {
