@@ -8,7 +8,7 @@
 
 import Foundation
 import WebKit
-import Images
+@preconcurrency import Images
 
 protocol ArticleIconSchemeHandlerDelegate: AnyObject {
 	
