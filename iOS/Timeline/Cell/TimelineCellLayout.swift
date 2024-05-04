@@ -94,7 +94,7 @@ extension TimelineCellLayout {
 		
 	}
 
-	static func rectForFeedName(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
+	@MainActor static func rectForFeedName(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 		
 		var r = CGRect.zero
 		r.origin = point

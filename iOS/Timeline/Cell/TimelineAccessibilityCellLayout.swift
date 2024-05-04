@@ -74,7 +74,7 @@ struct TimelineAccessibilityCellLayout: TimelineCellLayout {
 
 private extension TimelineAccessibilityCellLayout {
 	
-	static func rectForDate(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
+	@MainActor static func rectForDate(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 		
 		var r = CGRect.zero
 		

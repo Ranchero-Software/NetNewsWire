@@ -109,7 +109,7 @@ struct TimelineDefaultCellLayout: TimelineCellLayout {
 
 extension TimelineDefaultCellLayout {
 
-	static func rectForDate(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
+	@MainActor static func rectForDate(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 		
 		var r = CGRect.zero
 		

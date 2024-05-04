@@ -12,7 +12,7 @@ import UIKit
 // Uses a cache.
 // Main thready only.
 
-final class SingleLineUILabelSizer {
+@MainActor final class SingleLineUILabelSizer {
 
 	let font: UIFont
 	private var cache = [String: CGSize]()
@@ -36,7 +36,7 @@ final class SingleLineUILabelSizer {
 		
 	}
 
-	static private var sizers = [UIFont: SingleLineUILabelSizer]()
+	@MainActor static private var sizers = [UIFont: SingleLineUILabelSizer]()
 
 	static func sizer(for font: UIFont) -> SingleLineUILabelSizer {
 
