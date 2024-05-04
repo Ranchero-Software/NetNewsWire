@@ -10,7 +10,8 @@ import UIKit
 import Account
 
 protocol ShareFolderPickerControllerDelegate: AnyObject {
-	func shareFolderPickerDidSelect(_ container: ExtensionContainer)
+	
+	@MainActor func shareFolderPickerDidSelect(_ container: ExtensionContainer)
 }
 
 class ShareFolderPickerController: UITableViewController {
