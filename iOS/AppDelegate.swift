@@ -391,7 +391,9 @@ private extension AppDelegate {
 			do {
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
-				os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
+				Task { @MainActor in
+					os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
+				}
 			}
 		}
 	}

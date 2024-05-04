@@ -17,7 +17,8 @@ import ArticleExtractor
 import Images
 
 protocol WebViewControllerDelegate: AnyObject {
-	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
+	
+	@MainActor func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
 
 final class WebViewController: UIViewController {
