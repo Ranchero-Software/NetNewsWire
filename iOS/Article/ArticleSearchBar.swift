@@ -8,11 +8,11 @@
 
 import UIKit
 
-@objc protocol SearchBarDelegate: NSObjectProtocol {
-	@objc optional func nextWasPressed(_ searchBar: ArticleSearchBar)
-	@objc optional func previousWasPressed(_ searchBar: ArticleSearchBar)
-	@objc optional func doneWasPressed(_ searchBar: ArticleSearchBar)
-	@objc optional func searchBar(_ searchBar: ArticleSearchBar, textDidChange: String)
+protocol SearchBarDelegate: AnyObject {
+	@MainActor func nextWasPressed(_ searchBar: ArticleSearchBar)
+	@MainActor func previousWasPressed(_ searchBar: ArticleSearchBar)
+	@MainActor func doneWasPressed(_ searchBar: ArticleSearchBar)
+	@MainActor func searchBar(_ searchBar: ArticleSearchBar, textDidChange: String)
 }
 
 
@@ -146,7 +146,7 @@ private extension ArticleSearchBar {
 private extension ArticleSearchBar {
 	
 	@objc func textDidChange(_ notification: Notification) {
-		delegate?.searchBar?(self, textDidChange: searchField.text ?? "")
+		delegate?.searchBar(self, textDidChange: searchField.text ?? "")
 		
 		if searchField.text?.isEmpty ?? true {
 			searchField.rightViewMode = .never
@@ -156,21 +156,21 @@ private extension ArticleSearchBar {
 	}
 	
 	@objc func nextPressed() {
-		delegate?.nextWasPressed?(self)
+		delegate?.nextWasPressed(self)
 	}
 	
 	@objc func previousPressed() {
-		delegate?.previousWasPressed?(self)
+		delegate?.previousWasPressed(self)
 	}
 	
 	@objc func donePressed(_ _: Any? = nil) {
-		delegate?.doneWasPressed?(self)
+		delegate?.doneWasPressed(self)
 	}
 }
 
 extension ArticleSearchBar: UITextFieldDelegate {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		delegate?.nextWasPressed?(self)
+		delegate?.nextWasPressed(self)
 		return false
 	}
 }
