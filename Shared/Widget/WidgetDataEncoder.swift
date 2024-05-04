@@ -24,7 +24,7 @@ public final class WidgetDataEncoder {
 	private lazy var containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 	private lazy var dataURL = containerURL?.appendingPathComponent("widget-data.json")
 	
-	static let shared = WidgetDataEncoder()
+	@MainActor static let shared = WidgetDataEncoder()
 	private init () {}
 	
 	func encodeWidgetData() throws {

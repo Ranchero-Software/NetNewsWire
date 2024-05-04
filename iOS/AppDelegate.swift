@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
 	}
 	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	nonisolated(unsafe) let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!

@@ -17,7 +17,7 @@ enum AddFeedType {
 	case web
 }
 
-class AddFeedViewController: UITableViewController {
+final class AddFeedViewController: UITableViewController {
 	
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!
