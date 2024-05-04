@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TimelineTitleView: UIView {
+final class TimelineTitleView: UIView {
 
 	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var label: UILabel!
