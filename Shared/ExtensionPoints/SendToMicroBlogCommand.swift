@@ -9,7 +9,7 @@
 import AppKit
 import Articles
 import Core
-import AppKitExtras
+@preconcurrency import AppKitExtras
 
 // Not undoable.
 
