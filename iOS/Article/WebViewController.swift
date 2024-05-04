@@ -20,7 +20,7 @@ protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
 
-class WebViewController: UIViewController {
+final class WebViewController: UIViewController {
 	
 	private struct MessageName {
 		static let imageWasClicked = "imageWasClicked"
