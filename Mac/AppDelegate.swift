@@ -980,14 +980,14 @@ extension AppDelegate : ScriptingAppDelegate {
 
 extension AppDelegate: NSWindowRestoration {
 	
-	@objc static func restoreWindow(withIdentifier identifier: NSUserInterfaceItemIdentifier, state: NSCoder, completionHandler: @escaping (NSWindow?, Error?) -> Void) {
+	@objc static func restoreWindow(withIdentifier identifier: NSUserInterfaceItemIdentifier, state: NSCoder) async throws -> NSWindow {
+
 		var mainWindow: NSWindow? = nil
 		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
 			mainWindow = appDelegate.createAndShowMainWindow().window
 		}
-		completionHandler(mainWindow, nil)
-	}
-	
+		return mainWindow
+	}	
 }
 
 // Handle Notification Actions
