@@ -850,10 +850,10 @@ private extension SidebarViewController {
 		}
 	}
 
-	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (SidebarCell, Node) -> Void) {
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (SidebarCell, Node) -> Void) {
 		applyToAvailableCells { (cell, node) in
 			if node.representsSidebarObject(representedObject) {
-				completion(cell, node)
+				callback(cell, node)
 			}
 		}
 	}
