@@ -841,12 +841,12 @@ private extension SidebarViewController {
 		return rowView.view(atColumn: 0) as? SidebarCell
 	}
 
-	func applyToAvailableCells(_ completion: (SidebarCell, Node) -> Void) {
+	func applyToAvailableCells(_ callback: (SidebarCell, Node) -> Void) {
 		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
 			guard let cell = cellForRowView(rowView), let node = nodeForRow(row) else {
 				return
 			}
-			completion(cell, node)
+			callback(cell, node)
 		}
 	}
 
