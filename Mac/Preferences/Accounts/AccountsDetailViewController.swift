@@ -64,14 +64,16 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 	
 	@IBAction func credentials(_ sender: Any) {
 		
-		guard let account = account else { return }
-		
+		guard let account else { return }
+
 		switch account.type {
+
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.account = account
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsFeedbinWindowController
+		
 		case .inoreader, .bazQux, .theOldReader, .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = account.type
@@ -79,15 +81,15 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsReaderAPIWindowController
 			break
+		
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.account = account
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsNewsBlurWindowController
+		
 		default:
 			break
 		}
-		
 	}
-	
 }

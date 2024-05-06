@@ -47,9 +47,11 @@ class AccountsNewsBlurWindowController: NSWindowController {
 
 	// MARK: API
 
-	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+	func runSheetOnWindow(_ hostWindow: NSWindow) {
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: completion)
+		Task { @MainActor in
+			await hostWindow.beginSheet(window!)
+		}
 	}
 
 	// MARK: Actions

@@ -151,12 +151,16 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 }
 
 extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelegate {
+
 	func presentSheetForAccount(_ accountType: AccountType) {
+
 		switch accountType {
+
 		case .onMyMac:
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsAddLocalWindowController
+
 		case .cloudKit:
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
 
@@ -166,30 +170,34 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 					self.tableView.reloadData()
 				}
 			}
-			
+
 			addAccountWindowController = accountsAddCloudKitWindowController
+
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsFeedbinWindowController
+
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = accountType
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsReaderAPIWindowController
+
 		case .feedly:
 			let addAccount = FeedlyOAuthAccountAuthorizationOperation(accountType: .feedly, secretsProvider: Secrets())
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
 			MainThreadOperationQueue.shared.add(addAccount)
+
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsNewsBlurWindowController
 		}
 	}
-	
+
 	private func runAwaitingFeedlyLoginAlertModal(forLifetimeOf operation: FeedlyOAuthAccountAuthorizationOperation) {
 		let alert = NSAlert()
 		alert.alertStyle = .informational

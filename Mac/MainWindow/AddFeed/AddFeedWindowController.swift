@@ -54,8 +54,7 @@ class AddFeedWindowController : NSWindowController {
 	}
 	
     func runSheetOnWindow(_ hostWindow: NSWindow) {
-		hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
-		}
+		hostWindow.beginSheet(window!, completionHandler: nil)
     }
 
 	override func windowDidLoad() {
