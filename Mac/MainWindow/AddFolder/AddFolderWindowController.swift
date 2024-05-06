@@ -10,8 +10,8 @@ import AppKit
 import Articles
 import Account
 
-class AddFolderWindowController : NSWindowController {
-    
+final class AddFolderWindowController : NSWindowController {
+
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!
 	@IBOutlet var addFolderButton: NSButton!
@@ -25,9 +25,10 @@ class AddFolderWindowController : NSWindowController {
     
     func runSheetOnWindow(_ w: NSWindow) {
 		hostWindow = w
-		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
-			
-			if returnCode == NSApplication.ModalResponse.OK {
+
+		Task { @MainActor in
+			let returnCode = await hostWindow!.beginSheet(window!)
+			if returnCode == .OK {
 				self.addFolderIfNeeded()
 			}
 		}
