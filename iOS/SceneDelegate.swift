@@ -52,10 +52,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		}
 	}
 	
-	func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+	func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem) async -> Bool {
 		appDelegate.resumeDatabaseProcessingIfNecessary()
 		handleShortcutItem(shortcutItem)
-		completionHandler(true)
+		return true
 	}
 	
 	func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
