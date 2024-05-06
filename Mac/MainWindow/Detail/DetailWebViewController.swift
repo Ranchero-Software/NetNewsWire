@@ -166,14 +166,21 @@ final class DetailWebViewController: NSViewController {
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
+
 		if articleTextSize != AppDefaults.shared.articleTextSize {
 			articleTextSize = AppDefaults.shared.articleTextSize
-			reloadHTMLMaintainingScrollPosition()
+		
+			Task { @MainActor in
+				await reloadHTMLMaintainingScrollPosition()
+			}
 		}
 	}
-	
+
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
-		reloadHTMLMaintainingScrollPosition()
+
+		Task { @MainActor in
+			await reloadHTMLMaintainingScrollPosition()
+		}
 	}
 	
 	// MARK: Media Functions
@@ -184,16 +191,14 @@ final class DetailWebViewController: NSViewController {
 	
 	// MARK: Scrolling
 
-	func canScrollDown(_ completion: @escaping (Bool) -> Void) {
-		fetchScrollInfo { (scrollInfo) in
-			completion(scrollInfo?.canScrollDown ?? false)
-		}
+	func canScrollDown() async -> Bool {
+		let scrollInfo = await fetchScrollInfo()
+		return scrollInfo?.canScrollDown ?? false
 	}
 
-	func canScrollUp(_ completion: @escaping (Bool) -> Void) {
-		fetchScrollInfo { (scrollInfo) in
-			completion(scrollInfo?.canScrollUp ?? false)
-		}
+	func canScrollUp() async -> Bool {
+		let scrollInfo = await fetchScrollInfo()
+		return scrollInfo?.canScrollUp ?? false
 	}
 
 	override func scrollPageDown(_ sender: Any?) {
@@ -326,11 +331,10 @@ private extension DetailWebViewController {
 		}
 	}
 	
-	func reloadHTMLMaintainingScrollPosition() {
-		fetchScrollInfo() { scrollInfo in
-			self.windowScrollY = scrollInfo?.offsetY
-			self.reloadHTML()
-		}
+	func reloadHTMLMaintainingScrollPosition() async {
+		let scrollInfo = await fetchScrollInfo()
+		windowScrollY = scrollInfo?.offsetY
+		self.reloadHTML()
 	}
 
 	func reloadHTML() {
@@ -380,23 +384,22 @@ private extension DetailWebViewController {
 		webView.loadHTMLString(html, baseURL: baseURL)
 	}
 
-	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
-		
+	func fetchScrollInfo() async -> ScrollInfo? {
+
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
 
-		webView.evaluateJavaScript(javascriptString) { (info, error) in
-			guard let info = info as? [String: Any] else {
-				completion(nil)
-				return
-			}
-			guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
-				completion(nil)
-				return
-			}
-
-			let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webView.frame.height, offsetY: offsetY)
-			completion(scrollInfo)
+		guard let info = try? await webView.evaluateJavaScript(javascriptString) else {
+			return nil
 		}
+		guard let info = info as? [String: Any] else {
+			return nil
+		}
+		guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
+			return nil
+		}
+
+		let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webView.frame.height, offsetY: offsetY)
+		return scrollInfo
 	}
 
 	#if !MAC_APP_STORE

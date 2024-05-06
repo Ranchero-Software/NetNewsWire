@@ -986,8 +986,8 @@ extension AppDelegate: NSWindowRestoration {
 		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
 			mainWindow = appDelegate.createAndShowMainWindow().window
 		}
-		return mainWindow
-	}	
+		return mainWindow!
+	}
 }
 
 // Handle Notification Actions
