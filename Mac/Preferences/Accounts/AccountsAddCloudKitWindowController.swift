@@ -17,7 +17,7 @@ enum AccountsAddCloudKitWindowControllerError: LocalizedError {
 	}
 }
 
-class AccountsAddCloudKitWindowController: NSWindowController {
+final class AccountsAddCloudKitWindowController: NSWindowController {
 
 	private weak var hostWindow: NSWindow?
 
@@ -31,9 +31,9 @@ class AccountsAddCloudKitWindowController: NSWindowController {
 	
 	// MARK: API
 	
-	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+	func runSheetOnWindow(_ hostWindow: NSWindow) async -> NSApplication.ModalResponse {
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: completion)
+		return await hostWindow.beginSheet(window!)
 	}
 
 	// MARK: Actions
@@ -51,5 +51,4 @@ class AccountsAddCloudKitWindowController: NSWindowController {
 		let _ = AccountManager.shared.createAccount(type: .cloudKit)
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 	}
-	
 }

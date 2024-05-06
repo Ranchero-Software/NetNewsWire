@@ -159,11 +159,14 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			addAccountWindowController = accountsAddLocalWindowController
 		case .cloudKit:
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
-			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
+
+			Task { @MainActor in
+				let response = await accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!)
 				if response == NSApplication.ModalResponse.OK {
 					self.tableView.reloadData()
 				}
 			}
+			
 			addAccountWindowController = accountsAddCloudKitWindowController
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
