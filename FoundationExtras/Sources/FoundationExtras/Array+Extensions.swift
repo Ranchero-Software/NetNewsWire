@@ -15,7 +15,6 @@ public extension Array {
 			Array(self[$0 ..< Swift.min($0 + size, count)])
 		}
 	}
-	
 }
 
 public extension Array where Element: Equatable {
@@ -24,5 +23,16 @@ public extension Array where Element: Equatable {
 		guard let index = firstIndex(of: object) else {return}
 		remove(at: index)
 	}
+}
 
+public extension Array where Element == CGRect {
+
+	func maxY() -> CGFloat {
+
+		var y: CGFloat = 0.0
+		for r in self {
+			y = Swift.max(y, r.maxY)
+		}
+		return y
+	}
 }

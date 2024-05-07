@@ -333,7 +333,6 @@
 		51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF42273625800C787DC /* Bundle-Extensions.swift */; };
 		51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF622749FA100C787DC /* UIFont-Extensions.swift */; };
 		51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */; };
-		51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFA2275D85000C787DC /* Array-Extensions.swift */; };
 		51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */; };
 		51F9F3F723DF6DB200A314FD /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F9F3F623DF6DB200A314FD /* ArticleIconSchemeHandler.swift */; };
 		51F9F3F923DFB16300A314FD /* UITableView-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F9F3F823DFB16300A314FD /* UITableView-Extensions.swift */; };
@@ -1221,7 +1220,6 @@
 		51F85BF42273625800C787DC /* Bundle-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BF622749FA100C787DC /* UIFont-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem-Extensions.swift"; sourceTree = "<group>"; };
-		51F85BFA2275D85000C787DC /* Array-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
 		51F9F3F623DF6DB200A314FD /* ArticleIconSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleIconSchemeHandler.swift; sourceTree = "<group>"; };
 		51F9F3F823DFB16300A314FD /* UITableView-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView-Extensions.swift"; sourceTree = "<group>"; };
@@ -1861,7 +1859,6 @@
 			isa = PBXGroup;
 			children = (
 				51F9F3FA23DFB25700A314FD /* Animations.swift */,
-				51F85BFA2275D85000C787DC /* Array-Extensions.swift */,
 				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
 				51627A92238A3836007B3B4B /* CroppingPreviewParameters.swift */,
 				512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */,
@@ -3927,7 +3924,6 @@
 				845122742B8CEA9100480DB0 /* SidebarItem.swift in Sources */,
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,
 				5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */,
-				51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */,
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51EF0F7E2277A57D0050506E /* TimelineAccessibilityCellLayout.swift in Sources */,
 				51A1699B235E10D700EB091F /* AccountInspectorViewController.swift in Sources */,
