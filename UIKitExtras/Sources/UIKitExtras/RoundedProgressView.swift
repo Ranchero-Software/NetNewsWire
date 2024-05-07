@@ -8,9 +8,9 @@
 
 import UIKit
 
-class RoundedProgressView: UIProgressView {
+public final class RoundedProgressView: UIProgressView {
 
-	override func layoutSubviews() {
+	public override func layoutSubviews() {
 		super.layoutSubviews()
 		for subview in subviews {
 			subview.layer.masksToBounds = true
