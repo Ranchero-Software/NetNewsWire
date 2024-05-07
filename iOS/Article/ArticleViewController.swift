@@ -13,7 +13,7 @@ import Articles
 import SafariServices
 import ArticleExtractor
 
-class ArticleViewController: UIViewController {
+final class ArticleViewController: UIViewController {
 	
 	typealias State = (extractedArticle: ExtractedArticle?,
 		isShowingExtractedArticle: Bool,
@@ -508,4 +508,17 @@ private extension ArticleViewController {
 		return controller
 	}
 	
+}
+
+private extension UIPageViewController {
+
+	var scrollViewInsidePageControl: UIScrollView? {
+		
+		for view in view.subviews {
+			if let scrollView = view as? UIScrollView {
+				return scrollView
+			}
+		}
+		return nil
+	}
 }
