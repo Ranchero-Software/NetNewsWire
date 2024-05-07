@@ -1,5 +1,5 @@
 //
-//  String-Extensions.swift
+//  String+Extensions.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/8/19.
@@ -8,8 +8,8 @@
 
 import UIKit
 
-extension String {
-	
+public extension String {
+
 	func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
 		let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
 		let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
@@ -21,5 +21,4 @@ extension String {
 		let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
 		return ceil(boundingBox.width)
 	}
-	
 }

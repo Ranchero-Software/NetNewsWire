@@ -253,7 +253,6 @@
 		51C45258226508CF00C03939 /* AppAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45254226507D200C03939 /* AppAssets.swift */; };
 		51C45259226508D300C03939 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
 		51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */; };
-		51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45250226506F400C03939 /* String-Extensions.swift */; };
 		51C45268226508F600C03939 /* FeedUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45261226508F600C03939 /* FeedUnreadCountView.swift */; };
 		51C45269226508F600C03939 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45262226508F600C03939 /* FeedTableViewCell.swift */; };
 		51C4526A226508F600C03939 /* FeedTableViewCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45263226508F600C03939 /* FeedTableViewCellLayout.swift */; };
@@ -1165,7 +1164,6 @@
 		51C03080257D815A00609262 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/UnifiedWindow.storyboard; sourceTree = SOURCE_ROOT; };
 		51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreviewViewController.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
-		51C45250226506F400C03939 /* String-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String-Extensions.swift"; sourceTree = "<group>"; };
 		51C45254226507D200C03939 /* AppAssets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppAssets.swift; sourceTree = "<group>"; };
 		51C45255226507D200C03939 /* AppDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
 		51C45261226508F600C03939 /* FeedUnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedUnreadCountView.swift; sourceTree = "<group>"; };
@@ -1867,7 +1865,6 @@
 				5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */,
 				51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */,
 				512363372369155100951F16 /* RoundedProgressView.swift */,
-				51C45250226506F400C03939 /* String-Extensions.swift */,
 				5108F6D723763094001ABC45 /* TickMarkSlider.swift */,
 				C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */,
 				51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */,
@@ -3859,7 +3856,6 @@
 				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
 				51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */,
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
-				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51F9F3F923DFB16300A314FD /* UITableView-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* TimelineTableViewCell.swift in Sources */,
 				51C4526B226508F600C03939 /* SidebarViewController.swift in Sources */,
