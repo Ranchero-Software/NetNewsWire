@@ -13,7 +13,7 @@ import SafariServices
 import SwiftUI
 import UniformTypeIdentifiers
 
-class SettingsViewController: UITableViewController {
+final class SettingsViewController: UITableViewController {
 
 	private weak var opmlAccount: Account?
 
@@ -480,6 +480,19 @@ private extension SettingsViewController {
 		vc.modalPresentationStyle = .pageSheet
 		present(vc, animated: true)
 	}
-
 }
 
+extension Bundle {
+
+	var appName: String {
+		return infoDictionary?["CFBundleName"] as! String
+	}
+
+	var versionNumber: String {
+		return infoDictionary?["CFBundleShortVersionString"] as! String
+	}
+
+	var buildNumber: String {
+		return infoDictionary?["CFBundleVersion"] as! String
+	}
+}

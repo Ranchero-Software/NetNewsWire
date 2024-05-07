@@ -330,7 +330,6 @@
 		51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEE2272520B00C787DC /* Thanks.rtf */; };
 		51F85BF12272524100C787DC /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BF02272524100C787DC /* Credits.rtf */; };
 		51F85BF32272531500C787DC /* Dedication.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BF22272531500C787DC /* Dedication.rtf */; };
-		51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF42273625800C787DC /* Bundle-Extensions.swift */; };
 		51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF622749FA100C787DC /* UIFont-Extensions.swift */; };
 		51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */; };
 		51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */; };
@@ -1217,7 +1216,6 @@
 		51F85BEE2272520B00C787DC /* Thanks.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Thanks.rtf; sourceTree = "<group>"; };
 		51F85BF02272524100C787DC /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		51F85BF22272531500C787DC /* Dedication.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Dedication.rtf; sourceTree = "<group>"; };
-		51F85BF42273625800C787DC /* Bundle-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BF622749FA100C787DC /* UIFont-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
@@ -1859,7 +1857,6 @@
 			isa = PBXGroup;
 			children = (
 				51F9F3FA23DFB25700A314FD /* Animations.swift */,
-				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
 				51627A92238A3836007B3B4B /* CroppingPreviewParameters.swift */,
 				512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */,
 				512AF9DC236F05230066F8BE /* InteractiveLabel.swift */,
@@ -3872,7 +3869,6 @@
 				51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */,
 				517A745B2443665000B553B9 /* UIPageViewController-Extensions.swift in Sources */,
 				51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */,
-				51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */,
 				177A0C2D25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift in Sources */,
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
