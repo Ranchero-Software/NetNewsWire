@@ -8,13 +8,13 @@
 
 import UIKit
 
-class TickMarkSlider: UISlider {
+public final class TickMarkSlider: UISlider {
 
 	private var enableFeedback = false
 	private let feedbackGenerator = UISelectionFeedbackGenerator()
 	
 	private var roundedValue: Float?
-	override var value: Float {
+	public override var value: Float {
 		didSet {
 			let testValue = value.rounded()
 			if testValue != roundedValue && enableFeedback && value.truncatingRemainder(dividingBy: 1) == 0 {
@@ -24,7 +24,7 @@ class TickMarkSlider: UISlider {
 		}
 	}
 	
-	func addTickMarks() {
+	public func addTickMarks(color: UIColor) {
 
 		enableFeedback = true
 		
@@ -36,7 +36,7 @@ class TickMarkSlider: UISlider {
 			
 			let tick = UIView()
 			tick.translatesAutoresizingMaskIntoConstraints = false
-			tick.backgroundColor = AppAssets.tickMarkColor
+			tick.backgroundColor = backgroundColor
 			insertSubview(tick, at: 0)
 
 			tick.widthAnchor.constraint(equalToConstant: 3).isActive = true
@@ -59,7 +59,6 @@ class TickMarkSlider: UISlider {
 			} else {
 				tick.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
 			}
-			
 		}
 		
 		if let firstGapLayoutGuild = gapLayoutGuides.first {
@@ -67,17 +66,15 @@ class TickMarkSlider: UISlider {
 				gapLayoutGuides[i].widthAnchor.constraint(equalTo: firstGapLayoutGuild.widthAnchor).isActive = true
 			}
 		}
-				
 	}
 	
-	override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+	public override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
 		let result = super.continueTracking(touch, with: event)
 		value = value.rounded()
 		return result
 	}
 
-	override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
+	public override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
 		value = value.rounded()
 	}
-	
 }

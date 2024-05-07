@@ -8,8 +8,9 @@
 
 import UIKit
 import Images
+import UIKitExtras
 
-class TimelineCustomizerViewController: UIViewController {
+final class TimelineCustomizerViewController: UIViewController {
 
 	@IBOutlet weak var iconSizeSliderContainerView: UIView!
 	@IBOutlet weak var iconSizeSlider: TickMarkSlider!
@@ -29,11 +30,11 @@ class TimelineCustomizerViewController: UIViewController {
 
 		iconSizeSliderContainerView.layer.cornerRadius = 10
 		iconSizeSlider.value = Float(AppDefaults.shared.timelineIconSize.rawValue)
-		iconSizeSlider.addTickMarks()
+		iconSizeSlider.addTickMarks(color: AppAssets.tickMarkColor)
 
 		numberOfLinesSliderContainerView.layer.cornerRadius = 10
 		numberOfLinesSlider.value = Float(AppDefaults.shared.timelineNumberOfLines)
-		numberOfLinesSlider.addTickMarks()
+		numberOfLinesSlider.addTickMarks(color: AppAssets.tickMarkColor)
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -57,7 +58,6 @@ class TimelineCustomizerViewController: UIViewController {
 		AppDefaults.shared.timelineNumberOfLines = Int(numberOfLinesSlider.value.rounded())
 		updatePreview()
 	}
-	
 }
 
 // MARK: Private
@@ -87,5 +87,4 @@ private extension TimelineCustomizerViewController {
 			previewContainerView.layer.borderWidth = 0
 		}
 	}
-	
 }
