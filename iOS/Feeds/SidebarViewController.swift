@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UIKitExtras
 import Account
 import Articles
 import Tree

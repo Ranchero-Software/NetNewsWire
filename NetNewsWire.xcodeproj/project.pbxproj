@@ -331,8 +331,6 @@
 		51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */; };
 		51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */; };
 		51F9F3F723DF6DB200A314FD /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F9F3F623DF6DB200A314FD /* ArticleIconSchemeHandler.swift */; };
-		51F9F3F923DFB16300A314FD /* UITableView-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F9F3F823DFB16300A314FD /* UITableView-Extensions.swift */; };
-		51F9F3FB23DFB25700A314FD /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F9F3FA23DFB25700A314FD /* Animations.swift */; };
 		51FA73B72332D5F70090D516 /* LegacyArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73B62332D5F70090D516 /* LegacyArticleExtractorButton.swift */; };
 		51FD413B2342BD0500880194 /* TimelineUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FD413A2342BD0500880194 /* TimelineUnreadCountView.swift */; };
 		51FE10032345529D0056195D /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE10022345529D0056195D /* UserNotificationManager.swift */; };
@@ -1214,8 +1212,6 @@
 		51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
 		51F9F3F623DF6DB200A314FD /* ArticleIconSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleIconSchemeHandler.swift; sourceTree = "<group>"; };
-		51F9F3F823DFB16300A314FD /* UITableView-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView-Extensions.swift"; sourceTree = "<group>"; };
-		51F9F3FA23DFB25700A314FD /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		51FA73B62332D5F70090D516 /* LegacyArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyArticleExtractorButton.swift; sourceTree = "<group>"; };
 		51FD413A2342BD0500880194 /* TimelineUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineUnreadCountView.swift; sourceTree = "<group>"; };
 		51FE10022345529D0056195D /* UserNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationManager.swift; sourceTree = "<group>"; };
@@ -1850,7 +1846,6 @@
 		51C45245226506C800C03939 /* UIKit Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				51F9F3FA23DFB25700A314FD /* Animations.swift */,
 				51627A92238A3836007B3B4B /* CroppingPreviewParameters.swift */,
 				512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */,
 				512AF9DC236F05230066F8BE /* InteractiveLabel.swift */,
@@ -1865,7 +1860,6 @@
 				51F85BF622749FA100C787DC /* UIFont-Extensions.swift */,
 				517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */,
 				51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */,
-				51F9F3F823DFB16300A314FD /* UITableView-Extensions.swift */,
 				518ED21C23D0F26000E0A862 /* UIViewController-Extensions.swift */,
 				51FFF0C3235EE8E5002762AA /* VibrantButton.swift */,
 				5186A634235EF3A800C97195 /* VibrantLabel.swift */,
@@ -3813,7 +3807,6 @@
 				840D617F2029031C009BC708 /* AppDelegate.swift in Sources */,
 				512E08E72268801200BDCFDD /* FeedTreeControllerDelegate.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
-				51F9F3FB23DFB25700A314FD /* Animations.swift in Sources */,
 				5195C1DA2720205F00888867 /* ShadowTableChanges.swift in Sources */,
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,
 				B2B80778239C4C7000F191E0 /* RSImage-AppIcons.swift in Sources */,
@@ -3849,7 +3842,6 @@
 				514B7C8323205EFB00BAC947 /* RootSplitViewController.swift in Sources */,
 				51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */,
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
-				51F9F3F923DFB16300A314FD /* UITableView-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* TimelineTableViewCell.swift in Sources */,
 				51C4526B226508F600C03939 /* SidebarViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
