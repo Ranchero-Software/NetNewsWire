@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TimelineUnreadCountView: FeedUnreadCountView {
+final class TimelineUnreadCountView: FeedUnreadCountView {
 
 	override var padding: UIEdgeInsets {
 		return UIEdgeInsets(top: 2.0, left: 9.0, bottom: 2.0, right: 9.0)
@@ -33,7 +33,5 @@ class TimelineUnreadCountView: FeedUnreadCountView {
 		if unreadCount > 0 {
 			unreadCountString.draw(at: textRect().origin, withAttributes: textAttributes)
 		}
-		
 	}
-	
 }

@@ -326,7 +326,6 @@
 		51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BEE2272520B00C787DC /* Thanks.rtf */; };
 		51F85BF12272524100C787DC /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BF02272524100C787DC /* Credits.rtf */; };
 		51F85BF32272531500C787DC /* Dedication.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 51F85BF22272531500C787DC /* Dedication.rtf */; };
-		51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF622749FA100C787DC /* UIFont-Extensions.swift */; };
 		51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */; };
 		51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */; };
 		51F9F3F723DF6DB200A314FD /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F9F3F623DF6DB200A314FD /* ArticleIconSchemeHandler.swift */; };
@@ -1206,7 +1205,6 @@
 		51F85BEE2272520B00C787DC /* Thanks.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Thanks.rtf; sourceTree = "<group>"; };
 		51F85BF02272524100C787DC /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		51F85BF22272531500C787DC /* Dedication.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Dedication.rtf; sourceTree = "<group>"; };
-		51F85BF622749FA100C787DC /* UIFont-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem-Extensions.swift"; sourceTree = "<group>"; };
 		51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
 		51F9F3F623DF6DB200A314FD /* ArticleIconSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleIconSchemeHandler.swift; sourceTree = "<group>"; };
@@ -1855,7 +1853,6 @@
 				51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */,
 				C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */,
 				51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */,
-				51F85BF622749FA100C787DC /* UIFont-Extensions.swift */,
 				51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */,
 				518ED21C23D0F26000E0A862 /* UIViewController-Extensions.swift */,
 				51FFF0C3235EE8E5002762AA /* VibrantButton.swift */,
@@ -3876,7 +3873,6 @@
 				51DC079A2552083500A3F79F /* ArticleTextSize.swift in Sources */,
 				51C4529922650A0000C03939 /* ArticleThemesManager.swift in Sources */,
 				51EF0F802277A8330050506E /* TimelineCellLayout.swift in Sources */,
-				51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */,
 				51C452AF2265108300C03939 /* ArticleArray.swift in Sources */,
 				51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */,
 				51C9DE5823EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift in Sources */,
