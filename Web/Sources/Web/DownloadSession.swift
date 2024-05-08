@@ -48,10 +48,7 @@ public protocol DownloadSessionDelegate {
 		sessionConfiguration.httpMaximumConnectionsPerHost = 2
 		sessionConfiguration.httpCookieStorage = nil
 		sessionConfiguration.urlCache = nil
-
-		if let userAgentHeaders = UserAgent.headers() {
-			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-		}
+		sessionConfiguration.httpAdditionalHeaders = UserAgent.headers
 
 		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)		
 	}

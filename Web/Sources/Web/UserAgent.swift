@@ -10,17 +10,14 @@ import Foundation
 
 public struct UserAgent {
 	
-	public static func fromInfoPlist() -> String? {
+	public static let fromInfoPlist: String = {
 
-		return Bundle.main.object(forInfoDictionaryKey: "UserAgent") as? String
-	}
+		Bundle.main.object(forInfoDictionaryKey: "UserAgent") as! String
+	}()
 
-	public static func headers() -> [AnyHashable: String]? {
+	public static let headers: [String: String] = {
 
-		guard let userAgent = fromInfoPlist() else {
-			return nil
-		}
-
+		let userAgent = fromInfoPlist
 		return [HTTPRequestHeader.userAgent: userAgent]
-	}
+	}()
 }

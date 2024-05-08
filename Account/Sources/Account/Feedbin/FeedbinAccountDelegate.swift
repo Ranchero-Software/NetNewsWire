@@ -63,11 +63,8 @@ public enum FeedbinAccountDelegateError: String, Error {
 			sessionConfiguration.httpMaximumConnectionsPerHost = 1
 			sessionConfiguration.httpCookieStorage = nil
 			sessionConfiguration.urlCache = nil
-			
-			if let userAgentHeaders = UserAgent.headers() {
-				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-			}
-			
+			sessionConfiguration.httpAdditionalHeaders = UserAgent.headers
+
 			caller = FeedbinAPICaller(transport: URLSession(configuration: sessionConfiguration))
 		}
 

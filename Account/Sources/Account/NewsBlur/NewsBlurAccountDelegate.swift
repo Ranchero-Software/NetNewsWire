@@ -47,10 +47,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			sessionConfiguration.httpMaximumConnectionsPerHost = 1
 			sessionConfiguration.httpCookieStorage = nil
 			sessionConfiguration.urlCache = nil
-
-			if let userAgentHeaders = UserAgent.headers() {
-				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-			}
+			sessionConfiguration.httpAdditionalHeaders = UserAgent.headers
 
 			let session = URLSession(configuration: sessionConfiguration)
 			caller = NewsBlurAPICaller(transport: session)

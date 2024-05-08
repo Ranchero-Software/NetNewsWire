@@ -27,10 +27,7 @@ public typealias OneShotDownloadCallback = @Sendable (Data?, URLResponse?, Error
 		sessionConfiguration.httpCookieStorage = nil
 		sessionConfiguration.urlCache = nil
 		sessionConfiguration.timeoutIntervalForRequest = 30
-		
-		if let userAgentHeaders = UserAgent.headers() {
-			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-		}
+		sessionConfiguration.httpAdditionalHeaders = UserAgent.headers
 
 		urlSession = URLSession(configuration: sessionConfiguration)
 	}
