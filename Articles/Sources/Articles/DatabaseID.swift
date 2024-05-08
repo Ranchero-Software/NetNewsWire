@@ -8,21 +8,24 @@
 
 import Foundation
 import FoundationExtras
+import os
 
-class DatabaseIDCache: @unchecked Sendable {
+final class DatabaseIDCache: Sendable {
 
 	static let shared = DatabaseIDCache()
 
-	private var databaseIDCache = [String: String]()
-	private let databaseIDCacheLock = NSLock()
+	private let _databaseIDCache = OSAllocatedUnfairLock(initialState: [String: String]())
+	private var databaseIDCache: [String: String] {
+		get {
+			_databaseIDCache.withLock { $0 }
+		}
+		set {
+			_databaseIDCache.withLock { $0 = newValue }
+		}
+	}
 
 	/// Generates — or retrieves from cache — a database-suitable ID based on a String.
 	func databaseIDWithString(_ s: String) -> String {
-
-		databaseIDCacheLock.lock()
-		defer {
-			databaseIDCacheLock.unlock()
-		}
 
 		if let identifier = databaseIDCache[s] {
 			return identifier
