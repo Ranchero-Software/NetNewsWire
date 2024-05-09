@@ -24,7 +24,7 @@ public extension URLRequest {
 
 		if credentialsType == .newsBlurBasic {
 
-			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPRequestHeader.contentType)
+			setValue(MimeType.formURLEncoded, forHTTPHeaderField: HTTPRequestHeader.contentType)
 			httpMethod = "POST"
 
 			var postData = URLComponents()

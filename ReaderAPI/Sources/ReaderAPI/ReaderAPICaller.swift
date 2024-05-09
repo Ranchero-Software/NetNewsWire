@@ -209,7 +209,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.renameTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
-		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		guard let encodedOldName = self.encodeForURLPath(oldName), let encodedNewName = self.encodeForURLPath(newName) else {
@@ -234,7 +234,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.disableTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
-		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		let postData = "T=\(token)&s=\(folderExternalID)".data(using: String.Encoding.utf8)
@@ -276,7 +276,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 		
 		var request = URLRequest(url: callURL, readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
-		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		guard let encodedFeedURL = self.encodeForURLPath(url) else {
@@ -321,7 +321,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
-		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		let postData = "T=\(token)&s=\(subscriptionID)&ac=unsubscribe".data(using: String.Encoding.utf8)
@@ -357,7 +357,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
-		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
@@ -388,7 +388,7 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
-		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		// Get ids from above into hex representation of value
@@ -559,7 +559,7 @@ private extension ReaderAPICaller {
 		// Do POST asking for data about all the new articles
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.editTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
-		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
 		// Get ids from above into hex representation of value

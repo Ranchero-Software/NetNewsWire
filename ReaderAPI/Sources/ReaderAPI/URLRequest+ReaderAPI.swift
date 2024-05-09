@@ -24,7 +24,7 @@ extension URLRequest {
 
 		if credentialsType == .readerBasic {
 
-			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+			setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 			httpMethod = "POST"
 			var postData = URLComponents()
 			postData.queryItems = [

@@ -17,6 +17,8 @@ public struct MimeType {
 	public static let jpg = "image/jpg"
 	public static let gif = "image/gif"
 	public static let tiff = "image/tiff"
+
+	public static let formURLEncoded = "application/x-www-form-urlencoded"
 }
 
 public extension String {

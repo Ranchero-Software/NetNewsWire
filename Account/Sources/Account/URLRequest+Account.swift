@@ -28,7 +28,7 @@ public extension URLRequest {
 			let auth = "Basic \(base64 ?? "")"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
 		case .newsBlurBasic:
-			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPRequestHeader.contentType)
+			setValue(MimeType.formURLEncoded, forHTTPHeaderField: HTTPRequestHeader.contentType)
 			httpMethod = "POST"
 			var postData = URLComponents()
 			postData.queryItems = [
@@ -40,7 +40,7 @@ public extension URLRequest {
 			setValue("\(NewsBlurAPICaller.sessionIDCookieKey)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
 			httpShouldHandleCookies = true
 		case .readerBasic:
-			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+			setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 			httpMethod = "POST"
 			var postData = URLComponents()
 			postData.queryItems = [
