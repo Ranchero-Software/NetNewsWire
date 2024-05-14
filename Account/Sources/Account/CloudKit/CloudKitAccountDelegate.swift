@@ -408,7 +408,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
 
-		try? await database.insertStatuses(syncStatuses)
+		try? await database.insertStatuses(Set(syncStatuses))
 		if let count = try? await self.database.selectPendingCount(), count > 100 {
 			try await sendArticleStatus(for: account, showProgress: false)
 		}
@@ -671,7 +671,7 @@ private extension CloudKitAccountDelegate {
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
 		}
 
-		try? await database.insertStatuses(syncStatuses)
+		try? await database.insertStatuses(Set(syncStatuses))
 	}
 
 	func sendArticleStatus(for account: Account, showProgress: Bool) async throws {

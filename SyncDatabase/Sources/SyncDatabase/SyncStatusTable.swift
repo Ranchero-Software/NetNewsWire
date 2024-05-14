@@ -88,7 +88,7 @@ struct SyncStatusTable {
 		database.executeUpdateInTransaction(deleteSQL, withArgumentsIn: parameters)
 	}
 
-	func insertStatuses(_ statuses: [SyncStatus], database: FMDatabase) {
+	func insertStatuses(_ statuses: Set<SyncStatus>, database: FMDatabase) {
 
 		database.beginTransaction()
 

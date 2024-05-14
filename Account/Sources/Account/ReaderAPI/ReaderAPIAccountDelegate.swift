@@ -443,7 +443,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
 
-		try await self.database.insertStatuses(syncStatuses)
+		try await self.database.insertStatuses(Set(syncStatuses))
 
 		if let count = try await self.database.selectPendingCount(), count > 100 {
 			try await sendArticleStatus(for: account)

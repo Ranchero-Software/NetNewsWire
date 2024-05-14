@@ -378,7 +378,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
 
-		try? await database.insertStatuses(syncStatuses)
+		try? await database.insertStatuses(Set(syncStatuses))
 
 		if let count = try? await database.selectPendingCount(), count > 100 {
 			try? await sendArticleStatus(for: account)

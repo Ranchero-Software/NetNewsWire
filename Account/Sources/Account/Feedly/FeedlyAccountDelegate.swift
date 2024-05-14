@@ -357,7 +357,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
 
-		try? await syncDatabase.insertStatuses(syncStatuses)
+		try? await syncDatabase.insertStatuses(Set(syncStatuses))
 
 		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 			try? await sendArticleStatus(for: account)
