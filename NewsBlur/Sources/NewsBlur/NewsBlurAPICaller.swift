@@ -78,7 +78,7 @@ import Secrets
 		return (payload?.feeds, payload?.folders)
 	}
 
-	func retrieveStoryHashes(endpoint: String) async throws -> [NewsBlurStoryHash]? {
+	func retrieveStoryHashes(endpoint: String) async throws -> Set<NewsBlurStoryHash>? {
 
 		let url: URL! = baseURL
 			.appendingPathComponent(endpoint)
@@ -88,16 +88,19 @@ import Secrets
 
 		let (_, payload) = try await requestData(callURL: url, resultType: NewsBlurStoryHashesResponse.self, dateDecoding: .secondsSince1970)
 
-		let hashes = payload?.unread ?? payload?.starred
-		return hashes
+		if let hashes = payload?.unread ?? payload?.starred {
+			return Set(hashes)
+		} else {
+			return nil
+		}
 	}
 
-	public func retrieveUnreadStoryHashes() async throws -> [NewsBlurStoryHash]? {
+	public func retrieveUnreadStoryHashes() async throws -> Set<NewsBlurStoryHash>? {
 
 		return try await retrieveStoryHashes(endpoint: "reader/unread_story_hashes")
 	}
 
-	public func retrieveStarredStoryHashes() async throws -> [NewsBlurStoryHash]? {
+	public func retrieveStarredStoryHashes() async throws -> Set<NewsBlurStoryHash>? {
 
 		return try await retrieveStoryHashes(endpoint: "reader/starred_story_hashes")
 	}
@@ -131,22 +134,22 @@ import Secrets
 		return (payload?.stories, HTTPDateInfo(urlResponse: response)?.date)
 	}
 
-	public func markAsUnread(hashes: [String]) async throws {
+	public func markAsUnread(hashes: Set<String>) async throws {
 
 		try await sendUpdates(endpoint: "reader/mark_story_hash_as_unread", payload: NewsBlurStoryStatusChange(hashes: hashes))
 	}
 
-	public func markAsRead(hashes: [String]) async throws {
+	public func markAsRead(hashes: Set<String>) async throws {
 
 		try await sendUpdates(endpoint: "reader/mark_story_hashes_as_read", payload: NewsBlurStoryStatusChange(hashes: hashes))
 	}
 
-	public func star(hashes: [String]) async throws {
+	public func star(hashes: Set<String>) async throws {
 
 		try await sendUpdates(endpoint: "reader/mark_story_hash_as_starred", payload: NewsBlurStoryStatusChange(hashes: hashes))
 	}
 
-	public func unstar(hashes: [String]) async throws {
+	public func unstar(hashes: Set<String>) async throws {
 
 		try await sendUpdates(endpoint: "reader/mark_story_hash_as_unstarred", payload: NewsBlurStoryStatusChange(hashes: hashes))
 	}

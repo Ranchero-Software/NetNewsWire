@@ -10,7 +10,7 @@ import Foundation
 
 public struct NewsBlurStoryStatusChange: Sendable {
 
-	public let hashes: [String]
+	public let hashes: Set<String>
 }
 
 extension NewsBlurStoryStatusChange: NewsBlurDataConvertible {
