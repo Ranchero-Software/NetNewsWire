@@ -25,7 +25,7 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 		return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
 	}
 }
-@MainActor @objc public final class FeedlyOAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
+@MainActor @objc public final class FeedlyOAuthAccountAuthorizationOperation: NSObject {
 
 	public var isCanceled: Bool = false {
 		didSet {
@@ -34,21 +34,17 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 			}
 		}
 	}
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String?
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
+
+	public var completionBlock: ((FeedlyOAuthAccountAuthorizationOperation) -> Void)?
 
 	public weak var presentationAnchor: ASPresentationAnchor?
 	public weak var delegate: FeedlyOAuthAccountAuthorizationOperationDelegate?
 	
-	private let accountType: AccountType
 	private let oauthClient: OAuthAuthorizationClient
 	private var session: ASWebAuthenticationSession?
 	private let secretsProvider: SecretsProvider
 
-	public init(accountType: AccountType, secretsProvider: SecretsProvider) {
-		self.accountType = accountType
+	public init(secretsProvider: SecretsProvider) {
 		self.secretsProvider = secretsProvider
 		self.oauthClient = FeedlyAPICaller.API.cloud.oauthAuthorizationClient(secretsProvider: secretsProvider)
 	}
@@ -132,17 +128,6 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 		}
 	}
 
-
-	nonisolated public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-
-		MainActor.assumeIsolated {
-			guard let anchor = presentationAnchor else {
-				fatalError("\(self) has outlived presentation anchor.")
-			}
-			return anchor
-		}
-	}
-	
 	@MainActor private func saveAccount(for grant: OAuthAuthorizationGrant) {
 		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
 			didFinish(FeedlyOAuthAccountAuthorizationOperationError.duplicateAccount)
@@ -172,12 +157,27 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 	
 	@MainActor private func didFinish() {
 		assert(Thread.isMainThread)
-		operationDelegate?.operationDidComplete(self)
+//		operationDelegate?.operationDidComplete(self)
 	}
 	
 	@MainActor private func didFinish(_ error: Error) {
 		assert(Thread.isMainThread)
 		delegate?.oauthAccountAuthorizationOperation(self, didFailWith: error)
 		didFinish()
+	}
+}
+
+// MARK: - ASWebAuthenticationPresentationContextProviding
+
+extension FeedlyOAuthAccountAuthorizationOperation: ASWebAuthenticationPresentationContextProviding {
+
+	nonisolated public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+
+		MainActor.assumeIsolated {
+			guard let anchor = presentationAnchor else {
+				fatalError("\(self) has outlived presentation anchor.")
+			}
+			return anchor
+		}
 	}
 }

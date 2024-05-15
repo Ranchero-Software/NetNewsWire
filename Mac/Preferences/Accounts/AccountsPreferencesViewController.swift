@@ -185,11 +185,13 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			addAccountWindowController = accountsReaderAPIWindowController
 
 		case .feedly:
-			let addAccount = FeedlyOAuthAccountAuthorizationOperation(accountType: .feedly, secretsProvider: Secrets())
+			let addAccount = FeedlyOAuthAccountAuthorizationOperation(secretsProvider: Secrets())
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
-			MainThreadOperationQueue.shared.add(addAccount)
+			Task { @MainActor in
+				addAccount.run()
+			}
 
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
@@ -272,6 +274,8 @@ private extension AccountsPreferencesViewController {
 	}
 	
 }
+
+// MARK: - FeedlyOAuthAccountAuthorizationOperationDelegate
 
 extension AccountsPreferencesViewController: FeedlyOAuthAccountAuthorizationOperationDelegate {
 	

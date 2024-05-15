@@ -15,7 +15,7 @@ protocol AddAccountDismissDelegate: UIViewController {
 	@MainActor func dismiss()
 }
 
-class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
+final class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	private enum AddAccountSections: Int, CaseIterable {
 		case local = 0
@@ -66,7 +66,9 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			}
 		}
 	}
-	
+
+	private var feedlyAddAccountOperation: FeedlyOAuthAccountAuthorizationOperation?
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 	}
@@ -198,10 +200,15 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			addViewController.delegate = self
 			present(navController, animated: true)
 		case .feedly:
-			let addAccount = FeedlyOAuthAccountAuthorizationOperation(accountType: .feedly, secretsProvider: Secrets())
+			let addAccount = FeedlyOAuthAccountAuthorizationOperation(secretsProvider: Secrets())
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
-			MainThreadOperationQueue.shared.add(addAccount)
+			feedlyAddAccountOperation = addAccount
+			
+			Task { @MainActor in
+				addAccount.run()
+			}
+
 		case .newsBlur:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "NewsBlurAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
@@ -223,6 +230,8 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	}
 	
 }
+
+// MARK: - FeedlyOAuthAccountAuthorizationOperationDelegate
 
 extension AddAccountViewController: FeedlyOAuthAccountAuthorizationOperationDelegate {
 	
