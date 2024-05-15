@@ -71,9 +71,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 	private let syncDatabase: SyncDatabase
 
-	private weak var currentSyncAllOperation: MainThreadOperation?
-	private let operationQueue = MainThreadOperationQueue()
-
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API, secretsProvider: SecretsProvider) {
 		// Many operations have their own operation queues, such as the sync all operation.
 		// Making this a serial queue at this higher level of abstraction means we can ensure,
@@ -933,7 +930,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func suspendNetwork() {
 		MainActor.assumeIsolated {
 			caller.suspend()
-			operationQueue.cancelAllOperations()
+			// TODO: cancel tasks
+		//	operationQueue.cancelAllOperations()
 		}
 	}
 	
