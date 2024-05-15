@@ -142,7 +142,7 @@ private extension CloudKitSendStatusOperation {
 				// but the articles didn't come back in the fetch.  We need to clean up those sync records
 				// and stop processing.
 				if statusUpdates.isEmpty {
-					try? await self.database.deleteSelectedForProcessing(articleIDs)
+					try? await self.database.deleteSelectedForProcessing(Set(articleIDs))
 					done(true)
 					return
 				}
@@ -151,10 +151,10 @@ private extension CloudKitSendStatusOperation {
 					Task { @MainActor in
 						switch result {
 						case .success:
-							try? await self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID }))
+							try? await self.database.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
 							done(false)
 						case .failure(let error):
-							try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
+							try? await self.database.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 							self.processAccountError(error)
 							os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
 							completion(true)
@@ -162,7 +162,7 @@ private extension CloudKitSendStatusOperation {
 					}
 				}
 			} catch {
-				try? await self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }))
+				try? await self.database.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 				os_log(.error, log: self.log, "Send article status fetch articles error: %@.", error.localizedDescription)
 				completion(true)
 			}

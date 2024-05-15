@@ -693,10 +693,10 @@ private extension ReaderAPIAccountDelegate {
 
 			do {
 				let _ = try await apiCall(articleIDGroup)
-				try? await database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
+				try? await database.deleteSelectedForProcessing(Set(articleIDGroup))
 			} catch {
 				os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
-				try? await database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
+				try? await database.resetSelectedForProcessing(Set(articleIDGroup))
 			}
 		}
 	}

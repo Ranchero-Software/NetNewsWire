@@ -62,7 +62,7 @@ struct SyncStatusTable {
 		database.executeUpdateInTransaction(updateSQL)
 	}
 
-	func resetSelectedForProcessing(_ articleIDs: [String], database: FMDatabase) {
+	func resetSelectedForProcessing(_ articleIDs: Set<String>, database: FMDatabase) {
 
 		guard !articleIDs.isEmpty else {
 			return
@@ -75,7 +75,7 @@ struct SyncStatusTable {
 		database.executeUpdateInTransaction(updateSQL, withArgumentsIn: parameters)
 	}
 
-	func deleteSelectedForProcessing(_ articleIDs: [String], database: FMDatabase) {
+	func deleteSelectedForProcessing(_ articleIDs: Set<String>, database: FMDatabase) {
 
 		guard !articleIDs.isEmpty else {
 			return

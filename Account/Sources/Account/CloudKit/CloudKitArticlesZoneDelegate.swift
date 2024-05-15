@@ -66,7 +66,7 @@ private extension CloudKitArticlesZoneDelegate {
 			return
 		}
 
-		try? await database.deleteSelectedForProcessing(Array(deletableArticleIDs))
+		try? await database.deleteSelectedForProcessing(deletableArticleIDs)
 		try? await account?.delete(articleIDs: deletableArticleIDs)
 	}
 

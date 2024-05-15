@@ -272,7 +272,7 @@ extension NewsBlurAccountDelegate {
 			} catch {
 				errorOccurred = true
 				os_log(.error, log: self.log, "Story status sync call failed: %@.", error.localizedDescription)
-				try? await syncDatabase.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
+				try? await syncDatabase.resetSelectedForProcessing(Set(storyHashGroup))
 			}
 		}
 

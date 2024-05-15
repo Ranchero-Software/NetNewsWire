@@ -76,7 +76,7 @@ public actor SyncDatabase {
 		syncStatusTable.resetAllSelectedForProcessing(database: database)
 	}
 
-	public func resetSelectedForProcessing(_ articleIDs: [String]) throws {
+	public func resetSelectedForProcessing(_ articleIDs: Set<String>) throws {
 
 		guard let database else {
 			throw DatabaseError.suspended
@@ -84,7 +84,7 @@ public actor SyncDatabase {
 		syncStatusTable.resetSelectedForProcessing(articleIDs, database: database)
 	}
 	
-    public func deleteSelectedForProcessing(_ articleIDs: [String]) throws {
+    public func deleteSelectedForProcessing(_ articleIDs: Set<String>) throws {
 
 		guard let database else {
 			throw DatabaseError.suspended

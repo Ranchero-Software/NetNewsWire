@@ -563,9 +563,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 			do {
 				try await caller.mark(articleIDs, as: statusAction.action)
-				try? await syncDatabase.deleteSelectedForProcessing(Array(articleIDs))
+				try? await syncDatabase.deleteSelectedForProcessing(articleIDs)
 			} catch {
-				try? await syncDatabase.resetSelectedForProcessing(Array(articleIDs))
+				try? await syncDatabase.resetSelectedForProcessing(articleIDs)
 				throw error
 			}
 		}

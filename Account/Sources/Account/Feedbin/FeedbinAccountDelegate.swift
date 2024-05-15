@@ -729,11 +729,12 @@ private extension FeedbinAccountDelegate {
 		let articleIDGroups = articleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
 			
+			let articleIDsGroupAsString = Set(articleIDGroup.map { String($0) })
 			do {
 				try await apiCall(articleIDGroup)
-				try? await database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
+				try? await database.deleteSelectedForProcessing(articleIDsGroupAsString)
 			} catch {
-				try? await database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
+				try? await database.resetSelectedForProcessing(articleIDsGroupAsString)
 				localError = error
 				os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
 			}
