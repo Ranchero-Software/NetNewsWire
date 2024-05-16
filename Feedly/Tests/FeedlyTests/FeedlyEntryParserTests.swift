@@ -7,14 +7,14 @@
 //
 
 import XCTest
-@testable import Account
+@testable import Feedly
 
-class FeedlyEntryParserTests: XCTestCase {
-	
+final class FeedlyEntryParserTests: XCTestCase {
+
 	func testParsing() {
 		let content = FeedlyEntry.Content(content: "Test Content", direction: .leftToRight)
 		let summary = FeedlyEntry.Content(content: "Test Summary", direction: .leftToRight)
-		let origin = FeedlyOrigin(title: "Test Feed", streamId: "tests://feeds/1", htmlUrl: nil)
+		let origin = FeedlyOrigin(title: "Test Feed", streamID: "tests://feeds/1", htmlURL: nil)
 		let canonicalLink = FeedlyLink(href: "tests://feeds/1/entries/1", type: "text/html")
 		let tags = [
 			FeedlyTag(id: "tests/tags/1", label: "Tag 1"),
@@ -43,7 +43,7 @@ class FeedlyEntryParserTests: XCTestCase {
 		XCTAssertEqual(parser.title, entry.title)
 		XCTAssertEqual(parser.contentHMTL, content.content)
 		XCTAssertEqual(parser.summary, summary.content)
-		XCTAssertEqual(parser.datePublished, .distantPast)
+		XCTAssertEqual(parser.datePublished, Date.distantPast)
 		XCTAssertEqual(parser.dateModified, Date(timeIntervalSinceReferenceDate: 0))
 		
 		guard let item = parser.parsedItemRepresentation else {
@@ -76,7 +76,7 @@ class FeedlyEntryParserTests: XCTestCase {
 		let content = FeedlyEntry.Content(content: "<div style=\"direction:rtl;text-align:right\">Test Content</div>", direction: .rightToLeft)
 		let summaryContent = "Test Summary"
 		let summary = FeedlyEntry.Content(content: "<div style=\"direction:rtl;text-align:right\">\(summaryContent)</div>", direction: .rightToLeft)
-		let origin = FeedlyOrigin(title: "Test Feed", streamId: "tests://feeds/1", htmlUrl: nil)
+		let origin = FeedlyOrigin(title: "Test Feed", streamID: "tests://feeds/1", htmlURL: nil)
 		let title = "Test Entry 1"
 		let entry = FeedlyEntry(id: "tests/feeds/1/entries/1",
 								title: "<div style=\"direction:rtl;text-align:right\">\(title)</div>",
