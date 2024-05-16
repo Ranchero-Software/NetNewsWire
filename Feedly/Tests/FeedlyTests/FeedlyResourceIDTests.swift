@@ -7,11 +7,11 @@
 //
 
 import XCTest
-@testable import Account
+@testable import Feedly
 
-class FeedlyResourceIDTests: XCTestCase {
-	
-	func testFeedResourceID() {
+final class FeedlyResourceIDTests: XCTestCase {
+
+	@MainActor func testFeedResourceID() {
 		let expectedUrl = "http://ranchero.com/blog/atom.xml"
 		
 		let feedResource = FeedlyFeedResourceID(id: "feed/\(expectedUrl)")
