@@ -7,10 +7,10 @@
 //
 
 import XCTest
-@testable import Account
+@testable import Feedly
 
-class FeedlyFeedParserTests: XCTestCase {
-	
+final class FeedlyFeedParserTests: XCTestCase {
+
 	func testParsing() {
 		let name = "Test Feed"
 		let website = "tests://nnw/feed/1"
