@@ -7,10 +7,10 @@
 //
 
 import XCTest
-@testable import Account
+@testable import Feedly
 
-class FeedlyTextSanitizationTests: XCTestCase {
-	
+final class FeedlyTextSanitizationTests: XCTestCase {
+
 	func testRTLSanitization() {
 		
 		let targetsAndExpectations: [(target: String?, expectation: String?)] = [
