@@ -1,5 +1,5 @@
 //
-//  Array+RSCore.swift
+//  Array+Extensions.swift
 //  RSCore
 //
 //  Created by Brent Simmons on 2/17/18.
@@ -15,14 +15,6 @@ public extension Array {
 		return stride(from: 0, to: count, by: size).map {
 			Array(self[$0 ..< Swift.min($0 + size, count)])
 		}
-	}
-}
-
-public extension Array where Element: Equatable {
-
-	mutating func removeFirst(object: Element) {
-		guard let index = firstIndex(of: object) else {return}
-		remove(at: index)
 	}
 }
 
