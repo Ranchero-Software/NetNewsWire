@@ -409,7 +409,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func updateAccountFeeds(parsedItems: Set<ParsedItem>) async throws {
 
-		let feedIDsAndItems = parsedItemsKeyedByFeedURL(parsedItems)
+		let feedIDsAndItems = FeedlyUtilities.parsedItemsKeyedByFeedURL(parsedItems)
 		try await updateAccountFeedsWithItems(feedIDsAndItems: feedIDsAndItems)
 	}
 
@@ -449,26 +449,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		let feedsAndFolders = [(feedlyFeeds, folder)]
 		return feedsAndFolders
-	}
-
-	func parsedItemsKeyedByFeedURL(_ parsedItems: Set<ParsedItem>) -> [String: Set<ParsedItem>] {
-
-		var d = [String: Set<ParsedItem>]()
-
-		for parsedItem in parsedItems {
-			let key = parsedItem.feedURL
-			let value: Set<ParsedItem> = {
-				if var items = d[key] {
-					items.insert(parsedItem)
-					return items
-				} else {
-					return [parsedItem]
-				}
-			}()
-			d[key] = value
-		}
-
-		return d
 	}
 
 	func downloadArticles(missingArticleIDs: Set<String>?, updatedArticleIDs: Set<String>?) async throws {
