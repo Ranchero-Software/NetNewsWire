@@ -258,10 +258,7 @@ public protocol FeedlyAPICallerDelegate: AnyObject {
 			throw URLError(.cannotDecodeContentData)
 		}
 	}
-}
 
-extension FeedlyAPICaller {
-	
 	@discardableResult
 	@MainActor public func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String) async throws -> [FeedlyFeed] {
 
@@ -294,10 +291,7 @@ extension FeedlyAPICaller {
 
 		return collectionFeeds
 	}
-}
 
-extension FeedlyAPICaller {
-	
 	/// https://tools.ietf.org/html/rfc6749#section-4.1
 
 	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
@@ -338,10 +332,7 @@ extension FeedlyAPICaller {
 
 		return tokenResponse
 	}
-}
 
-extension FeedlyAPICaller {
-		
 	/// Access tokens expire. Perform a request for a fresh access token given the long life refresh token received when authorization was granted.
 	///
 	/// [Documentation](https://tools.ietf.org/html/rfc6749#section-6)
@@ -362,10 +353,7 @@ extension FeedlyAPICaller {
 
 		return tokenResponse
 	}
-}
 
-extension FeedlyAPICaller {
-	
 	public func getCollections() async throws -> Set<FeedlyCollection> {
 
 		guard !isSuspended else { throw TransportError.suspended }
@@ -379,10 +367,7 @@ extension FeedlyAPICaller {
 		
 		return Set(collections)
 	}
-}
 
-extension FeedlyAPICaller {
-	
 	@MainActor public func getStreamContents(for resource: FeedlyResourceID, continuation: String?, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStream {
 
 		guard !isSuspended else { throw TransportError.suspended }
@@ -432,10 +417,7 @@ extension FeedlyAPICaller {
 
 		return collections
 	}
-}
 
-extension FeedlyAPICaller {
-	
 	@MainActor public func getStreamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStreamIDs {
 
 		guard !isSuspended else { throw TransportError.suspended }
@@ -485,10 +467,7 @@ extension FeedlyAPICaller {
 
 		return collections
 	}
-}
 
-extension FeedlyAPICaller {
-	
 	@MainActor public func getEntries(for ids: Set<String>) async throws -> [FeedlyEntry] {
 
 		guard !isSuspended else { throw TransportError.suspended }
@@ -505,10 +484,7 @@ extension FeedlyAPICaller {
 
 		return entries
 	}
-}
 
-extension FeedlyAPICaller {
-	
 	private struct MarkerEntriesBody: Encodable {
 		let type = "entries"
 		var action: String
@@ -533,10 +509,7 @@ extension FeedlyAPICaller {
 			}
 		}
 	}
-}
 
-extension FeedlyAPICaller {
-	
 	public func getFeeds(for query: String, count: Int, localeIdentifier: String) async throws -> FeedlyFeedsSearchResponse {
 
 		guard !isSuspended else { throw TransportError.suspended }
@@ -563,9 +536,6 @@ extension FeedlyAPICaller {
 
 		return searchResponse
 	}
-}
-
-extension FeedlyAPICaller {
 	
 	public func logout() async throws {
 
