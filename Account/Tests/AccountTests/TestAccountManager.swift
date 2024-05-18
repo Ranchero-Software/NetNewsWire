@@ -8,11 +8,10 @@
 
 import Foundation
 import Web
-
 @testable import Account
 
-class TestAccountManager {
-	
+final class TestAccountManager {
+
 	static let shared = TestAccountManager()
 	
 	var accountsFolder: URL {
