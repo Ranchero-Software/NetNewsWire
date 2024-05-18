@@ -271,41 +271,4 @@ class FeedlyTestSupport {
 		XCTAssertEqual(items.count, entries.count)
 		XCTAssertTrue(missing.isEmpty, "Failed to create \(FeedlyEntry.self) values from objects in the JSON with these ids.")
 	}
-	
-	func makeParsedItemTestDataFor(numberOfFeeds: Int, numberOfItemsInFeeds: Int) -> [String: Set<ParsedItem>] {
-		let ids = (0..<numberOfFeeds).map { "feed/\($0)" }
-		let feedIDsAndItemCounts = ids.map { ($0, numberOfItemsInFeeds) }
-		
-		let entries = feedIDsAndItemCounts.map { (feedId, count) -> (String, [Int]) in
-			return (feedId, (0..<count).map { $0 })
-			
-		}.map { pair -> (String, Set<ParsedItem>) in
-			let items = pair.1.map { index -> ParsedItem in
-				ParsedItem(syncServiceID: "\(pair.0)/articles/\(index)",
-					uniqueID: UUID().uuidString,
-					feedURL: pair.0,
-					url: "http://localhost/",
-					externalURL: "http://localhost/\(pair.0)/articles/\(index).html",
-					title: "Title\(index)",
-					language: nil,
-					contentHTML: "Content \(index) HTML.",
-					contentText: "Content \(index) Text",
-					summary: nil,
-					imageURL: nil,
-					bannerImageURL: nil,
-					datePublished: nil,
-					dateModified: nil,
-					authors: nil,
-					tags: nil,
-					attachments: nil)
-			}
-			return (pair.0, Set(items))
-		}.reduce([String: Set<ParsedItem>](minimumCapacity: feedIDsAndItemCounts.count)) { (dict, pair) in
-			var mutant = dict
-			mutant[pair.0] = pair.1
-			return mutant
-		}
-		
-		return entries
-	}
 }
