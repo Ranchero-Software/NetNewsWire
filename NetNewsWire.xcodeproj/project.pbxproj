@@ -1326,6 +1326,7 @@
 		84A699132BC34E8500605AB8 /* ArticleExtractor */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ArticleExtractor; sourceTree = "<group>"; };
 		84A699182BC3524C00605AB8 /* LocalAccount */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = LocalAccount; sourceTree = "<group>"; };
 		84A699192BC36EDB00605AB8 /* Feedly */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Feedly; sourceTree = "<group>"; };
+		84A959052BF9743F00F0D9B8 /* NetNewsWire.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetNewsWire.xctestplan; sourceTree = "<group>"; };
 		84AD1EA92031617300BC20B7 /* PasteboardFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardFolder.swift; sourceTree = "<group>"; };
 		84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeedPasteboardWriter.swift; sourceTree = "<group>"; };
 		84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarOutlineDataSource.swift; sourceTree = "<group>"; };
@@ -2239,6 +2240,7 @@
 				84C9FC922262A0E600D921D6 /* iOS */,
 				84C9FC6822629C9A00D921D6 /* Shared */,
 				176813F82564BB2C00D98635 /* Widget */,
+				84A959052BF9743F00F0D9B8 /* NetNewsWire.xctestplan */,
 				84C9FCA52262A1E600D921D6 /* Tests */,
 				D5907CDA2002F084005947E5 /* xcconfig */,
 				849C64611ED37A5D003D8FC0 /* Products */,

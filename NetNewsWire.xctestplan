@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "12F2CDCE-49CC-41E9-828F-4F7F24C65D08",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:FoundationExtras",
+        "identifier" : "FoundationExtrasTests",
+        "name" : "FoundationExtrasTests"
+      }
+    }
+  ],
+  "version" : 1
+}
