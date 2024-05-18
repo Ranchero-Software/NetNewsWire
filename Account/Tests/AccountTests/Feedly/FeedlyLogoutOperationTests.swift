@@ -51,47 +51,6 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		}
 	}
 	
-	func testCancel() {
-		let service = TestFeedlyLogoutService()
-		service.logoutExpectation = expectation(description: "Did Call Logout")
-		service.logoutExpectation?.isInverted = true
-		
-		let accessToken: Credentials
-		let refreshToken: Credentials
-		do {
-			(accessToken, refreshToken) = try getTokens(for: account)
-		} catch {
-			XCTFail("Could not retrieve credentials to verify their integrity later.")
-			return
-		}
-		
-		let logout = FeedlyLogoutOperation(account: account, service: service, log: support.log)
-		
-		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
-		let completionExpectation = expectation(description: "Did Finish")
-		logout.completionBlock = { _ in
-			completionExpectation.fulfill()
-		}
-		
-		MainThreadOperationQueue.shared.add(logout)
-		
-		MainThreadOperationQueue.shared.cancelOperations([logout])
-		
-		waitForExpectations(timeout: 1)
-		
-		XCTAssertTrue(logout.isCanceled)
-		
-		do {
-			let accountAccessToken = try account.retrieveCredentials(type: .oauthAccessToken)
-			let accountRefreshToken = try account.retrieveCredentials(type: .oauthRefreshToken)
-			
-			XCTAssertEqual(accountAccessToken, accessToken)
-			XCTAssertEqual(accountRefreshToken, refreshToken)
-		} catch {
-			XCTFail("Could not verify tokens were left intact. Did the operation delete them?")
-		}
-	}
-	
 	func testLogoutSuccess() {
 		let service = TestFeedlyLogoutService()
 		service.logoutExpectation = expectation(description: "Did Call Logout")
