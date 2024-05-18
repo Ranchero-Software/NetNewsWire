@@ -1,5 +1,5 @@
 //
-//  FeedlyOrganiseParsedItemsByFeedOperationTests.swift
+//  ParsedItemsKeyedByFeedURLTests.swift
 //  AccountTests
 //
 //  Created by Kiel Gillard on 24/10/19.
@@ -10,8 +10,8 @@ import XCTest
 @testable import Account
 import Parser
 
-class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
-	
+final class ParsedItemsKeyedByFeedURLTests: XCTestCase {
+
 	private var account: Account!
 	private let support = FeedlyTestSupport()
 	
