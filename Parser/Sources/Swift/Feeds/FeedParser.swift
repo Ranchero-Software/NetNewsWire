@@ -48,4 +48,29 @@ public struct FeedParser {
 			return nil
 		}
 	}
+
+	/// For unit tests measuring performance.
+	public static func parseSync(_ parserData: ParserData) throws -> ParsedFeed? {
+
+		let type = feedType(parserData)
+
+		switch type {
+
+		case .jsonFeed:
+			return try JSONFeedParser.parse(parserData)
+
+		case .rssInJSON:
+			return try RSSInJSONParser.parse(parserData)
+
+		case .rss:
+			return RSSParser.parse(parserData)
+
+		case .atom:
+			return AtomParser.parse(parserData)
+
+		case .unknown, .notAFeed:
+			return nil
+		}
+	}
+
 }

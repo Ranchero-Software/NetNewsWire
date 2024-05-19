@@ -16,7 +16,7 @@ class JSONFeedParserTests: XCTestCase {
 		// 0.001 sec on my 2012 iMac.
 		let d = parserData("inessential", "json", "http://inessential.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			let _ = try! FeedParser.parseSync(d)
 		}
 	}
 
@@ -25,31 +25,31 @@ class JSONFeedParserTests: XCTestCase {
 		// 0.009 sec on my 2012 iMac.
 		let d = parserData("DaringFireball", "json", "http://daringfireball.net/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			let _ = try! FeedParser.parseSync(d)
 		}
 	}
 
-	func testGettingFaviconAndIconURLs() {
+	func testGettingFaviconAndIconURLs() async {
 
 		let d = parserData("DaringFireball", "json", "http://daringfireball.net/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		XCTAssert(parsedFeed.faviconURL == "https://daringfireball.net/graphics/favicon-64.png")
 		XCTAssert(parsedFeed.iconURL == "https://daringfireball.net/graphics/apple-touch-icon.png")
 	}
 
-	func testAllThis() {
+	func testAllThis() async {
 
 		let d = parserData("allthis", "json", "http://leancrew.com/allthis/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		XCTAssertEqual(parsedFeed.items.count, 12)
 	}
 
-	func testCurt() {
-		
+	func testCurt() async {
+
 		let d = parserData("curt", "json", "http://curtclifton.net/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		XCTAssertEqual(parsedFeed.items.count, 26)
 
@@ -64,23 +64,23 @@ class JSONFeedParserTests: XCTestCase {
 		XCTAssertTrue(didFindTwitterQuitterArticle)
 	}
 
-	func testPixelEnvy() {
+	func testPixelEnvy() async {
 
 		let d = parserData("pxlnv", "json", "http://pxlnv.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.items.count, 20)
 
 	}
 
-	func testRose() {
+	func testRose() async {
 		let d = parserData("rose", "json", "http://www.rosemaryorchard.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.items.count, 84)
 	}
 
-	func test3960() {
+	func test3960() async {
 		let d = parserData("3960", "json", "http://journal.3960.org/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.items.count, 20)
 		XCTAssertEqual(parsedFeed.language, "de-DE")
 		
@@ -89,9 +89,9 @@ class JSONFeedParserTests: XCTestCase {
 		}
 	}
 
-	func testAuthors() {
+	func testAuthors() async {
 		let d = parserData("authors", "json", "https://example.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.items.count, 4)
 
 		let rootAuthors = Set([

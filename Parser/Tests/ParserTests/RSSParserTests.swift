@@ -14,50 +14,54 @@ class RSSParserTests: XCTestCase {
 	func testScriptingNewsPerformance() {
 
 		// 0.004 sec on my 2012 iMac.
+		// 0.002 2022 Mac Studio
 		let d = parserData("scriptingNews", "rss", "http://scripting.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			let _ = try! FeedParser.parseSync(d)
 		}
 	}
 
 	func testKatieFloydPerformance() {
 
 		// 0.004 sec on my 2012 iMac.
+		// 0.001 2022 Mac Studio
 		let d = parserData("KatieFloyd", "rss", "http://katiefloyd.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			let _ = try! FeedParser.parseSync(d)
 		}
 	}
 
 	func testEMarleyPerformance() {
 
 		// 0.001 sec on my 2012 iMac.
+		// 0.0004 2022 Mac Studio
 		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			let _ = try! FeedParser.parseSync(d)
 		}
 	}
 
 	func testMantonPerformance() {
 
 		// 0.002 sec on my 2012 iMac.
+		// 0.0006 2022 Mac Studio
 		let d = parserData("manton", "rss", "http://manton.org/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			let _ = try! FeedParser.parseSync(d)
 		}
 	}
 
-	func testNatashaTheRobot() {
+	func testNatashaTheRobot() async {
 
 		let d = parserData("natasha", "xml", "https://www.natashatherobot.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.items.count, 10)
 	}
 
-	func testTheOmniShowAttachments() {
+	func testTheOmniShowAttachments() async {
 
 		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		for article in parsedFeed.items {
 			XCTAssertNotNil(article.attachments)
@@ -71,10 +75,10 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
-	func testTheOmniShowUniqueIDs() {
+	func testTheOmniShowUniqueIDs() async {
 
 		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		for article in parsedFeed.items {
 			XCTAssertNotNil(article.uniqueID)
@@ -82,12 +86,12 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
-	func testMacworldUniqueIDs() {
+	func testMacworldUniqueIDs() async {
 
 		// Macworld’s feed doesn’t have guids, so they should be calculated unique IDs.
 
 		let d = parserData("macworld", "rss", "https://www.macworld.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		for article in parsedFeed.items {
 			XCTAssertNotNil(article.uniqueID)
@@ -95,12 +99,12 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
-	func testMacworldAuthors() {
+	func testMacworldAuthors() async {
 
 		// Macworld uses names instead of email addresses (despite the RSS spec saying they should be email addresses).
 
 		let d = parserData("macworld", "rss", "https://www.macworld.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		for article in parsedFeed.items {
 
@@ -111,7 +115,7 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
-	func testMonkeyDomGuids() {
+	func testMonkeyDomGuids() async {
 
 		// https://coding.monkeydom.de/posts.rss has a bug in the feed (at this writing):
 		// It has guids that are supposed to be permalinks, per the spec —
@@ -119,7 +123,7 @@ class RSSParserTests: XCTestCase {
 		// detect this situation, and every article in the feed should have a permalink.
 
 		let d = parserData("monkeydom", "rss", "https://coding.monkeydom.de/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		for article in parsedFeed.items {
 			XCTAssertNil(article.url)
@@ -127,31 +131,31 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
-	func testEmptyContentEncoded() {
+	func testEmptyContentEncoded() async {
 		// The ATP feed (at the time of this writing) has some empty content:encoded elements. The parser should ignore those.
 		// https://github.com/brentsimmons/NetNewsWire/issues/529
 
 		let d = parserData("atp", "rss", "http://atp.fm/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 
 		for article in parsedFeed.items {
 			XCTAssertNotNil(article.contentHTML)
 		}
 	}
 
-	func testFeedKnownToHaveGuidsThatArentPermalinks() {
+	func testFeedKnownToHaveGuidsThatArentPermalinks() async {
 		let d = parserData("livemint", "xml", "https://www.livemint.com/rss/news")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 		for article in parsedFeed.items {
 			XCTAssertNil(article.url)
 		}
 	}
 
-	func testAuthorsWithTitlesInside() {
+	func testAuthorsWithTitlesInside() async {
 		// This feed uses atom authors, and we don’t want author/title to be used as item/title.
 		// https://github.com/brentsimmons/NetNewsWire/issues/943
 		let d = parserData("cloudblog", "rss", "https://cloudblog.withgoogle.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 		for article in parsedFeed.items {
 			XCTAssertNotEqual(article.title, "Product Manager, Office of the CTO")
 			XCTAssertNotEqual(article.title, "Developer Programs Engineer")
@@ -159,19 +163,19 @@ class RSSParserTests: XCTestCase {
 		}
 	}
 
-    func testTitlesWithInvalidFeedWithImageStructures() {
+    func testTitlesWithInvalidFeedWithImageStructures() async {
         // This invalid feed has <image> elements inside <item>s.
         // 17 Jan 2021 bug report — we’re not parsing titles in this feed.
         let d = parserData("aktuality", "rss", "https://www.aktuality.sk/")
-        let parsedFeed = try! FeedParser.parse(d)!
+        let parsedFeed = try! await FeedParser.parse(d)!
         for article in parsedFeed.items {
             XCTAssertNotNil(article.title)
         }
     }
 
-	func testFeedLanguage() {
+	func testFeedLanguage() async {
 		let d = parserData("manton", "rss", "http://manton.org/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try! await FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.language, "en-US")
 	}
 
