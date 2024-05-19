@@ -51,28 +51,6 @@
             default = "YES">
          </TestPlanReference>
       </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "849C64701ED37A5D003D8FC0"
-               BuildableName = "NetNewsWireTests.xctest"
-               BlueprintName = "NetNewsWireTests"
-               ReferencedContainer = "container:NetNewsWire.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AccountTests"
-               BuildableName = "AccountTests"
-               BlueprintName = "AccountTests"
-               ReferencedContainer = "container:Account">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

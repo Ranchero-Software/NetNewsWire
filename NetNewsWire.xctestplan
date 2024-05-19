@@ -9,6 +9,7 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : false,
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
@@ -25,14 +26,6 @@
         "containerPath" : "container:AppKitExtras",
         "identifier" : "AppKitExtrasTests",
         "name" : "AppKitExtrasTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:Parser",
-        "identifier" : "ParserTests",
-        "name" : "ParserTests"
       }
     }
   ],
