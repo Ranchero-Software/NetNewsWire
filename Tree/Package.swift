@@ -16,6 +16,9 @@ let package = Package(
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
 			]
-		)
+		),
+	.testTarget(
+		name: "TreeTests",
+		dependencies: ["Tree"])
 	]
 )

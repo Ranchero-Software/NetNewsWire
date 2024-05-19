@@ -27,6 +27,14 @@
         "identifier" : "AppKitExtrasTests",
         "name" : "AppKitExtrasTests"
       }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "TreeTests",
+        "name" : "TreeTests"
+      }
     }
   ],
   "version" : 1

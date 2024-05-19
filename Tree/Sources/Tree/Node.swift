@@ -66,7 +66,7 @@ import Foundation
 	
 	public class func genericRootNode() -> Node {
 		
-		let node = Node(representedObject: TopLevelRepresentedObject(), parent: nil)
+		let node = Node(representedObject: RootNodeRepresentedObject(), parent: nil)
 		node.canHaveChildNodes = true
 		return node
 	}

@@ -1,5 +1,5 @@
 //
-//  TopLevelRepresentedObject.swift
+//  RootNodeRepresentedObject.swift
 //  RSTree
 //
 //  Created by Brent Simmons on 8/10/16.
@@ -10,6 +10,6 @@ import Foundation
 
 // Handy to use as the represented object for a root node. Not required to use it, though.
 
-final class TopLevelRepresentedObject {
+final class RootNodeRepresentedObject {
 
 }

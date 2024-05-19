@@ -47,7 +47,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:NetNewsWire.xctestplan"
+            reference = "container:App.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
