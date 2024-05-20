@@ -47,7 +47,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:App.xctestplan"
+            reference = "container:Mac.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
