@@ -29,9 +29,16 @@
       }
     },
     {
+      "target" : {
+        "containerPath" : "container:Parser",
+        "identifier" : "ParserTests",
+        "name" : "ParserTests"
+      }
+    },
+    {
       "parallelizable" : true,
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:Tree",
         "identifier" : "TreeTests",
         "name" : "TreeTests"
       }
