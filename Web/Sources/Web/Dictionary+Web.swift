@@ -1,5 +1,5 @@
 //
-//  Dictionary+RSWeb.swift
+//  Dictionary+Web.swift
 //  RSWeb
 //
 //  Created by Brent Simmons on 1/13/18.
@@ -13,12 +13,13 @@ public extension Dictionary where Key == String, Value == String  {
 	/// Translates a dictionary into a string like `foo=bar&param2=some%20thing`.
 	var urlQueryString: String? {
 
-		var components = URLComponents()
-
-		components.queryItems = self.reduce(into: [URLQueryItem]()) {
-			$0.append(URLQueryItem(name: $1.key, value: $1.value))
+		var queryItems = [URLQueryItem]()
+		for (key, value) in self {
+			queryItems.append(URLQueryItem(name: key, value: value))
 		}
 
+		var components = URLComponents()
+		components.queryItems = queryItems
 		let s = components.percentEncodedQuery
 
 		return s == nil || s!.isEmpty ? nil : s
