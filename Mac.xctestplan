@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "12F2CDCE-49CC-41E9-828F-4F7F24C65D08",
+      "id" : "C18220EC-5A93-42E2-9B5A-B69F72ED7CD4",
       "name" : "Configuration 1",
       "options" : {
 
@@ -9,8 +9,7 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
-    "testTimeoutsEnabled" : true
+    "codeCoverage" : false
   },
   "testTargets" : [
     {
