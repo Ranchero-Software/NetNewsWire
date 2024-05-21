@@ -43,6 +43,14 @@
         "identifier" : "TreeTests",
         "name" : "TreeTests"
       }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CoreTests",
+        "name" : "CoreTests"
+      }
     }
   ],
   "version" : 1

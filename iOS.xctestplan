@@ -19,6 +19,22 @@
         "identifier" : "FoundationExtrasTests",
         "name" : "FoundationExtrasTests"
       }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CoreTests",
+        "name" : "CoreTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:..\/Tree",
+        "identifier" : "TreeTests",
+        "name" : "TreeTests"
+      }
     }
   ],
   "version" : 1
