@@ -9,18 +9,18 @@
 import XCTest
 @testable import Account
 
-class TestMarkArticlesService: FeedlyMarkArticlesService {
-	
-	var didMarkExpectation: XCTestExpectation?
-	var parameterTester: ((Set<String>, FeedlyMarkAction) -> ())?
-	var mockResult: Result<Void, Error> = .success(())
-	
-	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
-		
-		DispatchQueue.main.async {
-			self.parameterTester?(articleIDs, action)
-			completion(self.mockResult)
-			self.didMarkExpectation?.fulfill()
-		}
-	}
-}
+//class TestMarkArticlesService: FeedlyMarkArticlesService {
+//	
+//	var didMarkExpectation: XCTestExpectation?
+//	var parameterTester: ((Set<String>, FeedlyMarkAction) -> ())?
+//	var mockResult: Result<Void, Error> = .success(())
+//	
+//	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
+//		
+//		DispatchQueue.main.async {
+//			self.parameterTester?(articleIDs, action)
+//			completion(self.mockResult)
+//			self.didMarkExpectation?.fulfill()
+//		}
+//	}
+//}

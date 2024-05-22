@@ -53,10 +53,19 @@
       }
     },
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:",
         "identifier" : "FeedlyTests",
         "name" : "FeedlyTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
       }
     }
   ],
