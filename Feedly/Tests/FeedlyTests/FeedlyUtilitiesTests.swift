@@ -78,7 +78,7 @@ private extension FeedlyUtilitiesTests {
 
 		var parsedItems = Set<ParsedItem>()
 
-		for (key, value) in d {
+		for (_, value) in d {
 			parsedItems.formUnion(value)
 		}
 
