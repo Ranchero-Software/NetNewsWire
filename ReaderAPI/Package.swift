@@ -8,6 +8,7 @@ let package = Package(
 	products: [
 		.library(
 			name: "ReaderAPI",
+			type: .dynamic,
 			targets: ["ReaderAPI"]),
 	],
 	dependencies: [

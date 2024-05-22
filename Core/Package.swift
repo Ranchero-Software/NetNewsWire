@@ -6,8 +6,12 @@ let package = Package(
 	name: "Core",
 	platforms: [.macOS(.v14), .iOS(.v17)],
 	products: [
-		.library(name: "Core", targets: ["Core"]),
-		.library(name: "CoreResources", type: .static, targets: ["CoreResources"])
+		.library(name: "Core",
+				 type: .dynamic,
+				 targets: ["Core"]),
+		.library(name: "CoreResources",
+				 type: .static,
+				 targets: ["CoreResources"])
 	],
 	dependencies: [
 		.package(path: "../AppKitExtras")

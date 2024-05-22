@@ -355,6 +355,17 @@
 		841CECDE2BAD06D10001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECDD2BAD06D10001EE72 /* Tree */; };
 		84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */; };
 		8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
+		8426DBB82BFDAD8500E98109 /* Core in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5242BABBB5A00792720 /* Core */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8426DBB92BFDAD9200E98109 /* Core in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5282BABBB6A00792720 /* Core */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8426DBBB2BFDADD700E98109 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBBA2BFDADD700E98109 /* Core */; };
+		8426DBBE2BFDADFD00E98109 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBBD2BFDADFD00E98109 /* Core */; };
+		8426DBC02BFDAEF200E98109 /* Web in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84C1A8572BBBA5BD006E3E96 /* Web */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8426DBC22BFDAEFC00E98109 /* Web in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBC12BFDAEFC00E98109 /* Web */; };
+		8426DBC32BFDAEFC00E98109 /* Web in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBC12BFDAEFC00E98109 /* Web */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8426DBC42BFDAF0100E98109 /* ReaderAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8410C4A22BC1E27A00D4F799 /* ReaderAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8426DBC62BFDAF1B00E98109 /* CommonErrors in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBC52BFDAF1B00E98109 /* CommonErrors */; };
+		8426DBC82BFDAF4300E98109 /* Web in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBC72BFDAF4300E98109 /* Web */; };
+		8426DBCB2BFDAF6100E98109 /* CommonErrors in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBCA2BFDAF6100E98109 /* CommonErrors */; };
 		842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		8438C2DB2BABE0B00040C9EE /* CoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 8438C2DA2BABE0B00040C9EE /* CoreResources */; };
@@ -672,11 +683,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				8426DBC02BFDAEF200E98109 /* Web in Embed Frameworks */,
 				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
 				845611752BBD145D00507B73 /* ParserObjC in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
 				513F32812593EF180003048F /* Account in Embed Frameworks */,
+				8426DBB92BFDAD9200E98109 /* Core in Embed Frameworks */,
 				513F32752593EE6F0003048F /* ArticlesDatabase in Embed Frameworks */,
 				845611722BBD145D00507B73 /* Parser in Embed Frameworks */,
 			);
@@ -725,11 +738,14 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				8426DBC32BFDAEFC00E98109 /* Web in Embed Frameworks */,
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
 				8456116F2BBD145200507B73 /* ParserObjC in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
+				8426DBC42BFDAF0100E98109 /* ReaderAPI in Embed Frameworks */,
+				8426DBB82BFDAD8500E98109 /* Core in Embed Frameworks */,
 				513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */,
 				8456116C2BBD145200507B73 /* Parser in Embed Frameworks */,
 			);
@@ -1208,6 +1224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				511B148924E5DBDD00C919BD /* Account in Frameworks */,
+				8426DBBE2BFDADFD00E98109 /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1216,6 +1233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				27B86EEB25A53AAB00264340 /* Account in Frameworks */,
+				8426DBBB2BFDADD700E98109 /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1226,6 +1244,7 @@
 				84DC60022BCE40B200F04682 /* Images in Frameworks */,
 				841CECDE2BAD06D10001EE72 /* Tree in Frameworks */,
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
+				8426DBC82BFDAF4300E98109 /* Web in Frameworks */,
 				84DC60042BCE40D000F04682 /* ParserObjC in Frameworks */,
 				84D9582C2BABE53B0053E7B2 /* FoundationExtras in Frameworks */,
 			);
@@ -1264,6 +1283,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8426DBCB2BFDAF6100E98109 /* CommonErrors in Frameworks */,
 				84DCA5202BABB7A200792720 /* UIKitExtras in Frameworks */,
 				179D280B26F6F93D003B2E0A /* Zip in Frameworks */,
 				84DCA51E2BABB79900792720 /* FoundationExtras in Frameworks */,
@@ -1307,7 +1327,9 @@
 				8479ABE52B9E907400F84C4D /* FMDB in Frameworks */,
 				514C16CE24D2E63F009A3AFA /* Account in Frameworks */,
 				519CA8E525841DB700EB079A /* CrashReporter in Frameworks */,
+				8426DBC62BFDAF1B00E98109 /* CommonErrors in Frameworks */,
 				841CECD82BAD04B20001EE72 /* Tree in Frameworks */,
+				8426DBC22BFDAEFC00E98109 /* Web in Frameworks */,
 				8456116B2BBD145200507B73 /* Parser in Frameworks */,
 				8456116E2BBD145200507B73 /* ParserObjC in Frameworks */,
 			);
@@ -2416,6 +2438,7 @@
 			name = "NetNewsWire Share Extension";
 			packageProductDependencies = (
 				511B148824E5DBDD00C919BD /* Account */,
+				8426DBBD2BFDADFD00E98109 /* Core */,
 			);
 			productName = ShareExtension;
 			productReference = 510C415C24E5CDE3008226FD /* NetNewsWire Share Extension.appex */;
@@ -2438,6 +2461,7 @@
 			name = "NetNewsWire iOS Intents Extension";
 			packageProductDependencies = (
 				51BC2F4A24D343A500E90810 /* Account */,
+				8426DBBA2BFDADD700E98109 /* Core */,
 			);
 			productName = "NetNewsWire iOS Intents Extension";
 			productReference = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */;
@@ -2464,6 +2488,7 @@
 				841CECDD2BAD06D10001EE72 /* Tree */,
 				84DC60012BCE40B200F04682 /* Images */,
 				84DC60032BCE40D000F04682 /* ParserObjC */,
+				8426DBC72BFDAF4300E98109 /* Web */,
 			);
 			productName = "NetNewsWire iOS Share Extension";
 			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
@@ -2581,6 +2606,7 @@
 				8410C4A42BC1E28200D4F799 /* ReaderAPI */,
 				84A699142BC34F3D00605AB8 /* ArticleExtractor */,
 				84DC5FFB2BCE31DB00F04682 /* Images */,
+				8426DBCA2BFDAF6100E98109 /* CommonErrors */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -2629,6 +2655,8 @@
 				8410C4A22BC1E27A00D4F799 /* ReaderAPI */,
 				84A699162BC34F4400605AB8 /* ArticleExtractor */,
 				84DC5FF92BCE31D200F04682 /* Images */,
+				8426DBC12BFDAEFC00E98109 /* Web */,
+				8426DBC52BFDAF1B00E98109 /* CommonErrors */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -4136,6 +4164,30 @@
 		841CECDD2BAD06D10001EE72 /* Tree */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Tree;
+		};
+		8426DBBA2BFDADD700E98109 /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Core;
+		};
+		8426DBBD2BFDADFD00E98109 /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Core;
+		};
+		8426DBC12BFDAEFC00E98109 /* Web */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Web;
+		};
+		8426DBC52BFDAF1B00E98109 /* CommonErrors */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommonErrors;
+		};
+		8426DBC72BFDAF4300E98109 /* Web */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Web;
+		};
+		8426DBCA2BFDAF6100E98109 /* CommonErrors */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CommonErrors;
 		};
 		8438C2DA2BABE0B00040C9EE /* CoreResources */ = {
 			isa = XCSwiftPackageProductDependency;
