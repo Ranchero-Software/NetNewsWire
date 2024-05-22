@@ -35,6 +35,13 @@
         "identifier" : "TreeTests",
         "name" : "TreeTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "FeedlyTests",
+        "name" : "FeedlyTests"
+      }
     }
   ],
   "version" : 1

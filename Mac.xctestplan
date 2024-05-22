@@ -51,6 +51,13 @@
         "identifier" : "CoreTests",
         "name" : "CoreTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "FeedlyTests",
+        "name" : "FeedlyTests"
+      }
     }
   ],
   "version" : 1
