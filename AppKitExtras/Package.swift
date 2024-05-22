@@ -8,6 +8,7 @@ let package = Package(
 	products: [
 		.library(
 			name: "AppKitExtras",
+			type: .dynamic,
 			targets: ["AppKitExtras"]),
 	],
 	dependencies: [
