@@ -51,6 +51,14 @@
         "identifier" : "AccountTests",
         "name" : "AccountTests"
       }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:NetNewsWire.xcodeproj",
+        "identifier" : "518B2ED12351B3DD00400001",
+        "name" : "NetNewsWire-iOSTests"
+      }
     }
   ],
   "version" : 1
