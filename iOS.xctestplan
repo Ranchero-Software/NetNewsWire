@@ -23,7 +23,7 @@
     {
       "parallelizable" : true,
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:Core",
         "identifier" : "CoreTests",
         "name" : "CoreTests"
       }
@@ -31,7 +31,7 @@
     {
       "parallelizable" : true,
       "target" : {
-        "containerPath" : "container:..\/Tree",
+        "containerPath" : "container:Tree",
         "identifier" : "TreeTests",
         "name" : "TreeTests"
       }
@@ -39,7 +39,7 @@
     {
       "parallelizable" : true,
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:Feedly",
         "identifier" : "FeedlyTests",
         "name" : "FeedlyTests"
       }
@@ -47,7 +47,7 @@
     {
       "parallelizable" : true,
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:Account",
         "identifier" : "AccountTests",
         "name" : "AccountTests"
       }
@@ -63,7 +63,7 @@
     {
       "parallelizable" : true,
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:Web",
         "identifier" : "WebTests",
         "name" : "WebTests"
       }
