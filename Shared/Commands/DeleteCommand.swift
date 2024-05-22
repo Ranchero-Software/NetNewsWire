@@ -47,17 +47,14 @@ import Core
 
 	func perform() {
 
-		let group = DispatchGroup()
-		for itemSpecifier in itemSpecifiers {
-			group.enter()
-			itemSpecifier.delete() {
-				group.leave()
-			}
-		}
+		Task { @MainActor in
 
-		group.notify(queue: DispatchQueue.main) {
-			self.treeController?.rebuild()
-			self.registerUndo()
+			for itemSpecifier in itemSpecifiers {
+				await itemSpecifier.delete()
+			}
+
+			treeController?.rebuild()
+			registerUndo()
 		}
 	}
 
@@ -143,43 +140,34 @@ import Core
 
 	}
 
-	func delete(completion: @escaping () -> Void) {
-		
-		if let feed = feed {
-			
+	func delete() async {
+
+		if let feed {
+
 			guard let container = path.resolveContainer() else {
-				completion()
 				return
 			}
-			
+
 			BatchUpdate.shared.start()
 
-			Task { @MainActor in
-				do {
-					try await account?.removeFeed(feed, from: container)
-					BatchUpdate.shared.end()
-					completion()
-				} catch {
-					BatchUpdate.shared.end()
-					completion()
-					self.errorHandler(error)
-				}
+			do {
+				try await account?.removeFeed(feed, from: container)
+				BatchUpdate.shared.end()
+			} catch {
+				BatchUpdate.shared.end()
+				errorHandler(error)
 			}
 
-		} else if let folder = folder {
-			
+		} else if let folder {
+
 			BatchUpdate.shared.start()
-			
-			Task { @MainActor in
-				do {
-					try await account?.removeFolder(folder)
-					BatchUpdate.shared.end()
-					completion()
-				} catch {
-					BatchUpdate.shared.end()
-					completion()
-					self.errorHandler(error)
-				}
+
+			do {
+				try await account?.removeFolder(folder)
+				BatchUpdate.shared.end()
+			} catch {
+				BatchUpdate.shared.end()
+				errorHandler(error)
 			}
 		}
 	}
