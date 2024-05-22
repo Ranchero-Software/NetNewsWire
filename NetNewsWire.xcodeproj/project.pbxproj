@@ -1023,6 +1023,7 @@
 		845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarredFeedDelegate.swift; sourceTree = "<group>"; };
 		845EE7C01FC2488C00854A1F /* SmartFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFeed.swift; sourceTree = "<group>"; };
 		845F3D2B2BC268FE00AEBB68 /* CloudKitSync */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CloudKitSync; sourceTree = "<group>"; };
+		846133952BFDA8BC00EE2D05 /* ParserObjC */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ParserObjC; sourceTree = "<group>"; };
 		846799F42BBD120A000854CB /* Parser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Parser; sourceTree = "<group>"; };
 		84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkStatusCommand.swift; sourceTree = "<group>"; };
 		847120D62B8AE6AF00BBFC34 /* UTType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+Extensions.swift"; sourceTree = "<group>"; };
@@ -2005,6 +2006,7 @@
 				841550F52B9E4D6800D4B345 /* FMDB */,
 				849FEDC32BBB225E0053FB21 /* Web */,
 				846799F42BBD120A000854CB /* Parser */,
+				846133952BFDA8BC00EE2D05 /* ParserObjC */,
 				84DCA5232BABBA8100792720 /* Core */,
 				841CECD62BAD03C60001EE72 /* Tree */,
 				84DCA5102BABB6A100792720 /* UIKitExtras */,

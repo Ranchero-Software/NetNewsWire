@@ -9,6 +9,7 @@
 import Foundation
 import Web
 import Parser
+import ParserObjC
 
 extension RSHTMLMetadata: @unchecked Sendable {}
 

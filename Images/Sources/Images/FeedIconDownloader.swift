@@ -11,6 +11,7 @@ import Articles
 import Account
 import Web
 import Parser
+import ParserObjC
 import Core
 
 public extension Notification.Name {

@@ -12,12 +12,9 @@ let package = Package(
 			name: "Parser",
 			type: .dynamic,
 			targets: ["Parser"]),
-		.library(
-			name: "ParserObjC",
-			type: .dynamic,
-			targets: ["ParserObjC"]),
 	],
 	dependencies: [
+		.package(path: "../ParserObjC"),
 	],
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -25,20 +22,12 @@ let package = Package(
 		.target(
 			name: "Parser",
 			dependencies: ["ParserObjC"],
-			path: "Sources/Swift",
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
 			]),
-		.target(
-			name: "ParserObjC",
-			dependencies: [],
-			path: "Sources/ObjC",
-			cSettings: [
-				.headerSearchPath("include")
-			 ]),
 		.testTarget(
 			name: "ParserTests",
-			dependencies: ["Parser"],
+			dependencies: ["Parser", "ParserObjC"],
 			exclude: ["Info.plist"],
 			resources: [.copy("Resources")]),
 	]

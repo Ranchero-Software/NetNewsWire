@@ -6,5 +6,6 @@
 //
 
 import Foundation
+import ParserObjC
 
-extension ParserData: @unchecked Sendable {}
+extension RSHTMLMetadataParser: @unchecked Sendable {}

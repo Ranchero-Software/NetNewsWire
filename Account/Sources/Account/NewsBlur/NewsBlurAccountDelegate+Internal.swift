@@ -7,6 +7,7 @@
 //  Copyright (c) 2020 Ranchero Software, LLC. All rights reserved.
 //
 
+import Foundation
 import Articles
 import Database
 import Parser

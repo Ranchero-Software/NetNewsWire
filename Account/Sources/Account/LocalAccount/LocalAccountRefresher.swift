@@ -8,6 +8,7 @@
 
 import Foundation
 import Parser
+import ParserObjC
 import Web
 import Articles
 import ArticlesDatabase

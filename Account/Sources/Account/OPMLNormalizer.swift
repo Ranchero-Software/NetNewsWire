@@ -8,6 +8,7 @@
 
 import Foundation
 import Parser
+import ParserObjC
 
 final class OPMLNormalizer {
 	
