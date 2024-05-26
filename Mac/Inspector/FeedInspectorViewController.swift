@@ -80,14 +80,14 @@ import UserNotifications
 				}
 			} else if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
-					self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+					self.feed?.shouldSendUserNotificationForNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
 				}
 			} else {
 				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
 					self.updateNotificationSettings()
 					if granted {
 						DispatchQueue.main.async {
-							self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+							self.feed?.shouldSendUserNotificationForNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
 							NSApplication.shared.registerForRemoteNotifications()
 						}
 					} else {
@@ -171,7 +171,7 @@ private extension FeedInspectorViewController {
 
 	func updateNotifyAboutNewArticles() {
 		isNotifyAboutNewArticlesCheckBox?.title = feed?.notificationDisplayName ?? NSLocalizedString("Show notifications for new articles", comment: "Show notifications for new articles")
-		isNotifyAboutNewArticlesCheckBox?.state = (feed?.isNotifyAboutNewArticles ?? false) ? .on : .off
+		isNotifyAboutNewArticlesCheckBox?.state = (feed?.shouldSendUserNotificationForNewArticles ?? false) ? .on : .off
 	}
 
 	func updateIsReaderViewAlwaysOn() {

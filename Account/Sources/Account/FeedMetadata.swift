@@ -24,7 +24,7 @@ final class FeedMetadata: Codable {
 		case editedName
 		case authors
 		case contentHash
-		case isNotifyAboutNewArticles
+		case shouldSendUserNotificationForNewArticles = "isNotifyAboutNewArticles"
 		case isArticleExtractorAlwaysOn
 		case conditionalGetInfo
 		case sinceToken
@@ -74,10 +74,10 @@ final class FeedMetadata: Codable {
 		}
 	}
 	
-	var isNotifyAboutNewArticles: Bool? {
+	var shouldSendUserNotificationForNewArticles: Bool? {
 		didSet {
-			if isNotifyAboutNewArticles != oldValue {
-				valueDidChange(.isNotifyAboutNewArticles)
+			if shouldSendUserNotificationForNewArticles != oldValue {
+				valueDidChange(.shouldSendUserNotificationForNewArticles)
 			}
 		}
 	}

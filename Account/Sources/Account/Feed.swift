@@ -121,12 +121,12 @@ import Core
 		}
 	}
 
-	public var isNotifyAboutNewArticles: Bool? {
+	public var shouldSendUserNotificationForNewArticles: Bool? {
 		get {
-			return metadata.isNotifyAboutNewArticles
+			return metadata.shouldSendUserNotificationForNewArticles
 		}
 		set {
-			metadata.isNotifyAboutNewArticles = newValue
+			metadata.shouldSendUserNotificationForNewArticles = newValue
 		}
 	}
 	

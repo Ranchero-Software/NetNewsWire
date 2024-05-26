@@ -42,7 +42,7 @@ class FeedInspectorViewController: UITableViewController {
 		navigationItem.title = feed.nameForDisplay
 		nameTextField.text = feed.nameForDisplay
 		
-		notifyAboutNewArticlesSwitch.setOn(feed.isNotifyAboutNewArticles ?? false, animated: false)
+		notifyAboutNewArticlesSwitch.setOn(feed.shouldSendUserNotificationForNewArticles ?? false, animated: false)
 		
 		alwaysShowReaderViewSwitch.setOn(feed.isArticleExtractorAlwaysOn ?? false, animated: false)
 
@@ -84,13 +84,13 @@ class FeedInspectorViewController: UITableViewController {
 			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
 			present(notificationUpdateErrorAlert(), animated: true, completion: nil)
 		} else if settings.authorizationStatus == .authorized {
-			feed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
+			feed.shouldSendUserNotificationForNewArticles = notifyAboutNewArticlesSwitch.isOn
 		} else {
 			UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
 				self.updateNotificationSettings()
 				if granted {
 					DispatchQueue.main.async {
-						self.feed.isNotifyAboutNewArticles = self.notifyAboutNewArticlesSwitch.isOn
+						self.feed.shouldSendUserNotificationForNewArticles = self.notifyAboutNewArticlesSwitch.isOn
 						UIApplication.shared.registerForRemoteNotifications()
 					}
 				} else {

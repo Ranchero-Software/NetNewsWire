@@ -117,16 +117,16 @@ extension SidebarViewController {
 				self.showNotificationsNotEnabledAlert()
 			} else if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
-					if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
-					feed.isNotifyAboutNewArticles?.toggle()
+					if feed.shouldSendUserNotificationForNewArticles == nil { feed.shouldSendUserNotificationForNewArticles = false }
+					feed.shouldSendUserNotificationForNewArticles?.toggle()
 					NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 				}
 			} else {
 				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
 					if granted {
 						DispatchQueue.main.async {
-							if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
-							feed.isNotifyAboutNewArticles?.toggle()
+							if feed.shouldSendUserNotificationForNewArticles == nil { feed.shouldSendUserNotificationForNewArticles = false }
+							feed.shouldSendUserNotificationForNewArticles?.toggle()
 							NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 							NSApplication.shared.registerForRemoteNotifications()
 						}
@@ -226,7 +226,7 @@ private extension SidebarViewController {
 		let notificationText = feed.notificationDisplayName.capitalized
 		
 		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed)
-		if feed.isNotifyAboutNewArticles == nil || feed.isNotifyAboutNewArticles! == false {
+		if feed.shouldSendUserNotificationForNewArticles == nil || feed.shouldSendUserNotificationForNewArticles! == false {
 			notificationMenuItem.state = .off
 		} else {
 			notificationMenuItem.state = .on

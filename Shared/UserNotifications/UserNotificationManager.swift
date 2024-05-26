@@ -26,7 +26,7 @@ final class UserNotificationManager: Sendable {
 		
 		Task { @MainActor in
 			for article in articles {
-				if !article.status.read, let feed = article.feed, feed.isNotifyAboutNewArticles ?? false {
+				if !article.status.read, let feed = article.feed, feed.shouldSendUserNotificationForNewArticles ?? false {
 					sendNotification(feed: feed, article: article)
 				}
 			}
