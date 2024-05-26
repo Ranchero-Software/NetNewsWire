@@ -5,19 +5,12 @@
 //  Created by Brent Simmons on 12/19/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
+
 import AppKit
 
-// To get, for instance, the keyboard integer value for "\r": "\r".keyboardIntegerValue (returns 13)
-
-public struct KeyboardConstant {
-
-	public static let lineFeedKey = "\n".keyboardIntegerValue
-	public static let returnKey = "\r".keyboardIntegerValue
-	public static let spaceKey = " ".keyboardIntegerValue
-}
-
-extension String {
+private extension String {
 
 	var keyboardIntegerValue: Int? {
 		if isEmpty {
