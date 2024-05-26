@@ -7,79 +7,82 @@
 //
 
 import Foundation
+import os
 
-// Create a DownloadSessionDelegate, then create a DownloadSession.
-// To download things: call downloadObjects, with a set of represented objects, to download things. DownloadSession will call the various delegate methods.
+// To download things: call `download` with a set of identifiers (String). Redirects are followed automatically.
 
-public protocol DownloadSessionDelegate {
+public protocol DownloadSessionDelegate: AnyObject {
 
-	@MainActor func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject: AnyObject) -> URLRequest?
-	@MainActor func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void)
-	@MainActor func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, representedObject: AnyObject) -> Bool
-	@MainActor func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse: URLResponse, representedObject: AnyObject)
-	@MainActor func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject)
-	@MainActor func downloadSession(_ downloadSession: DownloadSession, didDiscardDuplicateRepresentedObject: AnyObject)
-	@MainActor func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession)
-
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, requestForIdentifier: String) -> URLRequest?
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForIdentifier: String, response: URLResponse?, data: Data?, error: Error?)
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, identifier: String) -> Bool
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse: URLResponse, identifier: String)
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, identifier: String)
+	@MainActor func downloadSession(_ downloadSession: DownloadSession, didDiscardDuplicateIdentifier: String)
+	@MainActor func downloadSessionDidComplete(_ downloadSession: DownloadSession)
 }
 
 @MainActor @objc public final class DownloadSession: NSObject {
-	
+
+	public weak var delegate: DownloadSessionDelegate?
+	public var downloadProgress = DownloadProgress(numberOfTasks: 0)
+
 	private var urlSession: URLSession!
 	private var tasksInProgress = Set<URLSessionTask>()
 	private var tasksPending = Set<URLSessionTask>()
 	private var taskIdentifierToInfoDictionary = [Int: DownloadInfo]()
-	private let representedObjects = NSMutableSet()
-	private let delegate: DownloadSessionDelegate
+	private var allIdentifiers = Set<String>()
 	private var redirectCache = [String: String]()
-	private var queue = [AnyObject]()
-	
-	public init(delegate: DownloadSessionDelegate) {
-		
-		self.delegate = delegate
+	private var queue = [String]()
 
+	override public init() {
 		super.init()
-		
+
 		let sessionConfiguration = URLSessionConfiguration.default
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 15.0
 		sessionConfiguration.httpShouldSetCookies = false
 		sessionConfiguration.httpCookieAcceptPolicy = .never
-		sessionConfiguration.httpMaximumConnectionsPerHost = 2
+		sessionConfiguration.httpMaximumConnectionsPerHost = 1
 		sessionConfiguration.httpCookieStorage = nil
 		sessionConfiguration.urlCache = nil
 		sessionConfiguration.httpAdditionalHeaders = UserAgent.headers
 
-		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)		
+		self.urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
 	}
-	
+
 	deinit {
+
 		urlSession.invalidateAndCancel()
 	}
 
 	// MARK: - API
 
-	public func cancelAll() {
-		urlSession.getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
-			for dataTask in dataTasks {
-				dataTask.cancel()
-			}
-			for uploadTask in uploadTasks {
-				uploadTask.cancel()
-			}
-			for downloadTask in downloadTasks {
-				downloadTask.cancel()
-			}
+	public func cancelAll() async {
+
+		clearDownloadProgress()
+
+		let (dataTasks, uploadTasks, downloadTasks) = await urlSession.tasks
+
+		for dataTask in dataTasks {
+			dataTask.cancel()
+		}
+		for uploadTask in uploadTasks {
+			uploadTask.cancel()
+		}
+		for downloadTask in downloadTasks {
+			downloadTask.cancel()
 		}
 	}
 
-	@MainActor public func downloadObjects(_ objects: NSSet) {
-		for oneObject in objects {
-			if !representedObjects.contains(oneObject) {
-				representedObjects.add(oneObject)
-				addDataTask(oneObject as AnyObject)
+	public func download(_ identifiers: Set<String>) {
+
+		for identifier in identifiers {
+			if !allIdentifiers.contains(identifier) {
+				allIdentifiers.insert(identifier)
+				addDataTask(identifier)
 			} else {
-				delegate.downloadSession(self, didDiscardDuplicateRepresentedObject: oneObject as AnyObject)
+				delegate?.downloadSession(self, didDiscardDuplicateIdentifier: identifier)
 			}
 		}
 	}
@@ -92,29 +95,25 @@ extension DownloadSession: URLSessionTaskDelegate {
 	nonisolated public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 
 		MainActor.assumeIsolated {
-			tasksInProgress.remove(task)
-
 			guard let info = infoForTask(task) else {
+				assertionFailure("Missing info for task in DownloadSession didCompleteWithError")
 				return
 			}
 
-			info.error = error
-
-			delegate.downloadSession(self, downloadDidCompleteForRepresentedObject: info.representedObject, response: info.urlResponse, data: info.data as Data, error: error as NSError?) {
-				self.removeTask(task)
-			}
+			delegate?.downloadSession(self, downloadDidCompleteForIdentifier: info.identifier, response: info.urlResponse, data: info.data, error: error)
+			removeTask(task)
 		}
 	}
-	
+
 	nonisolated public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-		
+
 		MainActor.assumeIsolated {
-			if response.statusCode == 301 || response.statusCode == 308 {
+			if response.statusCode == HTTPResponseCode.redirectTemporary || response.statusCode == HTTPResponseCode.redirectVeryTemporary {
 				if let oldURLString = task.originalRequest?.url?.absoluteString, let newURLString = request.url?.absoluteString {
 					cacheRedirect(oldURLString, newURLString)
 				}
 			}
-			
+
 			completionHandler(request)
 		}
 	}
@@ -127,17 +126,18 @@ extension DownloadSession: URLSessionDataDelegate {
 	nonisolated public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 
 		MainActor.assumeIsolated {
+
 			tasksInProgress.insert(dataTask)
 			tasksPending.remove(dataTask)
 
-			if let info = infoForTask(dataTask) {
-				info.urlResponse = response
-			}
+			let info = infoForTask(dataTask)
+			let identifier = info?.identifier
+			info?.urlResponse = response
 
-			if response.forcedStatusCode == 304 {
+			if response.forcedStatusCode == HTTPResponseCode.notModified {
 
-				if let representedObject = infoForTask(dataTask)?.representedObject {
-					delegate.downloadSession(self, didReceiveNotModifiedResponse: response, representedObject: representedObject)
+				if let identifier {
+					delegate?.downloadSession(self, didReceiveNotModifiedResponse: response, identifier: identifier)
 				}
 
 				completionHandler(.cancel)
@@ -148,8 +148,8 @@ extension DownloadSession: URLSessionDataDelegate {
 
 			if !response.statusIsOK {
 
-				if let representedObject = infoForTask(dataTask)?.representedObject {
-					delegate.downloadSession(self, didReceiveUnexpectedResponse: response, representedObject: representedObject)
+				if let identifier {
+					delegate?.downloadSession(self, didReceiveUnexpectedResponse: response, identifier: identifier)
 				}
 
 				completionHandler(.cancel)
@@ -163,37 +163,37 @@ extension DownloadSession: URLSessionDataDelegate {
 			completionHandler(.allow)
 		}
 	}
-	
+
 	nonisolated public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 
 		MainActor.assumeIsolated {
-			guard let info = infoForTask(dataTask) else {
+			
+			guard let delegate, let info = infoForTask(dataTask) else {
 				return
 			}
 			info.addData(data)
 			
-			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, representedObject: info.representedObject) {
-				
+			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data!, identifier: info.identifier) {
 				info.canceled = true
 				dataTask.cancel()
 				removeTask(dataTask)
 			}
 		}
 	}
-		
 }
 
 // MARK: - Private
 
 private extension DownloadSession {
 
-	@MainActor func addDataTask(_ representedObject: AnyObject) {
+	func addDataTask(_ identifier: String) {
+
 		guard tasksPending.count < 500 else {
-			queue.insert(representedObject, at: 0)
+			queue.insert(identifier, at: 0)
 			return
 		}
 		
-		guard let request = delegate.downloadSession(self, requestForRepresentedObject: representedObject) else {
+		guard let request = delegate?.downloadSession(self, requestForIdentifier: identifier) else {
 			return
 		}
 
@@ -209,37 +209,59 @@ private extension DownloadSession {
 		
 		let task = urlSession.dataTask(with: requestToUse)
 
-		let info = DownloadInfo(representedObject, urlRequest: requestToUse)
+		let info = DownloadInfo(identifier, urlRequest: requestToUse)
 		taskIdentifierToInfoDictionary[task.taskIdentifier] = info
 
 		tasksPending.insert(task)
 		task.resume()
+
+		updateDownloadProgress()
 	}
 	
 	func addDataTaskFromQueueIfNecessary() {
-		guard tasksPending.count < 500, let representedObject = queue.popLast() else { return }
-		addDataTask(representedObject)
+
+		guard tasksPending.count < 500, let identifier = queue.popLast() else {
+			return
+		}
+		addDataTask(identifier)
 	}
 
 	func infoForTask(_ task: URLSessionTask) -> DownloadInfo? {
+
 		return taskIdentifierToInfoDictionary[task.taskIdentifier]
 	}
 
-	@MainActor func removeTask(_ task: URLSessionTask) {
+	func removeTask(_ task: URLSessionTask) {
+
 		tasksInProgress.remove(task)
 		tasksPending.remove(task)
 		taskIdentifierToInfoDictionary[task.taskIdentifier] = nil
 
 		addDataTaskFromQueueIfNecessary()
-		
+
+		downloadProgress.completeTask()
+		updateDownloadProgress()
+
 		if tasksInProgress.count + tasksPending.count < 1 {
-			representedObjects.removeAllObjects()
-			delegate.downloadSessionDidCompleteDownloadObjects(self)
+			assert(allIdentifiers.isEmpty)
+			assert(queue.isEmpty)
+			delegate?.downloadSessionDidComplete(self)
+			clearDownloadProgress()
 		}
 	}
 	
-	func urlStringIsBlackListedRedirect(_ urlString: String) -> Bool {
+	func updateDownloadProgress() {
 		
+		downloadProgress.numberRemaining = tasksInProgress.count + tasksPending.count + queue.count
+	}
+
+	func clearDownloadProgress() {
+		
+		downloadProgress = DownloadProgress(numberOfTasks: 0)
+	}
+
+	func urlStringIsDisallowedRedirect(_ urlString: String) -> Bool {
+
 		// Hotels and similar often do permanent redirects. We can catch some of those.
 		
 		let s = urlString.lowercased()
@@ -255,7 +277,8 @@ private extension DownloadSession {
 	}
 	
 	func cacheRedirect(_ oldURLString: String, _ newURLString: String) {
-		if urlStringIsBlackListedRedirect(newURLString) {
+
+		if urlStringIsDisallowedRedirect(newURLString) {
 			return
 		}
 		redirectCache[oldURLString] = newURLString
@@ -295,9 +318,9 @@ private extension DownloadSession {
 
 private final class DownloadInfo {
 	
-	let representedObject: AnyObject
+	let identifier: String
 	let urlRequest: URLRequest
-	let data = NSMutableData()
+	var data: Data?
 	var error: Error?
 	var urlResponse: URLResponse?
 	var canceled = false
@@ -306,15 +329,17 @@ private final class DownloadInfo {
 		return urlResponse?.forcedStatusCode ?? 0
 	}
 	
-	init(_ representedObject: AnyObject, urlRequest: URLRequest) {
-		
-		self.representedObject = representedObject
+	init(_ identifier: String, urlRequest: URLRequest) {
+
+		self.identifier = identifier
 		self.urlRequest = urlRequest
 	}
 	
 	func addData(_ d: Data) {
-		
-		data.append(d)
+
+		if data == nil {
+			data = Data()
+		}
+		data!.append(d)
 	}
 }
-
