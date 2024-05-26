@@ -126,7 +126,7 @@ private extension DatabaseLookupTable {
 		
 		// Save the actual related objects.
 		
-		let relatedObjectsToSave = uniqueArrayOfRelatedObjects(with: objects)
+		let relatedObjectsToSave = uniqueRelatedObjects(with: objects)
 		if relatedObjectsToSave.isEmpty {
 			assertionFailure("updateRelationships: expected relatedObjectsToSave would not be empty. This should be unreachable.")
 			return
@@ -135,24 +135,12 @@ private extension DatabaseLookupTable {
 		relatedTable.save(relatedObjectsToSave, in: database)
 	}
 
-	func uniqueArrayOfRelatedObjects(with objects: [DatabaseObject]) -> [DatabaseObject] {
-		
-		// Can’t create a Set, because we can’t make a Set<DatabaseObject>, because protocol-conforming objects can’t be made Hashable or even Equatable.
-		// We still want the array to include only one copy of each object, but we have to do it the slow way. Instruments will tell us if this is a performance problem.
+	func uniqueRelatedObjects(with objects: [DatabaseObject]) -> [DatabaseObject] {
 
-		var relatedObjectsUniqueArray = [DatabaseObject]()
-		for object in objects {
-			guard let relatedObjects = object.relatedObjectsWithName(relationshipName) else {
-				assertionFailure("uniqueArrayOfRelatedObjects: expected every object to have related objects.")
-				continue
-			}
-			for relatedObject in relatedObjects {
-				if !relatedObjectsUniqueArray.includesObjectWithDatabaseID(relatedObject.databaseID) {
-					relatedObjectsUniqueArray += [relatedObject]
-				}
-			}
-		}
-		return relatedObjectsUniqueArray
+		// All of our objects that conform to DatabaseObject are Hashable.
+		// If that’s ever not true, this will crash when run from Xcode.
+		let objectSet = Set(objects as! [AnyHashable])
+		return Array(objectSet) as! [DatabaseObject]
 	}
 	
 	func syncRelatedObjectsAndLookupTable(_ object: DatabaseObject, _ lookupTable: RelatedObjectIDsMap, _ database: FMDatabase) {
