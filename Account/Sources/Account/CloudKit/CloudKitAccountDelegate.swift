@@ -48,11 +48,11 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	
 	private let mainThreadOperationQueue = MainThreadOperationQueue()
 
-	private lazy var refresher: LocalAccountRefresher = {
-		let refresher = LocalAccountRefresher()
-		refresher.delegate = self
-		return refresher
-	}()
+//	private lazy var refresher: LocalAccountRefresher = {
+//		let refresher = LocalAccountRefresher()
+//		refresher.delegate = self
+//		return refresher
+//	}()
 
 	weak var account: Account?
 	
@@ -459,7 +459,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 	func suspendNetwork() {
 		
-		refresher.suspend()
+//		refresher.suspend()
 	}
 
 	func suspendDatabase() {
@@ -471,7 +471,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	
 	func resume() {
 
-		refresher.resume()
+//		refresher.resume()
 
 		Task {
 			await database.resume()
@@ -536,7 +536,7 @@ private extension CloudKitAccountDelegate {
 
 	func combinedRefresh(_ account: Account, _ feeds: Set<Feed>) async throws {
 
-		await refresher.refreshFeeds(feeds)
+//		await refresher.refreshFeeds(feeds)
 	}
 
 	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
@@ -733,22 +733,22 @@ private extension CloudKitAccountDelegate {
 	}
 }
 
-extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
-
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed) {
-
-		refreshProgress.completeTask()
-	}
-
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-
-		Task { @MainActor in
-			await storeArticleChanges(new: articleChanges.newArticles,
-										  updated: articleChanges.updatedArticles,
-										  deleted: articleChanges.deletedArticles)
-		}
-	}
-}
+//extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
+//
+//	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed) {
+//
+//		refreshProgress.completeTask()
+//	}
+//
+//	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
+//
+//		Task { @MainActor in
+//			await storeArticleChanges(new: articleChanges.newArticles,
+//										  updated: articleChanges.updatedArticles,
+//										  deleted: articleChanges.deletedArticles)
+//		}
+//	}
+//}
 
 extension CloudKitAccountDelegate: CloudKitFeedInfoDelegate {
 

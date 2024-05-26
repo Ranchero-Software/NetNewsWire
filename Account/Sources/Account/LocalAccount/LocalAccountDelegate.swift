@@ -18,6 +18,7 @@ import Core
 import CommonErrors
 import FeedFinder
 import LocalAccount
+import FeedDownloader
 
 public enum LocalAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."
@@ -25,15 +26,9 @@ public enum LocalAccountDelegateError: String, Error {
 
 final class LocalAccountDelegate: AccountDelegate {
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccount")
+	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccount")
 
 	weak var account: Account?
-	
-	private lazy var refresher: LocalAccountRefresher = {
-		let refresher = LocalAccountRefresher()
-		refresher.delegate = self
-		return refresher
-	}()
 	
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
@@ -42,8 +37,17 @@ final class LocalAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	let refreshProgress = DownloadProgress(numberOfTasks: 0)
-	
+	var refreshProgress: DownloadProgress {
+		feedDownloader.downloadProgress
+	}
+
+	let feedDownloader: FeedDownloader
+
+	init() {
+		self.feedDownloader = FeedDownloader()
+		feedDownloader.delegate = self
+	}
+
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 	
@@ -54,12 +58,10 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 
 		let feeds = account.flattenedFeeds()
-		refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
+		let feedURLStrings = feeds.map { $0.url }
+		let feedURLs = Set(feedURLStrings.compactMap { URL(string: $0) })
 
-		await refresher.refreshFeeds(feeds)
-
-		self.refreshProgress.clear()
-		account.metadata.lastArticleFetchEndTime = Date()
+		feedDownloader.downloadFeeds(feedURLs)
 	}
 
 	func syncArticleStatus(for account: Account) async throws {
@@ -164,7 +166,9 @@ final class LocalAccountDelegate: AccountDelegate {
 	// MARK: Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
-		refresher.suspend()
+		Task { @MainActor in
+			await feedDownloader.suspend()
+		}
 	}
 
 	func suspendDatabase() {
@@ -172,21 +176,8 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func resume() {
-		refresher.resume()
+		feedDownloader.resume()
 	}
-}
-
-extension LocalAccountDelegate: LocalAccountRefresherDelegate {
-	
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: Feed) {
-		refreshProgress.completeTask()
-	}
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-		completion()
-	}
-
 }
 
 private extension LocalAccountDelegate {
@@ -197,9 +188,7 @@ private extension LocalAccountDelegate {
 		// container before the name has been downloaded. This will put it in the sidebar
 		// with an Untitled name if we don't delay it being added to the sidebar.
 		BatchUpdate.shared.start()
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		defer {
-			refreshProgress.completeTask()
 			BatchUpdate.shared.end()
 		}
 
@@ -225,5 +214,70 @@ private extension LocalAccountDelegate {
 		try await account.update(feed: feed, with: parsedFeed)
 
 		return feed
+	}
+}
+
+extension LocalAccountDelegate: FeedDownloaderDelegate {
+
+	func feedDownloader(_: FeedDownloader, requestCompletedForFeedURL feedURL: URL, response: URLResponse?, data: Data?, error: Error?) {
+
+		guard let account, let feed = account.existingFeed(urlString: feedURL.absoluteString) else {
+			return
+		}
+
+		if let error {
+			logger.debug("Error downloading \(feed.url) - \(error)")
+			return
+		}
+		guard let response, let data, !data.isEmpty else {
+			return
+		}
+
+		parseAndUpdateFeed(feed, response: response, data: data)
+	}
+
+	func feedDownloader(_: FeedDownloader, requestCanceledForFeedURL feedURL: URL, response: URLResponse?, data: Data?, error: Error?, reason: FeedDownloader.CancellationReason) {
+
+		// nothing to do
+	}
+
+	func feedDownloaderSessionDidComplete(_: FeedDownloader) {
+
+		account?.metadata.lastArticleFetchEndTime = Date()
+	}
+
+	func feedDownloader(_: FeedDownloader, conditionalGetInfoFor feedURL: URL) -> HTTPConditionalGetInfo? {
+
+		guard let feed = account?.existingFeed(urlString: feedURL.absoluteString) else {
+			return nil
+		}
+		return feed.conditionalGetInfo
+	}
+}
+
+private extension LocalAccountDelegate {
+
+	func parseAndUpdateFeed(_ feed: Feed, response: URLResponse, data: Data) {
+
+		Task { @MainActor in
+
+			let dataHash = data.md5String
+			if dataHash == feed.contentHash {
+				return
+			}
+
+			let parserData = ParserData(url: feed.url, data: data)
+
+			guard let parsedFeed = try? await FeedParser.parse(parserData) else {
+				return
+			}
+
+			try await self.account?.update(feed: feed, with: parsedFeed)
+
+			if let httpResponse = response as? HTTPURLResponse {
+				feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+			}
+			feed.contentHash = dataHash
+		}
 	}
 }

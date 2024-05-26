@@ -180,6 +180,14 @@ public enum FetchType {
 		return _externalIDToFeedDictionary
 	}
 	
+	private var _feedURLToFeedDictionary = [String: Feed]()
+	var feedURLToFeedDictionary: [String: Feed] {
+		if feedDictionariesNeedUpdate {
+			rebuildFeedDictionaries()
+		}
+		return _feedURLToFeedDictionary
+	}
+
 	var flattenedFeedURLs: Set<String> {
 		return Set(flattenedFeeds().map({ $0.url }))
 	}
@@ -1148,9 +1156,11 @@ private extension Account {
 	func rebuildFeedDictionaries() {
 		var idDictionary = [String: Feed]()
 		var externalIDDictionary = [String: Feed]()
-		
+		var urlDictionary = [String: Feed]()
+
 		for feed in flattenedFeeds() {
 			idDictionary[feed.feedID] = feed
+			urlDictionary[feed.url] = feed
 			if let externalID = feed.externalID {
 				externalIDDictionary[externalID] = feed
 			}
@@ -1158,6 +1168,7 @@ private extension Account {
 
 		_idToFeedDictionary = idDictionary
 		_externalIDToFeedDictionary = externalIDDictionary
+		_feedURLToFeedDictionary = urlDictionary
 		feedDictionariesNeedUpdate = false
 	}
     
@@ -1318,6 +1329,10 @@ extension Account {
 
 	public func existingFeed(withExternalID externalID: String) -> Feed? {
 		return externalIDToFeedDictionary[externalID]
+	}
+
+	public func existingFeed(urlString: String) -> Feed? {
+		return feedURLToFeedDictionary[urlString]
 	}
 }
 
