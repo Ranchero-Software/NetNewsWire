@@ -25,11 +25,25 @@ public protocol FeedDownloaderDelegate: AnyObject {
 /// Use this to download feeds directly (local and iCloud accounts).
 @MainActor public final class FeedDownloader {
 
-	public enum CancellationReason {
+	public enum CancellationReason: CustomStringConvertible {
+		
 		case suspended
 		case notFeedData
 		case unexpectedResponse
 		case notModified
+
+		public var description: String {
+			switch self {
+			case .suspended:
+				return "suspended"
+			case .notFeedData:
+				return "notFeedData"
+			case .unexpectedResponse:
+				return "unexpectedResponse"
+			case .notModified:
+				return "notModified"
+			}
+		}
 	}
 
 	public weak var delegate: FeedDownloaderDelegate?

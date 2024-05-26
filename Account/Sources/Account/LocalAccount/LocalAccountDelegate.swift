@@ -221,15 +221,16 @@ extension LocalAccountDelegate: FeedDownloaderDelegate {
 
 	func feedDownloader(_: FeedDownloader, requestCompletedForFeedURL feedURL: URL, response: URLResponse?, data: Data?, error: Error?) {
 
-		guard let account, let feed = account.existingFeed(urlString: feedURL.absoluteString) else {
+		if let error {
+			logger.debug("Error downloading: \(feedURL) - \(error)")
 			return
 		}
 
-		if let error {
-			logger.debug("Error downloading \(feed.url) - \(error)")
+		guard let response, let data, !data.isEmpty else {
+			logger.debug("Missing response and/or data: \(feedURL)")
 			return
 		}
-		guard let response, let data, !data.isEmpty else {
+		guard let account, let feed = account.existingFeed(urlString: feedURL.absoluteString) else {
 			return
 		}
 
@@ -238,11 +239,12 @@ extension LocalAccountDelegate: FeedDownloaderDelegate {
 
 	func feedDownloader(_: FeedDownloader, requestCanceledForFeedURL feedURL: URL, response: URLResponse?, data: Data?, error: Error?, reason: FeedDownloader.CancellationReason) {
 
-		// nothing to do
+		logger.debug("Request canceled: \(feedURL) - \(reason)")
 	}
 
 	func feedDownloaderSessionDidComplete(_: FeedDownloader) {
 
+		logger.debug("Feed downloader session did complete")
 		account?.metadata.lastArticleFetchEndTime = Date()
 	}
 
