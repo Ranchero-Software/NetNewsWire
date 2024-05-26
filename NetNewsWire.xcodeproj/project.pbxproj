@@ -1020,6 +1020,7 @@
 		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
 		842E45CD1ED8C308000A8B52 /* AppNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
+		843429CC2BFEE3B6003D6C70 /* FeedDownloader */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FeedDownloader; sourceTree = "<group>"; };
 		843EA3EA2BFC293B003F2E97 /* Mac.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mac.xctestplan; sourceTree = "<group>"; };
 		84411E701FE5FBFA004B527F /* SmallIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallIconProvider.swift; sourceTree = "<group>"; };
 		8444C8F11FED81840051386C /* OPMLExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLExporter.swift; sourceTree = "<group>"; };
@@ -2013,6 +2014,7 @@
 				84A699132BC34E8500605AB8 /* ArticleExtractor */,
 				84FB9FAE2BC3494B00B7AFC3 /* FeedFinder */,
 				51CD32C624D2DEF9009ABAEF /* Account */,
+				843429CC2BFEE3B6003D6C70 /* FeedDownloader */,
 				84A699182BC3524C00605AB8 /* LocalAccount */,
 				84FB9FAD2BC344F800B7AFC3 /* Feedbin */,
 				84A699192BC36EDB00605AB8 /* Feedly */,
