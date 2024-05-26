@@ -14,6 +14,7 @@ public protocol ContainerIdentifiable {
 }
 
 public enum ContainerIdentifier: Hashable, Equatable, Sendable {
+	
 	case smartFeedController
 	case account(String) // accountID
 	case folder(String, String) // accountID, folderName
@@ -55,6 +56,20 @@ public enum ContainerIdentifier: Hashable, Equatable, Sendable {
 		}
 	}
 	
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+
+		switch self {
+		case .smartFeedController:
+			hasher.combine(0)
+		case .account(let accountID):
+			hasher.combine(accountID)
+		case .folder(let accountID, let folderName):
+			hasher.combine(accountID)
+			hasher.combine(folderName)
+		}
+	}
 }
 
 extension ContainerIdentifier: Encodable {

@@ -18,6 +18,11 @@ private struct UILabelSizerSpecifier: Hashable {
 
 	let numberOfLines: Int
 	let font: UIFont
+
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(numberOfLines)
+		hasher.combine(font.pointSize)
+	}
 }
 
 struct TextFieldSizeInfo {

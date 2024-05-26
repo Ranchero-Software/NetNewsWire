@@ -144,6 +144,12 @@ typealias PasteboardFeedDictionary = [String: String]
 		}
 		return d
 	}
+
+	// MARK: - Hashable
+
+	nonisolated func hash(into hasher: inout Hasher) {
+		hasher.combine(url)
+	}
 }
 
 extension Feed: PasteboardWriterOwner {

@@ -28,6 +28,10 @@ public struct NewsBlurStoryHashesResponse: Decodable, Sendable {
 			self.hash = hash
 			self.timestamp = timestamp
 		}
+
+		public func hash(into hasher: inout Hasher) {
+			hasher.combine(hash)
+		}
 	}
 }
 

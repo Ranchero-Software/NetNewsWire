@@ -44,4 +44,9 @@ public struct SyncStatus: Hashable, Equatable, Sendable {
 	public func databaseDictionary() -> DatabaseDictionary {
 		return [DatabaseKey.articleID: articleID, DatabaseKey.key: key.rawValue, DatabaseKey.flag: flag, DatabaseKey.selected: selected]
 	}
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(articleID)
+		hasher.combine(key)
+	}
 }

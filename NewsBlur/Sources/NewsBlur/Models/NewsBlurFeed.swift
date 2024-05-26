@@ -18,6 +18,10 @@ public struct NewsBlurFeed: Hashable, Codable, Sendable {
 	public let feedURL: String
 	public let homePageURL: String?
 	public let faviconURL: String?
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(feedID)
+	}
 }
 
 public struct NewsBlurFeedsResponse: Decodable, Sendable {
@@ -29,6 +33,10 @@ public struct NewsBlurFeedsResponse: Decodable, Sendable {
 		
 		public let name: String
 		public let feedIDs: [Int]
+
+		public func hash(into hasher: inout Hasher) {
+			hasher.combine(name)
+		}
 	}
 }
 

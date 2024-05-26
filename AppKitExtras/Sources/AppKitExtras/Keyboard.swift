@@ -17,7 +17,7 @@ public struct KeyboardConstant {
 	public static let spaceKey = " ".keyboardIntegerValue
 }
 
-public extension String {
+extension String {
 
 	var keyboardIntegerValue: Int? {
 		if isEmpty {
@@ -64,6 +64,12 @@ public extension String {
 			}
 		}
 		return nil
+	}
+
+	// MARK: - Hashable
+
+	nonisolated public func hash(into hasher: inout Hasher) {
+		hasher.combine(key)
 	}
 }
 
@@ -143,5 +149,12 @@ public struct KeyboardKey: Hashable, Sendable {
 
 		self.init(integerValue: integerValue, shiftKeyDown: shiftKeyDown, optionKeyDown: optionKeyDown, commandKeyDown: commandKeyDown, controlKeyDown: controlKeyDown)
 	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(integerValue)
+	}
 }
+
 #endif

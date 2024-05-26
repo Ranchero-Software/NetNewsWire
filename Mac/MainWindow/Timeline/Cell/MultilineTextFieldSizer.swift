@@ -18,6 +18,11 @@ private struct TextFieldSizerSpecifier: Hashable {
 
 	let numberOfLines: Int
 	let font: NSFont
+
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(numberOfLines)
+		hasher.combine(font.pointSize)
+	}
 }
 
 struct TextFieldSizeInfo {

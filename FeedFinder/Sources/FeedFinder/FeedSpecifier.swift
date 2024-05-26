@@ -64,6 +64,12 @@ public struct FeedSpecifier: Hashable, Sendable {
 		
 		return currentBestFeed
 	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(urlString)
+	}
 }
 
 private extension FeedSpecifier {

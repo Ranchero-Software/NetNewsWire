@@ -25,16 +25,16 @@ public struct ParsedAuthor: Hashable, Codable, Sendable {
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {
-		if let name = name {
+		if let name {
 			hasher.combine(name)
 		}
-		else if let url = url {
+		else if let url {
 			hasher.combine(url)
 		}
-		else if let emailAddress = emailAddress {
+		else if let emailAddress {
 			hasher.combine(emailAddress)
 		}
-		else if let avatarURL = avatarURL {
+		else if let avatarURL{
 			hasher.combine(avatarURL)
 		}
 		else {

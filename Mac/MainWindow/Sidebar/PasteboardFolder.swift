@@ -82,6 +82,12 @@ typealias PasteboardFolderDictionary = [String: String]
 		}
 		return d
 	}
+
+	// MARK: - Hashable
+
+	nonisolated func hash(into hasher: inout Hasher) {
+		hasher.combine(name)
+	}
 }
 
 extension Folder: PasteboardWriterOwner {
