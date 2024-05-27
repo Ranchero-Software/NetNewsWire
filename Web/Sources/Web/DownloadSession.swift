@@ -107,7 +107,10 @@ extension DownloadSession: URLSessionTaskDelegate {
 				return
 			}
 
-			delegate?.downloadSession(self, downloadDidCompleteForIdentifier: info.identifier, response: info.urlResponse, data: info.data, error: error)
+			if let response = info.urlResponse, response.statusIsOK {
+				delegate?.downloadSession(self, downloadDidCompleteForIdentifier: info.identifier, response: info.urlResponse, data: info.data, error: error)
+			}
+			
 			removeTask(task)
 		}
 	}
@@ -146,10 +149,7 @@ extension DownloadSession: URLSessionDataDelegate {
 				if let identifier {
 					delegate?.downloadSession(self, didReceiveNotModifiedResponse: response, identifier: identifier)
 				}
-
-				completionHandler(.cancel)
-				removeTask(dataTask)
-
+				completionHandler(.allow)
 				return
 			}
 
@@ -158,10 +158,7 @@ extension DownloadSession: URLSessionDataDelegate {
 				if let identifier {
 					delegate?.downloadSession(self, didReceiveUnexpectedResponse: response, identifier: identifier)
 				}
-
 				completionHandler(.cancel)
-				removeTask(dataTask)
-
 				return
 			}
 
@@ -195,12 +192,15 @@ private extension DownloadSession {
 
 	func addDataTask(_ identifier: String) {
 
+		downloadProgress.addTask()
+
 		guard tasksPending.count < 500 else {
 			queue.insert(identifier, at: 0)
 			return
 		}
 		
 		guard let request = delegate?.downloadSession(self, requestForIdentifier: identifier) else {
+			downloadProgress.completeTask()
 			return
 		}
 
@@ -251,9 +251,8 @@ private extension DownloadSession {
 		downloadProgress.completeTask()
 		updateDownloadProgress()
 
-		if tasksInProgress.count + tasksPending.count < 1 {
-			assert(allIdentifiers.isEmpty)
-			assert(queue.isEmpty)
+		if tasksInProgress.count + tasksPending.count + queue.count < 1 { // Finished?
+			allIdentifiers = Set<String>()
 			delegate?.downloadSessionDidComplete(self)
 			clearDownloadProgress()
 		}
@@ -269,14 +268,15 @@ private extension DownloadSession {
 		downloadProgress = DownloadProgress(numberOfTasks: 0)
 	}
 
+	static let badRedirectStrings = ["solutionip", "lodgenet", "monzoon", "landingpage", "btopenzone", "register", "login", "authentic"]
+
 	func urlStringIsDisallowedRedirect(_ urlString: String) -> Bool {
 
 		// Hotels and similar often do permanent redirects. We can catch some of those.
 		
 		let s = urlString.lowercased()
-		let badStrings = ["solutionip", "lodgenet", "monzoon", "landingpage", "btopenzone", "register", "login", "authentic"]
-		
-		for oneBadString in badStrings {
+
+		for oneBadString in Self.badRedirectStrings {
 			if s.contains(oneBadString) {
 				return true
 			}
