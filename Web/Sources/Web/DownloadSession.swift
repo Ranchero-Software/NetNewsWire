@@ -214,7 +214,7 @@ private extension DownloadSession {
 			}
 		}
 		
-		requestToUse.addValue(UserAgent.fromInfoPlist, forHTTPHeaderField: HTTPRequestHeader.userAgent)
+		requestToUse.httpShouldHandleCookies = false
 		
 		let task = urlSession.dataTask(with: requestToUse)
 
