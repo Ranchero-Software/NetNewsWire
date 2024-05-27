@@ -22,6 +22,7 @@ private final class IndeterminateProgressController {
 
 	static var windowController: IndeterminateProgressWindowController?
 	static var runningProgressWindow = false
+	static var modalSession: NSApplication.ModalSession?
 
 	static func beginProgressWithMessage(_ message: String) {
 
@@ -32,7 +33,10 @@ private final class IndeterminateProgressController {
 
 		runningProgressWindow = true
 		windowController = IndeterminateProgressWindowController(message: message)
-		NSApplication.shared.runModal(for: windowController!.window!)
+
+		assert(modalSession == nil)
+		modalSession = NSApplication.shared.beginModalSession(for: windowController!.window!)
+		NSApplication.shared.runModalSession(modalSession!)
 	}
 
 	static func endProgress() {
@@ -43,9 +47,15 @@ private final class IndeterminateProgressController {
 		}
 
 		runningProgressWindow = false
-		NSApplication.shared.stopModal()
+		if let modalSession {
+			NSApplication.shared.endModalSession(modalSession)
+		} else {
+			assertionFailure("endProgress called without a modalSession.")
+		}
+
 		windowController?.close()
 		windowController = nil
+		modalSession = nil
 	}
 }
 
