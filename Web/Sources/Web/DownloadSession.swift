@@ -13,12 +13,19 @@ import os
 
 public protocol DownloadSessionDelegate: AnyObject {
 
+	// DownloadSession will add User-Agent header to request returned by delegate
 	@MainActor func downloadSession(_ downloadSession: DownloadSession, requestForIdentifier: String) -> URLRequest?
+
 	@MainActor func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForIdentifier: String, response: URLResponse?, data: Data?, error: Error?)
+
 	@MainActor func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, identifier: String) -> Bool
+
 	@MainActor func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse: URLResponse, identifier: String)
+
 	@MainActor func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, identifier: String)
+
 	@MainActor func downloadSession(_ downloadSession: DownloadSession, didDiscardDuplicateIdentifier: String)
+
 	@MainActor func downloadSessionDidComplete(_ downloadSession: DownloadSession)
 }
 
@@ -206,6 +213,8 @@ private extension DownloadSession {
 				requestToUse.url = redirectedURL
 			}
 		}
+		
+		requestToUse.addValue(UserAgent.fromInfoPlist, forHTTPHeaderField: HTTPRequestHeader.userAgent)
 		
 		let task = urlSession.dataTask(with: requestToUse)
 
