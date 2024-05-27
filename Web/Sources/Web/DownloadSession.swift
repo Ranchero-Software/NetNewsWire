@@ -67,7 +67,7 @@ public protocol DownloadSessionDelegate: AnyObject {
 
 	public func cancelAll() async {
 
-		clearDownloadProgress()
+		downloadProgress.clear()
 
 		let (dataTasks, uploadTasks, downloadTasks) = await urlSession.tasks
 
@@ -254,18 +254,13 @@ private extension DownloadSession {
 		if tasksInProgress.count + tasksPending.count + queue.count < 1 { // Finished?
 			allIdentifiers = Set<String>()
 			delegate?.downloadSessionDidComplete(self)
-			clearDownloadProgress()
+			downloadProgress.clear()
 		}
 	}
 	
 	func updateDownloadProgress() {
 		
 		downloadProgress.numberRemaining = tasksInProgress.count + tasksPending.count + queue.count
-	}
-
-	func clearDownloadProgress() {
-		
-		downloadProgress = DownloadProgress(numberOfTasks: 0)
 	}
 
 	static let badRedirectStrings = ["solutionip", "lodgenet", "monzoon", "landingpage", "btopenzone", "register", "login", "authentic"]
