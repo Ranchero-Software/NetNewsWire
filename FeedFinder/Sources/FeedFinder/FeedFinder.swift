@@ -11,9 +11,12 @@ import Parser
 import ParserObjC
 import Web
 import CommonErrors
+import os.log
 
 @MainActor public final class FeedFinder {
 	
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
+
 	@MainActor public static func find(url: URL) async throws -> Set<FeedSpecifier> {
 
 		try await withCheckedThrowingContinuation { continuation in
@@ -36,6 +39,7 @@ import CommonErrors
 			MainActor.assumeIsolated {
 				
 				if response?.forcedStatusCode == 404 {
+					logger.error("FeedFinder: 404 for \(url)")
 					if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
 						urlComponents.path = "\(urlComponents.path).json"
 						if let newURLString = urlComponents.url?.absoluteString {
@@ -49,31 +53,37 @@ import CommonErrors
 				}
 				
 				if let error = error {
+					logger.error("FeedFinder: error for \(url) - \(error)")
 					completion(.failure(error))
 					return
 				}
 				
-				guard let data = data, let response = response else {
+				guard let data, !data.isEmpty, let response else {
+					logger.error("FeedFinder: missing response and/or data for \(url)")
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 				
-				if !response.statusIsOK || data.isEmpty {
+				if !response.statusIsOK {
+					logger.error("FeedFinder: non-OK response for \(url) - \(response.forcedStatusCode)")
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 				
 				if FeedFinder.isFeed(data, url.absoluteString) {
+					logger.info("FeedFinder: is feed \(url)")
 					let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
 					completion(.success(Set([feedSpecifier])))
 					return
 				}
 				
 				if !FeedFinder.isHTML(data) {
+					logger.error("FeedFinder: not feed and not HTML \(url)")
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 				
+				logger.info("FeedFinder: finding feeds in HTML \(url)")
 				FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString, completion: completion)
 			}
 		}
