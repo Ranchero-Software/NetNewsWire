@@ -15,9 +15,8 @@ import SyncDatabase
 import Articles
 import ArticlesDatabase
 import Database
-import CloudKitSync
 
-final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
+public final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
 	public struct ArticleSupport {
 
@@ -27,6 +26,15 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		let markStarred: (Set<String>) -> Void
 		let markUnstarred: (Set<String>) -> Void
 		let update: (String, Set<ParsedItem>, Bool) async throws -> ArticleChanges? // feedID, parsedItems, deleteOlder
+
+		public init(delete: @escaping (Set<String>) -> Void, markRead: @escaping (Set<String>) -> Void, markUnread: @escaping (Set<String>) -> Void, markStarred: @escaping (Set<String>) -> Void, markUnstarred: @escaping (Set<String>) -> Void, update: @escaping (String, Set<ParsedItem>, Bool) async throws -> ArticleChanges?) {
+			self.delete = delete
+			self.markRead = markRead
+			self.markUnread = markUnread
+			self.markStarred = markStarred
+			self.markUnstarred = markUnstarred
+			self.update = update
+		}
 	}
 
 	let articleSupport: ArticleSupport
@@ -35,13 +43,13 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
-	init(articleSupport: ArticleSupport, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
+	public init(articleSupport: ArticleSupport, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
 		self.articleSupport = articleSupport
 		self.database = database
 		self.articlesZone = articlesZone
 	}
 
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+	public func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 
 		Task { @MainActor in
 			do {
