@@ -19,14 +19,24 @@ import CloudKitSync
 
 final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+	public struct ArticleSupport {
 
-	weak var account: Account?
-	var database: SyncDatabase
+		let delete: (Set<String>) -> Void
+		let markRead: (Set<String>) -> Void
+		let markUnread: (Set<String>) -> Void
+		let markStarred: (Set<String>) -> Void
+		let markUnstarred: (Set<String>) -> Void
+		let update: (String, Set<ParsedItem>, Bool) async throws -> ArticleChanges? // feedID, parsedItems, deleteOlder
+	}
+
+	let articleSupport: ArticleSupport
+	let database: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
 
-	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
-		self.account = account
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+
+	init(articleSupport: ArticleSupport, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
+		self.articleSupport = articleSupport
 		self.database = database
 		self.articlesZone = articlesZone
 	}
@@ -67,7 +77,7 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 
 		try? await database.deleteSelectedForProcessing(deletableArticleIDs)
-		try? await account?.delete(articleIDs: deletableArticleIDs)
+		articleSupport.delete(deletableArticleIDs)
 	}
 
 	@MainActor private func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>) async throws {
@@ -84,33 +94,11 @@ private extension CloudKitArticlesZoneDelegate {
 
 		var errorOccurred = false
 
-		do {
-			try await account?.markAsUnread(updateableUnreadArticleIDs)
-		} catch {
-			errorOccurred = true
-			os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", error.localizedDescription)
-		}
-
-		do {
-			try await account?.markAsRead(updateableReadArticleIDs)
-		} catch {
-			errorOccurred = true
-			os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", error.localizedDescription)
-		}
-
-		do {
-			try await account?.markAsUnstarred(updateableUnstarredArticleIDs)
-		} catch {
-			errorOccurred = true
-			os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", error.localizedDescription)
-		}
-
-		do {
-			try await account?.markAsStarred(updateableStarredArticleIDs)
-		} catch {
-			errorOccurred = true
-			os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", error.localizedDescription)
-		}
+		articleSupport.markRead(updateableReadArticleIDs)
+		articleSupport.markUnread(updateableUnreadArticleIDs)
+		
+		articleSupport.markStarred(updateableStarredArticleIDs)
+		articleSupport.markUnstarred(updateableUnstarredArticleIDs)
 
 		let parsedItems = await Self.makeParsedItems(records)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
@@ -118,7 +106,7 @@ private extension CloudKitArticlesZoneDelegate {
 		for (feedID, parsedItems) in feedIDsAndItems {
 
 			do {
-				let articleChanges = try await self.account?.update(feedID: feedID, with: parsedItems, deleteOlder: false)
+				let articleChanges = try await articleSupport.update(feedID, parsedItems, false)
 				guard let deletes = articleChanges?.deletedArticles, !deletes.isEmpty else {
 					continue
 				}

@@ -415,11 +415,45 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 	}
 
+	private func articleSupport() -> CloudKitArticlesZoneDelegate.ArticleSupport {
+
+		CloudKitArticlesZoneDelegate.ArticleSupport(
+			delete: { [weak self] articleIDs in
+				Task { @MainActor in
+					try? await self?.account?.delete(articleIDs: articleIDs)
+				}
+			},
+			markRead: { [weak self] articleIDs in
+				Task { @MainActor in
+					try? await self?.account?.markAsRead(articleIDs)
+				}
+			},
+			markUnread: { [weak self] articleIDs in
+				Task { @MainActor in
+					try? await self?.account?.markAsUnread(articleIDs)
+				}
+			},
+			markStarred: { [weak self] articleIDs in
+				Task { @MainActor in
+					try? await self?.account?.markAsStarred(articleIDs)
+				}
+			},
+			markUnstarred: { [weak self] articleIDs in
+				Task { @MainActor in
+					try? await self?.account?.markAsUnstarred(articleIDs)
+				}
+			},
+			update: { [weak self] (feedID, parsedItems, deleteOlder) async throws -> ArticleChanges? in
+				try await self?.account?.update(feedID: feedID, with: parsedItems, deleteOlder: deleteOlder)
+			}
+		)
+	}
+
 	func accountDidInitialize(_ account: Account) {
 		self.account = account
 		
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress, articlesZone: articlesZone)
-		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(articleSupport: articleSupport(), database: database, articlesZone: articlesZone)
 		articlesZone.feedInfoDelegate = self
 		
 		Task {
