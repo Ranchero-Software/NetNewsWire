@@ -9,6 +9,7 @@
 import Foundation
 
 /// Code to be run by MainThreadOperationQueue.
+/// This is deprecated legacy code. Don’t use it.
 ///
 /// When finished, it must call operationDelegate.operationDidComplete(self).
 /// If it’s canceled, it should not call the delegate.
@@ -60,27 +61,12 @@ public protocol MainThreadOperation: AnyObject {
 	/// This function has a default implementation. It’s super-rare
 	/// to need to provide your own.
 	@MainActor func cancel()
-
-	/// Make this operation dependent on an other operation.
-	///
-	/// This means the other operation must complete before
-	/// this operation gets run. If the other operation is canceled,
-	/// this operation will automatically be canceled.
-	/// Note: an operation can have multiple dependencies.
-	///
-	/// This function has a default implementation. It’s super-rare
-	/// to need to provide your own.
-	@MainActor func addDependency(_ parentOperation: MainThreadOperation)
 }
 
 public extension MainThreadOperation {
 
 	@MainActor func cancel() {
 		operationDelegate?.cancelOperation(self)
-	}
-
-	@MainActor func addDependency(_ parentOperation: MainThreadOperation) {
-		operationDelegate?.make(self, dependOn: parentOperation)
 	}
 
 	@MainActor func informOperationDelegateOfCompletion() {

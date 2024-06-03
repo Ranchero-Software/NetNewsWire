@@ -1,6 +1,6 @@
 //
 //  MainThreadOperationQueue.swift
-//  RSCore
+//  CloudKitSync
 //
 //  Created by Brent Simmons on 1/10/20.
 //  Copyright © 2020 Ranchero Software, LLC. All rights reserved.
@@ -12,43 +12,29 @@ public protocol MainThreadOperationDelegate: AnyObject {
 	
 	@MainActor func operationDidComplete(_ operation: MainThreadOperation)
 	@MainActor func cancelOperation(_ operation: MainThreadOperation)
-	@MainActor func make(_ childOperation: MainThreadOperation, dependOn parentOperation: MainThreadOperation)
 }
 
 /// Manage a queue of MainThreadOperation tasks.
+/// This is deprecated legacy code. Don’t use it.
 ///
 /// Runs them one at a time; runs them on the main thread.
 /// Any operation can use DispatchQueue or whatever to run code off of the main thread.
 /// An operation calls back to the queue when it’s completed or canceled.
 ///
 /// Use this only on the main thread.
-/// The operation can be suspended and resumed.
-/// It is *not* suspended on creation.
 @MainActor public final class MainThreadOperationQueue {
-
-	/// Use the shared queue when you don’t need to create a separate queue.
-	@MainActor public static let shared: MainThreadOperationQueue = {
-		MainThreadOperationQueue()
-	}()
 
 	private var operations = [Int: MainThreadOperation]()
 	private var pendingOperationIDs = [Int]()
 	private var currentOperationID: Int?
-	@MainActor private static var incrementingID = 0
-	private var isSuspended = false
-	private let dependencies = MainThreadOperationDependencies()
-
-	/// Meant for testing; not intended to be useful.
-	public var pendingOperationsCount: Int {
-		return pendingOperationIDs.count
-	}
+	private static var incrementingID = 0
 
 	public init() {
 		// Silence compiler complaint about init not being public.
 	}
 
 	/// Add an operation to the queue.
-	@MainActor public func add(_ operation: MainThreadOperation) {
+	public func add(_ operation: MainThreadOperation) {
 		precondition(Thread.isMainThread)
 		operation.operationDelegate = self
 		let operationID = ensureOperationID(operation)
@@ -62,22 +48,6 @@ public protocol MainThreadOperationDelegate: AnyObject {
 		runNextOperationIfNeeded()
 	}
 
-	/// Add multiple operations to the queue.
-	/// This has the same effect as calling addOperation one-by-one.
-	@MainActor public func addOperations(_ operations: [MainThreadOperation]) {
-		for operation in operations {
-			add(operation)
-		}
-	}
-
-	/// Add a dependency. Do this *before* calling addOperation, since addOperation might run the operation right away.
-	@MainActor public func make(_ childOperation: MainThreadOperation, dependOn parentOperation: MainThreadOperation) {
-		precondition(Thread.isMainThread)
-		let childOperationID = ensureOperationID(childOperation)
-		let parentOperationID = ensureOperationID(parentOperation)
-		dependencies.make(childOperationID, dependOn: parentOperationID)
-	}
-
 	/// Cancel all the current and pending operations.
 	public func cancelAllOperations() {
 		precondition(Thread.isMainThread)
@@ -88,9 +58,8 @@ public protocol MainThreadOperationDelegate: AnyObject {
 		cancel(operationIDsToCancel)
 	}
 
-	/// Cancel some operations. If any of them have dependent operations,
-	/// those operations will be canceled also.
-	@MainActor public func cancelOperations(_ operations: [MainThreadOperation]) {
+	/// Cancel some operations.
+	public func cancelOperations(_ operations: [MainThreadOperation]) {
 		precondition(Thread.isMainThread)
 		let operationIDsToCancel = operations.map{ ensureOperationID($0) }
 		assert(allOperationIDsArePendingOrCurrent(operationIDsToCancel))
@@ -99,44 +68,16 @@ public protocol MainThreadOperationDelegate: AnyObject {
 		cancel(operationIDsToCancel)
 		runNextOperationIfNeeded()
 	}
-
-	/// Cancel operations with the given name. If any of them have dependent
-	/// operations, they will be canceled too.
-	///
-	/// This will cancel the current operation, not just pending operations,
-	/// if it has the specified name.
-	@MainActor public func cancelOperations(named name: String) {
-		precondition(Thread.isMainThread)
-		guard let operationsToCancel = pendingAndCurrentOperations(named: name) else {
-			return
-		}
-		cancelOperations(operationsToCancel)
-	}
-
-	/// Stop running operations until resume() is called.
-	/// The current operation, if there is one, will run to completion —
-	/// it will not be canceled.
-	public func suspend() {
-		precondition(Thread.isMainThread)
-		isSuspended = true
-	}
-
-	/// Resume running operations.
-	public func resume() {
-		precondition(Thread.isMainThread)
-		isSuspended = false
-		runNextOperationIfNeeded()
-	}
 }
 
 extension MainThreadOperationQueue: MainThreadOperationDelegate {
 
-	@MainActor public func operationDidComplete(_ operation: MainThreadOperation) {
+	public func operationDidComplete(_ operation: MainThreadOperation) {
 		precondition(Thread.isMainThread)
 		operationDidFinish(operation)
 	}
 
-	@MainActor public func cancelOperation(_ operation: MainThreadOperation) {
+	public func cancelOperation(_ operation: MainThreadOperation) {
 		cancelOperations([operation])
 	}
 }
@@ -177,13 +118,6 @@ private extension MainThreadOperationQueue {
 			self.currentOperationID = nil
 		}
 
-		if operation.isCanceled {
-			dependencies.operationIDWasCanceled(operationID)
-		}
-		else {
-			dependencies.operationIDDidComplete(operationID)
-		}
-
 		callCompletionBlock(for: operation)
 		removeFromStorage(operation)
 		operation.operationDelegate = nil
@@ -192,7 +126,7 @@ private extension MainThreadOperationQueue {
 
 	func runNextOperationIfNeeded() {
 		DispatchQueue.main.async {
-			guard !self.isSuspended && !self.isRunningAnOperation() else {
+			guard !self.isRunningAnOperation() else {
 				return
 			}
 			guard let operation = self.popNextAvailableOperation() else {
@@ -215,7 +149,6 @@ private extension MainThreadOperationQueue {
 			}
 			if operationIsAvailable(operation) {
 				removeOperationIDsFromPendingOperationIDs([operationID])
-				dependencies.operationIDWillRun(operationID)
 				return operation
 			}
 		}
@@ -223,16 +156,16 @@ private extension MainThreadOperationQueue {
 	}
 
 	func operationIsAvailable(_ operation: MainThreadOperation) -> Bool {
-		return !operation.isCanceled && !dependencies.operationIDIsBlockedByDependency(operation.id!)
+		return !operation.isCanceled
 	}
 
-	@MainActor func createOperationID() -> Int {
+	func createOperationID() -> Int {
 		precondition(Thread.isMainThread)
 		Self.incrementingID += 1
 		return Self.incrementingID
 	}
 
-	@MainActor func ensureOperationID(_ operation: MainThreadOperation) -> Int {
+	func ensureOperationID(_ operation: MainThreadOperation) -> Int {
 		if let operationID = operation.id {
 			return operationID
 		}
@@ -247,23 +180,10 @@ private extension MainThreadOperationQueue {
 			return
 		}
 		
-		let operationIDsToCancel = operationIDsByAddingChildOperationIDs(operationIDs)
-		setCanceledAndRemoveDelegate(for: operationIDsToCancel)
-		callCompletionBlockForOperationIDs(operationIDsToCancel)
-		clearCurrentOperationIDIfContained(by: operationIDsToCancel)
-		removeOperationIDsFromPendingOperationIDs(operationIDsToCancel)
-		removeOperationIDsFromStorage(operationIDsToCancel)
-		dependencies.cancel(operationIDsToCancel)
-	}
-
-	func operationIDsByAddingChildOperationIDs(_ operationIDs: [Int]) -> [Int] {
-		var operationIDsToCancel = operationIDs
-		for operationID in operationIDs {
-			if let childOperationIDs = dependencies.childOperationIDs(for: operationID) {
-				operationIDsToCancel += childOperationIDs
-			}
-		}
-		return operationIDsToCancel
+		setCanceledAndRemoveDelegate(for: operationIDs)
+		callCompletionBlockForOperationIDs(operationIDs)
+		removeOperationIDsFromPendingOperationIDs(operationIDs)
+		removeOperationIDsFromStorage(operationIDs)
 	}
 
 	func setCanceledAndRemoveDelegate(for operationIDs: [Int]) {
@@ -272,12 +192,6 @@ private extension MainThreadOperationQueue {
 				operation.isCanceled = true
 				operation.operationDelegate = nil
 			}
-		}
-	}
-
-	func clearCurrentOperationIDIfContained(by operationIDs: [Int]) {
-		if let currentOperationID = currentOperationID, operationIDs.contains(currentOperationID) {
-			self.currentOperationID = nil
 		}
 	}
 
@@ -345,138 +259,5 @@ private extension MainThreadOperationQueue {
 			}
 		}
 		return true
-	}
-}
-
-private final class MainThreadOperationDependencies {
-
-	private var dependencies = [Int: Dependency]() // Key is parentOperationID
-
-	private final class Dependency {
-
-		let operationID: Int
-		var parentOperationDidComplete = false
-		var isEmpty: Bool {
-			return childOperationIDs.isEmpty
-		}
-		var childOperationIDs = [Int]()
-
-		init(operationID: Int) {
-			self.operationID = operationID
-		}
-
-		func remove(_ childOperationID: Int) {
-			if let ix = childOperationIDs.firstIndex(of: childOperationID) {
-				childOperationIDs.remove(at: ix)
-			}
-		}
-
-		func add(_ childOperationID: Int) {
-			guard !childOperationIDs.contains(childOperationID) else {
-				return
-			}
-			childOperationIDs.append(childOperationID)
-		}
-
-		func operationIDIsBlocked(_ operationID: Int) -> Bool {
-			if parentOperationDidComplete {
-				return false
-			}
-			return childOperationIDs.contains(operationID)
-		}
-	}
-
-	/// Add a dependency: make childOperationID dependent on parentOperationID.
-	func make(_ childOperationID: Int, dependOn parentOperationID: Int) {
-		let dependency = ensureDependency(parentOperationID)
-		dependency.add(childOperationID)
-	}
-
-	/// Child operationIDs for a possible dependency.
-	func childOperationIDs(for parentOperationID: Int) -> [Int]? {
-		if let dependency = dependencies[parentOperationID] {
-			return dependency.childOperationIDs
-		}
-		return nil
-	}
-
-	/// Update dependencies when an operation is completed.
-	func operationIDDidComplete(_ operationID: Int) {
-		if let dependency = dependencies[operationID] {
-			dependency.parentOperationDidComplete = true
-		}
-		removeChildOperationID(operationID)
-		removeEmptyDependencies()
-	}
-
-	/// Update dependencies when an operation finished but was canceled.
-	func operationIDWasCanceled(_ operationID: Int) {
-		removeAllReferencesToOperationIDs([operationID])
-	}
-
-	/// Update dependencies when canceling operations.
-	func cancel(_ operationIDs: [Int]) {
-		removeAllReferencesToOperationIDs(operationIDs)
-	}
-
-	/// Update dependencies when an operation is about to run.
-	func operationIDWillRun(_ operationID: Int) {
-		removeChildOperationIDs([operationID])
-	}
-
-	/// Find out if an operationID is blocked by a dependency.
-	func operationIDIsBlockedByDependency(_ operationID: Int) -> Bool {
-		for dependency in dependencies.values {
-			if dependency.operationIDIsBlocked(operationID) {
-				return true
-			}
-		}
-		return false
-	}
-
-	private func ensureDependency(_ parentOperationID: Int) -> Dependency {
-		if let dependency = dependencies[parentOperationID] {
-			return dependency
-		}
-		let dependency = Dependency(operationID: parentOperationID)
-		dependencies[parentOperationID] = dependency
-		return dependency
-	}
-}
-
-private extension MainThreadOperationDependencies {
-
-	func removeAllReferencesToOperationIDs(_ operationIDs: [Int]) {
-		removeDependencies(operationIDs)
-		removeChildOperationIDs(operationIDs)
-	}
-
-	func removeDependencies(_ parentOperationIDs: [Int]) {
-		for parentOperationID in parentOperationIDs {
-			dependencies[parentOperationID] = nil
-		}
-	}
-
-	func removeChildOperationIDs(_ operationIDs: [Int]) {
-		for operationID in operationIDs {
-			removeChildOperationID(operationID)
-		}
-		removeEmptyDependencies()
-	}
-
-	func removeChildOperationID(_ operationID: Int) {
-		for dependency in dependencies.values {
-			dependency.remove(operationID)
-		}
-	}
-
-	func removeEmptyDependencies() {
-		let parentOperationIDs = dependencies.keys
-		for parentOperationID in parentOperationIDs {
-			let dependency = dependencies[parentOperationID]!
-			if dependency.isEmpty {
-				dependencies[parentOperationID] = nil
-			}
-		}
 	}
 }
