@@ -452,7 +452,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	func accountDidInitialize(_ account: Account) {
 		self.account = account
 		
-		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress, articlesZone: articlesZone)
+		accountZone.delegate = CloudKitAcountZoneDelegate(account: account)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(articleSupport: articleSupport(), database: database, articlesZone: articlesZone)
 		articlesZone.feedInfoDelegate = self
 		
