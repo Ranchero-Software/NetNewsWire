@@ -23,7 +23,7 @@ public extension String {
 		let dotAt = CharacterSet(charactersIn: ".@")
 
 		while !s.isAtEnd {
-			if let input = s.shimScanUpToCharacters(from: dotAt) {
+			if let input = s.scanUpToCharacters(from: dotAt) {
 				if !input.isValidLabel { return nil }
 
 				if input.rangeOfCharacter(from: nonASCII) != nil {
@@ -37,7 +37,7 @@ public extension String {
 				}
 			}
 
-			if let input = s.shimScanCharacters(from: dotAt) {
+			if let input = s.scanCharacters(from: dotAt) {
 				result.append(input)
 			}
 		}
@@ -55,7 +55,7 @@ public extension String {
 		let dotAt = CharacterSet(charactersIn: ".@")
 
 		while !s.isAtEnd {
-			if let input = s.shimScanUpToCharacters(from: dotAt) {
+			if let input = s.scanUpToCharacters(from: dotAt) {
 				if input.lowercased().hasPrefix("xn--") {
 					let start = input.index(input.startIndex, offsetBy: 4)
 					guard let substr = input[start...].punycodeDecoded else { return nil }
@@ -66,7 +66,7 @@ public extension String {
 				}
 			}
 
-			if let input = s.shimScanCharacters(from: dotAt) {
+			if let input = s.scanCharacters(from: dotAt) {
 				result.append(input)
 			}
 		}
@@ -388,29 +388,29 @@ private extension String {
 		var password: String?
 		var fragment: String?
 
-		if let hostOrScheme = s.shimScanUpToCharacters(from: colonSlash) {
-			let maybeDelim = s.shimScanCharacters(from: colonSlash) ?? ""
+		if let hostOrScheme = s.scanUpToCharacters(from: colonSlash) {
+			let maybeDelim = s.scanCharacters(from: colonSlash) ?? ""
 
 			if maybeDelim.hasPrefix(":") {
 				delim = maybeDelim
 				scheme = hostOrScheme
-				host = s.shimScanUpToCharacters(from: slashQuestion) ?? ""
+				host = s.scanUpToCharacters(from: slashQuestion) ?? ""
 			} else {
 				path.append(hostOrScheme)
 				path.append(maybeDelim)
 			}
-		} else if let maybeDelim = s.shimScanString("//") {
+		} else if let maybeDelim = s.scanString("//") {
 			delim = maybeDelim
 
-			if let maybeHost = s.shimScanUpToCharacters(from: slashQuestion) {
+			if let maybeHost = s.scanUpToCharacters(from: slashQuestion) {
 				host = maybeHost
 			}
 		}
 
-		path.append(s.shimScanUpToString("#") ?? "")
+		path.append(s.scanUpToString("#") ?? "")
 
-		if s.shimScanString("#") != nil {
-			fragment = s.shimScanUpToCharacters(from: .newlines) ?? ""
+		if s.scanString("#") != nil {
+			fragment = s.scanUpToCharacters(from: .newlines) ?? ""
 		}
 
 		let usernamePasswordHostPort = host.components(separatedBy: "@")
