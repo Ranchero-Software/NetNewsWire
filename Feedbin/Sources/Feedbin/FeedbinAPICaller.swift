@@ -78,6 +78,8 @@ public protocol FeedbinAPICallerDelegate: AnyObject {
 
 	public func importOPML(opmlData: Data) async throws -> FeedbinImportResult {
 
+		if suspended { throw TransportError.suspended }
+
 		let callURL = feedbinBaseURL.appendingPathComponent("imports.json")
 		var request = URLRequest(url: callURL, feedbinCredentials: credentials)
 		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
@@ -131,6 +133,8 @@ public protocol FeedbinAPICallerDelegate: AnyObject {
 	}
 	
 	public func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
+
+		if suspended { throw TransportError.suspended }
 
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
