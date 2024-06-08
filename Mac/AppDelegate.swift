@@ -113,7 +113,7 @@ import Sparkle
 	private let accountManager: AccountManager
 	private let articleThemesManager: ArticleThemesManager
 
-	@MainActor override init() {
+	override init() {
 
 		NSWindow.allowsAutomaticWindowTabbing = false
 
@@ -237,7 +237,7 @@ import Sparkle
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
-		Task { @MainActor in
+		Task {
 			self.unreadCount = self.accountManager.unreadCount
 		}
 
@@ -255,7 +255,7 @@ import Sparkle
 
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			if settings.authorizationStatus == .authorized {
-				Task { @MainActor in
+				Task {
 					NSApplication.shared.registerForRemoteNotifications()
 				}
 			}
@@ -272,7 +272,7 @@ import Sparkle
 			refreshTimer!.update()
 			syncTimer!.update()
 		} else {
-			Task { @MainActor in
+			Task {
 				self.refreshTimer!.timedRefresh(nil)
 				self.syncTimer!.timedRefresh(nil)
 			}
@@ -293,7 +293,7 @@ import Sparkle
 		}
 
 		#if !MAC_APP_STORE
-		Task { @MainActor in
+		Task {
 			CrashReporter.check(crashReporter: self.crashReporter)
 		}
 		#endif
@@ -333,7 +333,7 @@ import Sparkle
 
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
 
-		Task { @MainActor in
+		Task {
 			await self.accountManager.receiveRemoteNotification(userInfo: userInfo)
 		}
 	}
@@ -350,7 +350,7 @@ import Sparkle
 		
 		ArticleThemeDownloader.cleanUp()
 		
-		Task { @MainActor in
+		Task {
 			await accountManager.sendArticleStatusAll()
 			self.isShutDownSyncDone = true
 		}
@@ -403,7 +403,7 @@ import Sparkle
 			let url = userInfo["url"] as? URL else {
 			return
 		}
-		Task { @MainActor in
+		Task {
 			self.importTheme(filename: url.path)
 		}
 	}
@@ -551,7 +551,7 @@ import Sparkle
 
 	@IBAction func refreshAll(_ sender: Any?) {
 
-		Task { @MainActor in
+		Task {
 			await accountManager.refreshAll(errorHandler: ErrorHandler.present)
 		}
 	}
@@ -927,7 +927,7 @@ internal extension AppDelegate {
 			informativeText = error.localizedDescription
 		}
 		
-		Task { @MainActor in
+		Task {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
