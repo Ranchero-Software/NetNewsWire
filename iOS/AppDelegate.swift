@@ -143,7 +143,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 
 	func applicationDidEnterBackground(_ application: UIApplication) {
+		
+		ArticleStringFormatter.emptyCaches()
+		MultilineUILabelSizer.emptyCache()
+		SingleLineUILabelSizer.emptyCache()
 		IconImageCache.shared.emptyCache()
+		accountManager.emptyCaches()
+
+		Task.detached {
+			await DownloadWithCacheManager.shared.cleanupCache()
+		}
 	}
 	
 	// MARK: Notifications

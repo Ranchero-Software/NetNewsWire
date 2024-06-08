@@ -142,8 +142,7 @@ public final actor DownloadWithCacheManager {
 	public func download(_ url: URL, forceRedownload: Bool = false) async throws -> DownloadData {
 
 		if lastCleanupDate.timeIntervalSinceNow < -DownloadWithCacheManager.cleanupInterval {
-			lastCleanupDate = Date()
-			cache.cleanup(DownloadWithCacheManager.timeToLive)
+			cleanupCache()
 		}
 
 		if !forceRedownload {
@@ -160,5 +159,10 @@ public final actor DownloadWithCacheManager {
 		}
 
 		return downloadData
+	}
+
+	public func cleanupCache() {
+		lastCleanupDate = Date()
+		cache.cleanup(DownloadWithCacheManager.timeToLive)
 	}
 }

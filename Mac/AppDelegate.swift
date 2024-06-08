@@ -327,8 +327,17 @@ import Sparkle
 	}
 	
 	func applicationDidResignActive(_ notification: Notification) {
+
 		ArticleStringFormatter.emptyCaches()
+		MultilineTextFieldSizer.emptyCache()
+		IconImageCache.shared.emptyCache()
+		accountManager.emptyCaches()
+
 		saveState()
+
+		Task.detached {
+			await DownloadWithCacheManager.shared.cleanupCache()
+		}
 	}
 
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
