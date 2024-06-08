@@ -256,14 +256,14 @@ protocol SidebarDelegate: AnyObject {
 		}
 	}
 	
-	@MainActor @IBAction func doubleClickedSidebar(_ sender: Any?) {
+	@IBAction func doubleClickedSidebar(_ sender: Any?) {
 
 		guard outlineView.clickedRow == outlineView.selectedRow else {
 			return
 		}
 
 		if AppDefaults.shared.feedDoubleClickMarkAsRead, let feed = singleSelectedFeed {
-			Task { @MainActor in
+			Task {
 				await markArticlesInFeedAsRead(feed: feed)
 			}
 		}
@@ -271,7 +271,7 @@ protocol SidebarDelegate: AnyObject {
 		openInBrowser(sender)
 	}
 
-	@MainActor private func markArticlesInFeedAsRead(feed: Feed) async {
+	private func markArticlesInFeedAsRead(feed: Feed) async {
 
 		guard let articles = try? await feed.fetchUnreadArticles() else {
 			return

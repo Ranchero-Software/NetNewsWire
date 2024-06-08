@@ -15,7 +15,7 @@ import Account
 
 		let defaultFeedsURL = Bundle.main.url(forResource: "DefaultFeeds", withExtension: "opml")!
 
-		Task { @MainActor in
+		Task {
 			try? await AccountManager.shared.defaultAccount.importOPML(defaultFeedsURL)
 		}
 	}

@@ -111,7 +111,7 @@ import Articles
 			return article.status.boolStatus(forKey:.read)
 		}
 		set {
-			Task { @MainActor in
+			Task {
 				markArticles([self.article], statusKey: .read, flag: newValue)
 			}
 		}
@@ -123,7 +123,7 @@ import Articles
 			return article.status.boolStatus(forKey:.starred)
 		}
 		set {
-			Task { @MainActor in
+			Task {
 				markArticles([self.article], statusKey: .starred, flag: newValue)
 			}
 		}
@@ -146,7 +146,7 @@ import Articles
     }
 
 	@objc(feed)
-	@MainActor var feed: ScriptableFeed? {
+	var feed: ScriptableFeed? {
 		guard let parentFeed = self.article.feed,
 			let account = parentFeed.account
 			else { return nil }

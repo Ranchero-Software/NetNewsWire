@@ -113,7 +113,7 @@ private extension FolderInspectorViewController {
 			return
 		}
 		
-		Task { @MainActor in
+		Task {
 
 			do {
 				try await account.renameFolder(folder, to: newName)

@@ -48,7 +48,7 @@ private extension NNW3ImportController {
 			return
 		}
 
-		Task { @MainActor in
+		Task {
 			do {
 				try await account.importOPML(opmlURL)
 				try? FileManager.default.removeItem(at: opmlURL)

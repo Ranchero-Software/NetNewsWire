@@ -87,7 +87,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		op.completionBlock = { mainThreadOperaion in
 			completion()
 		}
-		Task { @MainActor in
+		Task {
 			mainThreadOperationQueue.add(op)
 		}
 	}
@@ -658,7 +658,7 @@ private extension CloudKitAccountDelegate {
 
 	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
 
-		Task { @MainActor in
+		Task {
 
 			do {
 				let articles = try await account.articles(for: .feed(feed))
@@ -786,12 +786,12 @@ private extension CloudKitAccountDelegate {
 
 extension CloudKitAccountDelegate: CloudKitFeedInfoDelegate {
 
-	@MainActor func feedExternalID(article: Article) -> String? {
+	func feedExternalID(article: Article) -> String? {
 
 		article.feed?.externalID
 	}
 
-	@MainActor func feedURL(article: Article) -> String? {
+	func feedURL(article: Article) -> String? {
 
 		article.feed?.url
 	}
@@ -799,14 +799,14 @@ extension CloudKitAccountDelegate: CloudKitFeedInfoDelegate {
 
 extension CloudKitAccountDelegate: CloudKitSendStatusOperationDelegate {
 
-	@MainActor func cloudKitSendStatusOperation(_ : CloudKitSendStatusOperation, articlesFor articleIDs: Set<String>) async throws -> Set<Article> {
+	func cloudKitSendStatusOperation(_ : CloudKitSendStatusOperation, articlesFor articleIDs: Set<String>) async throws -> Set<Article> {
 
 		guard let account else { return Set<Article>() }
 
 		return try await account.articles(articleIDs: articleIDs)
 	}
 
-	@MainActor func cloudKitSendStatusOperation(_ : CloudKitSendStatusOperation, userDidDeleteZone: Error) {
+	func cloudKitSendStatusOperation(_ : CloudKitSendStatusOperation, userDidDeleteZone: Error) {
 
 		// Delete feeds and folders
 

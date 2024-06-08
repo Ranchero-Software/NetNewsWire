@@ -67,7 +67,7 @@ import Core
         return self.classDescription as! NSScriptClassDescription
     }
     
-	@MainActor func deleteElement(_ element:ScriptingObject) {
+	func deleteElement(_ element:ScriptingObject) {
 		// TODO: fix this
 //		if let scriptableFolder = element as? ScriptableFolder {
 //			BatchUpdate.shared.perform {

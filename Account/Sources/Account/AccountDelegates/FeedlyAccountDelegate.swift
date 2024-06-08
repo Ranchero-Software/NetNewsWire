@@ -935,7 +935,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 	
-	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller) async -> Bool {
+	func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller) async -> Bool {
 
 		guard let account else {
 			return false
@@ -1006,7 +1006,7 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 		self.oauthClient = FeedlyAPICaller.API.cloud.oauthAuthorizationClient(secretsProvider: secretsProvider)
 	}
 
-	@MainActor public func run() {
+	public func run() {
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 
 		let request = FeedlyAPICaller.oauthAuthorizationCodeGrantRequest(secretsProvider: secretsProvider)
@@ -1057,7 +1057,7 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 
 	private func didEndAuthentication(url: URL?, error: Error?) {
 
-		Task { @MainActor in
+		Task {
 			guard !isCanceled else {
 				didFinish()
 				return
@@ -1085,7 +1085,7 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 		}
 	}
 
-	@MainActor private func saveAccount(for grant: OAuthAuthorizationGrant) {
+	private func saveAccount(for grant: OAuthAuthorizationGrant) {
 		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
 			didFinish(FeedlyOAuthAccountAuthorizationOperationError.duplicateAccount)
 			return
@@ -1112,12 +1112,12 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 
 	// MARK: Managing Operation State
 
-	@MainActor private func didFinish() {
+	private func didFinish() {
 		assert(Thread.isMainThread)
 //		operationDelegate?.operationDidComplete(self)
 	}
 
-	@MainActor private func didFinish(_ error: Error) {
+	private func didFinish(_ error: Error) {
 		assert(Thread.isMainThread)
 		delegate?.oauthAccountAuthorizationOperation(self, didFailWith: error)
 		didFinish()

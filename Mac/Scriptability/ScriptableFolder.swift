@@ -52,7 +52,7 @@ import Core
         return self.classDescription as! NSScriptClassDescription
     }
  
-	@MainActor func deleteElement(_ element:ScriptingObject) {
+	func deleteElement(_ element:ScriptingObject) {
 		// TODO: fix this
 //       if let scriptableFeed = element as? ScriptableFeed {
 //            BatchUpdate.shared.perform {
@@ -68,7 +68,7 @@ import Core
         or
            tell account X to make new folder at end with properties {name:"new folder name"}
     */
-	@MainActor class func handleCreateElement(command:NSCreateCommand) -> Any?  {
+	class func handleCreateElement(command:NSCreateCommand) -> Any?  {
 		guard command.isCreateCommand(forClass:"fold") else { return nil }
 		let name = command.property(forKey:"name") as? String ?? ""
 
@@ -82,7 +82,7 @@ import Core
 
 		command.suspendExecution()
 
-		Task { @MainActor in
+		Task {
 			do {
 				let folder = try await account.addFolder(name)
 				let scriptableAccount = ScriptableAccount(account)

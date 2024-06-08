@@ -68,7 +68,7 @@ import Account
 		lastTimedRefresh = Date()
 		update()
 		
-		Task { @MainActor in
+		Task {
 			await AccountManager.shared.syncArticleStatusAll()
 		}
 	}

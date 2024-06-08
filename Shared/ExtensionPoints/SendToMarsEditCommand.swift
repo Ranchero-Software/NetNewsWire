@@ -22,7 +22,7 @@ import Core
 		appToUse() != nil
 	}
 
-	@MainActor func sendObject(_ object: Any?, selectedText: String?) {
+	func sendObject(_ object: Any?, selectedText: String?) {
 
 		guard canSendObject(object, selectedText: selectedText) else {
 			return
@@ -34,7 +34,7 @@ import Core
 			return
 		}
 
-		Task { @MainActor in
+		Task {
 			guard await app.launchIfNeeded(), app.bringToFront() else {
 				return
 			}
@@ -44,7 +44,7 @@ import Core
 	}
 }
 
-@MainActor private extension SendToMarsEditCommand {
+private extension SendToMarsEditCommand {
 
 	func send(_ article: Article, to app: UserApp) {
 

@@ -211,7 +211,7 @@ private extension FeedInspectorViewController {
 			return
 		}
 		
-		Task { @MainActor in
+		Task {
 
 			do {
 				try await account.renameFeed(feed, to: newName)

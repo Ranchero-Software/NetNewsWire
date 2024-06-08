@@ -314,7 +314,7 @@ private extension SidebarOutlineDataSource {
 			return
 		}
 
-		Task { @MainActor in
+		Task {
 			do {
 				try await destination.account?.addFeed(feed, to: destination)
 			} catch {
@@ -332,7 +332,7 @@ private extension SidebarOutlineDataSource {
 
 		BatchUpdate.shared.start()
 
-		Task { @MainActor in
+		Task {
 
 			do {
 				try await source.account?.moveFeed(feed, from: source, to: destination)
@@ -353,7 +353,7 @@ private extension SidebarOutlineDataSource {
 
 		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 
-			Task { @MainActor in
+			Task {
 				do {
 					try await destinationAccount.addFeed(existingFeed, to: destinationContainer)
 				} catch {
@@ -361,7 +361,7 @@ private extension SidebarOutlineDataSource {
 				}
 			}
 		} else {
-			Task { @MainActor in
+			Task {
 				do {
 					try await destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false)
 				} catch {
@@ -430,7 +430,7 @@ private extension SidebarOutlineDataSource {
 			return
 		}
 
-		Task { @MainActor in
+		Task {
 
 			do {
 				let destinationFolder = try await destinationAccount.addFolder(folder.name ?? "")

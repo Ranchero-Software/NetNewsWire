@@ -64,8 +64,8 @@ import Account
 		
 	}
 	
-	@objc @MainActor func timedRefresh(_ sender: Timer?) {
-		
+	@objc func timedRefresh(_ sender: Timer?) {
+
 		guard !shuttingDown else {
 			return
 		}
@@ -73,7 +73,7 @@ import Account
 		lastTimedRefresh = Date()
 		update()
 		
-		Task { @MainActor in
+		Task {
 			await AccountManager.shared.refreshAll()
 		}
 	}

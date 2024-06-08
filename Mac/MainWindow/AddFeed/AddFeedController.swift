@@ -65,7 +65,7 @@ import CommonErrors
 
 		beginShowingProgress()
 
-		Task { @MainActor in
+		Task {
 			do {
 				let feed = try await account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true)
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])

@@ -39,7 +39,7 @@ import Core
 			return
 		}
 
-		Task { @MainActor in
+		Task {
 			guard await microBlogApp.launchIfNeeded(), microBlogApp.bringToFront() else {
 				return
 			}

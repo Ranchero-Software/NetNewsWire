@@ -54,7 +54,7 @@ import CrashReporter
 		let formData = formString.data(using: .utf8, allowLossyConversion: true)
 		request.httpBody = formData
 
-		Task { @MainActor in
+		Task {
 			try? await OneShotDownloadManager.shared.download(request)
 		}
 	}

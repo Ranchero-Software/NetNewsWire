@@ -47,7 +47,7 @@ import Core
 
 	func perform() {
 
-		Task { @MainActor in
+		Task {
 
 			for itemSpecifier in itemSpecifiers {
 				await itemSpecifier.delete()
@@ -65,7 +65,7 @@ import Core
 		registerRedo()
 	}
 
-	@MainActor static func canDelete(_ nodes: [Node]) -> Bool {
+	static func canDelete(_ nodes: [Node]) -> Bool {
 
 		// Return true if all nodes are feeds and folders.
 		// Any other type: return false.
@@ -190,7 +190,7 @@ import Core
 
 		BatchUpdate.shared.start()
 
-		Task { @MainActor in
+		Task {
 
 			do {
 				try await account.restoreFeed(feed, container: container)
@@ -208,7 +208,7 @@ import Core
 			return
 		}
 
-		Task { @MainActor in
+		Task {
 			BatchUpdate.shared.start()
 			do {
 				try await account.restoreFolder(folder)

@@ -113,9 +113,9 @@ import CoreSpotlight
 	}
 	
 	#if os(iOS)
-	@MainActor static func cleanUp(_ account: Account) {
+	static func cleanUp(_ account: Account) {
 
-		Task { @MainActor in
+		Task {
 			var ids = [String]()
 
 			if let folders = account.folders {
@@ -133,9 +133,9 @@ import CoreSpotlight
 		}
 	}
 	
-	@MainActor static func cleanUp(_ folder: Folder) {
+	static func cleanUp(_ folder: Folder) {
 
-		Task { @MainActor in
+		Task {
 
 			var ids: [String] = [String]()
 			ids.append(identifier(for: folder))
@@ -150,9 +150,9 @@ import CoreSpotlight
 		}
 	}
 	
-	@MainActor static func cleanUp(_ feed: Feed) {
+	static func cleanUp(_ feed: Feed) {
 
-		Task { @MainActor in
+		Task {
 			let feedIdentifiers = await identifiers(for: feed)
 			try? await CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: feedIdentifiers)
 		}
@@ -264,7 +264,7 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	@MainActor func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
+	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
 
 		let attributeSet = CSSearchableItemAttributeSet(contentType: UTType.item)
 		attributeSet.title = feed.nameForDisplay
@@ -305,7 +305,7 @@ private extension ActivityManager {
 		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
 	}
 	
-	@MainActor static func identifiers(for feed: Feed) async -> [String] {
+	static func identifiers(for feed: Feed) async -> [String] {
 
 		var ids = [String]()
 		ids.append(identifier(for: feed))

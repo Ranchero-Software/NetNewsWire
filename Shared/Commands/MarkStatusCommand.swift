@@ -50,12 +50,12 @@ import Core
 		self.init(initialArticles: initialArticles, statusKey: .starred, flag: markingStarred, undoManager: undoManager, completion: completion)
 	}
 
-	@MainActor func perform() {
+	func perform() {
 		mark(statusKey, flag)
  		registerUndo()
     }
     
-	@MainActor func undo() {
+	func undo() {
 		mark(statusKey, !flag)
 		registerRedo()
     }
@@ -63,7 +63,7 @@ import Core
 
 private extension MarkStatusCommand {
     
-	@MainActor func mark(_ statusKey: ArticleStatus.Key, _ flag: Bool) {
+	func mark(_ statusKey: ArticleStatus.Key, _ flag: Bool) {
         markArticles(articles, statusKey: statusKey, flag: flag, completion: completion)
 		completion = nil
     }
@@ -83,7 +83,7 @@ private extension MarkStatusCommand {
 		}
 	}
 
-	@MainActor static func filteredArticles(_ articles: [Article], _ statusKey: ArticleStatus.Key, _ flag: Bool) -> [Article] {
+	static func filteredArticles(_ articles: [Article], _ statusKey: ArticleStatus.Key, _ flag: Bool) -> [Article] {
 
 		return articles.filter{ article in
 			guard article.status.boolStatus(forKey: statusKey) != flag else { return false }

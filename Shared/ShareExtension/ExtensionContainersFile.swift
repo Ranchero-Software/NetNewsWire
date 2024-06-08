@@ -22,7 +22,7 @@ import Core
 		return containerURL!.appendingPathComponent("extension_containers.plist").path
 	}()
 	
-	@MainActor private var isDirty = false {
+	private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
 		}
@@ -65,15 +65,15 @@ import Core
 
 private extension ExtensionContainersFile {
 
-	@MainActor @objc func markAsDirty() {
+	@objc func markAsDirty() {
 		isDirty = true
 	}
 	
-	@MainActor func queueSaveToDiskIfNeeded() {
+	func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 
-	@MainActor @objc func saveToDiskIfNeeded() {
+	@objc func saveToDiskIfNeeded() {
 		if isDirty {
 			isDirty = false
 			save()
