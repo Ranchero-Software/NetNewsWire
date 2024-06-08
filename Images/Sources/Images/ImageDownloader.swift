@@ -88,7 +88,7 @@ private extension ImageDownloader {
 		}
 
 		do {
-			let downloadData = try await downloadUsingCache(imageURL)
+			let downloadData = try await DownloadWithCacheManager.shared.download(imageURL)
 
 			if let data = downloadData.data, !data.isEmpty, let response = downloadData.response, response.statusIsOK {
 				try await saveToDisk(url, data)

@@ -19,74 +19,56 @@ import os.log
 
 	@MainActor public static func find(url: URL) async throws -> Set<FeedSpecifier> {
 
-		try await withCheckedThrowingContinuation { continuation in
-			Task { @MainActor in
-				self.find(url: url) { result in
-					switch result {
-					case .success(let feedSpecifiers):
-						continuation.resume(returning: feedSpecifiers)
-					case .failure(let error):
-						continuation.resume(throwing: error)
-					}
+		var downloadData: DownloadData?
+
+		do {
+			downloadData = try await DownloadWithCacheManager.shared.download(url)
+
+		} catch {
+			logger.error("FeedFinder: error for \(url) - \(error)")
+			throw error
+		}
+
+		guard let downloadData else {
+			logger.error("FeedFinder: unexpectedly nil downloadData")
+			return Set<FeedSpecifier>()
+		}
+
+		if downloadData.response?.forcedStatusCode == 404 {
+			if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
+				urlComponents.path = "\(urlComponents.path).json"
+				if let newURLString = urlComponents.url?.absoluteString {
+					let microblogFeedSpecifier = FeedSpecifier(title: nil, urlString: newURLString, source: .HTMLLink, orderFound: 1)
+					return Set([microblogFeedSpecifier])
 				}
 			}
+			logger.error("FeedFinder: 404 for \(url)")
+			throw AccountError.createErrorNotFound
 		}
-	}
-	
-	@MainActor public static func find(url: URL, completion: @escaping @Sendable (Result<Set<FeedSpecifier>, Error>) -> Void) {
-		downloadAddingToCache(url) { (data, response, error) in
-			
-			MainActor.assumeIsolated {
-				
-				if response?.forcedStatusCode == 404 {
-					logger.error("FeedFinder: 404 for \(url)")
-					if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
-						urlComponents.path = "\(urlComponents.path).json"
-						if let newURLString = urlComponents.url?.absoluteString {
-							let microblogFeedSpecifier = FeedSpecifier(title: nil, urlString: newURLString, source: .HTMLLink, orderFound: 1)
-							completion(.success(Set([microblogFeedSpecifier])))
-						}
-					} else {
-						completion(.failure(AccountError.createErrorNotFound))
-					}
-					return
-				}
-				
-				if let error = error {
-					logger.error("FeedFinder: error for \(url) - \(error)")
-					completion(.failure(error))
-					return
-				}
-				
-				guard let data, !data.isEmpty, let response else {
-					logger.error("FeedFinder: missing response and/or data for \(url)")
-					completion(.failure(AccountError.createErrorNotFound))
-					return
-				}
-				
-				if !response.statusIsOK {
-					logger.error("FeedFinder: non-OK response for \(url) - \(response.forcedStatusCode)")
-					completion(.failure(AccountError.createErrorNotFound))
-					return
-				}
-				
-				if FeedFinder.isFeed(data, url.absoluteString) {
-					logger.info("FeedFinder: is feed \(url)")
-					let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
-					completion(.success(Set([feedSpecifier])))
-					return
-				}
-				
-				if !FeedFinder.isHTML(data) {
-					logger.error("FeedFinder: not feed and not HTML \(url)")
-					completion(.failure(AccountError.createErrorNotFound))
-					return
-				}
-				
-				logger.info("FeedFinder: finding feeds in HTML \(url)")
-				FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString, completion: completion)
-			}
+
+		guard let data = downloadData.data, !data.isEmpty, let response = downloadData.response else {
+			logger.error("FeedFinder: missing response and/or data for \(url)")
+			throw AccountError.createErrorNotFound
 		}
+
+		if !response.statusIsOK {
+			logger.error("FeedFinder: non-OK response for \(url) - \(response.forcedStatusCode)")
+			throw AccountError.createErrorNotFound
+		}
+
+		if FeedFinder.isFeed(data, url.absoluteString) {
+			logger.info("FeedFinder: is feed \(url)")
+			let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
+			return Set([feedSpecifier])
+		}
+
+		if !FeedFinder.isHTML(data) {
+			logger.error("FeedFinder: not feed and not HTML \(url)")
+			throw AccountError.createErrorNotFound
+		}
+
+		logger.info("FeedFinder: finding feeds in HTML \(url)")
+		return try await findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString)
 	}
 }
 
@@ -104,7 +86,8 @@ private extension FeedFinder {
 		}
 	}
 
-	@MainActor static func findFeedsInHTMLPage(htmlData: Data, urlString: String, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
+	static func findFeedsInHTMLPage(htmlData: Data, urlString: String) async throws -> Set<FeedSpecifier> {
+
 		// Feeds in the <head> section we automatically assume are feeds.
 		// If there are none from the <head> section,
 		// then possible feeds in <body> section are downloaded individually
@@ -129,16 +112,13 @@ private extension FeedFinder {
 		}
 
 		if didFindFeedInHTMLHead {
-			completion(.success(Set(feedSpecifiers.values)))
-			return
+			return Set(feedSpecifiers.values)
 		}
-		else if feedSpecifiersToDownload.isEmpty {
-			completion(.failure(AccountError.createErrorNotFound))
-			return
+		if feedSpecifiersToDownload.isEmpty {
+			throw AccountError.createErrorNotFound
 		}
-		else {
-			downloadFeedSpecifiers(feedSpecifiersToDownload, feedSpecifiers: feedSpecifiers, completion: completion)
-		}
+		
+		return await downloadFeedSpecifiers(feedSpecifiersToDownload, feedSpecifiers: feedSpecifiers)
 	}
 
 	static func possibleFeedsInHTMLPage(htmlData: Data, urlString: String) -> Set<FeedSpecifier> {
@@ -166,35 +146,25 @@ private extension FeedFinder {
 		return data.isProbablyHTML
 	}
 
-	@MainActor static func downloadFeedSpecifiers(_ downloadFeedSpecifiers: Set<FeedSpecifier>, feedSpecifiers: [String: FeedSpecifier], completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
+	static func downloadFeedSpecifiers(_ downloadFeedSpecifiers: Set<FeedSpecifier>, feedSpecifiers: [String: FeedSpecifier]) async -> Set<FeedSpecifier> {
 
 		var resultFeedSpecifiers = feedSpecifiers
-		let group = DispatchGroup()
-		
+
 		for downloadFeedSpecifier in downloadFeedSpecifiers {
 			guard let url = URL(string: downloadFeedSpecifier.urlString) else {
 				continue
 			}
-			
-			group.enter()
 
-			Task { @MainActor in
-				downloadUsingCache(url) { (data, response, error) in
-					MainActor.assumeIsolated {
-						if let data = data, let response = response, response.statusIsOK, error == nil {
-							if self.isFeed(data, downloadFeedSpecifier.urlString) {
-								addFeedSpecifier(downloadFeedSpecifier, feedSpecifiers: &resultFeedSpecifiers)
-							}
-						}
-						group.leave()
+			if let downloadData = try? await DownloadWithCacheManager.shared.download(url) {
+				if let data = downloadData.data, let response = downloadData.response, response.statusIsOK {
+					if isFeed(data, downloadFeedSpecifier.urlString) {
+						addFeedSpecifier(downloadFeedSpecifier, feedSpecifiers: &resultFeedSpecifiers)
 					}
 				}
 			}
 		}
 
-		group.notify(queue: DispatchQueue.main) {
-			completion(.success(Set(resultFeedSpecifiers.values)))
-		}
+		return Set(resultFeedSpecifiers.values)
 	}
 
 	static func isFeed(_ data: Data, _ urlString: String) -> Bool {

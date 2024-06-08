@@ -123,7 +123,7 @@ private extension SingleFaviconDownloader {
 		}
 
 		do {
-			let downloadData = try await downloadUsingCache(url)
+			let downloadData = try await DownloadWithCacheManager.shared.download(url)
 
 			let data = downloadData.data
 			let response = downloadData.response

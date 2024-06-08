@@ -21,7 +21,7 @@ struct HTMLMetadataDownloader {
 			return nil
 		}
 
-		let downloadData = try? await downloadUsingCache(actualURL)
+		let downloadData = try? await DownloadWithCacheManager.shared.download(actualURL)
 		let data = downloadData?.data
 		let response = downloadData?.response
 
