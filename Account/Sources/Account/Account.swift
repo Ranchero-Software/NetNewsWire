@@ -220,7 +220,6 @@ public enum FetchType {
 	let dataFolder: String
 	let database: ArticlesDatabase
 	var delegate: AccountDelegate
-	@MainActor static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
 	private var unreadCounts = [String: Int]() // [feedID: Int]
 
