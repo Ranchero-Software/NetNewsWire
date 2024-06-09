@@ -212,7 +212,7 @@ private extension FaviconDownloader {
 
 	func findFaviconURLs(with homePageURL: String) async -> [String]? {
 
-		guard let url = URL(unicodeString: homePageURL) else {
+		guard let url = URL(string: homePageURL) else {
 			return nil
 		}
 		guard let faviconURLs = await FaviconURLFinder.findFaviconURLs(with: homePageURL, downloadMetadata: delegate!.downloadMetadata(_:)) else {

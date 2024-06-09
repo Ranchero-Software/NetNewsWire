@@ -46,8 +46,8 @@ class FeedInspectorViewController: UITableViewController {
 		
 		alwaysShowReaderViewSwitch.setOn(feed.isArticleExtractorAlwaysOn ?? false, animated: false)
 
-		homePageLabel.text = feed.homePageURL?.decodedURLString
-		feedURLLabel.text = feed.url.decodedURLString
+		homePageLabel.text = feed.homePageURL
+		feedURLLabel.text = feed.url
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		

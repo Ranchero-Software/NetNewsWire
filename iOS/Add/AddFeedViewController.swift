@@ -92,7 +92,7 @@ final class AddFeedViewController: UITableViewController {
 		let urlString = urlTextField.text ?? ""
 		let normalizedURLString = urlString.normalizedURL
 		
-		guard !normalizedURLString.isEmpty, let url = URL(unicodeString: normalizedURLString) else {
+		guard !normalizedURLString.isEmpty, let url = URL(string: normalizedURLString) else {
 			return
 		}
 		

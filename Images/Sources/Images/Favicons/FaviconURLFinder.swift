@@ -25,7 +25,7 @@ import UniformTypeIdentifiers
 	///   - urls: An array of favicon URLs as strings.
 	static func findFaviconURLs(with homePageURL: String, downloadMetadata: ((String) async throws -> RSHTMLMetadata?)) async -> [String]? {
 
-		guard let _ = URL(unicodeString: homePageURL) else {
+		guard let _ = URL(string: homePageURL) else {
 			return nil
 		}
 

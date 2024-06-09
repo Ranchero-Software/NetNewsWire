@@ -17,7 +17,7 @@ struct HTMLMetadataDownloader {
 
 	@MainActor static func downloadMetadata(for url: String) async -> RSHTMLMetadata? {
 
-		guard let actualURL = URL(unicodeString: url) else {
+		guard let actualURL = URL(string: url) else {
 			return nil
 		}
 
