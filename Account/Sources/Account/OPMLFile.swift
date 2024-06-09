@@ -18,21 +18,19 @@ import Core
 
 	private let fileURL: URL
 	private let account: Account
-
-	private var isDirty = false {
-		didSet {
-			queueSaveToDiskIfNeeded()
-		}
-	}
-	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+	private let dataFile: DataFile
 
 	init(filename: String, account: Account) {
-		self.fileURL = URL(fileURLWithPath: filename)
+
 		self.account = account
+		self.fileURL = URL(fileURLWithPath: filename)
+		self.dataFile = DataFile(fileURL: self.fileURL)
+
+		self.dataFile.delegate = self
 	}
 	
 	func markAsDirty() {
-		isDirty = true
+		dataFile.markAsDirty()
 	}
 	
 	func load() {
@@ -44,32 +42,14 @@ import Core
 			account.loadOPMLItems(opmlItems)
 		}
 	}
-	
+
 	func save() {
-		guard !account.isDeleted else { return }
-		let opmlDocumentString = opmlDocument()
-		
-		do {
-			try opmlDocumentString.write(to: fileURL, atomically: true, encoding: .utf8)
-		} catch let error as NSError {
-			os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
-		}
+
+		dataFile.save()
 	}
-	
 }
 
 private extension OPMLFile {
-
-	func queueSaveToDiskIfNeeded() {
-		saveQueue.add(self, #selector(saveToDiskIfNeeded))
-	}
-
-	@objc func saveToDiskIfNeeded() {
-		if isDirty {
-			isDirty = false
-			save()
-		}
-	}
 
 	func opmlFileData() -> Data? {
 		var fileData: Data? = nil
@@ -122,5 +102,29 @@ private extension OPMLFile {
 		let opml = openingText + middleText + closingText
 		return opml
 	}
-	
+}
+
+extension OPMLFile: DataFileDelegate {
+
+	func data(for dataFile: DataFile) -> Data? {
+
+		guard !account.isDeleted else {
+			return nil
+		}
+
+		let opmlDocumentString = opmlDocument()
+		guard let data = opmlDocumentString.data(using: .utf8, allowLossyConversion: true) else {
+
+			assertionFailure("OPML String conversion to Data failed.")
+			os_log(.error, log: log, "OPML String conversion to Data failed.")
+			return nil
+		}
+
+		return data
+	}
+
+	func dataFileWriteToDiskDidFail(for dataFile: DataFile, error: Error) {
+
+		os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
+	}
 }
