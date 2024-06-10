@@ -32,7 +32,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		guard let account = account else {
 			return true
 		}
-		switch account.type {
+		switch account.accountType {
 		case .onMyMac, .cloudKit, .feedly:
 			return true
 		default:
@@ -66,7 +66,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		
 		guard let account else { return }
 
-		switch account.type {
+		switch account.accountType {
 
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
@@ -76,7 +76,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		
 		case .inoreader, .bazQux, .theOldReader, .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = account.type
+			accountsReaderAPIWindowController.accountType = account.accountType
 			accountsReaderAPIWindowController.account = account
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsReaderAPIWindowController

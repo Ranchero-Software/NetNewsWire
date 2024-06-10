@@ -17,7 +17,7 @@ import ParserObjC
 import Database
 import ArticlesDatabase
 import Web
-import os.log
+import os
 import Secrets
 import Core
 import CommonErrors
@@ -95,7 +95,7 @@ public enum FetchType {
 		return defaultName
 	}()
 	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
+	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Account")
 
 	public var isDeleted = false
 	
@@ -107,7 +107,7 @@ public enum FetchType {
 		return self
 	}
 	public let accountID: String
-	public let type: AccountType
+	public let accountType: AccountType
 	public var nameForDisplay: String {
 		guard let name = name, !name.isEmpty else {
 			return defaultName
@@ -295,7 +295,7 @@ public enum FetchType {
 		self.delegate.accountMetadata = metadata
 		
 		self.accountID = accountID
-		self.type = type
+		self.accountType = type
 		self.dataFolder = dataFolder
 
 		let databasePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
@@ -751,6 +751,9 @@ public enum FetchType {
 	public func structureDidChange() {
 		// Feeds were added or deleted. Or folders added or deleted.
 		// Or feeds inside folders were added or deleted.
+
+		logger.info("structureDidChange in account \(self.accountID)")
+
 		Task { @MainActor in
 			opmlFile.markAsDirty()
 			flattenedFeedsNeedUpdate = true
@@ -762,7 +765,7 @@ public enum FetchType {
 	func update(feed: Feed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
 
 		precondition(Thread.isMainThread)
-		precondition(type == .onMyMac || type == .cloudKit)
+		precondition(accountType == .onMyMac || accountType == .cloudKit)
 
 		feed.takeSettings(from: parsedFeed)
 
@@ -777,7 +780,7 @@ public enum FetchType {
 	func update(feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
 
 		precondition(Thread.isMainThread)
-		precondition(type == .onMyMac || type == .cloudKit)
+		precondition(accountType == .onMyMac || accountType == .cloudKit)
 
 		let articleChanges = try await database.update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
 		self.sendNotificationAbout(articleChanges)
@@ -787,8 +790,8 @@ public enum FetchType {
 	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
 
 		precondition(Thread.isMainThread)
-		precondition(type != .onMyMac && type != .cloudKit)
-		
+		precondition(accountType != .onMyMac && accountType != .cloudKit)
+
 		guard !feedIDsAndItems.isEmpty else {
 			return
 		}

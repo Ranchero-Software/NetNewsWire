@@ -58,7 +58,7 @@ struct ExtensionContainers: Codable {
 	init(account: Account) {
 		self.name = account.nameForDisplay
 		self.accountID = account.accountID
-		self.type = account.type
+		self.type = account.accountType
 		self.disallowFeedInRootFolder = account.behaviors.contains(.disallowFeedInRootFolder)
 		self.containerID = account.containerID
 		self.folders = account.sortedFolders?.map { ExtensionFolder(folder: $0) } ?? [ExtensionFolder]()

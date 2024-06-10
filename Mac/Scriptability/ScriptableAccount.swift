@@ -156,7 +156,7 @@ import Core
     @objc(accountType)
     var accountType:OSType {
         var osType:String = ""
-        switch self.account.type {
+        switch self.account.accountType {
         case .onMyMac:
                 osType = "Locl"
 		case .cloudKit:

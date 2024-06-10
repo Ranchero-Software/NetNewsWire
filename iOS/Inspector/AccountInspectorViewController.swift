@@ -32,8 +32,8 @@ class AccountInspectorViewController: UITableViewController {
 		
 		navigationItem.title = account.nameForDisplay
 		
-		if account.type != .onMyMac {
-			deleteAccountButton.setTitle(NSLocalizedString("Remove Account", comment: "Remove Account"), for: .normal) 
+		if account.accountType != .onMyMac {
+			deleteAccountButton.setTitle(NSLocalizedString("Remove Account", comment: "Remove Account"), for: .normal)
 		}
 		
 		if isModal {
@@ -56,7 +56,7 @@ class AccountInspectorViewController: UITableViewController {
 	
 	@IBAction func credentials(_ sender: Any) {
 		guard let account = account else { return }
-		switch account.type {
+		switch account.accountType {
 		case .feedbin:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
 			let addViewController = navController.topViewController as! FeedbinAccountViewController
@@ -72,7 +72,7 @@ class AccountInspectorViewController: UITableViewController {
 		case .inoreader, .bazQux, .theOldReader, .freshRSS:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "ReaderAPIAccountNavigationViewController") as! UINavigationController
 			let addViewController = navController.topViewController as! ReaderAPIAccountViewController
-			addViewController.accountType = account.type
+			addViewController.accountType = account.accountType
 			addViewController.account = account
 			navController.modalPresentationStyle = .currentContext
 			present(navController, animated: true)
@@ -88,7 +88,7 @@ class AccountInspectorViewController: UITableViewController {
 		
 		let title = NSLocalizedString("Remove Account", comment: "Remove Account")
 		let message: String = {
-			switch account.type {
+			switch account.accountType {
 			case .feedly:
 				return NSLocalizedString("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Log Out and Remove Account")
 			default:
@@ -125,7 +125,7 @@ extension AccountInspectorViewController {
 		guard let account = account else {
 			return true
 		}
-		switch account.type {
+		switch account.accountType {
 		case .onMyMac, .cloudKit, .feedly:
 			return true
 		default:
@@ -154,7 +154,7 @@ extension AccountInspectorViewController {
 
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = AppAssets.image(for: account.type)
+			headerView.imageView.image = AppAssets.image(for: account.accountType)
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)

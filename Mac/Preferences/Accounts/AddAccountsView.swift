@@ -260,7 +260,7 @@ struct AddAccountsView: View {
 	}
 	
 	@MainActor private func isCloudInUse() -> Bool {
-		AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit })
+		AccountManager.shared.accounts.contains(where: { $0.accountType == .cloudKit })
 	}
 	
 	private func chunkedWebAccounts() -> [[AccountType]] {

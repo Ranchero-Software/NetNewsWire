@@ -176,7 +176,7 @@ import Secrets
 			return false
 		}
 		for account in accounts {
-			if account.type == type && username == account.username {
+			if account.accountType == type && username == account.username {
 				return true
 			}
 		}
@@ -414,7 +414,7 @@ private extension AccountManager {
 	}
 	
 	func duplicateServiceAccount(_ account: Account) -> Bool {
-		return duplicateServiceAccount(type: account.type, username: account.username)
+		return duplicateServiceAccount(type: account.accountType, username: account.username)
 	}
 
 	func sortByName(_ accounts: [Account]) -> [Account] {

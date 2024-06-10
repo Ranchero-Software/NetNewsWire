@@ -22,7 +22,7 @@ struct AddAccountHelpView: View {
 				ForEach(accountTypes, id: \.self) { accountType in
 					if !(AppDefaults.shared.isDeveloperBuild && accountType.isDeveloperRestricted) {
 						Button(action: {
-							if accountType == .cloudKit && AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit }) {
+							if accountType == .cloudKit && AccountManager.shared.accounts.contains(where: { $0.accountType == .cloudKit }) {
 								iCloudUnavailableError = true
 							} else {
 								delegate?.presentSheetForAccount(accountType)

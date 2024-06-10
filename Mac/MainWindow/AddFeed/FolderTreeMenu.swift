@@ -24,7 +24,7 @@ import Core
 				continue
 			}
 			
-			if restrictToSpecialAccounts && !(account.type == .onMyMac || account.type == .cloudKit) {
+			if restrictToSpecialAccounts && !(account.accountType == .onMyMac || account.accountType == .cloudKit) {
 				continue
 			}
 			

@@ -60,7 +60,7 @@ private extension UIViewController {
 		let title = NSLocalizedString("Account Error", comment: "Account Error")
 		let alertController = UIAlertController(title: title, message: error.localizedDescription, preferredStyle: .alert)
 		
-		if error.account?.type == .feedbin {
+		if error.account?.accountType == .feedbin {
 
 			let credentialsTitle = NSLocalizedString("Update Credentials", comment: "Update Credentials")
 			let credentialsAction = UIAlertAction(title: credentialsTitle, style: .default) { [weak self] _ in

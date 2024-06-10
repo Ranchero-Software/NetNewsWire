@@ -118,7 +118,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 			cell.textField?.stringValue = account.nameForDisplay
 			cell.imageView?.image = account.smallIcon?.image
 			
-			if account.type == .feedbin {
+			if account.accountType == .feedbin {
 				cell.isImageTemplateCapable = false
 			}
 			

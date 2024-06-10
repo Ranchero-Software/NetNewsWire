@@ -30,7 +30,7 @@ final class AddFeedFolderViewController: UITableViewController {
 		if addFeedType == .web {
 			sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
 		} else {
-			sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts.filter { $0.type == .onMyMac || $0.type == .cloudKit }
+			sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts.filter { $0.accountType == .onMyMac || $0.accountType == .cloudKit }
 		}
 		
 		for account in sortedActiveAccounts {
