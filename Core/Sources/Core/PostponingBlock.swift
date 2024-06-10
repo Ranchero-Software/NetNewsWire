@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 /// Runs a block of code in the future. Each time `runInFuture` is called, the block is postponed again until the future by `delayInterval`.
 @MainActor public final class PostponingBlock {
@@ -14,6 +15,8 @@ import Foundation
 	private let delayInterval: TimeInterval
 	private let name: String // For debugging
 	private var timer: Timer?
+
+	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "PostponingBlock")
 
 	public init(delayInterval: TimeInterval, name: String, block: @escaping () -> Void) {
 
@@ -47,6 +50,7 @@ private extension PostponingBlock {
 
 		if let timer, timer.isValid {
 			timer.invalidate()
+			logger.info("Canceling existing timer in PostponingBlock: \(self.name)")
 		}
 		timer = nil
 	}
