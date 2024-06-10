@@ -14,7 +14,7 @@ import Database
 import Core
 import Images
 
-final class SmartFeed: PseudoFeed {
+@MainActor final class SmartFeed: PseudoFeed {
 
 	var account: Account? = nil
 
@@ -60,19 +60,19 @@ final class SmartFeed: PseudoFeed {
 	private let delegate: SmartFeedDelegate
 	private var unreadCounts = [String: Int]()
 
-	@MainActor init(delegate: SmartFeedDelegate) {
+	init(delegate: SmartFeedDelegate) {
 		self.delegate = delegate
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		queueFetchUnreadCounts() // Fetch unread count at startup
 	}
 
-	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
+	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AppDelegate {
 			queueFetchUnreadCounts()
 		}
 	}
 
-	@MainActor func fetchUnreadCounts() async throws {
+	func fetchUnreadCounts() async throws {
 
 		let activeAccounts = AccountManager.shared.activeAccounts
 
@@ -110,12 +110,12 @@ extension SmartFeed: ArticleFetcher {
 
 private extension SmartFeed {
 
-	@MainActor func queueFetchUnreadCounts() {
+	func queueFetchUnreadCounts() {
 
 		postponingBlock.runInFuture()
 	}
 
-	@MainActor func fetchUnreadCount(for account: Account) async {
+	func fetchUnreadCount(for account: Account) async {
 
 		let unreadCount = await delegate.unreadCount(account: account)
 		unreadCounts[account.accountID] = unreadCount
@@ -123,7 +123,7 @@ private extension SmartFeed {
 		updateUnreadCount()
 	}
 
-	@MainActor func updateUnreadCount() {
+	func updateUnreadCount() {
 
 		var unread = 0
 		for account in AccountManager.shared.activeAccounts {
