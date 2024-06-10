@@ -7,18 +7,18 @@
 //
 
 import Foundation
-import os.log
+import os
 import Parser
 import ParserObjC
 import Core
 
 @MainActor final class OPMLFile {
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "opmlFile")
-
 	private let fileURL: URL
 	private let account: Account
 	private let dataFile: DataFile
+
+	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "OPMLFile")
 
 	init(filename: String, account: Account) {
 
@@ -30,6 +30,8 @@ import Core
 	}
 	
 	func markAsDirty() {
+
+		logger.info("OPMLFile marked dirty: \(self.fileURL)")
 		dataFile.markAsDirty()
 	}
 	
@@ -57,7 +59,7 @@ private extension OPMLFile {
 		do {
 			fileData = try Data(contentsOf: fileURL)
 		} catch {
-			os_log(.error, log: log, "OPML read from disk failed: %@.", error.localizedDescription)
+			logger.error("OPML read from disk failed for \(self.fileURL): \(error.localizedDescription)")
 		}
 
 		return fileData
@@ -70,7 +72,7 @@ private extension OPMLFile {
 		do {
 			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 		} catch {
-			os_log(.error, log: log, "OPML Import failed: %@.", error.localizedDescription)
+			logger.error("OPML Import failed for \(self.fileURL): \(error.localizedDescription)")
 			return nil
 		}
 		
@@ -115,8 +117,8 @@ extension OPMLFile: DataFileDelegate {
 		let opmlDocumentString = opmlDocument()
 		guard let data = opmlDocumentString.data(using: .utf8, allowLossyConversion: true) else {
 
-			assertionFailure("OPML String conversion to Data failed.")
-			os_log(.error, log: log, "OPML String conversion to Data failed.")
+			assertionFailure("OPML String conversion to Data failed for \(self.fileURL).")
+			logger.error("OPML String conversion to Data failed for \(self.fileURL)")
 			return nil
 		}
 
@@ -125,6 +127,6 @@ extension OPMLFile: DataFileDelegate {
 
 	func dataFileWriteToDiskDidFail(for dataFile: DataFile, error: Error) {
 
-		os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
+		logger.error("OPML save to disk failed for \(self.fileURL): \(error.localizedDescription)")
 	}
 }
