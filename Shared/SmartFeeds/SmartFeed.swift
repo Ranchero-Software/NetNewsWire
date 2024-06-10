@@ -48,6 +48,15 @@ final class SmartFeed: PseudoFeed {
 	}
 	#endif
 
+	private lazy var postponingBlock: PostponingBlock = {
+		PostponingBlock(delayInterval: 1.0) {
+			Task {
+				try? await self.fetchUnreadCounts()
+			}
+		}
+	}()
+	
+	private var fetchUnreadCountsTask: Task<Void, Never>?
 	private let delegate: SmartFeedDelegate
 	private var unreadCounts = [String: Int]()
 
@@ -63,7 +72,7 @@ final class SmartFeed: PseudoFeed {
 		}
 	}
 
-	@MainActor @objc func fetchUnreadCounts() {
+	@MainActor func fetchUnreadCounts() async throws {
 
 		let activeAccounts = AccountManager.shared.activeAccounts
 
@@ -79,11 +88,9 @@ final class SmartFeed: PseudoFeed {
 			updateUnreadCount()
 			return
 		}
-		
-		Task { @MainActor in
-			for account in activeAccounts {
-				await fetchUnreadCount(for: account)
-			}
+
+		for account in activeAccounts {
+			await fetchUnreadCount(for: account)
 		}
 	}
 }
@@ -104,7 +111,8 @@ extension SmartFeed: ArticleFetcher {
 private extension SmartFeed {
 
 	@MainActor func queueFetchUnreadCounts() {
-		CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
+
+		postponingBlock.runInFuture()
 	}
 
 	@MainActor func fetchUnreadCount(for account: Account) async {
@@ -125,3 +133,4 @@ private extension SmartFeed {
 		unreadCount = unread
 	}
 }
+

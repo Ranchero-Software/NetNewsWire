@@ -21,20 +21,24 @@ public protocol DataFileDelegate: AnyObject {
 	private var isDirty = false {
 		didSet {
 			if isDirty {
-				restartTimer()
+				postponingBlock.runInFuture()
 			}
 			else {
-				invalidateTimer()
+				postponingBlock.cancelRun()
 			}
 		}
 	}
 
 	private let fileURL: URL
-	private let saveInterval: TimeInterval = 1.0
-	private var timer: Timer?
+
+	private lazy var postponingBlock: PostponingBlock = {
+		PostponingBlock(delayInterval: 1.0) { [weak self] in
+			self?.saveToDiskIfNeeded()
+		}
+	}()
 
 	public init(fileURL: URL) {
-		
+
 		self.fileURL = fileURL
 	}
 
@@ -64,33 +68,8 @@ private extension DataFile {
 
 	func saveToDiskIfNeeded() {
 
-		assert(Thread.isMainThread)
-
 		if isDirty {
 			save()
 		}
-	}
-
-	func restartTimer() {
-
-		assert(Thread.isMainThread)
-
-		invalidateTimer()
-
-		timer = Timer.scheduledTimer(withTimeInterval: saveInterval, repeats: false) { timer in
-			MainActor.assumeIsolated {
-				self.saveToDiskIfNeeded()
-			}
-		}
-	}
-
-	func invalidateTimer() {
-
-		assert(Thread.isMainThread)
-
-		if let timer, timer.isValid {
-			timer.invalidate()
-		}
-		timer = nil
 	}
 }
