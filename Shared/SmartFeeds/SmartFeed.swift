@@ -49,7 +49,7 @@ import Images
 	#endif
 
 	private lazy var postponingBlock: PostponingBlock = {
-		PostponingBlock(delayInterval: 1.0) {
+		PostponingBlock(delayInterval: 1.0, name: "SmartFeed") {
 			Task {
 				try? await self.fetchUnreadCounts()
 			}
@@ -62,14 +62,13 @@ import Images
 
 	init(delegate: SmartFeedDelegate) {
 		self.delegate = delegate
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(appUnreadCountDidChange(_:)), name: .appUnreadCountDidChange, object: nil)
 		queueFetchUnreadCounts() // Fetch unread count at startup
 	}
 
-	@objc func unreadCountDidChange(_ note: Notification) {
-		if note.object is AppDelegate {
-			queueFetchUnreadCounts()
-		}
+	@objc func appUnreadCountDidChange(_ note: Notification) {
+		
+		queueFetchUnreadCounts()
 	}
 
 	func fetchUnreadCounts() async throws {

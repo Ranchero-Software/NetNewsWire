@@ -11,6 +11,7 @@ import Articles
 
 extension Notification.Name {
 	
+	static let appUnreadCountDidChange = Notification.Name("TimelineSelectionDidChangeNotification")
 	static let InspectableObjectsDidChange = Notification.Name("TimelineSelectionDidChangeNotification")
 	static let UserDidAddFeed = Notification.Name("UserDidAddFeedNotification")
 	static let LaunchedFromExternalAction = Notification.Name("LaunchedFromExternalAction")

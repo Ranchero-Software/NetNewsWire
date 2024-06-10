@@ -74,6 +74,7 @@ import Sparkle
 		didSet {
 			if unreadCount != oldValue {
 				CoalescingQueue.standard.add(self, #selector(updateDockBadge))
+				NotificationCenter.default.post(name: .appUnreadCountDidChange, object: self, userInfo: nil)
 				postUnreadCountDidChangeNotification()
 			}
 		}

@@ -12,12 +12,14 @@ import Foundation
 
 	private let block: () -> Void
 	private let delayInterval: TimeInterval
+	private let name: String // For debugging
 	private var timer: Timer?
 
-	public init(delayInterval: TimeInterval, block: @escaping () -> Void) {
+	public init(delayInterval: TimeInterval, name: String, block: @escaping () -> Void) {
 
-		self.block = block
 		self.delayInterval = delayInterval
+		self.name = name
+		self.block = block
 	}
 
 	/// Run the block in `delayInterval` seconds, canceling any run about to happen before then.
