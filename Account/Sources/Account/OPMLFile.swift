@@ -35,14 +35,12 @@ import Core
 		dataFile.markAsDirty()
 	}
 	
-	func load() {
-		guard let fileData = opmlFileData(), let opmlItems = parsedOPMLItems(fileData: fileData) else {
-			return
+	func opmlItems() -> [RSOPMLItem]? {
+		guard let fileData = opmlFileData() else {
+			return nil
 		}
-		
-		BatchUpdate.shared.perform {
-			account.loadOPMLItems(opmlItems)
-		}
+
+		return parsedOPMLItems(fileData: fileData)
 	}
 
 	func save() {

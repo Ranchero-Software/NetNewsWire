@@ -331,7 +331,11 @@ public enum FetchType {
 
 		metadataFile.load()
 		feedMetadataFile.load()
-		opmlFile.load()
+		BatchUpdate.shared.perform {
+			if let opmlItems = opmlFile.opmlItems() {
+				loadOPMLItems(opmlItems)
+			}
+		}
 
 		Task { @MainActor in
 			try? await self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
@@ -752,6 +756,10 @@ public enum FetchType {
 		// Feeds were added or deleted. Or folders added or deleted.
 		// Or feeds inside folders were added or deleted.
 
+		guard !BatchUpdate.shared.isPerforming else {
+			return
+		}
+
 		logger.info("structureDidChange in account \(self.accountID)")
 
 		Task { @MainActor in
@@ -911,7 +919,9 @@ public enum FetchType {
 	public func addFeed(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		structureDidChange()
-		postChildrenDidChangeNotification()
+		if !BatchUpdate.shared.isPerforming {
+			postChildrenDidChangeNotification()
+		}
 	}
 
 	func addFeedIfNotInAnyFolder(_ feed: Feed) {
@@ -972,6 +982,10 @@ public enum FetchType {
     }
 
 	@MainActor @objc func childrenDidChange(_ note: Notification) {
+
+		guard !BatchUpdate.shared.isPerforming else {
+			return
+		}
 		guard let object = note.object else {
 			return
 		}
