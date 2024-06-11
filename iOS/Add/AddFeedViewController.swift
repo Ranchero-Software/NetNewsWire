@@ -13,10 +13,6 @@ import Parser
 import Core
 import CommonErrors
 
-enum AddFeedType {
-	case web
-}
-
 final class AddFeedViewController: UITableViewController {
 	
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -30,7 +26,6 @@ final class AddFeedViewController: UITableViewController {
 	private var folderLabel = ""
 	private var userCancelled = false
 
-	var addFeedType = AddFeedType.web
 	var initialFeed: String?
 	var initialFeedName: String?
 
@@ -38,11 +33,6 @@ final class AddFeedViewController: UITableViewController {
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-		
-		switch addFeedType {
-		default:
-			break
-		}
 		
 		activityIndicator.isHidden = true
 		activityIndicator.color = .label
@@ -155,7 +145,6 @@ final class AddFeedViewController: UITableViewController {
 			navController.modalPresentationStyle = .currentContext
 			let folderViewController = navController.topViewController as! AddFeedFolderViewController
 			folderViewController.delegate = self
-			folderViewController.addFeedType = addFeedType
 			folderViewController.initialContainer = container
 			present(navController, animated: true)
 		}
