@@ -61,7 +61,9 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	private var restoreArticleWindowScrollY: CGFloat?
 
 	private lazy var postponingMakeToolbarValidateBlock: PostponingBlock = {
-		PostponingBlock(name: "Make Toolbar Validate", delayInterval: 0.05, block: makeToolbarValidate)
+		PostponingBlock(name: "Make Toolbar Validate") { [weak self] in
+			self?.makeToolbarValidate()
+		}
 	}()
 	
 	// MARK: - NSWindowController
