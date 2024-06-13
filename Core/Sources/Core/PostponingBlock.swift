@@ -32,9 +32,9 @@ import os
 
 		invalidateTimer()
 
-		timer = Timer.scheduledTimer(withTimeInterval: delayInterval, repeats: false) { timer in
+		timer = Timer.scheduledTimer(withTimeInterval: delayInterval, repeats: false) { [weak self] timer in
 			MainActor.assumeIsolated {
-				self.block()
+				self?.block()
 			}
 		}
 	}
