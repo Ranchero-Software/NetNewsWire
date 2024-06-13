@@ -48,14 +48,8 @@ import Images
 	}
 	#endif
 
-	private lazy var postponingBlock: PostponingBlock = {
-		PostponingBlock(name: "SmartFeed", delayInterval: 1.0) {
-			Task {
-				try? await self.fetchUnreadCounts()
-			}
-		}
-	}()
-	
+	private let fetchUnreadCountsQueue = CoalescingQueue(name: "SmartFeed", interval: 1.0, maxInterval: 2.0)
+
 	private var fetchUnreadCountsTask: Task<Void, Never>?
 	private let delegate: SmartFeedDelegate
 	private var unreadCounts = [String: Int]()
@@ -71,25 +65,28 @@ import Images
 		queueFetchUnreadCounts()
 	}
 
-	func fetchUnreadCounts() async throws {
-
-		let activeAccounts = AccountManager.shared.activeAccounts
-
-		// Remove any accounts that are no longer active or have been deleted
-		let activeAccountIDs = activeAccounts.map { $0.accountID }
-		for accountID in unreadCounts.keys {
-			if !activeAccountIDs.contains(accountID) {
-				unreadCounts.removeValue(forKey: accountID)
+	@objc func fetchUnreadCounts() {
+		
+		Task {
+			
+			let activeAccounts = AccountManager.shared.activeAccounts
+			
+			// Remove any accounts that are no longer active or have been deleted
+			let activeAccountIDs = activeAccounts.map { $0.accountID }
+			for accountID in unreadCounts.keys {
+				if !activeAccountIDs.contains(accountID) {
+					unreadCounts.removeValue(forKey: accountID)
+				}
 			}
-		}
-
-		if activeAccounts.isEmpty {
-			updateUnreadCount()
-			return
-		}
-
-		for account in activeAccounts {
-			await fetchUnreadCount(for: account)
+			
+			if activeAccounts.isEmpty {
+				updateUnreadCount()
+				return
+			}
+			
+			for account in activeAccounts {
+				await fetchUnreadCount(for: account)
+			}
 		}
 	}
 }
@@ -111,7 +108,7 @@ private extension SmartFeed {
 
 	func queueFetchUnreadCounts() {
 
-		postponingBlock.runInFuture()
+		fetchUnreadCountsQueue.add(self, #selector(fetchUnreadCounts))
 	}
 
 	func fetchUnreadCount(for account: Account) async {

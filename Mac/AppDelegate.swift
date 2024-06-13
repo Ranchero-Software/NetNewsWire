@@ -70,10 +70,6 @@ import Sparkle
 	@IBOutlet var groupArticlesByFeedMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 
-	private lazy var postponingUpdateDockBadgeBlock: PostponingBlock = {
-		PostponingBlock(name: "Update Dock Badge", delayInterval: 0.05, block: updateDockBadge)
-	}()
-
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -542,10 +538,11 @@ import Sparkle
 	// MARK: - Dock Badge
 
 	func queueUpdateDockBadge() {
-		postponingUpdateDockBadgeBlock.runInFuture()
+
+		CoalescingQueue.standard.add(self, #selector(updateDockBadge))
 	}
 
-	func updateDockBadge() {
+	@objc func updateDockBadge() {
 		let label = unreadCount > 0 ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}

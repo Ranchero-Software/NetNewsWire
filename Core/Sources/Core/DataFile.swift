@@ -21,25 +21,18 @@ public protocol DataFileDelegate: AnyObject {
 	private var isDirty = false {
 		didSet {
 			if isDirty {
-				postponingBlock.runInFuture()
-			}
-			else {
-				postponingBlock.cancelRun()
+				saveQueue.add(self, #selector(saveToDiskIfNeeded))
 			}
 		}
 	}
 
 	private let fileURL: URL
-
-	private lazy var postponingBlock: PostponingBlock = {
-		PostponingBlock(name: "DataFile \(fileURL.absoluteString)", delayInterval: 1.0) { [weak self] in
-			self?.saveToDiskIfNeeded()
-		}
-	}()
+	private let saveQueue: CoalescingQueue
 
 	public init(fileURL: URL) {
 
 		self.fileURL = fileURL
+		self.saveQueue = CoalescingQueue(name: "DataFile \(fileURL.absoluteString)", interval: 1.0, maxInterval: 2.0)
 	}
 
 	public func markAsDirty() {
@@ -66,7 +59,7 @@ public protocol DataFileDelegate: AnyObject {
 
 private extension DataFile {
 
-	func saveToDiskIfNeeded() {
+	@objc func saveToDiskIfNeeded() {
 
 		if isDirty {
 			save()

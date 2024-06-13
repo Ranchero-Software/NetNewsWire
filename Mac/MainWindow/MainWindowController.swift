@@ -59,12 +59,6 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	}
 	private var searchSmartFeed: SmartFeed? = nil
 	private var restoreArticleWindowScrollY: CGFloat?
-
-	private lazy var postponingMakeToolbarValidateBlock: PostponingBlock = {
-		PostponingBlock(name: "Make Toolbar Validate") { [weak self] in
-			self?.makeToolbarValidate()
-		}
-	}()
 	
 	// MARK: - NSWindowController
 
@@ -203,11 +197,11 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	
 	func queueMakeToolbarValidate() {
 
-		postponingMakeToolbarValidateBlock.runInFuture()
+		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
 	}
 
-	func makeToolbarValidate() {
-		
+	@objc func makeToolbarValidate() {
+
 		window?.toolbar?.validateVisibleItems()
 	}
 

@@ -23,9 +23,10 @@ final class SidebarStatusBarView: NSView {
 
 	private var progress: CombinedRefreshProgress? = nil {
 		didSet {
-			CoalescingQueue.standard.add(self, #selector(updateUI))
+			queueUpdateUI()
 		}
 	}
+
 	override var isFlipped: Bool {
 		return true
 	}
@@ -40,6 +41,11 @@ final class SidebarStatusBarView: NSView {
 		progressLabel.stringValue = ""		
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+	}
+
+	func queueUpdateUI() {
+
+		CoalescingQueue.standard.add(self, #selector(updateUI))
 	}
 
 	@objc func updateUI() {
