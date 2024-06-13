@@ -153,7 +153,7 @@ final class ArticlesTable {
 	func unreadCount(feedID: String, database: FMDatabase) -> Int? {
 
 		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0;"
-		let unreadCount = database.count(sql: sql, parameters: nil, tableName: name)
+		let unreadCount = database.count(sql: sql, parameters: [feedID], tableName: name)
 		return unreadCount
 	}
 
