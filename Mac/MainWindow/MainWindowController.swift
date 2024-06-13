@@ -630,8 +630,8 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		articleExtractor?.cancel()
 		articleExtractor = nil
 		isShowingExtractedArticle = false
-		makeToolbarValidate()
-		
+		queueMakeToolbarValidate()
+
 		let detailState: DetailState
 		if let articles = articles {
 			if articles.count == 1 {
