@@ -70,10 +70,14 @@ import Sparkle
 	@IBOutlet var groupArticlesByFeedMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 
+	private lazy var postponingUpdateDockBadgeBlock: PostponingBlock = {
+		PostponingBlock(delayInterval: 0.05, name: "Update Dock Badge", block: updateDockBadge)
+	}()
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
-				CoalescingQueue.standard.add(self, #selector(updateDockBadge))
+				queueUpdateDockBadge()
 				NotificationCenter.default.post(name: .appUnreadCountDidChange, object: self, userInfo: nil)
 				postUnreadCountDidChangeNotification()
 			}
@@ -401,7 +405,7 @@ import Sparkle
 			lastRefreshInterval = AppDefaults.shared.refreshInterval
 		}
 		
-		updateDockBadge()
+		queueUpdateDockBadge()
 	}
 	
 	@objc func didWakeNotification(_ note: Notification) {
@@ -536,7 +540,12 @@ import Sparkle
 	}
 
 	// MARK: - Dock Badge
-	@objc func updateDockBadge() {
+
+	func queueUpdateDockBadge() {
+		postponingUpdateDockBadgeBlock.runInFuture()
+	}
+
+	func updateDockBadge() {
 		let label = unreadCount > 0 ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}
