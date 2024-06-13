@@ -12,28 +12,27 @@ import Core
 
 @MainActor final class AccountMetadataFile {
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "accountMetadataFile")
-
 	private let fileURL: URL
 	private let account: Account
-	
-	private var isDirty = false {
-		didSet {
-			queueSaveToDiskIfNeeded()
-		}
-	}
-	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+	private let dataFile: DataFile
+	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountMetadataFile")
 
 	init(filename: String, account: Account) {
+
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
+		self.dataFile = DataFile(fileURL: self.fileURL)
+
+		self.dataFile.delegate = self
 	}
 	
 	func markAsDirty() {
-		isDirty = true
+
+		dataFile.markAsDirty()
 	}
 	
 	func load() {
+
 		if let fileData = try? Data(contentsOf: fileURL) {
 			let decoder = PropertyListDecoder()
 			account.metadata = (try? decoder.decode(AccountMetadata.self, from: fileData)) ?? AccountMetadata()
@@ -42,32 +41,27 @@ import Core
 	}
 	
 	func save() {
-		guard !account.isDeleted else { return }
-		
+
+		dataFile.save()
+	}
+}
+
+extension AccountMetadataFile: DataFileDelegate {
+
+	func data(for dataFile: DataFile) -> Data? {
+
+		guard !account.isDeleted else {
+			return nil
+		}
+
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
 
-		do {
-			let data = try encoder.encode(account.metadata)
-			try data.write(to: fileURL)
-		} catch let error as NSError {
-			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
-		}
-	}
-	
-}
-
-private extension AccountMetadataFile {
-
-	func queueSaveToDiskIfNeeded() {
-		saveQueue.add(self, #selector(saveToDiskIfNeeded))
+		return try? encoder.encode(account.metadata)
 	}
 
-	@objc func saveToDiskIfNeeded() {
-		if isDirty {
-			isDirty = false
-			save()
-		}
+	func dataFileWriteToDiskDidFail(for dataFile: DataFile, error: Error) {
+		
+		logger.error("AccountMetadataFile save to disk failed for \(self.fileURL): \(error.localizedDescription)")
 	}
-
 }
