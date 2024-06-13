@@ -114,11 +114,7 @@ public protocol CloudKitZone: AnyObject {
 
 	func delay(for seconds: Double) async {
 
-		await withCheckedContinuation { continuation in
-			self.retryIfPossible(after: seconds) {
-				continuation.resume()
-			}
-		}
+		try? await Task.sleep(for: .seconds(1))
 	}
 
 	nonisolated func retryIfPossible(after: Double, block: @escaping @Sendable @MainActor () -> ()) {
