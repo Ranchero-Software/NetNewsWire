@@ -11,6 +11,8 @@ import os
 /// Runs a block of code in the future. Each time `runInFuture` is called, the block is postponed again until the future by `delayInterval`.
 @MainActor public final class PostponingBlock {
 
+	public static let delayIntervalForUI: TimeInterval = 0.05
+
 	private let block: @MainActor () -> Void
 	private let delayInterval: TimeInterval
 	private let name: String // For debugging
@@ -18,7 +20,7 @@ import os
 
 	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "PostponingBlock")
 
-	public init(delayInterval: TimeInterval, name: String, block: @MainActor @escaping () -> Void) {
+	public init(name: String, delayInterval: TimeInterval = PostponingBlock.delayIntervalForUI, block: @MainActor @escaping () -> Void) {
 
 		self.delayInterval = delayInterval
 		self.name = name

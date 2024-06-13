@@ -60,6 +60,10 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	private var searchSmartFeed: SmartFeed? = nil
 	private var restoreArticleWindowScrollY: CGFloat?
 
+	private lazy var postponingMakeToolbarValidateBlock: PostponingBlock = {
+		PostponingBlock(name: "Make Toolbar Validate", delayInterval: 0.05, block: makeToolbarValidate)
+	}()
+	
 	// MARK: - NSWindowController
 
 	override func windowDidLoad() {
@@ -147,7 +151,7 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	// MARK: - Notifications
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
-		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
+		queueMakeToolbarValidate()
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -195,7 +199,12 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 
 	// MARK: - Toolbar
 	
-	@objc func makeToolbarValidate() {
+	func queueMakeToolbarValidate() {
+
+		postponingMakeToolbarValidateBlock.runInFuture()
+	}
+
+	func makeToolbarValidate() {
 		
 		window?.toolbar?.validateVisibleItems()
 	}

@@ -49,7 +49,7 @@ import Images
 	#endif
 
 	private lazy var postponingBlock: PostponingBlock = {
-		PostponingBlock(delayInterval: 1.0, name: "SmartFeed") {
+		PostponingBlock(name: "SmartFeed", delayInterval: 1.0) {
 			Task {
 				try? await self.fetchUnreadCounts()
 			}

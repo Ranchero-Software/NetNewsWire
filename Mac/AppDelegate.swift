@@ -71,7 +71,7 @@ import Sparkle
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 
 	private lazy var postponingUpdateDockBadgeBlock: PostponingBlock = {
-		PostponingBlock(delayInterval: 0.05, name: "Update Dock Badge", block: updateDockBadge)
+		PostponingBlock(name: "Update Dock Badge", delayInterval: 0.05, block: updateDockBadge)
 	}()
 
 	var unreadCount = 0 {

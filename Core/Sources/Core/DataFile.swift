@@ -32,7 +32,7 @@ public protocol DataFileDelegate: AnyObject {
 	private let fileURL: URL
 
 	private lazy var postponingBlock: PostponingBlock = {
-		PostponingBlock(delayInterval: 1.0, name: "DataFile \(fileURL.absoluteString)") { [weak self] in
+		PostponingBlock(name: "DataFile \(fileURL.absoluteString)", delayInterval: 1.0) { [weak self] in
 			self?.saveToDiskIfNeeded()
 		}
 	}()
