@@ -28,6 +28,11 @@ public protocol DataFileDelegate: AnyObject {
 
 	private let fileURL: URL
 	private let saveQueue: CoalescingQueue
+	
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DataFile")
+	private var logger: Logger {
+		Self.logger
+	}
 
 	public init(fileURL: URL) {
 
@@ -38,14 +43,17 @@ public protocol DataFileDelegate: AnyObject {
 	public func markAsDirty() {
 
 		isDirty = true
+		logger.info("Data file marked dirty: \(self.fileURL)")
 	}
 
 	public func save() {
 
 		assert(Thread.isMainThread)
 		isDirty = false
+		logger.info("Saving data file: \(self.fileURL)")
 
 		guard let data = delegate?.data(for: self) else {
+			logger.error("Delegate did not return data for data file: \(self.fileURL)")
 			return
 		}
 
@@ -53,6 +61,7 @@ public protocol DataFileDelegate: AnyObject {
 			try data.write(to: fileURL)
 		} catch {
 			delegate?.dataFileWriteToDiskDidFail(for: self, error: error)
+			logger.error("Data file did fail to write to disk: \(self.fileURL)")
 		}
 	}
 }

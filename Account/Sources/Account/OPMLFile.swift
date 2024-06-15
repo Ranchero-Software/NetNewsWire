@@ -31,7 +31,6 @@ import Core
 	
 	func markAsDirty() {
 
-		logger.info("OPMLFile marked dirty: \(self.fileURL)")
 		dataFile.markAsDirty()
 	}
 	
