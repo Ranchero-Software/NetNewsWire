@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 
 // Use when you want to coalesce calls for something like updating visible table cells.
 // Calls are uniqued. If you add a call with the same target and selector as a previous call, you’ll just get one call.
@@ -32,31 +33,32 @@ struct QueueCall: Equatable {
 
 @MainActor @objc public final class CoalescingQueue: NSObject {
 
-	@MainActor public static let standard = CoalescingQueue(name: "Standard", interval: 0.05, maxInterval: 0.1)
+	@MainActor public static let standard = CoalescingQueue(name: "Standard", interval: 0.05)
 	public let name: String
-	public var isPaused = false
 	private let interval: TimeInterval
-	private let maxInterval: TimeInterval
 	private var lastCallTime = Date.distantFuture
 	private var timer: Timer? = nil
 	private var calls = [QueueCall]()
 
-	public init(name: String, interval: TimeInterval = 0.05, maxInterval: TimeInterval = 2.0) {
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CoalescingQueue")
+	private var logger: Logger {
+		Self.logger
+	}
+
+	public init(name: String, interval: TimeInterval = 0.05) {
 		self.name = name
 		self.interval = interval
-		self.maxInterval = maxInterval
 	}
 
 	public func add(_ target: AnyObject, _ selector: Selector) {
 		let queueCall = QueueCall(target: target, selector: selector)
 		add(queueCall)
-		if Date().timeIntervalSince1970 - lastCallTime.timeIntervalSince1970 > maxInterval {
-			timerDidFire(nil)
-		}
 	}
 
 	public func performCallsImmediately() {
-		guard !isPaused else { return }
+
+		logger.info("CoalescingQueue performing calls: \(self.name)")
+		
 		let callsToMake = calls // Make a copy in case calls are added to the queue while performing calls.
 		resetCalls()
 		for call in callsToMake {
@@ -68,12 +70,14 @@ struct QueueCall: Equatable {
 		lastCallTime = Date()
 		performCallsImmediately()
 	}
-	
 }
 
 private extension CoalescingQueue {
 
 	func add(_ call: QueueCall) {
+
+		logger.info("CoalescingQueue adding to queue: \(self.name)")
+
 		restartTimer()
 
 		if !calls.contains(call) {

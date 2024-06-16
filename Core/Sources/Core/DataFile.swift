@@ -37,7 +37,7 @@ public protocol DataFileDelegate: AnyObject {
 	public init(fileURL: URL) {
 
 		self.fileURL = fileURL
-		self.saveQueue = CoalescingQueue(name: "DataFile \(fileURL.absoluteString)", interval: 1.0, maxInterval: 2.0)
+		self.saveQueue = CoalescingQueue(name: "DataFile \(fileURL.absoluteString)", interval: 1.0)
 	}
 
 	public func markAsDirty() {

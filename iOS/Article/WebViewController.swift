@@ -65,7 +65,7 @@ final class WebViewController: UIViewController {
 	
 	private(set) var article: Article?
 	
-	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 0.3)
+	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3)
 	var windowScrollY = 0
 	private var restoreWindowScrollY: Int?
 

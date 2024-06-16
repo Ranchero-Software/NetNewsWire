@@ -31,7 +31,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
-	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3)
 
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {

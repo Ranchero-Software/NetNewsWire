@@ -48,7 +48,7 @@ import Images
 	}
 	#endif
 
-	private let fetchUnreadCountsQueue = CoalescingQueue(name: "SmartFeed", interval: 1.0, maxInterval: 2.0)
+	private let fetchUnreadCountsQueue = CoalescingQueue(name: "SmartFeed", interval: 1.0)
 
 	private var fetchUnreadCountsTask: Task<Void, Never>?
 	private let delegate: SmartFeedDelegate

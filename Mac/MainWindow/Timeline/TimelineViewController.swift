@@ -163,7 +163,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var currentRowHeight: CGFloat = 0.0
 
 	private var didRegisterForNotifications = false
-	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5, maxInterval: 2.0)
+	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 
 	private var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
