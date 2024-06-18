@@ -77,14 +77,16 @@ public enum FeedbinAccountDelegateError: String, Error {
 
 	func refreshAll(for account: Account) async throws {
 
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		refreshProgress.addToNumberOfTasks(7)
+		defer {
+			refreshProgress.clear()
+		}
 
 		do {
-			try await refreshAccount(account)
+			try await refreshAccount(account) // 3 tasks
+			try await refreshArticlesAndStatuses(account) // 4 tasks
 		} catch {
-			refreshProgress.clear()
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrappedError(error: error, account: account)
 		}
 	}
 
@@ -509,22 +511,27 @@ private extension FeedbinAccountDelegate {
 		forceExpireFolderFeedRelationship(account, tags)
 
 		let taggings = try await caller.retrieveTaggings()
-
 		BatchUpdate.shared.perform {
 			self.syncFolders(account, tags)
 			self.syncFeeds(account, subscriptions)
 			self.syncFeedFolderRelationship(account, taggings)
 		}
-
 		refreshProgress.completeTask()
 	}
 
 	func refreshArticlesAndStatuses(_ account: Account) async throws {
 		
 		try await sendArticleStatus(for: account)
+		refreshProgress.completeTask()
+
 		try await refreshArticleStatus(for: account)
+		refreshProgress.completeTask()
+
 		try await refreshArticles(account)
+		refreshProgress.completeTask()
+
 		try await refreshMissingArticles(account)
+		refreshProgress.completeTask()
 	}
 
 	// This function can be deleted if Feedbin updates their taggings.json service to
