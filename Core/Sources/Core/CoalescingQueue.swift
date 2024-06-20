@@ -39,8 +39,8 @@ struct QueueCall: Equatable {
 	private var lastCallTime = Date.distantFuture
 	private var timer: Timer? = nil
 	private var calls = [QueueCall]()
-	private var debugging = false
 
+	private var loggingEnabled = false
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CoalescingQueue")
 	private var logger: Logger {
 		Self.logger
@@ -58,7 +58,7 @@ struct QueueCall: Equatable {
 
 	public func performCallsImmediately() {
 
-		if debugging {
+		if loggingEnabled {
 			logger.debug("CoalescingQueue performing calls: \(self.name)")
 		}
 
@@ -79,7 +79,7 @@ private extension CoalescingQueue {
 
 	func add(_ call: QueueCall) {
 
-		if debugging {
+		if loggingEnabled {
 			logger.debug("CoalescingQueue adding to queue: \(self.name)")
 		}
 		
