@@ -198,6 +198,10 @@ final class ArticlesTable {
 
 	func unreadCount(feedIDs: Set<String>, since: Date, database: FMDatabase) -> Int? {
 
+		if feedIDs.isEmpty {
+			return 0
+		}
+
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 		let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
 
