@@ -815,14 +815,18 @@ private extension SidebarViewController {
 		// then the unread count comes from the timeline.
 		// This ensures that any transients in the timeline
 		// are accounted for in the unread count.
-		if nodeShouldGetUnreadCountFromTimeline(node) {
-			return delegate?.unreadCount(for: node.representedObject) ?? 0
+
+		var count = 0
+		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+			count = unreadCountProvider.unreadCount
 		}
 
-		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
-			return unreadCountProvider.unreadCount
+		if nodeShouldGetUnreadCountFromTimeline(node) {
+			let timelineUnreadCount = delegate?.unreadCount(for: node.representedObject) ?? 0
+			return max(count, timelineUnreadCount) // timelineUnreadCount may include additional transients
 		}
-		return 0
+
+		return count
 	}
 
 	func nodeShouldGetUnreadCountFromTimeline(_ node: Node) -> Bool {
