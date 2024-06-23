@@ -137,12 +137,27 @@ private extension DatabaseLookupTable {
 
 	func uniqueRelatedObjects(with objects: [DatabaseObject]) -> [DatabaseObject] {
 
-		// All of our objects that conform to DatabaseObject are Hashable.
-		// If that’s ever not true, this will crash when run from Xcode.
-		let objectSet = Set(objects as! [AnyHashable])
-		return Array(objectSet) as! [DatabaseObject]
+		var relatedObjectIDs = Set<String>()
+		var relatedObjectsUniqueArray = [DatabaseObject]()
+
+		for object in objects {
+			guard let relatedObjects = object.relatedObjectsWithName(relationshipName) else {
+				assertionFailure("uniqueRelatedObjects: expected every object to have related objects.")
+				continue
+			}
+			for relatedObject in relatedObjects {
+				let databaseID = relatedObject.databaseID
+				if !relatedObjectIDs.contains(databaseID) {
+					relatedObjectIDs.insert(databaseID)
+					relatedObjectsUniqueArray.append(relatedObject)
+				}
+			}
+		}
+
+		assert(relatedObjectIDs.count == relatedObjectsUniqueArray.count)
+		return relatedObjectsUniqueArray
 	}
-	
+
 	func syncRelatedObjectsAndLookupTable(_ object: DatabaseObject, _ lookupTable: RelatedObjectIDsMap, _ database: FMDatabase) {
 		
 		guard let relatedObjects = object.relatedObjectsWithName(relationshipName) else {
