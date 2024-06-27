@@ -13,6 +13,7 @@ import Account
 import UniformTypeIdentifiers
 import Core
 import ParserObjC
+import AppConfig
 
 public extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
@@ -27,16 +28,18 @@ public protocol FaviconDownloaderDelegate {
 
 @MainActor public final class FaviconDownloader {
 
+	public static let shared = FaviconDownloader()
+
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
-	private let folder: String
+	private let folder: URL
 	private let diskCache: BinaryDiskCache
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
 	private var currentHomePageHasOnlyFaviconICO = false
 
 	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
-	private var homePageToFaviconURLCachePath: String
+	private var homePageToFaviconURLCachePath: URL
 	private var homePageToFaviconURLCacheDirty = false {
 		didSet {
 			queueSaveHomePageToFaviconURLCacheIfNeeded()
@@ -44,7 +47,7 @@ public protocol FaviconDownloaderDelegate {
 	}
 
 	private var homePageURLsWithNoFaviconURLCache = Set<String>()
-	private var homePageURLsWithNoFaviconURLCachePath: String
+	private var homePageURLsWithNoFaviconURLCachePath: URL
 	private var homePageURLsWithNoFaviconURLCacheDirty = false {
 		didSet {
 			queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded()
@@ -60,14 +63,14 @@ public protocol FaviconDownloaderDelegate {
 		static let faviconURL = "faviconURL"
 	}
 
-	public init(folder: String) {
+	public init() {
 
-		self.folder = folder
-		self.diskCache = BinaryDiskCache(folder: folder)
+		self.folder = AppLocations.faviconsFolder
+		self.diskCache = BinaryDiskCache(folder: folder.path)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
 
-		self.homePageToFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToFaviconURLCache.plist")
-		self.homePageURLsWithNoFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
+		self.homePageToFaviconURLCachePath = folder.appendingPathComponent("HomePageToFaviconURLCache.plist")
+		self.homePageURLsWithNoFaviconURLCachePath = folder.appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
 		loadHomePageToFaviconURLCache()
 		loadHomePageURLsWithNoFaviconURLCache()
 
@@ -262,8 +265,7 @@ private extension FaviconDownloader {
 	}
 
 	func loadHomePageToFaviconURLCache() {
-		let url = URL(fileURLWithPath: homePageToFaviconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
+		guard let data = try? Data(contentsOf: homePageToFaviconURLCachePath) else {
 			return
 		}
 		let decoder = PropertyListDecoder()
@@ -271,8 +273,7 @@ private extension FaviconDownloader {
 	}
 
 	func loadHomePageURLsWithNoFaviconURLCache() {
-		let url = URL(fileURLWithPath: homePageURLsWithNoFaviconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
+		guard let data = try? Data(contentsOf: homePageURLsWithNoFaviconURLCachePath) else {
 			return
 		}
 		let decoder = PropertyListDecoder()
@@ -297,10 +298,9 @@ private extension FaviconDownloader {
 
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: homePageToFaviconURLCachePath)
 		do {
 			let data = try encoder.encode(homePageToFaviconURLCache)
-			try data.write(to: url)
+			try data.write(to: homePageToFaviconURLCachePath)
 		} catch {
 			assertionFailure(error.localizedDescription)
 		}
@@ -311,10 +311,9 @@ private extension FaviconDownloader {
 
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: homePageURLsWithNoFaviconURLCachePath)
 		do {
 			let data = try encoder.encode(Array(homePageURLsWithNoFaviconURLCache))
-			try data.write(to: url)
+			try data.write(to: homePageURLsWithNoFaviconURLCachePath)
 		} catch {
 			assertionFailure(error.localizedDescription)
 		}

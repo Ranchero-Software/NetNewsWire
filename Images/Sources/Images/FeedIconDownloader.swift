@@ -28,11 +28,13 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 
 @MainActor public final class FeedIconDownloader {
 
+	public static let shared = FeedIconDownloader()
+
 	public static let feedKey = "url"
 	
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
-	private let imageDownloader: ImageDownloader
+	private let imageDownloader = ImageDownloader.shared
 
 	private var feedURLToIconURLCache = [String: String]()
 	private var feedURLToIconURLCachePath: String
@@ -68,8 +70,8 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 	
 	public var delegate: FeedIconDownloaderDelegate?
 
-	public init(imageDownloader: ImageDownloader, folder: String) {
-		self.imageDownloader = imageDownloader
+	public init(folder: String) {
+
 		self.feedURLToIconURLCachePath = (folder as NSString).appendingPathComponent("FeedURLToIconURLCache.plist")
 		self.homePageToIconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToIconURLCache.plist")
 		self.homePagesWithNoIconURLCachePath = (folder as NSString).appendingPathComponent("HomePagesWithNoIconURLCache.plist")

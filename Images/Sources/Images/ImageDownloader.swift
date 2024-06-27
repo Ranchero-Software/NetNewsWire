@@ -11,6 +11,7 @@ import os.log
 import Web
 import FoundationExtras
 import Core
+import AppConfig
 
 public extension Notification.Name {
 
@@ -18,6 +19,8 @@ public extension Notification.Name {
 }
 
 @MainActor public final class ImageDownloader {
+
+	public static let shared = ImageDownloader()
 
 	public static let imageURLKey = "url"
 
@@ -28,7 +31,8 @@ public extension Notification.Name {
 	private var urlsInProgress = Set<String>()
 	private var badURLs = Set<String>() // That return a 404 or whatever. Just skip them in the future.
 
-	public init(folder: String) {
+	init() {
+		let folder = AppLocations.imagesFolder.path
 		self.diskCache = BinaryDiskCache(folder: folder)
 	}
 
