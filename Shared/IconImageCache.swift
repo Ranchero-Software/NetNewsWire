@@ -85,14 +85,14 @@ private extension IconImageCache {
 		if let iconImage = feedIconImageCache[sidebarItemID] {
 			return iconImage
 		}
-		if let iconImage = appDelegate.feedIconDownloader.icon(for: feed) {
+		if let iconImage = FeedIconDownloader.shared.icon(for: feed) {
 			feedIconImageCache[sidebarItemID] = iconImage
 			return iconImage
 		}
 		if let faviconImage = faviconImageCache[sidebarItemID] {
 			return faviconImage
 		}
-		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
+		if let faviconImage = FaviconDownloader.shared.faviconAsIcon(for: feed) {
 			faviconImageCache[sidebarItemID] = faviconImage
 			return faviconImage
 		}
@@ -121,7 +121,7 @@ private extension IconImageCache {
 		if let iconImage = authorIconImageCache[author] {
 			return iconImage
 		}
-		if let iconImage = appDelegate.authorAvatarDownloader.image(for: author) {
+		if let iconImage = AuthorAvatarDownloader.shared.image(for: author) {
 			authorIconImageCache[author] = iconImage
 			return iconImage
 		}
