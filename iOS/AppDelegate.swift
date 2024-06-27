@@ -40,17 +40,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	nonisolated(unsafe) let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
 	var userNotificationManager: UserNotificationManager!
-	var faviconDownloader: FaviconDownloader!
-	var imageDownloader: ImageDownloader!
-	var authorAvatarDownloader: AuthorAvatarDownloader!
-	var feedIconDownloader: FeedIconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
-				NotificationCenter.default.post(name: .appUnreadCountDidChange, object: self, userInfo: nil)
+				AppNotification.postAppUnreadCountDidChange(from: self, unreadCount: unreadCount)
 				postUnreadCountDidChangeNotification()
 				UNUserNotificationCenter.current().setBadgeCount(unreadCount)
 			}
@@ -261,8 +257,6 @@ private extension AppDelegate {
 		let imagesFolderPath = imagesFolder.suffix(from: imagesFolder.index(imagesFolder.startIndex, offsetBy: 7))
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
 		imageDownloader = ImageDownloader(folder: String(imagesFolderPath))
-		
-		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		
 		let tempFolder = tempDir.absoluteString
 		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
