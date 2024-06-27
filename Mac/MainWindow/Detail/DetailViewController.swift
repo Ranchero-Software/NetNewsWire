@@ -102,10 +102,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	// MARK: - Navigation
 	
 	func focus() {
-		guard let window = currentWebViewController.webView.window else {
+		guard let webView = currentWebViewController.webView, let window = webView.window else {
 			return
 		}
-		window.makeFirstResponderUnlessDescendantIsFirstResponder(currentWebViewController.webView)
+		window.makeFirstResponderUnlessDescendantIsFirstResponder(webView)
 	}
 	
 	// MARK: State Restoration
@@ -113,7 +113,6 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	func saveState(to state: inout [AnyHashable : Any]) {
 		currentWebViewController.saveState(to: &state)
 	}
-	
 }
 
 // MARK: - DetailWebViewControllerDelegate

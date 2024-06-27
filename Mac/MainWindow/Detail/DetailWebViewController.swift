@@ -21,7 +21,7 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 final class DetailWebViewController: NSViewController {
 
 	weak var delegate: DetailWebViewControllerDelegate?
-	var webView: DetailWebView!
+	var webView: DetailWebView?
 	var state: DetailState = .noSelection {
 		didSet {
 			if state != oldValue {
@@ -52,10 +52,10 @@ final class DetailWebViewController: NSViewController {
 	#if !MAC_APP_STORE
 		private var webInspectorEnabled: Bool {
 			get {
-				return webView.configuration.preferences._developerExtrasEnabled
+				return webView?.configuration.preferences._developerExtrasEnabled ?? false
 			}
 			set {
-				webView.configuration.preferences._developerExtrasEnabled = newValue
+				webView?.configuration.preferences._developerExtrasEnabled = newValue
 			}
 		}
 	#endif
@@ -121,13 +121,13 @@ final class DetailWebViewController: NSViewController {
 		}
 		configuration.userContentController = userContentController
 
-		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
+		let webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self
 		webView.navigationDelegate = self
 		webView.keyboardDelegate = keyboardDelegate
 		webView.translatesAutoresizingMaskIntoConstraints = false
 		webView.customUserAgent = UserAgent.fromInfoPlist
-
+		self.webView = webView
 		view = webView
 
 		// Hide the web view until the first reload (navigation) is complete (plus some delay) to avoid the awful white flash that happens on the initial display in dark mode.
@@ -184,7 +184,7 @@ final class DetailWebViewController: NSViewController {
 	// MARK: Media Functions
 	
 	func stopMediaPlayback() {
-		webView.evaluateJavaScript("stopMediaPlayback();")
+		webView?.evaluateJavaScript("stopMediaPlayback();")
 	}
 	
 	// MARK: Scrolling
@@ -200,11 +200,11 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	override func scrollPageDown(_ sender: Any?) {
-		webView.scrollPageDown(sender)
+		webView?.scrollPageDown(sender)
 	}
 
 	override func scrollPageUp(_ sender: Any?) {
-		webView.scrollPageUp(sender)
+		webView?.scrollPageUp(sender)
 	}
 
 	// MARK: State Restoration
@@ -271,7 +271,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 		decisionHandler(.allow)
 	}
 	
-	nonisolated public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+	nonisolated public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation?) {
 
 		Task { @MainActor in
 			// See note in viewDidLoad()
@@ -379,10 +379,14 @@ private extension DetailWebViewController {
 		let articleBaseURL = URL(string: rendering.baseURL)
 		let baseURL = appIsInApplicationsFolder ? localBaseURL : articleBaseURL
 
-		webView.loadHTMLString(html, baseURL: baseURL)
+		webView?.loadHTMLString(html, baseURL: baseURL)
 	}
 
 	func fetchScrollInfo() async -> ScrollInfo? {
+
+		guard let webView else {
+			return nil
+		}
 
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
 
@@ -396,7 +400,7 @@ private extension DetailWebViewController {
 			return nil
 		}
 
-		let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webView.frame.height, offsetY: offsetY)
+		let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: webView.frame.height, offsetY: offsetY)
 		return scrollInfo
 	}
 
