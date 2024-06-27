@@ -33,6 +33,10 @@ import Foundation
 	public static var imagesFolder: URL = {
 		return createSubfolder(named: "Images", in: cacheFolder)
 	}()
+
+	public static var feedIconsFolder: URL = {
+		return createSubfolder(named: "FeedIcons", in: cacheFolder)
+	}()
 }
 
 private extension AppLocations {
