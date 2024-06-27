@@ -28,7 +28,7 @@ protocol SPUUpdaterDelegate {}
 import Sparkle
 #endif
 
-@MainActor var appDelegate: AppDelegate!
+//@MainActor var appDelegate: AppDelegate!
 
 @NSApplicationMain
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
@@ -38,10 +38,6 @@ import Sparkle
 	}
 	
 	var userNotificationManager: UserNotificationManager!
-	var faviconDownloader: FaviconDownloader!
-	var imageDownloader: ImageDownloader!
-	var authorAvatarDownloader: AuthorAvatarDownloader!
-	var feedIconDownloader: FeedIconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 
@@ -74,7 +70,7 @@ import Sparkle
 		didSet {
 			if unreadCount != oldValue {
 				queueUpdateDockBadge()
-				NotificationCenter.default.post(name: .appUnreadCountDidChange, object: self, userInfo: nil)
+				AppNotification.postAppUnreadCountDidChange(from: self, unreadCount: unreadCount)
 				postUnreadCountDidChangeNotification()
 			}
 		}
@@ -169,21 +165,8 @@ import Sparkle
 			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
 		}
 
-		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
-		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
-		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
-
-		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
-		faviconDownloader.delegate = self
-
-		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
-		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
-		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-		imageDownloader = ImageDownloader(folder: imagesFolder)
-
-		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
-		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
-		feedIconDownloader.delegate = self
+		FaviconDownloader.shared.delegate = self
+		FeedIconDownloader.shared.delegate = self
 		
 		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 	}
@@ -381,7 +364,7 @@ import Sparkle
 			return
 		}
 		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
-			let _ = faviconDownloader.favicon(for: feed)
+			let _ = FaviconDownloader.shared.favicon(for: feed)
 		}
 	}
 
@@ -1000,7 +983,7 @@ extension AppDelegate: NSWindowRestoration {
 
 		var mainWindow: NSWindow? = nil
 		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
-			mainWindow = appDelegate.createAndShowMainWindow().window
+			mainWindow = NSApp.delegate.createAndShowMainWindow().window
 		}
 		return mainWindow!
 	}
