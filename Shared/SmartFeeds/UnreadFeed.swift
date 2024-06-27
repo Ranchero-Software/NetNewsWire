@@ -53,13 +53,14 @@ final class UnreadFeed: PseudoFeed {
 	
 	@MainActor init() {
 
-		self.unreadCount = appDelegate.unreadCount
 		NotificationCenter.default.addObserver(self, selector: #selector(appUnreadCountDidChange(_:)), name: .appUnreadCountDidChange, object: nil)
 	}
 
 	@objc @MainActor func appUnreadCountDidChange(_ note: Notification) {
-
-		unreadCount = appDelegate.unreadCount
+		
+		if let unreadCount = note.unreadCount {
+			self.unreadCount = unreadCount
+		}
 	}
 }
 
