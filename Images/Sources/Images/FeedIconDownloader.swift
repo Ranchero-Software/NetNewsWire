@@ -13,6 +13,7 @@ import Web
 import Parser
 import ParserObjC
 import Core
+import AppConfig
 
 public extension Notification.Name {
 
@@ -37,7 +38,7 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 	private let imageDownloader = ImageDownloader.shared
 
 	private var feedURLToIconURLCache = [String: String]()
-	private var feedURLToIconURLCachePath: String
+	private var feedURLToIconURLCachePath: URL
 	private var feedURLToIconURLCacheDirty = false {
 		didSet {
 			queueSaveFeedURLToIconURLCacheIfNeeded()
@@ -45,7 +46,7 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 	}
 	
 	private var homePageToIconURLCache = [String: String]()
-	private var homePageToIconURLCachePath: String
+	private var homePageToIconURLCachePath: URL
 	private var homePageToIconURLCacheDirty = false {
 		didSet {
 			queueSaveHomePageToIconURLCacheIfNeeded()
@@ -53,7 +54,7 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 	}
 	
 	private var homePagesWithNoIconURLCache = Set<String>()
-	private var homePagesWithNoIconURLCachePath: String
+	private var homePagesWithNoIconURLCachePath: URL
 	private var homePagesWithNoIconURLCacheDirty = false {
 		didSet {
 			queueHomePagesWithNoIconURLCacheIfNeeded()
@@ -70,11 +71,13 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 	
 	public var delegate: FeedIconDownloaderDelegate?
 
-	public init(folder: String) {
+	public init() {
 
-		self.feedURLToIconURLCachePath = (folder as NSString).appendingPathComponent("FeedURLToIconURLCache.plist")
-		self.homePageToIconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToIconURLCache.plist")
-		self.homePagesWithNoIconURLCachePath = (folder as NSString).appendingPathComponent("HomePagesWithNoIconURLCache.plist")
+		let folder = AppLocations.feedIconsFolder
+
+		self.feedURLToIconURLCachePath = folder.appendingPathComponent("FeedURLToIconURLCache.plist")
+		self.homePageToIconURLCachePath = folder.appendingPathComponent("HomePageToIconURLCache.plist")
+		self.homePagesWithNoIconURLCachePath = folder.appendingPathComponent("HomePagesWithNoIconURLCache.plist")
 		loadFeedURLToIconURLCache()
 		loadHomePageToIconURLCache()
 		loadHomePagesWithNoIconURLCache()
@@ -250,8 +253,7 @@ private extension FeedIconDownloader {
 	}
 	
 	func loadFeedURLToIconURLCache() {
-		let url = URL(fileURLWithPath: feedURLToIconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
+		guard let data = try? Data(contentsOf: feedURLToIconURLCachePath) else {
 			return
 		}
 		let decoder = PropertyListDecoder()
@@ -259,8 +261,7 @@ private extension FeedIconDownloader {
 	}
 
 	func loadHomePageToIconURLCache() {
-		let url = URL(fileURLWithPath: homePageToIconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
+		guard let data = try? Data(contentsOf: homePageToIconURLCachePath) else {
 			return
 		}
 		let decoder = PropertyListDecoder()
@@ -268,8 +269,7 @@ private extension FeedIconDownloader {
 	}
 
 	func loadHomePagesWithNoIconURLCache() {
-		let url = URL(fileURLWithPath: homePagesWithNoIconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
+		guard let data = try? Data(contentsOf: homePagesWithNoIconURLCachePath) else {
 			return
 		}
 		let decoder = PropertyListDecoder()
@@ -294,10 +294,9 @@ private extension FeedIconDownloader {
 
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: feedURLToIconURLCachePath)
 		do {
 			let data = try encoder.encode(feedURLToIconURLCache)
-			try data.write(to: url)
+			try data.write(to: feedURLToIconURLCachePath)
 		} catch {
 			assertionFailure(error.localizedDescription)
 		}
@@ -308,10 +307,9 @@ private extension FeedIconDownloader {
 
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: homePageToIconURLCachePath)
 		do {
 			let data = try encoder.encode(homePageToIconURLCache)
-			try data.write(to: url)
+			try data.write(to: homePageToIconURLCachePath)
 		} catch {
 			assertionFailure(error.localizedDescription)
 		}
@@ -322,10 +320,9 @@ private extension FeedIconDownloader {
 
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: homePagesWithNoIconURLCachePath)
 		do {
 			let data = try encoder.encode(Array(homePagesWithNoIconURLCache))
-			try data.write(to: url)
+			try data.write(to: homePagesWithNoIconURLCachePath)
 		} catch {
 			assertionFailure(error.localizedDescription)
 		}
