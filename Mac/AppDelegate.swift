@@ -155,16 +155,6 @@ import Sparkle
 		
 		CacheCleaner.purgeIfNecessary()
 
-		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
-		let cacheFolder: String
-		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).path {
-			cacheFolder = userCacheFolder
-		}
-		else {
-			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
-			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
-		}
-
 		FaviconDownloader.shared.delegate = self
 		FeedIconDownloader.shared.delegate = self
 		
