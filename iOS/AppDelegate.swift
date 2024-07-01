@@ -9,7 +9,7 @@
 import UIKit
 import Web
 import Account
-import BackgroundTasks
+@preconcurrency import BackgroundTasks
 import os.log
 import Secrets
 import WidgetKit
@@ -215,27 +215,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		completionHandler([.list, .banner, .badge, .sound])
     }
 	
-	func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-		defer { completionHandler() }
-		
-		let userInfo = response.notification.request.content.userInfo
-		
-		switch response.actionIdentifier {
-		case "MARK_AS_READ":
-			handleMarkAsRead(userInfo: userInfo)
-		case "MARK_AS_STARRED":
-			handleMarkAsStarred(userInfo: userInfo)
-		default:
-			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
-				sceneDelegate.handle(response)
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-					sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
-				})
+	nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+
+		MainActor.assumeIsolated {
+			defer { completionHandler() }
+
+			let userInfo = response.notification.request.content.userInfo
+
+			switch response.actionIdentifier {
+			case "MARK_AS_READ":
+				handleMarkAsRead(userInfo: userInfo)
+			case "MARK_AS_STARRED":
+				handleMarkAsStarred(userInfo: userInfo)
+			default:
+				if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
+					sceneDelegate.handle(response)
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+						sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
+					})
+				}
 			}
 		}
-		
     }
-	
 }
 
 // MARK: App Initialization
