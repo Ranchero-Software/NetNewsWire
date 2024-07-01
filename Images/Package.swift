@@ -13,8 +13,7 @@ let package = Package(
 	dependencies: [
 		.package(path: "../Core"),
 		.package(path: "../Articles"),
-		.package(path: "../Account"),
-		.package(path: "../AppConfig")
+		.package(path: "../Account")
 	],
 	targets: [
 		.target(
@@ -22,8 +21,7 @@ let package = Package(
 			dependencies: [
 				"Core",
 				"Articles",
-				"Account",
-				"AppConfig"
+				"Account"
 			]
 //			Disabled due to Sendable warnings about RSImage (NSImage).
 //			TODO: check if Swift 6 will allow us to deal with these warnings.
