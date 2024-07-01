@@ -1,5 +1,5 @@
 //
-//  AppLocations.swift
+//  AppConfig.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 6/26/24.
@@ -8,9 +8,11 @@
 
 import Foundation
 
-@MainActor public final class AppLocations {
+public final class AppConfig {
 
-	private static var cacheFolder: URL = {
+	public static let appName: String = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
+
+	public static let cacheFolder: URL = {
 
 		let folderURL: URL
 
@@ -26,24 +28,17 @@ import Foundation
 		return folderURL
 	}()
 
-	public static var faviconsFolder: URL = {
-		return createSubfolder(named: "Favicons", in: cacheFolder)
-	}()
-
-	public static var imagesFolder: URL = {
-		return createSubfolder(named: "Images", in: cacheFolder)
-	}()
-
-	public static var feedIconsFolder: URL = {
-		return createSubfolder(named: "FeedIcons", in: cacheFolder)
-	}()
+	/// Returns URL to subfolder in cache folder (creating the folder if it doesn’t exist)
+	public static func cacheSubfolder(named name: String) -> URL {
+		subfolder(name, in: cacheFolder)
+	}
 }
 
-private extension AppLocations {
+private extension AppConfig {
 
-	static func createSubfolder(named subfolderName: String, in folderURL: URL) -> URL {
+	static func subfolder(_ name: String, in folderURL: URL) -> URL {
 
-		let folder = folderURL.appendingPathComponent(subfolderName, isDirectory: true)
+		let folder = folderURL.appendingPathComponent(name, isDirectory: true)
 		try! FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true, attributes: nil)
 		return folder
 	}
