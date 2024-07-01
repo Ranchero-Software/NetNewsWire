@@ -71,7 +71,7 @@ import Secrets
 			.appendingPathComponent("reader/feeds")
 			.appendingQueryItems([
 				URLQueryItem(name: "flat", value: "true"),
-				URLQueryItem(name: "update_counts", value: "false"),
+				URLQueryItem(name: "update_counts", value: "true"),
 			])
 
 		let (_, payload) = try await requestData(callURL: url, resultType: NewsBlurFeedsResponse.self)
