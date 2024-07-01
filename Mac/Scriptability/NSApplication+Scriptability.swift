@@ -25,11 +25,15 @@ extension NSApplication : ScriptingObjectContainer {
     var scriptingKey: String {
         return "application"
     }
-    
+
+	private var scriptingAppDelegate: ScriptingAppDelegate {
+		NSApp.delegate as! ScriptingAppDelegate
+	}
+
     @objc(currentArticle)
     func currentArticle() -> ScriptableArticle? {
         var scriptableArticle: ScriptableArticle?
-        if let currentArticle = appDelegate.scriptingCurrentArticle {
+        if let currentArticle = scriptingAppDelegate.scriptingCurrentArticle {
             if let feed = currentArticle.feed {
                 let scriptableFeed = ScriptableFeed(feed, container:self)
                 scriptableArticle = ScriptableArticle(currentArticle, container:scriptableFeed)
@@ -40,7 +44,7 @@ extension NSApplication : ScriptingObjectContainer {
 
     @objc(selectedArticles)
     func selectedArticles() -> NSArray {
-        let articles = appDelegate.scriptingSelectedArticles
+        let articles = scriptingAppDelegate.scriptingSelectedArticles
         let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
             if let feed = article.feed  {
                 let scriptableFeed = ScriptableFeed(feed, container:self)

@@ -578,6 +578,7 @@ extension MainWindowController: NSWindowDelegate {
 
 	func windowWillClose(_ notification: Notification) {
 		detailViewController?.stopMediaPlayback()
+		let appDelegate = NSApp.delegate as! AppDelegate
 		appDelegate.removeMainWindow(self)
 	}
 	
@@ -1248,7 +1249,8 @@ private extension MainWindowController {
 		}
 		
 		guard let selectedObjects = selectedObjectsInSidebar(), selectedObjects.count > 0 else {
-			window?.title = appDelegate.appName!
+			window?.title = AppConfig.appName
+			let appDelegate = NSApp.delegate as! AppDelegate
 			setSubtitle(appDelegate.unreadCount)
 			return
 		}

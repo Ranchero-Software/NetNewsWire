@@ -467,6 +467,8 @@ private extension SidebarOutlineDataSource {
 			return false
 		}
 
+		let appDelegate = NSApp.delegate as! AppDelegate
+		
 		// Show the add-feed sheet.
 		if let account = parentNode.representedObject as? Account {
 			appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: nil)
