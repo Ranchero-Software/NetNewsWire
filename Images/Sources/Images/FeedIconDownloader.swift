@@ -13,7 +13,6 @@ import Web
 import Parser
 import ParserObjC
 import Core
-import AppConfig
 
 public extension Notification.Name {
 
@@ -73,7 +72,7 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 
 	public init() {
 
-		let folder = AppLocations.feedIconsFolder
+		let folder = AppConfig.cacheSubfolder(named: "FeedIcons")
 
 		self.feedURLToIconURLCachePath = folder.appendingPathComponent("FeedURLToIconURLCache.plist")
 		self.homePageToIconURLCachePath = folder.appendingPathComponent("HomePageToIconURLCache.plist")

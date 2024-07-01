@@ -13,7 +13,6 @@ import Account
 import UniformTypeIdentifiers
 import Core
 import ParserObjC
-import AppConfig
 
 public extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
@@ -65,7 +64,7 @@ public protocol FaviconDownloaderDelegate {
 
 	public init() {
 
-		self.folder = AppLocations.faviconsFolder
+		self.folder = AppConfig.cacheSubfolder(named: "Favicons")
 		self.diskCache = BinaryDiskCache(folder: folder.path)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
 

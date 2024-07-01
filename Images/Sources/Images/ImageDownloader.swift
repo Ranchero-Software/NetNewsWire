@@ -11,7 +11,6 @@ import os.log
 import Web
 import FoundationExtras
 import Core
-import AppConfig
 
 public extension Notification.Name {
 
@@ -32,8 +31,8 @@ public extension Notification.Name {
 	private var badURLs = Set<String>() // That return a 404 or whatever. Just skip them in the future.
 
 	init() {
-		let folder = AppLocations.imagesFolder.path
-		self.diskCache = BinaryDiskCache(folder: folder)
+		let folder = AppConfig.cacheSubfolder(named: "Images")
+		self.diskCache = BinaryDiskCache(folder: folder.path)
 	}
 
 	@discardableResult
