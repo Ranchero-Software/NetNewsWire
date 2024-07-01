@@ -748,7 +748,7 @@ private extension TimelineViewController {
 	}
 	
 	func featuredImageFor(_ article: Article) -> UIImage? {
-		if let link = article.imageLink, let data = appDelegate.imageDownloader.image(for: link) {
+		if let link = article.imageLink, let data = ImageDownloader.shared.image(for: link) {
 			return RSImage(data: data)
 		}
 		return nil
