@@ -241,29 +241,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 // MARK: App Initialization
 
 private extension AppDelegate {
-	
-	private func initializeDownloaders() {
-		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
-		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-		
-		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
-		let faviconsFolder = faviconsFolderURL.absoluteString
-		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
-		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
-		faviconDownloader.delegate = self
 
-		let imagesFolder = imagesFolderURL.absoluteString
-		let imagesFolderPath = imagesFolder.suffix(from: imagesFolder.index(imagesFolder.startIndex, offsetBy: 7))
-		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-		imageDownloader = ImageDownloader(folder: String(imagesFolderPath))
-		
-		let tempFolder = tempDir.absoluteString
-		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
-		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
-		feedIconDownloader.delegate = self
-	}
-	
 	private func initializeHomeScreenQuickActions() {
 		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
 		let unreadIcon = UIApplicationShortcutIcon(systemImageName: "chevron.down.circle")
