@@ -28,8 +28,6 @@ protocol SPUUpdaterDelegate {}
 import Sparkle
 #endif
 
-//@MainActor var appDelegate: AppDelegate!
-
 @NSApplicationMain
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
@@ -41,8 +39,6 @@ import Sparkle
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 
-	var appName: String!
-	
 	var refreshTimer: AccountRefreshTimer?
 	var syncTimer: ArticleStatusSyncTimer?
 	var lastRefreshInterval = AppDefaults.shared.refreshInterval
@@ -122,21 +118,19 @@ import Sparkle
 
 		super.init()
 
-		#if !MAC_APP_STORE
+#if !MAC_APP_STORE
 		let crashReporterConfig = PLCrashReporterConfig.defaultConfiguration()
 		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
 		crashReporter.enable()
-		#endif
+#endif
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
-
-		appDelegate = self
 	}
-
+	
 	// MARK: - API
 	func showAddFolderSheetOnWindow(_ window: NSWindow) {
 		addFolderWindowController = AddFolderWindowController()
@@ -157,8 +151,6 @@ import Sparkle
 
 		FaviconDownloader.shared.delegate = self
 		FeedIconDownloader.shared.delegate = self
-		
-		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 	}
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
@@ -973,7 +965,8 @@ extension AppDelegate: NSWindowRestoration {
 
 		var mainWindow: NSWindow? = nil
 		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
-			mainWindow = NSApp.delegate.createAndShowMainWindow().window
+			let appDelegate = NSApp.delegate as! AppDelegate
+			mainWindow = appDelegate.createAndShowMainWindow().window
 		}
 		return mainWindow!
 	}
