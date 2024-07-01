@@ -20,4 +20,10 @@ extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
 
 		await HTMLMetadataDownloader.downloadMetadata(for: url)
 	}
+
+	func initializeDownloaders() {
+
+		FaviconDownloader.shared.delegate = self
+		FeedIconDownloader.shared.delegate = self
+	}
 }

@@ -149,10 +149,9 @@ import Sparkle
 		
 		CacheCleaner.purgeIfNecessary()
 
-		FaviconDownloader.shared.delegate = self
-		FeedIconDownloader.shared.delegate = self
+		initializeDownloaders()
 	}
-	
+
 	func applicationDidFinishLaunching(_ note: Notification) {
 
 		#if MAC_APP_STORE || TEST
