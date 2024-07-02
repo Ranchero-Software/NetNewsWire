@@ -8,11 +8,11 @@
 
 import Foundation
 import WebKit
-@preconcurrency import Images
+import Images
 
 protocol ArticleIconSchemeHandlerDelegate: AnyObject {
 	
-	func iconImage(for articleID: String) -> IconImage?
+	@MainActor func iconImage(for articleID: String) -> IconImage?
 }
 
 final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
@@ -34,31 +34,34 @@ final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 			return
 		}
 		let articleID = components.path
-		guard let iconImage = delegate.iconImage(for: articleID) else {
-			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
-			return
-		}
 
-		Task { @MainActor in
-
-			let iconView = IconView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
-			iconView.iconImage = iconImage
-			let renderedImage = iconView.asImage()
-
-			guard let data = renderedImage.dataRepresentation() else {
+		MainActor.assumeIsolated {
+			guard let iconImage = delegate.iconImage(for: articleID) else {
 				urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 				return
 			}
-			
-			let headerFields = ["Cache-Control": "no-cache"]
-			if let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
-				urlSchemeTask.didReceive(response)
-				urlSchemeTask.didReceive(data)
-				urlSchemeTask.didFinish()
+
+			Task { @MainActor in
+
+				let iconView = IconView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
+				iconView.iconImage = iconImage
+				let renderedImage = iconView.asImage()
+
+				guard let data = renderedImage.dataRepresentation() else {
+					urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
+					return
+				}
+
+				let headerFields = ["Cache-Control": "no-cache"]
+				if let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
+					urlSchemeTask.didReceive(response)
+					urlSchemeTask.didReceive(data)
+					urlSchemeTask.didFinish()
+				}
 			}
 		}
 	}
-	
+
 	func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
 		urlSchemeTask.didFailWithError(URLError(.unknown))
 	}
