@@ -26,4 +26,20 @@ extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
 		FaviconDownloader.shared.delegate = self
 		FeedIconDownloader.shared.delegate = self
 	}
+
+	func handleUnreadCountDidChange() {
+		
+		AppNotification.postAppUnreadCountDidChange(from: self, unreadCount: unreadCount)
+		postUnreadCountDidChangeNotification()
+		updateBadge()
+	}
+
+	func updateBadge() {
+
+#if os(macOS)
+		queueUpdateDockBadge()
+#elseif os(iOS)
+		UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+#endif
+	}
 }

@@ -56,6 +56,8 @@ import Sparkle
 
 	var isShutDownSyncDone = false
 	
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")
+
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
@@ -65,9 +67,7 @@ import Sparkle
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
-				queueUpdateDockBadge()
-				AppNotification.postAppUnreadCountDidChange(from: self, unreadCount: unreadCount)
-				postUnreadCountDidChangeNotification()
+				handleUnreadCountDidChange()
 			}
 		}
 	}

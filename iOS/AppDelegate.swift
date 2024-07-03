@@ -46,9 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
-				AppNotification.postAppUnreadCountDidChange(from: self, unreadCount: unreadCount)
-				postUnreadCountDidChangeNotification()
-				UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+				handleUnreadCountDidChange()
 			}
 		}
 	}
