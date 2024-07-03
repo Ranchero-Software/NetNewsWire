@@ -32,6 +32,20 @@ public final class AppConfig {
 	public static func cacheSubfolder(named name: String) -> URL {
 		subfolder(name, in: cacheFolder)
 	}
+
+	public static let dataFolder: URL = {
+
+#if os(macOS)
+		var dataFolder = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+		dataFolder = dataFolder.appendingPathComponent(appName)
+
+		try FileManager.default.createDirectory(at: dataFolder, withIntermediateDirectories: true, attributes: nil)
+		return dataFolder
+
+#elseif os(iOS)
+		FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+#endif
+	}()
 }
 
 private extension AppConfig {
