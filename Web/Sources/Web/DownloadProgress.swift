@@ -7,89 +7,92 @@
 //
 
 import Foundation
+import os
 
 public extension Notification.Name {
 	
 	static let DownloadProgressDidChange = Notification.Name(rawValue: "DownloadProgressDidChange")
 }
 
-@MainActor public final class DownloadProgress {
-	
-	public var numberOfTasks = 0 {
-		didSet {
-			if numberOfTasks == 0 && numberRemaining != 0 {
-				numberRemaining = 0
-			}
-			if numberOfTasks != oldValue {
-				postDidChangeNotification()
-			}
-		}
-	}
-	
-	public var numberRemaining = 0 {
-		didSet {
-			if numberRemaining == 0 && numberOfTasks != 0 {
-				numberOfTasks = 0
-			}
-			if numberRemaining != oldValue {
-				postDidChangeNotification()
-			}
+public final class DownloadProgress: Sendable {
+
+	public struct TaskCount: Sendable {
+
+		public var numberOfTasks = 0
+		public var numberCompleted = 0
+
+		public var numberRemaining: Int {
+			let n = numberOfTasks - numberCompleted
+			assert(n >= 0)
+			return n
 		}
 	}
 
-	public var numberCompleted: Int {
-		var n = numberOfTasks - numberRemaining
-		if n < 0 {
-			n = 0
-		}
-		if n > numberOfTasks {
-			n = numberOfTasks
-		}
-		return n
+	private let taskCount: OSAllocatedUnfairLock<TaskCount>
+
+	public var taskCounts: TaskCount {
+		taskCount.withLock { $0 }
 	}
-	
+
 	public var isComplete: Bool {
-		assert(Thread.isMainThread)
-		return numberRemaining < 1
+		taskCount.withLock { $0.numberRemaining < 1 }
 	}
-	
+
 	public init(numberOfTasks: Int) {
-		assert(Thread.isMainThread)
-		self.numberOfTasks = numberOfTasks
+
+		assert(numberOfTasks >= 0)
+		self.taskCount = OSAllocatedUnfairLock(initialState: TaskCount(numberOfTasks: numberOfTasks))
 	}
-	
-	public func addToNumberOfTasks(_ n: Int) {
-		assert(Thread.isMainThread)
-		numberOfTasks = numberOfTasks + n
-	}
-	
+
 	public func addTask() {
-		addToNumberOfTasks(1)
+
+		addTasks(1)
 	}
-	
-	public func addToNumberOfTasksAndRemaining(_ n: Int) {
-		assert(Thread.isMainThread)
-		numberOfTasks = numberOfTasks + n
-		numberRemaining = numberRemaining + n
+
+	public func addTasks(_ n: Int) {
+
+		assert(n > 0)
+
+		taskCount.withLock {
+			$0.numberOfTasks = $0.numberOfTasks + n
+		}
+		postDidChangeNotification()
 	}
 
 	public func completeTask() {
-		assert(Thread.isMainThread)
-		if numberRemaining > 0 {
-			numberRemaining = numberRemaining - 1
-		}
+
+		completeTasks(1)
 	}
-	
+
 	public func completeTasks(_ tasks: Int) {
-		assert(Thread.isMainThread)
-		if numberRemaining >= tasks {
-			numberRemaining = numberRemaining - tasks
+
+		taskCount.withLock { taskCount in
+			taskCount.numberCompleted = taskCount.numberCompleted + tasks
+			assert(taskCount.numberCompleted <= taskCount.numberOfTasks)
 		}
+
+		postDidChangeNotification()
 	}
-	
+
 	public func clear() {
-		assert(Thread.isMainThread)
-		numberOfTasks = 0
+
+		taskCount.withLock { taskCount in
+
+			var didChange = false
+
+			if taskCount.numberOfTasks != 0 {
+				taskCount.numberOfTasks = 0
+				didChange = true
+			}
+			if taskCount.numberCompleted != 0 {
+				taskCount.numberCompleted = 0
+				didChange = true
+			}
+
+			if didChange {
+				postDidChangeNotification()
+			}
+		}
 	}
 }
 

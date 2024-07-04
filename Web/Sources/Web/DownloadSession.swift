@@ -260,7 +260,7 @@ private extension DownloadSession {
 	
 	func updateDownloadProgress() {
 		
-		downloadProgress.numberRemaining = tasksInProgress.count + tasksPending.count + queue.count
+//		downloadProgress.numberRemaining = tasksInProgress.count + tasksPending.count + queue.count
 	}
 
 	static let badRedirectStrings = ["solutionip", "lodgenet", "monzoon", "landingpage", "btopenzone", "register", "login", "authentic"]

@@ -63,7 +63,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 	func refreshAll(for account: Account) async throws {
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(4)
+		refreshProgress.addTasks(4)
 
 		try await refreshFeeds(for: account)
 		refreshProgress.completeTask()
@@ -170,7 +170,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 		let storyHashes = try await caller.retrieveUnreadStoryHashes()
 		if let count = storyHashes?.count, count > 0 {
-			refreshProgress.addToNumberOfTasksAndRemaining((count - 1) / 100 + 1)
+			refreshProgress.addTasks((count - 1) / 100 + 1)
 		}
 
 		let storyHashesArray: [NewsBlurStoryHash] = {

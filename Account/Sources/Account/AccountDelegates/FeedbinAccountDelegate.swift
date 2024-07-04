@@ -77,7 +77,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 
 	func refreshAll(for account: Account) async throws {
 
-		refreshProgress.addToNumberOfTasks(7)
+		refreshProgress.addTasks(7)
 		defer {
 			refreshProgress.clear()
 		}
@@ -153,7 +153,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 
 		os_log(.debug, log: log, "Begin importing OPML...")
 		isOPMLImportInProgress = true
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 
 		do {
 			let importResult = try await caller.importOPML(opmlData: opmlData)
@@ -196,7 +196,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 			return
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			self.refreshProgress.completeTask()
 		}
@@ -221,7 +221,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 		
 		let feeds = folder.topLevelFeeds
 		let numberOfFeeds = feeds.count
-		refreshProgress.addToNumberOfTasksAndRemaining(numberOfFeeds)
+		refreshProgress.addTasks(numberOfFeeds)
 
 		for feed in feeds {
 
@@ -259,7 +259,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 	@discardableResult
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
@@ -293,7 +293,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 			throw FeedbinAccountDelegateError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
@@ -328,7 +328,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			refreshProgress.addTask()
 			defer { refreshProgress.completeTask() }
 
 			do {
@@ -814,7 +814,7 @@ private extension FeedbinAccountDelegate {
 
 	func initialFeedDownload( account: Account, feed: Feed) async throws -> Feed {
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		let (entries, page) = try await caller.retrieveEntries(feedID: feed.feedID)
@@ -840,10 +840,6 @@ private extension FeedbinAccountDelegate {
 	func refreshMissingArticles(_ account: Account) async throws {
 
 		os_log(.debug, log: log, "Refreshing missing articles...")
-
-		defer {
-			refreshProgress.completeTask()
-		}
 
 		let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() ?? Set<String>()
 
@@ -963,7 +959,7 @@ private extension FeedbinAccountDelegate {
 
 		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
 
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			refreshProgress.addTask()
 			defer { refreshProgress.completeTask() }
 
 			do {
@@ -990,7 +986,7 @@ private extension FeedbinAccountDelegate {
 			throw FeedbinAccountDelegateError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {

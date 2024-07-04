@@ -184,7 +184,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		try await accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems)
@@ -249,7 +249,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 			throw LocalAccountDelegateError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
@@ -268,7 +268,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 			throw LocalAccountDelegateError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
@@ -287,7 +287,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 	func createFolder(for account: Account, name: String) async throws -> Folder {
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		var externalID: String!
@@ -313,7 +313,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 			throw CloudKitAccountDelegateError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
@@ -331,7 +331,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 			throw CloudKitAccountDelegateError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
@@ -339,7 +339,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 			let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
 			var errorOccurred = false
-			refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
+			refreshProgress.addTasks(feeds.count)
 
 			for feed in feeds {
 				do {
@@ -371,7 +371,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 
 		let feedsToRestore = folder.topLevelFeeds
-		refreshProgress.addToNumberOfTasksAndRemaining(1 + feedsToRestore.count)
+		refreshProgress.addTasks(1 + feedsToRestore.count)
 
 		do {
 			let externalID = try await accountZone.createFolder(name: name)
@@ -524,7 +524,7 @@ private extension CloudKitAccountDelegate {
 			try await accountZone.fetchChangesInZone()
 
 			let feeds = account.flattenedFeeds()
-			refreshProgress.addToNumberOfTasksAndRemaining(feeds.count)
+			refreshProgress.addTasks(feeds.count)
 
 			try await refreshArticleStatus(for: account)
 
@@ -540,7 +540,7 @@ private extension CloudKitAccountDelegate {
 	func standardRefreshAll(for account: Account) async throws {
 
 		let intialFeedsCount = account.flattenedFeeds().count
-		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialFeedsCount)
+		refreshProgress.addTasks(3 + intialFeedsCount)
 
 		do {
 
@@ -548,7 +548,7 @@ private extension CloudKitAccountDelegate {
 			refreshProgress.completeTask()
 
 			let feeds = account.flattenedFeeds()
-			refreshProgress.addToNumberOfTasksAndRemaining(feeds.count - intialFeedsCount)
+			refreshProgress.addTasks(feeds.count - intialFeedsCount)
 
 			try await refreshArticleStatus(for: account)
 			refreshProgress.completeTask()
@@ -751,7 +751,7 @@ private extension CloudKitAccountDelegate {
 			return
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {

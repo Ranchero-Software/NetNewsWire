@@ -86,7 +86,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func refreshAll(for account: Account) async throws {
 
-		refreshProgress.addToNumberOfTasksAndRemaining(6)
+		refreshProgress.addTasks(6)
 
 		do {
 			try await refreshAccount(account)
@@ -201,7 +201,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		
 		do {
 			try await caller.renameTag(oldName: folder.name ?? "", newName: name)
@@ -225,7 +225,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 				if let subscriptionID = feed.externalID {
 
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
+					refreshProgress.addTask()
 
 					do {
 						try await caller.deleteTagging(subscriptionID: subscriptionID, tagName: folder.nameForDisplay)
@@ -240,7 +240,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			} else {
 
 				if let subscriptionID = feed.externalID {
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
+					refreshProgress.addTask()
 
 					do {
 						try await caller.deleteSubscription(subscriptionID: subscriptionID)
@@ -273,7 +273,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			throw ReaderAPIError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		refreshProgress.addTasks(2)
 
 		do {
 
@@ -310,7 +310,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			throw ReaderAPIError.invalidParameter
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		
 		do {
 			try await caller.renameSubscription(subscriptionID: subscriptionID, newName: name)
@@ -330,7 +330,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			throw ReaderAPIError.invalidParameter
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 
 		do {
 			try await caller.deleteSubscription(subscriptionID: subscriptionID)
@@ -365,7 +365,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				throw ReaderAPIError.invalidParameter
 			}
 
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			refreshProgress.addTask()
 
 			do {
 				try await caller.moveSubscription(subscriptionID: subscriptionID, sourceTag: sourceTag, destinationTag: destinationTag)
@@ -384,7 +384,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		if let folder = container as? Folder, let feedExternalID = feed.externalID {
 
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			refreshProgress.addTask()
 
 			do {
 
@@ -736,8 +736,8 @@ private extension ReaderAPIAccountDelegate {
 	@discardableResult
 	func initialFeedDownload( account: Account, feed: Feed) async throws -> Feed {
 
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
-		
+		refreshProgress.addTasks(5)
+
 		// Download the initial articles
 		let articleIDs = try await caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID)
 
@@ -769,7 +769,7 @@ private extension ReaderAPIAccountDelegate {
 			let articleIDs = Array(fetchedArticleIDs)
 			let chunkedArticleIDs = articleIDs.chunked(into: 150)
 
-			refreshProgress.addToNumberOfTasksAndRemaining(chunkedArticleIDs.count - 1)
+			refreshProgress.addTasks(chunkedArticleIDs.count - 1)
 
 			for chunk in chunkedArticleIDs {
 

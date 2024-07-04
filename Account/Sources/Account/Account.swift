@@ -965,7 +965,7 @@ public enum FetchType {
 			return
 		}
 
-		refreshInProgress = refreshProgress.numberRemaining > 0
+		refreshInProgress = !refreshProgress.isComplete
 		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
 	}
 	

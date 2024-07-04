@@ -12,7 +12,7 @@ import Web
 // Combines the refresh progress of multiple accounts into one struct,
 // for use by refresh status view and so on.
 
-@MainActor public struct CombinedRefreshProgress {
+public struct CombinedRefreshProgress: Sendable {
 
 	public let numberOfTasks: Int
 	public let numberRemaining: Int
@@ -32,9 +32,10 @@ import Web
 		var numberCompleted = 0
 
 		for downloadProgress in downloadProgressArray {
-			numberOfTasks += downloadProgress.numberOfTasks
-			numberRemaining += downloadProgress.numberRemaining
-			numberCompleted += downloadProgress.numberCompleted
+			let taskCounts = downloadProgress.taskCounts
+			numberOfTasks += taskCounts.numberOfTasks
+			numberRemaining += taskCounts.numberRemaining
+			numberCompleted += taskCounts.numberCompleted
 		}
 
 		self.init(numberOfTasks: numberOfTasks, numberRemaining: numberRemaining, numberCompleted: numberCompleted)

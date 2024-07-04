@@ -58,7 +58,7 @@ public protocol CloudKitSendStatusOperationDelegate: AnyObject {
 				do {
 					let count = (try await self.database.selectPendingCount()) ?? 0
 					let ticks = count / self.blockSize
-					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
+					self.refreshProgress?.addTasks(ticks)
 					self.selectForProcessing()
 				} catch {
 					os_log(.error, log: self.log, "Send status count pending error: %@.", error.localizedDescription)
@@ -131,9 +131,9 @@ private extension CloudKitSendStatusOperation {
 
 				@MainActor func done(_ stop: Bool) {
 					// Don't clear the last one since we might have had additional ticks added
-					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
+//					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 						self.refreshProgress?.completeTask()
-					}
+//					}
 					os_log(.debug, log: self.log, "Done sending article status block...")
 					completion(stop)
 				}
