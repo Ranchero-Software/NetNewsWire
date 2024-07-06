@@ -226,8 +226,8 @@ public enum FetchType {
 	private var _flattenedFeeds = Set<Feed>()
 	private var flattenedFeedsNeedUpdate = true
 
-	@MainActor private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
-	@MainActor private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
+	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
+	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
 	var metadata = AccountMetadata() {
 		didSet {
 			delegate.accountMetadata = metadata
@@ -258,7 +258,7 @@ public enum FetchType {
 				}
 				else {
 					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
-					Task { @MainActor in
+					Task {
 						opmlFile.markAsDirty()
 					}
 				}
@@ -270,7 +270,7 @@ public enum FetchType {
 		return delegate.refreshProgress
 	}
 
-	@MainActor init(dataFolder: String, type: AccountType, accountID: String, secretsProvider: SecretsProvider, transport: Transport? = nil) {
+	init(dataFolder: String, type: AccountType, accountID: String, secretsProvider: SecretsProvider, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
@@ -337,7 +337,7 @@ public enum FetchType {
 			}
 		}
 
-		Task { @MainActor in
+		Task {
 			try? await self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
 			self.fetchAllUnreadCounts()
 		}
@@ -419,7 +419,7 @@ public enum FetchType {
 		// Reset the last fetch date to get the article history for the added feeds.
 		metadata.lastArticleFetchStartTime = nil
 
-		Task { @MainActor in
+		Task {
 			try? await self.refreshAll()
 		}
 	}
@@ -454,7 +454,7 @@ public enum FetchType {
 	}
 
 	public func save() {
-		Task { @MainActor in
+		Task {
 			metadataFile.save()
 			feedMetadataFile.save()
 			opmlFile.save()
@@ -490,7 +490,7 @@ public enum FetchType {
 
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
 
-		Task { @MainActor in
+		Task {
 			try? await self.markArticles(articles, statusKey: statusKey, flag: flag)
 		}
 	}
@@ -647,7 +647,7 @@ public enum FetchType {
 		fetchUnreadCounts(for: feeds)
 	}
 
-	@MainActor public func articles(for fetchType: FetchType) async throws -> Set<Article> {
+	public func articles(for fetchType: FetchType) async throws -> Set<Article> {
 
 		switch fetchType {
 
@@ -681,7 +681,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public func articles(feed: Feed) async throws -> Set<Article> {
+	public func articles(feed: Feed) async throws -> Set<Article> {
 
 		let articles = try await database.articles(feedID: feed.feedID)
 		validateUnreadCount(feed, articles)
@@ -693,12 +693,12 @@ public enum FetchType {
 		try await database.articles(articleIDs: articleIDs)
 	}
 
-	@MainActor public func unreadArticles(feed: Feed) async throws -> Set<Article> {
+	public func unreadArticles(feed: Feed) async throws -> Set<Article> {
 
 		try await database.unreadArticles(feedIDs: Set([feed.feedID]))
 	}
 
-	@MainActor public func unreadArticles(feeds: Set<Feed>) async throws -> Set<Article> {
+	public func unreadArticles(feeds: Set<Feed>) async throws -> Set<Article> {
 
 		if feeds.isEmpty {
 			return Set<Article>()
@@ -762,7 +762,7 @@ public enum FetchType {
 
 		logger.info("structureDidChange in account \(self.accountID)")
 
-		Task { @MainActor in
+		Task {
 			opmlFile.markAsDirty()
 			flattenedFeedsNeedUpdate = true
 			feedDictionariesNeedUpdate = true
@@ -969,19 +969,19 @@ public enum FetchType {
 		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
 	}
 	
-	@MainActor @objc func unreadCountDidChange(_ note: Notification) {
+	@objc func unreadCountDidChange(_ note: Notification) {
 		if let feed = note.object as? Feed, feed.account === self {
 			updateUnreadCount()
 		}
 	}
     
-	@MainActor @objc func batchUpdateDidPerform(_ note: Notification) {
+	@objc func batchUpdateDidPerform(_ note: Notification) {
 		flattenedFeedsNeedUpdate = true
 		rebuildFeedDictionaries()
         updateUnreadCount()
     }
 
-	@MainActor @objc func childrenDidChange(_ note: Notification) {
+	@objc func childrenDidChange(_ note: Notification) {
 
 		guard !BatchUpdate.shared.isPerforming else {
 			return
@@ -1080,7 +1080,7 @@ private extension Account {
 		try await database.articlesMatching(searchString: searchString, articleIDs: articleIDs)
 	}
 
-	@MainActor func articles(container: Container) async throws -> Set<Article> {
+	func articles(container: Container) async throws -> Set<Article> {
 
 		let feeds = container.flattenedFeeds()
 		let articles = try await database.articles(feedIDs: allFeedIDs())
@@ -1090,7 +1090,7 @@ private extension Account {
 		return articles
 	}
 
-	@MainActor func unreadArticles(container: Container, limit: Int? = nil) async throws -> Set<Article> {
+	func unreadArticles(container: Container, limit: Int? = nil) async throws -> Set<Article> {
 
 		let feeds = container.flattenedFeeds()
 		let feedIDs = feeds.feedIDs()
@@ -1105,7 +1105,7 @@ private extension Account {
 		return articles
 	}
 
-	@MainActor func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
+	func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
 		// Validate unread counts. This was the site of a performance slowdown:
 		// it was calling going through the entire list of articles once per feed:
 		// feeds.forEach { validateUnreadCount($0, articles) }
@@ -1122,7 +1122,7 @@ private extension Account {
 		}
 	}
 
-	@MainActor func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
+	func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
 		// articles must contain all the unread articles for the feed.
 		// The unread number should match the feed’s unread count.
 
@@ -1188,7 +1188,7 @@ private extension Account {
 		feedDictionariesNeedUpdate = false
 	}
     
-	@MainActor func updateUnreadCount() {
+	func updateUnreadCount() {
 		if fetchingAllUnreadCounts {
 			return
 		}
@@ -1199,7 +1199,7 @@ private extension Account {
 		unreadCount = updatedUnreadCount
     }
     
-	@MainActor func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
+	func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
 		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
 		let articleIDs = Set(articles.map { $0.articleID })
@@ -1243,7 +1243,7 @@ private extension Account {
 
 	func fetchUnreadCount(_ feed: Feed) {
 
-		Task { @MainActor in
+		Task {
 			if let unreadCount = try? await database.unreadCount(feedID: feed.feedID) {
 				feed.unreadCount = unreadCount
 			}
@@ -1252,7 +1252,7 @@ private extension Account {
 
 	func fetchUnreadCounts(_ feeds: Set<Feed>) {
 
-		Task { @MainActor in
+		Task {
 
 			let feedIDs = Set(feeds.map { $0.feedID })
 			guard let unreadCountDictionary = try? await database.unreadCounts(feedIDs: feedIDs) else {
@@ -1270,7 +1270,7 @@ private extension Account {
 		}
 		fetchingAllUnreadCounts = true
 
-		Task { @MainActor in
+		Task {
 
 			let unreadCountDictionary = try? await database.allUnreadCounts()
 			self.fetchingAllUnreadCounts = false
@@ -1287,7 +1287,7 @@ private extension Account {
 		}
 	}
 
-	@MainActor func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<Feed>) {
+	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<Feed>) {
 		for feed in feeds {
 			// When the unread count is zero, it won’t appear in unreadCountDictionary.
 			let unreadCount = unreadCountDictionary[feed.feedID] ?? 0
@@ -1295,7 +1295,7 @@ private extension Account {
 		}
 	}
 
-	@MainActor func sendNotificationAbout(_ articleChanges: ArticleChanges) {
+	func sendNotificationAbout(_ articleChanges: ArticleChanges) {
 		var feeds = Set<Feed>()
 
 		if let newArticles = articleChanges.newArticles {
