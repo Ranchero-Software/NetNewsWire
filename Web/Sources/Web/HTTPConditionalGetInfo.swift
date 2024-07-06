@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct HTTPConditionalGetInfo: Codable, Equatable {
+public struct HTTPConditionalGetInfo: Codable, Equatable, Sendable {
 	
 	public let lastModified: String?
 	public let etag: String?
