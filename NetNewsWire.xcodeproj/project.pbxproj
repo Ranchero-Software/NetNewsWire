@@ -2107,12 +2107,12 @@
 		84C9FC6822629C9A00D921D6 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				84DC5FFD2BCE37A300F04682 /* AppDelegate+Shared.swift */,
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
 				51C4CFEF24D37D1F00AF9874 /* Secrets.swift */,
 				511B9805237DCAC90028BCAA /* UserInfoKey.swift */,
 				844933D12BA953590068AC51 /* ArticlePathInfo.swift */,
 				8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */,
-				84DC5FFD2BCE37A300F04682 /* AppDelegate+Shared.swift */,
 				845122752B8CEA9B00480DB0 /* SidebarItem */,
 				51C452AD2265102800C03939 /* Timeline */,
 				84702AB31FA27AE8006B8943 /* Commands */,
