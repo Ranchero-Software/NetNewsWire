@@ -9,6 +9,7 @@
 import Foundation
 import Images
 import ParserObjC
+import Account
 
 extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
 
@@ -40,6 +41,27 @@ extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
 		queueUpdateDockBadge()
 #elseif os(iOS)
 		UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+#endif
+	}
+
+	func importFeedsIfNeeded() {
+
+		guard AppDefaults.shared.isFirstRun else {
+			return
+		}
+		guard !AccountManager.shared.anyAccountHasAtLeastOneFeed() else {
+			return
+		}
+
+		let localAccount = AccountManager.shared.defaultAccount
+
+#if os(macOS)
+		// Import feeds. Either old NNW 3 feeds or the default feeds.
+		if !NNW3ImportController.importSubscriptionsIfFileExists(account: localAccount) {
+			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
+		}
+#elseif os(iOS)
+		DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 #endif
 	}
 }

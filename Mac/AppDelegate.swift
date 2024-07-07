@@ -160,22 +160,13 @@ import Sparkle
 		#endif
 		
 		AppDefaults.shared.registerDefaults()
-		let isFirstRun = AppDefaults.shared.isFirstRun
-		if isFirstRun {
+		if AppDefaults.shared.isFirstRun {
 			os_log(.debug, "Is first run.")
 		}
 
 		FaviconGenerator.faviconTemplateImage = AppAssets.faviconTemplateImage
 
-		let localAccount = AccountManager.shared.defaultAccount
-
-		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
-			// Import feeds. Either old NNW 3 feeds or the default feeds.
-			if !NNW3ImportController.importSubscriptionsIfFileExists(account: localAccount) {
-				DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
-			}
-		}
-
+		importFeedsIfNeeded()
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
 		
@@ -184,7 +175,7 @@ import Sparkle
 			mainWindowController.restoreStateFromUserDefaults()
 		}
 		
-		if isFirstRun {
+		if AppDefaults.shared.isFirstRun {
 			mainWindowController?.window?.center()
 		}
 

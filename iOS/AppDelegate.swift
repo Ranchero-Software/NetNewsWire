@@ -64,19 +64,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		
 		AppDefaults.registerDefaults()
+		if AppDefaults.shared.isFirstRun {
+			os_log(.debug, "Is first run.")
+		}
 
-		let isFirstRun = AppDefaults.shared.isFirstRun
-		if isFirstRun {
-			os_log("Is first run.", log: log, type: .info)
-		}
-		
-		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
-			let localAccount = AccountManager.shared.defaultAccount
-			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
-		}
-		
 		FaviconGenerator.faviconTemplateImage = AppAssets.faviconTemplateImage
+
+		importFeedsIfNeeded()
 
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
