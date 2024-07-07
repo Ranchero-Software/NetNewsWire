@@ -11,6 +11,7 @@ import Web
 import Articles
 import ArticlesDatabase
 import Database
+import Core
 
 @MainActor public final class AccountManager: UnreadCountProvider {
 
@@ -20,7 +21,11 @@ import Database
 
 	public let defaultAccount: Account
 
-	private let accountsFolder: String
+	private let accountsFolderURL: URL
+	private var accountsFolder: String {
+		accountsFolderURL.path
+	}
+
     private var accountsDictionary = [String: Account]()
 
 	private let defaultAccountFolderName = "OnMyMac"
@@ -91,19 +96,12 @@ import Database
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
-	public init(accountsFolder: String) {
+	public init() {
 
-		self.accountsFolder = accountsFolder
+		self.accountsFolderURL = AppConfig.dataSubfolder(named: "Accounts")
 
 		// The local "On My Mac" account must always exist, even if it's empty.
-		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
-		do {
-			try FileManager.default.createDirectory(atPath: localAccountFolder, withIntermediateDirectories: true, attributes: nil)
-		}
-		catch {
-			assertionFailure("Could not create folder for OnMyMac account.")
-			abort()
-		}
+		let localAccountFolder = AppConfig.ensureSubfolder(named: "OnMyMac", folderURL: self.accountsFolderURL).path
 
 		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
         accountsDictionary[defaultAccount.accountID] = defaultAccount

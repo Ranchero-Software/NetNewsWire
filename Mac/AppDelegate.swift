@@ -101,21 +101,16 @@ import Sparkle
 	#endif
 	
 	private var themeImportPath: String?
-	private let accountManager: AccountManager
 
 	override init() {
 
 		NSWindow.allowsAutomaticWindowTabbing = false
-
-		self.accountManager = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
-		AccountManager.shared = self.accountManager
-
 		super.init()
 
 #if !MAC_APP_STORE
 		let crashReporterConfig = PLCrashReporterConfig.defaultConfiguration()
-		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
-		crashReporter.enable()
+		self.crashReporter = PLCrashReporter(configuration: crashReporterConfig)
+		self.crashReporter.enable()
 #endif
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -172,9 +167,9 @@ import Sparkle
 
 		FaviconGenerator.faviconTemplateImage = AppAssets.faviconTemplateImage
 
-		let localAccount = accountManager.defaultAccount
+		let localAccount = AccountManager.shared.defaultAccount
 
-		if isFirstRun && !accountManager.anyAccountHasAtLeastOneFeed() {
+		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
 			// Import feeds. Either old NNW 3 feeds or the default feeds.
 			if !NNW3ImportController.importSubscriptionsIfFileExists(account: localAccount) {
 				DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
@@ -197,7 +192,7 @@ import Sparkle
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 		Task {
-			self.unreadCount = self.accountManager.unreadCount
+			self.unreadCount = AccountManager.shared.unreadCount
 		}
 
 		if InspectorWindowController.shouldOpenAtStartup {
@@ -290,7 +285,7 @@ import Sparkle
 		ArticleStringFormatter.emptyCaches()
 		MultilineTextFieldSizer.emptyCache()
 		IconImageCache.shared.emptyCache()
-		accountManager.emptyCaches()
+		AccountManager.shared.emptyCaches()
 
 		saveState()
 
@@ -302,7 +297,7 @@ import Sparkle
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
 
 		Task {
-			await self.accountManager.receiveRemoteNotification(userInfo: userInfo)
+			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
 		}
 	}
 
@@ -319,7 +314,7 @@ import Sparkle
 		ArticleThemeDownloader.cleanUp()
 		
 		Task {
-			await accountManager.sendArticleStatusAll()
+			await AccountManager.shared.sendArticleStatusAll()
 			self.isShutDownSyncDone = true
 		}
 		
@@ -330,7 +325,7 @@ import Sparkle
 	// MARK: Notifications
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
-			unreadCount = accountManager.unreadCount
+			unreadCount = AccountManager.shared.unreadCount
 		}
 	}
 
@@ -430,15 +425,15 @@ import Sparkle
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
 
 		if item.action == #selector(refreshAll(_:)) {
-			return !accountManager.refreshInProgress && !accountManager.activeAccounts.isEmpty
+			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		
 		if item.action == #selector(importOPMLFromFile(_:)) {
-			return accountManager.activeAccounts.contains(where: { !$0.behaviors.contains(where: { $0 == .disallowOPMLImports }) })
+			return AccountManager.shared.activeAccounts.contains(where: { !$0.behaviors.contains(where: { $0 == .disallowOPMLImports }) })
 		}
 		
 		if item.action == #selector(addAppNews(_:)) {
-			return !isDisplayingSheet && !accountManager.anyAccountHasNetNewsWireNewsSubscription() && !accountManager.activeAccounts.isEmpty
+			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		
 		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
@@ -446,7 +441,7 @@ import Sparkle
 		}
 		
 		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
-			return !isDisplayingSheet && !accountManager.activeAccounts.isEmpty
+			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		
 		#if !MAC_APP_STORE
@@ -526,7 +521,7 @@ import Sparkle
 	@IBAction func refreshAll(_ sender: Any?) {
 
 		Task {
-			await accountManager.refreshAll(errorHandler: ErrorHandler.present)
+			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 		}
 	}
 
@@ -601,7 +596,7 @@ import Sparkle
 	}
 	
 	@IBAction func addAppNews(_ sender: Any?) {
-		if accountManager.anyAccountHasNetNewsWireNewsSubscription() {
+		if AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() {
 			return
 		}
 		addFeed(AccountManager.netNewsWireNewsURL, name: "NetNewsWire News")
@@ -698,12 +693,12 @@ import Sparkle
 extension AppDelegate {
 
 	@IBAction func debugSearch(_ sender: Any?) {
-		accountManager.defaultAccount.debugRunSearch()
+		AccountManager.shared.defaultAccount.debugRunSearch()
 	}
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
 		#if DEBUG
-		for account in accountManager.activeAccounts {
+		for account in AccountManager.shared.activeAccounts {
 			account.debugDropConditionalGetInfo()
 		}
 		#endif
@@ -969,7 +964,7 @@ private extension AppDelegate {
 	
 	func handleMarkAsRead(articlePathInfo: ArticlePathInfo) {
 
-		guard let accountID = articlePathInfo.accountID, let account = accountManager.existingAccount(with: accountID) else {
+		guard let accountID = articlePathInfo.accountID, let account = AccountManager.shared.existingAccount(with: accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}
@@ -989,7 +984,7 @@ private extension AppDelegate {
 	
 	func handleMarkAsStarred(articlePathInfo: ArticlePathInfo) {
 
-		guard let accountID = articlePathInfo.accountID, let account = accountManager.existingAccount(with: accountID) else {
+		guard let accountID = articlePathInfo.accountID, let account = AccountManager.shared.existingAccount(with: accountID) else {
 			os_log(.debug, "No account found from notification.")
 			return
 		}

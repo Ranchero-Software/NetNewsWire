@@ -22,7 +22,7 @@ public final class AppConfig {
 			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 			let tempFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
 			folderURL = URL(fileURLWithPath: tempFolder, isDirectory: true)
-			try! FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
+			createFolderIfNecessary(folderURL)
 		}
 
 		return folderURL
@@ -30,36 +30,38 @@ public final class AppConfig {
 
 	/// Returns URL to subfolder in cache folder (creating the folder if it doesn’t exist)
 	public static func cacheSubfolder(named name: String) -> URL {
-		subfolder(name, in: cacheFolder)
+		ensureSubfolder(named: name, folderURL: cacheFolder)
 	}
 
 	public static let dataFolder: URL = {
 
 #if os(macOS)
-		var dataFolder = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+		var dataFolder = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		dataFolder = dataFolder.appendingPathComponent(appName)
-
-		try! FileManager.default.createDirectory(at: dataFolder, withIntermediateDirectories: true, attributes: nil)
-		return dataFolder
-
 #elseif os(iOS)
-		FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+		var dataFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 #endif
+
+		createFolderIfNecessary(dataFolder)
+		return dataFolder
 	}()
 
 	/// Returns URL to subfolder in data folder (creating the folder if it doesn’t exist)
 	public static func dataSubfolder(named name: String) -> URL {
-		subfolder(name, in: dataFolder)
+		ensureSubfolder(named: name, folderURL: dataFolder)
 	}
 
+	public static func ensureSubfolder(named name: String, folderURL: URL) -> URL {
+
+		let folder = folderURL.appendingPathComponent(name, isDirectory: true)
+		createFolderIfNecessary(folder)
+		return folder
+	}
 }
 
 private extension AppConfig {
 
-	static func subfolder(_ name: String, in folderURL: URL) -> URL {
-
-		let folder = folderURL.appendingPathComponent(name, isDirectory: true)
-		try! FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true, attributes: nil)
-		return folder
+	static func createFolderIfNecessary(_ folderURL: URL) {
+		try! FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
 	}
 }
