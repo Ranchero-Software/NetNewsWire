@@ -8,10 +8,10 @@
 import Foundation
 
 public protocol SecretsProvider {
-	var mercuryClientId: String { get }
+	var mercuryClientID: String { get }
 	var mercuryClientSecret: String { get }
-	var feedlyClientId: String { get }
+	var feedlyClientID: String { get }
 	var feedlyClientSecret: String { get }
-	var inoreaderAppId: String { get }
+	var inoreaderAppID: String { get }
 	var inoreaderAppKey: String { get }
 }

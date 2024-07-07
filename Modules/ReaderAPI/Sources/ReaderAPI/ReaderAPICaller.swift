@@ -543,7 +543,7 @@ private extension ReaderAPICaller {
 	
 	func addVariantHeaders(_ request: inout URLRequest) {
 		if variant == .inoreader {
-			request.addValue(secretsProvider.inoreaderAppId, forHTTPHeaderField: "AppId")
+			request.addValue(secretsProvider.inoreaderAppID, forHTTPHeaderField: "AppId")
 			request.addValue(secretsProvider.inoreaderAppKey, forHTTPHeaderField: "AppKey")
 		}
 	}

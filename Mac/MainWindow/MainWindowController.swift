@@ -1278,7 +1278,7 @@ private extension MainWindowController {
 
 	func startArticleExtractorForCurrentLink() {
 		let secrets = Secrets()
-		if let link = currentLink, let extractor = ArticleExtractor(link, clientID: secrets.mercuryClientId, clientSecret: secrets.mercuryClientSecret) {
+		if let link = currentLink, let extractor = ArticleExtractor(link, clientID: secrets.mercuryClientID, clientSecret: secrets.mercuryClientSecret) {
 			extractor.delegate = self
 			extractor.process()
 			articleExtractor = extractor
