@@ -18,7 +18,7 @@ public enum ArticleExtractorState: Sendable {
 	case cancelled
 }
 
-public protocol ArticleExtractorDelegate {
+public protocol ArticleExtractorDelegate: AnyObject {
 
 	@MainActor func articleExtractionDidFail(with: Error)
 	@MainActor func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
@@ -28,7 +28,7 @@ public protocol ArticleExtractorDelegate {
 
 	public var state: ArticleExtractorState!
 	public var article: ExtractedArticle?
-	public var delegate: ArticleExtractorDelegate?
+	public weak var delegate: ArticleExtractorDelegate?
 	public let articleLink: String?
 
 	private var dataTask: URLSessionDataTask? = nil
