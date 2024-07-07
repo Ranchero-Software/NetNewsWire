@@ -13,7 +13,6 @@ import Tree
 import Web
 import Account
 import CoreResources
-import Secrets
 import OSLog
 import Core
 import CrashReporter

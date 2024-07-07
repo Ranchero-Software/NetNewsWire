@@ -8,6 +8,7 @@
 
 import Foundation
 import FoundationExtras
+import Secrets
 
 public enum ArticleExtractorState: Sendable {
     case ready
@@ -33,12 +34,12 @@ public protocol ArticleExtractorDelegate {
 	private var dataTask: URLSessionDataTask? = nil
 	private let url: URL!
 
-	public init?(_ articleLink: String, clientID: String, clientSecret: String) {
+	public init?(_ articleLink: String) {
 		self.articleLink = articleLink
 		
 		let clientURL = "https://extract.feedbin.com/parser"
-		let username = clientID
-		let signature = articleLink.hmacUsingSHA1(key: clientSecret)
+		let username = SecretKey.mercuryClientID
+		let signature = articleLink.hmacUsingSHA1(key: SecretKey.mercuryClientSecret)
 
 		if let base64URL = articleLink.data(using: .utf8)?.base64EncodedString() {
 			let fullURL = "\(clientURL)/\(username)/\(signature)?base64_url=\(base64URL)"

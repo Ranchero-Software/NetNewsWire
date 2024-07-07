@@ -11,13 +11,15 @@ let package = Package(
 			targets: ["ArticleExtractor"]),
 	],
 	dependencies: [
-		.package(path: "../FoundationExtras")
+		.package(path: "../FoundationExtras"),
+		.package(path: "../Secrets")
 	],
 	targets: [
 		.target(
 			name: "ArticleExtractor",
 			dependencies: [
 				"FoundationExtras",
+				"Secrets"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")

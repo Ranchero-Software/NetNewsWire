@@ -8,7 +8,6 @@
 
 import XCTest
 import Parser
-import Secrets
 @testable import Account
 import os.log
 import SyncDatabase

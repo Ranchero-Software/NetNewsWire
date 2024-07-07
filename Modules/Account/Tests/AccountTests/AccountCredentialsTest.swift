@@ -9,7 +9,6 @@
 import XCTest
 import Web
 @testable import Account
-import Secrets
 
 //class AccountCredentialsTest: XCTestCase {
 //

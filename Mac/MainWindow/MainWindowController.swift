@@ -13,7 +13,6 @@ import Account
 import Core
 import AppKitExtras
 import ArticleExtractor
-import Secrets
 
 enum TimelineSourceMode {
 	case regular, search
@@ -1278,7 +1277,7 @@ private extension MainWindowController {
 	}
 
 	func startArticleExtractorForCurrentLink() {
-		if let link = currentLink, let extractor = ArticleExtractor(link, clientID: SecretKey.mercuryClientID, clientSecret: SecretKey.mercuryClientSecret) {
+		if let link = currentLink, let extractor = ArticleExtractor(link) {
 			extractor.delegate = self
 			extractor.process()
 			articleExtractor = extractor

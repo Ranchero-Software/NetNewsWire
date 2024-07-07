@@ -11,7 +11,6 @@ import Web
 import Account
 @preconcurrency import BackgroundTasks
 import os.log
-import Secrets
 import WidgetKit
 import Core
 import Images

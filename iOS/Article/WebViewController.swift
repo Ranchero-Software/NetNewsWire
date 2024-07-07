@@ -16,7 +16,6 @@ import Core
 import ArticleExtractor
 import Images
 import Web
-import Secrets
 
 protocol WebViewControllerDelegate: AnyObject {
 	
@@ -697,7 +696,7 @@ private extension WebViewController {
 	
 	func startArticleExtractor() {
 		guard articleExtractor == nil else { return }
-		if let link = article?.preferredLink, let extractor = ArticleExtractor(link, clientID: SecretKey.mercuryClientID, clientSecret: SecretKey.mercuryClientSecret) {
+		if let link = article?.preferredLink, let extractor = ArticleExtractor(link) {
 			extractor.delegate = self
 			extractor.process()
 			articleExtractor = extractor
