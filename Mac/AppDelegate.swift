@@ -104,7 +104,6 @@ import Sparkle
 	private var themeImportPath: String?
 	private let secretsProvider = Secrets()
 	private let accountManager: AccountManager
-	private let articleThemesManager: ArticleThemesManager
 
 	override init() {
 
@@ -112,9 +111,6 @@ import Sparkle
 
 		self.accountManager = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!, secretsProvider: secretsProvider)
 		AccountManager.shared = self.accountManager
-
-		self.articleThemesManager = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
-		ArticleThemesManager.shared = self.articleThemesManager
 
 		super.init()
 
@@ -823,7 +819,7 @@ internal extension AppDelegate {
 				
 			func importTheme() {
 				do {
-					try articleThemesManager.importTheme(filename: filename)
+					try ArticleThemesManager.shared.importTheme(filePath: filename)
 					confirmImportSuccess(themeName: theme.name)
 				} catch {
 					NSApplication.shared.presentError(error)
@@ -833,7 +829,7 @@ internal extension AppDelegate {
 			alert.beginSheetModal(for: window) { result in
 				if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 
-					if self.articleThemesManager.themeExists(filename: filename) {
+					if ArticleThemesManager.shared.themeExists(filePath: filename) {
 						let alert = NSAlert()
 						alert.alertStyle = .warning
 
@@ -926,7 +922,7 @@ internal extension AppDelegate {
 
 	@objc func openThemesFolder(_ sender: Any) {
 		if themeImportPath == nil {
-			let url = URL(fileURLWithPath: articleThemesManager.folderPath)
+			let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
 			NSWorkspace.shared.open(url)
 		} else {
 			let url = URL(fileURLWithPath: themeImportPath!)

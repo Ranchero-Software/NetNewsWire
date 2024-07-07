@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Core
 
 public extension Notification.Name {
 	static let ArticleThemeNamesDidChangeNotification = Notification.Name("ArticleThemeNamesDidChangeNotification")
@@ -15,12 +16,15 @@ public extension Notification.Name {
 
 final class ArticleThemesManager: NSObject, NSFilePresenter {
 
-	@MainActor static var shared: ArticleThemesManager!
-	public let folderPath: String
+	@MainActor static var shared = ArticleThemesManager()
+	public let folderURL: URL
+	private var folderPath: String {
+		folderURL.path
+	}
 
 	lazy var presentedItemOperationQueue = OperationQueue.main
 	var presentedItemURL: URL? {
-		return URL(fileURLWithPath: folderPath)
+		folderURL
 	}
 
 	var currentThemeName: String {
@@ -48,18 +52,11 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		}
 	}
 
-	init(folderPath: String) {
-		self.folderPath = folderPath
+	override init() {
+		self.folderURL = AppConfig.dataSubfolder(named: "Themes")
 		self.currentTheme = ArticleTheme.defaultTheme
 
 		super.init()
-		
-		do {
-			try FileManager.default.createDirectory(atPath: folderPath, withIntermediateDirectories: true, attributes: nil)
-		} catch {
-			assertionFailure("Could not create folder for Themes.")
-			abort()
-		}
 		
 		updateThemeNames()
 		updateCurrentTheme()
