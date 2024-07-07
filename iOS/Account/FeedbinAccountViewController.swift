@@ -30,8 +30,6 @@ class FeedbinAccountViewController: UITableViewController {
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
 
-	var secretsProvider: SecretsProvider!
-
 	override func viewDidLoad() {
         super.viewDidLoad()
 		setupFooter()
@@ -129,7 +127,7 @@ class FeedbinAccountViewController: UITableViewController {
 			var validatedCredentials: Credentials?
 
 			do {
-				validatedCredentials = try await Account.validateCredentials(type: .feedbin, credentials: credentials, secretsProvider: Secrets())
+				validatedCredentials = try await Account.validateCredentials(type: .feedbin, credentials: credentials)
 			} catch {
 				self.showError(error.localizedDescription)
 				validationDidThrow = true

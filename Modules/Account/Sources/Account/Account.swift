@@ -270,7 +270,7 @@ public enum FetchType {
 		return delegate.refreshProgress
 	}
 
-	init(dataFolder: String, type: AccountType, accountID: String, secretsProvider: SecretsProvider, transport: Transport? = nil) {
+	init(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
@@ -279,17 +279,17 @@ public enum FetchType {
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .feedly:
-			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment, secretsProvider: secretsProvider)
+			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
 		case .newsBlur:
 			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .freshRSS:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .freshRSS, secretsProvider: secretsProvider)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .freshRSS)
 		case .inoreader:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .inoreader, secretsProvider: secretsProvider)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .inoreader)
 		case .bazQux:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .bazQux, secretsProvider: secretsProvider)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .bazQux)
 		case .theOldReader:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .theOldReader, secretsProvider: secretsProvider)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .theOldReader)
 		}
 
 		self.delegate.accountMetadata = metadata
@@ -371,18 +371,18 @@ public enum FetchType {
 		try CredentialsManager.removeCredentials(type: type, server: server, username: username)
 	}
 	
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil, secretsProvider: SecretsProvider) async throws -> Credentials? {
+	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
 
 		switch type {
 
 		case .feedbin:
-			return try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
+			return try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
 
 		case .newsBlur:
-			return try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
+			return try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
 
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
-			return try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, secretsProvider: secretsProvider)
+			return try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
 
 		default:
 			return nil

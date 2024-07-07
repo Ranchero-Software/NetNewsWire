@@ -185,7 +185,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			addAccountWindowController = accountsReaderAPIWindowController
 
 		case .feedly:
-			let addAccount = FeedlyOAuthAccountAuthorizationOperation(secretsProvider: Secrets())
+			let addAccount = FeedlyOAuthAccountAuthorizationOperation()
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)

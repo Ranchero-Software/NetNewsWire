@@ -141,7 +141,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 			var validatedCredentials: Credentials?
 
 			do {
-				validatedCredentials = try await Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL, secretsProvider: Secrets())
+				validatedCredentials = try await Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL)
 			} catch {
 				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
 				validationDidThrow = true

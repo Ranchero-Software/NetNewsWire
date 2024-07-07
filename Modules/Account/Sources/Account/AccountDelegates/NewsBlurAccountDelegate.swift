@@ -430,7 +430,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 
 		let caller = NewsBlurAPICaller(transport: transport)
 		caller.credentials = credentials

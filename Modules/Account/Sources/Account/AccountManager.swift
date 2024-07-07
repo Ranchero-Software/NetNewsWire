@@ -27,8 +27,6 @@ import Secrets
 	private let defaultAccountFolderName = "OnMyMac"
 	private let defaultAccountIdentifier = "OnMyMac"
 
-	private let secretsProvider: SecretsProvider
-
 	public var isSuspended = false
 	public var isUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
@@ -94,10 +92,9 @@ import Secrets
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
-	public init(accountsFolder: String, secretsProvider: SecretsProvider) {
+	public init(accountsFolder: String) {
 
 		self.accountsFolder = accountsFolder
-		self.secretsProvider = secretsProvider
 
 		// The local "On My Mac" account must always exist, even if it's empty.
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
@@ -109,7 +106,7 @@ import Secrets
 			abort()
 		}
 
-		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier, secretsProvider: secretsProvider)
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
@@ -136,7 +133,7 @@ import Secrets
 			abort()
 		}
 		
-		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID, secretsProvider: secretsProvider)
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)
 		accountsDictionary[accountID] = account
 		
 		var userInfo = [String: Any]()
@@ -375,7 +372,7 @@ private extension AccountManager {
 	}
 
 	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier, secretsProvider: secretsProvider)
+		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
 	}
 
 	func loadAccount(_ filename: String) -> Account? {

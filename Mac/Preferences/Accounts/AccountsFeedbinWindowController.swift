@@ -88,7 +88,7 @@ final class AccountsFeedbinWindowController: NSWindowController {
 			var validatedCredentials: Credentials?
 
 			do {
-				validatedCredentials = try await Account.validateCredentials(type: .feedbin, credentials: credentials, secretsProvider: Secrets())
+				validatedCredentials = try await Account.validateCredentials(type: .feedbin, credentials: credentials)
 			} catch {
 				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
 				validationDidThrow = true

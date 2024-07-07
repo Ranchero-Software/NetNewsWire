@@ -200,7 +200,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			addViewController.delegate = self
 			present(navController, animated: true)
 		case .feedly:
-			let addAccount = FeedlyOAuthAccountAuthorizationOperation(secretsProvider: Secrets())
+			let addAccount = FeedlyOAuthAccountAuthorizationOperation()
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			feedlyAddAccountOperation = addAccount

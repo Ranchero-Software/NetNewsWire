@@ -11,14 +11,14 @@ import Secrets
 
 public extension OAuthAuthorizationClient {
 	
-	static func feedlyCloudClient(secretsProvider: SecretsProvider) -> OAuthAuthorizationClient {
+	static func feedlyCloudClient() -> OAuthAuthorizationClient {
 		/// Models private NetNewsWire client secrets.
 		/// These placeholders are substituted at build time using a Run Script phase with build settings.
 		/// https://developer.feedly.com/v3/auth/#authenticating-a-user-and-obtaining-an-auth-code
-		return OAuthAuthorizationClient(id: secretsProvider.feedlyClientID,
+		return OAuthAuthorizationClient(id: SecretKey.feedlyClientID,
 										redirectURI: "netnewswire://auth/feedly",
 										state: nil,
-										secret: secretsProvider.feedlyClientSecret)
+										secret: SecretKey.feedlyClientSecret)
 	}
 	
 	static var feedlySandboxClient: OAuthAuthorizationClient {

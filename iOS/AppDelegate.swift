@@ -56,14 +56,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	let accountManager: AccountManager
 
-	private var secretsProvider = Secrets()
-	
 	override init() {
 
 		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
-		self.accountManager = AccountManager(accountsFolder: documentAccountsFolderPath, secretsProvider: secretsProvider)
+		self.accountManager = AccountManager(accountsFolder: documentAccountsFolderPath)
 		AccountManager.shared = accountManager
 
 		super.init()

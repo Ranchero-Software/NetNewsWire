@@ -395,7 +395,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 	func accountWillBeDeleted(_ account: Account) {
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 
 		let caller = FeedbinAPICaller(transport: transport)
 		caller.credentials = credentials

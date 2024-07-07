@@ -165,7 +165,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 			var validatedCredentials: Credentials?
 
 			do {
-				validatedCredentials = try await Account.validateCredentials(type: type, credentials: credentials, endpoint: url, secretsProvider: Secrets())
+				validatedCredentials = try await Account.validateCredentials(type: type, credentials: credentials, endpoint: url)
 			} catch {
 				self.showError(error.localizedDescription)
 				validationDidThrow = true

@@ -73,14 +73,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 	private let syncDatabase: SyncDatabase
 
-	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API, secretsProvider: SecretsProvider) {
+	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
 		// Many operations have their own operation queues, such as the sync all operation.
 		// Making this a serial queue at this higher level of abstraction means we can ensure,
 		// for example, a `FeedlyRefreshAccessTokenOperation` occurs before a `FeedlySyncAllOperation`,
 		// improving our ability to debug, reason about and predict the behaviour of the code.
 
 		if let transport = transport {
-			self.caller = FeedlyAPICaller(transport: transport, api: api, secretsProvider: secretsProvider)
+			self.caller = FeedlyAPICaller(transport: transport, api: api)
 
 		} else {
 
@@ -95,12 +95,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			sessionConfiguration.httpAdditionalHeaders = UserAgent.headers
 
 			let session = URLSession(configuration: sessionConfiguration)
-			self.caller = FeedlyAPICaller(transport: session, api: api, secretsProvider: secretsProvider)
+			self.caller = FeedlyAPICaller(transport: session, api: api)
 		}
 
 		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.syncDatabase = SyncDatabase(databasePath: databasePath)
-		self.oauthAuthorizationClient = api.oauthAuthorizationClient(secretsProvider: secretsProvider)
+		self.oauthAuthorizationClient = api.oauthAuthorizationClient()
 
 		self.caller.delegate = self
 	}
@@ -374,7 +374,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 
 		assertionFailure("An `account` instance should refresh the access token first instead.")
 		return credentials
@@ -999,17 +999,15 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 
 	private let oauthClient: OAuthAuthorizationClient
 	private var session: ASWebAuthenticationSession?
-	private let secretsProvider: SecretsProvider
 
-	public init(secretsProvider: SecretsProvider) {
-		self.secretsProvider = secretsProvider
-		self.oauthClient = FeedlyAPICaller.API.cloud.oauthAuthorizationClient(secretsProvider: secretsProvider)
+	override public init() {
+		self.oauthClient = FeedlyAPICaller.API.cloud.oauthAuthorizationClient()
 	}
 
 	public func run() {
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 
-		let request = FeedlyAPICaller.oauthAuthorizationCodeGrantRequest(secretsProvider: secretsProvider)
+		let request = FeedlyAPICaller.oauthAuthorizationCodeGrantRequest()
 
 		guard let url = request.url else {
 			return DispatchQueue.main.async {
@@ -1073,7 +1071,7 @@ public enum FeedlyOAuthAccountAuthorizationOperationError: LocalizedError {
 
 				let response = try OAuthAuthorizationResponse(url: url, client: self.oauthClient)
 
-				let tokenResponse = try await FeedlyAPICaller.requestOAuthAccessToken(with: response, transport: URLSession.webserviceTransport(), secretsProvider: secretsProvider)
+				let tokenResponse = try await FeedlyAPICaller.requestOAuthAccessToken(with: response, transport: URLSession.webserviceTransport())
 				saveAccount(for: tokenResponse)
 
 			} catch is ASWebAuthenticationSessionError {

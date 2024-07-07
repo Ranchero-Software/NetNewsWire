@@ -37,12 +37,12 @@ public protocol FeedlyAPICallerDelegate: AnyObject {
 			return components
 		}
 		
-		public func oauthAuthorizationClient(secretsProvider: SecretsProvider) -> OAuthAuthorizationClient {
+		public func oauthAuthorizationClient() -> OAuthAuthorizationClient {
 			switch self {
 			case .sandbox:
 				return .feedlySandboxClient
 			case .cloud:
-				return OAuthAuthorizationClient.feedlyCloudClient(secretsProvider: secretsProvider)
+				return OAuthAuthorizationClient.feedlyCloudClient()
 			}
 		}
 	}
@@ -50,13 +50,11 @@ public protocol FeedlyAPICallerDelegate: AnyObject {
 	private let transport: Transport
 	private let baseURLComponents: URLComponents
 	private let uriComponentAllowed: CharacterSet
-	private let secretsProvider: SecretsProvider
 	private let api: FeedlyAPICaller.API
 
-	public init(transport: Transport, api: API, secretsProvider: SecretsProvider) {
+	public init(transport: Transport, api: API) {
 		self.transport = transport
 		self.baseURLComponents = api.baseUrlComponents
-		self.secretsProvider = secretsProvider
 		self.api = api
 
 		var urlHostAllowed = CharacterSet.urlHostAllowed
@@ -556,8 +554,8 @@ extension FeedlyAPICaller {
 
 	private static let oauthAuthorizationGrantScope = "https://cloud.feedly.com/subscriptions"
 
-	public static func oauthAuthorizationCodeGrantRequest(secretsProvider: SecretsProvider) -> URLRequest {
-		let client = API.cloud.oauthAuthorizationClient(secretsProvider: secretsProvider)
+	public static func oauthAuthorizationCodeGrantRequest() -> URLRequest {
+		let client = API.cloud.oauthAuthorizationClient()
 		let authorizationRequest = OAuthAuthorizationRequest(clientID: client.id,
 															 redirectURI: client.redirectURI,
 															 scope: oauthAuthorizationGrantScope,
@@ -566,13 +564,13 @@ extension FeedlyAPICaller {
 		return FeedlyAPICaller.authorizationCodeURLRequest(for: authorizationRequest, baseUrlComponents: baseURLComponents)
 	}
 
-	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: any Web.Transport, secretsProvider: any Secrets.SecretsProvider) async throws -> OAuthAuthorizationGrant {
+	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: any Web.Transport) async throws -> OAuthAuthorizationGrant {
 
-		let client = API.cloud.oauthAuthorizationClient(secretsProvider: secretsProvider)
+		let client = API.cloud.oauthAuthorizationClient()
 		let request = OAuthAccessTokenRequest(authorizationResponse: response,
 											  scope: oauthAuthorizationGrantScope,
 											  client: client)
-		let caller = FeedlyAPICaller(transport: transport, api: .cloud, secretsProvider: secretsProvider)
+		let caller = FeedlyAPICaller(transport: transport, api: .cloud)
 		let response = try await caller.requestAccessToken(request)
 
 		let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)

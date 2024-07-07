@@ -484,7 +484,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		articlesZone.resetChangeToken()
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 
 		return nil
 	}

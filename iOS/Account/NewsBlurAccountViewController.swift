@@ -112,7 +112,7 @@ class NewsBlurAccountViewController: UITableViewController {
 			var validatedCredentials: Credentials?
 
 			do {
-				validatedCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: credentials, secretsProvider: Secrets())
+				validatedCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: credentials)
 			} catch {
 				self.showError(error.localizedDescription)
 				validationDidThrow = true

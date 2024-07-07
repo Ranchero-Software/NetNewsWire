@@ -69,7 +69,6 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 	}
 	
 	private var transport: Transport!
-	private let secretsProvider: SecretsProvider
 	private let uriComponentAllowed: CharacterSet
 
 	private var accessToken: String?
@@ -86,10 +85,9 @@ public enum CreateReaderAPISubscriptionResult: Sendable {
 	}
 	
 	/// The delegate should be set in a subsequent call.
-	public init(transport: Transport, secretsProvider: SecretsProvider) {
+	public init(transport: Transport) {
 
 		self.transport = transport
-		self.secretsProvider = secretsProvider
 
 		var urlHostAllowed = CharacterSet.urlHostAllowed
 		urlHostAllowed.remove("+")
@@ -543,8 +541,8 @@ private extension ReaderAPICaller {
 	
 	func addVariantHeaders(_ request: inout URLRequest) {
 		if variant == .inoreader {
-			request.addValue(secretsProvider.inoreaderAppID, forHTTPHeaderField: "AppId")
-			request.addValue(secretsProvider.inoreaderAppKey, forHTTPHeaderField: "AppKey")
+			request.addValue(SecretKey.inoreaderAppID, forHTTPHeaderField: "AppId")
+			request.addValue(SecretKey.inoreaderAppKey, forHTTPHeaderField: "AppKey")
 		}
 	}
 

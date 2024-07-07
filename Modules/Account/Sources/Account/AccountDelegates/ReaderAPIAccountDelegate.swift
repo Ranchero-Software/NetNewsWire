@@ -54,7 +54,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant, secretsProvider: SecretsProvider) {
+	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
 
 		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databasePath: databasePath)
@@ -62,7 +62,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		self.variant = variant
 
 		if transport != nil {
-			self.caller = ReaderAPICaller(transport: transport!, secretsProvider: secretsProvider)
+			self.caller = ReaderAPICaller(transport: transport!)
 		} else {
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -74,7 +74,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			sessionConfiguration.urlCache = nil
 			sessionConfiguration.httpAdditionalHeaders = UserAgent.headers
 
-			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration), secretsProvider: secretsProvider)
+			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
 		}
 		
 		caller.delegate = self
@@ -458,13 +458,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func accountWillBeDeleted(_ account: Account) {
 	}
 	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, secretsProvider: SecretsProvider) async throws -> Credentials? {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		
 		guard let endpoint else {
 			throw TransportError.noURL
 		}
 		
-		let caller = ReaderAPICaller(transport: transport, secretsProvider: secretsProvider)
+		let caller = ReaderAPICaller(transport: transport)
 		caller.credentials = credentials
 		
 		return try await caller.validateCredentials(endpoint: endpoint)

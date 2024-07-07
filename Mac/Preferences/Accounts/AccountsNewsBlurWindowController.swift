@@ -85,7 +85,7 @@ class AccountsNewsBlurWindowController: NSWindowController {
 			var validatedCredentials: Credentials?
 
 			do {
-				validatedCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: credentials, secretsProvider: Secrets())
+				validatedCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: credentials)
 			} catch {
 				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
 				validationDidThrow = true

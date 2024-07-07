@@ -102,14 +102,13 @@ import Sparkle
 	#endif
 	
 	private var themeImportPath: String?
-	private let secretsProvider = Secrets()
 	private let accountManager: AccountManager
 
 	override init() {
 
 		NSWindow.allowsAutomaticWindowTabbing = false
 
-		self.accountManager = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!, secretsProvider: secretsProvider)
+		self.accountManager = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
 		AccountManager.shared = self.accountManager
 
 		super.init()
