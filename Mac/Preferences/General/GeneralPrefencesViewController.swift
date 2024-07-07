@@ -47,8 +47,7 @@ final class GeneralPreferencesViewController: NSViewController {
 	// MARK: - Actions
 
 	@IBAction func showThemesFolder(_ sender: Any) {
-		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
-		NSWorkspace.shared.open(url)
+		NSWorkspace.shared.open(ArticleThemesManager.shared.folderURL)
 	}
 	
 	@IBAction func articleThemePopUpDidChange(_ sender: Any) {

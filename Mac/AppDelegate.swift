@@ -819,7 +819,7 @@ internal extension AppDelegate {
 				
 			func importTheme() {
 				do {
-					try ArticleThemesManager.shared.importTheme(filePath: filename)
+					try ArticleThemesManager.shared.importTheme(filename: filename)
 					confirmImportSuccess(themeName: theme.name)
 				} catch {
 					NSApplication.shared.presentError(error)
@@ -829,7 +829,7 @@ internal extension AppDelegate {
 			alert.beginSheetModal(for: window) { result in
 				if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 
-					if ArticleThemesManager.shared.themeExists(filePath: filename) {
+					if ArticleThemesManager.shared.themeExists(filename: filename) {
 						let alert = NSAlert()
 						alert.alertStyle = .warning
 
@@ -922,14 +922,12 @@ internal extension AppDelegate {
 
 	@objc func openThemesFolder(_ sender: Any) {
 		if themeImportPath == nil {
-			let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
-			NSWorkspace.shared.open(url)
+			NSWorkspace.shared.open(ArticleThemesManager.shared.folderURL)
 		} else {
 			let url = URL(fileURLWithPath: themeImportPath!)
 			NSWorkspace.shared.open(url.deletingLastPathComponent())
 		}
 	}
-	
 }
 
 /*
