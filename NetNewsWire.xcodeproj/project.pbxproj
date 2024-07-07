@@ -344,7 +344,6 @@
 		840958632201629A002C1579 /* Subscribe to Feed.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840BEE4021D70E64009BBAFA /* CrashReportWindowController.swift */; };
 		840D617F2029031C009BC708 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D617E2029031C009BC708 /* AppDelegate.swift */; };
-		8410C4A32BC1E27A00D4F799 /* ReaderAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 8410C4A22BC1E27A00D4F799 /* ReaderAPI */; };
 		8410C4A52BC1E28200D4F799 /* ReaderAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 8410C4A42BC1E28200D4F799 /* ReaderAPI */; };
 		84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */; };
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
@@ -362,7 +361,6 @@
 		8426DBC02BFDAEF200E98109 /* Web in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84C1A8572BBBA5BD006E3E96 /* Web */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8426DBC22BFDAEFC00E98109 /* Web in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBC12BFDAEFC00E98109 /* Web */; };
 		8426DBC32BFDAEFC00E98109 /* Web in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBC12BFDAEFC00E98109 /* Web */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8426DBC42BFDAF0100E98109 /* ReaderAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8410C4A22BC1E27A00D4F799 /* ReaderAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8426DBC62BFDAF1B00E98109 /* CommonErrors in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBC52BFDAF1B00E98109 /* CommonErrors */; };
 		8426DBC82BFDAF4300E98109 /* Web in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBC72BFDAF4300E98109 /* Web */; };
 		8426DBCB2BFDAF6100E98109 /* CommonErrors in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBCA2BFDAF6100E98109 /* CommonErrors */; };
@@ -744,7 +742,6 @@
 				8456116F2BBD145200507B73 /* ParserObjC in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
-				8426DBC42BFDAF0100E98109 /* ReaderAPI in Embed Frameworks */,
 				8426DBB82BFDAD8500E98109 /* Core in Embed Frameworks */,
 				513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */,
 				8456116C2BBD145200507B73 /* Parser in Embed Frameworks */,
@@ -1318,7 +1315,6 @@
 				5132775E2590FC640064F1E7 /* Articles in Frameworks */,
 				84DCA5252BABBB5A00792720 /* Core in Frameworks */,
 				8479ABE32B9E906E00F84C4D /* Database in Frameworks */,
-				8410C4A32BC1E27A00D4F799 /* ReaderAPI in Frameworks */,
 				84DCA5122BABB75600792720 /* FoundationExtras in Frameworks */,
 				513277612590FC640064F1E7 /* ArticlesDatabase in Frameworks */,
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
@@ -2654,7 +2650,6 @@
 				841CECD72BAD04B20001EE72 /* Tree */,
 				8456116A2BBD145200507B73 /* Parser */,
 				8456116D2BBD145200507B73 /* ParserObjC */,
-				8410C4A22BC1E27A00D4F799 /* ReaderAPI */,
 				84A699162BC34F4400605AB8 /* ArticleExtractor */,
 				84DC5FF92BCE31D200F04682 /* Images */,
 				8426DBC12BFDAEFC00E98109 /* Web */,
@@ -4146,10 +4141,6 @@
 		6538133F2680E2DA007A082C /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Account;
-		};
-		8410C4A22BC1E27A00D4F799 /* ReaderAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ReaderAPI;
 		};
 		8410C4A42BC1E28200D4F799 /* ReaderAPI */ = {
 			isa = XCSwiftPackageProductDependency;
