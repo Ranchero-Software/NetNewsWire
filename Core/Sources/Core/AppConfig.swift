@@ -46,6 +46,12 @@ public final class AppConfig {
 		FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 #endif
 	}()
+
+	/// Returns URL to subfolder in data folder (creating the folder if it doesn’t exist)
+	public static func dataSubfolder(named name: String) -> URL {
+		subfolder(name, in: dataFolder)
+	}
+
 }
 
 private extension AppConfig {
