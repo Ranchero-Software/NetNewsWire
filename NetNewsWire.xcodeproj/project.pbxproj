@@ -344,6 +344,9 @@
 		840D617F2029031C009BC708 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D617E2029031C009BC708 /* AppDelegate.swift */; };
 		8410C4A52BC1E28200D4F799 /* ReaderAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 8410C4A42BC1E28200D4F799 /* ReaderAPI */; };
 		84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */; };
+		8417E6342C3B913200C75D84 /* AppAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417E6332C3B913200C75D84 /* AppAsset.swift */; };
+		8417E6352C3B913200C75D84 /* AppAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417E6332C3B913200C75D84 /* AppAsset.swift */; };
+		8417E6372C3B9FE400C75D84 /* AppAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417E6332C3B913200C75D84 /* AppAsset.swift */; };
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
 		841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */; };
 		841ABA6020145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */; };
@@ -1000,6 +1003,7 @@
 		840D61952029031D009BC708 /* NetNewsWire_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetNewsWire_iOSTests.swift; sourceTree = "<group>"; };
 		840D61972029031D009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkCommandValidationStatus.swift; sourceTree = "<group>"; };
+		8417E6332C3B913200C75D84 /* AppAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAsset.swift; sourceTree = "<group>"; };
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinSmartFeedInspectorViewController.swift; sourceTree = "<group>"; };
@@ -2112,6 +2116,7 @@
 			children = (
 				84DC5FFD2BCE37A300F04682 /* AppDelegate+Shared.swift */,
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
+				8417E6332C3B913200C75D84 /* AppAsset.swift */,
 				511B9805237DCAC90028BCAA /* UserInfoKey.swift */,
 				844933D12BA953590068AC51 /* ArticlePathInfo.swift */,
 				8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */,
@@ -3214,6 +3219,7 @@
 			files = (
 				51B5C8B923F368D000032075 /* ExtensionContainers.swift in Sources */,
 				515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */,
+				8417E6372C3B9FE400C75D84 /* AppAsset.swift in Sources */,
 				513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */,
 				51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */,
 				51B5C8BE23F37B2400032075 /* ShareDefaultContainer.swift in Sources */,
@@ -3353,6 +3359,7 @@
 				51B5C87D23F2346200032075 /* ExtensionContainersFile.swift in Sources */,
 				51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */,
 				5141E7392373C18B0013FF27 /* FeedInspectorViewController.swift in Sources */,
+				8417E6352C3B913200C75D84 /* AppAsset.swift in Sources */,
 				C5A6ED6D23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift in Sources */,
 				5108F6D42375EEEF001ABC45 /* TimelinePreviewTableViewController.swift in Sources */,
 				84CAFCA522BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
@@ -3479,6 +3486,7 @@
 				51FE10032345529D0056195D /* UserNotificationManager.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
 				51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */,
+				8417E6342C3B913200C75D84 /* AppAsset.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleThemesManager.swift in Sources */,
 				8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */,
 				844933D22BA953590068AC51 /* ArticlePathInfo.swift in Sources */,

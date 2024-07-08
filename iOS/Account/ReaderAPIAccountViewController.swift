@@ -230,13 +230,13 @@ class ReaderAPIAccountViewController: UITableViewController {
 		if let accountType = accountType {
 			switch accountType {
 				case .bazQux:
-					return AppAssets.accountBazQuxImage
+				return AppAsset.Account.bazQux
 				case .inoreader:
-					return AppAssets.accountInoreaderImage
+				return AppAsset.Account.inoReader
 				case .theOldReader:
-					return AppAssets.accountTheOldReaderImage
+				return AppAsset.Account.theOldReader
 				case .freshRSS:
-					return AppAssets.accountFreshRSSImage
+				return AppAsset.Account.freshRSS
 				default:
 					return nil
 			}

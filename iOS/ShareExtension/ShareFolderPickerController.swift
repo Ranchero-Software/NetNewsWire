@@ -8,6 +8,7 @@
 
 import UIKit
 import Account
+import Core
 
 protocol ShareFolderPickerControllerDelegate: AnyObject {
 	
@@ -46,7 +47,7 @@ class ShareFolderPickerController: UITableViewController {
 		}()
 		
 		if let account = container as? ExtensionAccount {
-			cell.icon.image = AppAssets.image(for: account.type)
+			cell.icon.image = AppAsset.Account.image(for: account.type)
 		} else {
 			cell.icon.image = AppAssets.folderImage.image
 		}

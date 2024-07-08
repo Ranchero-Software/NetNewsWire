@@ -20,6 +20,22 @@ public typealias RSImage = UIImage
 
 public extension RSImage {
 
+	static func appImage(_ name: String) -> RSImage {
+
+		RSImage(named: name)!
+	}
+	
+	static func systemImage(_ symbolName: String) -> RSImage {
+
+		#if canImport(AppKit)
+		NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)!
+
+		#else
+		UIImage(systemName: symbolName)!
+		
+		#endif
+	}
+	
 	/// Create a colored image from the source image using a specified color.
 	///
 	/// - Parameter color: The color with which to fill the mask image.

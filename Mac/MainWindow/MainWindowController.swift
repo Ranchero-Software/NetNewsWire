@@ -804,7 +804,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .newSidebarItemMenu:
 			let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
-			toolbarItem.image = AppAssets.addNewSidebarItemImage
+			toolbarItem.image = AppAsset.Mac.Toolbar.addNewSidebarItem
 			let description = NSLocalizedString("Add Item", comment: "Add Item")
 			toolbarItem.toolTip = description
 			toolbarItem.label = description

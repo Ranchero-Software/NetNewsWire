@@ -133,17 +133,17 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 		switch indexPath.section {
 		case AddAccountSections.local.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.local.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: .onMyMac)
+			cell.comboImage?.image = AppAsset.Account.image(for: .onMyMac)
 		case AddAccountSections.icloud.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.icloud.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.icloud.sectionContent[indexPath.row])
+			cell.comboImage?.image = AppAsset.Account.image(for: AddAccountSections.icloud.sectionContent[indexPath.row])
 			if AppDefaults.shared.isDeveloperBuild || AccountManager.shared.accounts.contains(where: { $0.accountType == .cloudKit }) {
 				cell.isUserInteractionEnabled = false
 				cell.comboNameLabel?.isEnabled = false
 			}
 		case AddAccountSections.web.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.web.sectionContent[indexPath.row])
+			cell.comboImage?.image = AppAsset.Account.image(for: AddAccountSections.web.sectionContent[indexPath.row])
 			let type = AddAccountSections.web.sectionContent[indexPath.row]
 			if (type == .feedly || type == .inoreader) && AppDefaults.shared.isDeveloperBuild {
 				cell.isUserInteractionEnabled = false
@@ -151,7 +151,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			}
 		case AddAccountSections.selfhosted.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.selfhosted.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.selfhosted.sectionContent[indexPath.row])
+			cell.comboImage?.image = AppAsset.Account.image(for: AddAccountSections.selfhosted.sectionContent[indexPath.row])
 			
 		default:
 			return cell

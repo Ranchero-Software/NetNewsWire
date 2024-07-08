@@ -9,34 +9,21 @@
 import AppKit
 import Account
 import Images
+import Core
+
+extension AppAsset {
+
+	struct Mac {
+
+		struct Toolbar {
+			static let addNewSidebarItem = RSImage.systemImage("plus")
+
+		}
+	}
+}
+
 
 struct AppAssets {
-
-	static let accountBazQux = NSImage(named: "accountBazQux")
-
-	static let accountCloudKit = NSImage(named: "accountCloudKit")
-
-	static let accountFeedbin = NSImage(named: "accountFeedbin")
-
-	static let accountFeedly = NSImage(named: "accountFeedly")
-	
-	static let accountFreshRSS = NSImage(named: "accountFreshRSS")
-
-	static let accountInoreader = NSImage(named: "accountInoreader")
-
-	static let accountLocal = NSImage(named: "accountLocal")
-
-	static let accountNewsBlur = NSImage(named: "accountNewsBlur")
-
-	static let accountTheOldReader = NSImage(named: "accountTheOldReader")
-
-	static let addNewSidebarItemImage = NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
-
-	static let articleExtractorError = NSImage(named: "articleExtractorError")!
-
-	static let articleExtractorOff = NSImage(named: "articleExtractorOff")!
-
-	static let articleExtractorOn = NSImage(named: "articleExtractorOn")!
 
 	static let articleTheme = NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
 
@@ -154,27 +141,4 @@ struct AppAssets {
 		.withSymbolConfiguration(.init(scale: .large))!
 
 	static let starColor = NSColor(named: NSColor.Name("StarColor"))!
-
-	static func image(for accountType: AccountType) -> NSImage? {
-		switch accountType {
-		case .onMyMac:
-			return AppAssets.accountLocal
-		case .cloudKit:
-			return AppAssets.accountCloudKit
-		case .bazQux:
-			return AppAssets.accountBazQux
-		case .feedbin:
-			return AppAssets.accountFeedbin
-		case .feedly:
-			return AppAssets.accountFeedly
-		case .freshRSS:
-			return AppAssets.accountFreshRSS
-		case .inoreader:
-			return AppAssets.accountInoreader
-		case .newsBlur:
-			return AppAssets.accountNewsBlur
-		case .theOldReader:
-			return AppAssets.accountTheOldReader
-		}
-	}
 }

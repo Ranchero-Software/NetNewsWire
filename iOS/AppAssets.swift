@@ -13,40 +13,10 @@ import Images
 
 struct AppAssets {
 	
-	static let accountBazQuxImage = UIImage(named: "accountBazQux")!
-
-	static let accountCloudKitImage = UIImage(named: "accountCloudKit")!
-
-	static let accountFeedbinImage = UIImage(named: "accountFeedbin")!
-
-	static let accountFeedlyImage = UIImage(named: "accountFeedly")!
-
-	static let accountFreshRSSImage = UIImage(named: "accountFreshRSS")!
-
-	static let accountInoreaderImage = UIImage(named: "accountInoreader")!
-
-	static let accountLocalPadImage = UIImage(named: "accountLocalPad")!
-
-	static let accountLocalPhoneImage = UIImage(named: "accountLocalPhone")!
-
-	static let accountNewsBlurImage = UIImage(named: "accountNewsBlur")!
-
-	static let accountTheOldReaderImage = UIImage(named: "accountTheOldReader")!
-
-	static let articleExtractorError = UIImage(named: "articleExtractorError")!
-
-	static let articleExtractorOff = UIImage(named: "articleExtractorOff")!
-
-	static let articleExtractorOffSF = UIImage(systemName: "doc.plaintext")!
-
 	@MainActor static let articleExtractorOffTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOff")!
 		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
-
-	static let articleExtractorOn = UIImage(named: "articleExtractorOn")!
-
-	static let articleExtractorOnSF = UIImage(named: "articleExtractorOnSF")!
 
 	@MainActor static let articleExtractorOnTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOn")!
@@ -148,31 +118,4 @@ struct AppAssets {
 	static let vibrantTextColor = UIColor(named: "vibrantTextColor")!
 
 	static let controlBackgroundColor = UIColor(named: "controlBackgroundColor")!
-
-	@MainActor static func image(for accountType: AccountType) -> UIImage? {
-		switch accountType {
-		case .onMyMac:
-			if UIDevice.current.userInterfaceIdiom == .pad {
-				return AppAssets.accountLocalPadImage
-			} else {
-				return AppAssets.accountLocalPhoneImage
-			}
-		case .cloudKit:
-			return AppAssets.accountCloudKitImage
-		case .feedbin:
-			return AppAssets.accountFeedbinImage
-		case .feedly:
-			return AppAssets.accountFeedlyImage
-		case .freshRSS:
-			return AppAssets.accountFreshRSSImage
-		case .newsBlur:
-			return AppAssets.accountNewsBlurImage
-		case .inoreader:
-			return AppAssets.accountInoreaderImage
-		case .bazQux:
-			return AppAssets.accountBazQuxImage
-		case .theOldReader:
-			return AppAssets.accountTheOldReaderImage
-		}
-	}
 }
