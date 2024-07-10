@@ -705,12 +705,12 @@ private extension SidebarViewController {
 	}
 	
 	func setFilterButtonToActive() {
-		filterButton?.image = AppAssets.filterActiveImage
+		filterButton?.image = AppAsset.filterActive
 		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
 	}
 	
 	func setFilterButtonToInactive() {
-		filterButton?.image = AppAssets.filterInactiveImage
+		filterButton?.image = AppAsset.filterInactive
 		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 	
@@ -1101,7 +1101,7 @@ private extension SidebarViewController {
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.markAllAsRead) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 
 				Task { @MainActor in
@@ -1122,7 +1122,7 @@ private extension SidebarViewController {
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.markAllAsRead) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

@@ -796,11 +796,11 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .sidebarToggle:
 			let title = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
-			return buildToolbarButton(.toggleSidebar, title, AppAssets.sidebarToggleImage, "toggleTheSidebar:")
+			return buildToolbarButton(.toggleSidebar, title, AppAsset.Mac.Toolbar.sidebarToggle, "toggleTheSidebar:")
 
 		case .refresh:
 			let title = NSLocalizedString("Refresh", comment: "Refresh")
-			return buildToolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
+			return buildToolbarButton(.refresh, title, AppAsset.Mac.Toolbar.refresh, "refreshAll:")
 
 		case .newSidebarItemMenu:
 			let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
@@ -813,11 +813,11 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .markAllAsRead:
 			let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
-			return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
+			return buildToolbarButton(.markAllAsRead, title, AppAsset.markAllAsRead, "markAllAsRead:")
 
 		case .toggleReadArticlesFilter:
 			let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
-			return buildToolbarButton(.toggleReadArticlesFilter, title, AppAssets.filterInactive, "toggleReadArticlesFilter:")
+			return buildToolbarButton(.toggleReadArticlesFilter, title, AppAsset.filterInactive, "toggleReadArticlesFilter:")
 
 		case .timelineTrackingSeparator:
 			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
@@ -854,7 +854,7 @@ extension MainWindowController: NSToolbarDelegate {
 			return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
 
 		case .articleThemeMenu:
-			articleThemeMenuToolbarItem.image = AppAssets.articleTheme
+			articleThemeMenuToolbarItem.image = AppAsset.Mac.Toolbar.articleTheme
 			let description = NSLocalizedString("Article Theme", comment: "Article Theme")
 			articleThemeMenuToolbarItem.toolTip = description
 			articleThemeMenuToolbarItem.label = description
@@ -869,7 +869,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .cleanUp:
 			let title = NSLocalizedString("Clean Up", comment: "Clean Up")
-			return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
+			return buildToolbarButton(.cleanUp, title, AppAsset.Mac.Toolbar.cleanUpImage, "cleanUp:")
 
 		default:
 			break
@@ -1190,7 +1190,7 @@ private extension MainWindowController {
 			(item as? NSMenuItem)?.title = hideCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				button.image = AppAsset.filterInactive
 			}
 			return false
 		}
@@ -1199,13 +1199,13 @@ private extension MainWindowController {
 			(item as? NSMenuItem)?.title = showCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = showCommand
-				button.image = AppAssets.filterActive
+				button.image = AppAsset.filterActive
 			}
 		} else {
 			(item as? NSMenuItem)?.title = hideCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				button.image = AppAsset.filterInactive
 			}
 		}
 		

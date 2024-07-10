@@ -15,9 +15,18 @@ extension AppAsset {
 
 	struct Mac {
 
+		static let iconLightBackgroundColor = NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
+		static let iconDarkBackgroundColor = NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
+
+		static let marsEditIcon = RSImage.appImage("MarsEditIcon")
+		static let microblogIcon = RSImage.appImage("MicroblogIcon")
+
 		struct Toolbar {
 			static let addNewSidebarItem = RSImage.systemImage("plus")
-
+			static let sidebarToggle = RSImage.systemImage("sidebar.left")
+			static let refresh = RSImage.systemImage("arrow.clockwise")
+			static let articleTheme = RSImage.systemImage("doc.richtext")
+			static let cleanUpImage = RSImage.systemImage("wind")
 		}
 	}
 }
@@ -25,23 +34,7 @@ extension AppAsset {
 
 struct AppAssets {
 
-	static let articleTheme = NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
 
-	static let cleanUpImage = NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
-
-	static let marsEditIcon = NSImage(named: "MarsEditIcon")!
-
-	static let microblogIcon = NSImage(named: "MicroblogIcon")!
-
-	static let faviconTemplateImage = NSImage(named: "faviconTemplateImage")!
-
-	static let filterActive = NSImage(systemSymbolName: "line.horizontal.3.decrease.circle.fill", accessibilityDescription: nil)!
-
-	static let filterInactive = NSImage(systemSymbolName: "line.horizontal.3.decrease.circle", accessibilityDescription: nil)!
-
-	static let iconLightBackgroundColor = NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
-
-	static let iconDarkBackgroundColor = NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
 
 	static let legacyArticleExtractor = NSImage(named: "legacyArticleExtractor")!
 
@@ -67,8 +60,6 @@ struct AppAssets {
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
-	static let markAllAsReadImage = NSImage(named: "markAllAsRead")!
-
 	static let nextUnreadImage = NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
 
 	static let openInBrowserImage = NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
@@ -83,7 +74,6 @@ struct AppAssets {
 
 	static let readOpenImage = NSImage(systemSymbolName: "circle", accessibilityDescription: nil)!
 	
-	static let refreshImage = NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
 
 	@MainActor
 	static let searchFeedImage: IconImage = {
@@ -91,8 +81,6 @@ struct AppAssets {
 	}()
 	
 	static let shareImage = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
-
-	static let sidebarToggleImage = NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
 
 	static let starClosedImage = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 

@@ -17,6 +17,10 @@ import Account
 
 final class AppAsset {
 
+
+	static let markAllAsRead = RSImage.appImage("markAllAsRead")
+	static let faviconTemplate = RSImage.appImage("faviconTemplateImage")
+
 	struct Account {
 
 		static let bazQux = RSImage.appImage("accountBazQux")
@@ -76,4 +80,7 @@ final class AppAsset {
 		static let on = RSImage.appImage("articleExtractorOn")
 		static let onSF = RSImage.appImage("articleExtractorOnSF")
 	}
+
+	static let filterActive = RSImage.systemImage("line.horizontal.3.decrease.circle.fill")
+	static let filterInactive = RSImage.systemImage("line.horizontal.3.decrease.circle")
 }

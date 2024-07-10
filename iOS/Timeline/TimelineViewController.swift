@@ -63,7 +63,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		// Initialize Programmatic Buttons
-		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+		filterButton = UIBarButtonItem(image: AppAsset.filterInactive, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 		firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
 		
 		// Setup the Search Controller
@@ -656,10 +656,10 @@ private extension TimelineViewController {
 		}
 		
 		if coordinator.isReadArticlesFiltered {
-			filterButton?.image = AppAssets.filterActiveImage
+			filterButton?.image = AppAsset.filterActive
 			filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
-			filterButton?.image = AppAssets.filterInactiveImage
+			filterButton?.image = AppAsset.filterInactive
 			filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 
@@ -886,7 +886,7 @@ private extension TimelineViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.markAllAsRead) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 
 				Task { @MainActor in

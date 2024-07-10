@@ -37,19 +37,11 @@ struct AppAssets {
 
 	static let editImage = UIImage(systemName: "square.and.pencil")!
 
-	static let faviconTemplateImage = RSImage(named: "faviconTemplateImage")!
-
-	static let filterInactiveImage = UIImage(systemName: "line.horizontal.3.decrease.circle")!
-	
-	static let filterActiveImage = UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
-
 	static let folderOutlinePlus = UIImage(systemName: "folder.badge.plus")!
 
 	static let fullScreenBackgroundColor = UIColor(named: "fullScreenBackgroundColor")!
 
 	static let infoImage = UIImage(systemName: "info.circle")!
-
-	static let markAllAsReadImage = UIImage(named: "markAllAsRead")!
 
 	static let markBelowAsReadImage = UIImage(systemName: "arrowtriangle.down.circle")!
 
