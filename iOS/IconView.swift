@@ -33,7 +33,7 @@ final class IconView: UIView {
 	private var isDiscernable = true
 
 	private let imageView: UIImageView = {
-		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
+		let imageView = NonIntrinsicImageView(image: AppAsset.faviconTemplate)
 		imageView.contentMode = .scaleAspectFit
 		imageView.clipsToBounds = true
 		imageView.layer.cornerRadius = 2.0

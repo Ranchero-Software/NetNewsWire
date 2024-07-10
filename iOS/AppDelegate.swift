@@ -70,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			os_log(.debug, "Is first run.")
 		}
 
-		FaviconGenerator.faviconTemplateImage = AppAssets.faviconTemplateImage
+		FaviconGenerator.faviconTemplateImage = AppAsset.faviconTemplate
 
 		importFeedsIfNeeded()
 

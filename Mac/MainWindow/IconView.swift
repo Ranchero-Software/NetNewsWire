@@ -54,8 +54,8 @@ final class IconView: NSView {
 		return imageView.frame.size.height < bounds.size.height
 	}
 
-	private static var lightBackgroundColor = AppAssets.iconLightBackgroundColor
-	private static var darkBackgroundColor = AppAssets.iconDarkBackgroundColor
+	private static var lightBackgroundColor = AppAsset.Mac.iconLightBackgroundColor
+	private static var darkBackgroundColor = AppAsset.Mac.iconDarkBackgroundColor
 
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
