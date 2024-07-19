@@ -36,7 +36,7 @@ set safariWindow to missing value
 --for each one of those, open a new tab in Safari
 
 tell application "NetNewsWire"
-	set allAccounts to every account
+	set allAccounts to every account whose active is true
 	repeat with nthAccount in allAccounts
 		set userFeeds to allWebFeeds of nthAccount
 		repeat with nthFeed in userFeeds
