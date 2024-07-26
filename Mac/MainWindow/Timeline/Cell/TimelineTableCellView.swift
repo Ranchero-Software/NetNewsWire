@@ -8,7 +8,7 @@
 
 import AppKit
 
-class TimelineTableCellView: NSTableCellView {
+final class TimelineTableCellView: NSTableCellView {
 
 	private let titleView = TimelineTableCellView.multiLineTextField()
 	private let summaryView = TimelineTableCellView.multiLineTextField()
@@ -19,7 +19,7 @@ class TimelineTableCellView: NSTableCellView {
 
 	private lazy var iconView = IconView()
 
-	private var starView = TimelineTableCellView.imageView(with: AppAssets.timelineStarUnselected, scaling: .scaleNone)
+	private var starView = TimelineTableCellView.imageView(with: AppAsset.Mac.Timeline.starUnselected, scaling: .scaleNone)
 
 	private lazy var textFields = {
 		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
@@ -258,9 +258,9 @@ private extension TimelineTableCellView {
 
 	func updateStarView() {
 		if isSelected && isEmphasized {
-			starView.image = AppAssets.timelineStarSelected
+			starView.image = AppAsset.Mac.Timeline.starSelected
 		} else {
-			starView.image = AppAssets.timelineStarUnselected
+			starView.image = AppAsset.Mac.Timeline.starUnselected
 		}
 		showOrHideView(starView, !cellData.starred)
 	}

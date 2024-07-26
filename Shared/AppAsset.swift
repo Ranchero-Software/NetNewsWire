@@ -14,12 +14,43 @@ import UIKit
 
 import Core
 import Account
+import Images
 
 final class AppAsset {
 
-
 	static let markAllAsRead = RSImage.appImage("markAllAsRead")
 	static let faviconTemplate = RSImage.appImage("faviconTemplateImage")
+	static let share = RSImage.systemImage("square.and.arrow.up")
+
+	static let starColor = RSColor(named: "StarColor")!
+
+	@MainActor static let folder: IconImage = {
+
+		#if os(macOS)
+		let image = RSImage.systemImage("folder")
+		let preferredColor = NSColor(named: "AccentColor")!
+		let coloredImage = image.tinted(with: preferredColor)
+		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+
+		#else
+		let image = RSImage.systemImage("folder.fill")
+		let preferredColor = AppAssets.secondaryAccentColor
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+
+		#endif
+	}()
+
+	@MainActor static let searchFeedImage: IconImage = {
+
+		#if os(macOS)
+		IconImage(NSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSupressed: true)
+
+		#else
+		IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
+
+		#endif
+	}()
+
 
 	struct Account {
 

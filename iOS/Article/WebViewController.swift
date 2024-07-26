@@ -868,7 +868,7 @@ private extension WebViewController {
 
 	func shareAction() -> UIAction {
 		let title = NSLocalizedString("Share", comment: "Share")
-		return UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
+		return UIAction(title: title, image: AppAsset.share) { [weak self] action in
 			self?.showActivityDialog()
 		}
 	}

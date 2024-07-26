@@ -824,7 +824,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .markRead:
 			let title = NSLocalizedString("Mark Read", comment: "Mark Read")
-			return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
+			return buildToolbarButton(.markRead, title, AppAsset.Mac.Toolbar.readClosed, "toggleRead:")
 
 		case .markStar:
 			let title = NSLocalizedString("Star", comment: "Star")
@@ -832,7 +832,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .nextUnread:
 			let title = NSLocalizedString("Next Unread", comment: "Next Unread")
-			return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
+			return buildToolbarButton(.nextUnread, title, AppAsset.Mac.Toolbar.nextUnread, "nextUnread:")
 
 		case .readerView:
 			let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
@@ -847,11 +847,11 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .share:
 			let title = NSLocalizedString("Share", comment: "Share")
-			return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
+			return buildToolbarButton(.share, title, AppAsset.Mac.Toolbar.share, "toolbarShowShareMenu:")
 
 		case .openInBrowser:
 			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-			return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
+			return buildToolbarButton(.openInBrowser, title, AppAsset.Mac.Toolbar.openInBrowser, "openArticleInBrowser:")
 
 		case .articleThemeMenu:
 			articleThemeMenuToolbarItem.image = AppAsset.Mac.Toolbar.articleTheme
@@ -1079,7 +1079,7 @@ private extension MainWindowController {
 		}
 		
 		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
+			button.image = markingRead ? AppAsset.Mac.Toolbar.readClosed : AppAsset.Mac.Toolbar.readOpen
 		}
 		
 		return result

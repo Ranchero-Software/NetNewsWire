@@ -285,7 +285,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		starAction.image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
-		starAction.backgroundColor = AppAssets.starColor
+		starAction.backgroundColor = AppAsset.starColor
 		
 		// Set up the read action
 		let moreTitle = NSLocalizedString("More", comment: "More")
@@ -984,7 +984,7 @@ private extension TimelineViewController {
 	func shareAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
-		let action = UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.share) { [weak self] action in
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
 		return action

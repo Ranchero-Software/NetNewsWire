@@ -47,8 +47,6 @@ struct AppAssets {
 
 	static let markAboveAsReadImage = UIImage(systemName: "arrowtriangle.up.circle")!
 
-	@MainActor static let folderImage = IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
-
 	static let folderImageNonIcon = UIImage(systemName: "folder.fill")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
 
 	static let moreImage = UIImage(systemName: "ellipsis.circle")!
@@ -73,11 +71,7 @@ struct AppAssets {
 
 	static let sectionHeaderColor = UIColor(named: "sectionHeaderColor")!
 
-	static let shareImage = UIImage(systemName: "square.and.arrow.up")!
-
 	static let smartFeedImage = UIImage(systemName: "gear")!
-
-	static let starColor = UIColor(named: "starColor")!
 
 	static let starClosedImage = UIImage(systemName: "star.fill")!
 
@@ -85,14 +79,14 @@ struct AppAssets {
 
 	@MainActor static let starredFeedImage: IconImage = {
 		let image = UIImage(systemName: "star.fill")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.starColor.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAsset.starColor.cgColor)
 	}()
 
 	static let tickMarkColor = UIColor(named: "tickMarkColor")!
 
 	static let timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
-		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
+		return image.withTintColor(AppAsset.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
 	@MainActor static let todayFeedImage: IconImage = {
