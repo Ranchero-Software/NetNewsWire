@@ -22,7 +22,7 @@ final class AppAsset {
 	static let faviconTemplate = RSImage.appImage("faviconTemplateImage")
 	static let share = RSImage.systemImage("square.and.arrow.up")
 
-	static let starColor = RSColor(named: "StarColor")!
+	static let starColor = RSColor(named: "starColor")!
 
 	@MainActor static let folder: IconImage = {
 
