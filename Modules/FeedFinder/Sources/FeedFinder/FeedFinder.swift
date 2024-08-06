@@ -13,11 +13,11 @@ import Web
 import CommonErrors
 import os.log
 
-@MainActor public final class FeedFinder {
+public final class FeedFinder {
 	
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
+	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
 
-	@MainActor public static func find(url: URL) async throws -> Set<FeedSpecifier> {
+	public static func find(url: URL) async throws -> Set<FeedSpecifier> {
 
 		var downloadData: DownloadData?
 
