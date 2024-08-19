@@ -14,4 +14,10 @@ extension String {
 		return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : self
 	}
 
+	static func isEmptyOrNil(_ s: String?) {
+		if let s {
+			return s.isEmpty
+		}
+		return true
+	}
 }
