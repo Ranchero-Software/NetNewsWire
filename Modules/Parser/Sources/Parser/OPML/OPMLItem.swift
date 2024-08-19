@@ -8,7 +8,7 @@
 import Foundation
 import os
 
-public final class OPMLItem: Sendable {
+public struct OPMLItem: Sendable {
 
 	public let feedSpecifier: OPMLFeedSpecifier
 
@@ -16,9 +16,9 @@ public final class OPMLItem: Sendable {
 	public let titleFromAttributes: String?
 
 	public let isFolder: Bool
-	public let children: [OPMLItem]?
+	public let items: [OPMLItem]?
 
-	init?(attributes: [String : String], children: [OPMLItem]?) {
+	init?(attributes: [String : String], items: [OPMLItem]?) {
 
 		guard let feedURL = attributes.opml_xmlUrl, !feedURL.isEmpty else {
 			return nil
@@ -36,7 +36,7 @@ public final class OPMLItem: Sendable {
 
 		self.attributes = attributes
 		
-		self.children = children
-		self.isFolder = (children?.count ?? 0) > 0
+		self.items = items
+		self.isFolder = (items?.count ?? 0) > 0
 	}
 }
