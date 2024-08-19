@@ -8,17 +8,19 @@
 import Foundation
 import os
 
-public struct OPMLItem: Sendable {
+class OPMLItem: @unchecked Sendable {
 
 	public let feedSpecifier: OPMLFeedSpecifier
 
 	public let attributes: [String: String]
 	public let titleFromAttributes: String?
 
-	public let isFolder: Bool
-	public let items: [OPMLItem]?
+	public var items: [OPMLItem]?
+	public var isFolder: Bool {
+		items.count > 0
+	}
 
-	init?(attributes: [String : String], items: [OPMLItem]?) {
+	init?(attributes: [String : String]) {
 
 		guard let feedURL = attributes.opml_xmlUrl, !feedURL.isEmpty else {
 			return nil
@@ -35,8 +37,13 @@ public struct OPMLItem: Sendable {
 		self.feedSpecifier = OPMLFeedSpecifier(title: titleFromAttributes, feedDescription: attributes.opml_description, homePageURL: attributes.opml_htmlUrl, feedURL: feedURL)
 
 		self.attributes = attributes
+	}
+
+	func addItem(_ item: OPMLItem) {
 		
-		self.items = items
-		self.isFolder = (items?.count ?? 0) > 0
+		if items == nil {
+			items = [OPMLItem]()
+		}
+		items?.append(item)
 	}
 }

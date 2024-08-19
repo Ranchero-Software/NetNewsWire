@@ -7,9 +7,8 @@
 
 import Foundation
 
-public struct OPMLDocument: Sendable {
+final class OPMLDocument: OPMLItem, @unchecked Sendable {
 
-	public let title: String
-	public let url: String
-	public let items: [OPMLItem]?
+	var title: String?
+	var url: String?
 }
