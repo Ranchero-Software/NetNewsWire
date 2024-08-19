@@ -8,6 +8,7 @@
 import Foundation
 import XCTest
 import Parser
+import ParserObjC
 
 class RSDateParserTests: XCTestCase {
 	
