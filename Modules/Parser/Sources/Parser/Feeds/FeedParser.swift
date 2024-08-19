@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ParserObjC
 
 // FeedParser handles RSS, Atom, JSON Feed, and RSS-in-JSON.
 // You don’t need to know the type of feed.

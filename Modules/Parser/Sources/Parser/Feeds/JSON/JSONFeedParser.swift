@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if SWIFT_PACKAGE
-import ParserObjC
-#endif
 
 // See https://jsonfeed.org/version/1.1
 

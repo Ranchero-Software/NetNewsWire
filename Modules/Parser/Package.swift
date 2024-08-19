@@ -14,20 +14,19 @@ let package = Package(
 			targets: ["Parser"]),
 	],
 	dependencies: [
-		.package(path: "../ParserObjC"),
 	],
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
 		.target(
 			name: "Parser",
-			dependencies: ["ParserObjC"],
+			dependencies: [],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
 			]),
 		.testTarget(
 			name: "ParserTests",
-			dependencies: ["Parser", "ParserObjC"],
+			dependencies: ["Parser"],
 			exclude: ["Info.plist"],
 			resources: [.copy("Resources")]),
 	]

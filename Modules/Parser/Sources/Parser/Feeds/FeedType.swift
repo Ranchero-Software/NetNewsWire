@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if SWIFT_PACKAGE
-import ParserObjC
-#endif
 
 public enum FeedType: Sendable {
 	case rss
