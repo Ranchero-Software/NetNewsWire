@@ -8,7 +8,7 @@
 import Foundation
 import os
 
-class OPMLItem: @unchecked Sendable {
+class OPMLItem {
 
 	public let feedSpecifier: ParsedOPMLFeedSpecifier
 

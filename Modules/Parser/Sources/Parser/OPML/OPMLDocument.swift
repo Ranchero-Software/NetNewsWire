@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class OPMLDocument: OPMLItem, @unchecked Sendable {
+final class OPMLDocument: OPMLItem {
 
 	var title: String? = nil
 	var url: String? = nil
