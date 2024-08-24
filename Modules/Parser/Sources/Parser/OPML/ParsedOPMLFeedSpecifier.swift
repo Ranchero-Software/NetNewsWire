@@ -1,6 +1,6 @@
 //
 //  ParsedOPMLFeedSpecifier.swift
-//
+//  
 //
 //  Created by Brent Simmons on 8/18/24.
 //
@@ -9,16 +9,32 @@ import Foundation
 
 public struct ParsedOPMLFeedSpecifier: Sendable {
 
-	public let title: String?
-	public let feedDescription: String?
-	public let homePageURL: String?
-	public let feedURL: String
+	let title: String?
+	let feedDescription: String?
+	let homePageURL: String?
+	let feedURL: String
 
-	init(_ opmlFeedSpecifier: OPMLFeedSpecifier) {
+	init(title: String?, feedDescription: String?, homePageURL: String?, feedURL: String) {
 
-		self.title = opmlFeedSpecifier.title
-		self.feedDescription = opmlFeedSpecifier.feedDescription
-		self.homePageURL = opmlFeedSpecifier.homePageURL
-		self.feedURL = opmlFeedSpecifier.feedURL
+		if String.isEmptyOrNil(title) {
+			self.title = nil
+		} else {
+			self.title = title
+		}
+
+		if String.isEmptyOrNil(feedDescription) {
+			self.feedDescription = nil
+		} else {
+			self.feedDescription = feedDescription
+		}
+
+		if String.isEmptyOrNil(homePageURL) {
+			self.homePageURL = nil
+		} else {
+			self.homePageURL = homePageURL
+		}
+
+		self.feedURL = feedURL
 	}
 }
+
