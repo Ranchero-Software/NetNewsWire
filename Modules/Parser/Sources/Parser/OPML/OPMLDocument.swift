@@ -9,6 +9,11 @@ import Foundation
 
 final class OPMLDocument: OPMLItem, @unchecked Sendable {
 
-	var title: String?
-	var url: String?
+	var title: String? = nil
+	var url: String? = nil
+
+	init(url: String?) {
+		self.url = url
+		super.init(attributes: nil)
+	}
 }

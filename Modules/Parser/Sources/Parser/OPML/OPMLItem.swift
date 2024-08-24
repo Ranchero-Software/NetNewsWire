@@ -10,7 +10,7 @@ import os
 
 class OPMLItem: @unchecked Sendable {
 
-	public let feedSpecifier: OPMLFeedSpecifier
+	public let feedSpecifier: ParsedOPMLFeedSpecifier
 
 	public let attributes: [String: String]
 	public let titleFromAttributes: String?
@@ -20,23 +20,13 @@ class OPMLItem: @unchecked Sendable {
 		items.count > 0
 	}
 
-	init?(attributes: [String : String]) {
+	init(attributes: [String : String]?) {
 
-		guard let feedURL = attributes.opml_xmlUrl, !feedURL.isEmpty else {
-			return nil
-		}
-
-		let titleFromAttributes = {
-			if let title = attributes.opml_title {
-				return title
-			}
-			return attributes.opml_text
-		}()
-		self.titleFromAttributes = titleFromAttributes
-
-		self.feedSpecifier = OPMLFeedSpecifier(title: titleFromAttributes, feedDescription: attributes.opml_description, homePageURL: attributes.opml_htmlUrl, feedURL: feedURL)
-
+		self.titleFromAttributes = attributes.opml_title ?? attributes.opml_text
 		self.attributes = attributes
+
+		self.feedSpecifier = ParsedOPMLFeedSpecifier(title: self.titleFromAttributes, feedDescription: attributes.opml_description, homePageURL: attributes.opml_htmlUrl, feedURL: attributes.opml_xmlUrl)
+
 	}
 
 	func addItem(_ item: OPMLItem) {

@@ -10,13 +10,13 @@ import Foundation
 // OPML allows for arbitrary attributes.
 // These are the common attributes in OPML files used as RSS subscription lists.
 
-private static let opmlTextKey = "text"
-private static let opmlTitleKey = "title"
-private static let opmlDescriptionKey = "description"
-private static let opmlTypeKey = "type"
-private static let opmlVersionKey = "version"
-private static let opmlHMTLURLKey = "htmlUrl"
-private static let opmlXMLURLKey = "xmlUrl"
+private let opmlTextKey = "text"
+private let opmlTitleKey = "title"
+private let opmlDescriptionKey = "description"
+private let opmlTypeKey = "type"
+private let opmlVersionKey = "version"
+private let opmlHMTLURLKey = "htmlUrl"
+private let opmlXMLURLKey = "xmlUrl"
 
 // A frequent error in OPML files is to mess up the capitalization,
 // so these do a case-insensitive lookup.

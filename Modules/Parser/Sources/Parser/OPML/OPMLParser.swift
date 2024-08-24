@@ -12,6 +12,7 @@ public final class OPMLParser {
 	let url: String
 	let data: Data
 
+	private let opmlDocument: OPMLDocument
 	private var itemStack = [OPMLItem]()
 	
 	enum OPMLParserError: Error {
@@ -22,9 +23,10 @@ public final class OPMLParser {
 
 		self.url = parserData.url
 		self.data = parserData.data
+		self.opmlDocument = OPMLDocument(url: parserData.url)
 	}
 
-	func parse() throws -> OPMLDocument? {
+	func parse() throws -> ParsedOPMLDocument {
 
 		guard canParseData() else {
 			throw OPMLParserError.notOPML
