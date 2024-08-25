@@ -389,6 +389,9 @@ static NSDate *RSParseW3CWithBytes(const char *bytes, NSUInteger numberOfBytes) 
 	if (hasMilliseconds) {
 		milliseconds = nextNumericValue(bytes, numberOfBytes, currentIndex, 3, &finalIndex);
 		currentIndex = finalIndex + 1;
+
+		// Igore more than 3 digits for fraction of a second
+		while (currentIndex < numberOfBytes && isdigit(bytes[currentIndex])) currentIndex++;
 	}
 
 	timeZoneOffset = parsedTimeZoneOffset(bytes, numberOfBytes, currentIndex);
