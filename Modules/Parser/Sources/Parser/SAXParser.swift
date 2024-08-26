@@ -17,10 +17,6 @@ protocol SAXParserDelegate {
 	func saxParser(_: SAXParser, xmlEndElement: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?)
 
 	func saxParser(_: SAXParser, xmlCharactersFound: XMLPointer, count: Int)
-
-	func saxParser(_: SAXParser, internedStringForName: XMLPointer, prefix: XMLPointer?) -> String?
-
-	func saxParser(_: SAXParser, internedStringForValue: XMLPointer, count: Int) -> String?
 }
 
 final class SAXParser {
@@ -111,24 +107,17 @@ final class SAXParser {
 				continue
 			}
 			let prefix = attributes[j + 1]
-			var attributeName = delegate.saxParser(self, internedStringForName: attribute, prefix: prefix)
-			if attributeName == nil {
-				attributeName = String(cString: attribute)
-				if let prefix {
-					let attributePrefix = String(cString: prefix)
-					attributeName = "\(attributePrefix):\(attributeName!)"
-				}
+			var attributeName = String(cString: attribute)
+			if let prefix {
+				let attributePrefix = String(cString: prefix)
+				attributeName = "\(attributePrefix):\(attributeName!)"
 			}
 
 			guard let valueStart = attributes[j + 3], let valueEnd = attributes[j + 4] else {
 				continue
 			}
 			let valueCount = valueEnd - valueStart
-
-			var value = delegate.saxParser(self, internedStringForValue: valueStart, count: Int(valueCount))
-			if value == nil {
-				value = String(bytes: UnsafeRawBufferPointer(start: valueStart, count: Int(valueCount)), encoding: .utf8)
-			}
+			var value = String(bytes: UnsafeRawBufferPointer(start: valueStart, count: Int(valueCount)), encoding: .utf8)
 
 			if let value, let attributeName {
 				dictionary[attributeName] = value
@@ -139,6 +128,12 @@ final class SAXParser {
 		}
 
 		return dictionary
+	}
+
+	func stringNoCopy(_ bytes: XMLPointer) -> String {
+
+		let length = strlen(bytes)
+		return NSString(bytesNoCopy: bytes, length: length, encoding: .utf8, freeWhenDone: false) as String
 	}
 }
 
