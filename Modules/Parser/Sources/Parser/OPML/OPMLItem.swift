@@ -8,9 +8,9 @@
 import Foundation
 import os
 
-class OPMLItem {
+public class OPMLItem {
 
-	public let feedSpecifier: ParsedOPMLFeedSpecifier
+	public let feedSpecifier: OPMLFeedSpecifier
 
 	public let attributes: [String: String]
 	public let titleFromAttributes: String?

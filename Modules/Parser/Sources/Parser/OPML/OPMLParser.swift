@@ -9,32 +9,63 @@ import Foundation
 
 public final class OPMLParser {
 
-	let url: String
-	let data: Data
+	private let url: String
+	private let data: Data
 
 	private let opmlDocument: OPMLDocument
+
 	private var itemStack = [OPMLItem]()
-	
-	enum OPMLParserError: Error {
-		case notOPML
+	private var currentItem: OPMLItem? {
+		itemStack.last
 	}
 
-	init(parserData: ParserData) {
+	/// Returns nil if data can’t be parsed (if it’s not OPML).
+	public static func document(with parserData: ParserData) -> OPMLDocument? {
+
+		let opmlParser = OPMLParser(parserData)
+		return opmlParser.parse()
+	}
+
+	init(_ parserData: ParserData) {
 
 		self.url = parserData.url
 		self.data = parserData.data
 		self.opmlDocument = OPMLDocument(url: parserData.url)
 	}
+}
 
-	func parse() throws -> ParsedOPMLDocument {
+private extension OPMLParser {
+
+	func parse() -> OPMLDocument? {
 
 		guard canParseData() else {
-			throw OPMLParserError.notOPML
+			return nil
 		}
 
-		let parser = SAXParser(delegate: self, data: data)
-		
+		pushItem(opmlDocument)
 
+		let saxParser = SAXParser(delegate: self, data: data)
+		saxParser.parse()
+	}
+
+	func canParseData() -> Bool {
+		
+		data.containsASCIIString("<opml")
+	}
+
+	func pushItem(_ item: OPMLItem) {
+
+		itemStack.append(item)
+	}
+
+	func popItem() {
+
+		assert(itemStack.count > 0)
+		guard itemStack.count > 0 else {
+			assertionFailure("itemStack.count must be > 0")
+		}
+
+		itemStack.dropLast()
 	}
 }
 
@@ -49,14 +80,6 @@ extension OPMLParser: SAXParserDelegate {
 	}
 
 	func saxParser(_: SAXParser, xmlCharactersFound: XMLPointer, count: Int) {
-
-	}
-
-	func saxParser(_: SAXParser, internedStringForName: XMLPointer, prefix: XMLPointer?) -> String? {
-
-	}
-
-	func saxParser(_: SAXParser, internedStringForValue: XMLPointer, count: Int) -> String? {
 
 	}
 }

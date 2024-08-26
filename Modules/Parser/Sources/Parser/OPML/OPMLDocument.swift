@@ -7,10 +7,10 @@
 
 import Foundation
 
-final class OPMLDocument: OPMLItem {
+public final class OPMLDocument: OPMLItem {
 
-	var title: String? = nil
-	var url: String? = nil
+	public var title: String? = nil
+	public var url: String? = nil
 
 	init(url: String?) {
 		self.url = url

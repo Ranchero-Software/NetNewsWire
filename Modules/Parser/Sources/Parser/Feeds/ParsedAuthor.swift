@@ -23,11 +23,11 @@ public struct ParsedAuthor: Hashable, Codable, Sendable {
 	}
 
 	/// Use when the actual property is unknown. Guess based on contents of the string. (This is common with RSS.)
-	convenience init(singleString: String) {
+	init(singleString: String) {
 
 		if singleString.contains("@") {
 			init(name: nil, url: nil, avatarURL: nil, emailAddress: singleString)
-		} else if singleString.lowercased.hasPrefix("http") {
+		} else if singleString.lowercased().hasPrefix("http") {
 			init(name: nil, url: singleString, avatarURL: nil, emailAddress: nil)
 		} else {
 			init(name: singleString, url: nil, avatarURL: nil, emailAddress: nil)

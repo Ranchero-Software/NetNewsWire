@@ -9,12 +9,12 @@ import Foundation
 
 public struct HTMLTag: Sendable {
 
-	public enum HTMLTagType {
+	public enum TagType {
 		case link
 		case meta
 	}
 
-	public let tagType: HTMLTagType
+	public let tagType: TagType
 	public let attributes: [String: String]?
 
 	public init(tagType: TagType, attributes: [String : String]?) {
