@@ -12,6 +12,10 @@ let package = Package(
 			name: "Parser",
 			type: .dynamic,
 			targets: ["Parser"]),
+		.library(
+			name: "SAX",
+			type: .dynamic,
+			targets: ["SAX"])
 	],
 	dependencies: [
 	],
@@ -20,6 +24,14 @@ let package = Package(
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
 		.target(
 			name: "Parser",
+			dependencies: [
+				"SAX"
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]),
+		.target(
+			name: "SAX",
 			dependencies: [],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")

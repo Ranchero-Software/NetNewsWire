@@ -10,9 +10,9 @@ import libxml2
 
 func SAXEqualStrings(_ s1: XMLPointer, _ s2: XMLPointer, length: Int? = nil) -> Bool {
 
-	if length == nil {
-		return Bool(xmlStrEqual(s1, s2))
+	if let length {
+		return xmlStrncmp(s1, s2, Int32(length)) == 0
 	}
 
-	return xmlStrncmp(s1, s2, length) == 0
+	return xmlStrEqual(s1, s2) != 0
 }

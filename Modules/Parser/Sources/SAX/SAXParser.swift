@@ -12,7 +12,7 @@ typealias XMLPointer = UnsafePointer<xmlChar>
 
 protocol SAXParserDelegate {
 
-	func saxParser(_: SAXParser, xmlStartElement: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafeMutablePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafeMutablePointer<XMLPointer?>?)
+	func saxParser(_: SAXParser, xmlStartElement: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?)
 
 	func saxParser(_: SAXParser, xmlEndElement: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?)
 
@@ -69,8 +69,8 @@ final class SAXParser {
 		xmlCtxtUseOptions(context, Int32(XML_PARSE_RECOVER.rawValue | XML_PARSE_NOENT.rawValue))
 
 		data.withUnsafeBytes { bufferPointer in
-			if let bytes = bufferPointer.bindMemory(to: CChar.self).baseAddress {
-				xmlParseChunk(context, bytes, CInt(data.count), 0)
+			if let bytes = bufferPointer.bindMemory(to: xmlChar.self).baseAddress {
+				xmlParseChunk(context, bytes, Int32(data.count), 0)
 			}
 		}
 
@@ -110,16 +110,16 @@ final class SAXParser {
 			var attributeName = String(cString: attribute)
 			if let prefix {
 				let attributePrefix = String(cString: prefix)
-				attributeName = "\(attributePrefix):\(attributeName!)"
+				attributeName = "\(attributePrefix):\(attributeName)"
 			}
 
 			guard let valueStart = attributes[j + 3], let valueEnd = attributes[j + 4] else {
 				continue
 			}
 			let valueCount = valueEnd - valueStart
-			var value = String(bytes: UnsafeRawBufferPointer(start: valueStart, count: Int(valueCount)), encoding: .utf8)
+			let value = String(bytes: UnsafeRawBufferPointer(start: valueStart, count: Int(valueCount)), encoding: .utf8)
 
-			if let value, let attributeName {
+			if let value {
 				dictionary[attributeName] = value
 			}
 
@@ -128,12 +128,6 @@ final class SAXParser {
 		}
 
 		return dictionary
-	}
-
-	func stringNoCopy(_ bytes: XMLPointer) -> String {
-
-		let length = strlen(bytes)
-		return NSString(bytesNoCopy: bytes, length: length, encoding: .utf8, freeWhenDone: false) as String
 	}
 }
 
@@ -148,7 +142,7 @@ private extension SAXParser {
 		delegate.saxParser(self, xmlCharactersFound: xmlCharacters, count: count)
 	}
 
-	func startElement(_ name: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafeMutablePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafeMutablePointer<XMLPointer?>?) {
+	func startElement(_ name: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
 
 		delegate.saxParser(self, xmlStartElement: name, prefix: prefix, uri: uri, namespaceCount: namespaceCount, namespaces: namespaces, attributeCount: attributeCount, attributesDefaultedCount: attributesDefaultedCount, attributes: attributes)
 	}
@@ -160,7 +154,7 @@ private extension SAXParser {
 	}
 }
 
-private func startElement(_ context: UnsafeMutableRawPointer?, name: XMLPointer?, prefix: XMLPointer?, URI: XMLPointer?, nb_namespaces: CInt, namespaces: UnsafeMutablePointer<XMLPointer?>?, nb_attributes: CInt, nb_defaulted: CInt, attributes: UnsafeMutablePointer<XMLPointer?>?) {
+private func startElement(_ context: UnsafeMutableRawPointer?, name: XMLPointer?, prefix: XMLPointer?, URI: XMLPointer?, nb_namespaces: CInt, namespaces: UnsafePointer<XMLPointer?>?, nb_attributes: CInt, nb_defaulted: CInt, attributes: UnsafeMutablePointer<XMLPointer?>?) {
 
 	guard let context, let name else {
 		return
