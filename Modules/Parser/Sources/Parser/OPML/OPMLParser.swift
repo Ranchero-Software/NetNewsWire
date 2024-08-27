@@ -19,6 +19,11 @@ public final class OPMLParser {
 		itemStack.last
 	}
 
+	struct XMLKey {
+		static let title = "title".utf8CString
+		static let outline = "outline".utf8CString
+	}
+
 	/// Returns nil if data can’t be parsed (if it’s not OPML).
 	public static func document(with parserData: ParserData) -> OPMLDocument? {
 
@@ -53,16 +58,16 @@ private extension OPMLParser {
 		data.containsASCIIString("<opml")
 	}
 
-	func pushItem(_ item: OPMLItem) {
+	func push(_ item: OPMLItem) {
 
 		itemStack.append(item)
 	}
 
 	func popItem() {
 
-		assert(itemStack.count > 0)
 		guard itemStack.count > 0 else {
 			assertionFailure("itemStack.count must be > 0")
+			return
 		}
 
 		itemStack.dropLast()
@@ -71,15 +76,40 @@ private extension OPMLParser {
 
 extension OPMLParser: SAXParserDelegate {
 
-	func saxParser(_: SAXParser, xmlStartElement: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafeMutablePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafeMutablePointer<XMLPointer?>?) {
+	func saxParser(_ saxParser: SAXParser, xmlStartElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafeMutablePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafeMutablePointer<XMLPointer?>?) {
 
+		if SAXEqualStrings(localName, XMLKey.title) {
+			saxParser.beginStoringCharacters()
+			return
+		}
+
+		if !SAXEqualStrings(localName, XMLKey.outline) {
+			return
+		}
+
+		let attributesDictionary = saxParser.attributesDictionary(attributes, attributeCount: attributeCount)
+		let item = OPMLItem(attributes: attributesDictionary)
+
+		currentItem?.add(item)
+		push(item)
 	}
 
-	func saxParser(_: SAXParser, xmlEndElement: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
+	func saxParser(_ saxParser: SAXParser, xmlEndElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
 
+		if SAXEqualStrings(localname, XMLKey.title) {
+			if let item = currentItem as? OPMLDocument {
+				item.title = saxParser.currentStringWithTrimmedWhitespace
+			}
+			return
+		}
+
+		if SAXEqualStrings(localName, XMLKey.outline) {
+			popItem()
+		}
 	}
 
 	func saxParser(_: SAXParser, xmlCharactersFound: XMLPointer, count: Int) {
 
+		// Nothing to do, but method is required.
 	}
 }
