@@ -73,7 +73,7 @@ private extension OPMLParser {
 			return
 		}
 
-		_ = itemStack.dropLast()
+		itemStack.removeLast()
 	}
 }
 

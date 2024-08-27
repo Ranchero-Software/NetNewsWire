@@ -16,7 +16,7 @@ class OPMLTests: XCTestCase {
 
 	func testOPMLParsingPerformance() {
 
-		// 0.002 sec on my 2012 iMac.
+		// 0.003 sec on my M1 Mac Studio 2022
 		self.measure {
 			let _ = OPMLParser.document(with: self.subsData)
 		}
