@@ -27,8 +27,9 @@ public class OPMLItem {
 
 		if let feedURL = attributes?.opml_xmlUrl {
 			self.feedSpecifier = OPMLFeedSpecifier(title: self.titleFromAttributes, feedDescription: attributes?.opml_description, homePageURL: attributes?.opml_htmlUrl, feedURL: feedURL)
+		} else {
+			self.feedSpecifier = nil
 		}
-
 	}
 
 	func add(_ item: OPMLItem) {

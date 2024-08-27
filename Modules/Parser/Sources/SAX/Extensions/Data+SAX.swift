@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Data {
+public extension Data {
 
 	/// Return true if the data contains a given String.
 	///

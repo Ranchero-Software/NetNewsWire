@@ -15,13 +15,26 @@ let package = Package(
 		.library(
 			name: "SAX",
 			type: .dynamic,
-			targets: ["SAX"])
+			targets: ["SAX"]),
+		.library(
+			name: "OPMLParser",
+			type: .dynamic,
+			targets: ["OPMLParser"])
+
 	],
 	dependencies: [
 	],
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
+		.target(
+			name: "OPMLParser",
+			dependencies: [
+				"SAX"
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]),
 		.target(
 			name: "Parser",
 			dependencies: [
@@ -40,6 +53,10 @@ let package = Package(
 			name: "ParserTests",
 			dependencies: ["Parser"],
 			exclude: ["Info.plist"],
+			resources: [.copy("Resources")]),
+		.testTarget(
+			name: "OPMLParserTests",
+			dependencies: ["OPMLParser"],
 			resources: [.copy("Resources")]),
 	]
 )

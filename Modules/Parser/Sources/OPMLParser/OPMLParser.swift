@@ -6,13 +6,16 @@
 //
 
 import Foundation
+import SAX
 
 public final class OPMLParser {
 
-	private let url: String
-	private let data: Data
+	private let parserData: ParserData
+	private var data: Data {
+		parserData.data
+	}
 
-	private let opmlDocument: OPMLDocument
+	private var opmlDocument: OPMLDocument?
 
 	private var itemStack = [OPMLItem]()
 	private var currentItem: OPMLItem? {
@@ -28,26 +31,26 @@ public final class OPMLParser {
 	public static func document(with parserData: ParserData) -> OPMLDocument? {
 
 		let opmlParser = OPMLParser(parserData)
-		return opmlParser.parse()
+		opmlParser.parse()
+		return opmlParser.opmlDocument
 	}
 
 	init(_ parserData: ParserData) {
 
-		self.url = parserData.url
-		self.data = parserData.data
-		self.opmlDocument = OPMLDocument(url: parserData.url)
+		self.parserData = parserData
 	}
 }
 
 private extension OPMLParser {
 
-	func parse() -> OPMLDocument? {
+	func parse() {
 
 		guard canParseData() else {
-			return nil
+			return
 		}
 
-		pushItem(opmlDocument)
+		opmlDocument = OPMLDocument(url: parserData.url)
+		push(opmlDocument!)
 
 		let saxParser = SAXParser(delegate: self, data: data)
 		saxParser.parse()
@@ -70,20 +73,20 @@ private extension OPMLParser {
 			return
 		}
 
-		itemStack.dropLast()
+		_ = itemStack.dropLast()
 	}
 }
 
 extension OPMLParser: SAXParserDelegate {
 
-	func saxParser(_ saxParser: SAXParser, xmlStartElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
+	public func saxParser(_ saxParser: SAXParser, xmlStartElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
 
-		if SAXEqualStrings(localName, XMLKey.title) {
+		if SAXEqualTags(localName, XMLKey.title) {
 			saxParser.beginStoringCharacters()
 			return
 		}
 
-		if !SAXEqualStrings(localName, XMLKey.outline) {
+		if !SAXEqualTags(localName, XMLKey.outline) {
 			return
 		}
 
@@ -94,21 +97,21 @@ extension OPMLParser: SAXParserDelegate {
 		push(item)
 	}
 
-	func saxParser(_ saxParser: SAXParser, xmlEndElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
+	public func saxParser(_ saxParser: SAXParser, xmlEndElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
 
-		if SAXEqualStrings(localname, XMLKey.title) {
+		if SAXEqualTags(localName, XMLKey.title) {
 			if let item = currentItem as? OPMLDocument {
 				item.title = saxParser.currentStringWithTrimmedWhitespace
 			}
 			return
 		}
 
-		if SAXEqualStrings(localName, XMLKey.outline) {
+		if SAXEqualTags(localName, XMLKey.outline) {
 			popItem()
 		}
 	}
 
-	func saxParser(_: SAXParser, xmlCharactersFound: XMLPointer, count: Int) {
+	public func saxParser(_: SAXParser, xmlCharactersFound: XMLPointer, count: Int) {
 
 		// Nothing to do, but method is required.
 	}

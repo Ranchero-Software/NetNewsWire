@@ -9,7 +9,7 @@ import Foundation
 
 public struct HTMLTag: Sendable {
 
-	public enum TagType {
+	public enum TagType: Sendable {
 		case link
 		case meta
 	}

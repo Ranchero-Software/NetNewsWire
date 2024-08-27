@@ -8,9 +8,9 @@
 import Foundation
 import libxml2
 
-typealias XMLPointer = UnsafePointer<xmlChar>
+public typealias XMLPointer = UnsafePointer<xmlChar>
 
-protocol SAXParserDelegate {
+public protocol SAXParserDelegate {
 
 	func saxParser(_: SAXParser, xmlStartElement: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?)
 
@@ -19,11 +19,11 @@ protocol SAXParserDelegate {
 	func saxParser(_: SAXParser, xmlCharactersFound: XMLPointer, count: Int)
 }
 
-final class SAXParser {
+public final class SAXParser {
 
 	fileprivate let delegate: SAXParserDelegate
 
-	var currentCharacters: Data? { // UTF-8 encoded
+	public var currentCharacters: Data? { // UTF-8 encoded
 
 		guard storingCharacters else {
 			return nil
@@ -33,7 +33,7 @@ final class SAXParser {
 
 	// Conveniences to get string version of currentCharacters
 
-	var currentString: String? {
+	public var currentString: String? {
 
 		guard let d = currentCharacters, !d.isEmpty else {
 			return nil
@@ -41,7 +41,7 @@ final class SAXParser {
 		return String(data: d, encoding: .utf8)
 	}
 
-	var currentStringWithTrimmedWhitespace: String? {
+	public var currentStringWithTrimmedWhitespace: String? {
 
 		guard let s = currentString else {
 			return nil
@@ -53,13 +53,13 @@ final class SAXParser {
 	private var storingCharacters = false
 	private var characters = Data()
 
-	init(delegate: SAXParserDelegate, data: Data) {
+	public init(delegate: SAXParserDelegate, data: Data) {
 
 		self.delegate = delegate
 		self.data = data
 	}
 
-	func parse() {
+	public func parse() {
 		
 		guard !data.isEmpty else {
 			return
@@ -69,7 +69,7 @@ final class SAXParser {
 		xmlCtxtUseOptions(context, Int32(XML_PARSE_RECOVER.rawValue | XML_PARSE_NOENT.rawValue))
 
 		data.withUnsafeBytes { bufferPointer in
-			if let bytes = bufferPointer.bindMemory(to: xmlChar.self).baseAddress {
+			if let bytes = bufferPointer.bindMemory(to: CChar.self).baseAddress {
 				xmlParseChunk(context, bytes, Int32(data.count), 0)
 			}
 		}
@@ -79,7 +79,7 @@ final class SAXParser {
 	}
 
 	/// Delegate can call from xmlStartElement. Characters will be available in xmlEndElement as currentCharacters property. Storing characters is stopped after each xmlEndElement.
-	func beginStoringCharacters() {
+	public func beginStoringCharacters() {
 
 		storingCharacters = true
 		characters.count = 0
@@ -91,7 +91,7 @@ final class SAXParser {
 		characters.count = 0
 	}
 
-	func attributesDictionary(_ attributes: UnsafePointer<XMLPointer?>?, attributeCount: Int) -> [String: String]? {
+	public func attributesDictionary(_ attributes: UnsafePointer<XMLPointer?>?, attributeCount: Int) -> [String: String]? {
 
 		guard attributeCount > 0, let attributes else {
 			return nil
@@ -154,7 +154,7 @@ private extension SAXParser {
 	}
 }
 
-private func startElement(_ context: UnsafeMutableRawPointer?, name: XMLPointer?, prefix: XMLPointer?, URI: XMLPointer?, nb_namespaces: CInt, namespaces: UnsafePointer<XMLPointer?>?, nb_attributes: CInt, nb_defaulted: CInt, attributes: UnsafeMutablePointer<XMLPointer?>?) {
+private func startElement(_ context: UnsafeMutableRawPointer?, name: XMLPointer?, prefix: XMLPointer?, URI: XMLPointer?, nb_namespaces: CInt, namespaces: UnsafeMutablePointer<XMLPointer?>?, nb_attributes: CInt, nb_defaulted: CInt, attributes: UnsafeMutablePointer<XMLPointer?>?) {
 
 	guard let context, let name else {
 		return
@@ -194,8 +194,9 @@ nonisolated(unsafe) private var saxHandlerStruct: xmlSAXHandler = {
 	var handler = xmlSAXHandler()
 
 	handler.characters = charactersFound
-	handler.startElement = startElement
-	handler.endElement = endElement
+	handler.startElementNs = startElement
+	handler.endElementNs = endElement
+	handler.initialized = XML_SAX2_MAGIC
 
 	return handler
 }()

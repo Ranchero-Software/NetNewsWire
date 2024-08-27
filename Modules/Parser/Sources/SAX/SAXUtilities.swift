@@ -8,11 +8,26 @@
 import Foundation
 import libxml2
 
-func SAXEqualStrings(_ s1: XMLPointer, _ s2: XMLPointer, length: Int? = nil) -> Bool {
+public func SAXEqualTags(_ localName: XMLPointer, _ tag: ContiguousArray<Int8>) -> Bool {
 
-	if let length {
-		return xmlStrncmp(s1, s2, Int32(length)) == 0
+	return tag.withUnsafeBufferPointer { bufferPointer in
+		
+		let tagCount = tag.count
+
+		for i in 0..<tagCount {
+
+			let localNameCharacter = localName[i]
+			if localNameCharacter == 0 {
+				return false
+			}
+
+			let tagCharacter = UInt8(tag[i])
+			if localNameCharacter != tagCharacter {
+				return false
+			}
+		}
+
+		// localName might actually be longer — make sure it’s the same length as tag.
+		return localName[tagCount] == 0
 	}
-
-	return xmlStrEqual(s1, s2) != 0
 }

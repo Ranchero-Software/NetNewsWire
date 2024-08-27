@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Dictionary where Key == String, Value == String {
+public extension Dictionary where Key == String, Value == String {
 
 	func object(forCaseInsensitiveKey key: String) -> String? {
 
