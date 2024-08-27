@@ -103,6 +103,7 @@ extension OPMLParser: SAXParserDelegate {
 			if let item = currentItem as? OPMLDocument {
 				item.title = saxParser.currentStringWithTrimmedWhitespace
 			}
+			saxParser.endStoringCharacters()
 			return
 		}
 

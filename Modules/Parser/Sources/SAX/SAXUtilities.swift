@@ -12,9 +12,9 @@ public func SAXEqualTags(_ localName: XMLPointer, _ tag: ContiguousArray<Int8>) 
 
 	return tag.withUnsafeBufferPointer { bufferPointer in
 		
-		let tagCount = tag.count
+		let tagCount = tag.count // includes 0 terminator
 
-		for i in 0..<tagCount {
+		for i in 0..<tagCount - 1 {
 
 			let localNameCharacter = localName[i]
 			if localNameCharacter == 0 {
@@ -28,6 +28,6 @@ public func SAXEqualTags(_ localName: XMLPointer, _ tag: ContiguousArray<Int8>) 
 		}
 
 		// localName might actually be longer — make sure it’s the same length as tag.
-		return localName[tagCount] == 0
+		return localName[tagCount - 1] == 0
 	}
 }

@@ -85,7 +85,7 @@ public final class SAXParser {
 		characters.count = 0
 	}
 
-	func endStoringCharacters() {
+	public func endStoringCharacters() {
 
 		storingCharacters = false
 		characters.count = 0
