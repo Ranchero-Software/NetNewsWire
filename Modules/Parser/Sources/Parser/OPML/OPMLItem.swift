@@ -10,22 +10,24 @@ import os
 
 public class OPMLItem {
 
-	public let feedSpecifier: OPMLFeedSpecifier
+	public let feedSpecifier: OPMLFeedSpecifier?
 
-	public let attributes: [String: String]
+	public let attributes: [String: String]?
 	public let titleFromAttributes: String?
 
 	public var items: [OPMLItem]?
 	public var isFolder: Bool {
-		items.count > 0
+		(items?.count ?? 0) > 0
 	}
 
 	init(attributes: [String : String]?) {
 
-		self.titleFromAttributes = attributes.opml_title ?? attributes.opml_text
+		self.titleFromAttributes = attributes?.opml_title ?? attributes?.opml_text
 		self.attributes = attributes
 
-		self.feedSpecifier = ParsedOPMLFeedSpecifier(title: self.titleFromAttributes, feedDescription: attributes.opml_description, homePageURL: attributes.opml_htmlUrl, feedURL: attributes.opml_xmlUrl)
+		if let feedURL = attributes?.opml_xmlUrl {
+			self.feedSpecifier = OPMLFeedSpecifier(title: self.titleFromAttributes, feedDescription: attributes?.opml_description, homePageURL: attributes?.opml_htmlUrl, feedURL: feedURL)
+		}
 
 	}
 

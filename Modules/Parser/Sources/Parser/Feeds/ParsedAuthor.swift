@@ -26,11 +26,11 @@ public struct ParsedAuthor: Hashable, Codable, Sendable {
 	init(singleString: String) {
 
 		if singleString.contains("@") {
-			init(name: nil, url: nil, avatarURL: nil, emailAddress: singleString)
+			self.init(name: nil, url: nil, avatarURL: nil, emailAddress: singleString)
 		} else if singleString.lowercased().hasPrefix("http") {
-			init(name: nil, url: singleString, avatarURL: nil, emailAddress: nil)
+			self.init(name: nil, url: singleString, avatarURL: nil, emailAddress: nil)
 		} else {
-			init(name: singleString, url: nil, avatarURL: nil, emailAddress: nil)
+			self.init(name: singleString, url: nil, avatarURL: nil, emailAddress: nil)
 		}
 	}
 
