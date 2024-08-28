@@ -9,9 +9,9 @@ let package = Package(
 	products: [
 		// Products define the executables and libraries a package produces, and make them visible to other packages.
 		.library(
-			name: "Parser",
+			name: "FeedParser",
 			type: .dynamic,
-			targets: ["Parser"]),
+			targets: ["FeedParser"]),
 		.library(
 			name: "SAX",
 			type: .dynamic,
@@ -36,7 +36,7 @@ let package = Package(
 				.enableExperimentalFeature("StrictConcurrency")
 			]),
 		.target(
-			name: "Parser",
+			name: "FeedParser",
 			dependencies: [
 				"SAX"
 			],
@@ -50,8 +50,8 @@ let package = Package(
 				.enableExperimentalFeature("StrictConcurrency")
 			]),
 		.testTarget(
-			name: "ParserTests",
-			dependencies: ["Parser"],
+			name: "FeedParserTests",
+			dependencies: ["FeedParser"],
 			exclude: ["Info.plist"],
 			resources: [.copy("Resources")]),
 		.testTarget(

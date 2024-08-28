@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ParsedFeed: Sendable {
+public class ParsedFeed: Sendable {
 
 	public let type: FeedType
 	public let title: String?
