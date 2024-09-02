@@ -49,6 +49,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FeedParser"
+               BuildableName = "FeedParser"
+               BlueprintName = "FeedParser"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -85,6 +99,16 @@
                BlueprintIdentifier = "FeedParserTests"
                BuildableName = "FeedParserTests"
                BlueprintName = "FeedParserTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DateParserTests"
+               BuildableName = "DateParserTests"
+               BlueprintName = "DateParserTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

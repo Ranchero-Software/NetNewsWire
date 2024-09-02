@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SAX
 
 // See https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md
 // Also: http://cyber.harvard.edu/rss/rss.html

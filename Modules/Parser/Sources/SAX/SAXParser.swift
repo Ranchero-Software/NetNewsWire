@@ -91,7 +91,9 @@ public final class SAXParser {
 		characters.count = 0
 	}
 
-	public func attributesDictionary(_ attributes: UnsafePointer<XMLPointer?>?, attributeCount: Int) -> [String: String]? {
+	public typealias XMLAttributesDictionary = [String: String]
+
+	public func attributesDictionary(_ attributes: UnsafePointer<XMLPointer?>?, attributeCount: Int) -> XMLAttributesDictionary? {
 
 		guard attributeCount > 0, let attributes else {
 			return nil

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SAX
 
 // See https://jsonfeed.org/version/1.1
 

@@ -22,11 +22,6 @@ public final class OPMLParser {
 		itemStack.last
 	}
 
-	struct XMLKey {
-		static let title = "title".utf8CString
-		static let outline = "outline".utf8CString
-	}
-
 	/// Returns nil if data can’t be parsed (if it’s not OPML).
 	public static func document(with parserData: ParserData) -> OPMLDocument? {
 
@@ -36,7 +31,6 @@ public final class OPMLParser {
 	}
 
 	init(_ parserData: ParserData) {
-
 		self.parserData = parserData
 	}
 }
@@ -79,14 +73,19 @@ private extension OPMLParser {
 
 extension OPMLParser: SAXParserDelegate {
 
+	private struct XMLName {
+		static let title = "title".utf8CString
+		static let outline = "outline".utf8CString
+	}
+
 	public func saxParser(_ saxParser: SAXParser, xmlStartElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
 
-		if SAXEqualTags(localName, XMLKey.title) {
+		if SAXEqualTags(localName, XMLName.title) {
 			saxParser.beginStoringCharacters()
 			return
 		}
 
-		if !SAXEqualTags(localName, XMLKey.outline) {
+		if !SAXEqualTags(localName, XMLName.outline) {
 			return
 		}
 
@@ -99,7 +98,7 @@ extension OPMLParser: SAXParserDelegate {
 
 	public func saxParser(_ saxParser: SAXParser, xmlEndElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
 
-		if SAXEqualTags(localName, XMLKey.title) {
+		if SAXEqualTags(localName, XMLName.title) {
 			if let item = currentItem as? OPMLDocument {
 				item.title = saxParser.currentStringWithTrimmedWhitespace
 			}
@@ -107,7 +106,7 @@ extension OPMLParser: SAXParserDelegate {
 			return
 		}
 
-		if SAXEqualTags(localName, XMLKey.outline) {
+		if SAXEqualTags(localName, XMLName.outline) {
 			popItem()
 		}
 	}

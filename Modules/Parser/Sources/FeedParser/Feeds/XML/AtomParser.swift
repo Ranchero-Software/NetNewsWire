@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SAX
 
 // RSSParser wraps the Objective-C RSAtomParser.
 //

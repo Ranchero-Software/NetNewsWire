@@ -19,10 +19,14 @@ let package = Package(
 		.library(
 			name: "OPMLParser",
 			type: .dynamic,
-			targets: ["OPMLParser"])
-
+			targets: ["OPMLParser"]),
+		.library(
+			name: "DateParser",
+			type: .dynamic,
+			targets: ["DateParser"])
 	],
 	dependencies: [
+		.package(path: "../FoundationExtras"),
 	],
 	targets: [
 		// Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -38,13 +42,21 @@ let package = Package(
 		.target(
 			name: "FeedParser",
 			dependencies: [
-				"SAX"
+				"SAX",
+				"FoundationExtras",
+				"DateParser"
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
 			]),
 		.target(
 			name: "SAX",
+			dependencies: [],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]),
+		.target(
+			name: "DateParser",
 			dependencies: [],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
@@ -58,6 +70,9 @@ let package = Package(
 			name: "OPMLParserTests",
 			dependencies: ["OPMLParser"],
 			resources: [.copy("Resources")]),
+		.testTarget(
+			name: "DateParserTests",
+			dependencies: ["DateParser"])
 	]
 )
 

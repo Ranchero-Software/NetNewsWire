@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ParsedItem: Hashable, Sendable {
+public final class ParsedItem: Hashable, Sendable {
 
 	public let syncServiceID: String? //Nil when not syncing
 	public let uniqueID: String //RSS guid, for instance; may be calculated
