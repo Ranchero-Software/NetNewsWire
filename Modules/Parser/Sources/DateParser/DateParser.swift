@@ -326,11 +326,11 @@ private extension DateParser {
 		timeInfo.tm_wday = -1
 		timeInfo.tm_yday = -1
 		timeInfo.tm_isdst = -1
-		timeInfo.tm_gmtoff = timeZoneOffset;
+		timeInfo.tm_gmtoff = 0;
 		timeInfo.tm_zone = nil;
 
-		var rawTime = timegm(&timeInfo)
-		if rawTime == time_t(UInt.max) {
+		var rawTime = timegm(&timeInfo) - timeZoneOffset
+		if rawTime == time_t(UInt32.max) {
 
 			// NSCalendar is super-amazingly slow (which is partly why this parser exists),
 			// so this is used only when the date is far enough in the future
