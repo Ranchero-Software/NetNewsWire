@@ -9,8 +9,6 @@ import Foundation
 
 public final class DateParser {
 
-	typealias DateBuffer = UnsafeBufferPointer<UInt8>
-
 	// MARK: - Public API
 
 	/// Parse W3C and pubDate dates — used for feed parsing.
@@ -39,279 +37,14 @@ public final class DateParser {
 			return parseW3CDate(buffer, numberOfBytes)
 		}
 	}
-}
 
-// MARK: - Private
-
-private extension DateParser {
-
-	struct DateCharacter {
-
-		static let space = Character(" ").asciiValue
-		static let `return` = Character("\r").asciiValue
-		static let newline = Character("\n").asciiValue
-		static let tab = Character("\t").asciiValue
-		static let hyphen = Character("-").asciiValue
-		static let comma = Character(",").asciiValue
-		static let dot = Character(".").asciiValue
-		static let colon = Character(":").asciiValue
-		static let plus = Character("+").asciiValue
-		static let minus = Character("-").asciiValue
-		static let Z = Character("Z").asciiValue
-		static let z = Character("z").asciiValue
-		static let F = Character("F").asciiValue
-		static let f = Character("f").asciiValue
-		static let S = Character("S").asciiValue
-		static let s = Character("s").asciiValue
-		static let O = Character("O").asciiValue
-		static let o = Character("o").asciiValue
-		static let N = Character("N").asciiValue
-		static let n = Character("n").asciiValue
-		static let D = Character("D").asciiValue
-		static let d = Character("d").asciiValue
-	}
-
-	enum Month: Int {
-
-		January = 1,
-		February,
-		March,
-		April,
-		May,
-		June,
-		July,
-		August,
-		September,
-		October,
-		November,
-		December
-	}
-
-	// MARK: - Standard Formats
-
-	static func dateIsW3CDate(_ bytes: DateBuffer, numberOfBytes: Int) -> Bool {
-
-		// Something like 2010-11-17T08:40:07-05:00
-		// But might be missing T character in the middle.
-		// Looks for four digits in a row followed by a -.
-
-		for i in 0..<numberOfBytes - 4 {
-
-			let ch = bytes[i]
-			// Skip whitespace.
-			if ch == DateCharacter.space || ch == DateCharacter.`return` || ch == DateCharacter.newline || ch == DateCharacter.tab {
-				continue
-			}
-
-			assert(i + 4 < numberOfBytes)
-			// First non-whitespace character must be the beginning of the year, as in `2010-`
-			return isdigit(ch) && isdigit(bytes[i + 1]) && isdigit(bytes[i + 2]) && isdigit(bytes[i + 3]) && bytes[i + 4] == DateCharacter.hyphen
-		}
-
-		return false
-	}
-
-	static func dateIsPubDate(_ bytes: DateBuffer, numberOfBytes: Int) -> Bool {
-
-		for ch in bytes {
-			if ch == DateCharacter.space || ch == DateCharacter.comma {
-				return true
-			}
-		}
-
-		return false
-	}
-
-	static func parseW3CDate(_ bytes: DateBuffer, numberOfBytes: Int) -> Date {
-
-		/*@"yyyy'-'MM'-'dd'T'HH':'mm':'ss"
-		 @"yyyy-MM-dd'T'HH:mm:sszzz"
-		 @"yyyy-MM-dd'T'HH:mm:ss'.'SSSzzz"
-		 etc.*/
-
-		var finalIndex = 0
-
-		let year = nextNumericValue(bytes, numberOfBytes, 0, 4, &finalIndex)
-		let month = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex)
-		let day = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex)
-		let hour = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex)
-		let minute = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex)
-		let second = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex)
-
-		let currentIndex = finalIndex + 1
-
-		let milliseconds = {
-			var ms = 0
-			let hasMilliseconds = (currentIndex < numberOfBytes) && (bytes[currentIndex] == DateCharacter.dot)
-			if hasMilliseconds {
-				ms = nextNumericValue(bytes, numberOfBytes, currentIndex, 3, &finalIndex)
-				currentIndex = finalIndex + 1
-			}
-			return ms
-		}()
-
-		let timeZoneOffset = parsedtimeZoneOffset(bytes, numberOfBytes, currentIndex)
-
-		return dateWithYearMonthDayHourMinuteSecondAndtimeZoneOffset(year, month, day, hour, minute, second, milliseconds, timeZoneOffset)
-	}
-
-	static func parsePubDate(_ bytes: DateBuffer, numberOfBytes: Int) -> Date {
-
-		var finalIndex = 0
-
-		let day = nextNumericValue(bytes, numberOfBytes, 0, 2, &finalIndex) ?? 1
-		let month = nextMonthValue(bytes, numberOfBytes, finalIndex + 1, &finalIndex)
-		let year = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 4, &finalIndex)
-		let hour = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) ?? 0
-		let minute = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) ?? 0
-
-		var currentIndex = finalIndex + 1
-
-		let second = {
-			var s = 0
-			let hasSeconds = (currentIndex < numberOfBytes) && (bytes[currentIndex] == DateCharacter.colon)
-			if hasSeconds {
-				s = nextNumericValue(bytes, numberOfBytes, currentIndex, 2, &finalIndex)
-			}
-			return s
-		}()
-
-		currentIndex = finalIndex + 1
-
-		let timeZoneOffset = {
-			var offset = 0
-			let hasTimeZone = (currentIndex < numberOfBytes) && (bytes[currentIndex] == DateCharacter.space)
-			if hasTimeZone {
-				offset = parsedtimeZoneOffset(bytes, numberOfBytes, currentIndex)
-			}
-			return offset
-		}()
-
-		return dateWithYearMonthDayHourMinuteSecondAndtimeZoneOffset(year, month, day, hour, minute, second, 0, timeZoneOffset)
-	}
-
-	// MARK: - Date Creation
-
-	static func dateWithYearMonthDayHourMinuteSecondAndtimeZoneOffset(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int, _ milliseconds: Int, _ timeZoneOffset: Int) {
-
-		var timeInfo = tm()
-		timeInfo.tm_sec = CInt(second)
-		timeInfo.tm_min = CInt(minute)
-		timeInfo.tm_hour = CInt(hour)
-		timeInfo.tm_mday = CInt(day)
-		timeInfo.tm_mon = CInt(month - 1) //It's 1-based coming in
-		timeInfo.tm_year = CInt(year - 1900) //see time.h -- it's years since 1900
-		timeInfo.tm_wday = -1
-		timeInfo.tm_yday = -1
-		timeInfo.tm_isdst = -1
-		timeInfo.tm_gmtoff = timeZoneOffset;
-		timeInfo.tm_zone = nil;
-
-		var rawTime = timegm(&timeInfo)
-		if rawTime == time_t(UInt.max) {
-
-			// NSCalendar is super-amazingly slow (which is partly why this parser exists),
-			// so this is used only when the date is far enough in the future
-			// (19 January 2038 03:14:08Z on 32-bit systems) that timegm fails.
-			// Hopefully by the time we consistently need dates that far in the future
-			// the performance of NSCalendar won’t be an issue.
-
-			var dateComponents = DateComponents()
-
-			dateComponents.timeZone = TimeZone(forSecondsFromGMT: timeZoneOffset)
-			dateComponents.year = year
-			dateComponents.month = month
-			dateComponents.day = day
-			dateComponents.hour = hour
-			dateComponents.minute = minute
-			dateComponents.second = second + (milliseconds / 1000)
-
-			return Calendar.autoupdatingCurrent.date(from: dateComponents)
-		}
-
-		if milliseconds > 0 {
-			rawTime += Float(milliseconds) / 1000.0
-		}
-
-		return Date(timeIntervalSince1970: rawTime)
-	}
-
-	// MARK: - Time Zones and Offsets
-
-	static let kGMT = "GMT".utf8CString
-	static let kUTC = "UTC".utf8CString
-
-	static func parsedTimeZoneOffset(_ bytes: DateBuffer, _ numberOfBytes: Int, _ startingIndex: Int) -> Int {
-
-		var timeZoneCharacters: [CChar] = [0, 0, 0, 0, 0, 0] // nil-terminated last character
-		var numberOfCharactersFound = 0
-		var hasAtLeastOneAlphaCharacter = false
-
-		for i in startingIndex..<numberOfBytes {
-			let ch = bytes[i]
-			if ch == DateCharacter.colon || ch == DateCharacter.space {
-				continue
-			}
-			let isAlphaCharacter = isalpha(ch)
-			if isAlphaCharacter {
-				hasAtLeastOneAlphaCharacter = true
-			}
-			if isAlphaCharacter || isdigit(ch) || ch == DateCharacter.plus || ch == DateCharacter.minus {
-				numberOfCharactersFound += 1
-				timeZoneCharacters[numberOfCharactersFound - 1] = ch
-			}
-			if numberOfCharactersFound >= 5 {
-				break
-			}
-		}
-
-		if numberOfCharactersFound < 1 || timeZoneCharacters[0] == DateCharacter.Z || timeZoneCharacters[0] == DateCharacter.z {
-			return 0
-		}
-		if strcasestr(timeZoneCharacters, kGMT) != nil || strcasestr(timeZoneCharacters, kUTC) != nil {
-			return 0
-		}
-
-		if hasAtLeastOneAlphaCharacter {
-			return offsetInSecondsForTimeZoneAbbreviation(timeZoneCharacters)
-		}
-		return offsetInSecondsForOffsetCharacters(timeZoneCharacters)
-	}
-
-	static func offsetInSecondsForOffsetCharacters(_ timeZoneCharacters: DateBuffer) {
-
-		let isPlus = timeZoneCharacters[0] == DateCharacter.plus
-
-		var finalIndex = 0
-		let numberOfCharacters = strlen(timeZoneCharacters)
-		let hours = nextNumericValue(timeZoneCharacters, numberOfCharacters, 0, 2, &finalIndex) ?? 0
-		let minutes = nextNumericValue(timeZoneCharacters, numberOfCharacters, finalIndex + 1, 2, &finalIndex) ?? 0
-		
-		if hours == 0 && minutes == 0 {
-			return 0
-		}
-
-		var seconds = (hours * 60 * 60) + (minutes * 60)
-		if !isPlus {
-			seconds = 0 - seconds
-		}
-
-		return seconds
-	}
-
-	/// Returns offset in seconds.
-	static func timeZoneOffset(_ hours: Int, _ minutes: Int) -> Int {
-
-		if hours < 0 {
-			return (hours * 60 * 60) - (minutes * 60)
-		}
-		return (hours * 60 * 60) + (minutes * 60)
-		}
+	private typealias DateBuffer = UnsafeBufferPointer<UInt8>
 
 	// See http://en.wikipedia.org/wiki/List_of_time_zone_abbreviations for list
-	private let timeZoneTable: [String: Int] = [
+	private static let timeZoneTable: [String: Int] = [
 
 		"GMT": timeZoneOffset(0, 0),
+		"UTC": timeZoneOffset(0, 0),
 		"PDT": timeZoneOffset(-7, 0),
 		"PST": timeZoneOffset(-8, 0),
 		"EST": timeZoneOffset(-5, 0),
@@ -408,8 +141,292 @@ private extension DateParser {
 		"YAKT": timeZoneOffset(9, 0),
 		"YEKT": timeZoneOffset(5, 0)
 	]
+}
 
-	static func offsetInSecondsForTimeZoneAbbreviation(_ abbreviation: DateBuffer) -> Int? {
+// MARK: - Private
+
+private extension DateParser {
+
+	struct DateCharacter {
+
+		static let space = Character(" ").asciiValue!
+		static let `return` = Character("\r").asciiValue!
+		static let newline = Character("\n").asciiValue!
+		static let tab = Character("\t").asciiValue!
+		static let hyphen = Character("-").asciiValue!
+		static let comma = Character(",").asciiValue!
+		static let dot = Character(".").asciiValue!
+		static let colon = Character(":").asciiValue!
+		static let plus = Character("+").asciiValue!
+		static let minus = Character("-").asciiValue!
+		static let A = Character("A").asciiValue!
+		static let a = Character("a").asciiValue!
+		static let D = Character("D").asciiValue!
+		static let d = Character("d").asciiValue!
+		static let F = Character("F").asciiValue!
+		static let f = Character("f").asciiValue!
+		static let J = Character("J").asciiValue!
+		static let j = Character("j").asciiValue!
+		static let M = Character("M").asciiValue!
+		static let m = Character("m").asciiValue!
+		static let N = Character("N").asciiValue!
+		static let n = Character("n").asciiValue!
+		static let O = Character("O").asciiValue!
+		static let o = Character("o").asciiValue!
+		static let S = Character("S").asciiValue!
+		static let s = Character("s").asciiValue!
+		static let U = Character("U").asciiValue!
+		static let u = Character("u").asciiValue!
+		static let Y = Character("Y").asciiValue!
+		static let y = Character("y").asciiValue!
+		static let Z = Character("Z").asciiValue!
+		static let z = Character("z").asciiValue!
+	}
+
+	enum Month: Int {
+
+		case January = 1,
+		February,
+		March,
+		April,
+		May,
+		June,
+		July,
+		August,
+		September,
+		October,
+		November,
+		December
+	}
+
+	// MARK: - Standard Formats
+
+	private static func dateIsW3CDate(_ bytes: DateBuffer, _ numberOfBytes: Int) -> Bool {
+
+		// Something like 2010-11-17T08:40:07-05:00
+		// But might be missing T character in the middle.
+		// Looks for four digits in a row followed by a -.
+
+		for i in 0..<numberOfBytes - 4 {
+
+			let ch = bytes[i]
+			// Skip whitespace.
+			if ch == DateCharacter.space || ch == DateCharacter.`return` || ch == DateCharacter.newline || ch == DateCharacter.tab {
+				continue
+			}
+
+			assert(i + 4 < numberOfBytes)
+			// First non-whitespace character must be the beginning of the year, as in `2010-`
+			return Bool(isDigit(ch)) && isDigit(bytes[i + 1]) && isDigit(bytes[i + 2]) && isDigit(bytes[i + 3]) && bytes[i + 4] == DateCharacter.hyphen
+		}
+
+		return false
+	}
+
+	private static func dateIsPubDate(_ bytes: DateBuffer, _ numberOfBytes: Int) -> Bool {
+
+		for ch in bytes {
+			if ch == DateCharacter.space || ch == DateCharacter.comma {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	private static func parseW3CDate(_ bytes: DateBuffer, _ numberOfBytes: Int) -> Date? {
+
+		/*@"yyyy'-'MM'-'dd'T'HH':'mm':'ss"
+		 @"yyyy-MM-dd'T'HH:mm:sszzz"
+		 @"yyyy-MM-dd'T'HH:mm:ss'.'SSSzzz"
+		 etc.*/
+
+		var finalIndex = 0
+
+		guard let year = nextNumericValue(bytes, numberOfBytes, 0, 4, &finalIndex) else {
+			return nil
+		}
+		guard let month = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) else {
+			return nil
+		}
+		guard let day = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) else {
+			return nil
+		}
+		let hour = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) ?? 0
+		let minute = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) ?? 0
+		let second = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) ?? 0
+
+		var currentIndex = finalIndex + 1
+
+		let milliseconds = {
+			var ms = 0
+			let hasMilliseconds = (currentIndex < numberOfBytes) && (bytes[currentIndex] == DateCharacter.dot)
+			if hasMilliseconds {
+				ms = nextNumericValue(bytes, numberOfBytes, currentIndex, 3, &finalIndex) ?? 00
+				currentIndex = finalIndex + 1
+			}
+			return ms
+		}()
+
+		let timeZoneOffset = parsedTimeZoneOffset(bytes, numberOfBytes, currentIndex)
+
+		return dateWithYearMonthDayHourMinuteSecondAndtimeZoneOffset(year, month, day, hour, minute, second, milliseconds, timeZoneOffset)
+	}
+
+	private static func parsePubDate(_ bytes: DateBuffer, _ numberOfBytes: Int) -> Date? {
+
+		var finalIndex = 0
+
+		let day = nextNumericValue(bytes, numberOfBytes, 0, 2, &finalIndex) ?? 1
+		let month = nextMonthValue(bytes, numberOfBytes, finalIndex + 1, &finalIndex) ?? .January
+		
+		guard let year = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 4, &finalIndex) else {
+			return nil
+		}
+
+		let hour = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) ?? 0
+		let minute = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex) ?? 0
+
+		var currentIndex = finalIndex + 1
+
+		let second = {
+			var s = 0
+			let hasSeconds = (currentIndex < numberOfBytes) && (bytes[currentIndex] == DateCharacter.colon)
+			if hasSeconds {
+				s = nextNumericValue(bytes, numberOfBytes, currentIndex, 2, &finalIndex) ?? 0
+			}
+			return s
+		}()
+
+		currentIndex = finalIndex + 1
+
+		let timeZoneOffset = {
+			var offset = 0
+			let hasTimeZone = (currentIndex < numberOfBytes) && (bytes[currentIndex] == DateCharacter.space)
+			if hasTimeZone {
+				offset = parsedTimeZoneOffset(bytes, numberOfBytes, currentIndex)
+			}
+			return offset
+		}()
+
+		return dateWithYearMonthDayHourMinuteSecondAndtimeZoneOffset(year, month.rawValue, day, hour, minute, second, 0, timeZoneOffset)
+	}
+
+	// MARK: - Date Creation
+
+	static func dateWithYearMonthDayHourMinuteSecondAndtimeZoneOffset(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int, _ milliseconds: Int, _ timeZoneOffset: Int) -> Date? {
+
+		var timeInfo = tm()
+		timeInfo.tm_sec = CInt(second)
+		timeInfo.tm_min = CInt(minute)
+		timeInfo.tm_hour = CInt(hour)
+		timeInfo.tm_mday = CInt(day)
+		timeInfo.tm_mon = CInt(month - 1) //It's 1-based coming in
+		timeInfo.tm_year = CInt(year - 1900) //see time.h -- it's years since 1900
+		timeInfo.tm_wday = -1
+		timeInfo.tm_yday = -1
+		timeInfo.tm_isdst = -1
+		timeInfo.tm_gmtoff = timeZoneOffset;
+		timeInfo.tm_zone = nil;
+
+		var rawTime = timegm(&timeInfo)
+		if rawTime == time_t(UInt.max) {
+
+			// NSCalendar is super-amazingly slow (which is partly why this parser exists),
+			// so this is used only when the date is far enough in the future
+			// (19 January 2038 03:14:08Z on 32-bit systems) that timegm fails.
+			// Hopefully by the time we consistently need dates that far in the future
+			// the performance of NSCalendar won’t be an issue.
+
+			var dateComponents = DateComponents()
+
+			dateComponents.timeZone = TimeZone(secondsFromGMT: timeZoneOffset)
+			dateComponents.year = year
+			dateComponents.month = month
+			dateComponents.day = day
+			dateComponents.hour = hour
+			dateComponents.minute = minute
+			dateComponents.second = second + (milliseconds / 1000)
+
+			return Calendar.autoupdatingCurrent.date(from: dateComponents)
+		}
+
+		if milliseconds > 0 {
+			rawTime += Int(Float(milliseconds) / 1000.0)
+		}
+
+		return Date(timeIntervalSince1970: TimeInterval(rawTime))
+	}
+
+	// MARK: - Time Zones and Offsets
+
+	private static func parsedTimeZoneOffset(_ bytes: DateBuffer, _ numberOfBytes: Int, _ startingIndex: Int) -> Int {
+
+		var timeZoneCharacters: [UInt8] = [0, 0, 0, 0, 0, 0] // nil-terminated last character
+		var numberOfCharactersFound = 0
+		var hasAtLeastOneAlphaCharacter = false
+
+		for i in startingIndex..<numberOfBytes {
+			let ch = bytes[i]
+			if ch == DateCharacter.colon || ch == DateCharacter.space {
+				continue
+			}
+			let isAlphaCharacter = isAlpha(ch)
+			if isAlphaCharacter {
+				hasAtLeastOneAlphaCharacter = true
+			}
+			if isAlphaCharacter || isDigit(ch) || ch == DateCharacter.plus || ch == DateCharacter.minus {
+				numberOfCharactersFound += 1
+				timeZoneCharacters[numberOfCharactersFound - 1] = ch
+			}
+			if numberOfCharactersFound >= 5 {
+				break
+			}
+		}
+
+		if numberOfCharactersFound < 1 || timeZoneCharacters[0] == DateCharacter.Z || timeZoneCharacters[0] == DateCharacter.z {
+			return 0
+		}
+
+		if hasAtLeastOneAlphaCharacter {
+			return offsetInSecondsForTimeZoneAbbreviation(timeZoneCharacters) ?? 0
+		}
+		return offsetInSecondsForOffsetCharacters(timeZoneCharacters)
+	}
+
+	private static func offsetInSecondsForOffsetCharacters(_ timeZoneCharacters: [UInt8]) -> Int {
+
+		let isPlus = timeZoneCharacters[0] == DateCharacter.plus
+		var finalIndex = 0
+		let numberOfCharacters = strlen(timeZoneCharacters)
+
+		return timeZoneCharacters.withUnsafeBufferPointer { bytes in
+			let hours = nextNumericValue(bytes, numberOfCharacters, 0, 2, &finalIndex) ?? 0
+			let minutes = nextNumericValue(bytes, numberOfCharacters, finalIndex + 1, 2, &finalIndex) ?? 0
+
+			if hours == 0 && minutes == 0 {
+				return 0
+			}
+
+			var seconds = (hours * 60 * 60) + (minutes * 60)
+			if !isPlus {
+				seconds = 0 - seconds
+			}
+
+			return seconds
+		}
+	}
+
+	/// Returns offset in seconds.
+	static func timeZoneOffset(_ hours: Int, _ minutes: Int) -> Int {
+
+		if hours < 0 {
+			return (hours * 60 * 60) - (minutes * 60)
+		}
+		return (hours * 60 * 60) + (minutes * 60)
+	}
+
+	private static func offsetInSecondsForTimeZoneAbbreviation(_ abbreviation: [UInt8]) -> Int? {
 
 		let name = String(cString: abbreviation)
 		return timeZoneTable[name]
@@ -417,7 +434,7 @@ private extension DateParser {
 
 	// MARK: - Parser
 
-	static func nextMonthValue(_ buffer: DateBuffer, _ numberOfBytes: Int, _ startingIndex: Int, _ finalIndex: inout Int) -> DateParser.Month? {
+	private static func nextMonthValue(_ bytes: DateBuffer, _ numberOfBytes: Int, _ startingIndex: Int, _ finalIndex: inout Int) -> DateParser.Month? {
 
 		// Lots of short-circuits here. Not strict.
 
@@ -429,7 +446,7 @@ private extension DateParser {
 			finalIndex = i
 			let ch = bytes[i]
 			
-			let isAlphaCharacter = isalpha(ch)
+			let isAlphaCharacter = isAlpha(ch)
 			if !isAlphaCharacter {
 				if numberOfAlphaCharactersFound < 1 {
 					continue
@@ -439,65 +456,66 @@ private extension DateParser {
 				}
 			}
 
-			numberOfAlphaCharactersFound +=1
+			numberOfAlphaCharactersFound+=1
 			if numberOfAlphaCharactersFound == 1 {
 				if ch == DateCharacter.F || ch == DateCharacter.f {
-					return February
+					return .February
 				}
 				if ch == DateCharacter.S || ch == DateCharacter.s {
-					return September
+					return .September
 				}
 				if ch == DateCharacter.O || ch == DateCharacter.o {
-					return October
+					return .October
 				}
 				if ch == DateCharacter.N || ch == DateCharacter.n {
-					return November
+					return .November
 				}
 				if ch == DateCharacter.D || ch == DateCharacter.d {
-					return December
+					return .December
 				}
 			}
 
-			monthCharacters[numberOfAlphaCharactersFound - 1] = character
-			if numberOfAlphaCharactersFound >=3
+			monthCharacters[numberOfAlphaCharactersFound - 1] = CChar(ch)
+			if numberOfAlphaCharactersFound >= 3 {
 				break
+			}
 		}
 
 		if numberOfAlphaCharactersFound < 2 {
 			return nil
 		}
 
-		if monthCharacters[0] == DateCharater.J || monthCharacters[0] == DateCharacter.j { // Jan, Jun, Jul
+		if monthCharacters[0] == DateCharacter.J || monthCharacters[0] == DateCharacter.j { // Jan, Jun, Jul
 			if monthCharacters[1] == DateCharacter.A || monthCharacters[1] == DateCharacter.a {
-				return Month.January
+				return .January
 			}
-			if monthCharacters[1] = DateCharacter.U || monthCharacters[1] == DateCharacter.u {
+			if monthCharacters[1] == DateCharacter.U || monthCharacters[1] == DateCharacter.u {
 				if monthCharacters[2] == DateCharacter.N || monthCharacters[2] == DateCharacter.n {
-					return June
+					return .June
 				}
-				return July
+				return .July
 			}
-			return January
+			return .January
 		}
 
 		if monthCharacters[0] == DateCharacter.M || monthCharacters[0] == DateCharacter.m { // March, May
 			if monthCharacters[2] == DateCharacter.Y || monthCharacters[2] == DateCharacter.y {
-				return May
+				return .May
 			}
-			return March
+			return .March
 		}
 
 		if monthCharacters[0] == DateCharacter.A || monthCharacters[0] == DateCharacter.a { // April, August
 			if monthCharacters[1] == DateCharacter.U || monthCharacters[1] == DateCharacter.u {
-				return August
+				return .August
 			}
-			return April
+			return .April
 		}
 
-		return January // Should never get here (but possibly do)
+		return .January // Should never get here (but possibly do)
 	}
 
-	static func nextNumericValue(_ bytes: DateBuffer, numberOfBytes: Int, startingIndex: Int, maximumNumberOfDigits: Int, finalIndex: inout Int) -> Int? {
+	private static func nextNumericValue(_ bytes: DateBuffer, _ numberOfBytes: Int, _ startingIndex: Int, _ maximumNumberOfDigits: Int, _ finalIndex: inout Int) -> Int? {
 
 		// Maximum for the maximum is 4 (for time zone offsets and years)
 		assert(maximumNumberOfDigits > 0 && maximumNumberOfDigits <= 4)
@@ -508,9 +526,46 @@ private extension DateParser {
 		for i in startingIndex..<numberOfBytes {
 
 			finalIndex = i
+			let ch = Int(bytes[i])
 
-			let isDigit = isDigit(
+			let isDigit = isDigit(ch)
+			if !isDigit && numberOfDigitsFound < 1 {
+				continue
+			}
+			if !isDigit && numberOfDigitsFound > 0 {
+				break
+			}
+
+			digits[numberOfDigitsFound] = ch - 48; // '0' is 48
+			numberOfDigitsFound+=1
+			if numberOfDigitsFound >= maximumNumberOfDigits {
+				break
+			}
 		}
 
+		if numberOfDigitsFound < 1 {
+			return nil
+		}
+
+		if numberOfDigitsFound == 1 {
+			return digits[0]
+		}
+		if numberOfDigitsFound == 2 {
+			return (digits[0] * 10) + digits[1]
+		}
+		if numberOfDigitsFound == 3 {
+			return (digits[0] * 100) + (digits[1] * 10) + digits[2]
+		}
+		return (digits[0] * 1000) + (digits[1] * 100) + (digits[2] * 10) + digits[3]
+	}
+
+	static func isDigit<T: BinaryInteger>(_ ch: T) -> Bool {
+
+		return isdigit(Int32(ch)) != 0
+	}
+
+	static func isAlpha<T: BinaryInteger>(_ ch: T) -> Bool {
+
+		return isalpha(Int32(ch)) != 0
 	}
 }
