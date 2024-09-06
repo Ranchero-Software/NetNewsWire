@@ -55,7 +55,7 @@ aDirectory/
   SharedXcodeSettings/
     DeveloperSettings.xcconfig
   NetNewsWire/
-    NetNewsWire.xcworkspace
+    NetNewsWire.xcodeproj
 ```
 Example:
 
