@@ -8,6 +8,7 @@
 
 import Foundation
 import SAX
+import DateParser
 
 public final class RSSParser {
 
@@ -30,7 +31,7 @@ public final class RSSParser {
 	private var parsingArticle = false
 	private var parsingChannelImage = false
 	private var parsingAuthor = false
-	private var currentAttributes: XMLAttributesDictionary?
+	private var currentAttributes: SAXParser.XMLAttributesDictionary?
 
 	public static func parsedFeed(with parserData: ParserData) -> RSSFeed {
 
@@ -88,8 +89,8 @@ private extension RSSParser {
 		articles.append(article)
 	}
 
-	func addArticleElement(_ localName: XMLPointer, _ prefix: XMLPointer?) {
-		
+	func addArticleElement(_ saxParser: SAXParser, _ localName: XMLPointer, _ prefix: XMLPointer?) {
+
 		if SAXEqualTags(prefix, XMLName.dc) {
 			addDCElement(localName)
 			return;
@@ -110,7 +111,7 @@ private extension RSSParser {
 			addGuid()
 		}
 		else if SAXEqualTags(localName, XMLName.pubDate) {
-			currentArticle.datePublished = currentDate
+			currentArticle.datePublished = currentDate(saxParser)
 		}
 		else if SAXEqualTags(localName, XMLName.author) {
 			addAuthorWithString(currentString)
@@ -131,6 +132,15 @@ private extension RSSParser {
 		else if SAXEqualTags(localName, XMLName.enclosure) {
 			addEnclosure()
 		}
+	}
+
+	func currentDate(_ saxParser: SAXParser) -> Date? {
+
+		guard let data = saxParser.currentCharacters else {
+			return nil
+		}
+		return DateParser.date(data: data)
+
 	}
 }
 
@@ -197,7 +207,7 @@ extension RSSParser: SAXParserDelegate {
 			parsingArticle = false
 		}
 		else if parsingArticle {
-			addArticleElement(localName, prefix)
+			addArticleElement(saxParser, localName, prefix)
 			if SAXEqualTags(localName, XMLName.author) {
 				parsingAuthor = false
 			}
