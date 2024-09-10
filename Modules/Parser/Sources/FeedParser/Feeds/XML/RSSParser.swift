@@ -52,6 +52,7 @@ private extension RSSParser {
 
 		let saxParser = SAXParser(delegate: self, data: data)
 		saxParser.parse()
+		feed.articles = articles
 	}
 
 	private struct XMLName {

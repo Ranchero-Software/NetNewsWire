@@ -1,5 +1,5 @@
 import XCTest
-@testable import Parser
+import FeedParser
 
 final class ParserTests: XCTestCase {
     func testExample() throws {
