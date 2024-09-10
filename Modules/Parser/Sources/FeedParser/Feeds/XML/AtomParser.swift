@@ -17,13 +17,13 @@ import SAX
 //
 // In general, you should see FeedParser.swift for all your feed-parsing needs.
 
-public struct AtomParser {
-
-	public static func parse(_ parserData: ParserData) -> ParsedFeed? {
-
-		if let rsParsedFeed = RSAtomParser.parseFeed(with: parserData) {
-			return RSParsedFeedTransformer.parsedFeed(rsParsedFeed)
-		}
-		return nil
-	}
-}
+//public struct AtomParser {
+//
+//	public static func parse(_ parserData: ParserData) -> ParsedFeed? {
+//
+//		if let rsParsedFeed = RSAtomParser.parseFeed(with: parserData) {
+//			return RSParsedFeedTransformer.parsedFeed(rsParsedFeed)
+//		}
+//		return nil
+//	}
+//}

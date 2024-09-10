@@ -33,7 +33,7 @@ public final class RSSParser {
 	private var parsingAuthor = false
 	private var currentAttributes: SAXParser.XMLAttributesDictionary?
 
-	public static func parsedFeed(with parserData: ParserData) -> RSSFeed {
+	static func parsedFeed(with parserData: ParserData) -> RSSFeed {
 
 		let parser = RSSParser(parserData)
 		parser.parse()
@@ -47,6 +47,12 @@ public final class RSSParser {
 }
 
 private extension RSSParser {
+
+	func parse() {
+
+		let saxParser = SAXParser(delegate: self, data: data)
+		saxParser.parse()
+	}
 
 	private struct XMLName {
 		static let uppercaseRDF = "RDF".utf8CString
@@ -63,9 +69,13 @@ private extension RSSParser {
 		static let dc = "dc".utf8CString
 		static let content = "content".utf8CString
 		static let encoded = "encoded".utf8CString
+		static let creator = "creator".utf8CString
+		static let date = "date".utf8CString
+		static let pubDate = "pubDate".utf8CString
+		static let description = "description".utf8CString
 	}
 
-	func addFeedElement(_ localName: XMLPointer, _ prefix: XMLPointer?) {
+	func addFeedElement(_ saxParser: SAXParser, _ localName: XMLPointer, _ prefix: XMLPointer?) {
 
 		guard prefix == nil else {
 			return
@@ -73,14 +83,14 @@ private extension RSSParser {
 
 		if SAXEqualTags(localName, XMLName.link) {
 			if feed.link == nil {
-				feed.link = currentString
+				feed.link = saxParser.currentString
 			}
 		}
 		else if SAXEqualTags(localName, XMLName.title) {
-			feed.title = currentString
+			feed.title = saxParser.currentString
 		}
 		else if SAXEqualTags(localName, XMLName.language) {
-			feed.language = currentString
+			feed.language = saxParser.currentString
 		}
 	}
 
@@ -91,13 +101,17 @@ private extension RSSParser {
 
 	func addArticleElement(_ saxParser: SAXParser, _ localName: XMLPointer, _ prefix: XMLPointer?) {
 
-		if SAXEqualTags(prefix, XMLName.dc) {
-			addDCElement(localName)
-			return;
+		guard let currentArticle else {
+			return
 		}
 
-		if SAXEqualTags(prefix, XMLName.content) && SAXEqualTags(localName, XMLName.encoded) {
-			if let currentString, !currentString.isEmpty {
+		if let prefix, SAXEqualTags(prefix, XMLName.dc) {
+			addDCElement(saxParser, localName, currentArticle)
+			return
+		}
+
+		if let prefix, SAXEqualTags(prefix, XMLName.content) && SAXEqualTags(localName, XMLName.encoded) {
+			if let currentString = saxParser.currentString, !currentString.isEmpty {
 				currentArticle.body = currentString
 			}
 			return
@@ -107,31 +121,163 @@ private extension RSSParser {
 			return
 		}
 
-		if SAXEqualTags(localName, XMLName.guid) {
-			addGuid()
+		if let currentString = saxParser.currentString {
+			if SAXEqualTags(localName, XMLName.guid) {
+				addGuid(currentString, currentArticle)
+			}
+			else if SAXEqualTags(localName, XMLName.author) {
+				addAuthorWithString(currentString, currentArticle)
+			}
+			else if SAXEqualTags(localName, XMLName.link) {
+				currentArticle.link = urlString(currentString)
+			}
+			else if SAXEqualTags(localName, XMLName.description) {
+				if currentArticle.body == nil {
+					currentArticle.body = currentString
+				}
+			}
+			else if !parsingAuthor && SAXEqualTags(localName, XMLName.title) {
+				currentArticle.title = currentString
+			}
 		}
 		else if SAXEqualTags(localName, XMLName.pubDate) {
 			currentArticle.datePublished = currentDate(saxParser)
 		}
-		else if SAXEqualTags(localName, XMLName.author) {
-			addAuthorWithString(currentString)
+		else if SAXEqualTags(localName, XMLName.enclosure), let currentAttributes {
+			addEnclosure(currentAttributes, currentArticle)
 		}
-		else if SAXEqualTags(localName, XMLName.link) {
-			currentArticle.link = urlString(currentString)
-		}
-		else if SAXEqualTags(localName, XMLName.description) {
-			if currentArticle.body == nil {
-				currentArticle.body = currentString
+	}
+
+	func addDCElement(_ saxParser: SAXParser, _ localName: XMLPointer, _ currentArticle: RSSArticle) {
+
+		if SAXEqualTags(localName, XMLName.creator) {
+			if let currentString = saxParser.currentString {
+				addAuthorWithString(currentString, currentArticle)
 			}
 		}
-		else if !parsingAuthor && SAXEqualTags(localName, XMLName.title) {
-			if let currentString {
-				currentArticle.title = currentString
+		else if SAXEqualTags(localName, XMLName.date) {
+			currentArticle.datePublished = currentDate(saxParser)
+		}
+	}
+
+	static let isPermalinkKey = "isPermaLink"
+	static let isPermalinkLowercaseKey = "ispermalink"
+	static let falseValue = "false"
+
+	func addGuid(_ guid: String, _ currentArticle: RSSArticle) {
+
+		currentArticle.guid = guid
+
+		guard let currentAttributes else {
+			return
+		}
+
+		let isPermaLinkValue: String? = {
+
+			if let value = currentAttributes[Self.isPermalinkKey] {
+				return value
 			}
+			// Allow for `ispermalink`, `isPermalink`, etc.
+			for (key, value) in currentAttributes {
+				if key.lowercased() == Self.isPermalinkLowercaseKey {
+					return value
+				}
+			}
+
+			return nil
+		}()
+
+		// Spec: `isPermaLink is optional, its default value is true.`
+		// https://cyber.harvard.edu/rss/rss.html#ltguidgtSubelementOfLtitemgt
+		// Return only if non-nil and equal to false — otherwise it’s a permalink.
+		if let isPermaLinkValue, isPermaLinkValue == Self.falseValue {
+			return
 		}
-		else if SAXEqualTags(localName, XMLName.enclosure) {
-			addEnclosure()
+
+		// Feed bug found in the wild: using a guid that’s not really a permalink
+		// and not realizing that `isPermaLink` is true by default.
+		if stringIsProbablyAURLOrRelativePath(guid) {
+			currentArticle.permalink = urlString(guid)
 		}
+	}
+
+	func stringIsProbablyAURLOrRelativePath(_ s: String) -> Bool {
+
+		// The RSS guid is defined as a permalink, except when it appears like this:
+		// `<guid isPermaLink="false">some—identifier</guid>`
+		// However, people often seem to think it’s *not* a permalink by default, even
+		// though it is. So we try to detect the situation where the value is not a URL string,
+		// and not even a relative path. This may need to evolve over time.
+
+		if !s.contains("/") {
+			// This seems to be just about the best possible check.
+			// Bad guids are often just integers, for instance.
+			return false
+		}
+
+		if s.lowercased().hasPrefix("tag:") {
+			// A common non-URL guid form starts with `tag:`.
+			return false
+		}
+
+		return true
+	}
+
+	/// Do best attempt at turning a string into a URL string.
+	///
+	/// If it already appears to be a URL, return it.
+	/// Otherwise, treat it like a relative URL and resolve using
+	/// the URL of the home page of the feed (if available)
+	/// or the URL of the feed.
+	///
+	/// The returned value is not guaranteed to be a valid URL string.
+	/// It’s a best attempt without going to heroic lengths.
+	func urlString(_ s: String) -> String {
+
+		if s.lowercased().hasPrefix("http") {
+			return s
+		}
+
+		let baseURLString = feed.link ?? feedURL
+		guard let baseURL = URL(string: baseURLString) else {
+			return s
+		}
+		guard let resolvedURL = URL(string: s, relativeTo: baseURL) else {
+			return s
+		}
+
+		return resolvedURL.absoluteString
+	}
+
+	func addAuthorWithString(_ authorString: String, _ currentArticle: RSSArticle) {
+
+		if authorString.isEmpty {
+			return
+		}
+
+		let author = RSSAuthor(singleString: authorString)
+		currentArticle.addAuthor(author)
+	}
+
+	private struct EnclosureKey {
+		static let url = "url"
+		static let length = "length"
+		static let type = "type"
+	}
+
+	func addEnclosure(_ attributes: SAXParser.XMLAttributesDictionary, _ currentArticle: RSSArticle) {
+
+		guard let url = attributes[EnclosureKey.url], !url.isEmpty else {
+			return
+		}
+
+		let enclosure = RSSEnclosure(url: url)
+		if let lengthValue = attributes[EnclosureKey.length], let length = Int(lengthValue) {
+			enclosure.length = length
+		}
+		enclosure.mimeType = attributes[EnclosureKey.type]
+
+		currentArticle.addEnclosure(enclosure)
 	}
 
 	func currentDate(_ saxParser: SAXParser) -> Date? {
@@ -140,7 +286,6 @@ private extension RSSParser {
 			return nil
 		}
 		return DateParser.date(data: data)
-
 	}
 }
 
@@ -157,8 +302,8 @@ extension RSSParser: SAXParserDelegate {
 			return
 		}
 
-		var xmlAttributes: XMLAttributesDictionary? = nil
-		if (isRDF && SAXEqualTags(localName, XMLName.item)) || SAXEqualTags(localName, XMLName.guid) || SAXEqualTags(enclosure, XMLName.enclosure) {
+		var xmlAttributes: SAXParser.XMLAttributesDictionary? = nil
+		if (isRDF && SAXEqualTags(localName, XMLName.item)) || SAXEqualTags(localName, XMLName.guid) || SAXEqualTags(localName, XMLName.enclosure) {
 			xmlAttributes = saxParser.attributesDictionary(attributes, attributeCount: attributeCount)
 		}
 		if currentAttributes != xmlAttributes {
@@ -169,7 +314,7 @@ extension RSSParser: SAXParserDelegate {
 			addArticle()
 			parsingArticle = true
 
-			if isRDF && let rdfGuid = xmlAttributes?[XMLName.rdfAbout], let currentArticle { // RSS 1.0 guid
+			if isRDF, let rdfGuid = xmlAttributes?[XMLName.rdfAbout], let currentArticle { // RSS 1.0 guid
 				currentArticle.guid = rdfGuid
 				currentArticle.permalink = rdfGuid
 			}
