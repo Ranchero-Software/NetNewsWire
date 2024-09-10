@@ -265,6 +265,12 @@ private extension DateParser {
 				ms = nextNumericValue(bytes, numberOfBytes, currentIndex, 3, &finalIndex) ?? 00
 				currentIndex = finalIndex + 1
 			}
+
+			// Ignore more than 3 digits of precision
+			while currentIndex < numberOfBytes && isDigit(bytes[currentIndex]) {
+				currentIndex += 1
+			}
+
 			return ms
 		}()
 
@@ -346,16 +352,18 @@ private extension DateParser {
 			dateComponents.day = day
 			dateComponents.hour = hour
 			dateComponents.minute = minute
-			dateComponents.second = second + (milliseconds / 1000)
+			dateComponents.second = second
+			dateComponents.nanosecond = milliseconds * 1000000
 
 			return Calendar.autoupdatingCurrent.date(from: dateComponents)
 		}
 
+		var timeInterval = TimeInterval(rawTime)
 		if milliseconds > 0 {
-			rawTime += Int(Float(milliseconds) / 1000.0)
+			timeInterval += TimeInterval(TimeInterval(milliseconds) / 1000.0)
 		}
 
-		return Date(timeIntervalSince1970: TimeInterval(rawTime))
+		return Date(timeIntervalSince1970: TimeInterval(timeInterval))
 	}
 
 	// MARK: - Time Zones and Offsets

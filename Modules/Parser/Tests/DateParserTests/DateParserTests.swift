@@ -11,7 +11,7 @@ import XCTest
 
 class DateParserTests: XCTestCase {
 	
-	func dateWithValues(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int) -> Date {
+	func dateWithValues(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int, _ millisecond: Int = 0) -> Date {
 		var dateComponents = DateComponents()
 		dateComponents.calendar = Calendar.current
 		dateComponents.timeZone = TimeZone(secondsFromGMT: 0)
@@ -22,7 +22,8 @@ class DateParserTests: XCTestCase {
 		dateComponents.hour = hour
 		dateComponents.minute = minute
 		dateComponents.second = second
-		
+		dateComponents.nanosecond = millisecond * 1000000
+
 		return dateComponents.date!
 	}
 	
@@ -100,11 +101,33 @@ class DateParserTests: XCTestCase {
 		XCTAssertEqual(d, expectedDateResult)
 	}
 
-//	func testHighMillisecondDate() {
-//		let expectedDateResult = dateWithValues(2021, 03, 29, 10, 46, 56)
-//		let d = date("2021-03-29T10:46:56.516941+00:00")
-//		XCTAssertEqual(d, expectedDateResult)
-//	}
+	func testMillisecondDate() {
+		let expectedDateResult = dateWithValues(2021, 03, 29, 10, 46, 56, 516)
+		let d = date("2021-03-29T10:46:56.516+00:00")
+		XCTAssertEqual(d, expectedDateResult)
+	}
+
+	func testExtraMillisecondPrecisionDate() {
+		let expectedDateResult = dateWithValues(2021, 03, 29, 10, 46, 56, 516)
+		let d = date("2021-03-29T10:46:56.516941+00:00")
+		XCTAssertEqual(d, expectedDateResult)
+	}
+
+	func testW3CParsingPerformance() {
+
+		// 0.0001 seconds on my Mac Studio M1
+		self.measure {
+			_ = date("2021-03-29T10:46:56.516941+00:00")
+		}
+	}
+
+	func testPubDateParsingPerformance() {
+		
+		// 0.0001 seconds on my Mac Studio M1
+		self.measure {
+			_ = date("21 May 2010 21:22:53 GMT")
+		}
+	}
 }
 
 private extension DateParserTests {
