@@ -335,7 +335,7 @@ private extension DateParser {
 		timeInfo.tm_gmtoff = 0;
 		timeInfo.tm_zone = nil;
 
-		var rawTime = timegm(&timeInfo) - timeZoneOffset
+		let rawTime = timegm(&timeInfo) - timeZoneOffset
 		if rawTime == time_t(UInt32.max) {
 
 			// NSCalendar is super-amazingly slow (which is partly why this parser exists),
@@ -363,7 +363,7 @@ private extension DateParser {
 			timeInterval += TimeInterval(TimeInterval(milliseconds) / 1000.0)
 		}
 
-		return Date(timeIntervalSince1970: TimeInterval(timeInterval))
+		return Date(timeIntervalSince1970: timeInterval)
 	}
 
 	// MARK: - Time Zones and Offsets

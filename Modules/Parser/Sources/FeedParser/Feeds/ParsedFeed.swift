@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class ParsedFeed: Sendable {
+public final class ParsedFeed: Sendable {
 
 	public let type: FeedType
 	public let title: String?

@@ -59,7 +59,6 @@ private extension RSSParser {
 		static let item = "item".utf8CString
 		static let guid = "guid".utf8CString
 		static let enclosure = "enclosure".utf8CString
-		static let rdfAbout = "rdf:about".utf8CString
 		static let image = "image".utf8CString
 		static let author = "author".utf8CString
 		static let rss = "rss".utf8CString
@@ -291,6 +290,8 @@ private extension RSSParser {
 
 extension RSSParser: SAXParserDelegate {
 
+	static let rdfAbout = "rdf:about"
+
 	public func saxParser(_ saxParser: SAXParser, xmlStartElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
 
 		if endRSSFound {
@@ -314,7 +315,7 @@ extension RSSParser: SAXParserDelegate {
 			addArticle()
 			parsingArticle = true
 
-			if isRDF, let rdfGuid = xmlAttributes?[XMLName.rdfAbout], let currentArticle { // RSS 1.0 guid
+			if isRDF, let rdfGuid = xmlAttributes?[Self.rdfAbout], let currentArticle { // RSS 1.0 guid
 				currentArticle.guid = rdfGuid
 				currentArticle.permalink = rdfGuid
 			}
@@ -358,7 +359,7 @@ extension RSSParser: SAXParserDelegate {
 			}
 		}
 		else if !parsingChannelImage {
-			addFeedElement(localName, prefix)
+			addFeedElement(saxParser, localName, prefix)
 		}
 	}
 

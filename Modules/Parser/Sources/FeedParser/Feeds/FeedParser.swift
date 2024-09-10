@@ -12,8 +12,8 @@ import SAX
 // FeedParser handles RSS, Atom, JSON Feed, and RSS-in-JSON.
 // You don’t need to know the type of feed.
 
-//public struct FeedParser {
-//
+public struct FeedParser {
+
 //	public static func canParse(_ parserData: ParserData) -> Bool {
 //
 //		let type = feedType(parserData)
@@ -25,9 +25,13 @@ import SAX
 //			return false
 //		}
 //	}
-//
-//	public static func parse(_ parserData: ParserData) async throws -> ParsedFeed? {
-//
+
+	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
+
+		let rssFeed = RSSParser.parsedFeed(with: parserData)
+		let parsedFeed = RSSFeedTransformer.parsedFeed(with: rssFeed)
+		
+		return parsedFeed
 //		let type = feedType(parserData)
 //
 //		switch type {
@@ -47,8 +51,8 @@ import SAX
 //		case .unknown, .notAFeed:
 //			return nil
 //		}
-//	}
-//
+	}
+
 //	/// For unit tests measuring performance.
 //	public static func parseSync(_ parserData: ParserData) throws -> ParsedFeed? {
 //
@@ -72,5 +76,5 @@ import SAX
 //			return nil
 //		}
 //	}
-//
-//}
+
+}

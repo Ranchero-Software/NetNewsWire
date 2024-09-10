@@ -66,7 +66,7 @@ public final class ParsedItem: Hashable, Sendable {
 
 	public static func ==(lhs: ParsedItem, rhs: ParsedItem) -> Bool {
 
-		lhs.syncServiceID == rhs.syncServiceID && lhs.uniqueID == rhs.uniqueID && lhs.feedURL == rhs.feedURL && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.title == rhs.title lhs.language == rhs.language && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors && lhs.tags == rhs.tags && lhs.attachments == rhs.attachments
+		lhs.syncServiceID == rhs.syncServiceID && lhs.uniqueID == rhs.uniqueID && lhs.feedURL == rhs.feedURL && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.title == rhs.title && lhs.language == rhs.language && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.bannerImageURL == rhs.bannerImageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors && lhs.tags == rhs.tags && lhs.attachments == rhs.attachments
 	}
 }
 
