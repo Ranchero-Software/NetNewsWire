@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ParsedAttachment: Hashable, Sendable {
+public final class ParsedAttachment: Hashable, Sendable {
 
 	public let url: String
 	public let mimeType: String?
@@ -32,5 +32,11 @@ public struct ParsedAttachment: Hashable, Sendable {
 
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(url)
+	}
+
+	// MARK: - Equatable
+
+	public static func ==(lhs: ParsedAttachment, rhs: ParsedAttachment) -> Bool {
+		lhs.url == rhs.url && lhs.mimeType == rhs.mimeType && lhs.title == rhs.title && lhs.sizeInBytes == rhs.sizeInBytes && lhs.durationInSeconds == rhs.durationInSeconds
 	}
 }

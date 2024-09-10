@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ParsedAuthor: Hashable, Codable, Sendable {
+public final class ParsedAuthor: Hashable, Codable, Sendable {
 
 	public let name: String?
 	public let url: String?
@@ -23,7 +23,7 @@ public struct ParsedAuthor: Hashable, Codable, Sendable {
 	}
 
 	/// Use when the actual property is unknown. Guess based on contents of the string. (This is common with RSS.)
-	init(singleString: String) {
+	convenience init(singleString: String) {
 
 		if singleString.contains("@") {
 			self.init(name: nil, url: nil, avatarURL: nil, emailAddress: singleString)
@@ -52,5 +52,12 @@ public struct ParsedAuthor: Hashable, Codable, Sendable {
 		else {
 			hasher.combine("")
 		}
+	}
+
+	// MARK: - Equatable
+
+	public static func ==(lhs: ParsedAuthor, rhs: ParsedAuthor) -> Bool {
+
+		lhs.name == rhs.name && lhs.url == rhs.url && lhs.avatarURL == rhs.avatarURL && lhs.emailAddress == rhs.emailAddress
 	}
 }
