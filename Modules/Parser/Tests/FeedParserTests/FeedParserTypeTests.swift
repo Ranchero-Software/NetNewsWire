@@ -114,27 +114,27 @@ class FeedParserTypeTests: XCTestCase {
 
 	// MARK: Atom
 
-//	func testDaringFireballAtomType() {
-//
-//		// File extension is .rss, but it’s really an Atom feed.
-//		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .atom)
-//	}
-//
-//	func testOneFootTsunamiAtomType() {
-//
-//		let d = parserData("OneFootTsunami", "atom", "http://onefoottsunami.com/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .atom)
-//	}
-//
-//	func testRussCoxAtomType() {
-//		let d = parserData("russcox", "atom", "https://research.swtch.com/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .atom)
-//	}
-//
+	func testDaringFireballAtomType() {
+
+		// File extension is .rss, but it’s really an Atom feed.
+		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .atom)
+	}
+
+	func testOneFootTsunamiAtomType() {
+
+		let d = parserData("OneFootTsunami", "atom", "http://onefoottsunami.com/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .atom)
+	}
+
+	func testRussCoxAtomType() {
+		let d = parserData("russcox", "atom", "https://research.swtch.com/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .atom)
+	}
+
 //	// MARK: RSS-in-JSON
 //
 //	func testScriptingNewsJSONType() {

@@ -10,7 +10,7 @@ import Foundation
 import SAX
 
 public enum FeedType: Sendable {
-	
+
 	case rss
 	case atom
 	case jsonFeed
@@ -41,6 +41,9 @@ public enum FeedType: Sendable {
 			
 			if isProbablyRSS(cCharPointer, count) {
 				return .rss
+			}
+			if isProbablyAtom(cCharPointer, count) {
+				return .atom
 			}
 
 			return .unknown
@@ -80,6 +83,11 @@ private extension FeedType {
 		}
 
 		return didFindString("<channel>", bytes, count) && didFindString("<pubDate>", bytes, count)
+	}
+
+	static func isProbablyAtom(_ bytes: UnsafePointer<CChar>, _ count: Int) -> Bool {
+
+		didFindString("<feed", bytes, count)
 	}
 
 	static func didFindString(_ string: UnsafePointer<CChar>, _ bytes: UnsafePointer<CChar>, _ numberOfBytes: Int) -> Bool {
