@@ -14,33 +14,33 @@ class FeedParserTypeTests: XCTestCase {
 
 	// MARK: HTML
 
-//	func testDaringFireballHTMLType() {
-//
-//		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .notAFeed)
-//	}
-//
-//	func testFurboHTMLType() {
-//
-//		let d = parserData("furbo", "html", "http://furbo.org/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .notAFeed)
-//	}
-//	
-//	func testInessentialHTMLType() {
-//
-//		let d = parserData("inessential", "html", "http://inessential.com/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .notAFeed)
-//	}
-//
-//	func testSixColorsHTMLType() {
-//
-//		let d = parserData("sixcolors", "html", "https://sixcolors.com/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .notAFeed)
-//	}
+	func testDaringFireballHTMLType() {
+
+		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .notAFeed)
+	}
+
+	func testFurboHTMLType() {
+
+		let d = parserData("furbo", "html", "http://furbo.org/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .notAFeed)
+	}
+	
+	func testInessentialHTMLType() {
+
+		let d = parserData("inessential", "html", "http://inessential.com/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .notAFeed)
+	}
+
+	func testSixColorsHTMLType() {
+
+		let d = parserData("sixcolors", "html", "https://sixcolors.com/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .notAFeed)
+	}
 	
 	// MARK: RSS
 
@@ -135,51 +135,51 @@ class FeedParserTypeTests: XCTestCase {
 		XCTAssertTrue(type == .atom)
 	}
 
-//	// MARK: RSS-in-JSON
-//
-//	func testScriptingNewsJSONType() {
-//
-//		let d = parserData("ScriptingNews", "json", "http://scripting.com/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .rssInJSON)
-//	}
-//
-//	// MARK: JSON Feed
-//
-//	func testInessentialJSONFeedType() {
-//
-//		let d = parserData("inessential", "json", "http://inessential.com/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .jsonFeed)
-//	}
-//
-//	func testAllThisJSONFeedType() {
-//
-//		let d = parserData("allthis", "json", "http://leancrew.com/allthis/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .jsonFeed)
-//	}
-//
-//	func testCurtJSONFeedType() {
-//
-//		let d = parserData("curt", "json", "http://curtclifton.net/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .jsonFeed)
-//	}
-//
-//	func testPixelEnvyJSONFeedType() {
-//
-//		let d = parserData("pxlnv", "json", "http://pxlnv.com/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .jsonFeed)
-//	}
-//
-//	func testRoseJSONFeedType() {
-//
-//		let d = parserData("rose", "json", "https://www.rosemaryorchard.com/")
-//		let type = feedType(d)
-//		XCTAssertTrue(type == .jsonFeed)
-//	}
+	// MARK: RSS-in-JSON
+
+	func testScriptingNewsJSONType() {
+
+		let d = parserData("ScriptingNews", "json", "http://scripting.com/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .rssInJSON)
+	}
+
+	// MARK: JSON Feed
+
+	func testInessentialJSONFeedType() {
+
+		let d = parserData("inessential", "json", "http://inessential.com/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .jsonFeed)
+	}
+
+	func testAllThisJSONFeedType() {
+
+		let d = parserData("allthis", "json", "http://leancrew.com/allthis/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .jsonFeed)
+	}
+
+	func testCurtJSONFeedType() {
+
+		let d = parserData("curt", "json", "http://curtclifton.net/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .jsonFeed)
+	}
+
+	func testPixelEnvyJSONFeedType() {
+
+		let d = parserData("pxlnv", "json", "http://pxlnv.com/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .jsonFeed)
+	}
+
+	func testRoseJSONFeedType() {
+
+		let d = parserData("rose", "json", "https://www.rosemaryorchard.com/")
+		let type = FeedType.feedType(d.data)
+		XCTAssertTrue(type == .jsonFeed)
+	}
 
 	// MARK: Unknown
 
@@ -195,45 +195,45 @@ class FeedParserTypeTests: XCTestCase {
 
 	// MARK: Performance
 	
-//	func testFeedTypePerformance() {
-//
-//		// 0.000 on my 2012 iMac.
-//
-//		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
-//		self.measure {
-//			let _ = feedType(d)
-//		}
-//	}
+	func testFeedTypePerformance() {
 
-//	func testFeedTypePerformance2() {
-//
-//		// 0.000 on my 2012 iMac.
-//
-//		let d = parserData("inessential", "json", "http://inessential.com/")
-//		self.measure {
-//			let _ = feedType(d)
-//		}
-//	}
+		// 0.000 on my 2012 iMac.
 
-//	func testFeedTypePerformance3() {
-//
-//		// 0.000 on my 2012 iMac.
-//
-//		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
-//		self.measure {
-//			let _ = feedType(d)
-//		}
-//	}
-//
-//	func testFeedTypePerformance4() {
-//
-//		// 0.001 on my 2012 iMac.
-//
-//		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
-//		self.measure {
-//			let _ = feedType(d)
-//		}
-//	}
+		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
+		self.measure {
+			let _ = FeedType.feedType(d.data)
+		}
+	}
+
+	func testFeedTypePerformance2() {
+
+		// 0.000 on my 2012 iMac.
+
+		let d = parserData("inessential", "json", "http://inessential.com/")
+		self.measure {
+			let _ = FeedType.feedType(d.data)
+		}
+	}
+
+	func testFeedTypePerformance3() {
+
+		// 0.000 on my 2012 iMac.
+
+		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
+		self.measure {
+			let _ = FeedType.feedType(d.data)
+		}
+	}
+
+	func testFeedTypePerformance4() {
+
+		// 0.001 on my 2012 iMac.
+
+		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
+		self.measure {
+			let _ = FeedType.feedType(d.data)
+		}
+	}
 }
 
 func parserData(_ filename: String, _ fileExtension: String, _ url: String) -> ParserData {

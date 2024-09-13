@@ -38,20 +38,31 @@ public enum FeedType: Sendable {
 			}
 			let cCharPointer = baseAddress.assumingMemoryBound(to: CChar.self)
 			
+			if isProbablyJSON(cCharPointer, count) {
+
+				if isPartialData {
+					// Might not be able to detect a JSON Feed without all data.
+					// Dr. Drang’s JSON Feed (see althis.json and allthis-partial.json in tests)
+					// has, at this writing, the JSON version element at the end of the feed,
+					// which is totally legal — but it means not being able to detect
+					// that it’s a JSON Feed without all the data.
+					// So this returns .unknown instead of .notAFeed.
+					return .unknown
+				}
+
+				if isProbablyJSONFeed(cCharPointer, count) {
+					return .jsonFeed
+				}
+				if isProbablyRSSInJSON(cCharPointer, count) {
+					return .rssInJSON
+				}
+			}
+
 			if isProbablyRSS(cCharPointer, count) {
 				return .rss
 			}
 			if isProbablyAtom(cCharPointer, count) {
 				return .atom
-			}
-			if isPartialData && isProbablyJSON(cCharPointer, count) {
-				// Might not be able to detect a JSON Feed without all data.
-				// Dr. Drang’s JSON Feed (see althis.json and allthis-partial.json in tests)
-				// has, at this writing, the JSON version element at the end of the feed,
-				// which is totally legal — but it means not being able to detect
-				// that it’s a JSON Feed without all the data.
-				// So this returns .unknown instead of .notAFeed.
-				return .unknown
 			}
 
 			return .notAFeed
@@ -78,6 +89,18 @@ private extension FeedType {
 	static func isProbablyJSON(_ bytes: UnsafePointer<CChar>, _ count: Int) -> Bool {
 
 		bytesStartWithStringIgnoringWhitespace("{", bytes, count)
+	}
+
+	static func isProbablyJSONFeed(_ bytes: UnsafePointer<CChar>, _ count: Int) -> Bool {
+
+		// Assumes already called `isProbablyJSON` and it returned true.
+		didFindString("://jsonfeed.org/version/", bytes, count) || didFindString(":\\/\\/jsonfeed.org\\/version\\/", bytes, count)
+	}
+
+	static func isProbablyRSSInJSON(_ bytes: UnsafePointer<CChar>, _ count: Int) -> Bool {
+
+		// Assumes already called `isProbablyJSON` and it returned true.
+		didFindString("rss", bytes, count) && didFindString("channel", bytes, count) && didFindString("item", bytes, count)
 	}
 
 	static func didFindString(_ string: UnsafePointer<CChar>, _ bytes: UnsafePointer<CChar>, _ numberOfBytes: Int) -> Bool {
