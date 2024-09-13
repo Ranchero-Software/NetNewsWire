@@ -26,11 +26,10 @@ public enum FeedType: Sendable {
 		// If there’s not enough data, return .unknown. Ask again when there’s more data.
 		// If it’s definitely not a feed, return .notAFeed.
 
-		if data.count < minNumberOfBytesRequired {
+		let count = data.count
+		if count < minNumberOfBytesRequired {
 			return .unknown
 		}
-
-		let count = data.count
 
 		return data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
 
@@ -45,32 +44,18 @@ public enum FeedType: Sendable {
 			if isProbablyAtom(cCharPointer, count) {
 				return .atom
 			}
+			if isPartialData && isProbablyJSON(cCharPointer, count) {
+				// Might not be able to detect a JSON Feed without all data.
+				// Dr. Drang’s JSON Feed (see althis.json and allthis-partial.json in tests)
+				// has, at this writing, the JSON version element at the end of the feed,
+				// which is totally legal — but it means not being able to detect
+				// that it’s a JSON Feed without all the data.
+				// So this returns .unknown instead of .notAFeed.
+				return .unknown
+			}
 
-			return .unknown
+			return .notAFeed
 		}
-//		if d.isProbablyJSONFeed() {
-//			return .jsonFeed
-//		}
-//		if d.isProbablyRSSInJSON() {
-//			return .rssInJSON
-//		}
-//		if d.isProbablyAtom() {
-//			return .atom
-//		}
-//
-//		if isPartialData && d.isProbablyJSON() {
-//			// Might not be able to detect a JSON Feed without all data.
-//			// Dr. Drang’s JSON Feed (see althis.json and allthis-partial.json in tests)
-//			// has, at this writing, the JSON version element at the end of the feed,
-//			// which is totally legal — but it means not being able to detect
-//			// that it’s a JSON Feed without all the data.
-//			// So this returns .unknown instead of .notAFeed.
-//			return .unknown
-//		}
-
-//		return .notAFeed
-
-//		return type
 	}
 }
 
@@ -90,9 +75,52 @@ private extension FeedType {
 		didFindString("<feed", bytes, count)
 	}
 
+	static func isProbablyJSON(_ bytes: UnsafePointer<CChar>, _ count: Int) -> Bool {
+
+		bytesStartWithStringIgnoringWhitespace("{", bytes, count)
+	}
+
 	static func didFindString(_ string: UnsafePointer<CChar>, _ bytes: UnsafePointer<CChar>, _ numberOfBytes: Int) -> Bool {
 
 		let foundString = strnstr(bytes, string, numberOfBytes)
 		return foundString != nil
+	}
+
+	struct Whitespace {
+		static let space = Character(" ").asciiValue!
+		static let `return` = Character("\r").asciiValue!
+		static let newline = Character("\n").asciiValue!
+		static let tab = Character("\t").asciiValue!
+	}
+
+	static func bytesStartWithStringIgnoringWhitespace(_ string: UnsafePointer<CChar>, _ bytes: UnsafePointer<CChar>, _ numberOfBytes: Int) -> Bool {
+
+		var i = 0
+
+		while i < numberOfBytes {
+
+			let ch = bytes[i]
+
+			if ch == Whitespace.space || ch == Whitespace.return || ch == Whitespace.newline || ch == Whitespace.tab {
+				i += 1
+				continue
+			}
+
+			if ch == string[0] {
+				if let found = strnstr(bytes, string, numberOfBytes) {
+					return found == bytes + i
+				}
+			}
+
+			// Allow for a BOM of up to four bytes (assuming BOM is only at the start)
+			if i < 4 {
+				i += 1
+				continue
+			}
+
+			break
+		}
+
+		return false
 	}
 }
