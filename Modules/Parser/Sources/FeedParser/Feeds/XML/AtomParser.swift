@@ -86,7 +86,12 @@ private extension AtomParser {
 	private struct XMLString {
 		static let rel = "rel"
 		static let alternate = "alternate"
+		static let related = "related"
+		static let enclosure = "enclosure"
 		static let href = "href"
+		static let title = "title"
+		static let type = "type"
+		static let length = "length"
 		static let xmlLang = "xml:lang"
 	}
 
@@ -202,6 +207,46 @@ private extension AtomParser {
 
 	func addLink(_ article: RSSArticle) {
 
+		guard let attributes = currentAttributes else {
+			return
+		}
+		guard let urlString = attributes[XMLString.href], !urlString.isEmpty else {
+			return
+		}
+		
+		var rel = attributes[XMLString.rel]
+		if rel?.isEmpty ?? true {
+			rel = XMLString.alternate
+		}
+
+		if rel == XMLString.related {
+			if article.link == nil {
+				article.link = urlString
+			}
+		}
+		else if rel == XMLString.alternate {
+			if article.permalink == nil {
+				article.permalink = urlString
+			}
+		}
+		else if rel == XMLString.enclosure {
+			if let enclosure = enclosure(urlString, attributes) {
+				article.addEnclosure(enclosure)
+			}
+		}
+	}
+
+	func enclosure(_ urlString: String, _ attributes: SAXParser.XMLAttributesDictionary) -> RSSEnclosure? {
+
+		let enclosure = RSSEnclosure(url: urlString)
+		enclosure.title = attributes[XMLString.title]
+		enclosure.mimeType = attributes[XMLString.type]
+
+		if let lengthString = attributes[XMLString.length] {
+			enclosure.length = Int(lengthString)
+		}
+
+		return enclosure
 	}
 
 	func addXHTMLTag(_ localName: XMLPointer) {
