@@ -14,7 +14,7 @@ final class RSSAuthor {
 	var avatarURL: String?
 	var emailAddress: String?
 
-	init(name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
+	init(name: String? = nil, url: String? = nil, avatarURL: String? = nil, emailAddress: String? = nil) {
 		self.name = name
 		self.url = url
 		self.avatarURL = avatarURL
@@ -25,11 +25,11 @@ final class RSSAuthor {
 	convenience init(singleString: String) {
 
 		if singleString.contains("@") {
-			self.init(name: nil, url: nil, avatarURL: nil, emailAddress: singleString)
+			self.init(emailAddress: singleString)
 		} else if singleString.lowercased().hasPrefix("http") {
-			self.init(name: nil, url: singleString, avatarURL: nil, emailAddress: nil)
+			self.init(url: singleString)
 		} else {
-			self.init(name: singleString, url: nil, avatarURL: nil, emailAddress: nil)
+			self.init(name: singleString)
 		}
 	}
 }

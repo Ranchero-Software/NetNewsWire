@@ -35,7 +35,11 @@ final class AtomParser {
 	private var parsingXHTML = false
 	private var xhtmlString: String?
 
+	private var currentAuthor: RSSAuthor?
+	private var parsingAuthor = false
+
 	private var parsingArticle = false
+	private var parsingSource = false
 	private var endFeedFound = false
 
 	static func parsedFeed(with parserData: ParserData) -> RSSFeed {
@@ -62,8 +66,22 @@ private extension AtomParser {
 
 	private struct XMLName {
 		static let entry = "entry".utf8CString
+		static let content = "content".utf8CString
+		static let summary = "summary".utf8CString
+		static let link = "link".utf8CString
+		static let feed = "feed".utf8CString
+		static let source = "source".utf8CString
+		static let author = "author".utf8CString
 	}
 
+	func addFeedLink() {
+
+	}
+
+	func addFeedLanguage() {
+
+	}
+	
 	func addArticle() {
 		let article = RSSArticle(feedURL)
 		articles.append(article)
@@ -126,6 +144,44 @@ extension AtomParser: SAXParserDelegate {
 			return
 		}
 
+		if SAXEqualTags(localName, XMLName.author) {
+			parsingAuthor = true
+			currentAuthor = RSSAuthor()
+			return
+		}
+
+		if SAXEqualTags(localName, XMLName.source) {
+			parsingSource = true
+			return
+		}
+
+		let isContentTag = SAXEqualTags(localName, XMLName.content)
+		let isSummaryTag = SAXEqualTags(localName, XMLName.summary)
+
+		if parsingArticle && (isContentTag || isSummaryTag) {
+
+			if isContentTag {
+				currentArticle?.language = xmlAttributes["xml:lang"]
+			}
+
+			let contentType = xmlAttributes["type"];
+			if contentType == "xhtml" {
+				parsingXHTML = true
+				xhtmlString = ""
+				return
+			}
+		}
+
+		if !parsingArticle && SAXEqualTags(localName, XMLName.link) {
+			addFeedLink()
+			return
+		}
+
+		if SAXEqualTags(localName, XMLName.feed) {
+			addFeedLanguage()
+		}
+
+		saxParser.beginStoringCharacters()
 	}
 
 	public func saxParser(_ saxParser: SAXParser, xmlEndElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
