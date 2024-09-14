@@ -35,6 +35,6 @@ final class RSSAuthor {
 
 	func isEmpty() -> Bool {
 
-		name != nil || url != nil || avatarURL != nil || emailAddress != nil
+		name == nil && url == nil && avatarURL == nil && emailAddress == nil
 	}
 }

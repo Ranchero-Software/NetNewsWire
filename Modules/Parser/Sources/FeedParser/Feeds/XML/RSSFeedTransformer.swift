@@ -11,10 +11,10 @@ import Foundation
 struct RSSFeedTransformer {
 
 	/// Turn an internal RSSFeed into a public ParsedFeed.
-	static func parsedFeed(with rssFeed: RSSFeed) -> ParsedFeed {
+	static func parsedFeed(with feed: RSSFeed, feedType: FeedType) -> ParsedFeed {
 
-		let items = parsedItems(rssFeed.articles)
-		return ParsedFeed(type: .rss, title: rssFeed.title, homePageURL: rssFeed.link, feedURL: rssFeed.urlString, language: rssFeed.language, feedDescription: nil, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
+		let items = parsedItems(feed.articles)
+		return ParsedFeed(type: feedType, title: feed.title, homePageURL: feed.link, feedURL: feed.urlString, language: feed.language, feedDescription: nil, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 	}
 }
 

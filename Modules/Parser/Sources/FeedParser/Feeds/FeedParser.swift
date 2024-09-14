@@ -40,11 +40,11 @@ public struct FeedParser {
 
 		case .rss:
 			let feed = RSSParser.parsedFeed(with: parserData)
-			return RSSFeedTransformer.parsedFeed(with: feed)
+			return RSSFeedTransformer.parsedFeed(with: feed, feedType: .rss)
 
 		case .atom:
 			let feed = AtomParser.parsedFeed(with: parserData)
-			return RSSFeedTransformer.parsedFeed(with: feed)
+			return RSSFeedTransformer.parsedFeed(with: feed, feedType: .atom)
 
 		case .unknown, .notAFeed:
 			return nil
