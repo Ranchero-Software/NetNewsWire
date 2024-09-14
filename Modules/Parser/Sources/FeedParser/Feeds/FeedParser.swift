@@ -39,11 +39,12 @@ public struct FeedParser {
 			return nil // TODO: try RSSInJSONParser.parse(parserData)
 
 		case .rss:
-			let rssFeed = RSSParser.parsedFeed(with: parserData)
-			return RSSFeedTransformer.parsedFeed(with: rssFeed)
+			let feed = RSSParser.parsedFeed(with: parserData)
+			return RSSFeedTransformer.parsedFeed(with: feed)
 
 		case .atom:
-			return nil // TODO: AtomParser.parse(parserData)
+			let feed = AtomParser.parsedFeed(with: parserData)
+			return RSSFeedTransformer.parsedFeed(with: feed)
 
 		case .unknown, .notAFeed:
 			return nil
