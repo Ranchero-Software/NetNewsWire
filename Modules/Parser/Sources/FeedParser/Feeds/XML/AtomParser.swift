@@ -203,6 +203,11 @@ private extension AtomParser {
 	}
 
 	func addSummary(_ saxParser: SAXParser, _ article: RSSArticle) {
+
+		guard article.body == nil else {
+			return
+		}
+		article.body = currentString(saxParser)
 	}
 
 	func addLink(_ article: RSSArticle) {
@@ -443,4 +448,3 @@ extension AtomParser: SAXParserDelegate {
 		xhtmlString = s
 	}
 }
-
