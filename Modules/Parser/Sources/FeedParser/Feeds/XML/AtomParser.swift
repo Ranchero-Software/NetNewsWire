@@ -8,22 +8,62 @@
 
 import Foundation
 import SAX
+import DateParser
 
-// RSSParser wraps the Objective-C RSAtomParser.
-//
-// The Objective-C parser creates RSParsedFeed, RSParsedArticle, etc.
-// This wrapper then creates ParsedFeed, ParsedItem, etc. so that it creates
-// the same things that JSONFeedParser and RSSInJSONParser create.
-//
-// In general, you should see FeedParser.swift for all your feed-parsing needs.
+final class AtomParser {
 
-//public struct AtomParser {
-//
-//	public static func parse(_ parserData: ParserData) -> ParsedFeed? {
-//
-//		if let rsParsedFeed = RSAtomParser.parseFeed(with: parserData) {
-//			return RSParsedFeedTransformer.parsedFeed(rsParsedFeed)
-//		}
-//		return nil
-//	}
-//}
+	private var parserData: ParserData
+	private var feedURL: String {
+		parserData.url
+	}
+	private var data: Data {
+		parserData.data
+	}
+
+	private let feed: RSSFeed
+	private var articles = [RSSArticle]()
+	private var currentArticle: RSSArticle? {
+		articles.last
+	}
+
+	static func parsedFeed(with parserData: ParserData) -> RSSFeed {
+
+		let parser = AtomParser(parserData)
+		parser.parse()
+		return parser.feed
+	}
+
+	init(_ parserData: ParserData) {
+		self.parserData = parserData
+		self.feed = RSSFeed(urlString: parserData.url)
+	}
+}
+
+private extension AtomParser {
+
+	func parse() {
+
+		let saxParser = SAXParser(delegate: self, data: data)
+		saxParser.parse()
+		feed.articles = articles
+	}
+
+
+}
+
+extension AtomParser: SAXParserDelegate {
+
+	public func saxParser(_ saxParser: SAXParser, xmlStartElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
+
+	}
+
+	public func saxParser(_ saxParser: SAXParser, xmlEndElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
+
+	}
+
+	public func saxParser(_ saxParser: SAXParser, xmlCharactersFound: XMLPointer, count: Int) {
+
+		// Required method.
+	}
+}
+
