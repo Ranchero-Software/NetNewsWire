@@ -14,67 +14,39 @@ import SAX
 
 public struct FeedParser {
 
-//	public static func canParse(_ parserData: ParserData) -> Bool {
-//
-//		let type = feedType(parserData)
-//
-//		switch type {
-//		case .jsonFeed, .rssInJSON, .rss, .atom:
-//			return true
-//		default:
-//			return false
-//		}
-//	}
+	public static func canParse(_ parserData: ParserData) -> Bool {
+
+		let type = FeedType.feedType(parserData.data)
+
+		switch type {
+		case .jsonFeed, .rssInJSON, .rss, .atom:
+			return true
+		default:
+			return false
+		}
+	}
 
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 
-		let rssFeed = RSSParser.parsedFeed(with: parserData)
-		let parsedFeed = RSSFeedTransformer.parsedFeed(with: rssFeed)
-		
-		return parsedFeed
-//		let type = feedType(parserData)
-//
-//		switch type {
-//
-//		case .jsonFeed:
-//			return try JSONFeedParser.parse(parserData)
-//
-//		case .rssInJSON:
-//			return try RSSInJSONParser.parse(parserData)
-//
-//		case .rss:
-//			return RSSParser.parse(parserData)
-//
-//		case .atom:
-//			return AtomParser.parse(parserData)
-//
-//		case .unknown, .notAFeed:
-//			return nil
-//		}
+		let type = FeedType.feedType(parserData.data)
+
+		switch type {
+
+		case .jsonFeed:
+			return nil // TODO: try JSONFeedParser.parse(parserData)
+
+		case .rssInJSON:
+			return nil // TODO: try RSSInJSONParser.parse(parserData)
+
+		case .rss:
+			let rssFeed = RSSParser.parsedFeed(with: parserData)
+			return RSSFeedTransformer.parsedFeed(with: rssFeed)
+
+		case .atom:
+			return nil // TODO: AtomParser.parse(parserData)
+
+		case .unknown, .notAFeed:
+			return nil
+		}
 	}
-
-//	/// For unit tests measuring performance.
-//	public static func parseSync(_ parserData: ParserData) throws -> ParsedFeed? {
-//
-//		let type = feedType(parserData)
-//
-//		switch type {
-//
-//		case .jsonFeed:
-//			return try JSONFeedParser.parse(parserData)
-//
-//		case .rssInJSON:
-//			return try RSSInJSONParser.parse(parserData)
-//
-//		case .rss:
-//			return RSSParser.parse(parserData)
-//
-//		case .atom:
-//			return AtomParser.parse(parserData)
-//
-//		case .unknown, .notAFeed:
-//			return nil
-//		}
-//	}
-
 }
