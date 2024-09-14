@@ -31,3 +31,11 @@ public func SAXEqualTags(_ localName: XMLPointer, _ tag: ContiguousArray<Int8>) 
 		return localName[tagCount - 1] == 0
 	}
 }
+
+public extension String {
+
+	init?(xmlPointer: XMLPointer, count: Int? = nil) {
+		let d = Data(bytes: xmlPointer, count: count ?? strlen(xmlPointer))
+		self.init(data: d, encoding: .utf8)
+	}
+}

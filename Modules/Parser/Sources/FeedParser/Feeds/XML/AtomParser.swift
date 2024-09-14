@@ -81,7 +81,7 @@ private extension AtomParser {
 	func addFeedLanguage() {
 
 	}
-	
+
 	func addArticle() {
 		let article = RSSArticle(feedURL)
 		articles.append(article)
@@ -94,11 +94,7 @@ private extension AtomParser {
 			return
 		}
 
-		let name: String? = {
-			let data = Data(bytes: localName, count: strlen(localName))
-			return String(data: data, encoding: .utf8)
-		}()
-		guard let name else {
+		guard let name = String(xmlPointer: localName) else {
 			assertionFailure("Unexpected failure converting XMLPointer to String in addXHTMLTag.")
 			return
 		}
@@ -190,7 +186,20 @@ extension AtomParser: SAXParserDelegate {
 
 	public func saxParser(_ saxParser: SAXParser, xmlCharactersFound: XMLPointer, count: Int) {
 
-		// Required method.
+		guard parsingXHTML else {
+			return
+		}
+		guard var s = String(xmlPointer: xmlCharactersFound, count: count) else {
+			return
+		}
+
+		// libxml decodes all entities; we need to re-encode certain characters
+		// (<, >, and &) when inside XHTML text content.
+		s = s.replacingOccurrences(of: "<", with: "&;lt;")
+		s = s.replacingOccurrences(of: ">", with: "&;gt;")
+		s = s.replacingOccurrences(of: "&", with: "&amp;")
+
+		xhtmlString = s
 	}
 }
 
