@@ -21,10 +21,20 @@ final class AtomParser {
 	}
 
 	private let feed: RSSFeed
+
 	private var articles = [RSSArticle]()
 	private var currentArticle: RSSArticle? {
 		articles.last
 	}
+
+	private var attributesStack = [SAXParser.XMLAttributesDictionary]()
+	private var currentAttributes: SAXParser.XMLAttributesDictionary? {
+		attributesStack.last
+	}
+
+	private var parsingArticle = false
+	private var parsingXHTML = false
+	private var endFeedFound = false
 
 	static func parsedFeed(with parserData: ParserData) -> RSSFeed {
 
@@ -48,12 +58,35 @@ private extension AtomParser {
 		feed.articles = articles
 	}
 
+	func addArticle() {
+		let article = RSSArticle(feedURL)
+		articles.append(article)
+	}
+
 
 }
 
 extension AtomParser: SAXParserDelegate {
 
 	public func saxParser(_ saxParser: SAXParser, xmlStartElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
+
+		if endFeedFound {
+			return
+		}
+
+		let xmlAttributes = saxParser.attributesDictionary(attributes, attributeCount: attributeCount) ?? SAXParser.XMLAttributesDictionary()
+		attributesStack.append(xmlAttributes)
+
+		if parsingXHTML {
+//			addXHTMLTag(localName)
+			return
+		}
+
+//		if SAXEqualTags(localName, "entry") {
+//			parsingArticle = true
+//			addArticle()
+//			return
+//		}
 
 	}
 
