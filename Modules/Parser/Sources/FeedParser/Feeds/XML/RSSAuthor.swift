@@ -32,4 +32,9 @@ final class RSSAuthor {
 			self.init(name: singleString)
 		}
 	}
+
+	func isEmpty() -> Bool {
+
+		name != nil || url != nil || avatarURL != nil || emailAddress != nil
+	}
 }

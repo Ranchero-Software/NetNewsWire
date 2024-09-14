@@ -72,6 +72,14 @@ private extension AtomParser {
 		static let feed = "feed".utf8CString
 		static let source = "source".utf8CString
 		static let author = "author".utf8CString
+		static let name = "name".utf8CString
+		static let email = "email".utf8CString
+		static let uri = "uri".utf8CString
+		static let title = "title".utf8CString
+	}
+
+	func addFeedTitle() {
+
 	}
 
 	func addFeedLink() {
@@ -85,6 +93,10 @@ private extension AtomParser {
 	func addArticle() {
 		let article = RSSArticle(feedURL)
 		articles.append(article)
+	}
+
+	func addArticleElement(_ localName: XMLPointer, _ prefix: XMLPointer?) {
+
 	}
 
 	func addXHTMLTag(_ localName: XMLPointer) {
@@ -182,6 +194,85 @@ extension AtomParser: SAXParserDelegate {
 
 	public func saxParser(_ saxParser: SAXParser, xmlEndElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
 
+		if SAXEqualTags(localName, XMLName.feed) {
+			endFeedFound = true
+			return
+		}
+
+		if endFeedFound {
+			return
+		}
+
+		if parsingXHTML {
+
+			let isContentTag = SAXEqualTags(localName, XMLName.content)
+			let isSummaryTag = SAXEqualTags(localName, XMLName.summary)
+
+			if parsingArticle && (isContentTag || isSummaryTag) {
+
+				if isContentTag {
+					currentArticle?.body = xhtmlString
+				}
+
+				else if isSummaryTag {
+					if (currentArticle?.body?.count ?? 0) < 1 {
+						currentArticle?.body = xhtmlString
+					}
+				}
+			}
+
+			if isContentTag || isSummaryTag {
+				parsingXHTML = false
+			}
+
+			if var xhtmlString {
+				if let localNameString = String(xmlPointer: localName) {
+					xhtmlString.append("</")
+					xhtmlString.append(localNameString)
+					xhtmlString.append(">")
+				}
+			} else {
+				assertionFailure("xhtmlString must not be nil when parsingXHTML in xmlEndElement.")
+			}
+		}
+
+		else if parsingAuthor {
+
+			if SAXEqualTags(localName, XMLName.author) {
+				parsingAuthor = false
+				if let currentAuthor, !currentAuthor.isEmpty() {
+					currentArticle?.addAuthor(currentAuthor)
+				}
+				currentAuthor = nil
+			}
+			else if SAXEqualTags(localName, XMLName.name) {
+				currentAuthor?.name = saxParser.currentStringWithTrimmedWhitespace
+			}
+			else if SAXEqualTags(localName, XMLName.email) {
+				currentAuthor?.emailAddress = saxParser.currentStringWithTrimmedWhitespace
+			}
+			else if SAXEqualTags(localName, XMLName.uri) {
+				currentAuthor?.url = saxParser.currentStringWithTrimmedWhitespace
+			}
+		}
+
+		else if SAXEqualTags(localName, XMLName.entry) {
+			parsingArticle = false
+		}
+
+		else if parsingArticle && !parsingSource {
+			addArticleElement(localName, prefix)
+		}
+
+		else if SAXEqualTags(localName, XMLName.source) {
+			parsingSource = false
+		}
+
+		else if !parsingArticle && !parsingSource && SAXEqualTags(localName, XMLName.title) {
+			addFeedTitle()
+		}
+
+		_ = attributesStack.popLast()
 	}
 
 	public func saxParser(_ saxParser: SAXParser, xmlCharactersFound: XMLPointer, count: Int) {
