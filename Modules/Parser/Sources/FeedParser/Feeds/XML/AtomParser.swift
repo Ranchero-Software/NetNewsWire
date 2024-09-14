@@ -76,12 +76,33 @@ private extension AtomParser {
 		static let email = "email".utf8CString
 		static let uri = "uri".utf8CString
 		static let title = "title".utf8CString
+		static let id = "id".utf8CString
+		static let published = "published".utf8CString
+		static let updated = "updated".utf8CString
+		static let issued = "issued".utf8CString
+		static let modified = "modified".utf8CString
 	}
 
 	private struct XMLString {
 		static let rel = "rel"
 		static let alternate = "alternate"
 		static let href = "href"
+		static let xmlLang = "xml:lang"
+	}
+
+	func currentString(_ saxParser: SAXParser) -> String? {
+
+		saxParser.currentStringWithTrimmedWhitespace
+	}
+
+	func currentDate(_ saxParser: SAXParser) -> Date? {
+
+		guard let data = saxParser.currentCharacters else {
+			assertionFailure("Unexpected nil saxParser.currentCharacters in AtomParser.currentDate")
+			return nil
+		}
+
+		return DateParser.date(data: data)
 	}
 
 	func addFeedTitle(_ saxParser: SAXParser) {
@@ -89,7 +110,8 @@ private extension AtomParser {
 		guard feed.title == nil else {
 			return
 		}
-		if let title = saxParser.currentStringWithTrimmedWhitespace, !title.isEmpty {
+
+		if let title = currentString(saxParser), !title.isEmpty {
 			feed.title = title
 		}
 	}
@@ -107,6 +129,11 @@ private extension AtomParser {
 
 	func addFeedLanguage() {
 
+		guard feed.language == nil, let currentAttributes else {
+			return
+		}
+
+		feed.language = currentAttributes[XMLString.xmlLang]
 	}
 
 	func addArticle() {
@@ -114,7 +141,66 @@ private extension AtomParser {
 		articles.append(article)
 	}
 
-	func addArticleElement(_ localName: XMLPointer, _ prefix: XMLPointer?) {
+	func addArticleElement(_ saxParser: SAXParser, _ localName: XMLPointer, _ prefix: XMLPointer?) {
+
+		guard prefix == nil else {
+			return
+		}
+		guard let currentArticle else {
+			assertionFailure("currentArticle must not be nil in AtomParser.addArticleElement")
+			return
+		}
+
+		if SAXEqualTags(localName, XMLName.id) {
+			currentArticle.guid = currentString(saxParser)
+		}
+
+		else if SAXEqualTags(localName, XMLName.title) {
+			currentArticle.title = currentString(saxParser)
+		}
+
+		else if SAXEqualTags(localName, XMLName.content) {
+			addContent(saxParser, currentArticle)
+		}
+
+		else if SAXEqualTags(localName, XMLName.summary) {
+			addSummary(saxParser, currentArticle)
+		}
+
+		else if SAXEqualTags(localName, XMLName.link) {
+			addLink(currentArticle)
+		}
+
+		else if SAXEqualTags(localName, XMLName.published) {
+			currentArticle.datePublished = currentDate(saxParser)
+		}
+
+		else if SAXEqualTags(localName, XMLName.updated) {
+			currentArticle.dateModified = currentDate(saxParser)
+		}
+
+		// Atom 0.3 dates
+		else if SAXEqualTags(localName, XMLName.issued) {
+			if currentArticle.datePublished == nil {
+				currentArticle.datePublished = currentDate(saxParser)
+			}
+		}
+		else if SAXEqualTags(localName, XMLName.modified) {
+			if currentArticle.dateModified == nil {
+				currentArticle.dateModified = currentDate(saxParser)
+			}
+		}
+	}
+
+	func addContent(_ saxParser: SAXParser, _ article: RSSArticle) {
+
+		article.body = currentString(saxParser)
+	}
+
+	func addSummary(_ saxParser: SAXParser, _ article: RSSArticle) {
+	}
+
+	func addLink(_ article: RSSArticle) {
 
 	}
 
@@ -280,7 +366,7 @@ extension AtomParser: SAXParserDelegate {
 		}
 
 		else if parsingArticle && !parsingSource {
-			addArticleElement(localName, prefix)
+			addArticleElement(saxParser, localName, prefix)
 		}
 
 		else if SAXEqualTags(localName, XMLName.source) {
