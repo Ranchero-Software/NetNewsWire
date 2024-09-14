@@ -38,6 +38,14 @@ public final class DateParser {
 		}
 	}
 
+	public static func date(string: String) -> Date? {
+
+		guard let data = string.data(using: .utf8) else {
+			return nil
+		}
+		return date(data: data)
+	}
+
 	private typealias DateBuffer = UnsafeBufferPointer<UInt8>
 
 	// See http://en.wikipedia.org/wiki/List_of_time_zone_abbreviations for list
