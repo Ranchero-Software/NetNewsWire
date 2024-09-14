@@ -78,12 +78,31 @@ private extension AtomParser {
 		static let title = "title".utf8CString
 	}
 
-	func addFeedTitle() {
+	private struct XMLString {
+		static let rel = "rel"
+		static let alternate = "alternate"
+		static let href = "href"
+	}
 
+	func addFeedTitle(_ saxParser: SAXParser) {
+
+		guard feed.title == nil else {
+			return
+		}
+		if let title = saxParser.currentStringWithTrimmedWhitespace, !title.isEmpty {
+			feed.title = title
+		}
 	}
 
 	func addFeedLink() {
 
+		guard feed.link == nil, let currentAttributes else {
+			return
+		}
+
+		if let related = currentAttributes[XMLString.rel], related == XMLString.alternate {
+			feed.link = currentAttributes[XMLString.href]
+		}
 	}
 
 	func addFeedLanguage() {
@@ -269,7 +288,7 @@ extension AtomParser: SAXParserDelegate {
 		}
 
 		else if !parsingArticle && !parsingSource && SAXEqualTags(localName, XMLName.title) {
-			addFeedTitle()
+			addFeedTitle(saxParser)
 		}
 
 		_ = attributesStack.popLast()
