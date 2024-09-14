@@ -32,8 +32,10 @@ final class AtomParser {
 		attributesStack.last
 	}
 
-	private var parsingArticle = false
 	private var parsingXHTML = false
+	private var xhtmlString: String?
+
+	private var parsingArticle = false
 	private var endFeedFound = false
 
 	static func parsedFeed(with parserData: ParserData) -> RSSFeed {
@@ -58,12 +60,48 @@ private extension AtomParser {
 		feed.articles = articles
 	}
 
+	private struct XMLName {
+		static let entry = "entry".utf8CString
+	}
+
 	func addArticle() {
 		let article = RSSArticle(feedURL)
 		articles.append(article)
 	}
 
+	func addXHTMLTag(_ localName: XMLPointer) {
 
+		guard var xhtmlString else {
+			assertionFailure("xhtmlString must not be nil when in addXHTMLTag.")
+			return
+		}
+
+		let name: String? = {
+			let data = Data(bytes: localName, count: strlen(localName))
+			return String(data: data, encoding: .utf8)
+		}()
+		guard let name else {
+			assertionFailure("Unexpected failure converting XMLPointer to String in addXHTMLTag.")
+			return
+		}
+
+		xhtmlString.append("<")
+		xhtmlString.append(name)
+
+		if let currentAttributes, currentAttributes.count > 0 {
+			for (key, value) in currentAttributes {
+				xhtmlString.append(" ")
+				xhtmlString.append(key)
+				xhtmlString.append("=\"")
+
+				let encodedValue = value.replacingOccurrences(of: "\"", with: "&quot;")
+				xhtmlString.append(encodedValue)
+				xhtmlString.append("\"")
+			}
+		}
+
+		xhtmlString.append(">")
+	}
 }
 
 extension AtomParser: SAXParserDelegate {
@@ -78,15 +116,15 @@ extension AtomParser: SAXParserDelegate {
 		attributesStack.append(xmlAttributes)
 
 		if parsingXHTML {
-//			addXHTMLTag(localName)
+			addXHTMLTag(localName)
 			return
 		}
 
-//		if SAXEqualTags(localName, "entry") {
-//			parsingArticle = true
-//			addArticle()
-//			return
-//		}
+		if SAXEqualTags(localName, XMLName.entry) {
+			parsingArticle = true
+			addArticle()
+			return
+		}
 
 	}
 
