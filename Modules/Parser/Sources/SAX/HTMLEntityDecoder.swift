@@ -166,6 +166,7 @@ extension String {
 	}
 }
 
+/// rawEntity is assumed not to have opening `&` and closing `;`.
 private func decodedEntity(_ rawEntity: String) -> String? {
 
 	return nil
