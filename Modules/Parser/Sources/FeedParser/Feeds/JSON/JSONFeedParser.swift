@@ -178,7 +178,7 @@ private extension JSONFeedParser {
 		}
 
 		if isSpecialCaseTitleWithEntitiesFeed(feedURL) {
-			return (title as NSString).rsparser_stringByDecodingHTMLEntities()
+			return HTMLEntityDecoder.decodedString(title)
 		}
 
 		return title

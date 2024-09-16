@@ -9,7 +9,9 @@ import Foundation
 
 public final class HTMLEntityDecoder {
 
-	static func decodedString(withEncodedString encodedString: String) -> String {
+	static let ampersandCharacter = Character("&")
+
+	public static func decodedString(_ encodedString: String) -> String {
 
 		let scanner = EntityScanner(string: encodedString)
 		var result = ""
@@ -17,7 +19,7 @@ public final class HTMLEntityDecoder {
 
 		while true {
 
-			let scannedString = scanner.scanUpTo(Character("&"))
+			let scannedString = scanner.scanUpTo(Self.ampersandCharacter)
 			if !scannedString.isEmpty {
 				result.append(scannedString)
 			}
@@ -60,10 +62,10 @@ final class EntityScanner {
 	}
 
 	var currentCharacter: Character? {
-		guard !isAtEnd, let index = string.index(string.startIndex, offsetBy: scanLocation, limitedBy: string.endIndex) else {
+		guard !isAtEnd else {
 			return nil
 		}
-		return string[index]
+		return string.characterAtIntIndex(scanLocation)
 	}
 
 	init(string: String) {
@@ -95,39 +97,7 @@ final class EntityScanner {
 		return scanned
 	}
 
-//	- (BOOL)rs_scanEntityValue:(NSString * _Nullable * _Nullable)decodedEntity {
-//
-//		NSString *s = self.string;
-//		NSUInteger initialScanLocation = self.scanLocation;
-//		static NSUInteger maxEntityLength = 20; // It’s probably smaller, but this is just for sanity.
-//
-//		while (true) {
-//
-//			unichar ch = [s characterAtIndex:self.scanLocation];
-//			if ([NSCharacterSet.whitespaceAndNewlineCharacterSet characterIsMember:ch]) {
-//				break;
-//			}
-//			if (ch == ';') {
-//				if (!decodedEntity) {
-//					return YES;
-//				}
-//				NSString *rawEntity = [s substringWithRange:NSMakeRange(initialScanLocation + 1, (self.scanLocation - initialScanLocation) - 1)];
-//				*decodedEntity = [rawEntity rs_stringByDecodingEntity];
-//				self.scanLocation = self.scanLocation + 1;
-//				return *decodedEntity != nil;
-//			}
-//
-//			self.scanLocation = self.scanLocation + 1;
-//			if (self.scanLocation - initialScanLocation > maxEntityLength) {
-//				break;
-//			}
-//			if (self.isAtEnd) {
-//				break;
-//			}
-//		}
-//
-//		return NO;
-//	}
+	static let semicolonCharacter = Character(";")
 
 	func scanEntityValue() -> String? {
 
@@ -136,10 +106,67 @@ final class EntityScanner {
 
 		while true {
 
-			guard let ch = currentCharacter
+			guard let ch = currentCharacter else {
+				break
+			}
+			if CharacterSet.whitespacesAndNewlines.contains(ch.unicodeScalars.first!) {
+				break
+			}
 
+			if ch == Self.semicolonCharacter {
+				let entityRange = initialScanLocation..<scanLocation
+				guard let entity = string.substring(intRange: entityRange), let decodedEntity = decodedEntity(entity) else {
+					assertionFailure("Unexpected failure scanning entity in scanEntityValue.")
+					scanLocation = initialScanLocation + 1
+					return nil
+				}
+				scanLocation = initialScanLocation + 1
+				return decodedEntity
+			}
+
+			scanLocation += 1
+			if scanLocation - initialScanLocation > maxEntityLength {
+				break
+			}
+			if isAtEnd {
+				break
+			}
 		}
 
 		return nil
 	}
+}
+
+extension String {
+
+	func indexForInt(_ i: Int) -> Index? {
+
+		index(startIndex, offsetBy: i, limitedBy: endIndex)
+	}
+
+	func characterAtIntIndex(_ i: Int) -> Character? {
+
+		guard let index = indexForInt(i) else {
+			return nil
+		}
+
+		return self[index]
+	}
+
+	func substring(intRange: Range<Int>) -> String? {
+
+		guard let rangeLower = indexForInt(intRange.lowerBound) else {
+			return nil
+		}
+		guard let rangeUpper = indexForInt(intRange.upperBound) else {
+			return nil
+		}
+
+		return String(self[rangeLower..<rangeUpper])
+	}
+}
+
+private func decodedEntity(_ rawEntity: String) -> String? {
+
+	return nil
 }
