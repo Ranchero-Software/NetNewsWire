@@ -121,7 +121,7 @@ final class EntityScanner {
 					scanLocation = initialScanLocation + 1
 					return nil
 				}
-				scanLocation = initialScanLocation + 1
+				scanLocation = scanLocation + 1
 				return decodedEntity
 			}
 
