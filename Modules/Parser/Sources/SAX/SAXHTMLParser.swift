@@ -10,12 +10,12 @@ import libxml2
 
 protocol SAXHTMLParserDelegate: AnyObject {
 
-	func saxHTMLParser(_: SAXHTMLParser, startElement name: XMLPointer, attributes: UnsafePointer<XMLPointer?>?)
+	func saxHTMLParser(_: SAXHTMLParser, startElement: XMLPointer, attributes: UnsafePointer<XMLPointer?>?)
 
-	func saxHTMLParser(_: SAXHTMLParser, endElement name: XMLPointer?)
+	func saxHTMLParser(_: SAXHTMLParser, endElement: XMLPointer)
 
 	// Length is guaranteed to be greater than 0.
-	func saxHTMLParser(_: SAXHTMLParser, charactersFound characters: XMLPointer?, count: Int)
+	func saxHTMLParser(_: SAXHTMLParser, charactersFound: XMLPointer, count: Int)
 }
 
 final class SAXHTMLParser {
@@ -72,7 +72,7 @@ final class SAXHTMLParser {
 
 			let characterEncoding = xmlDetectCharEncoding(bytes, Int32(data.count))
 			let context = htmlCreatePushParserCtxt(&saxHandlerStruct, Unmanaged.passUnretained(self).toOpaque(), nil, 0, nil, characterEncoding)
-			htmlCtxtUseOptions(context, Int32(XML_PARSE_RECOVER | XML_PARSE_NONET | HTML_PARSE_COMPACT))
+			htmlCtxtUseOptions(context, Int32(XML_PARSE_RECOVER.rawValue | XML_PARSE_NONET.rawValue | HTML_PARSE_COMPACT.rawValue))
 
 			htmlParseChunk(context, bytes, Int32(data.count), 0)
 
@@ -137,13 +137,13 @@ final class SAXHTMLParser {
 
 private extension SAXHTMLParser {
 
-	func charactersFound(_ xmlCharacters: XMLPointer, count: Int) {
+	func charactersFound(_ htmlCharacters: XMLPointer, count: Int) {
 
 		if storingCharacters {
-			characters.append(xmlCharacters, count: count)
+			characters.append(htmlCharacters, count: count)
 		}
 
-		delegate.saxHTMLParser(self, charactersFound: characters, count: count)
+		delegate.saxHTMLParser(self, charactersFound: htmlCharacters, count: count)
 	}
 
 	func startElement(_ name: XMLPointer, attributes: UnsafePointer<XMLPointer?>?) {
@@ -189,7 +189,7 @@ private func charactersFound(_ context: UnsafeMutableRawPointer?, ch: XMLPointer
 	parser.charactersFound(ch, count: Int(len))
 }
 
-private func parser(from context: UnsafeMutableRawPointer) -> SAXParser {
+private func parser(from context: UnsafeMutableRawPointer) -> SAXHTMLParser {
 
 	Unmanaged<SAXHTMLParser>.fromOpaque(context).takeUnretainedValue()
 }
