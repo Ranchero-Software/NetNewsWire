@@ -33,7 +33,7 @@ public struct FeedParser {
 		switch type {
 
 		case .jsonFeed:
-			return nil // TODO: try JSONFeedParser.parse(parserData)
+			return try JSONFeedParser.parse(parserData)
 
 		case .rssInJSON:
 			return nil // TODO: try RSSInJSONParser.parse(parserData)
