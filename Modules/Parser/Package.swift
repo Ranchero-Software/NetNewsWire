@@ -21,6 +21,10 @@ let package = Package(
 			type: .dynamic,
 			targets: ["OPMLParser"]),
 		.library(
+			name: "HTMLParser",
+			type: .dynamic,
+			targets: ["HTMLParser"]),
+		.library(
 			name: "DateParser",
 			type: .dynamic,
 			targets: ["DateParser"])
@@ -33,6 +37,14 @@ let package = Package(
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
 		.target(
 			name: "OPMLParser",
+			dependencies: [
+				"SAX"
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]),
+		.target(
+			name: "HTMLParser",
 			dependencies: [
 				"SAX"
 			],
