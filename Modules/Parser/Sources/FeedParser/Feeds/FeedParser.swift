@@ -36,7 +36,7 @@ public struct FeedParser {
 			return try JSONFeedParser.parse(parserData)
 
 		case .rssInJSON:
-			return nil // TODO: try RSSInJSONParser.parse(parserData)
+			return try RSSInJSONParser.parse(parserData)
 
 		case .rss:
 			let feed = RSSParser.parsedFeed(with: parserData)
