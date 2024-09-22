@@ -74,21 +74,15 @@ let package = Package(
 				.enableExperimentalFeature("StrictConcurrency")
 			]),
 		.testTarget(
-			name: "FeedParserTests",
-			dependencies: ["FeedParser"],
+			name: "ParserTests",
+			dependencies: [
+				"FeedParser",
+				"OPMLParser",
+				"DateParser",
+				"HTMLParser"
+			],
 			exclude: ["Info.plist"],
 			resources: [.copy("Resources")]),
-		.testTarget(
-			name: "OPMLParserTests",
-			dependencies: ["OPMLParser"],
-			resources: [.copy("Resources")]),
-		.testTarget(
-			name: "HTMLParserTests",
-			dependencies: ["HTMLParser"],
-			resources: [.copy("Resources")]),
-		.testTarget(
-			name: "DateParserTests",
-			dependencies: ["DateParser"])
 	]
 )
 

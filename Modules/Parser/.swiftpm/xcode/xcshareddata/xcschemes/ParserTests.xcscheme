@@ -18,9 +18,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DateParserTests"
-               BuildableName = "DateParserTests"
-               BlueprintName = "DateParserTests"
+               BlueprintIdentifier = "ParserTests"
+               BuildableName = "ParserTests"
+               BlueprintName = "ParserTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
