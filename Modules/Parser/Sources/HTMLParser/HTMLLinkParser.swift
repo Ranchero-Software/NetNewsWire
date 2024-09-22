@@ -15,7 +15,7 @@ public final class HTMLLinkParser {
 	private let parserData: ParserData
 	private let baseURL: URL?
 
-	public static func htmlLinks(parserData: ParserData) -> [HTMLLink] {
+	public static func htmlLinks(with parserData: ParserData) -> [HTMLLink] {
 
 		let parser = HTMLLinkParser(parserData)
 		parser.parse()
@@ -38,23 +38,23 @@ private extension HTMLLinkParser {
 	}
 }
 
-private extension HTMLLinkParser: SAXHTMLParserDelegate {
+extension HTMLLinkParser: SAXHTMLParserDelegate {
 
-	var currentLink: HTMLLink? {
+	private var currentLink: HTMLLink? {
 		links.last
 	}
 
-	struct HTMLAttributeName {
-		let href = "href"
-		let title = "title"
+	private struct HTMLAttributeName {
+		static let href = "href"
+		static let title = "title"
 	}
 
-	func title(_ attributesDictionary: HTMLAttributesDictionary) -> String? {
+	private func title(with attributesDictionary: SAXHTMLParser.HTMLAttributesDictionary) -> String? {
 
-		attributesDictionary.object(object(forCaseInsensitiveKey: HTMLAttributeName.title))
+		attributesDictionary.object(forCaseInsensitiveKey: HTMLAttributeName.title)
 	}
 
-	func urlString(_ attributesDictionary: HTMLAttributesDictionary) -> String? {
+	private func urlString(with attributesDictionary: SAXHTMLParser.HTMLAttributesDictionary) -> String? {
 
 		guard let href = attributesDictionary.object(forCaseInsensitiveKey: HTMLAttributeName.href) else {
 			return nil
@@ -68,22 +68,22 @@ private extension HTMLLinkParser: SAXHTMLParserDelegate {
 		return absoluteURL.absoluteString
 	}
 
-	func handleLinkAttributes(_ attributesDictionary: HTMLAttributesDictionary) {
+	private func handleLinkAttributes(_ attributesDictionary: SAXHTMLParser.HTMLAttributesDictionary) {
 
 		guard let currentLink else {
 			assertionFailure("currentLink must not be nil")
 			return
 		}
 
-		link.urlString = urlString(attributesDictionary)
-		link.title = title(attributesDictionary)
+		currentLink.urlString = urlString(with: attributesDictionary)
+		currentLink.title = title(with: attributesDictionary)
 	}
 
-	struct HTMLName {
+	private struct HTMLName {
 		static let a = "a".utf8CString
 	}
 
-	func saxHTMLParser(_ saxHTMLParser: SAXHTMLParser, startElement name: XMLPointer, attributes: UnsafePointer<XMLPointer?>?) {
+	public func saxHTMLParser(_ saxHTMLParser: SAXHTMLParser, startElement name: XMLPointer, attributes: UnsafePointer<XMLPointer?>?) {
 
 		guard SAXEqualTags(name, HTMLName.a) else {
 			return
@@ -99,15 +99,20 @@ private extension HTMLLinkParser: SAXHTMLParserDelegate {
 		saxHTMLParser.beginStoringCharacters()
 	}
 
-	func saxHTMLParser(_ saxHTMLParser: SAXHTMLParser, endElement name: XMLPointer) {
+	public func saxHTMLParser(_ saxHTMLParser: SAXHTMLParser, endElement name: XMLPointer) {
 
 		guard SAXEqualTags(name, HTMLName.a) else {
 			return
 		}
+		guard let currentLink else {
+			assertionFailure("currentLink must not be nil.")
+			return
+		}
+
 		currentLink.text = saxHTMLParser.currentStringWithTrimmedWhitespace
 	}
 
-	func saxHTMLParser(_: SAXHTMLParser, charactersFound: XMLPointer, count: Int) {
+	public func saxHTMLParser(_: SAXHTMLParser, charactersFound: XMLPointer, count: Int) {
 		// Nothing needed.
 	}
 }

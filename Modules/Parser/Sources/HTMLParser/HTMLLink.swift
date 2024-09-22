@@ -9,7 +9,14 @@ import Foundation
 
 public final class HTMLLink {
 
-	let urlString: String? // Absolute URL string
-	let text: String?
-	let title: String? // Title attribute inside anchor tag
+	public var urlString: String? // Absolute URL string
+	public var text: String?
+	public var title: String? // Title attribute inside anchor tag
+
+	init(urlString: String? = nil, text: String? = nil, title: String? = nil) {
+
+		self.urlString = urlString
+		self.text = text
+		self.title = title
+	}
 }

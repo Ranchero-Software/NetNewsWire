@@ -83,6 +83,10 @@ let package = Package(
 			dependencies: ["OPMLParser"],
 			resources: [.copy("Resources")]),
 		.testTarget(
+			name: "HTMLParserTests",
+			dependencies: ["HTMLParser"],
+			resources: [.copy("Resources")]),
+		.testTarget(
 			name: "DateParserTests",
 			dependencies: ["DateParser"])
 	]
