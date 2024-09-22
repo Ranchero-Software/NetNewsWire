@@ -8,7 +8,7 @@
 import Foundation
 import libxml2
 
-protocol SAXHTMLParserDelegate: AnyObject {
+public protocol SAXHTMLParserDelegate: AnyObject {
 
 	func saxHTMLParser(_: SAXHTMLParser, startElement: XMLPointer, attributes: UnsafePointer<XMLPointer?>?)
 
@@ -18,7 +18,7 @@ protocol SAXHTMLParserDelegate: AnyObject {
 	func saxHTMLParser(_: SAXHTMLParser, charactersFound: XMLPointer, count: Int)
 }
 
-final class SAXHTMLParser {
+public final class SAXHTMLParser {
 
 	fileprivate let delegate: SAXHTMLParserDelegate
 
