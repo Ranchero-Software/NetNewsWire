@@ -66,13 +66,13 @@ public final class SAXHTMLParser {
 
 		data.withUnsafeBytes { bufferPointer in
 
-			guard let bytes = bufferPointer.bindMemory(to: xmlChar.self).baseAddress else {
+			guard let bytes = bufferPointer.bindMemory(to: CChar.self).baseAddress else {
 				return
 			}
 
 			let characterEncoding = xmlDetectCharEncoding(bytes, Int32(data.count))
 			let context = htmlCreatePushParserCtxt(&saxHandlerStruct, Unmanaged.passUnretained(self).toOpaque(), nil, 0, nil, characterEncoding)
-			htmlCtxtUseOptions(context, Int32(XML_PARSE_RECOVER.rawValue | XML_PARSE_NONET.rawValue | HTML_PARSE_COMPACT.rawValue))
+			htmlCtxtUseOptions(context, Int32(HTML_PARSE_RECOVER.rawValue | HTML_PARSE_NONET.rawValue | HTML_PARSE_COMPACT.rawValue | HTML_PARSE_NOERROR.rawValue | HTML_PARSE_NOWARNING.rawValue))
 
 			htmlParseChunk(context, bytes, Int32(data.count), 0)
 
@@ -158,37 +158,6 @@ private extension SAXHTMLParser {
 	}
 }
 
-private func startElement(_ context: UnsafeMutableRawPointer?, name: XMLPointer?, attributes: UnsafeMutablePointer<XMLPointer?>?) {
-
-	guard let context, let name else {
-		return
-	}
-
-	let parser = parser(from: context)
-	parser.startElement(name, attributes: attributes)
-}
-
-
-private func endElement(_ context: UnsafeMutableRawPointer?, name: XMLPointer?) {
-
-	guard let context, let name else {
-		return
-	}
-
-	let parser = parser(from: context)
-	parser.endElement(name)
-}
-
-private func charactersFound(_ context: UnsafeMutableRawPointer?, ch: XMLPointer?, len: CInt) {
-
-	guard let context, let ch, len > 0 else {
-		return
-	}
-
-	let parser = parser(from: context)
-	parser.charactersFound(ch, count: Int(len))
-}
-
 private func parser(from context: UnsafeMutableRawPointer) -> SAXHTMLParser {
 
 	Unmanaged<SAXHTMLParser>.fromOpaque(context).takeUnretainedValue()
@@ -196,12 +165,37 @@ private func parser(from context: UnsafeMutableRawPointer) -> SAXHTMLParser {
 
 nonisolated(unsafe) private var saxHandlerStruct: xmlSAXHandler = {
 
-	var handler = xmlSAXHandler()
+	var handler = htmlSAXHandler()
 
-	handler.characters = charactersFound
-	handler.startElement = startElement
-	handler.endElement = endElement
-	handler.initialized = XML_SAX2_MAGIC
+	handler.characters = { (context: UnsafeMutableRawPointer?, ch: XMLPointer?, len: CInt) in
+
+		guard let context, let ch, len > 0 else {
+			return
+		}
+
+		let parser = parser(from: context)
+		parser.charactersFound(ch, count: Int(len))
+	}
+
+	handler.startElement = { (context: UnsafeMutableRawPointer?, name: XMLPointer?, attributes: UnsafeMutablePointer<XMLPointer?>?) in
+
+		guard let context, let name else {
+			return
+		}
+
+		let parser = parser(from: context)
+		parser.startElement(name, attributes: attributes)
+	}
+
+	handler.endElement = { (context: UnsafeMutableRawPointer?, name: XMLPointer?) in
+
+		guard let context, let name else {
+			return
+		}
+
+		let parser = parser(from: context)
+		parser.endElement(name)
+	}
 
 	return handler
 }()

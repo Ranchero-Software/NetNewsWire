@@ -56,7 +56,7 @@ extension HTMLLinkParser: SAXHTMLParserDelegate {
 
 	private func urlString(with attributesDictionary: SAXHTMLParser.HTMLAttributesDictionary) -> String? {
 
-		guard let href = attributesDictionary.object(forCaseInsensitiveKey: HTMLAttributeName.href) else {
+		guard let href = attributesDictionary.object(forCaseInsensitiveKey: HTMLAttributeName.href), !href.isEmpty else {
 			return nil
 		}
 

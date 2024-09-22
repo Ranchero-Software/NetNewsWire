@@ -7,9 +7,9 @@
 //
 
 import XCTest
-import FeedParser
 import HTMLParser
 import SAX
+import libxml2
 
 class HTMLLinkTests: XCTestCase {
 

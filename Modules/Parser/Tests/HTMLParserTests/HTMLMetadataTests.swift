@@ -7,7 +7,6 @@
 //
 
 import XCTest
-import FeedParser
 
 //class HTMLMetadataTests: XCTestCase {
 //
