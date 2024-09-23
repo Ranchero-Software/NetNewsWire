@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias HTMLTagAttributes = [String: String]
+
 public struct HTMLTag: Sendable {
 
 	public enum TagType: Sendable {
@@ -15,9 +17,9 @@ public struct HTMLTag: Sendable {
 	}
 
 	public let tagType: TagType
-	public let attributes: [String: String]?
+	public let attributes: HTMLTagAttributes?
 
-	public init(tagType: TagType, attributes: [String : String]?) {
+	public init(tagType: TagType, attributes: HTMLTagAttributes?) {
 		self.tagType = tagType
 		self.attributes = attributes
 	}
