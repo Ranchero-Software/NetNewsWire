@@ -49,10 +49,13 @@ public final class HTMLMetadata {
 
 	static func resolvedFaviconLinks(_ baseURLString: String, _ tags: [HTMLTag]) -> [HTMLMetadataFavicon]? {
 
-		let linkTags = linkTagsWithMatchingRel("icon")
+		guard let linkTags = linkTagsWithMatchingRel("icon", tags) else {
+			return nil
+		}
+
 		var seenHrefs = [String]()
 
-		let favicons = linkTags.compactMap { htmlTag in
+		let favicons: [HTMLMetadataFavicon] = linkTags.compactMap { htmlTag in
 
 			let favicon = HTMLMetadataFavicon(baseURLString, htmlTag)
 			guard let urlString = favicon.urlString else {
@@ -74,13 +77,15 @@ public final class HTMLMetadata {
 			return nil
 		}
 
-		let appleTouchIconTags = tagsMatchingRelValues(["apple-touch-icon", "apple-touch-icon-precomposed"], tags)
+		guard let appleTouchIconTags = tagsMatchingRelValues(["apple-touch-icon", "apple-touch-icon-precomposed"], linkTags) else {
+			return nil
+		}
 		return appleTouchIconTags.isEmpty ? nil : appleTouchIconTags
 	}
 
 	static func feedLinkTags(_ tags: [HTMLTag]) -> [HTMLTag]? {
 
-		let alternateLinkTags = linkTagsWithMatchingRel("alternate", tags) else {
+		guard let alternateLinkTags = linkTagsWithMatchingRel("alternate", tags) else {
 			return nil
 		}
 
@@ -120,7 +125,10 @@ public final class HTMLMetadata {
 		}
 
 		let tagsWithURLString = linkTags.filter { tag in
-			guard let urlString = urlStringFromDictionary(tag.attributes), !urlString.isEmpty else {
+			guard let attributes = tag.attributes else {
+				return false
+			}
+			guard let urlString = urlString(from: attributes), !urlString.isEmpty else {
 				return false
 			}
 			return true
@@ -129,7 +137,9 @@ public final class HTMLMetadata {
 			return nil
 		}
 
-		let matchingTags = tagsMatchingRelValues([valueToMatch], tagsWithURLString)
+		guard let matchingTags = tagsMatchingRelValues([valueToMatch], tagsWithURLString) else {
+			return nil
+		}
 		return matchingTags.isEmpty ? nil : matchingTags
 	}
 
@@ -141,11 +151,14 @@ public final class HTMLMetadata {
 
 			tags.filter { tag in
 
-				guard let relValue = relValue(tag.attributes) else {
+				guard let attributes = tag.attributes else {
+					return false
+				}
+				guard let relValue = relValue(from: attributes) else {
 					return false
 				}
 
-				let relValues = relValue.componentsSeparatedByCharactersInSet(.whitespacesAndNewlines)
+				let relValues = relValue.components(separatedBy: .whitespacesAndNewlines)
 				for oneRelValue in relValues {
 					let oneLowerRelValue = oneRelValue.lowercased()
 
@@ -158,7 +171,7 @@ public final class HTMLMetadata {
 
 				return false
 			}
-		}
+		}()
 
 		return matchingTags.isEmpty ? nil : matchingTags
 	}
@@ -182,7 +195,7 @@ public final class HTMLMetadataAppleTouchIcon {
 		}
 
 		self.rel = attributes.object(forCaseInsensitiveKey: "rel")
-		self.urlString = absoluteURLStringWithDictionary(attributes)
+		self.urlString = absoluteURLString(from: attributes, baseURL: urlString)
 
 		guard let sizes = attributes.object(forCaseInsensitiveKey: "sizes") else {
 			self.sizes = nil
@@ -191,17 +204,13 @@ public final class HTMLMetadataAppleTouchIcon {
 		}
 		self.sizes = sizes
 
-		let size: CGSize? = {
-			let sizeComponents = sizes.components(separatedBy: CharacterSet(charactersIn: "x"))
-			guard sizeComponents.count == 2 else {
-				return nil
-			}
-			let width = Double(sizeComponents[0])
-			let height = Double(sizeComponents[1])
-			return CGSize(width: width, height: height)
-		}()
-
-		self.size = size
+		let sizeComponents = sizes.components(separatedBy: CharacterSet(charactersIn: "x"))
+		if sizeComponents.count == 2, let width = Double(sizeComponents[0]), let height = Double(sizeComponents[1]) {
+			self.size = CGSize(width: width, height: height)
+		}
+		else {
+			self.size = nil
+		}
 	}
 }
 
@@ -220,7 +229,7 @@ public final class HTMLMetadataFeedLink {
 			return
 		}
 
-		self.urlString = absoluteURLStringWithDictionary(attributes, baseURLString)
+		self.urlString = absoluteURLString(from: attributes, baseURL: urlString)
 		self.title = attributes.object(forCaseInsensitiveKey: "title")
 		self.type = attributes.object(forCaseInsensitiveKey: "type")
 	}
@@ -239,7 +248,7 @@ public final class HTMLMetadataFavicon {
 			return
 		}
 
-		self.urlString = absoluteURLStringWithDictionary(attributes, baseURLString)
+		self.urlString = absoluteURLString(from: attributes, baseURL: urlString)
 		self.type = attributes.object(forCaseInsensitiveKey: "type")
 	}
 }
@@ -276,7 +285,7 @@ private extension HTMLOpenGraphProperties {
 		static let ogImageHeight = "og:image:height"
 	}
 
-	static func parse(_ tags: [HTMLTag]) -> [HTMLOpenGraphImage]? {
+	static func parse(_ tags: [HTMLTag]) -> HTMLOpenGraphImage? {
 
 		let metaTags = tags.filter { $0.tagType == .meta }
 		if metaTags.isEmpty {
@@ -319,10 +328,14 @@ private extension HTMLOpenGraphProperties {
 				altText = content
 			}
 			else if propertyName == OGValue.ogImageWidth {
-				width = CGFloat(content)
+				if let value = Double(content) {
+					width = CGFloat(value)
+				}
 			}
 			else if propertyName == OGValue.ogImageHeight {
-				height = CGFloat(content)
+				if let value = Double(content) {
+					height = CGFloat(value)
+				}
 			}
 		}
 
@@ -343,8 +356,8 @@ public final class HTMLOpenGraphImage {
 	public let height: CGFloat?
 	public let altText: String?
 
-	init(url: String?, secureURL: String?, mimeType: String, width: CGFloat?, height: CGFloat?, altText: String?) {
-		
+	init(url: String?, secureURL: String?, mimeType: String?, width: CGFloat?, height: CGFloat?, altText: String?) {
+
 		self.url = url
 		self.secureURL = secureURL
 		self.mimeType = mimeType
@@ -369,7 +382,7 @@ public final class HTMLTwitterProperties {
 
 	init(_ urlString: String, _ tags: [HTMLTag]) {
 
-		let imageURL: String = {
+		let imageURL: String? = {
 			for tag in tags {
 				guard tag.tagType == .meta else {
 					continue
@@ -388,5 +401,38 @@ public final class HTMLTwitterProperties {
 
 		self.imageURL = imageURL
 	}
+}
+
+private func urlString(from attributes: HTMLTagAttributes) -> String? {
+
+	if let urlString = attributes.object(forCaseInsensitiveKey: "href") {
+		return urlString
+	}
+	return attributes.object(forCaseInsensitiveKey: "src")
+}
+
+private func relValue(from attributes: HTMLTagAttributes) -> String? {
+
+	attributes.object(forCaseInsensitiveKey: "rel")
+}
+
+private func absoluteURLString(from attributes: HTMLTagAttributes, baseURL: String) -> String? {
+
+	guard let urlString = urlString(from: attributes), !urlString.isEmpty else {
+		return nil
+	}
+
+	return absoluteURLStringWithRelativeURLString(urlString, baseURLString: baseURL)
+}
+
+private func absoluteURLStringWithRelativeURLString(_ relativeURLString: String, baseURLString: String) -> String? {
+
+	guard let baseURL = URL(string: baseURLString) else {
+		return nil
+	}
+	guard let absoluteURL = URL(string: relativeURLString, relativeTo: baseURL) else {
+		return nil
+	}
+	return absoluteURL.absoluteURL.standardized.absoluteString
 }
 
