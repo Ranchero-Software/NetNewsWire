@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 @testable import DateParser
 
-class DateParserTests: XCTestCase {
+final class DateParserTests: XCTestCase {
 	
 	func dateWithValues(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int, _ millisecond: Int = 0) -> Date {
 		var dateComponents = DateComponents()

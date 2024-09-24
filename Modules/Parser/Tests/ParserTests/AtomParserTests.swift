@@ -9,7 +9,7 @@
 import XCTest
 import FeedParser
 
-class AtomParserTests: XCTestCase {
+final class AtomParserTests: XCTestCase {
 
 	func testDaringFireballPerformance() {
 

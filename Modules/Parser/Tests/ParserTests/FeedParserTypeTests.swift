@@ -10,7 +10,7 @@ import XCTest
 @testable import FeedParser
 import SAX
 
-class FeedParserTypeTests: XCTestCase {
+final class FeedParserTypeTests: XCTestCase {
 
 	// MARK: HTML
 

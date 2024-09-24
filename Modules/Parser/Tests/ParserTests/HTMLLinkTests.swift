@@ -10,7 +10,7 @@ import XCTest
 import HTMLParser
 import libxml2
 
-class HTMLLinkTests: XCTestCase {
+final class HTMLLinkTests: XCTestCase {
 
 	func testSixColorsPerformance() {
 
