@@ -8,7 +8,6 @@
 
 import Foundation
 import Images
-import ParserObjC
 import Account
 
 extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {

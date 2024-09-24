@@ -8,7 +8,6 @@
 
 import Foundation
 import Parser
-import ParserObjC
 
 public final class FeedbinEntry: Decodable, @unchecked Sendable {
 

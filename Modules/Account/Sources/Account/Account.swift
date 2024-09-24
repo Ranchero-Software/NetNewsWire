@@ -13,7 +13,6 @@ import UIKit
 import Foundation
 import Articles
 import Parser
-import ParserObjC
 import Database
 import ArticlesDatabase
 import Web

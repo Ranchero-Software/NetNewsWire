@@ -385,12 +385,8 @@
 		8454C3F8263F3AD400E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
 		8456116B2BBD145200507B73 /* Parser in Frameworks */ = {isa = PBXBuildFile; productRef = 8456116A2BBD145200507B73 /* Parser */; };
 		8456116C2BBD145200507B73 /* Parser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8456116A2BBD145200507B73 /* Parser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8456116E2BBD145200507B73 /* ParserObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 8456116D2BBD145200507B73 /* ParserObjC */; };
-		8456116F2BBD145200507B73 /* ParserObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8456116D2BBD145200507B73 /* ParserObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		845611712BBD145D00507B73 /* Parser in Frameworks */ = {isa = PBXBuildFile; productRef = 845611702BBD145D00507B73 /* Parser */; };
 		845611722BBD145D00507B73 /* Parser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 845611702BBD145D00507B73 /* Parser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		845611742BBD145D00507B73 /* ParserObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 845611732BBD145D00507B73 /* ParserObjC */; };
-		845611752BBD145D00507B73 /* ParserObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 845611732BBD145D00507B73 /* ParserObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */; };
 		845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */; };
 		845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
@@ -494,7 +490,6 @@
 		84DC5FFE2BCE37A300F04682 /* AppDelegate+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC5FFD2BCE37A300F04682 /* AppDelegate+Shared.swift */; };
 		84DC60002BCE37A300F04682 /* AppDelegate+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC5FFD2BCE37A300F04682 /* AppDelegate+Shared.swift */; };
 		84DC60022BCE40B200F04682 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = 84DC60012BCE40B200F04682 /* Images */; };
-		84DC60042BCE40D000F04682 /* ParserObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 84DC60032BCE40D000F04682 /* ParserObjC */; };
 		84DCA5122BABB75600792720 /* FoundationExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5112BABB75600792720 /* FoundationExtras */; };
 		84DCA5142BABB76100792720 /* AppKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5132BABB76100792720 /* AppKitExtras */; };
 		84DCA51E2BABB79900792720 /* FoundationExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA51D2BABB79900792720 /* FoundationExtras */; };
@@ -686,7 +681,6 @@
 				8426DBC02BFDAEF200E98109 /* Web in Embed Frameworks */,
 				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
-				845611752BBD145D00507B73 /* ParserObjC in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
 				513F32812593EF180003048F /* Account in Embed Frameworks */,
 				8426DBB92BFDAD9200E98109 /* Core in Embed Frameworks */,
@@ -741,7 +735,6 @@
 				8426DBC32BFDAEFC00E98109 /* Web in Embed Frameworks */,
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
-				8456116F2BBD145200507B73 /* ParserObjC in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
 				8426DBB82BFDAD8500E98109 /* Core in Embed Frameworks */,
@@ -1097,7 +1090,6 @@
 		84A059EE2C3A4A570041209B /* FMDB */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FMDB; sourceTree = "<group>"; };
 		84A059EF2C3A4A5B0041209B /* Web */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Web; sourceTree = "<group>"; };
 		84A059F02C3A4A5F0041209B /* Parser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Parser; sourceTree = "<group>"; };
-		84A059F12C3A4A620041209B /* ParserObjC */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ParserObjC; sourceTree = "<group>"; };
 		84A059F22C3A4A670041209B /* Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Core; sourceTree = "<group>"; };
 		84A059F32C3A4A6C0041209B /* Tree */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Tree; sourceTree = "<group>"; };
 		84A059F42C3A4AA30041209B /* UIKitExtras */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = UIKitExtras; sourceTree = "<group>"; };
@@ -1244,7 +1236,6 @@
 				841CECDE2BAD06D10001EE72 /* Tree in Frameworks */,
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
 				8426DBC82BFDAF4300E98109 /* Web in Frameworks */,
-				84DC60042BCE40D000F04682 /* ParserObjC in Frameworks */,
 				84D9582C2BABE53B0053E7B2 /* FoundationExtras in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1291,7 +1282,6 @@
 				84C1A8582BBBA5BD006E3E96 /* Web in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
 				84A699152BC34F3D00605AB8 /* ArticleExtractor in Frameworks */,
-				845611742BBD145D00507B73 /* ParserObjC in Frameworks */,
 				845611712BBD145D00507B73 /* Parser in Frameworks */,
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
 				513F32772593EE6F0003048F /* Secrets in Frameworks */,
@@ -1329,7 +1319,6 @@
 				841CECD82BAD04B20001EE72 /* Tree in Frameworks */,
 				8426DBC22BFDAEFC00E98109 /* Web in Frameworks */,
 				8456116B2BBD145200507B73 /* Parser in Frameworks */,
-				8456116E2BBD145200507B73 /* ParserObjC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2052,7 +2041,6 @@
 				84A059EE2C3A4A570041209B /* FMDB */,
 				84A059EF2C3A4A5B0041209B /* Web */,
 				84A059F02C3A4A5F0041209B /* Parser */,
-				84A059F12C3A4A620041209B /* ParserObjC */,
 				84A059F22C3A4A670041209B /* Core */,
 				84A059F32C3A4A6C0041209B /* Tree */,
 				84A059F42C3A4AA30041209B /* UIKitExtras */,
@@ -2493,7 +2481,6 @@
 				84D9582B2BABE53B0053E7B2 /* FoundationExtras */,
 				841CECDD2BAD06D10001EE72 /* Tree */,
 				84DC60012BCE40B200F04682 /* Images */,
-				84DC60032BCE40D000F04682 /* ParserObjC */,
 				8426DBC72BFDAF4300E98109 /* Web */,
 			);
 			productName = "NetNewsWire iOS Share Extension";
@@ -2608,7 +2595,6 @@
 				841CECDB2BAD04BF0001EE72 /* Tree */,
 				84C1A8572BBBA5BD006E3E96 /* Web */,
 				845611702BBD145D00507B73 /* Parser */,
-				845611732BBD145D00507B73 /* ParserObjC */,
 				8410C4A42BC1E28200D4F799 /* ReaderAPI */,
 				84A699142BC34F3D00605AB8 /* ArticleExtractor */,
 				84DC5FFB2BCE31DB00F04682 /* Images */,
@@ -2657,7 +2643,6 @@
 				8438C2DA2BABE0B00040C9EE /* CoreResources */,
 				841CECD72BAD04B20001EE72 /* Tree */,
 				8456116A2BBD145200507B73 /* Parser */,
-				8456116D2BBD145200507B73 /* ParserObjC */,
 				84A699162BC34F4400605AB8 /* ArticleExtractor */,
 				84DC5FF92BCE31D200F04682 /* Images */,
 				8426DBC12BFDAEFC00E98109 /* Web */,
@@ -4200,17 +4185,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Parser;
 		};
-		8456116D2BBD145200507B73 /* ParserObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ParserObjC;
-		};
 		845611702BBD145D00507B73 /* Parser */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Parser;
-		};
-		845611732BBD145D00507B73 /* ParserObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ParserObjC;
 		};
 		8479ABE22B9E906E00F84C4D /* Database */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4259,10 +4236,6 @@
 		84DC60012BCE40B200F04682 /* Images */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Images;
-		};
-		84DC60032BCE40D000F04682 /* ParserObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ParserObjC;
 		};
 		84DCA5112BABB75600792720 /* FoundationExtras */ = {
 			isa = XCSwiftPackageProductDependency;

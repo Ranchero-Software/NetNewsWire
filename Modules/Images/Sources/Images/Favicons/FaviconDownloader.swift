@@ -12,7 +12,6 @@ import Articles
 import Account
 import UniformTypeIdentifiers
 import Core
-import ParserObjC
 
 public extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL

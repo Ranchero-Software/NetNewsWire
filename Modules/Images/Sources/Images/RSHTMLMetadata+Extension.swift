@@ -8,7 +8,6 @@
 
 import Foundation
 import Parser
-import ParserObjC
 
 extension RSHTMLMetadata {
 

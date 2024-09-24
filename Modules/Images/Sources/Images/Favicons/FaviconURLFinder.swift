@@ -9,7 +9,6 @@
 import Foundation
 import CoreServices
 import Parser
-import ParserObjC
 import UniformTypeIdentifiers
 
 // The favicon URLs may be specified in the head section of the home page.

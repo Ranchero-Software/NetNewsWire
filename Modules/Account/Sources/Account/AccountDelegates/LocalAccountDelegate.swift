@@ -9,7 +9,6 @@
 import Foundation
 import os.log
 import Parser
-import ParserObjC
 import Articles
 import ArticlesDatabase
 import Web

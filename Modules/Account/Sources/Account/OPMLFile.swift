@@ -9,7 +9,6 @@
 import Foundation
 import os
 import Parser
-import ParserObjC
 import Core
 
 @MainActor final class OPMLFile {
