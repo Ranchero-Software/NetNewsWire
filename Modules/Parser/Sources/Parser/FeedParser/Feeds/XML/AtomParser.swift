@@ -8,8 +8,6 @@
 
 import Foundation
 import FoundationExtras
-import SAX
-import DateParser
 
 final class AtomParser {
 

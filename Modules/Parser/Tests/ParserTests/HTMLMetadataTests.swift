@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import HTMLParser
+import Parser
 
 final class HTMLMetadataTests: XCTestCase {
 

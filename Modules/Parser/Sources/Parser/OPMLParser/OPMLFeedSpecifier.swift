@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SAX
 
 public struct OPMLFeedSpecifier: Sendable {
 

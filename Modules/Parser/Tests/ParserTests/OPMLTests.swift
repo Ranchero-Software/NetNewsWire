@@ -7,8 +7,7 @@
 //
 
 import XCTest
-import SAX
-@testable import OPMLParser
+@testable import Parser
 
 final class OPMLTests: XCTestCase {
 

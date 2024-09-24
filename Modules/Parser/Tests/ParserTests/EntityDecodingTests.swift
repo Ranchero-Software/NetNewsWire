@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import SAX
+import Parser
 
 final class EntityDecodingTests: XCTestCase {
 

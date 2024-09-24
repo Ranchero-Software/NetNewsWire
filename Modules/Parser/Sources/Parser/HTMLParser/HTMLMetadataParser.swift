@@ -7,7 +7,6 @@
 
 import Foundation
 import FoundationExtras
-import SAX
 
 public final class HTMLMetadataParser {
 

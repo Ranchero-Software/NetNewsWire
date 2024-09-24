@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SAX
 
 public final class OPMLParser {
 

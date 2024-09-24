@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import FeedParser
+import Parser
 
 final class JSONFeedParserTests: XCTestCase {
 

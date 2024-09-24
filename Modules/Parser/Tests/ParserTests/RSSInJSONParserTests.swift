@@ -7,8 +7,7 @@
 //
 
 import XCTest
-import SAX
-import FeedParser
+import Parser
 
 final class RSSInJSONParserTests: XCTestCase {
 

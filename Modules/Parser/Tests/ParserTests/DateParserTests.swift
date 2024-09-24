@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-@testable import DateParser
+@testable import Parser
 
 final class DateParserTests: XCTestCase {
 	

@@ -7,8 +7,7 @@
 //
 
 import XCTest
-@testable import FeedParser
-import SAX
+@testable import Parser
 
 final class FeedParserTypeTests: XCTestCase {
 

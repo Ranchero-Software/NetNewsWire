@@ -7,8 +7,7 @@
 //
 
 import XCTest
-import HTMLParser
-import libxml2
+import Parser
 
 final class HTMLLinkTests: XCTestCase {
 
