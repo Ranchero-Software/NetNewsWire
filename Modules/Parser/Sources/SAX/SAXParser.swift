@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FoundationExtras
 import libxml2
 
 public typealias XMLPointer = UnsafePointer<xmlChar>
@@ -91,9 +92,7 @@ public final class SAXParser {
 		characters.count = 0
 	}
 
-	public typealias XMLAttributesDictionary = [String: String]
-
-	public func attributesDictionary(_ attributes: UnsafePointer<XMLPointer?>?, attributeCount: Int) -> XMLAttributesDictionary? {
+	public func attributesDictionary(_ attributes: UnsafePointer<XMLPointer?>?, attributeCount: Int) -> StringDictionary? {
 
 		guard attributeCount > 0, let attributes else {
 			return nil

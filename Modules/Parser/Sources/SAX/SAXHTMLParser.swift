@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FoundationExtras
 import libxml2
 
 public protocol SAXHTMLParserDelegate: AnyObject {
@@ -94,9 +95,7 @@ public final class SAXHTMLParser {
 		characters.count = 0
 	}
 
-	public typealias HTMLAttributesDictionary = [String: String]
-
-	public func attributesDictionary(_ attributes: UnsafePointer<XMLPointer?>?) -> HTMLAttributesDictionary? {
+	public func attributesDictionary(_ attributes: UnsafePointer<XMLPointer?>?) -> StringDictionary? {
 
 		guard let attributes else {
 			return nil

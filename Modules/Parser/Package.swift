@@ -46,6 +46,7 @@ let package = Package(
 		.target(
 			name: "HTMLParser",
 			dependencies: [
+				"FoundationExtras",
 				"SAX"
 			],
 			swiftSettings: [
@@ -63,7 +64,9 @@ let package = Package(
 			]),
 		.target(
 			name: "SAX",
-			dependencies: [],
+			dependencies: [
+				"FoundationExtras"
+			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency")
 			]),
