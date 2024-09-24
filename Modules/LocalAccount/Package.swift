@@ -18,7 +18,7 @@ let package = Package(
 		.target(
 			name: "LocalAccount",
 			dependencies: [
-				"Parser",
+				.product(name: "FeedParser", package: "Parser"),
 				"Web"
 			],
 			swiftSettings: [

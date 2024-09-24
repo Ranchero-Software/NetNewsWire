@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Parser
+import FeedParser
 import Web
 
 public struct InitialFeedDownloader {
@@ -22,8 +22,7 @@ public struct InitialFeedDownloader {
 			return nil
 		}
 
-		let parserData = ParserData(url: url.absoluteString, data: data)
-		guard let parsedFeed = try? await FeedParser.parse(parserData) else {
+		guard let parsedFeed = try? FeedParser.parse(urlString: url.absoluteString, data: data) else {
 			return nil
 		}
 
