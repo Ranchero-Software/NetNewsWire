@@ -1,11 +1,12 @@
 //
-//  File.swift
+//  HTMLLinkParser.swift
 //  
 //
 //  Created by Brent Simmons on 9/21/24.
 //
 
 import Foundation
+import FoundationExtras
 import SAX
 
 public final class HTMLLinkParser {
@@ -49,12 +50,12 @@ extension HTMLLinkParser: SAXHTMLParserDelegate {
 		static let title = "title"
 	}
 
-	private func title(with attributesDictionary: SAXHTMLParser.HTMLAttributesDictionary) -> String? {
+	private func title(with attributesDictionary: StringDictionary) -> String? {
 
 		attributesDictionary.object(forCaseInsensitiveKey: HTMLAttributeName.title)
 	}
 
-	private func urlString(with attributesDictionary: SAXHTMLParser.HTMLAttributesDictionary) -> String? {
+	private func urlString(with attributesDictionary: StringDictionary) -> String? {
 
 		guard let href = attributesDictionary.object(forCaseInsensitiveKey: HTMLAttributeName.href), !href.isEmpty else {
 			return nil
@@ -68,7 +69,7 @@ extension HTMLLinkParser: SAXHTMLParserDelegate {
 		return absoluteURL.absoluteString
 	}
 
-	private func handleLinkAttributes(_ attributesDictionary: SAXHTMLParser.HTMLAttributesDictionary) {
+	private func handleLinkAttributes(_ attributesDictionary: StringDictionary) {
 
 		guard let currentLink else {
 			assertionFailure("currentLink must not be nil")
