@@ -15,10 +15,10 @@ import DateParser
 
 public struct RSSInJSONParser {
 
-	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
+	public static func parse(urlString: String, data: Data) throws -> ParsedFeed? {
 
 		do {
-			guard let parsedObject = try JSONSerialization.jsonObject(with: parserData.data) as? JSONDictionary else {
+			guard let parsedObject = try JSONSerialization.jsonObject(with: data) as? JSONDictionary else {
 				throw FeedParserError(.invalidJSON)
 			}
 			guard let rssObject = parsedObject["rss"] as? JSONDictionary else {
@@ -46,11 +46,11 @@ public struct RSSInJSONParser {
 
 			let title = channelObject["title"] as? String
 			let homePageURL = channelObject["link"] as? String
-			let feedURL = parserData.url
+			let feedURL = urlString
 			let feedDescription = channelObject["description"] as? String
 			let feedLanguage = channelObject["language"] as? String
 
-			let items = parseItems(itemsObject!, parserData.url)
+			let items = parseItems(itemsObject!, urlString)
 
 			return ParsedFeed(type: .rssInJSON, title: title, homePageURL: homePageURL, feedURL: feedURL, language: feedLanguage, feedDescription: feedDescription, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 

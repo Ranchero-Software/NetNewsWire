@@ -13,14 +13,8 @@ import DateParser
 
 public final class RSSParser {
 
-	private var parserData: ParserData
-	private var feedURL: String {
-		parserData.url
-	}
-	private var data: Data {
-		parserData.data
-	}
-	
+	private let feedURL: String
+	private let data: Data
 	private let feed: RSSFeed
 	private var articles = [RSSArticle]()
 	private var currentArticle: RSSArticle? {
@@ -34,16 +28,17 @@ public final class RSSParser {
 	private var parsingAuthor = false
 	private var currentAttributes: StringDictionary?
 
-	static func parsedFeed(with parserData: ParserData) -> RSSFeed {
+	static func parsedFeed(urlString: String, data: Data) -> RSSFeed {
 
-		let parser = RSSParser(parserData)
+		let parser = RSSParser(urlString: urlString, data: data)
 		parser.parse()
 		return parser.feed
 	}
 
-	init(_ parserData: ParserData) {
-		self.parserData = parserData
-		self.feed = RSSFeed(urlString: parserData.url)
+	init(urlString: String, data: Data) {
+		self.feedURL = urlString
+		self.data = data
+		self.feed = RSSFeed(urlString: urlString)
 	}
 }
 

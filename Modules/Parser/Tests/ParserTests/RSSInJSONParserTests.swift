@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import SAX
 import FeedParser
 
 final class RSSInJSONParserTests: XCTestCase {
@@ -24,5 +25,13 @@ final class RSSInJSONParserTests: XCTestCase {
 		let d = parserData("ScriptingNews", "json", "http://scripting.com/")
 		let parsedFeed = try! FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.language, "en-us")
+	}
+}
+
+extension FeedParser {
+
+	static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
+
+		try FeedParser.parse(urlString: parserData.url, data: parserData.data)
 	}
 }

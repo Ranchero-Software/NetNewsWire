@@ -51,9 +51,9 @@ public struct JSONFeedParser {
 
 	static let jsonFeedVersionMarker = "://jsonfeed.org/version/" // Allow for the mistake of not getting the scheme exactly correct.
 
-	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
+	public static func parse(urlString: String, data: Data) throws -> ParsedFeed? {
 
-		guard let d = JSONUtilities.dictionary(with: parserData.data) else {
+		guard let d = JSONUtilities.dictionary(with: data) else {
 			throw FeedParserError(.invalidJSON)
 		}
 
@@ -69,7 +69,7 @@ public struct JSONFeedParser {
 
 		let authors = parseAuthors(d)
 		let homePageURL = d[Key.homePageURL] as? String
-		let feedURL = d[Key.feedURL] as? String ?? parserData.url
+		let feedURL = d[Key.feedURL] as? String ?? urlString
 		let feedDescription = d[Key.feedDescription] as? String
 		let nextURL = d[Key.nextURL] as? String
 		let iconURL = d[Key.icon] as? String
@@ -78,7 +78,7 @@ public struct JSONFeedParser {
 		let hubs = parseHubs(d)
 		let language = d[Key.language] as? String
 
-		let items = parseItems(itemsArray, parserData.url)
+		let items = parseItems(itemsArray, urlString)
 
 		return ParsedFeed(type: .jsonFeed, title: title, homePageURL: homePageURL, feedURL: feedURL, language: language, feedDescription: feedDescription, nextURL: nextURL, iconURL: iconURL, faviconURL: faviconURL, authors: authors, expired: expired, hubs: hubs, items: items)
 	}

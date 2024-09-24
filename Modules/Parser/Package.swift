@@ -88,4 +88,3 @@ let package = Package(
 			resources: [.copy("Resources")]),
 	]
 )
-

@@ -7,16 +7,15 @@
 //
 
 import Foundation
-import SAX
 
 // FeedParser handles RSS, Atom, JSON Feed, and RSS-in-JSON.
 // You don’t need to know the type of feed.
 
 public struct FeedParser {
 
-	public static func canParse(_ parserData: ParserData) -> Bool {
+	public static func canParse(_ data: Data) -> Bool {
 
-		let type = FeedType.feedType(parserData.data)
+		let type = FeedType.feedType(data)
 
 		switch type {
 		case .jsonFeed, .rssInJSON, .rss, .atom:
@@ -26,24 +25,24 @@ public struct FeedParser {
 		}
 	}
 
-	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
+	public static func parse(urlString: String, data: Data) throws -> ParsedFeed? {
 
-		let type = FeedType.feedType(parserData.data)
+		let type = FeedType.feedType(data)
 
 		switch type {
 
 		case .jsonFeed:
-			return try JSONFeedParser.parse(parserData)
+			return try JSONFeedParser.parse(urlString: urlString, data: data)
 
 		case .rssInJSON:
-			return try RSSInJSONParser.parse(parserData)
+			return try RSSInJSONParser.parse(urlString: urlString, data: data)
 
 		case .rss:
-			let feed = RSSParser.parsedFeed(with: parserData)
+			let feed = RSSParser.parsedFeed(urlString: urlString, data: data)
 			return RSSFeedTransformer.parsedFeed(with: feed, feedType: .rss)
 
 		case .atom:
-			let feed = AtomParser.parsedFeed(with: parserData)
+			let feed = AtomParser.parsedFeed(urlString: urlString, data: data)
 			return RSSFeedTransformer.parsedFeed(with: feed, feedType: .atom)
 
 		case .unknown, .notAFeed:
