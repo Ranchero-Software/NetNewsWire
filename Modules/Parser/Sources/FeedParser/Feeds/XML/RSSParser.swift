@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FoundationExtras
 import SAX
 import DateParser
 
@@ -31,7 +32,7 @@ public final class RSSParser {
 	private var parsingArticle = false
 	private var parsingChannelImage = false
 	private var parsingAuthor = false
-	private var currentAttributes: SAXParser.XMLAttributesDictionary?
+	private var currentAttributes: StringDictionary?
 
 	static func parsedFeed(with parserData: ParserData) -> RSSFeed {
 
@@ -265,7 +266,7 @@ private extension RSSParser {
 		static let type = "type"
 	}
 
-	func addEnclosure(_ attributes: SAXParser.XMLAttributesDictionary, _ currentArticle: RSSArticle) {
+	func addEnclosure(_ attributes: StringDictionary, _ currentArticle: RSSArticle) {
 
 		guard let url = attributes[EnclosureKey.url], !url.isEmpty else {
 			return
@@ -304,7 +305,7 @@ extension RSSParser: SAXParserDelegate {
 			return
 		}
 
-		var xmlAttributes: SAXParser.XMLAttributesDictionary? = nil
+		var xmlAttributes: StringDictionary? = nil
 		if (isRDF && SAXEqualTags(localName, XMLName.item)) || SAXEqualTags(localName, XMLName.guid) || SAXEqualTags(localName, XMLName.enclosure) {
 			xmlAttributes = saxParser.attributesDictionary(attributes, attributeCount: attributeCount)
 		}

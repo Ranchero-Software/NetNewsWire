@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FoundationExtras
 import SAX
 import DateParser
 
@@ -27,8 +28,8 @@ final class AtomParser {
 		articles.last
 	}
 
-	private var attributesStack = [SAXParser.XMLAttributesDictionary]()
-	private var currentAttributes: SAXParser.XMLAttributesDictionary? {
+	private var attributesStack = [StringDictionary]()
+	private var currentAttributes: StringDictionary? {
 		attributesStack.last
 	}
 
@@ -241,7 +242,7 @@ private extension AtomParser {
 		}
 	}
 
-	func enclosure(_ urlString: String, _ attributes: SAXParser.XMLAttributesDictionary) -> RSSEnclosure? {
+	func enclosure(_ urlString: String, _ attributes: StringDictionary) -> RSSEnclosure? {
 
 		let enclosure = RSSEnclosure(url: urlString)
 		enclosure.title = attributes[XMLString.title]
@@ -293,7 +294,7 @@ extension AtomParser: SAXParserDelegate {
 			return
 		}
 
-		let xmlAttributes = saxParser.attributesDictionary(attributes, attributeCount: attributeCount) ?? SAXParser.XMLAttributesDictionary()
+		let xmlAttributes = saxParser.attributesDictionary(attributes, attributeCount: attributeCount) ?? StringDictionary()
 		attributesStack.append(xmlAttributes)
 
 		if parsingXHTML {
