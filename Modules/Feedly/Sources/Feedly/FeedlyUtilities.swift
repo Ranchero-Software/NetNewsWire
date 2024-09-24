@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Parser
+import FeedParser
 
 public final class FeedlyUtilities {
 

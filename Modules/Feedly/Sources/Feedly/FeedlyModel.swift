@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import Parser
+import FeedParser
 
 public struct FeedlyCategory: Decodable, Sendable, Equatable {
 
