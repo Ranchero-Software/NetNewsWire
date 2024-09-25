@@ -13,14 +13,12 @@ let package = Package(
 	dependencies: [
 		.package(path: "../Web"),
 		.package(path: "../Secrets"),
-		.package(path: "../Parser"),
 	],
 	targets: [
 		.target(
 			name: "NewsBlur",
 			dependencies: [
 				"Web",
-				"Parser",
 				"Secrets"
 			],
 			swiftSettings: [

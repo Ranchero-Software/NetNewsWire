@@ -10,7 +10,6 @@ import Foundation
 import os.log
 import Web
 import Parser
-import ParserObjC
 import CloudKit
 import FoundationExtras
 
@@ -57,12 +56,12 @@ enum CloudKitAccountZoneError: LocalizedError {
 		migrateChangeToken()
     }
 	
-	public func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
+	public func importOPML(rootExternalID: String, items: [OPMLItem]) async throws {
 
 		var records = [CKRecord]()
 		var feedRecords = [String: CKRecord]()
 		
-		func processFeed(feedSpecifier: RSOPMLFeedSpecifier, containerExternalID: String) {
+		func processFeed(feedSpecifier: OPMLFeedSpecifier, containerExternalID: String) {
 			if let feedRecord = feedRecords[feedSpecifier.feedURL], var containerExternalIDs = feedRecord[CloudKitFeed.Fields.containerExternalIDs] as? [String] {
 				containerExternalIDs.append(containerExternalID)
 				feedRecord[CloudKitFeed.Fields.containerExternalIDs] = containerExternalIDs
@@ -80,7 +79,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 				if let title = item.titleFromAttributes {
 					let containerRecord = newContainerCKRecord(name: title)
 					records.append(containerRecord)
-					item.children?.forEach { itemChild in
+					item.items?.forEach { itemChild in
 						if let feedSpecifier = itemChild.feedSpecifier {
 							processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
 						}
@@ -289,7 +288,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 
 private extension CloudKitAccountZone {
 	
-	func newFeedCKRecord(feedSpecifier: RSOPMLFeedSpecifier, containerExternalID: String) -> CKRecord {
+	func newFeedCKRecord(feedSpecifier: OPMLFeedSpecifier, containerExternalID: String) -> CKRecord {
 
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: generateRecordID())
 		record[CloudKitFeed.Fields.url] = feedSpecifier.feedURL

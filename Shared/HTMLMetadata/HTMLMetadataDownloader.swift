@@ -9,13 +9,12 @@
 import Foundation
 import Web
 import Parser
-import ParserObjC
 
-extension RSHTMLMetadata: @unchecked Sendable {}
+extension HTMLMetadata: @unchecked Sendable {}
 
 struct HTMLMetadataDownloader {
 
-	@MainActor static func downloadMetadata(for url: String) async -> RSHTMLMetadata? {
+	@MainActor static func downloadMetadata(for url: String) async -> HTMLMetadata? {
 
 		guard let actualURL = URL(string: url) else {
 			return nil
@@ -34,10 +33,10 @@ struct HTMLMetadataDownloader {
 		return nil
 	}
 
-	@MainActor private static func parseMetadata(with parserData: ParserData) async -> RSHTMLMetadata? {
+	@MainActor private static func parseMetadata(with parserData: ParserData) async -> HTMLMetadata? {
 
-		let task = Task.detached { () -> RSHTMLMetadata? in
-			RSHTMLMetadataParser.htmlMetadata(with: parserData)
+		let task = Task.detached { () -> HTMLMetadata? in
+			HTMLMetadataParser.metadata(with: parserData)
 		}
 
 		return await task.value

@@ -17,6 +17,7 @@ import OSLog
 import Core
 import CrashReporter
 import Images
+import libxml2
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
 // for AppDelegate to comply
@@ -103,6 +104,8 @@ import Sparkle
 	private var themeImportPath: String?
 
 	override init() {
+
+		xmlInitParser()
 
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()

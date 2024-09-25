@@ -87,7 +87,7 @@
 //		}
 //	}
 //
-//	func pullFeaturedImageURL(from metadata: RSHTMLMetadata, articleURL: String) {
+//	func pullFeaturedImageURL(from metadata: HTMLMetadata, articleURL: String) {
 //
 //		if let url = metadata.bestFeaturedImageURL() {
 //			cacheURL(for: articleURL, url)

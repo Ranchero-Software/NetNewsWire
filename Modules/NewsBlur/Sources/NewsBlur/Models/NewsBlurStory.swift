@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Parser
 
 public typealias NewsBlurStory = NewsBlurStoriesResponse.Story
 

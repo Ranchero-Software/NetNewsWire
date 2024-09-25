@@ -12,7 +12,6 @@ let package = Package(
 	],
 	dependencies: [
 		.package(path: "../Parser"),
-		.package(path: "../ParserObjC"),
 		.package(path: "../Articles"),
 		.package(path: "../ArticlesDatabase"),
 		.package(path: "../Web"),
@@ -35,7 +34,6 @@ let package = Package(
 			name: "Account",
 			dependencies: [
 				"Parser",
-				"ParserObjC",
 				"Web",
 				"Articles",
 				"ArticlesDatabase",

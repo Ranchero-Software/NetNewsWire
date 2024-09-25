@@ -55,6 +55,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 	override init() {
 
+		xmlInitParser()
+
 		super.init()
 
 		appDelegate = self

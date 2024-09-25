@@ -13,7 +13,6 @@ import UIKit
 import Foundation
 import Articles
 import Parser
-import ParserObjC
 import Database
 import ArticlesDatabase
 import Web
@@ -465,14 +464,14 @@ public enum FetchType {
 		delegate.accountWillBeDeleted(self)
 	}
 
-	func addOPMLItems(_ items: [RSOPMLItem]) {
+	func addOPMLItems(_ items: [OPMLItem]) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
 				addFeed(newFeed(with: feedSpecifier))
 			} else {
 				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
 					folder.externalID = item.attributes?["nnw_externalID"] as? String
-					if let children = item.children {
+					if let children = item.items {
 						for itemChild in children {
 							if let feedSpecifier = itemChild.feedSpecifier {
 								folder.addFeed(newFeed(with: feedSpecifier))
@@ -484,7 +483,7 @@ public enum FetchType {
 		}
 	}
 	
-	func loadOPMLItems(_ items: [RSOPMLItem]) {
+	func loadOPMLItems(_ items: [OPMLItem]) {
 		addOPMLItems(OPMLNormalizer.normalize(items))		
 	}
 
@@ -561,7 +560,7 @@ public enum FetchType {
 		return folders?.first(where: { $0.externalID == externalID })
 	}
 	
-	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
+	func newFeed(with opmlFeedSpecifier: OPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)

@@ -8,7 +8,6 @@
 
 import Foundation
 import Parser
-import ParserObjC
 import Web
 import CommonErrors
 import os.log
@@ -56,7 +55,7 @@ public final class FeedFinder {
 			throw AccountError.createErrorNotFound
 		}
 
-		if FeedFinder.isFeed(data, url.absoluteString) {
+		if FeedFinder.isFeed(data) {
 			logger.info("FeedFinder: is feed \(url)")
 			let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
 			return Set([feedSpecifier])
@@ -157,7 +156,7 @@ private extension FeedFinder {
 
 			if let downloadData = try? await DownloadWithCacheManager.shared.download(url) {
 				if let data = downloadData.data, let response = downloadData.response, response.statusIsOK {
-					if isFeed(data, downloadFeedSpecifier.urlString) {
+					if isFeed(data) {
 						addFeedSpecifier(downloadFeedSpecifier, feedSpecifiers: &resultFeedSpecifiers)
 					}
 				}
@@ -167,8 +166,7 @@ private extension FeedFinder {
 		return Set(resultFeedSpecifiers.values)
 	}
 
-	static func isFeed(_ data: Data, _ urlString: String) -> Bool {
-		let parserData = ParserData(url: urlString, data: data)
-		return FeedParser.canParse(parserData)
+	static func isFeed(_ data: Data) -> Bool {
+		return FeedParser.canParse(data)
 	}
 }
