@@ -77,8 +77,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		let opmlData = try Data(contentsOf: opmlFile)
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
 
-		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		guard let children = opmlDocument.children else {
+		let opmlDocument = OPMLParser.document(with: parserData)
+		guard let children = opmlDocument?.items else {
 			return
 		}
 
@@ -267,9 +267,7 @@ private extension LocalAccountDelegate {
 				return
 			}
 
-			let parserData = ParserData(url: feed.url, data: data)
-
-			guard let parsedFeed = try? await FeedParser.parse(parserData) else {
+			guard let parsedFeed = try? await FeedParser.parseAsync(urlString: feed.url, data: data) else {
 				return
 			}
 

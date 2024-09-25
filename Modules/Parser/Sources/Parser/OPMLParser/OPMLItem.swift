@@ -32,7 +32,7 @@ public class OPMLItem {
 		}
 	}
 
-	func add(_ item: OPMLItem) {
+	public func add(_ item: OPMLItem) {
 		
 		if items == nil {
 			items = [OPMLItem]()

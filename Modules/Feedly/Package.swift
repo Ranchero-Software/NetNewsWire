@@ -22,7 +22,7 @@ let package = Package(
 		.target(
 			name: "Feedly",
 			dependencies: [
-				.product(name: "FeedParser", package: "Parser"),
+				"Parser",
 				"Articles",
 				"Secrets",
 				"Core",

@@ -49,4 +49,9 @@ public struct FeedParser {
 			return nil
 		}
 	}
+
+	public static func parseAsync(urlString: String, data: Data) async throws -> ParsedFeed? {
+
+		try parse(urlString: urlString, data: data)
+	}
 }

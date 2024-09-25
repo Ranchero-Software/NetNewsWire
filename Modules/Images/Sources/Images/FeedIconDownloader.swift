@@ -22,7 +22,7 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 
 	@MainActor var appIconImage: IconImage? { get }
 
-	func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata?
+	func downloadMetadata(_ url: String) async throws -> HTMLMetadata?
 }
 
 @MainActor public final class FeedIconDownloader {
@@ -217,7 +217,7 @@ private extension FeedIconDownloader {
 		homePageToIconURLCacheDirty = true
 	}
 
-	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed, downloadMetadata: @escaping (String) async throws -> RSHTMLMetadata?) {
+	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed, downloadMetadata: @escaping (String) async throws -> HTMLMetadata?) {
 
 		guard !urlsInProgress.contains(homePageURL) else {
 			return
@@ -236,7 +236,7 @@ private extension FeedIconDownloader {
 		}
 	}
 
-	func pullIconURL(from metadata: RSHTMLMetadata, homePageURL: String, feed: Feed) {
+	func pullIconURL(from metadata: HTMLMetadata, homePageURL: String, feed: Feed) {
 
 		if let url = metadata.bestWebsiteIconURL() {
 			cacheIconURL(for: homePageURL, url)

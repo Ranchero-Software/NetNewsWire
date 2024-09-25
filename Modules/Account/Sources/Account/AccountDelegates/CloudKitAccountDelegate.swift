@@ -175,9 +175,9 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 		let opmlData = try Data(contentsOf: opmlFile)
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+		let opmlDocument = OPMLParser.document(with: parserData)
 
-		guard let opmlItems = opmlDocument.children, let rootExternalID = account.externalID else {
+		guard let opmlItems = opmlDocument?.items, let rootExternalID = account.externalID else {
 			return
 		}
 

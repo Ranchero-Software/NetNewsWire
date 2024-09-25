@@ -33,7 +33,7 @@ import Core
 		dataFile.markAsDirty()
 	}
 	
-	func opmlItems() -> [RSOPMLItem]? {
+	func opmlItems() -> [OPMLItem]? {
 		guard let fileData = opmlFileData() else {
 			return nil
 		}
@@ -61,18 +61,10 @@ private extension OPMLFile {
 		return fileData
 	}
 	
-	func parsedOPMLItems(fileData: Data) -> [RSOPMLItem]? {
+	func parsedOPMLItems(fileData: Data) -> [OPMLItem]? {
 		let parserData = ParserData(url: fileURL.absoluteString, data: fileData)
-		var opmlDocument: RSOPMLDocument?
-
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			logger.error("OPML Import failed for \(self.fileURL): \(error.localizedDescription)")
-			return nil
-		}
-		
-		return opmlDocument?.children
+		let opmlDocument = OPMLParser.document(with: parserData)
+		return opmlDocument?.items
 	}
 	
 	func opmlDocument() -> String {

@@ -9,6 +9,7 @@
 import Foundation
 import Images
 import Account
+import Parser
 
 extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
 
@@ -16,7 +17,7 @@ extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
 		IconImage.appIcon
 	}
 
-	func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata? {
+	func downloadMetadata(_ url: String) async throws -> HTMLMetadata? {
 
 		await HTMLMetadataDownloader.downloadMetadata(for: url)
 	}

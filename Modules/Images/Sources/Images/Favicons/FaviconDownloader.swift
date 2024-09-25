@@ -12,6 +12,7 @@ import Articles
 import Account
 import UniformTypeIdentifiers
 import Core
+import Parser
 
 public extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
@@ -21,7 +22,7 @@ public protocol FaviconDownloaderDelegate {
 
 	@MainActor var appIconImage: IconImage? { get }
 
-	@MainActor func downloadMetadata(_ url: String) async throws -> RSHTMLMetadata?
+	@MainActor func downloadMetadata(_ url: String) async throws -> HTMLMetadata?
 }
 
 @MainActor public final class FaviconDownloader {

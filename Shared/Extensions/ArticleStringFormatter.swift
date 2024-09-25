@@ -66,7 +66,7 @@ import Parser
 		s = s.replacingOccurrences(of: "\t", with: "")
 
 		if !forHTML {
-			s = s.rsparser_stringByDecodingHTMLEntities()
+			s = HTMLEntityDecoder.decodedString(s)
 		}
 
 		s = s.trimmingWhitespace
@@ -98,8 +98,9 @@ import Parser
 		if let cachedBody = summaryCache[key] {
 			return cachedBody
 		}
-		var s = body.rsparser_stringByDecodingHTMLEntities()
+		var s = body
 		s = s.strippingHTML(maxCharacters: 250)
+		s = HTMLEntityDecoder.decodedString(s)
 		s = s.trimmingWhitespace
 		s = s.collapsingWhitespace
 		if s == "Comments" { // Hacker News.

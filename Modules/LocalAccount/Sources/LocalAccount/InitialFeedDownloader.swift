@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import FeedParser
+import Parser
 import Web
 
 public struct InitialFeedDownloader {

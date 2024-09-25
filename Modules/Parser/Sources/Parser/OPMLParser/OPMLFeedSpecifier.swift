@@ -9,10 +9,10 @@ import Foundation
 
 public struct OPMLFeedSpecifier: Sendable {
 
-	let title: String?
-	let feedDescription: String?
-	let homePageURL: String?
-	let feedURL: String
+	public let title: String?
+	public let feedDescription: String?
+	public let homePageURL: String?
+	public let feedURL: String
 
 	init(title: String?, feedDescription: String?, homePageURL: String?, feedURL: String) {
 
