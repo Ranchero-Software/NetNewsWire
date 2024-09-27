@@ -13,6 +13,7 @@ let package = Package(
 	dependencies: [
 		.package(path: "../SyncDatabase"),
 		.package(path: "../Articles"),
+		.package(path: "../ArticlesDatabase"),
 		.package(path: "../Core"),
 		.package(path: "../Web"),
 		.package(path: "../Parser"),
@@ -23,6 +24,7 @@ let package = Package(
 			dependencies: [
 				"SyncDatabase",
 				"Articles",
+				"ArticlesDatabase",
 				"Core",
 				"Web",
 				"Parser"
