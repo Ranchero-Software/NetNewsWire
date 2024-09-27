@@ -75,4 +75,21 @@ final class EntityDecodingTests: XCTestCase {
 		decoded = HTMLEntityDecoder.decodedString(s)
 		XCTAssertEqual(decoded, "£")
 	}
+
+	func testPerformance() {
+
+		// 0.009 sec on my 2012 iMac.
+		let s = stringForResource("DaringFireball", "html")
+		self.measure {
+			_ = HTMLEntityDecoder.decodedString(s)
+		}
+	}
+
+}
+
+func stringForResource(_ filename: String, _ fileExtension: String) -> String {
+
+	let filename = "Resources/\(filename)"
+	let path = Bundle.module.path(forResource: filename, ofType: fileExtension)!
+	return try! String(contentsOfFile: path)
 }
