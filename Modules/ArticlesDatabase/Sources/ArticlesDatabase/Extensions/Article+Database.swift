@@ -14,7 +14,7 @@ import FMDB
 
 extension Article {
 	
-	init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
+	convenience init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
 			assertionFailure("Expected articleID.")
 			return nil
@@ -41,7 +41,7 @@ extension Article {
 		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
 	}
 
-	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
+	convenience init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 
 		// Deal with future datePublished and dateModified dates.

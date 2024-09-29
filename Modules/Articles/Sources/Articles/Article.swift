@@ -10,7 +10,7 @@ import Foundation
 
 public typealias ArticleSetBlock = (Set<Article>) -> Void
 
-public struct Article: Hashable, Sendable {
+public final class Article: Hashable, Sendable {
 
 	public let articleID: String // Unique database ID (possibly sync service ID)
 	public let accountID: String
@@ -83,7 +83,6 @@ public extension Set where Element == Article {
 	func contains(accountID: String, articleID: String) -> Bool {
 		return contains(where: { $0.accountID == accountID && $0.articleID == articleID})
 	}
-	
 }
 
 public extension Array where Element == Article {
