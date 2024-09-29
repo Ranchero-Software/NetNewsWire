@@ -4,6 +4,19 @@
 <dict>
 	<key>classNames</key>
 	<dict>
+		<key>EntityDecodingTests</key>
+		<dict>
+			<key>testPerformance()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.002095</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Local Baseline</string>
+				</dict>
+			</dict>
+		</dict>
 		<key>RSSParserTests</key>
 		<dict>
 			<key>testEMarleyPerformance()</key>

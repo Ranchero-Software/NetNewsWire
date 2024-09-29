@@ -2,206 +2,295 @@
 //  HTMLEntityDecoder.swift
 //
 //
-//  Created by Brent Simmons on 9/14/24.
+//  Created by Brent Simmons on 9/26/24.
 //
 
 import Foundation
 
 public final class HTMLEntityDecoder {
 
-	public static func decodedString(_ encodedString: String) -> String {
+	public static func decodedString(_ encodedString: String) -> String? {
 
-		let scanner = EntityScanner(string: encodedString)
-		var result = ""
 		var didDecodeAtLeastOneEntity = false
 
-		while true {
+		// If `withContiguousStorageIfAvailable` works, then we can avoid copying memory.
+		var result: String? = encodedString.utf8.withContiguousStorageIfAvailable { buffer in
+			return decodedEntities(buffer, &didDecodeAtLeastOneEntity)
+		}
 
-			let scannedString = scanner.scanUpToAmpersand()
-			if !scannedString.isEmpty {
-				result.append(scannedString)
-			}
-			if scanner.isAtEnd {
-				break
-			}
-
-			let savedScanLocation = scanner.scanLocation
-
-			if let decodedEntity = scanner.scanEntityValue() {
-				result.append(decodedEntity)
-				didDecodeAtLeastOneEntity = true
-			}
-			else {
-				result.append("&")
-				scanner.scanLocation = savedScanLocation + 1
-			}
-
-			if scanner.isAtEnd {
-				break
+		if result == nil {
+			let d = Data(encodedString.utf8)
+			result = d.withUnsafeBytes { bytes in
+				let buffer = bytes.bindMemory(to: UInt8.self)
+				return decodedEntities(buffer, &didDecodeAtLeastOneEntity)
 			}
 		}
 
-		if !didDecodeAtLeastOneEntity { // No entities decoded?
+		if let result {
+			if didDecodeAtLeastOneEntity {
+				return result
+			}
 			return encodedString
 		}
-		return result
-	}
-}
 
-/// Purpose-built version of NSScanner, which has deprecated the parts we want to use.
-final class EntityScanner {
-
-	let string: String
-	let count: Int
-	var scanLocation = 0
-
-	var isAtEnd: Bool {
-		scanLocation >= count
-	}
-
-	var currentCharacter: Character? {
-		guard !isAtEnd else {
-			return nil
-		}
-		return string.characterAtIntIndex(scanLocation)
-	}
-
-	init(string: String) {
-		self.string = string
-		self.count = string.count
-	}
-
-	static let ampersandCharacter = Character("&")
-
-	/// Scans up to `characterToFind` and returns the characters up to (and not including) `characterToFind`.
-	/// - Returns: the scanned portion before `characterToFind`. May be empty string.
-	func scanUpToAmpersand() -> String {
-
-		let characterToFind = Self.ampersandCharacter
-		var scanned = ""
-		
-		while true {
-
-			guard let ch = currentCharacter else {
-				break
-			}
-			scanLocation += 1
-
-			if ch == characterToFind {
-				break
-			}
-			else {
-				scanned.append(ch)
-			}
-		}
-
-		return scanned
-	}
-
-	static let semicolonCharacter = Character(";")
-
-	func scanEntityValue() -> String? {
-
-		let initialScanLocation = scanLocation
-		let maxEntityLength = 20 // It’s probably smaller, but this is just for sanity.
-
-		while true {
-
-			guard let ch = currentCharacter else {
-				break
-			}
-			if CharacterSet.whitespacesAndNewlines.contains(ch.unicodeScalars.first!) {
-				break
-			}
-
-			if ch == Self.semicolonCharacter {
-				let entityRange = initialScanLocation..<scanLocation
-				guard let entity = string.substring(intRange: entityRange), let decodedEntity = decodedEntity(entity) else {
-					assertionFailure("Unexpected failure scanning entity in scanEntityValue.")
-					scanLocation = initialScanLocation + 1
-					return nil
-				}
-				scanLocation = scanLocation + 1
-				return decodedEntity
-			}
-
-			scanLocation += 1
-			if scanLocation - initialScanLocation > maxEntityLength {
-				break
-			}
-			if isAtEnd {
-				break
-			}
-		}
-
+		assertionFailure("Expected result but got nil.")
 		return nil
 	}
 }
 
-extension String {
+private let ampersandCharacter = Character("&").asciiValue!
+private let numberSignCharacter = Character("#").asciiValue!
+private let xCharacter = Character("x").asciiValue!
+private let XCharacter = Character("X").asciiValue!
+private let semicolonCharacter = Character(";").asciiValue!
 
-	func indexForInt(_ i: Int) -> Index? {
+private let zeroCharacter = Character("0").asciiValue!
+private let nineCharacter = Character("9").asciiValue!
+private let aCharacter = Character("a").asciiValue!
+private let fCharacter = Character("f").asciiValue!
+private let zCharacter = Character("z").asciiValue!
+private let ACharacter = Character("A").asciiValue!
+private let FCharacter = Character("F").asciiValue!
+private let ZCharacter = Character("Z").asciiValue!
 
-		index(startIndex, offsetBy: i, limitedBy: endIndex)
+private let maxUnicodeNumber = 0x10FFFF
+
+private func decodedEntities(_ sourceBuffer: UnsafeBufferPointer<UInt8>, _ didDecodeAtLeastOneEntity: inout Bool) -> String {
+
+	let byteCount = sourceBuffer.count
+	let resultBufferByteCount = byteCount + 1
+
+	// Allocate a destination buffer for the result string. It can be the same size
+	// as the source string buffer, since decoding HTML entities will only make it smaller.
+	// Same size plus 1, that is, for null-termination.
+	let resultBuffer = UnsafeMutableRawPointer.allocate(byteCount: resultBufferByteCount, alignment: MemoryLayout<UInt8>.alignment)
+	defer {
+		resultBuffer.deallocate()
 	}
 
-	func characterAtIntIndex(_ i: Int) -> Character? {
+	resultBuffer.initializeMemory(as: UInt8.self, repeating: 0, count: resultBufferByteCount)
+	let result = resultBuffer.assumingMemoryBound(to: UInt8.self)
+	
+	var sourceLocation = 0
+	var resultLocation = 0
 
-		guard let index = indexForInt(i) else {
-			return nil
+	while sourceLocation < byteCount {
+
+		let ch = sourceBuffer[sourceLocation]
+
+		var decodedEntity: String? = nil
+
+		if ch == ampersandCharacter {
+			decodedEntity = decodedEntityValue(sourceBuffer, byteCount, &sourceLocation)
 		}
 
-		return self[index]
+		if let decodedEntity {
+			addDecodedEntity(decodedEntity, result, byteCount, &resultLocation)
+			didDecodeAtLeastOneEntity = true
+			sourceLocation += 1
+			continue
+		}
+
+		result[resultLocation] = ch
+
+		resultLocation += 1
+		sourceLocation += 1
 	}
 
-	func substring(intRange: Range<Int>) -> String? {
+	let cString = resultBuffer.assumingMemoryBound(to: CChar.self)
+	return String(cString: cString)
+}
 
-		guard let rangeLower = indexForInt(intRange.lowerBound) else {
-			return nil
-		}
-		guard let rangeUpper = indexForInt(intRange.upperBound) else {
-			return nil
-		}
+private func addDecodedEntity(_ decodedEntity: String, _ result: UnsafeMutablePointer<UInt8>, _ resultByteCount: Int, _ resultLocation: inout Int) {
 
-		return String(self[rangeLower..<rangeUpper])
+	let utf8Bytes = Array(decodedEntity.utf8)
+	precondition(resultLocation + utf8Bytes.count <= resultByteCount)
+
+	for byte in utf8Bytes {
+		result[resultLocation] = byte
+		resultLocation += 1
 	}
 }
 
-/// rawEntity may or may not have leading `&` and/or trailing `;` characters.
-private func decodedEntity(_ rawEntity: String) -> String? {
+private func decodedEntityValue(_ buffer: UnsafeBufferPointer<UInt8>, _ byteCount: Int, _ sourceLocation: inout Int) -> /*[UInt8]?*/ String? {
 
-	var s = rawEntity
-
-	if s.hasPrefix("&") {
-		s.removeFirst()
-	}
-	if s.hasSuffix(";") {
-		s.removeLast()
-	}
-
-	if let decodedEntity = entitiesDictionary[s] {
-		return decodedEntity
-	}
-
-	if s.hasPrefix("#x") || s.hasPrefix("#X") { // Hex
-		let scanner = Scanner(string: s)
-			scanner.charactersToBeSkipped = CharacterSet(charactersIn: "#xX")
-		var hexValue: UInt64 = 0
-		if scanner.scanHexInt64(&hexValue) {
-			return stringWithValue(UInt32(hexValue))
-		}
+	guard let rawEntity = rawEntityValue(buffer, byteCount, &sourceLocation) else {
 		return nil
 	}
 
-	else if s.hasPrefix("#") {
-		s.removeFirst()
-		guard let value = UInt32(s), value >= 1 else {
-			return nil
+	return decodedRawEntityValue(rawEntity)
+}
+
+private func decodedRawEntityValue(_ rawEntity: ContiguousArray<UInt8>) -> String? {
+
+	let key = String(cString: Array(rawEntity))
+	if let entityString = entitiesDictionary[key] {
+		return entityString
+	}
+
+	if rawEntity[0] == numberSignCharacter {
+		if let entityString = decodedNumericEntity(rawEntity) {
+			return entityString
 		}
-		return stringWithValue(value)
 	}
 
 	return nil
+}
+
+private func decodedNumericEntity(_ rawEntity: ContiguousArray<UInt8>) -> String? {
+
+	assert(rawEntity[0] == numberSignCharacter)
+
+	var decodedNumber: UInt32?
+
+	if rawEntity[1] == xCharacter || rawEntity[1] == XCharacter { // Hex?
+		decodedNumber = decodedHexEntity(rawEntity)
+	}
+	else {
+		decodedNumber = decodedDecimalEntity(rawEntity)
+	}
+
+	if let decodedNumber {
+		return stringWithValue(decodedNumber)
+	}
+	return nil
+}
+
+private func decodedHexEntity(_ rawEntity: ContiguousArray<UInt8>) -> UInt32? {
+
+	assert(rawEntity[0] == numberSignCharacter)
+	assert(rawEntity[1] == xCharacter || rawEntity[1] == XCharacter)
+
+	var number: UInt32 = 0
+	var i = 0
+
+	for byte in rawEntity {
+
+		if i < 2 { // Skip first two characters: #x or #X
+			i += 1
+			continue
+		}
+
+		if byte == 0 { // rawEntity is null-terminated
+			break
+		}
+
+		var digit: UInt32?
+
+		switch byte {
+		case zeroCharacter...nineCharacter: // 0-9
+			digit = UInt32(byte - zeroCharacter)
+		case aCharacter...fCharacter: // a-f
+			digit = UInt32((byte - aCharacter) + 10)
+		case ACharacter...FCharacter: // a-f
+			digit = UInt32((byte - ACharacter) + 10)
+		default:
+			return nil
+		}
+
+		guard let digit else {
+			return nil // Shouldn’t get here — handled by default case — but we need to bind digit
+		}
+
+		number = (number * 16) + digit
+		if number > maxUnicodeNumber {
+			return nil
+		}
+	}
+
+	if number == 0 {
+		return nil
+	}
+
+	return number
+}
+
+private func decodedDecimalEntity(_ rawEntity: ContiguousArray<UInt8>) -> UInt32? {
+
+	assert(rawEntity[0] == numberSignCharacter)
+	assert(rawEntity[1] != xCharacter && rawEntity[1] != XCharacter) // not hex
+
+	var number: UInt32 = 0
+	var isFirstCharacter = true
+
+	// Convert, for instance, [51, 57] to 39
+	for byte in rawEntity {
+
+		if isFirstCharacter { // first character is #
+			isFirstCharacter = false
+			continue
+		}
+
+		if byte == 0 { // rawEntity is null-terminated
+			break
+		}
+
+		// Be sure it’s a digit 0-9
+		if byte < zeroCharacter || byte > nineCharacter {
+			return nil
+		}
+		let digit = UInt32(byte - zeroCharacter)
+		number = (number * 10) + digit
+		if number > maxUnicodeNumber {
+			return nil
+		}
+	}
+
+	if number == 0 {
+		return nil
+	}
+	
+	return number
+}
+
+private func rawEntityValue(_ buffer: UnsafeBufferPointer<UInt8>, _ byteCount: Int, _ sourceLocation: inout Int) -> ContiguousArray<UInt8>? {
+
+	// sourceLocation points to the & character.
+	let savedSourceLocation = sourceLocation
+	let maxEntityCharacters = 36 // Longest current entity is &CounterClockwiseContourIntegral;
+
+	var entityCharacters: ContiguousArray<UInt8> = [0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, // 20 characters
+									 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, // 35 characters
+									 0] // nil-terminated last character
+
+	var entityCharactersIndex = 0
+
+	while true {
+
+		sourceLocation += 1
+		if sourceLocation >= byteCount || entityCharactersIndex >= maxEntityCharacters  { // did not parse entity
+			sourceLocation = savedSourceLocation
+			return nil
+		}
+
+		let ch = buffer[sourceLocation]
+		if ch == semicolonCharacter { // End of entity?
+			return entityCharacters
+		}
+
+		// Make sure character is in 0-9, A-Z, a-z, #
+		if ch < zeroCharacter && ch != numberSignCharacter {
+			return nil
+		}
+		if ch > nineCharacter && ch < ACharacter {
+			return nil
+		}
+		if ch > ZCharacter && ch < aCharacter {
+			return nil
+		}
+		if ch > zCharacter {
+			return nil
+		}
+
+		entityCharacters[entityCharactersIndex] = ch
+
+		entityCharactersIndex += 1
+	}
 }
 
 private func stringWithValue(_ value: UInt32) -> String? {
@@ -216,7 +305,7 @@ private func stringWithValue(_ value: UInt32) -> String? {
 
 	var modifiedValue = value
 
-	if (modifiedValue & ~0x1F) == 0x80 { // value >= 128 && value < 160
+	if value >= 128 && value < 160 {
 		modifiedValue = windowsLatin1ExtensionArray[Int(modifiedValue - 0x80)]
 	}
 
