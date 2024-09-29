@@ -223,7 +223,12 @@ public extension String {
 		preflight = preflight.removingTagAndContents("style")
 
 		var s = String()
-		s.reserveCapacity(preflight.count)
+		if let maxCharacters {
+			s.reserveCapacity(maxCharacters)
+		}
+		else {
+			s.reserveCapacity(preflight.count)
+		}
 		var lastCharacterWasSpace = false
 		var charactersAdded = 0
 		var level = 0
