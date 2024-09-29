@@ -11,6 +11,7 @@ let package = Package(
 			targets: ["Feedly"]),
 	],
 	dependencies: [
+		.package(path: "../FoundationExtras"),
 		.package(path: "../Parser"),
 		.package(path: "../Articles"),
 		.package(path: "../Secrets"),
@@ -22,6 +23,7 @@ let package = Package(
 		.target(
 			name: "Feedly",
 			dependencies: [
+				"FoundationExtras",
 				"Parser",
 				"Articles",
 				"Secrets",
@@ -35,6 +37,9 @@ let package = Package(
 		),
 		.testTarget(
 			name: "FeedlyTests",
-			dependencies: ["Feedly"]),
+			dependencies: [
+				"Feedly",
+				"FoundationExtras"
+			]),
 	]
 )

@@ -11,9 +11,9 @@ import XCTest
 
 @testable import NetNewsWire
 
-class SharingTests: XCTestCase {
+final class SharingTests: XCTestCase {
 
-    func testSharingSubject() {
+    @MainActor func testSharingSubject() {
         let sharingServiceDelegate = SharingServiceDelegate(nil)
         let sharingService = NSSharingService(title: "Chirpy", image: NSImage(size: NSSize.zero), alternateImage: nil, handler: {})
 
@@ -25,7 +25,7 @@ class SharingTests: XCTestCase {
         XCTAssertEqual("Immunization", sharingService.subject)
     }
 
-    func testSharingSubjectMultipleArticles() {
+	@MainActor func testSharingSubjectMultipleArticles() {
         let sharingServiceDelegate = SharingServiceDelegate(nil)
         let sharingService = NSSharingService(title: "Chirpy", image: NSImage(size: NSSize.zero), alternateImage: nil, handler: {})
 
@@ -38,7 +38,7 @@ class SharingTests: XCTestCase {
         XCTAssertEqual("NetNewsWire Status: Almost Beta, No Algorithms Follow-Up", sharingService.subject)
     }
 
-    private func article(titled title: String) -> Article {
+	@MainActor private func article(titled title: String) -> Article {
         let articleID = randomID()
 		return Article(accountID: randomID(),
 					   articleID: articleID,
@@ -58,8 +58,7 @@ class SharingTests: XCTestCase {
 		)
     }
 
-    private func randomID() -> String {
+	@MainActor private func randomID() -> String {
         return UUID().uuidString
     }
-
 }

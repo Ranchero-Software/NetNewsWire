@@ -21,10 +21,57 @@
       }
     },
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:Modules\/FoundationExtras",
         "identifier" : "FoundationExtrasTests",
         "name" : "FoundationExtrasTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/AppKitExtras",
+        "identifier" : "AppKitExtrasTests",
+        "name" : "AppKitExtrasTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Modules\/Tree",
+        "identifier" : "TreeTests",
+        "name" : "TreeTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Modules\/Core",
+        "identifier" : "CoreTests",
+        "name" : "CoreTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Modules\/Web",
+        "identifier" : "WebTests",
+        "name" : "WebTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Modules\/Feedly",
+        "identifier" : "FeedlyTests",
+        "name" : "FeedlyTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:NetNewsWire.xcodeproj",
+        "identifier" : "849C64701ED37A5D003D8FC0",
+        "name" : "NetNewsWireTests"
       }
     }
   ],

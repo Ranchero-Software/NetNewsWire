@@ -12,11 +12,11 @@ import XCTest
 
 @testable import NetNewsWire
 
-class ArticleSorterTests: XCTestCase {
-	
+final class ArticleSorterTests: XCTestCase {
+
 	// MARK: sortByDate ascending tests
 	
-	func testSortByDateAscending() {
+	@MainActor func testSortByDateAscending() {
 		let now = Date()
 		
 		let article1 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-60.0), sortableArticleID: "1", sortableFeedID: "4")
@@ -36,7 +36,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article3)
 	}
 	
-	func testSortByDateAscendingWithSameDate() {
+	@MainActor func testSortByDateAscendingWithSameDate() {
 		let now = Date()
 		
 		// Articles with the same date should end up being sorted by their article ID
@@ -59,7 +59,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(4), article3)
 	}
 	
-	func testSortByDateAscendingWithGroupByFeed() {
+	@MainActor func testSortByDateAscendingWithGroupByFeed() {
 		let now = Date()
 
 		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: Date(timeInterval: -100.0, since: now), sortableArticleID: "1", sortableFeedID: "1")
@@ -94,7 +94,7 @@ class ArticleSorterTests: XCTestCase {
 
 	// MARK: sortByDate descending tests
 	
-	func testSortByDateDescending() {
+	@MainActor func testSortByDateDescending() {
 		let now = Date()
 		
 		let article1 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-60.0), sortableArticleID: "1", sortableFeedID: "4")
@@ -114,7 +114,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article4)
 	}
 	
-	func testSortByDateDescendingWithSameDate() {
+	@MainActor func testSortByDateDescendingWithSameDate() {
 		let now = Date()
 		
 		// Articles with the same date should end up being sorted by their article ID
@@ -137,7 +137,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(4), article5)
 	}
 	
-	func testSortByDateDescendingWithGroupByFeed() {
+	@MainActor func testSortByDateDescendingWithGroupByFeed() {
 		let now = Date()
 
 		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: Date(timeInterval: -100.0, since: now), sortableArticleID: "1", sortableFeedID: "1")
@@ -172,7 +172,7 @@ class ArticleSorterTests: XCTestCase {
 	
 	// MARK: Additional group by feed tests
 
-	func testGroupByFeedWithCaseInsensitiveFeedNames() {
+	@MainActor func testGroupByFeedWithCaseInsensitiveFeedNames() {
 		let now = Date()
 		
 		let article1 = TestArticle(sortableName: "phil's feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "1")
@@ -197,7 +197,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(4), article4)
 	}
 	
-	func testGroupByFeedWithSameFeedNames() {
+	@MainActor func testGroupByFeedWithSameFeedNames() {
 		let now = Date()
 
 		// Articles with the same feed name should be sorted by feed ID

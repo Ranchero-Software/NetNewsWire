@@ -11,7 +11,7 @@ import AppKit
 import XCTest
 import AppKitExtras
 
-final class NSMenuExtensionsTests: XCTestCase {
+@MainActor final class NSMenuExtensionsTests: XCTestCase {
 
 	// MARK: - Test addSeparatorIfNeeded
 
