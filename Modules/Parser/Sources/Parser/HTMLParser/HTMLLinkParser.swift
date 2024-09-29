@@ -7,10 +7,12 @@
 
 import Foundation
 import FoundationExtras
+import os
 
 public final class HTMLLinkParser {
 
 	public private(set) var links = [HTMLLink]()
+	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLLinkParser")
 
 	private let parserData: ParserData
 	private let baseURL: URL?
@@ -61,7 +63,7 @@ extension HTMLLinkParser: SAXHTMLParserDelegate {
 		}
 
 		guard let baseURL, let absoluteURL = URL(string: href, relativeTo: baseURL) else {
-			assertionFailure("Expected to create URL")
+			Self.logger.info("Expected to create URL but got nil with \(href)")
 			return nil
 		}
 
