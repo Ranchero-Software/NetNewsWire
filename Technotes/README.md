@@ -1,7 +1,5 @@
 # TechNotes
 
-[Roadmap](Roadmap.md)
-
 ## How To
 
 [How to Restore to Factory Settings](RestoreToFactory.md)
