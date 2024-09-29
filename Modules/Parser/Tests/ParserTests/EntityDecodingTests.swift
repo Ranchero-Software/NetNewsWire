@@ -153,5 +153,5 @@ func stringForResource(_ filename: String, _ fileExtension: String) -> String {
 
 func decodedString(_ s: String) -> String {
 
-	HTMLEntityDecoder.decodedString(s)!
+	HTMLEntityDecoder.decodedString(s)
 }
