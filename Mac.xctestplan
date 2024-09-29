@@ -66,13 +66,6 @@
         "identifier" : "FeedlyTests",
         "name" : "FeedlyTests"
       }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:NetNewsWire.xcodeproj",
-        "identifier" : "849C64701ED37A5D003D8FC0",
-        "name" : "NetNewsWireTests"
-      }
     }
   ],
   "version" : 1
