@@ -388,6 +388,7 @@
 		845611722BBD145D00507B73 /* Parser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 845611702BBD145D00507B73 /* Parser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8457C52E2CA91FED0038F3C0 /* AppKitExtras in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84A059F52C3A4AB20041209B /* AppKitExtras */; };
 		8457C5302CA920020038F3C0 /* AppKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 8457C52F2CA920020038F3C0 /* AppKitExtras */; };
+		8457C5322CA922DA0038F3C0 /* AppKitExtras in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5132BABB76100792720 /* AppKitExtras */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */; };
 		845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */; };
 		845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
@@ -738,6 +739,7 @@
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
+				8457C5322CA922DA0038F3C0 /* AppKitExtras in Embed Frameworks */,
 				8426DBB82BFDAD8500E98109 /* Core in Embed Frameworks */,
 				513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */,
 				8456116C2BBD145200507B73 /* Parser in Embed Frameworks */,
