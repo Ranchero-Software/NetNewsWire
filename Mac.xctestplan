@@ -15,73 +15,16 @@
     {
       "parallelizable" : true,
       "target" : {
-        "containerPath" : "container:FoundationExtras",
-        "identifier" : "FoundationExtrasTests",
-        "name" : "FoundationExtrasTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:AppKitExtras",
-        "identifier" : "AppKitExtrasTests",
-        "name" : "AppKitExtrasTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:Parser",
-        "identifier" : "ParserTests",
-        "name" : "ParserTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:Tree",
-        "identifier" : "TreeTests",
-        "name" : "TreeTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:Core",
-        "identifier" : "CoreTests",
-        "name" : "CoreTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:Feedly",
-        "identifier" : "FeedlyTests",
-        "name" : "FeedlyTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:Account",
-        "identifier" : "AccountTests",
-        "name" : "AccountTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:Web",
-        "identifier" : "WebTests",
-        "name" : "WebTests"
-      }
-    },
-    {
-      "parallelizable" : true,
-      "target" : {
         "containerPath" : "container:Modules\/Parser",
         "identifier" : "ParserTests",
         "name" : "ParserTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/FoundationExtras",
+        "identifier" : "FoundationExtrasTests",
+        "name" : "FoundationExtrasTests"
       }
     }
   ],
