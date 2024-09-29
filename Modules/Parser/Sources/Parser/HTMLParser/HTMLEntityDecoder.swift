@@ -9,7 +9,7 @@ import Foundation
 
 public final class HTMLEntityDecoder {
 
-	public static func decodedString(_ encodedString: String) -> String? {
+	public static func decodedString(_ encodedString: String) -> String {
 
 		var didDecodeAtLeastOneEntity = false
 
@@ -34,7 +34,7 @@ public final class HTMLEntityDecoder {
 		}
 
 		assertionFailure("Expected result but got nil.")
-		return nil
+		return encodedString
 	}
 }
 
