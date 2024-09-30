@@ -7,7 +7,6 @@ CODE_SIGN_STYLE = Manual
 
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 
-ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 BUNDLE_LOADER = $(TEST_HOST)
 COMBINE_HIDPI_IMAGES = YES
 INFOPLIST_FILE = Tests/NetNewsWireTests/Info.plist
