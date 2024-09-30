@@ -487,6 +487,7 @@
 		84CC88181FE59CBF00644329 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */; };
 		84D9582C2BABE53B0053E7B2 /* FoundationExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 84D9582B2BABE53B0053E7B2 /* FoundationExtras */; };
+		84DA44FC2CAA5A2F00929FA7 /* Parser in Frameworks */ = {isa = PBXBuildFile; productRef = 84DA44FB2CAA5A2F00929FA7 /* Parser */; };
 		84DC5FFA2BCE31D200F04682 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = 84DC5FF92BCE31D200F04682 /* Images */; };
 		84DC5FFC2BCE31DB00F04682 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = 84DC5FFB2BCE31DB00F04682 /* Images */; };
 		84DC5FFE2BCE37A300F04682 /* AppDelegate+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC5FFD2BCE37A300F04682 /* AppDelegate+Shared.swift */; };
@@ -1240,6 +1241,7 @@
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
 				8426DBC82BFDAF4300E98109 /* Web in Frameworks */,
 				84D9582C2BABE53B0053E7B2 /* FoundationExtras in Frameworks */,
+				84DA44FC2CAA5A2F00929FA7 /* Parser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2486,6 +2488,7 @@
 				841CECDD2BAD06D10001EE72 /* Tree */,
 				84DC60012BCE40B200F04682 /* Images */,
 				8426DBC72BFDAF4300E98109 /* Web */,
+				84DA44FB2CAA5A2F00929FA7 /* Parser */,
 			);
 			productName = "NetNewsWire iOS Share Extension";
 			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
@@ -4233,6 +4236,10 @@
 		84D9582B2BABE53B0053E7B2 /* FoundationExtras */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FoundationExtras;
+		};
+		84DA44FB2CAA5A2F00929FA7 /* Parser */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Parser;
 		};
 		84DC5FF92BCE31D200F04682 /* Images */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -14,6 +14,7 @@ import os.log
 import WidgetKit
 import Core
 import Images
+import libxml2
 
 @MainActor var appDelegate: AppDelegate!
 
