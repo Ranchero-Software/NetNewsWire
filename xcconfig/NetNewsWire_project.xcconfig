@@ -47,6 +47,7 @@ SWIFT_VERSION = 5.10
 SWIFT_STRICT_CONCURRENCY = complete
 ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO
 DEAD_CODE_STRIPPING = YES
+BUILD_INDEPENDENT_TARGETS_IN_PARALLEL = YES
 
 // https://forums.swift.org/t/swift-packages-in-multiple-targets-results-in-this-will-result-in-duplication-of-library-code-errors/34892/33
 DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES
