@@ -287,8 +287,16 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 				}
 			} else {
 				if let windowScrollY = windowScrollY {
-					_ = try? await webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
-					self.windowScrollY = nil
+
+					// Using await evaluateJavaScript can trigger a crash,
+					// so we stick with completion-based method.
+					// https://forums.developer.apple.com/forums/thread/701553
+					webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));") { [weak self] _, _ in
+						guard let self else {
+							return
+						}
+						self.windowScrollY = nil
+					}
 				}
 			}
 		}
@@ -390,25 +398,36 @@ private extension DetailWebViewController {
 
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
 
-		guard let info = try? await webView.evaluateJavaScript(javascriptString) else {
-			return nil
-		}
-		guard let info = info as? [String: Any] else {
-			return nil
-		}
-		guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
-			return nil
-		}
+		return await withCheckedContinuation { continuation in
 
-		let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: webView.frame.height, offsetY: offsetY)
-		return scrollInfo
+			// Using await evaluateJavaScript can trigger a crash,
+			// so we stick with completion-based method.
+			// https://forums.developer.apple.com/forums/thread/701553
+			webView.evaluateJavaScript(javascriptString) { info, _ in
+				guard let info else {
+					continuation.resume(returning: nil)
+					return
+				}
+				guard let info = info as? [String: Any] else {
+					continuation.resume(returning: nil)
+					return
+				}
+				guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
+					continuation.resume(returning: nil)
+					return
+				}
+
+				let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: webView.frame.height, offsetY: offsetY)
+				continuation.resume(returning: scrollInfo)
+			}
+		}
 	}
 
-	#if !MAC_APP_STORE
-		@objc func webInspectorEnabledDidChange(_ notification: Notification) {
-			self.webInspectorEnabled = notification.object! as! Bool
-		}
-	#endif
+#if !MAC_APP_STORE
+	@objc func webInspectorEnabledDidChange(_ notification: Notification) {
+		self.webInspectorEnabled = notification.object! as! Bool
+	}
+#endif
 }
 
 // MARK: - ScrollInfo
