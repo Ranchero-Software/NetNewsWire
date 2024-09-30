@@ -308,29 +308,11 @@
 		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
 		5F323809231DF9F000706F6B /* VibrantTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */; };
-		653813432680E2DA007A082C /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
-		653813442680E2DA007A082C /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C416024E5CDE3008226FD /* ShareViewController.swift */; };
-		653813452680E2DA007A082C /* ExtensionFeedAddRequestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C8BF23F3866C00032075 /* ExtensionFeedAddRequestFile.swift */; };
-		653813462680E2DA007A082C /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
-		653813472680E2DA007A082C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
-		653813482680E2DA007A082C /* ExtensionContainersFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */; };
-		653813492680E2DA007A082C /* ExtensionContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87623F22B8200032075 /* ExtensionContainers.swift */; };
-		6538134A2680E2DA007A082C /* ArticleTextSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC07972552083500A3F79F /* ArticleTextSize.swift */; };
-		6538134B2680E2DA007A082C /* ShareDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C8BC23F3780900032075 /* ShareDefaultContainer.swift */; };
-		6538134E2680E2DA007A082C /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 6538133F2680E2DA007A082C /* Account */; };
-		653813502680E2DA007A082C /* ShareViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 510C416224E5CDE3008226FD /* ShareViewController.xib */; };
-		653813512680E2DA007A082C /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5132779E2591034D0064F1E7 /* icon.icns */; };
-		653813522680E2DA007A082C /* SafariExt.js in Resources */ = {isa = PBXBuildFile; fileRef = 515D4FCB2325815A00EE1167 /* SafariExt.js */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
 		6581C74020CED60100F4AD34 /* netnewswire-subscribe-to-feed.js in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */; };
 		6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
-		65ED4092235DEF770081F399 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
-		65ED4093235DEF770081F399 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
-		65ED4096235DEF770081F399 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
-		65ED4097235DEF770081F399 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
-		65ED4098235DEF770081F399 /* netnewswire-subscribe-to-feed.js in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */; };
 		65ED40A0235DEFF00081F399 /* container-migration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 65ED409F235DEFF00081F399 /* container-migration.plist */; };
 		769F2ED513DA03EE75B993A8 /* NewsBlurAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */; };
 		8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD892213E0E3008CE1BF /* DetailContainerView.swift */; };
@@ -693,16 +675,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		653813532680E2DA007A082C /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6581C75720CED60100F4AD34 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -971,7 +943,6 @@
 		55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsReaderAPI.xib; sourceTree = "<group>"; };
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
 		5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantTableViewCell.swift; sourceTree = "<group>"; };
-		653813592680E2DA007A082C /* NetNewsWire Share Extension MAS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire Share Extension MAS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_shareextension_target_macappstore.xcconfig; sourceTree = "<group>"; };
 		6543108B2322D90900658221 /* common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = common; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -983,7 +954,6 @@
 		6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "netnewswire-subscribe-to-feed.js"; sourceTree = "<group>"; };
 		6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ToolbarItemIcon.pdf; sourceTree = "<group>"; };
 		6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Subscribe_to_Feed.entitlements; sourceTree = "<group>"; };
-		65ED409D235DEF770081F399 /* Subscribe to Feed MAS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed MAS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65ED409F235DEFF00081F399 /* container-migration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "container-migration.plist"; sourceTree = "<group>"; };
 		65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_macapp_target_macappstore.xcconfig; sourceTree = "<group>"; };
 		65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_safariextension_target_macappstore.xcconfig; sourceTree = "<group>"; };
@@ -1252,22 +1222,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6538134C2680E2DA007A082C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6538134E2680E2DA007A082C /* Account in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6581C73020CED60000F4AD34 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		65ED4094235DEF770081F399 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2016,10 +1971,8 @@
 				513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */,
 				518B2ED22351B3DD00400001 /* NetNewsWire-iOSTests.xctest */,
 				51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */,
-				65ED409D235DEF770081F399 /* Subscribe to Feed MAS.appex */,
 				510C415C24E5CDE3008226FD /* NetNewsWire Share Extension.appex */,
 				176813F32564BB2C00D98635 /* NetNewsWire iOS Widget Extension.appex */,
-				653813592680E2DA007A082C /* NetNewsWire Share Extension MAS.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2512,28 +2465,6 @@
 			productReference = 518B2ED22351B3DD00400001 /* NetNewsWire-iOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		6538133E2680E2DA007A082C /* NetNewsWire Share Extension MAS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 653813562680E2DA007A082C /* Build configuration list for PBXNativeTarget "NetNewsWire Share Extension MAS" */;
-			buildPhases = (
-				653813422680E2DA007A082C /* Sources */,
-				6538134C2680E2DA007A082C /* Frameworks */,
-				6538134F2680E2DA007A082C /* Resources */,
-				653813532680E2DA007A082C /* Embed Frameworks */,
-				653813552680E2DA007A082C /* Delete Unnecessary Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "NetNewsWire Share Extension MAS";
-			packageProductDependencies = (
-				6538133F2680E2DA007A082C /* Account */,
-			);
-			productName = ShareExtension;
-			productReference = 653813592680E2DA007A082C /* NetNewsWire Share Extension MAS.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		6581C73220CED60000F4AD34 /* Subscribe to Feed */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6581C75620CED60100F4AD34 /* Build configuration list for PBXNativeTarget "Subscribe to Feed" */;
@@ -2549,23 +2480,6 @@
 			name = "Subscribe to Feed";
 			productName = "Subscribe to Feed";
 			productReference = 6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
-		65ED4090235DEF770081F399 /* Subscribe to Feed MAS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 65ED4099235DEF770081F399 /* Build configuration list for PBXNativeTarget "Subscribe to Feed MAS" */;
-			buildPhases = (
-				65ED4091235DEF770081F399 /* Sources */,
-				65ED4094235DEF770081F399 /* Frameworks */,
-				65ED4095235DEF770081F399 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Subscribe to Feed MAS";
-			productName = "Subscribe to Feed";
-			productReference = 65ED409D235DEF770081F399 /* Subscribe to Feed MAS.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		840D617B2029031C009BC708 /* NetNewsWire-iOS */ = {
@@ -2720,10 +2634,6 @@
 						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
-					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = SHJK2V3AJG;
-						ProvisioningStyle = Automatic;
-					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
 						DevelopmentTeam = SHJK2V3AJG;
@@ -2776,13 +2686,11 @@
 				849C64701ED37A5D003D8FC0 /* NetNewsWireTests */,
 				840D617B2029031C009BC708 /* NetNewsWire-iOS */,
 				6581C73220CED60000F4AD34 /* Subscribe to Feed */,
-				65ED4090235DEF770081F399 /* Subscribe to Feed MAS */,
 				513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */,
 				51314636235A7BBE00387FDC /* NetNewsWire iOS Intents Extension */,
 				176813F22564BB2C00D98635 /* NetNewsWire iOS Widget Extension */,
 				518B2ED12351B3DD00400001 /* NetNewsWire-iOSTests */,
 				510C415B24E5CDE3008226FD /* NetNewsWire Share Extension */,
-				6538133E2680E2DA007A082C /* NetNewsWire Share Extension MAS */,
 			);
 		};
 /* End PBXProject section */
@@ -2835,16 +2743,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6538134F2680E2DA007A082C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				653813502680E2DA007A082C /* ShareViewController.xib in Resources */,
-				653813512680E2DA007A082C /* icon.icns in Resources */,
-				653813522680E2DA007A082C /* SafariExt.js in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6581C73120CED60000F4AD34 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2852,16 +2750,6 @@
 				6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */,
 				6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */,
 				6581C74020CED60100F4AD34 /* netnewswire-subscribe-to-feed.js in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		65ED4095235DEF770081F399 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				65ED4096235DEF770081F399 /* ToolbarItemIcon.pdf in Resources */,
-				65ED4097235DEF770081F399 /* SafariExtensionViewController.xib in Resources */,
-				65ED4098235DEF770081F399 /* netnewswire-subscribe-to-feed.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3042,24 +2930,6 @@
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
 		};
-		653813552680E2DA007A082C /* Delete Unnecessary Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Delete Unnecessary Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Delete the framework that Xcode should have never included\n# https://forums.swift.org/t/is-this-an-xcode-bug-or-somehow-related-to-spm/33987\nrm -rf \"${TARGET_BUILD_DIR}/NetNewsWire Share Extension.appex/Contents/Frameworks\"\n";
-		};
 		7180F95C265B67B800189094 /* Run Script: Delete Unnecessary Frameworks For Share Extension */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -3230,37 +3100,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		653813422680E2DA007A082C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				653813432680E2DA007A082C /* AppDefaults.swift in Sources */,
-				653813442680E2DA007A082C /* ShareViewController.swift in Sources */,
-				653813452680E2DA007A082C /* ExtensionFeedAddRequestFile.swift in Sources */,
-				653813462680E2DA007A082C /* ExtensionFeedAddRequest.swift in Sources */,
-				653813472680E2DA007A082C /* RefreshInterval.swift in Sources */,
-				653813482680E2DA007A082C /* ExtensionContainersFile.swift in Sources */,
-				653813492680E2DA007A082C /* ExtensionContainers.swift in Sources */,
-				6538134A2680E2DA007A082C /* ArticleTextSize.swift in Sources */,
-				6538134B2680E2DA007A082C /* ShareDefaultContainer.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6581C72F20CED60000F4AD34 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */,
 				6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		65ED4091235DEF770081F399 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				65ED4092235DEF770081F399 /* SafariExtensionViewController.swift in Sources */,
-				65ED4093235DEF770081F399 /* SafariExtensionHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3826,20 +3671,6 @@
 			};
 			name = Release;
 		};
-		653813572680E2DA007A082C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target_macappstore.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		653813582680E2DA007A082C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target_macappstore.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
 		6581C74720CED60100F4AD34 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
@@ -3850,20 +3681,6 @@
 		6581C74820CED60100F4AD34 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		65ED409A235DEF770081F399 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		65ED409C235DEF770081F399 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -3972,29 +3789,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		653813562680E2DA007A082C /* Build configuration list for PBXNativeTarget "NetNewsWire Share Extension MAS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				653813572680E2DA007A082C /* Debug */,
-				653813582680E2DA007A082C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		6581C75620CED60100F4AD34 /* Build configuration list for PBXNativeTarget "Subscribe to Feed" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6581C74720CED60100F4AD34 /* Debug */,
 				6581C74820CED60100F4AD34 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		65ED4099235DEF770081F399 /* Build configuration list for PBXNativeTarget "Subscribe to Feed MAS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				65ED409A235DEF770081F399 /* Debug */,
-				65ED409C235DEF770081F399 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4140,10 +3939,6 @@
 		51C4CFF524D37DD500AF9874 /* Secrets */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Secrets;
-		};
-		6538133F2680E2DA007A082C /* Account */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Account;
 		};
 		8410C4A42BC1E28200D4F799 /* ReaderAPI */ = {
 			isa = XCSwiftPackageProductDependency;
