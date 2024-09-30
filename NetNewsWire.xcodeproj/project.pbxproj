@@ -114,10 +114,7 @@
 		5132775E2590FC640064F1E7 /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 5132775D2590FC640064F1E7 /* Articles */; };
 		5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5132775D2590FC640064F1E7 /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513277612590FC640064F1E7 /* ArticlesDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 513277602590FC640064F1E7 /* ArticlesDatabase */; };
-		513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513277602590FC640064F1E7 /* ArticlesDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513277642590FC640064F1E7 /* SyncDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 513277632590FC640064F1E7 /* SyncDatabase */; };
-		513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513277632590FC640064F1E7 /* SyncDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		513277662590FC780064F1E7 /* Secrets in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51C4CFF524D37DD500AF9874 /* Secrets */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5132779F2591034D0064F1E7 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5132779E2591034D0064F1E7 /* icon.icns */; };
 		5137C2E426F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
 		5137C2E626F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
@@ -129,11 +126,8 @@
 		513F32712593EE6F0003048F /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32702593EE6F0003048F /* Articles */; };
 		513F32722593EE6F0003048F /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32702593EE6F0003048F /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32732593EE6F0003048F /* ArticlesDatabase */; };
-		513F32752593EE6F0003048F /* ArticlesDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32732593EE6F0003048F /* ArticlesDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513F32772593EE6F0003048F /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32762593EE6F0003048F /* Secrets */; };
-		513F32782593EE6F0003048F /* Secrets in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32762593EE6F0003048F /* Secrets */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32792593EE6F0003048F /* SyncDatabase */; };
-		513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32792593EE6F0003048F /* SyncDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513F32812593EF180003048F /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 516B695E24D2F33B00B5702F /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5141E7392373C18B0013FF27 /* FeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7382373C18B0013FF27 /* FeedInspectorViewController.swift */; };
 		5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5142192923522B5500E07E2C /* ImageViewController.swift */; };
@@ -370,7 +364,6 @@
 		845611722BBD145D00507B73 /* Parser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 845611702BBD145D00507B73 /* Parser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8457C52E2CA91FED0038F3C0 /* AppKitExtras in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84A059F52C3A4AB20041209B /* AppKitExtras */; };
 		8457C5302CA920020038F3C0 /* AppKitExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 8457C52F2CA920020038F3C0 /* AppKitExtras */; };
-		8457C5322CA922DA0038F3C0 /* AppKitExtras in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5132BABB76100792720 /* AppKitExtras */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */; };
 		845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29231FC9255E007B49E3 /* SidebarCellAppearance.swift */; };
 		845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
@@ -664,12 +657,9 @@
 			dstSubfolderSpec = 10;
 			files = (
 				8426DBC02BFDAEF200E98109 /* Web in Embed Frameworks */,
-				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
-				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
 				513F32812593EF180003048F /* Account in Embed Frameworks */,
 				8426DBB92BFDAD9200E98109 /* Core in Embed Frameworks */,
-				513F32752593EE6F0003048F /* ArticlesDatabase in Embed Frameworks */,
 				845611722BBD145D00507B73 /* Parser in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -710,11 +700,7 @@
 				8426DBC32BFDAEFC00E98109 /* Web in Embed Frameworks */,
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
-				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
-				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
-				8457C5322CA922DA0038F3C0 /* AppKitExtras in Embed Frameworks */,
 				8426DBB82BFDAD8500E98109 /* Core in Embed Frameworks */,
-				513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */,
 				8456116C2BBD145200507B73 /* Parser in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";

@@ -7,7 +7,6 @@ let package = Package(
     products: [
         .library(
             name: "SyncDatabase",
-			type: .dynamic,
             targets: ["SyncDatabase"]),
     ],
 	dependencies: [
