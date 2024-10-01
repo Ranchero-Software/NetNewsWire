@@ -14,26 +14,6 @@ import Images
 extension AppAsset {
 
 	struct Mac {
-
-		static let iconLightBackgroundColor = NSColor(named: "iconLightBackgroundColor")!
-		static let iconDarkBackgroundColor = NSColor(named: "iconDarkBackgroundColor")!
-
-		static let marsEditIcon = RSImage.appImage("MarsEditIcon")
-		static let microblogIcon = RSImage.appImage("MicroblogIcon")
-
-		struct Toolbar {
-			static let addNewSidebarItem = RSImage.systemImage("plus")
-			static let sidebarToggle = RSImage.systemImage("sidebar.left")
-			static let refresh = RSImage.systemImage("arrow.clockwise")
-			static let articleTheme = RSImage.systemImage("doc.richtext")
-			static let cleanUpImage = RSImage.systemImage("wind")
-			static let nextUnread = RSImage.systemImage("chevron.down.circle")
-			static let openInBrowser = RSImage.systemImage("safari")
-			static let readClosed = RSImage.systemImage("largecircle.fill.circle")
-			static let readOpen = RSImage.systemImage("circle")
-			static let share = AppAsset.shareImage
-		}
-
 		struct PreferencesToolbar {
 			static let accounts = RSImage.systemImage("at")
 			static let general = RSImage.systemImage("gearshape")

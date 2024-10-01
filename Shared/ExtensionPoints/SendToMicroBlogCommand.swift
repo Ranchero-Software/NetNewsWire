@@ -16,7 +16,7 @@ import Core
 @MainActor final class SendToMicroBlogCommand: SendToCommand {
 
 	let title = "Micro.blog"
-	let image: RSImage? = AppAsset.Mac.microblogIcon
+	let image: RSImage? = AppAsset.microblogImage
 
 	private let microBlogApp = UserApp(bundleID: "blog.micro.mac")
 

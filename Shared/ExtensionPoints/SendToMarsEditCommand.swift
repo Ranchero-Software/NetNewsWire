@@ -14,7 +14,7 @@ import Core
 @MainActor final class SendToMarsEditCommand: SendToCommand {
 
 	let title = "MarsEdit"
-	let image: RSImage? = AppAsset.Mac.marsEditIcon
+	let image: RSImage? = AppAsset.marsEditImage
 
 	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
 

@@ -26,32 +26,44 @@ final class AppAsset {
 
 	@MainActor static let folderIcon: IconImage = {
 
-		#if os(macOS)
+#if os(macOS)
 		let image = RSImage.systemImage("folder")
 		let preferredColor = NSColor(named: "AccentColor")!
 		let coloredImage = image.tinted(with: preferredColor)
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
-
-		#else
+#else
 		let image = RSImage.systemImage("folder.fill")
 		let preferredColor = AppAssets.secondaryAccentColor
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
-
-		#endif
+#endif
 	}()
 
 	@MainActor static let searchFeedImage: IconImage = {
 
 #if os(macOS)
 		IconImage(NSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSupressed: true)
-
 #else
 		IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
-
 #endif
 	}()
 
-	// MARK: - Account
+	// MARK: - ArticleExtractor
+
+	static let articleExtractorErrorImage = RSImage.appImage("articleExtractorError")
+	static let articleExtractorOffImage = RSImage.appImage("articleExtractorOff")
+	static let articleExtractorOffSFImage = RSImage.systemImage("doc.plaintext")
+	static let articleExtractorOnImage = RSImage.appImage("articleExtractorOn")
+	static let articleExtractorOnSFImage = RSImage.appImage("articleExtractorOnSF")
+
+	// MARK: - Filter icon
+
+	static let filterActiveImage = RSImage.systemImage("line.horizontal.3.decrease.circle.fill")
+	static let filterInactiveImage = RSImage.systemImage("line.horizontal.3.decrease.circle")
+}
+
+// MARK: - Account
+
+extension AppAsset {
 
 	static let bazQuxImage = RSImage.appImage("accountBazQux")
 	static let cloudKitImage = RSImage.appImage("accountCloudKit")
@@ -72,14 +84,12 @@ final class AppAsset {
 
 #if os(macOS)
 			return AppAsset.localAccountMacImage
-
 #elseif os(iOS)
 			if UIDevice.current.userInterfaceIdiom == .pad {
 				return AppAsset.localAccountPadImage
 			} else {
 				return AppAsset.localAccountPhoneImage
 			}
-
 #endif
 
 		case .cloudKit:
@@ -100,17 +110,35 @@ final class AppAsset {
 			return AppAsset.theOldReaderImage
 		}
 	}
-	
-	// MARK: - ArticleExtractor
-	
-	static let articleExtractorErrorImage = RSImage.appImage("articleExtractorError")
-	static let articleExtractorOffImage = RSImage.appImage("articleExtractorOff")
-	static let articleExtractorOffSFImage = RSImage.systemImage("doc.plaintext")
-	static let articleExtractorOnImage = RSImage.appImage("articleExtractorOn")
-	static let articleExtractorOnSFImage = RSImage.appImage("articleExtractorOnSF")
-	
-	// MARK: - Filter icon
-	
-	static let filterActiveImage = RSImage.systemImage("line.horizontal.3.decrease.circle.fill")
-	static let filterInactiveImage = RSImage.systemImage("line.horizontal.3.decrease.circle")
 }
+
+#if os(macOS)
+
+// MARK: - Mac
+
+extension AppAsset {
+
+	static let iconLightBackgroundColor = NSColor(named: "iconLightBackgroundColor")!
+	static let iconDarkBackgroundColor = NSColor(named: "iconDarkBackgroundColor")!
+
+	// MARK: - Mac Share Menu
+
+	static let marsEditImage = RSImage.appImage("MarsEditIcon")
+	static let microblogImage = RSImage.appImage("MicroblogIcon")
+
+	// MARK: - Mac Toolbar
+
+	static let toolbarAddNewSidebarItemImage = RSImage.systemImage("plus")
+	static let toolbarSidebarToggleImage = RSImage.systemImage("sidebar.left")
+	static let toolbarRefreshImage = RSImage.systemImage("arrow.clockwise")
+	static let toolbarArticleThemeImage = RSImage.systemImage("doc.richtext")
+	static let toolbarCleanUpImage = RSImage.systemImage("wind")
+	static let toolbarNextUnreadImage = RSImage.systemImage("chevron.down.circle")
+	static let toolbarOpenInBrowserImage = RSImage.systemImage("safari")
+	static let toolbarReadClosedImage = RSImage.systemImage("largecircle.fill.circle")
+	static let toolbarReadOpenImage = RSImage.systemImage("circle")
+	static let toolbarShareImage = AppAsset.shareImage
+}
+
+#endif
+
