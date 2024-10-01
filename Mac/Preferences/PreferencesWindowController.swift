@@ -35,10 +35,10 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		var specs = [PreferencesToolbarItemSpec]()
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General,
 											 name: NSLocalizedString("General", comment: "Preferences"),
-											 image: AppAsset.Mac.PreferencesToolbar.general)]
+											 image: AppAsset.preferencesToolbarGeneralImage)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
 											 name: NSLocalizedString("Accounts", comment: "Preferences"),
-											 image: AppAsset.Mac.PreferencesToolbar.accounts)]
+											 image: AppAsset.preferencesToolbarAccountsImage)]
 
 		// Omit the Advanced Preferences for now because the Software Update related functionality is
 		// forbidden/non-applicable, and we can rely upon Apple to some extent for crash reports. We
@@ -47,7 +47,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		#if !MAC_APP_STORE
 			specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
 												 name: NSLocalizedString("Advanced", comment: "Preferences"),
-												 image: AppAsset.Mac.PreferencesToolbar.advanced)]
+												 image: AppAsset.preferencesToolbarAdvancedImage)]
 		#endif
 		return specs
 	}()

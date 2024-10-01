@@ -138,6 +138,12 @@ extension AppAsset {
 	static let toolbarReadClosedImage = RSImage.systemImage("largecircle.fill.circle")
 	static let toolbarReadOpenImage = RSImage.systemImage("circle")
 	static let toolbarShareImage = AppAsset.shareImage
+
+	// MARK: - Mac Preferences Toolbar
+
+	static let preferencesToolbarAccountsImage = RSImage.systemImage("at")
+	static let preferencesToolbarGeneralImage = RSImage.systemImage("gearshape")
+	static let preferencesToolbarAdvancedImage = RSImage.systemImage("gearshape.2")
 }
 
 #endif

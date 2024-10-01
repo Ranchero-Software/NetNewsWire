@@ -14,11 +14,6 @@ import Images
 extension AppAsset {
 
 	struct Mac {
-		struct PreferencesToolbar {
-			static let accounts = RSImage.systemImage("at")
-			static let general = RSImage.systemImage("gearshape")
-			static let advanced = RSImage.systemImage("gearshape.2")
-		}
 
 		struct Timeline {
 			static let swipeMarkRead = NSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
