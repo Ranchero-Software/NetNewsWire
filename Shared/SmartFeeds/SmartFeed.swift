@@ -8,9 +8,7 @@
 
 import Foundation
 import Articles
-import ArticlesDatabase
 import Account
-import Database
 import Core
 import Images
 

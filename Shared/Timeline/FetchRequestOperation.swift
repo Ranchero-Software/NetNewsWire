@@ -9,7 +9,6 @@
 import Foundation
 import Account
 import Articles
-import Database
 
 // Main thread only.
 // Runs an asynchronous fetch.

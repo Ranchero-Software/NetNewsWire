@@ -9,8 +9,6 @@
 import Foundation
 import Account
 import Articles
-import ArticlesDatabase
-import Database
 import Core
 
 protocol SmartFeedDelegate: SidebarItemIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
