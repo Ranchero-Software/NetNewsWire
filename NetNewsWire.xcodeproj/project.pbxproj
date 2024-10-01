@@ -337,6 +337,9 @@
 		8426DBCB2BFDAF6100E98109 /* CommonErrors in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBCA2BFDAF6100E98109 /* CommonErrors */; };
 		842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
+		84308B4E2CABC598004AF552 /* ReaderAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 84308B4D2CABC598004AF552 /* ReaderAPI */; };
+		84308B4F2CABC598004AF552 /* ReaderAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84308B4D2CABC598004AF552 /* ReaderAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		84308B502CABC5A7004AF552 /* ReaderAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8410C4A42BC1E28200D4F799 /* ReaderAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8438C2DB2BABE0B00040C9EE /* CoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 8438C2DA2BABE0B00040C9EE /* CoreResources */; };
 		84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
 		8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
@@ -650,6 +653,7 @@
 			files = (
 				8426DBC02BFDAEF200E98109 /* Web in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
+				84308B502CABC5A7004AF552 /* ReaderAPI in Embed Frameworks */,
 				513F32812593EF180003048F /* Account in Embed Frameworks */,
 				8426DBB92BFDAD9200E98109 /* Core in Embed Frameworks */,
 				845611722BBD145D00507B73 /* Parser in Embed Frameworks */,
@@ -691,6 +695,7 @@
 			files = (
 				8426DBC32BFDAEFC00E98109 /* Web in Embed Frameworks */,
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
+				84308B4F2CABC598004AF552 /* ReaderAPI in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
 				8426DBB82BFDAD8500E98109 /* Core in Embed Frameworks */,
 				8456116C2BBD145200507B73 /* Parser in Embed Frameworks */,
@@ -1240,6 +1245,7 @@
 				84DCA5252BABBB5A00792720 /* Core in Frameworks */,
 				84DCA5122BABB75600792720 /* FoundationExtras in Frameworks */,
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
+				84308B4E2CABC598004AF552 /* ReaderAPI in Frameworks */,
 				179C39EA26F76B0500D4E741 /* Zip in Frameworks */,
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				84DCA5142BABB76100792720 /* AppKitExtras in Frameworks */,
@@ -2530,6 +2536,7 @@
 				84DC5FF92BCE31D200F04682 /* Images */,
 				8426DBC12BFDAEFC00E98109 /* Web */,
 				8426DBC52BFDAF1B00E98109 /* CommonErrors */,
+				84308B4D2CABC598004AF552 /* ReaderAPI */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -3925,6 +3932,10 @@
 		8426DBCA2BFDAF6100E98109 /* CommonErrors */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CommonErrors;
+		};
+		84308B4D2CABC598004AF552 /* ReaderAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReaderAPI;
 		};
 		8438C2DA2BABE0B00040C9EE /* CoreResources */ = {
 			isa = XCSwiftPackageProductDependency;
