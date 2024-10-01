@@ -31,7 +31,7 @@ extension AppAsset {
 			static let openInBrowser = RSImage.systemImage("safari")
 			static let readClosed = RSImage.systemImage("largecircle.fill.circle")
 			static let readOpen = RSImage.systemImage("circle")
-			static let share = AppAsset.share
+			static let share = AppAsset.shareImage
 		}
 
 		struct PreferencesToolbar {

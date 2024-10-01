@@ -18,13 +18,13 @@ import Images
 
 final class AppAsset {
 
-	static let markAllAsRead = RSImage.appImage("markAllAsRead")
-	static let faviconTemplate = RSImage.appImage("faviconTemplateImage")
-	static let share = RSImage.systemImage("square.and.arrow.up")
+	static let markAllAsReadImage = RSImage.appImage("markAllAsRead")
+	static let faviconTemplateImage = RSImage.appImage("faviconTemplateImage")
+	static let shareImage = RSImage.systemImage("square.and.arrow.up")
 
 	static let starColor = RSColor(named: "starColor")!
 
-	@MainActor static let folder: IconImage = {
+	@MainActor static let folderIcon: IconImage = {
 
 		#if os(macOS)
 		let image = RSImage.systemImage("folder")
@@ -42,76 +42,75 @@ final class AppAsset {
 
 	@MainActor static let searchFeedImage: IconImage = {
 
-		#if os(macOS)
+#if os(macOS)
 		IconImage(NSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSupressed: true)
 
-		#else
+#else
 		IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
 
-		#endif
+#endif
 	}()
 
+	// MARK: - Account
 
-	struct Account {
+	static let bazQuxImage = RSImage.appImage("accountBazQux")
+	static let cloudKitImage = RSImage.appImage("accountCloudKit")
+	static let feedbinImage = RSImage.appImage("accountFeedbin")
+	static let feedlyImage = RSImage.appImage("accountFeedly")
+	static let freshRSSImage = RSImage.appImage("accountFreshRSS")
+	static let inoReaderImage = RSImage.appImage("accountInoreader")
+	static let localAccountMacImage = RSImage.appImage("accountLocal")
+	static let localAccountPadImage = RSImage.appImage("accountLocalPad")
+	static let localAccountPhoneImage = RSImage.appImage("accountLocalPhone")
+	static let newsBlurImage = RSImage.appImage("accountNewsBlur")
+	static let theOldReaderImage = RSImage.appImage("accountTheOldReader")
 
-		static let bazQux = RSImage.appImage("accountBazQux")
-		static let cloudKit = RSImage.appImage("accountCloudKit")
-		static let feedbin = RSImage.appImage("accountFeedbin")
-		static let feedly = RSImage.appImage("accountFeedly")
-		static let freshRSS = RSImage.appImage("accountFreshRSS")
-		static let inoReader = RSImage.appImage("accountInoreader")
-		static let local = RSImage.appImage("accountLocal")
-		static let localPad = RSImage.appImage("accountLocalPad")
-		static let localPhone = RSImage.appImage("accountLocalPhone")
-		static let newsBlur = RSImage.appImage("accountNewsBlur")
-		static let theOldReader = RSImage.appImage("accountTheOldReader")
+	@MainActor static func accountImage(for accountType: AccountType) -> RSImage {
 
-		@MainActor static func image(for accountType: AccountType) -> RSImage {
+		switch accountType {
+		case .onMyMac:
 
-			switch accountType {
-			case .onMyMac:
+#if os(macOS)
+			return AppAsset.localAccountMacImage
 
-				#if os(macOS)
-				return AppAsset.Account.local
-
-				#elseif os(iOS)
-				if UIDevice.current.userInterfaceIdiom == .pad {
-					return AppAsset.Account.localPad
-				} else {
-					return AppAsset.Account.localPhone
-				}
-				
-				#endif
-
-			case .cloudKit:
-				return AppAsset.Account.cloudKit
-			case .bazQux:
-				return AppAsset.Account.bazQux
-			case .feedbin:
-				return AppAsset.Account.feedbin
-			case .feedly:
-				return AppAsset.Account.feedly
-			case .freshRSS:
-				return AppAsset.Account.freshRSS
-			case .inoreader:
-				return AppAsset.Account.inoReader
-			case .newsBlur:
-				return AppAsset.Account.newsBlur
-			case .theOldReader:
-				return AppAsset.Account.theOldReader
+#elseif os(iOS)
+			if UIDevice.current.userInterfaceIdiom == .pad {
+				return AppAsset.localAccountPadImage
+			} else {
+				return AppAsset.localAccountPhoneImage
 			}
+
+#endif
+
+		case .cloudKit:
+			return AppAsset.cloudKitImage
+		case .bazQux:
+			return AppAsset.bazQuxImage
+		case .feedbin:
+			return AppAsset.feedbinImage
+		case .feedly:
+			return AppAsset.feedlyImage
+		case .freshRSS:
+			return AppAsset.freshRSSImage
+		case .inoreader:
+			return AppAsset.inoReaderImage
+		case .newsBlur:
+			return AppAsset.newsBlurImage
+		case .theOldReader:
+			return AppAsset.theOldReaderImage
 		}
 	}
-
-	struct ArticleExtractor {
-
-		static let error = RSImage.appImage("articleExtractorError")
-		static let off = RSImage.appImage("articleExtractorOff")
-		static let offSF = RSImage.systemImage("doc.plaintext")
-		static let on = RSImage.appImage("articleExtractorOn")
-		static let onSF = RSImage.appImage("articleExtractorOnSF")
-	}
-
-	static let filterActive = RSImage.systemImage("line.horizontal.3.decrease.circle.fill")
-	static let filterInactive = RSImage.systemImage("line.horizontal.3.decrease.circle")
+	
+	// MARK: - ArticleExtractor
+	
+	static let articleExtractorErrorImage = RSImage.appImage("articleExtractorError")
+	static let articleExtractorOffImage = RSImage.appImage("articleExtractorOff")
+	static let articleExtractorOffSFImage = RSImage.systemImage("doc.plaintext")
+	static let articleExtractorOnImage = RSImage.appImage("articleExtractorOn")
+	static let articleExtractorOnSFImage = RSImage.appImage("articleExtractorOnSF")
+	
+	// MARK: - Filter icon
+	
+	static let filterActiveImage = RSImage.systemImage("line.horizontal.3.decrease.circle.fill")
+	static let filterInactiveImage = RSImage.systemImage("line.horizontal.3.decrease.circle")
 }

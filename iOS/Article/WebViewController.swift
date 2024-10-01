@@ -860,7 +860,7 @@ private extension WebViewController {
 	func toggleArticleExtractorAction() -> UIAction {
 		let extracted = articleExtractorButtonState == .on
 		let title = extracted ? NSLocalizedString("Show Feed Article", comment: "Show Feed Article") : NSLocalizedString("Show Reader View", comment: "Show Reader View")
-		let extractorImage = extracted ? AppAsset.ArticleExtractor.offSF : AppAsset.ArticleExtractor.onSF
+		let extractorImage = extracted ? AppAsset.articleExtractorOffSFImage : AppAsset.articleExtractorOnSFImage
 		return UIAction(title: title, image: extractorImage) { [weak self] action in
 			self?.toggleArticleExtractor()
 		}
@@ -868,7 +868,7 @@ private extension WebViewController {
 
 	func shareAction() -> UIAction {
 		let title = NSLocalizedString("Share", comment: "Share")
-		return UIAction(title: title, image: AppAsset.share) { [weak self] action in
+		return UIAction(title: title, image: AppAsset.shareImage) { [weak self] action in
 			self?.showActivityDialog()
 		}
 	}

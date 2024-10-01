@@ -25,16 +25,16 @@ enum ArticleExtractorButtonState {
 				switch buttonState {
 				case .error:
 					stripAnimatedSublayer()
-					setImage(AppAsset.ArticleExtractor.error, for: .normal)
+					setImage(AppAsset.articleExtractorErrorImage, for: .normal)
 				case .animated:
 					setImage(nil, for: .normal)
 					setNeedsLayout()
 				case .on:
 					stripAnimatedSublayer()
-					setImage(AppAsset.ArticleExtractor.on, for: .normal)
+					setImage(AppAsset.articleExtractorOnImage, for: .normal)
 				case .off:
 					stripAnimatedSublayer()
-					setImage(AppAsset.ArticleExtractor.off, for: .normal)
+					setImage(AppAsset.articleExtractorOffImage, for: .normal)
 				}
 			}
 		}
@@ -77,7 +77,7 @@ enum ArticleExtractorButtonState {
 		let images = [image1, image2, image1]
 		
 		animatedLayer = CALayer()
-		let imageSize = AppAsset.ArticleExtractor.off.size
+		let imageSize = AppAsset.articleExtractorOffImage.size
 		animatedLayer!.bounds = CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height)
 		animatedLayer!.position = CGPoint(x: bounds.midX, y: bounds.midY)
 		

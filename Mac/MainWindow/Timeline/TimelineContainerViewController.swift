@@ -210,9 +210,9 @@ private extension TimelineContainerViewController {
 		readFilteredButton.isHidden = false
 		
 		if isReadFiltered {
-			readFilteredButton.image = AppAsset.filterActive
+			readFilteredButton.image = AppAsset.filterActiveImage
 		} else {
-			readFilteredButton.image = AppAsset.filterInactive
+			readFilteredButton.image = AppAsset.filterInactiveImage
 		}
 	}
 	

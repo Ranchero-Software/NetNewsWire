@@ -40,7 +40,7 @@ final class ArticleViewController: UIViewController {
 	private var articleExtractorButton: ArticleExtractorButton = {
 		let button = ArticleExtractorButton(type: .system)
 		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
-		button.setImage(AppAsset.ArticleExtractor.off, for: .normal)
+		button.setImage(AppAsset.articleExtractorOffImage, for: .normal)
 		return button
 	}()
 	

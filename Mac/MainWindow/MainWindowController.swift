@@ -813,11 +813,11 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .markAllAsRead:
 			let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
-			return buildToolbarButton(.markAllAsRead, title, AppAsset.markAllAsRead, "markAllAsRead:")
+			return buildToolbarButton(.markAllAsRead, title, AppAsset.markAllAsReadImage, "markAllAsRead:")
 
 		case .toggleReadArticlesFilter:
 			let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
-			return buildToolbarButton(.toggleReadArticlesFilter, title, AppAsset.filterInactive, "toggleReadArticlesFilter:")
+			return buildToolbarButton(.toggleReadArticlesFilter, title, AppAsset.filterInactiveImage, "toggleReadArticlesFilter:")
 
 		case .timelineTrackingSeparator:
 			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
@@ -1190,7 +1190,7 @@ private extension MainWindowController {
 			(item as? NSMenuItem)?.title = hideCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAsset.filterInactive
+				button.image = AppAsset.filterInactiveImage
 			}
 			return false
 		}
@@ -1199,13 +1199,13 @@ private extension MainWindowController {
 			(item as? NSMenuItem)?.title = showCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = showCommand
-				button.image = AppAsset.filterActive
+				button.image = AppAsset.filterActiveImage
 			}
 		} else {
 			(item as? NSMenuItem)?.title = hideCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAsset.filterInactive
+				button.image = AppAsset.filterInactiveImage
 			}
 		}
 		

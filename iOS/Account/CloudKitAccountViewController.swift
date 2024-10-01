@@ -56,7 +56,7 @@ class CloudKitAccountViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = AppAsset.Account.image(for: .cloudKit)
+			headerView.imageView.image = AppAsset.accountImage(for: .cloudKit)
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)

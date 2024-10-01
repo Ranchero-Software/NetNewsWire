@@ -70,7 +70,7 @@ private extension TimelinePreviewTableViewController {
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
-		let iconImage = IconImage(AppAsset.faviconTemplate.withTintColor(AppAssets.secondaryAccentColor))
+		let iconImage = IconImage(AppAsset.faviconTemplateImage.withTintColor(AppAssets.secondaryAccentColor))
 		
 		return TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Feed Name", byline: nil, iconImage: iconImage, showIcon: true, featuredImage: nil, numberOfLines: AppDefaults.shared.timelineNumberOfLines, iconSize: AppDefaults.shared.timelineIconSize)
 	}

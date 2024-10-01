@@ -167,7 +167,7 @@ import Sparkle
 			os_log(.debug, "Is first run.")
 		}
 
-		FaviconGenerator.faviconTemplateImage = AppAsset.faviconTemplate
+		FaviconGenerator.faviconTemplateImage = AppAsset.faviconTemplateImage
 
 		importFeedsIfNeeded()
 		updateSortMenuItems()

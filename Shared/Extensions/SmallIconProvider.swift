@@ -18,7 +18,7 @@ protocol SmallIconProvider {
 
 extension Account: SmallIconProvider {
 	var smallIcon: IconImage? {
-		let image = AppAsset.Account.image(for: accountType)
+		let image = AppAsset.accountImage(for: accountType)
 		return IconImage(image)
 	}
 }
@@ -35,6 +35,6 @@ extension Feed: SmallIconProvider {
 
 extension Folder: SmallIconProvider {
 	var smallIcon: IconImage? {
-		AppAsset.folder
+		AppAsset.folderIcon
 	}
 }
