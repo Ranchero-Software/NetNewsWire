@@ -6,10 +6,27 @@
 	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen</string>
 	<key>AppIdentifierPrefix</key>
 	<string>$(AppIdentifierPrefix)</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>nnwtheme</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>NetNewsWire Theme</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.ranchero.netnewswire.theme</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<true/>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIconFile</key>
@@ -46,6 +63,8 @@
 	<string>$(DEVELOPER_ENTITLEMENTS)</string>
 	<key>FeedURLForTestBuilds</key>
 	<string>https://ranchero.com/downloads/netnewswire-beta.xml</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.news</string>
 	<key>LSMinimumSystemVersion</key>
@@ -60,7 +79,7 @@
 	<key>NSAppleScriptEnabled</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2002-2023 Brent Simmons. All rights reserved.</string>
+	<string>Copyright © 2002-2024 Brent Simmons. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
@@ -75,27 +94,6 @@
 	<string>$(ORGANIZATION_IDENTIFIER)</string>
 	<key>SUFeedURL</key>
 	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
-	<key>UserAgent</key>
-	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>nnwtheme</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>NetNewsWire Theme</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>com.ranchero.netnewswire.theme</string>
-			</array>
-			<key>LSTypeIsPackage</key>
-			<true/>
-		</dict>
-	</array>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -118,5 +116,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>UserAgent</key>
+	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
 </dict>
 </plist>
