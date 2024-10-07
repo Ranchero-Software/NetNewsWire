@@ -133,9 +133,9 @@ private extension RSSParser {
 			else if !parsingAuthor && SAXEqualTags(localName, XMLName.title) {
 				currentArticle.title = currentString
 			}
-		}
-		else if SAXEqualTags(localName, XMLName.pubDate) {
-			currentArticle.datePublished = currentDate(saxParser)
+			else if SAXEqualTags(localName, XMLName.pubDate) {
+				currentArticle.datePublished = currentDate(saxParser)
+			}
 		}
 		else if SAXEqualTags(localName, XMLName.enclosure), let currentAttributes {
 			addEnclosure(currentAttributes, currentArticle)

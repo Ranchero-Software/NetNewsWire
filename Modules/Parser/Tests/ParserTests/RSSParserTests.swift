@@ -208,4 +208,31 @@ final class RSSParserTests: XCTestCase {
 			XCTAssertNotNil(article.contentHTML)
 		}
 	}
+
+	func testVincodeDates() {
+		let d = parserData("vincode", "rss", "https://vincode.io/feed.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+		XCTAssert(parsedFeed.items.count > 0)
+
+		var didFindFirstTestArticle = false
+		var didFindSecondTestArticle = false
+		for article in parsedFeed.items {
+
+			if article.title == "Drag Boat Race in Parker, AZ" {
+				didFindFirstTestArticle = true
+				// Tue, 07 Mar 2023 15:15:29 -0500
+				let expectedDatePublished = dateWithValues(2023, 3, 7, 20, 15, 29)
+				XCTAssertEqual(article.datePublished, expectedDatePublished)
+			}
+			else if article.title == "Ventura’s System Settings" {
+				didFindSecondTestArticle = true
+				// Sun, 30 Oct 2022 11:58:26 -0500
+				let expectedDatePublished = dateWithValues(2022, 10, 30, 16, 58, 26)
+				XCTAssertEqual(article.datePublished, expectedDatePublished)
+			}
+		}
+
+		XCTAssertTrue(didFindFirstTestArticle)
+		XCTAssertTrue(didFindSecondTestArticle)
+	}
 }

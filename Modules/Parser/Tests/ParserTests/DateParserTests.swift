@@ -10,23 +10,7 @@ import XCTest
 @testable import Parser
 
 final class DateParserTests: XCTestCase {
-	
-	func dateWithValues(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int, _ millisecond: Int = 0) -> Date {
-		var dateComponents = DateComponents()
-		dateComponents.calendar = Calendar.current
-		dateComponents.timeZone = TimeZone(secondsFromGMT: 0)
-		
-		dateComponents.year = year
-		dateComponents.month = month
-		dateComponents.day = day
-		dateComponents.hour = hour
-		dateComponents.minute = minute
-		dateComponents.second = second
-		dateComponents.nanosecond = millisecond * 1000000
 
-		return dateComponents.date!
-	}
-	
 	func testDateWithString() {
 		var expectedDateResult = dateWithValues(2010, 5, 28, 21, 3, 38)
 		
@@ -136,4 +120,20 @@ private extension DateParserTests {
 		let d = Data(string.utf8)
 		return DateParser.date(data: d)
 	}
+}
+
+func dateWithValues(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int, _ millisecond: Int = 0) -> Date {
+	var dateComponents = DateComponents()
+	dateComponents.calendar = Calendar.current
+	dateComponents.timeZone = TimeZone(secondsFromGMT: 0)
+
+	dateComponents.year = year
+	dateComponents.month = month
+	dateComponents.day = day
+	dateComponents.hour = hour
+	dateComponents.minute = minute
+	dateComponents.second = second
+	dateComponents.nanosecond = millisecond * 1000000
+
+	return dateComponents.date!
 }
