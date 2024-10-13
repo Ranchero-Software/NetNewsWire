@@ -12,14 +12,14 @@ public protocol CacheRecord: Sendable {
 	var dateCreated: Date { get }
 }
 
-final class Cache: Sendable {
+public final class Cache<T: CacheRecord>: Sendable {
 
 	public let timeToLive: TimeInterval
 	public let timeBetweenCleanups: TimeInterval
 
 	private struct State: Sendable {
 		var lastCleanupDate = Date()
-		var cache = [String: CacheRecord]()
+		var cache = [String: T]()
 	}
 
 	private let stateLock = OSAllocatedUnfairLock(initialState: State())
@@ -29,7 +29,7 @@ final class Cache: Sendable {
 		self.timeBetweenCleanups = timeBetweenCleanups
 	}
 
-	public subscript(_ key: String) -> CacheRecord? {
+	public subscript(_ key: String) -> T? {
 		get {
 			stateLock.withLock { state in
 
@@ -42,7 +42,7 @@ final class Cache: Sendable {
 					state.cache[key] = nil
 					return nil
 				}
-				
+
 				return value
 			}
 		}
@@ -50,6 +50,12 @@ final class Cache: Sendable {
 			stateLock.withLock { state in
 				state.cache[key] = newValue
 			}
+		}
+	}
+
+	public func cleanup() {
+		stateLock.withLock { state in
+			cleanupIfNeeded(&state)
 		}
 	}
 }
