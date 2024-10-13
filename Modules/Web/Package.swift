@@ -11,10 +11,15 @@ let package = Package(
 			type: .dynamic,
 			targets: ["Web"]),
 	],
+	dependencies: [
+		.package(path: "../Core")
+	],
 	targets: [
 		.target(
 			name: "Web",
-			dependencies: [],
+			dependencies: [
+				"Core"
+			],
 			swiftSettings: [
 				.define("SWIFT_PACKAGE"),
 				.enableExperimentalFeature("StrictConcurrency")
