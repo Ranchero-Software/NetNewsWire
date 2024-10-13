@@ -176,7 +176,7 @@ public final class HTMLMetadata {
 	}
 }
 
-public final class HTMLMetadataAppleTouchIcon {
+public final class HTMLMetadataAppleTouchIcon: Sendable {
 
 	public let rel: String?
 	public let sizes: String?
@@ -213,7 +213,7 @@ public final class HTMLMetadataAppleTouchIcon {
 	}
 }
 
-public final class HTMLMetadataFeedLink {
+public final class HTMLMetadataFeedLink: Sendable {
 
 	public let title: String?
 	public let type: String?
@@ -234,7 +234,7 @@ public final class HTMLMetadataFeedLink {
 	}
 }
 
-public final class HTMLMetadataFavicon {
+public final class HTMLMetadataFavicon: Sendable {
 
 	public let type: String?
 	public let urlString: String?
@@ -252,7 +252,7 @@ public final class HTMLMetadataFavicon {
 	}
 }
 
-public final class HTMLOpenGraphProperties {
+public final class HTMLOpenGraphProperties: Sendable {
 
 	// TODO: the rest. At this writing (Nov. 26, 2017) I just care about og:image.
 	// See http://ogp.me/
@@ -346,7 +346,7 @@ private extension HTMLOpenGraphProperties {
 	}
 }
 
-public final class HTMLOpenGraphImage {
+public final class HTMLOpenGraphImage: Sendable {
 
 	public let url : String?
 	public let secureURL: String?
@@ -366,7 +366,7 @@ public final class HTMLOpenGraphImage {
 	}
 }
 
-public final class HTMLTwitterProperties {
+public final class HTMLTwitterProperties: Sendable {
 
 	public let imageURL: String? // twitter:image:src
 
