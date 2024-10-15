@@ -21,8 +21,6 @@ public extension Notification.Name {
 public protocol FaviconDownloaderDelegate {
 
 	@MainActor var appIconImage: IconImage? { get }
-
-	@MainActor func downloadMetadata(_ url: String) async throws -> HTMLMetadata?
 }
 
 @MainActor public final class FaviconDownloader {
@@ -228,7 +226,7 @@ private extension FaviconDownloader {
 		guard let url = URL(string: homePageURL) else {
 			return nil
 		}
-		guard let faviconURLs = await FaviconURLFinder.findFaviconURLs(with: homePageURL, downloadMetadata: delegate!.downloadMetadata(_:)) else {
+		guard let faviconURLs = await FaviconURLFinder.findFaviconURLs(with: homePageURL) else {
 			return nil
 		}
 

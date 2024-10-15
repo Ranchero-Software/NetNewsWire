@@ -17,11 +17,6 @@ extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
 		IconImage.appIcon
 	}
 
-	func downloadMetadata(_ url: String) async throws -> HTMLMetadata? {
-
-		await HTMLMetadataDownloader.downloadMetadata(for: url)
-	}
-
 	func initializeDownloaders() {
 
 		FaviconDownloader.shared.delegate = self

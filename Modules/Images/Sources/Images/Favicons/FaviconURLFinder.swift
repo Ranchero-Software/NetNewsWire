@@ -22,14 +22,14 @@ import UniformTypeIdentifiers
 	/// - Parameters:
 	///   - homePageURL: The page to search.
 	///   - urls: An array of favicon URLs as strings.
-	static func findFaviconURLs(with homePageURL: String, downloadMetadata: ((String) async throws -> HTMLMetadata?)) async -> [String]? {
+	static func findFaviconURLs(with homePageURL: String) async -> [String]? {
 
 		guard let _ = URL(string: homePageURL) else {
 			return nil
 		}
 
 		// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.
-		let htmlMetadata = try? await downloadMetadata(homePageURL)
+		let htmlMetadata = await HTMLMetadataDownloader.downloadMetadata(for: homePageURL)
 
 		let faviconURLs = htmlMetadata?.favicons?.compactMap { favicon -> String? in
 			shouldAllowFavicon(favicon) ? favicon.urlString : nil
