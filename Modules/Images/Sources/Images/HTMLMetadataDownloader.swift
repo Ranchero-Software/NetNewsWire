@@ -20,7 +20,7 @@ public struct HTMLMetadataDownloader {
 	public static func downloadMetadata(for url: String) async -> HTMLMetadata? {
 
 		if debugLoggingEnabled {
-			logger.debug("HTMLMetadataDownloader download for \(url)")
+			logger.debug("HTMLMetadataDownloader requested download for \(url)")
 		}
 
 		if let htmlMetadata = cache[url] {
