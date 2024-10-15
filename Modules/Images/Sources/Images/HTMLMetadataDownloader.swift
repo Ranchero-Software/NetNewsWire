@@ -11,21 +11,29 @@ import os
 import Web
 import Parser
 
-struct HTMLMetadataDownloader {
+public struct HTMLMetadataDownloader {
 
 	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
 	private static let debugLoggingEnabled = true
-
-	static func downloadMetadata(for url: String) async -> HTMLMetadata? {
+	private static let cache = HTMLMetadataCache()
+	
+	public static func downloadMetadata(for url: String) async -> HTMLMetadata? {
 
 		if debugLoggingEnabled {
 			logger.debug("HTMLMetadataDownloader download for \(url)")
 		}
 
+		if let htmlMetadata = cache[url] {
+			if debugLoggingEnabled {
+				logger.debug("HTMLMetadataDownloader returning cached metadata for \(url)")
+			}
+			return htmlMetadata
+		}
+
 		guard let actualURL = URL(string: url) else {
 			return nil
 		}
-
+		
 		let downloadRecord = try? await DownloadWithCacheManager.shared.download(actualURL)
 		let data = downloadRecord?.data
 		let response = downloadRecord?.response
@@ -34,11 +42,19 @@ struct HTMLMetadataDownloader {
 			let urlToUse = response.url ?? actualURL
 			let parserData = ParserData(url: urlToUse.absoluteString, data: data)
 
-			if debugLoggingEnabled {
-				logger.debug("HTMLMetadataDownloader parsing metadata for \(url)")
+			if let htmlMetadata = await parseMetadata(with: parserData) {
+				if debugLoggingEnabled {
+					logger.debug("HTMLMetadataDownloader caching parsed metadata for \(url)")
+				}
+			cache[url] = htmlMetadata
+				return htmlMetadata
 			}
 
-			return await parseMetadata(with: parserData)
+			if debugLoggingEnabled {
+				logger.debug("HTMLMetadataDownloader parser returned nil for \(url)")
+			}
+
+			return nil
 		}
 
 		if debugLoggingEnabled {

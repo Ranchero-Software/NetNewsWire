@@ -243,7 +243,6 @@
 		51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */; };
 		51C4529922650A0000C03939 /* ArticleThemesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97881ED9ECEF007D329B /* ArticleThemesManager.swift */; };
 		51C4529A22650A0400C03939 /* ArticleTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97871ED9ECEF007D329B /* ArticleTheme.swift */; };
-		51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
 		51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97581ED9EB0D007D329B /* ArticleUtilities.swift */; };
 		51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
 		51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
@@ -324,7 +323,6 @@
 		841CECDC2BAD04BF0001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECDB2BAD04BF0001EE72 /* Tree */; };
 		841CECDE2BAD06D10001EE72 /* Tree in Frameworks */ = {isa = PBXBuildFile; productRef = 841CECDD2BAD06D10001EE72 /* Tree */; };
 		84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */; };
-		8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
 		8426DBB82BFDAD8500E98109 /* Core in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5242BABBB5A00792720 /* Core */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8426DBB92BFDAD9200E98109 /* Core in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84DCA5282BABBB6A00792720 /* Core */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8426DBBB2BFDADD700E98109 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 8426DBBA2BFDADD700E98109 /* Core */; };
@@ -953,7 +951,6 @@
 		841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinSmartFeedInspectorViewController.swift; sourceTree = "<group>"; };
 		84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWebViewController.swift; sourceTree = "<group>"; };
-		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
 		842E45CD1ED8C308000A8B52 /* AppNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		84308B512CB1A42D004AF552 /* NetNewsWire_macapp_target _debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "NetNewsWire_macapp_target _debug.xcconfig"; sourceTree = "<group>"; };
@@ -1698,14 +1695,6 @@
 			path = "NetNewsWire-iOSTests";
 			sourceTree = "<group>";
 		};
-		8426119C1FCB6ED40086A189 /* HTMLMetadata */ = {
-			isa = PBXGroup;
-			children = (
-				8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */,
-			);
-			path = HTMLMetadata;
-			sourceTree = "<group>";
-		};
 		842E45E11ED8C681000A8B52 /* MainWindow */ = {
 			isa = PBXGroup;
 			children = (
@@ -2051,7 +2040,6 @@
 				51FE0FF9234552490056195D /* UserNotifications */,
 				84F2D5341FC22FCB00998D64 /* SmartFeeds */,
 				51B5C85A23F22A7A00032075 /* ShareExtension */,
-				8426119C1FCB6ED40086A189 /* HTMLMetadata */,
 				5183CCEA226F70350010922C /* Timer */,
 				512E08DD22687FA000BDCFDD /* Tree */,
 				849A97561ED9EB0D007D329B /* Extensions */,
@@ -3211,7 +3199,6 @@
 				5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */,
 				519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */,
 				FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */,
-				51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */,
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
 				51C452782265091600C03939 /* TimelineCellData.swift in Sources */,
 				5148F4552336DB7000F8CD8B /* TimelineTitleView.swift in Sources */,
@@ -3342,7 +3329,6 @@
 				510C417F24E5D1AE008226FD /* ExtensionContainersFile.swift in Sources */,
 				84C9FC7A22629E1200D921D6 /* PreferencesTableViewBackgroundView.swift in Sources */,
 				84CAFCAF22BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
-				8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */,
 				849A976E1ED9EBC8007D329B /* TimelineViewController.swift in Sources */,
 				5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */,
 				849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */,
