@@ -20,9 +20,9 @@ struct HTMLMetadataDownloader {
 			return nil
 		}
 
-		let downloadData = try? await DownloadWithCacheManager.shared.download(actualURL)
-		let data = downloadData?.data
-		let response = downloadData?.response
+		let downloadRecord = try? await DownloadWithCacheManager.shared.download(actualURL)
+		let data = downloadRecord?.data
+		let response = downloadRecord?.response
 
 		if let data, !data.isEmpty, let response, response.statusIsOK {
 			let urlToUse = response.url ?? actualURL

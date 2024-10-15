@@ -8,9 +8,28 @@
 
 import Foundation
 import os
+import Core
 
-public typealias DownloadData = (data: Data?, response: URLResponse?)
+public final class DownloadRecord: CacheRecord, Sendable {
 
+	public let originalURL: URL
+	public let data: Data?
+	public let response: URLResponse?
+	public let dateCreated: Date
+	public let error: Error?
+
+	init(originalURL: URL, data: Data?, response: URLResponse?, error: Error?) {
+		self.originalURL = originalURL
+		self.data = data
+		self.response = response
+		self.dateCreated = Date()
+		self.error = error
+	}
+}
+
+typealias DownloadCallback = @Sendable (DownloadRecord) -> Void
+
+// This writes to the cache but does not read from the cache.
 public final class OneShotDownloadManager: Sendable {
 
 	public static let shared = OneShotDownloadManager()
@@ -35,29 +54,12 @@ public final class OneShotDownloadManager: Sendable {
 		urlSession.invalidateAndCancel()
 	}
 
-	func download(_ url: URL) async throws -> DownloadData {
+	func download(_ url: URL, _ callback: @escaping DownloadCallback) {
 
-		try await withCheckedThrowingContinuation { continuation in
-			download(url) { data, response, error in
-				if let error {
-					continuation.resume(throwing: error)
-				} else {
-					continuation.resume(returning: (data: data, response: response))
-				}
-			}
-		}
-	}
-
-	public func download(_ urlRequest: URLRequest) async throws -> DownloadData {
-
-		try await withCheckedThrowingContinuation { continuation in
-			download(urlRequest) { data, response, error in
-				if let error {
-					continuation.resume(throwing: error)
-				} else {
-					continuation.resume(returning: (data: data, response: response))
-				}
-			}
+		download(url) { data, response, error in
+			let downloadRecord = DownloadRecord(originalURL: url, data: data, response: response, error: error)
+			downloadCache[url.absoluteString] = downloadRecord
+			callback(downloadRecord)
 		}
 	}
 
@@ -66,103 +68,152 @@ public final class OneShotDownloadManager: Sendable {
 		task.resume()
 	}
 
-	private func download(_ urlRequest: URLRequest, _ completion: @escaping @Sendable (Data?, URLResponse?, (any Error)?) -> Void) {
-		let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
-			DispatchQueue.main.async() {
-				completion(data, response, error)
-			}
-		}
+	public func download(_ urlRequest: URLRequest) {
+		// Used by the CrashReporter. Should not be used by anything else.
+		let task = urlSession.dataTask(with: urlRequest) { _, _, _ in }
 		task.resume()
 	}
 }
 
 // MARK: - Downloading using a cache
 
-private struct WebCacheRecord {
+// URLSessionConfiguration has a cache policy.
+// But we don’t know how it works, so we use a cache
+// that works exactly as we want it to work.
 
-    let url: URL
-    let dateDownloaded: Date
-    let data: Data
-    let response: URLResponse
-}
+private let downloadCache = Core.Cache<DownloadRecord>(timeToLive: 5 * 60, timeBetweenCleanups: 3 * 60)
 
-private final class WebCache: Sendable {
+private final class DownloadRequest: Equatable, Sendable {
 
-	private let cache = OSAllocatedUnfairLock(initialState: [URL: WebCacheRecord]())
+	private let id = UUID()
+	let url: URL
+	let callback: DownloadCallback
 
-    func cleanup(_ cleanupInterval: TimeInterval) {
+	init(url: URL, callback: @escaping DownloadCallback) {
+		self.url = url
+		self.callback = callback
+	}
 
-		cache.withLock { d in
-			let cutoffDate = Date(timeInterval: -cleanupInterval, since: Date())
-			for key in d.keys {
-				let cacheRecord = d[key]!
-				if shouldDelete(cacheRecord, cutoffDate) {
-					d[key] = nil
-				}
+	func download(_ callback: @escaping DownloadCallback) {
+
+		if let downloadRecord = downloadCache[url.absoluteString] {
+			Task {
+				callback(downloadRecord)
 			}
 		}
-     }
-    
-    private func shouldDelete(_ cacheRecord: WebCacheRecord, _ cutoffDate: Date) -> Bool {
-        
-        cacheRecord.dateDownloaded < cutoffDate
-    }
-    
-    subscript(_ url: URL) -> WebCacheRecord? {
-        get {
-			cache.withLock { d in
-				return d[url]
-			}
-        }
-        set {
-			cache.withLock { d in
-				if let cacheRecord = newValue {
-					d[url] = cacheRecord
-				}
-				else {
-					d[url] = nil
-				}
-			}
-        }
-    }
-}
+		else {
+			OneShotDownloadManager.shared.download(url, callback)
+		}
+	}
 
-// URLSessionConfiguration has a cache policy.
-// But we don’t know how it works, and the unimplemented parts spook us a bit.
-// So we use a cache that works exactly as we want it to work.
+	static func ==(lhs: DownloadRequest, rhs: DownloadRequest) -> Bool {
+		lhs.id == rhs.id
+	}
+}
 
 public final actor DownloadWithCacheManager {
 
 	public static let shared = DownloadWithCacheManager()
-	private let cache = WebCache()
-	private static let timeToLive: TimeInterval = 10 * 60 // 10 minutes
-	private static let cleanupInterval: TimeInterval = 5 * 60 // clean up the cache at most every 5 minutes
-	private var lastCleanupDate = Date()
 
-	public func download(_ url: URL, forceRedownload: Bool = false) async throws -> DownloadData {
+	private static let maxConcurrentDownloads = 4
+	private var queue = [DownloadRequest]()
+	private var downloadsInProgress = [DownloadRequest]() // Duplicates are expected
 
-		if lastCleanupDate.timeIntervalSinceNow < -DownloadWithCacheManager.cleanupInterval {
-			cleanupCache()
+	public func download(_ url: URL) async throws -> DownloadRecord {
+
+		try await withCheckedThrowingContinuation { continuation in
+			download(url) { downloadRecord in
+
+				if let error = downloadRecord.error {
+					continuation.resume(throwing: error)
+				}
+				else {
+					continuation.resume(returning: downloadRecord)
+				}
+			}
+		}
+	}
+
+	nonisolated public func cleanupCache() {
+
+		downloadCache.cleanup()
+	}
+}
+
+private extension DownloadWithCacheManager {
+
+	func download(_ url: URL, callback: @escaping DownloadCallback) {
+
+		let downloadRequest = DownloadRequest(url: url, callback: callback)
+		queue.append(downloadRequest)
+
+		startNextDownloadIfNeeded()
+	}
+
+	func startNextDownloadIfNeeded() {
+
+		guard let downloadRequest = nextDownloadRequest() else {
+			return
 		}
 
-		if !forceRedownload {
-			if let cacheRecord = cache[url] {
-				return (cacheRecord.data, cacheRecord.response)
+		downloadsInProgress.append(downloadRequest)
+		Task {
+			startNextDownloadIfNeeded()
+		}
+
+		downloadRequest.download { downloadRecord in
+			Task {
+				await self.completeDownloadRequest(downloadRequest)
+			}
+			downloadRequest.callback(downloadRecord)
+		}
+	}
+
+	func nextDownloadRequest() -> DownloadRequest? {
+
+		guard downloadsInProgress.count < Self.maxConcurrentDownloads else {
+			return nil
+		}
+
+		// We want a downloadRequest that does not have the same URL as any
+		// in downloadsInProgress — this way the current download for
+		// that URL will finish, and the result will be cached,
+		// so that the next downloadRequest for that URL will
+		// get its result from the cache.
+		// This is actually a super-common scenario in the app —
+		// this happens, for example, when downloading web pages to get
+		// their metadata in order to find favicons and feed icons.
+		let inProgressURLs = downloadsInProgress.map { $0.url }
+		var downloadRequest: DownloadRequest?
+		for oneDownloadRequest in queue {
+			if !inProgressURLs.contains(oneDownloadRequest.url) {
+				downloadRequest = oneDownloadRequest
+				break
 			}
 		}
 
-		let downloadData = try await OneShotDownloadManager.shared.download(url)
-
-		if let data = downloadData.data, let response = downloadData.response, response.statusIsOK {
-			let cacheRecord = WebCacheRecord(url: url, dateDownloaded: Date(), data: data, response: response)
-			cache[url] = cacheRecord
+		guard let downloadRequest else {
+			return nil
 		}
 
-		return downloadData
+		if let indexOfDownloadRequest = queue.firstIndex(of: downloadRequest) {
+			queue.remove(at: indexOfDownloadRequest)
+		}
+		else {
+			assertionFailure("Found downloadRequest but it’s not in the queue.")
+		}
+
+		return downloadRequest
 	}
 
-	public func cleanupCache() {
-		lastCleanupDate = Date()
-		cache.cleanup(DownloadWithCacheManager.timeToLive)
+	func completeDownloadRequest(_ downloadRequest: DownloadRequest) {
+
+		guard let indexOfDownloadRequest = downloadsInProgress.firstIndex(of: downloadRequest) else {
+			assertionFailure("Expected to remove downloadRequest that is not in downloadsInProgress.")
+			return
+		}
+		downloadsInProgress.remove(at: indexOfDownloadRequest)
+
+		startNextDownloadIfNeeded()
 	}
 }

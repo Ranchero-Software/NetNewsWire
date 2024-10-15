@@ -54,9 +54,7 @@ import CrashReporter
 		let formData = formString.data(using: .utf8, allowLossyConversion: true)
 		request.httpBody = formData
 
-		Task {
-			try? await OneShotDownloadManager.shared.download(request)
-		}
+		OneShotDownloadManager.shared.download(request)
 	}
 
 	static func runCrashReporterWindow(_ crashLogText: String) {

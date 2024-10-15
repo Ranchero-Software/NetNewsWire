@@ -18,22 +18,22 @@ public final class FeedFinder {
 
 	public static func find(url: URL) async throws -> Set<FeedSpecifier> {
 
-		var downloadData: DownloadData?
+		var downloadRecord: DownloadRecord?
 
 		do {
-			downloadData = try await DownloadWithCacheManager.shared.download(url)
+			downloadRecord = try await DownloadWithCacheManager.shared.download(url)
 
 		} catch {
 			logger.error("FeedFinder: error for \(url) - \(error)")
 			throw error
 		}
 
-		guard let downloadData else {
-			logger.error("FeedFinder: unexpectedly nil downloadData")
+		guard let downloadRecord else {
+			logger.error("FeedFinder: unexpectedly nil downloadRecord")
 			return Set<FeedSpecifier>()
 		}
 
-		if downloadData.response?.forcedStatusCode == 404 {
+		if downloadRecord.response?.forcedStatusCode == 404 {
 			if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
 				urlComponents.path = "\(urlComponents.path).json"
 				if let newURLString = urlComponents.url?.absoluteString {
@@ -45,7 +45,7 @@ public final class FeedFinder {
 			throw AccountError.createErrorNotFound
 		}
 
-		guard let data = downloadData.data, !data.isEmpty, let response = downloadData.response else {
+		guard let data = downloadRecord.data, !data.isEmpty, let response = downloadRecord.response else {
 			logger.error("FeedFinder: missing response and/or data for \(url)")
 			throw AccountError.createErrorNotFound
 		}
@@ -154,8 +154,8 @@ private extension FeedFinder {
 				continue
 			}
 
-			if let downloadData = try? await DownloadWithCacheManager.shared.download(url) {
-				if let data = downloadData.data, let response = downloadData.response, response.statusIsOK {
+			if let downloadRecord = try? await DownloadWithCacheManager.shared.download(url) {
+				if let data = downloadRecord.data, let response = downloadRecord.response, response.statusIsOK {
 					if isFeed(data) {
 						addFeedSpecifier(downloadFeedSpecifier, feedSpecifiers: &resultFeedSpecifiers)
 					}

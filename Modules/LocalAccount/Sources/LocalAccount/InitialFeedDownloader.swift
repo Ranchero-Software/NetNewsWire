@@ -14,11 +14,11 @@ public struct InitialFeedDownloader {
 
 	public static func download(_ url: URL) async -> ParsedFeed? {
 
-		guard let downloadData = try? await DownloadWithCacheManager.shared.download(url) else {
+		guard let downloadRecord = try? await DownloadWithCacheManager.shared.download(url) else {
 			return nil
 		}
 
-		guard let data = downloadData.data else {
+		guard let data = downloadRecord.data else {
 			return nil
 		}
 

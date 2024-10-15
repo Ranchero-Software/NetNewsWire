@@ -91,14 +91,14 @@ private extension ImageDownloader {
 		}
 
 		do {
-			let downloadData = try await DownloadWithCacheManager.shared.download(imageURL)
+			let downloadRecord = try await DownloadWithCacheManager.shared.download(imageURL)
 
-			if let data = downloadData.data, !data.isEmpty, let response = downloadData.response, response.statusIsOK {
+			if let data = downloadRecord.data, !data.isEmpty, let response = downloadRecord.response, response.statusIsOK {
 				try await saveToDisk(url, data)
 				return data
 			}
 
-			if let response = downloadData.response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
+			if let response = downloadRecord.response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
 				badURLs.insert(url)
 			}
 

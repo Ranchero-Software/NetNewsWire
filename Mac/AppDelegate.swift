@@ -280,12 +280,9 @@ import Sparkle
 		MultilineTextFieldSizer.emptyCache()
 		IconImageCache.shared.emptyCache()
 		AccountManager.shared.emptyCaches()
+		DownloadWithCacheManager.shared.cleanupCache()
 
 		saveState()
-
-		Task.detached {
-			await DownloadWithCacheManager.shared.cleanupCache()
-		}
 	}
 
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
