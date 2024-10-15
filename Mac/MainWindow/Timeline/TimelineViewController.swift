@@ -896,13 +896,6 @@ extension TimelineViewController: NSTableViewDelegate {
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
 	}
 
-	private func iconFor(_ article: Article) -> IconImage? {
-		if !showIcons {
-			return nil
-		}
-		return IconImageCache.shared.imageForArticle(article)
-	}
-
 	private func avatarForAuthor(_ author: Author) -> IconImage? {
 		return AuthorAvatarDownloader.shared.image(for: author)
 	}
