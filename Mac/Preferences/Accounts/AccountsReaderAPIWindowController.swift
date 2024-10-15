@@ -43,7 +43,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 				titleLabel.stringValue = NSLocalizedString("Sign in to your FreshRSS account.", comment: "FreshRSS")
 				noAccountTextField.stringValue = NSLocalizedString("Don’t have a FreshRSS instance?", comment: "No FreshRSS")
 				createAccountButton.title = NSLocalizedString("Find out more", comment: "No FreshRSS Button")
-				apiURLTextField.placeholderString = NSLocalizedString("fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
+				apiURLTextField.placeholderString = NSLocalizedString("https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
 			case .inoreader:
 				titleImageView.image = AppAssets.accountInoreader
 				titleLabel.stringValue = NSLocalizedString("Sign in to your Inoreader account.", comment: "Inoreader")
