@@ -21,8 +21,6 @@ public extension Notification.Name {
 public protocol FeedIconDownloaderDelegate: Sendable {
 
 	@MainActor var appIconImage: IconImage? { get }
-
-	func downloadMetadata(_ url: String) async throws -> HTMLMetadata?
 }
 
 @MainActor public final class FeedIconDownloader {
@@ -167,7 +165,6 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 			saveHomePagesWithNoIconURLCache()
 		}
 	}
-	
 }
 
 private extension FeedIconDownloader {
@@ -182,7 +179,7 @@ private extension FeedIconDownloader {
 			return await icon(forURL: iconURL, feed: feed)
 		}
 
-		findIconURLForHomePageURL(homePageURL, feed: feed, downloadMetadata: delegate!.downloadMetadata(_:))
+		findIconURLForHomePageURL(homePageURL, feed: feed)
 
 		return nil
 	}
@@ -217,7 +214,7 @@ private extension FeedIconDownloader {
 		homePageToIconURLCacheDirty = true
 	}
 
-	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed, downloadMetadata: @escaping (String) async throws -> HTMLMetadata?) {
+	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed) {
 
 		guard !urlsInProgress.contains(homePageURL) else {
 			return
@@ -226,7 +223,7 @@ private extension FeedIconDownloader {
 
 		Task { @MainActor in
 
-			let metadata = try? await downloadMetadata(homePageURL)
+			let metadata = await HTMLMetadataDownloader.downloadMetadata(for: homePageURL)
 
 			self.urlsInProgress.remove(homePageURL)
 			guard let metadata else {
