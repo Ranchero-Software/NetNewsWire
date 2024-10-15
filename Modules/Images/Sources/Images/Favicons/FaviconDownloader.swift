@@ -37,6 +37,8 @@ public protocol FaviconDownloaderDelegate {
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
 	private var currentHomePageHasOnlyFaviconICO = false
 
+	private var homePageURLsInProgress = Set<String>()
+
 	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
 	private var homePageToFaviconURLCachePath: URL
 	private var homePageToFaviconURLCacheDirty = false {
@@ -144,7 +146,16 @@ public protocol FaviconDownloaderDelegate {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
+		guard !homePageURLsInProgress.contains(homePageURL) else {
+			return nil
+		}
+		homePageURLsInProgress.insert(homePageURL)
+
 		Task { @MainActor in
+
+			defer {
+				homePageURLsInProgress.remove(homePageURL)
+			}
 
 			if let faviconURLs = await findFaviconURLs(with: url) {
 
