@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class HTMLMetadata {
+public final class HTMLMetadata: Sendable {
 
 	public let baseURLString: String
 	public let tags: [HTMLTag]

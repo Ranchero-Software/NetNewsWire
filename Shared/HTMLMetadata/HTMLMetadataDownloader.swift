@@ -10,8 +10,6 @@ import Foundation
 import Web
 import Parser
 
-extension HTMLMetadata: @unchecked Sendable {}
-
 struct HTMLMetadataDownloader {
 
 	@MainActor static func downloadMetadata(for url: String) async -> HTMLMetadata? {
