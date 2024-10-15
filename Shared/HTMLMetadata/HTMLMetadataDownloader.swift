@@ -7,12 +7,20 @@
 //
 
 import Foundation
+import os
 import Web
 import Parser
 
 struct HTMLMetadataDownloader {
 
-	@MainActor static func downloadMetadata(for url: String) async -> HTMLMetadata? {
+	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
+	private static let debugLoggingEnabled = true
+
+	static func downloadMetadata(for url: String) async -> HTMLMetadata? {
+
+		if debugLoggingEnabled {
+			logger.debug("HTMLMetadataDownloader download for \(url)")
+		}
 
 		guard let actualURL = URL(string: url) else {
 			return nil
@@ -25,18 +33,23 @@ struct HTMLMetadataDownloader {
 		if let data, !data.isEmpty, let response, response.statusIsOK {
 			let urlToUse = response.url ?? actualURL
 			let parserData = ParserData(url: urlToUse.absoluteString, data: data)
+
+			if debugLoggingEnabled {
+				logger.debug("HTMLMetadataDownloader parsing metadata for \(url)")
+			}
+
 			return await parseMetadata(with: parserData)
+		}
+
+		if debugLoggingEnabled {
+			logger.debug("HTMLMetadataDownloader failed download for \(url)")
 		}
 
 		return nil
 	}
 
-	@MainActor private static func parseMetadata(with parserData: ParserData) async -> HTMLMetadata? {
+	private static func parseMetadata(with parserData: ParserData) async -> HTMLMetadata? {
 
-		let task = Task.detached { () -> HTMLMetadata? in
-			HTMLMetadataParser.metadata(with: parserData)
-		}
-
-		return await task.value
+		return HTMLMetadataParser.metadata(with: parserData)
 	}
 }
