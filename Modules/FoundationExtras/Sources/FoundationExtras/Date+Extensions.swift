@@ -21,7 +21,7 @@ public extension Date {
 	}
 }
 
-private extension TimeInterval {
+public extension TimeInterval {
 
 	init(days: Int) {
 		self.init(days * 24 * 60 * 60)
