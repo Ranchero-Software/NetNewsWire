@@ -140,8 +140,6 @@ import Sparkle
 		installAppleEventHandlers()
 		
 		CacheCleaner.purgeIfNecessary()
-
-		initializeDownloaders()
 	}
 
 	func applicationDidFinishLaunching(_ note: Notification) {

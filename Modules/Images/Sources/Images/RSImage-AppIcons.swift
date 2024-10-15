@@ -8,7 +8,11 @@
 
 import Foundation
 import Core
-import Images
+#if os(macOS)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
 
 extension RSImage {
 	static let appIconImage: RSImage? = {

@@ -79,7 +79,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
-		initializeDownloaders()
 		initializeHomeScreenQuickActions()
 		
 		Task { @MainActor in
@@ -128,10 +127,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		SingleLineUILabelSizer.emptyCache()
 		IconImageCache.shared.emptyCache()
 		AccountManager.shared.emptyCaches()
-
-		Task.detached {
-			await DownloadWithCacheManager.shared.cleanupCache()
-		}
+		DownloadWithCacheManager.shared.cleanupCache()
 	}
 	
 	// MARK: Notifications

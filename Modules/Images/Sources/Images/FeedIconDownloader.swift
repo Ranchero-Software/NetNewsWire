@@ -18,11 +18,6 @@ public extension Notification.Name {
 	static let FeedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailableNotification") // UserInfoKey.feed
 }
 
-public protocol FeedIconDownloaderDelegate: Sendable {
-
-	@MainActor var appIconImage: IconImage? { get }
-}
-
 @MainActor public final class FeedIconDownloader {
 
 	public static let shared = FeedIconDownloader()
@@ -64,8 +59,6 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 	private var urlsInProgress = Set<String>()
 	private var cache = [Feed: IconImage]()
 	private var waitingForFeedURLs = [String: Feed]()
-	
-	public var delegate: FeedIconDownloaderDelegate?
 
 	public init() {
 
@@ -91,7 +84,7 @@ public protocol FeedIconDownloaderDelegate: Sendable {
 		}
 		
 		if let hpURLString = feed.homePageURL, let hpURL = URL(string: hpURLString), (hpURL.host == "nnw.ranchero.com" || hpURL.host == "netnewswire.blog") {
-			return delegate?.appIconImage
+			return IconImage.appIcon
 		}
 
 		@MainActor func checkHomePageURL() {

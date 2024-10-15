@@ -18,11 +18,6 @@ public extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-public protocol FaviconDownloaderDelegate {
-
-	@MainActor var appIconImage: IconImage? { get }
-}
-
 @MainActor public final class FaviconDownloader {
 
 	public static let shared = FaviconDownloader()
@@ -55,8 +50,6 @@ public protocol FaviconDownloaderDelegate {
 
 	private let queue: DispatchQueue
 	private var cache = [Feed: IconImage]() // faviconURL: RSImage
-
-	public var delegate: FaviconDownloaderDelegate?
 
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
@@ -132,7 +125,7 @@ public protocol FaviconDownloaderDelegate {
 
 		if let url = URL(string: homePageURL) {
 			if url.host == "nnw.ranchero.com" || url.host == "netnewswire.blog" {
-				return delegate?.appIconImage
+				return IconImage.appIcon
 			}
 		}
 

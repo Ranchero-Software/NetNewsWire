@@ -11,17 +11,7 @@ import Images
 import Account
 import Parser
 
-extension AppDelegate: FaviconDownloaderDelegate, FeedIconDownloaderDelegate {
-
-	var appIconImage: IconImage? {
-		IconImage.appIcon
-	}
-
-	func initializeDownloaders() {
-
-		FaviconDownloader.shared.delegate = self
-		FeedIconDownloader.shared.delegate = self
-	}
+extension AppDelegate {
 
 	func handleUnreadCountDidChange() {
 		
