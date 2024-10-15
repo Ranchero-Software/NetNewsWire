@@ -56,7 +56,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 			switch unwrappedAccountType {
 			case .freshRSS:
 				title = NSLocalizedString("FreshRSS", comment: "FreshRSS")
-				apiURLTextField.placeholder = NSLocalizedString("API URL: fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
+				apiURLTextField.placeholder = NSLocalizedString("API URL: https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
 			case .inoreader:
 				title = NSLocalizedString("InoReader", comment: "InoReader")
 			case .bazQux:
