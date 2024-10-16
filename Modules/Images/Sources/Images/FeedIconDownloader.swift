@@ -56,7 +56,6 @@ public extension Notification.Name {
 		return Set(["https://www.macsparky.com/", "https://xkcd.com/"])
 	}()
 	
-	private var urlsInProgress = Set<String>()
 	private var cache = [Feed: IconImage]()
 	private var waitingForFeedURLs = [String: Feed]()
 
@@ -164,15 +163,24 @@ private extension FeedIconDownloader {
 
 	func icon(forHomePageURL homePageURL: String, feed: Feed) async -> RSImage? {
 
-		if homePagesWithNoIconURLCache.contains(homePageURL) || homePagesWithUglyIcons.contains(homePageURL) {
-			return nil
-		}
-
 		if let iconURL = cachedIconURL(for: homePageURL) {
 			return await icon(forURL: iconURL, feed: feed)
 		}
 
-		findIconURLForHomePageURL(homePageURL, feed: feed)
+		if homePagesWithNoIconURLCache.contains(homePageURL) || homePagesWithUglyIcons.contains(homePageURL) {
+			return nil
+		}
+
+		guard let metadata = HTMLMetadataDownloader.cachedMetadata(for: homePageURL) else {
+			return nil
+		}
+
+		if let url = metadata.bestWebsiteIconURL() {
+			cacheIconURL(for: homePageURL, url)
+			return await icon(forURL: url, feed: feed)
+		}
+
+		homePagesWithNoIconURLCache.insert(homePageURL)
 
 		return nil
 	}
@@ -207,39 +215,6 @@ private extension FeedIconDownloader {
 		homePageToIconURLCacheDirty = true
 	}
 
-	func findIconURLForHomePageURL(_ homePageURL: String, feed: Feed) {
-
-		guard !urlsInProgress.contains(homePageURL) else {
-			return
-		}
-		urlsInProgress.insert(homePageURL)
-
-		Task { @MainActor in
-
-			let metadata = await HTMLMetadataDownloader.downloadMetadata(for: homePageURL)
-
-			self.urlsInProgress.remove(homePageURL)
-			guard let metadata else {
-				return
-			}
-			self.pullIconURL(from: metadata, homePageURL: homePageURL, feed: feed)
-		}
-	}
-
-	func pullIconURL(from metadata: HTMLMetadata, homePageURL: String, feed: Feed) {
-
-		if let url = metadata.bestWebsiteIconURL() {
-			cacheIconURL(for: homePageURL, url)
-			Task { @MainActor in
-				await icon(forURL: url, feed: feed)
-			}
-			return
-		}
-
-		homePagesWithNoIconURLCache.insert(homePageURL)
-		homePagesWithNoIconURLCacheDirty = true
-	}
-	
 	func loadFeedURLToIconURLCache() {
 		guard let data = try? Data(contentsOf: feedURLToIconURLCachePath) else {
 			return

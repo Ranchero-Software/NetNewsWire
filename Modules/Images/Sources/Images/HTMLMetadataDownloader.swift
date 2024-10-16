@@ -16,17 +16,26 @@ public struct HTMLMetadataDownloader {
 	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
 	private static let debugLoggingEnabled = false
 	private static let cache = HTMLMetadataCache()
-	
-	public static func downloadMetadata(for url: String) async -> HTMLMetadata? {
+
+	public static func cachedMetadata(for url: String) -> HTMLMetadata? {
 
 		if debugLoggingEnabled {
-			logger.debug("HTMLMetadataDownloader requested download for \(url)")
+			logger.debug("HTMLMetadataDownloader requested cached metadata for \(url)")
 		}
 
-		if let htmlMetadata = cache[url] {
-			if debugLoggingEnabled {
-				logger.debug("HTMLMetadataDownloader returning cached metadata for \(url)")
-			}
+		guard let htmlMetadata = cache[url] else {
+			return nil
+		}
+
+		if debugLoggingEnabled {
+			logger.debug("HTMLMetadataDownloader returning cached metadata for \(url)")
+		}
+		return htmlMetadata
+	}
+
+	public static func downloadMetadata(for url: String) async -> HTMLMetadata? {
+
+		if let htmlMetadata = cachedMetadata(for: url) {
 			return htmlMetadata
 		}
 
@@ -34,6 +43,10 @@ public struct HTMLMetadataDownloader {
 			return nil
 		}
 		
+		if debugLoggingEnabled {
+			logger.debug("HTMLMetadataDownloader downloading for \(url)")
+		}
+
 		let downloadRecord = try? await DownloadWithCacheManager.shared.download(actualURL)
 		let data = downloadRecord?.data
 		let response = downloadRecord?.response
