@@ -120,9 +120,19 @@ private extension AtomParser {
 		guard feed.link == nil, let currentAttributes else {
 			return
 		}
+		guard let link = currentAttributes[XMLString.href] else {
+			return
+		}
 
-		if let related = currentAttributes[XMLString.rel], related == XMLString.alternate {
-			feed.link = currentAttributes[XMLString.href]
+		let isRelated: Bool = {
+			if let related = currentAttributes[XMLString.rel], related == XMLString.alternate { // rel="alternate"
+				return true
+			}
+			return currentAttributes.count == 1 // Example: <link href="https://www.allenpike.com/"/> — no rel or anything
+		}()
+
+		if isRelated {
+			feed.link = link
 		}
 	}
 
