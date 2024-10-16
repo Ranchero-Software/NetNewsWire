@@ -33,6 +33,7 @@ public protocol DataFileDelegate: AnyObject {
 	private var logger: Logger {
 		Self.logger
 	}
+	private var debugLoggingEnabled = false
 
 	public init(fileURL: URL) {
 
@@ -43,14 +44,18 @@ public protocol DataFileDelegate: AnyObject {
 	public func markAsDirty() {
 
 		isDirty = true
-		logger.info("Data file marked dirty: \(self.fileURL)")
+		if debugLoggingEnabled {
+			logger.info("Data file marked dirty: \(self.fileURL)")
+		}
 	}
 
 	public func save() {
 
 		assert(Thread.isMainThread)
 		isDirty = false
-		logger.info("Saving data file: \(self.fileURL)")
+		if debugLoggingEnabled {
+			logger.info("Saving data file: \(self.fileURL)")
+		}
 
 		guard let data = delegate?.data(for: self) else {
 			logger.error("Delegate did not return data for data file: \(self.fileURL)")
