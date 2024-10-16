@@ -14,7 +14,7 @@ import Parser
 public struct HTMLMetadataDownloader {
 
 	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
-	private static let debugLoggingEnabled = true
+	private static let debugLoggingEnabled = false
 	private static let cache = HTMLMetadataCache()
 	
 	public static func downloadMetadata(for url: String) async -> HTMLMetadata? {
