@@ -30,7 +30,7 @@ import UniformTypeIdentifiers
 		print("findFaviconURLs \(homePageURL)")
 
 		// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.
-		let htmlMetadata = HTMLMetadataDownloader.cachedMetadata(for: homePageURL)
+		let htmlMetadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL)
 
 		let faviconURLs = htmlMetadata?.favicons?.compactMap { favicon -> String? in
 			shouldAllowFavicon(favicon) ? favicon.urlString : nil

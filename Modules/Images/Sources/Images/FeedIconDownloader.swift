@@ -156,7 +156,7 @@ private extension FeedIconDownloader {
 			return nil
 		}
 
-		guard let metadata = HTMLMetadataDownloader.cachedMetadata(for: homePageURL) else {
+		guard let metadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
 			return nil
 		}
 
