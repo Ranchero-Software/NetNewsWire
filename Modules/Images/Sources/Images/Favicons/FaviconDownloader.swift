@@ -30,8 +30,6 @@ public extension Notification.Name {
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
 	private var currentHomePageHasOnlyFaviconICO = false
 
-	private var homePageURLsInProgress = Set<String>()
-
 	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
 	private var homePageToFaviconURLCachePath: URL
 	private var homePageToFaviconURLCacheDirty = false {
@@ -137,26 +135,14 @@ public extension Notification.Name {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
-		guard !homePageURLsInProgress.contains(homePageURL) else {
-			return nil
-		}
-		homePageURLsInProgress.insert(homePageURL)
+		if let faviconURLs = findFaviconURLs(with: url) {
 
-		Task { @MainActor in
+			// If the site explicitly specifies favicon.ico, it will appear twice.
+			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 
-			defer {
-				homePageURLsInProgress.remove(homePageURL)
-			}
-
-			if let faviconURLs = await findFaviconURLs(with: url) {
-
-				// If the site explicitly specifies favicon.ico, it will appear twice.
-				self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
-
-				if let firstIconURL = faviconURLs.first {
-					let _ = self.favicon(with: firstIconURL, homePageURL: url)
-					self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
-				}
+			if let firstIconURL = faviconURLs.first {
+				let _ = self.favicon(with: firstIconURL, homePageURL: url)
+				self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
 			}
 		}
 
@@ -214,17 +200,18 @@ private extension FaviconDownloader {
 
 	static let localeForLowercasing = Locale(identifier: "en_US")
 
-	func findFaviconURLs(with homePageURL: String) async -> [String]? {
+	func findFaviconURLs(with homePageURL: String) -> [String]? {
 
 		guard let url = URL(string: homePageURL) else {
 			return nil
 		}
-		guard let faviconURLs = await FaviconURLFinder.findFaviconURLs(with: homePageURL) else {
+		guard let htmlMetadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
 			return nil
 		}
+		let faviconURLs = htmlMetadata.usableFaviconURLs() ?? [String]()
 
 		guard let scheme = url.scheme, let host = url.host else {
-			return faviconURLs
+			return faviconURLs.isEmpty ? nil : faviconURLs
 		}
 
 		let defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)

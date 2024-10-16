@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import Parser
 
 extension HTMLMetadata {
@@ -43,25 +44,37 @@ extension HTMLMetadata {
 
 	func bestWebsiteIconURL() -> String? {
 
-		// TODO: metadata icons — sometimes they’re large enough to use here.
-
-		if let appleTouchIcon = largestAppleTouchIcon() {
-			return appleTouchIcon
-		}
-		
-		if let openGraphImageURL = openGraphProperties?.image {
-			return openGraphImageURL.url
-		}
-
-		return twitterProperties?.imageURL
+		largestAppleTouchIcon() ?? openGraphProperties?.image?.url ?? twitterProperties?.imageURL
 	}
 
-	func bestFeaturedImageURL() -> String? {
+	func usableFaviconURLs() -> [String]? {
 
-		if let openGraphImageURL = openGraphProperties?.image {
-			return openGraphImageURL.url
+		favicons?.compactMap { favicon in
+			shouldAllowFavicon(favicon) ? favicon.urlString : nil
+		}
+	}
+}
+
+private extension HTMLMetadata {
+
+	static let ignoredTypes = [UTType.svg]
+
+	private func shouldAllowFavicon(_ favicon: HTMLMetadataFavicon) -> Bool {
+
+		// Check mime type.
+		if let mimeType = favicon.type, let utType = UTType(mimeType: mimeType) {
+			if Self.ignoredTypes.contains(utType) {
+				return false
+			}
 		}
 
-		return twitterProperties?.imageURL
+		// Check file extension.
+		if let urlString = favicon.urlString, let url = URL(string: urlString), let utType = UTType(filenameExtension: url.pathExtension) {
+			if Self.ignoredTypes.contains(utType) {
+				return false
+			}
+		}
+
+		return true
 	}
 }
