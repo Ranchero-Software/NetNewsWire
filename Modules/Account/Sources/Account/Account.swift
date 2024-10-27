@@ -50,7 +50,27 @@ public enum AccountType: Int, Codable, Sendable {
 	public var isDeveloperRestricted: Bool {
 		return self == .cloudKit || self == .feedbin || self == .feedly || self == .inoreader
 	}
-	
+
+	public var createAccountURL: URL? {
+		switch self {
+		case .onMyMac, .cloudKit:
+			return nil
+		case .feedly:
+			return URL(string: "https://feedly.com/")!
+		case .feedbin:
+			return URL(string: "https://feedbin.com/signup")!
+		case .newsBlur:
+			return URL(string: "https://newsblur.com/")!
+		case .freshRSS:
+			return URL(string: "https://freshrss.org/")!
+		case .inoreader:
+			return URL(string: "https://www.inoreader.com/")!
+		case .bazQux:
+			return URL(string: "https://bazqux.com/")!
+		case .theOldReader:
+			return URL(string: "https://theoldreader.com/")!
+		}
+	}
 }
 
 public enum FetchType {
