@@ -194,18 +194,12 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	}
 
 	@IBAction func createAccountWithProvider(_ sender: Any) {
-		switch accountType {
-		case .freshRSS:
-			NSWorkspace.shared.open(URL(string: "https://freshrss.org")!)
-		case .inoreader:
-			NSWorkspace.shared.open(URL(string: "https://www.inoreader.com")!)
-		case .bazQux:
-			NSWorkspace.shared.open(URL(string: "https://bazqux.com")!)
-		case .theOldReader:
-			NSWorkspace.shared.open(URL(string: "https://theoldreader.com")!)
-		default:
+
+		guard let createAccountURL = accountType.createAccountURL else {
 			return
 		}
+
+		NSWorkspace.shared.open(createAccountURL)
 	}
 	
 	// MARK: Autofill

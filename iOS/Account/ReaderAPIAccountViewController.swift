@@ -265,20 +265,12 @@ class ReaderAPIAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func signUpWithProvider(_ sender: Any) {
-		var url: URL!
-		switch accountType {
-			case .bazQux:
-				url = URL(string: "https://bazqux.com")!
-			case .inoreader:
-				url = URL(string: "https://www.inoreader.com")!
-			case .theOldReader:
-				url = URL(string: "https://theoldreader.com")!
-			case .freshRSS:
-				url = URL(string: "https://freshrss.org")!
-			default:
-				return
+
+		guard let createAccountURL = accountType.createAccountURL else {
+			return
 		}
-		let safari = SFSafariViewController(url: url)
+
+		let safari = SFSafariViewController(url: createAccountURL)
 		safari.modalPresentationStyle = .currentContext
 		self.present(safari, animated: true, completion: nil)
 	}
