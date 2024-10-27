@@ -94,18 +94,19 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	
 	@IBAction func action(_ sender: Any) {
 		self.errorMessageLabel.stringValue = ""
+		let apiURLString = apiURLTextField.stringValue
 
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
 			return
 		}
 
-		guard let accountType = accountType, !(accountType == .freshRSS && apiURLTextField.stringValue.isEmpty) else {
+		guard let accountType = accountType, !(accountType == .freshRSS && apiURLString.isEmpty) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
 			return
 		}
 
-		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: usernameTextField.stringValue) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: usernameTextField.stringValue, apiURL: apiURLString) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
 			return
 		}
@@ -113,7 +114,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 		let apiURL: URL
 		switch accountType {
 		case .freshRSS:
-			guard let inputURL = URL(string: apiURLTextField.stringValue) else {
+			guard let inputURL = URL(string: apiURLString) else {
 				self.errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Invalid API URL")
 				return
 			}
