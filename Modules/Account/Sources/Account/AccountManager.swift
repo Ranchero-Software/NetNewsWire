@@ -165,15 +165,33 @@ import Core
 		NotificationCenter.default.post(name: .UserDidDeleteAccount, object: self, userInfo: userInfo)
 	}
 	
-	public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
+	public func duplicateServiceAccount(type: AccountType, username: String?, apiURL: String? = nil) -> Bool {
+
 		guard type != .onMyMac else {
 			return false
 		}
-		for account in accounts {
-			if account.accountType == type && username == account.username {
-				return true
+
+		if type == .freshRSS {
+			guard let apiURL, let endpointURL = URL(string: apiURL) else {
+				return false
+			}
+			for account in accounts {
+				// A person might use the same username with different instances of FreshRSS,
+				// so it’s necessary to check the endpointURL.
+				// https://github.com/Ranchero-Software/NetNewsWire/issues/4377
+				if account.accountType == type && username == account.username && account.endpointURL == endpointURL {
+					return true
+				}
 			}
 		}
+		else {
+			for account in accounts {
+				if account.accountType == type && username == account.username {
+					return true
+				}
+			}
+		}
+
 		return false
 	}
 	
