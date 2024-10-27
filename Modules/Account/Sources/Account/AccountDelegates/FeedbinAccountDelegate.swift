@@ -989,20 +989,15 @@ private extension FeedbinAccountDelegate {
 		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
-		do {
-			try await caller.deleteSubscription(subscriptionID: subscriptionID)
-
-			account.clearFeedMetadata(feed)
-			account.removeFeed(feed)
-			if let folders = account.folders {
-				for folder in folders {
-					folder.removeFeed(feed)
-				}
+		try? await caller.deleteSubscription(subscriptionID: subscriptionID)
+		// Ignore any errors from the server and process locally
+		// https://github.com/Ranchero-Software/NetNewsWire/issues/3611
+		account.clearFeedMetadata(feed)
+		account.removeFeed(feed)
+		if let folders = account.folders {
+			for folder in folders {
+				folder.removeFeed(feed)
 			}
-
-		} catch {
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
 		}
 	}
 }
