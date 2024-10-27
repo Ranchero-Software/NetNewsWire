@@ -266,7 +266,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 	
 	@IBAction func signUpWithProvider(_ sender: Any) {
 
-		guard let createAccountURL = accountType.createAccountURL else {
+		guard let createAccountURL = accountType?.createAccountURL else {
 			return
 		}
 

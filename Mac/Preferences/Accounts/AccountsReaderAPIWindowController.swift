@@ -195,7 +195,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 
-		guard let createAccountURL = accountType.createAccountURL else {
+		guard let createAccountURL = accountType?.createAccountURL else {
 			return
 		}
 
