@@ -485,8 +485,7 @@ import Sparkle
 	}
 
 	@objc func updateDockBadge() {
-		let label = unreadCount > 0 ? "\(unreadCount)" : ""
-		NSApplication.shared.dockTile.badgeLabel = label
+		NSApplication.shared.dockTile.badgeLabel = UnreadCountFormatter.string(from: unreadCount)
 	}
 
 	// MARK: - Actions

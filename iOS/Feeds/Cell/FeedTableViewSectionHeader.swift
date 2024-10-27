@@ -23,7 +23,8 @@ class FeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		get {
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
-				return "\(name) \(unreadCount) \(unreadLabel) \(expandedStateMessage) "
+				let unreadCountString = UnreadCountFormatter.string(from: unreadCount)
+				return "\(name) \(unreadCountString) \(unreadLabel) \(expandedStateMessage) "
 			} else {
 				return "\(name) \(expandedStateMessage) "
 			}

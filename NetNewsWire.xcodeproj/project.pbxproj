@@ -495,6 +495,8 @@
 		84F9EAF3213660A100CF2DE4 /* testCurrentArticleIsNil.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE0213660A100CF2DE4 /* testCurrentArticleIsNil.applescript */; };
 		84F9EAF4213660A100CF2DE4 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE1213660A100CF2DE4 /* testGenericScript.applescript */; };
 		84F9EAF5213660A100CF2DE4 /* establishMainWindowStartingState.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */; };
+		84FCB8742CCDFB7800CCC2F8 /* UnreadCountFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FCB8732CCDFB7800CCC2F8 /* UnreadCountFormatter.swift */; };
+		84FCB8752CCDFB7800CCC2F8 /* UnreadCountFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FCB8732CCDFB7800CCC2F8 /* UnreadCountFormatter.swift */; };
 		B24E9ADC245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */; };
 		B24E9ADE245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */; };
 		B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */ = {isa = PBXBuildFile; fileRef = B27EEBDF244D15F2000932E6 /* stylesheet.css */; };
@@ -1116,6 +1118,7 @@
 		84F9EAE1213660A100CF2DE4 /* testGenericScript.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testGenericScript.applescript; sourceTree = "<group>"; };
 		84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = establishMainWindowStartingState.applescript; sourceTree = "<group>"; };
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84FCB8732CCDFB7800CCC2F8 /* UnreadCountFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCountFormatter.swift; sourceTree = "<group>"; };
 		B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+NetNewsWire.swift"; sourceTree = "<group>"; };
 		B24EFD482330FF99006C6242 /* NetNewsWire-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-Bridging-Header.h"; sourceTree = "<group>"; };
 		B24EFD5923310109006C6242 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
@@ -2025,6 +2028,7 @@
 				511B9805237DCAC90028BCAA /* UserInfoKey.swift */,
 				844933D12BA953590068AC51 /* ArticlePathInfo.swift */,
 				8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */,
+				84FCB8732CCDFB7800CCC2F8 /* UnreadCountFormatter.swift */,
 				845122752B8CEA9B00480DB0 /* SidebarItem */,
 				51C452AD2265102800C03939 /* Timeline */,
 				84702AB31FA27AE8006B8943 /* Commands */,
@@ -3179,6 +3183,7 @@
 				51627A6923861DED007B3B4B /* FeedsViewController+Drop.swift in Sources */,
 				514219372352510100E07E2C /* ImageScrollView.swift in Sources */,
 				516AE9B32371C372007DEEAA /* FeedTableViewSectionHeaderLayout.swift in Sources */,
+				84FCB8752CCDFB7800CCC2F8 /* UnreadCountFormatter.swift in Sources */,
 				D3555BF524664566005E48C3 /* ArticleSearchBar.swift in Sources */,
 				8454C3F3263F2D8700E3F9C7 /* IconImageCache.swift in Sources */,
 				B24E9ADE245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */,
@@ -3265,6 +3270,7 @@
 				849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */,
 				84A37CB5201ECD610087C5AF /* RenameWindowController.swift in Sources */,
 				84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */,
+				84FCB8742CCDFB7800CCC2F8 /* UnreadCountFormatter.swift in Sources */,
 				849A97891ED9ECEF007D329B /* ArticleTheme.swift in Sources */,
 				84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,

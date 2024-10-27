@@ -35,7 +35,7 @@ class FeedUnreadCountView : UIView {
 	}
 	
 	var unreadCountString: String {
-		return unreadCount < 1 ? "" : "\(unreadCount)"
+		UnreadCountFormatter.string(from: unreadCount)
 	}
 
 	private var contentSizeIsValid = false

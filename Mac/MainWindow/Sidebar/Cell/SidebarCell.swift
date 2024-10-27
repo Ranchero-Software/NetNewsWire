@@ -113,7 +113,8 @@ class SidebarCell : NSTableCellView {
 	override func accessibilityLabel() -> String? {
 		if unreadCount > 0 {
 			let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
-			return "\(name) \(unreadCount) \(unreadLabel)"
+			let unreadCountString = UnreadCountFormatter.string(from: unreadCount)
+			return "\(name) \(unreadCountString) \(unreadLabel)"
 		} else {
 			return name
 		}
