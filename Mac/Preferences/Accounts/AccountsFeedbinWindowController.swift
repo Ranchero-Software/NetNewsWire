@@ -67,7 +67,7 @@ final class AccountsFeedbinWindowController: NSWindowController {
 		self.errorMessageLabel.stringValue = ""
 		
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = NSLocalizedString("Username and password are required.", comment: "Credentials Error")
 			return
 		}
 		
