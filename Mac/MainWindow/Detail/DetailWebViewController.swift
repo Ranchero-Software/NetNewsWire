@@ -292,10 +292,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 					// so we stick with completion-based method.
 					// https://forums.developer.apple.com/forums/thread/701553
 					webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));") { [weak self] _, _ in
-						guard let self else {
-							return
-						}
-						self.windowScrollY = nil
+						self?.windowScrollY = nil
 					}
 				}
 			}
