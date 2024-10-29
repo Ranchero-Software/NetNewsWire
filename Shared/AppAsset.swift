@@ -129,7 +129,6 @@ extension AppAsset {
 	// MARK: - Mac Toolbar
 
 	static let toolbarAddNewSidebarItemImage = RSImage.systemImage("plus")
-	static let toolbarSidebarToggleImage = RSImage.systemImage("sidebar.left")
 	static let toolbarRefreshImage = RSImage.systemImage("arrow.clockwise")
 	static let toolbarArticleThemeImage = RSImage.systemImage("doc.richtext")
 	static let toolbarCleanUpImage = RSImage.systemImage("wind")

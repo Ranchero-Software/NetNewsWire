@@ -273,20 +273,6 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 			return validateToggleReadArticles(item)
 		}
 
-		if item.action == #selector(toggleTheSidebar(_:)) {
-			guard let splitViewItem = sidebarSplitViewItem else {
-				return false
-			}
-
-			let sidebarIsShowing = !splitViewItem.isCollapsed
-			if let menuItem = item as? NSMenuItem {
-				let title = sidebarIsShowing ? NSLocalizedString("Hide Sidebar", comment: "Menu item") : NSLocalizedString("Show Sidebar", comment: "Menu item")
-				menuItem.title = title
-			}
-
-			return true
-		}
-		
 		return true
 	}
 
@@ -463,16 +449,6 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 		nextUnread(sender)
 	}
 
-	@IBAction func toggleTheSidebar(_ sender: Any?) {
-		splitViewController!.toggleSidebar(sender)
-		guard let splitViewItem = sidebarSplitViewItem else { return }
-		if splitViewItem.isCollapsed {
-			currentTimelineViewController?.focus()
-		} else {
-			sidebarViewController?.focus()
-		}
-	}
-	
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 		currentTimelineViewController?.markOlderArticlesRead()
 	}
@@ -769,7 +745,6 @@ extension MainWindowController : ScriptingMainWindowController {
 // MARK: - NSToolbarDelegate
 
 extension NSToolbarItem.Identifier {
-	static let sidebarToggle = NSToolbarItem.Identifier("sidebarToggle")
 	static let newFeed = NSToolbarItem.Identifier("newFeed")
 	static let newFolder = NSToolbarItem.Identifier("newFolder")
 	static let refresh = NSToolbarItem.Identifier("refresh")
@@ -793,10 +768,6 @@ extension MainWindowController: NSToolbarDelegate {
 	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
 
 		switch itemIdentifier {
-
-		case .sidebarToggle:
-			let title = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
-			return buildToolbarButton(.toggleSidebar, title, AppAsset.toolbarSidebarToggleImage, "toggleTheSidebar:")
 
 		case .refresh:
 			let title = NSLocalizedString("Refresh", comment: "Refresh")
@@ -880,7 +851,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
 		[
-			.sidebarToggle,
+			NSToolbarItem.Identifier.toggleSidebar,
 			.refresh,
 			.newSidebarItemMenu,
 			.sidebarTrackingSeparator,
@@ -906,6 +877,7 @@ extension MainWindowController: NSToolbarDelegate {
 			.refresh,
 			.newSidebarItemMenu,
 			.sidebarTrackingSeparator,
+			NSToolbarItem.Identifier.toggleSidebar,
 			.markAllAsRead,
 			.toggleReadArticlesFilter,
 			.timelineTrackingSeparator,
