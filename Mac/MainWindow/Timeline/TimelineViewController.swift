@@ -30,6 +30,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
+	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "TimelineViewController")
+	private let debugLoggingEnabled = true
+
 	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
 	var isReadFiltered: Bool? {
 		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem else {
@@ -65,6 +68,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	var representedObjects: [AnyObject]? {
 		didSet {
+			if debugLoggingEnabled {
+				Self.logger.log(level: .debug, "TimelineViewController - did set representedObjects")
+			}
 			guard !representedObjectArraysAreEqual(oldValue, representedObjects) else {
 				return
 			}
@@ -562,7 +568,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	func goToNextUnread(wrappingToTop wrapping: Bool = false) {
 		guard let ix = indexOfNextUnreadArticle() else {
+			if debugLoggingEnabled {
+				Self.logger.log(level: .debug, "TimelineViewController - goToNextUnread — no index of next unread")
+			}
 			return
+		}
+
+		if debugLoggingEnabled {
+			Self.logger.log(level: .debug, "TimelineViewController - goToNextUnread — going to index \(ix)")
 		}
 		NSCursor.setHiddenUntilMouseMoves(true)
 		tableView.selectRow(ix)
@@ -570,10 +583,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		guard let _ = indexOfNextUnreadArticle(wrappingToTop: wrapping) else {
-			return false
+		let canGo = indexOfNextUnreadArticle(wrappingToTop: wrapping) != nil
+		if debugLoggingEnabled {
+			Self.logger.log(level: .debug, "TimelineViewController - canGoToNextUnread -> \(canGo)")
 		}
-		return true
+		return canGo
 	}
 	
 	func indexOfNextUnreadArticle(wrappingToTop wrapping: Bool = false) -> Int? {
@@ -1110,6 +1124,10 @@ private extension TimelineViewController {
 	// MARK: - Fetching Articles
 	
 	func fetchAndReplaceArticles() async {
+
+		if debugLoggingEnabled {
+			Self.logger.log(level: .debug, "TimelineViewController - fetchAndReplaceArticles")
+		}
 
 		cancelPendingAsyncFetches()
 
