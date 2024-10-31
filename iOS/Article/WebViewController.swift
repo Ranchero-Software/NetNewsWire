@@ -388,8 +388,8 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 // MARK: WKNavigationDelegate
 
 extension WebViewController: WKNavigationDelegate {
-	
-	nonisolated func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+
+	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor @Sendable(WKNavigationActionPolicy) -> Void) {
 
 		guard navigationAction.navigationType == .linkActivated else {
 			decisionHandler(.allow)
@@ -426,49 +426,41 @@ extension WebViewController: WKNavigationDelegate {
 		}
 	}
 
-	nonisolated func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+	func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
 
-		Task { @MainActor in
-			fullReload()
-		}
+		fullReload()
 	}
 
-	nonisolated private func openURLInBrowser(_ url: URL) {
+	private func openURLInBrowser(_ url: URL) {
 
-		Task { @MainActor in
-			if AppDefaults.shared.useSystemBrowser {
-				UIApplication.shared.open(url, options: [:])
-			} else {
-				UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { didOpen in
-					guard didOpen == false else {
-						return
-					}
-					let vc = SFSafariViewController(url: url)
-					self.present(vc, animated: true)
+		if AppDefaults.shared.useSystemBrowser {
+			UIApplication.shared.open(url, options: [:])
+		} else {
+			UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { didOpen in
+				guard didOpen == false else {
+					return
 				}
+				let vc = SFSafariViewController(url: url)
+				self.present(vc, animated: true)
 			}
 		}
 	}
 
-	nonisolated private func openEmailAddressURL(_ url: URL) {
+	private func openEmailAddressURL(_ url: URL) {
 
-		Task { @MainActor in
-			if UIApplication.shared.canOpenURL(url) {
-				UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
-			} else {
-				let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
-				alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
-				self.present(alert, animated: true, completion: nil)
-			}
+		if UIApplication.shared.canOpenURL(url) {
+			UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
+		} else {
+			let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
+			alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
+			self.present(alert, animated: true, completion: nil)
 		}
 	}
 
-	nonisolated private func openTelURL(_ url: URL) {
+	private func openTelURL(_ url: URL) {
 
-		Task { @MainActor in
-			if UIApplication.shared.canOpenURL(url) {
-				UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
-			}
+		if UIApplication.shared.canOpenURL(url) {
+			UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
 		}
 	}
 }
@@ -476,53 +468,46 @@ extension WebViewController: WKNavigationDelegate {
 // MARK: WKUIDelegate
 
 extension WebViewController: WKUIDelegate {
-	
-	nonisolated func webView(_ webView: WKWebView, contextMenuForElement elementInfo: WKContextMenuElementInfo, willCommitWithAnimator animator: UIContextMenuInteractionCommitAnimating) {
+
+	func webView(_ webView: WKWebView, contextMenuForElement elementInfo: WKContextMenuElementInfo, willCommitWithAnimator animator: UIContextMenuInteractionCommitAnimating) {
 		// We need to have at least an unimplemented WKUIDelegate assigned to the WKWebView.  This makes the
 		// link preview launch Safari when the link preview is tapped.  In theory, you should be able to get
 		// the link from the elementInfo above and transition to SFSafariViewController instead of launching
 		// Safari.  As the time of this writing, the link in elementInfo is always nil.  ¯\_(ツ)_/¯
 	}
 
-	nonisolated func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+	func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
 		guard let url = navigationAction.request.url else {
 			return nil
 		}
 		
-		Task { @MainActor in
-			openURL(url)
-		}
-
+		openURL(url)
 		return nil
 	}
-	
 }
 
 // MARK: WKScriptMessageHandler
 
 extension WebViewController: WKScriptMessageHandler {
 
-	nonisolated func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
 
 		let name = message.name
 		let body = message.body as? String
 
-		Task { @MainActor in
-			switch name {
-			case MessageName.imageWasShown:
-				clickedImageCompletion?()
-			case MessageName.imageWasClicked:
-				imageWasClicked(body: body)
-			case MessageName.showFeedInspector:
-				if let feed = article?.feed {
-					coordinator.showFeedInspector(for: feed)
-				}
-			default:
-				return
+		switch name {
+		case MessageName.imageWasShown:
+			clickedImageCompletion?()
+		case MessageName.imageWasClicked:
+			imageWasClicked(body: body)
+		case MessageName.showFeedInspector:
+			if let feed = article?.feed {
+				coordinator.showFeedInspector(for: feed)
 			}
+		default:
+			return
 		}
 	}
-	
 }
 
 // MARK: UIViewControllerTransitioningDelegate
