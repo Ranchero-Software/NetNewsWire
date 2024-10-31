@@ -188,7 +188,6 @@
 		51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */; };
 		51A9A5E62380C8B20033AADF /* ShareFolderPickerFolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */; };
 		51A9A5E82380CA130033AADF /* ShareFolderPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */; };
-		51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45254226507D200C03939 /* AppAssets.swift */; };
 		51A9A5EE2380D6080033AADF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9B2262A1A900D921D6 /* Assets.xcassets */; };
 		51A9A5F32380DE530033AADF /* AddFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */; };
 		51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A5F42380F6A60033AADF /* ModalNavigationController.swift */; };
@@ -215,7 +214,6 @@
 		51BC4B01247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
 		51C03081257D815A00609262 /* UnifiedWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C0307F257D815A00609262 /* UnifiedWindow.storyboard */; };
 		51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */; };
-		51C45258226508CF00C03939 /* AppAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45254226507D200C03939 /* AppAssets.swift */; };
 		51C45259226508D300C03939 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
 		51C4525A226508D600C03939 /* UIStoryboard-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */; };
 		51C45268226508F600C03939 /* FeedUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45261226508F600C03939 /* FeedUnreadCountView.swift */; };
@@ -874,7 +872,6 @@
 		51C03080257D815A00609262 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/UnifiedWindow.storyboard; sourceTree = SOURCE_ROOT; };
 		51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreviewViewController.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
-		51C45254226507D200C03939 /* AppAssets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppAssets.swift; sourceTree = "<group>"; };
 		51C45255226507D200C03939 /* AppDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
 		51C45261226508F600C03939 /* FeedUnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedUnreadCountView.swift; sourceTree = "<group>"; };
 		51C45262226508F600C03939 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
@@ -2147,7 +2144,6 @@
 				5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */,
 				514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */,
 				511D4410231FC02D00FB1562 /* KeyboardManager.swift */,
-				51C45254226507D200C03939 /* AppAssets.swift */,
 				51C45255226507D200C03939 /* AppDefaults.swift */,
 				51E3EB3C229AB08300645299 /* ErrorHandler.swift */,
 				51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */,
@@ -3047,7 +3043,6 @@
 				51B5C8BA23F368D000032075 /* ExtensionContainersFile.swift in Sources */,
 				51B5C8BB23F368D000032075 /* ExtensionFeedAddRequest.swift in Sources */,
 				51A9A5E82380CA130033AADF /* ShareFolderPickerCell.swift in Sources */,
-				51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */,
 				51B5C8C123F3A0DB00032075 /* ExtensionFeedAddRequestFile.swift in Sources */,
 				845382072CD33F3200B3FBA3 /* AppAsset-iOS.swift in Sources */,
 				51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */,
@@ -3138,7 +3133,6 @@
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
 				5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */,
 				516244E3241E19F000B61C47 /* ColorPaletteTableViewController.swift in Sources */,
-				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
 				51C4527C2265091600C03939 /* TimelineDefaultCellLayout.swift in Sources */,
 				51E4398023805EBC00015C31 /* AddComboTableViewCell.swift in Sources */,
 				51C4529A22650A0400C03939 /* ArticleTheme.swift in Sources */,
