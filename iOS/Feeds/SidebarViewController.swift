@@ -597,13 +597,13 @@ class SidebarViewController: UITableViewController, UndoableCommandRunner {
 		var menuItems: [UIAction] = []
 
 		let addFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
-		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAssets.plus) { _ in
+		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAsset.plus) { _ in
 			self.coordinator.showAddFeed()
 		}
 		menuItems.append(addFeedAction)
 
 		let addFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-		let addFolderAction = UIAction(title: addFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
+		let addFolderAction = UIAction(title: addFolderActionTitle, image: AppAsset.folderOutlinePlus) { _ in
 			self.coordinator.showAddFolder()
 		}
 
@@ -927,7 +927,7 @@ private extension SidebarViewController {
 		}
 		
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.safariImage) { [weak self] action in
 			self?.coordinator.showBrowserForFeed(indexPath)
 		}
 		return action
@@ -953,7 +953,7 @@ private extension SidebarViewController {
 			  }
 		
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: AppAsset.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -981,7 +981,7 @@ private extension SidebarViewController {
 			  }
 		
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: AppAsset.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -1037,7 +1037,7 @@ private extension SidebarViewController {
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
 		
-		let action = UIAction(title: title, image: AppAssets.trashImage, attributes: .destructive) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.trashImage, attributes: .destructive) { [weak self] action in
 			self?.delete(indexPath: indexPath)
 		}
 		return action
@@ -1045,7 +1045,7 @@ private extension SidebarViewController {
 	
 	func renameAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Rename", comment: "Rename")
-		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.editImage) { [weak self] action in
 			self?.rename(indexPath: indexPath)
 		}
 		return action
@@ -1057,7 +1057,7 @@ private extension SidebarViewController {
 		}
 		
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.infoImage) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: feed)
 		}
 		return action
@@ -1065,7 +1065,7 @@ private extension SidebarViewController {
 
 	func getAccountInfoAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAsset.infoImage) { [weak self] action in
 			self?.coordinator.showAccountInspector(for: account)
 		}
 		return action
@@ -1073,7 +1073,7 @@ private extension SidebarViewController {
 
 	func deactivateAccountAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Deactivate", comment: "Deactivate")
-		let action = UIAction(title: title, image: AppAssets.deactivateImage) { action in
+		let action = UIAction(title: title, image: AppAsset.deactivateImage) { action in
 			account.isActive = false
 		}
 		return action

@@ -21,7 +21,7 @@ class TimelineTableViewCell: VibrantTableViewCell {
 	private lazy var iconView = IconView()
 	
 	private lazy var starView = {
-		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
+		return NonIntrinsicImageView(image: AppAsset.timelineStarImage)
 	}()
 	
 	private var unreadIndicatorPropertyAnimator: UIViewPropertyAnimator?
@@ -63,16 +63,16 @@ class TimelineTableViewCell: VibrantTableViewCell {
 		if animated {
 			UIView.animate(withDuration: Self.duration) {
 				if self.isHighlighted || self.isSelected {
-					self.unreadIndicatorView.backgroundColor = AppAssets.vibrantTextColor
+					self.unreadIndicatorView.backgroundColor = AppAsset.vibrantTextColor
 				} else {
-					self.unreadIndicatorView.backgroundColor = AppAssets.secondaryAccentColor
+					self.unreadIndicatorView.backgroundColor = AppAsset.secondaryAccentColor
 				}
 			}
 		} else {
 			if self.isHighlighted || self.isSelected {
-				self.unreadIndicatorView.backgroundColor = AppAssets.vibrantTextColor
+				self.unreadIndicatorView.backgroundColor = AppAsset.vibrantTextColor
 			} else {
-				self.unreadIndicatorView.backgroundColor = AppAssets.secondaryAccentColor
+				self.unreadIndicatorView.backgroundColor = AppAsset.secondaryAccentColor
 			}
 		}
 	}

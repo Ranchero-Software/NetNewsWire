@@ -91,7 +91,7 @@ class FeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		let button = NonIntrinsicButton()
 
 		button.tintColor = UIColor.tertiaryLabel
-		button.setImage(AppAssets.disclosureImage, for: .normal)
+		button.setImage(AppAsset.disclosureImage, for: .normal)
 		button.contentMode = .center
 		button.addInteraction(UIPointerInteraction())
 		button.addTarget(self, action: #selector(toggleDisclosure), for: .touchUpInside)
@@ -206,7 +206,7 @@ private extension FeedTableViewSectionHeader {
 	
 	func addBackgroundView() {
 		self.backgroundView = UIView(frame: self.bounds)
-		self.backgroundView?.backgroundColor = AppAssets.sectionHeaderColor
+		self.backgroundView?.backgroundColor = AppAsset.sectionHeaderColor
 	}
 	
 }

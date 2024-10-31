@@ -1416,13 +1416,13 @@ private extension SceneCoordinator {
 		navController.navigationBar.scrollEdgeAppearance = scrollEdge
 		navController.navigationBar.compactScrollEdgeAppearance = scrollEdge
 
-		navController.navigationBar.tintColor = AppAssets.primaryAccentColor
+		navController.navigationBar.tintColor = AppAsset.primaryAccentColor
 
 		let toolbarAppearance = UIToolbarAppearance()
 		navController.toolbar.standardAppearance = toolbarAppearance
 		navController.toolbar.compactAppearance = toolbarAppearance
 		navController.toolbar.scrollEdgeAppearance = toolbarAppearance
-		navController.toolbar.tintColor = AppAssets.primaryAccentColor
+		navController.toolbar.tintColor = AppAsset.primaryAccentColor
 	}
 
 	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {

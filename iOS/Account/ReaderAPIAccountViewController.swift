@@ -26,7 +26,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 	@IBOutlet weak var signUpButton: UIButton!
 	@IBOutlet weak var onepasswordButton: UIBarButtonItem! {
 		didSet {
-			onepasswordButton.image?.withTintColor(AppAssets.primaryAccentColor)
+			onepasswordButton.image?.withTintColor(AppAsset.primaryAccentColor)
 		}
 	}
 	

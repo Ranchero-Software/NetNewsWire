@@ -23,7 +23,6 @@ import Images
 	static let shareImage = RSImage.systemImage("square.and.arrow.up")
 
 	static let starColor = RSColor(named: "starColor")!
-
 	static let starOpenImage = RSImage.systemImage("star")
 	static let starClosedImage = RSImage.systemImage("star.fill")
 

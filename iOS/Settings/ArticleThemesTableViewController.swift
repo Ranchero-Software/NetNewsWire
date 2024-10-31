@@ -100,7 +100,7 @@ class ArticleThemesTableViewController: UITableViewController {
 			self?.present(alertController, animated: true)
 		}
 		
-		deleteAction.image = AppAssets.trashImage
+		deleteAction.image = AppAsset.trashImage
 		deleteAction.backgroundColor = UIColor.systemRed
 		
 		return UISwipeActionsConfiguration(actions: [deleteAction])

@@ -27,7 +27,7 @@ final class TimelineUnreadCountView: FeedUnreadCountView {
 		let cornerRadii = CGSize(width: cornerRadius, height: cornerRadius)
 		let rect = CGRect(x: 1, y: 1, width: bounds.width - 2, height: bounds.height - 2)
 		let path = UIBezierPath(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadii: cornerRadii)
-		AppAssets.primaryAccentColor.setFill()
+		AppAsset.primaryAccentColor.setFill()
 		path.fill()
 
 		if unreadCount > 0 {

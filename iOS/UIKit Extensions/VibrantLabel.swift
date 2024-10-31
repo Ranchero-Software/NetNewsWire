@@ -21,7 +21,7 @@ class VibrantLabel: UILabel {
 	}
 	
 	private func commonInit() {
-		highlightedTextColor = AppAssets.vibrantTextColor
+		highlightedTextColor = AppAsset.vibrantTextColor
 	}
 
 }

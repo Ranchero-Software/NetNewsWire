@@ -354,6 +354,7 @@
 		845122742B8CEA9100480DB0 /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451226E2B8CEA9100480DB0 /* SidebarItem.swift */; };
 		845382042CD33B0400B3FBA3 /* AppAsset-Mac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845382032CD33B0400B3FBA3 /* AppAsset-Mac.swift */; };
 		845382062CD33B6200B3FBA3 /* AppAsset-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845382052CD33B6200B3FBA3 /* AppAsset-iOS.swift */; };
+		845382072CD33F3200B3FBA3 /* AppAsset-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845382052CD33B6200B3FBA3 /* AppAsset-iOS.swift */; };
 		845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
 		8454C3F3263F2D8700E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
 		8454C3F8263F3AD400E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
@@ -3048,6 +3049,7 @@
 				51A9A5E82380CA130033AADF /* ShareFolderPickerCell.swift in Sources */,
 				51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */,
 				51B5C8C123F3A0DB00032075 /* ExtensionFeedAddRequestFile.swift in Sources */,
+				845382072CD33F3200B3FBA3 /* AppAsset-iOS.swift in Sources */,
 				51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

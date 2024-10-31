@@ -115,7 +115,7 @@ private extension IconView {
 
 	private func updateBackgroundColor() {
 		if !isBackgroundSuppressed && ((iconImage != nil && isVerticalBackgroundExposed) || !isDiscernable) {
-			backgroundColor = AppAssets.iconBackgroundColor
+			backgroundColor = AppAsset.iconBackgroundColor
 		} else {
 			backgroundColor = nil
 		}

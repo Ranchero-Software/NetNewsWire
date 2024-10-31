@@ -817,7 +817,7 @@ private extension WebViewController {
 	func prevArticleAction() -> UIAction? {
 		guard coordinator.isPrevArticleAvailable else { return nil }
 		let title = NSLocalizedString("Previous Article", comment: "Previous Article")
-		return UIAction(title: title, image: AppAssets.prevArticleImage) { [weak self] action in
+		return UIAction(title: title, image: AppAsset.prevArticleImage) { [weak self] action in
 			self?.coordinator.selectPrevArticle()
 		}
 	}
@@ -825,7 +825,7 @@ private extension WebViewController {
 	func nextArticleAction() -> UIAction? {
 		guard coordinator.isNextArticleAvailable else { return nil }
 		let title = NSLocalizedString("Next Article", comment: "Next Article")
-		return UIAction(title: title, image: AppAssets.nextArticleImage) { [weak self] action in
+		return UIAction(title: title, image: AppAsset.nextArticleImage) { [weak self] action in
 			self?.coordinator.selectNextArticle()
 		}
 	}
@@ -834,7 +834,7 @@ private extension WebViewController {
 		guard let article = article, !article.status.read || article.isAvailableToMarkUnread else { return nil }
 		
 		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		let readImage = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+		let readImage = article.status.read ? AppAsset.circleClosedImage : AppAsset.circleOpenImage
 		return UIAction(title: title, image: readImage) { [weak self] action in
 			self?.coordinator.toggleReadForCurrentArticle()
 		}
@@ -843,7 +843,7 @@ private extension WebViewController {
 	func toggleStarredAction() -> UIAction {
 		let starred = article?.status.starred ?? false
 		let title = starred ? NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") : NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
-		let starredImage = starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		let starredImage = starred ? AppAsset.starOpenImage : AppAsset.starClosedImage
 		return UIAction(title: title, image: starredImage) { [weak self] action in
 			self?.coordinator.toggleStarredForCurrentArticle()
 		}
@@ -852,7 +852,7 @@ private extension WebViewController {
 	func nextUnreadArticleAction() -> UIAction? {
 		guard coordinator.isAnyUnreadAvailable else { return nil }
 		let title = NSLocalizedString("Next Unread Article", comment: "Next Unread Article")
-		return UIAction(title: title, image: AppAssets.nextUnreadArticleImage) { [weak self] action in
+		return UIAction(title: title, image: AppAsset.nextUnreadArticleImage) { [weak self] action in
 			self?.coordinator.selectNextUnread()
 		}
 	}

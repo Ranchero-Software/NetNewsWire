@@ -55,12 +55,12 @@ private extension InteractiveNavigationController {
 		scrollEdgeStandardAppearance.backgroundColor = .systemBackground
 		navigationBar.scrollEdgeAppearance = scrollEdgeStandardAppearance
 		
-		navigationBar.tintColor = AppAssets.primaryAccentColor
+		navigationBar.tintColor = AppAsset.primaryAccentColor
 		
 		let toolbarAppearance = UIToolbarAppearance()
 		toolbar.standardAppearance = toolbarAppearance
 		toolbar.compactAppearance = toolbarAppearance
-		toolbar.tintColor = AppAssets.primaryAccentColor
+		toolbar.tintColor = AppAsset.primaryAccentColor
 	}
 
 }

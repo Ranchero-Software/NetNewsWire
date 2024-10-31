@@ -23,7 +23,7 @@ class NewsBlurAccountViewController: UITableViewController {
 	@IBOutlet weak var footerLabel: UILabel!
 	@IBOutlet weak var onepasswordButton: UIBarButtonItem! {
 		didSet {
-			onepasswordButton.image?.withTintColor(AppAssets.primaryAccentColor)
+			onepasswordButton.image?.withTintColor(AppAsset.primaryAccentColor)
 		}
 	}
 
