@@ -15,7 +15,7 @@ public final class HTMLMetadataDownloader: Sendable {
 
 	static let shared = HTMLMetadataDownloader()
 
-	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
 	private let debugLoggingEnabled = false
 	private let cache = HTMLMetadataCache()
 	private let attemptDatesLock = OSAllocatedUnfairLock(initialState: [String: Date]())

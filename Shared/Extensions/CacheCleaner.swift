@@ -12,7 +12,7 @@ import Web
 
 struct CacheCleaner {
 
-	nonisolated(unsafe) static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
+	static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
 
 	@MainActor static func purgeIfNecessary() {
 

@@ -37,7 +37,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 	}
 	
-	nonisolated(unsafe) let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
 	var userNotificationManager: UserNotificationManager!
 	var extensionContainersFile: ExtensionContainersFile!

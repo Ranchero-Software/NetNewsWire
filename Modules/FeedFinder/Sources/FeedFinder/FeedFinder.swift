@@ -14,7 +14,7 @@ import os.log
 
 public final class FeedFinder {
 	
-	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
 
 	public static func find(url: URL) async throws -> Set<FeedSpecifier> {
 

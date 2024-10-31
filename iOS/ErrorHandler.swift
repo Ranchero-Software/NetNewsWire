@@ -11,7 +11,7 @@ import os.log
 
 struct ErrorHandler {
 
-	nonisolated(unsafe) private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
 	public static func present(_ viewController: UIViewController) -> @MainActor (Error) -> () {
 		

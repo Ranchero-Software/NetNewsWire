@@ -17,7 +17,7 @@ public struct AccountSyncError {
 	
 	// OSLog is supposedly Sendable and will be annotated that way in the future:
 	// https://forums.developer.apple.com/forums/thread/747816
-	nonisolated(unsafe) private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
 	public let account: Account
 	public let error: Error

@@ -12,7 +12,7 @@ import os
 public final class HTMLLinkParser {
 
 	public private(set) var links = [HTMLLink]()
-	nonisolated(unsafe) private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLLinkParser")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLLinkParser")
 
 	private let parserData: ParserData
 	private let baseURL: URL?
