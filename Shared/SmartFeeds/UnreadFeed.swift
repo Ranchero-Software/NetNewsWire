@@ -41,7 +41,7 @@ final class UnreadFeed: PseudoFeed {
 	}
 
 	var smallIcon: IconImage? {
-		return AppAssets.unreadFeedImage
+		return AppAsset.unreadFeedImage
 	}
 	
 	#if os(macOS)

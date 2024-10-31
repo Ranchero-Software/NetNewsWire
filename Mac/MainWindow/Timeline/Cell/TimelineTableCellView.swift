@@ -19,7 +19,7 @@ final class TimelineTableCellView: NSTableCellView {
 
 	private lazy var iconView = IconView()
 
-	private var starView = TimelineTableCellView.imageView(with: AppAsset.Mac.Timeline.starUnselected, scaling: .scaleNone)
+	private var starView = TimelineTableCellView.imageView(with: AppAsset.timelineStarUnselected, scaling: .scaleNone)
 
 	private lazy var textFields = {
 		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
@@ -258,9 +258,9 @@ private extension TimelineTableCellView {
 
 	func updateStarView() {
 		if isSelected && isEmphasized {
-			starView.image = AppAsset.Mac.Timeline.starSelected
+			starView.image = AppAsset.timelineStarSelected
 		} else {
-			starView.image = AppAsset.Mac.Timeline.starUnselected
+			starView.image = AppAsset.timelineStarUnselected
 		}
 		showOrHideView(starView, !cellData.starred)
 	}

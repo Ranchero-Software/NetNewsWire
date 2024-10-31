@@ -77,10 +77,6 @@ struct AppAssets {
 
 	static let starOpenImage = UIImage(systemName: "star")!
 
-	@MainActor static let starredFeedImage: IconImage = {
-		let image = UIImage(systemName: "star.fill")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAsset.starColor.cgColor)
-	}()
 
 	static let tickMarkColor = UIColor(named: "tickMarkColor")!
 
@@ -89,17 +85,8 @@ struct AppAssets {
 		return image.withTintColor(AppAsset.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
-	@MainActor static let todayFeedImage: IconImage = {
-		let image = UIImage(systemName: "sun.max.fill")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: UIColor.systemOrange.cgColor)
-	}()
-
 	static let trashImage = UIImage(systemName: "trash")!
 
-	@MainActor static let unreadFeedImage: IconImage = {
-		let image = UIImage(systemName: "largecircle.fill.circle")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
-	}()
 
 	static let vibrantTextColor = UIColor(named: "vibrantTextColor")!
 

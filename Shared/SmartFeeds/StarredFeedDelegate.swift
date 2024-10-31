@@ -20,7 +20,7 @@ import Images
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
 	let fetchType: FetchType = .starred(nil)
 	var smallIcon: IconImage? {
-		return AppAssets.starredFeedImage
+		return AppAsset.starredFeedImage
 	}
 
 	func unreadCount(account: Account) async -> Int {

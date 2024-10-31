@@ -20,7 +20,7 @@ import Images
 	let nameForDisplay = NSLocalizedString("Today", comment: "Today pseudo-feed title")
 	let fetchType = FetchType.today(nil)
 	var smallIcon: IconImage? {
-		return AppAssets.todayFeedImage
+		return AppAsset.todayFeedImage
 	}
 	
 	func unreadCount(account: Account) async -> Int {
