@@ -146,7 +146,7 @@ struct PasteboardWebFeed: Hashable {
 	}
 }
 
-extension WebFeed: PasteboardWriterOwner {
+extension WebFeed: @retroactive PasteboardWriterOwner {
 
 	public var pasteboardWriter: NSPasteboardWriting {
 		return WebFeedPasteboardWriter(webFeed: self)
