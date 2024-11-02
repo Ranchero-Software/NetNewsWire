@@ -84,7 +84,7 @@ private extension IconImageCache {
 		if let iconImage = webFeedIconImageCache[feedID] {
 			return iconImage
 		}
-		if let iconImage = appDelegate.webFeedIconDownloader.icon(for: webFeed) {
+		if let iconImage = appDelegate.feedIconDownloader.icon(for: webFeed) {
 			webFeedIconImageCache[feedID] = iconImage
 			return iconImage
 		}
