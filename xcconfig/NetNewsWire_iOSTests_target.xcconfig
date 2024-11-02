@@ -9,7 +9,6 @@ PROVISIONING_PROFILE_SPECIFIER =
 
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 
-ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 BUNDLE_LOADER = $(TEST_HOST)
 COMBINE_HIDPI_IMAGES = YES
 INFOPLIST_FILE = Tests/NetNewsWire-iOSTests/Info.plist
