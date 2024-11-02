@@ -83,10 +83,10 @@ final class DetailWebViewController: NSViewController {
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
-		preferences.javaScriptEnabled = true
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = true
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
