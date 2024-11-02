@@ -55,7 +55,7 @@ import Account
 
 	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
 		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
-		let draggedFeeds = PasteboardWebFeed.pasteboardFeeds(with: info.draggingPasteboard)
+		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
 		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil)  {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
@@ -91,7 +91,7 @@ import Account
 	
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
 		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
-		let draggedFeeds = PasteboardWebFeed.pasteboardFeeds(with: info.draggingPasteboard)
+		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
 		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil)  {
 			return false
 		}
@@ -145,7 +145,7 @@ private extension SidebarOutlineDataSource {
 		case empty, singleLocal, singleNonLocal, multipleLocal, multipleNonLocal, mixed
 	}
 
-	func draggedFeedContentsType(_ draggedFeeds: Set<PasteboardWebFeed>) -> DraggedFeedsContentsType {
+	func draggedFeedContentsType(_ draggedFeeds: Set<PasteboardFeed>) -> DraggedFeedsContentsType {
 		if draggedFeeds.isEmpty {
 			return .empty
 		}
@@ -173,14 +173,14 @@ private extension SidebarOutlineDataSource {
 		return .multipleNonLocal
 	}
 
-	func singleNonLocalFeed(from feeds: Set<PasteboardWebFeed>) -> PasteboardWebFeed? {
+	func singleNonLocalFeed(from feeds: Set<PasteboardFeed>) -> PasteboardFeed? {
 		guard feeds.count == 1, let feed = feeds.first else {
 			return nil
 		}
 		return feed.isLocalFeed ? nil : feed
 	}
 
-	func validateSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardWebFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+	func validateSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		// A non-local feed should always drag on to an Account or Folder node, with NSOutlineViewDropOnItemIndex — since we don’t know where it would sort till we read the feed.
 		guard let dropTargetNode = ancestorThatCanAcceptNonLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone
@@ -191,7 +191,7 @@ private extension SidebarOutlineDataSource {
 		return .copy
 	}
 
-	func validateSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardWebFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+	func validateSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		// A local feed should always drag on to an Account or Folder node, and we can provide an index.
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone
@@ -212,7 +212,7 @@ private extension SidebarOutlineDataSource {
 		return localDragOperation(parentNode: parentNode)
 	}
 
-	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		// Local feeds should always drag on to an Account or Folder node, and index should be NSOutlineViewDropOnItemIndex since we can’t provide multiple indexes.
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone
@@ -370,7 +370,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> Bool {
+	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> Bool {
 		guard let draggedNodes = draggedNodes else {
 			return false
 		}
@@ -473,7 +473,7 @@ private extension SidebarOutlineDataSource {
 		return true
 	}
 
-	func acceptSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardWebFeed, _ parentNode: Node, _ index: Int) -> Bool {
+	func acceptSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> Bool {
 		guard nodeIsDropTarget(parentNode), index == NSOutlineViewDropOnItemIndex else {
 			return false
 		}
@@ -490,11 +490,11 @@ private extension SidebarOutlineDataSource {
 		return true
 	}
 
-	func nodeHasChildRepresentingDraggedFeed(_ parentNode: Node, _ draggedFeed: PasteboardWebFeed) -> Bool {
+	func nodeHasChildRepresentingDraggedFeed(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Bool {
 		return nodeHasChildRepresentingAnyDraggedFeed(parentNode, Set([draggedFeed]))
 	}
 
-	func nodeRepresentsAnyDraggedFeed(_ node: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+	func nodeRepresentsAnyDraggedFeed(_ node: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		guard let feed = node.representedObject as? Feed else {
 			return false
 		}
@@ -532,7 +532,7 @@ private extension SidebarOutlineDataSource {
 		return nodeAccount(node)?.accountID
 	}
 	
-	func nodeHasChildRepresentingAnyDraggedFeed(_ parentNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+	func nodeHasChildRepresentingAnyDraggedFeed(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		for node in parentNode.childNodes {
 			if nodeRepresentsAnyDraggedFeed(node, draggedFeeds) {
 				return true
@@ -541,11 +541,11 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 
-	func violatesAccountSpecificBehavior(_ dropTargetNode: Node, _ draggedFeed: PasteboardWebFeed) -> Bool {
+	func violatesAccountSpecificBehavior(_ dropTargetNode: Node, _ draggedFeed: PasteboardFeed) -> Bool {
 		return violatesAccountSpecificBehavior(dropTargetNode, Set([draggedFeed]))
 	}
 	
-	func violatesAccountSpecificBehavior(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+	func violatesAccountSpecificBehavior(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		if violatesDisallowFeedInRootFolder(dropTargetNode) {
 			return true
 		}
@@ -573,7 +573,7 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 
-	func violatesDisallowFeedCopyInRootFolder(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+	func violatesDisallowFeedCopyInRootFolder(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		guard let dropTargetAccount = nodeAccount(dropTargetNode), dropTargetAccount.behaviors.contains(.disallowFeedCopyInRootFolder) else {
 			return false
 		}
@@ -591,7 +591,7 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 
-	func violatesDisallowFeedInMultipleFolders(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+	func violatesDisallowFeedInMultipleFolders(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		guard let dropTargetAccount = nodeAccount(dropTargetNode), dropTargetAccount.behaviors.contains(.disallowFeedInMultipleFolders) else {
 			return false
 		}
@@ -611,7 +611,7 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 
-	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardWebFeed) -> Int {
+	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
 		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
 		let draggedFeedNode = Node(representedObject: draggedFeedWrapper, parent: nil)
 		let nodes = parentNode.childNodes + [draggedFeedNode]
@@ -640,9 +640,9 @@ final class PasteboardFeedObjectWrapper: DisplayNameProvider {
 	var nameForDisplay: String {
 		return pasteboardFeed.editedName ?? pasteboardFeed.name ?? ""
 	}
-	let pasteboardFeed: PasteboardWebFeed
+	let pasteboardFeed: PasteboardFeed
 
-	init(pasteboardFeed: PasteboardWebFeed) {
+	init(pasteboardFeed: PasteboardFeed) {
 		self.pasteboardFeed = pasteboardFeed
 	}
 }

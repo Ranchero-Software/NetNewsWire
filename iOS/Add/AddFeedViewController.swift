@@ -59,7 +59,7 @@ class AddFeedViewController: UITableViewController {
 		nameTextField.text = initialFeedName
 		nameTextField.delegate = self
 		
-		if let defaultContainer = AddWebFeedDefaultContainer.defaultContainer {
+		if let defaultContainer = AddFeedDefaultContainer.defaultContainer {
 			container = defaultContainer
 		} else {
 			addButton.isEnabled = false
@@ -165,7 +165,7 @@ extension AddFeedViewController: AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container) {
 		self.container = container
 		updateFolderLabel()
-		AddWebFeedDefaultContainer.saveDefaultContainer(container)
+		AddFeedDefaultContainer.saveDefaultContainer(container)
 	}
 }
 

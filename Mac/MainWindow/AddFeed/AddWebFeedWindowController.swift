@@ -64,7 +64,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 		
 		if let account = initialAccount {
 			FolderTreeMenu.select(account: account, folder: initialFolder, in: folderPopupButton)
-		} else if let container = AddWebFeedDefaultContainer.defaultContainer {
+		} else if let container = AddFeedDefaultContainer.defaultContainer {
 			if let folder = container as? Folder, let account = folder.account {
 				FolderTreeMenu.select(account: account, folder: folder, in: folderPopupButton)
 			} else {
@@ -97,7 +97,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 		}
 		
 		guard let container = selectedContainer() else { return }
-		AddWebFeedDefaultContainer.saveDefaultContainer(container)
+		AddFeedDefaultContainer.saveDefaultContainer(container)
 
 		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
 		

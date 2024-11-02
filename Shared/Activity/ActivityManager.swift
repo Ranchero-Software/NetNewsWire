@@ -235,7 +235,7 @@ private extension ActivityManager {
 	#endif
 	
 	func makeKeywords(_ article: Article) -> [String] {
-		let feedNameKeywords = makeKeywords(article.webFeed?.nameForDisplay)
+		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
 		let articleTitleKeywords = makeKeywords(ArticleStringFormatter.truncatedTitle(article))
 		return feedNameKeywords + articleTitleKeywords
 	}

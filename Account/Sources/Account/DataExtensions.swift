@@ -11,14 +11,14 @@ import Articles
 import RSParser
 
 public extension Notification.Name {
-	static let WebFeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
+	static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
 }
 
 public extension Feed {
 
-	static let WebFeedSettingUserInfoKey = "feedSetting"
+	static let FeedSettingUserInfoKey = "feedSetting"
 
-	struct WebFeedSettingKey {
+	struct FeedSettingKey {
 		public static let homePageURL = "homePageURL"
 		public static let iconURL = "iconURL"
 		public static let faviconURL = "faviconURL"
@@ -41,8 +41,8 @@ extension Feed {
 	}
 
 	func postFeedSettingDidChangeNotification(_ codingKey: WebFeedMetadata.CodingKeys) {
-		let userInfo = [Feed.WebFeedSettingUserInfoKey: codingKey.stringValue]
-		NotificationCenter.default.post(name: .WebFeedSettingDidChange, object: self, userInfo: userInfo)
+		let userInfo = [Feed.FeedSettingUserInfoKey: codingKey.stringValue]
+		NotificationCenter.default.post(name: .FeedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }
 

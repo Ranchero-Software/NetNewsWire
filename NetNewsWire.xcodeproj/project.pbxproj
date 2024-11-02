@@ -229,7 +229,7 @@
 		51A1699D235E10D700EB091F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16993235E10D600EB091F /* SettingsViewController.swift */; };
 		51A1699F235E10D700EB091F /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16995235E10D600EB091F /* AboutViewController.swift */; };
 		51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */; };
-		51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
+		51A66685238075AE00CB272D /* AddFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */; };
 		51A737AE24DB19730015FA66 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737AD24DB19730015FA66 /* RSCore */; };
 		51A737AF24DB19730015FA66 /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737AD24DB19730015FA66 /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51A737BF24DB197F0015FA66 /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737BE24DB197F0015FA66 /* RSDatabase */; };
@@ -245,7 +245,7 @@
 		51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45254226507D200C03939 /* AppAssets.swift */; };
 		51A9A5EE2380D6080033AADF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9B2262A1A900D921D6 /* Assets.xcassets */; };
 		51A9A5EF2380D63B0033AADF /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
-		51A9A5F32380DE530033AADF /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
+		51A9A5F32380DE530033AADF /* AddFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */; };
 		51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A5F42380F6A60033AADF /* ModalNavigationController.swift */; };
 		51A9A60A2382FD240033AADF /* PoppableGestureRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */; };
 		51AB8AB323B7F4C6008F147D /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51AB8AB223B7F4C6008F147D /* WebViewController.swift */; };
@@ -438,7 +438,7 @@
 		8483630B2262A3F000DA1D35 /* RenameSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848363092262A3F000DA1D35 /* RenameSheet.xib */; };
 		8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8483630C2262A3FE00DA1D35 /* MainWindow.storyboard */; };
 		848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
-		848D578E21543519005FFAD5 /* PasteboardWebFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D578D21543519005FFAD5 /* PasteboardWebFeed.swift */; };
+		848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D578D21543519005FFAD5 /* PasteboardFeed.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
 		849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		849A97531ED9EAC0007D329B /* AddFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97511ED9EAC0007D329B /* AddFeedController.swift */; };
@@ -921,7 +921,7 @@
 		51A16993235E10D600EB091F /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		51A16995235E10D600EB091F /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
-		51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedDefaultContainer.swift; sourceTree = "<group>"; };
+		51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedDefaultContainer.swift; sourceTree = "<group>"; };
 		51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerAccountCell.xib; sourceTree = "<group>"; };
 		51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerFolderCell.xib; sourceTree = "<group>"; };
 		51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerCell.swift; sourceTree = "<group>"; };
@@ -1080,7 +1080,7 @@
 		8483630A2262A3F000DA1D35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/RenameSheet.xib; sourceTree = SOURCE_ROOT; };
 		8483630D2262A3FE00DA1D35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/MainWindow.storyboard; sourceTree = SOURCE_ROOT; };
 		848B937121C8C5540038DC0D /* CrashReporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrashReporter.swift; sourceTree = "<group>"; };
-		848D578D21543519005FFAD5 /* PasteboardWebFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardWebFeed.swift; sourceTree = "<group>"; };
+		848D578D21543519005FFAD5 /* PasteboardFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardFeed.swift; sourceTree = "<group>"; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
 		849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderWindowController.swift; sourceTree = "<group>"; };
 		849A97511ED9EAC0007D329B /* AddFeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedController.swift; path = AddFeed/AddFeedController.swift; sourceTree = "<group>"; };
@@ -1919,7 +1919,7 @@
 		849A97561ED9EB0D007D329B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */,
+				51A66684238075AE00CB272D /* AddFeedDefaultContainer.swift */,
 				849A97731ED9EC04007D329B /* ArticleStringFormatter.swift */,
 				849A97581ED9EB0D007D329B /* ArticleUtilities.swift */,
 				5108F6B52375E612001ABC45 /* CacheCleaner.swift */,
@@ -1939,7 +1939,7 @@
 			isa = PBXGroup;
 			children = (
 				84AD1EA92031617300BC20B7 /* PasteboardFolder.swift */,
-				848D578D21543519005FFAD5 /* PasteboardWebFeed.swift */,
+				848D578D21543519005FFAD5 /* PasteboardFeed.swift */,
 				51868BF0254386630011A17B /* SidebarDeleteItemsAlert.swift */,
 				84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */,
 				849A97601ED9EB96007D329B /* SidebarOutlineView.swift */,
@@ -3174,7 +3174,7 @@
 				51C4CFF224D37D1F00AF9874 /* Secrets.swift in Sources */,
 				51C452A022650A1900C03939 /* FeedIconDownloader.swift in Sources */,
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
-				51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */,
+				51A66685238075AE00CB272D /* AddFeedDefaultContainer.swift in Sources */,
 				176813E92564BAE200D98635 /* WidgetDeepLinks.swift in Sources */,
 				51B5C87723F22B8200032075 /* ExtensionContainers.swift in Sources */,
 				51C45292226509C800C03939 /* TodayFeedDelegate.swift in Sources */,
@@ -3313,7 +3313,7 @@
 				D57BE6E0204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift in Sources */,
 				D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */,
 				845EE7C11FC2488C00854A1F /* SmartFeed.swift in Sources */,
-				51A9A5F32380DE530033AADF /* AddWebFeedDefaultContainer.swift in Sources */,
+				51A9A5F32380DE530033AADF /* AddFeedDefaultContainer.swift in Sources */,
 				84702AA41FA27AC0006B8943 /* MarkStatusCommand.swift in Sources */,
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
@@ -3385,7 +3385,7 @@
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,
 				844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */,
-				848D578E21543519005FFAD5 /* PasteboardWebFeed.swift in Sources */,
+				848D578E21543519005FFAD5 /* PasteboardFeed.swift in Sources */,
 				5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */,
 				849A97801ED9EC42007D329B /* DetailViewController.swift in Sources */,
 				173A64172547BE0900267F6E /* AccountType+Helpers.swift in Sources */,

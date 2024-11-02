@@ -460,7 +460,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			if article.webFeed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+			if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
 				cell.setIconImage(image)
 			}
 		}
@@ -730,7 +730,7 @@ private extension MasterTimelineViewController {
 		
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 	}
 	
@@ -846,7 +846,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let webFeed = article.webFeed,
+		guard let webFeed = article.feed,
 			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 		
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
@@ -857,7 +857,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed,
+		guard let webFeed = article.feed,
 			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
@@ -869,7 +869,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.feed else { return nil }
 		guard let fetchedArticles = try? webFeed.fetchArticles() else {
 			return nil
 		}
@@ -892,7 +892,7 @@ private extension MasterTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.feed else { return nil }
 		guard let fetchedArticles = try? webFeed.fetchArticles() else {
 			return nil
 		}

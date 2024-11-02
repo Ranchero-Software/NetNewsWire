@@ -69,7 +69,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)		
 
@@ -137,10 +137,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.WebFeedSettingUserInfoKey] as? String else {
+		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == Feed.WebFeedSettingKey.homePageURL || key == Feed.WebFeedSettingKey.faviconURL {
+		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
 	}

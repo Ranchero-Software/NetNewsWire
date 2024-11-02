@@ -616,7 +616,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		if let articles = articles {
 			if articles.count == 1 {
 				activityManager.reading(feed: nil, article: articles.first)
-				if articles.first?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {
@@ -633,8 +633,8 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		detailViewController?.setState(detailState, mode: mode)
 	}
 
-	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: Feed) {
-		sidebarViewController?.selectFeed(webFeed)
+	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed) {
+		sidebarViewController?.selectFeed(feed)
 	}
 	
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController) {
@@ -1144,7 +1144,7 @@ private extension MainWindowController {
 				return currentLink != nil
 			}
 			
-			if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
+			if currentTimelineViewController?.selectedArticles.first?.feed != nil {
 				toolbarButton.isEnabled = true
 			}
 
@@ -1171,7 +1171,7 @@ private extension MainWindowController {
 				return currentLink != nil
 			}
 			
-			if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
+			if currentTimelineViewController?.selectedArticles.first?.feed != nil {
 				toolbarButton.isEnabled = true
 			}
 			
@@ -1426,10 +1426,10 @@ private extension MainWindowController {
 	func buildNewSidebarItemMenu() -> NSMenu {
 		let menu = NSMenu()
 		
-		let newWebFeedItem = NSMenuItem()
-		newWebFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
-		newWebFeedItem.action = Selector(("showAddFeedWindow:"))
-		menu.addItem(newWebFeedItem)
+		let newFeedItem = NSMenuItem()
+		newFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
+		newFeedItem.action = Selector(("showAddFeedWindow:"))
+		menu.addItem(newFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")
