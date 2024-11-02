@@ -137,7 +137,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		guard let handler = addCompletionHandler else {
 			return
 		}
-		if let feedResource = feedResourceId, let feed = folder.existingWebFeed(withWebFeedID: feedResource.id) {
+		if let feedResource = feedResourceId, let feed = folder.existingFeed(withFeedID: feedResource.id) {
 			handler(.success(feed))
 		}
 		else {

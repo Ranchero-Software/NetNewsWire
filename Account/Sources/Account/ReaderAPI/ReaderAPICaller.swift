@@ -554,7 +554,7 @@ final class ReaderAPICaller: NSObject {
 
 	}
 	
-	func retrieveItemIDs(type: ItemIDType, webFeedID: String? = nil, completion: @escaping ((Result<[String], Error>) -> Void)) {
+	func retrieveItemIDs(type: ItemIDType, feedID: String? = nil, completion: @escaping ((Result<[String], Error>) -> Void)) {
 		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
@@ -579,13 +579,13 @@ final class ReaderAPICaller: NSObject {
 			queryItems.append(URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))))
 			queryItems.append(URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue))
 		case .allForFeed:
-			guard let webFeedID = webFeedID else {
+			guard let feedID = feedID else {
 				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 				return
 			}
 			let sinceTimeInterval = (Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()).timeIntervalSince1970
 			queryItems.append(URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))))
-			queryItems.append(URLQueryItem(name: "s", value: webFeedID))
+			queryItems.append(URLQueryItem(name: "s", value: feedID))
 		case .unread:
 			queryItems.append(URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue))
 			queryItems.append(URLQueryItem(name: "xt", value: ReaderState.read.rawValue))

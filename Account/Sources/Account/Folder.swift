@@ -113,7 +113,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		return topLevelFeeds.contains(feed)
 	}
 
-	public func addWebFeed(_ feed: Feed) {
+	public func addFeed(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		postChildrenDidChangeNotification()
 	}
@@ -126,7 +126,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		postChildrenDidChangeNotification()
 	}
 	
-	public func removeWebFeed(_ feed: Feed) {
+	public func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}

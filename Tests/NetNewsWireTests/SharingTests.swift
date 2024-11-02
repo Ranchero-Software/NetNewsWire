@@ -42,7 +42,7 @@ class SharingTests: XCTestCase {
         let articleId = randomId()
 		return Article(accountID: randomId(),
 					   articleID: articleId,
-					   webFeedID: randomId(),
+					   feedID: randomId(),
 					   uniqueID: randomId(),
 					   title: title,
 					   contentHTML: nil,

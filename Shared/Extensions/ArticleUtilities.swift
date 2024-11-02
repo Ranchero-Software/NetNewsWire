@@ -43,7 +43,7 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 extension Article {
 	
 	var feed: Feed? {
-		return account?.existingWebFeed(withWebFeedID: webFeedID)
+		return account?.existingFeed(withFeedID: feedID)
 	}
 	
 	var url: URL? {
@@ -121,11 +121,11 @@ extension Article {
 		return IconImageCache.shared.imageForArticle(self)
 	}
 	
-	func iconImageUrl(webFeed: Feed) -> URL? {
+	func iconImageUrl(feed: Feed) -> URL? {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-			let feedID = webFeed.feedID.replacingOccurrences(of: "/", with: "_")
+			let feedID = feed.feedID.replacingOccurrences(of: "/", with: "_")
 			#if os(macOS)
 			path.appendPathComponent(feedID + "_smallIcon.tiff")
 			#else
@@ -193,7 +193,7 @@ extension Article {
 struct ArticlePathKey {
 	static let accountID = "accountID"
 	static let accountName = "accountName"
-	static let webFeedID = "webFeedID"
+	static let feedID = "feedID"
 	static let articleID = "articleID"
 }
 
@@ -203,7 +203,7 @@ extension Article {
 		return [
 			ArticlePathKey.accountID: accountID,
 			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
-			ArticlePathKey.webFeedID: webFeedID,
+			ArticlePathKey.feedID: feedID,
 			ArticlePathKey.articleID: articleID
 		]
 	}
@@ -226,8 +226,8 @@ extension Article: SortableArticle {
 		return articleID
 	}
 	
-	var sortableWebFeedID: String {
-		return webFeedID
+	var sortableFeedID: String {
+		return feedID
 	}
 	
 }

@@ -397,7 +397,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			case .readArticle:
 				self.handleReadArticle(activity.userInfo)
 			case .addFeedIntent:
-				self.showAddWebFeed()
+				self.showAddFeed()
 			}
 		}
 	}
@@ -545,10 +545,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let webFeed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		discloseWebFeed(webFeed, animations: [.scroll, .navigation])
+		discloseFeed(feed, animations: [.scroll, .navigation])
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
@@ -557,7 +557,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<Feed> else {
+		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
 			return
 		}
 		
@@ -1128,25 +1128,25 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return timelineFeed == feed
 	}
 
-	func discloseWebFeed(_ webFeed: Feed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: Feed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
 			masterTimelineViewController?.hideSearch()
 		}
 		
-		guard let account = webFeed.account else {
+		guard let account = feed.account else {
 			completion?()
 			return
 		}
 		
-		let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
+		let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(feed) })
 		
 		markExpanded(account)
 		if let parentFolder = parentFolder {
 			markExpanded(parentFolder)
 		}
 	
-		if let webFeedFeedID = webFeed.sidebarItemID {
-			self.treeControllerDelegate.addFilterException(webFeedFeedID)
+		if let sidebarItemID = feed.sidebarItemID {
+			self.treeControllerDelegate.addFilterException(sidebarItemID)
 		}
 		if let parentFolderFeedID = parentFolder?.sidebarItemID {
 			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
@@ -1155,7 +1155,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		rebuildBackingStores(initialLoad: initialLoad, completion:  {
 			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(nil) {
-				self.selectFeed(webFeed, animations: animations, completion: completion)
+				self.selectFeed(feed, animations: animations, completion: completion)
 			}
 		})
 		
@@ -1196,9 +1196,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func showFeedInspector() {
-		let timelineWebFeed = timelineFeed as? Feed
+		let timelineFeed = timelineFeed as? Feed
 		let articleFeed = currentArticle?.feed
-		guard let feed = timelineWebFeed ?? articleFeed else {
+		guard let feed = timelineFeed ?? articleFeed else {
 			return
 		}
 		showFeedInspector(for: feed)
@@ -1207,19 +1207,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func showFeedInspector(for feed: Feed) {
 		let feedInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
-		let feedInspectorController = feedInspectorNavController.topViewController as! WebFeedInspectorViewController
+		let feedInspectorController = feedInspectorNavController.topViewController as! FeedInspectorViewController
 		feedInspectorNavController.modalPresentationStyle = .formSheet
-		feedInspectorNavController.preferredContentSize = WebFeedInspectorViewController.preferredContentSizeForFormSheetDisplay
-		feedInspectorController.webFeed = feed
+		feedInspectorNavController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
+		feedInspectorController.feed = feed
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
 	
-	func showAddWebFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
+	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
 		
 		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
 		selectFeed(nil)
 
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
+		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
 		
 		let addViewController = addNavViewController.topViewController as! AddFeedViewController
 		addViewController.initialFeed = initialFeed
@@ -1476,10 +1476,10 @@ private extension SceneCoordinator {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
 				}
-			} else if let webFeed = feed as? Feed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.feedID) != nil {
+			} else if let feed = feed as? Feed {
+				if feed.account?.existingFeed(withFeedID: feed.feedID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
-					addParentFolderToFilterExceptions(webFeed)
+					addParentFolderToFilterExceptions(feed)
 				}
 			}
 		}
@@ -2002,7 +2002,7 @@ private extension SceneCoordinator {
 				if !unsortedArticleIDs.contains(article.articleID) {
 					updatedArticles.insert(article)
 				}
-				if article.account?.existingWebFeed(withWebFeedID: article.webFeedID) == nil {
+				if article.account?.existingFeed(withFeedID: article.feedID) == nil {
 					updatedArticles.remove(article)
 				}
 			}
@@ -2086,7 +2086,7 @@ private extension SceneCoordinator {
 			}
 		} else if let folder = timelineFeed as? Folder {
 			for oneFeed in feeds {
-				if folder.hasWebFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
+				if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 					return true
 				}
 			}
@@ -2284,14 +2284,14 @@ private extension SceneCoordinator {
 				}
 			})
 		
-		case .webFeed(let accountID, let webFeedID):
+		case .feed(let accountID, let feedID):
 			guard let accountNode = findAccountNode(accountID: accountID),
 				let account = accountNode.representedObject as? Account,
-				let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
+				let feed = account.existingFeed(withFeedID: feedID) else {
 				return
 			}
 			
-			self.discloseWebFeed(webFeed, initialLoad: true) {
+			self.discloseFeed(feed, initialLoad: true) {
 				self.masterFeedViewController.focus()
 			}
 		}
@@ -2303,7 +2303,7 @@ private extension SceneCoordinator {
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			  let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
-			  let webFeedID = articlePathUserInfo[ArticlePathKey.webFeedID] as? String,
+			  let feedID = articlePathUserInfo[ArticlePathKey.feedID] as? String,
 			  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String,
 			  let accountNode = findAccountNode(accountID: accountID, accountName: accountName),
 			  let account = accountNode.representedObject as? Account else {
@@ -2312,20 +2312,20 @@ private extension SceneCoordinator {
 		
 		exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 
-		if restoreFeedSelection(userInfo, accountID: accountID, webFeedID: webFeedID, articleID: articleID) {
+		if restoreFeedSelection(userInfo, accountID: accountID, feedID: feedID, articleID: articleID) {
 			return
 		}
 		
-		guard let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
+		guard let feed = account.existingFeed(withFeedID: feedID) else {
 			return
 		}
 		
-		discloseWebFeed(webFeed) {
+		discloseFeed(feed) {
 			self.selectArticleInCurrentFeed(articleID)
 		}
 	}
 	
-	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
+	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, feedID: String, articleID: String) -> Bool {
 		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
 			  let feedIdentifier = SidebarItemIdentifier(userInfo: feedIdentifierUserInfo),
 			  let isShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool,
@@ -2345,11 +2345,11 @@ private extension SceneCoordinator {
 			}
 			return found
 		
-		case .webFeed:
+		case .feed:
 			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
-				if let webFeedNode = nodeFor(feedID: feedIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.sidebarItemID {
+				if let feedNode = nodeFor(feedID: feedIdentifier), let folder = feedNode.parent?.representedObject as? Folder, let folderFeedID = folder.sidebarItemID {
 					treeControllerDelegate.addFilterException(folderFeedID)
 				}
 			}
@@ -2378,8 +2378,8 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func findWebFeedNode(webFeedID: String, beginningAt startingNode: Node) -> Node? {
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == webFeedID }) {
+	func findFeedNode(feedID: String, beginningAt startingNode: Node) -> Node? {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
 			return node
 		}
 		return nil

@@ -17,7 +17,7 @@ struct FeedlyFeedParser {
 		return rightToLeftTextSantizer.sanitize(feed.title) ?? ""
 	}
 	
-	var webFeedID: String {
+	var feedID: String {
 		return feed.id
 	}
 	

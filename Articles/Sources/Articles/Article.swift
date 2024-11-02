@@ -14,7 +14,7 @@ public struct Article: Hashable {
 
 	public let articleID: String // Unique database ID (possibly sync service ID)
 	public let accountID: String
-	public let webFeedID: String // Likely a URL, but not necessarily
+	public let feedID: String // Likely a URL, but not necessarily
 	public let uniqueID: String // Unique per feed (RSS guid, for example)
 	public let title: String?
 	public let contentHTML: String?
@@ -28,9 +28,9 @@ public struct Article: Hashable {
 	public let authors: Set<Author>?
 	public let status: ArticleStatus
 
-	public init(accountID: String, articleID: String?, webFeedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, status: ArticleStatus) {
+	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, status: ArticleStatus) {
 		self.accountID = accountID
-		self.webFeedID = webFeedID
+		self.feedID = feedID
 		self.uniqueID = uniqueID
 		self.title = title
 		self.contentHTML = contentHTML
@@ -48,12 +48,12 @@ public struct Article: Hashable {
 			self.articleID = articleID
 		}
 		else {
-			self.articleID = Article.calculatedArticleID(webFeedID: webFeedID, uniqueID: uniqueID)
+			self.articleID = Article.calculatedArticleID(feedID: feedID, uniqueID: uniqueID)
 		}
 	}
 
-	public static func calculatedArticleID(webFeedID: String, uniqueID: String) -> String {
-		return databaseIDWithString("\(webFeedID) \(uniqueID)")
+	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
+		return databaseIDWithString("\(feedID) \(uniqueID)")
 	}
 
 	// MARK: - Hashable
@@ -65,7 +65,7 @@ public struct Article: Hashable {
 	// MARK: - Equatable
 
 	static public func ==(lhs: Article, rhs: Article) -> Bool {
-		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.webFeedID == rhs.webFeedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.rawLink == rhs.rawLink && lhs.rawExternalLink == rhs.rawExternalLink && lhs.summary == rhs.summary && lhs.rawImageLink == rhs.rawImageLink && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
+		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.rawLink == rhs.rawLink && lhs.rawExternalLink == rhs.rawExternalLink && lhs.summary == rhs.summary && lhs.rawImageLink == rhs.rawImageLink && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
 	}
 }
 

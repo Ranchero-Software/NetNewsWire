@@ -37,7 +37,7 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
-		addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
+		addFeedWindowController = AddFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
 																 name: name,
 																 account: account,
 																 folder: folder,

@@ -65,10 +65,10 @@ extension TimelineViewController {
 	}
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let webFeed = menuItem.representedObject as? Feed else {
+		guard let menuItem = sender as? NSMenuItem, let feed = menuItem.representedObject as? Feed else {
 			return
 		}
-		delegate?.timelineRequestedWebFeedSelection(self, webFeed: webFeed)
+		delegate?.timelineRequestedFeedSelection(self, feed: feed)
 	}
 	
 	@objc func markAllInFeedAsRead(_ sender: Any?) {

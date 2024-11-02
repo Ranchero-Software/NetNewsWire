@@ -147,7 +147,7 @@ class AddFeedViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.row == 2 {
-			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedFolderNavViewController") as! UINavigationController
+			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedFolderNavViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
 			let folderViewController = navController.topViewController as! AddFeedFolderViewController
 			folderViewController.delegate = self
@@ -159,7 +159,7 @@ class AddFeedViewController: UITableViewController {
 	
 }
 
-// MARK: AddWebFeedFolderViewControllerDelegate
+// MARK: AddFeedFolderViewControllerDelegate
 
 extension AddFeedViewController: AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container) {

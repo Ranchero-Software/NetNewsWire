@@ -12,8 +12,8 @@ import RSTree
 import Articles
 import Account
 
-class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
-    
+final class AddFeedWindowController : NSWindowController {
+
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
@@ -38,7 +38,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
     var hostWindow: NSWindow!
 
 	convenience init(urlString: String?, name: String?, account: Account?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
-		self.init(windowNibName: NSNib.Name("AddWebFeedSheet"))
+		self.init(windowNibName: NSNib.Name("AddFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
 		self.initialAccount = account
@@ -117,9 +117,6 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 	@objc func controlTextDidChange(_ obj: Notification) {
 		updateUI()
 	}
-}
-
-private extension AddWebFeedWindowController {
 	
 	private func updateUI() {
 		addButton.isEnabled = urlTextField.stringValue.mayBeURL && selectedContainer() != nil

@@ -448,8 +448,8 @@ protocol SidebarDelegate: AnyObject {
 		if isReadFiltered, let feedID = feed.sidebarItemID {
 			self.treeControllerDelegate.addFilterException(feedID)
 			
-			if let webFeed = feed as? Feed, let account = webFeed.account {
-				let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
+			if let feed = feed as? Feed, let account = feed.account {
+				let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(feed) })
 				if let parentFolderFeedID = parentFolder?.sidebarItemID {
 					self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 				}
@@ -540,10 +540,10 @@ private extension SidebarViewController {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
 				}
-			} else if let webFeed = feed as? Feed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.feedID) != nil {
+			} else if let feed = feed as? Feed {
+				if feed.account?.existingFeed(withFeedID: feed.feedID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
-					addParentFolderToFilterExceptions(webFeed)
+					addParentFolderToFilterExceptions(feed)
 				}
 			}
 		}
@@ -738,10 +738,10 @@ private extension SidebarViewController {
 	}
 	
 	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
-		guard let webFeedID = userInfo?[ArticlePathKey.webFeedID] as? String else {
+		guard let feedID = userInfo?[ArticlePathKey.feedID] as? String else {
 			return nil
 		}
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == webFeedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
 			return node
 		}
 		return nil
