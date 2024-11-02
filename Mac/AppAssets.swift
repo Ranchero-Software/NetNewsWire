@@ -52,7 +52,6 @@ struct AppAssets {
 		return RSImage(named: "accountTheOldReader")
 	}()
 
-	@available(macOS 11.0, *)
 	static var addNewSidebarItemImage: RSImage = {
 		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 	}()
@@ -69,12 +68,10 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorOn")!
 	}()
 
-	@available(macOS 11.0, *)
 	static var articleTheme: RSImage = {
 		return NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
 	static var cleanUpImage: RSImage = {
 		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
 	}()
@@ -150,12 +147,10 @@ struct AppAssets {
 		return RSImage(named: "markAllAsRead")!
 	}()
 
-	@available(macOS 11.0, *)
 	static var nextUnreadImage: RSImage = {
 		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
 	static var openInBrowserImage: RSImage = {
 		return NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
 	}()
