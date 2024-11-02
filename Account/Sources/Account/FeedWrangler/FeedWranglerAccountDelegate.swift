@@ -315,7 +315,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		fatalError()
 	}
 	
-	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		self.refreshCredentials(for: account) {
@@ -336,7 +336,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	private func addFeedWranglerSubscription(account: Account, subscription sub: FeedWranglerSubscription, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	private func addFeedWranglerSubscription(account: Account, subscription sub: FeedWranglerSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		DispatchQueue.main.async {
 			let feed = account.createWebFeed(with: sub.title, url: sub.feedURL, webFeedID: String(sub.feedID), homePageURL: sub.siteURL)
 			
@@ -364,7 +364,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	private func initialFeedDownload(account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	private func initialFeedDownload(account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		self.caller.retrieveFeedItems(page: 0, feed: feed) { results in
 			switch results {
@@ -383,7 +383,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameWebFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		self.refreshCredentials(for: account) {
@@ -408,7 +408,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addWebFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		// just add to account, folders are not supported
 		DispatchQueue.main.async {
 			account.addFeedIfNotInAnyFolder(feed)
@@ -416,7 +416,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeWebFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		self.refreshCredentials(for: account) {
@@ -442,11 +442,11 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveWebFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		fatalError()
 	}
 	
-	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {       
+	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {       
         if let existingFeed = account.existingWebFeed(withURL: feed.url) {
             account.addWebFeed(existingFeed, to: container) { result in
                 switch result {

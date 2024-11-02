@@ -97,7 +97,7 @@ protocol SidebarDelegate: AnyObject {
 	func saveState(to state: inout [AnyHashable : Any]) {
 		state[UserInfoKey.readFeedsFilterState] = isReadFiltered
 		state[UserInfoKey.containerExpandedWindowState] = expandedTable.map { $0.userInfo }
-		state[UserInfoKey.selectedFeedsState] = selectedFeeds.compactMap { $0.feedID?.userInfo }
+		state[UserInfoKey.selectedFeedsState] = selectedFeeds.compactMap { $0.sidebarItemID?.userInfo }
 	}
 	
 	func restoreState(from state: [AnyHashable : Any]) {
@@ -111,7 +111,7 @@ protocol SidebarDelegate: AnyObject {
 			return
 		}
 
-		let selectedFeedIdentifers = Set(selectedFeedsState.compactMap( { FeedIdentifier(userInfo: $0) }))
+		let selectedFeedIdentifers = Set(selectedFeedsState.compactMap( { SidebarItemIdentifier(userInfo: $0) }))
 		selectedFeedIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
 		
 		rebuildTreeAndReloadDataIfNeeded()
@@ -119,7 +119,7 @@ protocol SidebarDelegate: AnyObject {
 		var selectIndexes = IndexSet()
 
 		func selectFeedsVisitor(node: Node) {
-			if let feedID = (node.representedObject as? FeedIdentifiable)?.feedID {
+			if let feedID = (node.representedObject as? SidebarItemIdentifiable)?.sidebarItemID {
 				if selectedFeedIdentifers.contains(feedID) {
 					selectIndexes.insert(outlineView.row(forItem: node) )
 				}
@@ -194,15 +194,15 @@ protocol SidebarDelegate: AnyObject {
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed else { return }
 		configureCellsForRepresentedObject(webFeed)
 	}
 	
 	@objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
+		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
+		if key == Feed.WebFeedSettingKey.homePageURL || key == Feed.WebFeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
 	}
@@ -444,13 +444,13 @@ protocol SidebarDelegate: AnyObject {
 
 	// MARK: - API
 	
-	func selectFeed(_ feed: Feed) {
-		if isReadFiltered, let feedID = feed.feedID {
+	func selectFeed(_ feed: SidebarItem) {
+		if isReadFiltered, let feedID = feed.sidebarItemID {
 			self.treeControllerDelegate.addFilterException(feedID)
 			
-			if let webFeed = feed as? WebFeed, let account = webFeed.account {
+			if let webFeed = feed as? Feed, let account = webFeed.account {
 				let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
-				if let parentFolderFeedID = parentFolder?.feedID {
+				if let parentFolderFeedID = parentFolder?.sidebarItemID {
 					self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 				}
 			}
@@ -465,7 +465,7 @@ protocol SidebarDelegate: AnyObject {
 	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
 		guard let accountNode = findAccountNode(userInfo),
 			let feedNode = findFeedNode(userInfo, beginningAt: accountNode),
-			let feed = feedNode.representedObject as? Feed else {
+			let feed = feedNode.representedObject as? SidebarItem else {
 			return
 		}
 		selectFeed(feed)
@@ -510,8 +510,8 @@ private extension SidebarViewController {
 		return [Node]()
 	}
 	
-	var selectedFeeds: [Feed] {
-		selectedNodes.compactMap { $0.representedObject as? Feed }
+	var selectedFeeds: [SidebarItem] {
+		selectedNodes.compactMap { $0.representedObject as? SidebarItem }
 	}
 
 	var singleSelectedNode: Node? {
@@ -521,26 +521,26 @@ private extension SidebarViewController {
 		return selectedNodes.first!
 	}
 
-	var singleSelectedWebFeed: WebFeed? {
+	var singleSelectedWebFeed: Feed? {
 		guard let node = singleSelectedNode else {
 			return nil
 		}
-		return node.representedObject as? WebFeed
+		return node.representedObject as? Feed
 	}
 	
 	func addAllSelectedToFilterExceptions() {
 		selectedFeeds.forEach { addToFilterExeptionsIfNecessary($0) }
 	}
 	
-	func addToFilterExeptionsIfNecessary(_ feed: Feed?) {
-		if isReadFiltered, let feedID = feed?.feedID {
+	func addToFilterExeptionsIfNecessary(_ feed: SidebarItem?) {
+		if isReadFiltered, let feedID = feed?.sidebarItemID {
 			if feed is PseudoFeed {
 				treeControllerDelegate.addFilterException(feedID)
 			} else if let folderFeed = feed as? Folder {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
 				}
-			} else if let webFeed = feed as? WebFeed {
+			} else if let webFeed = feed as? Feed {
 				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
 					addParentFolderToFilterExceptions(webFeed)
@@ -549,10 +549,10 @@ private extension SidebarViewController {
 		}
 	}
 	
-	func addParentFolderToFilterExceptions(_ feed: Feed) {
+	func addParentFolderToFilterExceptions(_ feed: SidebarItem) {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
 			let folder = node.parent?.representedObject as? Folder,
-			let folderFeedID = folder.feedID else {
+			let folderFeedID = folder.sidebarItemID else {
 				return
 		}
 		
@@ -610,7 +610,7 @@ private extension SidebarViewController {
 	}
 
 	func addTreeControllerToFilterExceptionsVisitor(node: Node) {
-		if let feed = node.representedObject as? Feed, let feedID = feed.feedID {
+		if let feed = node.representedObject as? SidebarItem, let feedID = feed.sidebarItemID {
 			treeControllerDelegate.addFilterException(feedID)
 		}
 	}
@@ -741,7 +741,7 @@ private extension SidebarViewController {
 		guard let webFeedID = userInfo?[ArticlePathKey.webFeedID] as? String else {
 			return nil
 		}
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? WebFeed)?.webFeedID == webFeedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.webFeedID == webFeedID }) {
 			return node
 		}
 		return nil
@@ -768,7 +768,7 @@ private extension SidebarViewController {
 	}
 
 	func imageFor(_ node: Node) -> IconImage? {
-		if let feed = node.representedObject as? WebFeed, let feedIcon = IconImageCache.shared.imageForFeed(feed) {
+		if let feed = node.representedObject as? Feed, let feedIcon = IconImageCache.shared.imageForFeed(feed) {
 			return feedIcon
 		}
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
@@ -858,7 +858,7 @@ private extension Node {
 		if representedObject === object {
 			return true
 		}
-		if let feed1 = object as? WebFeed, let feed2 = representedObject as? WebFeed {
+		if let feed1 = object as? Feed, let feed2 = representedObject as? Feed {
 			return feed1 == feed2
 		}
 		return false

@@ -195,14 +195,14 @@ extension NewsBlurAccountDelegate {
 		
 	}
 
-	func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
+	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
 			feed.folderRelationship = folderRelationship
 		}
 	}
 
-	func saveFolderRelationship(for feed: WebFeed, withFolderName folderName: String, id: String) {
+	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = id
 			feed.folderRelationship = folderRelationship
@@ -412,7 +412,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func createFeed(account: Account, feed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createFeed(account: Account, feed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let feed = feed else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -445,7 +445,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func downloadFeed(account: Account, feed: WebFeed, page: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+	func downloadFeed(account: Account, feed: Feed, page: Int, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		caller.retrieveStories(feedID: feed.webFeedID, page: page) { result in
@@ -484,7 +484,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func initialFeedDownload(account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func initialFeedDownload(account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		// Download the initial articles
@@ -513,7 +513,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func deleteFeed(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		// This error should never happen
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))

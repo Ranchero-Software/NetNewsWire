@@ -169,7 +169,7 @@ final class FeedWranglerAPICaller: NSObject {
 		
 	}
 	
-	func retrieveFeedItems(page: Int = 0, feed: WebFeed? = nil, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
+	func retrieveFeedItems(page: Int = 0, feed: Feed? = nil, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
 		let queryItems = [
 			URLQueryItem(name: "read", value: "false"),
 			URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),

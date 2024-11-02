@@ -130,17 +130,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
 			return
 		}
 		applyToCellsForRepresentedObject(webFeed, configureIcon(_:_:))
 	}
 
 	@objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
+		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
+		if key == Feed.WebFeedSettingKey.homePageURL || key == Feed.WebFeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
 	}
@@ -268,7 +268,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		renameAction.backgroundColor = UIColor.systemOrange
 		actions.append(renameAction)
 		
-		if let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed {
+		if let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed {
 			let moreTitle = NSLocalizedString("More", comment: "More")
 			let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completion) in
 				
@@ -320,10 +320,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
 			return nil
 		}
-		if feed is WebFeed {
+		if feed is Feed {
 			return makeWebFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else if feed is Folder {
 			return makeFolderContextMenu(indexPath: indexPath)
@@ -795,7 +795,7 @@ private extension MasterFeedViewController {
 			cell.isDisclosureAvailable = false
 		}
 		
-		if let feed = node.representedObject as? Feed {
+		if let feed = node.representedObject as? SidebarItem {
 			cell.name = feed.nameForDisplay
 			cell.unreadCount = feed.unreadCount
 		}
@@ -812,7 +812,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func configureIcon(_ cell: MasterFeedTableViewCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let feedID = feed.feedID else {
+		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? SidebarItem, let feedID = feed.sidebarItemID else {
 			return
 		}
 		cell.iconImage = IconImageCache.shared.imageFor(feedID)
@@ -832,9 +832,9 @@ private extension MasterFeedViewController {
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MasterFeedTableViewCell, IndexPath) -> Void) {
 		applyToAvailableCells { (cell, indexPath) in
 			if let node = coordinator.nodeFor(indexPath),
-			   let representedFeed = representedObject as? Feed,
-			   let candidate = node.representedObject as? Feed,
-			   representedFeed.feedID == candidate.feedID {
+			   let representedFeed = representedObject as? SidebarItem,
+			   let candidate = node.representedObject as? SidebarItem,
+			   representedFeed.sidebarItemID == candidate.sidebarItemID {
 				completion(cell, indexPath)
 			}
 		}
@@ -862,7 +862,7 @@ private extension MasterFeedViewController {
 		if let folder = node.representedObject as? Folder {
 			return folder.account
 		}
-		if let feed = node.representedObject as? WebFeed {
+		if let feed = node.representedObject as? Feed {
 			return feed.account
 		}
 		return nil
@@ -1000,7 +1000,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let url = URL(string: webFeed.url) else {
 				  return nil
 			  }
@@ -1013,7 +1013,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func copyFeedPageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let url = URL(string: webFeed.url) else {
 				  return nil
 			  }
@@ -1027,7 +1027,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let homePageURL = webFeed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
@@ -1041,7 +1041,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func copyHomePageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let homePageURL = webFeed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
@@ -1056,7 +1056,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			webFeed.unreadCount > 0,
 			let articles = try? webFeed.fetchArticles(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 				return nil
@@ -1096,7 +1096,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func getInfoAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed else {
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
 			return nil
 		}
 		
@@ -1124,7 +1124,7 @@ private extension MasterFeedViewController {
 	}
 
 	func getInfoAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed else {
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
 			return nil
 		}
 
@@ -1137,7 +1137,7 @@ private extension MasterFeedViewController {
 	}
 
 	func markAllAsReadAction(indexPath: IndexPath) -> UIAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem,
 			  let contentView = self.tableView.cellForRow(at: indexPath)?.contentView,
 			  feed.unreadCount > 0 else {
 				  return nil
@@ -1179,7 +1179,7 @@ private extension MasterFeedViewController {
 
 
 	func rename(indexPath: IndexPath) {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else { return	}
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
 
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Rename feed")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, feed.nameForDisplay) as String
@@ -1196,7 +1196,7 @@ private extension MasterFeedViewController {
 				return
 			}
 			
-			if let webFeed = feed as? WebFeed {
+			if let webFeed = feed as? Feed {
 				webFeed.rename(to: name) { result in
 					switch result {
 					case .success:
@@ -1233,7 +1233,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func delete(indexPath: IndexPath) {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else { return	}
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
 
 		let title: String
 		let message: String
@@ -1271,7 +1271,7 @@ private extension MasterFeedViewController {
 
 		if let folder = deleteNode.representedObject as? Folder {
 			ActivityManager.cleanUp(folder)
-		} else if let feed = deleteNode.representedObject as? WebFeed {
+		} else if let feed = deleteNode.representedObject as? Feed {
 			ActivityManager.cleanUp(feed)
 		}
 		

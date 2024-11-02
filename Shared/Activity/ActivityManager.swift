@@ -48,12 +48,12 @@ class ActivityManager {
 		invalidateNextUnread()
 	}
 	
-	func selecting(feed: Feed) {
+	func selecting(feed: SidebarItem) {
 		invalidateCurrentActivities()
 		
 		selectingActivity = makeSelectFeedActivity(feed: feed)
 		
-		if let webFeed = feed as? WebFeed {
+		if let webFeed = feed as? Feed {
 			updateSelectingActivityFeedSearchAttributes(with: webFeed)
 		}
 		
@@ -86,7 +86,7 @@ class ActivityManager {
 		nextUnreadActivity = nil
 	}
 	
-	func reading(feed: Feed?, article: Article?) {
+	func reading(feed: SidebarItem?, article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
 		
@@ -134,13 +134,13 @@ class ActivityManager {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ webFeed: WebFeed) {
+	static func cleanUp(_ webFeed: Feed) {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: webFeed))
 	}
 	#endif
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
 			return
 		}
 		
@@ -161,7 +161,7 @@ class ActivityManager {
 
 private extension ActivityManager {
 	
-	func makeSelectFeedActivity(feed: Feed) -> NSUserActivity {
+	func makeSelectFeedActivity(feed: SidebarItem) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)
 		
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
@@ -171,27 +171,27 @@ private extension ActivityManager {
 		activity.keywords = Set(makeKeywords(title))
 		activity.isEligibleForSearch = true
 		
-		let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
+		let articleFetcherIdentifierUserInfo = feed.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
 		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo]
 		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 
-		activity.persistentIdentifier = feed.feedID?.description ?? ""
+		activity.persistentIdentifier = feed.sidebarItemID?.description ?? ""
 
 		#if os(iOS)
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
-		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.feedID?.description ?? ""
+		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.sidebarItemID?.description ?? ""
 		#endif
 
 		return activity
 	}
 	
-	func makeReadArticleActivity(feed: Feed?, article: Article) -> NSUserActivity {
+	func makeReadArticleActivity(feed: SidebarItem?, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
 		
 		if let feed = feed {
-			let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
+			let articleFetcherIdentifierUserInfo = feed.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
 			let articlePathUserInfo = article.pathUserInfo
 			activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
 		} else {
@@ -244,7 +244,7 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	func updateSelectingActivityFeedSearchAttributes(with feed: WebFeed) {
+	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
 		attributeSet.title = feed.nameForDisplay
@@ -277,7 +277,7 @@ private extension ActivityManager {
 		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
 	}
 	
-	static func identifier(for feed: WebFeed) -> String {
+	static func identifier(for feed: Feed) -> String {
 		return "account_\(feed.account!.accountID)_feed_\(feed.webFeedID)"
 	}
 	
@@ -285,7 +285,7 @@ private extension ActivityManager {
 		return "account_\(article.accountID)_feed_\(article.webFeedID)_article_\(article.articleID)"
 	}
 	
-	static func identifiers(for feed: WebFeed) -> [String] {
+	static func identifiers(for feed: Feed) -> [String] {
 		var ids = [String]()
 		ids.append(identifier(for: feed))
 		if let articles = try? feed.fetchArticles() {

@@ -77,7 +77,7 @@ final class DeleteCommand: UndoableCommand {
 		}
 
 		for node in nodes {
-			if let _ = node.representedObject as? WebFeed {
+			if let _ = node.representedObject as? Feed {
 				continue
 			}
 			if let _ = node.representedObject as? Folder {
@@ -98,7 +98,7 @@ private struct SidebarItemSpecifier {
 	private weak var account: Account?
 	private let parentFolder: Folder?
 	private let folder: Folder?
-	private let webFeed: WebFeed?
+	private let webFeed: Feed?
 	private let path: ContainerPath
 	private let errorHandler: (Error) -> ()
 
@@ -118,7 +118,7 @@ private struct SidebarItemSpecifier {
 
 		self.parentFolder = node.parentFolder()
 
-		if let webFeed = node.representedObject as? WebFeed {
+		if let webFeed = node.representedObject as? Feed {
 			self.webFeed = webFeed
 			self.folder = nil
 			account = webFeed.account
@@ -271,7 +271,7 @@ private struct DeleteActionName {
 		var numberOfFolders = 0
 
 		for node in nodes {
-			if let _ = node.representedObject as? WebFeed {
+			if let _ = node.representedObject as? Feed {
 				numberOfFeeds += 1
 			}
 			else if let _ = node.representedObject as? Folder {

@@ -19,7 +19,7 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 	public static let shared = SmartFeedsController()
 	let nameForDisplay = NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")
 
-	var smartFeeds = [Feed]()
+	var smartFeeds = [SidebarItem]()
 	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 	let unreadFeed = UnreadFeed()
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
@@ -28,7 +28,7 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}
 	
-	func find(by identifier: FeedIdentifier) -> PseudoFeed? {
+	func find(by identifier: SidebarItemIdentifier) -> PseudoFeed? {
 		switch identifier {
 		case .smartFeed(let stringIdentifer):
 			switch stringIdentifer {

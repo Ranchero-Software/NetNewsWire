@@ -8,11 +8,11 @@
 
 import Foundation
 
-public protocol FeedIdentifiable {
-	var feedID: FeedIdentifier? { get }
+public protocol SidebarItemIdentifiable {
+	var sidebarItemID: SidebarItemIdentifier? { get }
 }
 
-public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
+public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable {
 	
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
@@ -65,16 +65,16 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 		switch type {
 		case "smartFeed":
 			guard let id = userInfo["id"] as? String else { return nil }
-			self = FeedIdentifier.smartFeed(id)
+			self = SidebarItemIdentifier.smartFeed(id)
 		case "script":
 			guard let id = userInfo["id"] as? String else { return nil }
-			self = FeedIdentifier.script(id)
+			self = SidebarItemIdentifier.script(id)
 		case "feed":
 			guard let accountID = userInfo["accountID"] as? String, let webFeedID = userInfo["webFeedID"] as? String else { return nil }
-			self = FeedIdentifier.webFeed(accountID, webFeedID)
+			self = SidebarItemIdentifier.webFeed(accountID, webFeedID)
 		case "folder":
 			guard let accountID = userInfo["accountID"] as? String, let folderName = userInfo["folderName"] as? String else { return nil }
-			self = FeedIdentifier.folder(accountID, folderName)
+			self = SidebarItemIdentifier.folder(accountID, folderName)
 		default:
 			return nil
 		}

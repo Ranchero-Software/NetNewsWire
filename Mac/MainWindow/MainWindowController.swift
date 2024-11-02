@@ -176,7 +176,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			}
 		}
 		
-		if let feed = currentFeedOrFolder as? WebFeed, let noteObject = noteObject as? WebFeed {
+		if let feed = currentFeedOrFolder as? Feed, let noteObject = noteObject as? Feed {
 			if feed == noteObject {
 				updateWindowTitle()
 				return
@@ -633,7 +633,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		detailViewController?.setState(detailState, mode: mode)
 	}
 
-	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed) {
+	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: Feed) {
 		sidebarViewController?.selectFeed(webFeed)
 	}
 	

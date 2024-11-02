@@ -19,13 +19,13 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 final class FetchRequestOperation {
 
 	let id: Int
-	let readFilterEnabledTable: [FeedIdentifier: Bool]
+	let readFilterEnabledTable: [SidebarItemIdentifier: Bool]
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
 	private let fetchers: [ArticleFetcher]
 
-	init(id: Int, readFilterEnabledTable: [FeedIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilterEnabledTable: [SidebarItemIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
 		self.readFilterEnabledTable = readFilterEnabledTable
@@ -81,7 +81,7 @@ final class FetchRequestOperation {
 		}
 		
 		for fetcher in fetchers {
-			if (fetcher as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+			if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
 				fetcher.fetchUnreadArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
 					process(articles)

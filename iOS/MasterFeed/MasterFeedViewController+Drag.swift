@@ -13,7 +13,7 @@ import Account
 extension MasterFeedViewController: UITableViewDragDelegate {
 	
 	func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-		guard let node = coordinator.nodeFor(indexPath), let webFeed = node.representedObject as? WebFeed else {
+		guard let node = coordinator.nodeFor(indexPath), let webFeed = node.representedObject as? Feed else {
 			return [UIDragItem]()
 		}
 		

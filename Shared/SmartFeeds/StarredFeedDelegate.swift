@@ -16,8 +16,8 @@ import Account
 
 struct StarredFeedDelegate: SmartFeedDelegate {
 
-	var feedID: FeedIdentifier? {
-		return FeedIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))
+	var sidebarItemID: SidebarItemIdentifier? {
+		return SidebarItemIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))
 	}
 
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
