@@ -3508,6 +3508,7 @@
 		};
 		7180F95C265B67B800189094 /* Run Script: Delete Unnecessary Frameworks For Share Extension */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -3526,6 +3527,7 @@
 		};
 		8423E3E3220158E700C3795B /* Run Script: Code Sign Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -3544,6 +3546,7 @@
 		};
 		84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -3558,6 +3561,7 @@
 		};
 		D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
