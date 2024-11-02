@@ -1428,7 +1428,7 @@ private extension MainWindowController {
 		
 		let newWebFeedItem = NSMenuItem()
 		newWebFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
-		newWebFeedItem.action = Selector(("showAddWebFeedWindow:"))
+		newWebFeedItem.action = Selector(("showAddFeedWindow:"))
 		menu.addItem(newWebFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()

@@ -465,7 +465,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return mainWindowController?.isOpen ?? false
 		}
 		
-		if item.action == #selector(showAddWebFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
+		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		
@@ -538,7 +538,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 	}
 
-	@IBAction func showAddWebFeedWindow(_ sender: Any?) {
+	@IBAction func showAddFeedWindow(_ sender: Any?) {
 		addWebFeed(nil)
 	}
 
