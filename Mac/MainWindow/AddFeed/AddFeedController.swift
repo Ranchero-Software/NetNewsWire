@@ -33,20 +33,16 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		self.hostWindow = hostWindow
 	}
 
-	func showAddFeedSheet(_ type: AddFeedWindowControllerType, _ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
+	func showAddFeedSheet(_ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
-		switch type {
-		case .webFeed:
-			addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
+		addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
 																 name: name,
 																 account: account,
 																 folder: folder,
 																 folderTreeController: folderTreeController,
 																 delegate: self)
-		}
-		
 		addFeedWindowController!.runSheetOnWindow(hostWindow)
 	}
 

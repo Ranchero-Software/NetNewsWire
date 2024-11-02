@@ -141,7 +141,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 		addFeedController = AddFeedController(hostWindow: window)
-		addFeedController?.showAddFeedSheet(.webFeed, urlString, name, account, folder)
+		addFeedController?.showAddFeedSheet(urlString, name, account, folder)
 	}
 	
 	// MARK: - NSApplicationDelegate
