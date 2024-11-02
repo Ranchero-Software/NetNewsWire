@@ -354,7 +354,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		let feedId = FeedlyFeedResourceId(id: feed.webFeedID)
+		let feedId = FeedlyFeedResourceId(id: feed.feedID)
 		let editedNameBefore = feed.editedName
 		
 		// Adding an existing feed updates it.
@@ -381,7 +381,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				throw FeedlyAccountDelegateError.notLoggedIn
 			}
 			
-			let resource = FeedlyFeedResourceId(id: feed.webFeedID)
+			let resource = FeedlyFeedResourceId(id: feed.feedID)
             let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
                                                                      credentials: credentials,
                                                                      resource: resource,
@@ -412,7 +412,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 		
-		caller.removeFeed(feed.webFeedID, fromCollectionWith: collectionId) { result in
+		caller.removeFeed(feed.feedID, fromCollectionWith: collectionId) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -459,8 +459,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
-			account.addWebFeed(existingFeed, to: container) { result in
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -483,9 +483,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			
-			folder.topLevelWebFeeds.remove(feed)
+			folder.topLevelFeeds.remove(feed)
 			
 			group.enter()
 			restoreWebFeed(for: account, feed: feed, container: folder) { result in

@@ -70,11 +70,11 @@ struct PasteboardFeed: Hashable {
 
 	init?(pasteboardItem: NSPasteboardItem) {
 		var pasteboardType: NSPasteboard.PasteboardType?
-		if pasteboardItem.types.contains(WebFeedPasteboardWriter.webFeedUTIInternalType) {
-			pasteboardType = WebFeedPasteboardWriter.webFeedUTIInternalType
+		if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIInternalType) {
+			pasteboardType = FeedPasteboardWriter.feedUTIInternalType
 		}
-		else if pasteboardItem.types.contains(WebFeedPasteboardWriter.webFeedUTIType) {
-			pasteboardType = WebFeedPasteboardWriter.webFeedUTIType
+		else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
+			pasteboardType = FeedPasteboardWriter.feedUTIType
 		}
 		if let foundType = pasteboardType {
 			if let feedDictionary = pasteboardItem.propertyList(forType: foundType) as? PasteboardFeedDictionary {
@@ -107,8 +107,8 @@ struct PasteboardFeed: Hashable {
 		guard let items = pasteboard.pasteboardItems else {
 			return nil
 		}
-		let webFeeds = items.compactMap { PasteboardFeed(pasteboardItem: $0) }
-		return webFeeds.isEmpty ? nil : Set(webFeeds)
+		let feeds = items.compactMap { PasteboardFeed(pasteboardItem: $0) }
+		return feeds.isEmpty ? nil : Set(feeds)
 	}
 
 	// MARK: - Writing
@@ -149,28 +149,28 @@ struct PasteboardFeed: Hashable {
 extension Feed: @retroactive PasteboardWriterOwner {
 
 	public var pasteboardWriter: NSPasteboardWriting {
-		return WebFeedPasteboardWriter(webFeed: self)
+		return FeedPasteboardWriter(feed: self)
 	}
 }
 
-@objc final class WebFeedPasteboardWriter: NSObject, NSPasteboardWriting {
+@objc final class FeedPasteboardWriter: NSObject, NSPasteboardWriting {
 
-	private let webFeed: Feed
-	static let webFeedUTI = "com.ranchero.webFeed"
-	static let webFeedUTIType = NSPasteboard.PasteboardType(rawValue: webFeedUTI)
-	static let webFeedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.webFeed"
-	static let webFeedUTIInternalType = NSPasteboard.PasteboardType(rawValue: webFeedUTIInternal)
+	private let feed: Feed
+	static let feedUTI = "com.ranchero.feed"
+	static let feedUTIType = NSPasteboard.PasteboardType(rawValue: feedUTI)
+	static let feedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.feed"
+	static let feedUTIInternalType = NSPasteboard.PasteboardType(rawValue: feedUTIInternal)
 
 
-	init(webFeed: Feed) {
-		self.webFeed = webFeed
+	init(feed: Feed) {
+		self.feed = feed
 	}
 
 	// MARK: - NSPasteboardWriting
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		return [WebFeedPasteboardWriter.webFeedUTIType, .URL, .string, WebFeedPasteboardWriter.webFeedUTIInternalType]
+		return [FeedPasteboardWriter.feedUTIType, .URL, .string, FeedPasteboardWriter.feedUTIInternalType]
 	}
 
 	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
@@ -179,12 +179,12 @@ extension Feed: @retroactive PasteboardWriterOwner {
 
 		switch type {
 		case .string:
-			plist = webFeed.nameForDisplay
+			plist = feed.nameForDisplay
 		case .URL:
-			plist = webFeed.url
-		case WebFeedPasteboardWriter.webFeedUTIType:
+			plist = feed.url
+		case FeedPasteboardWriter.feedUTIType:
 			plist = exportDictionary
-		case WebFeedPasteboardWriter.webFeedUTIInternalType:
+		case FeedPasteboardWriter.feedUTIInternalType:
 			plist = internalDictionary
 		default:
 			plist = nil
@@ -194,10 +194,10 @@ extension Feed: @retroactive PasteboardWriterOwner {
 	}
 }
 
-private extension WebFeedPasteboardWriter {
+private extension FeedPasteboardWriter {
 
 	var pasteboardFeed: PasteboardFeed {
-		return PasteboardFeed(url: webFeed.url, feedID: webFeed.webFeedID, homePageURL: webFeed.homePageURL, name: webFeed.name, editedName: webFeed.editedName, accountID: webFeed.account?.accountID, accountType: webFeed.account?.type)
+		return PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID, accountType: feed.account?.type)
 	}
 
 	var exportDictionary: PasteboardFeedDictionary {

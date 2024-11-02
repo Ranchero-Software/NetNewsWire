@@ -308,12 +308,12 @@ private extension SidebarOutlineDataSource {
 		return localDragOperation(parentNode: parentNode)
 	}
 	
-	func copyWebFeedInAccount(node: Node, to parentNode: Node) {
+	func copyFeedInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed, let destination = parentNode.representedObject as? Container else {
 			return
 		}
 		
-		destination.account?.addWebFeed(feed, to: destination) { result in
+		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
 				break
@@ -323,7 +323,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	func moveWebFeedInAccount(node: Node, to parentNode: Node) {
+	func moveFeedInAccount(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
 			let source = node.parent?.representedObject as? Container,
 			let destination = parentNode.representedObject as? Container else {
@@ -331,7 +331,7 @@ private extension SidebarOutlineDataSource {
 		}
 
 		BatchUpdate.shared.start()
-		source.account?.moveWebFeed(feed, from: source, to: destination) { result in
+		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -342,15 +342,15 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	func copyWebFeedBetweenAccounts(node: Node, to parentNode: Node) {
+	func copyFeedBetweenAccounts(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? Feed,
 			let destinationAccount = nodeAccount(parentNode),
 			let destinationContainer = parentNode.representedObject as? Container else {
 			return
 		}
 		
-		if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-			destinationAccount.addWebFeed(existingFeed, to: destinationContainer) { result in
+		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
 					break
@@ -359,7 +359,7 @@ private extension SidebarOutlineDataSource {
 				}
 			}
 		} else {
-			destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
+			destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
 					break
@@ -378,12 +378,12 @@ private extension SidebarOutlineDataSource {
 		draggedNodes.forEach { node in
 			if sameAccount(node, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyWebFeedInAccount(node: node, to: parentNode)
+					copyFeedInAccount(node: node, to: parentNode)
 				} else {
-					moveWebFeedInAccount(node: node, to: parentNode)
+					moveFeedInAccount(node: node, to: parentNode)
 				}
 			} else {
-				copyWebFeedBetweenAccounts(node: node, to: parentNode)
+				copyFeedBetweenAccounts(node: node, to: parentNode)
 			}
 		}
 		
@@ -431,9 +431,9 @@ private extension SidebarOutlineDataSource {
 		destinationAccount.addFolder(folder.name ?? "") { result in
 			switch result {
 			case .success(let destinationFolder):
-				for feed in folder.topLevelWebFeeds {
-					if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-						destinationAccount.addWebFeed(existingFeed, to: destinationFolder) { result in
+				for feed in folder.topLevelFeeds {
+					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
+						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
 							switch result {
 							case .success:
 								break
@@ -442,7 +442,7 @@ private extension SidebarOutlineDataSource {
 							}
 						}
 					} else {
-						destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
+						destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
 							switch result {
 							case .success:
 								break
@@ -520,8 +520,8 @@ private extension SidebarOutlineDataSource {
 			return account
 		} else if let folder = node.representedObject as? Folder {
 			return folder.account
-		} else if let webFeed = node.representedObject as? Feed {
-			return webFeed.account
+		} else if let feed = node.representedObject as? Feed {
+			return feed.account
 		} else {
 			return nil
 		}
@@ -602,7 +602,7 @@ private extension SidebarOutlineDataSource {
 					return true
 				}
 			} else {
-				if dropTargetAccount.hasWebFeed(withURL: draggedFeed.url) {
+				if dropTargetAccount.hasFeed(withURL: draggedFeed.url) {
 					return true
 				}
 			}

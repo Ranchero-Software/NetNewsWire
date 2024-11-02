@@ -99,7 +99,7 @@ class AddFeedViewController: UITableViewController {
 			account = containerAccount
 		}
 		
-		if account!.hasWebFeed(withURL: url.absoluteString) {
+		if account!.hasFeed(withURL: url.absoluteString) {
 			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}
@@ -112,14 +112,14 @@ class AddFeedViewController: UITableViewController {
 		
 		BatchUpdate.shared.start()
 		
-		account!.createWebFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
+		account!.createFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
 
 			BatchUpdate.shared.end()
 			
 			switch result {
 			case .success(let feed):
 				self.dismiss(animated: true)
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
 				self.addButton.isEnabled = true
 				self.activityIndicator.isHidden = true

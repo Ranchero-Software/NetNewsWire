@@ -22,18 +22,18 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
 		}
-		return SidebarItemIdentifier.webFeed(accountID, webFeedID)
+		return SidebarItemIdentifier.webFeed(accountID, feedID)
 	}
 
 	public weak var account: Account?
 	public let url: String
 
-	public var webFeedID: String {
+	public var feedID: String {
 		get {
-			return metadata.webFeedID
+			return metadata.feedID
 		}
 		set {
-			metadata.webFeedID = newValue
+			metadata.feedID = newValue
 		}
 	}
 
@@ -264,13 +264,13 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {
-		hasher.combine(webFeedID)
+		hasher.combine(feedID)
 	}
 
 	// MARK: - Equatable
 
 	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
-		return lhs.webFeedID == rhs.webFeedID && lhs.accountID == rhs.accountID
+		return lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
 	}
 }
 
@@ -307,7 +307,7 @@ extension Feed: OPMLRepresentable {
 extension Set where Element == Feed {
 
 	func webFeedIDs() -> Set<String> {
-		return Set<String>(map { $0.webFeedID })
+		return Set<String>(map { $0.feedID })
 	}
 	
 	func sorted() -> Array<Feed> {

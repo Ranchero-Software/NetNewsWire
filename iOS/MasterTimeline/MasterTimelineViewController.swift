@@ -453,7 +453,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		
-		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in

@@ -32,7 +32,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
 		   let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
 		   let sourceWebFeed = sourceNode.representedObject as? Feed,
-		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasWebFeed(withURL: sourceWebFeed.url) {
+		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasFeed(withURL: sourceWebFeed.url) {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 
@@ -104,7 +104,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		guard sourceContainer !== destinationContainer else { return }
 		
 		BatchUpdate.shared.start()
-		sourceContainer.account?.moveWebFeed(feed, from: sourceContainer, to: destinationContainer) { result in
+		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -117,10 +117,10 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	
 	func moveWebFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		
-		if let existingFeed = destinationContainer.account?.existingWebFeed(withURL: feed.url) {
+		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.addWebFeed(existingFeed, to: destinationContainer) { result in
+			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
 					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in
@@ -141,7 +141,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		} else {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
+			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
 					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in

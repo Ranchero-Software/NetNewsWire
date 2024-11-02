@@ -10,7 +10,7 @@ import Foundation
 
 struct UserInfoKey {
 
-	static let webFeed = "webFeed"
+	static let feed = "feed"
 	static let url = "url"
 	static let articlePath = "articlePath"
 	static let feedIdentifier = "feedIdentifier"

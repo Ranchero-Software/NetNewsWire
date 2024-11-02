@@ -29,7 +29,7 @@ protocol SidebarDelegate: AnyObject {
 	weak var delegate: SidebarDelegate?
 
 	private let rebuildTreeAndRestoreSelectionQueue = CoalescingQueue(name: "Rebuild Tree Queue", interval: 1.0)
-	let treeControllerDelegate = WebFeedTreeControllerDelegate()
+	let treeControllerDelegate = FeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
@@ -64,7 +64,7 @@ protocol SidebarDelegate: AnyObject {
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
-		outlineView.registerForDraggedTypes([WebFeedPasteboardWriter.webFeedUTIInternalType, WebFeedPasteboardWriter.webFeedUTIType, .URL, .string])
+		outlineView.registerForDraggedTypes([FeedPasteboardWriter.feedUTIInternalType, FeedPasteboardWriter.feedUTIType, .URL, .string])
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -75,8 +75,8 @@ protocol SidebarDelegate: AnyObject {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
 
@@ -183,7 +183,7 @@ protocol SidebarDelegate: AnyObject {
 	}
 	
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let feed = notification.userInfo?[UserInfoKey.webFeed] else {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] else {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
@@ -193,17 +193,17 @@ protocol SidebarDelegate: AnyObject {
 		applyToAvailableCells(configureFavicon)
 	}
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed else { return }
-		configureCellsForRepresentedObject(webFeed)
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else { return }
+		configureCellsForRepresentedObject(feed)
 	}
 	
-	@objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
+	@objc func feedSettingDidChange(_ note: Notification) {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
 			return
 		}
 		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
-			configureCellsForRepresentedObject(webFeed)
+			configureCellsForRepresentedObject(feed)
 		}
 	}
 
@@ -255,7 +255,7 @@ protocol SidebarDelegate: AnyObject {
 		guard outlineView.clickedRow == outlineView.selectedRow else {
 			return
 		}
-		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = try? singleSelectedWebFeed?.fetchUnreadArticles() {
+		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = try? singleSelectedFeed?.fetchUnreadArticles() {
 			if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) {
 				runCommand(markReadCommand)
 			}
@@ -264,7 +264,7 @@ protocol SidebarDelegate: AnyObject {
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
-		guard let feed = singleSelectedWebFeed, let homePageURL = feed.homePageURL else {
+		guard let feed = singleSelectedFeed, let homePageURL = feed.homePageURL else {
 			return
 		}
 		Browser.open(homePageURL, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
@@ -272,7 +272,7 @@ protocol SidebarDelegate: AnyObject {
 
 	@objc func openInAppBrowser(_ sender: Any?) {
 		// There is no In-App Browser for mac - so we use safari
-		guard let feed = singleSelectedWebFeed, let homePageURL = feed.homePageURL else {
+		guard let feed = singleSelectedFeed, let homePageURL = feed.homePageURL else {
 			return
 		}
 		Browser.open(homePageURL, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
@@ -521,7 +521,7 @@ private extension SidebarViewController {
 		return selectedNodes.first!
 	}
 
-	var singleSelectedWebFeed: Feed? {
+	var singleSelectedFeed: Feed? {
 		guard let node = singleSelectedNode else {
 			return nil
 		}
@@ -541,7 +541,7 @@ private extension SidebarViewController {
 					treeControllerDelegate.addFilterException(feedID)
 				}
 			} else if let webFeed = feed as? Feed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
+				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.feedID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
 					addParentFolderToFilterExceptions(webFeed)
 				}
@@ -741,7 +741,7 @@ private extension SidebarViewController {
 		guard let webFeedID = userInfo?[ArticlePathKey.webFeedID] as? String else {
 			return nil
 		}
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.webFeedID == webFeedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == webFeedID }) {
 			return node
 		}
 		return nil

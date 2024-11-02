@@ -336,7 +336,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			
 			if feed.folderRelationship?.count ?? 0 > 1 {
 				
@@ -472,7 +472,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func addWebFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let folder = container as? Folder, let webFeedID = Int(feed.webFeedID) {
+		if let folder = container as? Folder, let webFeedID = Int(feed.feedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
 			caller.createTagging(webFeedID: webFeedID, name: folder.name ?? "") { result in
 				self.refreshProgress.completeTask()
@@ -504,8 +504,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
-			account.addWebFeed(existingFeed, to: container) { result in
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -530,9 +530,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			
-			folder.topLevelWebFeeds.remove(feed)
+			folder.topLevelFeeds.remove(feed)
 			
 			group.enter()
 			restoreWebFeed(for: account, feed: feed, container: folder) { result in
@@ -780,7 +780,7 @@ private extension FeedbinAccountDelegate {
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !tagNames.contains(folder.name ?? "") {
-					for feed in folder.topLevelWebFeeds {
+					for feed in folder.topLevelFeeds {
 						account.addWebFeed(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
@@ -818,16 +818,16 @@ private extension FeedbinAccountDelegate {
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
-				for feed in folder.topLevelWebFeeds {
-					if !subFeedIds.contains(feed.webFeedID) {
+				for feed in folder.topLevelFeeds {
+					if !subFeedIds.contains(feed.feedID) {
 						folder.removeWebFeed(feed)
 					}
 				}
 			}
 		}
 		
-		for feed in account.topLevelWebFeeds {
-			if !subFeedIds.contains(feed.webFeedID) {
+		for feed in account.topLevelFeeds {
+			if !subFeedIds.contains(feed.feedID) {
 				account.removeWebFeed(feed)
 			}
 		}
@@ -888,8 +888,8 @@ private extension FeedbinAccountDelegate {
 			let taggingFeedIDs = groupedTaggings.map { String($0.feedID) }
 			
 			// Move any feeds not in the folder to the account
-			for feed in folder.topLevelWebFeeds {
-				if !taggingFeedIDs.contains(feed.webFeedID) {
+			for feed in folder.topLevelFeeds {
+				if !taggingFeedIDs.contains(feed.feedID) {
 					folder.removeWebFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					account.addWebFeed(feed)
@@ -897,7 +897,7 @@ private extension FeedbinAccountDelegate {
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelWebFeeds.map { $0.webFeedID }
+			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
 			
 			for tagging in groupedTaggings {
 				let taggingFeedID = String(tagging.feedID)
@@ -915,8 +915,8 @@ private extension FeedbinAccountDelegate {
 		let taggedFeedIDs = Set(taggings.map { String($0.feedID) })
 		
 		// Remove all feeds from the account container that have a tag
-		for feed in account.topLevelWebFeeds {
-			if taggedFeedIDs.contains(feed.webFeedID) {
+		for feed in account.topLevelFeeds {
+			if taggedFeedIDs.contains(feed.feedID) {
 				account.removeWebFeed(feed)
 			}
 		}
@@ -980,7 +980,7 @@ private extension FeedbinAccountDelegate {
 	}
 	
 	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
-		for feed in account.flattenedWebFeeds() {
+		for feed in account.flattenedFeeds() {
 			if var folderRelationship = feed.folderRelationship {
 				let relationship = folderRelationship[fromName]
 				folderRelationship[fromName] = nil
@@ -1034,7 +1034,7 @@ private extension FeedbinAccountDelegate {
 			feed.iconURL = sub.jsonFeed?.icon
 			feed.faviconURL = sub.jsonFeed?.favicon
 		
-			account.addWebFeed(feed, to: container) { result in
+			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {
@@ -1064,7 +1064,7 @@ private extension FeedbinAccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(4)
 
 		// Download the initial articles
-		self.caller.retrieveEntries(feedID: feed.webFeedID) { result in
+		self.caller.retrieveEntries(feedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
 			
 			switch result {

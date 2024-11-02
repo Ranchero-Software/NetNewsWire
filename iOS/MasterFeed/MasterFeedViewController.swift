@@ -130,7 +130,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
+		guard let webFeed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		applyToCellsForRepresentedObject(webFeed, configureIcon(_:_:))

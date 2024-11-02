@@ -50,7 +50,7 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 
-		let webFeeds = account.flattenedWebFeeds()
+		let webFeeds = account.flattenedFeeds()
 		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
 
 		let group = DispatchGroup()
@@ -250,7 +250,7 @@ private extension LocalAccountDelegate {
 						return
 				}
 				
-				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
+				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
 					self.refreshProgress.completeTask()
 					BatchUpdate.shared.end()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))

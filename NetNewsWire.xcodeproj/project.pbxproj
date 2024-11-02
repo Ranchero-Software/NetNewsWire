@@ -111,7 +111,7 @@
 		512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */; };
 		512DD4C92430086400C17B1F /* CloudKitAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4C82430086400C17B1F /* CloudKitAccountViewController.swift */; };
 		512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
-		512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift */; };
+		512E08E72268801200BDCFDD /* FeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */; };
 		512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */; };
 		512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B99C9C1FAE83C600ECDEDB /* DeleteCommand.swift */; };
 		5131463E235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -447,7 +447,7 @@
 		849A975C1ED9EB0D007D329B /* DefaultFeedsImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */; };
 		849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A975D1ED9EB72007D329B /* MainWindowController.swift */; };
 		849A97641ED9EB96007D329B /* SidebarOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97601ED9EB96007D329B /* SidebarOutlineView.swift */; };
-		849A97651ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift */; };
+		849A97651ED9EB96007D329B /* FeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */; };
 		849A97661ED9EB96007D329B /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97621ED9EB96007D329B /* SidebarViewController.swift */; };
 		849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97631ED9EB96007D329B /* UnreadCountView.swift */; };
 		849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97691ED9EBC8007D329B /* TimelineTableRowView.swift */; };
@@ -1089,7 +1089,7 @@
 		849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultFeedsImporter.swift; sourceTree = "<group>"; };
 		849A975D1ED9EB72007D329B /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		849A97601ED9EB96007D329B /* SidebarOutlineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarOutlineView.swift; sourceTree = "<group>"; };
-		849A97611ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebFeedTreeControllerDelegate.swift; sourceTree = "<group>"; };
+		849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTreeControllerDelegate.swift; sourceTree = "<group>"; };
 		849A97621ED9EB96007D329B /* SidebarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
 		849A97631ED9EB96007D329B /* UnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadCountView.swift; sourceTree = "<group>"; };
 		849A97691ED9EBC8007D329B /* TimelineTableRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineTableRowView.swift; sourceTree = "<group>"; };
@@ -1446,7 +1446,7 @@
 		512E08DD22687FA000BDCFDD /* Tree */ = {
 			isa = PBXGroup;
 			children = (
-				849A97611ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift */,
+				849A97611ED9EB96007D329B /* FeedTreeControllerDelegate.swift */,
 				849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */,
 			);
 			path = Tree;
@@ -3111,7 +3111,7 @@
 				512DD4C92430086400C17B1F /* CloudKitAccountViewController.swift in Sources */,
 				840D617F2029031C009BC708 /* AppDelegate.swift in Sources */,
 				51236339236915B100951F16 /* RoundedProgressView.swift in Sources */,
-				512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */,
+				512E08E72268801200BDCFDD /* FeedTreeControllerDelegate.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
 				51F9F3FB23DFB25700A314FD /* Animations.swift in Sources */,
@@ -3319,7 +3319,7 @@
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
 				51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
-				849A97651ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift in Sources */,
+				849A97651ED9EB96007D329B /* FeedTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				510C418024E5D1AE008226FD /* ExtensionFeedAddRequestFile.swift in Sources */,
 				51FE10092346739D0056195D /* ActivityType.swift in Sources */,

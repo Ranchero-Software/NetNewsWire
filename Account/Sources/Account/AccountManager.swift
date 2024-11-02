@@ -344,7 +344,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		for account in activeAccounts {
-			if let _ = account.existingWebFeed(withURL: urlString) {
+			if let _ = account.existingFeed(withURL: urlString) {
 				return true
 			}
 		}

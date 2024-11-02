@@ -400,7 +400,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 
 		var feedIDs: [String] = []
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			if (feed.folderRelationship?.count ?? 0) > 1 {
 				clearFolderRelationship(for: feed, withFolderName: folderToRemove)
 			} else if let feedID = feed.externalID {
@@ -520,8 +520,8 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
-		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
-			account.addWebFeed(existingFeed, to: container) { result in
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -548,9 +548,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 
 		var feedsToRestore: [Feed] = []
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			feedsToRestore.append(feed)
-			folder.topLevelWebFeeds.remove(feed)
+			folder.topLevelFeeds.remove(feed)
 		}
 
 		let group = DispatchGroup()

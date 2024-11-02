@@ -127,7 +127,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	var prefersStatusBarHidden = false
 	
-	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
+	private let treeControllerDelegate = FeedTreeControllerDelegate()
 	private let treeController: TreeController
 	
 	var stateRestorationActivity: NSUserActivity {
@@ -545,7 +545,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? Feed else {
+		guard let webFeed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		discloseWebFeed(webFeed, animations: [.scroll, .navigation])
@@ -1477,7 +1477,7 @@ private extension SceneCoordinator {
 					treeControllerDelegate.addFilterException(feedID)
 				}
 			} else if let webFeed = feed as? Feed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
+				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.feedID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
 					addParentFolderToFilterExceptions(webFeed)
 				}
@@ -2080,13 +2080,13 @@ private extension SceneCoordinator {
 		
 		if let feed = timelineFeed as? Feed {
 			for oneFeed in feeds {
-				if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
+				if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 					return true
 				}
 			}
 		} else if let folder = timelineFeed as? Folder {
 			for oneFeed in feeds {
-				if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
+				if folder.hasWebFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 					return true
 				}
 			}
@@ -2379,7 +2379,7 @@ private extension SceneCoordinator {
 	}
 
 	func findWebFeedNode(webFeedID: String, beginningAt startingNode: Node) -> Node? {
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.webFeedID == webFeedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == webFeedID }) {
 			return node
 		}
 		return nil

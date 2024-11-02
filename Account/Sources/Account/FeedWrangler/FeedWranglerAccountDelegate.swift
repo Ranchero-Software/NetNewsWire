@@ -340,7 +340,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		DispatchQueue.main.async {
 			let feed = account.createWebFeed(with: sub.title, url: sub.feedURL, webFeedID: String(sub.feedID), homePageURL: sub.siteURL)
 			
-			account.addWebFeed(feed, to: container) { result in
+			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {
@@ -388,7 +388,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		
 		self.refreshCredentials(for: account) {
 			self.refreshProgress.completeTask()
-			self.caller.renameSubscription(feedID: feed.webFeedID, newName: name) { result in
+			self.caller.renameSubscription(feedID: feed.feedID, newName: name) { result in
 				self.refreshProgress.completeTask()
 				
 				switch result {
@@ -421,7 +421,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		
 		self.refreshCredentials(for: account) {
 			self.refreshProgress.completeTask()
-			self.caller.removeSubscription(feedID: feed.webFeedID) { result in
+			self.caller.removeSubscription(feedID: feed.feedID) { result in
 				self.refreshProgress.completeTask()
 				
 				switch result {
@@ -447,8 +447,8 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {       
-        if let existingFeed = account.existingWebFeed(withURL: feed.url) {
-            account.addWebFeed(existingFeed, to: container) { result in
+        if let existingFeed = account.existingFeed(withURL: feed.url) {
+            account.addFeed(existingFeed, to: container) { result in
                 switch result {
                 case .success:
                     completion(.success(()))
@@ -533,7 +533,7 @@ private extension FeedWranglerAccountDelegate {
 		assert(Thread.isMainThread)
 		let feedIds = subscriptions.map { String($0.feedID) }
 		
-		let feedsToRemove = account.topLevelWebFeeds.filter { !feedIds.contains($0.webFeedID) }
+		let feedsToRemove = account.topLevelFeeds.filter { !feedIds.contains($0.feedID) }
 		account.removeFeeds(feedsToRemove)
 
 		var subscriptionsToAdd = Set<FeedWranglerSubscription>()

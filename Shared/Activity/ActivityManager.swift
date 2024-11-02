@@ -116,7 +116,7 @@ class ActivityManager {
 			}
 		}
 		
-		for webFeed in account.flattenedWebFeeds() {
+		for webFeed in account.flattenedFeeds() {
 			ids.append(contentsOf: identifiers(for: webFeed))
 		}
 		
@@ -127,7 +127,7 @@ class ActivityManager {
 		var ids = [String]()
 		ids.append(identifier(for: folder))
 		
-		for webFeed in folder.flattenedWebFeeds() {
+		for webFeed in folder.flattenedFeeds() {
 			ids.append(contentsOf: identifiers(for: webFeed))
 		}
 		
@@ -140,7 +140,7 @@ class ActivityManager {
 	#endif
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
+		guard let webFeed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
 			return
 		}
 		
@@ -150,7 +150,7 @@ class ActivityManager {
 		}
 		#endif
 		
-		if activityFeedId == webFeed.webFeedID {
+		if activityFeedId == webFeed.feedID {
 			updateSelectingActivityFeedSearchAttributes(with: webFeed)
 		}
 	}
@@ -278,7 +278,7 @@ private extension ActivityManager {
 	}
 	
 	static func identifier(for feed: Feed) -> String {
-		return "account_\(feed.account!.accountID)_feed_\(feed.webFeedID)"
+		return "account_\(feed.account!.accountID)_feed_\(feed.feedID)"
 	}
 	
 	static func identifier(for article: Article) -> String {

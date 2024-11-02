@@ -61,7 +61,7 @@ private extension UserNotificationManager {
 			content.subtitle = ArticleStringFormatter.truncatedTitle(article)
 		}
 		content.body = ArticleStringFormatter.truncatedSummary(article)
-		content.threadIdentifier = webFeed.webFeedID
+		content.threadIdentifier = webFeed.feedID
 		content.summaryArgument = "\(webFeed.nameForDisplay)"
 		content.summaryArgumentCount = 1
 		content.sound = UNNotificationSound.default
@@ -83,7 +83,7 @@ private extension UserNotificationManager {
 	/// - Warning: In certain scenarios, this will return the `faviconTemplateImage`.
 	func thumbnailAttachment(for article: Article, webFeed: Feed) -> UNNotificationAttachment? {
 		if let imageURL = article.iconImageUrl(webFeed: webFeed) {
-			let thumbnail = try? UNNotificationAttachment(identifier: webFeed.webFeedID, url: imageURL, options: nil)
+			let thumbnail = try? UNNotificationAttachment(identifier: webFeed.feedID, url: imageURL, options: nil)
 			return thumbnail
 		}
 		return nil

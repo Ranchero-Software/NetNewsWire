@@ -77,7 +77,7 @@ extension NSApplication : ScriptingObjectContainer {
         let accounts = AccountManager.shared.activeAccounts
         let emptyFeeds:[Feed] = []
         return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
-              let accountFeeds = Array(nthAccount.topLevelWebFeeds)
+              let accountFeeds = Array(nthAccount.topLevelFeeds)
               return result + accountFeeds
         }
     }
@@ -91,7 +91,7 @@ extension NSApplication : ScriptingObjectContainer {
     @objc(valueInWebFeedsWithUniqueID:)
     func valueInWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
         let webFeeds = self.allWebFeeds()
-        guard let webFeed = webFeeds.first(where:{$0.webFeedID == id}) else { return nil }
+        guard let webFeed = webFeeds.first(where:{$0.feedID == id}) else { return nil }
         return ScriptableWebFeed(webFeed, container:self)
     }
 }

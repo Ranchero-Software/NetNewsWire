@@ -173,7 +173,7 @@ final class FeedWranglerAPICaller: NSObject {
 		let queryItems = [
 			URLQueryItem(name: "read", value: "false"),
 			URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
-			feed.map { URLQueryItem(name: "feed_id", value: $0.webFeedID) }
+			feed.map { URLQueryItem(name: "feed_id", value: $0.feedID) }
 		].compactMap { $0 }
 		let url = FeedWranglerConfig.clientURL
 			.appendingPathComponent("feed_items/list")

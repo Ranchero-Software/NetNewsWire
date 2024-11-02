@@ -594,7 +594,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard showIcons, let feed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
+		guard showIcons, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
@@ -1235,14 +1235,14 @@ private extension TimelineViewController {
 		for representedObject in representedObjects {
 			if let feed = representedObject as? Feed {
 				for oneFeed in webFeeds {
-					if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
+					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 						return true
 					}
 				}
 			}
 			else if let folder = representedObject as? Folder {
 				for oneFeed in webFeeds {
-					if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
+					if folder.hasWebFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true
 					}
 				}

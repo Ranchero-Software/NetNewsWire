@@ -45,7 +45,7 @@ class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
     var scriptingUniqueId:Any {
-        return webFeed.webFeedID
+        return webFeed.feedID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
@@ -88,7 +88,7 @@ class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         let (account, folder) = command.accountAndFolderForNewChild()
         guard let url = self.urlForNewFeed(arguments:arguments) else {return nil}
         
-        if let existingFeed = account.existingWebFeed(withURL:url) {
+        if let existingFeed = account.existingFeed(withURL:url) {
             return scriptableFeed(existingFeed, account:account, folder:folder).objectSpecifier
         }
 		
@@ -102,10 +102,10 @@ class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         // suspendExecution(). When we get the callback, we supply the event result and call resumeExecution().
         command.suspendExecution()
         
-		account.createWebFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
+		account.createFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
 			switch result {
 			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 				let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
 				command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
 			case .failure:

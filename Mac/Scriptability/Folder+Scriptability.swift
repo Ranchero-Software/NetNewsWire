@@ -97,7 +97,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     
     @objc(webFeeds)
     var webFeeds:NSArray  {
-		let feeds = Array(folder.topLevelWebFeeds)
+		let feeds = Array(folder.topLevelFeeds)
         return feeds.map { ScriptableWebFeed($0, container:self) } as NSArray
     }
 

@@ -17,7 +17,7 @@ protocol WebFeedMetadataDelegate: AnyObject {
 final class WebFeedMetadata: Codable {
 
 	enum CodingKeys: String, CodingKey {
-		case webFeedID = "feedID"
+		case feedID
 		case homePageURL
 		case iconURL
 		case faviconURL
@@ -32,10 +32,10 @@ final class WebFeedMetadata: Codable {
 		case folderRelationship
 	}
 
-	var webFeedID: String {
+	var feedID: String {
 		didSet {
-			if webFeedID != oldValue {
-				valueDidChange(.webFeedID)
+			if feedID != oldValue {
+				valueDidChange(.feedID)
 			}
 		}
 	}
@@ -139,8 +139,8 @@ final class WebFeedMetadata: Codable {
 
 	weak var delegate: WebFeedMetadataDelegate?
 
-	init(webFeedID: String) {
-		self.webFeedID = webFeedID
+	init(feedID: String) {
+		self.feedID = feedID
 	}
 
 	func valueDidChange(_ key: CodingKeys) {

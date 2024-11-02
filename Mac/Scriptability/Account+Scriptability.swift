@@ -96,7 +96,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(webFeeds)
     var webFeeds:NSArray  {
-        return account.topLevelWebFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
+        return account.topLevelFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
     }
     
     @objc(valueInWebFeedsWithUniqueID:)
@@ -107,7 +107,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(valueInWebFeedsWithName:)
     func valueInWebFeeds(withName name:String) -> ScriptableWebFeed? {
-		let feeds = Array(account.flattenedWebFeeds())
+		let feeds = Array(account.flattenedFeeds())
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
         return ScriptableWebFeed(feed, container:self)
     }
@@ -133,13 +133,13 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     @objc(allWebFeeds)
     var allWebFeeds: NSArray  {
 		var webFeeds = [ScriptableWebFeed]()
-		for webFeed in account.topLevelWebFeeds {
+		for webFeed in account.topLevelFeeds {
 			webFeeds.append(ScriptableWebFeed(webFeed, container: self))
 		}
 		if let folders = account.folders {
 			for folder in folders {
 				let scriptableFolder = ScriptableFolder(folder, container: self)
-				for webFeed in folder.topLevelWebFeeds {
+				for webFeed in folder.topLevelFeeds {
 					webFeeds.append(ScriptableWebFeed(webFeed, container: scriptableFolder))
 				}
 			}

@@ -358,7 +358,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		let feedsToRestore = folder.topLevelWebFeeds
+		let feedsToRestore = folder.topLevelFeeds
 		refreshProgress.addToNumberOfTasksAndRemaining(1 + feedsToRestore.count)
 		
 		accountZone.createFolder(name: name) { result in
@@ -371,7 +371,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				let group = DispatchGroup()
 				for feed in feedsToRestore {
 					
-					folder.topLevelWebFeeds.remove(feed)
+					folder.topLevelFeeds.remove(feed)
 
 					group.enter()
 					self.restoreWebFeed(for: account, feed: feed, container: folder) { result in
@@ -485,7 +485,7 @@ private extension CloudKitAccountDelegate {
 		accountZone.fetchChangesInZone() { result in
 			self.refreshProgress.completeTask()
 
-			let webFeeds = account.flattenedWebFeeds()
+			let webFeeds = account.flattenedFeeds()
 			self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
 
 			switch result {
@@ -518,7 +518,7 @@ private extension CloudKitAccountDelegate {
 
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		let intialWebFeedsCount = account.flattenedWebFeeds().count
+		let intialWebFeedsCount = account.flattenedFeeds().count
 		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialWebFeedsCount)
 
 		func fail(_ error: Error) {
@@ -532,7 +532,7 @@ private extension CloudKitAccountDelegate {
 			case .success:
 				
 				self.refreshProgress.completeTask()
-				let webFeeds = account.flattenedWebFeeds()
+				let webFeeds = account.flattenedFeeds()
 				self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count - intialWebFeedsCount)
 				
 				self.refreshArticleStatus(for: account) { result in
@@ -617,7 +617,7 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 				
-				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
+				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
 					self.refreshProgress.completeTasks(4)
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
@@ -706,7 +706,7 @@ private extension CloudKitAccountDelegate {
 	
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
-			account.removeFeeds(account.topLevelWebFeeds)
+			account.removeFeeds(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
 				account.removeFolder(folder)
 			}

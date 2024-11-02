@@ -11,7 +11,7 @@ import RSTree
 import Articles
 import Account
 
-final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
+final class FeedTreeControllerDelegate: TreeControllerDelegate {
 
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
@@ -39,7 +39,7 @@ final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 	}	
 }
 
-private extension WebFeedTreeControllerDelegate {
+private extension FeedTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()
@@ -66,7 +66,7 @@ private extension WebFeedTreeControllerDelegate {
 
 		var children = [AnyObject]()
 		
-		for webFeed in container.topLevelWebFeeds {
+		for webFeed in container.topLevelFeeds {
 			if let feedID = webFeed.sidebarItemID, !(!filterExceptions.contains(feedID) && isReadFiltered && webFeed.unreadCount == 0) {
 				children.append(webFeed)
 			}
