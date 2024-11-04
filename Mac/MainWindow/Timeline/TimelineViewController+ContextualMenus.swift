@@ -8,6 +8,7 @@
 
 import AppKit
 import RSCore
+import RSCoreObjC
 import Articles
 import Account
 
@@ -200,7 +201,7 @@ private extension TimelineViewController {
 
 		let sortedArticles = articles.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
-		let standardServices = NSSharingService.sharingServices(forItems: items)
+		let standardServices = NSSharingService.sharingServices(forItems_noDeprecationWarning: items) as? [NSSharingService] ?? [NSSharingService]()
 		let customServices = SharingServicePickerDelegate.customSharingServices(for: items)
 		let services = standardServices + customServices
 		if services.isEmpty {
