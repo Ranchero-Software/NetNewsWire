@@ -405,6 +405,8 @@
 		841387822CD897EF00E8490F /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 841387802CD897EF00E8490F /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		841387842CD897EF00E8490F /* RSCoreObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 841387832CD897EF00E8490F /* RSCoreObjC */; };
 		841387852CD897EF00E8490F /* RSCoreObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 841387832CD897EF00E8490F /* RSCoreObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		841387872CD89E5200E8490F /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 841387862CD89E5200E8490F /* RSCore */; };
+		841387882CD89E5200E8490F /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 841387862CD89E5200E8490F /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */; };
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
 		841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */; };
@@ -668,6 +670,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				841387882CD89E5200E8490F /* RSCore in Embed Frameworks */,
 				51BC2F4E24D343AB00E90810 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1255,6 +1258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				27B86EEB25A53AAB00264340 /* Account in Frameworks */,
+				841387872CD89E5200E8490F /* RSCore in Frameworks */,
 				51BC2F4D24D343AB00E90810 /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2469,6 +2473,7 @@
 			packageProductDependencies = (
 				51BC2F4A24D343A500E90810 /* Account */,
 				51BC2F4C24D343AB00E90810 /* RSTree */,
+				841387862CD89E5200E8490F /* RSCore */,
 			);
 			productName = "NetNewsWire iOS Intents Extension";
 			productReference = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */;
@@ -4099,6 +4104,10 @@
 		841387832CD897EF00E8490F /* RSCoreObjC */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RSCoreObjC;
+		};
+		841387862CD89E5200E8490F /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RSCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
