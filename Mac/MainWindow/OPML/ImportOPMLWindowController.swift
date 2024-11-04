@@ -106,7 +106,3 @@ class ImportOPMLWindowController: NSWindowController {
 
 }
 
-extension UTType {
-
-	static let opml = UTType("public.opml")!
-}

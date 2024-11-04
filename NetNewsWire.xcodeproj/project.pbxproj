@@ -407,6 +407,8 @@
 		841387852CD897EF00E8490F /* RSCoreObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 841387832CD897EF00E8490F /* RSCoreObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		841387872CD89E5200E8490F /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 841387862CD89E5200E8490F /* RSCore */; };
 		841387882CD89E5200E8490F /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 841387862CD89E5200E8490F /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8413878A2CD8A38A00E8490F /* UniformTypeIdentifiers+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841387892CD8A38A00E8490F /* UniformTypeIdentifiers+Extras.swift */; };
+		8413878B2CD8A38A00E8490F /* UniformTypeIdentifiers+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841387892CD8A38A00E8490F /* UniformTypeIdentifiers+Extras.swift */; };
 		84162A152038C12C00035290 /* MarkCommandValidationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */; };
 		841ABA4E20145E7300980E11 /* NothingInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */; };
 		841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */; };
@@ -1051,6 +1053,7 @@
 		840D61952029031D009BC708 /* NetNewsWire_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetNewsWire_iOSTests.swift; sourceTree = "<group>"; };
 		840D61972029031D009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8413876B2CD896E000E8490F /* RSCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSCore; sourceTree = "<group>"; };
+		841387892CD8A38A00E8490F /* UniformTypeIdentifiers+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformTypeIdentifiers+Extras.swift"; sourceTree = "<group>"; };
 		84162A142038C12C00035290 /* MarkCommandValidationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkCommandValidationStatus.swift; sourceTree = "<group>"; };
 		841ABA4D20145E7300980E11 /* NothingInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NothingInspectorViewController.swift; sourceTree = "<group>"; };
 		841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderInspectorViewController.swift; sourceTree = "<group>"; };
@@ -2141,6 +2144,7 @@
 				511D43CE231FA51100FB1562 /* Resources */,
 				176813A22564B9D100D98635 /* Widget */,
 				173A64162547BE0900267F6E /* AccountType+Helpers.swift */,
+				841387892CD8A38A00E8490F /* UniformTypeIdentifiers+Extras.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -3196,6 +3200,7 @@
 				51B5C87B23F2317700032075 /* ExtensionFeedAddRequest.swift in Sources */,
 				51627A93238A3836007B3B4B /* CroppingPreviewParameters.swift in Sources */,
 				512AF9DD236F05230066F8BE /* InteractiveLabel.swift in Sources */,
+				8413878A2CD8A38A00E8490F /* UniformTypeIdentifiers+Extras.swift in Sources */,
 				51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */,
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
 				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,
@@ -3454,6 +3459,7 @@
 				849A977A1ED9EC04007D329B /* TimelineTableCellView.swift in Sources */,
 				849A97761ED9EC04007D329B /* TimelineCellAppearance.swift in Sources */,
 				849A977F1ED9EC42007D329B /* ArticleRenderer.swift in Sources */,
+				8413878B2CD8A38A00E8490F /* UniformTypeIdentifiers+Extras.swift in Sources */,
 				84C9FC7822629E1200D921D6 /* GeneralPrefencesViewController.swift in Sources */,
 				179DB3CE822BFCC2D774D9F4 /* AccountsNewsBlurWindowController.swift in Sources */,
 			);

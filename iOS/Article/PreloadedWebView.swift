@@ -17,10 +17,10 @@ class PreloadedWebView: WKWebView {
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false
-		preferences.javaScriptEnabled = true
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = true
 		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 		configuration.allowsInlineMediaPlayback = true
 		configuration.mediaTypesRequiringUserActionForPlayback = .audio

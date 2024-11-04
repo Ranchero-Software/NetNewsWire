@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		didSet {
 			if unreadCount != oldValue {
 				postUnreadCountDidChangeNotification()
-				UIApplication.shared.applicationIconBadgeNumber = unreadCount
+				UNUserNotificationCenter.current().setBadgeCount(unreadCount)
 			}
 		}
 	}
@@ -196,7 +196,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
+		completionHandler([.list, .banner, .badge, .sound])
     }
 	
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
