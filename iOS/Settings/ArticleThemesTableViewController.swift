@@ -7,8 +7,12 @@
 //
 
 import Foundation
-
 import UIKit
+import UniformTypeIdentifiers
+
+extension UTType {
+	static var netNewsWireTheme: UTType { UTType(importedAs: "com.ranchero.netnewswire.theme") }
+}
 
 class ArticleThemesTableViewController: UITableViewController {
 
@@ -27,10 +31,10 @@ class ArticleThemesTableViewController: UITableViewController {
 	}
 
 	@objc func importTheme(_ sender: Any?) {
-		let docPicker = UIDocumentPickerViewController(documentTypes: ["com.ranchero.netnewswire.theme"], in: .import)
-		docPicker.delegate = self
-		docPicker.modalPresentationStyle = .formSheet
-		self.present(docPicker, animated: true)
+		let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.netNewsWireTheme])
+		documentPicker.delegate = self
+		documentPicker.modalPresentationStyle = .formSheet
+		self.present(documentPicker, animated: true)
 	}
 
 	// MARK: - Table view data source
@@ -119,5 +123,4 @@ extension ArticleThemesTableViewController: UIDocumentPickerDelegate {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
 		}
 	}
-	
 }

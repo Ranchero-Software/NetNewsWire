@@ -470,9 +470,9 @@ private extension SettingsViewController {
 			self.presentError(title: "OPML Export Error", message: error.localizedDescription)
 		}
 		
-		let docPicker = UIDocumentPickerViewController(url: tempFile, in: .exportToService)
-		docPicker.modalPresentationStyle = .formSheet
-		self.present(docPicker, animated: true)
+		let documentPicker = UIDocumentPickerViewController(forExporting: [tempFile])
+		documentPicker.modalPresentationStyle = .formSheet
+		self.present(documentPicker, animated: true)
 	}
 	
 	func openURL(_ urlString: String) {
