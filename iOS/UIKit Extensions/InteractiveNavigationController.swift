@@ -28,15 +28,13 @@ class InteractiveNavigationController: UINavigationController {
 		super.viewDidLoad()
 		poppableDelegate.navigationController = self
 		interactivePopGestureRecognizer?.delegate = poppableDelegate
+
+		registerForTraitChanges([UITraitUserInterfaceStyle.self], target: self, action: #selector(userInterfaceStyleDidChange))
 	}
-	
-	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-		super.traitCollectionDidChange(previousTraitCollection)
-		if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-			configure()
-		}
+
+	@objc func userInterfaceStyleDidChange() {
+		configure()
 	}
-		
 }
 
 // MARK: Private
@@ -62,5 +60,4 @@ private extension InteractiveNavigationController {
 		toolbar.compactAppearance = toolbarAppearance
 		toolbar.tintColor = AppAssets.primaryAccentColor
 	}
-
 }
