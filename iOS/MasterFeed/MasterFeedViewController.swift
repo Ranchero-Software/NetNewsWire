@@ -71,7 +71,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)		
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+
+		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -84,17 +86,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		updateUI()
 		super.viewWillAppear(animated)
 	}
-	
-	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-		super.traitCollectionDidChange(previousTraitCollection)
-		if traitCollection.preferredContentSizeCategory != previousTraitCollection?.preferredContentSizeCategory {
-			IconImageCache.shared.emptyCache()
-			reloadAllVisibleCells()
-		}
-	}
 
 	// MARK: Notifications
-	
+
+	@objc func preferredContentSizeCategoryDidChange() {
+		IconImageCache.shared.emptyCache()
+		reloadAllVisibleCells()
+	}
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateUI()
 
