@@ -2159,16 +2159,16 @@ private extension SceneCoordinator {
 
 	func installSubSplit() {
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
-		
+
 		subSplitViewController = UISplitViewController()
-		subSplitViewController!.preferredDisplayMode = .oneBesideSecondary
-		subSplitViewController!.viewControllers = [InteractiveNavigationController.template()]
-		subSplitViewController!.preferredPrimaryColumnWidthFraction = 0.4285
-		
-		rootSplitViewController.showDetailViewController(subSplitViewController!, sender: self)
-		rootSplitViewController.setOverrideTraitCollection(UITraitCollection(horizontalSizeClass: .regular), forChild: subSplitViewController!)
+		if let subSplitViewController {
+			subSplitViewController.preferredDisplayMode = .oneBesideSecondary
+			subSplitViewController.viewControllers = [InteractiveNavigationController.template()]
+			subSplitViewController.preferredPrimaryColumnWidthFraction = 0.4285
+			subSplitViewController.traitOverrides.horizontalSizeClass = .regular
+		}
 	}
-	
+
 	func navControllerForTimeline() -> UINavigationController {
 		if let subSplit = subSplitViewController {
 			return subSplit.viewControllers.first as! UINavigationController
