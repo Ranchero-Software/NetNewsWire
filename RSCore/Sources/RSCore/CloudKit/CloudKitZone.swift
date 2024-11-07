@@ -133,47 +133,6 @@ public extension CloudKitZone {
 		}
 	}
 
-	/// Retrieves the zone record for this zone only. If the record isn't found it will be created.
-	func fetchZoneRecord(completion: @escaping (Result<CKRecordZone?, Error>) -> Void) {
-		let op = CKFetchRecordZonesOperation(recordZoneIDs: [zoneID])
-		op.qualityOfService = Self.qualityOfService
-
-		op.fetchRecordZonesCompletionBlock = { [weak self] (zoneRecords, error) in
-			guard let self = self else {
-				completion(.failure(CloudKitZoneError.unknown))
-				return
-			}
-
-			switch CloudKitZoneResult.resolve(error) {
-			case .success:
-				completion(.success(zoneRecords?[self.zoneID]))
-			case .zoneNotFound, .userDeletedZone:
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
-						self.fetchZoneRecord(completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(error))
-						}
-					}
-				}
-			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone fetch changes retry in %f seconds.", self.zoneID.zoneName, timeToWait)
-				self.retryIfPossible(after: timeToWait) {
-					self.fetchZoneRecord(completion: completion)
-				}
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
-				}
-			}
-			
-		}
-
-		database?.add(op)
-	}
-
 	/// Creates the zone record
 	func createZoneRecord(completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let database = database else {
