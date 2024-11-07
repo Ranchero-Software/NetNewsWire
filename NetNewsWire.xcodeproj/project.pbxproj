@@ -425,6 +425,7 @@
 		844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B661FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift */; };
 		844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
 		845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845213221FCA5B10003B6E93 /* ImageDownloader.swift */; };
+		845288242CDC90FA00C63564 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 845288232CDC90FA00C63564 /* RSWeb */; };
 		845479881FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */; };
 		8454C3F3263F2D8700E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
 		8454C3F8263F3AD400E3F9C7 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
@@ -1238,6 +1239,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				845288242CDC90FA00C63564 /* RSWeb in Frameworks */,
 				176813F72564BB2C00D98635 /* SwiftUI.framework in Frameworks */,
 				176813F52564BB2C00D98635 /* WidgetKit.framework in Frameworks */,
 			);
@@ -2429,6 +2431,7 @@
 			);
 			name = "NetNewsWire iOS Widget Extension";
 			packageProductDependencies = (
+				845288232CDC90FA00C63564 /* RSWeb */,
 			);
 			productName = "NetNewsWire WidgetExtension";
 			productReference = 176813F32564BB2C00D98635 /* NetNewsWire iOS Widget Extension.appex */;
@@ -4093,6 +4096,10 @@
 			productName = RSWeb;
 		};
 		841387902CDC791B00E8490F /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RSWeb;
+		};
+		845288232CDC90FA00C63564 /* RSWeb */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RSWeb;
 		};
