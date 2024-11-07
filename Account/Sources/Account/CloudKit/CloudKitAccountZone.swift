@@ -253,43 +253,65 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 	
 	func findOrCreateAccount(completion: @escaping (Result<String, Error>) -> Void) {
+
+		guard let database else {
+			completion(.failure(CloudKitAccountZoneError.unknown))
+			return
+		}
+
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
-		
-		database?.perform(ckQuery, inZoneWith: zoneID) { [weak self] records, error in
-			guard let self = self else { return }
-			
-			switch CloudKitZoneResult.resolve(error) {
-            case .success:
-				DispatchQueue.main.async {
-					if records!.count > 0 {
-						completion(.success(records![0].externalID))
-					} else {
-						self.createContainer(name: "Account", isAccount: true, completion: completion)
+
+		database.fetch(withQuery: ckQuery, inZoneWith: zoneID) { [weak self] result in
+			guard let self else { return }
+
+			switch result {
+
+			case .success((let matchResults, _)):
+
+				for result in matchResults {
+					let (_, recordResult) = result
+					switch recordResult {
+
+					case .success(let record):
+						completion(.success(record.externalID))
+						return
+
+					case .failure(_):
+						continue
 					}
 				}
-			case .retry(let timeToWait):
-				self.retryIfPossible(after: timeToWait) {
-					self.findOrCreateAccount(completion: completion)
-				}
-			case .zoneNotFound, .userDeletedZone:
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
+
+				self.createContainer(name: "Account", isAccount: true, completion: completion)
+
+			case .failure(let error):
+
+				switch CloudKitZoneResult.resolve(error) {
+
+				case .retry(let timeToWait):
+					self.retryIfPossible(after: timeToWait) {
 						self.findOrCreateAccount(completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(CloudKitError(error)))
+					}
+
+				case .zoneNotFound, .userDeletedZone:
+					self.createZoneRecord() { result in
+						switch result {
+						case .success:
+							self.findOrCreateAccount(completion: completion)
+						case .failure(let error):
+							DispatchQueue.main.async {
+								completion(.failure(CloudKitError(error)))
+							}
 						}
 					}
+
+				default:
+					self.createContainer(name: "Account", isAccount: true, completion: completion)
 				}
-			default:
-				self.createContainer(name: "Account", isAccount: true, completion: completion)
 			}
 		}
-		
 	}
-	
+
 	func createFolder(name: String, completion: @escaping (Result<String, Error>) -> Void) {
 		createContainer(name: name, isAccount: false, completion: completion)
 	}
