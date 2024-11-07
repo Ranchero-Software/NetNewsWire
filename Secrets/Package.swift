@@ -1,9 +1,10 @@
-// swift-tools-version: 5.9
+// swift-tools-version:5.9
+
 import PackageDescription
 
 let package = Package(
     name: "Secrets",
-	platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
+	platforms: [.macOS(.v14), .iOS(.v17)],
     products: [
         .library(
             name: "Secrets",

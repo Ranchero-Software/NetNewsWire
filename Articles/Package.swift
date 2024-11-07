@@ -1,9 +1,10 @@
-// swift-tools-version: 5.9
+// swift-tools-version:5.9
+
 import PackageDescription
 
 let package = Package(
     name: "Articles",
-	platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
+	platforms: [.macOS(.v14), .iOS(.v17)],
     products: [
         .library(
             name: "Articles",
@@ -11,7 +12,7 @@ let package = Package(
             targets: ["Articles"]),
     ],
     dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMinor(from: "1.0.0")),
+		.package(path: "../RSCore"),
     ],
     targets: [
         .target(

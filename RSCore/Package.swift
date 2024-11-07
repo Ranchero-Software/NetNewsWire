@@ -1,11 +1,10 @@
-// swift-tools-version:5.3
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version:5.9
 
 import PackageDescription
 
 let package = Package(
     name: "RSCore",
-    platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
+	platforms: [.macOS(.v14), .iOS(.v17)],
     products: [
         .library(name: "RSCore", type: .dynamic, targets: ["RSCore"]),
 		.library(name: "RSCoreObjC", type: .dynamic, targets: ["RSCoreObjC"]),
