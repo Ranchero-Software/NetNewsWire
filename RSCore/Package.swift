@@ -10,10 +10,13 @@ let package = Package(
 		.library(name: "RSCoreObjC", type: .dynamic, targets: ["RSCoreObjC"]),
 		.library(name: "RSCoreResources", type: .static, targets: ["RSCoreResources"])
     ],
-    targets: [
-        .target(
-            name: "RSCore",
-            dependencies: ["RSCoreObjC"]),
+	targets: [
+		.target(
+			name: "RSCore",
+			dependencies: ["RSCoreObjC"],
+			swiftSettings: [
+				.unsafeFlags(["-warnings-as-errors"])
+			]),
 		.target(
 			name: "RSCoreObjC",
 			dependencies: [],
