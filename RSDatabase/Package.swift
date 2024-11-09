@@ -21,7 +21,6 @@ let package = Package(
 		.target(
 			name: "RSDatabase",
 			dependencies: ["RSDatabaseObjC"],
-			exclude: ["ODB/README.markdown"],
 			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
 		),
 		.target(
