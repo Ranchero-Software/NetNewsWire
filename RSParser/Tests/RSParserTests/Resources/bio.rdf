@@ -1,0 +1,663 @@
+<rdf:RDF xmlns:admin="http://webns.net/mvcb/" xmlns="http://purl.org/rss/1.0/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:prism="http://purl.org/rss/1.0/modules/prism/" xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:syn="http://purl.org/rss/1.0/modules/syndication/">
+<channel rdf:about="http://biorxiv.org">
+<admin:errorReportsTo rdf:resource="mailto:biorxiv@cshlpress.edu"/>
+<title>bioRxiv Subject Collection: Plant Biology</title>
+<link>http://biorxiv.org</link>
+<description>
+This feed contains articles for bioRxiv Subject Collection "Plant Biology"
+</description>
+
+ 
+
+
+
+<items>
+<rdf:Seq>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/743294v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/746628v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/745653v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/745463v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/744177v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/742742v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/745364v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/744003v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/743898v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/744326v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/742429v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/741314v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/742114v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/740043v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/740126v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/740167v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/740001v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/736363v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/738971v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/738914v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/738070v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/738021v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/736793v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/736439v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/736397v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/734525v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/736199v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/736249v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/733857v1?rss=1"/>
+<rdf:li rdf:resource="http://biorxiv.org/cgi/content/short/726125v1?rss=1"/>
+</rdf:Seq>
+</items>
+<prism:eIssn/>
+<prism:publicationName>bioRxiv</prism:publicationName>
+<prism:issn/>
+
+<image rdf:resource=""/>
+</channel>
+<image rdf:about="">
+<title>bioRxiv</title>
+<url/>
+<link>http://biorxiv.org</link>
+</image>
+<item rdf:about="http://biorxiv.org/cgi/content/short/743294v1?rss=1">
+<title>
+<![CDATA[
+Wheat inositol pyrophosphate kinase (TaVIH2-3B) interacts with Fasciclin-like arabinogalactan (FLA6) protein and alters the plant cell-wall composition 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/743294v1?rss=1
+</link>
+<description><![CDATA[
+Inositol pyrophosphates (PPx-InsPs) are of key interest, since they are known to participate in multiple physiological processes from lower eukaryotes to humans. However, limited knowledge is available for their role in plants and especially in crops. In this study, two diphosphoinositol pentakisphosphate kinase PPIP5K wheat homologs, TaVIH1 and TaVIH2 were identified and characterized for their spatio-temporal expression along with their physiological functions. The biochemical assay demonstrated the presence of active VIH-kinase domains as evident from the InsP6 phosphorylation activity. The yeast complementation assays showed differential function, where only TaVIH2-3B was capable of rescuing the growth defects of yeast vip1{Delta} genotype. Reporter assays with TaVIH2-promoter in Arabidopsis displayed strong GUS expression in response to dehydration stress and Pi-starvation with similar observations noted at the transcriptional level. In an attempt to identify VIH2 function, a yeast two hybrid screen of wheat library resulted in the identification of multiple interacting proteins primarily associated with cell-wall. One such interactor of wheat VIH2-3B was identified to be a Fasciclin-like arabinogalactan protein (FLA6) that was confirmed by pull-down assay. Systematic analysis of transgenic Arabidopsis overexpressing TaVIH2-3B protein showed robust growth and enhanced relative water content when compared to controls. Biochemical analysis of their cell-wall components in the shoots resulted in increased accumulation of polysaccharides such as cellulose, arabinogalactan and arabinoxylan, whereas Atvih2-3 mutant showed decrease in some of these components. Overall, our results provide novel insight into the functional role of inositol pyrophosphate kinases that modulate cell-wall components so as to provide tolerance towards the dehydration stress.
+]]></description>
+<dc:creator><![CDATA[ Kaur, M., Shukla, A., Kanwar, S., Shukla, V., Kaur, G., Sharma, S., Kumar, A., Aggarwal, S., Bhati, K. K., Pandey, P., Mazumder, K., Rishi, V., Pandey, A. K. ]]></dc:creator>
+<dc:date>2019-08-27</dc:date>
+<dc:identifier>doi:10.1101/743294</dc:identifier>
+<dc:title><![CDATA[Wheat inositol pyrophosphate kinase (TaVIH2-3B) interacts with Fasciclin-like arabinogalactan (FLA6) protein and alters the plant cell-wall composition]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-27</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/746628v1?rss=1">
+<title>
+<![CDATA[
+Natural variation in the Arabidopsis AGO2 gene is associated with susceptibility to potato virus X 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/746628v1?rss=1
+</link>
+<description><![CDATA[
+RNA silencing functions as an anti-viral defence in plants through the action of DICER-like (DCL) and ARGONAUTE (AGO) proteins. However, there are few known examples of functional variation in RNA silencing components. The AGO2 protein is important for antiviral defense against multiple viruses and has been shown to be a major limiting factor to infection by potato virus X (PVX) of Arabidopsis thaliana but not Nicotiana benthamiana. We show that the AGO2 proteins from these two plants have differential activity against PVX, suggesting that variation in AGO2 is important in plant-virus interactions. Consistent with this, we find that the Arabidopsis thaliana AGO2 gene shows a high incidence of polymorphisms between accessions, with evidence of selective pressure. AGO2 protein variants can be assigned to two groups, in near equal frequency, based on an amino acid change and small deletions in the protein N-terminus. Inoculation of a large number of Arabidopsis accessions shows strong correlation between these alleles and resistance or susceptibility to PVX. These observations were validated using genetic and transgenic complementation analysis, which showed that one type of AGO2 variant is specifically affected in its antiviral activity, without interfering with other AGO2-associated functions such as anti-bacterial resistance or DNA methylation. Our results demonstrate a novel type of genetically-encoded virus resistance and suggest that plant-virus interactions have influenced natural variation in RNA silencing components.
+]]></description>
+<dc:creator><![CDATA[ Brosseau, C., Adurogbangba, A., Roussin-Leveillee, C., Zhao, Z., Biga, S., Moffett, P. ]]></dc:creator>
+<dc:date>2019-08-24</dc:date>
+<dc:identifier>doi:10.1101/746628</dc:identifier>
+<dc:title><![CDATA[Natural variation in the Arabidopsis AGO2 gene is associated with susceptibility to potato virus X]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-24</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/745653v1?rss=1">
+<title>
+<![CDATA[
+Dynamic architecture and regulatory implications of the miRNA network underlying the response to stress in melon 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/745653v1?rss=1
+</link>
+<description><![CDATA[
+miRNAs are small RNAs that regulate mRNAs at both transcriptional and posttranscriptional level. In plants, miRNAs are involved in the regulation of different processes including development and stress-response. Elucidating how stress-responsive miRNAs are regulated is key to understand the global response to stress but also to develop efficient biotechnological tools that could help to cope with stress. Here, we describe a computational approach based on sRNA sequencing, transcript quantification and degradome data to analyze the accumulation, function and structural organization of melon miRNAs reactivated under seven biotic and abiotic stress conditions at two and four days post-treatment. Our pipeline allowed us to identify fourteen stress-responsive miRNAs (including evolutionary conserved such as miR156, miR166, miR172, miR319, miR398, miR399, miR894 and miR408) at both analyzed times. According to our analysis miRNAs were categorized in three groups showing a broad-, intermediate- or narrow- response range. miRNAs reactive to a broad range of environmental cues appear as central components in the stress-response network. The strictly coordinated response of miR398 and miR408 (broad response-range) to the seven stress treatments during the period analyzed here reinforces this notion. Although both, the amplitude and diversity of the miRNA-related response to stress changes during the exposition time, the architecture of the miRNA-network is conserved. This organization of miRNA response to stress is also conserved in rice and soybean supporting the conservation of miRNA-network organization in other crops. Overall, our work sheds light into how miRNA networks in plants organize and function during stress.
+]]></description>
+<dc:creator><![CDATA[ Sanz-Carbonell, A., Marques, M. C., Martinez, G., Gomez, G. ]]></dc:creator>
+<dc:date>2019-08-24</dc:date>
+<dc:identifier>doi:10.1101/745653</dc:identifier>
+<dc:title><![CDATA[Dynamic architecture and regulatory implications of the miRNA network underlying the response to stress in melon]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-24</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/745463v1?rss=1">
+<title>
+<![CDATA[
+Algal photosynthesis converts nitric oxide into nitrous oxide 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/745463v1?rss=1
+</link>
+<description><![CDATA[
+Nitrous oxide (N2O), a potent greenhouse gas in the atmosphere, is produced mostly from aquatic ecosystems, to which algae substantially contribute. However, mechanisms of N2O production by photosynthetic organisms are poorly described. Here, we show that the green microalga Chlamydomonas reinhardtii reduces NO into N2O using the photosynthetic electron transport. Through the study of C. reinhardtii mutants deficient in flavodiiron proteins (FLVs) or in a cytochrome p450 (CYP55), we show that FLVs contribute to NO reduction in the light, while CYP55 operates in the dark. Furthermore, NO reduction by both pathways is restricted to Chlorophytes, organisms particularly abundant in ocean N2O-producing hotspots. Our results provide a mechanistic understanding of N2O production in eukaryotic phototrophs and represent an important step toward a comprehensive assessment of greenhouse gas emission by aquatic ecosystems.nnOne sentence summaryGreen microalgae produce N2O using flavodiiron proteins in the light and a cytochrome P450 NO reductase in the dark.
+]]></description>
+<dc:creator><![CDATA[ Burlacot, A., Gosset, A., RIchaud, P., Li-Beisson, Y., Peltier, G. ]]></dc:creator>
+<dc:date>2019-08-24</dc:date>
+<dc:identifier>doi:10.1101/745463</dc:identifier>
+<dc:title><![CDATA[Algal photosynthesis converts nitric oxide into nitrous oxide]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-24</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/744177v1?rss=1">
+<title>
+<![CDATA[
+Cytokinin fluoroprobe and receptor CRE1/AHK4 localize to both plasma membrane and endoplasmic reticulum 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/744177v1?rss=1
+</link>
+<description><![CDATA[
+The plant hormone cytokinin regulates various cell and developmental processes, including cell division and differentiation, embryogenesis, activity of shoot and root apical meristems, formation of shoot and root lateral organs and others 1. Cytokinins are perceived by a subfamily of sensor histidine kinases (HKs), which via a two-component phosphorelay cascade activate transcriptional responses in the nucleus. Based on the subcellular localization of cytokinin receptors in various transient expression systems, such as tobacco leaf epidermal cells, and membrane fractionation experiments of Arabidopsis and maize, the endoplasmic reticulum (ER) membrane has been proposed as a principal hormone perception site 2-4. Intriguingly, recent study of the cytokinin transporter PUP14 has pointed out that the plasma membrane (PM)-mediated signalling might play an important role in establishment of cytokinin response gradients in various plant organs 5. However, localization of cytokinin HK receptors to the PM, although initially suggested 6, remains ambiguous. Here, by monitoring subcellular localizations of the fluorescently labelled natural cytokinin probe iP-NBD 7 and the cytokinin receptor ARABIDOPSIS HISTIDINE KINASE 4 (CRE1/AHK4) fused to GFP reporter, we show that pools of the ER-located cytokinin fluoroprobes and receptors can enter the secretory pathway and reach the PM. We demonstrate that in cells of the root apical meristem, CRE1/AHK4 localizes to the PM and the cell plate of dividing meristematic cells. Brefeldin A (BFA) experiments revealed vesicular recycling of the receptor and its accumulation in BFA compartments. Our results provide a new perspective on cytokinin signalling and the possibility of multiple sites of perception at PM and ER, which may determine specific outputs of cytokinin signalling.
+]]></description>
+<dc:creator><![CDATA[ Kubiasova, K., Montesinos, J. C., Samajova, O., Nisler, J., Mik, V., Plihalova, L., Novak, O., Marhavy, P., Zalabak, D., Berka, K., Dolezal, K., Galuszka, P., Samaj, J., Strnad, M., Benkova, E., Plihal, O., Spichal, L. ]]></dc:creator>
+<dc:date>2019-08-24</dc:date>
+<dc:identifier>doi:10.1101/744177</dc:identifier>
+<dc:title><![CDATA[Cytokinin fluoroprobe and receptor CRE1/AHK4 localize to both plasma membrane and endoplasmic reticulum]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-24</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/742742v1?rss=1">
+<title>
+<![CDATA[
+Transcriptional Dynamics of the Salicylic Acid Response and its Interplay with the Jasmonic Acid Pathway 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/742742v1?rss=1
+</link>
+<description><![CDATA[
+The phytohormone salicylic acid (SA) is a central regulator of plant immunity. Antagonistic and synergistic actions between SA and other defense-associated hormones like jasmonic acid (JA) play key roles in determining the outcome of the plant immune response. To obtain a deeper understanding of SA-mediated transcriptional reprogramming and SA/JA crosstalk, we generated a high-resolution time series of gene expression from Arabidopsis leaves treated with SA alone and a combination of SA and methyl JA (MeJA), sampled at 14 time points over a 16-h period. We found that approximately one-third of the Arabidopsis genome was differentially expressed in response to SA, and temporal changes in gene expression could be partitioned into 45 distinct clusters of process-specific coregulated genes, linked to specific cis-regulatory elements and binding of transcription factors (TFs). Integration of our expression data with information on TF-DNA binding allowed us to generate a dynamic gene regulatory network model of the SA response, recovering known regulators and identifying novel ones. We found that 12% of SA-responsive genes and 69% of the MeJA-responsive genes exhibited antagonistic or synergistic expression levels in the combination treatment. Multi-condition co-clustering of the single- and combined-hormone expression profiles predicted underlying regulatory mechanisms in signal integration. Finally, we identified the TFs ANAC061 and ANAC090 as negative regulators of SA pathway genes and defense against biotrophic pathogens. Collectively, our data provide an unprecedented level of detail about transcriptional changes during the SA response and SA/JA crosstalk, serving as a valuable resource for systems-level network studies and functional plant defense studies.
+]]></description>
+<dc:creator><![CDATA[ Hickman, R., Pereira Mendes, M., Van Verk, M. C., Van Dijken, A. J. H., Di Sora, J., Denby, K., Pieterse, C. C. M. J., Van Wees, S. C. M. ]]></dc:creator>
+<dc:date>2019-08-24</dc:date>
+<dc:identifier>doi:10.1101/742742</dc:identifier>
+<dc:title><![CDATA[Transcriptional Dynamics of the Salicylic Acid Response and its Interplay with the Jasmonic Acid Pathway]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-24</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/745364v1?rss=1">
+<title>
+<![CDATA[
+Dynamic response of RNA editing to temperature in Grape by RNA deep-sequencing 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/745364v1?rss=1
+</link>
+<description><![CDATA[
+RNA editing is a post-transcriptional process of modifying genetic information on RNA molecules, which provides cells an additional level of gene expression regulation. Unlike mammals, in land plants, RNA editing converts C to U residues in organelles. However, its potential role in response to different stressors (heat, salt and so on) remains unclear. Grape is one of the most popular and economically important fruits in the world, and its production, like other crops, must deal with abiotic and biotic stresses, which cause reductions in yield and fruit quality. In our study, we tested the influence of the environmental factor temperature on RNA processing in the whole mRNA from grape organelle. In total, we identified 123 and 628 RNA editing in chloroplast and mitochondria respectively with the average editing extent nearly ~60%. The analyses revealed that number of non-synonymous editing sites were higher than that of synonymous editing sites, and the amino acid substitution type tend to be hydrophobic. Additionally, the overall editing level decreased with the temperature rises, especially several gene transcripts in chloroplast and mitochondria (matK, ndhB etc.). 245 sites were furthermore determined as stress-responsive sites candidates. We also found that the expression level of PPR genes decreased with the temperature rises, which may contribute to the loss of RNA editing at high temperature. Our findings suggest that the RNA editing events are very sensitive to high temperature, the changes of amino acid in these genes may contribute to the stress adaption for grape.
+]]></description>
+<dc:creator><![CDATA[ Zhang, a., jiang, x., zhang, x. ]]></dc:creator>
+<dc:date>2019-08-24</dc:date>
+<dc:identifier>doi:10.1101/745364</dc:identifier>
+<dc:title><![CDATA[Dynamic response of RNA editing to temperature in Grape by RNA deep-sequencing]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-24</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/744003v1?rss=1">
+<title>
+<![CDATA[
+Genome-wide analysis of GATA factors in moso bamboo (Phyllostachys edulis) unveils that PeGATAs regulate shoot rapid-growth and rhizome development 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/744003v1?rss=1
+</link>
+<description><![CDATA[
+BackgroundMoso bamboo is well-known for its rapid-growth shoots and widespread rhizomes. However, the regulatory genes of these two processes are largely unexplored. GATA factors regulate many developmental processes, but its role in plant height control and rhizome development remains unclear.nnResultsHere, we found that bamboo GATA factors (PeGATAs) are involved in the growth regulation of bamboo shoots and rhizomes. Bioinformatics and evolutionary analysis showed that there are 31 PeGATA factors in bamboo, which can be divided into three subfamilies. Light, hormone, and stress-related cis-elements were found in the promoter region of the PeGATA genes. Gene expression of 12 PeGATA genes was regulated by phytohormone-GA but there was no correlation between auxin and PeGATA gene expression. More than 27 PeGATA genes were differentially expressed in different tissues of rhizomes, and almost all PeGATAs have dynamic gene expression level during the rapid-growth of bamboo shoots. These results indicate that PeGATAs regulate rhizome development and bamboo shoot growth partially via GA signaling pathway. In addition, PeGATA26, a rapid-growth negative regulatory candidate gene modulated by GA treatment, was overexpressed in Arabidopsis, and over-expression of PeGATA26 significantly repressed Arabidopsis primary root length and plant height. The PeGATA26 overexpressing lines were also resistant to exogenous GA treatment, further emphasizing that PeGATA26 inhibits plant height from Arabidopsis to moso bamboo via GA signaling pathway.nnConclusionsOur results provide an insight into the function of GATA transcription factors in regulating shoot rapid-growth and rhizome development, and provide genetic resources for engineering plant height.
+]]></description>
+<dc:creator><![CDATA[ Wang, T., Yang, Y., Lou, S., Wei, W., Zhao, Z., Lin, C., Ma, L. ]]></dc:creator>
+<dc:date>2019-08-22</dc:date>
+<dc:identifier>doi:10.1101/744003</dc:identifier>
+<dc:title><![CDATA[Genome-wide analysis of GATA factors in moso bamboo (Phyllostachys edulis) unveils that PeGATAs regulate shoot rapid-growth and rhizome development]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-22</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/743898v1?rss=1">
+<title>
+<![CDATA[
+The maize Hairy Sheath Frayed1 (Hsf1) mutant alters leaf patterning through increased cytokinin signaling 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/743898v1?rss=1
+</link>
+<description><![CDATA[
+Leaf morphogenesis requires growth polarized along three axes - proximal-distal, medial-lateral and abaxial-adaxial. Grass leaves display a prominent proximal-distal (P-D) polarity consisting of a proximal sheath separated from the distal blade by the auricle and ligule. Although proper specification of the four segments is essential for normal morphology, our knowledge is incomplete regarding the mechanisms which influence P-D specification in monocots like maize (Zea mays). Here we report the identification of the gene underlying the semi-dominant, leaf patterning, maize mutant Hairy Sheath Frayed1 (Hsf1). Hsf1 plants produce leaves with outgrowths consisting of proximal segments - sheath, auricle and ligule - emanating from the distal blade margin. Analysis of three independent Hsf1 alleles revealed gain-of-function missense mutations in the ligand binding domain of the maize cytokinin (CK) receptor Zea mays Histidine Kinase1 (ZmHK1) gene. Biochemical analysis and structural modeling suggest the mutated residues near the CK binding pocket affect CK binding affinity. Treatment of wild type seedlings with exogenous CK phenocopied the Hsf1 leaf phenotypes. Results from expression and epistatic analyses indicated the Hsf1 mutant receptor is expressed normally but appears hypersignaling. Our results demonstrate that hypersignaling of CK in incipient leaf primordia can reprogram developmental patterns in maize.nnSummaryIncreased cytokinin signaling in the maize Hairy Sheath Frayed1 mutant modifies leaf development leading to changes in pattering, growth and cell identity.
+]]></description>
+<dc:creator><![CDATA[ Muszynski, M. G., Moss-Taylor, L., Chudalayandi, S., Cahill, J. F., Del-Valle Echevarria, A. R., Alvarez-Castro, I., Petefish, A., Sakakibara, H., Krivosheev, D. M., Lomin, S. N., Romanov, G. A., Thamotharan, S., Dam, T., Li, B., Brugiere, N. ]]></dc:creator>
+<dc:date>2019-08-22</dc:date>
+<dc:identifier>doi:10.1101/743898</dc:identifier>
+<dc:title><![CDATA[The maize Hairy Sheath Frayed1 (Hsf1) mutant alters leaf patterning through increased cytokinin signaling]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-22</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/744326v1?rss=1">
+<title>
+<![CDATA[
+Expression atlas of Selaginella moellendorffii provides insights into the evolution of vasculature, secondary metabolism and roots 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/744326v1?rss=1
+</link>
+<description><![CDATA[
+O_LIThe lycophyte Selaginella moellendorffii represents early vascular plants and is studied to understand the evolution of higher plant traits such as the vasculature, leaves, stems, roots, and secondary metabolism. However, little is known about the gene expression and transcriptional coordination of Selaginella genes, which precludes us from understanding the evolution of transcriptional programs behind these traits.nC_LIO_LIWe here present a gene expression atlas comprising all major organs, tissue types, and the diurnal gene expression profiles for S. moellendorffii. The atlas is part of the CoNekT-Plants database (conekt.plant.tools), which enables comparative transcriptomic analyses across two algae and seven land plants.nC_LIO_LIWe show that the transcriptional gene module responsible for the biosynthesis of lignocellulose evolved in the ancestor of vascular plants, and pinpoint the duplication and subfunctionalization events that generated multiple gene modules involved in the biosynthesis of various cell wall types. We further demonstrate how secondary metabolism is transcriptionally coordinated and integrated with other cellular pathways. Finally, we identify root-specific genes in vascular plants and show that the evolution of roots did not coincide with an increased appearance of gene families, suggesting that the existing genetic material was sufficient to generate new organs.nC_LIO_LIOur updated database at conekt.plant.tools provides a unique resource to study the evolution of genes, gene families, transcriptomes, and functional gene modules in the Archaeplastida kingdom.nC_LI
+]]></description>
+<dc:creator><![CDATA[ Ferrari, C., Shivhare, D., Hansen, B. O., Winter, N., Pasha, A., Esteban, E., Provart, N. J., Kragler, F., Fernie, A. R., Tohge, T., Mutwil, M. ]]></dc:creator>
+<dc:date>2019-08-22</dc:date>
+<dc:identifier>doi:10.1101/744326</dc:identifier>
+<dc:title><![CDATA[Expression atlas of Selaginella moellendorffii provides insights into the evolution of vasculature, secondary metabolism and roots]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-22</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/742429v1?rss=1">
+<title>
+<![CDATA[
+Soybean drought resilience: contributions of a brassinosteroid functional analogue. 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/742429v1?rss=1
+</link>
+<description><![CDATA[
+Drought is one of the most important causes of severe yield loss in soybean worldwide, threatening food production for the coming years. Phytohormones such as brassinosteroids can increase response to water deficit. However, natural brassinosteroids low stability precludes large-scale field application, challenging research and development of more stable and cost-effective analogues. Seeking functional analogues capable of improving plant drought-response, we investigated for the first time the effect of DI-31 in Arabidopsis and soybean. We found that, in A. thaliana, the DI-31 increased root growth, biomass accumulation, leaf number per plant, triggered antioxidant response and dose-dependent stomatal closure, requiring NADPH and peroxidase-dependent ROS production. In soybean, the relative water content, water use efficiency, biomass production and duration, root length, free proline, chlorophyll and carotenoid accumulation and enzymatic antioxidants activity were stimulated by DI-31 application after four and eight days of mild water shortage, while significantly reduced the lipid-peroxides content. Additionally, our results demonstrated that DI-31 diminishes the nodular senescence and successfully maintains the N homeostasis through a fine tune of biological/assimilative N2-fixation pathways. These findings support the DI-31 potential use as a sustainable alternative for integrative soybean resilience management under drought.nnHighlightBrassinosteroid analogue DI-31 improves soybean growth, water economy, respiration, anti-stress response and nitrogen homeostasis under drought. Thus, they may be considered as a sustainable and environmentally-safe alternative for raising legumes climate resilience.
+]]></description>
+<dc:creator><![CDATA[ Perez Borroto, L. S., Toum, L., Castagnaro, A. P., Gonzalez-Olmedo, J. L., Coll-Manchado, F., Welin, B. G. V., Coll-Garcia, Y., Pardo, E. M. ]]></dc:creator>
+<dc:date>2019-08-22</dc:date>
+<dc:identifier>doi:10.1101/742429</dc:identifier>
+<dc:title><![CDATA[Soybean drought resilience: contributions of a brassinosteroid functional analogue.]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-22</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/741314v1?rss=1">
+<title>
+<![CDATA[
+Co-catabolism of arginine and succinate drives symbiotic nitrogen fixation 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/741314v1?rss=1
+</link>
+<description><![CDATA[
+Biological nitrogen fixation emerging from the symbiosis between bacteria and crop plants holds a significant promise to increase the sustainability of agriculture. One of the biggest hurdles for the engineering of nitrogen-fixing organisms is to identify the metabolic blueprint for symbiotic nitrogen fixation. Here, we report on the C4-dicarboxylate Arginine-Transamination Co-catabolism under acidic (H+) conditions to fix Nitrogen (CATCH-N), a novel metabolic network based on co-catabolism of plant-provided arginine and succinate to drive the energy-demanding process of symbiotic nitrogen fixation in endosymbiotic rhizobia. Using systems biology, isotope labelling studies and transposon sequencing in conjunction with biochemical characterization, we uncovered highly redundant network components of the CATCH-N cycle including transaminases that interlink the co-catabolism of arginine and succinate. The CATCH-N cycle shares aspects with the plant mitochondrial arginine degradation pathway. However, it uses N2 as an additional sink for reductant and therefore delivers up to 25% higher yields in nitrogen than classical arginine catabolism -two alanines and three ammonium ions are secreted for each input of arginine and succinate. We argue that the CATCH-N cycle has evolved as part of a specific mechanism to sustain bacterial metabolism in the microoxic and acid environment of symbiosomes. Thus, the CATCH-N cycle entangles the metabolism of both partners to promote symbiosis. In sum, our systems-level findings provide the theoretical framework and enzymatic blueprint for the rational design of plants and plant-associated organisms with new properties for improved nitrogen fixation.nnSignificance StatementSymbiotic bacteria assimilate nitrogen from the air and fix it into a form that can be used by plants in a process known as biological nitrogen fixation. In agricultural systems, this process is restricted mainly to legumes, yet there is considerable interest in exploring whether similar symbioses can be developed in non-legumes including cereals and other important crop plants. Here we present systems-level findings on the minimal metabolic function set for biological nitrogen fixation that provides the theoretical framework for rational engineering of novel organisms with improved nitrogen-fixing capabilities.
+]]></description>
+<dc:creator><![CDATA[ Flores-Tinoco, C. E., Christen, M., Christen, B. ]]></dc:creator>
+<dc:date>2019-08-21</dc:date>
+<dc:identifier>doi:10.1101/741314</dc:identifier>
+<dc:title><![CDATA[Co-catabolism of arginine and succinate drives symbiotic nitrogen fixation]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-21</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/742114v1?rss=1">
+<title>
+<![CDATA[
+Cross-compatibility of five highbush blueberry varieties and ideal crossing combinations 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/742114v1?rss=1
+</link>
+<description><![CDATA[
+Blueberry plants require large quantities of pollen deposited on stigmas to produce commercial-quality fruit. Like many agricultural crops, the interaction between pollen-source variety and pollen-recipient variety can be a major determinant of fruit quality in blueberries. However, little information exists to guide growers in optimising fruit set and quality. Using five commonly grown blueberry varieties, I determined whether crossing between varieties (inter-varietal) increased fruit mass and decreased developmental time relative to crossing within a variety (intra-varietal), and if so, what the best crossing combinations are. While intra-varietal pollination often produced fruit, for certain varieties the fruit set and fruit mass were highly reduced compared to inter-varietal pollination. Furthermore, intra-varietal pollination resulted in longer fruit developmental time in comparison to pollination between varieties. For the same pollen-recipient variety, inter-varietal crosses typically outperformed intra-varietal crosses in fruit mass and developmental time; however, the extent to which inter-varietal crosses outperformed intra-varietal crosses differed between pollen-donor varieties. This result suggests that combinations of varieties are not trivial as some inter-varietal combinations may outperform others. Furthermore, some varieties appear to be more susceptible to the negative effects of intra-varietal crosses than others and that less susceptible varieties may be better suited to conditions where pollinator movement is poor. While our study can guide growers in determining optimal co-planting schemes for the varieties tested, for example in South Africa where these varieties are frequently grown. It also serves as a blueprint for similar compatibility studies that can easily be performed prior to planting to determine the best inter-varietal combinations.
+]]></description>
+<dc:creator><![CDATA[ Martin, K., Anderson, B., Minnaar, C., de Jager, M. ]]></dc:creator>
+<dc:date>2019-08-21</dc:date>
+<dc:identifier>doi:10.1101/742114</dc:identifier>
+<dc:title><![CDATA[Cross-compatibility of five highbush blueberry varieties and ideal crossing combinations]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-21</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/740043v1?rss=1">
+<title>
+<![CDATA[
+Symbiotic signalling is at the core of an endophytic Fusarium solani-legume association 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/740043v1?rss=1
+</link>
+<description><![CDATA[
+Legumes interact with a wide range of microbes in their root system, ranging from beneficial symbionts to pathogens. Symbiotic rhizobia and arbuscular mycorrhizal glomeromycetes trigger a so-called common symbiotic signalling pathway (CSSP), including the induction of nuclear calcium spiking in the root epidermis. In our study, the recognition of an endophytic Fusarium solani strain K in Lotus japonicus induced the expression of LysM receptors for chitin-based molecules, CSSP members and CSSP-dependent genes in L. japonicus. In LysM and CSSP mutant/RNAi lines, root penetration and fungal intraradical progression was either stimulated or limited while FsK exudates are perceived in a CSSP-dependent manner, triggering nuclear calcium spiking in epidermal cells of Medicago truncatula Root Organ Cultures. Our results corroborate that the CSSP is a more common pathway than previously envisaged, involved in the perception of signals from other microbes beyond the restricted group of symbiotic interactions sensu stricto.nnAbbreviationsAM, Arbuscular Mycorrhizal; AU, airy units; CLSM, Confocal Laser Scanning Microscopy; CO5, pentameric chito-oligosaccharide; CSSP, Common Symbiosis Signalling Pathway; dpi, days post inoculation; Fom, Fusarium oxysporum f. sp. medicaginis; FsK, Fusarium solani strain K; LCOs, lipo-chitooligosaccharides; Lj, Lotus japonicus; Lysin-motif, LysM; Mt, Medicago truncatula; NF, Nod Factor; PM, plasma membrane; RLK, receptor-like kinase; RLS, rhizobium - legume symbiosis; ROCs, Root Organ Cultures; wt, wild-type
+]]></description>
+<dc:creator><![CDATA[ Skiada, V., Avramidou, M., Bonfante, P., Genre, A., PAPADOPOULOU, K. ]]></dc:creator>
+<dc:date>2019-08-20</dc:date>
+<dc:identifier>doi:10.1101/740043</dc:identifier>
+<dc:title><![CDATA[Symbiotic signalling is at the core of an endophytic Fusarium solani-legume association]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-20</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/740126v1?rss=1">
+<title>
+<![CDATA[
+NbCycB2 represses Nbwo activity via a negative feedback loop in the tobacco trichome developmemt 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/740126v1?rss=1
+</link>
+<description><![CDATA[
+The wo protein and its downstream gene, SlCycB2 have been demonstrated to regulate the trichome development in tomato. It was shown that only gain-of-function mutant form of wo, Wov (wo woolly motif mutant allele) could induce the increase of trichome density. However, it is still unclear the relationships between wo, Wov and SlCycB2 in trichome regulation. In this study, we demonstrated Nbwo (NbWov) directly regulated the expressions NbCycB2 by binding to the promoter of NbCycB2 and its genomic sequences. As a feedback regulation, NbCycB2 negatively regulates the trichome formation by repressing Nbwo activity at protein level. We further found that the mutations of Nbwo woolly motif could prevent repression of NbWov by NbCycB2, which results in the significant increase of active Nbwo proteins, trichome density and branches. Our results revealed a novel reciprocal mechanism between NbCycB2 and Nbwo during the trichome formation in Nicotiana benthamiana.nnHighlightNbCycB2 is specifically expressed in trichomes of Nicotiana benthamiana and represses the Nbwo activity via a negative feedback loop in tobacco trichome developmemt.
+]]></description>
+<dc:creator><![CDATA[ Wu, M., Cui, Y., Ge, L., Cui, L., Xu, Z., Zhang, H., Wang, Z., Zhou, D., Wu, S., Chen, L., Cui, H. ]]></dc:creator>
+<dc:date>2019-08-20</dc:date>
+<dc:identifier>doi:10.1101/740126</dc:identifier>
+<dc:title><![CDATA[NbCycB2 represses Nbwo activity via a negative feedback loop in the tobacco trichome developmemt]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-20</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/740167v1?rss=1">
+<title>
+<![CDATA[
+Successes of artemisinin elicitation in low-artemisinin producing Artemisia annua cell cultures constrained by repression of biosynthetic genes 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/740167v1?rss=1
+</link>
+<description><![CDATA[
+The sesquiterpene phytolactone derived from Artemisia annua, artemisinin is associated with a variety of novel biological properties, such as immunoregulatory and anticancer effects, and therapeutic applications, apart from its main function as an antimalarial drug. Emerging from the fact that artemisinin production in planta occurs in trace amounts and its compartmentalized synthesis, the irregular agricultural supply often results in market fluctuations and reductions in artemisinin inventory. Further improvement in artemisinin production calls for approaches that act in a supplementary manner, filling the agricultural production gap. Here we investigated the elicitation efficiency of ultraviolet B (UV-B) and dimethyl sulfoxide (DMSO) independently on a low-artemisinin producing (LAP) chemotype of the species A. annua. The exposure of cell suspension cultures to short-term UV-B radiation and DMSO treatment did not result in significant changes in artemisinin yield. The lack of stimulation has been associated with: (i) the general lack of cytodifferentiation of cell cultures; (ii) negative feedback regulation of artemisinin biosynthesis; and (iii) artemisinin sequestration by cellular detoxification. Further molecular analysis revealed the repression of key genes ADS, DBR2 and ALDH1 which affected artemisinin synthesis. This study provides insights into the complexity of stress-induced responses of A. annua cell suspension cultures in relation to metabolic processes (transportation, accumulation and degradation of secondary products) which are important for artemisinin formation.
+]]></description>
+<dc:creator><![CDATA[ Kam, M. Y. Y., Yap, W. ]]></dc:creator>
+<dc:date>2019-08-19</dc:date>
+<dc:identifier>doi:10.1101/740167</dc:identifier>
+<dc:title><![CDATA[Successes of artemisinin elicitation in low-artemisinin producing Artemisia annua cell cultures constrained by repression of biosynthetic genes]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-19</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/740001v1?rss=1">
+<title>
+<![CDATA[
+A SAC phosphoinositide phosphatase controls rice development via hydrolyzing phosphatidylinositol 4-phosphate and phosphatidylinositol 4,5-bisphosphate 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/740001v1?rss=1
+</link>
+<description><![CDATA[
+Phosphoinositides (PIs) as regulatory membrane lipids play essential roles in multiple cellular processes. Although the exact molecular targets of PIs-dependent modulation remain largely elusive, the effects of disturbed PIs metabolism could be employed to propose regulatory modules associated with particular downstream targets of PIs. Here, we identified the role of GRAIN NUMBER AND PLANT HEIGHT 1 (GH1), which encodes a suppressor of actin (SAC) domain-containing phosphatase with unknown function in rice. Endoplasmic reticulum-localized GH1 specifically dephosphorylated and hydrolyzed phosphatidylinositol 4-phosphate (PI4P) and phosphatidylinositol 4,5-bisphosphate [PI(4,5)P2]. Inactivation of GH1 resulted in massive accumulation of both PI4P and PI(4,5)P2, while excessive GH1 caused their depletion. Notably, superabundant PI4P and PI(4,5)P2 could both disrupt actin cytoskeleton organization and suppress cell elongation. Interestingly, both PI4P and PI(4,5)P2 inhibited actin-related proteins 2 and 3 (Arp2/3) complex-nucleated actin branching networks in vitro, whereas PI(4,5)P2 showed more dramatic effect in a dose-dependent manner. Overall, the overaccumulation of PI(4,5)P2 resulted from dysfunction of SAC phosphatase possibly perturbs Arp2/3 complex-mediated actin polymerization, thereby disordering the cell development. These findings imply that Arp2/3 complex might be the potential molecular target of PI(4,5)P2-dependent modulation in eukaryotes, thereby providing new insights into the relationship between PIs homeostasis and plants growth and development.
+]]></description>
+<dc:creator><![CDATA[ Guo, T., Lin, H.-X., Chen, K., Dong, N.-Q., Huang, S., Ye, W.-W., Shan, J.-X., Chen, H.-C., Lu, Z.-Q., Diao, M. ]]></dc:creator>
+<dc:date>2019-08-19</dc:date>
+<dc:identifier>doi:10.1101/740001</dc:identifier>
+<dc:title><![CDATA[A SAC phosphoinositide phosphatase controls rice development via hydrolyzing phosphatidylinositol 4-phosphate and phosphatidylinositol 4,5-bisphosphate]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-19</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/736363v1?rss=1">
+<title>
+<![CDATA[
+Integrated Multi-omic Framework of the Plant Response to Jasmonic Acid 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/736363v1?rss=1
+</link>
+<description><![CDATA[
+Understanding the systems-level actions of transcriptional responses to hormones provides insight into how the genome is reprogrammed in response to environmental stimuli. Here, we investigate the signaling pathway of the hormone jasmonic acid (JA), which controls a plethora of critically important processes in plants and is orchestrated by the transcription factor MYC2 and its closest relatives in Arabidopsis thaliana. We generated an integrated framework of the response to JA that spans from the activity of master and secondary-regulatory transcription factors, through gene expression outputs and alternative splicing to protein abundance changes, protein phosphorylation and chromatin remodeling. We integrated time series transcriptome analysis with (phospho)proteomic data to reconstruct gene regulatory network models. These enable us to predict previously unknown points of crosstalk from JA to other signaling pathways and to identify new components of the JA regulatory mechanism, which we validated through targeted mutant analysis. These results provide a comprehensive understanding of how a plant hormone remodels cellular functions and plant behavior, the general principles of which provide a framework for analysis of cross-regulation between other hormone and stress signaling pathways.
+]]></description>
+<dc:creator><![CDATA[ Zander, M., Lewsey, M. G., Clarke, N. M., Yin, L., Bartlett, A., Saldierna Guzman, J. P., Hann, E., Langford, A., Jow, B., Wise, A., Nery, J. R., Chen, H., Bar-Joseph, Z., Walley, J., Solano, R., Ecker, J. R. ]]></dc:creator>
+<dc:date>2019-08-19</dc:date>
+<dc:identifier>doi:10.1101/736363</dc:identifier>
+<dc:title><![CDATA[Integrated Multi-omic Framework of the Plant Response to Jasmonic Acid]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-19</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/738971v1?rss=1">
+<title>
+<![CDATA[
+Developing a rapid and highly efficient cowpea regeneration and transformation system using embryonic axis explants 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/738971v1?rss=1
+</link>
+<description><![CDATA[
+Cowpea is one of the most important legume crops planted worldwide, especially in Sub-Saharan Africa and Asia. Despite decades of effort, genetic engineering of cowpea is still challenging due to inefficient in vitro shoot regeneration, Agrobacterium-mediated T-DNA delivery and transgenic selection. Here, we report a rapid and highly efficient cowpea transformation system using embryonic axis explants isolated from imbibed mature seeds. We found that removal of the shoot apical meristem by cutting through the middle of the epicotyl stimulated direct multiple shoot organogenesis from the cotyledonary node tissue. Furthermore, the application of a ternary transformation vector system using an optimized pVIR accessory plasmid provided high levels of Agrobacterium-mediated gene delivery. The utilization of spectinomycin as the selection agent enabled more efficient transgenic selection and plant recovery. Transgenic cowpea shoots developed exclusively from the cotyledonary nodes at high frequencies of 4.5 to 37% across a wide range of cowpea genotypes. We believe that the transformation principles established in this study could also be applied to other legumes to increase transformation efficiencies.
+]]></description>
+<dc:creator><![CDATA[ Che, P., Chang, S., Simon, M. K., Zhang, Z., Shaharyar, A., Ourada, J., O'Neill, D., Torres-Mendoza, M., Guo, Y., Marasigan, K. M., Vielle-Calzada, J.-P., Ozias-Akins, P., Albertsen, M. C., Jones, T. J. ]]></dc:creator>
+<dc:date>2019-08-19</dc:date>
+<dc:identifier>doi:10.1101/738971</dc:identifier>
+<dc:title><![CDATA[Developing a rapid and highly efficient cowpea regeneration and transformation system using embryonic axis explants]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-19</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/738914v1?rss=1">
+<title>
+<![CDATA[
+Genetic analysis of seed and pod traits in a set of Recombinant Inbred Lines (RILs) in peanut (Arachis hypogaea L.) 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/738914v1?rss=1
+</link>
+<description><![CDATA[
+Although seed and pod traits are important for peanut breeding, little is known about the inheritance of these traits. A recombinant inbred line (RIL) population of 156 lines from a cross of Tifrunner x NC 3033 was genotyped with the Axiom_Arachis1 SNP array and SSRs to generate a genetic map composed of 1524 markers in 29 linkage groups (LG). The genetic positions of markers were compared with their physical positions on the peanut genome to confirm the validity of the linkage map and explore the distribution of recombination and potential chromosomal rearrangements. This linkage map was then used to identify Quantitative Trait Loci (QTL) for seed and pod traits that were phenotyped over three consecutive years for the purpose of developing trait-associated markers for breeding. Forty-nine QTL were identified in 14 LG for seed size index, kernel percentage, seed weight, pod weight, single-kernel, double-kernel, pod area and pod density. Twenty QTL demonstrated phenotypic variance explained (PVE) greater than 10% and eight more than 20%. Of note, seven of the eight major QTL for pod area, pod weight and seed weight (PVE >20% variance) were attributed to NC 3033 and located in a single linkage group, LG B06_1. In contrast, the most consistent QTL for kernel percentage were located on A07/B07 and derived from Tifrunner.
+]]></description>
+<dc:creator><![CDATA[ Chavarro, C., Chu, Y., Holbrook, C. C., Isleib, T., Bertioli, D., Hovav, R., Butts, C., Marshall, L., Sorensen, R., Jackson, S. A., Ozias-Akins, P. ]]></dc:creator>
+<dc:date>2019-08-18</dc:date>
+<dc:identifier>doi:10.1101/738914</dc:identifier>
+<dc:title><![CDATA[Genetic analysis of seed and pod traits in a set of Recombinant Inbred Lines (RILs) in peanut (Arachis hypogaea L.)]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-18</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/738070v1?rss=1">
+<title>
+<![CDATA[
+Characterizing allele-by-environment interactions using maize introgression lines 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/738070v1?rss=1
+</link>
+<description><![CDATA[
+Relatively small genomic introgressions containing quantitative trait loci can have significant impacts on the phenotype of an individual plant. However, the magnitude of phenotypic effects for the same introgression can vary quite substantially in different environments due to allele-by-environment interactions. To study potential patterns of allele-by-environment interactions, fifteen near-isogenic lines (NILs) with >90% B73 genetic background and multiple Mo17 introgressions were grown in 16 different environments. These environments included five geographical locations with multiple planting dates and multiple planting densities. The phenotypic impact of the introgressions was evaluated for up to 26 traits that span different growth stages in each environment to assess allele-by-environment interactions. Results from this study showed that small portions of the genome can drive significant genotype-by-environment interaction across a wide range of vegetative and reproductive traits, and the magnitude of the allele-by-environment interaction varies across traits. Some introgressed segments were more prone to genotype-by-environment interaction than others when evaluating the interaction on a whole plant basis throughout developmental time, indicating variation in phenotypic plasticity throughout the genome. Understanding the profile of allele-by-environment interaction is useful in considerations of how small introgressions of QTL or transgene containing regions might be expected to impact traits in diverse environments.nnKey MessageSignificant allele-by-environment interactions are observed for traits throughout development from small introgressed segments of the genome.
+]]></description>
+<dc:creator><![CDATA[ Li, Z., Tirado, S. B., Kadam, D. C., Coffey, L., Miller, N. D., Spalding, E. P., Lorenz, A. J., de Leon, N., Kaeppler, S. M., Schnable, P. S., Springer, N. M., Hirsch, C. N. ]]></dc:creator>
+<dc:date>2019-08-16</dc:date>
+<dc:identifier>doi:10.1101/738070</dc:identifier>
+<dc:title><![CDATA[Characterizing allele-by-environment interactions using maize introgression lines]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-16</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/738021v1?rss=1">
+<title>
+<![CDATA[
+A modular cloning toolkit for genome editing in plants 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/738021v1?rss=1
+</link>
+<description><![CDATA[
+The modular cloning (MoClo), based on the Golden Gate (GG) method, has enabled development of cloning systems with standardised genetic parts, e.g. promoters, coding sequences or terminators, that can be easily interchanged and assembled into expression units, which in their own turn can be further assembled into higher order multigene constructs. Here we present an expanded cloning toolkit that contains modules encoding a variety of CRISPR/Cas-based nucleases and their corresponding guide RNA backbones. Among other components, the toolkit includes a number of promoters that allow expression of CRISPR/Cas nucleases (or any other coding sequences) and their guide RNAs in monocots and dicots. As part of the toolkit, we present a set of modules that enable quick and facile assembly of tRNA-sgRNA polycistronic units without a PCR step involved. We believe the toolkit will contribute towards wider adoption of the CRISPR/Cas genome editing technology and modular cloning by researchers across the plant science community.
+]]></description>
+<dc:creator><![CDATA[ Hahn, F., Korolev, A., Sanjurjo Loures, L., Nekrasov, V. ]]></dc:creator>
+<dc:date>2019-08-16</dc:date>
+<dc:identifier>doi:10.1101/738021</dc:identifier>
+<dc:title><![CDATA[A modular cloning toolkit for genome editing in plants]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-16</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/736793v1?rss=1">
+<title>
+<![CDATA[
+Evaluation of 20 enset (Ensete ventricosum) landraces for response to Xanthomonas vasicola pv. musacearum infection 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/736793v1?rss=1
+</link>
+<description><![CDATA[
+Bacterial wilt, caused by Xanthomonas vasicola pv. musacearum (Xvm), formerly X. campestris pv. musacearum, is the most threatening and economically important disease of enset (Ensete ventricosum), the multipurpose food security crop orphan to south and southwestern Ethiopia. Xvm has also had a major impact on banana and plantain production in East Africa following its detection in Uganda in 2001 and subsequent spread. Effective control of this disease currently relies on integrated disease management (IDM) strategies including minimization of field pathogen inoculum and deployment of wilt resistant enset landraces. Identifying landraces with stable and durable Xvm resistance will greatly accelerate breeding of varieties that can be included as a component of IDM. In this study, 20 enset landraces previously reported to exhibit lower susceptibility to Xvm were grown in pots under open field conditions and inoculated with an aggressive Xvm inoculum isolated from a disease hotspot area. Longitudinal and survival analyses were applied to each landrace, based on disease units representing a combination of area-under-disease progress stairs, disease index and apparent infection rate. Considerable variation was observed among the 20 landraces; however, none exhibited full immunity to Xvm infection. Three landraces, viz. Haela, Mazia and Lemat (HML), showed lowest susceptibility to Xvm as evidenced by lower disease units and higher survival rates. Landraces Kuro, Gezewet, Bededet, and Alagena showed similar levels of Xvm infection as did HML, but with lower survival rates. By contrast, landrace Arkia showed the highest infection level and lowest survival rate, suggesting a high degree of susceptibility to Xvm. This study identifies new material that can be used in future breeding programmes to develop Xvm-resistant enset varieties.
+]]></description>
+<dc:creator><![CDATA[ Muzemil, S., Chala, A., Tesfaye, B., Studholme, D. J., Grant, M., Yemataw, Z., Olango, T. M. ]]></dc:creator>
+<dc:date>2019-08-15</dc:date>
+<dc:identifier>doi:10.1101/736793</dc:identifier>
+<dc:title><![CDATA[Evaluation of 20 enset (Ensete ventricosum) landraces for response to Xanthomonas vasicola pv. musacearum infection]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-15</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/736439v1?rss=1">
+<title>
+<![CDATA[
+A peptide pair coordinates regular ovule initiation patterns with seed number and fruit size 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/736439v1?rss=1
+</link>
+<description><![CDATA[
+Ovule development in Arabidopsis thaliana involves pattern formation which ensures that ovules are regularly arranged in the pistils to reduce competition for nutrients and space. Mechanisms underlying pattern formation in plants, such as phyllotaxis, flower morphogenesis or lateral root initiation, have been extensively studied, and genes controlling the initiation of ovules have been identified. However, how a regular spacing of ovules is achieved is not known. Using natural variation analysis combined with quantitative trait locus analysis, we found that the spacing of ovules in the developing fruits is controlled by two secreted peptides, EPFL2 and EPFL9 (also known as Stomagen), and their receptors from the ERECTA (ER) family that act from the carpel wall and the placental tissue. We found that a signalling pathway controlled by EPFL9 acting from the carpel wall through the LRR-receptor kinases ER, ERL1 and ERL2 promotes fruit growth. Regular spacing of ovules depends on EPFL2 expression in the carpel wall and in the inter-ovule spaces, where it acts through ERL1 and ERL2. Loss of EPFL2 signalling results in shorter fruits and irregular spacing of ovules or even ovule twinning. The EPFL2 expression pattern between ovules is under negative-feedback regulation by auxin, which accumulates in the arising ovule primordia. We propose that the auxin-EPFL2 signalling module evolved to control the initiation and regular, equidistant spacing of ovule primordia, which serves to minimise competition between developing seeds. Together, EPFL2 and EPFL9 coordinate ovule patterning and thereby seed number with fruit growth through a set of shared receptors.
+]]></description>
+<dc:creator><![CDATA[ Kawamoto, N., Pino del Carpio, D., Hofmann, A., Mizuta, Y., Daisuke, K., Higashiyama, T., Uchida, N., Torii, K. U., Colombo, L., Groth, G., Simon, R. ]]></dc:creator>
+<dc:date>2019-08-15</dc:date>
+<dc:identifier>doi:10.1101/736439</dc:identifier>
+<dc:title><![CDATA[A peptide pair coordinates regular ovule initiation patterns with seed number and fruit size]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-15</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/736397v1?rss=1">
+<title>
+<![CDATA[
+Multi-Dimensional Machine Learning Approaches for Fruit Shape Recognition and Phenotyping in Strawberry 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/736397v1?rss=1
+</link>
+<description><![CDATA[
+BackgroundShape is a critical element of the visual appeal of strawberry fruit and determined by both genetic and non-genetic factors. Current fruit phenotyping approaches for external characteristics in strawberry rely on the human eye to make categorical assessments. However, fruit shape is multi-dimensional, continuously variable, and not adequately described by a single quantitative variable. Morphometric approaches enable the study of complex forms but are often abstract and difficult to interpret. In this study, we developed a mathematical approach for transforming fruit shape classifications from digital images onto an ordinal scale called the principal progression of k clusters (PPKC). We use these human-recognizable shape categories to select features extracted from multiple morphometric analyses that are best fit for genome-wide and forward genetic analyses.nnResultsWe transformed images of strawberry fruit into human-recognizable categories using unsupervised machine learning, discovered four principal shape categories, and inferred progression using PPKC. We extracted 67 quantitative features from digital images of strawberries using a suite of morphometric analyses and multi-variate approaches. These analyses defined informative feature sets that effectively captured quantitative differences between shape classes. Classification accuracy ranged from 68.9 - 99.3% for the newly created, genetically correlated phenotypic variables describing a shape.nnConclusionsOur results demonstrated that strawberry fruit shapes could be robustly quantified, accurately classified, and empirically ordered using image analyses, machine learning, and PPKC. We generated a dictionary of quantitative traits for studying and predicting shape classes and identifying genetic factors underlying phenotypic variability for fruit shape in strawberry. The methods and approaches we applied in strawberry should apply to other fruits, vegetables, and specialty crops.
+]]></description>
+<dc:creator><![CDATA[ Feldmann, M. J., Hardigan, M. A., Famula, R. A., Lopez, C. M., Tabb, A., Cole, G. S., Knapp, S. J. ]]></dc:creator>
+<dc:date>2019-08-15</dc:date>
+<dc:identifier>doi:10.1101/736397</dc:identifier>
+<dc:title><![CDATA[Multi-Dimensional Machine Learning Approaches for Fruit Shape Recognition and Phenotyping in Strawberry]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-15</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/734525v1?rss=1">
+<title>
+<![CDATA[
+An ethnobotanical study of the genus Elymus 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/734525v1?rss=1
+</link>
+<description><![CDATA[
+Grains of domesticated grasses (Poaceae) have long been a global food source and constitute the bulk of calories in the human diet. Recent efforts to establish more sustainable agricultural systems have focused in part on the development of herbaceous, perennial crops. Perennial plants have extensive root systems that stabilize soil and absorb water and nutrients at greater rates than their annual counterparts; consequently, perennial grasses are important potential candidates for grain domestication. While most contemporary grass domesticates consumed by humans are annual plants, there are over 7,000 perennial grass species that remain largely unexplored for domestication purposes. Documenting ethnobotanical uses of wild perennial grasses could aid in the evaluation of candidate species for de novo crop development. The objectives of this study are 1) to provide an ethnobotanical survey of the grass genus Elymus; and 2) to investigate floret size variation in species used by people. Elymus includes approximately 150 perennial species distributed in temperate and subtropical regions, of which at least 21 taxa have recorded nutritional, medicinal, and/or material uses. Elymus species used for food by humans warrant pre-breeding and future analyses to assess potential utility in perennial agricultural systems.
+]]></description>
+<dc:creator><![CDATA[ Frawley, E. S., Ciotir, C., Micke, B., Rubin, M. J., Miller, A. ]]></dc:creator>
+<dc:date>2019-08-15</dc:date>
+<dc:identifier>doi:10.1101/734525</dc:identifier>
+<dc:title><![CDATA[An ethnobotanical study of the genus Elymus]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-15</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/736199v1?rss=1">
+<title>
+<![CDATA[
+Drought sensitivity of leaflet growth, biomass accumulation, and resource partitioning predicts yield in common bean 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/736199v1?rss=1
+</link>
+<description><![CDATA[
+While drought limits yield largely by its impact on photosynthesis and therefore biomass accumulation, biomass is not the strongest predictor of yield under drought. Instead, resource partitioning efficiency, measured by how much total pod weight is contained in seeds at maturity (Pod Harvest Index), is the stronger correlate in Phaseolus vulgaris. Using 20 field-grown genotypes, we expanded on this finding by pairing yield and resource partitioning data with growth rates of leaflets and pods. We hypothesized that genotypes which decreased partitioning and yield most under drought would also have strongest decreases in growth rates. We found that while neither leaflet nor pod growth rates correlated with seed yield or partitioning, impacts to leaflet growth rates under drought correlate with impacts to yield and partitioning. As expected, biomass production correlated with yield, yet correlations between the decreases to these two traits under drought were even stronger. This suggests that while biomass contributes to yield, biomass sensitivity to drought is a stronger predictor. Lastly, under drought, genotypes may achieve similar canopy biomass yet different yields, which can be explained by higher or lower partitioning efficiencies. Our findings suggest that inherent sensitivity to drought may be used as a predictor of yield.nnHIGHLIGHTIn common bean, higher biomass accumulation under drought alone does not guarantee higher yield, as maintenance of higher growth rates and partitioning processes act as an additional requirement.
+]]></description>
+<dc:creator><![CDATA[ Hageman, A. N., Urban, M. O., Van Volkenburgh, E. ]]></dc:creator>
+<dc:date>2019-08-15</dc:date>
+<dc:identifier>doi:10.1101/736199</dc:identifier>
+<dc:title><![CDATA[Drought sensitivity of leaflet growth, biomass accumulation, and resource partitioning predicts yield in common bean]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-15</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/736249v1?rss=1">
+<title>
+<![CDATA[
+Dynamic regulation of immunity through post-translational control of defense transcript splicing 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/736249v1?rss=1
+</link>
+<description><![CDATA[
+Survival of all living organisms requires the ability to detect attack and swiftly counter with protective immune responses. Despite considerable mechanistic advances, interconnectivity of signaling circuits often remains unclear. A newly-characterized protein, IMMUNOREGULATORY RNA-BINDING PROTEIN (IRR), negatively regulates immune responses in both maize and Arabidopsis, with disrupted function resulting in enhanced disease resistance. IRR physically interacts with, and promotes canonical splicing of, transcripts encoding defense signaling proteins, including the key negative regulator of pattern recognition receptor signaling complexes, CALCIUM-DEPENDENT PROTEIN KINASE 28 (CPK28). Upon immune activation by Plant Elicitor Peptides (Peps), IRR is dephosphorylated, disrupting interaction with CPK28 transcripts and resulting in accumulation of an alternative splice variant encoding a truncated CPK28 protein with impaired kinase activity and diminished function as a negative regulator. We demonstrate a novel circuit linking Pep-induced post-translational modification of IRR with post-transcriptionally-mediated attenuation of CPK28 function to dynamically amplify Pep signaling and immune output.nnOne Sentence SummaryPlant innate immunity is promoted by post-translational modification of a novel RNA-binding protein that regulates alternative splicing of transcripts encoding defense signaling proteins to dynamically increase immune receptor signaling capacity through deactivation of a key signal-buffering circuit.
+]]></description>
+<dc:creator><![CDATA[ Dressano, K., Weckwerth, P., Poretsky, E., Takahashi, Y., Villarreal, C., Shen, Z., Schroeder, J., Briggs, S., Huffaker, A. ]]></dc:creator>
+<dc:date>2019-08-15</dc:date>
+<dc:identifier>doi:10.1101/736249</dc:identifier>
+<dc:title><![CDATA[Dynamic regulation of immunity through post-translational control of defense transcript splicing]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-15</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/733857v1?rss=1">
+<title>
+<![CDATA[
+How do three cytosolic glutamine synthetase isozymes of wheat perform N assimilation and translocation? 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/733857v1?rss=1
+</link>
+<description><![CDATA[
+To understand how the three cytosolic glutamine synthetase (GS1) isozymes of wheat (Triticum aestivum L., TaGS1) perform nitrogen assimilation and translocation, we studied the kinetic properties of TaGS1 isozymes, the effects of nitrogen on the expression and localization of TaGS1 isozymes with specific antibodies, and the nitrogen metabolism. The results showed TaGS1;1, the dominant TaGS1 isozyme, had a high affinity for substrates, and was widely localized in the mesophyll cells, root pericycle and root tip meristematic zone, suggesting it was the primary isozyme for N assimilation. TaGS1;2, with a high affinity for Glu, was activated by Gln, and was mainly localized in the around vascular tissues, indicating that TaGS1;2 catalyzed Gln synthesis in low Glu concentration, then the Gln returned to activate TaGS1;2, which may lead to the rapid accumulation of Gln around the vascular tissues. TaGS1;3 had low affinity for substrates but the highest Vmax among TaGS1, was mainly localized in the root tip meristematic zone; exogenous NH4+ could promote TaGS1;3 expressing, indicating that TaGS1;3 could rapidly assimilate NH4+ to relieve NH4+ toxicity. In conclusion, TaGS1;1, TaGS1;2 and TaGS1;3 have different role in N assimilation, Gln translocation and relieving ammonium toxicity, respectively, and synergistically perform nitrogen assimilation and translocation.nnHighlightThree cytosolic glutamine synthase isozymes of wheat have different role and synergistically perform nitrogen assimilation and translocation.
+]]></description>
+<dc:creator><![CDATA[ Wei, Y., Wang, X., Zhang, Z., Xiong, S., Zhang, Y., Wang, L., Meng, X., Zhang, J., Ma, X. ]]></dc:creator>
+<dc:date>2019-08-14</dc:date>
+<dc:identifier>doi:10.1101/733857</dc:identifier>
+<dc:title><![CDATA[How do three cytosolic glutamine synthetase isozymes of wheat perform N assimilation and translocation?]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-14</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+<item rdf:about="http://biorxiv.org/cgi/content/short/726125v1?rss=1">
+<title>
+<![CDATA[
+Cell-surface receptors enable perception of extracellular cytokinins 
+]]>
+</title>
+<link>
+http://biorxiv.org/cgi/content/short/726125v1?rss=1
+</link>
+<description><![CDATA[
+Cytokinins are mobile multifunctional plant hormones with roles in development and stress resilience 1,2. Although cytokinin receptors are substantially localised to the endoplasmic reticulum 3-5, the cellular sites of cytokinin perception continue to be debated 1,6,7. Several cytokinin types display bioactivity 8,9 and recently a cell-specific cytokinin gradient was reported in roots 10. Yet, the importance of spatially heterogeneous cytokinin distribution and the specific cytokinin(s) that account for the different responses remain unclear. Here we show that cytokinin perception by plasma membrane receptors is an effective path for cytokinin response in root cells. Readout from a Two Component Signalling cytokinin-specific reporter (TCSn::GFP;11) is closely matched to intracellular cytokinin content, yet a proportion of bioactive cytokinins are detected in the extracellular fluid. Using cytokinins covalently linked to beads that could not pass the plasma membrane, we demonstrate that strong TCSn activation still occurs and that this response is greatly diminished in cytokinin receptor mutants. Although intracellular receptors play significant roles, we argue for a revision of concepts of cytokinin perception to include the spatial dimensions. In particular, selective ligand-receptor affinities, cellular localisation and tissue distribution of bioactive cytokinins, their receptors, transporters and inactivation enzymes appear all to be components of the signalling regulatory mechanisms.
+]]></description>
+<dc:creator><![CDATA[ Antoniadi, I., Novak, O., Gelova, Z., Johnson, A., Plihal, O., Vain, T., Simersky, R., Mik, V., Karady, M., Pernisova, M., Plackova, L., Opassathian, K., Hejatko, J., Robert, S., Friml, J., Dolezal, K., Ljung, K., Turnbull, C. ]]></dc:creator>
+<dc:date>2019-08-14</dc:date>
+<dc:identifier>doi:10.1101/726125</dc:identifier>
+<dc:title><![CDATA[Cell-surface receptors enable perception of extracellular cytokinins]]></dc:title>
+<dc:publisher>Cold Spring Harbor Laboratory</dc:publisher>
+<prism:publicationDate>2019-08-14</prism:publicationDate>
+<prism:section></prism:section>
+</item>
+ 
+
+
+
+</rdf:RDF>
