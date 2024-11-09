@@ -13,7 +13,7 @@ public enum CloudKitZoneError: LocalizedError {
 	case userDeletedZone
 	case corruptAccount
 	case unknown
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .userDeletedZone:
@@ -33,7 +33,7 @@ public protocol CloudKitZoneDelegate: AnyObject {
 public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
 
 public protocol CloudKitZone: AnyObject {
-	
+
 	static var qualityOfService: QualityOfService { get }
 
 	var zoneID: CKRecordZone.ID { get }
@@ -49,28 +49,28 @@ public protocol CloudKitZone: AnyObject {
 
 	/// Generates a new CKRecord.ID using a UUID for the record's name
 	func generateRecordID() -> CKRecord.ID
-	
+
 	/// Subscribe to changes at a zone level
 	func subscribeToZoneChanges()
-	
+
 	/// Process a remove notification
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
-	
+
 }
 
 public extension CloudKitZone {
-	
+
 	// My observation has been that QoS is treated differently for CloudKit operations on macOS vs iOS.
 	// .userInitiated is too aggressive on iOS and can lead the UI slowing down and appearing to block.
 	// .default (or lower) on macOS will sometimes hang for extended periods of time and appear to hang.
 	static var qualityOfService: QualityOfService {
-		#if os(macOS) || targetEnvironment(macCatalyst)
+#if os(macOS) || targetEnvironment(macCatalyst)
 		return .userInitiated
-		#else
+#else
 		return .default
-		#endif
+#endif
 	}
-	
+
 	var oldChangeTokenKey: String {
 		return "cloudkit.server.token.\(zoneID.zoneName)"
 	}
@@ -101,12 +101,12 @@ public extension CloudKitZone {
 			UserDefaults.standard.removeObject(forKey: oldChangeTokenKey)
 		}
 	}
-	
+
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken() {
 		changeToken = nil
 	}
-	
+
 	func generateRecordID() -> CKRecord.ID {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: zoneID)
 	}
@@ -117,14 +117,14 @@ public extension CloudKitZone {
 			block()
 		})
 	}
-	
+
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == zoneID.zoneName else {
 			completion()
 			return
 		}
-		
+
 		fetchChangesInZone() { result in
 			if case .failure(let error) = result {
 				os_log(.error, log: self.log, "%@ zone remote notification fetch error: %@", self.zoneID.zoneName, error.localizedDescription)
@@ -158,39 +158,46 @@ public extension CloudKitZone {
 		let subscription = CKRecordZoneSubscription(zoneID: zoneID, subscriptionID: zoneID.zoneName)
 
 		let info = CKSubscription.NotificationInfo()
-        info.shouldSendContentAvailable = true
-        subscription.notificationInfo = info
-        
+		info.shouldSendContentAvailable = true
+		subscription.notificationInfo = info
+
 		save(subscription) { result in
 			if case .failure(let error) = result {
 				os_log(.error, log: self.log, "%@ zone subscribe to changes error: %@", self.zoneID.zoneName, error.localizedDescription)
 			}
 		}
-    }
-		
+	}
+
 	/// Issue a CKQuery and return the resulting CKRecords.
 	func query(_ ckQuery: CKQuery, desiredKeys: [String]? = nil, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		var records = [CKRecord]()
-		
+
 		let op = CKQueryOperation(query: ckQuery)
 		op.qualityOfService = Self.qualityOfService
-		
+
 		if let desiredKeys = desiredKeys {
 			op.desiredKeys = desiredKeys
 		}
-		
-		op.recordFetchedBlock = { record in
-			records.append(record)
+
+		op.recordMatchedBlock = { recordID, recordResult in
+			switch recordResult {
+			case .success(let record):
+				records.append(record)
+			case .failure(let error):
+				os_log(.error, log: self.log, "query recordMatchedBlock error recordID: %@ error: %@", recordID, error.localizedDescription)
+			}
 		}
-		
-		op.queryCompletionBlock = { [weak self] (cursor, error) in
-			guard let self = self else {
+
+		op.queryResultBlock = { [weak self] result in
+
+			guard let self else {
 				completion(.failure(CloudKitZoneError.unknown))
 				return
 			}
 
-			switch CloudKitZoneResult.resolve(error) {
-            case .success:
+			switch result {
+
+			case .success(let cursor):
 				DispatchQueue.main.async {
 					if let cursor = cursor {
 						self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
@@ -198,59 +205,74 @@ public extension CloudKitZone {
 						completion(.success(records))
 					}
 				}
-			case .zoneNotFound:
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
-						self.query(ckQuery, desiredKeys: desiredKeys, completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(error))
+
+			case .failure(let error):
+
+				switch CloudKitZoneResult.resolve(error) {
+
+				case .zoneNotFound:
+					self.createZoneRecord() { result in
+						switch result {
+						case .success:
+							self.query(ckQuery, desiredKeys: desiredKeys, completion: completion)
+						case .failure(let error):
+							DispatchQueue.main.async {
+								completion(.failure(error))
+							}
 						}
 					}
-				}
-			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone query retry in %f seconds.", self.zoneID.zoneName, timeToWait)
-				self.retryIfPossible(after: timeToWait) {
-					self.query(ckQuery, desiredKeys: desiredKeys, completion: completion)
-				}
-			case .userDeletedZone:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitZoneError.userDeletedZone))
-				}
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
+
+				case .retry(let timeToWait):
+					os_log(.error, log: self.log, "%@ zone query retry in %f seconds.", self.zoneID.zoneName, timeToWait)
+					self.retryIfPossible(after: timeToWait) {
+						self.query(ckQuery, desiredKeys: desiredKeys, completion: completion)
+					}
+
+				case .userDeletedZone:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitZoneError.userDeletedZone))
+					}
+
+				default:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitError(error)))
+					}
 				}
 			}
 		}
-		
+
 		database?.add(op)
 	}
-	
+
 	/// Query CKRecords using a CKQuery Cursor
 	func query(cursor: CKQueryOperation.Cursor, desiredKeys: [String]? = nil, carriedRecords: [CKRecord], completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		var records = carriedRecords
-		
+
 		let op = CKQueryOperation(cursor: cursor)
 		op.qualityOfService = Self.qualityOfService
-		
+
 		if let desiredKeys = desiredKeys {
 			op.desiredKeys = desiredKeys
 		}
-		
-		op.recordFetchedBlock = { record in
-			records.append(record)
+
+		op.recordMatchedBlock = { recordID, recordResult in
+			switch recordResult {
+			case .success(let record):
+				records.append(record)
+			case .failure(let error):
+				os_log(.error, log: self.log, "query cursor recordMatchedBlock error recordID: %@ error: %@", recordID, error.localizedDescription)
+			}
 		}
-		
-		op.queryCompletionBlock = { [weak self] (newCursor, error) in
+
+		op.queryResultBlock = { [weak self] result in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
 				return
 			}
 
-			switch CloudKitZoneResult.resolve(error) {
-			case .success:
+			switch result {
+
+			case .success(let newCursor):
 				DispatchQueue.main.async {
 					if let newCursor = newCursor {
 						self.query(cursor: newCursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
@@ -258,36 +280,41 @@ public extension CloudKitZone {
 						completion(.success(records))
 					}
 				}
-			case .zoneNotFound:
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
-						self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(error))
+
+			case .failure(let error):
+				switch CloudKitZoneResult.resolve(error) {
+
+				case .zoneNotFound:
+					self.createZoneRecord() { result in
+						switch result {
+						case .success:
+							self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
+						case .failure(let error):
+							DispatchQueue.main.async {
+								completion(.failure(error))
+							}
 						}
 					}
-				}
-			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone query retry in %f seconds.", self.zoneID.zoneName, timeToWait)
-				self.retryIfPossible(after: timeToWait) {
-					self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
-				}
-			case .userDeletedZone:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitZoneError.userDeletedZone))
-				}
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
+				case .retry(let timeToWait):
+					os_log(.error, log: self.log, "%@ zone query retry in %f seconds.", self.zoneID.zoneName, timeToWait)
+					self.retryIfPossible(after: timeToWait) {
+						self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
+					}
+				case .userDeletedZone:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitZoneError.userDeletedZone))
+					}
+				default:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitError(error)))
+					}
 				}
 			}
 		}
 
 		database?.add(op)
 	}
-	
+
 
 	/// Fetch a CKRecord by using its externalID
 	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
@@ -297,7 +324,7 @@ public extension CloudKitZone {
 		}
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
-		
+
 		database?.fetch(withRecordID: recordID) { [weak self] record, error in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
@@ -305,7 +332,7 @@ public extension CloudKitZone {
 			}
 
 			switch CloudKitZoneResult.resolve(error) {
-            case .success:
+			case .success:
 				DispatchQueue.main.async {
 					if let record = record {
 						completion(.success(record))
@@ -340,81 +367,91 @@ public extension CloudKitZone {
 			}
 		}
 	}
-	
+
 	/// Save the CKRecord
 	func save(_ record: CKRecord, completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
 	}
-	
+
 	/// Save the CKRecords
 	func save(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: records, recordIDsToDelete: [], completion: completion)
 	}
-	
+
 	/// Saves or modifies the records as long as they are unchanged relative to the local version
 	func saveIfNew(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
 		let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: [CKRecord.ID]())
 		op.savePolicy = .ifServerRecordUnchanged
 		op.isAtomic = false
 		op.qualityOfService = Self.qualityOfService
-		
-		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
-			
+
+		op.modifyRecordsResultBlock = { [weak self] result in
+
 			guard let self = self else { return }
-			
-			switch CloudKitZoneResult.resolve(error) {
-			case .success, .partialFailure:
+
+			switch result {
+
+			case .success:
 				DispatchQueue.main.async {
 					completion(.success(()))
 				}
-				
-			case .zoneNotFound:
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
-						self.saveIfNew(records, completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(error))
-						}
+
+			case .failure(let error):
+
+				switch CloudKitZoneResult.resolve(error) {
+				case .partialFailure:
+					DispatchQueue.main.async {
+						completion(.success(()))
 					}
-				}
-				
-			case .userDeletedZone:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitZoneError.userDeletedZone))
-				}
-				
-			case .retry(let timeToWait):
-				self.retryIfPossible(after: timeToWait) {
-					self.saveIfNew(records, completion: completion)
-				}
-				
-			case .limitExceeded:
 
-				var chunkedRecords = records.chunked(into: 200)
-
-				func saveChunksIfNew() {
-					if let records = chunkedRecords.popLast() {
-						self.saveIfNew(records) { result in
-							switch result {
-							case .success:
-								os_log(.info, log: self.log, "Saved %d chunked new records.", records.count)
-								saveChunksIfNew()
-							case .failure(let error):
+				case .zoneNotFound:
+					self.createZoneRecord() { result in
+						switch result {
+						case .success:
+							self.saveIfNew(records, completion: completion)
+						case .failure(let error):
+							DispatchQueue.main.async {
 								completion(.failure(error))
 							}
 						}
-					} else {
-						completion(.success(()))
 					}
-				}
-				
-				saveChunksIfNew()
-				
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
+
+				case .userDeletedZone:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitZoneError.userDeletedZone))
+					}
+
+				case .retry(let timeToWait):
+					self.retryIfPossible(after: timeToWait) {
+						self.saveIfNew(records, completion: completion)
+					}
+
+				case .limitExceeded:
+
+					var chunkedRecords = records.chunked(into: 200)
+
+					func saveChunksIfNew() {
+						if let records = chunkedRecords.popLast() {
+							self.saveIfNew(records) { result in
+								switch result {
+								case .success:
+									os_log(.info, log: self.log, "Saved %d chunked new records.", records.count)
+									saveChunksIfNew()
+								case .failure(let error):
+									completion(.failure(error))
+								}
+							}
+						} else {
+							completion(.success(()))
+						}
+					}
+
+					saveChunksIfNew()
+
+				default:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitError(error)))
+					}
 				}
 			}
 		}
@@ -458,85 +495,107 @@ public extension CloudKitZone {
 			}
 		}
 	}
-	
+
 	/// Delete CKRecords using a CKQuery
 	func delete(ckQuery: CKQuery, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		var records = [CKRecord]()
-		
+
 		let op = CKQueryOperation(query: ckQuery)
 		op.qualityOfService = Self.qualityOfService
-		op.recordFetchedBlock = { record in
-			records.append(record)
+
+		op.recordMatchedBlock = { recordID, recordResult in
+			switch recordResult {
+			case .success(let record):
+				records.append(record)
+			case .failure(let error):
+				os_log(.error, log: self.log, "delete query recordMatchedBlock error recordID: %@ error: %@", recordID, error.localizedDescription)
+			}
 		}
-		
-		op.queryCompletionBlock = { [weak self] (cursor, error) in
+
+		op.queryResultBlock = { [weak self] result in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
 				return
 			}
 
+			switch result {
+			case .success(let cursor):
 
-			if let cursor = cursor {
-				self.delete(cursor: cursor, carriedRecords: records, completion: completion)
-			} else {
-				guard !records.isEmpty else {
-					DispatchQueue.main.async {
-						completion(.success(()))
+				if let cursor = cursor {
+					self.delete(cursor: cursor, carriedRecords: records, completion: completion)
+				} else {
+					guard !records.isEmpty else {
+						DispatchQueue.main.async {
+							completion(.success(()))
+						}
+						return
 					}
-					return
+
+					let recordIDs = records.map { $0.recordID }
+					self.modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
 				}
-				
-				let recordIDs = records.map { $0.recordID }
-				self.modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
+
+			case .failure(let error):
+				completion(.failure(error))
 			}
-			
 		}
-		
+
 		database?.add(op)
 	}
-	
+
 	/// Delete CKRecords using a CKQuery
 	func delete(cursor: CKQueryOperation.Cursor, carriedRecords: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		var records = [CKRecord]()
-		
+
 		let op = CKQueryOperation(cursor: cursor)
 		op.qualityOfService = Self.qualityOfService
-		op.recordFetchedBlock = { record in
-			records.append(record)
+
+		op.recordMatchedBlock = { recordID, recordResult in
+			switch recordResult {
+			case .success(let record):
+				records.append(record)
+			case .failure(let error):
+				os_log(.error, log: self.log, "delete cursor recordMatchedBlock error recordID: %@ error: %@", recordID, error.localizedDescription)
+			}
 		}
-		
-		op.queryCompletionBlock = { [weak self] (cursor, error) in
+
+		op.queryResultBlock = { [weak self] result in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
 				return
 			}
+			switch result {
 
-			records.append(contentsOf: carriedRecords)
-			
-			if let cursor = cursor {
-				self.delete(cursor: cursor, carriedRecords: records, completion: completion)
-			} else {
-				let recordIDs = records.map { $0.recordID }
-				self.modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
+			case .success(let cursor):
+
+				records.append(contentsOf: carriedRecords)
+
+				if let cursor = cursor {
+					self.delete(cursor: cursor, carriedRecords: records, completion: completion)
+				} else {
+					let recordIDs = records.map { $0.recordID }
+					self.modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
+				}
+			case .failure(let error):
+				completion(.failure(error))
 			}
-			
 		}
-		
+
 		database?.add(op)
 	}
-	
+
 	/// Delete a CKRecord using its recordID
 	func delete(recordID: CKRecord.ID, completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
-		
+
 	/// Delete CKRecords
 	func delete(recordIDs: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
 	}
-		
+
 	/// Delete a CKRecord using its externalID
 	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let externalID = externalID else {
@@ -547,7 +606,7 @@ public extension CloudKitZone {
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
-	
+
 	/// Delete a CKSubscription
 	func delete(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		database?.delete(withSubscriptionID: subscriptionID) { [weak self] _, error in
@@ -588,94 +647,101 @@ public extension CloudKitZone {
 		op.isAtomic = true
 		op.qualityOfService = Self.qualityOfService
 
-		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
-			
+		op.modifyRecordsResultBlock = { [weak self] result in
+
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
 				return
 			}
 
-			switch CloudKitZoneResult.resolve(error) {
+			switch result {
+
 			case .success:
 				DispatchQueue.main.async {
 					completion(.success(()))
 				}
-			case .zoneNotFound:
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
-						self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(error))
-						}
-					}
-				}
-			case .userDeletedZone:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitZoneError.userDeletedZone))
-				}
-			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone modify retry in %f seconds.", self.zoneID.zoneName, timeToWait)
-				self.retryIfPossible(after: timeToWait) {
-					self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
-				}
-			case .limitExceeded:
-				var recordToSaveChunks = recordsToSave.chunked(into: 200)
-				var recordIDsToDeleteChunks = recordIDsToDelete.chunked(into: 200)
 
-				func saveChunks(completion: @escaping (Result<Void, Error>) -> Void) {
-					if !recordToSaveChunks.isEmpty {
-						let records = recordToSaveChunks.removeFirst()
-						self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
-							switch result {
-							case .success:
-								os_log(.info, log: self.log, "Saved %d chunked records.", records.count)
-								saveChunks(completion: completion)
-							case .failure(let error):
+			case .failure(let error):
+
+				switch CloudKitZoneResult.resolve(error) {
+
+				case .zoneNotFound:
+					self.createZoneRecord() { result in
+						switch result {
+						case .success:
+							self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
+						case .failure(let error):
+							DispatchQueue.main.async {
 								completion(.failure(error))
 							}
 						}
-					} else {
-						completion(.success(()))
 					}
-				}
-				
-				func deleteChunks() {
-					if !recordIDsToDeleteChunks.isEmpty {
-						let records = recordIDsToDeleteChunks.removeFirst()
-						self.modify(recordsToSave: [], recordIDsToDelete: records) { result in
-							switch result {
-							case .success:
-								os_log(.info, log: self.log, "Deleted %d chunked records.", records.count)
-								deleteChunks()
-							case .failure(let error):
-								DispatchQueue.main.async {
+				case .userDeletedZone:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitZoneError.userDeletedZone))
+					}
+				case .retry(let timeToWait):
+					os_log(.error, log: self.log, "%@ zone modify retry in %f seconds.", self.zoneID.zoneName, timeToWait)
+					self.retryIfPossible(after: timeToWait) {
+						self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
+					}
+				case .limitExceeded:
+					var recordToSaveChunks = recordsToSave.chunked(into: 200)
+					var recordIDsToDeleteChunks = recordIDsToDelete.chunked(into: 200)
+
+					func saveChunks(completion: @escaping (Result<Void, Error>) -> Void) {
+						if !recordToSaveChunks.isEmpty {
+							let records = recordToSaveChunks.removeFirst()
+							self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
+								switch result {
+								case .success:
+									os_log(.info, log: self.log, "Saved %d chunked records.", records.count)
+									saveChunks(completion: completion)
+								case .failure(let error):
 									completion(.failure(error))
 								}
 							}
-						}
-					} else {
-						DispatchQueue.main.async {
+						} else {
 							completion(.success(()))
 						}
 					}
-				}
-				
-				saveChunks() { result in
-					switch result {
-					case .success:
-						deleteChunks()
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(error))
+
+					func deleteChunks() {
+						if !recordIDsToDeleteChunks.isEmpty {
+							let records = recordIDsToDeleteChunks.removeFirst()
+							self.modify(recordsToSave: [], recordIDsToDelete: records) { result in
+								switch result {
+								case .success:
+									os_log(.info, log: self.log, "Deleted %d chunked records.", records.count)
+									deleteChunks()
+								case .failure(let error):
+									DispatchQueue.main.async {
+										completion(.failure(error))
+									}
+								}
+							}
+						} else {
+							DispatchQueue.main.async {
+								completion(.success(()))
+							}
 						}
 					}
-				}
-				
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
+
+					saveChunks() { result in
+						switch result {
+						case .success:
+							deleteChunks()
+						case .failure(let error):
+							DispatchQueue.main.async {
+								completion(.failure(error))
+							}
+						}
+					}
+
+				default:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitError(error)))
+					}
 				}
 			}
 		}
@@ -684,45 +750,48 @@ public extension CloudKitZone {
 	}
 
 	/// Fetch all the changes in the CKZone since the last time we checked
-    func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
+	func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
 
 		var savedChangeToken = changeToken
-		
+
 		var changedRecords = [CKRecord]()
 		var deletedRecordKeys = [CloudKitRecordKey]()
-		
+
 		let zoneConfig = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
 		zoneConfig.previousServerChangeToken = changeToken
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [zoneID], configurationsByRecordZoneID: [zoneID: zoneConfig])
-        op.fetchAllChanges = true
+		op.fetchAllChanges = true
 		op.qualityOfService = Self.qualityOfService
 
-        op.recordZoneChangeTokensUpdatedBlock = { zoneID, token, _ in
+		op.recordZoneChangeTokensUpdatedBlock = { zoneID, token, _ in
 			savedChangeToken = token
-        }
+		}
 
-        op.recordChangedBlock = { record in
-			changedRecords.append(record)
-        }
+		op.recordWasChangedBlock = { recordID, result in
+			if let record = try? result.get() {
+				changedRecords.append(record)
+			}
+		}
 
-        op.recordWithIDWasDeletedBlock = { recordID, recordType in
+		op.recordWithIDWasDeletedBlock = { recordID, recordType in
 			let recordKey = CloudKitRecordKey(recordType: recordType, recordID: recordID)
 			deletedRecordKeys.append(recordKey)
-        }
+		}
 
-        op.recordZoneFetchCompletionBlock = { zoneID ,token, _, _, error in
-			if case .success = CloudKitZoneResult.resolve(error) {
+		op.recordZoneFetchResultBlock = { recordZoneID, result in
+			if let (token, _, _) = try? result.get() {
 				savedChangeToken = token
 			}
-        }
+		}
 
-        op.fetchRecordZoneChangesCompletionBlock = { [weak self] error in
+		op.fetchRecordZoneChangesResultBlock = { [weak self] result in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
 				return
 			}
 
-			switch CloudKitZoneResult.resolve(error) {
+			switch result {
+
 			case .success:
 				DispatchQueue.main.async {
 					self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys) { result in
@@ -735,40 +804,44 @@ public extension CloudKitZone {
 						}
 					}
 				}
-			case .zoneNotFound:
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
-						self.fetchChangesInZone(completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(error))
+
+			case .failure(let error):
+				switch CloudKitZoneResult.resolve(error) {
+
+				case .zoneNotFound:
+					self.createZoneRecord() { result in
+						switch result {
+						case .success:
+							self.fetchChangesInZone(completion: completion)
+						case .failure(let error):
+							DispatchQueue.main.async {
+								completion(.failure(error))
+							}
 						}
 					}
-				}
-			case .userDeletedZone:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitZoneError.userDeletedZone))
-				}
-			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone fetch changes retry in %f seconds.", self.zoneID.zoneName, timeToWait)
-				self.retryIfPossible(after: timeToWait) {
-					self.fetchChangesInZone(completion: completion)
-				}
-			case .changeTokenExpired:
-				DispatchQueue.main.async {
-					self.changeToken = nil
-					self.fetchChangesInZone(completion: completion)
-				}
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
+				case .userDeletedZone:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitZoneError.userDeletedZone))
+					}
+				case .retry(let timeToWait):
+					os_log(.error, log: self.log, "%@ zone fetch changes retry in %f seconds.", self.zoneID.zoneName, timeToWait)
+					self.retryIfPossible(after: timeToWait) {
+						self.fetchChangesInZone(completion: completion)
+					}
+				case .changeTokenExpired:
+					DispatchQueue.main.async {
+						self.changeToken = nil
+						self.fetchChangesInZone(completion: completion)
+					}
+				default:
+					DispatchQueue.main.async {
+						completion(.failure(CloudKitError(error)))
+					}
 				}
 			}
-			
-        }
+		}
 
-        database?.add(op)
-    }
-	
+		database?.add(op)
+	}
+
 }
