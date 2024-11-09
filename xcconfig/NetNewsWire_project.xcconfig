@@ -46,7 +46,7 @@ SWIFT_SWIFT3_OBJC_INFERENCE = Off
 WARNING_CFLAGS = -Werror
 GCC_TREAT_WARNINGS_AS_ERRORS = YES
 SWIFT_TREAT_WARNINGS_AS_ERRORS = YES
-SWIFT_VERSION = 5.9
+SWIFT_VERSION = 5.10
 
 // https://forums.swift.org/t/swift-packages-in-multiple-targets-results-in-this-will-result-in-duplication-of-library-code-errors/34892/33
 DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES
