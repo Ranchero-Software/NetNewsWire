@@ -485,6 +485,7 @@
 		84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84BAE64821CEDAF20046DB56 /* CrashReporterWindow.xib */; };
 		84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84BBB12B20142A4700F054F5 /* Inspector.storyboard */; };
 		84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */; };
+		84C1EB4A2CDFE0D200C7456A /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 84C1EB492CDFE0D200C7456A /* RSTree */; };
 		84C9FC6722629B9000D921D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC6622629B3900D921D6 /* AppDelegate.swift */; };
 		84C9FC7722629E1200D921D6 /* AdvancedPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC6B22629E1200D921D6 /* AdvancedPreferencesViewController.swift */; };
 		84C9FC7822629E1200D921D6 /* GeneralPrefencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C9FC6D22629E1200D921D6 /* GeneralPrefencesViewController.swift */; };
@@ -1262,6 +1263,7 @@
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
 				8413877B2CD897CF00E8490F /* RSCore in Frameworks */,
 				8413877E2CD897CF00E8490F /* RSCoreObjC in Frameworks */,
+				84C1EB4A2CDFE0D200C7456A /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2494,6 +2496,7 @@
 				51BC2F3724D3439A00E90810 /* Account */,
 				8413877A2CD897CF00E8490F /* RSCore */,
 				8413877D2CD897CF00E8490F /* RSCoreObjC */,
+				84C1EB492CDFE0D200C7456A /* RSTree */,
 			);
 			productName = "NetNewsWire iOS Share Extension";
 			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
@@ -4051,6 +4054,10 @@
 			productName = RSTree;
 		};
 		847C4C102CDF2310008BF5FE /* RSTree */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RSTree;
+		};
+		84C1EB492CDFE0D200C7456A /* RSTree */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RSTree;
 		};
