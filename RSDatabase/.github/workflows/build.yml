@@ -1,0 +1,18 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+
+    steps:
+    - name: Checkout Project
+      uses: actions/checkout@v1
+
+    - name: Switch to Xcode 12
+      run: sudo xcode-select -s /Applications/Xcode_12.app
+
+    - name: Run Build
+      run: swift build

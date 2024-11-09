@@ -11,30 +11,12 @@
         }
       },
       {
-        "package": "RSDatabase",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSDatabase.git",
-        "state": {
-          "branch": null,
-          "revision": "a6c5f1622320f745cc9a0a910d1bed1e2eaf15e3",
-          "version": "1.0.0"
-        }
-      },
-      {
         "package": "RSParser",
         "repositoryURL": "https://github.com/Ranchero-Software/RSParser.git",
         "state": {
           "branch": null,
           "revision": "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
           "version": "2.0.3"
-        }
-      },
-      {
-        "package": "RSTree",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSTree.git",
-        "state": {
-          "branch": null,
-          "revision": "9d051f42cfc4faa991fd79cdb32e4cc8c545e334",
-          "version": "1.0.0"
         }
       },
       {

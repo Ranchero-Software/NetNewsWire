@@ -10,16 +10,19 @@ let package = Package(
             name: "RSWeb",
             type: .dynamic,
             targets: ["RSWeb"]),
-    ],
-    dependencies: [
-    ],
-    targets: [
-        .target(
-            name: "RSWeb",
+	],
+	dependencies: [
+	],
+	targets: [
+		.target(
+			name: "RSWeb",
 			resources: [.copy("UTS46/uts46")],
-			swiftSettings: [.define("SWIFT_PACKAGE")]),
-        .testTarget(
-            name: "RSWebTests",
-            dependencies: ["RSWeb"]),
-    ]
+			swiftSettings: [
+				.define("SWIFT_PACKAGE"),
+				.unsafeFlags(["-warnings-as-errors"])
+			]),
+		.testTarget(
+			name: "RSWebTests",
+			dependencies: ["RSWeb"]),
+	]
 )
