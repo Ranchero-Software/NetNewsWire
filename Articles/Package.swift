@@ -3,22 +3,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "Articles",
+	name: "Articles",
 	platforms: [.macOS(.v14), .iOS(.v17)],
-    products: [
-        .library(
-            name: "Articles",
+	products: [
+		.library(
+			name: "Articles",
 			type: .dynamic,
-            targets: ["Articles"]),
-    ],
-    dependencies: [
+			targets: ["Articles"]),
+	],
+	dependencies: [
 		.package(path: "../RSCore"),
-    ],
-    targets: [
-        .target(
-            name: "Articles",
+	],
+	targets: [
+		.target(
+			name: "Articles",
 			dependencies: [
 				"RSCore"
-			]),
+			],
+			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
+		),
 	]
 )

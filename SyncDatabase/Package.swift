@@ -14,7 +14,7 @@ let package = Package(
 	dependencies: [
 		.package(path: "../RSCore"),
 		.package(path: "../Articles"),
-		.package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0")),
+		.package(path: "../RSDatabase.git"),
 	],
 	targets: [
 		.target(
@@ -23,6 +23,8 @@ let package = Package(
 				"RSCore",
 				"RSDatabase",
 				"Articles",
-			]),
+			],
+			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
+		),
 	]
 )

@@ -12,8 +12,8 @@ let package = Package(
 			targets: ["ArticlesDatabase"]),
 	],
 	dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0")),
-		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.2")),
+		.package(path: "../RSDatabase"),
+		.package(path: "../RSParser"),
 		.package(path: "../RSCore"),
 		.package(path: "../Articles"),
 	],
@@ -25,6 +25,8 @@ let package = Package(
 				"RSDatabase",
 				"RSParser",
 				"Articles",
-			]),
+			],
+			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
+		),
 	]
 )
