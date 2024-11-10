@@ -326,19 +326,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feedMetadataFile.load()
 		opmlFile.load()
 
-		var shouldHandleRetentionPolicyChange = false
-		if type == .onMyMac {
-			let didHandlePolicyChange = metadata.performedApril2020RetentionPolicyChange ?? false
-			shouldHandleRetentionPolicyChange = !didHandlePolicyChange
-		}
-
 		DispatchQueue.main.async {
-			if shouldHandleRetentionPolicyChange {
-				// Handle one-time database changes made necessary by April 2020 retention policy change.
-				self.database.performApril2020RetentionPolicyChange()
-				self.metadata.performedApril2020RetentionPolicyChange = true
-			}
-
 			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
 			self.fetchAllUnreadCounts()
 		}
