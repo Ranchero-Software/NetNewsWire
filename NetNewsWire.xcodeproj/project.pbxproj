@@ -21,7 +21,6 @@
 		511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511D4410231FC02D00FB1562 /* KeyboardManager.swift */; };
 		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5131463E235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		51314668235A7E4600387FDC /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51314666235A7E4600387FDC /* IntentHandler.swift */; };
 		513146B2235A81A400387FDC /* AddWebFeedIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513146B1235A81A400387FDC /* AddWebFeedIntentHandler.swift */; };
 		513146B3235A81A400387FDC /* AddWebFeedIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513146B1235A81A400387FDC /* AddWebFeedIntentHandler.swift */; };
 		51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 51314707235C41FC00387FDC /* Intents.intentdefinition */; };
@@ -300,9 +299,6 @@
 		511D4410231FC02D00FB1562 /* KeyboardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardManager.swift; sourceTree = "<group>"; };
 		5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneCoordinator.swift; sourceTree = "<group>"; };
 		51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Intents Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		51314665235A7E4600387FDC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		51314666235A7E4600387FDC /* IntentHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
-		51314684235A7EB900387FDC /* NetNewsWire_iOS_IntentsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_IntentsExtension.entitlements; sourceTree = "<group>"; };
 		513146B1235A81A400387FDC /* AddWebFeedIntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedIntentHandler.swift; sourceTree = "<group>"; };
 		51314706235C41FC00387FDC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
 		51314714235C420900387FDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Intents.strings; sourceTree = "<group>"; };
@@ -409,6 +405,13 @@
 				ShareExtension/ShareViewController.swift,
 			);
 			target = 510C415B24E5CDE3008226FD /* NetNewsWire Share Extension */;
+		};
+		84BAE1812CE1C7F800402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				IntentHandler.swift,
+			);
+			target = 51314636235A7BBE00387FDC /* NetNewsWire iOS Intents Extension */;
 		};
 		84C1EB602CDFE18E00C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -559,6 +562,7 @@
 		843007342CE16412001B820C /* MasterFeed */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MasterFeed; sourceTree = "<group>"; };
 		845E30622CE1639500770277 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (845E306D2CE1639500770277 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 845E306E2CE1639500770277 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		84BAE0AA2CE1C4D500402E69 /* Mac */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84BAE1402CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84BAE1412CE1C4D500402E69 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, 84BAE1422CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84BAE1432CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Mac; sourceTree = "<group>"; };
+		84BAE17F2CE1C7F800402E69 /* IntentsExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84BAE1812CE1C7F800402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = IntentsExtension; sourceTree = "<group>"; };
 		84C1EB5E2CDFE18E00C7456A /* xcconfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1EB602CDFE18E00C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (common, ); path = xcconfig; sourceTree = "<group>"; };
 		84C1EB7C2CDFE31700C7456A /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1EB952CDFE31700C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1EB962CDFE31700C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		84C1EC192CDFE49100C7456A /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1ECEB2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEC2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECED2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEE2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEF2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECF02CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
@@ -684,16 +688,6 @@
 			path = Intents;
 			sourceTree = "<group>";
 		};
-		51314643235A7C2300387FDC /* IntentsExtension */ = {
-			isa = PBXGroup;
-			children = (
-				51314666235A7E4600387FDC /* IntentHandler.swift */,
-				51314665235A7E4600387FDC /* Info.plist */,
-				51314684235A7EB900387FDC /* NetNewsWire_iOS_IntentsExtension.entitlements */,
-			);
-			path = IntentsExtension;
-			sourceTree = "<group>";
-		};
 		51C452B22265141B00C03939 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -780,7 +774,7 @@
 				843006B62CE163FE001B820C /* Settings */,
 				843006902CE163FB001B820C /* UIKit Extensions */,
 				8430066E2CE163F3001B820C /* ShareExtension */,
-				51314643235A7C2300387FDC /* IntentsExtension */,
+				84BAE17F2CE1C7F800402E69 /* IntentsExtension */,
 				845E30622CE1639500770277 /* Resources */,
 			);
 			path = iOS;
@@ -1361,7 +1355,6 @@
 			files = (
 				513146B3235A81A400387FDC /* AddWebFeedIntentHandler.swift in Sources */,
 				51314705235C41FC00387FDC /* Intents.intentdefinition in Sources */,
-				51314668235A7E4600387FDC /* IntentHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
