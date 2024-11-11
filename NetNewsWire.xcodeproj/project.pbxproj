@@ -120,10 +120,6 @@
 		8417FA412CDF2E4B005F989B /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA3F2CDF2E4B005F989B /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8417FA432CDF2E56005F989B /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA422CDF2E56005F989B /* RSDatabase */; };
 		8417FA442CDF2E56005F989B /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA422CDF2E56005F989B /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8417FA462CDF2E7E005F989B /* RSDatabaseObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA452CDF2E7E005F989B /* RSDatabaseObjC */; };
-		8417FA472CDF2E7E005F989B /* RSDatabaseObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA452CDF2E7E005F989B /* RSDatabaseObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8417FA492CDF2E8A005F989B /* RSDatabaseObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA482CDF2E8A005F989B /* RSDatabaseObjC */; };
-		8417FA4A2CDF2E8A005F989B /* RSDatabaseObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA482CDF2E8A005F989B /* RSDatabaseObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */; };
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
 		844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */; };
@@ -326,7 +322,6 @@
 				841387762CD897C500E8490F /* RSCore in Embed Frameworks */,
 				847C4C122CDF2310008BF5FE /* RSTree in Embed Frameworks */,
 				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
-				8417FA472CDF2E7E005F989B /* RSDatabaseObjC in Embed Frameworks */,
 				84CA14562CDF36DF00912E2C /* RSParser in Embed Frameworks */,
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
@@ -372,7 +367,6 @@
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
 				84CA14532CDF36CF00912E2C /* RSParser in Embed Frameworks */,
-				8417FA4A2CDF2E8A005F989B /* RSDatabaseObjC in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
 				513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */,
@@ -813,7 +807,6 @@
 				841387752CD897C500E8490F /* RSCore in Frameworks */,
 				179D280B26F6F93D003B2E0A /* Zip in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
-				8417FA462CDF2E7E005F989B /* RSDatabaseObjC in Frameworks */,
 				847C4C112CDF2310008BF5FE /* RSTree in Frameworks */,
 				8417FA432CDF2E56005F989B /* RSDatabase in Frameworks */,
 				841387782CD897C500E8490F /* RSCoreObjC in Frameworks */,
@@ -838,7 +831,6 @@
 				8417FA402CDF2E4B005F989B /* RSDatabase in Frameworks */,
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
 				84CA14522CDF36CF00912E2C /* RSParser in Frameworks */,
-				8417FA492CDF2E8A005F989B /* RSDatabaseObjC in Frameworks */,
 				841387732CD8970B00E8490F /* RSCoreResources in Frameworks */,
 				8413878E2CDC790C00E8490F /* RSWeb in Frameworks */,
 				179C39EA26F76B0500D4E741 /* Zip in Frameworks */,
@@ -1420,7 +1412,6 @@
 				841387902CDC791B00E8490F /* RSWeb */,
 				847C4C102CDF2310008BF5FE /* RSTree */,
 				8417FA422CDF2E56005F989B /* RSDatabase */,
-				8417FA452CDF2E7E005F989B /* RSDatabaseObjC */,
 				84CA14542CDF36DF00912E2C /* RSParser */,
 			);
 			productName = "NetNewsWire-iOS";
@@ -1471,7 +1462,6 @@
 				8413878D2CDC790C00E8490F /* RSWeb */,
 				847C4C0D2CDF2301008BF5FE /* RSTree */,
 				8417FA3F2CDF2E4B005F989B /* RSDatabase */,
-				8417FA482CDF2E8A005F989B /* RSDatabaseObjC */,
 				84CA14512CDF36CF00912E2C /* RSParser */,
 			);
 			productName = NetNewsWire;
@@ -2516,14 +2506,6 @@
 		8417FA422CDF2E56005F989B /* RSDatabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RSDatabase;
-		};
-		8417FA452CDF2E7E005F989B /* RSDatabaseObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RSDatabaseObjC;
-		};
-		8417FA482CDF2E8A005F989B /* RSDatabaseObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RSDatabaseObjC;
 		};
 		845288232CDC90FA00C63564 /* RSWeb */ = {
 			isa = XCSwiftPackageProductDependency;
