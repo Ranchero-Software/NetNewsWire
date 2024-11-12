@@ -7,15 +7,10 @@
 //
 
 import Foundation
+import os
 
-// Threading rules:
-// * Main-thread only
-// * Except: may be created on background thread by StatusesTable.
-// Which is safe, because at creation time it’t not yet shared,
-// and it won’t be mutated ever on a background thread.
+public final class ArticleStatus: Sendable, Hashable {
 
-public final class ArticleStatus: Hashable {
-	
 	public enum Key: String {
 		case read = "read"
 		case starred = "starred"
@@ -24,13 +19,31 @@ public final class ArticleStatus: Hashable {
 	public let articleID: String
 	public let dateArrived: Date
 
-	public var read = false
-	public var starred = false
+	private let _read: OSAllocatedUnfairLock<Bool>
+	private let _starred: OSAllocatedUnfairLock<Bool>
+
+	public var read: Bool {
+		get {
+			_read.withLock { $0 }
+		}
+		set {
+			_read.withLock { $0 = newValue }
+		}
+	}
+
+	public var starred: Bool {
+		get {
+			_starred.withLock { $0 }
+		}
+		set {
+			_starred.withLock { $0 = newValue }
+		}
+	}
 
 	public init(articleID: String, read: Bool, starred: Bool, dateArrived: Date) {
 		self.articleID = articleID
-		self.read = read
-		self.starred = starred
+		self._read = OSAllocatedUnfairLock(initialState: read)
+		self._starred = OSAllocatedUnfairLock(initialState: starred)
 		self.dateArrived = dateArrived
 	}
 
@@ -65,20 +78,20 @@ public final class ArticleStatus: Hashable {
 	// MARK: - Equatable
 
 	public static func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
-		return lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred
+		lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred
 	}
 }
 
 public extension Set where Element == ArticleStatus {
-	
+
 	func articleIDs() -> Set<String> {
-		return Set<String>(map { $0.articleID })
+		Set<String>(map { $0.articleID })
 	}
 }
 
 public extension Array where Element == ArticleStatus {
-	
-	func articleIDs() -> [String] {		
-		return map { $0.articleID }
+
+	func articleIDs() -> [String] {
+		map { $0.articleID }
 	}
 }
