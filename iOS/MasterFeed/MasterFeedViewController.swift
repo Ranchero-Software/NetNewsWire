@@ -19,11 +19,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	private var refreshProgressView: RefreshProgressView?
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
 		didSet {
-			if #available(iOS 14, *) {
-				addNewItemButton.primaryAction = nil
-			} else {
-				addNewItemButton.action = #selector(MasterFeedViewController.add(_:))
-			}
+			addNewItemButton.primaryAction = nil
 		}
 	}
 
@@ -428,37 +424,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
-		
-		if #available(iOS 14, *) {
-			
-		} else {
-			let title = NSLocalizedString("Add Item", comment: "Add Item")
-			let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-			
-			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
-			
-			let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
-			let addFeedAction = UIAlertAction(title: addFeedActionTitle, style: .default) { _ in
-				self.coordinator.showAddFeed()
-			}
-			
-			let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-			let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
-				self.coordinator.showAddFolder()
-			}
-			
-			alertController.addAction(addFeedAction)
-			
-			alertController.addAction(addWebFolderAction)
-			alertController.addAction(cancelAction)
-			
-			alertController.popoverPresentationController?.barButtonItem = sender
-
-			present(alertController, animated: true)
-		}
-		
-		
 	}
 	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
@@ -638,35 +603,32 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc
 	func configureContextMenu(_: Any? = nil) {
-		if #available(iOS 14.0, *) {
-			
-			/*
-				Context Menu Order:
-				1. Add Feed
-				3. Add Folder
-			*/
-			
-			var menuItems: [UIAction] = []
-			
-			let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
-			let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAssets.plus) { _ in
-				self.coordinator.showAddFeed()
-			}
-			menuItems.append(addFeedAction)
-			
-			let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-			let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
-				self.coordinator.showAddFolder()
-			}
-			
-			menuItems.append(addWebFolderAction)
-			
-			let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
-			
-			self.addNewItemButton.menu = contextMenu
+		/*
+		 Context Menu Order:
+		 1. Add Feed
+		 3. Add Folder
+		 */
+
+		var menuItems: [UIAction] = []
+
+		let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
+		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAssets.plus) { _ in
+			self.coordinator.showAddFeed()
 		}
+		menuItems.append(addFeedAction)
+
+		let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
+			self.coordinator.showAddFolder()
+		}
+
+		menuItems.append(addWebFolderAction)
+
+		let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
+
+		self.addNewItemButton.menu = contextMenu
 	}
-		
+
 	func focus() {
 		becomeFirstResponder()
 	}

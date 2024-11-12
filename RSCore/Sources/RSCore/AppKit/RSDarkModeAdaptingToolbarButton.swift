@@ -23,16 +23,14 @@ class RSDarkModeAdaptingToolbarButton: NSButton {
 
 	override func layout() {
 		// Always re-set the NSImage template state based on the current dark mode setting
-		if #available(macOS 10.14, *) {
-			if self.forceTemplateInDarkMode, let targetImage = self.image {
-				var newTemplateState: Bool = self.originalImageTemplateState
+		if self.forceTemplateInDarkMode, let targetImage = self.image {
+			var newTemplateState: Bool = self.originalImageTemplateState
 
-				if self.effectiveAppearance.isDarkMode {
-					newTemplateState = true
-				}
-
-				targetImage.isTemplate = newTemplateState
+			if self.effectiveAppearance.isDarkMode {
+				newTemplateState = true
 			}
+
+			targetImage.isTemplate = newTemplateState
 		}
 
 		super.layout()

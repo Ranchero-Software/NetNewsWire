@@ -197,9 +197,7 @@ private extension MasterFeedTableViewCell {
 		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false
-		if #available(iOS 13.4, *) {
-			disclosureButton?.addInteraction(UIPointerInteraction())
-		}
+		disclosureButton?.addInteraction(UIPointerInteraction())
 		addSubviewAtInit(disclosureButton!)
 	}
 	

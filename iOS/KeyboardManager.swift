@@ -48,9 +48,7 @@ class KeyboardManager {
 	static func createKeyCommand(title: String, action: String, input: String, modifiers: UIKeyModifierFlags) -> UIKeyCommand {
 		let selector = NSSelectorFromString(action)
 		let keyCommand = UIKeyCommand(title: title, image: nil, action: selector, input: input, modifierFlags: modifiers, propertyList: nil, alternates: [], discoverabilityTitle: nil, attributes: [], state: .on)
-		if #available(iOS 15.0, *) {
-			keyCommand.wantsPriorityOverSystemBehavior = true
-		}
+		keyCommand.wantsPriorityOverSystemBehavior = true
 		return keyCommand
 	}
 	
@@ -67,9 +65,7 @@ private extension KeyboardManager {
 			return KeyboardManager.createKeyCommand(title: title, action: action, input: input, modifiers: modifiers)
 		} else {
 			let keyCommand = UIKeyCommand(input: input, modifierFlags: modifiers, action: NSSelectorFromString(action))
-			if #available(iOS 15.0, *) {
-				keyCommand.wantsPriorityOverSystemBehavior = true
-			}
+			keyCommand.wantsPriorityOverSystemBehavior = true
 			return keyCommand
 		}
 	}

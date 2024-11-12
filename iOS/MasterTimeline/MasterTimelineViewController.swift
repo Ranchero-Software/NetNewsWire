@@ -79,9 +79,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Configure the table
 		tableView.dataSource = dataSource
-		if #available(iOS 15.0, *) {
-			tableView.isPrefetchingEnabled = false
-		}
+		tableView.isPrefetchingEnabled = false
+
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
@@ -104,13 +103,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 		
 		// Disable swipe back on iPad Mice
-		if #available(iOS 13.4, *) {
-			guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
-				return
-			}
-			gesture.allowedScrollTypesMask = []
+		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
+			return
 		}
-		
+		gesture.allowedScrollTypesMask = []
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {

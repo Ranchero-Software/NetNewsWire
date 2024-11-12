@@ -7,45 +7,17 @@
 //
 
 import Foundation
-#if canImport(CryptoKit)
 import CryptoKit
-#endif
-import CommonCrypto
 
 public extension Data {
 
-	/// The MD5 hash of the data.
 	var md5Hash: Data {
-
-		#if canImport(CryptoKit)
-		if #available(macOS 10.15, *) {
-			let digest = Insecure.MD5.hash(data: self)
-			return Data(digest)
-		} else {
-			return ccMD5Hash
-		}
-		#else
-		return ccMD5Hash
-		#endif
-
+		let digest = Insecure.MD5.hash(data: self)
+		return Data(digest)
 	}
 
-	@available(macOS, deprecated: 10.15)
-	@available(iOS, deprecated: 13.0)
-	private var ccMD5Hash: Data {
-		let len = Int(CC_MD5_DIGEST_LENGTH)
-		let md = UnsafeMutablePointer<CUnsignedChar>.allocate(capacity: len)
-
-		let _ = self.withUnsafeBytes {
-			CC_MD5($0.baseAddress, numericCast($0.count), md)
-		}
-
-		return Data(bytes: md, count: len)
-	}
-
-	/// The MD5 has of the data, as a hexadecimal string.
 	var md5String: String? {
-		return md5Hash.hexadecimalString
+		md5Hash.hexadecimalString
 	}
 
 	/// Image signature constants.
@@ -174,7 +146,5 @@ public extension Data {
 		}
 
 		return reduce("") { $0 + String(format: "%02x", $1) }
-
 	}
-
 }

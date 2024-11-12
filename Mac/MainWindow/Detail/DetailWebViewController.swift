@@ -106,20 +106,6 @@ final class DetailWebViewController: NSViewController {
 
 		view = webView
 
-		// Use the safe area layout guides if they are available.
-		if #available(OSX 11.0, *) {
-			// These constraints have been removed as they were unsatisfiable after removing NSBox.
-		} else {
-			let constraints = [
-				webView.topAnchor.constraint(equalTo: view.topAnchor),
-				webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-				webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-				webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			]
-			NSLayoutConstraint.activate(constraints)
-		}
-
-
 		// Hide the web view until the first reload (navigation) is complete (plus some delay) to avoid the awful white flash that happens on the initial display in dark mode.
 		// See bug #901.
 		webView.isHidden = true
