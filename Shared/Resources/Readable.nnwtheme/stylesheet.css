@@ -8,7 +8,6 @@
 	--article-secondary-color: rgba(0, 0, 0, 0.5);
 	--table-cell-border-color: lightgray;
 	--table-header-border-color: #dedede;
-	--primary-accent-color: #43350e;
 	--secondary-accent-color: #1145a5;
 	--block-quote-border-color: rgba(0, 0, 0, 0.3);
 	--font-serif: -apple-system-ui-serif, ui-serif, serif;
@@ -16,6 +15,8 @@
 	--font-mono: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	--background-color: #fff;
 	--font-color: #111;
+	--code-background-border: transparent;
+	--code-background: #403f3f;
 }
 @media (prefers-color-scheme: dark) {
 	:root {
@@ -31,6 +32,8 @@
 		--block-quote-border-color: rgba(255, 255, 255, 0.2);
 		--table-cell-border-color: rgba(255,255,255,0.1);
 		--table-header-border-color: rgba(255,255,255,0.2);
+		--code-background-border: #dedede20;
+		--code-background: #424141;
 	}
 }
 
@@ -95,14 +98,26 @@ pre {
 
 code,
 pre {
-	background-color: rgb(71, 71, 71);
-	padding: 5px;
-	border-radius: 4px;
+	background-color: var(--code-background);
+	padding: 4px 6px;
+	border-radius: 8px;
 	color: var(--body-code-color);
 	font-family: var(--font-mono);
-	font-size: 0.85rem;
-	letter-spacing: -0.027em;
+	font-size: 0.8rem;
 	-webkit-hyphens: none;
+}
+code {
+	position: relative;
+	top: -1px;
+}
+pre {
+	border: 1px solid var(--code-background-border);
+	padding: 8px 8px;
+	border-radius: 8px;
+}
+code a,
+pre a {
+	color: var(--body-code-color);
 }
 
 img,
@@ -281,13 +296,10 @@ body > .systemMessage {
 body a.footnote,
 body a.footnote:visited,
 .newsfoot-footnote-popover + a.footnote:hover {
-	background: #aaa;
-	color: white;
-	transition: background-color 200ms ease-out;
-}
-a.footnote:hover,
-.newsfoot-footnote-popover + a.footnote {
-	background: #666;
+	font-family: var(--font-sans);
+	color: var(--font-color);
+	font-weight: 700;
+	padding: 0;
 	transition: background-color 200ms ease-out;
 }
 
