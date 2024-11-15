@@ -86,40 +86,27 @@ h6 + p {
 pre {
 	max-width: 100%;
 	margin: 0;
+	font-family: var(--font-mono);
+	background-color: var(--code-background);
+	color: var(--body-code-color);
+	font-size: 0.8rem;
+	border: 1px solid var(--code-background-border);
+	border-radius: 8px;
+	padding: 8px 12px;
 	overflow: auto;
 	overflow-y: hidden;
 	word-wrap: normal;
 	word-break: normal;
-}
-
-pre {
 	line-height: 1.4286em;
-}
-
-code,
-pre {
-	background-color: var(--code-background);
-	padding: 4px 6px;
-	border-radius: 8px;
-	color: var(--body-code-color);
-	font-family: var(--font-mono);
-	font-size: 0.8rem;
 	-webkit-hyphens: none;
 }
 code {
-	position: relative;
-	top: -1px;
-}
-pre {
-	border: 1px solid var(--code-background-border);
-	padding: 8px 8px;
-	border-radius: 8px;
+	font-family: var(--font-mono);
 }
 code a,
 pre a {
 	color: var(--body-code-color);
 }
-
 img,
 figure,
 video,
