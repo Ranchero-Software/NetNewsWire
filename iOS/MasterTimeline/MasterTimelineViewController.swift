@@ -549,7 +549,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = TimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		} else {
 			let layout = MasterTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)

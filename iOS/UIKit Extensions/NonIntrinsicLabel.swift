@@ -1,5 +1,5 @@
 //
-//  MasterTimelineLabel.swift
+//  NonIntrinsicLabel.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 4/22/19.

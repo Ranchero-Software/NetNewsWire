@@ -1,5 +1,5 @@
 //
-//  MasterTimelineCellLayout.swift
+//  TimelineCellLayout.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 4/29/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol MasterTimelineCellLayout {
+protocol TimelineCellLayout {
 	
 	var height: CGFloat {get}
 	var unreadIndicatorRect: CGRect {get}
@@ -21,7 +21,7 @@ protocol MasterTimelineCellLayout {
 	
 }
 
-extension MasterTimelineCellLayout {
+extension TimelineCellLayout {
 	
 	static func rectForUnreadIndicator(_ point: CGPoint) -> CGRect {
 		var r = CGRect.zero

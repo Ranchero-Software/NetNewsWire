@@ -1,5 +1,5 @@
 //
-//  MasterTimelineAccessibilityCellLayout.swift
+//  TimelineAccessibilityCellLayout.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 4/29/19.
@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
+struct TimelineAccessibilityCellLayout: TimelineCellLayout {
 	
 	let height: CGFloat
 	let unreadIndicatorRect: CGRect
@@ -27,15 +27,15 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 		currentPoint.y = MasterTimelineDefaultCellLayout.cellPadding.top
 		
 		// Unread Indicator and Star
-		self.unreadIndicatorRect = MasterTimelineAccessibilityCellLayout.rectForUnreadIndicator(currentPoint)
-		self.starRect = MasterTimelineAccessibilityCellLayout.rectForStar(currentPoint)
+		self.unreadIndicatorRect = TimelineAccessibilityCellLayout.rectForUnreadIndicator(currentPoint)
+		self.starRect = TimelineAccessibilityCellLayout.rectForStar(currentPoint)
 		
 		// Start the point at the beginning position of the main block
 		currentPoint.x += MasterTimelineDefaultCellLayout.unreadCircleDimension + MasterTimelineDefaultCellLayout.unreadCircleMarginRight
 		
 		// Icon Image
 		if cellData.showIcon {
-			self.iconImageRect = MasterTimelineAccessibilityCellLayout.rectForIconView(currentPoint, iconSize: cellData.iconSize)
+			self.iconImageRect = TimelineAccessibilityCellLayout.rectForIconView(currentPoint, iconSize: cellData.iconSize)
 			currentPoint.y = self.iconImageRect.maxY
 		} else {
 			self.iconImageRect = CGRect.zero
@@ -44,26 +44,26 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 		let textAreaWidth = width - (currentPoint.x + MasterTimelineDefaultCellLayout.cellPadding.right + insets.right)
 		
 		// Title Text Block
-		let (titleRect, numberOfLinesForTitle) = MasterTimelineAccessibilityCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)
+		let (titleRect, numberOfLinesForTitle) = TimelineAccessibilityCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
 		
 		// Summary Text Block
 		if self.titleRect != CGRect.zero {
 			currentPoint.y = self.titleRect.maxY + MasterTimelineDefaultCellLayout.titleBottomMargin
 		}
-		self.summaryRect = MasterTimelineAccessibilityCellLayout.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
+		self.summaryRect = TimelineAccessibilityCellLayout.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
 		
 		currentPoint.y = [self.titleRect, self.summaryRect].maxY()
 		
 		if cellData.showFeedName != .none {
-			self.feedNameRect = MasterTimelineAccessibilityCellLayout.rectForFeedName(cellData, currentPoint, textAreaWidth)
+			self.feedNameRect = TimelineAccessibilityCellLayout.rectForFeedName(cellData, currentPoint, textAreaWidth)
 			currentPoint.y = self.feedNameRect.maxY
 		} else {
 			self.feedNameRect = CGRect.zero
 		}
 		
 		// Feed Name and Pub Date
-		self.dateRect = MasterTimelineAccessibilityCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)
+		self.dateRect = TimelineAccessibilityCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)
 		
 		self.height = self.dateRect.maxY + MasterTimelineDefaultCellLayout.cellPadding.bottom
 		
@@ -73,7 +73,7 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 
 // MARK: - Calculate Rects
 
-private extension MasterTimelineAccessibilityCellLayout {
+private extension TimelineAccessibilityCellLayout {
 	
 	static func rectForDate(_ cellData: MasterTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 		

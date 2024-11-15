@@ -23,7 +23,7 @@ class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate,
 
 	func heightFor(width: CGFloat) -> CGFloat {
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			let layout = MasterTimelineAccessibilityCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = TimelineAccessibilityCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			return layout.height
 		} else {
 			let layout = MasterTimelineDefaultCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)

@@ -9,7 +9,7 @@
 import UIKit
 import RSCore
 
-struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
+struct MasterTimelineDefaultCellLayout: TimelineCellLayout {
 
 	static let cellPadding = UIEdgeInsets(top: 12, left: 8, bottom: 12, right: 20)
 	

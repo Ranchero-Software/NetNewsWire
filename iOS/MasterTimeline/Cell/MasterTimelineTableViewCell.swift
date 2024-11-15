@@ -153,9 +153,9 @@ private extension MasterTimelineTableViewCell {
 		addSubviewAtInit(starView, hidden: true)
 	}
 	
-	func updatedLayout(width: CGFloat) -> MasterTimelineCellLayout {
+	func updatedLayout(width: CGFloat) -> TimelineCellLayout {
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			return MasterTimelineAccessibilityCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
+			return TimelineAccessibilityCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
 		} else {
 			return MasterTimelineDefaultCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
 		}
