@@ -85,7 +85,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
 
-		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
+		if let titleView = Bundle.main.loadNibNamed("TimelineTitleView", owner: self, options: nil)?[0] as? TimelineTitleView {
 			navigationItem.titleView = titleView
 		}
 		
@@ -445,7 +445,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? TimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		
@@ -479,7 +479,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? TimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		if coordinator.showIcons {
@@ -504,7 +504,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? TimelineTitleView {
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 		}
 	}
@@ -613,7 +613,7 @@ private extension TimelineViewController {
 		
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
 
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? TimelineTitleView {
 			let timelineIconImage = coordinator.timelineIconImage
 			titleView.iconView.iconImage = timelineIconImage
 			if let preferredColor = timelineIconImage?.preferredColor {
@@ -684,7 +684,7 @@ private extension TimelineViewController {
 	}
 	
 	func updateTitleUnreadCount() {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? TimelineTitleView {
 			titleView.unreadCountView.unreadCount = coordinator.timelineUnreadCount
 		}
 	}
