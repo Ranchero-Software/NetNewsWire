@@ -164,8 +164,6 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
                 osType = "Fdly"
         case .feedbin:
                 osType = "Fdbn"
-        case .feedWrangler:
-                osType = "FWrg"
         case .newsBlur:
                 osType = "NBlr"
 		case .freshRSS:

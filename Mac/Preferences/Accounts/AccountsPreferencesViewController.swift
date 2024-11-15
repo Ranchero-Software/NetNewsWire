@@ -24,7 +24,8 @@ final class AccountsPreferencesViewController: NSViewController {
 	@IBOutlet weak var deleteButton: NSButton!
 	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
 	var addAccountWindowController: NSWindowController?
-	
+	var addAccountsViewController: NSHostingController<AddAccountsView>?
+
 	private var sortedAccounts = [Account]()
 
 	override func viewDidLoad() {
@@ -51,6 +52,7 @@ final class AccountsPreferencesViewController: NSViewController {
 	@IBAction func addAccount(_ sender: Any) {
 		let controller = NSHostingController(rootView: AddAccountsView(delegate: self))
 		controller.rootView.parent = controller
+		addAccountsViewController = controller
 		presentAsSheet(controller)
 	}
 	
@@ -168,10 +170,6 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsFeedbinWindowController
-		case .feedWrangler:
-			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
-			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
-			addAccountWindowController = accountsFeedWranglerWindowController
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = accountType
