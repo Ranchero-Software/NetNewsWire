@@ -23,15 +23,15 @@ struct TimelineAccessibilityCellLayout: TimelineCellLayout {
 	init(width: CGFloat, insets: UIEdgeInsets, cellData: MasterTimelineCellData) {
 		
 		var currentPoint = CGPoint.zero
-		currentPoint.x = MasterTimelineDefaultCellLayout.cellPadding.left + insets.left + MasterTimelineDefaultCellLayout.unreadCircleMarginLeft
-		currentPoint.y = MasterTimelineDefaultCellLayout.cellPadding.top
+		currentPoint.x = TimelineDefaultCellLayout.cellPadding.left + insets.left + TimelineDefaultCellLayout.unreadCircleMarginLeft
+		currentPoint.y = TimelineDefaultCellLayout.cellPadding.top
 		
 		// Unread Indicator and Star
 		self.unreadIndicatorRect = TimelineAccessibilityCellLayout.rectForUnreadIndicator(currentPoint)
 		self.starRect = TimelineAccessibilityCellLayout.rectForStar(currentPoint)
 		
 		// Start the point at the beginning position of the main block
-		currentPoint.x += MasterTimelineDefaultCellLayout.unreadCircleDimension + MasterTimelineDefaultCellLayout.unreadCircleMarginRight
+		currentPoint.x += TimelineDefaultCellLayout.unreadCircleDimension + TimelineDefaultCellLayout.unreadCircleMarginRight
 		
 		// Icon Image
 		if cellData.showIcon {
@@ -41,7 +41,7 @@ struct TimelineAccessibilityCellLayout: TimelineCellLayout {
 			self.iconImageRect = CGRect.zero
 		}
 		
-		let textAreaWidth = width - (currentPoint.x + MasterTimelineDefaultCellLayout.cellPadding.right + insets.right)
+		let textAreaWidth = width - (currentPoint.x + TimelineDefaultCellLayout.cellPadding.right + insets.right)
 		
 		// Title Text Block
 		let (titleRect, numberOfLinesForTitle) = TimelineAccessibilityCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)
@@ -49,7 +49,7 @@ struct TimelineAccessibilityCellLayout: TimelineCellLayout {
 		
 		// Summary Text Block
 		if self.titleRect != CGRect.zero {
-			currentPoint.y = self.titleRect.maxY + MasterTimelineDefaultCellLayout.titleBottomMargin
+			currentPoint.y = self.titleRect.maxY + TimelineDefaultCellLayout.titleBottomMargin
 		}
 		self.summaryRect = TimelineAccessibilityCellLayout.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
 		
@@ -65,7 +65,7 @@ struct TimelineAccessibilityCellLayout: TimelineCellLayout {
 		// Feed Name and Pub Date
 		self.dateRect = TimelineAccessibilityCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)
 		
-		self.height = self.dateRect.maxY + MasterTimelineDefaultCellLayout.cellPadding.bottom
+		self.height = self.dateRect.maxY + TimelineDefaultCellLayout.cellPadding.bottom
 		
 	}
 	
@@ -79,7 +79,7 @@ private extension TimelineAccessibilityCellLayout {
 		
 		var r = CGRect.zero
 		
-		let size = SingleLineUILabelSizer.size(for: cellData.dateString, font: MasterTimelineDefaultCellLayout.dateFont)
+		let size = SingleLineUILabelSizer.size(for: cellData.dateString, font: TimelineDefaultCellLayout.dateFont)
 		r.size = size
 		r.origin = point
 		

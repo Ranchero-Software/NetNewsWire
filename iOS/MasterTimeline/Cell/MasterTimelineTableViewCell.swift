@@ -157,24 +157,24 @@ private extension MasterTimelineTableViewCell {
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			return TimelineAccessibilityCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
 		} else {
-			return MasterTimelineDefaultCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
+			return TimelineDefaultCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
 		}
 	}
 	
 	func updateTitleView() {
-		titleView.font = MasterTimelineDefaultCellLayout.titleFont
+		titleView.font = TimelineDefaultCellLayout.titleFont
 		titleView.textColor = labelColor
 		updateTextFieldAttributedText(titleView, cellData?.attributedTitle)
 	}
 	
 	func updateSummaryView() {
-		summaryView.font = MasterTimelineDefaultCellLayout.summaryFont
+		summaryView.font = TimelineDefaultCellLayout.summaryFont
 		summaryView.textColor = labelColor
 		updateTextFieldText(summaryView, cellData?.summary)
 	}
 	
 	func updateDateView() {
-		dateView.font = MasterTimelineDefaultCellLayout.dateFont
+		dateView.font = TimelineDefaultCellLayout.dateFont
 		dateView.textColor = secondaryLabelColor
 		updateTextFieldText(dateView, cellData.dateString)
 	}
@@ -204,12 +204,12 @@ private extension MasterTimelineTableViewCell {
 		switch cellData.showFeedName {
 		case .feed:
 			showView(feedNameView)
-			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
+			feedNameView.font = TimelineDefaultCellLayout.feedNameFont
 			feedNameView.textColor = secondaryLabelColor
 			updateTextFieldText(feedNameView, cellData.feedName)
 		case .byline:
 			showView(feedNameView)
-			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
+			feedNameView.font = TimelineDefaultCellLayout.feedNameFont
 			feedNameView.textColor = secondaryLabelColor
 			updateTextFieldText(feedNameView, cellData.byline)
 		case .none:

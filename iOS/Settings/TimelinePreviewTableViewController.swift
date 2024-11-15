@@ -26,7 +26,7 @@ class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate,
 			let layout = TimelineAccessibilityCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			return layout.height
 		} else {
-			let layout = MasterTimelineDefaultCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = TimelineDefaultCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			return layout.height
 		}
 	}

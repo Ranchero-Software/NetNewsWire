@@ -552,7 +552,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			let layout = TimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		} else {
-			let layout = MasterTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = TimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		}
 		
