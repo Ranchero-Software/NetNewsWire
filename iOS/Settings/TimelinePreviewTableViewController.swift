@@ -42,7 +42,7 @@ class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate,
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! TimelineTableViewCell
 		cell.cellData = prototypeCellData
 		return cell
 	}
@@ -62,7 +62,7 @@ class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate,
 
 private extension TimelinePreviewTableViewController {
 
-	var prototypeCellData: MasterTimelineCellData {
+	var prototypeCellData: TimelineCellData {
 		let longTitle = "Enim ut tellus elementum sagittis vitae et. Nibh praesent tristique magna sit amet purus gravida quis blandit. Neque volutpat ac tincidunt vitae semper quis lectus nulla. Massa id neque aliquam vestibulum morbi blandit. Ultrices vitae auctor eu augue. Enim eu turpis egestas pretium aenean pharetra magna. Eget gravida cum sociis natoque. Sit amet consectetur adipiscing elit. Auctor eu augue ut lectus arcu bibendum. Maecenas volutpat blandit aliquam etiam erat velit. Ut pharetra sit amet aliquam id diam maecenas ultricies. In hac habitasse platea dictumst quisque sagittis purus sit amet."
 		
 		let prototypeID = "prototype"
@@ -71,7 +71,7 @@ private extension TimelinePreviewTableViewController {
 		
 		let iconImage = IconImage(AppAssets.faviconTemplateImage.withTintColor(AppAssets.secondaryAccentColor))
 		
-		return MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Feed Name", byline: nil, iconImage: iconImage, showIcon: true, featuredImage: nil, numberOfLines: AppDefaults.shared.timelineNumberOfLines, iconSize: AppDefaults.shared.timelineIconSize)
+		return TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Feed Name", byline: nil, iconImage: iconImage, showIcon: true, featuredImage: nil, numberOfLines: AppDefaults.shared.timelineNumberOfLines, iconSize: AppDefaults.shared.timelineIconSize)
 	}
 		
 }

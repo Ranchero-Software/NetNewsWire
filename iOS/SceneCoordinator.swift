@@ -60,8 +60,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	private var rootSplitViewController: RootSplitViewController!
 	private var navigationController: UINavigationController!
-	private var feedViewController: MasterFeedViewController!
-	private var timelineViewController: MasterTimelineViewController?
+	private var feedViewController: FeedViewController!
+	private var timelineViewController: TimelineViewController?
 	private var subSplitViewController: UISplitViewController?
 	
 	private var articleViewController: ArticleViewController? {
@@ -339,7 +339,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		navigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
 		navigationController.delegate = self
 		
-		feedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
+		feedViewController = UIStoryboard.main.instantiateController(ofType: FeedViewController.self)
 		feedViewController.coordinator = self
 		navigationController.pushViewController(feedViewController, animated: false)
 		
@@ -776,7 +776,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		clearTimelineIfNoLongerAvailable()
 	}
 	
-	func masterFeedIndexPathForCurrentTimeline() -> IndexPath? {
+	func feedIndexPathForCurrentTimeline() -> IndexPath? {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(timelineFeed as AnyObject) else {
 			return nil
 		}
@@ -825,7 +825,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
-				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
+				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is TimelineViewController {
 					self.navControllerForTimeline().popViewController(animated: animations.contains(.navigation))
 				}
 				completion?()
@@ -2099,9 +2099,9 @@ private extension SceneCoordinator {
 	// MARK: Three Panel Mode
 	
 	func installTimelineControllerIfNecessary(animated: Bool) {
-		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
+		if navControllerForTimeline().viewControllers.filter({ $0 is TimelineViewController }).count < 1 {
 			isTimelineViewControllerPending = true
-			timelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+			timelineViewController = UIStoryboard.main.instantiateController(ofType: TimelineViewController.self)
 			timelineViewController!.coordinator = self
 			navControllerForTimeline().pushViewController(timelineViewController!, animated: animated)
 		}
@@ -2216,7 +2216,7 @@ private extension SceneCoordinator {
 		}
 			
 		if currentFeedIndexPath != nil {
-			timelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+			timelineViewController = UIStoryboard.main.instantiateController(ofType: TimelineViewController.self)
 			timelineViewController!.coordinator = self
 			navigationController.pushViewController(timelineViewController!, animated: false)
 		}

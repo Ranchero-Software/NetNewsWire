@@ -1,5 +1,5 @@
 //
-//  MasterFeedViewController+Drag.swift
+//  FeedViewController+Drag.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/20/19.
@@ -11,7 +11,7 @@ import MobileCoreServices
 import Account
 import UniformTypeIdentifiers
 
-extension MasterFeedViewController: UITableViewDragDelegate {
+extension FeedViewController: UITableViewDragDelegate {
 	
 	func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
 		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed else {

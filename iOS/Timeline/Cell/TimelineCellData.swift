@@ -1,5 +1,5 @@
 //
-//  MasterTimelineCellData.swift
+//  TimelineCellData.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 2/6/16.
@@ -9,7 +9,7 @@
 import UIKit
 import Articles
 
-struct MasterTimelineCellData {
+struct TimelineCellData {
 
 	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
 	

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9cW-lu-HoC">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9cW-lu-HoC">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -343,26 +342,26 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="WR6-xo-ty2" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="806" width="374" height="84"/>
+                                        <rect key="frame" x="20" y="806" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WR6-xo-ty2" id="zX8-l2-bVH">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="84"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="751" ambiguous="YES" text="Enable Full Screen Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79e-5s-vd0">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="751" text="Enable Full Screen Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79e-5s-vd0">
                                                     <rect key="frame" x="20" y="11" width="202" height="15.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="2Md-2E-7Z4">
-                                                    <rect key="frame" x="307" y="6" width="51" height="31"/>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="2Md-2E-7Z4">
+                                                    <rect key="frame" x="307" y="6" width="51" height="25.5"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchFullscreenArticles:" destination="a0p-rk-skQ" eventType="valueChanged" id="5fa-Ad-e0j"/>
                                                     </connections>
                                                 </switch>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" ambiguous="YES" text="Tap the article top bar to enter Full Screen. Tap the top or bottom to exit." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a30-nc-ZS4">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Tap the article top bar to enter Full Screen. Tap the top or bottom to exit." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a30-nc-ZS4">
                                                     <rect key="frame" x="20" y="33" width="262.5" height="0.0"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                                     <nil key="textColor"/>
@@ -388,10 +387,10 @@
                             <tableViewSection headerTitle="Appearance" id="TkH-4v-yhk">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="EvG-yE-gDF" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="946" width="374" height="43.5"/>
+                                        <rect key="frame" x="20" y="906" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="EvG-yE-gDF" id="wBN-zJ-6pN">
-                                            <rect key="frame" x="0.0" y="0.0" width="343.5" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="343.5" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Color Palette" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Fp-li-dGP">
@@ -425,7 +424,7 @@
                             <tableViewSection headerTitle="Help" id="CS8-fJ-ghn">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="uGk-2d-oFc" style="IBUITableViewCellStyleDefault" id="Tle-IV-D40" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1045.5" width="374" height="43.5"/>
+                                        <rect key="frame" x="20" y="1006" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Tle-IV-D40" id="IJD-ZB-8Wm">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
@@ -442,7 +441,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="6G3-yV-Eyh" style="IBUITableViewCellStyleDefault" id="Tbf-fE-nfx" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1089" width="374" height="43.5"/>
+                                        <rect key="frame" x="20" y="1049.5" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Tbf-fE-nfx" id="beV-vI-g3r">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
@@ -459,7 +458,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="NeD-y8-KrM" style="IBUITableViewCellStyleDefault" id="TIX-yK-rC6" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1132.5" width="374" height="43.5"/>
+                                        <rect key="frame" x="20" y="1093" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="TIX-yK-rC6" id="qr8-EN-Ofg">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
@@ -476,7 +475,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="lfL-bQ-sOp" style="IBUITableViewCellStyleDefault" id="mFn-fE-zqa" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1176" width="374" height="43.5"/>
+                                        <rect key="frame" x="20" y="1136.5" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mFn-fE-zqa" id="jTe-mf-MRj">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
@@ -493,7 +492,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="DDJ-8P-3YY" style="IBUITableViewCellStyleDefault" id="iGs-ze-4gQ" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1219.5" width="374" height="43.5"/>
+                                        <rect key="frame" x="20" y="1180" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="iGs-ze-4gQ" id="EqZ-rF-N0l">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
@@ -510,7 +509,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="DsV-Qv-X4K" style="IBUITableViewCellStyleDefault" id="taJ-sg-wnU" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1263" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="1223.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="taJ-sg-wnU" id="axB-si-1KM">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
@@ -527,7 +526,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="zMz-hU-UYU" style="IBUITableViewCellStyleDefault" id="OXi-cg-ab9" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1307" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="1267.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OXi-cg-ab9" id="npR-a0-9wv">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
@@ -544,7 +543,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="T7x-zl-6Yf" style="IBUITableViewCellStyleDefault" id="VpI-0o-3Px" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1351" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="1311.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VpI-0o-3Px" id="xRH-i4-vne">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
@@ -561,7 +560,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="76A-Ng-kfs" style="IBUITableViewCellStyleDefault" id="jK8-tv-hBD" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="1395" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="1355.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jK8-tv-hBD" id="I7Q-GQ-u8Y">
                                             <rect key="frame" x="0.0" y="0.0" width="355.5" height="44"/>
@@ -669,7 +668,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="AboutViewController" title="About" id="K5w-58-sQW" customClass="AboutViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="ybg-ki-AbJ">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="804"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
                             <tableViewSection id="apW-l0-gWz">
@@ -821,7 +820,7 @@
             <objects>
                 <viewController storyboardIdentifier="TimelineCustomizerViewController" title="Timeline Layout" id="amD-xZ-U3A" customClass="TimelineCustomizerViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2Fb-t4-5QE">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="804"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Q4t-3M-goU">
@@ -947,7 +946,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="300" height="128"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="Zaq-yo-L5h" customClass="MasterTimelineTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="Zaq-yo-L5h" customClass="TimelineTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="300" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Zaq-yo-L5h" id="fD5-nw-z0z">
@@ -980,7 +979,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="ArticleThemesTableViewController" title="Article Themes" id="fO4-og-e41" customClass="ArticleThemesTableViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="I8p-P9-C8h">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="804"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -1019,7 +1018,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="ColorPaletteTableViewController" title="Color Palette" id="4je-jl-or5" customClass="ColorPaletteTableViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="nt4-zl-48k">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="804"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -1063,10 +1062,10 @@
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="groupTableViewBackgroundColor">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="labelColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>

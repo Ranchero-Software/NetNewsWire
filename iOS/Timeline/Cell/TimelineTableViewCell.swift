@@ -1,5 +1,5 @@
 //
-//  MasterTimelineTableViewCell.swift
+//  TimelineTableViewCell.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 8/31/15.
@@ -9,13 +9,13 @@
 import UIKit
 import RSCore
 
-class MasterTimelineTableViewCell: VibrantTableViewCell {
+class TimelineTableViewCell: VibrantTableViewCell {
 	
-	private let titleView = MasterTimelineTableViewCell.multiLineUILabel()
-	private let summaryView = MasterTimelineTableViewCell.multiLineUILabel()
-	private let unreadIndicatorView = MasterUnreadIndicatorView(frame: CGRect.zero)
-	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
-	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
+	private let titleView = TimelineTableViewCell.multiLineUILabel()
+	private let summaryView = TimelineTableViewCell.multiLineUILabel()
+	private let unreadIndicatorView = UnreadIndicatorView(frame: CGRect.zero)
+	private let dateView = TimelineTableViewCell.singleLineUILabel()
+	private let feedNameView = TimelineTableViewCell.singleLineUILabel()
 	
 	private lazy var iconView = IconView()
 	
@@ -26,7 +26,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 	private var unreadIndicatorPropertyAnimator: UIViewPropertyAnimator?
 	private var starViewPropertyAnimator: UIViewPropertyAnimator?
 
-	var cellData: MasterTimelineCellData! {
+	var cellData: TimelineCellData! {
 		didSet {
 			updateSubviews()
 		}
@@ -106,7 +106,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 
 // MARK: - Private
 
-private extension MasterTimelineTableViewCell {
+private extension TimelineTableViewCell {
 	
 	static func singleLineUILabel() -> UILabel {
 		let label = NonIntrinsicLabel()

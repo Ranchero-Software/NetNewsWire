@@ -20,7 +20,7 @@ struct TimelineAccessibilityCellLayout: TimelineCellLayout {
 	let feedNameRect: CGRect
 	let dateRect: CGRect
 	
-	init(width: CGFloat, insets: UIEdgeInsets, cellData: MasterTimelineCellData) {
+	init(width: CGFloat, insets: UIEdgeInsets, cellData: TimelineCellData) {
 		
 		var currentPoint = CGPoint.zero
 		currentPoint.x = TimelineDefaultCellLayout.cellPadding.left + insets.left + TimelineDefaultCellLayout.unreadCircleMarginLeft
@@ -75,7 +75,7 @@ struct TimelineAccessibilityCellLayout: TimelineCellLayout {
 
 private extension TimelineAccessibilityCellLayout {
 	
-	static func rectForDate(_ cellData: MasterTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
+	static func rectForDate(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 		
 		var r = CGRect.zero
 		

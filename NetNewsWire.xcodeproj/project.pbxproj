@@ -545,8 +545,8 @@
 		843006D42CE16406001B820C /* Add */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Add; sourceTree = "<group>"; };
 		843006E42CE16409001B820C /* Account */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Account; sourceTree = "<group>"; };
 		843006FA2CE1640C001B820C /* Article */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Article; sourceTree = "<group>"; };
-		843007182CE1640F001B820C /* MasterTimeline */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MasterTimeline; sourceTree = "<group>"; };
-		843007342CE16412001B820C /* MasterFeed */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MasterFeed; sourceTree = "<group>"; };
+		843007182CE1640F001B820C /* Timeline */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Timeline; sourceTree = "<group>"; };
+		843007342CE16412001B820C /* Feed */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Feed; sourceTree = "<group>"; };
 		845E30622CE1639500770277 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (845E306D2CE1639500770277 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 845E306E2CE1639500770277 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		84BAE0AA2CE1C4D500402E69 /* Mac */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84BAE1402CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84BAE1412CE1C4D500402E69 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, 84BAE1422CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84BAE1432CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Mac; sourceTree = "<group>"; };
 		84BAE17F2CE1C7F800402E69 /* IntentsExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84BAE1812CE1C7F800402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = IntentsExtension; sourceTree = "<group>"; };
@@ -730,8 +730,8 @@
 				51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */,
 				C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */,
 				51B62E67233186730085F949 /* IconView.swift */,
-				843007342CE16412001B820C /* MasterFeed */,
-				843007182CE1640F001B820C /* MasterTimeline */,
+				843007342CE16412001B820C /* Feed */,
+				843007182CE1640F001B820C /* Timeline */,
 				843006FA2CE1640C001B820C /* Article */,
 				843006E42CE16409001B820C /* Account */,
 				843006D42CE16406001B820C /* Add */,
@@ -907,8 +907,8 @@
 				843006D42CE16406001B820C /* Add */,
 				843006E42CE16409001B820C /* Account */,
 				843006FA2CE1640C001B820C /* Article */,
-				843007182CE1640F001B820C /* MasterTimeline */,
-				843007342CE16412001B820C /* MasterFeed */,
+				843007182CE1640F001B820C /* Timeline */,
+				843007342CE16412001B820C /* Feed */,
 				845E30622CE1639500770277 /* Resources */,
 				84C1EC192CDFE49100C7456A /* Shared */,
 			);
