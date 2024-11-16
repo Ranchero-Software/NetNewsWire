@@ -92,6 +92,7 @@
 				<cocoa key="scriptingIsActive"/>
 			</property>
            	<property name="allFeeds" code="Feds" access="r" description="All feeds, including feeds inside folders">
+				<synonym name="allWebFeeds"/>
                 <cocoa key="allFeeds"/>
                 <type type="feed" list="yes"/>
             </property>
@@ -99,6 +100,7 @@
                 <cocoa key="opmlRepresentation"/>
             </property>
             <element type="feed">
+				<synonym name="webFeed"/>
                 <cocoa key="feeds"/>
             </element>
             <element type="folder">
