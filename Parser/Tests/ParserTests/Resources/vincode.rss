@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0">
+  <channel>
+    <title>Maurice Parker</title>
+    <link>https://vincode.io/</link>
+    <description></description>
+    
+    <language>en</language>
+    
+    <lastBuildDate>Thu, 19 Dec 2019 18:12:02 -0500</lastBuildDate>
+    <item>
+      <title></title>
+      <link>https://vincode.io/2023/03/09/i-updated-a.html</link>
+      <pubDate>Thu, 09 Mar 2023 20:04:10 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2023/03/09/i-updated-a.html</guid>
+      <description>&lt;p&gt;I updated a couple of my minor apps today so that they look correct on the latest macOS releases. The first, &lt;a href=&#34;https://apps.apple.com/us/app/feed-compass/id1458648487?mt=12&#34;&gt;Feed Compass&lt;/a&gt; which is an app to help you find, preview, and subscribe to blogs. I also updated &lt;a href=&#34;https://apps.apple.com/us/app/feed-curator/id1458647758?mt=12&#34;&gt;Feed Curator&lt;/a&gt; which is an OPML feed list editor. I also added multiple select for a Reddit user who was needing it. It felt good to help someone out and to finally update the appearance of these apps.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Drag Boat Race in Parker, AZ</title>
+      <link>https://vincode.io/2023/03/07/drag-boat-race.html</link>
+      <pubDate>Tue, 07 Mar 2023 15:15:29 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2023/03/07/drag-boat-race.html</guid>
+      <description>&lt;p&gt;About a month ago Nic and I went to drag boat races in Parker, AZ. The start of them is right outside the bar at &lt;a href=&#34;https://piratesdenresort.com&#34;&gt;Pirates Den&lt;/a&gt;. It was pretty fun. We got to drink beer all day and watch the races, then crawl to van at the end of the night to sleep it off. Mike Finnegan from &lt;a href=&#34;https://www.motortrend.com/roadkill/&#34;&gt;Roadkill&lt;/a&gt; was there to race his new boat. That was pretty great for me. I&amp;rsquo;m a huge Roadkill fan. Finnegan basically made a movie about it and put it on Youtube if you are curious as to what the experience there was like.&lt;/p&gt;
+
+&lt;p&gt;&lt;center&gt;&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/RsvOE2vPUzw&#34; title=&#34;YouTube video player&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&#34; allowfullscreen&gt;&lt;/iframe&gt;&lt;/center&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2023/03/07/if-someone-has.html</link>
+      <pubDate>Tue, 07 Mar 2023 01:42:31 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2023/03/07/if-someone-has.html</guid>
+      <description>&lt;p&gt;If someone has to tell you how good they are at something, their work doesn’t stand on its own. If someone won’t explain why they made a decision, it is because they know that it was a bad one. If someone tells you that you aren’t worth listening to, its because they are afraid of what you will say.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2023/03/06/the-main-project.html</link>
+      <pubDate>Mon, 06 Mar 2023 15:46:42 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2023/03/06/the-main-project.html</guid>
+      <description>&lt;p&gt;The main project I work on, &lt;a href=&#34;https://micro.blog/NetNewsWire&#34;&gt;@NetNewsWire&lt;/a&gt; got a shout out in the Atlantic today.  &lt;a href=&#34;https://www.theatlantic.com/ideas/archive/2023/03/social-media-algorithms-twitter-meta-rss-reader/673282/?utm_source=feed&#34;&gt;How to Take Back Control of What You Read on the Internet&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2023/03/06/i-messed-up.html</link>
+      <pubDate>Mon, 06 Mar 2023 14:54:42 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2023/03/06/i-messed-up.html</guid>
+      <description>&lt;p&gt;I messed up a &lt;a href=&#34;https://micro.blog/NetNewsWire&#34;&gt;@NetNewsWire&lt;/a&gt; merge recently. I left some Git merge conflict markers in a couple files. &lt;a href=&#34;https://micro.blog/danielpunkass&#34;&gt;@danielpunkass&lt;/a&gt; suggested that a pre-commit &lt;a href=&#34;https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks&#34;&gt;Git Hook&lt;/a&gt; could prevent this in the future. &lt;a href=&#34;https://gist.github.com/vincode-io/48f3394f379bac2351127dbe630f2233&#34;&gt;So I made one.&lt;/a&gt;.
+Daniel has added this to his &lt;a href=&#34;https://coderwall.com/p/jp7d5q/create-a-global-git-commit-hook&#34;&gt;global Git templates&lt;/a&gt;. You should too.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2023/02/03/just-another-day.html</link>
+      <pubDate>Fri, 03 Feb 2023 13:15:33 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2023/02/03/just-another-day.html</guid>
+      <description>&lt;p&gt;Just another day at the office.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;uploads/2023/869fb8af1f.jpg&#34; width=&#34;600&#34; height=&#34;450&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2023/02/01/i-got-new.html</link>
+      <pubDate>Wed, 01 Feb 2023 13:50:13 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2023/02/01/i-got-new.html</guid>
+      <description>&lt;p&gt;I got new wheels and tires on the van. They look great, but the larger size puts more strain on my little 4.6 V8. I completely blew a spark plug out of the engine from pushing it to hard coming up a mountain pass. Life on the road…&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;uploads/2023/e39e028e03.jpg&#34; width=&#34;600&#34; height=&#34;450&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2022/12/25/christmas-dinner-this.html</link>
+      <pubDate>Sun, 25 Dec 2022 17:09:16 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/12/25/christmas-dinner-this.html</guid>
+      <description>&lt;p&gt;Christmas dinner this year is Ramen on Sunset Blvd.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;uploads/2022/89cdd3889c.jpg&#34; width=&#34;600&#34; height=&#34;600&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2022/11/14/i-really-like.html</link>
+      <pubDate>Mon, 14 Nov 2022 13:46:25 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/11/14/i-really-like.html</guid>
+      <description>&lt;p&gt;I really like Dan Rather&amp;rsquo;s Substack newsletter, Steady. It has some great social commentary on it. Dan Rather is a journalist from a time when news wasn&amp;rsquo;t entertainment. &lt;a href=&#34;https://steady.substack.com&#34;&gt;steady.substack.com&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2022/11/14/it-would-be.html</link>
+      <pubDate>Mon, 14 Nov 2022 13:43:08 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/11/14/it-would-be.html</guid>
+      <description>&lt;p&gt;It would be great if Substack had RSS feeds for its Inbox and Discover timelines. I understand why they don&amp;rsquo;t. They really need to get users into paid subscriptions to keep the site going. I guess we should be glad that they at least have RSS feeds for individual newsletters.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2022/11/07/yeah-its-one.html</link>
+      <pubDate>Mon, 07 Nov 2022 16:03:47 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/11/07/yeah-its-one.html</guid>
+      <description>&lt;p&gt;Yeah. It’s one of &lt;em&gt;those&lt;/em&gt; days.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;uploads/2022/001e80fb82.jpg&#34; width=&#34;600&#34; height=&#34;450&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2022/11/01/id-love-to.html</link>
+      <pubDate>Tue, 01 Nov 2022 12:41:24 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/11/01/id-love-to.html</guid>
+      <description>&lt;p&gt;I&amp;rsquo;d love to have &lt;a href=&#34;https://developer.apple.com/ios/universal-links/&#34;&gt;Universal Links&lt;/a&gt; on the Micro.blog Apple apps. Since they are Open Source, I&amp;rsquo;d implement myself. I can&amp;rsquo;t see how it can be done. &lt;a href=&#34;https://micro.blog/manton&#34;&gt;@manton&lt;/a&gt; rightly encourages everyone have a domain. That makes it impossible to do consistently.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ventura’s System Settings</title>
+      <link>https://vincode.io/2022/10/30/venturas-system-settings.html</link>
+      <pubDate>Sun, 30 Oct 2022 11:58:26 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/10/30/venturas-system-settings.html</guid>
+      <description>&lt;p&gt;I have to admit, when I saw screenshots of Ventura’s new System Settings stuff, I was very unimpressed. It looked too much like you would see on Windows or Linux for me.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://vincode.io/uploads/2022/c5a5977b4c.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;p&gt;Now that I’ve actually used it, I appreciate the design decision that was made. I know a lot of people were critical, myself included, about basing the design of the System Settings on the iOS ones. But making it like the iOS ones reduces cognitive load when switching back and forth a lot more than I thought it would. I can find the setting that I want much easier now.&lt;/p&gt;
+
+&lt;p&gt;There is a lot to criticize though. It feels clunky, like it is missing some animations. For example, if you have the right pointing chevron, it should animate you that direction. I know that style of navigation sounds very iOS like, but the column view in Finder works that way too.&lt;/p&gt;
+
+&lt;p&gt;It also doesn’t feel like it fits in quite right with the rest of macOS. I haven’t read Apple’s HIG yet this year so that could be it. My guess is that we will see the rest of the move more this direction again next year.&lt;/p&gt;
+
+&lt;p&gt;Because so many more people own an iPhone than a Mac, making Macs easier for iPhone owners to use is a good strategy. Lots of the same people who are critical of recent macOS changes are also the same ones who are frustrated that Apple isn’t doing enough to grow the Mac user base. It looks like Apple is working to leverage the popularity of the iPhone and the iPad to win over users. Between that and the new Mac hardware, it looks to me like they are very focused on the success of the Mac.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2022/02/10/i-wrote-a.html</link>
+      <pubDate>Thu, 10 Feb 2022 15:20:03 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/02/10/i-wrote-a.html</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://zavala.vincode.io/2022/02/10/Zavala_and_Micro.blog.html&#34;&gt;I wrote a blog post &lt;/a&gt;about how I blog to Micro.blog using &lt;a href=&#34;https://zavala.vincode.io&#34;&gt;Zavala&lt;/a&gt; and &lt;a href=&#34;https://apps.apple.com/us/app/humboldt/id1592768206&#34;&gt;Humboldt&lt;/a&gt;. Blogging this way probably isn&amp;rsquo;t for you unless you are big into outliners. Still it is neat to see how these two computer systems that weren&amp;rsquo;t designed to work together could be made to.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Software Development And Vanlife</title>
+      <link>https://vincode.io/2022/02/03/software-development-and.html</link>
+      <pubDate>Thu, 03 Feb 2022 18:35:00 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/02/03/software-development-and.html</guid>
+      <description>
+
+&lt;p&gt;Part of the year I live out of my self-converted E-250 Campervan. My wife and our 2 cats are also traveling with me. That doesn’t leave a lot of space for an office to do software development. This is how I do it.&lt;/p&gt;
+
+&lt;h2 id=&#34;my-portable-office&#34;&gt;My Portable Office&lt;/h2&gt;
+
+&lt;p&gt;Wouldn’t it be great if you had a full office with full-size keyboard, monitor, printer, and the works while living in a van? No chance.&lt;/p&gt;
+
+&lt;h3 id=&#34;desk&#34;&gt;Desk&lt;/h3&gt;
+
+&lt;p&gt;I wish I had a desk. My lap is my desk and when sometimes a picnic table. The picnic table is a rare treat since we mostly do what is called boondocking. That is where you don’t have any hookups for electric or water. Boondocking is typically done on public lands and is free.&lt;/p&gt;
+
+&lt;p&gt;Sometimes I sit in the passenger seat of the van. Right now, I’m sitting in the back of the van on my couch which converts into my bed at night. My favorite is sitting in a chair outside as long as the glare isn’t too bad.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://cdn.uploads.micro.blog/6481/2022/c709bf0ed5.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;h3 id=&#34;computer&#34;&gt;Computer&lt;/h3&gt;
+
+&lt;p&gt;I have one of the new 16” M1 MacBook Pro’s. It compiles code fast. Like, really fast. It makes working on big projects much less painful. The battery life is unbelievable. This is really important in a van when off the grid. Electricity is at a premium. I’m usually able to charge the laptop after the van’s batteries have been topped off and don’t need any more power. The MacBook will last with me using it as much as I want until the next day.&lt;/p&gt;
+
+&lt;p&gt;The speakers are also something that needs to be heard to be believed. We stayed at a friend’s condo in Redondo Beach for 3 weeks over the holidays. The whole time we used my computer as a television and the incredible sound capabilities made this much nicer.&lt;/p&gt;
+
+&lt;h3 id=&#34;purse&#34;&gt;Purse&lt;/h3&gt;
+
+&lt;p&gt;Man purse? Computer bag? I’m not sure what to call it. It was a purse that I bought at REI.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://cdn.uploads.micro.blog/6481/2022/cbc7a80991.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;p&gt;I don’t have a conventional computer bag. A conventional computer bag is too bulky to fit in my limited van space. I have a sleeve for the MacBook and this little bag to hold my cables, headphones, computer glasses, and charging brick.&lt;/p&gt;
+
+&lt;p&gt;It works out pretty well. If I want to work in a coffee shop, I just through the purse over my shoulder and carry the computer in its case. The rest of the time everything fits into my clothing drawer with my clothes.&lt;/p&gt;
+
+&lt;h3 id=&#34;internet&#34;&gt;Internet&lt;/h3&gt;
+
+&lt;p&gt;I use cellular data for most everything I do. I have 1GB per month of data on a Verizon plan. I never come close to using all of it.&lt;/p&gt;
+
+&lt;p&gt;The real tricky part is getting data while away from civilization. Most of the time I can just tether my computer to my phone and it is fine. Sometimes if I’m just out of reach of good cellular service I use my cellular booster in the van. I have a Weboost Drive 4g-X with a marine antenna. This will boost a weak, unusable signal into one that is very serviceable.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://cdn.uploads.micro.blog/6481/2022/d8be3913d2.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;h2 id=&#34;recent-project-developments&#34;&gt;Recent Project Developments&lt;/h2&gt;
+
+&lt;p&gt;I’m always working on something.&lt;/p&gt;
+
+&lt;h3 id=&#34;netnewswire-6-1&#34;&gt;NetNewsWire 6.1&lt;/h3&gt;
+
+&lt;p&gt;We’ve released development versions of NetNewsWire 6.1 for both iOS and the Mac. The &lt;a href=&#34;https://nnw.ranchero.com/2022/01/17/netnewswire-b-for.html&#34;&gt;blog post for the 6.1b2 version for the Mac&lt;/a&gt; has good info in it. The tentpole feature for this release is Themes.&lt;/p&gt;
+
+&lt;p&gt;Themes are the ability change how the Article is rendered in NetNewsWire. This can be a matter of personal taste and sometimes a matter of accessibility. For example if a font is pretty, but difficult to read, you can change that font so that to one that is easier to read. You can also change Article colors, sizes, and key field placements. All this is pretty easy to do if you have basic Web development skills.&lt;/p&gt;
+
+&lt;h3 id=&#34;netnewswire-6-2&#34;&gt;NetNewsWire 6.2&lt;/h3&gt;
+
+&lt;p&gt;The NetNewsWire team will occasionally work on multiple releases at the same time. This time we are testing version 6.1 while developing version 6.2. For version 6.2 we plan to finally add FeedWrangler syncing for macOS and iOS.&lt;/p&gt;
+
+&lt;p&gt;On iOS, we’re also updating the user interface to look more at home on recent version of iOS. My NetNewsWire teammate, &lt;a href=&#34;https://mynameisstuart.com/&#34;&gt;Stuart&lt;/a&gt;, and I have been hard at work on the iOS UI refresh. I’m pretty happy with the progress thus far. Stuart has also contributed a Notification manager that will make working with Notifications much easier.&lt;/p&gt;
+
+&lt;h3 id=&#34;zavala-2-0-release&#34;&gt;Zavala 2.0 Release&lt;/h3&gt;
+
+&lt;p&gt;I managed the &lt;a href=&#34;https://zavala.vincode.io/2022/01/31/2.0_Release.html&#34;&gt;second major release of Zavala&lt;/a&gt; while working out of the van in the desert close to Holtzville, CA. This release is a big deal to me. Thanks to &lt;a href=&#34;https://twitter.com/bradellis?s=21&#34;&gt;Brad Ellis&lt;/a&gt; and some elbow grease from me, this release really feels professional. I mean, it feels like there is a real budget with several team members from a good company kind of professional.&lt;/p&gt;
+
+&lt;p&gt;The big deal with this release is &lt;a href=&#34;https://support.apple.com/guide/shortcuts/welcome/ios&#34;&gt;Shortcuts&lt;/a&gt; support. This really makes Zavala much more customizable and powerful. I hope the users end up finding this useful. I use it all the time, from backing up my outline database, to posting to different blogging systems.&lt;/p&gt;
+
+&lt;h2 id=&#34;vanlife-is-often-boring&#34;&gt;Vanlife is Often Boring&lt;/h2&gt;
+
+&lt;p&gt;What you don’t often get from Instagram #vanlife stuff is that there are lots of times that you have nothing to do. If you are off the grid for 4 or more days at a time with nothing but scrub brush and sand, what do you do? I’m fortunate enough that my hobby, software development, is still possible even in those conditions.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2022/01/31/zavala-is-a.html</link>
+      <pubDate>Mon, 31 Jan 2022 19:08:50 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2022/01/31/zavala-is-a.html</guid>
+      <description>&lt;p&gt;Zavala is a modern outliner for Mac, iPhone, and iPad. Version 2.0 has just been release with a refined user interface and support for Shortcuts. &lt;a href=&#34;https://zavala.vincode.io/2022/01/31/2.0_Release.html&#34;&gt;Read all about the 2.0 release.&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2021/12/17/this-is-awesome.html</link>
+      <pubDate>Fri, 17 Dec 2021 14:27:30 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/12/17/this-is-awesome.html</guid>
+      <description>&lt;p&gt;This is awesome: &lt;a href=&#34;https://blog.iconfactory.com/2021/12/notches-gone-wild/&#34;&gt;blog.iconfactory.com/2021/12/n&amp;hellip;&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Radford Racing School</title>
+      <link>https://vincode.io/2021/12/10/radford-racing-school.html</link>
+      <pubDate>Fri, 10 Dec 2021 18:47:31 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/12/10/radford-racing-school.html</guid>
+      <description>
+
+&lt;h2 id=&#34;cars&#34;&gt;Cars&lt;/h2&gt;
+
+&lt;p&gt;I’ve always loved fast cars. Most of my adult life has been focused on being the best software developer that I can be, so my other hobbies, like cars, suffered. Now that I am retired, I did some life reassessing. One of the things that I feel like I missed out on was enjoying cars more. I decided that I wanted to do more than just zip around on the street. I wanted to race cars on a track.&lt;/p&gt;
+
+&lt;p&gt;I don’t have any professional aspirations to become a race car driver. I just want to do my best to win and enjoy the process. I decided that I would race the car I have rather than buy or build another one. I have a 1971 Corvette that has had the suspension, brakes, engine, and transmission all updated. There is a little more work that I need to do to it to get it ready for autocross or road racing, but I think it will be a good starter car.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://vincode.io/uploads/2021/1dca90c8be.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;h2 id=&#34;racing-school&#34;&gt;Racing School&lt;/h2&gt;
+
+&lt;p&gt;Since I know very little about road racing, I figured that I should go to a school to learn more. &lt;a href=&#34;https://www.radfordracingschool.com&#34;&gt;Radford Racing School&lt;/a&gt; came up immediately when I began searching for a racing school. I had a bit of good luck. They were having a Black Friday sale on classes and they were located in Arizona, which is where we were headed for the winter. I booked a 3 day high performance driving course almost immediately.&lt;/p&gt;
+
+&lt;p&gt;I probably wouldn’t have gone if not for the Black Friday sale, just due to the cost alone. After going to Radford, I get why it is so expensive. They have two full-size race tracks, a big autocross course and a couple skid pads. There is a large full-time staff of instructors, administrative people, and mechanics. Their fleet of cars is massive and requires constant maintenance. They go through gas and rubber like nobody’s business. I think the school is actually reasonably priced for what you get.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://vincode.io/uploads/2021/63f566ed36.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;h2 id=&#34;classes&#34;&gt;Classes&lt;/h2&gt;
+
+&lt;p&gt;We had some class room time where fundamentals were taught us. Things like where to look and how weight transfer affected traction were some of the subject we were taught. There was surprisingly, little time spent behind a desk. Most of our time was behind the wheel.&lt;/p&gt;
+
+&lt;p&gt;One of the first and most important things you learn is accident avoidance. We talk about it in class and they run you through a series of drills to make sure you can pull off the maneuvers. Some of the maneuvers were pretty hard. Braking at 65 MPH while swerving to miss an obstacle was quite challenging in the distance they gave you.&lt;/p&gt;
+
+&lt;p&gt;We did a lot of autocross to hone our skills before hitting the track. I didn’t think I would enjoy the autocross stuff as much as I did. Racing your car through cones just didn’t seem like a lot of fun, but I was wrong. It might be something that I try and get the Corvette out to do next summer.&lt;/p&gt;
+
+&lt;p&gt;We also got a a lot of driving time on the full size race tracks. I had the time of my life. We also got some good one-on-one time with the instructors who would both take you for ride alongs and would ride with you. There is nothing better for learning than to be in the same car with someone who really knows how to move that machine around.&lt;img src=&#34;https://vincode.io/uploads/2021/a2c7033b13.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;h2 id=&#34;was-it-worth-it&#34;&gt;Was it worth it?&lt;/h2&gt;
+
+&lt;p&gt;Yes, in fact I probably will go again. They offer more advanced courses that go beyond what we did. I was learning new things right up till the very last minute and know that I have more to learn. First though, I’m going to take what I learned and refine it. Next summer I hope to get to do some road racing where I have a chance to develop myself and maybe then I can get more out of a follow up course.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Vanlife 2021</title>
+      <link>https://vincode.io/2021/12/04/vanlife.html</link>
+      <pubDate>Sat, 04 Dec 2021 18:50:49 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/12/04/vanlife.html</guid>
+      <description>
+
+&lt;h2 id=&#34;2020-sucked-for-everyone&#34;&gt;2020 Sucked (For Everyone)&lt;/h2&gt;
+
+&lt;p&gt;We got back to Centerville, IA just as the world was entering lockdown in March of 2020. We were pretty strick with out protocols, so we didn’t even much leave the house until vaccines became widely available. Needless to say, there wasn’t any van adventuring happening, but Nic got really good at making sourdough bread and I wrote an &lt;a href=&#34;https://zavala.vincode.io&#34;&gt;outliner application&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I’ve got no regrets about how we spent 2020 and most of 2021. It was hard, but my parents are getting up there in age and Nicole is an ex-smoker. Covid could have taken anyone of us or left us with a permanent disability. Thus far it hasn’t and I will do what I can to keep it that way.&lt;/p&gt;
+
+&lt;h2 id=&#34;covid-and-vanlife&#34;&gt;Covid and Vanlife&lt;/h2&gt;
+
+&lt;p&gt;We spend a lot of time isolated and outside while living out of the van. I think most people focus on that and don’t realize how much time we spend in public places while traveling. The most common public place we go to is the gym. That is our main place to shower.&lt;/p&gt;
+
+&lt;p&gt;We decided that since we were vaccinated and boostered that it would be safe enough for us to get back to using the gym again. But just in case we got some variant that is vaccine resistant, I installed a shower on the van so that we could avoid the gym if we needed to.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://vincode.io/uploads/2021/e45fc0c09a.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;p&gt;It holds 7 gallons of water and is black so that the sun can heat it. You pressurize it using compressed air.&lt;/p&gt;
+
+&lt;p&gt;We used it for the first time yesterday. I used my onboard air compressor to give it pressure. Thankfully the shower has a pressure release valve. I over compressed it (after only a minute) and it shot water two feet above the top of the van as I frantically tried to shut it down. Afterwards Nicole successfully used it to wash her hair. The campground we are currently at in Kearney, AZ doesn’t have any showers and we are a long way from a gym, so the new shower immediately proved itself.&lt;/p&gt;
+
+&lt;h2 id=&#34;vintage-campers&#34;&gt;Vintage Campers&lt;/h2&gt;
+
+&lt;p&gt;Backtracking a bit, we stopped at a really nice campsite that had restored, vintage campers and some cars in Albuquerque, NM on our way to Arizona. After getting settled there, we immediately grabbed a couple beers and toured it.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://vincode.io/uploads/2021/afc84d5964.png&#34; alt=&#34;&#34; /&gt;￼&lt;img src=&#34;https://vincode.io/uploads/2021/6d90da3059.png&#34; alt=&#34;&#34; /&gt;￼&lt;img src=&#34;https://vincode.io/uploads/2021/dde8d04125.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;h2 id=&#34;radford-racing-school&#34;&gt;Radford Racing School&lt;/h2&gt;
+
+&lt;p&gt;Our next stop is in Chandler, AZ and the &lt;a href=&#34;https://www.radfordracingschool.com&#34;&gt;Redford Racing School.&lt;/a&gt; They have a 3 day performance driving course that Nicole and I are going to take. We are really looking forward to the adventure. I’m very much a car guy and Nic just likes to drive fast. We’ll be driving Challenger Redeye’s that have almost 800 HP. Those cars have two different keys. You have to have a special one to unlock the full engine potential. I doubt we get that key right away, but hopefully by the end of the course we’ll get to open those Mopar’s up.&lt;/p&gt;
+
+&lt;h2 id=&#34;feels-good&#34;&gt;Feels Good&lt;/h2&gt;
+
+&lt;p&gt;We’ve been out for about a week now and are finally getting back in the groove and it feels good. Everything is a lot more work, but the routine becomes the norm, and soon we notice it less and less. Eventually, it will seem like this is how we’ve always lived and we will have to work to remember what it is like to live in a normal home.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Shortcuts for Micro.blog</title>
+      <link>https://vincode.io/2021/11/01/shortcuts-for-microblog.html</link>
+      <pubDate>Mon, 01 Nov 2021 20:16:12 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/11/01/shortcuts-for-microblog.html</guid>
+      <description>
+
+&lt;h2 id=&#34;announcing-humboldt&#34;&gt;Announcing Humboldt&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/vincode-io/Humboldt&#34;&gt;Humboldt&lt;/a&gt; is a new Open Source project I put together so that I could use &lt;a href=&#34;https://support.apple.com/guide/shortcuts/welcome/ios&#34;&gt;Shortcuts&lt;/a&gt; to post to &lt;a href=&#34;https://micro.blog&#34;&gt;Micro.blog&lt;/a&gt;. Humboldt is built on top of &lt;a href=&#34;https://github.com/microdotblog/snippets&#34;&gt;Snippets&lt;/a&gt; from Micro.blog, which does the heavy lifting. Humboldt only exposes a small portion of Snippets, so there is room for Humboldt to grow in the future if there is demand for more functionality.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://apps.apple.com/us/app/humboldt/id1592768206&#34;&gt;Humboldt is available for both macOS and iOS in the App Store&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-main-humboldt-app&#34;&gt;The Main Humboldt App&lt;/h2&gt;
+
+&lt;p&gt;The main app walks you though the usual Micro.blog sign-on flow. You just enter the email address you use for Micro.blog and wait for your sign-on email to arrive. When it does you just click a link in the email and you will be routed back to Humboldt which completes the sign-on for you. That’s all the main app does. You are now ready to begin building Shortcuts that communicate to Micro.blog.&lt;/p&gt;
+
+&lt;h2 id=&#34;post-html-to-micro-blog&#34;&gt;Post HTML to Micro.blog&lt;/h2&gt;
+
+&lt;p&gt;The main shortcut to use is the Post HTML one. You can submit just a short HTML snippet or a full blog post. The Title is an optional parameter, since lots of Micro.blog posts are short and don’t require them.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.icloud.com/shortcuts/8d0c34942cee4770a86a79e76def1aeb&#34;&gt;Here&lt;/a&gt; is a simple Shortcut that just asks for what you want to post and then does it. You can use this Shortcut completely hands free to post to Micro.blog.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://vincode.io/uploads/2021/6aa652fd04.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;h2 id=&#34;upload-image-to-micro-blog&#34;&gt;Upload Image to Micro.blog&lt;/h2&gt;
+
+&lt;p&gt;You can also upload image resources to Micro.blog. &lt;a href=&#34;https://www.icloud.com/shortcuts/fedaf0ef3ded419196c37347e7575ae3&#34;&gt;This Shortcut example&lt;/a&gt; shows it in action.
+&lt;img src=&#34;https://vincode.io/uploads/2021/b5e3db9ee5.png&#34; alt=&#34;&#34; /&gt;￼&lt;/p&gt;
+
+&lt;h2 id=&#34;get-blog-id-from-micro-blog&#34;&gt;Get Blog ID from Micro.blog&lt;/h2&gt;
+
+&lt;p&gt;This is useful if you have multiple Micro.blog blogs associated with your account. You can pass the result of this action to either Post HTML for Upload Image to work with the blog you want. Otherwise, those actions work on the currently selected default blog. You can change the current default blog using Micro.blog on the web.&lt;/p&gt;
+
+&lt;h2 id=&#34;putting-them-together&#34;&gt;Putting Them Together&lt;/h2&gt;
+
+&lt;p&gt;You can upload blog posts with images embedded in them. In fact, that is how this blog post was uploaded to Micro.blog!&lt;/p&gt;
+
+&lt;p&gt;The Upload Image action has an output parameter. It is the published URL of the image. You need to save this for each image you upload and pass it to a step that manipulates the HTML of the post you will upload.&lt;/p&gt;
+
+&lt;p&gt;Your HTML needs to have placeholder text, unique to each image, that can be searched for. This placeholder text needs to be substituted for the image’s published URL. You can use the Replace Text built-in Shortcut action to do this. Now you can use Post HTML to post your updated blog HTML.&lt;/p&gt;
+
+&lt;h2 id=&#34;zavala-integration&#34;&gt;Zavala Integration&lt;/h2&gt;
+
+&lt;p&gt;I wanted the ability to build a blog post in &lt;a href=&#34;https://zavala.vincode.io&#34;&gt;Zavala&lt;/a&gt; and then post it to Micro.blog. This is the original reason why I built Humboldt. Shortcut support for Zavala is “coming soon”, which is needed to tie everything together. When it is released to testing, I will post more about how to make Humboldt work with Zavala.&lt;/p&gt;
+
+&lt;h2 id=&#34;future-updates&#34;&gt;Future Updates&lt;/h2&gt;
+
+&lt;p&gt;For now, Humboldt does everything I need it to do. It just posts to Micro.blog and that is about it. It can’t edit or delete posts or manipulate image uploads. You can use the Micro.blog website for that or a full featured blog editor like &lt;a href=&#34;https://redsweater.com/marsedit/&#34;&gt;MarsEdit&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If there is community interest in expanding what Humboldt can do, I’m interested in hearing about it. Let me know what you would like to see on the &lt;a href=&#34;https://github.com/vincode-io/Humboldt/discussions&#34;&gt;Humboldt’s GitHub Discussions site&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Drummer</title>
+      <link>https://vincode.io/2021/10/17/drummer.html</link>
+      <pubDate>Sun, 17 Oct 2021 13:49:00 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/10/17/drummer.html</guid>
+      <description>
+
+&lt;h2 id=&#34;the-oldest-and-newest-thing-in-blogging&#34;&gt;The Oldest and Newest Thing in Blogging&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://scripting.com&#34;&gt;Dave Winer&lt;/a&gt; just release a new project called &lt;a href=&#34;http://docserver.scripting.com/drummer/about.opml&#34;&gt;Drummer&lt;/a&gt;. Drummer is an &lt;a href=&#34;https://en.wikipedia.org/wiki/Outliner&#34;&gt;outliner&lt;/a&gt; that has been especially adapted to doing blogging. If you are into either outliners or blogs, this is an interesting development. Dave is probably the oldest name in outline, blogging, and podcasting applications. You can check out his &lt;a href=&#34;https://en.wikipedia.org/wiki/Dave_Winer&#34;&gt;Wikipedia page&lt;/a&gt; for a full history.&lt;/p&gt;
+
+&lt;p&gt;I’m not very familiar with the history of outliners and blogging, but I do know in certain circles, especially the Mac community, early blogs were based on outlines. Over the years it seems like those two have drifted apart into their own applications and communities.&lt;/p&gt;
+
+&lt;h2 id=&#34;personal-interest&#34;&gt;Personal Interest&lt;/h2&gt;
+
+&lt;p&gt;I stumbled into the blogging world long before I had heard of blogs. In the very early 2000’s personal blogs weren’t very well known, but sites like &lt;a href=&#34;https://slashdot.org&#34;&gt;Slashdot&lt;/a&gt; were. Slashdot was what we would now refer to as a link blog. A link blog is one that links to external articles and provides commentary about them. I decided I wanted my own link blog and so I built one based on the (at the time) open source Jive forum software. The site itself never turned into anything, but it got me my first Java consulting gig.&lt;/p&gt;
+
+&lt;p&gt;Like many people I eventually drifted away from blogs into the world of social platforms. I eventually got interested in doing Apple platform development and started looking for a good open source application to work on. I found &lt;a href=&#34;https://netnewswire.com&#34;&gt;NetNewsWire&lt;/a&gt;. I originally began work on NetNewsWire because the code was a good model to learn advanced techniques from. Along the way I rediscovered how amazing blogging is.&lt;/p&gt;
+
+&lt;p&gt;Through &lt;a href=&#34;https://inessential.com&#34;&gt;Brent Simmons&lt;/a&gt;, the founder of NetNewsWire, I learned about how useful outliners could be. I was familiar with outliners, but hadn’t used them to their full potential. I got more and more interested in outliners and eventually began work on &lt;a href=&#34;https://zavala.vincode.io&#34;&gt;Zavala&lt;/a&gt;. Through Brent, I also learned about publishing outlines as blogs.&lt;/p&gt;
+
+&lt;h2 id=&#34;outlines-as-blogs&#34;&gt;Outlines as Blogs&lt;/h2&gt;
+
+&lt;p&gt;I’ve always used outlines to do my writing since I learned about them. The hierarchal structure in writing just made sense to me. As a software consultant, I alway wrote using Word’s outline view. To me it was just natural to want to use something like that for blogs. When I heard about the history of using outlines for blogging, things just clicked.&lt;/p&gt;
+
+&lt;p&gt;As part of Zavala 2.0, I wanted to satisfy the blog using an outline use case. In fact, this blog post is written using Zavala.
+&lt;img src=&#34;https://vincode.io/uploads/2021/a9c6cbe926.png&#34; alt=&#34;&#34; /&gt;￼
+To publish this outline, I run a Shortcut that uploads images and HTML to my &lt;a href=&#34;https://micro.blog&#34;&gt;Micro.blog&lt;/a&gt; blog. Drummer works somewhat differently. Zavala considers an outline a document that gets uploaded as a post. Drummer is designed to group multiple entries under a published date. Each entry is a separate blog post, but are all grouped together by date. It also has a publish step, but what happens, happens behind the scenes.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://vincode.io/uploads/2021/328aa1ad88.png&#34; alt=&#34;&#34; /&gt;￼
+It is important here to point out some terminology differences. A “note” in Zavala is associated with a row. It provides additional detail for the topic. When publishing docs or blog posts from Zavala a topic is a group heading and a note is paragraph text.&lt;/p&gt;
+
+&lt;p&gt;A “note” in Drummer is a row that is a blog entry. I’m not sure what makes a “note” row different than a regular row under a date. They seem to publish the same, but the icon is different some how.&lt;/p&gt;
+
+&lt;p&gt;Drummer has the concept of a microblog post, which Zavala doesn’t have. This is similar to what you see on Micro.blog or Twitter. It is a short post that doesn’t have a title. If you add a child row under a row that is under a date, you get a full blog post where the child rows are paragraphs and the row is the blog title.&lt;/p&gt;
+
+&lt;p&gt;Drummer’s take on blogging is a little bit different different than the common definition. I think Drummer is set up well for a prolific writer or someone who posts a lot in smaller chunks through out the day. It scales up well for long posts or quick posts just to express an opinion as well through.&lt;/p&gt;
+
+&lt;h2 id=&#34;what-s-next&#34;&gt;What’s next&lt;/h2&gt;
+
+&lt;p&gt;If I’ve sold you on blogging using outlines, check out this &lt;a href=&#34;https://www.amitgawande.com/2021/10/16/getting-started-blogging.html&#34;&gt;nice article on blogging with Drummer&lt;/a&gt;. You will eventually be able to do blogging on some platforms with Zavala 2.0, but that won’t be ready until early 2022. In the meantime, Drummer is something to try.&lt;/p&gt;
+
+&lt;p&gt;Some caveats about Drummer though. You will have to think differently if you are used to common forms of blogging. Using a single outline for all your blog entries is very different than publishing different documents as blog entries.&lt;/p&gt;
+
+&lt;p&gt;Drummer is also complicated in some ways. For example, adding an inline image requires you to edit a rows attributes, enter a special key, and link out to a site that is hosting your image. Drummer is new though and it is’’t like this is something that can’t be made easier in a follow up release.&lt;/p&gt;
+
+&lt;p&gt;I’m going to be keeping an eye on Drummer for things I can learn from it. I’ll also be looking for opportunities for interoperablility. There might be something there that can make both projects better.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Shortcuts</title>
+      <link>https://vincode.io/2021/10/13/shortcuts.html</link>
+      <pubDate>Wed, 13 Oct 2021 12:47:12 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/10/13/shortcuts.html</guid>
+      <description>
+
+&lt;p&gt;I’ve been spending a lot of time lately working with &lt;a href=&#34;https://support.apple.com/en-in/guide/shortcuts/welcome/ios&#34;&gt;Shortcuts&lt;/a&gt;. I have some thoughts about them.&lt;/p&gt;
+
+&lt;h2 id=&#34;adding-shortcut-support-to-zavala-https-zavala-vincode-io&#34;&gt;Adding Shortcut support to &lt;a href=&#34;https://zavala.vincode.io&#34;&gt;Zavala&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;One of the early requirements for Zavala was that it should be able to be automated or scripted. Since Zavala works on both iOS and macOS, these scripts should be able to be shared.&lt;/p&gt;
+
+&lt;p&gt;Prior to WWDC21 there wasn’t a shared scripting environment common between iOS and macOS. AppleScript was macOS only and Shortcuts was iOS only. I eventually decided that I would embed a Python runtime and editor to get cross-platform scripting to work.&lt;/p&gt;
+
+&lt;p&gt;When Shortcuts for macOS was announced at WWDC21 this year, I now had a different option. My only concern was if Shortcuts would be powerful enough to script a full outliner.&lt;/p&gt;
+
+&lt;h2 id=&#34;discovering-shortcuts&#34;&gt;Discovering Shortcuts&lt;/h2&gt;
+
+&lt;p&gt;I had briefly worked on Shortcut support a couple years ago for &lt;a href=&#34;https://netnewswire.com&#34;&gt;NetNewsWire&lt;/a&gt; but we ran into some roadblocks. These have since been removed. Still, because of them we didn’t get the full Shortcuts support we would have wanted and I didn’t fully learn how to use Shortcuts.&lt;/p&gt;
+
+&lt;p&gt;Cut to a couple years later and I wanted to do some really powerful automation with Zavala. For example, I wanted to post outlines as blog posts on both &lt;a href=&#34;https://micro.blog&#34;&gt;Micro.blog&lt;/a&gt; and a &lt;a href=&#34;https://jekyllrb.com&#34;&gt;Jekyll&lt;/a&gt; blog. I wanted to dynamically create outlines.&lt;/p&gt;
+
+&lt;p&gt;I’m happy to say that with some enhancements to Zavala to support Shortcuts, I&amp;rsquo;ve been able to do everything (thus far) that I’ve set out to do. I’ve written over a dozen Shortcuts, some of them fairly complicated. I was surprised at what I could accomplish with a graphical programming language.&lt;/p&gt;
+
+&lt;h2 id=&#34;shortcuts-are-very-capable&#34;&gt;Shortcuts are Very Capable&lt;/h2&gt;
+
+&lt;p&gt;I’ve come to think of Shortcuts as the graphical programming equivalent of Unix shell scripts. You are expected to piece together a lot of small Shortcut actions to make a full Shortcut. Each of the Shortcut actions take an input and provide an output.&lt;/p&gt;
+
+&lt;p&gt;One of the big differences between Shortcuts and shell scripts is that you can define the type of data that you are using for input and output. Shortcuts has something called The &lt;a href=&#34;https://support.apple.com/en-in/guide/shortcuts/apd4618db957/ios&#34;&gt;Content Graph engine&lt;/a&gt; which can convert data to different types on the fly, so using typed data isn’t as verbose as it could be. For example, you could pass an array of URL’s to an action that only accepts a single URL. Shortcuts will automatically pick the first (usually the only) item in the array without having to specify it. Or you could pass a URL to an action that takes a Text input and Shortcuts will change it to a text input.&lt;/p&gt;
+
+&lt;h2 id=&#34;shortcomings&#34;&gt;Shortcomings&lt;/h2&gt;
+
+&lt;p&gt;In iOS 15 and macOS 12, the Shortcut editor is buggy. Embarrassingly buggy. The delete button for actions almost never works. Yes, something as simple as a button not doing the simplest of tasks, doesn’t work. And it crashes a lot. Fortunately, the execution engine for Shortcuts seems to be stable and work well.&lt;/p&gt;
+
+&lt;p&gt;One thing I would like to see is the ability to add a Shortcut to the Share menu on macOS. You can already add it to the Share menu on iOS. You can add a Shortcut to the Services menu on macOS, so maybe that is the more appropriate location. I do think users are going to expect Shortcuts to be able to be available in the macOS Share menu since it shares an icon with the iOS equivalent.&lt;/p&gt;
+
+&lt;p&gt;The biggest thing I think is missing is an API to execute Shortcuts directly from within your application. Say, I write a Shortcut that moves all completed items in an outline to a row called “Done” at the bottom of the outline. I would like to be able to execute this Shortcut without leaving the application and without focus being given to the Shortcuts app. Right now that isn’t possible to the best of my knowledge.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-future&#34;&gt;The Future&lt;/h2&gt;
+
+&lt;p&gt;It is pretty clear to me that Shortcuts are the future of Apple platform automation. It is powerful while still being accessible to non-programmers. I hope that this year’s quality problems are a short-term setback, because I’m all in for automating Zavala using Shortcuts.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2021/10/08/some-cool-stuff.html</link>
+      <pubDate>Fri, 08 Oct 2021 15:01:05 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/10/08/some-cool-stuff.html</guid>
+      <description>&lt;p&gt;Some cool stuff is coming in Zavala 2.0. &lt;a href=&#34;https://zavala.vincode.io/2021/10/08/2.0-Preview.html&#34;&gt;zavala.vincode.io/2021/10/0&amp;hellip;&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2021/09/28/my-outliner-zavala.html</link>
+      <pubDate>Tue, 28 Sep 2021 15:22:15 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/09/28/my-outliner-zavala.html</guid>
+      <description>&lt;p&gt;My outliner, Zavala, has a new release in beta testing. There are lots of new features and I sure could use some help testing it. &lt;a href=&#34;https://zavala.vincode.io/2021/09/28/1.2-Beta-1.html&#34;&gt;zavala.vincode.io/2021/09/2&amp;hellip;&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://vincode.io/2021/06/24/heres-a-great.html</link>
+      <pubDate>Thu, 24 Jun 2021 19:55:28 -0500</pubDate>
+      
+      <guid>http://vincode.micro.blog/2021/06/24/heres-a-great.html</guid>
+      <description>&lt;p&gt;Here&amp;rsquo;s a great article about &lt;a href=&#34;https://micro.blog/NetNewsWire&#34;&gt;@NetNewsWire&lt;/a&gt; with some excellent quotes from &lt;a href=&#34;https://micro.blog/brentsimmons&#34;&gt;@brentsimmons&lt;/a&gt;. It really gets into how Brent and the team think about NetNewsWire&amp;rsquo;s place in the world. &lt;a href=&#34;https://www.lifewire.com/how-netnewswire-6-could-change-the-way-you-read-news-5190136&#34;&gt;www.lifewire.com/how-netne&amp;hellip;&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cocoa-dom</title>
+    <description>coding bits I use, come across, like, hate, the whole shebang.</description>
+    <link>https://coding.monkeydom.de</link>
+    <atom:link href="https://coding.monkeydom.de/posts.rss" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>TCMPortMapper 2018 Edition</title>
+      <description>&lt;p&gt;About 10 years ago, I released one of my first pieces of open source software. For the collaboration part of &lt;a href="https://subethaedit.net/"&gt;SubEthaEdit&lt;/a&gt; we needed a way to make the app&amp;#39;s network service available to the outside world, so you could invite people to documents without any additional setup.&lt;/p&gt;
+
+&lt;p&gt;To achieve this without any other additional central service to communicate over, one way is to leverage the port mapping services of your router to open up to the outside world. And for this reason, I created &lt;a href="https://github.com/monkeydom/TCMPortMapper"&gt;TCMPortMapper&lt;/a&gt;.framework with its companion example and in itself useful &lt;a href="https://github.com/monkeydom/TCMPortMapper/releases/tag/PortMap-2.0.0"&gt;Port Map.app&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/monkeydom/TCMPortMapper/releases/tag/PortMap-2.0.0"&gt;
+&lt;img alt="Port Map App Icon" src="/assets/posts/PortMapAppIcon-512.png" width="256"&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Since this piece of software was more or less just working after its inception, I left it quite unmaintained for a long time. This is also signified by the fact, that the original repo was on google code, and it didn&amp;#39;t even make it over to another hoster when it got shutdown, so the commit history was lost.&lt;/p&gt;
+
+&lt;p&gt;So I took some time to revive it, clean it up, get the original commit history and update the libraries it leverages. &lt;/p&gt;
+
+&lt;p&gt;The funny thing is, that 10 years ago the thought was, when IPv6 will be here, port mapping would be obsolete. Sadly, that is not the case. Both IPv6 is not available everywhere yet, and as it turns out, the default IPv6 behaviour of routers is to close you off from the outside world too. With most routers it is not an easy feat to open it up again for the layperson. With that in mind I&amp;#39;ll probably look into what kind of information/help for IPv6 connectivity &lt;a href="https://github.com/monkeydom/TCMPortMapper"&gt;TCMPortMapper&lt;/a&gt;.framework can give you, now that the codebase is cleaned up again and fit for the next few years.&lt;/p&gt;
+
+&lt;p&gt;Until then, the existing &lt;a href="https://github.com/monkeydom/TCMPortMapper/releases/tag/PortMap-2.0.0"&gt;Port Map.app&lt;/a&gt; can be helpful for you in some of the following scenarios:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;make your SSH avaialable temporarily, or permanently e.g. if you use dyn-dns for your home router.&lt;/li&gt;
+&lt;li&gt;temporarily expose some services to others. E.g. I use it so show my local web development things by turning on Port Map for e.g. 4000 and copy the link to others in a chat.&lt;/li&gt;
+&lt;li&gt;know your external IPv4 address, if any.&lt;/li&gt;
+&lt;li&gt;looking up what ports are currently mapped in your UPnP enabled router.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/monkeydom/TCMPortMapper/"&gt;
+&lt;img alt="Port Map Screenshot" src="/assets/posts/PortMapApp-Screenshot.png" width="602"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://coding.monkeydom.de/posts/2018/09/06/tcmportmapper"&gt;⚓&lt;/a&gt;&lt;/p&gt;</description>
+      <pubDate>Thu, 6 Sep 2018 13:27:00 +0000</pubDate>
+      <link>https://github.com/monkeydom/TCMPortMapper</link>
+      <guid>cocoa-dom:tcmportmapper</guid>
+    </item>
+    <item>
+      <title>Command line utilities: exa and bat</title>
+      <description>&lt;p&gt;While surfing through the &lt;a href="http://rust-lang.org"&gt;rust&lt;/a&gt; ecosystem, I stumbled across a few excellent command line utilities I enjoy using and installed on all my systems. I&amp;#39;m going to post about them for my own reference and in case they might be useful to you too.&lt;/p&gt;
+
+&lt;h3&gt;exa&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href="https://the.exa.website"&gt;exa&lt;/a&gt; is a modern replacement for ls. Apart from great coloring I use it mostly for its tree based view and git and extended attributes integration.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;dom@dreizehn:/usr/local/etc$ exa -lTF
+drwxrwxr-x     - dom  3 Jul 13:02 ./
+drwxr-xr-x     - dom  3 Jul 13:02 ├── bash_completion.d/
+lrwxr-xr-x    36 dom 29 Jun  2017 │  ├── brew -&amp;gt; ../../Homebrew/completions/bash/brew
+lrwxr-xr-x    48 dom  5 Oct  2017 │  ├── exa -&amp;gt; ../../Cellar/exa/0.8.0/etc/bash_completion.d/exa
+lrwxr-xr-x    51 dom 29 Apr  4:36 │  ├── fd.bash -&amp;gt; ../../Cellar/fd/7.0.0/etc/bash_completion.d/fd.bash
+lrwxr-xr-x    65 dom 22 Jun 16:38 │  ├── git-completion.bash -&amp;gt; ../../Cellar/git/2.18.0/etc/bash_completion.d/git-completion.bash
+lrwxr-xr-x    59 dom 22 Jun 16:38 │  ├── git-prompt.sh -&amp;gt; ../../Cellar/git/2.18.0/etc/bash_completion.d/git-prompt.sh
+…
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;bat&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/sharkdp/bat"&gt;bat&lt;/a&gt; to me is a great less/cat combination that adds syntax highlighting and line numbers. Especially useful on remote servers.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;dom@dreizehn:/etc$ bat hosts
+───────┬────────────────────────────────────────────────────────────────────────────────────────────
+       │ File: hosts
+───────┼────────────────────────────────────────────────────────────────────────────────────────────
+   1   │ ##
+   2   │ # Host Database
+   3   │ #
+   4   │ # localhost is used to configure the loopback interface
+   5   │ # when the system is booting.  Do not change this entry.
+   6   │ ##
+   7   │ 127.0.0.1       localhost
+   8   │ 255.255.255.255 broadcasthost
+   9   │ ::1             localhost
+───────┴────────────────────────────────────────────────────────────────────────────────────────────
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+      <pubDate>Thu, 5 Jul 2018 12:30:39 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2018/07/05/command-line-utilities-exa-and-bat</link>
+      <guid>cocoa-dom:command-line-utilities-exa-and-bat</guid>
+    </item>
+    <item>
+      <title>Swift Library naming warts</title>
+      <description>&lt;p&gt;This is just a collection of oddities / naming choices that I ran across while playing with Swift. This list isn&amp;#39;t exhaustive, nor do I have a good solution for all of them. It&amp;#39;s just an observational piece on things that produced a negative gut reaction.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;the &lt;strong&gt;func&lt;/strong&gt; keyword &lt;br/&gt;
+somehow that one really doesn&amp;#39;t sit well with me. I&amp;#39;d much more preferred it if the keyword would have called &lt;strong&gt;function&lt;/strong&gt;. However It has been pointed out that other abbreviations are used as well in standard keywords. Most notably: &lt;strong&gt;enum&lt;/strong&gt;, &lt;strong&gt;var&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;succ(), pred()&lt;/strong&gt; &lt;br/&gt;
+The ForwardIndex and BidirectionalIndex use these methods to move forward and backward. I&amp;#39;d much rather have seen &lt;strong&gt;successor()&lt;/strong&gt; and &lt;strong&gt;predecessor()&lt;/strong&gt; there. Or &lt;strong&gt;nextIndex()&lt;/strong&gt; and &lt;strong&gt;previousIndex()&lt;/strong&gt; since these methods are tied to Indexes. Or &lt;strong&gt;succedingIndex()&lt;/strong&gt; and &lt;strong&gt;precedingIndex()&lt;/strong&gt;. Actually this hits a sore point in the current Swift Library quite on the mark: how general or specific should the naming of methods and global functions be? And how can this be as consistent as possible to give future code writers the right idea and direction to make these in a way they fit in the language? Something that is very established in Cocoa and imho needs to be established in Swift as soon as possible.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;advance()&lt;/strong&gt; &lt;br/&gt;
+This is used to move an index forward by a distance. So why not &lt;strong&gt;advanceIndex()&lt;/strong&gt;? And also what is the inverse? I found no good one in the english language, but I&amp;#39;m foreign. There is no inverse because you are supposed to use advance with a negative distance to move backward. I like that the name includes the direction, so you know your moving forwards with a positive distance and backwards with a negative index. However, I don&amp;#39;t like the impetus of advance, suggesting to me going forward is the only way. &lt;br/&gt;Interestingly enough it hits another point: &lt;strong&gt;mutability&lt;/strong&gt;. Does advance() change the index given or not? This is not clear by the naming, but I think it should be.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;join(a,b)&lt;/strong&gt; and &lt;strong&gt;&amp;lt;Type&amp;gt;.join(b)&lt;/strong&gt; &lt;br/&gt;
+These behave consistent but are confusing to me as hell. Compared to cocoa&amp;#39;s &lt;code&gt;[NSArray componentsJoinedByString:]&lt;/code&gt; which is clear to me. So to join [&amp;quot;c&amp;quot;,&amp;quot;d&amp;quot;,&amp;quot;e&amp;quot;] with &amp;quot;-&amp;quot; as glue you have to do either &lt;strong&gt;join(&amp;quot;-&amp;quot;,[&amp;quot;c&amp;quot;,&amp;quot;d&amp;quot;,&amp;quot;e&amp;quot;])&lt;/strong&gt; or &lt;strong&gt;&amp;quot;-&amp;quot;.join([&amp;quot;c&amp;quot;,&amp;quot;d&amp;quot;,&amp;quot;e&amp;quot;])&lt;/strong&gt;. I think the more intuitive version would be something like &lt;strong&gt;[&amp;quot;c&amp;quot;,&amp;quot;d&amp;quot;,&amp;quot;e&amp;quot;].joinBy(&amp;quot;-&amp;quot;)&lt;/strong&gt; - I also don&amp;#39;t get exactly why it is both a global function and a method. I would prefer the function to be defined as &lt;strong&gt;join(a, by: b)&lt;/strong&gt; with the semantics reversed. Everything would be much clearer and visible to the first time reader at a glance. However, the swift library does not make use of named parameters on a function level.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Array.append(), Array.extend(), Array.filter(), Array.sort()&lt;/strong&gt; &lt;br/&gt;
+This again hits my sore spot on &lt;strong&gt;mutablity&lt;/strong&gt;. Which of these methods return a new, changed array, which do mutate the array? Without consulting the documentation or Xcode there isn&amp;#39;t a clear indication. It turns out &lt;strong&gt;sort()&lt;/strong&gt; sorts in place while &lt;strong&gt;filter()&lt;/strong&gt; returns a filtered array. We need a consistent way of expressing this in the naming.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;contains(a,b)&lt;/strong&gt; &lt;br/&gt; 
+Does this test if a contains b, or if a is contained in b? You can&amp;#39;t be sure without looking at the signature. I would much rather prefer this to be something like &lt;strong&gt;does(a, contain: b)&lt;/strong&gt;. and for it&amp;#39;s brethren with the predicate &lt;strong&gt;doesAnyElementOf(a, satisfyPredicate: b)&lt;/strong&gt;. However, with trailing closures being able to lose the last parameter name and just putting the closure at the end that might look awkward. But I sure as hell don&amp;#39;t get why one should name basic functions in a short way, if there is a possible improvement in readability and less ambiguity by writing a longer signature.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      <pubDate>Sat, 5 Jul 2014 08:30:39 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2014/07/05/swift-library-naming-warts</link>
+      <guid>cocoa-dom:swift-library-naming-warts</guid>
+    </item>
+    <item>
+      <title>Autolayout and Complexity</title>
+      <description>&lt;p&gt;I recently dipped my toes into some autolayout on both iOS and OS X. Short term verdict: powerful, but too complex for daily use. And that&amp;#39;s an issue.&lt;/p&gt;
+
+&lt;p&gt;Remember the times of handling touches before there were &lt;code&gt;UIGestureRecognizers&lt;/code&gt;? That is exactly the state autolayout is in. The underlying technology is great but it is in desperate need of a good abstraction layer on top of it that makes the standard use cases easy and maintainable. I&amp;#39;m looking forward to this year&amp;#39;s WWDC to see some of these aspects to be addressed.&lt;/p&gt;
+</description>
+      <pubDate>Wed, 5 Feb 2014 04:31:39 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2014/02/05/autolayout-and-complexity</link>
+      <guid>cocoa-dom:autolayout-and-complexity</guid>
+    </item>
+    <item>
+      <title>Blocks need considering</title>
+      <description>&lt;p&gt;While I don&amp;#39;t agree with &lt;a href="http://sealedabstract.com/code/nsnotificationcenter-with-blocks-considered-harmful/"&gt;this post&lt;/a&gt; in most respects, it still alerted me to a crucial thing when using blocks: Be sure the Macros you use in them don&amp;#39;t reference self directly. And if they do and you need to be sure to not create a retain cycle, use either &lt;code&gt;@weakify&lt;/code&gt; and &lt;code&gt;@strongify&lt;/code&gt; from &lt;a href="https://github.com/jspahrsummers/libextobjc"&gt;libextobjc&lt;/a&gt; or do shadow self yourself this way:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight objective_c"&gt;&lt;code&gt;&lt;span class="n"&gt;__weak&lt;/span&gt; &lt;span class="n"&gt;typeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;weakSelf&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; 
+
+&lt;span class="c1"&gt;// some api that takes blocks, when you give the block do &lt;/span&gt;
+&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;__strong&lt;/span&gt; &lt;span class="n"&gt;typeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;weakSelf&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;self&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;weakSelf&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; 
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So thanks for ranting so much to alert me to the fact that &lt;code&gt;NSAssert()&lt;/code&gt; does reference self directly, and as such make the block retain self.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update:&lt;/strong&gt; &lt;a href="http://www.cimgf.com/2010/05/02/my-current-prefix-pch-file/"&gt;ZAssert&lt;/a&gt; seems to be a reasonable replacement for &lt;code&gt;NSAssert()&lt;/code&gt; in blocks which is mentioned in the comments of the Article.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update 2:&lt;/strong&gt; Since this is such a common pattern, I&amp;#39;ve seen people using &lt;code&gt;welf&lt;/code&gt; instead of &lt;code&gt;weakSelf&lt;/code&gt;, which makes me chuckle. Also the &lt;code&gt;__typeof__&lt;/code&gt; can be replaced by &lt;code&gt;typeof&lt;/code&gt;, which makes it less atrocious.&lt;/p&gt;
+</description>
+      <pubDate>Wed, 20 Nov 2013 19:17:00 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2013/11/20/blocks-need-considering</link>
+      <guid>cocoa-dom:blocks-need-considering</guid>
+    </item>
+    <item>
+      <title>iOS 7 Game Center Sandbox</title>
+      <description>&lt;p&gt;&lt;a href="http://ishamrock.com/post/66808377466/beware-of-canceling-the-ios-7-game-center-sandbox-login"&gt;Great advice and bug report&lt;/a&gt; from Patrick McCarron. Ran into it several times. Disabled Game Center for debug builds because of that (and because of the annoyingly slow login dialog when switching simulators).&lt;/p&gt;
+</description>
+      <pubDate>Tue, 12 Nov 2013 17:38:49 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2013/11/12/ios-game-center-sandbox</link>
+      <guid>cocoa-dom:ios-game-center-sandbox</guid>
+    </item>
+    <item>
+      <title>objc.io</title>
+      <description>&lt;p&gt;If you haven&amp;#39;t seen it yet, you have to check it out. &lt;a href="http://www.objc.io/"&gt;objc.io&lt;/a&gt; offers fantastic in depth articles about all things objc.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update:&lt;/strong&gt; An &lt;a href="http://www.objc.io/subscribe.html"&gt;iOS newsstand subscription&lt;/a&gt; is now avaiable - I highly recommend supporting this publication by purchasing it!&lt;/p&gt;
+</description>
+      <pubDate>Sat, 19 Oct 2013 11:33:00 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2013/10/19/objc-io</link>
+      <guid>cocoa-dom:objc-io</guid>
+    </item>
+    <item>
+      <title>New thing I do in code</title>
+      <description>&lt;p&gt;Ever since I found out that a GCC C extension causes a code block to return a value if you enclose it in round brackets, I&amp;#39;ve been using it in my code. What do you think?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight objective_c"&gt;&lt;code&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bounds&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="n"&gt;CGRect&lt;/span&gt; &lt;span class="n"&gt;bounds&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bounds&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;bounds&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;currentYPosition&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;SHEETINSETY&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;bounds&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I&amp;#39;m also using this for frame. The advantage is that with this construct I never forget to set the frame after altering it, which I did far too often otherwise.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight objective_c"&gt;&lt;code&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;helpButton&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;({&lt;/span&gt;    &lt;span class="c1"&gt;// helpbutton&lt;/span&gt;
+  &lt;span class="n"&gt;UIButton&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;button&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;UIButton&lt;/span&gt; &lt;span class="nf"&gt;buttonWithType&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;UIButtonTypeCustom&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;button&lt;/span&gt; &lt;span class="nf"&gt;setImage&lt;/span&gt;&lt;span class="p"&gt;:[&lt;/span&gt;&lt;span class="n"&gt;UIImage&lt;/span&gt; &lt;span class="nf"&gt;imageNamed&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s"&gt;@"ParentalControlQuestionMarkButton"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; 
+          &lt;span class="nf"&gt;forState&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;UIControlStateNormal&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+  &lt;span class="n"&gt;CGRect&lt;/span&gt; &lt;span class="n"&gt;buttonRect&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;innerBounds&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="n"&gt;buttonRect&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;button&lt;/span&gt; &lt;span class="nf"&gt;sizeThatFits&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;CGSizeMake&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;400&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;400&lt;/span&gt;&lt;span class="p"&gt;)];&lt;/span&gt;
+  &lt;span class="n"&gt;buttonRect&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;origin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;CGRectGetMaxX&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;innerBounds&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;CGRectGetWidth&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buttonRect&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="n"&gt;button&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;UIEdgeInsetsInsetRect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buttonRect&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UIEdgeInsetsMake&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;button&lt;/span&gt; &lt;span class="nf"&gt;addTarget&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt; &lt;span class="nf"&gt;action&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="k"&gt;@selector&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;helpAction&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;forControlEvents&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;UIControlEventTouchUpInside&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+  &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt; &lt;span class="nf"&gt;addSubview&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;button&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+  &lt;span class="n"&gt;button&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The major benefits of this one are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The instance variable in which I will store the generated object is in the first line, clearly showing what the next part of the code does. Prior to this, the assignment happend at the end.&lt;/li&gt;
+&lt;li&gt;The stack variables declared and used don&amp;#39;t pollute other code in the same function/method. I can feel free to use very generic names (view,frame,rect,button) and not get into conflict with other parts.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Update:&lt;/strong&gt; And it all works with CLANG due to the great &lt;a href="http://clang.llvm.org/features.html#gcccompat"&gt;design policy of CLANG&lt;/a&gt; to support most of the GCC extensions to maximise compatibility.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update 2:&lt;/strong&gt; NSHipster featured this in its &lt;a href="https://nshipster.com/new-years-2014/"&gt;New Year&amp;#39;s 2014 post&lt;/a&gt;. 😃🎉&lt;/p&gt;
+</description>
+      <pubDate>Fri, 26 Jul 2013 10:19:00 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2013/07/26/new-thing-i-do-in-code</link>
+      <guid>cocoa-dom:new-thing-i-do-in-code</guid>
+    </item>
+    <item>
+      <title>NSHipster</title>
+      <description>&lt;p&gt;If you have anything to do with Cocoa: Go ahead and go to &lt;a href="http://nshipster.com"&gt;NSHipster&lt;/a&gt; now, if you haven&amp;#39;t done so. I can&amp;#39;t stress enough how good this site is in revealing great Stuff about Objective-C and the Cocoa and UIKit frameworks. Just so well done.&lt;/p&gt;
+</description>
+      <pubDate>Wed, 30 Jan 2013 04:32:42 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2013/01/30/nshipster</link>
+      <guid>cocoa-dom:nshipster</guid>
+    </item>
+    <item>
+      <title>Turn Based Gaming - Game Center Style Part #1</title>
+      <description>&lt;p&gt;Some of you may have noticed that we released &lt;a href="http://lostcitiesapp.com/"&gt;Lost Cities&lt;/a&gt; in the end of August. Apart from being our first card game (we did &lt;a href="http://carcassonneapp.com/"&gt;Carcassonne&lt;/a&gt; prior to that), it is also our first time to use the Turn Based API that Game Center provides starting with iOS 5.0. This sadly has proven a very challenging thing to do, and I want to part with some of the major gripes we encountered in this multipart series.&lt;/p&gt;
+
+&lt;h3&gt;Game Center’s idea of Push Notifications&lt;/h3&gt;
+
+&lt;p&gt;Push notifications are something iOS users are pretty familiar with now. They also made the hop to the desktop in Mountain Lion. Every app can send push notifications to the user in appropriate moments, if the user gives their permission. Users can even customize them on a per app basis and set if they want them to appear as alerts, banners and/or in the lock screen, if they have sound or not or they should badge the App Icon.&lt;/p&gt;
+
+&lt;p&gt;All right, these are nice and understandable, already a little bit complicated – but okay. And if you are using the Game Center Turn Based API you get push notifications too. Isn’t that nice? Or so it seems. The Game Center Push Notifications sadly have some strangeness to them:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;They aren’t yours&lt;/strong&gt; – meaning they do not belong to the app sending it. They appear with the Game Center Icon and your App’s Name. The push notifications appear in Quotes to discern them from other Game Center Notifications. If you can search the web for &lt;a href="http://www.alexcurylo.com/blog/2012/01/02/tip-custom-game-center-sound/"&gt;undocumented features&lt;/a&gt; you can change the built in fanfare to your app’s sound. That’s it. (rdar://&lt;span&gt;10177685)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;They are all or nothing&lt;/strong&gt; – your users can’t set the notification settings for your app, they have to set the one’s for game center. You read right. You can’t turn them on or off for specific games, or even discern them from the Game Center’s friend requests. You want a Sound for this game notification? Then you also have to live with the friend request fanfare. You have a game you play only on your iPhone and not on your iPad? Too bad for you, can’t tell the iPad not to show the notifications. (rdar://10177685)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Invitations to games appear during your game&lt;/strong&gt; - yes that too. If you are invited to a new game, while already in that game’s app, you get the invite notification banner shown inside your app. Also: there is no sane way of showing the invite text to you other than show in notification center, as we the app devs don’t have access to it. We don’t even get a notification.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;No extra payload and early access for you&lt;/strong&gt; - with normal push notifications you, as an app, can add a little bit of extra payload to that notification which you get instantly when your app is moved into foreground or started. This way you can prepare the correct UI for the Notification the user swiped upon while you sneakily load the data you need in addition that in the background to give the fastest experience. Not so with Game Center. With Game Center you aren’t told at all that the user swiped on a notification to start your app. The earliest you can guess that the user swiped a notification is in the turn based delegate callback, which only fires after the Game Center Greeting Banner (you know the one) is shown in your app, which can be up to 30 seconds in bad networking conditions. And which also fires if you start the app and a turn is received during that time. So we more or less have to guess if the user swiped a notification instead of knowing. (rdar://10177254)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;They aren’t localizable&lt;/strong&gt; – yes you read right – there is no sane way of localizing the Notifications. There isn’t even a proper way to set the notification text directly. (rdar://9581651)&lt;/p&gt;
+
+&lt;p&gt;You can either chose to not set a custom text in which case the recipient(s) of the push notification get a message of “Your Turn” localized in their iOS Language. But then you have no additional information about the game in progress, no opponents, no turn order, no score, no whatsoever.&lt;/p&gt;
+
+&lt;p&gt;Or the participant that made the last move may set a text to be sent instead. This is the text that will be displayed in quotes in the notification. E.g. we chose to set “20 cards against Monkeydom”. This is the Status text of the game. Which poses a problem if you use the standard Game Center Turn based UI, as it appears in that list as status of the user that made the turn. So if you are using that you already have the issue of a strange display.&lt;/p&gt;
+
+&lt;p&gt;However if you want to go the extra mile and localize the Message then the only thing you can do is the following: The participant app that makes a move needs to anticipate the recipient of the push notification (e.g. the next player), localize the notification in their language, and set the text and make the move. This needs knowledge about the locale of the recipient, which in turn you have to transport in the game data. We chose that approach, but it was a serious pain.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Although I’m sure some of the issues are addressed in iOS 6, I already know of some that aren’t. Which in turn means one more year until we can hope for improvements again.&lt;/p&gt;
+</description>
+      <pubDate>Tue, 4 Sep 2012 16:00:20 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2012/09/04/turn-based-gaming-game-center-style-part</link>
+      <guid>cocoa-dom:turn-based-gaming-game-center-style-part</guid>
+    </item>
+    <item>
+      <title>New Objective-C Language features in Xcode 4.4</title>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;“One of the reasons that you may want to upgrade to Xcode 4.4 is that it includes Apple LLVM compiler 4.0 that adds a number of new Objective-C Language features. Even better most of the new features are backwardly compatibile with older versions of iOS. To make is easier to understand which features are available for which tool and OS releases Apple has published a useful Objective-C Feature Availability Index.”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;em&gt;Great summary on useyourloaf.com about &lt;a href="http://useyourloaf.com/blog/2012/08/01/property-synthesis-with-xcode-4-dot-4.html"&gt;Automatic Property Synthesis With Xcode 4.4&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://coding.monkeydom.de/posts/2012/08/01/new-objective-c-language-features-in-xcode-4-4"&gt;⚓&lt;/a&gt;&lt;/p&gt;</description>
+      <pubDate>Wed, 1 Aug 2012 21:16:00 +0000</pubDate>
+      <link>http://useyourloaf.com/blog/2012/08/01/property-synthesis-with-xcode-4-dot-4.html</link>
+      <guid>cocoa-dom:new-objective-c-language-features-in-xcode-4-4</guid>
+    </item>
+    <item>
+      <title>iPad Mini</title>
+      <description>&lt;p&gt;Just to go on the record: If and when an iPad mini comes I predict it will have the 1024x768 @1x resolution cramped into that smaller display area. It will have slightly higher DPI than the original iPad/iPhone, but it won&amp;#39;t be Retina:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;All iPad apps will just work. &lt;/li&gt;
+&lt;li&gt;iPad apps that disregarded Human Interface Guidlines and made their buttons too small will have issues. &lt;/li&gt;
+&lt;li&gt;All others will be a little bit more intricate to handle than on the iPad/iPad2, but be fine overall.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      <pubDate>Thu, 5 Jul 2012 03:05:35 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2012/07/05/ipad-mini</link>
+      <guid>cocoa-dom:ipad-mini</guid>
+    </item>
+    <item>
+      <title>Games, iCloud and Game Center</title>
+      <description>&lt;p&gt;There is a dilemma Game Developers face on iOS in terms of synced game state across multiple devices. This also applies to games that you deleted from the device once and want to continue playing some time in the future.&lt;/p&gt;
+
+&lt;p&gt;Apple&amp;#39;s recommended solution is to use the iCloud. However the iCloud storage is not tied to your Game Center account. This causes some major problems:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Somebody logged into Game Center on a device that does not have his iCloud account simply doesn&amp;#39;t get his/her save games / game state (little known fact: you can log into the game center on any device using your account)&lt;/li&gt;
+&lt;li&gt;Since the iCloud account and the Game Center account are totally independent, there is no way of telling the user about this fact gracefully, so you end up just creating a new game state for this game center id on this iCloud storage, everyone is confused.&lt;/li&gt;
+&lt;li&gt;You essentially have to design your app around the fact that the user might have an iCloud account or not, and might have a Game Center account and not, and any combination of iCloud account and Game Center account, and work fine and predictable in every case. This adds very unnecessary complexity to quite a simple problem: taking care of the users progress in the best possible way.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;However, there would be a simple solution to this dilemma: make Game Center provide storage that is tied to the Game Center account. That is the natural fit. Users would get what they expect. If you think so too, please file a duplicate of rdar://11263793 so we get this rather sooner than later.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Sadly, this is just one of the little details Apple did not figure out right with Game Center.&lt;/em&gt;&lt;/p&gt;
+</description>
+      <pubDate>Tue, 17 Apr 2012 11:31:00 +0000</pubDate>
+      <link>https://coding.monkeydom.de/posts/2012/04/17/games-icloud-and-gamecenter</link>
+      <guid>cocoa-dom:games-icloud-and-gamecenter</guid>
+    </item>
+  </channel>
+</rss>
