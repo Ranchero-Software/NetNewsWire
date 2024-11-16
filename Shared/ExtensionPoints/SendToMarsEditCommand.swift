@@ -15,7 +15,7 @@ final class SendToMarsEditCommand: SendToCommand {
 	let title = "MarsEdit"
 	let image: RSImage? = AppAssets.marsEditIcon
 
-	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
+	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit5"), UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
 
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
 		appToUse() != nil
@@ -62,7 +62,9 @@ private extension SendToMarsEditCommand {
 	
 	func appToUse() -> UserApp? {
 
-		marsEditApps.forEach{ $0.updateStatus() }
+		for app in marsEditApps {
+			app.updateStatus()
+		}
 
 		for app in marsEditApps {
 			if app.isRunning {
