@@ -5,10 +5,7 @@
 //  Created by Brent Simmons on 11/3/24.
 //
 
-#if TARGET_OS_OSX
-
 @import AppKit;
-#import <TargetConditionals.h>
 
 @interface NSSharingService (NoDeprecationWarning)
 
@@ -24,5 +21,3 @@
 + (NSArray *)sharingServicesForItems_noDeprecationWarning:(NSArray *)items;
 
 @end
-
-#endif

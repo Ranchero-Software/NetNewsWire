@@ -1,15 +1,11 @@
 //
-//  NSSharingService+RSCore.m
+//  NSSharingService+Extension.m
 //  RSCore
 //
 //  Created by Brent Simmons on 11/3/24.
 //
 
-#import <TargetConditionals.h>
-
-#if TARGET_OS_OSX
-
-#import "NSSharingService+RSCore.h"
+#import "NSSharingService+Extension.h"
 
 @implementation NSSharingService (NoDeprecationWarning)
 
@@ -24,5 +20,3 @@
 }
 
 @end
-
-#endif
