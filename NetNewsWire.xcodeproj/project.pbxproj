@@ -73,6 +73,8 @@
 		8417FA412CDF2E4B005F989B /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA3F2CDF2E4B005F989B /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8417FA432CDF2E56005F989B /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA422CDF2E56005F989B /* RSDatabase */; };
 		8417FA442CDF2E56005F989B /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 8417FA422CDF2E56005F989B /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		841D696E2CE8646800B577E7 /* Parser in Frameworks */ = {isa = PBXBuildFile; productRef = 841D696D2CE8646800B577E7 /* Parser */; };
+		841D69702CE8647500B577E7 /* Parser in Frameworks */ = {isa = PBXBuildFile; productRef = 841D696F2CE8647500B577E7 /* Parser */; };
 		845288242CDC90FA00C63564 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 845288232CDC90FA00C63564 /* RSWeb */; };
 		847C4C0E2CDF2301008BF5FE /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 847C4C0D2CDF2301008BF5FE /* RSTree */; };
 		847C4C0F2CDF2301008BF5FE /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 847C4C0D2CDF2301008BF5FE /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -81,10 +83,6 @@
 		84C1EB4A2CDFE0D200C7456A /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 84C1EB492CDFE0D200C7456A /* RSTree */; };
 		84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9F2262A1B300D921D6 /* Main.storyboard */; };
 		84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FCA22262A1B800D921D6 /* LaunchScreenPhone.storyboard */; };
-		84CA14522CDF36CF00912E2C /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 84CA14512CDF36CF00912E2C /* RSParser */; };
-		84CA14532CDF36CF00912E2C /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84CA14512CDF36CF00912E2C /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		84CA14552CDF36DF00912E2C /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 84CA14542CDF36DF00912E2C /* RSParser */; };
-		84CA14562CDF36DF00912E2C /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84CA14542CDF36DF00912E2C /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */; };
 /* End PBXBuildFile section */
 
@@ -215,7 +213,6 @@
 				841387762CD897C500E8490F /* RSCore in Embed Frameworks */,
 				847C4C122CDF2310008BF5FE /* RSTree in Embed Frameworks */,
 				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
-				84CA14562CDF36DF00912E2C /* RSParser in Embed Frameworks */,
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
 				513F32812593EF180003048F /* Account in Embed Frameworks */,
@@ -258,7 +255,6 @@
 				847C4C0F2CDF2301008BF5FE /* RSTree in Embed Frameworks */,
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
-				84CA14532CDF36CF00912E2C /* RSParser in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
 				513277622590FC640064F1E7 /* ArticlesDatabase in Embed Frameworks */,
@@ -311,9 +307,9 @@
 		847C4C0C2CDF22DD008BF5FE /* RSTree */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSTree; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		849E61B82CE85D09008AF514 /* Parser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Parser; sourceTree = "<group>"; };
 		84C9FCA02262A1B300D921D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		84C9FCA32262A1B800D921D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreenPhone.storyboard; sourceTree = "<group>"; };
-		84CA14502CDF36B700912E2C /* RSParser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSParser; sourceTree = "<group>"; };
 		84CBDDAE1FD3674C005A61AA /* Technotes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Technotes; sourceTree = "<group>"; };
 		84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 		C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleActivityItemSource.swift; sourceTree = "<group>"; };
@@ -603,7 +599,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84CA14552CDF36DF00912E2C /* RSParser in Frameworks */,
 				841387752CD897C500E8490F /* RSCore in Frameworks */,
 				179D280B26F6F93D003B2E0A /* Zip in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
@@ -614,6 +609,7 @@
 				841387912CDC791B00E8490F /* RSWeb in Frameworks */,
 				513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */,
 				513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */,
+				841D69702CE8647500B577E7 /* Parser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,8 +623,8 @@
 				513277612590FC640064F1E7 /* ArticlesDatabase in Frameworks */,
 				8417FA402CDF2E4B005F989B /* RSDatabase in Frameworks */,
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
-				84CA14522CDF36CF00912E2C /* RSParser in Frameworks */,
 				841387732CD8970B00E8490F /* RSCoreResources in Frameworks */,
+				841D696E2CE8646800B577E7 /* Parser in Frameworks */,
 				8413878E2CDC790C00E8490F /* RSWeb in Frameworks */,
 				179C39EA26F76B0500D4E741 /* Zip in Frameworks */,
 				847C4C0E2CDF2301008BF5FE /* RSTree in Frameworks */,
@@ -677,7 +673,7 @@
 				51CD32C724D2E06C009ABAEF /* Secrets */,
 				51CD32A824D2CB25009ABAEF /* SyncDatabase */,
 				8417FA3E2CDF2E31005F989B /* RSDatabase */,
-				84CA14502CDF36B700912E2C /* RSParser */,
+				849E61B82CE85D09008AF514 /* Parser */,
 				847C4C0C2CDF22DD008BF5FE /* RSTree */,
 				8413878C2CDC78EE00E8490F /* RSWeb */,
 				8413876B2CD896E000E8490F /* RSCore */,
@@ -910,7 +906,7 @@
 				841387902CDC791B00E8490F /* RSWeb */,
 				847C4C102CDF2310008BF5FE /* RSTree */,
 				8417FA422CDF2E56005F989B /* RSDatabase */,
-				84CA14542CDF36DF00912E2C /* RSParser */,
+				841D696F2CE8647500B577E7 /* Parser */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -956,7 +952,7 @@
 				8413878D2CDC790C00E8490F /* RSWeb */,
 				847C4C0D2CDF2301008BF5FE /* RSTree */,
 				8417FA3F2CDF2E4B005F989B /* RSDatabase */,
-				84CA14512CDF36CF00912E2C /* RSParser */,
+				841D696D2CE8646800B577E7 /* Parser */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -1841,6 +1837,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = RSDatabase;
 		};
+		841D696D2CE8646800B577E7 /* Parser */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Parser;
+		};
+		841D696F2CE8647500B577E7 /* Parser */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Parser;
+		};
 		845288232CDC90FA00C63564 /* RSWeb */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RSWeb;
@@ -1856,14 +1860,6 @@
 		84C1EB492CDFE0D200C7456A /* RSTree */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RSTree;
-		};
-		84CA14512CDF36CF00912E2C /* RSParser */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RSParser;
-		};
-		84CA14542CDF36DF00912E2C /* RSParser */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RSParser;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
