@@ -1,5 +1,5 @@
 //
-//  RSHTMLMetadata+Extension.swift
+//  HTMLMetadata+Extension.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 11/26/17.
