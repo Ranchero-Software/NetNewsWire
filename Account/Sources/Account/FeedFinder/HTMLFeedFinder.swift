@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 
 private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
 
@@ -20,18 +20,20 @@ class HTMLFeedFinder {
 	private var feedSpecifiersDictionary = [String: FeedSpecifier]()
 	
 	init(parserData: ParserData) {
-		let metadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
+		let metadata = HTMLMetadataParser.metadata(with: parserData)
 		var orderFound = 0
-		
-		for oneFeedLink in metadata.feedLinks {
-			if let oneURLString = oneFeedLink.urlString?.normalizedURL {
-				orderFound = orderFound + 1
-				let oneFeedSpecifier = FeedSpecifier(title: oneFeedLink.title, urlString: oneURLString, source: .HTMLHead, orderFound: orderFound)
-				addFeedSpecifier(oneFeedSpecifier)
+
+		if let feedLinks = metadata.feedLinks {
+			for oneFeedLink in feedLinks {
+				if let oneURLString = oneFeedLink.urlString?.normalizedURL {
+					orderFound = orderFound + 1
+					let oneFeedSpecifier = FeedSpecifier(title: oneFeedLink.title, urlString: oneURLString, source: .HTMLHead, orderFound: orderFound)
+					addFeedSpecifier(oneFeedSpecifier)
+				}
 			}
 		}
 
-		let bodyLinks = RSHTMLLinkParser.htmlLinks(with: parserData)
+		let bodyLinks = HTMLLinkParser.htmlLinks(with: parserData)
 		for oneBodyLink in bodyLinks {
 			if linkMightBeFeed(oneBodyLink), let normalizedURL = oneBodyLink.urlString?.normalizedURL {
 				orderFound = orderFound + 1
@@ -69,7 +71,7 @@ private extension HTMLFeedFinder {
 		return false
 	}
 
-	func linkMightBeFeed(_ link: RSHTMLLink) -> Bool {
+	func linkMightBeFeed(_ link: HTMLLink) -> Bool {
 		if let linkURLString = link.urlString, urlStringMightBeFeed(linkURLString) {
 			return true
 		}

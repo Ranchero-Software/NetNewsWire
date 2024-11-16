@@ -19,7 +19,7 @@ let package = Package(
 		.package(path: "../SyncDatabase"),
 		.package(path: "../RSCore"),
 		.package(path: "../RSDatabase"),
-		.package(path: "../RSParser"),
+		.package(path: "../Parser"),
 	],
 	targets: [
 		.target(
@@ -27,7 +27,7 @@ let package = Package(
 			dependencies: [
 				"RSCore",
 				"RSDatabase",
-				"RSParser",
+				"Parser",
 				"RSWeb",
 				"Articles",
 				"ArticlesDatabase",

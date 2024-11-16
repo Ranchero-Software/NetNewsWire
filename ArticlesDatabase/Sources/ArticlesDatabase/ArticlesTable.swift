@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
-import RSParser
+import Parser
 import Articles
 
 final class ArticlesTable: DatabaseTable {

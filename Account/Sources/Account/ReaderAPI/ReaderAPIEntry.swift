@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import RSCore
 
 struct ReaderAPIEntryWrapper: Codable {

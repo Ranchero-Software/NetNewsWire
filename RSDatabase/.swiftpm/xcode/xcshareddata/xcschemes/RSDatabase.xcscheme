@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "Parser"
-               BuildableName = "Parser"
-               BlueprintName = "Parser"
+               BlueprintIdentifier = "RSDatabase"
+               BuildableName = "RSDatabase"
+               BlueprintName = "RSDatabase"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "Parser"
-            BuildableName = "Parser"
-            BlueprintName = "Parser"
+            BlueprintIdentifier = "RSDatabase"
+            BuildableName = "RSDatabase"
+            BlueprintName = "RSDatabase"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

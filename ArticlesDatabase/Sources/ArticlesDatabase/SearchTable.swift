@@ -11,7 +11,7 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import Articles
-import RSParser
+import Parser
 
 final class ArticleSearchInfo: Hashable {
 
@@ -34,7 +34,7 @@ final class ArticleSearchInfo: Hashable {
 	}
 
 	lazy var bodyForIndex: String = {
-		let s = preferredText.rsparser_stringByDecodingHTMLEntities()
+		let s = HTMLEntityDecoder.decodedString(preferredText)
 		let sanitizedBody = s.strippingHTML().collapsingWhitespace
 
 		if let authorsNames = authorsNames {

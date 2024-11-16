@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import RSParser
+import Parser
 
 struct ArticleStringFormatter {
 
@@ -66,7 +66,7 @@ struct ArticleStringFormatter {
 		s = s.replacingOccurrences(of: "\t", with: "")
 
 		if !forHTML {
-			s = s.rsparser_stringByDecodingHTMLEntities()
+			s = HTMLEntityDecoder.decodedString(s)
 		}
 
 		s = s.trimmingWhitespace
@@ -98,7 +98,7 @@ struct ArticleStringFormatter {
 		if let cachedBody = summaryCache[key] {
 			return cachedBody
 		}
-		var s = body.rsparser_stringByDecodingHTMLEntities()
+		var s = HTMLEntityDecoder.decodedString(body)
 		s = s.strippingHTML(maxCharacters: 250)
 		s = s.trimmingWhitespace
 		s = s.collapsingWhitespace

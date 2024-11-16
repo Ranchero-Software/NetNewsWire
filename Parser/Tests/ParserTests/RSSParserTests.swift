@@ -1,6 +1,6 @@
 //
 //  RSSParserTests.swift
-//  RSParser
+//  Parser
 //
 //  Created by Brent Simmons on 6/26/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.

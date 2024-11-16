@@ -13,7 +13,7 @@ let package = Package(
 	],
 	dependencies: [
 		.package(path: "../RSDatabase"),
-		.package(path: "../RSParser"),
+		.package(path: "../Parser"),
 		.package(path: "../RSCore"),
 		.package(path: "../Articles"),
 	],
@@ -23,7 +23,7 @@ let package = Package(
 			dependencies: [
 				"RSCore",
 				"RSDatabase",
-				"RSParser",
+				"Parser",
 				"Articles",
 			],
 			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]

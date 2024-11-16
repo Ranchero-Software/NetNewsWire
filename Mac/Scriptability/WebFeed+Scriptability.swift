@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import Account
 import Articles
 
@@ -95,7 +95,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
 		let container: Container = folder != nil ? folder! : account
 		
         // We need to download the feed and parse it.
-        // RSParser does the callback for the download on the main thread.
+        // Parser does the callback for the download on the main thread.
         // Because we can't wait here (on the main thread) for the callback, we have to return from this function.
         // Generally, returning from an AppleEvent handler function means that handling the Apple event is over,
         // but we don’t yet have the result of the event yet, so we prevent the Apple event from returning by calling

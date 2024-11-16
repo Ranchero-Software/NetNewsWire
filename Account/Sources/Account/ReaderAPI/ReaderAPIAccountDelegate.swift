@@ -6,9 +6,10 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
+import Foundation
 import Articles
 import RSCore
-import RSParser
+import Parser
 import RSWeb
 import SyncDatabase
 import os.log

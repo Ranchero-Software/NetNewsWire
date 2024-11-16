@@ -6,7 +6,7 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import RSParser
+import Parser
 
 #if canImport(AppKit)
 import AppKit
@@ -310,6 +310,6 @@ private struct CountedSet<Element> where Element: Hashable {
 private extension String {
 	var decodedEntity: String {
 		// It's possible the implementation will change, but for now it just calls this.
-		(self as NSString).rsparser_stringByDecodingHTMLEntities() as String
+		HTMLEntityDecoder.decodedString(self)
 	}
 }

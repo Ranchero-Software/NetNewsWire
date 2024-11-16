@@ -1,6 +1,6 @@
 //
 //  FeedParser.swift
-//  RSParser
+//  Parser
 //
 //  Created by Brent Simmons on 6/20/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
@@ -47,6 +47,22 @@ public struct FeedParser {
 
 		case .unknown, .notAFeed:
 			return nil
+		}
+	}
+
+	public static func parse(_ parserData: ParserData, _ completion: @Sendable @escaping (ParsedFeed?, Error?) -> Void) {
+
+		Task {
+			do {
+				let parsedFeed = try await parseAsync(urlString: parserData.url, data: parserData.data)
+				Task { @MainActor in
+					completion(parsedFeed, nil)
+				}
+			} catch {
+				Task { @MainActor in
+					completion(nil, error)
+				}
+			}
 		}
 	}
 

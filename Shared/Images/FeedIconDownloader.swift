@@ -11,7 +11,7 @@ import Articles
 import Account
 import RSCore
 import RSWeb
-import RSParser
+import Parser
 
 extension Notification.Name {
 
@@ -214,7 +214,7 @@ private extension FeedIconDownloader {
 		}
 	}
 
-	func pullIconURL(from metadata: RSHTMLMetadata, homePageURL: String, feed: Feed) {
+	func pullIconURL(from metadata: HTMLMetadata, homePageURL: String, feed: Feed) {
 
 		if let url = metadata.bestWebsiteIconURL() {
 			cacheIconURL(for: homePageURL, url)

@@ -414,7 +414,6 @@
 		84C1ECEB2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Images/FeaturedImageDownloader.swift,
 				Resources/NewsFax.nnwtheme,
 				Secrets.swift.gyb,
 				ShareExtension/SafariExt.js,
@@ -433,7 +432,6 @@
 				ExtensionPoints/SendToMarsEditCommand.swift,
 				ExtensionPoints/SendToMicroBlogCommand.swift,
 				"Extensions/NSView-Extensions.swift",
-				Images/FeaturedImageDownloader.swift,
 				Secrets.swift.gyb,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
@@ -672,8 +670,8 @@
 				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,
 				51CD32C724D2E06C009ABAEF /* Secrets */,
 				51CD32A824D2CB25009ABAEF /* SyncDatabase */,
-				8417FA3E2CDF2E31005F989B /* RSDatabase */,
 				849E61B82CE85D09008AF514 /* Parser */,
+				8417FA3E2CDF2E31005F989B /* RSDatabase */,
 				847C4C0C2CDF22DD008BF5FE /* RSTree */,
 				8413878C2CDC78EE00E8490F /* RSWeb */,
 				8413876B2CD896E000E8490F /* RSCore */,

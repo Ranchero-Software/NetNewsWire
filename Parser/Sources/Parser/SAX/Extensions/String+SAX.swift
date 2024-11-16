@@ -1,6 +1,6 @@
 //
-//  String+RSParser.swift
-//  RSParser
+//  String+Parser.swift
+//  Parser
 //
 //  Created by Nate Weaver on 2020-01-19.
 //  Copyright © 2020 Ranchero Software, LLC. All rights reserved.

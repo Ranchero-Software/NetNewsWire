@@ -12,7 +12,7 @@ import SystemConfiguration
 import os.log
 import SyncDatabase
 import RSCore
-import RSParser
+import Parser
 import Articles
 import ArticlesDatabase
 import RSWeb
@@ -147,21 +147,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 		
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
-		
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
+		let opmlDocument = OPMLParser.document(with: parserData)
+
 		guard let loadDocument = opmlDocument else {
 			completion(.success(()))
 			return
 		}
 
-		guard let opmlItems = loadDocument.children, let rootExternalID = account.externalID else {
+		guard let opmlItems = loadDocument.items, let rootExternalID = account.externalID else {
 			return
 		}
 

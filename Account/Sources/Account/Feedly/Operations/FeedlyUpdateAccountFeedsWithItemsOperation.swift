@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import os.log
 
 /// Combine the articles with their feeds for a specific account.

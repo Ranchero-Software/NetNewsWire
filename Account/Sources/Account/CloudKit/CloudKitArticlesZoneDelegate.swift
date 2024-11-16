@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 import RSCore
-import RSParser
+import Parser
 import RSWeb
 import CloudKit
 import SyncDatabase

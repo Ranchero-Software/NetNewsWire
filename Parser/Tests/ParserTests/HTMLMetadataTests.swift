@@ -1,6 +1,6 @@
 //
 //  HTMLMetadataTests.swift
-//  RSParser
+//  Parser
 //
 //  Created by Brent Simmons on 6/25/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.

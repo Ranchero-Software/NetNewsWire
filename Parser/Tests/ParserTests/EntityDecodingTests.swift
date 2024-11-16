@@ -1,6 +1,6 @@
 //
 //  EntityDecodingTests.swift
-//  RSParserTests
+//  ParserTests
 //
 //  Created by Brent Simmons on 12/30/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.

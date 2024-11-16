@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 import RSCore
-import RSParser
+import Parser
 import Articles
 import ArticlesDatabase
 import RSWeb
@@ -96,21 +96,13 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 		
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
-		
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-		
+		let opmlDocument = OPMLParser.document(with: parserData)
 		guard let loadDocument = opmlDocument else {
 			completion(.success(()))
 			return
 		}
 
-		guard let children = loadDocument.children else {
+		guard let children = loadDocument.items else {
 			return
 		}
 

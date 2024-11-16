@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import RSCore
 
 final class FeedbinEntry: Decodable {
@@ -29,7 +29,7 @@ final class FeedbinEntry: Decodable {
 	// and letting the one date fail when parsed.
 	lazy var parsedDatePublished: Date? = {
 		if let datePublished = datePublished {
-			return RSDateWithString(datePublished)
+			return DateParser.date(string: datePublished)
 		}
 		else {
 			return nil

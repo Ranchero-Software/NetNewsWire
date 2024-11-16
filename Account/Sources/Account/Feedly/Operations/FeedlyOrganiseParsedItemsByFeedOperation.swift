@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import os.log
 
 protocol FeedlyParsedItemsByFeedProviding {

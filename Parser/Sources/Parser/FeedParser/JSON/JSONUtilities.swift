@@ -1,6 +1,6 @@
 //
 //  JSONUtilities.swift
-//  RSParser
+//  Parser
 //
 //  Created by Brent Simmons on 12/10/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
