@@ -145,15 +145,6 @@ class FeedlyTestSupport {
 		XCTAssertTrue(missingFeedIds.isEmpty, "Feeds with these ids were not found in the \"\(label)\" folder.")
 	}
 	
-	func checkArticles(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil) throws {
-		let stream = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
-		try checkArticles(in: account, againstItemsInStreamInJSONPayload: stream)
-	}
-	
-	func checkArticles(in account: Account, againstItemsInStreamInJSONPayload stream: [String: Any]) throws {
-		try checkArticles(in: account, correspondToStreamItemsIn: stream)
-	}
-	
 	private struct ArticleItem {
 		var id: String
 		var feedId: String
@@ -190,32 +181,7 @@ class FeedlyTestSupport {
 			self.unread = item["unread"] as! Bool
 		}
 	}
-	
-	/// Awkwardly titled to make it clear the JSON given is from a stream response.
-	func checkArticles(in testAccount: Account, correspondToStreamItemsIn stream: [String: Any]) throws {
 
-		let items = stream["items"] as! [[String: Any]]
-		let articleItems = items.map { ArticleItem(item: $0) }
-		let itemIds = Set(articleItems.map { $0.id })
-		
-		let articles = try testAccount.fetchArticles(.articleIDs(itemIds))
-		let articleIds = Set(articles.map { $0.articleID })
-		
-		let missing = itemIds.subtracting(articleIds)
-		
-		XCTAssertEqual(items.count, articles.count)
-		XCTAssertTrue(missing.isEmpty, "Items with these ids did not have a corresponding article with the same id.")
-		
-		for article in articles {
-			for item in articleItems where item.id == article.articleID {
-				XCTAssertEqual(article.uniqueID, item.id)
-				XCTAssertEqual(article.contentHTML, item.content)
-				XCTAssertEqual(article.feedID, item.feedId)
-				XCTAssertEqual(article.externalURL, item.externalUrl)
-			}
-		}
-	}
-	
 	func checkUnreadStatuses(in account: Account, againstIdsInStreamInJSONNamed name: String, subdirectory: String? = nil, testCase: XCTestCase) {
 		let streamIds = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
 		checkUnreadStatuses(in: account, correspondToIdsInJSONPayload: streamIds, testCase: testCase)
