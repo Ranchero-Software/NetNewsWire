@@ -401,7 +401,7 @@
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
-                                                <action selector="toggleTheSidebar:" target="Ady-hI-5gd" id="1hl-EZ-ao4"/>
+                                                <action selector="toggleSidebar:" target="Ady-hI-5gd" id="2jN-YZ-Uaa"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="jKG-b2-ZWf"/>
