@@ -107,6 +107,7 @@
         </class>
         
         <class name="feed" code="Feed" plural="feeds" description="An RSS feed">
+            <synonym name="webFeed"/>
             <cocoa class="ScriptableFeed"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the feed">
                 <cocoa key="name"/>
