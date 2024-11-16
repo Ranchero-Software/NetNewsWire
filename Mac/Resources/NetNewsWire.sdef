@@ -35,6 +35,16 @@
             <result type="specifier" description="The new object."/>
         </command>
 
+		<command name="count" code="corecnte" description="Return the number of elements of a particular class within an object.">
+			<cocoa class="NSCountCommand"/>
+			<access-group identifier="*"/>
+			<direct-parameter type="specifier" requires-access="r" description="The objects to be counted."/>
+			<parameter name="each" code="kocl" type="type" optional="yes" description="The class of objects to be counted." hidden="yes">
+				<cocoa key="ObjectClass"/>
+			</parameter>
+			<result type="integer" description="The count."/>
+		</command>
+
         <class name="application" code="capp" description="The application's top-level scripting object.">
             <cocoa class="NSApplication"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the application."/>
