@@ -83,6 +83,7 @@
 		84C1EB4A2CDFE0D200C7456A /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 84C1EB492CDFE0D200C7456A /* RSTree */; };
 		84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9F2262A1B300D921D6 /* Main.storyboard */; };
 		84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FCA22262A1B800D921D6 /* LaunchScreenPhone.storyboard */; };
+		84EDC26D2CE947ED00959F29 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 84EDC26C2CE947ED00959F29 /* RSCore */; };
 		C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */; };
 /* End PBXBuildFile section */
 
@@ -636,6 +637,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84EDC26D2CE947ED00959F29 /* RSCore in Frameworks */,
 				4679674625E599C100844E8D /* Articles in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -977,6 +979,7 @@
 			name = NetNewsWireTests;
 			packageProductDependencies = (
 				4679674525E599C100844E8D /* Articles */,
+				84EDC26C2CE947ED00959F29 /* RSCore */,
 			);
 			productName = NetNewsWireTests;
 			productReference = 849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */;
@@ -1858,6 +1861,10 @@
 		84C1EB492CDFE0D200C7456A /* RSTree */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RSTree;
+		};
+		84EDC26C2CE947ED00959F29 /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RSCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
