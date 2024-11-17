@@ -62,7 +62,7 @@ extension NSApplication : ScriptingObjectContainer {
     
     @objc(valueInAccountsWithUniqueID:)
     func valueInAccounts(withUniqueID id:String) -> ScriptableAccount? {
-        let accounts = AccountManager.shared.activeAccounts
+        let accounts = AccountManager.shared.accounts
         guard let account = accounts.first(where:{$0.accountID == id}) else { return nil }
         return ScriptableAccount(account)
     }
