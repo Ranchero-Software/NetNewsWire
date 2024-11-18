@@ -68,7 +68,9 @@ public final class MainThreadOperationQueue {
 	/// Add multiple operations to the queue.
 	/// This has the same effect as calling addOperation one-by-one.
 	public func addOperations(_ operations: [MainThreadOperation]) {
-		operations.forEach{ add($0) }
+		for operation in operations {
+			add(operation)
+		}
 	}
 
 	/// Add a dependency. Do this *before* calling addOperation, since addOperation might run the operation right away.
@@ -453,16 +455,22 @@ private extension MainThreadOperationDependencies {
 	}
 
 	func removeDependencies(_ parentOperationIDs: [Int]) {
-		parentOperationIDs.forEach { dependencies[$0] = nil }
+		for parentOperationID in parentOperationIDs {
+			dependencies[parentOperationID] = nil
+		}
 	}
 
 	func removeChildOperationIDs(_ operationIDs: [Int]) {
-		operationIDs.forEach{ removeChildOperationID($0) }
+		for operationID in operationIDs {
+			removeChildOperationID(operationID)
+		}
 		removeEmptyDependencies()
 	}
 
 	func removeChildOperationID(_ operationID: Int) {
-		dependencies.values.forEach{ $0.remove(operationID) }
+		for value in dependencies.values {
+			value.remove(operationID)
+		}
 	}
 
 	func removeEmptyDependencies() {

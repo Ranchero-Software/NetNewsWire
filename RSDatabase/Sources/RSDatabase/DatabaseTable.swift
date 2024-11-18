@@ -62,7 +62,7 @@ public extension DatabaseTable {
 
 	func insertRows(_ dictionaries: [DatabaseDictionary], insertType: RSDatabaseInsertType, in database: FMDatabase) {
 
-		dictionaries.forEach { (oneDictionary) in
+		for oneDictionary in dictionaries {
 			let _ = database.rs_insertRow(with: oneDictionary, insertType: insertType, tableName: self.name)
 		}
 	}

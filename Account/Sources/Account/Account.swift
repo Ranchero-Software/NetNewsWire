@@ -491,9 +491,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			} else {
 				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
 					folder.externalID = item.attributes?["nnw_externalID"] as? String
-					item.items?.forEach { itemChild in
-						if let feedSpecifier = itemChild.feedSpecifier {
-							folder.addFeed(newFeed(with: feedSpecifier))
+					if let items = item.items {
+						for itemChild in items {
+							if let feedSpecifier = itemChild.feedSpecifier {
+								folder.addFeed(newFeed(with: feedSpecifier))
+							}
 						}
 					}
 				}
@@ -521,9 +523,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		if topLevelFeeds.contains(feed) {
 			containers.append(self)
 		}
-		folders?.forEach { folder in
-			if folder.topLevelFeeds.contains(feed) {
-				containers.append(folder)
+		if let folders {
+			for folder in folders {
+				if folder.topLevelFeeds.contains(feed) {
+					containers.append(folder)
+				}
 			}
 		}
 		return containers
@@ -925,7 +929,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func debugDropConditionalGetInfo() {
 		#if DEBUG
-			flattenedFeeds().forEach{ $0.dropConditionalGetInfo() }
+		for feed in flattenedFeeds() {
+			feed.dropConditionalGetInfo()
+		}
 		#endif
 	}
 
@@ -1169,7 +1175,7 @@ private extension Account {
 		for article in articles where !article.status.read {
 			unreadCountStorage[article.feedID, default: 0] += 1
 		}
-		feeds.forEach { (feed) in
+		for feed in feeds {
 			let unreadCount = unreadCountStorage[feed.feedID, default: 0]
 			feed.unreadCount = unreadCount
 		}
@@ -1220,7 +1226,7 @@ private extension Account {
 		var idDictionary = [String: Feed]()
 		var externalIDDictionary = [String: Feed]()
 		
-		flattenedFeeds().forEach { (feed) in
+		for feed in flattenedFeeds() {
 			idDictionary[feed.feedID] = feed
 			if let externalID = feed.externalID {
 				externalIDDictionary[externalID] = feed

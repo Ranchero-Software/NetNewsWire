@@ -19,8 +19,12 @@ extension UIViewController {
 	}
 	
 	public func replaceChildAndPinView(_ controller: UIViewController) {
-		view.subviews.forEach { $0.removeFromSuperview() }
-		children.forEach { $0.removeFromParent() }
+		for subview in view.subviews {
+			subview.removeFromSuperview()
+		}
+		for child in children {
+			child.removeFromParent()
+		}
 		addChildAndPinView(controller)
 	}
 	

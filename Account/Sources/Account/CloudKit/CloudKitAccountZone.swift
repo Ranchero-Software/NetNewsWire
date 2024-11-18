@@ -77,9 +77,11 @@ final class CloudKitAccountZone: CloudKitZone {
 				if let title = item.titleFromAttributes {
 					let containerRecord = newContainerCKRecord(name: title)
 					records.append(containerRecord)
-					item.items?.forEach { itemChild in
-						if let feedSpecifier = itemChild.feedSpecifier {
-							processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
+					if let items = item.items {
+						for itemChild in items {
+							if let feedSpecifier = itemChild.feedSpecifier {
+								processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
+							}
 						}
 					}
 				}

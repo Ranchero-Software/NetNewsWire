@@ -88,7 +88,7 @@ private final class WebCache {
     func cleanup(_ cleanupInterval: TimeInterval) {
 
 		let cutoffDate = Date(timeInterval: -cleanupInterval, since: Date())
-        cache.keys.forEach { (key) in
+        for key in cache.keys {
             let cacheRecord = self[key]!
             if shouldDelete(cacheRecord, cutoffDate) {
                 cache[key] = nil
@@ -168,7 +168,7 @@ private final class DownloadWithCacheManager {
 			}
 
 			var callbackCount = 0
-			self.pendingCallbacks.forEach{ (callbackRecord) in
+			for callbackRecord in self.pendingCallbacks {
 				if url == callbackRecord.url {
 					callbackRecord.completion(data, response, error)
 					callbackCount += 1

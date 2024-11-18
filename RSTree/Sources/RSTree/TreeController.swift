@@ -89,7 +89,7 @@ private extension TreeController {
 	func visitNode(_ node: Node, _ visitBlock: NodeVisitBlock) {
 		
 		visitBlock(node)
-		node.childNodes.forEach{ (oneChildNode) in
+		for oneChildNode in node.childNodes {
 			visitNode(oneChildNode, visitBlock)
 		}
 	}
@@ -124,7 +124,7 @@ private extension TreeController {
 			node.childNodes = childNodes
 		}
 		
-		childNodes.forEach{ (oneChildNode) in
+		for oneChildNode in childNodes {
 			if rebuildChildNodes(node: oneChildNode) {
 				childNodesDidChange = true
 			}
