@@ -3,7 +3,7 @@
 <!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
 
 <!-- declare the namespace for using XInclude so we can include the standard suite -->
-<dictionary title="sa;lfsdf" xmlns:xi="http://www.w3.org/2003/XInclude">
+<dictionary title="NetNewsWire Terminology" xmlns:xi="http://www.w3.org/2003/XInclude">
     
     <suite name="Standard Suite" code="core" description="Subset of the Standard Suite.">
         <access-group identifier="com.ranchero.NetNewsWire-Evergreen" access="rw"/>
