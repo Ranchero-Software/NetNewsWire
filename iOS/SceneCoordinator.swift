@@ -1450,7 +1450,7 @@ private extension SceneCoordinator {
 	func rebuildArticleDictionaries() {
 		var idDictionary = [String: Article]()
 
-		articles.forEach { article in
+		for article in articles {
 			idDictionary[article.articleID] = article
 		}
 

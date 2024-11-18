@@ -13,7 +13,9 @@ extension Array where Element == CGRect {
 	func maxY() -> CGFloat {
 		
 		var y: CGFloat = 0.0
-		self.forEach { y = Swift.max(y, $0.maxY) }
+		for oneRect in self {
+			y = Swift.max(y, oneRect.maxY)
+		}
 		return y
 	}
 	

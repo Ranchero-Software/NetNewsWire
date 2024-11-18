@@ -375,7 +375,7 @@ private extension SidebarOutlineDataSource {
 			return false
 		}
 
-		draggedNodes.forEach { node in
+		for node in draggedNodes {
 			if sameAccount(node, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
 					copyFeedInAccount(node: node, to: parentNode)
@@ -464,7 +464,7 @@ private extension SidebarOutlineDataSource {
 			return false
 		}
 		
-		draggedNodes.forEach { node in
+		for node in draggedNodes {
 			if !sameAccount(node, parentNode) {
 				copyFolderBetweenAccounts(node: node, to: parentNode)
 			}

@@ -112,8 +112,10 @@ protocol SidebarDelegate: AnyObject {
 		}
 
 		let selectedFeedIdentifers = Set(selectedFeedsState.compactMap( { SidebarItemIdentifier(userInfo: $0) }))
-		selectedFeedIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
-		
+		for feedIdentifier in selectedFeedIdentifers {
+			treeControllerDelegate.addFilterException(feedIdentifier)
+		}
+
 		rebuildTreeAndReloadDataIfNeeded()
 		
 		var selectIndexes = IndexSet()
@@ -529,7 +531,9 @@ private extension SidebarViewController {
 	}
 	
 	func addAllSelectedToFilterExceptions() {
-		selectedFeeds.forEach { addToFilterExeptionsIfNecessary($0) }
+		for feed in selectedFeeds {
+			addToFilterExeptionsIfNecessary(feed)
+		}
 	}
 	
 	func addToFilterExeptionsIfNecessary(_ feed: SidebarItem?) {
@@ -572,13 +576,12 @@ private extension SidebarViewController {
 		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
 		
 		// Automatically expand any new or newly active accounts
-		AccountManager.shared.activeAccounts.forEach { account in
+		for account in AccountManager.shared.activeAccounts {
 			if !savedAccounts.contains(account) {
 				let accountNode = treeController.nodeInTreeRepresentingObject(account)
 				outlineView.expandItem(accountNode)
 			}
 		}
-		
 	}
 	
 	func rebuildTreeAndReloadDataIfNeeded() {
