@@ -618,7 +618,6 @@
 		65ED4065235DEF6C0081F399 /* AccountsFeedbin.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */; };
 		65ED4066235DEF6C0081F399 /* TimelineTableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8405DDA122168920008CE1BF /* TimelineTableView.xib */; };
 		65ED4067235DEF6C0081F399 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = B528F81D23333C7E00E735DD /* page.html */; };
-		65ED4068235DEF6C0081F399 /* MainWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8483630C2262A3FE00DA1D35 /* MainWindow.storyboard */; };
 		65ED4069235DEF6C0081F399 /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		65ED406A235DEF6C0081F399 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		65ED406B235DEF6C0081F399 /* CrashReporterWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84BAE64821CEDAF20046DB56 /* CrashReporterWindow.xib */; };
@@ -678,7 +677,6 @@
 		848363052262A3CC00DA1D35 /* AddFolderSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848363032262A3CC00DA1D35 /* AddFolderSheet.xib */; };
 		848363082262A3DD00DA1D35 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 848363062262A3DD00DA1D35 /* Main.storyboard */; };
 		8483630B2262A3F000DA1D35 /* RenameSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848363092262A3F000DA1D35 /* RenameSheet.xib */; };
-		8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8483630C2262A3FE00DA1D35 /* MainWindow.storyboard */; };
 		848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
 		848D578E21543519005FFAD5 /* PasteboardWebFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848D578D21543519005FFAD5 /* PasteboardWebFeed.swift */; };
 		848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
@@ -1389,7 +1387,6 @@
 		848363042262A3CC00DA1D35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddFolderSheet.xib; sourceTree = SOURCE_ROOT; };
 		848363072262A3DD00DA1D35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8483630A2262A3F000DA1D35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/RenameSheet.xib; sourceTree = SOURCE_ROOT; };
-		8483630D2262A3FE00DA1D35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Mac/Base.lproj/MainWindow.storyboard; sourceTree = SOURCE_ROOT; };
 		848B937121C8C5540038DC0D /* CrashReporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrashReporter.swift; sourceTree = "<group>"; };
 		848D578D21543519005FFAD5 /* PasteboardWebFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardWebFeed.swift; sourceTree = "<group>"; };
 		848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaviconDownloader.swift; sourceTree = "<group>"; };
@@ -2146,7 +2143,6 @@
 		842E45E11ED8C681000A8B52 /* MainWindow */ = {
 			isa = PBXGroup;
 			children = (
-				8483630C2262A3FE00DA1D35 /* MainWindow.storyboard */,
 				51C0307F257D815A00609262 /* UnifiedWindow.storyboard */,
 				849A975D1ED9EB72007D329B /* MainWindowController.swift */,
 				519B8D322143397200FA689C /* SharingServiceDelegate.swift */,
@@ -3282,7 +3278,6 @@
 				65ED4065235DEF6C0081F399 /* AccountsFeedbin.xib in Resources */,
 				65ED4066235DEF6C0081F399 /* TimelineTableView.xib in Resources */,
 				65ED4067235DEF6C0081F399 /* page.html in Resources */,
-				65ED4068235DEF6C0081F399 /* MainWindow.storyboard in Resources */,
 				BDCB516824282C8A00102A80 /* AccountsNewsBlur.xib in Resources */,
 				3B826DCD2385C89600FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				65ED4069235DEF6C0081F399 /* AccountsReaderAPI.xib in Resources */,
@@ -3385,7 +3380,6 @@
 				5144EA52227B8E4500D19003 /* AccountsFeedbin.xib in Resources */,
 				8405DDA222168920008CE1BF /* TimelineTableView.xib in Resources */,
 				B528F81E23333C7E00E735DD /* page.html in Resources */,
-				8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */,
 				DFD6AACE27ADE86E00463FAD /* NewsFax.nnwtheme in Resources */,
 				3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
@@ -4425,14 +4419,6 @@
 				8483630A2262A3F000DA1D35 /* Base */,
 			);
 			name = RenameSheet.xib;
-			sourceTree = "<group>";
-		};
-		8483630C2262A3FE00DA1D35 /* MainWindow.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8483630D2262A3FE00DA1D35 /* Base */,
-			);
-			name = MainWindow.storyboard;
 			sourceTree = "<group>";
 		};
 		84C9FC8022629E4800D921D6 /* Preferences.storyboard */ = {

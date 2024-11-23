@@ -394,12 +394,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	// MARK: Main Window
 	
 	func createMainWindowController() -> MainWindowController {
-		let controller: MainWindowController
-		if #available(macOS 11.0, *) {
-			controller = windowControllerWithName("UnifiedWindow") as! MainWindowController
-		} else {
-			controller = windowControllerWithName("MainWindow") as! MainWindowController
-		}
+		let controller: MainWindowController = windowControllerWithName("UnifiedWindow") as! MainWindowController
 		
 		if !(mainWindowController?.isOpen ?? false) {
 			mainWindowControllers.removeAll()
