@@ -145,14 +145,13 @@
                                                 <action selector="copy:" target="Ady-hI-5gd" id="G1f-GL-Joy"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Copy Article URL" id="qNk-By-jKp">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Copy Article URL" keyEquivalent="C" id="qNk-By-jKp">
                                             <connections>
                                                 <action selector="copyArticleURL:" target="Ady-hI-5gd" id="A5t-x7-Mmy"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Copy External URL" id="fOF-99-6Iv">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Copy External URL" keyEquivalent="c" id="fOF-99-6Iv">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
                                                 <action selector="copyExternalURL:" target="Ady-hI-5gd" id="MkV-Do-Bc1"/>
                                             </connections>
