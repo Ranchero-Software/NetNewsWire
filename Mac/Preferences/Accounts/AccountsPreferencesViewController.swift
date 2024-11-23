@@ -24,7 +24,8 @@ final class AccountsPreferencesViewController: NSViewController {
 	@IBOutlet weak var deleteButton: NSButton!
 	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
 	var addAccountWindowController: NSWindowController?
-	
+	var addAccountsViewController: NSHostingController<AddAccountsView>?
+
 	private var sortedAccounts = [Account]()
 
 	override func viewDidLoad() {
@@ -51,6 +52,7 @@ final class AccountsPreferencesViewController: NSViewController {
 	@IBAction func addAccount(_ sender: Any) {
 		let controller = NSHostingController(rootView: AddAccountsView(delegate: self))
 		controller.rootView.parent = controller
+		addAccountsViewController = controller
 		presentAsSheet(controller)
 	}
 	
