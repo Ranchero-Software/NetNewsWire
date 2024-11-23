@@ -296,24 +296,6 @@ public final class ArticlesDatabase {
 		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
 		articlesTable.deleteOldStatuses()
 	}
-
-	/// Do database cleanups made necessary by the retention policy change in April 2020.
-	///
-	/// The retention policy for feed-based systems changed in April 2020:
-	/// we keep articles only for as long as they’re in the feed.
-	/// This change could result in a bunch of older articles suddenly
-	/// appearing as unread articles.
-	///
-	/// These are articles that were in the database,
-	/// but weren’t appearing in the UI because they were beyond the 90-day window.
-	/// (The previous retention policy used a 90-day window.)
-	///
-	/// This function marks everything as read that’s beyond that 90-day window.
-	/// It’s intended to be called only once on an account.
-	public func performApril2020RetentionPolicyChange() {
-		precondition(retentionStyle == .feedBased)
-		articlesTable.markOlderStatusesAsRead()
-	}
 }
 
 // MARK: - Private
