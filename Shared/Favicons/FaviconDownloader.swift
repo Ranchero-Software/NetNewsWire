@@ -61,8 +61,6 @@ final class FaviconDownloader {
 		loadHomePageToFaviconURLCache()
 		loadHomePageURLsWithNoFaviconURLCache()
 
-		FaviconURLFinder.ignoredTypes = [kUTTypeScalableVectorGraphics as String]
-
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 	}
 
