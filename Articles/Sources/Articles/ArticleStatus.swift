@@ -7,15 +7,10 @@
 //
 
 import Foundation
-
-// Threading rules:
-// * Main-thread only
-// * Except: may be created on background thread by StatusesTable.
-// Which is safe, because at creation time it’t not yet shared,
-// and it won’t be mutated ever on a background thread.
+import os
 
 public final class ArticleStatus: Hashable {
-	
+
 	public enum Key: String {
 		case read = "read"
 		case starred = "starred"
@@ -24,13 +19,31 @@ public final class ArticleStatus: Hashable {
 	public let articleID: String
 	public let dateArrived: Date
 
-	public var read = false
-	public var starred = false
+	private let _read: OSAllocatedUnfairLock<Bool>
+	private let _starred: OSAllocatedUnfairLock<Bool>
+
+	public var read: Bool {
+		get {
+			_read.withLock { $0 }
+		}
+		set {
+			_read.withLock { $0 = newValue }
+		}
+	}
+
+	public var starred: Bool {
+		get {
+			_starred.withLock { $0 }
+		}
+		set {
+			_starred.withLock { $0 = newValue }
+		}
+	}
 
 	public init(articleID: String, read: Bool, starred: Bool, dateArrived: Date) {
 		self.articleID = articleID
-		self.read = read
-		self.starred = starred
+		self._read = OSAllocatedUnfairLock(initialState: read)
+		self._starred = OSAllocatedUnfairLock(initialState: starred)
 		self.dateArrived = dateArrived
 	}
 
