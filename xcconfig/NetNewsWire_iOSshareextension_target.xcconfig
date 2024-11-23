@@ -34,6 +34,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 #include "./common/NetNewsWire_ios_target_common.xcconfig"
 
+ENABLE_HARDENED_RUNTIME = YES
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../../Frameworks
 CODE_SIGN_ENTITLEMENTS = iOS/ShareExtension/NetNewsWire_iOS_ShareExtension.entitlements
 INFOPLIST_FILE = iOS/ShareExtension/Info.plist
