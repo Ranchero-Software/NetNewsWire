@@ -3,8 +3,8 @@
 <!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
 
 <!-- declare the namespace for using XInclude so we can include the standard suite -->
-<dictionary title="sa;lfsdf" xmlns:xi="http://www.w3.org/2003/XInclude">
-    
+<dictionary title="NetNewsWire Terminology" xmlns:xi="http://www.w3.org/2003/XInclude">
+
     <suite name="Standard Suite" code="core" description="Subset of the Standard Suite.">
         <access-group identifier="com.ranchero.NetNewsWire-Evergreen" access="rw"/>
         <command name="delete" code="coredelo" description="Delete an object.">
@@ -35,7 +35,17 @@
             <result type="specifier" description="The new object."/>
         </command>
 
-        <class name="application" code="capp" description="The application's top-level scripting object.">
+		<command name="count" code="corecnte" description="Return the number of elements of a particular class within an object.">
+			<cocoa class="NSCountCommand"/>
+			<access-group identifier="*"/>
+			<direct-parameter type="specifier" requires-access="r" description="The objects to be counted."/>
+			<parameter name="each" code="kocl" type="type" optional="yes" description="The class of objects to be counted." hidden="yes">
+				<cocoa key="ObjectClass"/>
+			</parameter>
+			<result type="integer" description="The count."/>
+		</command>
+
+		<class name="application" code="capp" description="The application's top-level scripting object.">
             <cocoa class="NSApplication"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the application."/>
             <property name="version" code="vers" type="text" access="r" description="The version number of the application."/>
@@ -61,17 +71,22 @@
                  <cocoa key="accounts"/>
              </element>
              <element type="webFeed">
+				 <synonym name="feed"/>
                  <cocoa key="webFeeds"/>
              </element>
          </class>
 
-        <enumeration name="account type" code="enum">
-            <enumerator name="onmymac" code="Locl" description="An On my Mac (local) account"/>
-            <enumerator name="feedly" code="Fdly" description="A Feedly account"/>
-            <enumerator name="feedbin" code="Fdbn" description="A Feedbin account"/>
-            <enumerator name="newsblur" code="NBlr" description="A Newsblur account"/>
+		<enumeration name="account type" code="enum">
+			<enumerator name="onmymac" code="Locl" description="An On my Mac (local) account"/>
+			<enumerator name="cloudkit" code="Clkt" description="The iCloud account"/>
+			<enumerator name="feedly" code="Fdly" description="A Feedly account"/>
+			<enumerator name="feedbin" code="Fdbn" description="A Feedbin account"/>
+			<enumerator name="newsblur" code="NBlr" description="A Newsblur account"/>
 			<enumerator name="fresh rss" code="Frsh" description="A Fresh RSS account"/>
-        </enumeration>
+			<enumerator name="inoreader" code="Inrd" description="An Inoreader account"/>
+			<enumerator name="bazqux" code="Bzqx" description="A BazQux account"/>
+			<enumerator name="the old reader" code="Tord" description="A The Old Reader account"/>
+		</enumeration>
 
         <class name="account" code="Acct" plural="accounts" description="An account for subscribing to feeds">
             <cocoa class="ScriptableAccount"/>
@@ -88,6 +103,7 @@
 				<cocoa key="scriptingIsActive"/>
 			</property>
            	<property name="allWebFeeds" code="Feds" access="r" description="All feeds, including feeds inside folders">
+				<synonym name="allFeeds"/>
                 <cocoa key="allWebFeeds"/>
                 <type type="webFeed" list="yes"/>
             </property>
@@ -95,7 +111,8 @@
                 <cocoa key="opmlRepresentation"/>
             </property>
             <element type="webFeed">
-                <cocoa key="webFeeds"/>
+				<synonym name="feed"/>
+				<cocoa key="webFeeds"/>
             </element>
             <element type="folder">
                 <cocoa key="folders"/>
@@ -103,6 +120,7 @@
         </class>
         
         <class name="webFeed" code="Feed" plural="webFeeds" description="An RSS feed">
+			<synonym name="feed"/>
             <cocoa class="ScriptableWebFeed"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the feed">
                 <cocoa key="name"/>
@@ -165,6 +183,7 @@
                 <cocoa key="opmlRepresentation"/>
             </property>
             <element type="webFeed">
+				<synonym name="feed"/>
                 <cocoa key="webFeeds"/>
             </element>
         </class>
