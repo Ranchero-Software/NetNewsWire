@@ -25,7 +25,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 		self.log = log
 	}
 	
-	private (set) var entries = [FeedlyEntry]()
+	private(set) var entries = [FeedlyEntry]()
 	
 	private var storedParsedEntries: Set<ParsedItem>?
 	

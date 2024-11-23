@@ -13,7 +13,7 @@ protocol FeedlyEntryIdentifierProviding: AnyObject {
 }
 
 final class FeedlyEntryIdentifierProvider: FeedlyEntryIdentifierProviding {
-	private (set) var entryIds: Set<String>
+	private(set) var entryIds: Set<String>
 	
 	init(entryIds: Set<String> = Set()) {
 		self.entryIds = entryIds
