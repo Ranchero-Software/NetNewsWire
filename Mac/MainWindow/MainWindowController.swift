@@ -64,22 +64,16 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		super.windowDidLoad()
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
-		
+
 		updateArticleThemeMenu()
 
-		if #available(macOS 11.0, *) {
-			let toolbar = NSToolbar(identifier: "MainWindowToolbar")
-			toolbar.allowsUserCustomization = true
-			toolbar.autosavesConfiguration = true
-			toolbar.displayMode = .iconOnly
-			toolbar.delegate = self
-			self.window?.toolbar = toolbar
-		} else {
-			if !AppDefaults.shared.showTitleOnMainWindow {
-				window?.titleVisibility = .hidden
-			}
-		}
-		
+		let toolbar = NSToolbar(identifier: "MainWindowToolbar")
+		toolbar.allowsUserCustomization = true
+		toolbar.autosavesConfiguration = true
+		toolbar.displayMode = .iconOnly
+		toolbar.delegate = self
+		self.window?.toolbar = toolbar
+
 		if let window = window {
 			let point = NSPoint(x: 128, y: 64)
 			let size = NSSize(width: 1345, height: 900)
@@ -269,20 +263,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return validateToggleReadArticles(item)
 		}
 
-		if item.action == #selector(toggleTheSidebar(_:)) {
-			guard let splitViewItem = sidebarSplitViewItem else {
-				return false
-			}
-
-			let sidebarIsShowing = !splitViewItem.isCollapsed
-			if let menuItem = item as? NSMenuItem {
-				let title = sidebarIsShowing ? NSLocalizedString("Hide Sidebar", comment: "Menu item") : NSLocalizedString("Show Sidebar", comment: "Menu item")
-				menuItem.title = title
-			}
-
-			return true
-		}
-		
 		return true
 	}
 
@@ -449,16 +429,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		nextUnread(sender)
 	}
 
-	@IBAction func toggleTheSidebar(_ sender: Any?) {
-		splitViewController!.toggleSidebar(sender)
-		guard let splitViewItem = sidebarSplitViewItem else { return }
-		if splitViewItem.isCollapsed {
-			currentTimelineViewController?.focus()
-		} else {
-			sidebarViewController?.focus()
-		}
-	}
-	
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 		currentTimelineViewController?.markOlderArticlesRead()
 	}
@@ -754,7 +724,6 @@ extension MainWindowController : ScriptingMainWindowController {
 // MARK: - NSToolbarDelegate
 
 extension NSToolbarItem.Identifier {
-	static let sidebarToggle = NSToolbarItem.Identifier("sidebarToggle")
 	static let newFeed = NSToolbarItem.Identifier("newFeed")
 	static let newFolder = NSToolbarItem.Identifier("newFolder")
 	static let refresh = NSToolbarItem.Identifier("refresh")
@@ -776,175 +745,132 @@ extension NSToolbarItem.Identifier {
 extension MainWindowController: NSToolbarDelegate {
 
 	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-		if #available(macOS 11.0, *) {
 
-			switch itemIdentifier {
+		switch itemIdentifier {
 
-			case .sidebarToggle:
-				let title = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
-				return buildToolbarButton(.toggleSidebar, title, AppAssets.sidebarToggleImage, "toggleTheSidebar:")
+		case .refresh:
+			let title = NSLocalizedString("Refresh", comment: "Refresh")
+			return buildToolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
 
-			case .refresh:
-				let title = NSLocalizedString("Refresh", comment: "Refresh")
-				return buildToolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
-			
-			case .newSidebarItemMenu:
-				let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
-				toolbarItem.image = AppAssets.addNewSidebarItemImage
-				let description = NSLocalizedString("Add Item", comment: "Add Item")
-				toolbarItem.toolTip = description
-				toolbarItem.label = description
-				toolbarItem.menu = buildNewSidebarItemMenu()
-				return toolbarItem
+		case .newSidebarItemMenu:
+			let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
+			toolbarItem.image = AppAssets.addNewSidebarItemImage
+			let description = NSLocalizedString("Add Item", comment: "Add Item")
+			toolbarItem.toolTip = description
+			toolbarItem.label = description
+			toolbarItem.menu = buildNewSidebarItemMenu()
+			return toolbarItem
 
-			case .markAllAsRead:
-				let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
-				return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
-			
-			case .toggleReadArticlesFilter:
-				let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
-				return buildToolbarButton(.toggleReadArticlesFilter, title, AppAssets.filterInactive, "toggleReadArticlesFilter:")
-			
-			case .timelineTrackingSeparator:
-				return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
+		case .markAllAsRead:
+			let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+			return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
 
-			case .markRead:
-				let title = NSLocalizedString("Mark Read", comment: "Mark Read")
-				return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
-			
-			case .markStar:
-				let title = NSLocalizedString("Star", comment: "Star")
-				return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
-			
-			case .nextUnread:
-				let title = NSLocalizedString("Next Unread", comment: "Next Unread")
-				return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
-			
-			case .readerView:
-				let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
-				toolbarItem.autovalidates = true
-				let description = NSLocalizedString("Reader View", comment: "Reader View")
-				toolbarItem.toolTip = description
-				toolbarItem.label = description
-				let button = ArticleExtractorButton()
-				button.action = #selector(toggleArticleExtractor(_:))
-				toolbarItem.view = button
-				return toolbarItem
+		case .toggleReadArticlesFilter:
+			let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
+			return buildToolbarButton(.toggleReadArticlesFilter, title, AppAssets.filterInactive, "toggleReadArticlesFilter:")
 
-			case .share:
-				let title = NSLocalizedString("Share", comment: "Share")
-				return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
-			
-			case .openInBrowser:
-				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
-			
-			case .articleThemeMenu:
-				articleThemeMenuToolbarItem.image = AppAssets.articleTheme
-				let description = NSLocalizedString("Article Theme", comment: "Article Theme")
-				articleThemeMenuToolbarItem.toolTip = description
-				articleThemeMenuToolbarItem.label = description
-				return articleThemeMenuToolbarItem
+		case .timelineTrackingSeparator:
+			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
-			case .search:
-				let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
-				let description = NSLocalizedString("Search", comment: "Search")
-				toolbarItem.toolTip = description
-				toolbarItem.label = description
-				return toolbarItem
+		case .markRead:
+			let title = NSLocalizedString("Mark Read", comment: "Mark Read")
+			return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
 
-			case .cleanUp:
-				let title = NSLocalizedString("Clean Up", comment: "Clean Up")
-				return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
-			
-			default:
-				break
-			}
+		case .markStar:
+			let title = NSLocalizedString("Star", comment: "Star")
+			return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
 
+		case .nextUnread:
+			let title = NSLocalizedString("Next Unread", comment: "Next Unread")
+			return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
+
+		case .readerView:
+			let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
+			toolbarItem.autovalidates = true
+			let description = NSLocalizedString("Reader View", comment: "Reader View")
+			toolbarItem.toolTip = description
+			toolbarItem.label = description
+			let button = ArticleExtractorButton()
+			button.action = #selector(toggleArticleExtractor(_:))
+			toolbarItem.view = button
+			return toolbarItem
+
+		case .share:
+			let title = NSLocalizedString("Share", comment: "Share")
+			return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
+
+		case .openInBrowser:
+			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+			return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
+
+		case .articleThemeMenu:
+			articleThemeMenuToolbarItem.image = AppAssets.articleTheme
+			let description = NSLocalizedString("Article Theme", comment: "Article Theme")
+			articleThemeMenuToolbarItem.toolTip = description
+			articleThemeMenuToolbarItem.label = description
+			return articleThemeMenuToolbarItem
+
+		case .search:
+			let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
+			let description = NSLocalizedString("Search", comment: "Search")
+			toolbarItem.toolTip = description
+			toolbarItem.label = description
+			return toolbarItem
+
+		case .cleanUp:
+			let title = NSLocalizedString("Clean Up", comment: "Clean Up")
+			return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
+
+		default:
+			break
 		}
-		
+
 		return nil
 	}
 	
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		if #available(macOS 11.0, *) {
-			return [
-				.sidebarToggle,
-				.refresh,
-				.newSidebarItemMenu,
-				.sidebarTrackingSeparator,
-				.markAllAsRead,
-				.toggleReadArticlesFilter,
-				.timelineTrackingSeparator,
-				.flexibleSpace,
-				.nextUnread,
-				.markRead,
-				.markStar,
-				.readerView,
-				.openInBrowser,
-				.share,
-				.articleThemeMenu,
-				.search,
-				.cleanUp
-			]
-		} else {
-			return [
-				.newFeed,
-				.newFolder,
-				.refresh,
-				.flexibleSpace,
-				.markAllAsRead,
-				.search,
-				.flexibleSpace,
-				.nextUnread,
-				.markStar,
-				.markRead,
-				.readerView,
-				.openInBrowser,
-				.share,
-				.cleanUp
-			]
-		}
+		[
+			NSToolbarItem.Identifier.toggleSidebar,
+			.refresh,
+			.newSidebarItemMenu,
+			.sidebarTrackingSeparator,
+			.markAllAsRead,
+			.toggleReadArticlesFilter,
+			.timelineTrackingSeparator,
+			.flexibleSpace,
+			.nextUnread,
+			.markRead,
+			.markStar,
+			.readerView,
+			.openInBrowser,
+			.share,
+			.articleThemeMenu,
+			.search,
+			.cleanUp
+		]
 	}
-	
+
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		if #available(macOS 11.0, *) {
-			return [
-				.flexibleSpace,
-				.refresh,
-				.newSidebarItemMenu,
-				.sidebarTrackingSeparator,
-				.markAllAsRead,
-				.toggleReadArticlesFilter,
-				.timelineTrackingSeparator,
-				.markRead,
-				.markStar,
-				.nextUnread,
-				.readerView,
-				.share,
-				.openInBrowser,
-				.flexibleSpace,
-				.search
-			]
-		} else {
-			return [
-				.newFeed,
-				.newFolder,
-				.refresh,
-				.flexibleSpace,
-				.markAllAsRead,
-				.search,
-				.flexibleSpace,
-				.nextUnread,
-				.markStar,
-				.markRead,
-				.readerView,
-				.openInBrowser,
-				.share
-			]
-		}
+		[
+			.flexibleSpace,
+			.refresh,
+			.newSidebarItemMenu,
+			.sidebarTrackingSeparator,
+			NSToolbarItem.Identifier.toggleSidebar,
+			.markAllAsRead,
+			.toggleReadArticlesFilter,
+			.timelineTrackingSeparator,
+			.markRead,
+			.markStar,
+			.nextUnread,
+			.readerView,
+			.share,
+			.openInBrowser,
+			.flexibleSpace,
+			.search
+		]
 	}
-	
+
 	func toolbarWillAddItem(_ notification: Notification) {
 		guard let item = notification.userInfo?["item"] as? NSToolbarItem else {
 			return
@@ -955,20 +881,11 @@ extension MainWindowController: NSToolbarDelegate {
 			button.sendAction(on: .leftMouseDown)
 		}
 
-		if #available(macOS 11.0, *) {
-			if item.itemIdentifier == .search, let searchItem = item as? NSSearchToolbarItem {
-				searchItem.searchField.delegate = self
-				searchItem.searchField.target = self
-				searchItem.searchField.action = #selector(runSearch(_:))
-				currentSearchField = searchItem.searchField
-			}
-		} else {
-			if item.itemIdentifier == .search, let searchField = item.view as? NSSearchField {
-				searchField.delegate = self
-				searchField.target = self
-				searchField.action = #selector(runSearch(_:))
-				currentSearchField = searchField
-			}
+		if item.itemIdentifier == .search, let searchItem = item as? NSSearchToolbarItem {
+			searchItem.searchField.delegate = self
+			searchItem.searchField.target = self
+			searchItem.searchField.action = #selector(runSearch(_:))
+			currentSearchField = searchItem.searchField
 		}
 	}
 
@@ -977,23 +894,13 @@ extension MainWindowController: NSToolbarDelegate {
 			return
 		}
 
-		if #available(macOS 11.0, *) {
-			if item.itemIdentifier == .search, let searchItem = item as? NSSearchToolbarItem {
-				searchItem.searchField.delegate = nil
-				searchItem.searchField.target = nil
-				searchItem.searchField.action = nil
-				currentSearchField = nil
-			}
-		} else {
-			if item.itemIdentifier == .search, let searchField = item.view as? NSSearchField {
-				searchField.delegate = nil
-				searchField.target = nil
-				searchField.action = nil
-				currentSearchField = nil
-			}
+		if item.itemIdentifier == .search, let searchItem = item as? NSSearchToolbarItem {
+			searchItem.searchField.delegate = nil
+			searchItem.searchField.target = nil
+			searchItem.searchField.action = nil
+			currentSearchField = nil
 		}
 	}
-	
 }
 
 // MARK: - Private
@@ -1122,7 +1029,7 @@ private extension MainWindowController {
 			menuItem.title = commandName
 		}
 		
-		if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
 		}
 		
@@ -1133,69 +1040,30 @@ private extension MainWindowController {
 		guard !AppDefaults.shared.isDeveloperBuild else {
 			return false
 		}
-		
 
-		if #available(macOS 11.0, *) {
+		guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? ArticleExtractorButton else {
+			if let menuItem = item as? NSMenuItem {
+				menuItem.state = isShowingExtractedArticle ? .on : .off
+			}
+			return currentLink != nil
+		}
 
-			guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? ArticleExtractorButton else {
-				if let menuItem = item as? NSMenuItem {
-					menuItem.state = isShowingExtractedArticle ? .on : .off
-				}
-				return currentLink != nil
-			}
-			
-			if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
-				toolbarButton.isEnabled = true
-			}
+		if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
+			toolbarButton.isEnabled = true
+		}
 
-			guard let state = articleExtractor?.state else {
-				toolbarButton.buttonState = .off
-				return currentLink != nil
-			}
+		guard let state = articleExtractor?.state else {
+			toolbarButton.buttonState = .off
+			return currentLink != nil
+		}
 
-			switch state {
-			case .processing:
-				toolbarButton.buttonState = .animated
-			case .failedToParse:
-				toolbarButton.buttonState = .error
-			case .ready, .cancelled, .complete:
-				toolbarButton.buttonState = isShowingExtractedArticle ? .on : .off
-			}
-
-		} else {
-			
-			guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? LegacyArticleExtractorButton else {
-				if let menuItem = item as? NSMenuItem {
-					menuItem.state = isShowingExtractedArticle ? .on : .off
-				}
-				return currentLink != nil
-			}
-			
-			if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
-				toolbarButton.isEnabled = true
-			}
-			
-			toolbarButton.state = isShowingExtractedArticle ? .on : .off
-
-			guard let state = articleExtractor?.state else {
-				toolbarButton.isError = false
-				toolbarButton.isInProgress = false
-				toolbarButton.state = .off
-				return currentLink != nil
-			}
-			
-			switch state {
-			case .processing:
-				toolbarButton.isError = false
-				toolbarButton.isInProgress = true
-			case .failedToParse:
-				toolbarButton.isError = true
-				toolbarButton.isInProgress = false
-			case .ready, .cancelled, .complete:
-				toolbarButton.isError = false
-				toolbarButton.isInProgress = false
-			}
-			
+		switch state {
+		case .processing:
+			toolbarButton.buttonState = .animated
+		case .failedToParse:
+			toolbarButton.buttonState = .error
+		case .ready, .cancelled, .complete:
+			toolbarButton.buttonState = isShowingExtractedArticle ? .on : .off
 		}
 
 		return true
@@ -1245,7 +1113,7 @@ private extension MainWindowController {
 			menuItem.title = commandName
 		}
 
-		if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 			button.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		}
 
@@ -1271,7 +1139,7 @@ private extension MainWindowController {
 
 		guard let isReadFiltered = timelineContainerViewController?.isReadFiltered else {
 			(item as? NSMenuItem)?.title = hideCommand
-			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
 				button.image = AppAssets.filterInactive
 			}
@@ -1280,13 +1148,13 @@ private extension MainWindowController {
 
 		if isReadFiltered {
 			(item as? NSMenuItem)?.title = showCommand
-			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = showCommand
 				button.image = AppAssets.filterActive
 			}
 		} else {
 			(item as? NSMenuItem)?.title = hideCommand
-			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
 				button.image = AppAssets.filterInactive
 			}
@@ -1321,53 +1189,44 @@ private extension MainWindowController {
 		guard timelineSourceMode != .search else {
 			let localizedLabel = NSLocalizedString("Search: %@", comment: "Search")
 			window?.title = NSString.localizedStringWithFormat(localizedLabel as NSString, searchString ?? "") as String
-			if #available(macOS 11.0, *) {
-				window?.subtitle = ""
-			}
+			window?.subtitle = ""
 			return
 		}
 		
 		func setSubtitle(_ count: Int) {
 			let localizedLabel = NSLocalizedString("%d unread", comment: "Unread")
 			let formattedLabel = NSString.localizedStringWithFormat(localizedLabel as NSString, count)
-			if #available(macOS 11.0, *) {
-				window?.subtitle = formattedLabel as String
-			}
+			window?.subtitle = formattedLabel as String
 		}
-		
+
 		guard let selectedObjects = selectedObjectsInSidebar(), selectedObjects.count > 0 else {
 			window?.title = appDelegate.appName!
-			if #available(macOS 11.0, *) {
-				setSubtitle(appDelegate.unreadCount)
-			}
+			setSubtitle(appDelegate.unreadCount)
 			return
 		}
-		
+
 		guard selectedObjects.count == 1 else {
 			window?.title = NSLocalizedString("Multiple", comment: "Multiple")
-			if #available(macOS 11.0, *) {
-				let unreadCount = selectedObjects.reduce(0, { result, selectedObject in
-					if let unreadCountProvider = selectedObject as? UnreadCountProvider {
-						return result + unreadCountProvider.unreadCount
-					} else {
-						return result
-					}
-				})
-				setSubtitle(unreadCount)
-			}
+			let unreadCount = selectedObjects.reduce(0, { result, selectedObject in
+				if let unreadCountProvider = selectedObject as? UnreadCountProvider {
+					return result + unreadCountProvider.unreadCount
+				} else {
+					return result
+				}
+			})
+			setSubtitle(unreadCount)
+
 			return
 		}
-		
+
 		if let displayNameProvider = currentFeedOrFolder as? DisplayNameProvider {
 			window?.title = displayNameProvider.nameForDisplay
-			if #available(macOS 11.0, *) {
-				if let unreadCountProvider = currentFeedOrFolder as? UnreadCountProvider {
-					setSubtitle(unreadCountProvider.unreadCount)
-				}
+			if let unreadCountProvider = currentFeedOrFolder as? UnreadCountProvider {
+				setSubtitle(unreadCountProvider.unreadCount)
 			}
 		}
 	}
-	
+
 	func startArticleExtractorForCurrentLink() {
 		if let link = currentLink, let extractor = ArticleExtractor(link) {
 			extractor.delegate = self
