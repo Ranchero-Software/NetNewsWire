@@ -26,10 +26,6 @@ struct AppAssets {
 	static var accountFeedlyImage: UIImage = {
 		return UIImage(named: "accountFeedly")!
 	}()
-	
-	static var accountFeedWranglerImage: UIImage = {
-		return UIImage(named: "accountFeedWrangler")!
-	}()
 
 	static var accountFreshRSSImage: UIImage = {
 		return UIImage(named: "accountFreshRSS")!
@@ -272,8 +268,6 @@ struct AppAssets {
 			return AppAssets.accountFeedbinImage
 		case .feedly:
 			return AppAssets.accountFeedlyImage
-		case .feedWrangler:
-			return AppAssets.accountFeedWranglerImage
 		case .freshRSS:
 			return AppAssets.accountFreshRSSImage
 		case .newsBlur:

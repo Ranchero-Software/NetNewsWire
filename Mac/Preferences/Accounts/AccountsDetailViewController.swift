@@ -79,11 +79,6 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsReaderAPIWindowController
 			break
-		case .feedWrangler:
-			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
-			accountsFeedWranglerWindowController.account = account
-			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
-			accountsWindowController = accountsFeedWranglerWindowController
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.account = account

@@ -38,8 +38,6 @@ extension AccountType {
 			return NSLocalizedString("BazQux", comment: "Account name")
 		case .cloudKit:
 			return NSLocalizedString("iCloud", comment: "Account name")
-		case .feedWrangler:
-			return NSLocalizedString("FeedWrangler", comment: "Account name")
 		case .feedbin:
 			return NSLocalizedString("Feedbin", comment: "Account name")
 		case .feedly:
@@ -73,8 +71,6 @@ extension AccountType {
 			return Image("accountBazQux")
 		case .cloudKit:
 			return Image("accountCloudKit")
-		case .feedWrangler:
-			return Image("accountFeedWrangler")
 		case .feedbin:
 			return Image("accountFeedbin")
 		case .feedly:

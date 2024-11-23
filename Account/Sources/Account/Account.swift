@@ -39,7 +39,6 @@ public enum AccountType: Int, Codable {
 	case cloudKit = 2
 	case feedly = 16
 	case feedbin = 17
-	case feedWrangler = 18
 	case newsBlur = 19
 	case freshRSS = 20
 	case inoreader = 21
@@ -47,7 +46,7 @@ public enum AccountType: Int, Codable {
 	case theOldReader = 23
 	
 	public var isDeveloperRestricted: Bool {
-		return self == .cloudKit || self == .feedbin || self == .feedly || self == .feedWrangler || self == .inoreader
+		return self == .cloudKit || self == .feedbin || self == .feedly || self == .inoreader
 	}
 	
 }
@@ -269,8 +268,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .feedly:
 			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
-		case .feedWrangler:
-			self.delegate = FeedWranglerAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .newsBlur:
 			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .freshRSS:
@@ -302,8 +299,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			defaultName = NSLocalizedString("Feedly", comment: "Feedly")
 		case .feedbin:
 			defaultName = NSLocalizedString("Feedbin", comment: "Feedbin")
-		case .feedWrangler:
-			defaultName = NSLocalizedString("FeedWrangler", comment: "FeedWrangler")
 		case .newsBlur:
 			defaultName = NSLocalizedString("NewsBlur", comment: "NewsBlur")
 		case .freshRSS:
@@ -376,8 +371,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch type {
 		case .feedbin:
 			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
-		case .feedWrangler:
-			FeedWranglerAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .newsBlur:
 			NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:

@@ -9,7 +9,6 @@ import Foundation
 import Secrets
 
 struct FeedlyTestSecrets: SecretsProvider {
-	var feedWranglerKey = ""
 	var mercuryClientId = ""
 	var mercuryClientSecret = ""
 	var feedlyClientId = ""

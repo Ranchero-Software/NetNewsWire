@@ -56,7 +56,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 				return [.cloudKit]
 			case .web:
 				#if DEBUG
-				return [.bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader]
+				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
 				#else
 				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
 				#endif
@@ -142,7 +142,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].localizedAccountName()
 			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.web.sectionContent[indexPath.row])
 			let type = AddAccountSections.web.sectionContent[indexPath.row]
-			if (type == .feedly || type == .feedWrangler || type == .inoreader) && AppDefaults.shared.isDeveloperBuild {
+			if (type == .feedly || type == .inoreader) && AppDefaults.shared.isDeveloperBuild {
 				cell.isUserInteractionEnabled = false
 				cell.comboNameLabel?.isEnabled = false
 			}
@@ -201,12 +201,6 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			MainThreadOperationQueue.shared.add(addAccount)
-		case .feedWrangler:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedWranglerAccountNavigationViewController") as! UINavigationController
-			navController.modalPresentationStyle = .currentContext
-			let addViewController = navController.topViewController as! FeedWranglerAccountViewController
-			addViewController.delegate = self
-			present(navController, animated: true)
 		case .newsBlur:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "NewsBlurAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
