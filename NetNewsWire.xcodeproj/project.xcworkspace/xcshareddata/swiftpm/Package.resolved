@@ -47,15 +47,6 @@
         }
       },
       {
-        "package": "RSWeb",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSWeb.git",
-        "state": {
-          "branch": null,
-          "revision": "2f7849a9ad2cb461b3d6c9c920e163596e6b5d7b",
-          "version": "1.0.3"
-        }
-      },
-      {
         "package": "RSSparkle",
         "repositoryURL": "https://github.com/Ranchero-Software/Sparkle-Binary.git",
         "state": {

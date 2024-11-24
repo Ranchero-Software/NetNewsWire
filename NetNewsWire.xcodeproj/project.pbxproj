@@ -51,8 +51,6 @@
 		17D643B226F8A436008D4C05 /* ArticleThemeDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D643B026F8A436008D4C05 /* ArticleThemeDownloader.swift */; };
 		17D7586F2679C21800B17787 /* OnePasswordExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D7586E2679C21800B17787 /* OnePasswordExtension.m */; };
 		17E0084625941887000C23F0 /* SizeCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0084525941887000C23F0 /* SizeCategories.swift */; };
-		17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; };
-		17EF6A2225C4E5B4002C9F81 /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		27B86EEB25A53AAB00264340 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; };
 		4679674625E599C100844E8D /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 4679674525E599C100844E8D /* Articles */; };
 		4679674725E599C100844E8D /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 4679674525E599C100844E8D /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -140,8 +138,6 @@
 		5138E94D24D3417A00AFF0FE /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E94B24D3417A00AFF0FE /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5138E95224D3418100AFF0FE /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95124D3418100AFF0FE /* RSParser */; };
 		5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95124D3418100AFF0FE /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		5138E95824D3419000AFF0FE /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95724D3419000AFF0FE /* RSWeb */; };
-		5138E95924D3419000AFF0FE /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95724D3419000AFF0FE /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
 		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
 		513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -235,8 +231,6 @@
 		51A737AF24DB19730015FA66 /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737AD24DB19730015FA66 /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51A737BF24DB197F0015FA66 /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737BE24DB197F0015FA66 /* RSDatabase */; };
 		51A737C024DB197F0015FA66 /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737BE24DB197F0015FA66 /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		51A737C524DB19B50015FA66 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C424DB19B50015FA66 /* RSWeb */; };
-		51A737C624DB19B50015FA66 /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C424DB19B50015FA66 /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51A737C824DB19CC0015FA66 /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C724DB19CC0015FA66 /* RSParser */; };
 		51A737C924DB19CC0015FA66 /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C724DB19CC0015FA66 /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
@@ -411,6 +405,12 @@
 		842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */; };
 		842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
+		843E2F172CF2B8A700ED170F /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F162CF2B8A700ED170F /* RSWeb */; };
+		843E2F182CF2B8A700ED170F /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F162CF2B8A700ED170F /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		843E2F1A2CF2B8C500ED170F /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F192CF2B8C500ED170F /* RSWeb */; };
+		843E2F1B2CF2B8C500ED170F /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F192CF2B8C500ED170F /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		843E2F1D2CF2B8D300ED170F /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F1C2CF2B8D300ED170F /* RSWeb */; };
+		843E2F1E2CF2B8D300ED170F /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F1C2CF2B8D300ED170F /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
 		8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
 		844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */; };
@@ -629,7 +629,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17EF6A2225C4E5B4002C9F81 /* RSWeb in Embed Frameworks */,
+				843E2F1E2CF2B8D300ED170F /* RSWeb in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -701,8 +701,8 @@
 			files = (
 				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
 				5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */,
+				843E2F1B2CF2B8C500ED170F /* RSWeb in Embed Frameworks */,
 				5138E94A24D3416D00AFF0FE /* RSCore in Embed Frameworks */,
-				5138E95924D3419000AFF0FE /* RSWeb in Embed Frameworks */,
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
 				513F32812593EF180003048F /* Account in Embed Frameworks */,
@@ -747,7 +747,7 @@
 			files = (
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
-				51A737C624DB19B50015FA66 /* RSWeb in Embed Frameworks */,
+				843E2F182CF2B8A700ED170F /* RSWeb in Embed Frameworks */,
 				51A737C024DB197F0015FA66 /* RSDatabase in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
@@ -1050,6 +1050,7 @@
 		842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSHTMLMetadata+Extension.swift"; sourceTree = "<group>"; };
 		842E45CD1ED8C308000A8B52 /* AppNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
 		842E45DC1ED8C54B000A8B52 /* Browser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
+		843E2F152CF2B43700ED170F /* RSWeb */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSWeb; sourceTree = "<group>"; };
 		84411E701FE5FBFA004B527F /* SmallIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallIconProvider.swift; sourceTree = "<group>"; };
 		8444C8F11FED81840051386C /* OPMLExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLExporter.swift; sourceTree = "<group>"; };
 		844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarKeyboardDelegate.swift; sourceTree = "<group>"; };
@@ -1225,7 +1226,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */,
+				843E2F1D2CF2B8D300ED170F /* RSWeb in Frameworks */,
 				176813F72564BB2C00D98635 /* SwiftUI.framework in Frameworks */,
 				176813F52564BB2C00D98635 /* WidgetKit.framework in Frameworks */,
 			);
@@ -1279,12 +1280,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				5138E94924D3416D00AFF0FE /* RSCore in Frameworks */,
-				5138E95824D3419000AFF0FE /* RSWeb in Frameworks */,
 				179D280B26F6F93D003B2E0A /* Zip in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
 				5138E95224D3418100AFF0FE /* RSParser in Frameworks */,
 				5138E94C24D3417A00AFF0FE /* RSDatabase in Frameworks */,
 				51C452B42265141B00C03939 /* WebKit.framework in Frameworks */,
+				843E2F1A2CF2B8C500ED170F /* RSWeb in Frameworks */,
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
 				513F32772593EE6F0003048F /* Secrets in Frameworks */,
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
@@ -1300,7 +1301,6 @@
 			files = (
 				513277642590FC640064F1E7 /* SyncDatabase in Frameworks */,
 				17192ADA2567B3D500AAEACA /* RSSparkle in Frameworks */,
-				51A737C524DB19B50015FA66 /* RSWeb in Frameworks */,
 				514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */,
 				5132775E2590FC640064F1E7 /* Articles in Frameworks */,
 				513277612590FC640064F1E7 /* ArticlesDatabase in Frameworks */,
@@ -1311,6 +1311,7 @@
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				514C16E124D2EF38009A3AFA /* RSCoreResources in Frameworks */,
 				514C16CE24D2E63F009A3AFA /* Account in Frameworks */,
+				843E2F172CF2B8A700ED170F /* RSWeb in Frameworks */,
 				519CA8E525841DB700EB079A /* CrashReporter in Frameworks */,
 				51A737BF24DB197F0015FA66 /* RSDatabase in Frameworks */,
 			);
@@ -2042,6 +2043,7 @@
 				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,
 				51CD32C724D2E06C009ABAEF /* Secrets */,
 				51CD32A824D2CB25009ABAEF /* SyncDatabase */,
+				843E2F152CF2B43700ED170F /* RSWeb */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -2419,7 +2421,7 @@
 			);
 			name = "NetNewsWire iOS Widget Extension";
 			packageProductDependencies = (
-				17EF6A2025C4E5B4002C9F81 /* RSWeb */,
+				843E2F1C2CF2B8D300ED170F /* RSWeb */,
 			);
 			productName = "NetNewsWire WidgetExtension";
 			productReference = 176813F32564BB2C00D98635 /* NetNewsWire iOS Widget Extension.appex */;
@@ -2555,12 +2557,12 @@
 				5138E94824D3416D00AFF0FE /* RSCore */,
 				5138E94B24D3417A00AFF0FE /* RSDatabase */,
 				5138E95124D3418100AFF0FE /* RSParser */,
-				5138E95724D3419000AFF0FE /* RSWeb */,
 				513F32702593EE6F0003048F /* Articles */,
 				513F32732593EE6F0003048F /* ArticlesDatabase */,
 				513F32762593EE6F0003048F /* Secrets */,
 				513F32792593EE6F0003048F /* SyncDatabase */,
 				179D280A26F6F93D003B2E0A /* Zip */,
+				843E2F192CF2B8C500ED170F /* RSWeb */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -2595,7 +2597,6 @@
 				51C4CFF524D37DD500AF9874 /* Secrets */,
 				51A737AD24DB19730015FA66 /* RSCore */,
 				51A737BE24DB197F0015FA66 /* RSDatabase */,
-				51A737C424DB19B50015FA66 /* RSWeb */,
 				51A737C724DB19CC0015FA66 /* RSParser */,
 				17192AD92567B3D500AAEACA /* RSSparkle */,
 				519CA8E425841DB700EB079A /* CrashReporter */,
@@ -2603,6 +2604,7 @@
 				513277602590FC640064F1E7 /* ArticlesDatabase */,
 				513277632590FC640064F1E7 /* SyncDatabase */,
 				179C39E926F76B0500D4E741 /* Zip */,
+				843E2F162CF2B8A700ED170F /* RSWeb */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -2711,7 +2713,6 @@
 			packageReferences = (
 				5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */,
 				510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */,
-				51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */,
 				51B0DF0D24D24E3B000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */,
 				51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */,
 				17192AD82567B3D500AAEACA /* XCRemoteSwiftPackageReference "Sparkle-Binary" */,
@@ -3939,14 +3940,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Ranchero-Software/RSWeb.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		519CA8E325841DB700EB079A /* XCRemoteSwiftPackageReference "plcrashreporter" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/microsoft/plcrashreporter.git";
@@ -3988,11 +3981,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 179D280926F6F93D003B2E0A /* XCRemoteSwiftPackageReference "Zip" */;
 			productName = Zip;
-		};
-		17EF6A2025C4E5B4002C9F81 /* RSWeb */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
-			productName = RSWeb;
 		};
 		4679674525E599C100844E8D /* Articles */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4043,11 +4031,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
 			productName = RSParser;
-		};
-		5138E95724D3419000AFF0FE /* RSWeb */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
-			productName = RSWeb;
 		};
 		513F325B2593ECF40003048F /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4108,11 +4091,6 @@
 			package = 51B0DF0D24D24E3B000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
 			productName = RSDatabase;
 		};
-		51A737C424DB19B50015FA66 /* RSWeb */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
-			productName = RSWeb;
-		};
 		51A737C724DB19CC0015FA66 /* RSParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
@@ -4139,6 +4117,18 @@
 		51C4CFF524D37DD500AF9874 /* Secrets */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Secrets;
+		};
+		843E2F162CF2B8A700ED170F /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RSWeb;
+		};
+		843E2F192CF2B8C500ED170F /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RSWeb;
+		};
+		843E2F1C2CF2B8D300ED170F /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RSWeb;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
