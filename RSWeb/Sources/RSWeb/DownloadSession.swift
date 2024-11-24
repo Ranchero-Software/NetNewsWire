@@ -45,7 +45,7 @@ public protocol DownloadSessionDelegate {
 		sessionConfiguration.timeoutIntervalForRequest = 15.0
 		sessionConfiguration.httpShouldSetCookies = false
 		sessionConfiguration.httpCookieAcceptPolicy = .never
-		sessionConfiguration.httpMaximumConnectionsPerHost = 2
+		sessionConfiguration.httpMaximumConnectionsPerHost = 1
 		sessionConfiguration.httpCookieStorage = nil
 		sessionConfiguration.urlCache = nil
 
