@@ -22,4 +22,6 @@ public struct HTTPResponseHeader {
 	// Changed to the canonical case for lookups against a case sensitive dictionary
 	// https://developer.apple.com/documentation/foundation/httpurlresponse/1417930-allheaderfields
 	public static let etag = "Etag"
+
+	public static let cacheControl = "Cache-Control"
 }
