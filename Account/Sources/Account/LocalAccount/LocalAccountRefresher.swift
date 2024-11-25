@@ -19,33 +19,36 @@ protocol LocalAccountRefresherDelegate {
 }
 
 final class LocalAccountRefresher {
-	
+
 	private var completion: (() -> Void)? = nil
 	private var isSuspended = false
 	var delegate: LocalAccountRefresherDelegate?
-	
+
 	private lazy var downloadSession: DownloadSession = {
 		return DownloadSession(delegate: self)
 	}()
 
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
-		guard !feeds.isEmpty else {
+
+		let feedsToDownload = feedsWithThrottledHostsRemovedIfNeeded(feeds)
+
+		guard !feedsToDownload.isEmpty else {
 			completion?()
 			return
 		}
+
 		self.completion = completion
-		downloadSession.downloadObjects(feeds as NSSet)
+		downloadSession.downloadObjects(feedsToDownload as NSSet)
 	}
-	
+
 	public func suspend() {
 		downloadSession.cancelAll()
 		isSuspended = true
 	}
-	
+
 	public func resume() {
 		isSuspended = false
 	}
-	
 }
 
 // MARK: - DownloadSessionDelegate
@@ -157,7 +160,60 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		completion?()
 		completion = nil
 	}
+}
 
+// MARK: - Throttled Hosts
+
+private extension LocalAccountRefresher {
+
+	// We want to support openrss.org, and possibly other domains in the future,
+	// by calling their servers no more often than timeIntervalBetweenThrottledHostsReads.
+	// We store the last read in UserDefaults.
+	static let lastReadOfThrottledHostsDefaultsKey = "lastReadOfThrottledHosts"
+	static let timeIntervalBetweenThrottledHostsReads: TimeInterval = 60 * 60 // One hour
+
+	func feedsWithThrottledHostsRemovedIfNeeded(_ feeds: Set<WebFeed>) -> Set<WebFeed> {
+
+		let currentDate = Date()
+		let lastReadOfThrottledHostsDate = UserDefaults.standard.object(forKey: Self.lastReadOfThrottledHostsDefaultsKey) as? Date ?? Date.distantPast
+		let timeIntervalSinceLastReadOfThrottledHosts = currentDate.timeIntervalSince(lastReadOfThrottledHostsDate)
+
+		let shouldReadThrottledHosts = timeIntervalSinceLastReadOfThrottledHosts > (Self.timeIntervalBetweenThrottledHostsReads)
+
+		if shouldReadThrottledHosts {
+			UserDefaults.standard.set(currentDate, forKey: Self.lastReadOfThrottledHostsDefaultsKey)
+			return feeds
+		}
+
+		return feeds.filter { !feedIsFromThrottledDomain($0) }
+	}
+
+	static let throttledHosts = ["openrss.org"]
+
+	func feedIsFromThrottledDomain(_ feed: WebFeed) -> Bool {
+
+		guard let url = URL(unicodeString: feed.url) else {
+			return false
+		}
+
+		return urlIsThrottledDomain(url)
+	}
+
+	func urlIsThrottledDomain(_ url: URL) -> Bool {
+
+		guard let host = url.host() else {
+			return false
+		}
+		let lowerCaseHost = host.lowercased()
+
+		for throttledHost in Self.throttledHosts {
+			if lowerCaseHost.contains(throttledHost) {
+				return true
+			}
+		}
+
+		return false
+	}
 }
 
 // MARK: - Utility
