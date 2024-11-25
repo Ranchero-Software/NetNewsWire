@@ -168,7 +168,6 @@ extension DownloadSession: URLSessionDataDelegate {
 			removeTask(dataTask)
 		}
 	}
-		
 }
 
 // MARK: - Private
