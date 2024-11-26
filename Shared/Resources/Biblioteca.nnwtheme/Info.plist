@@ -3,9 +3,9 @@
 <plist version="1.0">
 	<dict>
 		<key>Name</key>
-		<string>Readable</string>
+		<string>Biblioteca</string>
 		<key>ThemeIdentifier</key>
-		<string>com.netnewswire.themes.readable</string>
+		<string>com.netnewswire.themes.biblioteca</string>
 		<key>CreatorHomePage</key>
 		<string>https://martingonzalez.net/</string>
 		<key>CreatorName</key>
