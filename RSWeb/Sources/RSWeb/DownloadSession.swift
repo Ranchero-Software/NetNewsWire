@@ -33,7 +33,8 @@ public protocol DownloadSessionDelegate {
 	private let delegate: DownloadSessionDelegate
 	private var redirectCache = [String: String]()
 	private var queue = [AnyObject]()
-	
+	private var retryAfterMessages = [String: HTTPResponse429]()
+
 	public init(delegate: DownloadSessionDelegate) {
 		
 		self.delegate = delegate
@@ -88,7 +89,7 @@ extension DownloadSession: URLSessionTaskDelegate {
 
 	public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 		tasksInProgress.remove(task)
-		
+
 		guard let info = infoForTask(task) else {
 			return
 		}
@@ -124,8 +125,9 @@ extension DownloadSession: URLSessionDataDelegate {
 		if let info = infoForTask(dataTask) {
 			info.urlResponse = response
 		}
+		let statusCode = response.forcedStatusCode
 
-		if response.forcedStatusCode == 304 {
+		if statusCode == HTTPResponseCode.notModified {
 
 			if let representedObject = infoForTask(dataTask)?.representedObject {
 				delegate.downloadSession(self, didReceiveNotModifiedResponse: response, representedObject: representedObject)
@@ -145,6 +147,10 @@ extension DownloadSession: URLSessionDataDelegate {
 
 			completionHandler(.cancel)
 			removeTask(dataTask)
+
+			if statusCode == HTTPResponseCode.tooManyRequests {
+				handle429Response(dataTask, response)
+			}
 
 			return
 		}
@@ -179,21 +185,25 @@ private extension DownloadSession {
 			queue.insert(representedObject, at: 0)
 			return
 		}
-		
+
 		guard let request = delegate.downloadSession(self, requestForRepresentedObject: representedObject) else {
 			return
 		}
 
 		var requestToUse = request
-		
+
 		// If received permanent redirect earlier, use that URL.
-		
+
 		if let urlString = request.url?.absoluteString, let redirectedURLString = cachedRedirectForURLString(urlString) {
 			if let redirectedURL = URL(string: redirectedURLString) {
 				requestToUse.url = redirectedURL
 			}
 		}
-		
+
+		if requestShouldBeDroppedDueToActive429(requestToUse) {
+			return
+		}
+
 		let task = urlSession.dataTask(with: requestToUse)
 
 		let info = DownloadInfo(representedObject, urlRequest: requestToUse)
@@ -202,7 +212,7 @@ private extension DownloadSession {
 		tasksPending.insert(task)
 		task.resume()
 	}
-	
+
 	func addDataTaskFromQueueIfNecessary() {
 		guard tasksPending.count < 500, let representedObject = queue.popLast() else { return }
 		addDataTask(representedObject)
@@ -218,49 +228,49 @@ private extension DownloadSession {
 		taskIdentifierToInfoDictionary[task.taskIdentifier] = nil
 
 		addDataTaskFromQueueIfNecessary()
-		
+
 		if tasksInProgress.count + tasksPending.count < 1 {
 			representedObjects.removeAllObjects()
 			delegate.downloadSessionDidCompleteDownloadObjects(self)
 		}
 	}
-	
+
 	func urlStringIsBlackListedRedirect(_ urlString: String) -> Bool {
-		
+
 		// Hotels and similar often do permanent redirects. We can catch some of those.
-		
+
 		let s = urlString.lowercased()
 		let badStrings = ["solutionip", "lodgenet", "monzoon", "landingpage", "btopenzone", "register", "login", "authentic"]
-		
+
 		for oneBadString in badStrings {
 			if s.contains(oneBadString) {
 				return true
 			}
 		}
-		
+
 		return false
 	}
-	
+
 	func cacheRedirect(_ oldURLString: String, _ newURLString: String) {
 		if urlStringIsBlackListedRedirect(newURLString) {
 			return
 		}
 		redirectCache[oldURLString] = newURLString
 	}
-	
+
 	func cachedRedirectForURLString(_ urlString: String) -> String? {
-		
+
 		// Follow chains of redirects, but avoid loops.
-		
+
 		var urlStrings = Set<String>()
 		urlStrings.insert(urlString)
-		
+
 		var currentString = urlString
-		
+
 		while(true) {
-			
+
 			if let oneRedirectString = redirectCache[currentString] {
-				
+
 				if urlStrings.contains(oneRedirectString) {
 					// Cycle. Bail.
 					return nil
@@ -268,13 +278,95 @@ private extension DownloadSession {
 				urlStrings.insert(oneRedirectString)
 				currentString = oneRedirectString
 			}
-				
+
 			else {
 				break
 			}
 		}
-		
+
 		return currentString == urlString ? nil : currentString
+	}
+
+	// MARK: - 429 Too Many Requests
+
+	func handle429Response(_ dataTask: URLSessionDataTask, _ response: URLResponse) {
+
+		guard let message = createHTTPResponse429(dataTask, response) else {
+			return
+		}
+
+		retryAfterMessages[message.host] = message
+		cancelAndRemoveTasksWithHost(message.host)
+	}
+
+	func createHTTPResponse429(_ dataTask: URLSessionDataTask, _ response: URLResponse) -> HTTPResponse429? {
+
+		guard let url = dataTask.currentRequest?.url ?? dataTask.originalRequest?.url else {
+			return nil
+		}
+		guard let httpResponse = response as? HTTPURLResponse else {
+			return nil
+		}
+		guard let retryAfterValue = httpResponse.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) else {
+			return nil
+		}
+		guard let retryAfterSeconds = Int(retryAfterValue), retryAfterSeconds > 0 else {
+			return nil
+		}
+
+		return HTTPResponse429(url: url, retryAfterSeconds: retryAfterSeconds)
+	}
+
+	func cancelAndRemoveTasksWithHost(_ host: String) {
+
+		cancelAndRemoveTasksWithHost(host, in: tasksInProgress)
+		cancelAndRemoveTasksWithHost(host, in: tasksPending)
+	}
+
+	func cancelAndRemoveTasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) {
+
+		let lowercaseHost = host.lowercased()
+
+		let tasksToRemove = tasks.filter { task in
+			if let taskHost = task.lowercaseHost, taskHost.contains(lowercaseHost) {
+				return false
+			}
+			return true
+		}
+
+		for task in tasksToRemove {
+			task.cancel()
+		}
+		for task in tasksToRemove {
+			removeTask(task)
+		}
+	}
+
+	func requestShouldBeDroppedDueToActive429(_ request: URLRequest) -> Bool {
+
+		guard let host = request.url?.host() else {
+			return false
+		}
+		guard let retryAfterMessage = retryAfterMessages[host] else {
+			return false
+		}
+
+		if retryAfterMessage.resumeDate < Date() {
+			retryAfterMessages[host] = nil
+			return false
+		}
+
+		return true
+	}
+}
+
+extension URLSessionTask {
+
+	var lowercaseHost: String? {
+		guard let request = currentRequest ?? originalRequest else {
+			return nil
+		}
+		return request.url?.host()?.lowercased()
 	}
 }
 
@@ -304,4 +396,3 @@ private final class DownloadInfo {
 		data.append(d)
 	}
 }
-

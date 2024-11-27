@@ -24,4 +24,5 @@ public struct HTTPResponseHeader {
 	public static let etag = "Etag"
 
 	public static let cacheControl = "Cache-Control"
+	public static let retryAfter = "Retry-After"
 }
