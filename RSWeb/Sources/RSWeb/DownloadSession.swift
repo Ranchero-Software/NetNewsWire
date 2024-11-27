@@ -156,23 +156,22 @@ private extension DownloadSession {
 			return
 		}
 
-		let request = URLRequest(url: url)
-		var requestToUse = request
+
+		var urlToUse = url
 
 		// If received permanent redirect earlier, use that URL.
-
 		let urlString = url.absoluteString
 		if let redirectedURLString = cachedRedirectForURLString(urlString) {
 			if let redirectedURL = URL(string: redirectedURLString) {
-				requestToUse.url = redirectedURL
+				urlToUse = redirectedURL
 			}
 		}
 
-		if requestShouldBeDroppedDueToActive429(requestToUse) {
+		if requestShouldBeDroppedDueToActive429(urlToUse) {
 			return
 		}
 
-		let task = urlSession.dataTask(with: requestToUse)
+		let task = urlSession.dataTask(with: urlToUse)
 
 		let info = DownloadInfo(url)
 		taskIdentifierToInfoDictionary[task.taskIdentifier] = info
@@ -310,9 +309,9 @@ private extension DownloadSession {
 		}
 	}
 
-	func requestShouldBeDroppedDueToActive429(_ request: URLRequest) -> Bool {
+	func requestShouldBeDroppedDueToActive429(_ url: URL) -> Bool {
 
-		guard let host = request.url?.host() else {
+		guard let host = url.host() else {
 			return false
 		}
 		guard let retryAfterMessage = retryAfterMessages[host] else {
