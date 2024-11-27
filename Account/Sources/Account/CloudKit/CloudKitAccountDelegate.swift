@@ -713,7 +713,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 	
-	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?, completion: @escaping () -> Void) {
+	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?, completion: (() -> Void)?) {
 		// New records with a read status aren't really new, they just didn't have the read article stored
 		let group = DispatchGroup()
 		if let new = new {
@@ -736,7 +736,7 @@ private extension CloudKitAccountDelegate {
 		
 		group.notify(queue: DispatchQueue.global(qos: .userInitiated)) {
 			DispatchQueue.main.async {
-				completion()
+				completion?()
 			}
 		}
 	}
@@ -798,15 +798,11 @@ private extension CloudKitAccountDelegate {
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
-		refreshProgress.completeTask()
-	}
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges) {
 		self.storeArticleChanges(new: articleChanges.newArticles,
 								 updated: articleChanges.updatedArticles,
 								 deleted: articleChanges.deletedArticles,
-								 completion: completion)
+								 completion: nil)
 	}
 	
 }

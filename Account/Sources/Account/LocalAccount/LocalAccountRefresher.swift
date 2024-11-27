@@ -14,8 +14,7 @@ import Articles
 import ArticlesDatabase
 
 protocol LocalAccountRefresherDelegate {
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed)
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void)
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges)
 }
 
 final class LocalAccountRefresher {
@@ -23,18 +22,30 @@ final class LocalAccountRefresher {
 	private var completion: (() -> Void)? = nil
 	private var isSuspended = false
 	var delegate: LocalAccountRefresherDelegate?
-
+	
 	private lazy var downloadSession: DownloadSession = {
 		return DownloadSession(delegate: self)
 	}()
+
+	private var urlToFeedDictionary = [String: WebFeed]()
 
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
 		guard !feeds.isEmpty else {
 			completion?()
 			return
 		}
+
+		urlToFeedDictionary.removeAll()
+		for feed in feeds {
+			urlToFeedDictionary[feed.url] = feed
+		}
+
+		let urls = feeds.compactMap { feed in
+			URL(unicodeString: feed.url)
+		}
+
 		self.completion = completion
-		downloadSession.downloadObjects(feeds as NSSet)
+		downloadSession.download(Set(urls))
 	}
 
 	public func suspend() {
@@ -51,100 +62,50 @@ final class LocalAccountRefresher {
 
 extension LocalAccountRefresher: DownloadSessionDelegate {
 
-	func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
-		guard let feed = representedObject as? WebFeed else {
-			return nil
-		}
-		guard let url = URL(string: feed.url) else {
-			return nil
-		}
+	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
 
-		return URLRequest(url: url)
-	}
-	
-	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void) {
-		let feed = representedObject as! WebFeed
-		
+		guard let feed = urlToFeedDictionary[url.absoluteString] else {
+			return
+		}
 		guard !data.isEmpty, !isSuspended else {
-			completion()
-			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			return
 		}
 
-		if let error = error {
-			print("Error downloading \(feed.url) - \(error)")
-			completion()
-			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+		if let error {
+			print("Error downloading \(url) - \(error)")
 			return
 		}
 
 		let dataHash = data.md5String
 		if dataHash == feed.contentHash {
-			completion()
-			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			return
 		}
 
 		let parserData = ParserData(url: feed.url, data: data)
 		FeedParser.parse(parserData) { (parsedFeed, error) in
 			
-			guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
-				completion()
-				self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+			guard let account = feed.account, let parsedFeed, error == nil else {
 				return
 			}
 			
 			account.update(feed, with: parsedFeed) { result in
 				if case .success(let articleChanges) = result {
 					feed.contentHash = dataHash
-					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges) {
-						completion()
-					}
-				} else {
-					completion()
-					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges)
 				}
 			}
-			
 		}
 	}
 	
-	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
-		let feed = representedObject as! WebFeed
-		guard !isSuspended else {
-			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, url: URL) -> Bool {
+
+		guard !data.isDefinitelyNotFeed(), !isSuspended else {
 			return false
 		}
-		
-		if data.isEmpty {
-			return true
-		}
-		
-		if data.isDefinitelyNotFeed() {
-			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-			return false
-		}
-		
-		return true		
-	}
-
-	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
-		let feed = representedObject as! WebFeed
-		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-	}
-
-	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
-		let feed = representedObject as! WebFeed
-		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+		return true
 	}
 	
-	func downloadSession(_ downloadSession: DownloadSession, didDiscardDuplicateRepresentedObject representedObject: AnyObject) {
-		let feed = representedObject as! WebFeed
-		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
-	}
-
-	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession) {
+	func downloadSessionDidComplete(_ downloadSession: DownloadSession) {
 		completion?()
 		completion = nil
 	}

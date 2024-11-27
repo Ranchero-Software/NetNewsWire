@@ -217,16 +217,9 @@ final class LocalAccountDelegate: AccountDelegate {
 }
 
 extension LocalAccountDelegate: LocalAccountRefresherDelegate {
-	
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
-		refreshProgress.completeTask()
+		
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges) {
 	}
-	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-		completion()
-	}
-
 }
 
 private extension LocalAccountDelegate {
