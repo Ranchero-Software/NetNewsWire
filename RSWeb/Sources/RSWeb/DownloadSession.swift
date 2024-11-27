@@ -138,8 +138,6 @@ extension DownloadSession: URLSessionDataDelegate {
 		info.addData(data)
 
 		if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
-
-			info.canceled = true
 			dataTask.cancel()
 			removeTask(dataTask)
 		}
@@ -344,12 +342,7 @@ private final class DownloadInfo {
 	let url: URL
 	let data = NSMutableData()
 	var urlResponse: URLResponse?
-	var canceled = false
-	
-	var statusCode: Int {
-		return urlResponse?.forcedStatusCode ?? 0
-	}
-	
+
 	init(_ url: URL) {
 
 		self.url = url
