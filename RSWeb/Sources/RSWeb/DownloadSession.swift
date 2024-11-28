@@ -9,7 +9,7 @@
 import Foundation
 
 // Create a DownloadSessionDelegate, then create a DownloadSession.
-// To download things: call downloadObjects, with a set of represented objects, to download things. DownloadSession will call the various delegate methods.
+// To download things: call download with a set of URLs. DownloadSession will call the various delegate methods.
 
 public protocol DownloadSessionDelegate {
 
@@ -153,7 +153,6 @@ private extension DownloadSession {
 			queue.insert(url, at: 0)
 			return
 		}
-
 
 		var urlToUse = url
 
