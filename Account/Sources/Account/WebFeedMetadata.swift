@@ -26,7 +26,6 @@ final class WebFeedMetadata: Codable {
 		case contentHash
 		case isNotifyAboutNewArticles
 		case isArticleExtractorAlwaysOn
-		case sinceToken
 		case externalID = "subscriptionID"
 		case folderRelationship
 	}
@@ -103,14 +102,6 @@ final class WebFeedMetadata: Codable {
 		}
 	}
 
-	var sinceToken: String? {
-		didSet {
-			if externalID != oldValue {
-				valueDidChange(.externalID)
-			}
-		}
-	}
-	
 	var externalID: String? {
 		didSet {
 			if externalID != oldValue {
