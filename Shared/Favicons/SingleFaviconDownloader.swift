@@ -139,7 +139,7 @@ private extension SingleFaviconDownloader {
 			return
 		}
 
-		downloadUsingCache(url) { (data, response, error) in
+		Downloader.shared.download(url) { (data, response, error) in
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				self.saveToDisk(data)

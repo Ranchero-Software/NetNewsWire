@@ -14,8 +14,8 @@ import RSCore
 class FeedFinder {
 	
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
-		downloadAddingToCache(url) { (data, response, error) in
-			
+		Downloader.shared.download(url) { (data, response, error) in
+
 			if response?.forcedStatusCode == 404 {
 				if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
 					urlComponents.path = "\(urlComponents.path).json"
@@ -147,7 +147,7 @@ private extension FeedFinder {
 			}
 			
 			group.enter()
-			downloadUsingCache(url) { (data, response, error) in
+			Downloader.shared.download(url) { (data, response, error) in
 				if let data = data, let response = response, response.statusIsOK, error == nil {
 					if self.isFeed(data, downloadFeedSpecifier.urlString) {
 						addFeedSpecifier(downloadFeedSpecifier, feedSpecifiers: &resultFeedSpecifiers)

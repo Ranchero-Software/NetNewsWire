@@ -103,7 +103,7 @@ private extension ImageDownloader {
 			return
 		}
 
-		downloadUsingCache(imageURL) { (data, response, error) in
+		Downloader.shared.download(imageURL) { (data, response, error) in
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				self.saveToDisk(url, data)

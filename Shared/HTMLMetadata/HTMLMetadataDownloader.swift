@@ -20,7 +20,7 @@ struct HTMLMetadataDownloader {
 			return
 		}
 
-		downloadUsingCache(actualURL) { (data, response, error) in
+		Downloader.shared.download(actualURL) { (data, response, error) in
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				let urlToUse = response.url ?? actualURL
 				let parserData = ParserData(url: urlToUse.absoluteString, data: data)
