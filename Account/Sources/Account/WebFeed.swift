@@ -123,15 +123,6 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
 
-	public var conditionalGetInfo: HTTPConditionalGetInfo? {
-		get {
-			return metadata.conditionalGetInfo
-		}
-		set {
-			metadata.conditionalGetInfo = newValue
-		}
-	}
-
 	public var contentHash: String? {
 		get {
 			return metadata.contentHash
@@ -251,14 +242,6 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		self.accountID = account.accountID
 		self.url = url
 		self.metadata = metadata
-	}
-
-	// MARK: - API
-	
-	public func dropConditionalGetInfo() {
-		conditionalGetInfo = nil
-		contentHash = nil
-		sinceToken = nil
 	}
 
 	// MARK: - Hashable

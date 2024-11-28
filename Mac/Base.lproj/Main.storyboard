@@ -509,13 +509,6 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Debug" id="NOT-8E-ykF">
                                     <items>
-                                        <menuItem title="Drop Conditional Get Info" id="btO-Tb-2qS">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="debugDropConditionalGetInfo:" target="Voe-Tx-rLC" id="X24-9X-rwG"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="Dij-Nu-eot"/>
                                         <menuItem title="Test Crash Reporter Window" id="gVd-kQ-efj">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

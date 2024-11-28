@@ -782,7 +782,6 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 				self.articlesZone.deleteArticles(webFeedExternalID) { result in
-					feed.dropConditionalGetInfo()
 					self.refreshProgress.completeTask()
 					completion(result)
 				}

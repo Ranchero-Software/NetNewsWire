@@ -704,12 +704,6 @@ extension AppDelegate {
 		AccountManager.shared.defaultAccount.debugRunSearch()
 	}
 
-	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
-		#if DEBUG
-			AccountManager.shared.activeAccounts.forEach{ $0.debugDropConditionalGetInfo() }
-		#endif
-	}
-
 	@IBAction func debugTestCrashReporterWindow(_ sender: Any?) {
 		#if DEBUG
 			crashReportWindowController = CrashReportWindowController(crashLogText: "This is a test crash log.")

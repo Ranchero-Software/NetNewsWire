@@ -919,12 +919,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	// MARK: - Debug
 
-	public func debugDropConditionalGetInfo() {
-		#if DEBUG
-			flattenedWebFeeds().forEach{ $0.dropConditionalGetInfo() }
-		#endif
-	}
-
 	public func debugRunSearch() {
 		#if DEBUG
 			let t1 = Date()
