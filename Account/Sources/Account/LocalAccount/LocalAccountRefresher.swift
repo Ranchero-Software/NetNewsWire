@@ -19,10 +19,14 @@ protocol LocalAccountRefresherDelegate {
 
 final class LocalAccountRefresher {
 
+	var delegate: LocalAccountRefresherDelegate?
+	lazy var downloadProgress: DownloadProgress = {
+		downloadSession.downloadProgress
+	}()
+
 	private var completion: (() -> Void)? = nil
 	private var isSuspended = false
-	var delegate: LocalAccountRefresherDelegate?
-	
+
 	private lazy var downloadSession: DownloadSession = {
 		return DownloadSession(delegate: self)
 	}()

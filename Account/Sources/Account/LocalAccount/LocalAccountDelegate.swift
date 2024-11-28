@@ -25,12 +25,10 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	weak var account: Account?
 	
-	private lazy var refresher: LocalAccountRefresher? = {
-		let refresher = LocalAccountRefresher()
-		refresher.delegate = self
-		return refresher
+	lazy var refreshProgress: DownloadProgress = {
+		refresher!.downloadProgress
 	}()
-	
+
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
 	
@@ -38,8 +36,12 @@ final class LocalAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	let refreshProgress = DownloadProgress(numberOfTasks: 0)
-	
+	private lazy var refresher: LocalAccountRefresher? = {
+		let refresher = LocalAccountRefresher()
+		refresher.delegate = self
+		return refresher
+	}()
+
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		completion()
 	}
@@ -51,7 +53,6 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 
 		let webFeeds = account.flattenedWebFeeds()
-		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
 
 		let group = DispatchGroup()
 
@@ -61,11 +62,9 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			self.refreshProgress.clear()
 			account.metadata.lastArticleFetchEndTime = Date()
 			completion(.success(()))
 		}
-		
 	}
 
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
@@ -79,17 +78,17 @@ final class LocalAccountDelegate: AccountDelegate {
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		completion(.success(()))
 	}
-	
+
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		var fileData: Data?
-		
+
 		do {
 			fileData = try Data(contentsOf: opmlFile)
 		} catch {
 			completion(.failure(error))
 			return
 		}
-		
+
 		guard let opmlData = fileData else {
 			completion(.success(()))
 			return
@@ -119,7 +118,6 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 		
 		completion(.success(()))
-
 	}
 	
 	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
@@ -230,28 +228,24 @@ private extension LocalAccountDelegate {
 		// container before the name has been downloaded.  This will put it in the sidebar
 		// with an Untitled name if we don't delay it being added to the sidebar.
 		BatchUpdate.shared.start()
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		FeedFinder.find(url: url) { result in
 			
 			switch result {
 			case .success(let feedSpecifiers):
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
 					let url = URL(string: bestFeedSpecifier.urlString) else {
-						self.refreshProgress.completeTask()
 						BatchUpdate.shared.end()
 						completion(.failure(AccountError.createErrorNotFound))
 						return
 				}
 				
 				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
-					self.refreshProgress.completeTask()
 					BatchUpdate.shared.end()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
 				}
 				
 				InitialFeedDownloader.download(url) { parsedFeed in
-					self.refreshProgress.completeTask()
 
 					if let parsedFeed = parsedFeed {
 						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
@@ -266,17 +260,12 @@ private extension LocalAccountDelegate {
 						BatchUpdate.shared.end()
 						completion(.failure(AccountError.createErrorNotFound))
 					}
-					
 				}
 				
 			case .failure:
 				BatchUpdate.shared.end()
-				self.refreshProgress.completeTask()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
-			
 		}
-		
 	}
-	
 }

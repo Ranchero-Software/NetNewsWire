@@ -30,9 +30,6 @@ public final class DownloadProgress {
 	
 	public var numberRemaining = 0 {
 		didSet {
-			if numberRemaining == 0 && numberOfTasks != 0 {
-				numberOfTasks = 0
-			}
 			if numberRemaining != oldValue {
 				postDidChangeNotification()
 			}

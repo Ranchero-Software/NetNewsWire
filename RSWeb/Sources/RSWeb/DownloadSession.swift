@@ -19,7 +19,9 @@ public protocol DownloadSessionDelegate {
 }
 
 @objc public final class DownloadSession: NSObject {
-	
+
+	public let downloadProgress = DownloadProgress(numberOfTasks: 0)
+
 	private var urlSession: URLSession!
 	private var tasksInProgress = Set<URLSessionTask>()
 	private var tasksPending = Set<URLSessionTask>()
@@ -71,6 +73,7 @@ public protocol DownloadSessionDelegate {
 			addDataTask(url)
 		}
 		urlsInSession.formUnion(urls)
+		updateDownloadProgress()
 	}
 }
 
@@ -79,10 +82,12 @@ public protocol DownloadSessionDelegate {
 extension DownloadSession: URLSessionTaskDelegate {
 
 	public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-		tasksInProgress.remove(task)
+
+		defer {
+			removeTask(task)
+		}
 
 		guard let info = infoForTask(task) else {
-			removeTask(task)
 			return
 		}
 
@@ -106,7 +111,11 @@ extension DownloadSession: URLSessionTaskDelegate {
 extension DownloadSession: URLSessionDataDelegate {
 
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-		
+
+		defer {
+			updateDownloadProgress()
+		}
+
 		tasksInProgress.insert(dataTask)
 		tasksPending.remove(dataTask)
 		
@@ -178,8 +187,8 @@ private extension DownloadSession {
 	}
 
 	func addDataTaskFromQueueIfNecessary() {
-		guard tasksPending.count < 500, let representedObject = queue.popLast() else { return }
-		addDataTask(representedObject)
+		guard tasksPending.count < 500, let url = queue.popLast() else { return }
+		addDataTask(url)
 	}
 
 	func infoForTask(_ task: URLSessionTask) -> DownloadInfo? {
@@ -193,10 +202,7 @@ private extension DownloadSession {
 
 		addDataTaskFromQueueIfNecessary()
 
-		if tasksInProgress.count + tasksPending.count < 1 {
-			urlsInSession.removeAll()
-			delegate.downloadSessionDidComplete(self)
-		}
+		updateDownloadProgress()
 	}
 
 	func urlStringIsBlackListedRedirect(_ urlString: String) -> Bool {
@@ -249,6 +255,23 @@ private extension DownloadSession {
 		}
 
 		return currentString == urlString ? nil : currentString
+	}
+
+	// MARK: - Download Progress
+
+	func updateDownloadProgress() {
+
+		downloadProgress.numberOfTasks = urlsInSession.count
+
+		let numberRemaining = tasksPending.count + tasksInProgress.count + queue.count
+		downloadProgress.numberRemaining = min(numberRemaining, downloadProgress.numberOfTasks)
+
+		// Complete?
+		if downloadProgress.numberOfTasks > 0 && downloadProgress.numberRemaining < 1 {
+			delegate.downloadSessionDidComplete(self)
+			urlsInSession.removeAll()
+			downloadProgress.numberOfTasks = 0
+		}
 	}
 
 	// MARK: - 429 Too Many Requests
