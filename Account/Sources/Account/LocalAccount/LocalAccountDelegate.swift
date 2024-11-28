@@ -26,7 +26,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	weak var account: Account?
 	
 	lazy var refreshProgress: DownloadProgress = {
-		refresher!.downloadProgress
+		refresher.downloadProgress
 	}()
 
 	let behaviors: AccountBehaviors = []
@@ -36,7 +36,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	private lazy var refresher: LocalAccountRefresher? = {
+	private lazy var refresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()
 		refresher.delegate = self
 		return refresher
@@ -57,7 +57,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		let group = DispatchGroup()
 
 		group.enter()
-		refresher?.refreshFeeds(webFeeds) {
+		refresher.refreshFeeds(webFeeds) {
 			group.leave()
 		}
 		
@@ -202,7 +202,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	// MARK: Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
-		refresher?.suspend()
+		refresher.suspend()
 	}
 
 	func suspendDatabase() {
@@ -210,7 +210,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func resume() {
-		refresher?.resume()
+		refresher.resume()
 	}
 }
 
