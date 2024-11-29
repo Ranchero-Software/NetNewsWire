@@ -796,13 +796,15 @@ private extension CloudKitAccountDelegate {
 }
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
-	
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: URL) {
+		refreshProgress.completeTask()
+	}
+
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges) {
 		self.storeArticleChanges(new: articleChanges.newArticles,
 								 updated: articleChanges.updatedArticles,
 								 deleted: articleChanges.deletedArticles,
 								 completion: nil)
 	}
-	
 }
-

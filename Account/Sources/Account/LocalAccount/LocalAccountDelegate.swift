@@ -216,6 +216,9 @@ final class LocalAccountDelegate: AccountDelegate {
 
 extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 		
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: URL) {
+	}
+
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges) {
 	}
 }

@@ -14,6 +14,7 @@ import Articles
 import ArticlesDatabase
 
 protocol LocalAccountRefresherDelegate {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: URL)
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges)
 }
 
@@ -68,6 +69,10 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
 
+		defer {
+			delegate?.localAccountRefresher(self, requestCompletedFor: url)
+		}
+		
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
