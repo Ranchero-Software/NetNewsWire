@@ -36,7 +36,9 @@ final class LocalAccountRefresher {
 
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
 
-		guard !feeds.isEmpty else {
+		let filteredFeeds = feeds.filter { !Self.feedIsDisallowed($0) }
+
+		guard !filteredFeeds.isEmpty else {
 			Task { @MainActor in
 				completion?()
 			}
@@ -44,11 +46,11 @@ final class LocalAccountRefresher {
 		}
 
 		urlToFeedDictionary.removeAll()
-		for feed in feeds {
+		for feed in filteredFeeds {
 			urlToFeedDictionary[feed.url] = feed
 		}
 
-		let urls = feeds.compactMap { feed in
+		let urls = filteredFeeds.compactMap { feed in
 			URL(unicodeString: feed.url)
 		}
 
@@ -119,6 +121,36 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			completion?()
 			completion = nil
 		}
+	}
+}
+
+
+// MARK: - Private
+
+private extension LocalAccountRefresher {
+
+	/// These hosts will never return a feed.
+	static let badHosts = ["twitter.com", "www.twitter.com", "x.com", "www.x.com"]
+
+	/// Return true if we won’t download that feed.
+	///
+	/// We will never get a feed from X/Twitter, for instance.
+	static func feedIsDisallowed(_ feed: WebFeed) -> Bool {
+
+		guard let url = URL(unicodeString: feed.url) else {
+			return true
+		}
+		guard let lowercaseHost = url.host()?.lowercased() else {
+			return true
+		}
+
+		for badHost in badHosts {
+			if lowercaseHost == badHost {
+				return true
+			}
+		}
+
+		return false
 	}
 }
 
