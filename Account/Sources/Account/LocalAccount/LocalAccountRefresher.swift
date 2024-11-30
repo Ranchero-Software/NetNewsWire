@@ -130,11 +130,12 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 private extension LocalAccountRefresher {
 
 	/// These hosts will never return a feed.
+	///
+	/// People may still have feeds pointing to Twitter due to our prior
+	/// use of the Twitter API. (Which Twitter took away.)
 	static let badHosts = ["twitter.com", "www.twitter.com", "x.com", "www.x.com"]
 
 	/// Return true if we won’t download that feed.
-	///
-	/// We will never get a feed from X/Twitter, for instance.
 	static func feedIsDisallowed(_ feed: WebFeed) -> Bool {
 
 		guard let url = URL(unicodeString: feed.url) else {
