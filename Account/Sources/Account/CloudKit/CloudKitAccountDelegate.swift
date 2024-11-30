@@ -56,9 +56,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	/// refreshProgress is combined sync progress and feed download progress.
 	let refreshProgress = DownloadProgress(numberOfTasks: 0)
 	private let syncProgress = DownloadProgress(numberOfTasks: 0)
-	private var downloadProgress: DownloadProgress {
-		refresher.downloadProgress
-	}
 
 	init(dataFolder: String) {
 
@@ -71,7 +68,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		self.refresher = LocalAccountRefresher()
 		self.refresher.delegate = self
 
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: downloadProgress)
+		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: refresher.downloadProgress)
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .DownloadProgressDidChange, object: syncProgress)
 	}
 
@@ -485,12 +482,12 @@ private extension CloudKitAccountDelegate {
 
 	func updateRefreshProgress() {
 
-		refreshProgress.numberOfTasks = downloadProgress.numberOfTasks + syncProgress.numberOfTasks
-		refreshProgress.numberRemaining = downloadProgress.numberRemaining + syncProgress.numberRemaining
+		refreshProgress.numberOfTasks = refresher.downloadProgress.numberOfTasks + syncProgress.numberOfTasks
+		refreshProgress.numberRemaining = refresher.downloadProgress.numberRemaining + syncProgress.numberRemaining
 
 		// Complete?
 		if refreshProgress.numberOfTasks > 0 && refreshProgress.numberRemaining < 1 {
-			downloadProgress.numberOfTasks = 0
+			refresher.downloadProgress.numberOfTasks = 0
 			syncProgress.numberOfTasks = 0
 		}
 	}
