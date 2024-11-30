@@ -12,6 +12,7 @@ import RSParser
 import RSWeb
 import Articles
 import ArticlesDatabase
+import os
 
 protocol LocalAccountRefresherDelegate {
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: URL)
@@ -81,7 +82,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 
 		if let error {
-			print("Error downloading \(url) - \(error)")
+			os_log(.debug, "Error downloading \(url) - \(error)")
 			return
 		}
 
