@@ -270,7 +270,6 @@ private extension DownloadSession {
 		if downloadProgress.numberOfTasks > 0 && downloadProgress.numberRemaining < 1 {
 			delegate.downloadSessionDidComplete(self)
 			urlsInSession.removeAll()
-			downloadProgress.numberOfTasks = 0
 		}
 	}
 

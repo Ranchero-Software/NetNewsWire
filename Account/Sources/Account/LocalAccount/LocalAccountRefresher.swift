@@ -15,7 +15,6 @@ import ArticlesDatabase
 import os
 
 protocol LocalAccountRefresherDelegate {
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: URL)
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges)
 }
 
@@ -36,8 +35,11 @@ final class LocalAccountRefresher {
 	private var urlToFeedDictionary = [String: WebFeed]()
 
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
+
 		guard !feeds.isEmpty else {
-			completion?()
+			Task { @MainActor in
+				completion?()
+			}
 			return
 		}
 
@@ -70,10 +72,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
 
-		defer {
-			delegate?.localAccountRefresher(self, requestCompletedFor: url)
-		}
-		
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
@@ -116,8 +114,11 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession) {
-		completion?()
-		completion = nil
+
+		Task { @MainActor in
+			completion?()
+			completion = nil
+		}
 	}
 }
 
