@@ -13,6 +13,7 @@ import Foundation
 
 public protocol DownloadSessionDelegate {
 
+	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, url: URL) -> Bool
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession)
@@ -44,13 +45,14 @@ public protocol DownloadSessionDelegate {
 
 		super.init()
 		
-		let sessionConfiguration = URLSessionConfiguration.default
-		sessionConfiguration.requestCachePolicy = .useProtocolCachePolicy
+		let sessionConfiguration = URLSessionConfiguration.ephemeral
+		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 15.0
 		sessionConfiguration.httpShouldSetCookies = false
 		sessionConfiguration.httpCookieAcceptPolicy = .never
 		sessionConfiguration.httpMaximumConnectionsPerHost = 1
 		sessionConfiguration.httpCookieStorage = nil
+		sessionConfiguration.urlCache = nil
 
 		if let userAgentHeaders = UserAgent.headers() {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
@@ -184,6 +186,11 @@ private extension DownloadSession {
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
 			return
+		}
+
+		var urlRequest = URLRequest(url: urlToUse)
+		if let conditionalGetInfo = delegate.downloadSession(self, conditionalGetInfoFor: url) {
+			conditionalGetInfo.addRequestHeadersToURLRequest(&urlRequest)
 		}
 
 		let task = urlSession.dataTask(with: urlToUse)

@@ -72,14 +72,29 @@ final class LocalAccountRefresher {
 
 extension LocalAccountRefresher: DownloadSessionDelegate {
 
+	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor url: URL) -> HTTPConditionalGetInfo? {
+
+		guard let feed = urlToFeedDictionary[url.absoluteString] else {
+			return nil
+		}
+		return feed.conditionalGetInfo
+	}
+
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
 
+		guard !isSuspended else {
+			return
+		}
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
-		guard !data.isEmpty, !isSuspended else {
-			return
-		}
+
+		let conditionalGetInfo: HTTPConditionalGetInfo? = {
+			if let httpResponse = response as? HTTPURLResponse {
+				return HTTPConditionalGetInfo(urlResponse: httpResponse)
+			}
+			return nil
+		}()
 
 		if let error {
 			os_log(.debug, "Error downloading \(url) - \(error)")
@@ -88,6 +103,10 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 		let dataHash = data.md5String
 		if dataHash == feed.contentHash {
+			// It’s possible that the conditional get info has changed even if the
+			// content hasn’t changed.
+			// https://inessential.com/2024/08/03/netnewswire_and_conditional_get_issues.html
+			feed.conditionalGetInfo = conditionalGetInfo
 			return
 		}
 
@@ -101,6 +120,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			account.update(feed, with: parsedFeed) { result in
 				if case .success(let articleChanges) = result {
 					feed.contentHash = dataHash
+					feed.conditionalGetInfo = conditionalGetInfo
 					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges)
 				}
 			}
