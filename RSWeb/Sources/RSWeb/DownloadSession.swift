@@ -28,12 +28,18 @@ public protocol DownloadSessionDelegate {
 	private var taskIdentifierToInfoDictionary = [Int: DownloadInfo]()
 	private var urlsInSession = Set<URL>()
 	private let delegate: DownloadSessionDelegate
-	private var redirectCache = [String: String]()
+	private var redirectCache = [URL: URL]()
 	private var queue = [URL]()
+
+	// 429 Too Many Requests responses
 	private var retryAfterMessages = [String: HTTPResponse429]()
 
+	/// URLs with 400-499 responses (except for 429).
+	/// These URLs are skipped for the rest of the session.
+	private var urlsWith400s = Set<URL>()
+
 	public init(delegate: DownloadSessionDelegate) {
-		
+
 		self.delegate = delegate
 
 		super.init()
@@ -94,14 +100,16 @@ extension DownloadSession: URLSessionTaskDelegate {
 		delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
 	}
 
+	private static let redirectStatusCodes = Set([HTTPResponseCode.redirectPermanent, HTTPResponseCode.redirectTemporary, HTTPResponseCode.redirectVeryTemporary, HTTPResponseCode.redirectPermanentPreservingMethod])
+
 	public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-		
-		if response.statusCode == 301 || response.statusCode == 308 {
-			if let oldURLString = task.originalRequest?.url?.absoluteString, let newURLString = request.url?.absoluteString {
-				cacheRedirect(oldURLString, newURLString)
+
+		if Self.redirectStatusCodes.contains(response.statusCode) {
+			if let oldURL = task.originalRequest?.url, let newURL = request.url {
+				cacheRedirect(oldURL, newURL)
 			}
 		}
-		
+
 		completionHandler(request)
 	}
 }
@@ -128,8 +136,12 @@ extension DownloadSession: URLSessionDataDelegate {
 			completionHandler(.cancel)
 			removeTask(dataTask)
 
-			if response.forcedStatusCode == HTTPResponseCode.tooManyRequests {
+			let statusCode = response.forcedStatusCode
+
+			if statusCode == HTTPResponseCode.tooManyRequests {
 				handle429Response(dataTask, response)
+			} else if (400...499).contains(statusCode), let url = response.url {
+				urlsWith400s.insert(url)
 			}
 
 			return
@@ -158,22 +170,19 @@ extension DownloadSession: URLSessionDataDelegate {
 private extension DownloadSession {
 
 	func addDataTask(_ url: URL) {
+
 		guard tasksPending.count < 500 else {
 			queue.insert(url, at: 0)
 			return
 		}
 
-		var urlToUse = url
-
 		// If received permanent redirect earlier, use that URL.
-		let urlString = url.absoluteString
-		if let redirectedURLString = cachedRedirectForURLString(urlString) {
-			if let redirectedURL = URL(string: redirectedURLString) {
-				urlToUse = redirectedURL
-			}
-		}
+		let urlToUse = cachedRedirect(for: url) ?? url
 
 		if requestShouldBeDroppedDueToActive429(urlToUse) {
+			return
+		}
+		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
 			return
 		}
 
@@ -221,32 +230,32 @@ private extension DownloadSession {
 		return false
 	}
 
-	func cacheRedirect(_ oldURLString: String, _ newURLString: String) {
-		if urlStringIsBlackListedRedirect(newURLString) {
+	func cacheRedirect(_ oldURL: URL, _ newURL: URL) {
+		if urlStringIsBlackListedRedirect(newURL.absoluteString) {
 			return
 		}
-		redirectCache[oldURLString] = newURLString
+		redirectCache[oldURL] = newURL
 	}
 
-	func cachedRedirectForURLString(_ urlString: String) -> String? {
+	func cachedRedirect(for url: URL) -> URL? {
 
 		// Follow chains of redirects, but avoid loops.
 
-		var urlStrings = Set<String>()
-		urlStrings.insert(urlString)
+		var urls = Set<URL>()
+		urls.insert(url)
 
-		var currentString = urlString
+		var currentURL = url
 
 		while(true) {
 
-			if let oneRedirectString = redirectCache[currentString] {
+			if let oneRedirectURL = redirectCache[currentURL] {
 
-				if urlStrings.contains(oneRedirectString) {
+				if urls.contains(oneRedirectURL) {
 					// Cycle. Bail.
 					return nil
 				}
-				urlStrings.insert(oneRedirectString)
-				currentString = oneRedirectString
+				urls.insert(oneRedirectURL)
+				currentURL = oneRedirectURL
 			}
 
 			else {
@@ -254,7 +263,10 @@ private extension DownloadSession {
 			}
 		}
 
-		return currentString == urlString ? nil : currentString
+		if currentURL == url {
+			return nil
+		}
+		return currentURL
 	}
 
 	// MARK: - Download Progress
@@ -343,6 +355,20 @@ private extension DownloadSession {
 		}
 
 		return true
+	}
+
+	// MARK: - 400-499 responses
+
+	func requestShouldBeDroppedDueToPrevious400(_ url: URL) -> Bool {
+
+		if urlsWith400s.contains(url) {
+			return true
+		}
+		if let redirectedURL = cachedRedirect(for: url), urlsWith400s.contains(redirectedURL) {
+			return true
+		}
+
+		return false
 	}
 }
 
