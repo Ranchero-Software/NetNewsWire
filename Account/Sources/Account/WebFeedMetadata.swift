@@ -26,6 +26,7 @@ final class WebFeedMetadata: Codable {
 		case contentHash
 		case isNotifyAboutNewArticles
 		case isArticleExtractorAlwaysOn
+		case conditionalGetInfo
 		case externalID = "subscriptionID"
 		case folderRelationship
 	}
@@ -98,6 +99,14 @@ final class WebFeedMetadata: Codable {
 		didSet {
 			if authors != oldValue {
 				valueDidChange(.authors)
+			}
+		}
+	}
+
+	var conditionalGetInfo: HTTPConditionalGetInfo? {
+		didSet {
+			if conditionalGetInfo != oldValue {
+				valueDidChange(.conditionalGetInfo)
 			}
 		}
 	}
