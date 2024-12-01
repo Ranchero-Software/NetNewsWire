@@ -32,7 +32,8 @@ public struct HTTPResponseCode {
 	public static let useProxy = 305
 	public static let unused = 306
 	public static let redirectVeryTemporary = 307
-	
+	public static let redirectPermanentPreservingMethod = 308
+
 	public static let badRequest = 400
 	public static let unauthorized = 401
 	public static let paymentRequired = 402
