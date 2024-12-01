@@ -188,12 +188,15 @@ private extension DownloadSession {
 			return
 		}
 
-		var urlRequest = URLRequest(url: urlToUse)
-		if let conditionalGetInfo = delegate.downloadSession(self, conditionalGetInfoFor: url) {
-			conditionalGetInfo.addRequestHeadersToURLRequest(&urlRequest)
-		}
+		let urlRequest: URLRequest = {
+			var request = URLRequest(url: urlToUse)
+			if let conditionalGetInfo = delegate.downloadSession(self, conditionalGetInfoFor: url) {
+				conditionalGetInfo.addRequestHeadersToURLRequest(&request)
+			}
+			return request
+		}()
 
-		let task = urlSession.dataTask(with: urlToUse)
+		let task = urlSession.dataTask(with: urlRequest)
 
 		let info = DownloadInfo(url)
 		taskIdentifierToInfoDictionary[task.taskIdentifier] = info
