@@ -6,7 +6,18 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
-        <item>
+       <item>
+            <title>NetNewsWire 6.1.5b3</title>
+            <description><![CDATA[
+                <p>Fix bug introduced in previous beta regarding conditional GET info — all back to normal now</p>
+                <p>Add support for Cache-Control response header. Skip downloading a feed when Cache-Control says it’s too soon</p>
+        ]]></description>
+            <pubDate>Sat, 30 Nov 2024 22:25:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.5b3/NetNewsWire6.1.5b3.zip" sparkle:version="6124" sparkle:shortVersionString="6.1.5b3" length="9810276" type="application/zip" />
+            <sparkle:minimumSystemVersion>13.0.0</sparkle:minimumSystemVersion>
+     </item>
+
+       <item>
             <title>NetNewsWire 6.1.5b2</title>
             <description><![CDATA[
 				<p>Restore toggle sidebar button to toolbar</p>
