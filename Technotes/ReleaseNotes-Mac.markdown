@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+## 6.1.5b3 build 6124 30 Nov 2024
+
+Fix bug introduced in previous beta regarding conditional GET info — all back to normal now
+Write our own support for Cache-Control response header. Skip downloading a feed when Cache-Control says it’s too soon
+
 ## 6.1.5b2 build 6123 29 Nov 2024
 
 Restore toggle sidebar button to toolbar
