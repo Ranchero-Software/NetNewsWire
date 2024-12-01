@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 
 // Create a DownloadSessionDelegate, then create a DownloadSession.
 // To download things: call download with a set of URLs. DownloadSession will call the various delegate methods.
@@ -31,6 +32,7 @@ public protocol DownloadSessionDelegate {
 	private let delegate: DownloadSessionDelegate
 	private var redirectCache = [URL: URL]()
 	private var queue = [URL]()
+	private var cacheControlResponses = [URL: CacheControlInfo]()
 
 	// 429 Too Many Requests responses
 	private var retryAfterMessages = [String: HTTPResponse429]()
@@ -128,9 +130,10 @@ extension DownloadSession: URLSessionDataDelegate {
 
 		tasksInProgress.insert(dataTask)
 		tasksPending.remove(dataTask)
-		
-		if let info = infoForTask(dataTask) {
-			info.urlResponse = response
+
+		let taskInfo = infoForTask(dataTask)
+		if let taskInfo {
+			taskInfo.urlResponse = response
 		}
 
 		if !response.statusIsOK {
@@ -149,6 +152,15 @@ extension DownloadSession: URLSessionDataDelegate {
 			return
 		}
 
+		if let httpURLResponse = response as? HTTPURLResponse, let cacheControlInfo = CacheControlInfo(urlResponse: httpURLResponse) {
+			if let url = taskInfo?.url {
+				cacheControlResponses[url] = cacheControlInfo
+				if let actualURL = response.url, actualURL != url {
+					cacheControlResponses[actualURL] = cacheControlInfo
+				}
+			}
+		}
+		
 		addDataTaskFromQueueIfNecessary()
 		completionHandler(.allow)
 	}
@@ -182,9 +194,15 @@ private extension DownloadSession {
 		let urlToUse = cachedRedirect(for: url) ?? url
 
 		if requestShouldBeDroppedDueToActive429(urlToUse) {
+			os_log(.debug, "Dropping request for previous 429: \(urlToUse)")
 			return
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
+			os_log(.debug, "Dropping request for previous 400-499: \(urlToUse)")
+			return
+		}
+		if requestShouldBeDroppedDueToCacheControl(urlToUse) {
+			os_log(.debug, "Dropping request for Cache-Control reasons: \(urlToUse)")
 			return
 		}
 
@@ -379,6 +397,17 @@ private extension DownloadSession {
 		}
 
 		return false
+	}
+
+	// MARK: - Cache-Control responses
+
+	func requestShouldBeDroppedDueToCacheControl(_ url: URL) -> Bool {
+
+		guard let cacheControlInfo = cacheControlResponses[url] else {
+			return false
+		}
+
+		return cacheControlInfo.dateExpired > Date()
 	}
 }
 
