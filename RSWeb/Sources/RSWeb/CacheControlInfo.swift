@@ -9,12 +9,15 @@ import Foundation
 
 /// Basic Cache-Control handling — just the part we need,
 /// which is to know when we got the response (dateCreated)
-/// and when we can ask again (dateExpired).
+/// and when we can ask again (isExpired, dateExpired).
 public struct CacheControlInfo: Codable, Equatable {
 
 	let dateCreated: Date
 	let maxAge: TimeInterval
 
+	var isExpired: Bool {
+		Date() > dateExpired
+	}
 	var dateExpired: Date {
 		dateCreated + maxAge
 	}
