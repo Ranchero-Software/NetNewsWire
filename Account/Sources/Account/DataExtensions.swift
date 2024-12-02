@@ -27,6 +27,7 @@ public extension WebFeed {
 		public static let authors = "authors"
 		public static let contentHash = "contentHash"
 		public static let conditionalGetInfo = "conditionalGetInfo"
+		public static let cacheControlInfo = "cacheControlInfo"
 	}
 }
 
