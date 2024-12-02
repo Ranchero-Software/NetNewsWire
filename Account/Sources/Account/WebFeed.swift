@@ -132,6 +132,15 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
 
+	public var cacheControlInfo: CacheControlInfo? {
+		get {
+			metadata.cacheControlInfo
+		}
+		set {
+			metadata.cacheControlInfo = newValue
+		}
+	}
+	
 	public var contentHash: String? {
 		get {
 			return metadata.contentHash

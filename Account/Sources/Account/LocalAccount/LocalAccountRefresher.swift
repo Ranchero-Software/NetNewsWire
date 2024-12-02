@@ -89,6 +89,11 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			return
 		}
 
+		if let error {
+			os_log(.debug, "Error downloading \(url) - \(error)")
+			return
+		}
+
 		let conditionalGetInfo: HTTPConditionalGetInfo? = {
 			if let httpResponse = response as? HTTPURLResponse {
 				return HTTPConditionalGetInfo(urlResponse: httpResponse)
@@ -96,9 +101,8 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			return nil
 		}()
 
-		if let error {
-			os_log(.debug, "Error downloading \(url) - \(error)")
-			return
+		if let httpURLResponse = response as? HTTPURLResponse, let cacheControlInfo = CacheControlInfo(urlResponse: httpURLResponse) {
+			feed.cacheControlInfo = cacheControlInfo
 		}
 
 		let dataHash = data.md5String
