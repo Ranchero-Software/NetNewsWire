@@ -13,11 +13,17 @@ final class HTTPResponse429 {
 
 	let url: URL
 	let host: String // lowercased
-	let retryAfterSeconds: Int
-	let dateMessageReceived: Date
-	let resumeDate: Date // dateMessageReceived + retryAfterSeconds
+	let dateCreated: Date
+	let retryAfter: TimeInterval
 
-	init?(url: URL, retryAfterSeconds: Int) {
+	var resumeDate: Date {
+		dateCreated + TimeInterval(retryAfter)
+	}
+	var canResume: Bool {
+		Date() >= resumeDate
+	}
+
+	init?(url: URL, retryAfter: TimeInterval) {
 
 		guard let host = url.host() else {
 			return nil
@@ -25,10 +31,7 @@ final class HTTPResponse429 {
 
 		self.url = url
 		self.host = host.lowercased()
-		self.retryAfterSeconds = retryAfterSeconds
-
-		let currentDate = Date()
-		self.dateMessageReceived = currentDate
-		self.resumeDate = currentDate + TimeInterval(retryAfterSeconds)
+		self.retryAfter = retryAfter
+		self.dateCreated = Date()
 	}
 }

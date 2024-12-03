@@ -180,7 +180,7 @@ private extension LocalAccountRefresher {
 
 	func feedShouldBeSkipped(_ feed: WebFeed) -> Bool {
 
-		if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.isExpired {
+		if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
 			os_log(.debug, "Dropping request for Cache-Control reasons: \(feed.url)")
 			return true
 		}

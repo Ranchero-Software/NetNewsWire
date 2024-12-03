@@ -15,13 +15,13 @@ public struct CacheControlInfo: Codable, Equatable {
 	let dateCreated: Date
 	let maxAge: TimeInterval
 
-	public var isExpired: Bool {
-		Date() > dateExpired
-	}
-	var dateExpired: Date {
+	var resumeDate: Date {
 		dateCreated + maxAge
 	}
-
+	public var canResume: Bool {
+		Date() >= resumeDate
+	}
+	
 	public init?(urlResponse: HTTPURLResponse) {
 		guard let cacheControlValue = urlResponse.valueForHTTPHeaderField(HTTPResponseHeader.cacheControl) else {
 			return nil

@@ -322,11 +322,11 @@ private extension DownloadSession {
 		guard let retryAfterValue = httpResponse.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) else {
 			return nil
 		}
-		guard let retryAfterSeconds = Int(retryAfterValue), retryAfterSeconds > 0 else {
+		guard let retryAfter = TimeInterval(retryAfterValue), retryAfter > 0 else {
 			return nil
 		}
 
-		return HTTPResponse429(url: url, retryAfterSeconds: retryAfterSeconds)
+		return HTTPResponse429(url: url, retryAfter: retryAfter)
 	}
 
 	func cancelAndRemoveTasksWithHost(_ host: String) {
