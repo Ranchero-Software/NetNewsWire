@@ -13,6 +13,7 @@
 	<key>com.apple.security.temporary-exception.apple-events</key>
 	<array>
 		<string>com.red-sweater.marsedit4</string>
+		<string>com.red-sweater.marsedit5</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
