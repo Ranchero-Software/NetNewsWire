@@ -36,7 +36,7 @@ final class LocalAccountRefresher {
 
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
 
-		let filteredFeeds = feeds.filter { !Self.feedIsDisallowed($0) }
+		let filteredFeeds = feeds.filter { !feedShouldBeSkipped($0) }
 
 		guard !filteredFeeds.isEmpty else {
 			Task { @MainActor in
@@ -176,6 +176,16 @@ private extension LocalAccountRefresher {
 		}
 
 		return false
+	}
+
+	func feedShouldBeSkipped(_ feed: WebFeed) -> Bool {
+
+		if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.isExpired {
+			os_log(.debug, "Dropping request for Cache-Control reasons: \(feed.url)")
+			return true
+		}
+
+		return Self.feedIsDisallowed(feed)
 	}
 }
 

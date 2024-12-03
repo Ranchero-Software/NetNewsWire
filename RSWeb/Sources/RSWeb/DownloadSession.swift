@@ -32,7 +32,6 @@ public protocol DownloadSessionDelegate {
 	private let delegate: DownloadSessionDelegate
 	private var redirectCache = [URL: URL]()
 	private var queue = [URL]()
-	private var cacheControlResponses = [URL: CacheControlInfo]()
 
 	// 429 Too Many Requests responses
 	private var retryAfterMessages = [String: HTTPResponse429]()
@@ -152,15 +151,6 @@ extension DownloadSession: URLSessionDataDelegate {
 			return
 		}
 
-		if let httpURLResponse = response as? HTTPURLResponse, let cacheControlInfo = CacheControlInfo(urlResponse: httpURLResponse) {
-			if let url = taskInfo?.url {
-				cacheControlResponses[url] = cacheControlInfo
-				if let actualURL = response.url, actualURL != url {
-					cacheControlResponses[actualURL] = cacheControlInfo
-				}
-			}
-		}
-		
 		addDataTaskFromQueueIfNecessary()
 		completionHandler(.allow)
 	}
@@ -199,10 +189,6 @@ private extension DownloadSession {
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
 			os_log(.debug, "Dropping request for previous 400-499: \(urlToUse)")
-			return
-		}
-		if requestShouldBeDroppedDueToCacheControl(urlToUse) {
-			os_log(.debug, "Dropping request for Cache-Control reasons: \(urlToUse)")
 			return
 		}
 
@@ -397,17 +383,6 @@ private extension DownloadSession {
 		}
 
 		return false
-	}
-
-	// MARK: - Cache-Control responses
-
-	func requestShouldBeDroppedDueToCacheControl(_ url: URL) -> Bool {
-
-		guard let cacheControlInfo = cacheControlResponses[url] else {
-			return false
-		}
-
-		return cacheControlInfo.dateExpired > Date()
 	}
 }
 
