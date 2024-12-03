@@ -90,7 +90,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 
 		if let error {
-			os_log(.debug, "Error downloading \(url) - \(error)")
 			return
 		}
 
@@ -171,6 +170,7 @@ private extension LocalAccountRefresher {
 
 		for badHost in badHosts {
 			if lowercaseHost == badHost {
+				os_log(.debug, "Dropping request because it‘s X/Twitter, which doesn’t provide feeds: \(feed.url)")
 				return true
 			}
 		}
