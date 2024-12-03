@@ -7,6 +7,17 @@
         <language>en</language>
 
        <item>
+            <title>NetNewsWire 6.1.5b4</title>
+            <description><![CDATA[
+                <p>Make Cache-Control responses persist between runs</p>
+                <p>Add MarsEdit 5 to Apple events entitlements</p>
+        ]]></description>
+            <pubDate>Mon, 02 Dec 2024 22:10:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.5b4/NetNewsWire6.1.5b4.zip" sparkle:version="6125" sparkle:shortVersionString="6.1.5b4" length="9809430" type="application/zip" />
+            <sparkle:minimumSystemVersion>13.0.0</sparkle:minimumSystemVersion>
+     </item>
+
+       <item>
             <title>NetNewsWire 6.1.5b3</title>
             <description><![CDATA[
                 <p>Fix bug introduced in previous beta regarding conditional GET info — all back to normal now</p>
