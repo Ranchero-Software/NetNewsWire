@@ -9,7 +9,7 @@ import Foundation
 
 /// Basic Cache-Control handling — just the part we need,
 /// which is to know when we got the response (dateCreated)
-/// and when we can ask again (isExpired, dateExpired).
+/// and when we can ask again (canResume).
 public struct CacheControlInfo: Codable, Equatable {
 
 	let dateCreated: Date
