@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+## 6.1.5b4 build 6125 2 Dec 2024
+
+Make Cache-Control responses persist between runs
+Add MarsEdit 5 to Apple events entitlements
+
 ## 6.1.5b3 build 6124 30 Nov 2024
 
 Fix bug introduced in previous beta regarding conditional GET info — all back to normal now
