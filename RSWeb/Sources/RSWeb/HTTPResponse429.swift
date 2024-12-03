@@ -9,7 +9,7 @@ import Foundation
 
 // 429 Too Many Requests
 
-final class HTTPResponse429 {
+struct HTTPResponse429 {
 
 	let url: URL
 	let host: String // lowercased
