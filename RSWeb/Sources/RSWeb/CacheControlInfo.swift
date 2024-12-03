@@ -15,7 +15,7 @@ public struct CacheControlInfo: Codable, Equatable {
 	let dateCreated: Date
 	let maxAge: TimeInterval
 
-	var isExpired: Bool {
+	public var isExpired: Bool {
 		Date() > dateExpired
 	}
 	var dateExpired: Date {
