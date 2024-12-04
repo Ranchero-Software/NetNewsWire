@@ -7,6 +7,23 @@
         <language>en</language>
 
        <item>
+            <title>NetNewsWire 6.1.5</title>
+            <description><![CDATA[
+			<ul>
+				<li>Restore toggle sidebar button to toolbar</li>
+				<li>Add keyboard shortcut for Copy Article URL and Copy External URL menu items</li>
+				<li>Fix some Applescript bugs</li>
+				<li>Add support for 429 responses and Cache-Control header — will use less bandwidth and will be kinder to servers (for On My Mac and iCloud accounts)</li>
+				<li>Support MarsEdit 5 - it will now appear in Share menu</li>
+				<li>Fix a crashing bug that could happen when adding an account</li>
+			</ul>
+			]]></description>
+            <pubDate>Mon, 03 Dec 2024 20:35:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.5b4/NetNewsWire6.1.5b4.zip" sparkle:version="6126" sparkle:shortVersionString="6.1.5" length="9809430" type="application/zip" />
+            <sparkle:minimumSystemVersion>13.0.0</sparkle:minimumSystemVersion>
+     </item>
+
+       <item>
             <title>NetNewsWire 6.1.5b4</title>
             <description><![CDATA[
                 <p>Make Cache-Control responses persist between runs</p>
