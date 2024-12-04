@@ -1,5 +1,15 @@
 # Mac Release Notes
 
+## 6.1.5 build 6126 3 Dec 2024
+
+Restore toggle sidebar button to toolbar
+Add keyboard shortcut for Copy Article URL and Copy External URL menu items
+Fix some Applescript bugs
+Add support for 429 responses and Cache-Control header — will use less bandwidth and will be kinder to servers (for On My Mac and iCloud accounts)
+Support MarsEdit 5 - it will now appear in Share menu
+Fix a crashing bug that could happen when adding an account
+
+
 ## 6.1.5b4 build 6125 2 Dec 2024
 
 Make Cache-Control responses persist between runs
