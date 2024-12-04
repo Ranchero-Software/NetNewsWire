@@ -138,6 +138,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			
 			os_log(.debug, log: log, "Sync took %{public}.3f seconds", -date.timeIntervalSinceNow)
 			completion(result)
+			self?.refreshProgress.clear()
 		}
 		
 		currentSyncAllOperation = syncAllOperation
