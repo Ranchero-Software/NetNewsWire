@@ -6,6 +6,7 @@ Restore toggle sidebar button to toolbar
 Add keyboard shortcut for Copy Article URL and Copy External URL menu items
 Fix some Applescript support bugs
 Add support for 429 responses and Cache-Control header — will use less bandwidth and will be kinder to servers (for On My Mac and iCloud accounts)
+Fix a bug with conditional GET support
 Support MarsEdit 5 - it will now appear in Share menu
 Fix a crashing bug that could happen when adding an account
 
