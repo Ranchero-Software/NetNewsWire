@@ -6,309 +6,67 @@
         <description>Most recent NetNewsWire releases (not test builds).</description>
         <language>en</language>
 
- 		<item>
-            <title>NetNewsWire 6.0.3</title>
+        <item>
+            <title>NetNewsWire 6.1.4</title>
             <description><![CDATA[
-<p>Feedly: preserve custom feed names with Feedly when moving them between folders</p>
-<p>Feedly: handle API change with deleting and don’t show a spurious error</p>
-<p>NewsBlur: don’t fetch articles marked hidden by NewsBlur</p>
-<p>FreshRSS: add API endpoint URL example in setup form</p>
-<p>iCloud: fixed bug not retaining feeds in a folder where the folder hasn’t been synced yet</p>
-<p>iCloud: fixed bug where iCloud syncing could stop prematurely when the sync database has records not in the local database</p>
-<p>BazQux: fixed bug where BazQux-synced feeds might stop updating</p>
-<p>Feedbin: fixed bug where external URLs in Feedbin feeds might be lost</p>
-<p>Twitter extension: fixed weird bug where an extra https:/ could appear in tweet text</p>
-<p>Preferences: use full-width row style in accounts and extensions panes</p>
-<p>Fixed a crashing bug triggered by running some UI code outside of main thread</p>
-<p>Fixed a crashing bug that could happen when the app tries to find a feed for a website</p>
-<p>Fixed a crashing bug that could happen when rendering tweets</p>
-<p>Changed how images are placed in Twitter articles so that you can better see who Tweeted the image</p>
-<p>Fixed bug where favicons wouldn’t be found when a home page URL has non-ASCII characters</p>
-<p>Fixed bug where words prepended with $ wouldn’t appear in Twitter feeds</p>
-<p>Fixed bug where newlines would be just a space in Twitter feeds</p>
-<p>Feeds list: smart feeds remain visible despite Hide Read Feeds setting</p>
-<p>Keyboard shortcuts: fixed regression where L key wouldn’t go to next unread when feed is all read</p>
-			]]></description>
-            <pubDate>Sun, 05 Sep 2021 12:20:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.3/NetNewsWire6.0.3.zip" sparkle:version="6035" sparkle:shortVersionString="6.0.3" length="10477066" type="application/zip" />
+            <p>Reddit API integration has ended as of June 30, 2023, due to Reddit CEO Steve Huffman’s decision to make apps like NetNewsWire pay to use the Reddit API.</p>
+            <p>This build removes the code for that Reddit integration.</p>
+            <p>For more information, read <a href="https://netnewswire.blog/2023/06/11/netnewswire-to-end.html">NetNewsWire to End Reddit API Use by End of June</a>.</p>
+            ]]></description>
+            <pubDate>Fri, 30 Jun 2023 17:45:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.4/NetNewsWire6.1.4.zip" sparkle:version="6120" sparkle:shortVersionString="6.1.4" length="10313935" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-          <item>
-            <title>NetNewsWire 6.0.2</title>
+        <item>
+            <title>NetNewsWire 6.1.3</title>
             <description><![CDATA[
-<p>Inoreader sync: fixed (hopefully) cause of rate limit errors — now doing background sync of statuses much less often - note that this fix needs to be rolled out across all NetNewsWire users in order for it to have full effect</p>
-<p>Fixed regression with the L key — now works properly again</p>
-			]]></description>
-            <pubDate>Tue, 20 Apr 2021 17:40:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.2/NetNewsWire6.0.2.zip" sparkle:version="6032" sparkle:shortVersionString="6.0.2" length="10453603" type="application/zip" />
+            <p>Show Reddit deprecation notice on startup if needed.</p>
+            <p>For more information, read <a href="https://netnewswire.blog/2023/06/11/netnewswire-to-end.html">NetNewsWire to End Reddit API Use by End of June</a>.</p>
+            ]]></description>
+            <pubDate>Sun, 25 Jun 2023 14:00:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.3/NetNewsWire6.1.3.zip" sparkle:version="6118" sparkle:shortVersionString="6.1.3" length="10876175" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-         <item>
-            <title>NetNewsWire 6.0.1</title>
+        <item>
+            <title>NetNewsWire 6.1.2</title>
             <description><![CDATA[
-<p>Twitter: fixed a date parsing bug that could affect people in some locales, which would prevent Twitter feeds from working for them</p>
-<p>Preferences: adjusted layout of the add account sheet so that it fits on smaller monitors</p>
-<p>Feeds list: properly scale the smart feed icons when sidebar is set to large size in System Preferences</p>
-<p>Feeds list: fixed bug where newly added feed would be called Untitled past the time when the app actually knows its name</p>
-<p>Timeline: fixed bug where next-unread command wouldn’t wrap around when you got to the bottom of the Feeds list</p>
-<p>Timeline: fixed bug updating article display when an article with the same article ID appears more than once (which can happen when a person has multiple accounts)</p>
-<p>iCloud: won’t add feeds that aren’t parseable, which fixes an error upon trying to rename one of these feeds</p>
-<p>Feedbin: fixed a bug with read/unread status syncing</p>
-			]]></description>
-            <pubDate>Thu, 01 Apr 2021 20:22:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.1/NetNewsWire6.0.1.zip" sparkle:version="6030" sparkle:shortVersionString="6.0.1" length="10448727" type="application/zip" />
+            <p><b>Twitter integration has been removed:</b> Twitter has suspended NetNewsWire, and Twitter is removing free access to the Twitter API</p>
+            <p>Since Twitter does not provide RSS feeds, we’ve had to use the Twitter API. Without free access to that API, we can’t read feeds from Twitter.</p>
+            <p>We’ve left your Twitter feeds intact. If you have any starred items from those feeds, they will remain as long as you don’t delete those feeds.</p>
+            <p>You can still read whatever you have already downloaded. However, those feeds will no longer update.</p>
+            <p>Other changes…</p>
+            <p>Fixed a crashing bug that could happen in the sidebar</p>
+            <p>Fixed a bug that could prevent users from accessing BazQux if an article was missing a field</p>
+            <p>Fixed an issue that could prevent Feedly users from syncing if they tried to mark too many articles as read at the same time</p>
+            <p>Updated the Safari extension icon (credit to Louie Mantia for the new icon)</p>
+            ]]></description>
+            <pubDate>Sat, 08 Apr 2023 10:30:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.2/NetNewsWire6.1.2.zip" sparkle:version="6114" sparkle:shortVersionString="6.1.2" length="10873540" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-
-         <item>
-            <title>NetNewsWire 6.0</title>
+        <item>
+            <title>NetNewsWire 6.1</title>
             <description><![CDATA[
-<p>Big Sur app icon</p>
-<p>Big Sur UI (when running on Big Sur)</p>
-<p>App is now sandboxed</p>
-<p>Apple Silicon native code</p>
-<p>Syncing via iCloud</p>
-<p>Syncing via BazQux, Inoreader, NewsBlur, The Old Reader, and FreshRSS</p>
-<p>Share extension, so you can send URLs to NetNewsWire</p>
-<p>Special support for Twitter and Reddit feeds</p>
-<p>Sidebar contextual menu commands for turning on and off Reader View and for notifications</p>
-<p>High resolution icons in the sidebar (when available)</p>
-<p>External link, when available, shows in article view</p>
-<p>Preference to change article text size</p>
-<p>Preference to set preferred browser</p>
-			]]></description>
-            <pubDate>Sat, 27 Mar 2021 14:30:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0/NetNewsWire6.0.zip" sparkle:version="6026" sparkle:shortVersionString="6.0" length="10447422" type="application/zip" />
+                <p>Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences or by adding the theme switcher to the toolbar</p>
+                <p>Copy URLs using repaired, rather than raw, feed links</p>
+                <p>Restore article scroll position on relaunching app</p>
+                <p>Added Copy Article URL and Copy External URL commands to the Edit menu</p>
+                <p>Fixed a bug where using cmd-Q wouldn’t always quit the app as quickly as one might prefer</p>
+                <p>Disallow creation of iCloud account in the app if iCloud and iCloud Drive aren’t both enabled</p>
+                <p>Fixed bug showing quote tweets that only included an image</p>
+                <p>Added a hidden pref to suppress downloading/syncing on start: `defaults write com.ranchero.NetNewsWire-Evergreen DevroeSuppressSyncOnLaunch -bool true`</p>
+                <p>Video autoplay is now disallowed</p>
+                <p>Article view now supports RTL layout</p>
+                <p>Fixed a few font and sizing issues</p>
+                <p>Updated built-in feeds</p>
+                <p>Better alignment for items in General Preferences pane</p>
+            ]]></description>
+            <pubDate>Thu, 07 Apr 2022 10:05:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1/NetNewsWire6.1.zip" sparkle:version="6106" sparkle:shortVersionString="6.1" length="10923258" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
-
-<item>
-    <title>NetNewsWire 5.1.2</title>
-    <description><![CDATA[
-<p>Fixed a crashing bug in the timeline</p>
-<p>Fixed a background color bug in dark mode in the timeline</p>
-<p>Fixed a crashing bug updating the browser popup in Preferences</p>
-<p>Feedbin: fixed bug where credentials couldn’t be updated</p>
-<p>Feedly: fixed bug syncing feed name changes</p>
-<p>Feedly: fixed a bug adding a feed to a Feedly collection that has a + in its name</p>
-<p>On My Mac: increased performance downloading feeds in the On My Mac account</p>
-    ]]></description>
-    <pubDate>Sat, 31 Oct 2020 11:25:00 -0700</pubDate>
-    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.2/NetNewsWire5.1.2.zip" sparkle:version="3016" sparkle:shortVersionString="5.1.2" length="6583447" type="application/zip" />
-    <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-</item>
-
-<item>
-	<title>NetNewsWire 5.1.1</title>
-	<description><![CDATA[
-<p>Fixed a crash handling a specific type of weird URL</p>
-<p>Preferences: restored ability to set default RSS reader</p>
-<p>Fixed bug where o key wouldn’t mark older as read</p>
-<p>Fixed an Open System Preferences button in an alert that didn’t work</p>
-<p>Fixed a possible hang when adding a feed to Feedly (and the feed isn’t found)</p>
-<p>Fixed some UI issues to do with adding a Feedly account</p>
-<p>Fixed contrast in footnotes indicator</p>
-<p>Fixed bug where duplicate accounts (same username and service) could be made</p>
-<p>Fixed bug where open in Safari in background might not open in the background</p>
-	]]></description>
-	<pubDate>Mon, 05 Oct 2020 11:45:00 -0700</pubDate>
-	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.1/NetNewsWire5.1.1.zip" sparkle:version="3012" sparkle:shortVersionString="5.1.1" length="6582076" type="application/zip" />
-	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-</item>
-
-<item>
-	<title>NetNewsWire 5.1</title>
-	<description><![CDATA[
-<p>Changes since 5.0.4:</p>
-<p>Feedly syncing</p>
-<p>Reader view</p>
-<p>Notifications (configure per feed in the Info window)</p>
-<p>Multiple windows - File > New Window</p>
-<p>View > Hide Read Feeds</p>
-<p>View > Hide Read Articles (also a filter button above timeline for this)</p>
-<p>Clean Up command (to immediately hide read articles when hide-read-articles is on)</p>
-<p>Feeds view: remember expansion state between runs</p>
-<p>Timeline: more compact rows (source and date on same line)</p>
-<p>Timeline: sort menu on top</p>
-<p>Timeline: swipe actions</p>
-<p>Article view: shift-space scrolls backwards</p>
-<p>Articles with non-ASCII URLs can now open in browser</p>
-<p>Adding feeds with non-ASCII URLs now works</p>
-<p>AppleScript: article now has a feed property</p>
-<p>Hold down shift to temporarily toggle open-in-browser in background preference</p>
-<p>Article > Mark Above as Read, Mark Below as Read</p>
-<p>Preferences: Choose preferred browser (for viewing web pages)</p>
-<p>Inspector: window title now matches name of thing being inspected</p>
-	]]></description>
-	<pubDate>Sat, 19 Sep 2020 12:45:00 -0700</pubDate>
-	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1/NetNewsWire5.1.zip" sparkle:version="3007" sparkle:shortVersionString="5.1" length="6561360" type="application/zip" />
-	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-</item>
-
-	<item>
-         <title>NetNewsWire 5.0.4</title>
-            <description><![CDATA[
-<p>Performance enhancement: fetching articles is faster and uses less memory</p>
-
-<p>Changed the retention policy to match iOS</p>
-
-<p>Feeds view: fixed bug where multiple sequential deletes could mess up the current selection index</p>
-
-<p>Article view: dealt with Twitter change that caused Twitter embeds to get cut off</p>
-
-<p>Article view: properly size emojis that are actually graphics (from Wordpress, for instance)</p>
-
-<p>Article view: stop playing any audio if the window is closed</p>
-
-<p>Article view: don’t let line lengths get too long</p>
-
-<p>Article view: fixed display of BandCamp widgets</p>
-
-<p>OPML export: use an accessory view instead of an intermediate sheet</p>
-
-<p>Add Folder: disable Add Folder button when text field is empty</p>
-
-<p>Feed icons: get more icons from Feedbin; get favicons from some tricky cases</p>
-
-<p>Add Feed: now allows IPv6 literal URLs</p>
-
-<p>Feed discovery: give less weight to feeds with the word “podcast” in them, because they’re probably not what we want</p>
-
-<p>Refreshing: fixed bug where automatic refreshing might not happening after the computer wakes from sleep</p>
-
-<p>Preferences > Accounts: Renamed “Create” account button to “Add Account”</p>
-
-<p>Fixed bug where a Feedbin article could stay unread right after you select it</p>
-
-<p>Fixed bug where folder names with double quotes would have the quotes replaced with the HTML entity for quote</p>
-
-<p>When importing from NNW 3, the app now ignores script feeds (since we don’t have that feature yet)</p>
-
-<p>Fixed bug where, right after initial launch, the spacebar might not work to go to next unread article</p>
-
-<p>Pressing return now opens the selected article in your browser</p>
-		]]></description>
-            <pubDate>Sat, 08 Aug 2020 11:40:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.0.4/NetNewsWire5.0.4.zip" sparkle:version="2622" sparkle:shortVersionString="5.0.4" length="5130054" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
-        </item>
-
-	<item>
-         <title>NetNewsWire 5.0.3</title>
-            <description><![CDATA[
-<p>Significantly enhanced performance during syncs and refreshes. Fetching articles from the database is also faster.</p>
-
-<p>When running for the first time, and the user previously used NetNewsWire 3, it will automatically import NetNewsWire 3 subscriptions instead of the defaults for new users.</p>
-
-<p>You can also import NetNewsWire 3 subscriptions via the new File > Import NNW3 Subscriptions… command.</p>
-
-<p>Keyboard shortcuts: the 's' key toggles starred status. The 'r' and 'u' keys now both toggle read status (instead of setting read and unread status, respectively).</p>
-
-<p>Articles view: articles where the feed icon is quite large would be slow to render — now they render as fast as other articles.</p>
-
-<p>Articles view: a bug where keyboard shortcuts wouldn’t work after giving the articles view focus has been fixed.</p>
-
-<p>Articles view: YouTube videos could end up small. Fixed.</p>
-
-<p>Articles view: fixed a bug scaling images to fit in the view.</p>
-
-<p>Fixed the space bar when running on Catalina. It wouldn’t advance to the next unread — now it will. (This was due to a change in JavaScript in Catalina.)</p>
-
-<p>Fixed a crashing bug having to do with async database fetches for the timeline.</p>
-
-<p>Feedbin syncing: fixed a bug where renaming a tag on the Feedbin site would result in feeds in NNW ending up at the top level.</p>
-
-<p>Help menu: fixed the expired Slack link.</p>
-
- 		]]></description>
-            <pubDate>Tue, 22 Oct 2019 13:00:00 -0700</pubDate>
-            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.3/NetNewsWire5.0.3.zip" sparkle:version="2618" sparkle:shortVersionString="5.0.3" length="5152201" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
-        </item>
-
-				<item>
-         <title>NetNewsWire 5.0.2</title>
-            <description><![CDATA[
-<p>The app movement monitor has been updated to handle quarantined apps and translocation.</p>
-
-<p>Normally we wouldn’t have pushed out a new release for a single bug fix, but this one is important — we were getting false positives on app movement, which was affecting some users negatively.</p>
- 							]]></description>
-            <pubDate>Sat, 14 Sep 2019 11:20:00 -0700</pubDate>
-            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.2/NetNewsWire5.0.2.zip" sparkle:version="2615" sparkle:shortVersionString="5.0.2" length="5082387" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
-        </item>
-
-				<item>
-         <title>NetNewsWire 5.0.1</title>
-            <description><![CDATA[
-<p>Crash fix: when the app is renamed or moved on disk while running, alert the user and quit the app. This prevents crashes that will happen due to renaming/moving. See Daniel Jalkut on <a href="https://red-sweater.com/blog/3508/app-movement-monitoring">App Movement Monitoring</a> for more info.</p>
-
-<p>(Probably) fix a crashing bug having to do with a callback being called more than once, when it was designed to be called just once.</p>
-
-<p>Sidebar: deleting an empty Feedbin folder no longer makes the sidebar non-responsive.</p>
-
-<p>Timeline: update UI more quickly when a feed icon is downloaded.</p>
-
-<p>Timeline: reload the timeline when show-feed-names is toggled. This fixes a bug where switching between a folder and a feed with the exact same list of articles to appear in the timeline would result in display glitches.</p>
-
-<p>Timeline and article pane: make sure the link for an article isn’t an empty string.</p>
-
-<p>Article pane: stop blocking links containing the string “feedburner” — there are legitimate cases where that string appears.</p>
-
-<p>Article pane: handle figures and iframes as we do images, so they fit in the view.</p>
-
-<p>Article pane: fix white flash on first article load while in Dark Mode.</p>
-
-<p>Preferences > General: add checkbox to hide the unread count in the Dock.</p>
-
-<p>Preferences > Accounts: Updated the UI when a Feedbin user with an expired trial creates an account in NetNewsWire.</p>
-
-<p>RSS parser: Detect RDF (RSS 1.0) feeds that lack an XML header.</p>
-
-<p>RSS parser: Parse Atom-style dates that are missing a T character in the middle.</p>
-
-<p>RSS parser: check for bad permalinks more aggressively. If they don’t contain a / character, then do not consider them permalinks.</p>
-
-<p>RSS parser: don’t let author/title overwrite item/title.</p>
-
-<p>About window: add link to NetNewsWire website.</p>
-
-<p>Feedbin syncing: fixed a bug where starred articles could appear as unread.</p>
-
-<p>Microblog Mac app sharing: when it has to launch the app first, it waits a little longer before sending it content, which should fix a bug where sometimes you get no content in that case.</p>
-
-<p>Enable the Open in Browser command only when a single article is selected.</p>
-
- 							]]></description>
-            <pubDate>Fri, 13 Sep 2019 13:40:00 -0700</pubDate>
-            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0.1/NetNewsWire5.0.1.zip" sparkle:version="2614" sparkle:shortVersionString="5.0.1" length="5095218" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
-        </item>
-
-		<item>
-         <title>NetNewsWire 5.0b6</title>
-            <description><![CDATA[
-            	<p>Okay — one last beta! Pretty sure, at least.</p>
-            	<p>Fixes a bug with undoing deleting feeds or folders. The sidebar wouldn’t update afterward to show that the feed is back. Now it does.</p>
-            	<p>Opens preferences window in center of screen.</p>
-           		<p>Centers main window on first launch.</p>
- 							]]></description>
-            <pubDate>Fri, 23 Aug 2019 18:50:00 -0700</pubDate>
-            <enclosure url="https://github.com/brentsimmons/NetNewsWire/releases/download/mac-5.0b6/NetNewsWire5.0b6.zip" sparkle:version="2608" sparkle:shortVersionString="5.0b6" length="5174618" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
-        </item>
-
-			<item>
-         <title>NetNewsWire 5.0b4</title>
-            <description><![CDATA[
-            	<p>Fixed a bug showing the unread count for the selected feed, smart feed, or folder.</p>
- 							]]></description>
-            <pubDate>Wed, 14 Aug 2019 00:30:00 -0700</pubDate>
-            <enclosure url="https://ranchero.com/downloads/NetNewsWire5.0b4.zip" sparkle:version="2606" sparkle:shortVersionString="5.0b4" length="5168358" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
         </item>
 
     </channel>
