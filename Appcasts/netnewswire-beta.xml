@@ -6,6 +6,19 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
+
+       <item>
+            <title>NetNewsWire 6.1.6</title>
+            <description><![CDATA[
+			<ul>
+				<li>Fix bug clearing sync progress for Feedly accounts</li>
+			</ul>
+			]]></description>
+            <pubDate>Wed, 04 Dec 2024 15:45:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.6/NetNewsWire6.1.6.zip" sparkle:version="6127" sparkle:shortVersionString="6.1.6" length="9809153" type="application/zip" />
+            <sparkle:minimumSystemVersion>13.0.0</sparkle:minimumSystemVersion>
+     </item>
+
        <item>
             <title>NetNewsWire 6.1.5</title>
             <description><![CDATA[
