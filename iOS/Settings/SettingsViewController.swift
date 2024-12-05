@@ -217,27 +217,12 @@ class SettingsViewController: UITableViewController {
 				openURL("https://netnewswire.com/help/ios/6.1/en/")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 1:
-				openURL("https://netnewswire.com/")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 2:
 				openURL(URL.releaseNotes.absoluteString)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 3:
-				openURL("https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/HowToSupportNetNewsWire.markdown")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 4:
-				openURL("https://github.com/brentsimmons/NetNewsWire")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 5:
+			case 2:
 				openURL("https://github.com/brentsimmons/NetNewsWire/issues")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 6:
-				openURL("https://github.com/brentsimmons/NetNewsWire/tree/main/Technotes")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 7:
-				openURL("https://netnewswire.com/slack")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 8:
+			case 3:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
