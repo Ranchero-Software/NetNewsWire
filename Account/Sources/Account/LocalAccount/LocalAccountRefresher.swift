@@ -89,7 +89,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			return
 		}
 
-		if let error {
+		if error != nil {
 			return
 		}
 
