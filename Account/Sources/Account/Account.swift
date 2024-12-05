@@ -699,6 +699,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredAndUnreadCount(for: flattenedWebFeeds().webFeedIDs(), completion: completion)
 	}
 
+	public func fetchCountForStarredArticles() throws -> Int {
+		return try database.fetchStarredArticlesCount(flattenedWebFeeds().webFeedIDs())
+	}
+
 	public func fetchUnreadArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
 		database.fetchUnreadArticleIDsAsync(completion: completion)
 	}
