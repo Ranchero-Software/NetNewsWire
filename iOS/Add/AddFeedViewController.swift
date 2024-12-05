@@ -25,7 +25,6 @@ class AddFeedViewController: UITableViewController {
 	private var folderLabel = ""
 	private var userCancelled = false
 
-	var addFeedType = AddFeedType.web
 	var initialFeed: String?
 	var initialFeedName: String?
 
@@ -147,7 +146,6 @@ class AddFeedViewController: UITableViewController {
 			navController.modalPresentationStyle = .currentContext
 			let folderViewController = navController.topViewController as! AddFeedFolderViewController
 			folderViewController.delegate = self
-			folderViewController.addFeedType = addFeedType
 			folderViewController.initialContainer = container
 			present(navController, animated: true)
 		}

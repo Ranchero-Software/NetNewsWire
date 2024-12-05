@@ -14,16 +14,6 @@ class PreloadedWebView: WKWebView {
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?
 
-	static let userScripts: [WKUserScript] = {
-		var scripts = [WKUserScript]()
-		for fileName in ["main.js", "main_ios.js", "newsfoot.js"] {
-			let scriptSource = try! String(contentsOf: baseURL.appending(path: fileName, directoryHint: .notDirectory))
-			let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true, in: appScriptsWorld)
-			scripts.append(script)
-		}
-		return scripts
-	}()
-
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false
@@ -36,13 +26,6 @@ class PreloadedWebView: WKWebView {
 		configuration.mediaTypesRequiringUserActionForPlayback = .audio
 		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		
-		let userContentController = WKUserContentController()
-		let appScriptsWorld = WKContentWorld.world(name: "NetNewsWire")
-		for script in Self.userScripts {
-			userContentController.addUserScript(script)
-		}
-		configuration.userContentController = userContentController
-
 		super.init(frame: .zero, configuration: configuration)
 	}
 	
