@@ -2928,6 +2928,7 @@
 		};
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 8;
 			files = (
 			);
