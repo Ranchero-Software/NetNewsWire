@@ -86,11 +86,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 0.5)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
-	
+
+	// Which Containers are expanded
 	private var expandedTable = Set<ContainerIdentifier>()
+
+	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
+	private var lastExpandedTable = Set<ContainerIdentifier>()
+
+	// Which Feeds have the Read Articles Filter enabled
 	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+
+	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
-	
+
 	private(set) var preSearchTimelineFeed: Feed?
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
@@ -649,12 +657,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
+		guard indexPath.section > -1 &&
+				indexPath.row > -1 &&
+				indexPath.section < shadowTable.count &&
+				indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
 			return nil
 		}
 		return shadowTable[indexPath.section].feedNodes[indexPath.row].node
 	}
-	
+
 	func indexPathFor(_ node: Node) -> IndexPath? {
 		for i in 0..<shadowTable.count {
 			if let row = shadowTable[i].feedNodes.firstIndex(of: FeedNode(node)) {
@@ -718,12 +729,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		markExpanded(containerID)
 		rebuildBackingStores()
 	}
-	
+
+	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
+	/// Failure to do so will get the Sidebar into an invalid state.
 	func expand(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		lastExpandedTable.insert(containerID)
 		expand(containerID)
 	}
-	
+
 	func expandAllSectionsAndFolders() {
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
@@ -742,11 +756,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		clearTimelineIfNoLongerAvailable()
 	}
 	
+	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
+	/// Failure to do so will get the Sidebar into an invalid state.
 	func collapse(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		lastExpandedTable.remove(containerID)
 		collapse(containerID)
 	}
-	
+
 	func collapseAllFolders() {
 		for sectionNode in treeController.rootNode.childNodes {
 			for topLevelNode in sectionNode.childNodes {
@@ -1111,23 +1128,23 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return timelineFeed == feed
 	}
 
-	func discloseWebFeed(_ webFeed: WebFeed, animations: Animations = [], completion: (() -> Void)? = nil) {
+	func discloseWebFeed(_ webFeed: WebFeed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
 			masterTimelineViewController?.hideSearch()
 		}
-		
+
 		guard let account = webFeed.account else {
 			completion?()
 			return
 		}
-		
+
 		let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
-		
+
 		markExpanded(account)
 		if let parentFolder = parentFolder {
 			markExpanded(parentFolder)
 		}
-	
+
 		if let webFeedFeedID = webFeed.feedID {
 			self.treeControllerDelegate.addFilterException(webFeedFeedID)
 		}
@@ -1135,13 +1152,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 		}
 
-		rebuildBackingStores(completion:  {
+		rebuildBackingStores(initialLoad: initialLoad, completion:  {
 			self.treeControllerDelegate.resetFilterExceptions()
-			self.selectFeed(webFeed, animations: animations, completion: completion)
+			self.selectFeed(nil) {
+				self.selectFeed(webFeed, animations: animations, completion: completion)
+			}
 		})
-		
 	}
-	
+
 	func showStatusBar() {
 		prefersStatusBarHidden = false
 		UIView.animate(withDuration: 0.15) {
@@ -1510,10 +1528,10 @@ private extension SceneCoordinator {
 		var newShadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
-			
+
 			var feedNodes = [FeedNode]()
 			let sectionNode = treeController.rootNode.childAtIndex(i)!
-			
+
 			if isExpanded(sectionNode) {
 				for node in sectionNode.childNodes {
 					feedNodes.append(FeedNode(node))
@@ -1524,26 +1542,27 @@ private extension SceneCoordinator {
 					}
 				}
 			}
-			
+
 			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
 			newShadowTable.append((sectionID: sectionID, feedNodes: feedNodes))
 		}
-		
+
 		// If we have a current Feed IndexPath it is no longer valid and needs reset.
 		if currentFeedIndexPath != nil {
 			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
-		
-		// Compute the differences in the shadow table rows
+
+		// Compute the differences in the shadow table rows and the expanded table entries
 		var changes = [ShadowTableChanges.RowChanges]()
-		
+		let expandedTableDifference = lastExpandedTable.symmetricDifference(expandedTable)
+
 		for (section, newSectionRows) in newShadowTable.enumerated() {
 			var moves = Set<ShadowTableChanges.Move>()
 			var inserts = Set<Int>()
 			var deletes = Set<Int>()
-			
+
 			let oldFeedNodes = shadowTable.first(where: { $0.sectionID == newSectionRows.sectionID })?.feedNodes ?? [FeedNode]()
-			
+
 			let diff = newSectionRows.feedNodes.difference(from: oldFeedNodes).inferringMoves()
 			for change in diff {
 				switch change {
@@ -1561,15 +1580,28 @@ private extension SceneCoordinator {
 					}
 				}
 			}
-			
-			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, moves: moves))
+
+			// We need to reload the difference in expanded rows to get the disclosure arrows correct when programmatically changing their state
+			var reloads = Set<Int>()
+
+			for (index, newFeedNode) in newSectionRows.feedNodes.enumerated() {
+				if let newFeedNodeContainerID = (newFeedNode.node.representedObject as? Container)?.containerID {
+					if expandedTableDifference.contains(newFeedNodeContainerID) {
+						reloads.insert(index)
+					}
+				}
+			}
+
+			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, reloads: reloads, moves: moves))
 		}
+
+		lastExpandedTable = expandedTable
 
 		// Compute the difference in the shadow table sections
 		var moves = Set<ShadowTableChanges.Move>()
 		var inserts = Set<Int>()
 		var deletes = Set<Int>()
-		
+
 		let oldSections = shadowTable.map { $0.sectionID }
 		let newSections = newShadowTable.map { $0.sectionID }
 		let diff = newSections.difference(from: oldSections).inferringMoves()
@@ -1591,10 +1623,10 @@ private extension SceneCoordinator {
 		}
 
 		shadowTable = newShadowTable
-		
+
 		return ShadowTableChanges(deletes: deletes, inserts: inserts, moves: moves, rowChanges: changes)
 	}
-	
+
 	func shadowTableContains(_ feed: Feed) -> Bool {
 		for section in shadowTable {
 			for feedNode in section.feedNodes {
@@ -2258,7 +2290,7 @@ private extension SceneCoordinator {
 				return
 			}
 			
-			self.discloseWebFeed(webFeed) {
+			self.discloseWebFeed(webFeed, initialLoad: true) {
 				self.masterFeedViewController.focus()
 			}
 		}
