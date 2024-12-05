@@ -34,6 +34,7 @@
 		--table-header-border-color: rgba(255,255,255,0.2);
 		--code-background-border: #dedede20;
 		--code-background: #424141;
+		--system-message-color: #777;
 	}
 }
 
@@ -253,17 +254,16 @@ iframe.nnw-constrained {
 .nnw-overflow {
 	overflow-x: auto;
 }
+
+/* appears when a feed is selected on the sidebar  */
 .systemMessage {
-	color: white;
+	color: var(--system-message-color);
 	position: absolute;
 	top: 45%;
 	left: 50%;
 	transform: translateX(-55%) translateY(-50%);
 	-webkit-user-select: none;
 	cursor: default;
-}
-body > .systemMessage {
-	color: var(--system-message-color);
 }
 
 /* Footnotes */
