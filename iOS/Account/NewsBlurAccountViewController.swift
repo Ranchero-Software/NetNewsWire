@@ -21,11 +21,6 @@ class NewsBlurAccountViewController: UITableViewController {
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
 	@IBOutlet weak var footerLabel: UILabel!
-	@IBOutlet weak var onepasswordButton: UIBarButtonItem! {
-		didSet {
-			onepasswordButton.image?.withTintColor(AppAssets.primaryAccentColor)
-		}
-	}
 
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
@@ -158,16 +153,6 @@ class NewsBlurAccountViewController: UITableViewController {
 		self.present(safari, animated: true, completion: nil)
 	}
 	
-	@IBAction func retrievePasswordDetailsFrom1Password(_ sender: Any) {
-		OnePasswordExtension.shared().findLogin(forURLString: "newsblur.com", for: self, sender: sender) { [self] loginDictionary, error in
-			if let loginDictionary = loginDictionary {
-				usernameTextField.text = loginDictionary[AppExtensionUsernameKey] as? String
-				passwordTextField.text = loginDictionary[AppExtensionPasswordKey] as? String
-				actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false)
-			}
-		}
-	}
-
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false)
 	}

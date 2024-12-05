@@ -114,6 +114,10 @@ public final class ArticlesDatabase {
 		return try articlesTable.fetchStarredArticles(webFeedIDs, limit)
 	}
 
+	public func fetchStarredArticlesCount(_ webFeedIDs: Set<String>) throws -> Int {
+		return try articlesTable.fetchStarredArticlesCount(webFeedIDs)
+	}
+
 	public func fetchArticlesMatching(_ searchString: String, _ webFeedIDs: Set<String>) throws -> Set<Article> {
 		return try articlesTable.fetchArticlesMatching(searchString, webFeedIDs)
 	}

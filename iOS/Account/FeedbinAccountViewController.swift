@@ -21,12 +21,7 @@ class FeedbinAccountViewController: UITableViewController {
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
 	@IBOutlet weak var footerLabel: UILabel!
-	@IBOutlet weak var onepasswordButton: UIBarButtonItem! {
-		didSet {
-			onepasswordButton.image?.withTintColor(AppAssets.primaryAccentColor)
-		}
-	}
-	
+
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
 
@@ -51,11 +46,6 @@ class FeedbinAccountViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
-		
-		if !OnePasswordExtension.shared().isAppExtensionAvailable() {
-			onepasswordButton.isEnabled = false
-			onepasswordButton.image?.withTintColor(.clear)
-		}
 	}
 	
 	private func setupFooter() {
@@ -79,17 +69,6 @@ class FeedbinAccountViewController: UITableViewController {
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
 	}
-	
-	@IBAction func retrievePasswordDetailsFrom1Password(_ sender: Any) {
-		OnePasswordExtension.shared().findLogin(forURLString: "feedbin.com", for: self, sender: self) { [self] loginDictionary, error in
-			if let loginDictionary = loginDictionary {
-				emailTextField.text = loginDictionary[AppExtensionUsernameKey] as? String
-				passwordTextField.text = loginDictionary[AppExtensionPasswordKey] as? String
-				actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false)
-			}
-		}
-	}
-	
 	
 	@IBAction func showHidePassword(_ sender: Any) {
 		if passwordTextField.isSecureTextEntry {
