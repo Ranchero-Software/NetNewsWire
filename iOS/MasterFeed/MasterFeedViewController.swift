@@ -72,7 +72,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(configureContextMenu(_:)), name: .ActiveExtensionPointsDidChange, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -504,6 +503,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
+	override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+		if action == #selector(UIResponder.delete(_:)) {
+			return isFirstResponder
+		}
+		return super.canPerformAction(action, withSender: sender)
+	}
+
 	@objc func expandSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath, let node = coordinator.nodeFor(indexPath) {
 			coordinator.expand(node)
@@ -608,6 +614,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 		}
 		
+		if let rowChanges = changes.rowChanges {
+			for rowChange in rowChanges {
+				if let reloads = rowChange.reloadIndexPaths, !reloads.isEmpty {
+					tableView.reloadRows(at: reloads, with: .none)
+				}
+			}
+		}
+
 		completion?()
 	}
 	
@@ -635,7 +649,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			
 			var menuItems: [UIAction] = []
 			
-			let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+			let addWebFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
 			let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
 				self.coordinator.showAddWebFeed()
 			}

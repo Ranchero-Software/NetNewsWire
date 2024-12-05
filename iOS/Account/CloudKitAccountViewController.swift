@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SafariServices
 import Account
 
 enum CloudKitAccountViewControllerError: LocalizedError {
@@ -30,7 +31,7 @@ class CloudKitAccountViewController: UITableViewController {
 	}
 	
 	private func setupFooter() {
-		footerLabel.text = NSLocalizedString("Feeds in your iCloud account will be synced across your Mac and iOS devices.\n\nImportant note: while NetNewsWire itself is very fast, iCloud syncing is sometimes very slow. This can happen after adding a number of feeds and when setting it up on a new device.\n\nIf that happens to you, it may appear stuck. But don’t worry — it’s not. Just let it run.", comment: "iCloud")
+		footerLabel.text = NSLocalizedString("NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices.", comment: "iCloud")
 	}
 
 	@IBAction func cancel(_ sender: Any) {
@@ -62,5 +63,10 @@ class CloudKitAccountViewController: UITableViewController {
 			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
 	}
-	
+
+	@IBAction func openLimitationsAndSolutions(_ sender: Any) {
+		let vc = SFSafariViewController(url: CloudKitWebDocumentation.limitationsAndSolutionsURL)
+		vc.modalPresentationStyle = .pageSheet
+		present(vc, animated: true)
+	}
 }

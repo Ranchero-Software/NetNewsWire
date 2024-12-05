@@ -28,7 +28,7 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 
 final class AppDefaults {
 
-	static let defaultThemeName = "Defaults"
+	static let defaultThemeName = "Default"
 	
 	static let shared = AppDefaults()
 	private init() {}
@@ -41,7 +41,6 @@ final class AppDefaults {
 	
 	struct Key {
 		static let userInterfaceColorPalette = "userInterfaceColorPalette"
-		static let activeExtensionPointIDs = "activeExtensionPointIDs"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
@@ -111,15 +110,6 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
-		}
-	}
-	
-	var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
-		get {
-			return UserDefaults.standard.object(forKey: Key.activeExtensionPointIDs) as? [[AnyHashable : AnyHashable]]
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.activeExtensionPointIDs)
 		}
 	}
 	

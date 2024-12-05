@@ -45,7 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var webFeedIconDownloader: WebFeedIconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
-	
+	var widgetDataEncoder: WidgetDataEncoder!
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -71,8 +72,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		let documentThemesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
 		let documentThemesFolderPath = String(documentThemesFolder.suffix(from: documentAccountsFolder.index(documentThemesFolder.startIndex, offsetBy: 7)))
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: documentThemesFolderPath)
-		
-		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
@@ -114,8 +113,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		extensionContainersFile = ExtensionContainersFile()
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 		
+		widgetDataEncoder = WidgetDataEncoder()
+
 		syncTimer = ArticleStatusSyncTimer()
-		
+
 		#if DEBUG
 		syncTimer!.update()
 		#endif
@@ -175,9 +176,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
+		widgetDataEncoder.encode()
 		waitForSyncTasksToFinish()
 	}
-	
+
 	func prepareAccountsForForeground() {
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
@@ -293,7 +295,7 @@ private extension AppDelegate {
 			return
 		}
 		
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning {
+		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || widgetDataEncoder.isRunning {
 			os_log("Waiting for sync to finish...", log: self.log, type: .info)
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)
@@ -387,9 +389,9 @@ private extension AppDelegate {
 	/// - Parameter task: `BGAppRefreshTask`
 	/// - Warning: As of Xcode 11 beta 2, when triggered from the debugger this doesn't work.
 	func performBackgroundFeedRefresh(with task: BGAppRefreshTask) {
-		
+
 		scheduleBackgroundFeedRefresh() // schedule next refresh
-		
+
 		os_log("Woken to perform account refresh.", log: self.log, type: .info)
 
 		DispatchQueue.main.async {
@@ -398,26 +400,22 @@ private extension AppDelegate {
 			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
-					if #available(iOS 14, *) {
-						try? WidgetDataEncoder.shared.encodeWidgetData()
-					}
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
 					task.setTaskCompleted(success: true)
 				}
 			}
 		}
-					
+
 		// set expiration handler
 		task.expirationHandler = { [weak task] in
-			DispatchQueue.main.sync {
-				self.suspendApplication()
-			}
 			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
-			task?.setTaskCompleted(success: false)
+			DispatchQueue.main.async {
+				self.suspendApplication()
+				task?.setTaskCompleted(success: false)
+			}
 		}
 	}
-	
 }
 
 // Handle Notification Actions
@@ -445,9 +443,6 @@ private extension AppDelegate {
 		self.prepareAccountsForBackground()
 		account!.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
-				if #available(iOS 14, *) {
-					try? WidgetDataEncoder.shared.encodeWidgetData()
-				}
 				self?.prepareAccountsForBackground()
 				self?.suspendApplication()
 			}
@@ -474,9 +469,6 @@ private extension AppDelegate {
 		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
 		account!.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
-				if #available(iOS 14, *) {
-					try? WidgetDataEncoder.shared.encodeWidgetData()
-				}
 				self?.prepareAccountsForBackground()
 				self?.suspendApplication()
 			}

@@ -12,10 +12,6 @@ import RSCore
 import RSTree
 import RSParser
 
-enum AddFeedType {
-	case web
-}
-
 class AddFeedViewController: UITableViewController {
 	
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -37,12 +33,7 @@ class AddFeedViewController: UITableViewController {
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-		
-		switch addFeedType {
-		default:
-			break
-		}
-		
+
 		activityIndicator.isHidden = true
 		activityIndicator.color = .label
 		
