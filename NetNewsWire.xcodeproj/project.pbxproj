@@ -214,8 +214,6 @@
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		519CA8E525841DB700EB079A /* CrashReporter in Frameworks */ = {isa = PBXBuildFile; productRef = 519CA8E425841DB700EB079A /* CrashReporter */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
-		519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */; };
-		519ED47A24482AEB007F8E94 /* EnableExtensionPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */; };
 		51A052CE244FB9D7006C2024 /* AddFeedWIndowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */; };
 		51A16999235E10D700EB091F /* LocalAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A1698F235E10D600EB091F /* LocalAccountViewController.swift */; };
 		51A1699A235E10D700EB091F /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51A16990235E10D600EB091F /* Settings.storyboard */; };
@@ -908,8 +906,6 @@
 		5195C1DB2720BD3000888867 /* MasterFeedRowIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedRowIdentifier.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		519E743422C663F900A78E47 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExtensionPointViewController.swift; sourceTree = "<group>"; };
-		519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionPointViewController.swift; sourceTree = "<group>"; };
 		51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedWIndowController.swift; path = AddFeed/AddFeedWIndowController.swift; sourceTree = "<group>"; };
 		51A1698F235E10D600EB091F /* LocalAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalAccountViewController.swift; sourceTree = "<group>"; };
 		51A16990235E10D600EB091F /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
@@ -1519,11 +1515,9 @@
 			children = (
 				51A16995235E10D600EB091F /* AboutViewController.swift */,
 				51A16992235E10D600EB091F /* AddAccountViewController.swift */,
-				519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */,
 				5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */,
 				510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */,
 				516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */,
-				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
 				51A16990235E10D600EB091F /* Settings.storyboard */,
 				516A09382360A2AE00EAE89B /* SettingsComboTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsComboTableViewCell.xib */,
@@ -3159,7 +3153,6 @@
 				51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */,
 				517630232336657E00E15FFF /* WebViewProvider.swift in Sources */,
 				51E43962238037C400015C31 /* AddFeedFolderViewController.swift in Sources */,
-				519ED47A24482AEB007F8E94 /* EnableExtensionPointViewController.swift in Sources */,
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
 				51FD413B2342BD0500880194 /* MasterTimelineUnreadCountView.swift in Sources */,
 				513146B2235A81A400387FDC /* AddWebFeedIntentHandler.swift in Sources */,
@@ -3275,7 +3268,6 @@
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,
 				516AE9E02372269A007DEEAA /* IconImage.swift in Sources */,
-				519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */,
 				51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */,
 				D3A39865246505DF00F9A366 /* FindInArticleActivity.swift in Sources */,
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,

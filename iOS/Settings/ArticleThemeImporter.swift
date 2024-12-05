@@ -16,7 +16,7 @@ struct ArticleThemeImporter {
 		let localizedTitleText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
 		let title = NSString.localizedStringWithFormat(localizedTitleText as NSString, theme.name, theme.creatorName) as String
 
-		let localizedMessageText = NSLocalizedString("Author's Website:\n%@", comment: "Authors website")
+		let localizedMessageText = NSLocalizedString("Author’s website:\n%@", comment: "Authors website")
 		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.creatorHomePage) as String
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)

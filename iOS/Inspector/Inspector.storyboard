@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -16,21 +16,41 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="xcc-i3-tPS">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="3V2-Cm-ezj">
+                            <rect key="frame" x="0.0" y="282" width="414" height="44"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dgD-uX-vcx">
+                                    <rect key="frame" x="75" y="7" width="264" height="30"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                    <state key="normal" title="iCloud Syncing Limitations &amp; Solutions"/>
+                                    <connections>
+                                        <action selector="openLimitationsAndSolutions:" destination="1m3-fZ-n7g" eventType="touchUpInside" id="DKt-dF-a6L"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstItem="dgD-uX-vcx" firstAttribute="centerX" secondItem="3V2-Cm-ezj" secondAttribute="centerX" id="IDg-5p-aZs"/>
+                                <constraint firstItem="dgD-uX-vcx" firstAttribute="centerY" secondItem="3V2-Cm-ezj" secondAttribute="centerY" id="w0c-Qa-ADC"/>
+                            </constraints>
+                        </view>
                         <sections>
                             <tableViewSection id="vec-ab-Ylg">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="4Ue-UW-e0l" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="18" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="18" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4Ue-UW-e0l" id="9E1-ww-kYn">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="19" translatesAutoresizingMaskIntoConstraints="NO" id="mQa-0W-eVS">
-                                                    <rect key="frame" x="20" y="12.5" width="334" height="18.5"/>
+                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
                                                     <subviews>
                                                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name (Optional)" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LUW-uv-piz">
-                                                            <rect key="frame" x="0.0" y="0.0" width="334" height="18.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="334" height="22"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                             <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                         </textField>
@@ -45,14 +65,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zQY-gY-BOY" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="62" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="61.5" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zQY-gY-BOY" id="dBp-J5-ZsY">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Active" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zf0-Gm-p4F">
-                                                    <rect key="frame" x="20" y="13.5" width="40" height="17"/>
+                                                    <rect key="frame" x="20" y="11.5" width="47.5" height="20.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -75,14 +95,14 @@
                             <tableViewSection id="9UW-s0-NPI">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="FsT-vH-rTo" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="142" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="141" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FsT-vH-rTo" id="rJW-6J-9DM">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TYD-py-8IF" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
+                                                    <rect key="frame" x="0.0" y="-0.5" width="374" height="44.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="WmU-wG-RLQ"/>
                                                     </constraints>
@@ -107,14 +127,14 @@
                             <tableViewSection id="mgY-wW-xiO">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="lgY-im-vCo" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="222" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="220.5" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lgY-im-vCo" id="fIH-xP-nza">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="obv-a5-Pl6" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
+                                                    <rect key="frame" x="0.0" y="-0.5" width="374" height="44.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="WtN-fp-Ldt"/>
                                                     </constraints>
@@ -154,6 +174,7 @@
                     <connections>
                         <outlet property="activeSwitch" destination="6YV-K0-yPS" id="d9M-GP-aTR"/>
                         <outlet property="deleteAccountButton" destination="obv-a5-Pl6" id="idW-gm-BIJ"/>
+                        <outlet property="limitationsAndSolutionsButton" destination="dgD-uX-vcx" id="5ti-AM-xms"/>
                         <outlet property="nameTextField" destination="LUW-uv-piz" id="e2P-Hq-guh"/>
                     </connections>
                 </tableViewController>
@@ -179,7 +200,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZdA-rl-9eP">
-                                                    <rect key="frame" x="20" y="13" width="334" height="18.5"/>
+                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                 </textField>
@@ -199,7 +220,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notify About New Articles" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YV2-gG-lMP">
-                                                    <rect key="frame" x="24" y="13.5" width="167.5" height="17"/>
+                                                    <rect key="frame" x="24" y="11.5" width="196.5" height="20.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -229,7 +250,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Always Use Reader View" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bf4-3X-Rfr">
-                                                    <rect key="frame" x="24" y="13.5" width="158.5" height="17"/>
+                                                    <rect key="frame" x="24" y="11.5" width="187" height="20.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -256,20 +277,20 @@
                             <tableViewSection headerTitle="Home Page" id="dTd-6q-SZd">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="0zc-o6-Sjh" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="198.5" width="374" height="43.5"/>
+                                        <rect key="frame" x="20" y="204.5" width="374" height="22.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0zc-o6-Sjh" id="vJs-XK-ebf">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="22.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HUP-Cu-FGT">
-                                                    <rect key="frame" x="20" y="11" width="301" height="22"/>
+                                                    <rect key="frame" x="20" y="11" width="301" height="0.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="safari" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="p82-kn-lfh">
-                                                    <rect key="frame" x="329" y="10" width="25" height="24"/>
+                                                    <rect key="frame" x="329" y="-1" width="25" height="24.5"/>
                                                     <color key="tintColor" name="primaryAccentColor"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="25" id="Suu-bu-Lar"/>
@@ -300,14 +321,14 @@
                             <tableViewSection headerTitle="Feed URL" id="MtQ-oG-lrU">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="fKD-Vi-B8O">
-                                        <rect key="frame" x="20" y="292" width="374" height="43.5"/>
+                                        <rect key="frame" x="20" y="283" width="374" height="22.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="fKD-Vi-B8O" id="2G0-9f-qwN">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="22.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rOV-XS-bNW" customClass="InteractiveLabel" customModule="NetNewsWire" customModuleProvider="target">
-                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
+                                                    <rect key="frame" x="20" y="11" width="334" height="0.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -353,7 +374,7 @@
             <objects>
                 <navigationController storyboardIdentifier="FeedInspectorNavigationViewController" id="Ybm-En-qAg" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="YQK-Se-EBX">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -369,7 +390,7 @@
             <objects>
                 <navigationController storyboardIdentifier="AccountInspectorNavigationViewController" id="5wr-gz-V2t" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="3Os-JI-n4e">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -380,104 +401,15 @@
             </objects>
             <point key="canvasLocation" x="157" y="-591"/>
         </scene>
-        <!--Extension Point Inspector View Controller-->
-        <scene sceneID="OYN-w4-caJ">
-            <objects>
-                <tableViewController storyboardIdentifier="ExtensionPointInspectorViewController" id="1B7-3Y-VYf" customClass="ExtensionPointInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="sMo-hq-Gps">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <sections>
-                            <tableViewSection id="hGI-fH-ovr">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="hx7-HU-HV2" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="18" width="374" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hx7-HU-HV2" id="fEV-cR-i6h">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YJL-5w-N2S">
-                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="YJL-5w-N2S" firstAttribute="leading" secondItem="fEV-cR-i6h" secondAttribute="leadingMargin" id="kx6-6v-VNw"/>
-                                                <constraint firstItem="YJL-5w-N2S" firstAttribute="top" secondItem="fEV-cR-i6h" secondAttribute="topMargin" id="l6Y-A0-BFs"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="YJL-5w-N2S" secondAttribute="bottom" id="nKi-1U-g6E"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="YJL-5w-N2S" secondAttribute="trailing" id="o5n-Co-7RG"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection id="OcC-FF-jGv">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="k4j-va-uaO" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="98" width="374" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="k4j-va-uaO" id="bQ8-mc-QAj">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IhW-3B-PM7" customClass="VibrantButton" customModule="NetNewsWire" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="44" id="qwy-Nb-VrG"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <state key="normal" title="Deactivate Extension">
-                                                        <color key="titleColor" systemColor="systemRedColor"/>
-                                                    </state>
-                                                    <state key="highlighted">
-                                                        <color key="titleColor" systemColor="systemRedColor"/>
-                                                    </state>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="color" keyPath="backgroundHighlightColor">
-                                                            <color key="value" name="deleteBackgroundColor"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                    </userDefinedRuntimeAttributes>
-                                                    <connections>
-                                                        <action selector="disable:" destination="1B7-3Y-VYf" eventType="touchUpInside" id="hVd-LH-FhC"/>
-                                                    </connections>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="IhW-3B-PM7" firstAttribute="centerY" secondItem="bQ8-mc-QAj" secondAttribute="centerY" id="DLY-b7-amc"/>
-                                                <constraint firstItem="IhW-3B-PM7" firstAttribute="leading" secondItem="bQ8-mc-QAj" secondAttribute="leading" id="LlY-8t-XJf"/>
-                                                <constraint firstAttribute="trailing" secondItem="IhW-3B-PM7" secondAttribute="trailing" id="Ua9-qY-YaN"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                        </sections>
-                        <connections>
-                            <outlet property="dataSource" destination="1B7-3Y-VYf" id="Ro3-xz-VDK"/>
-                            <outlet property="delegate" destination="1B7-3Y-VYf" id="X3w-Zg-zKw"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="bBU-mK-vL1"/>
-                    <connections>
-                        <outlet property="extensionDescription" destination="YJL-5w-N2S" id="zam-r3-KIC"/>
-                    </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="cc3-yd-zmS" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1549" y="-591"/>
-        </scene>
     </scenes>
     <designables>
         <designable name="rOV-XS-bNW"/>
     </designables>
     <resources>
-        <image name="safari" catalog="system" width="128" height="121"/>
-        <image name="safari.fill" catalog="system" width="128" height="121"/>
+        <image name="safari" catalog="system" width="128" height="123"/>
+        <image name="safari.fill" catalog="system" width="128" height="123"/>
         <namedColor name="deleteBackgroundColor">
-            <color red="1" green="0.23100003600120544" blue="0.18799999356269836" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23100002110004425" blue="0.18799999356269836" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="primaryAccentColor">
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -485,6 +417,9 @@
         <namedColor name="secondaryAccentColor">
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemRedColor">
             <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
