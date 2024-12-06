@@ -10,9 +10,9 @@
 	--table-header-border-color: #dedede;
 	--secondary-accent-color: #1145a5;
 	--block-quote-border-color: rgba(0, 0, 0, 0.3);
-	--font-serif: -apple-system-ui-serif, ui-serif, serif;
-	--font-sans: "SF Pro", sans-serif;
-	--font-mono: "SF Mono", Menlo, "Courier New", Courier, monospace;
+	--font-serif: ui-serif, serif;
+	--font-sans: ui-sans-serif, sans-serif;
+	--font-mono: ui-monospace, monospace;
 	--background-color: #fff;
 	--font-color: #111;
 	--code-background-border: transparent;
@@ -193,10 +193,12 @@ iframe.nnw-constrained {
 }
 .article-title {
 	font-family: var(--font-serif);
+	/* fix strange white artifact above headline */
+	-webkit-transform: translate3d(0, 0, 0);
 	font-size: 1.5em;
 	letter-spacing: -0.25px;
 	max-inline-size: 45ch;
-  	text-wrap: balance;
+	text-wrap: balance;
 }
 .article-title h1 {
 	margin-bottom: 10px;
@@ -212,6 +214,8 @@ iframe.nnw-constrained {
 	font-size: 0.9em;
 	align-items: baseline;
 	display: flex;
+	/* fix strange white artifact above byline */
+	-webkit-transform: translate3d(0, 0, 0);
 }
 .articleDateline .byline {
 	font-weight: 600;
