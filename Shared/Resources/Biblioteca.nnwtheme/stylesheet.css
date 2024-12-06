@@ -119,6 +119,7 @@ pre {
 }
 code {
 	font-family: var(--font-mono);
+	font-size: 85%;
 }
 code a,
 pre a {
@@ -425,16 +426,16 @@ body a.footnote:visited,
 		color-scheme: light dark;
 		--background-color: Canvas;
 	}
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--header-table-border-color: rgba(255, 255, 255, 0.3);
+		}
+	}
 	body {
 		word-break: break-word;
 		-webkit-hyphens: none;
 		-webkit-text-size-adjust: none;
 		font-size: [[font-size]]px;
-	}
-
-	pre {
-		border: 1px solid var(--secondary-accent-color);
-		padding: 5px;
 	}
 }
 
