@@ -121,6 +121,10 @@ code {
 	font-family: var(--font-mono);
 	font-size: 85%;
 }
+/* reset size of code in fences */
+pre code {
+	font-size: 100%;
+}
 code a,
 pre a {
 	color: var(--body-code-color);
