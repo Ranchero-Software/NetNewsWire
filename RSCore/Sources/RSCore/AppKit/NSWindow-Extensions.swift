@@ -25,7 +25,7 @@ public extension NSWindow {
 
 	func setPointAndSizeAdjustingForScreen(point: NSPoint, size: NSSize, minimumSize: NSSize) {
 
-		// point.y specifices from the *top* of the screen, even though screen coordinates work from the bottom up. This is for convenience.
+		// point.y specifies from the *top* of the screen, even though screen coordinates work from the bottom up. This is for convenience.
 		// The eventual size may be smaller than requested, since the screen may be small, but not smaller than minimumSize.
 
 		guard let screenFrame = screen?.visibleFrame else {

@@ -12,10 +12,10 @@ to openTabInSafari(theUrl)
 		if (my safariWindow is missing value) then
 			-- first time through, make a new window with the given url in the only tab
 			set newdoc to make new document at front with properties {URL:theUrl}
-			-- because we created the doucument "at front", we know it is window 1
+			-- because we created the document "at front", we know it is window 1
 			set safariWindow to window 1
 		else
-			-- after the first time, make a new tab in the wndow we created the first tim
+			-- after the first time, make a new tab in the window we created the first tim
 			tell safariWindow
 				make new tab with properties {URL:theUrl}
 			end tell
