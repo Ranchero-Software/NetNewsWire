@@ -676,6 +676,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		if let indexPath = coordinator.currentFeedIndexPath,
 			let url = coordinator.homePageURLForFeed(indexPath) {
 			let vc = SFSafariViewController(url: url)
+			vc.modalPresentationStyle = .overFullScreen
 			present(vc, animated: true)
 		}
 	}
