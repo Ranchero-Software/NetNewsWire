@@ -17,7 +17,7 @@
 	--font-color: #111;
 	--code-background-border: transparent;
 	--code-background: #403f3f;
-	--font-size-title: 1.075em;
+	--font-size-title: 1em;
 	--font-size-secondary: 0.8em;
 	--font-size-tertiary: 0.7em;
 }
@@ -220,7 +220,6 @@ iframe.nnw-constrained {
 	font-family: var(--font-serif);
 	-webkit-transform: translate3d(0, 0, 0);
 	font-size: var(--font-size-title);
-	letter-spacing: -0.25px;
 	max-inline-size: 45ch;
 	text-wrap: balance;
 }
@@ -244,6 +243,7 @@ iframe.nnw-constrained {
 	font-size: var(--font-size-secondary);
 	align-items: baseline;
 	display: flex;
+	flex-wrap: wrap;
 }
 @media (min-width: 740px) {
 	.header-container {
@@ -421,9 +421,13 @@ body a.footnote:visited,
 
 /* iOS Specific */
 @supports (-webkit-touch-callout: none) {
+	:root {
+		color-scheme: light dark;
+		--background-color: Canvas;
+	}
 	body {
 		word-break: break-word;
-		-webkit-hyphens: auto;
+		-webkit-hyphens: none;
 		-webkit-text-size-adjust: none;
 		font-size: [[font-size]]px;
 	}
