@@ -280,7 +280,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	private var articleDictionaryNeedsUpdate = true
 	private var _idToArticleDictionary = [String: Article]()
-	private var idToAticleDictionary: [String: Article] {
+	private var idToArticleDictionary: [String: Article] {
 		if articleDictionaryNeedsUpdate {
 			rebuildArticleDictionaries()
 		}
@@ -357,8 +357,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if let activity = activity, let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
 			
 			if let containerExpandedWindowState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-				let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
-				expandedTable = Set(containerIdentifers)
+				let containerIdentifiers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
+				expandedTable = Set(containerIdentifiers)
 			}
 			
 			if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
@@ -676,7 +676,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func articleFor(_ articleID: String) -> Article? {
-		return idToAticleDictionary[articleID]
+		return idToArticleDictionary[articleID]
 	}
 	
 	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
@@ -991,7 +991,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func selectPrevUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
@@ -1007,7 +1007,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
@@ -1459,7 +1459,7 @@ private extension SceneCoordinator {
 	}
 	
 	func ensureFeedIsAvailableToSelect(_ feed: SidebarItem, completion: @escaping () -> Void) {
-		addToFilterExeptionsIfNecessary(feed)
+		addToFilterExceptionsIfNecessary(feed)
 		addShadowTableToFilterExceptions()
 		
 		rebuildBackingStores(completion:  {
@@ -1515,7 +1515,7 @@ private extension SceneCoordinator {
 	
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
 		if !BatchUpdate.shared.isPerforming {
-			addToFilterExeptionsIfNecessary(timelineFeed)
+			addToFilterExceptionsIfNecessary(timelineFeed)
 			treeController.rebuild()
 			treeControllerDelegate.resetFilterExceptions()
 			
