@@ -19,7 +19,6 @@
 	--code-background: #403f3f;
 	--font-size-title: 1em;
 	--font-size-secondary: 0.8em;
-	--font-size-tertiary: 0.7em;
 }
 @media (prefers-color-scheme: dark) {
 	:root {
@@ -44,13 +43,11 @@
 	:root {
 		--font-size-title: 1.15em;
 		--font-size-secondary: 0.9em;
-		--font-size-tertiary: 0.8em;
 	}
 }
 @media (min-width: 740px) {
 	:root {
 		--font-size-title: 1.5em;
-		--font-size-tertiary: 0.9em;
 	}
 }
 
@@ -193,24 +190,34 @@ iframe.nnw-constrained {
 
 /* Article header */
 .header-container {
-	font-size: var(--font-size-tertiary);
+	font-size: var(--font-size-secondary);
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	padding-bottom: 5px;
-	border-bottom: 1px solid var(--header-table-border-color);
+	justify-content: flex-start;
 	font-family: var(--font-sans);
 	font-style: italic;
+	padding-top: 5px;
+}
+@media (min-width: 740px) {
+	.header-container {
+		padding-top: 0;
+		padding-bottom: 5px;
+		border-bottom: 1px solid var(--header-table-border-color);
+		justify-content: center;
+	}
 }
 .header-container img {
-	width: 32px;
-	height: 32px;
-	margin-right: 10px;
-	margin-top: 5px;
-	margin-bottom: 5px;
+	width: 20px;
+	height: 20px;
+	margin-right: 8px;
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 @media (min-width: 740px) {
 	.header-container img {
+		width: 32px;
+		height: 32px;
+		margin-right: 10px;
 		margin-top: 10px;
 		margin-bottom: 10px;
 	}
@@ -229,7 +236,7 @@ iframe.nnw-constrained {
 	text-wrap: balance;
 }
 .article-title h1 {
-	margin-top: 12px;
+	margin-top: 5px;
 	margin-bottom: 10px;
 }
 @media (min-width: 740px) {
@@ -429,11 +436,6 @@ body a.footnote:visited,
 	:root {
 		color-scheme: light dark;
 		--background-color: Canvas;
-	}
-	@media (prefers-color-scheme: dark) {
-		:root {
-			--header-table-border-color: rgba(255, 255, 255, 0.3);
-		}
 	}
 	body {
 		word-break: break-word;
