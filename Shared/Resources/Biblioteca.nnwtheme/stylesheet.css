@@ -59,7 +59,7 @@ body {
 	padding-left: 20px;
 	padding-right: 20px;
 	word-wrap: break-word;
-	max-width: 44em;
+	max-width: 42em;
 	color: var(--font-color);
 	background-color: var(--background-color);
 }
@@ -173,6 +173,9 @@ blockquote {
 	margin-inline-end: 0;
 	padding-inline-start: 15px;
 	border-inline-start: 3px solid var(--block-quote-border-color);
+}
+form {
+	font-family: var(--font-sans);
 }
 iframe {
 	max-width: 100%;
@@ -304,7 +307,12 @@ iframe.nnw-constrained {
 	font-family: var(--font-serif);
 	line-height: var(--body-line-height);
 	margin-top: 1em;
-	margin-bottom: 5em;
+	margin-bottom: 1.25em;
+}
+@media (min-width: 740px) {
+	.article-body {
+		margin-bottom: 4em;
+	}
 }
 .nnw-overflow {
 	overflow-x: auto;
