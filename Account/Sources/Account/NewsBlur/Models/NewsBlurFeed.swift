@@ -8,7 +8,7 @@
 
 import Foundation
 import RSCore
-import RSParser
+import Parser
 
 typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
 

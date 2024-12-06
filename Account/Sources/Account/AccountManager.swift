@@ -215,23 +215,31 @@ public final class AccountManager: UnreadCountProvider {
 	
 	public func suspendNetworkAll() {
 		isSuspended = true
-		accounts.forEach { $0.suspendNetwork() }
+		for account in accounts {
+			account.suspendNetwork()
+		}
 	}
 
 	public func suspendDatabaseAll() {
-		accounts.forEach { $0.suspendDatabase() }
+		for account in accounts {
+			account.suspendDatabase()
+		}
 	}
 
 	public func resumeAll() {
 		isSuspended = false
-		accounts.forEach { $0.resumeDatabaseAndDelegate() }
-		accounts.forEach { $0.resume() }
+		for account in accounts {
+			account.resumeDatabaseAndDelegate()
+		}
+		for account in accounts {
+			account.resume()
+		}
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 		
-		activeAccounts.forEach { account in
+		for account in activeAccounts {
 			group.enter()
 			account.receiveRemoteNotification(userInfo: userInfo) { 
 				group.leave()
@@ -248,7 +256,7 @@ public final class AccountManager: UnreadCountProvider {
 
 		let group = DispatchGroup()
 		
-		activeAccounts.forEach { account in
+		for account in activeAccounts {
 			group.enter()
 			account.refreshAll() { result in
 				group.leave()
@@ -272,7 +280,7 @@ public final class AccountManager: UnreadCountProvider {
 		var syncErrors = [AccountSyncError]()
 		let group = DispatchGroup()
 		
-		activeAccounts.forEach { account in
+		for account in activeAccounts {
 			group.enter()
 			account.refreshAll() { result in
 				group.leave()
@@ -297,9 +305,9 @@ public final class AccountManager: UnreadCountProvider {
 	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 		
-		activeAccounts.forEach {
+		for account in activeAccounts {
 			group.enter()
-			$0.sendArticleStatus() { _ in
+			account.sendArticleStatus() { _ in
 				group.leave()
 			}
 		}
@@ -312,9 +320,9 @@ public final class AccountManager: UnreadCountProvider {
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 		
-		activeAccounts.forEach {
+		for account in activeAccounts {
 			group.enter()
-			$0.syncArticleStatus() { _ in
+			account.syncArticleStatus() { _ in
 				group.leave()
 			}
 		}
@@ -325,7 +333,9 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public func saveAll() {
-		accounts.forEach { $0.save() }
+		for account in accounts {
+			account.save()
+		}
 	}
 	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
@@ -481,13 +491,15 @@ private extension AccountManager {
 		
 		filenames = filenames?.sorted()
 
-		filenames?.forEach { (oneFilename) in
-			guard oneFilename != defaultAccountFolderName else {
-				return
-			}
-			if let oneAccount = loadAccount(oneFilename) {
-				if !duplicateServiceAccount(oneAccount) {
-					accountsDictionary[oneAccount.accountID] = oneAccount
+		if let filenames {
+			for oneFilename in filenames {
+				guard oneFilename != defaultAccountFolderName else {
+					continue
+				}
+				if let oneAccount = loadAccount(oneFilename) {
+					if !duplicateServiceAccount(oneAccount) {
+						accountsDictionary[oneAccount.accountID] = oneAccount
+					}
 				}
 			}
 		}

@@ -48,9 +48,9 @@ final class DeleteCommand: UndoableCommand {
 	func perform() {
 		
 		let group = DispatchGroup()
-		itemSpecifiers.forEach {
+		for itemSpecifier in itemSpecifiers {
 			group.enter()
-			$0.delete() {
+			itemSpecifier.delete() {
 				group.leave()
 			}
 		}
@@ -59,11 +59,12 @@ final class DeleteCommand: UndoableCommand {
 			self.treeController?.rebuild()
 			self.registerUndo()
 		}
-		
 	}
 	
 	func undo() {
-		itemSpecifiers.forEach { $0.restore() }
+		for itemSpecifier in itemSpecifiers {
+			itemSpecifier.restore()
+		}
 		registerRedo()
 	}
 

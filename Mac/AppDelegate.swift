@@ -705,9 +705,11 @@ extension AppDelegate {
 	}
 
 	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
-		#if DEBUG
-			AccountManager.shared.activeAccounts.forEach{ $0.debugDropConditionalGetInfo() }
-		#endif
+#if DEBUG
+		for account in AccountManager.shared.activeAccounts {
+			account.debugDropConditionalGetInfo()
+		}
+#endif
 	}
 
 	@IBAction func debugTestCrashReporterWindow(_ sender: Any?) {

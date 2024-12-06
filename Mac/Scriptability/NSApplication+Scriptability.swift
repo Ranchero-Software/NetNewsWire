@@ -42,9 +42,9 @@ extension NSApplication : ScriptingObjectContainer {
     func selectedArticles() -> NSArray {
         let articles = appDelegate.scriptingSelectedArticles
         let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
-            if let feed = article.feed  {
-                let scriptableFeed = ScriptableFeed(feed, container:self)
-                return ScriptableArticle(article, container:scriptableFeed)
+			if let feed = article.feed, let account = feed.account  {
+                let scriptableFeed = ScriptableFeed(feed, container: ScriptableAccount(account))
+                return ScriptableArticle(article, container: scriptableFeed)
             } else {
                 return nil
             }
@@ -62,7 +62,7 @@ extension NSApplication : ScriptingObjectContainer {
     
     @objc(valueInAccountsWithUniqueID:)
     func valueInAccounts(withUniqueID id:String) -> ScriptableAccount? {
-        let accounts = AccountManager.shared.activeAccounts
+        let accounts = AccountManager.shared.accounts
         guard let account = accounts.first(where:{$0.accountID == id}) else { return nil }
         return ScriptableAccount(account)
     }

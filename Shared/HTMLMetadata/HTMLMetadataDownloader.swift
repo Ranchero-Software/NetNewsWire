@@ -8,13 +8,13 @@
 
 import Foundation
 import RSWeb
-import RSParser
+import Parser
 
 struct HTMLMetadataDownloader {
 
 	static let serialDispatchQueue = DispatchQueue(label: "HTMLMetadataDownloader")
 
-	static func downloadMetadata(for url: String, _ completion: @escaping (RSHTMLMetadata?) -> Void) {
+	static func downloadMetadata(for url: String, _ completion: @escaping (HTMLMetadata?) -> Void) {
 		guard let actualURL = URL(string: url) else {
 			completion(nil)
 			return
@@ -32,9 +32,9 @@ struct HTMLMetadataDownloader {
 		}
 	}
 
-	private static func parseMetadata(with parserData: ParserData, _ completion: @escaping (RSHTMLMetadata?) -> Void) {
+	private static func parseMetadata(with parserData: ParserData, _ completion: @escaping (HTMLMetadata?) -> Void) {
 		serialDispatchQueue.async {
-			let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
+			let htmlMetadata = HTMLMetadataParser.metadata(with: parserData)
 			DispatchQueue.main.async {
 				completion(htmlMetadata)
 			}

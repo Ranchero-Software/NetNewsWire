@@ -10,7 +10,7 @@ import Foundation
 import RSDatabase
 import RSDatabaseObjC
 import Articles
-import RSParser
+import Parser
 
 extension Article {
 	

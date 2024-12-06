@@ -59,7 +59,9 @@ struct QueueCall: Equatable {
 		guard !isPaused else { return }
 		let callsToMake = calls // Make a copy in case calls are added to the queue while performing calls.
 		resetCalls()
-		callsToMake.forEach { $0.perform() }
+		for call in callsToMake {
+			call.perform()
+		}
 	}
 	
 	@objc func timerDidFire(_ sender: Any?) {

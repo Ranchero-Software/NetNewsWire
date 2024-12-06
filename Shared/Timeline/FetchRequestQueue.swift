@@ -24,7 +24,9 @@ final class FetchRequestQueue {
 
 	func cancelAllRequests() {
 		precondition(Thread.isMainThread)
-		pendingRequests.forEach { $0.isCanceled = true }
+		for request in pendingRequests {
+			request.isCanceled = true
+		}
 		currentRequest?.isCanceled = true
 		pendingRequests = [FetchRequestOperation]()
 	}

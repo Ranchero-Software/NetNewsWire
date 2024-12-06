@@ -3,7 +3,7 @@
 <!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
 
 <!-- declare the namespace for using XInclude so we can include the standard suite -->
-<dictionary title="sa;lfsdf" xmlns:xi="http://www.w3.org/2003/XInclude">
+<dictionary title="NetNewsWire Terminology" xmlns:xi="http://www.w3.org/2003/XInclude">
     
     <suite name="Standard Suite" code="core" description="Subset of the Standard Suite.">
         <access-group identifier="com.ranchero.NetNewsWire-Evergreen" access="rw"/>
@@ -34,6 +34,16 @@
             </parameter>
             <result type="specifier" description="The new object."/>
         </command>
+
+		<command name="count" code="corecnte" description="Return the number of elements of a particular class within an object.">
+			<cocoa class="NSCountCommand"/>
+			<access-group identifier="*"/>
+			<direct-parameter type="specifier" requires-access="r" description="The objects to be counted."/>
+			<parameter name="each" code="kocl" type="type" optional="yes" description="The class of objects to be counted." hidden="yes">
+				<cocoa key="ObjectClass"/>
+			</parameter>
+			<result type="integer" description="The count."/>
+		</command>
 
         <class name="application" code="capp" description="The application's top-level scripting object.">
             <cocoa class="NSApplication"/>
@@ -92,6 +102,7 @@
 				<cocoa key="scriptingIsActive"/>
 			</property>
            	<property name="allFeeds" code="Feds" access="r" description="All feeds, including feeds inside folders">
+				<synonym name="allWebFeeds"/>
                 <cocoa key="allFeeds"/>
                 <type type="feed" list="yes"/>
             </property>
@@ -99,6 +110,7 @@
                 <cocoa key="opmlRepresentation"/>
             </property>
             <element type="feed">
+				<synonym name="webFeed"/>
                 <cocoa key="feeds"/>
             </element>
             <element type="folder">
@@ -107,6 +119,7 @@
         </class>
         
         <class name="feed" code="Feed" plural="feeds" description="An RSS feed">
+            <synonym name="webFeed"/>
             <cocoa class="ScriptableFeed"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the feed">
                 <cocoa key="name"/>

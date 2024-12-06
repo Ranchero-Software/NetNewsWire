@@ -12,10 +12,9 @@ class RoundedProgressView: UIProgressView {
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		subviews.forEach { subview in
+		for subview in subviews {
 			subview.layer.masksToBounds = true
 			subview.layer.cornerRadius = bounds.height / 2.0
 		}
 	}
-
 }

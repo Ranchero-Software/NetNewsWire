@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import RSParser
+import Parser
 
 public extension Notification.Name {
 	static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")

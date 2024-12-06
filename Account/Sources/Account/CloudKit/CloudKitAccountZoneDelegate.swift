@@ -84,9 +84,9 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	
 	func removeFeed(_ externalID: String) {
 		if let feed = account?.existingFeed(withExternalID: externalID), let containers = account?.existingContainers(withFeed: feed) {
-			containers.forEach {
+			for container in containers {
 				feed.dropConditionalGetInfo()
-				$0.removeFeed(feed)
+				container.removeFeed(feed)
 			}
 		}
 	}

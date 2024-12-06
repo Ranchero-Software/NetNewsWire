@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 import RSDatabase
-import RSParser
+import Parser
 import Articles
 
 // This file is the entirety of the public API for ArticlesDatabase.framework.

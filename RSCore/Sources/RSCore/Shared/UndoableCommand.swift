@@ -67,10 +67,12 @@ public extension UndoableCommandRunner {
         // Otherwise things like Redo Mark Read are ambiguous.
         // (Do they apply to the previous articles or to the current articles?)
         
-        guard let undoManager = undoManager else {
+        guard let undoManager else {
             return
         }
-        undoableCommands.forEach { undoManager.removeAllActions(withTarget: $0) }
+		for undoableCommand in undoableCommands {
+			undoManager.removeAllActions(withTarget: undoableCommand)
+		}
         undoableCommands = [UndoableCommand]()
     }
 }

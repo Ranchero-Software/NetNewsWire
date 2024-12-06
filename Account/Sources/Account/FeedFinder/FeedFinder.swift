@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import RSWeb
 import RSCore
 
@@ -44,7 +44,7 @@ class FeedFinder {
 				return
 			}
 			
-			if FeedFinder.isFeed(data, url.absoluteString) {
+			if FeedFinder.isFeed(data) {
 				let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
 				completion(.success(Set([feedSpecifier])))
 				return
@@ -149,7 +149,7 @@ private extension FeedFinder {
 			group.enter()
 			downloadUsingCache(url) { (data, response, error) in
 				if let data = data, let response = response, response.statusIsOK, error == nil {
-					if self.isFeed(data, downloadFeedSpecifier.urlString) {
+					if self.isFeed(data) {
 						addFeedSpecifier(downloadFeedSpecifier, feedSpecifiers: &resultFeedSpecifiers)
 					}
 				}
@@ -163,8 +163,7 @@ private extension FeedFinder {
 		}
 	}
 
-	static func isFeed(_ data: Data, _ urlString: String) -> Bool {
-		let parserData = ParserData(url: urlString, data: data)
-		return FeedParser.canParse(parserData)
+	static func isFeed(_ data: Data) -> Bool {
+		return FeedParser.canParse(data)
 	}
 }

@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 import RSCore
-import RSParser
+import Parser
 
 final class OPMLFile {
 	
@@ -82,18 +82,15 @@ private extension OPMLFile {
 		return fileData
 	}
 	
-	func parsedOPMLItems(fileData: Data) -> [RSOPMLItem]? {
-		let parserData = ParserData(url: fileURL.absoluteString, data: fileData)
-		var opmlDocument: RSOPMLDocument?
+	func parsedOPMLItems(fileData: Data) -> [OPMLItem]? {
 
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			os_log(.error, log: log, "OPML Import failed: %@.", error.localizedDescription)
+		let parserData = ParserData(url: fileURL.absoluteString, data: fileData)
+		guard let opmlDocument = OPMLParser.document(with: parserData) else {
+			os_log(.error, log: log, "OPML Import failed")
 			return nil
 		}
-		
-		return opmlDocument?.children
+
+		return opmlDocument.items
 	}
 	
 	func opmlDocument() -> String {

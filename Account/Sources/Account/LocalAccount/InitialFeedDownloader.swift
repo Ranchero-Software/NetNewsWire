@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSParser
+import Parser
 import RSWeb
 
 struct InitialFeedDownloader {
@@ -20,9 +20,11 @@ struct InitialFeedDownloader {
 				return
 			}
 
-			let parserData = ParserData(url: url.absoluteString, data: data)
-			FeedParser.parse(parserData) { (parsedFeed, error) in
-				completion(parsedFeed)
+			Task.detached {
+				let parsedFeed = try? FeedParser.parse(urlString: url.absoluteString, data: data)
+				Task { @MainActor in
+					completion(parsedFeed)
+				}
 			}
 		}
 	}

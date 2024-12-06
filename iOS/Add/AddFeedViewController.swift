@@ -10,7 +10,7 @@ import UIKit
 import Account
 import RSCore
 import RSTree
-import RSParser
+import Parser
 
 enum AddFeedType {
 	case web
