@@ -17,6 +17,9 @@
 	--font-color: #111;
 	--code-background-border: transparent;
 	--code-background: #403f3f;
+	--font-size-title: 1.075em;
+	--font-size-secondary: 0.8em;
+	--font-size-tertiary: 0.7em;
 }
 @media (prefers-color-scheme: dark) {
 	:root {
@@ -35,6 +38,19 @@
 		--code-background-border: #dedede20;
 		--code-background: #424141;
 		--system-message-color: #777;
+	}
+}
+@media (min-width: 400px) {
+	:root {
+		--font-size-title: 1.15em;
+		--font-size-secondary: 0.9em;
+		--font-size-tertiary: 0.8em;
+	}
+}
+@media (min-width: 740px) {
+	:root {
+		--font-size-title: 1.5em;
+		--font-size-tertiary: 0.9em;
 	}
 }
 
@@ -172,10 +188,11 @@ iframe.nnw-constrained {
 
 /* Article header */
 .header-container {
-	font-size: 0.9em;
+	font-size: var(--font-size-tertiary);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	padding-bottom: 5px;
 	border-bottom: 1px solid var(--header-table-border-color);
 	font-family: var(--font-sans);
 	font-style: italic;
@@ -184,6 +201,14 @@ iframe.nnw-constrained {
 	width: 32px;
 	height: 32px;
 	margin-right: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+@media (min-width: 740px) {
+	.header-container img {
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
 }
 .header-container a,
 .header-container a:link,
@@ -193,15 +218,20 @@ iframe.nnw-constrained {
 }
 .article-title {
 	font-family: var(--font-serif);
-	/* fix strange white artifact above headline */
 	-webkit-transform: translate3d(0, 0, 0);
-	font-size: 1.5em;
+	font-size: var(--font-size-title);
 	letter-spacing: -0.25px;
 	max-inline-size: 45ch;
 	text-wrap: balance;
 }
 .article-title h1 {
+	margin-top: 12px;
 	margin-bottom: 10px;
+}
+@media (min-width: 740px) {
+	.article-title h1 {
+		margin-top: 20px;
+	}
 }
 .article-title a:link,
 .article-title a:visited {
@@ -211,11 +241,14 @@ iframe.nnw-constrained {
 .articleDateline {
 	color: var(--article-secondary-color);
 	font-family: var(--font-sans);
-	font-size: 0.9em;
+	font-size: var(--font-size-secondary);
 	align-items: baseline;
 	display: flex;
-	/* fix strange white artifact above byline */
-	-webkit-transform: translate3d(0, 0, 0);
+}
+@media (min-width: 740px) {
+	.header-container {
+		font-size: 0.9em;
+	}
 }
 .articleDateline .byline {
 	font-weight: 600;
@@ -251,15 +284,13 @@ iframe.nnw-constrained {
 /* Running copy */
 .article-body {
 	font-family: var(--font-serif);
-	line-height: 1.6;
+	line-height: 1.475;
 	margin-top: 1em;
 	margin-bottom: 5em;
 }
 .nnw-overflow {
 	overflow-x: auto;
 }
-
-/* appears when a feed is selected on the sidebar  */
 .systemMessage {
 	color: var(--system-message-color);
 	position: absolute;
@@ -406,22 +437,22 @@ body a.footnote:visited,
 /* macOS Specific */
 @supports not (-webkit-touch-callout: none) {
 	.smallText {
-		font-size: 14px;
-	}
-
-	.mediumText {
 		font-size: 16px;
 	}
 
-	.largeText {
+	.mediumText {
 		font-size: 18px;
 	}
 
-	.xlargeText {
+	.largeText {
 		font-size: 20px;
 	}
 
-	.xxlargeText {
+	.xlargeText {
 		font-size: 22px;
+	}
+
+	.xxlargeText {
+		font-size: 24px;
 	}
 }
