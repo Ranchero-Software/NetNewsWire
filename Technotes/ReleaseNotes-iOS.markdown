@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.6 TestFlight build 6128 - 7 Dec 2024
+
+Restore ability to tap on image and view its alt text (as with xkcd, for instance)
+
 ### 6.1.6 TestFlight build 6127 - 7 Dec 2024
 
 Fix a crashing bug in `-[UINavigationBar layoutSubviews:]` that started when we built with Xcode 15
