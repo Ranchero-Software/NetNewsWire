@@ -22,8 +22,8 @@ extension ArticleStatus {
 	
 }
 
-extension ArticleStatus: DatabaseObject {
-	
+extension ArticleStatus: @retroactive DatabaseObject {
+
 	public var databaseID: String {
 		return articleID
 	}

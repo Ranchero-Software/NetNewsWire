@@ -40,7 +40,7 @@ extension Author {
 	}
 }
 
-extension Author: DatabaseObject {
+extension Author: @retroactive DatabaseObject {
 
 	public var databaseID: String {
 		return authorID
