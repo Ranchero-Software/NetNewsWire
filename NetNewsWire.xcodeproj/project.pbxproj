@@ -2619,7 +2619,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1610;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					176813F22564BB2C00D98635 = {
@@ -2874,6 +2874,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		1701E1BF25689B44009453D8 /* SwiftGen Localization */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -2892,6 +2893,7 @@
 		};
 		513F328A2593EFCE0003048F /* Delete Unnecessary Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -2910,6 +2912,7 @@
 		};
 		513F328B2593F03F0003048F /* Delete Unnecessary Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -2985,6 +2988,7 @@
 		};
 		84BB8F7F26224B5F00DB61F8 /* Delete Unnecessary Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
