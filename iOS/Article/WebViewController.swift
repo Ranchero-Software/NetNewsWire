@@ -592,8 +592,7 @@ private extension WebViewController {
 		]
 
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
-		
+		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
 	}
 	
 	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
