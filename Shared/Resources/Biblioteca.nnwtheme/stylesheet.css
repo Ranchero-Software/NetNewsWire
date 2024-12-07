@@ -424,6 +424,12 @@ body a.footnote:visited,
 	top: 30px;
 	right: 10px;
 }
+/* Wordpress block editor */
+.wp-block-image > .aligncenter {
+	margin-left: auto;
+	margin-right: auto;
+	display: table;
+}
 /* Twitter */
 .twitterAvatar {
 	vertical-align: middle;
