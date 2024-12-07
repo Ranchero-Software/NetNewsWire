@@ -1,5 +1,20 @@
 # iOS Release Notes
 
+### 6.1.6 TestFlight build 6127 - 7 Dec 2024
+
+Fix a crashing bug in `-[UINavigationBar layoutSubviews:]` that started when we built with Xcode 15
+Now building with Xcode 16.1
+
+### 6.1.5 TestFlight build 6126 - 4 Dec 2024
+
+Use less bandwidth by respecting Cache-Control headers — skip refreshing feeds that have asked not to be refreshed yet. (This is of course also kind to servers, which is important.)
+Fix a potential crashing bug (data race) in the object that stores article status (read/unread, starred/unstarred)
+
+### 6.1.5 TestFlight build 6125 - 4 Dec 2024
+
+Use less bandwidth by respecting Cache-Control headers — skip refreshing feeds that have asked not to be refreshed yet. (This is of course also kind to servers, which is important.)
+Fix a potential crashing bug (data race) in the object that stores article status (read/unread, starred/unstarred)
+
 ### 6.1.5 TestFlight build 6124 - 21 Mar 2024
 
 Nothing actually changed — this is just because TestFlight expired.
