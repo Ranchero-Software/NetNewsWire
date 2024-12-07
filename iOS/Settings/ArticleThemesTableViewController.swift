@@ -7,8 +7,12 @@
 //
 
 import Foundation
-
+import UniformTypeIdentifiers
 import UIKit
+
+extension UTType {
+	static var netNewsWireTheme: UTType { UTType(importedAs: "com.ranchero.netnewswire.theme") }
+}
 
 class ArticleThemesTableViewController: UITableViewController {
 
@@ -27,7 +31,7 @@ class ArticleThemesTableViewController: UITableViewController {
 	}
 
 	@objc func importTheme(_ sender: Any?) {
-		let docPicker = UIDocumentPickerViewController(documentTypes: ["com.ranchero.netnewswire.theme"], in: .import)
+		let docPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.netNewsWireTheme])
 		docPicker.delegate = self
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
