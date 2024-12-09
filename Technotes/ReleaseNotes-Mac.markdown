@@ -1,10 +1,10 @@
 # Mac Release Notes
 
-### 6.1.6 build 6127 4 Dec 2024
+## 6.1.6 build 6127 4 Dec 2024 - branch: 6.1.6 tag: mac-6.1.6
 
 Fix bug clearing sync progress for Feedly accounts
 
-## 6.1.5 build 6126 3 Dec 2024
+## 6.1.5 build 6126 3 Dec 2024 - branch: 6.1.5 tag: mac-6.1.5
 
 Restore toggle sidebar button to toolbar
 Add keyboard shortcut for Copy Article URL and Copy External URL menu items
