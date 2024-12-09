@@ -21,11 +21,6 @@ final class SidebarStatusBarView: NSView {
 
 	private var isAnimatingProgress = false
 
-	private var progress: CombinedRefreshProgress? = nil {
-		didSet {
-			CoalescingQueue.standard.add(self, #selector(updateUI))
-		}
-	}
 	override var isFlipped: Bool {
 		return true
 	}
@@ -39,25 +34,20 @@ final class SidebarStatusBarView: NSView {
 		progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
 		progressLabel.stringValue = ""		
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
 	}
 
 	@objc func updateUI() {
 
-		guard let progress = progress else {
-			stopProgressIfNeeded()
-			return
-		}
-
-		updateProgressIndicator(progress)
-		updateProgressLabel(progress)
+		updateProgressIndicator()
+		updateProgressLabel()
 	}
 
 	// MARK: Notifications
 
 	@objc dynamic func progressDidChange(_ notification: Notification) {
 
-		progress = AccountManager.shared.combinedRefreshProgress
+		CoalescingQueue.standard.add(self, #selector(updateUI))
 	}
 }
 
@@ -73,13 +63,13 @@ private extension SidebarStatusBarView {
 			return
 		}
 		isAnimatingProgress = false
-		self.progressIndicator.stopAnimation(self)
+		progressIndicator.stopAnimation(self)
 		progressIndicator.isHidden = true
 		progressLabel.isHidden = true
 
 		superview?.layoutSubtreeIfNeeded()
 
-		NSAnimationContext.runAnimationGroup{ (context) in
+		NSAnimationContext.runAnimationGroup { context in
 			context.duration = SidebarStatusBarView.animationDuration
 			context.allowsImplicitAnimation = true
 			bottomConstraint.constant = -(heightConstraint.constant)
@@ -99,7 +89,7 @@ private extension SidebarStatusBarView {
 
 		superview?.layoutSubtreeIfNeeded()
 
-		NSAnimationContext.runAnimationGroup{ (context) in
+		NSAnimationContext.runAnimationGroup { context in
 			context.duration = SidebarStatusBarView.animationDuration
 			context.allowsImplicitAnimation = true
 			bottomConstraint.constant = 0
@@ -107,7 +97,9 @@ private extension SidebarStatusBarView {
 		}
 	}
 
-	func updateProgressIndicator(_ progress: CombinedRefreshProgress) {
+	func updateProgressIndicator() {
+
+		let progress = AccountManager.shared.combinedRefreshProgress
 
 		if progress.isComplete {
 			stopProgressIfNeeded()
@@ -127,7 +119,9 @@ private extension SidebarStatusBarView {
 		}
 	}
 
-	func updateProgressLabel(_ progress: CombinedRefreshProgress) {
+	func updateProgressLabel() {
+
+		let progress = AccountManager.shared.combinedRefreshProgress
 
 		if progress.isComplete {
 			progressLabel.stringValue = ""
@@ -135,8 +129,8 @@ private extension SidebarStatusBarView {
 		}
 
 		let formatString = NSLocalizedString("%@ of %@", comment: "Status bar progress")
-		let s = NSString(format: formatString as NSString, NSNumber(value: progress.numberCompleted), NSNumber(value: progress.numberOfTasks))
+		let s = String(format: formatString, NSNumber(value: progress.numberCompleted), NSNumber(value: progress.numberOfTasks))
 
-		progressLabel.stringValue = s as String
+		progressLabel.stringValue = s
 	}
 }

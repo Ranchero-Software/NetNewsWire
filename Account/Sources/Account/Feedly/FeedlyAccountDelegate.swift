@@ -123,10 +123,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			return
 		}
 		
+		refreshProgress.reset()
+
 		let log = self.log
-		
+
 		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
-		
+
 		syncAllOperation.downloadProgress = refreshProgress
 		
 		let date = Date()
@@ -138,7 +140,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			
 			os_log(.debug, log: log, "Sync took %{public}.3f seconds", -date.timeIntervalSinceNow)
 			completion(result)
-			self?.refreshProgress.clear()
+			self?.refreshProgress.reset()
 		}
 		
 		currentSyncAllOperation = syncAllOperation

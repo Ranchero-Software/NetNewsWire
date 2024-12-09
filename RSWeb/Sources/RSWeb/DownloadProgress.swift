@@ -82,8 +82,9 @@ public final class DownloadProgress {
 		}
 	}
 	
-	public func clear() {
+	public func reset() {
 		assert(Thread.isMainThread)
+		numberRemaining = 0
 		numberOfTasks = 0
 	}
 }

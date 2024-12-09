@@ -87,6 +87,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 
+		syncProgress.reset()
+		
 		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
 		var flags = SCNetworkReachabilityFlags()
 		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
@@ -511,7 +513,7 @@ private extension CloudKitAccountDelegate {
 
 		func fail(_ error: Error) {
 			self.processAccountError(account, error)
-			self.syncProgress.clear()
+			self.syncProgress.reset()
 			completion(.failure(error))
 		}
 
@@ -529,7 +531,7 @@ private extension CloudKitAccountDelegate {
 					case .success:
 
 						self.combinedRefresh(account, webFeeds) {
-							self.syncProgress.clear()
+							self.syncProgress.reset()
 							account.metadata.lastArticleFetchEndTime = Date()
 						}
 
@@ -549,7 +551,7 @@ private extension CloudKitAccountDelegate {
 
 		func fail(_ error: Error) {
 			self.processAccountError(account, error)
-			self.syncProgress.clear()
+			self.syncProgress.reset()
 			completion(.failure(error))
 		}
 
@@ -566,7 +568,7 @@ private extension CloudKitAccountDelegate {
 						self.syncProgress.completeTask()
 						self.combinedRefresh(account, webFeeds) {
 							self.sendArticleStatus(for: account, showProgress: true) { _ in
-								self.syncProgress.clear()
+								self.syncProgress.reset()
 								account.metadata.lastArticleFetchEndTime = Date()
 								completion(.success(()))
 							}

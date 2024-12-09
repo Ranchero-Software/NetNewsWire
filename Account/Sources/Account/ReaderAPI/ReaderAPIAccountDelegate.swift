@@ -105,6 +105,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		refreshProgress.reset()
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
 		refreshAccount(account) { result in
@@ -120,7 +122,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 								self.refreshArticleStatus(for: account) { _ in
 									self.refreshProgress.completeTask()
 									self.refreshMissingArticles(account) {
-										self.refreshProgress.clear()
+										self.refreshProgress.reset()
 										DispatchQueue.main.async {
 											completion(.success(()))
 										}
@@ -135,7 +137,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 			case .failure(let error):
 				DispatchQueue.main.async {
-					self.refreshProgress.clear()
+					self.refreshProgress.reset()
 					
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
 					if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
@@ -405,7 +407,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			case .success(let feedSpecifiers):
 				let feedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
-					self.refreshProgress.clear()
+					self.refreshProgress.reset()
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
@@ -431,7 +433,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					
 				}
 			case .failure:
-				self.refreshProgress.clear()
+				self.refreshProgress.reset()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
 			
@@ -961,7 +963,7 @@ private extension ReaderAPIAccountDelegate {
 					self.refreshArticleStatus(for: account) { _ in
 						self.refreshProgress.completeTask()
 						self.refreshMissingArticles(account) {
-							self.refreshProgress.clear()
+							self.refreshProgress.reset()
 							DispatchQueue.main.async {
 								completion(.success(feed))
 							}
