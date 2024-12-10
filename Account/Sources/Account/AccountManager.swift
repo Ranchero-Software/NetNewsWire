@@ -246,7 +246,7 @@ public final class AccountManager: UnreadCountProvider {
 			return
 		}
 
-		combinedRefreshProgress.reset()
+		combinedRefreshProgress.start()
 
 		let group = DispatchGroup()
 		
@@ -264,7 +264,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			self.combinedRefreshProgress.reset()
+			self.combinedRefreshProgress.stop()
 			completion?()
 		}
 	}

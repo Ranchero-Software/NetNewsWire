@@ -22,29 +22,32 @@ public final class CombinedRefreshProgress {
 	public private(set) var numberCompleted = 0
 
 	public var isComplete: Bool {
-		numberRemaining < 1
+		!isStarted || numberRemaining < 1
 	}
+
+	var isStarted = false
 
 	init() {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
 	}
 
-	func reset() {
+	func start() {
+		reset()
+		isStarted = true
+	}
 
-		let didMakeChange = numberOfTasks != 0 || numberRemaining != 0 || numberCompleted != 0
-
-		numberOfTasks = 0
-		numberRemaining = 0
-		numberCompleted = 0
-
-		if didMakeChange {
-			postDidChangeNotification()
-		}
+	func stop() {
+		reset()
+		isStarted = false
 	}
 
 	@objc func refreshProgressDidChange(_ notification: Notification) {
 
+		guard isStarted else {
+			return
+		}
+		
 		var updatedNumberOfTasks = 0
 		var updatedNumberRemaining = 0
 		var updatedNumberCompleted = 0
@@ -86,6 +89,19 @@ public final class CombinedRefreshProgress {
 }
 
 private extension CombinedRefreshProgress {
+
+	func reset() {
+
+		let didMakeChange = numberOfTasks != 0 || numberRemaining != 0 || numberCompleted != 0
+
+		numberOfTasks = 0
+		numberRemaining = 0
+		numberCompleted = 0
+
+		if didMakeChange {
+			postDidChangeNotification()
+		}
+	}
 
 	func postDidChangeNotification() {
 
