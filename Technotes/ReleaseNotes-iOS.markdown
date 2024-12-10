@@ -1,43 +1,51 @@
 # iOS Release Notes
 
-### 6.1.6 TestFlight build 6128 - 7 Dec 2024
+## 6.1.5 TestFlight build 6130 9 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6130
+
+Fix crash importing OPML subscriptions
+
+## 6.1.5 TestFlight build 6129 8 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6129
+
+Fix newly-introduced bugs with reporting refresh/sync progress
+ 
+## 6.1.5 TestFlight build 6128 - 7 Dec 2024
 
 Restore ability to tap on image and view its alt text (as with xkcd, for instance)
 
-### 6.1.6 TestFlight build 6127 - 7 Dec 2024
+## 6.1.5 TestFlight build 6127 - 7 Dec 2024
 
 Fix a crashing bug in `-[UINavigationBar layoutSubviews:]` that started when we built with Xcode 15
 Now building with Xcode 16.1
 
-### 6.1.5 TestFlight build 6126 - 4 Dec 2024
+## 6.1.5 TestFlight build 6126 - 4 Dec 2024
 
 Use less bandwidth by respecting Cache-Control headers — skip refreshing feeds that have asked not to be refreshed yet. (This is of course also kind to servers, which is important.)
 Fix a potential crashing bug (data race) in the object that stores article status (read/unread, starred/unstarred)
 
-### 6.1.5 TestFlight build 6125 - 4 Dec 2024
+## 6.1.5 TestFlight build 6125 - 4 Dec 2024
 
 Use less bandwidth by respecting Cache-Control headers — skip refreshing feeds that have asked not to be refreshed yet. (This is of course also kind to servers, which is important.)
 Fix a potential crashing bug (data race) in the object that stores article status (read/unread, starred/unstarred)
 
-### 6.1.5 TestFlight build 6124 - 21 Mar 2024
+## 6.1.5 TestFlight build 6124 - 21 Mar 2024
 
 Nothing actually changed — this is just because TestFlight expired.
 
-### 6.1.5 TestFlight build 6123 - 21 Dec 2023
+## 6.1.5 TestFlight build 6123 - 21 Dec 2023
 
 Building with Xcode 14.2 on macOS 13 to see if that makes the new-in-iOS-17 crashing bug go away.
 
-### 6.1.5 TestFlight build 6122 - 19 Dec 2023
+## 6.1.5 TestFlight build 6122 - 19 Dec 2023
 
 Remove code for showing Twitter and Reddit deprecation alerts.
 
 Build using Xcode 15.1.
 
-### 6.1.5 TestFlight build 6121 - 29 Sep 2023
+## 6.1.5 TestFlight build 6121 - 29 Sep 2023
 
 Build using Xcode 15 to make sure there are no regressions.
 
-### 6.1.4 TestFlight build 6120 - 1 July 2023
+## 6.1.4 TestFlight build 6120 - 1 July 2023
 
 Build using Xcode 14.3.1 so the app won’t crash on launch on iOS 13.
 
