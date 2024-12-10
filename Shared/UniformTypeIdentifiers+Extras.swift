@@ -10,5 +10,5 @@ import UniformTypeIdentifiers
 
 extension UTType {
 
-	static let opml = UTType("public.opml")!
+	static let opml = UTType(filenameExtension: "opml", conformingTo: UTType.xml)!
 }
