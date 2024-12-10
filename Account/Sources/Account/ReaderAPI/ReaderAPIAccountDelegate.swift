@@ -122,14 +122,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 								self.refreshArticleStatus(for: account) { _ in
 									self.refreshProgress.completeTask()
 									self.refreshMissingArticles(account) {
-										self.refreshProgress.reset()
 										DispatchQueue.main.async {
+											self.refreshProgress.reset()
 											completion(.success(()))
 										}
 									}
 								}
 							}
 						case .failure(let error):
+							self.refreshProgress.reset()
 							completion(.failure(error))
 						}
 					}
