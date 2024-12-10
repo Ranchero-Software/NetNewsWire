@@ -1468,7 +1468,7 @@ private extension SceneCoordinator {
 		})
 	}
 
-	func addToFilterExeptionsIfNecessary(_ feed: SidebarItem?) {
+	func addToFilterExceptionsIfNecessary(_ feed: SidebarItem?) {
 		if isReadFeedsFiltered, let feedID = feed?.sidebarItemID {
 			if feed is SmartFeed {
 				treeControllerDelegate.addFilterException(feedID)
