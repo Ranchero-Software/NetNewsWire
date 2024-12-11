@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+
+## 6.1.5 TestFlight build 6131 10 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6131
+
+Fix hanging progress indicator in the Feeds view
+
 ## 6.1.5 TestFlight build 6130 9 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6130
 
 Fix crash importing OPML subscriptions
