@@ -1220,6 +1220,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		selectFeed(nil)
 
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
+		
 		let addViewController = addNavViewController.topViewController as! AddFeedViewController
 		addViewController.initialFeed = initialFeed
 		addViewController.initialFeedName = initialFeedName
