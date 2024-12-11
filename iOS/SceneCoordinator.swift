@@ -1219,8 +1219,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
 		selectFeed(nil)
 
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
-		
+		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
 		let addViewController = addNavViewController.topViewController as! AddFeedViewController
 		addViewController.initialFeed = initialFeed
 		addViewController.initialFeedName = initialFeedName

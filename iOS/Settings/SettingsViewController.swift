@@ -372,7 +372,7 @@ private extension SettingsViewController {
 	func addFeed() {
 		self.dismiss(animated: true)
 
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
+		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
 		let addViewController = addNavViewController.topViewController as! AddFeedViewController
 		addViewController.initialFeed = AccountManager.netNewsWireNewsURL
 		addViewController.initialFeedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
