@@ -80,6 +80,17 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		return feed.conditionalGetInfo
 	}
 
+	func downloadSession(_ downloadSession: DownloadSession, userAgentFor url: URL) -> String? {
+		// For openrss.org (and only for them), provide a User-Agent string that includes platform,
+		// version, and build number. This will help with knowing which instances of the app
+		// have the bandwidth use fixes.
+
+		guard let host = url.host(), host.contains("openrss.org") else {
+			return nil
+		}
+		return Self.openRSSOrgUserAgent
+	}
+
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
 
 		guard !isSuspended else {
@@ -186,6 +197,27 @@ private extension LocalAccountRefresher {
 		}
 
 		return Self.feedIsDisallowed(feed)
+	}
+
+	static let openRSSOrgUserAgent = {
+
+#if os(iOS)
+		let platform = "iOS"
+#else
+		let platform = "Mac"
+#endif
+		let version = stringFromInfoPlist("CFBundleShortVersionString") ?? "Unknown"
+		let build = stringFromInfoPlist("CFBundleVersion") ?? "Unknown"
+		return "NetNewsWire (RSS Reader; https://netnewswire.com/; \(platform); \(version) (\(build)))"
+	}()
+
+	static func stringFromInfoPlist(_ key: String) -> String? {
+
+		guard let s = Bundle.main.object(forInfoDictionaryKey: key) as? String else {
+			assertionFailure("Expected to get \(key) from infoDictionary.")
+			return nil
+		}
+		return s
 	}
 }
 

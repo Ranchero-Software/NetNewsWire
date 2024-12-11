@@ -15,6 +15,10 @@ import os
 public protocol DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
+
+	// Return nil to use default User-Agent
+	func downloadSession(_ downloadSession: DownloadSession, userAgentFor: URL) -> String?
+
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, url: URL) -> Bool
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession)
@@ -113,7 +117,13 @@ extension DownloadSession: URLSessionTaskDelegate {
 			}
 		}
 
-		completionHandler(request)
+		var modifiedRequest = request
+
+		if let url = request.url, let userAgent = delegate.downloadSession(self, userAgentFor: url) {
+			modifiedRequest.setValue(userAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
+		}
+
+		completionHandler(modifiedRequest)
 	}
 }
 
@@ -196,6 +206,9 @@ private extension DownloadSession {
 			var request = URLRequest(url: urlToUse)
 			if let conditionalGetInfo = delegate.downloadSession(self, conditionalGetInfoFor: url) {
 				conditionalGetInfo.addRequestHeadersToURLRequest(&request)
+			}
+			if let userAgent = delegate.downloadSession(self, userAgentFor: url) {
+				request.setValue(userAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
 			}
 			return request
 		}()
