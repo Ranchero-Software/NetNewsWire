@@ -422,6 +422,7 @@ private extension DownloadSession {
 
 		if canDownloadFromOpenRSSOrg {
 			// Allow only one feed from openrss.org per refresh session
+			lastOpenRSSOrgFeedRefresh = Date()
 			return urls.byRemovingAllButOneRandomOpenRSSOrgURL()
 		}
 
