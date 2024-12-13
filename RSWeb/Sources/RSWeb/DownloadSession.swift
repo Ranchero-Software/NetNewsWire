@@ -15,10 +15,6 @@ import os
 public protocol DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
-
-	// Return nil to use default User-Agent
-	func downloadSession(_ downloadSession: DownloadSession, userAgentFor: URL) -> String?
-
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, url: URL) -> Bool
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession)
@@ -43,6 +39,7 @@ public protocol DownloadSessionDelegate {
 	/// URLs with 400-499 responses (except for 429).
 	/// These URLs are skipped for the rest of the session.
 	private var urlsWith400s = Set<URL>()
+
 
 	public init(delegate: DownloadSessionDelegate) {
 
@@ -82,10 +79,13 @@ public protocol DownloadSessionDelegate {
 
 	public func download(_ urls: Set<URL>) {
 
-		for url in urls.subtracting(urlsInSession) {
+		let filteredURLs = Self.filteredURLs(urls)
+
+		for url in filteredURLs {
 			addDataTask(url)
 		}
-		urlsInSession.formUnion(urls)
+
+		urlsInSession = filteredURLs
 		updateDownloadProgress()
 	}
 }
@@ -119,8 +119,8 @@ extension DownloadSession: URLSessionTaskDelegate {
 
 		var modifiedRequest = request
 
-		if let url = request.url, let userAgent = delegate.downloadSession(self, userAgentFor: url) {
-			modifiedRequest.setValue(userAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
+		if let url = request.url, url.isOpenRSSOrgURL {
+			modifiedRequest.setValue(UserAgent.openRSSOrgUserAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
 		}
 
 		completionHandler(modifiedRequest)
@@ -207,8 +207,8 @@ private extension DownloadSession {
 			if let conditionalGetInfo = delegate.downloadSession(self, conditionalGetInfoFor: url) {
 				conditionalGetInfo.addRequestHeadersToURLRequest(&request)
 			}
-			if let userAgent = delegate.downloadSession(self, userAgentFor: url) {
-				request.setValue(userAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
+			if url.isOpenRSSOrgURL {
+				request.setValue(UserAgent.openRSSOrgUserAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
 			}
 			return request
 		}()
@@ -396,6 +396,36 @@ private extension DownloadSession {
 		}
 
 		return false
+	}
+
+	// MARK: - Filtering URLs
+
+	static private let lastOpenRSSOrgFeedRefreshKey = "lastOpenRSSOrgFeedRefresh"
+	static private var lastOpenRSSOrgFeedRefresh: Date {
+		get {
+			UserDefaults.standard.value(forKey: lastOpenRSSOrgFeedRefreshKey) as? Date ?? Date.distantPast
+		}
+		set {
+			UserDefaults.standard.setValue(newValue, forKey: lastOpenRSSOrgFeedRefreshKey)
+		}
+	}
+
+	static private var canDownloadFromOpenRSSOrg: Bool {
+		let okayToDownloadDate = lastOpenRSSOrgFeedRefresh + TimeInterval(60 * 60 * 10) // 10 minutes (arbitrary)
+		return Date() > okayToDownloadDate
+	}
+
+	static func filteredURLs(_ urls: Set<URL>) -> Set<URL> {
+
+		// Possibly remove some openrss.org URLs.
+		// Can be extended later if necessary.
+
+		if canDownloadFromOpenRSSOrg {
+			// Allow only one feed from openrss.org per refresh session
+			return urls.byRemovingAllButOneRandomOpenRSSOrgURL()
+		}
+
+		return urls.byRemovingOpenRSSOrgURLs()
 	}
 }
 

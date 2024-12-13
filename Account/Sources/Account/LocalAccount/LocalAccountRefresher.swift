@@ -50,9 +50,7 @@ final class LocalAccountRefresher {
 			urlToFeedDictionary[feed.url] = feed
 		}
 
-		let urls = filteredFeeds.compactMap { feed in
-			URL(unicodeString: feed.url)
-		}
+		let urls = filteredFeeds.compactMap { Self.url(for: $0) }
 
 		self.completion = completion
 		downloadSession.download(Set(urls))
@@ -78,17 +76,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			return nil
 		}
 		return feed.conditionalGetInfo
-	}
-
-	func downloadSession(_ downloadSession: DownloadSession, userAgentFor url: URL) -> String? {
-		// For openrss.org (and only for them), provide a User-Agent string that includes platform,
-		// version, and build number. This will help with knowing which instances of the app
-		// have the bandwidth use fixes.
-
-		guard let host = url.host(), host.contains("openrss.org") else {
-			return nil
-		}
-		return Self.openRSSOrgUserAgent
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
@@ -172,7 +159,7 @@ private extension LocalAccountRefresher {
 	/// Return true if we won’t download that feed.
 	static func feedIsDisallowed(_ feed: WebFeed) -> Bool {
 
-		guard let url = URL(unicodeString: feed.url) else {
+		guard let url = url(for: feed) else {
 			return true
 		}
 		guard let lowercaseHost = url.host()?.lowercased() else {
@@ -199,25 +186,23 @@ private extension LocalAccountRefresher {
 		return Self.feedIsDisallowed(feed)
 	}
 
-	static let openRSSOrgUserAgent = {
+	static var urlCache = [String: URL]()
 
-#if os(iOS)
-		let platform = "iOS"
-#else
-		let platform = "Mac"
-#endif
-		let version = stringFromInfoPlist("CFBundleShortVersionString") ?? "Unknown"
-		let build = stringFromInfoPlist("CFBundleVersion") ?? "Unknown"
-		return "NetNewsWire (RSS Reader; https://netnewswire.com/; \(platform); \(version) (\(build)))"
-	}()
+	static func url(for feed: WebFeed) -> URL? {
 
-	static func stringFromInfoPlist(_ key: String) -> String? {
+		assert(Thread.isMainThread)
 
-		guard let s = Bundle.main.object(forInfoDictionaryKey: key) as? String else {
-			assertionFailure("Expected to get \(key) from infoDictionary.")
-			return nil
+		let urlString = feed.url
+
+		if let url = urlCache[urlString] {
+			return url
 		}
-		return s
+		if let url = URL(unicodeString: urlString) {
+			urlCache[urlString] = url
+			return url
+		}
+
+		return nil
 	}
 }
 
