@@ -798,7 +798,6 @@ private extension WebViewController {
 	func openURLInSafariViewController(_ url: URL) {
 
 		let viewController = SFSafariViewController(url: url)
-		viewController.modalPresentationStyle = .overFullScreen // This avoids a crash with .fullScreen
 		present(viewController, animated: true)
 	}
 }
