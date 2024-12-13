@@ -220,5 +220,7 @@
 	<false/>
 	<key>UserAgent</key>
 	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
+	<key>UserAgentExtended</key>
+	<string>NetNewsWire (RSS Reader; https://netnewswire.com/; [platform]; [version] ([build]))</string>
 </dict>
 </plist>
