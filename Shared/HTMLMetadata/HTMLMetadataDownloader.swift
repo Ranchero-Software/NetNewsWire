@@ -9,18 +9,39 @@
 import Foundation
 import RSWeb
 import RSParser
+import os
 
 struct HTMLMetadataDownloader {
 
 	static let serialDispatchQueue = DispatchQueue(label: "HTMLMetadataDownloader")
 
+	static let currentURLsLock = OSAllocatedUnfairLock(initialState: Set<URL>())
+
 	static func downloadMetadata(for url: String, _ completion: @escaping (RSHTMLMetadata?) -> Void) {
+
 		guard let actualURL = URL(unicodeString: url) else {
 			completion(nil)
 			return
 		}
 
+		let urlDownloadIsInProgress = currentURLsLock.withLock { currentURLs in
+			if currentURLs.contains(actualURL) {
+				return true
+			}
+			currentURLs.insert(actualURL)
+			return false
+		}
+		if urlDownloadIsInProgress {
+			completion(nil)
+			return
+		}
+
 		Downloader.shared.download(actualURL) { (data, response, error) in
+
+			_ = currentURLsLock.withLock { currentURLs in
+				currentURLs.remove(actualURL)
+			}
+
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				let urlToUse = response.url ?? actualURL
 				let parserData = ParserData(url: urlToUse.absoluteString, data: data)
