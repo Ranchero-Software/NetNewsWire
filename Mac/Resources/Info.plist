@@ -79,6 +79,8 @@
 	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
 	<key>UserAgent</key>
 	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
+	<key>UserAgentExtended</key>
+	<string>NetNewsWire (RSS Reader; https://netnewswire.com/; [platform]; [version] ([build]))</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
