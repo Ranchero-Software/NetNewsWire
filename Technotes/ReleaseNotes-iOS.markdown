@@ -1,5 +1,11 @@
 # iOS Release Notes
 
+## 6.1.5 TestFlight build 6131 12 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6132
+
+Restore ability to swipe back from a Safari view (web page view)
+Space out requests made to openrss.org
+Send user-agent with platform, version, and build to openrss.org (and only to that site)
+Cut down on bandwidth use on fetching web page metadata (still more work to do on this one, but this is an improvement)
 
 ## 6.1.5 TestFlight build 6131 10 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6131
 
