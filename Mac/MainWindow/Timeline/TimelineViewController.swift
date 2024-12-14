@@ -890,7 +890,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private func avatarForAuthor(_ author: Author) -> IconImage? {
-		return appDelegate.authorAvatarDownloader.image(for: author)
+		return AuthorAvatarDownloader.shared.image(for: author)
 	}
 
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
