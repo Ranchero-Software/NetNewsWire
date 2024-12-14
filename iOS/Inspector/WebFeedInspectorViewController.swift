@@ -48,7 +48,7 @@ class WebFeedInspectorViewController: UITableViewController {
 		homePageLabel.text = webFeed.homePageURL?.decodedURLString
 		feedURLLabel.text = webFeed.url.decodedURLString
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNotificationSettings), name: UIApplication.willEnterForegroundNotification, object: nil)
 		
