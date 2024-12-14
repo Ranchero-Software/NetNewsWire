@@ -29,7 +29,7 @@ final class HTMLMetadataCache: Sendable {
 		let dateCreated = Date()
 	}
 
-	private let cache = Cache<HTMLMetadataCacheRecord>(timeToLive: TimeInterval(21 * 60 * 60), timeBetweenCleanups: TimeInterval(10 * 60 * 60))
+	private let cache = Cache<HTMLMetadataCacheRecord>(timeToLive: TimeInterval(hours: 21), timeBetweenCleanups: TimeInterval(hours: 10))
 
 	subscript(_ url: String) -> RSHTMLMetadata? {
 		get {

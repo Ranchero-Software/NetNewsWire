@@ -11,6 +11,9 @@ import CoreServices
 import Articles
 import Account
 import RSCore
+import RSWeb
+import RSParser
+import UniformTypeIdentifiers
 
 extension Notification.Name {
 
@@ -132,15 +135,13 @@ final class FaviconDownloader {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
-		findFaviconURLs(with: url) { (faviconURLs) in
-			if let faviconURLs = faviconURLs {
-				// If the site explicitly specifies favicon.ico, it will appear twice.
-				self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
+		if let faviconURLs = findFaviconURLs(with: url) {
+			// If the site explicitly specifies favicon.ico, it will appear twice.
+			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 
-				if let firstIconURL = faviconURLs.first {
-					let _ = self.favicon(with: firstIconURL, homePageURL: url)
-					self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
-				}
+			if let firstIconURL = faviconURLs.first {
+				let _ = self.favicon(with: firstIconURL, homePageURL: url)
+				self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
 			}
 		}
 
@@ -196,31 +197,22 @@ private extension FaviconDownloader {
 
 	static let localeForLowercasing = Locale(identifier: "en_US")
 
-	func findFaviconURLs(with homePageURL: String, _ completion: @escaping ([String]?) -> Void) {
+	func findFaviconURLs(with homePageURL: String) -> [String]? {
 
-		guard let url = URL(unicodeString: homePageURL) else {
-			completion(nil)
-			return
+		guard let url = URL(string: homePageURL) else {
+			return nil
+		}
+		guard let htmlMetadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
+			return nil
+		}
+		let faviconURLs = htmlMetadata.usableFaviconURLs() ?? [String]()
+
+		guard let scheme = url.scheme, let host = url.host else {
+			return faviconURLs.isEmpty ? nil : faviconURLs
 		}
 
-		FaviconURLFinder.findFaviconURLs(with: homePageURL) { (faviconURLs) in
-			guard var faviconURLs = faviconURLs else {
-				completion(nil)
-				return
-			}
-
-			var defaultFaviconURL: String? = nil
-
-			if let scheme = url.scheme, let host = url.host {
-				defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
-			}
-
-			if let defaultFaviconURL = defaultFaviconURL {
-				faviconURLs.append(defaultFaviconURL)
-			}
-
-			completion(faviconURLs)
-		}
+		let defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
+		return faviconURLs + [defaultFaviconURL]
 	}
 
 	func faviconDownloader(withURL faviconURL: String, homePageURL: String?) -> SingleFaviconDownloader {
@@ -311,5 +303,35 @@ private extension FaviconDownloader {
 			assertionFailure(error.localizedDescription)
 		}
 	}
+}
 
+private extension RSHTMLMetadata {
+
+	func usableFaviconURLs() -> [String]? {
+
+		favicons.compactMap { favicon in
+			shouldAllowFavicon(favicon) ? favicon.urlString : nil
+		}
+	}
+
+	static let ignoredTypes = [UTType.svg]
+
+	private func shouldAllowFavicon(_ favicon: RSHTMLMetadataFavicon) -> Bool {
+
+		// Check mime type.
+		if let mimeType = favicon.type, let utType = UTType(mimeType: mimeType) {
+			if Self.ignoredTypes.contains(utType) {
+				return false
+			}
+		}
+
+		// Check file extension.
+		if let urlString = favicon.urlString, let url = URL(string: urlString), let utType = UTType(filenameExtension: url.pathExtension) {
+			if Self.ignoredTypes.contains(utType) {
+				return false
+			}
+		}
+
+		return true
+	}
 }

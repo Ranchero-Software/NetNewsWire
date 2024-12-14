@@ -165,7 +165,18 @@ private extension WebFeedIconDownloader {
 			return
 		}
 
-		findIconURLForHomePageURL(homePageURL, feed: feed)
+		guard let metadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
+			imageResultBlock(nil)
+			return
+		}
+
+		if let url = metadata.bestWebsiteIconURL() {
+			cacheIconURL(for: homePageURL, url)
+			icon(forURL: url, feed: feed, imageResultBlock)
+			return
+		}
+
+		homePagesWithNoIconURLCache.insert(homePageURL)
 	}
 
 	func icon(forURL url: String, feed: WebFeed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
@@ -195,23 +206,6 @@ private extension WebFeedIconDownloader {
 		homePagesWithNoIconURLCacheDirty = true
 		homePageToIconURLCache[homePageURL] = iconURL
 		homePageToIconURLCacheDirty = true
-	}
-
-	func findIconURLForHomePageURL(_ homePageURL: String, feed: WebFeed) {
-
-		guard !urlsInProgress.contains(homePageURL) else {
-			return
-		}
-		urlsInProgress.insert(homePageURL)
-
-		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (metadata) in
-
-			self.urlsInProgress.remove(homePageURL)
-			guard let metadata = metadata else {
-				return
-			}
-			self.pullIconURL(from: metadata, homePageURL: homePageURL, feed: feed)
-		}
 	}
 
 	func pullIconURL(from metadata: RSHTMLMetadata, homePageURL: String, feed: WebFeed) {

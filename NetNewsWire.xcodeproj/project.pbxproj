@@ -296,12 +296,10 @@
 		51C4529A22650A0400C03939 /* ArticleTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97871ED9ECEF007D329B /* ArticleTheme.swift */; };
 		51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */; };
 		51C4529C22650A1000C03939 /* SingleFaviconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */; };
-		51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
 		51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845213221FCA5B10003B6E93 /* ImageDownloader.swift */; };
 		51C4529F22650A1900C03939 /* AuthorAvatarDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E850851FCB60CE0072EA88 /* AuthorAvatarDownloader.swift */; };
 		51C452A022650A1900C03939 /* WebFeedIconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611891FCB67AA0086A189 /* WebFeedIconDownloader.swift */; };
 		51C452A222650A1900C03939 /* RSHTMLMetadata+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */; };
-		51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
 		51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97581ED9EB0D007D329B /* ArticleUtilities.swift */; };
 		51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
 		51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
@@ -400,7 +398,6 @@
 		841ABA6020145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */; };
 		84216D0322128B9D0049B9B9 /* DetailWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */; };
 		8426118A1FCB67AA0086A189 /* WebFeedIconDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611891FCB67AA0086A189 /* WebFeedIconDownloader.swift */; };
-		8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */; };
 		842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */; };
 		842E45CE1ED8C308000A8B52 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		842E45DD1ED8C54B000A8B52 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45DC1ED8C54B000A8B52 /* Browser.swift */; };
@@ -537,7 +534,6 @@
 		84F9EAF3213660A100CF2DE4 /* testCurrentArticleIsNil.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE0213660A100CF2DE4 /* testCurrentArticleIsNil.applescript */; };
 		84F9EAF4213660A100CF2DE4 /* testGenericScript.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE1213660A100CF2DE4 /* testGenericScript.applescript */; };
 		84F9EAF5213660A100CF2DE4 /* establishMainWindowStartingState.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */; };
-		84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */; };
 		B24E9ADC245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */; };
 		B24E9ADE245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */; };
 		B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */ = {isa = PBXBuildFile; fileRef = B27EEBDF244D15F2000932E6 /* stylesheet.css */; };
@@ -1042,7 +1038,6 @@
 		841ABA5F20145EC100980E11 /* BuiltinSmartFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinSmartFeedInspectorViewController.swift; sourceTree = "<group>"; };
 		84216D0222128B9D0049B9B9 /* DetailWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailWebViewController.swift; sourceTree = "<group>"; };
 		842611891FCB67AA0086A189 /* WebFeedIconDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedIconDownloader.swift; sourceTree = "<group>"; };
-		8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataDownloader.swift; sourceTree = "<group>"; };
 		8426119F1FCB72600086A189 /* FeaturedImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedImageDownloader.swift; sourceTree = "<group>"; };
 		842611A11FCB769D0086A189 /* RSHTMLMetadata+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSHTMLMetadata+Extension.swift"; sourceTree = "<group>"; };
 		842E45CD1ED8C308000A8B52 /* AppNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
@@ -1182,7 +1177,6 @@
 		84F9EAE1213660A100CF2DE4 /* testGenericScript.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = testGenericScript.applescript; sourceTree = "<group>"; };
 		84F9EAE2213660A100CF2DE4 /* establishMainWindowStartingState.applescript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.applescript; path = establishMainWindowStartingState.applescript; sourceTree = "<group>"; };
 		84F9EAE4213660A100CF2DE4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconURLFinder.swift; sourceTree = "<group>"; };
 		B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+NetNewsWire.swift"; sourceTree = "<group>"; };
 		B24EFD482330FF99006C6242 /* NetNewsWire-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-Bridging-Header.h"; sourceTree = "<group>"; };
 		B24EFD5923310109006C6242 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
@@ -1772,14 +1766,6 @@
 			path = "NetNewsWire-iOSTests";
 			sourceTree = "<group>";
 		};
-		8426119C1FCB6ED40086A189 /* HTMLMetadata */ = {
-			isa = PBXGroup;
-			children = (
-				8426119D1FCB6ED40086A189 /* HTMLMetadataDownloader.swift */,
-			);
-			path = HTMLMetadata;
-			sourceTree = "<group>";
-		};
 		842E45E11ED8C681000A8B52 /* MainWindow */ = {
 			isa = PBXGroup;
 			children = (
@@ -1882,7 +1868,6 @@
 				51EF0F78227716380050506E /* ColorHash.swift */,
 				848F6AE41FC29CFA002D422E /* FaviconDownloader.swift */,
 				51EF0F76227716200050506E /* FaviconGenerator.swift */,
-				84FF69B01FC3793300DC198E /* FaviconURLFinder.swift */,
 				845A29081FC74B8E007B49E3 /* SingleFaviconDownloader.swift */,
 			);
 			path = Favicons;
@@ -2117,7 +2102,6 @@
 				51B5C85A23F22A7A00032075 /* ShareExtension */,
 				848F6AE31FC29CFA002D422E /* Favicons */,
 				845213211FCA5B10003B6E93 /* Images */,
-				8426119C1FCB6ED40086A189 /* HTMLMetadata */,
 				5183CCEA226F70350010922C /* Timer */,
 				512E08DD22687FA000BDCFDD /* Tree */,
 				849A97561ED9EB0D007D329B /* Extensions */,
@@ -3216,7 +3200,6 @@
 				512AF9DD236F05230066F8BE /* InteractiveLabel.swift in Sources */,
 				51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */,
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
-				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,
 				5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */,
 				516244E3241E19F000B61C47 /* ColorPaletteTableViewController.swift in Sources */,
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
@@ -3290,7 +3273,6 @@
 				5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */,
 				519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */,
 				FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */,
-				51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */,
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
 				8413C1382D050A1E002E3D0F /* UniformTypeIdentifiers+Extras.swift in Sources */,
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,
@@ -3369,7 +3351,6 @@
 				84A14FF320048CA70046AD9A /* SendToMicroBlogCommand.swift in Sources */,
 				B2B8075E239C49D300F191E0 /* RSImage-AppIcons.swift in Sources */,
 				849A97891ED9ECEF007D329B /* ArticleTheme.swift in Sources */,
-				84FF69B11FC3793300DC198E /* FaviconURLFinder.swift in Sources */,
 				84B7178C201E66580091657D /* SidebarViewController+ContextualMenus.swift in Sources */,
 				842611A21FCB769D0086A189 /* RSHTMLMetadata+Extension.swift in Sources */,
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
@@ -3427,7 +3408,6 @@
 				510C417F24E5D1AE008226FD /* ExtensionContainersFile.swift in Sources */,
 				84C9FC7A22629E1200D921D6 /* PreferencesTableViewBackgroundView.swift in Sources */,
 				84CAFCAF22BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
-				8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */,
 				849A976E1ED9EBC8007D329B /* TimelineViewController.swift in Sources */,
 				5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */,
 				5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */,
