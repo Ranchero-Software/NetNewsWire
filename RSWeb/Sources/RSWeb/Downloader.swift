@@ -38,16 +38,15 @@ public final class Downloader {
 	}
 
 	public func download(_ url: URL, _ completion: DownloadCallback? = nil) {
-		let task = urlSession.dataTask(with: url) { (data, response, error) in
-			DispatchQueue.main.async() {
-				completion?(data, response, error)
-			}
-		}
-		task.resume()
+		download(URLRequest(url: url), completion)
 	}
 
 	public func download(_ urlRequest: URLRequest, _ completion: DownloadCallback? = nil) {
-		let task = urlSession.dataTask(with: urlRequest) { (data, response, error) in
+
+		var urlRequestToUse = urlRequest
+		urlRequestToUse.addSpecialCaseUserAgentIfNeeded()
+
+		let task = urlSession.dataTask(with: urlRequestToUse) { (data, response, error) in
 			DispatchQueue.main.async() {
 				completion?(data, response, error)
 			}
