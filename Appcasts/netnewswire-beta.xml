@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <channel>
-        <title>NetNewsWire Betas</title>
-        <link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
-        <description>Most recent NetNewsWire changes with links to updates.</description>
-        <language>en</language>
+<channel>
+    <title>NetNewsWire Betas</title>
+    <link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
+    <description>Most recent NetNewsWire changes with links to updates.</description>
+    <language>en</language>
 
+<item>
+    <title>NetNewsWire 6.1.7b1</title>
+    <description><![CDATA[
+        <ul>
+        <li>Fix bug clearing refresh progress</li>
+        <li>Fix bandwidth bugs with downloading web pages to find feed icons and favicons</li>
+        <li>Update default theme with enhancements by John Gruber</li>
+        <li>Space out requests made to openrss.org</li>
+        <li>Send user-agent with platform, version, and build to openrss.org (and only to that site)</li>
+        </ul>
+    ]]></description>
+    <pubDate>Sun, 15 Dec 2024 11:30:00 -0800</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.7b1/NetNewsWire6.1.7b1.zip" sparkle:version="6130" sparkle:shortVersionString="6.1.7b1" length="9221093" type="application/zip" />
+    <sparkle:minimumSystemVersion>13.0.0</sparkle:minimumSystemVersion>
+</item>
 
-       <item>
+    <item>
             <title>NetNewsWire 6.1.6</title>
             <description><![CDATA[
 			<ul>
