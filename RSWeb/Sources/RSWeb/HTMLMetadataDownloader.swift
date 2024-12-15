@@ -15,7 +15,7 @@ public final class HTMLMetadataDownloader: Sendable {
 	public static let shared = HTMLMetadataDownloader()
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
-	private static let debugLoggingEnabled = true
+	private static let debugLoggingEnabled = false
 	
 	private let cache = HTMLMetadataCache()
 	private let attemptDatesLock = OSAllocatedUnfairLock(initialState: [String: Date]())
@@ -50,12 +50,13 @@ private extension HTMLMetadataDownloader {
 			return
 		}
 
-		// We try a download once an hour at most.
+		// Limit how often a download should be attempted.
 		let shouldDownload = attemptDatesLock.withLock { attemptDates in
 
 			let currentDate = Date()
 
-			if let attemptDate = attemptDates[url], attemptDate > currentDate.bySubtracting(hours: 1) {
+			let hoursBetweenAttempts = 3 // arbitrary
+			if let attemptDate = attemptDates[url], attemptDate > currentDate.bySubtracting(hours: hoursBetweenAttempts) {
 				if Self.debugLoggingEnabled {
 					Self.logger.debug("HTMLMetadataDownloader skipping download for \(url) because an attempt was made less than an hour ago.")
 				}
