@@ -40,7 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
-	var imageDownloader: ImageDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	var widgetDataEncoder: WidgetDataEncoder!
