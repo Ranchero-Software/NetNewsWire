@@ -19,8 +19,8 @@ public final class Downloader {
 
 	private init() {
 
-		let sessionConfiguration = URLSessionConfiguration.default
-		sessionConfiguration.requestCachePolicy = .useProtocolCachePolicy
+		let sessionConfiguration = URLSessionConfiguration.ephemeral
+		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.httpShouldSetCookies = false
 		sessionConfiguration.httpCookieAcceptPolicy = .never
 		sessionConfiguration.httpMaximumConnectionsPerHost = 1
