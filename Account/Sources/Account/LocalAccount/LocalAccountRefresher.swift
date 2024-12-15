@@ -36,7 +36,7 @@ final class LocalAccountRefresher {
 
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
 
-		let filteredFeeds = feeds.filter { !feedShouldBeSkipped($0) }
+		let filteredFeeds = feeds.filter { !Self.feedShouldBeSkipped($0) }
 
 		guard !filteredFeeds.isEmpty else {
 			Task { @MainActor in
@@ -176,14 +176,24 @@ private extension LocalAccountRefresher {
 		return false
 	}
 
-	func feedShouldBeSkipped(_ feed: WebFeed) -> Bool {
+	// These hosts are immune to Cache-Control checking.
+	// We could certainly add more hosts to this if requested by site owners.
+	static let hostsThatShouldNeverBeSkipped = Set(["inessential.com", "netnewswire.blog", "nnw.ranchero.com"])
+
+	static func feedShouldBeSkipped(_ feed: WebFeed) -> Bool {
+
+		if let host = url(for: feed)?.host() {
+			if hostsThatShouldNeverBeSkipped.contains(host) {
+				return false
+			}
+		}
 
 		if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
 			os_log(.debug, "Dropping request for Cache-Control reasons: \(feed.url)")
 			return true
 		}
 
-		return Self.feedIsDisallowed(feed)
+		return feedIsDisallowed(feed)
 	}
 
 	static var urlCache = [String: URL]()
