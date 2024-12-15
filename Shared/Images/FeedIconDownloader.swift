@@ -38,8 +38,7 @@ public final class FeedIconDownloader {
 
 	init() {
 
-//		let folder = AppConfig.cacheSubfolder(named: "FeedIcons")
-		let folder = URL(fileURLWithPath: "/Users/brent/Desktop/")
+		let folder = AppConfig.cacheSubfolder(named: "FeedIcons")
 		self.feedURLToIconURLCachePath = folder.appendingPathComponent("FeedURLToIconURLCache.plist")
 		loadFeedURLToIconURLCache()
 
