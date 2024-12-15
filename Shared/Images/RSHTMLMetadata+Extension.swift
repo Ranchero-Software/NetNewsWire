@@ -86,13 +86,4 @@ extension RSHTMLMetadata {
 
 		return twitterProperties.imageURL
 	}
-
-	func bestFeaturedImageURL() -> String? {
-
-		if let openGraphImageURL = largestOpenGraphImageURL() {
-			return openGraphImageURL
-		}
-
-		return twitterProperties.imageURL
-	}
 }
