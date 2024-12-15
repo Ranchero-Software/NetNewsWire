@@ -1,6 +1,10 @@
 # iOS Release Notes
 
-##  6.1.5 TestFlight build 6133 12 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6133
+##  6.1.5 TestFlight build 6134 15 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6134
+
+Fix crash introduced in previous build (crash on selecting a folder)
+
+##  6.1.5 TestFlight build 6133 14 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6133
 
 Fix bandwidth-use bugs with downloading feed home pages to find feed icons and favicons
 Update default theme with enhancements by John Gruber
@@ -23,7 +27,7 @@ Fix crash importing OPML subscriptions
 ## 6.1.5 TestFlight build 6129 8 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6129
 
 Fix newly-introduced bugs with reporting refresh/sync progress
- 
+
 ## 6.1.5 TestFlight build 6128 - 7 Dec 2024
 
 Restore ability to tap on image and view its alt text (as with xkcd, for instance)
