@@ -1,6 +1,11 @@
 # iOS Release Notes
 
-## 6.1.5 TestFlight build 6131 12 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6132
+##  6.1.5 TestFlight build 6133 12 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6133
+
+Fix bandwidth-use bugs with downloading feed home pages to find feed icons and favicons
+Update default theme with enhancements by John Gruber
+
+## 6.1.5 TestFlight build 6132 12 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6132
 
 Restore ability to swipe back from a Safari view (web page view)
 Space out requests made to openrss.org
