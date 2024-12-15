@@ -71,7 +71,7 @@ private extension TimelinePreviewTableViewController {
 		
 		let iconImage = IconImage(AppAssets.faviconTemplateImage.withTintColor(AppAssets.secondaryAccentColor))
 		
-		return MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Feed Name", byline: nil, iconImage: iconImage, showIcon: true, featuredImage: nil, numberOfLines: AppDefaults.shared.timelineNumberOfLines, iconSize: AppDefaults.shared.timelineIconSize)
+		return MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Feed Name", byline: nil, iconImage: iconImage, showIcon: true, numberOfLines: AppDefaults.shared.timelineNumberOfLines, iconSize: AppDefaults.shared.timelineIconSize)
 	}
 		
 }

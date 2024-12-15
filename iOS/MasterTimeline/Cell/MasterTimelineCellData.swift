@@ -22,13 +22,12 @@ struct MasterTimelineCellData {
 	let showFeedName: ShowFeedName
 	let iconImage: IconImage? // feed icon, user avatar, or favicon
 	let showIcon: Bool // Make space even when icon is nil
-	let featuredImage: UIImage? // image from within the article
 	let read: Bool
 	let starred: Bool
 	let numberOfLines: Int
 	let iconSize: IconSize
 
-	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: UIImage?, numberOfLines: Int, iconSize: IconSize) {
+	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize) {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
 		self.attributedTitle = ArticleStringFormatter.attributedTruncatedTitle(article)
@@ -59,8 +58,7 @@ struct MasterTimelineCellData {
 
 		self.showIcon = showIcon
 		self.iconImage = iconImage
-		self.featuredImage = featuredImage
-		
+
 		self.read = article.status.read
 		self.starred = article.status.starred
 		self.numberOfLines = numberOfLines
@@ -78,7 +76,6 @@ struct MasterTimelineCellData {
 		self.showFeedName = .none
 		self.showIcon = false
 		self.iconImage = nil
-		self.featuredImage = nil
 		self.read = true
 		self.starred = false
 		self.numberOfLines = 0
