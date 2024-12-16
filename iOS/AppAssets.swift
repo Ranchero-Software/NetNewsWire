@@ -51,7 +51,7 @@ struct AppAssets {
 		return UIImage(named: "accountTheOldReader")!
 	}()
 
-	static let nnwFeedIcon = RSImage(named: "feedIcon")!
+	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
