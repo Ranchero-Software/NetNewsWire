@@ -52,7 +52,7 @@ public final class FeedIconDownloader {
 		}
 		
 		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), (homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog") {
-			return IconImage.appIcon
+			return IconImage.nnwFeedIcon
 		}
 
 		func checkHomePageURL() {
