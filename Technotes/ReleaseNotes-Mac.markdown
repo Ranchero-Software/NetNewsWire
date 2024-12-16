@@ -1,6 +1,6 @@
 # Mac Release Notes
 
-## 6.1.7 build 6131 16 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7
+## 6.1.7 build 6131 16 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7-release
 
 Fix bug clearing refresh progress
 Fix bandwidth bugs with downloading web pages to find feed icons and favicons
