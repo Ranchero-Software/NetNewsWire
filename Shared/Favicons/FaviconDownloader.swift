@@ -123,7 +123,7 @@ final class FaviconDownloader {
 
 		if let url = URL(string: homePageURL) {
 			if url.host == "nnw.ranchero.com" || url.host == "netnewswire.blog" {
-				return IconImage.appIcon
+				return IconImage.nnwFeedIcon
 			}
 		}
 
