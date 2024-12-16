@@ -7,6 +7,22 @@
     <language>en</language>
 
 <item>
+    <title>NetNewsWire 6.1.7</title>
+    <description><![CDATA[
+        <ul>
+        <li>Fix bug clearing refresh progress</li>
+        <li>Fix bandwidth bugs with downloading web pages to find feed icons and favicons</li>
+        <li>Update default theme with enhancements by John Gruber</li>
+        <li>Space out requests made to openrss.org</li>
+        <li>Send user-agent with platform, version, and build to openrss.org (and only to that site)</li>
+        </ul>
+    ]]></description>
+    <pubDate>Mon, 16 Dec 2024 07:55:00 -0800</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.7-release/NetNewsWire6.1.7.zip" sparkle:version="6131" sparkle:shortVersionString="6.1.7" length="9467322" type="application/zip" />
+    <sparkle:minimumSystemVersion>13.0.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
     <title>NetNewsWire 6.1.7b1</title>
     <description><![CDATA[
         <ul>
