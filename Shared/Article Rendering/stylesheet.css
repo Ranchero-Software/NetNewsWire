@@ -176,9 +176,9 @@ pre {
 }
 
 code, pre {
-	font-family: "SF Mono", Menlo, Courier, monospace;
-/*	font-size: 1em;*/
-/*	-webkit-hyphens: none;*/
+	font-family: "SF Mono Regular", Menlo, Courier, monospace;
+	font-size: 1em;
+	-webkit-hyphens: none;
 	background: var(--code-background-color);
 }
 
