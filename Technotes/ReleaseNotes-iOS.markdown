@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+##  6.1.5 TestFlight build 6135 16 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6135
+
+Add dark and tinted app icons
+
 ##  6.1.5 TestFlight build 6134 15 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6134
 
 Fix crash introduced in previous build (crash on selecting a folder)
