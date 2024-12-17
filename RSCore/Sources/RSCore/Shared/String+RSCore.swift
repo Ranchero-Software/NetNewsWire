@@ -42,7 +42,7 @@ public extension String {
 		self.data(using: .utf8)!.md5Hash
 	}
 
-	/// A hexadecimal representaion of an MD5 hash of the string's UTF-8 representation.
+	/// A hexadecimal representation of an MD5 hash of the string's UTF-8 representation.
 	var md5String: String {
 		self.md5Hash.hexadecimalString!
 	}
@@ -299,7 +299,7 @@ public extension String {
 	///
 	/// - Parameter string: The string to search for.
 	///
-	/// - Returns: `true` if the string contains `string`; `false` otherswise.
+	/// - Returns: `true` if the string contains `string`; `false` otherwise.
 	func caseInsensitiveContains(_ string: String) -> Bool {
 		return self.range(of: string, options: .caseInsensitive) != nil
 	}

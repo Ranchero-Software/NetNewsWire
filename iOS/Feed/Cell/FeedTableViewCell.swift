@@ -23,7 +23,7 @@ class FeedTableViewCell : VibrantTableViewCell {
 		set {}
 		get {
 			if unreadCount > 0 {
-				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
+				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
 				return "\(name) \(unreadCount) \(unreadLabel)"
 			} else {
 				return name

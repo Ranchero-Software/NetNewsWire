@@ -267,7 +267,7 @@ static int FMDBDatabaseBusyHandler(void *f, int count) {
 
 // we no longer make busyRetryTimeout public
 // but for folks who don't bother noticing that the interface to FMDatabase changed,
-// we'll still implement the method so they don't get suprise crashes
+// we'll still implement the method so they don't get surprise crashes
 - (int)busyRetryTimeout {
     NSLog(@"%s:%d", __FUNCTION__, __LINE__);
     NSLog(@"FMDB: busyRetryTimeout no longer works, please use maxBusyRetryTimeInterval");

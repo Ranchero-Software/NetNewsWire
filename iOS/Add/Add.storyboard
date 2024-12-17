@@ -142,7 +142,7 @@
         <!--Modal Navigation Controller-->
         <scene sceneID="hbe-Yu-anW">
             <objects>
-                <navigationController storyboardIdentifier="AddWebFeedFolderNavViewController" id="WDg-F7-gfk" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="AddFeedFolderNavViewController" id="WDg-F7-gfk" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="akM-T1-shZ">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -254,7 +254,7 @@
         <!--Navigation Controller-->
         <scene sceneID="1In-mk-bYI">
             <objects>
-                <navigationController storyboardIdentifier="AddWebFeedViewControllerNav" id="4Ej-aI-tUP" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="AddFeedViewControllerNav" id="4Ej-aI-tUP" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Fot-QF-7Rn">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>

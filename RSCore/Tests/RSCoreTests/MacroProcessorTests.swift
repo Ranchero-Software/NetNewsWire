@@ -28,8 +28,8 @@ class MacroProcessorTests: XCTestCase {
 		result = try! MacroProcessor.renderedText(withTemplate: template, substitutions: substitutions)
 		XCTAssertEqual(result, expected)
 
-		// Nonexistant key
-		template = "foo [[nonexistant]] bar"
+		// Nonexistent key
+		template = "foo [[nonexistent]] bar"
 		expected = template
 		result = try! MacroProcessor.renderedText(withTemplate: template, substitutions: substitutions)
 		XCTAssertEqual(result, expected)

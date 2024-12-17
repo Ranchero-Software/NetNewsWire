@@ -19,7 +19,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	/// Feedly has a sandbox API and a production API.
 	/// This property is referred to when clients need to know which environment it should be pointing to.
-	/// The value of this proptery must match any `OAuthAuthorizationClient` used.
+	/// The value of this property must match any `OAuthAuthorizationClient` used.
 	/// Currently this is always returning the cloud API, but we are leaving it stubbed out for now.
 	static var environment: FeedlyAPICaller.API {
 		return .cloud

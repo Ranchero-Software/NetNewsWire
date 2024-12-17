@@ -47,7 +47,7 @@ final class IconView: UIView {
 	}
 	
 	private var isBackgroundSuppressed: Bool {
-		return iconImage?.isBackgroundSupressed ?? false
+		return iconImage?.isBackgroundSuppressed ?? false
 	}
 	
 	override init(frame: CGRect) {

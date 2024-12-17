@@ -1,10 +1,26 @@
 # Mac Release Notes
 
-### 6.1.6 build 6127 4 Dec 2024
+## 6.1.7 build 6131 16 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7-release
+
+Fix bug clearing refresh progress
+Fix bandwidth bugs with downloading web pages to find feed icons and favicons
+Update default theme with enhancements by John Gruber
+Space out requests made to openrss.org
+Send user-agent with platform, version, and build to openrss.org (and only to that site)
+
+## 6.1.7b1 build 6130 15 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7b1
+
+Fix bug clearing refresh progress
+Fix bandwidth bugs with downloading web pages to find feed icons and favicons
+Update default theme with enhancements by John Gruber
+Space out requests made to openrss.org
+Send user-agent with platform, version, and build to openrss.org (and only to that site)
+
+## 6.1.6 build 6127 4 Dec 2024 - branch: 6.1.6 tag: mac-6.1.6
 
 Fix bug clearing sync progress for Feedly accounts
 
-## 6.1.5 build 6126 3 Dec 2024
+## 6.1.5 build 6126 3 Dec 2024 - branch: 6.1.5 tag: mac-6.1.5
 
 Restore toggle sidebar button to toolbar
 Add keyboard shortcut for Copy Article URL and Copy External URL menu items

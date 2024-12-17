@@ -11,7 +11,7 @@ import Foundation
 /// Used to select which animations should be performed
 public struct Animations: OptionSet {
 	
-	/// Select and deslections will be animated.
+	/// Selections and deselections will be animated.
 	public static let select = Animations(rawValue: 1)
 	
 	/// Scrolling will be animated

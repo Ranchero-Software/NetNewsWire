@@ -36,8 +36,8 @@ class ReaderAPIAccountViewController: UITableViewController {
 		usernameTextField.delegate = self
 		passwordTextField.delegate = self
 		
-		if let unwrappedAcount = account,
-		   let credentials = try? retrieveCredentialsForAccount(for: unwrappedAcount) {
+		if let unwrappedAccount = account,
+		   let credentials = try? retrieveCredentialsForAccount(for: unwrappedAccount) {
 			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
 			actionButton.isEnabled = true
 			usernameTextField.text = credentials.username
@@ -180,7 +180,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 							case .success:
 								break
 							case .failure(let error):
-								self.showError(NSLocalizedString(error.localizedDescription, comment: "Accoount Refresh Error"))
+								self.showError(NSLocalizedString(error.localizedDescription, comment: "Account Refresh Error"))
 							}
 						}
 						

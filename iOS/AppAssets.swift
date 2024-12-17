@@ -146,7 +146,7 @@ struct AppAssets {
 	}()
 	
 	static var folderImage: IconImage = {
-		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
 
 	static var moreImage: UIImage = {
@@ -215,7 +215,7 @@ struct AppAssets {
 	
 	static var starredFeedImage: IconImage {
 		let image = UIImage(systemName: "star.fill")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.starColor.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.starColor.cgColor)
 	}
 
 	static var tickMarkColor: UIColor = {
@@ -229,7 +229,7 @@ struct AppAssets {
 	
 	static var todayFeedImage: IconImage {
 		let image = UIImage(systemName: "sun.max.fill")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: UIColor.systemOrange.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange.cgColor)
 	}
 
 	static var trashImage: UIImage = {
@@ -238,7 +238,7 @@ struct AppAssets {
 	
 	static var unreadFeedImage: IconImage {
 		let image = UIImage(systemName: "largecircle.fill.circle")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}
 	
 	static var vibrantTextColor: UIColor = {
