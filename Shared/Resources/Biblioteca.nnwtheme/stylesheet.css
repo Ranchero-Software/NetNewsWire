@@ -416,13 +416,11 @@ body a.footnote:visited,
 	position: relative;
 }
 /* Substack images */
-.image-link-expand {
-	background-color: rgba(0,0,0,.6);
-	padding: 5px;
-	border-radius: 3px;
-	position: absolute;
-	top: 30px;
-	right: 10px;
+.image-link .restack-image {
+	display: none;
+}
+.image-link .image-link-expand {
+	display: none;
 }
 /* Wordpress block editor */
 .wp-block-image > .aligncenter {
