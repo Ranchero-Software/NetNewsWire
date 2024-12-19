@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+## 6.1.8 build 6133 19 Dec 2024 - branch 6.1.8-mac tag: mac-6.1.8
+
+Fix state restoration bug by building on Xcode 14
+
 ## 6.1.8b1 build 6132 18 Dec 2024 - branch 6.1.8-mac tag: mac-6.1.8b1
 
 Hopefully fix state restoration bug by building on Xcode 14
