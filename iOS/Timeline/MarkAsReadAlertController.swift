@@ -46,8 +46,11 @@ struct MarkAsReadAlertController {
 							  completion: @escaping (UIAlertAction) -> Void) -> UIAlertController where T: MarkAsReadAlertControllerSourceType  {
 		
 		
+		let hasShownAlertKey = "hasShownMarkAsReadAlert"
+		let hasShownAlert = UserDefaults.standard.bool(forKey: hasShownAlertKey)
+		
 		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
-		let message = NSLocalizedString("You can turn this confirmation off in Settings.",
+		let message = hasShownAlert ? nil : NSLocalizedString("You can turn this confirmation off in Settings.",
 										comment: "You can turn this confirmation off in Settings.")
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let settingsTitle = NSLocalizedString("Open Settings", comment: "Open Settings")
@@ -56,13 +59,16 @@ struct MarkAsReadAlertController {
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 			cancelCompletion?()
 		}
-		let settingsAction = UIAlertAction(title: settingsTitle, style: .default) { _ in
-			coordinator.showSettings(scrollToArticlesSection: true)
-		}
 		let markAction = UIAlertAction(title: confirmTitle, style: .default, handler: completion)
 		
 		alertController.addAction(markAction)
-		alertController.addAction(settingsAction)
+		if (!hasShownAlert) {
+			let settingsAction = UIAlertAction(title: settingsTitle, style: .default) { _ in
+				coordinator.showSettings(scrollToArticlesSection: true)
+			}
+			alertController.addAction(settingsAction)
+			UserDefaults.standard.set(true, forKey: hasShownAlertKey)
+		}
 		alertController.addAction(cancelAction)
 		
 		if let barButtonItem = sourceType as? UIBarButtonItem {
