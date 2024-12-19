@@ -136,7 +136,7 @@ extension Article {
 	}
 }
 
-extension Article: @retroactive DatabaseObject {
+extension Article: DatabaseObject {
 
 	public func databaseDictionary() -> DatabaseDictionary? {
 		var d = DatabaseDictionary()
