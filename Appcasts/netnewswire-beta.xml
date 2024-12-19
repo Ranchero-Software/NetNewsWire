@@ -7,6 +7,18 @@
     <language>en</language>
 
 <item>
+    <title>NetNewsWire 6.1.8b1</title>
+    <description><![CDATA[
+        <ul>
+        <li>Hopefully fix state restoration bug (temporary fix — building on Xcode 14 — permanent fix to come later)</li>
+        </ul>
+    ]]></description>
+    <pubDate>Wed, 18 Dec 2024 18:50:00 -0800</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.8b1/NetNewsWire6.1.8b1.zip" sparkle:version="6132" sparkle:shortVersionString="6.1.8b1" length="10087321" type="application/zip" />
+    <sparkle:minimumSystemVersion>13.0.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
     <title>NetNewsWire 6.1.7</title>
     <description><![CDATA[
         <ul>
