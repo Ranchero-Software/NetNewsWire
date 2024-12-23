@@ -1,14 +1,18 @@
 # iOS Release Notes
 
-##  6.1.5 TestFlight build 6135 16 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6135
+## 6.1.6 TestFlight build 6136 22 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6136
+
+Hopefully fix layoutSubviews crash by switching to the modern three-column split view
+
+## 6.1.5 TestFlight build 6135 16 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6135
 
 Add dark and tinted app icons
 
-##  6.1.5 TestFlight build 6134 15 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6134
+## 6.1.5 TestFlight build 6134 15 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6134
 
 Fix crash introduced in previous build (crash on selecting a folder)
 
-##  6.1.5 TestFlight build 6133 14 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6133
+## 6.1.5 TestFlight build 6133 14 Dec 2024 - branch: 6.1.5 tag: iOS-6.1.5-6133
 
 Fix bandwidth-use bugs with downloading feed home pages to find feed icons and favicons
 Update default theme with enhancements by John Gruber
