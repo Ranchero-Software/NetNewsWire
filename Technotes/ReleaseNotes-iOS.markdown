@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+## 6.1.6 TestFlight build 6137 23 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6137
+
+Fix bug where next-unread on iPhone would sometimes briefly show the timeline before going to the next article
+
 ## 6.1.6 TestFlight build 6136 22 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6136
 
 Hopefully fix layoutSubviews crash by switching to the modern three-column split view
