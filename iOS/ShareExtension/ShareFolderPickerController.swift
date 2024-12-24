@@ -48,7 +48,7 @@ class ShareFolderPickerController: UITableViewController {
 		if let account = container as? ExtensionAccount {
 			cell.icon.image = AppAssets.image(for: account.type)
 		} else {
-			cell.icon.image = AppAssets.masterFolderImage.image
+			cell.icon.image = AppAssets.mainFolderImage.image
 		}
 
 		cell.label?.text = container?.name ?? ""

@@ -37,6 +37,6 @@ extension WebFeed: SmallIconProvider {
 
 extension Folder: SmallIconProvider {
 	var smallIcon: IconImage? {
-		AppAssets.masterFolderImage
+		AppAssets.mainFolderImage
 	}
 }

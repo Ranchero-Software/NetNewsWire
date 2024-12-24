@@ -1,5 +1,5 @@
 //
-//  MasterTimelineTableViewCell.swift
+//  MainTimelineTableViewCell.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 8/31/15.
@@ -9,14 +9,14 @@
 import UIKit
 import RSCore
 
-class MasterTimelineTableViewCell: VibrantTableViewCell {
-	
-	private let titleView = MasterTimelineTableViewCell.multiLineUILabel()
-	private let summaryView = MasterTimelineTableViewCell.multiLineUILabel()
-	private let unreadIndicatorView = MasterUnreadIndicatorView(frame: CGRect.zero)
-	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
-	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
-	
+class MainTimelineTableViewCell: VibrantTableViewCell {
+
+	private let titleView = MainTimelineTableViewCell.multiLineUILabel()
+	private let summaryView = MainTimelineTableViewCell.multiLineUILabel()
+	private let unreadIndicatorView = MainUnreadIndicatorView(frame: CGRect.zero)
+	private let dateView = MainTimelineTableViewCell.singleLineUILabel()
+	private let feedNameView = MainTimelineTableViewCell.singleLineUILabel()
+
 	private lazy var iconView = IconView()
 	
 	private lazy var starView = {
@@ -26,7 +26,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 	private var unreadIndicatorPropertyAnimator: UIViewPropertyAnimator?
 	private var starViewPropertyAnimator: UIViewPropertyAnimator?
 
-	var cellData: MasterTimelineCellData! {
+	var cellData: MainTimelineCellData! {
 		didSet {
 			updateSubviews()
 		}
@@ -106,8 +106,8 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 
 // MARK: - Private
 
-private extension MasterTimelineTableViewCell {
-	
+private extension MainTimelineTableViewCell {
+
 	static func singleLineUILabel() -> UILabel {
 		let label = NonIntrinsicLabel()
 		label.lineBreakMode = .byTruncatingTail
@@ -153,28 +153,28 @@ private extension MasterTimelineTableViewCell {
 		addSubviewAtInit(starView, hidden: true)
 	}
 	
-	func updatedLayout(width: CGFloat) -> MasterTimelineCellLayout {
+	func updatedLayout(width: CGFloat) -> MainTimelineCellLayout {
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			return MasterTimelineAccessibilityCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
+			return MainTimelineAccessibilityCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
 		} else {
-			return MasterTimelineDefaultCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
+			return MainTimelineDefaultCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
 		}
 	}
 	
 	func updateTitleView() {
-		titleView.font = MasterTimelineDefaultCellLayout.titleFont
+		titleView.font = MainTimelineDefaultCellLayout.titleFont
 		titleView.textColor = labelColor
 		updateTextFieldAttributedText(titleView, cellData?.attributedTitle)
 	}
 	
 	func updateSummaryView() {
-		summaryView.font = MasterTimelineDefaultCellLayout.summaryFont
+		summaryView.font = MainTimelineDefaultCellLayout.summaryFont
 		summaryView.textColor = labelColor
 		updateTextFieldText(summaryView, cellData?.summary)
 	}
 	
 	func updateDateView() {
-		dateView.font = MasterTimelineDefaultCellLayout.dateFont
+		dateView.font = MainTimelineDefaultCellLayout.dateFont
 		dateView.textColor = secondaryLabelColor
 		updateTextFieldText(dateView, cellData.dateString)
 	}
@@ -204,12 +204,12 @@ private extension MasterTimelineTableViewCell {
 		switch cellData.showFeedName {
 		case .feed:
 			showView(feedNameView)
-			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
+			feedNameView.font = MainTimelineDefaultCellLayout.feedNameFont
 			feedNameView.textColor = secondaryLabelColor
 			updateTextFieldText(feedNameView, cellData.feedName)
 		case .byline:
 			showView(feedNameView)
-			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
+			feedNameView.font = MainTimelineDefaultCellLayout.feedNameFont
 			feedNameView.textColor = secondaryLabelColor
 			updateTextFieldText(feedNameView, cellData.byline)
 		case .none:

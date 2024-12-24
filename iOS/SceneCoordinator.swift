@@ -52,8 +52,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	private var rootSplitViewController: RootSplitViewController!
 
-	private var masterFeedViewController: MainFeedViewController!
-	private var masterTimelineViewController: MasterTimelineViewController?
+	private var mainFeedViewController: MainFeedViewController!
+	private var mainTimelineViewController: MainTimelineViewController?
 	private var articleViewController: ArticleViewController?
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
@@ -280,13 +280,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		super.init()
 
-		self.masterFeedViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedViewController
-		self.masterFeedViewController.coordinator = self
-		self.masterFeedViewController?.navigationController?.delegate = self
+		self.mainFeedViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedViewController
+		self.mainFeedViewController.coordinator = self
+		self.mainFeedViewController?.navigationController?.delegate = self
 
-		self.masterTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MasterTimelineViewController
-		self.masterTimelineViewController?.coordinator = self
-		self.masterTimelineViewController?.navigationController?.delegate = self
+		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MainTimelineViewController
+		self.mainTimelineViewController?.coordinator = self
+		self.mainTimelineViewController?.navigationController?.delegate = self
 
 		self.articleViewController = rootSplitViewController.viewController(for: .secondary) as? ArticleViewController
 		self.articleViewController?.coordinator = self
@@ -370,9 +370,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	func resetFocus() {
 		if currentArticle != nil {
-			masterTimelineViewController?.focus()
+			mainTimelineViewController?.focus()
 		} else {
-			masterFeedViewController?.focus()
+			mainFeedViewController?.focus()
 		}
 	}
 	
@@ -389,7 +389,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		selectFeed(indexPath: nil) {
 			self.rootSplitViewController.show(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
-				self.masterTimelineViewController!.showSearchAll()
+				self.mainTimelineViewController!.showSearchAll()
 			}
 		}
 	}
@@ -422,7 +422,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
 			fetchAndMergeArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores()
 			}
 		} else {
@@ -441,7 +441,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	@objc func accountStateDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores()
 			}
 		} else {
@@ -459,7 +459,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores(updateExpandedNodes: expandNewAccount)
 			}
 		} else {
@@ -477,7 +477,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores(updateExpandedNodes: cleanupAccount)
 			}
 		} else {
@@ -562,7 +562,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			treeControllerDelegate.isReadFiltered = true
 		}
 		rebuildBackingStores()
-		masterFeedViewController?.updateUI()
+		mainFeedViewController?.updateUI()
 	}
 	
 	func toggleReadArticlesFilter() {
@@ -644,7 +644,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
 		}
 		fetchAndReplaceArticlesAsync(animated: true) {
-			self.masterTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
+			self.mainTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
 		}
 	}
 	
@@ -717,7 +717,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		clearTimelineIfNoLongerAvailable()
 	}
 	
-	func masterFeedIndexPathForCurrentTimeline() -> IndexPath? {
+	func mainFeedIndexPathForCurrentTimeline() -> IndexPath? {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(timelineFeed as AnyObject) else {
 			return nil
 		}
@@ -742,7 +742,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		
 		currentFeedIndexPath = indexPath
-		masterFeedViewController.updateFeedSelection(animations: animations)
+		mainFeedViewController.updateFeedSelection(animations: animations)
 
 		if deselectArticle {
 			selectArticle(nil)
@@ -815,7 +815,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		
 		if article == nil {
 			rootSplitViewController.show(.supplementary)
-			masterTimelineViewController?.updateArticleSelection(animations: animations)
+			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			return
 		}
 		
@@ -824,7 +824,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
 
-		masterTimelineViewController?.updateArticleSelection(animations: animations)
+		mainTimelineViewController?.updateArticleSelection(animations: animations)
 		articleViewController?.article = article
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
 			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
@@ -844,7 +844,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if let oldTimelineFeed = preSearchTimelineFeed {
 			emptyTheTimeline()
 			timelineFeed = oldTimelineFeed
-			masterTimelineViewController?.reinitializeArticles(resetScroll: true)
+			mainTimelineViewController?.reinitializeArticles(resetScroll: true)
 			replaceArticles(with: savedSearchArticles!, animated: true)
 		} else {
 			setTimelineFeed(nil, animated: true)
@@ -857,7 +857,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		savedSearchArticles = nil
 		isSearching = false
 		selectArticle(nil)
-		masterTimelineViewController?.focus()
+		mainTimelineViewController?.focus()
 	}
 	
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
@@ -955,7 +955,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		if self.isSearching {
-			self.masterTimelineViewController?.hideSearch()
+			self.mainTimelineViewController?.hideSearch()
 		}
 
 		selectNextUnreadFeed() {
@@ -1067,7 +1067,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	func discloseWebFeed(_ webFeed: WebFeed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
-			masterTimelineViewController?.hideSearch()
+			mainTimelineViewController?.hideSearch()
 		}
 
 		guard let account = webFeed.account else {
@@ -1163,14 +1163,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		masterFeedViewController.present(addNavViewController, animated: true)
+		mainFeedViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
-		masterFeedViewController.present(addNavViewController, animated: true)
+		mainFeedViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
@@ -1219,12 +1219,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			articleViewController?.openInAppBrowser()
 		}
 		else {
-			masterFeedViewController.openInAppBrowser()
+			mainFeedViewController.openInAppBrowser()
 		}
 	}
 
 	func navigateToFeeds() {
-		masterFeedViewController?.focus()
+		mainFeedViewController?.focus()
 		selectArticle(nil)
 	}
 	
@@ -1232,7 +1232,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if currentArticle == nil && articles.count > 0 {
 			selectArticle(articles[0])
 		}
-		masterTimelineViewController?.focus()
+		mainTimelineViewController?.focus()
 	}
 	
 	func navigateToDetail() {
@@ -1266,7 +1266,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	/// `SFSafariViewController` or `SettingsViewController`,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
-		guard let presentedController = masterFeedViewController.presentedViewController else { return }
+		guard let presentedController = mainFeedViewController.presentedViewController else { return }
 		
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
@@ -1320,7 +1320,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		}
 
 		// If we are showing the Feeds and only the feeds start clearing stuff
-		if viewController === masterFeedViewController && !isTimelineViewControllerPending {
+		if viewController === mainFeedViewController && !isTimelineViewControllerPending {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil, animations: [.scroll, .select, .navigation])
 			return
@@ -1330,9 +1330,9 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
-		if viewController === masterTimelineViewController && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
+		if viewController === mainTimelineViewController && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
 			currentArticle = nil
-			masterTimelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])
+			mainTimelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])
 			activityManager.invalidateReading()
 
 			// Restore any bars hidden by the article controller
@@ -1442,7 +1442,7 @@ private extension SceneCoordinator {
 			
 			updateExpandedNodes?()
 			let changes = rebuildShadowTable()
-			masterFeedViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
+			mainFeedViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
 		}
 	}
 	
@@ -1577,7 +1577,7 @@ private extension SceneCoordinator {
 		timelineFeed = feed
 		
 		fetchAndReplaceArticlesAsync(animated: animated) {
-			self.masterTimelineViewController?.reinitializeArticles(resetScroll: true)
+			self.mainTimelineViewController?.reinitializeArticles(resetScroll: true)
 			completion?()
 		}
 	}
@@ -1891,7 +1891,7 @@ private extension SceneCoordinator {
 			articles = sortedArticles
 			updateShowNamesAndIcons()
 			updateUnreadCount()
-			masterTimelineViewController?.reloadArticles(animated: animated)
+			mainTimelineViewController?.reloadArticles(animated: animated)
 		}
 	}
 	
@@ -1901,8 +1901,8 @@ private extension SceneCoordinator {
 
 	@objc func fetchAndMergeArticlesAsync() {
 		fetchAndMergeArticlesAsync(animated: true) {
-			self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
-			self.masterTimelineViewController?.restoreSelectionIfNecessary(adjustScroll: false)
+			self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
+			self.mainTimelineViewController?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
 	
@@ -2051,7 +2051,7 @@ private extension SceneCoordinator {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
 					self.selectFeed(indexPath: indexPath) {
-						self.masterFeedViewController.focus()
+						self.mainFeedViewController.focus()
 					}
 				}
 			})
@@ -2072,7 +2072,7 @@ private extension SceneCoordinator {
 				
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
 					self.selectFeed(indexPath: indexPath) {
-						self.masterFeedViewController.focus()
+						self.mainFeedViewController.focus()
 					}
 				}
 			})
@@ -2085,7 +2085,7 @@ private extension SceneCoordinator {
 			}
 			
 			self.discloseWebFeed(webFeed, initialLoad: true) {
-				self.masterFeedViewController.focus()
+				self.mainFeedViewController.focus()
 			}
 		}
 	}

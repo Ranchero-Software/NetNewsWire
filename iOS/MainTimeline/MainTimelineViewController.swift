@@ -1,5 +1,5 @@
 //
-//  MasterTimelineViewController.swift
+//  MainTimelineViewController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/8/19.
@@ -11,7 +11,7 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
+class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -86,7 +86,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
 
-		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
+		if let titleView = Bundle.main.loadNibNamed("MainTimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
 			navigationItem.titleView = titleView
 		}
 		
@@ -444,7 +444,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
-				if let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell {
 					configure(cell, article: article)
 				}
 			}
@@ -453,7 +453,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
 		
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		
@@ -464,7 +464,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			if article.webFeed == feed, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+			if article.webFeed == feed, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
 				cell.setIconImage(image)
 			}
 		}
@@ -479,7 +479,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 				return
 			}
 			for author in authors {
-				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell, let image = iconImageFor(article) {
+				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
 					cell.setIconImage(image)
 				}
 			}
@@ -487,7 +487,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		if coordinator.showIcons {
@@ -512,7 +512,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 		}
 	}
@@ -554,13 +554,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
-		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, numberOfLines: numberOfTextLines, iconSize: iconSize)
-		
+		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, numberOfLines: numberOfTextLines, iconSize: iconSize)
+
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = MainTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		} else {
-			let layout = MasterTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = MainTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		}
 		
@@ -570,7 +570,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 // MARK: Searching
 
-extension MasterTimelineViewController: UISearchControllerDelegate {
+extension MainTimelineViewController: UISearchControllerDelegate {
 
 	func willPresentSearchController(_ searchController: UISearchController) {
 		coordinator.beginSearching()
@@ -584,7 +584,7 @@ extension MasterTimelineViewController: UISearchControllerDelegate {
 
 }
 
-extension MasterTimelineViewController: UISearchResultsUpdating {
+extension MainTimelineViewController: UISearchResultsUpdating {
 
 	func updateSearchResults(for searchController: UISearchController) {
 		let searchScope = SearchScope(rawValue: searchController.searchBar.selectedScopeButtonIndex)!
@@ -593,7 +593,7 @@ extension MasterTimelineViewController: UISearchResultsUpdating {
 
 }
 
-extension MasterTimelineViewController: UISearchBarDelegate {
+extension MainTimelineViewController: UISearchBarDelegate {
 	func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
 		let searchScope = SearchScope(rawValue: selectedScope)!
 		coordinator.searchArticles(searchBar.text!, searchScope)
@@ -602,7 +602,7 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 // MARK: Private
 
-private extension MasterTimelineViewController {
+private extension MainTimelineViewController {
 
 	func configureToolbar() {		
 		guard !(splitViewController?.isCollapsed ?? true) else {
@@ -622,7 +622,7 @@ private extension MasterTimelineViewController {
 		
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
 
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			let timelineIconImage = coordinator.timelineIconImage
 			titleView.iconView.iconImage = timelineIconImage
 			if let preferredColor = timelineIconImage?.preferredColor {
@@ -693,7 +693,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateTitleUnreadCount() {
-		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.unreadCountView.unreadCount = coordinator.timelineUnreadCount
 		}
 	}
@@ -717,8 +717,8 @@ private extension MasterTimelineViewController {
 	
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
-			MasterTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
-				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
+			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
+				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainTimelineTableViewCell
 				self?.configure(cell, article: article)
 				return cell
 			})
@@ -726,13 +726,13 @@ private extension MasterTimelineViewController {
 		return dataSource
     }
 	
-	func configure(_ cell: MasterTimelineTableViewCell, article: Article) {
-		
+	func configure(_ cell: MainTimelineTableViewCell, article: Article) {
+
 		let iconImage = iconImageFor(article)
 
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
 
 	}
 	

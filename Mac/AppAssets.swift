@@ -145,7 +145,7 @@ struct AppAssets {
 		return RSImage(named: "legacyArticleExtractorProgress4")
 	}()
 	
-	static var masterFolderImage: IconImage {
+	static var mainFolderImage: IconImage {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 			let preferredColor = NSColor(named: "AccentColor")!

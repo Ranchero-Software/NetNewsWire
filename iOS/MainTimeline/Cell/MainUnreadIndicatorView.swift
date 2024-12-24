@@ -1,5 +1,5 @@
 //
-//  MasterUnreadIndicatorView.swift
+//  MainUnreadIndicatorView.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 2/16/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MasterUnreadIndicatorView: UIView {
+class MainUnreadIndicatorView: UIView {
 
 	override func layoutSubviews() {
 		super.layoutSubviews()

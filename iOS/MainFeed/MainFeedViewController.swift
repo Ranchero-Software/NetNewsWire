@@ -549,7 +549,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: API
 	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
-		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
+		if let indexPath = coordinator.mainFeedIndexPathForCurrentTimeline() {
 			if adjustScroll {
 				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
@@ -722,7 +722,7 @@ extension MainFeedViewController: UIContextMenuInteractionDelegate {
 	}
 }
 
-// MARK: MasterFeedTableViewSectionHeaderDelegate
+// MARK: MainFeedTableViewSectionHeaderDelegate
 
 extension MainFeedViewController: MainFeedTableViewSectionHeaderDelegate {
 	
@@ -732,11 +732,11 @@ extension MainFeedViewController: MainFeedTableViewSectionHeaderDelegate {
 	
 }
 
-// MARK: MasterTableViewCellDelegate
+// MARK: MainTableViewCellDelegate
 
 extension MainFeedViewController: MainFeedTableViewCellDelegate {
 	
-	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool) {
+	func mainFeedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool) {
 		if expanding {
 			expand(sender)
 		} else {
