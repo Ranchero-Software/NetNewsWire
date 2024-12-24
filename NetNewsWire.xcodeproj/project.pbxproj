@@ -122,8 +122,6 @@
 		5138E94D24D3417A00AFF0FE /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E94B24D3417A00AFF0FE /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5138E95224D3418100AFF0FE /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95124D3418100AFF0FE /* RSParser */; };
 		5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E95124D3418100AFF0FE /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
-		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
 		513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		513F325C2593ECF40003048F /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 513F325B2593ECF40003048F /* RSCore */; };
 		513F325D2593ECF40003048F /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F325B2593ECF40003048F /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -158,7 +156,6 @@
 		516AE9DF2372269A007DEEAA /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
 		516AE9E02372269A007DEEAA /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
 		516B695F24D2F33B00B5702F /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 516B695E24D2F33B00B5702F /* Account */; };
-		51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51707438232AA97100A461A3 /* ShareFolderPickerController.swift */; };
 		517630042336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		517630052336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -183,9 +180,6 @@
 		51A737C824DB19CC0015FA66 /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C724DB19CC0015FA66 /* RSParser */; };
 		51A737C924DB19CC0015FA66 /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C724DB19CC0015FA66 /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
-		51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */; };
-		51A9A5E62380C8B20033AADF /* ShareFolderPickerFolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */; };
-		51A9A5E82380CA130033AADF /* ShareFolderPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */; };
 		51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45254226507D200C03939 /* AppAssets.swift */; };
 		51A9A5EE2380D6080033AADF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC9B2262A1A900D921D6 /* Assets.xcassets */; };
 		51A9A5EF2380D63B0033AADF /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
@@ -740,9 +734,6 @@
 		5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Sepia.nnwtheme; sourceTree = "<group>"; };
 		51386A8D25673276005F3762 /* AccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCell.swift; sourceTree = "<group>"; };
 		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		513C5CEB232571C2003D4054 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		513C5CED232571C2003D4054 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5141E7552374A2890013FF27 /* DetailIconSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailIconSchemeHandler.swift; sourceTree = "<group>"; };
 		5142194A2353C1CF00E07E2C /* main_mac.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main_mac.js; sourceTree = "<group>"; };
 		514219572353C28900E07E2C /* main_ios.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main_ios.js; sourceTree = "<group>"; };
@@ -755,10 +746,8 @@
 		5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountsFeedbin.xib; sourceTree = "<group>"; };
 		514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootSplitViewController.swift; sourceTree = "<group>"; };
 		515D4FCB2325815A00EE1167 /* SafariExt.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SafariExt.js; sourceTree = "<group>"; };
-		515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_ShareExtension.entitlements; sourceTree = "<group>"; };
 		515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSshareextension_target.xcconfig; sourceTree = "<group>"; };
 		516AE9DE2372269A007DEEAA /* IconImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImage.swift; sourceTree = "<group>"; };
-		51707438232AA97100A461A3 /* ShareFolderPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerController.swift; sourceTree = "<group>"; };
 		517630032336215100E15FFF /* main.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
 		5183CCE7226F68D90010922C /* AccountRefreshTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRefreshTimer.swift; sourceTree = "<group>"; };
@@ -772,9 +761,6 @@
 		519E743422C663F900A78E47 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		51A052CD244FB9D6006C2024 /* AddFeedWIndowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddFeedWIndowController.swift; path = AddFeed/AddFeedWIndowController.swift; sourceTree = "<group>"; };
 		51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedDefaultContainer.swift; sourceTree = "<group>"; };
-		51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerAccountCell.xib; sourceTree = "<group>"; };
-		51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerFolderCell.xib; sourceTree = "<group>"; };
-		51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerCell.swift; sourceTree = "<group>"; };
 		51B5C87623F22B8200032075 /* ExtensionContainers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContainers.swift; sourceTree = "<group>"; };
 		51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionFeedAddRequest.swift; sourceTree = "<group>"; };
 		51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContainersFile.swift; sourceTree = "<group>"; };
@@ -1021,6 +1007,16 @@
 		FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		84A6CEFD2D1B4E1600F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		84352B8A2D1B446D0002B64E /* MainFeed */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainFeed; sourceTree = "<group>"; };
 		84A6CE4F2D1B457500F23315 /* MainTimeline */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainTimeline; sourceTree = "<group>"; };
@@ -1030,6 +1026,7 @@
 		84A6CE9D2D1B4D9A00F23315 /* Inspector */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Inspector; sourceTree = "<group>"; };
 		84A6CEAE2D1B4DD000F23315 /* Settings */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Settings; sourceTree = "<group>"; };
 		84A6CED32D1B4DF700F23315 /* UIKit Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "UIKit Extensions"; sourceTree = "<group>"; };
+		84A6CEF52D1B4E1600F23315 /* ShareExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84A6CEFD2D1B4E1600F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ShareExtension; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1268,21 +1265,6 @@
 				51314684235A7EB900387FDC /* NetNewsWire_iOS_IntentsExtension.entitlements */,
 			);
 			path = IntentsExtension;
-			sourceTree = "<group>";
-		};
-		513C5CE7232571C2003D4054 /* ShareExtension */ = {
-			isa = PBXGroup;
-			children = (
-				513C5CE8232571C2003D4054 /* ShareViewController.swift */,
-				51707438232AA97100A461A3 /* ShareFolderPickerController.swift */,
-				51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */,
-				51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */,
-				51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */,
-				513C5CEA232571C2003D4054 /* MainInterface.storyboard */,
-				513C5CED232571C2003D4054 /* Info.plist */,
-				515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */,
-			);
-			path = ShareExtension;
 			sourceTree = "<group>";
 		};
 		5144EA39227A377700D19003 /* OPML */ = {
@@ -1871,7 +1853,7 @@
 				513145F9235A55A700387FDC /* Intents */,
 				84A6CEAE2D1B4DD000F23315 /* Settings */,
 				84A6CED32D1B4DF700F23315 /* UIKit Extensions */,
-				513C5CE7232571C2003D4054 /* ShareExtension */,
+				84A6CEF52D1B4E1600F23315 /* ShareExtension */,
 				51314643235A7C2300387FDC /* IntentsExtension */,
 				84C9FC9A2262A1A900D921D6 /* Resources */,
 			);
@@ -2109,6 +2091,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				84A6CEF52D1B4E1600F23315 /* ShareExtension */,
 			);
 			name = "NetNewsWire iOS Share Extension";
 			packageProductDependencies = (
@@ -2402,9 +2387,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */,
-				51A9A5E62380C8B20033AADF /* ShareFolderPickerFolderCell.xib in Resources */,
-				51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */,
-				513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */,
 				51A9A5EE2380D6080033AADF /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2743,12 +2725,9 @@
 			files = (
 				51B5C8B923F368D000032075 /* ExtensionContainers.swift in Sources */,
 				515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */,
-				513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */,
-				51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */,
 				51B5C8BE23F37B2400032075 /* ShareDefaultContainer.swift in Sources */,
 				51B5C8BA23F368D000032075 /* ExtensionContainersFile.swift in Sources */,
 				51B5C8BB23F368D000032075 /* ExtensionFeedAddRequest.swift in Sources */,
-				51A9A5E82380CA130033AADF /* ShareFolderPickerCell.swift in Sources */,
 				51A9A5EF2380D63B0033AADF /* IconImage.swift in Sources */,
 				51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */,
 				51B5C8C123F3A0DB00032075 /* ExtensionFeedAddRequestFile.swift in Sources */,
@@ -3124,14 +3103,6 @@
 				51314714235C420900387FDC /* en */,
 			);
 			name = Intents.intentdefinition;
-			sourceTree = "<group>";
-		};
-		513C5CEA232571C2003D4054 /* MainInterface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				513C5CEB232571C2003D4054 /* Base */,
-			);
-			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 		51C0307F257D815A00609262 /* UnifiedWindow.storyboard */ = {
