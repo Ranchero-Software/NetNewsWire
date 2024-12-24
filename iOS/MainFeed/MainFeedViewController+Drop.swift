@@ -1,5 +1,5 @@
 //
-//  MasterFeedViewController+Drop.swift
+//  MainFeedViewController+Drop.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/20/19.
@@ -11,7 +11,7 @@ import RSCore
 import Account
 import RSTree
 
-extension MasterFeedViewController: UITableViewDropDelegate {
+extension MainFeedViewController: UITableViewDropDelegate {
 	
 	func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
 		return session.localDragSession != nil

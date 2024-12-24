@@ -52,7 +52,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	private var rootSplitViewController: RootSplitViewController!
 
-	private var masterFeedViewController: MasterFeedViewController!
+	private var masterFeedViewController: MainFeedViewController!
 	private var masterTimelineViewController: MasterTimelineViewController?
 	private var articleViewController: ArticleViewController?
 	
@@ -280,7 +280,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		super.init()
 
-		self.masterFeedViewController = rootSplitViewController.viewController(for: .primary) as? MasterFeedViewController
+		self.masterFeedViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedViewController
 		self.masterFeedViewController.coordinator = self
 		self.masterFeedViewController?.navigationController?.delegate = self
 

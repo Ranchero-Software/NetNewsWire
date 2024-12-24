@@ -1,5 +1,5 @@
 //
-//  MasterTableViewCell.swift
+//  MainFeedTableViewCell.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 8/1/15.
@@ -11,13 +11,13 @@ import RSCore
 import Account
 import RSTree
 
-protocol MasterFeedTableViewCellDelegate: AnyObject {
-	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MasterFeedTableViewCell, expanding: Bool)
+protocol MainFeedTableViewCellDelegate: AnyObject {
+	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool)
 }
 
-class MasterFeedTableViewCell : VibrantTableViewCell {
+class MainFeedTableViewCell : VibrantTableViewCell {
 
-	weak var delegate: MasterFeedTableViewCellDelegate?
+	weak var delegate: MainFeedTableViewCellDelegate?
 
 	override var accessibilityLabel: String? {
 		set {}
@@ -103,7 +103,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	
 	private var isDisclosureExpanded = false
 	private var disclosureButton: UIButton?
-	private var unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
+	private var unreadCountView = MainFeedUnreadCountView(frame: CGRect.zero)
 	private var isShowingEditControl = false
 	
 	required init?(coder: NSCoder) {
@@ -136,13 +136,13 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
+		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
 		return CGSize(width: bounds.width, height: layout.height)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
+		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
 		layoutWith(layout)
 	}
 	
@@ -180,7 +180,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	
 }
 
-private extension MasterFeedTableViewCell {
+private extension MainFeedTableViewCell {
 
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
@@ -208,7 +208,7 @@ private extension MasterFeedTableViewCell {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 
-	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
+	func layoutWith(_ layout: MainFeedTableViewCellLayout) {
 		iconView.setFrameIfNotEqual(layout.faviconRect)
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)

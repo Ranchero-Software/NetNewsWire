@@ -1,5 +1,5 @@
 //
-//  MasterUnreadCountView.swift
+//  MainFeedUnreadCountView.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 11/22/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MasterFeedUnreadCountView : UIView {
+class MainFeedUnreadCountView : UIView {
 	
 	var padding: UIEdgeInsets {
 		return UIEdgeInsets(top: 1.0, left: 9.0, bottom: 1.0, right: 9.0)

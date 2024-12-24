@@ -1,5 +1,5 @@
 //
-//  MasterTableViewSectionHeader.swift
+//  MainTableViewSectionHeader.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/18/19.
@@ -8,13 +8,13 @@
 
 import UIKit
 
-protocol MasterFeedTableViewSectionHeaderDelegate {
-	func masterFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MasterFeedTableViewSectionHeader)
+protocol MainFeedTableViewSectionHeaderDelegate {
+	func mainFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MainFeedTableViewSectionHeader)
 }
 
-class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
+class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
-	var delegate: MasterFeedTableViewSectionHeaderDelegate?
+	var delegate: MainFeedTableViewSectionHeaderDelegate?
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -81,7 +81,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		return label
 	}()
 	
-	private let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
+	private let unreadCountView = MainFeedUnreadCountView(frame: CGRect.zero)
 
 	private lazy var disclosureButton: UIButton = {
 		let button = NonIntrinsicButton()
@@ -118,14 +118,14 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
+		let layout = MainFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
 		return CGSize(width: bounds.width, height: layout.height)
 		
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: contentView.bounds.size.width,
+		let layout = MainFeedTableViewSectionHeaderLayout(cellWidth: contentView.bounds.size.width,
 															insets: contentView.safeAreaInsets,
 															label: titleView,
 															unreadCountView: unreadCountView)
@@ -134,10 +134,10 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
 }
 
-private extension MasterFeedTableViewSectionHeader {
+private extension MainFeedTableViewSectionHeader {
 	
 	@objc func toggleDisclosure() {
-		delegate?.masterFeedTableViewSectionHeaderDisclosureDidToggle(self)
+		delegate?.mainFeedTableViewSectionHeaderDisclosureDidToggle(self)
 	}
 	
 	func commonInit() {
@@ -189,7 +189,7 @@ private extension MasterFeedTableViewSectionHeader {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
-	func layoutWith(_ layout: MasterFeedTableViewSectionHeaderLayout) {
+	func layoutWith(_ layout: MainFeedTableViewSectionHeaderLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton.setFrameIfNotEqual(layout.disclosureButtonRect)
