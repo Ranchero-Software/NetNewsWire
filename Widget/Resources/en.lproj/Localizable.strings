@@ -8,13 +8,13 @@
 
 /* Bundle */
 "Unread_Widget_Title" = "Your Unread Articles";
-"Unread_Widget_Description" = "A sneak peek at your unread articles.";
+"Unread_Widget_Description" = "See unread articles.";
 
 "Today_Widget_Title" = "Your Today Articles";
-"Today_Widget_Description" = "A sneak peek at recently published unread articles.";
+"Today_Widget_Description" = "See the latest unread articles.";
 
 "Starred_Widget_Title" = "Your Starred Articles";
-"Starred_Widget_Description" = "A sneak peek at your starred articles.";
+"Starred_Widget_Description" = "See your starred articles.";
 
 "SmartFeedSummary_Widget_Title" = "Your Smart Feed Summary";
 "SmartFeedSummary_Widget_Description" = "Your smart feeds, summarized.";
