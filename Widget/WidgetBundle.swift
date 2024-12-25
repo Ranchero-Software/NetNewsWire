@@ -19,8 +19,6 @@ struct UnreadWidget: Widget {
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			UnreadWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
-			
 		})
 		.configurationDisplayName(L10n.unreadWidgetTitle)
 		.description(L10n.unreadWidgetDescription)
@@ -37,8 +35,6 @@ struct TodayWidget: Widget {
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			TodayWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
-			
 		})
 		.configurationDisplayName(L10n.todayWidgetTitle)
 		.description(L10n.todayWidgetDescription)
@@ -55,8 +51,6 @@ struct StarredWidget: Widget {
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			StarredWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
-			
 		})
 		.configurationDisplayName(L10n.starredWidgetTitle)
 		.description(L10n.starredWidgetDescription)
