@@ -24,16 +24,16 @@ struct UnreadWidgetView : View {
 		else {
 			GeometryReader { metrics in
 				HStack {
-					VStack {
+					VStack(alignment: .leading) {
 						unreadImage
-							.padding(.vertical, 12)
-							.padding(.leading, 8)
+							.padding(.vertical, 0)
+							.padding(.leading, 0)
 						Spacer()
 					
 					}
 				}
-				.frame(width: metrics.size.width * 0.15)
-				
+				.frame(width: metrics.size.width * 0.10, alignment: .leading)
+
 				Spacer()
 				
 				VStack(alignment:.leading, spacing: 0) {
@@ -52,9 +52,8 @@ struct UnreadWidgetView : View {
 					})
 					Spacer()
 				}
-				.padding(.leading, metrics.size.width * 0.175)
+				.padding(.leading, metrics.size.width * 0.085)
 				.padding([.bottom, .trailing])
-				.padding(.top, 12)
 				.overlay(
 					 VStack {
 						Spacer()
@@ -79,7 +78,7 @@ struct UnreadWidgetView : View {
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
 			.resizable()
-			.frame(width: 30, height: 30, alignment: .top)
+			.frame(width: 20, height: 20, alignment: .top)
 			.foregroundColor(.accentColor)
 	}
 	
