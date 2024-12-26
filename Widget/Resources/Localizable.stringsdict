@@ -51,9 +51,9 @@
 			<key>zero</key>
 			<string>No more recent articles</string>
 			<key>one</key>
-			<string>+ 1 more recent unread article</string>
+			<string>+ 1 more recent article</string>
 			<key>other</key>
-			<string>+ %u more recent unread articles</string>
+			<string>+ %u more recent articles</string>
 		</dict>
 	</dict>
 	<key>LocalizedCount</key>
