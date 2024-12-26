@@ -22,7 +22,7 @@ struct ArticleItemView: View {
 				if iconImage != nil {
 					iconImage!
 						.resizable()
-						.frame(width: 30, height: 30)
+						.frame(width: 24, height: 24)
 						.cornerRadius(4)
 				}
 
