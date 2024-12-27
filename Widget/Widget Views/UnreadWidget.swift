@@ -24,13 +24,10 @@ struct UnreadWidgetView : View {
 		else {
 			GeometryReader { metrics in
 				HStack {
-					VStack(alignment: .leading) {
+//					VStack(alignment: .leading) {
 						unreadImage
-							.padding(.vertical, 0)
-							.padding(.leading, 0)
-						Spacer()
-					
-					}
+//						Spacer()
+//					}
 				}
 				.frame(width: metrics.size.width * 0.10, alignment: .leading)
 
@@ -68,7 +65,6 @@ struct UnreadWidgetView : View {
 						}
 					}
 					.padding(.horizontal)
-					.padding(.bottom, 6)
 				)
 			}
 			.widgetURL(WidgetDeepLink.unread.url)
