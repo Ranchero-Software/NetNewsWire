@@ -37,7 +37,7 @@ struct UnreadWidgetView : View {
 				Spacer()
 				
 				VStack(alignment:.leading, spacing: 0) {
-					ForEach(0..<maxCount(), content: { i in
+					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
