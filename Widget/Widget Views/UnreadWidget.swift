@@ -23,28 +23,20 @@ struct UnreadWidgetView : View {
 		}
 		else {
 			GeometryReader { metrics in
-				HStack {
-//					VStack(alignment: .leading) {
-						unreadImage
-//						Spacer()
-//					}
-				}
-				.frame(width: metrics.size.width * 0.10, alignment: .leading)
-
-				Spacer()
-				
+				unreadImage
+					.frame(width: metrics.size.width * 0.10, alignment: .leading)
 				VStack(alignment:.leading, spacing: 0) {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
 											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-								.padding(.top, 8)
-								.padding(.bottom, 4)
+							.padding(.top, 8)
+							.padding(.bottom, 4)
 						} else {
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
 											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-								.padding(.bottom, 4)
+							.padding(.bottom, 4)
 						}
 					})
 					Spacer()
@@ -52,7 +44,7 @@ struct UnreadWidgetView : View {
 				.padding(.leading, metrics.size.width * 0.085)
 				.padding([.bottom, .trailing])
 				.overlay(
-					 VStack {
+					VStack {
 						Spacer()
 						HStack {
 							Spacer()
@@ -64,7 +56,7 @@ struct UnreadWidgetView : View {
 							}
 						}
 					}
-					.padding(.horizontal)
+						.padding(.horizontal)
 				)
 			}
 			.widgetURL(WidgetDeepLink.unread.url)
