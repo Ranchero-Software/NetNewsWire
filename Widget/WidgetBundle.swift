@@ -65,25 +65,6 @@ struct StarredWidget: Widget {
 	}
 }
 
-struct SmartFeedSummaryWidget: Widget {
-	let kind: String = "com.ranchero.NetNewsWire.SmartFeedSummaryWidget"
-	
-	var body: some WidgetConfiguration {
-		
-		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
-			SmartFeedSummaryWidgetView(entry: entry)
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.containerBackground(for: .widget) {
-					Color.clear
-				}
-		})
-		.configurationDisplayName(L10n.smartFeedSummaryWidgetTitle)
-		.description(L10n.smartFeedSummaryWidgetDescription)
-		.supportedFamilies([.systemSmall])
-	}
-}
-
-
 // MARK: - WidgetBundle
 @main
 struct NetNewsWireWidgets: WidgetBundle {
