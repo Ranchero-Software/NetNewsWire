@@ -10,12 +10,12 @@ import WidgetKit
 import SwiftUI
 
 struct UnreadWidgetView : View {
-	
+
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
-	
+
 	var entry: Provider.Entry
-	
+
 	var body: some View {
 		if entry.widgetData.currentUnreadCount == 0 {
 			inboxZero
@@ -24,24 +24,24 @@ struct UnreadWidgetView : View {
 		else {
 			GeometryReader { metrics in
 				unreadImage
-					.frame(width: metrics.size.width * 0.10, alignment: .leading)
+					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
 				VStack(alignment:.leading, spacing: 0) {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
 											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-							.padding(.top, 8)
-							.padding(.bottom, 4)
+							.padding(.top, WidgetLayout.articleItemViewPaddingTop)
+							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						} else {
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
 											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-							.padding(.bottom, 4)
+							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						}
 					})
 					Spacer()
 				}
-				.padding(.leading, metrics.size.width * 0.085)
+				.padding(.leading, WidgetLayout.leftSideWidth)
 				.padding([.bottom, .trailing])
 				.overlay(
 					VStack {
@@ -62,26 +62,26 @@ struct UnreadWidgetView : View {
 			.widgetURL(WidgetDeepLink.unread.url)
 		}
 	}
-	
+
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
 			.resizable()
-			.frame(width: 20, height: 20, alignment: .top)
+			.frame(width: WidgetLayout.titleImageSize, height: WidgetLayout.titleImageSize, alignment: .top)
 			.foregroundColor(.accentColor)
 	}
-	
+
 	func maxCount() -> Int {
 		var reduceAccessibilityCount: Int = 0
 		if SizeCategories().isSizeCategoryLarge(category: sizeCategory) {
 			reduceAccessibilityCount = 1
 		}
-		
+
 		if family == .systemLarge {
 			return entry.widgetData.unreadArticles.count >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
 		}
 		return entry.widgetData.unreadArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
 	}
-	
+
 	var inboxZero: some View {
 		VStack(alignment: .center) {
 			Spacer()
@@ -94,7 +94,7 @@ struct UnreadWidgetView : View {
 			Text(L10n.unreadWidgetNoItemsTitle)
 				.font(.headline)
 				.foregroundColor(.primary)
-			
+
 			Text(L10n.unreadWidgetNoItems)
 				.font(.caption)
 				.foregroundColor(.gray)
@@ -103,6 +103,6 @@ struct UnreadWidgetView : View {
 		.multilineTextAlignment(.center)
 		.padding()
 	}
-	
+
 }
 

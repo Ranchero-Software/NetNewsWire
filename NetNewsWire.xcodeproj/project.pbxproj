@@ -289,6 +289,7 @@
 		843E2F1E2CF2B8D300ED170F /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F1C2CF2B8D300ED170F /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		84411E711FE5FBFA004B527F /* SmallIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84411E701FE5FBFA004B527F /* SmallIconProvider.swift */; };
 		8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
+		8448F1E22D1E2DA30048BA50 /* WidgetLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8448F1E12D1E2DA30048BA50 /* WidgetLayout.swift */; };
 		844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */; };
 		844B5B5B1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */; };
 		844B5B651FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */; };
@@ -793,6 +794,7 @@
 		843E2F152CF2B43700ED170F /* RSWeb */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSWeb; sourceTree = "<group>"; };
 		84411E701FE5FBFA004B527F /* SmallIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallIconProvider.swift; sourceTree = "<group>"; };
 		8444C8F11FED81840051386C /* OPMLExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLExporter.swift; sourceTree = "<group>"; };
+		8448F1E12D1E2DA30048BA50 /* WidgetLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLayout.swift; sourceTree = "<group>"; };
 		844B5B581FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarKeyboardDelegate.swift; sourceTree = "<group>"; };
 		844B5B5A1FEA00FB00C7C76A /* TimelineKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineKeyboardDelegate.swift; sourceTree = "<group>"; };
 		844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = GlobalKeyboardShortcuts.plist; sourceTree = "<group>"; };
@@ -1136,6 +1138,7 @@
 				1768143D2564BCC800D98635 /* TodayWidget.swift */,
 				176814452564BCD200D98635 /* StarredWidget.swift */,
 				1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */,
+				8448F1E12D1E2DA30048BA50 /* WidgetLayout.swift */,
 			);
 			path = "Widget Views";
 			sourceTree = "<group>";
@@ -2561,6 +2564,7 @@
 				1768142D2564BCA800D98635 /* TimelineProvider.swift in Sources */,
 				1701E1E725689D1E009453D8 /* Localized.swift in Sources */,
 				176814652564BD7F00D98635 /* WidgetData.swift in Sources */,
+				8448F1E22D1E2DA30048BA50 /* WidgetLayout.swift in Sources */,
 				1768145E2564BD7B00D98635 /* WidgetDataDecoder.swift in Sources */,
 				176814132564BC8A00D98635 /* WidgetBundle.swift in Sources */,
 				17E0084625941887000C23F0 /* SizeCategories.swift in Sources */,

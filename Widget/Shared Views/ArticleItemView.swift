@@ -22,7 +22,7 @@ struct ArticleItemView: View {
 				if iconImage != nil {
 					iconImage!
 						.resizable()
-						.frame(width: 24, height: 24)
+						.frame(width: WidgetLayout.feedIconSize, height: WidgetLayout.feedIconSize)
 						.cornerRadius(4)
 				}
 
