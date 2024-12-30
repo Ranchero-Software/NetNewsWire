@@ -48,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		didSet {
 			if unreadCount != oldValue {
 				postUnreadCountDidChangeNotification()
-				UIApplication.shared.applicationIconBadgeNumber = unreadCount
+				UNUserNotificationCenter.current().setBadgeCount(unreadCount)
 			}
 		}
 	}
