@@ -163,7 +163,8 @@ class ArticleViewController: UIViewController {
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
-		navigationController?.isToolbarHidden = false
+		let hideToolbar = AppDefaults.shared.articleFullscreenEnabled
+		navigationController?.isToolbarHidden = hideToolbar
 		super.viewWillAppear(animated)
 	}
 
