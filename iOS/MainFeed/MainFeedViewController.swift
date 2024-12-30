@@ -73,9 +73,11 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
+		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
+
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		
+
 		configureToolbar()
 		becomeFirstResponder()
 	}
@@ -85,17 +87,14 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		updateUI()
 		super.viewWillAppear(animated)
 	}
-	
-	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-		super.traitCollectionDidChange(previousTraitCollection)
-		if traitCollection.preferredContentSizeCategory != previousTraitCollection?.preferredContentSizeCategory {
-			IconImageCache.shared.emptyCache()
-			reloadAllVisibleCells()
-		}
-	}
 
 	// MARK: Notifications
 	
+	@objc func preferredContentSizeCategoryDidChange() {
+		IconImageCache.shared.emptyCache()
+		reloadAllVisibleCells()
+	}
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateUI()
 
