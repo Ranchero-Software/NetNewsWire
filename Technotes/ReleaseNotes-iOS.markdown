@@ -1,5 +1,17 @@
 # iOS Release Notes
 
+## 6.1.6 TestFlight build 6139 30 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6139
+
+Fix display bug with footnote links (remove link underline)
+Fix bug with toolbars appearing when fullscreen mode is on
+Fix crashing bug on the Settings > Timeline layout view
+Make sure Feeds view shows on first run
+Add button to articles view that shows/hides timeline when in regular horizontal size class (iPads, mainly)
+
+## 6.1.6 TestFlight build 6138 26 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6138
+
+Fix layout issues with widgets — adopt widget API changes from iOS 17
+
 ## 6.1.6 TestFlight build 6137 23 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6137
 
 Fix bug where next-unread on iPhone would sometimes briefly show the timeline before going to the next article
