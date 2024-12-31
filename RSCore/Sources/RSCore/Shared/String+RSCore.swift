@@ -195,7 +195,15 @@ public extension String {
 	///
 	/// - Note: Doesn't work correctly with nested tags of the same name.
 	private func removingTagAndContents(_ tag: String) -> String {
-		return self.replacingOccurrences(of: "<\(tag).+?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
+		let pattern = "<\(tag)>.*?<\\/\(tag)>"
+		if let regex = try? NSRegularExpression(pattern: pattern, options: [.dotMatchesLineSeparators, .caseInsensitive]) {
+			let range = NSRange(location: 0, length: self.utf16.count)
+			let modifiedString = regex.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "")
+			return modifiedString
+		} else {
+			// If the above regex fails, fall back to the original method.
+			return self.replacingOccurrences(of: "<\(tag).+?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
+		}
 	}
 
 	/// Strips HTML from a string.
