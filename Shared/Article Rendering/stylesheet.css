@@ -414,8 +414,10 @@ a.footnote:hover,
 	}
 
 	.articleBody a:link, .articleBody a:visited {
-		text-decoration: none;
-		border-bottom: 1px solid var(--primary-accent-color);
+		text-decoration: underline;
+		text-decoration-color: var(--primary-accent-color);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 2px;
 		color: var(--secondary-accent-color);
 	}
 
