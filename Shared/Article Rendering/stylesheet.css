@@ -44,6 +44,7 @@ a:hover {
 	--article-title-color: #333;
 	--article-date-color: rgba(0, 0, 0, 0.5);
 	--table-cell-border-color: lightgray;
+	--sup-link-color: rgba(255, 255, 255, 0.9);
 }
 
 @media(prefers-color-scheme: dark) {
@@ -419,6 +420,11 @@ a.footnote:hover,
 		text-decoration-thickness: 1px;
 		text-underline-offset: 2px;
 		color: var(--secondary-accent-color);
+	}
+
+	.articleBody sup a:link, .articleBody sup a:visited {
+		text-decoration: none;
+		color: var(--sup-link-color);
 	}
 
 	body .header {
