@@ -24,6 +24,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
 		
 		let rootViewController = window!.rootViewController as! RootSplitViewController
+		rootViewController.presentsWithGesture = true
+		rootViewController.showsSecondaryOnlyButton = true
+		if AppDefaults.shared.isFirstRun {
+			// This ensures that the Feeds view shows on first-run.
+			rootViewController.preferredDisplayMode = .twoBesideSecondary
+		} else {
+			rootViewController.preferredDisplayMode = .oneBesideSecondary
+		}
+
 		coordinator = SceneCoordinator(rootSplitViewController: rootViewController)
 		rootViewController.coordinator = coordinator
 		rootViewController.delegate = coordinator
