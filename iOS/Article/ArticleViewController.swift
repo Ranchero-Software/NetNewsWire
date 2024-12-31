@@ -163,8 +163,12 @@ class ArticleViewController: UIViewController {
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
-		let hideToolbar = AppDefaults.shared.articleFullscreenEnabled
-		navigationController?.isToolbarHidden = hideToolbar
+		let hideToolbars = AppDefaults.shared.articleFullscreenEnabled
+		if hideToolbars {
+			currentWebViewController?.hideBars()
+		} else {
+			currentWebViewController?.showBars()
+		}
 		super.viewWillAppear(animated)
 	}
 
@@ -225,7 +229,6 @@ class ArticleViewController: UIViewController {
 			starBarButtonItem.image = AppAssets.starOpenImage
 			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
 		}
-		
 	}
 	
 	// MARK: Notifications
