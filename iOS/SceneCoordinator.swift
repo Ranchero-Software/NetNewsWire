@@ -1251,7 +1251,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	func importTheme(filename: String) {
 		do {
-			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename)
+			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, url: URL(fileURLWithPath: filename))
 		} catch {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
 		}

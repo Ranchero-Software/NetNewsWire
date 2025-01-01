@@ -117,11 +117,18 @@ extension ArticleThemesTableViewController: UIDocumentPickerDelegate {
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		guard let url = urls.first else { return }
-		do {
-			try ArticleThemeImporter.importTheme(controller: self, filename: url.standardizedFileURL.path)
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+
+		if url.startAccessingSecurityScopedResource() {
+			
+			defer {
+				url.stopAccessingSecurityScopedResource()
+			}
+
+			do {
+				try ArticleThemeImporter.importTheme(controller: self, url: url)
+			} catch {
+				NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			}
 		}
 	}
-	
 }
