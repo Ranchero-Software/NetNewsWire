@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+## 6.1.6 TestFlight build 6139 31 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6140
+
+Fix theme importing
+Draw account row separators on the Feeds view all the way across the screen
+
 ## 6.1.6 TestFlight build 6139 30 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6139
 
 Fix display bug with footnote links (remove link underline)
