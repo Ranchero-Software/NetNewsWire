@@ -189,6 +189,22 @@ public extension String {
 
 	/// Removes an HTML tag and everything between its start and end tags.
 	///
+	/// The regex pattern `<tag>.*?</tag>` explanation:
+	/// - `<` matches the literal `<` character.
+	/// - `tag` matches the literal parameter provided to the function, e.g., `style`.
+	/// - `>` matches the literal `>` character.
+	/// - `.*?`
+	/// 	- `.` matches _any_ character **except** a new line
+	/// 	- `*` will match zero or more of the preceeding character, in this case _any_
+	/// 	character
+	/// 	- `?` switches the matching mode to [lazy](https://javascript.info/regexp-greedy-and-lazy)
+	/// 	so it will match as few as characters as possible before satisfying the rest of the pattern.
+	/// - `<` matches the literal `<` character.
+	/// - `/` matches the literal `/` character.
+	/// - `tag` matches the literal parameter provided to the function, e.g., `style`
+	/// - `>` matches the literal `>` character.
+	///
+	///
 	/// - Parameter tag: The tag to remove.
 	///
 	/// - Returns: A new copy of `self` with the tag removed.
