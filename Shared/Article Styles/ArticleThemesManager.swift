@@ -97,20 +97,20 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 			return ArticleTheme.defaultTheme
 		}
 		
-		let path: String
+		let url: URL
 		let isAppTheme: Bool
-		if let appThemePath = Bundle.main.url(forResource: themeName, withExtension: ArticleTheme.nnwThemeSuffix)?.path {
-			path = appThemePath
+		if let appThemeURL = Bundle.main.url(forResource: themeName, withExtension: ArticleTheme.nnwThemeSuffix) {
+			url = appThemeURL
 			isAppTheme = true
 		} else if let installedPath = pathForThemeName(themeName, folder: folderPath) {
-			path = installedPath
+			url = URL(fileURLWithPath: installedPath)
 			isAppTheme = false
 		} else {
 			return nil
 		}
 		
 		do {
-			return try ArticleTheme(path: path, isAppTheme: isAppTheme)
+			return try ArticleTheme(url: url, isAppTheme: isAppTheme)
 		} catch {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
 			return nil

@@ -16,14 +16,14 @@ struct ArticleTheme: Equatable {
 	private static let defaultThemeName = NSLocalizedString("Default", comment: "Default")
 	private static let unknownValue = NSLocalizedString("Unknown", comment: "Unknown Value")
 	
-	let path: String?
+	let url: URL?
 	let template: String?
 	let css: String?
 	let isAppTheme: Bool
 	
 	var name: String {
-		guard let path = path else { return Self.defaultThemeName }
-		return Self.themeNameForPath(path)
+		guard let url else { return Self.defaultThemeName }
+		return Self.themeNameForPath(url.path)
 	}
 	
 	var creatorHomePage: String {
@@ -41,7 +41,7 @@ struct ArticleTheme: Equatable {
 	private let info: ArticleThemePlist?
 	
 	init() {
-		self.path = nil;
+		self.url = nil
 		self.info = ArticleThemePlist(name: "Article Theme", themeIdentifier: "com.ranchero.netnewswire.theme.article", creatorHomePage: "https://netnewswire.com/", creatorName: "Ranchero Software", version: 1)
 		
 		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
@@ -54,27 +54,33 @@ struct ArticleTheme: Equatable {
 		isAppTheme = true
 	}
 	
-	init(path: String, isAppTheme: Bool) throws {
-		self.path = path
+	init(url: URL, isAppTheme: Bool) throws {
+
+		_ = url.startAccessingSecurityScopedResource()
+		defer {
+			url.stopAccessingSecurityScopedResource()
+		}
 		
-		let infoPath = (path as NSString).appendingPathComponent("Info.plist")
-		let data = try Data(contentsOf: URL(fileURLWithPath: infoPath))
-		self.info = try PropertyListDecoder().decode(ArticleThemePlist.self, from: data)
-		
-		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
-		let stylesheetPath = (path as NSString).appendingPathComponent("stylesheet.css")
-		if let stylesheetCSS = Self.stringAtPath(stylesheetPath) {
-			self.css = Self.stringAtPath(corePath)! + "\n" + stylesheetCSS
+		self.url = url
+
+		let coreURL = Bundle.main.url(forResource: "core", withExtension: "css")!
+		let styleSheetURL = url.appendingPathComponent("stylesheet.css")
+		if let stylesheetCSS = Self.stringAtPath(styleSheetURL.path) {
+			self.css = Self.stringAtPath(coreURL.path)! + "\n" + stylesheetCSS
 		} else {
 			self.css = nil
 		}
-		
-		let templatePath = (path as NSString).appendingPathComponent("template.html")
-		self.template = Self.stringAtPath(templatePath)
-		
+
+		let templateURL = url.appendingPathComponent("template.html")
+		self.template = Self.stringAtPath(templateURL.path)
+
 		self.isAppTheme = isAppTheme
+
+		let infoURL = url.appendingPathComponent("Info.plist")
+		let data = try Data(contentsOf: infoURL)
+		self.info = try PropertyListDecoder().decode(ArticleThemePlist.self, from: data)
 	}
-	
+
 	static func stringAtPath(_ f: String) -> String? {
 		if !FileManager.default.fileExists(atPath: f) {
 			return nil
