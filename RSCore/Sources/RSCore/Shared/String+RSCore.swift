@@ -189,21 +189,20 @@ public extension String {
 
 	/// Removes an HTML tag and everything between its start and end tags.
 	///
-	/// The regex pattern `<tag>.*?</tag>` explanation:
+	/// The regex pattern `<tag>[\\s\\S]*?</tag>` explanation:
 	/// - `<` matches the literal `<` character.
 	/// - `tag` matches the literal parameter provided to the function, e.g., `style`.
 	/// - `>` matches the literal `>` character.
-	/// - `.*?`
-	/// 	- `.` matches _any_ character **except** a new line
+	/// - `[\\s\\S]*?`
+	/// 	- `[\\s\\S]` matches _any_ character, including new lines.
 	/// 	- `*` will match zero or more of the preceeding character, in this case _any_
-	/// 	character
+	/// 	character.
 	/// 	- `?` switches the matching mode to [lazy](https://javascript.info/regexp-greedy-and-lazy)
 	/// 	so it will match as few as characters as possible before satisfying the rest of the pattern.
 	/// - `<` matches the literal `<` character.
 	/// - `/` matches the literal `/` character.
-	/// - `tag` matches the literal parameter provided to the function, e.g., `style`
+	/// - `tag` matches the literal parameter provided to the function, e.g., `style`.
 	/// - `>` matches the literal `>` character.
-	///
 	///
 	/// - Parameter tag: The tag to remove.
 	///
@@ -211,15 +210,7 @@ public extension String {
 	///
 	/// - Note: Doesn't work correctly with nested tags of the same name.
 	private func removingTagAndContents(_ tag: String) -> String {
-		let pattern = "<\(tag)>.*?<\\/\(tag)>"
-		if let regex = try? NSRegularExpression(pattern: pattern, options: [.dotMatchesLineSeparators, .caseInsensitive]) {
-			let range = NSRange(location: 0, length: self.utf16.count)
-			let modifiedString = regex.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "")
-			return modifiedString
-		} else {
-			// If the above regex fails, fall back to the original method.
-			return self.replacingOccurrences(of: "<\(tag).+?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
-		}
+		return self.replacingOccurrences(of: "<\(tag)>[\\s\\S]*?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
 	}
 
 	/// Strips HTML from a string.
