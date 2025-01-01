@@ -839,9 +839,26 @@ private extension MainTimelineViewController {
 		}
 		return action
 	}
-	
+
+	private func canGoToFeed() -> Bool {
+		// This is temporary — since we haven’t figured out
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4452>
+		// on compact size classes, just don’t display this option
+		// when on compact.
+
+		var viewController: UIViewController? = self
+		while viewController != nil {
+			if let splitViewController = viewController?.splitViewController {
+				return splitViewController.traitCollection.horizontalSizeClass == .regular
+			}
+			viewController = parent
+		}
+
+		return false
+	}
+
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let webFeed = article.webFeed,
+		guard canGoToFeed(), let webFeed = article.webFeed,
 			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 		
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
@@ -852,7 +869,7 @@ private extension MainTimelineViewController {
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed,
+		guard canGoToFeed(), let webFeed = article.webFeed,
 			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
