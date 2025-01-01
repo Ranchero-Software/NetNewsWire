@@ -193,10 +193,15 @@ private extension MainFeedTableViewSectionHeader {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton.setFrameIfNotEqual(layout.disclosureButtonRect)
-		
-		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.33)
+
+		let x = -safeAreaInsets.left
+		let width = safeAreaInsets.left + safeAreaInsets.right + frame.width
+		let height = 0.33
+
+		let top = CGRect(x: x, y: 0, width: width, height: height)
 		topSeparatorView.setFrameIfNotEqual(top)
-		let bottom = CGRect(x: safeAreaInsets.left, y: frame.height - 0.33, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.33)
+		
+		let bottom = CGRect(x: x, y: frame.height - height, width: width, height: height)
 		bottomSeparatorView.setFrameIfNotEqual(bottom)
 	}
 	
