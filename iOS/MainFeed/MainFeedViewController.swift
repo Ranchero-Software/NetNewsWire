@@ -72,6 +72,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 
@@ -95,6 +96,16 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		reloadAllVisibleCells()
 	}
 
+	private func headerViewForAccount(_ account: Account) -> MainFeedTableViewSectionHeader? {
+
+		guard let node = coordinator.rootNode.childNodeRepresentingObject(account),
+			  let sectionIndex = coordinator.rootNode.indexOfChild(node) else {
+			return nil
+		}
+
+		return tableView.headerView(forSection: sectionIndex) as? MainFeedTableViewSectionHeader
+	}
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateUI()
 
@@ -103,15 +114,12 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if let account = unreadCountProvider as? Account {
-			if let node = coordinator.rootNode.childNodeRepresentingObject(account) {
-				let sectionIndex = coordinator.rootNode.indexOfChild(node)!
-				if let headerView = tableView.headerView(forSection: sectionIndex) as? MainFeedTableViewSectionHeader {
-					headerView.unreadCount = account.unreadCount
-				}
+			if let headerView = headerViewForAccount(account) {
+				headerView.unreadCount = account.unreadCount
 			}
 			return
 		}
-		
+
 		var node: Node? = nil
 		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
@@ -140,11 +148,25 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL || key == WebFeed.WebFeedSettingKey.editedName {
+		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
 	}
-	
+
+	@objc func displayNameDidChange(_ note: Notification) {
+		
+		if let account = note.object as? Account {
+			if let headerView = headerViewForAccount(account) {
+				headerView.name = account.nameForDisplay
+			}
+			return
+		}
+
+		if let representedObject = note.object as? AnyObject {
+			configureCellsForRepresentedObject(representedObject)
+		}
+	}
+
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		resetEstimatedRowHeight()
 		tableView.reloadData()
