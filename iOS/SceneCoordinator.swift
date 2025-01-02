@@ -1089,7 +1089,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 		}
 
-		rebuildBackingStores(initialLoad: initialLoad) {
+		rebuildBackingStores(initialLoad: initialLoad, completion: {
 			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(nil) {
 				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
@@ -1100,7 +1100,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					self.selectFeed(webFeed, animations: animations, completion: completion)
 				}
 			}
-		}
+		})
 	}
 
 	func showStatusBar() {
