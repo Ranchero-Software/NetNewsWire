@@ -1,6 +1,11 @@
 # iOS Release Notes
 
-## 6.1.6 TestFlight build 6139 31 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6140
+## 6.1.6 TestFlight build 6141 1 Jan 2025 - branch: 6.1.6-ios tag: iOS-6.1.6-6141
+
+Fix bug updating account and feed names on Feeds screen after names have been edited
+Fix Go To Feed menu item bug
+
+## 6.1.6 TestFlight build 6140 31 Dec 2024 - branch: 6.1.6-ios tag: iOS-6.1.6-6140
 
 Fix theme importing
 Draw account row separators on the Feeds view all the way across the screen
