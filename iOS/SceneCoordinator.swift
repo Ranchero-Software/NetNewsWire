@@ -1089,12 +1089,18 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 		}
 
-		rebuildBackingStores(initialLoad: initialLoad, completion:  {
+		rebuildBackingStores(initialLoad: initialLoad) {
 			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(nil) {
-				self.selectFeed(webFeed, animations: animations, completion: completion)
+				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+						self.selectFeed(webFeed, animations: animations, completion: completion)
+					}
+				} else {
+					self.selectFeed(webFeed, animations: animations, completion: completion)
+				}
 			}
-		})
+		}
 	}
 
 	func showStatusBar() {
