@@ -26,7 +26,7 @@ struct AppAssets {
 	static var accountFeedlyImage: UIImage = {
 		return UIImage(named: "accountFeedly")!
 	}()
-	
+
 	static var accountFreshRSSImage: UIImage = {
 		return UIImage(named: "accountFreshRSS")!
 	}()
@@ -50,6 +50,8 @@ struct AppAssets {
 	static var accountTheOldReaderImage: UIImage = {
 		return UIImage(named: "accountTheOldReader")!
 	}()
+
+	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
