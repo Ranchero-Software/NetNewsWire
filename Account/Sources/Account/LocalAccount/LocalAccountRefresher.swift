@@ -201,6 +201,8 @@ private extension LocalAccountRefresher {
 				return true
 			}
 		}
+
+		return false
 	}
 
 	static var urlCache = [String: URL]()
