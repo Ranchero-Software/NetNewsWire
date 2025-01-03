@@ -63,11 +63,10 @@ class CloudKitAccountViewController: UITableViewController {
 			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
 	}
-	
+
 	@IBAction func openLimitationsAndSolutions(_ sender: Any) {
 		let vc = SFSafariViewController(url: CloudKitWebDocumentation.limitationsAndSolutionsURL)
 		vc.modalPresentationStyle = .pageSheet
 		present(vc, animated: true)
 	}
-	
 }

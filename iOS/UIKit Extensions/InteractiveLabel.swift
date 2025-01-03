@@ -15,12 +15,12 @@ class InteractiveLabel: UILabel, UIEditMenuInteractionDelegate {
 		super.init(frame: frame)
 		commonInit()
 	}
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	func commonInit() {
 		let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
 		self.addGestureRecognizer(gestureRecognizer)
@@ -30,7 +30,7 @@ class InteractiveLabel: UILabel, UIEditMenuInteractionDelegate {
 
 		self.isUserInteractionEnabled = true
 	}
-	
+
 	@objc func handleLongPressGesture(_ recognizer: UIGestureRecognizer) {
 		guard recognizer.state == .began, let recognizerView = recognizer.view else {
 			return
@@ -50,7 +50,7 @@ class InteractiveLabel: UILabel, UIEditMenuInteractionDelegate {
 	override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
 		return (action == #selector(UIResponderStandardEditActions.copy(_:)))
 	}
-	
+
 	override func copy(_ sender: Any?) {
 		UIPasteboard.general.string = text
 	}
@@ -58,10 +58,11 @@ class InteractiveLabel: UILabel, UIEditMenuInteractionDelegate {
 	// MARK: - UIEditMenuInteractionDelegate
 
 	func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
-		
+
 		let copyAction = UIAction(title: "Copy", image: nil) { [weak self] action in
 			self?.copy(nil)
 		}
 		return UIMenu(title: "", children: [copyAction])
 	}
 }
+

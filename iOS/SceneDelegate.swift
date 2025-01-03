@@ -19,29 +19,39 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		
-		window = UIWindow(windowScene: scene as! UIWindowScene)
 		window!.tintColor = AppAssets.primaryAccentColor
 		updateUserInterfaceStyle()
-		window!.rootViewController = coordinator.start(for: window!.frame.size)
+		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
+		
+		let rootViewController = window!.rootViewController as! RootSplitViewController
+		rootViewController.presentsWithGesture = true
+		rootViewController.showsSecondaryOnlyButton = true
+		if AppDefaults.shared.isFirstRun {
+			// This ensures that the Feeds view shows on first-run.
+			rootViewController.preferredDisplayMode = .twoBesideSecondary
+		} else {
+			rootViewController.preferredDisplayMode = .oneBesideSecondary
+		}
+
+		coordinator = SceneCoordinator(rootSplitViewController: rootViewController)
+		rootViewController.coordinator = coordinator
+		rootViewController.delegate = coordinator
 		
 		coordinator.restoreWindowState(session.stateRestorationActivity)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 		
 		if let _ = connectionOptions.urlContexts.first?.url  {
-			window?.makeKeyAndVisible()
 			self.scene(scene, openURLContexts: connectionOptions.urlContexts)
 			return
 		}
 		
 		if let shortcutItem = connectionOptions.shortcutItem {
-			window!.makeKeyAndVisible()
 			handleShortcutItem(shortcutItem)
 			return
 		}
 		
 		if let notificationResponse = connectionOptions.notificationResponse {
-			window!.makeKeyAndVisible()
 			coordinator.handle(notificationResponse)
 			return
 		}
@@ -49,8 +59,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
 			coordinator.handle(userActivity)
 		}
-		
-		window!.makeKeyAndVisible()
+
 	}
 	
 	func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
@@ -68,11 +77,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		ArticleStringFormatter.emptyCaches()
 		appDelegate.prepareAccountsForBackground()
 	}
-	
+
 	func sceneWillEnterForeground(_ scene: UIScene) {
 		appDelegate.resumeDatabaseProcessingIfNecessary()
 		appDelegate.prepareAccountsForForeground()
-		coordinator.configurePanelMode(for: window!.frame.size)
 		coordinator.resetFocus()
 	}
 	

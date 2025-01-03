@@ -23,7 +23,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 	@IBOutlet weak var actionButton: UIButton!
 	@IBOutlet weak var footerLabel: UILabel!
 	@IBOutlet weak var signUpButton: UIButton!
-	
+
 	weak var account: Account?
 	var accountType: AccountType?
 	weak var delegate: AddAccountDismissDelegate?

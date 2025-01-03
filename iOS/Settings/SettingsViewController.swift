@@ -114,7 +114,7 @@ class SettingsViewController: UITableViewController {
 	// MARK: UITableView
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		
+
 		switch section {
 		case 1:
 			return AccountManager.shared.accounts.count + 1
@@ -130,13 +130,13 @@ class SettingsViewController: UITableViewController {
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
 		let cell: UITableViewCell
 		switch indexPath.section {
 		case 1:
-						
+
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
 				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
@@ -151,9 +151,9 @@ class SettingsViewController: UITableViewController {
 			}
 		default:
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
-			
+
 		}
-		
+
 		return cell
 	}
 
@@ -218,27 +218,12 @@ class SettingsViewController: UITableViewController {
 				openURL("https://netnewswire.com/help/ios/6.1/en/")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 1:
-				openURL("https://netnewswire.com/")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 2:
 				openURL(URL.releaseNotes.absoluteString)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 3:
-				openURL("https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/HowToSupportNetNewsWire.markdown")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 4:
-				openURL("https://github.com/brentsimmons/NetNewsWire")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 5:
+			case 2:
 				openURL("https://github.com/brentsimmons/NetNewsWire/issues")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 6:
-				openURL("https://github.com/brentsimmons/NetNewsWire/tree/main/Technotes")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 7:
-				openURL("https://netnewswire.com/slack")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 8:
+			case 3:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
@@ -248,7 +233,7 @@ class SettingsViewController: UITableViewController {
 			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 		return false
 	}

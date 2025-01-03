@@ -21,7 +21,7 @@ class FeedbinAccountViewController: UITableViewController {
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
 	@IBOutlet weak var footerLabel: UILabel!
-	
+
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
 
@@ -46,7 +46,6 @@ class FeedbinAccountViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
-		
 	}
 	
 	private func setupFooter() {
@@ -70,7 +69,6 @@ class FeedbinAccountViewController: UITableViewController {
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
 	}
-	
 	
 	@IBAction func showHidePassword(_ sender: Any) {
 		if passwordTextField.isSecureTextEntry {
