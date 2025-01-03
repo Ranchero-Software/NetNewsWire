@@ -914,11 +914,11 @@ private extension MainWindowController {
 		return viewController.children.first as? NSSplitViewController
 	}
 
-	var currentTimelineViewController: TimelineViewController? {
+	var currentTimelineViewController: MainTimelineViewController? {
 		return timelineContainerViewController?.currentTimelineViewController
 	}
 
-	var regularTimelineViewController: TimelineViewController? {
+	var regularTimelineViewController: MainTimelineViewController? {
 		return timelineContainerViewController?.regularTimelineViewController
 	}
 

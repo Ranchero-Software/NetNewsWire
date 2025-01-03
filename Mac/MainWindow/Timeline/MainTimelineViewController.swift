@@ -13,9 +13,9 @@ import Account
 import os.log
 
 protocol TimelineDelegate: AnyObject  {
-	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
-	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
-	func timelineInvalidatedRestorationState(_: TimelineViewController)
+	func timelineSelectionDidChange(_: MainTimelineViewController, selectedArticles: [Article]?)
+	func timelineRequestedFeedSelection(_: MainTimelineViewController, feed: Feed)
+	func timelineInvalidatedRestorationState(_: MainTimelineViewController)
 }
 
 enum TimelineShowFeedName {
@@ -24,7 +24,7 @@ enum TimelineShowFeedName {
 	case feed
 }
 
-final class TimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
+final class MainTimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
 
 	@IBOutlet var tableView: TimelineTableView!
 
@@ -759,7 +759,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 // MARK: - NSMenuDelegate
 
-extension TimelineViewController: NSMenuDelegate {
+extension MainTimelineViewController: NSMenuDelegate {
 
 	public func menuNeedsUpdate(_ menu: NSMenu) {
 		menu.removeAllItems()
@@ -772,7 +772,7 @@ extension TimelineViewController: NSMenuDelegate {
 
 // MARK: - NSUserInterfaceValidations
 
-extension TimelineViewController: NSUserInterfaceValidations {
+extension MainTimelineViewController: NSUserInterfaceValidations {
 
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		if item.action == #selector(openArticleInBrowser(_:)) {
@@ -794,7 +794,7 @@ extension TimelineViewController: NSUserInterfaceValidations {
 
 // MARK: - NSTableViewDataSource
 
-extension TimelineViewController: NSTableViewDataSource {
+extension MainTimelineViewController: NSTableViewDataSource {
 	func numberOfRows(in tableView: NSTableView) -> Int {
 		return articles.count
 	}
@@ -813,15 +813,15 @@ extension TimelineViewController: NSTableViewDataSource {
 
 // MARK: - NSTableViewDelegate
 
-extension TimelineViewController: NSTableViewDelegate {
+extension MainTimelineViewController: NSTableViewDelegate {
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineRow")
 
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-		if let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: TimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
+		if let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: MainTimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
 			return rowView
 		}
 		let rowView = TimelineTableRowView()
-		rowView.identifier = TimelineViewController.rowViewIdentifier
+		rowView.identifier = MainTimelineViewController.rowViewIdentifier
 		return rowView
 	}
 
@@ -839,13 +839,13 @@ extension TimelineViewController: NSTableViewDelegate {
 			}
 		}
 
-		if let cell = tableView.makeView(withIdentifier: TimelineViewController.timelineCellIdentifier, owner: nil) as? TimelineTableCellView {
+		if let cell = tableView.makeView(withIdentifier: MainTimelineViewController.timelineCellIdentifier, owner: nil) as? TimelineTableCellView {
 			configure(cell)
 			return cell
 		}
 
 		let cell = TimelineTableCellView()
-		cell.identifier = TimelineViewController.timelineCellIdentifier
+		cell.identifier = MainTimelineViewController.timelineCellIdentifier
 		configure(cell)
 		return cell
 	}
@@ -943,7 +943,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 // MARK: - Private
 
-private extension TimelineViewController {
+private extension MainTimelineViewController {
 	
 	func fetchAndReplacePreservingSelection() {
 		if let article = oneSelectedArticle, let account = article.account {
@@ -1187,7 +1187,7 @@ private extension TimelineViewController {
 	}
 
 	func queueFetchAndMergeArticles() {
-		TimelineViewController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+		MainTimelineViewController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
 
 	func representedObjectArraysAreEqual(_ objects1: [AnyObject]?, _ objects2: [AnyObject]?) -> Bool {

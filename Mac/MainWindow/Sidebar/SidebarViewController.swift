@@ -153,7 +153,7 @@ protocol SidebarDelegate: AnyObject {
 			return
 		}
 		
-		if let timelineViewController = representedObject as? TimelineViewController {
+		if let timelineViewController = representedObject as? MainTimelineViewController {
 			configureUnreadCountForCellsForRepresentedObjects(timelineViewController.representedObjects)
 		} else {
 			configureUnreadCountForCellsForRepresentedObjects([representedObject as AnyObject])

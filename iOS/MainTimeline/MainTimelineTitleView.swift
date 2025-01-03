@@ -1,5 +1,5 @@
 //
-//  FeedTitleView.swift
+//  MainTimelineTitleView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 9/21/19.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-class TimelineTitleView: UIView {
+class MainTimelineTitleView: UIView {
 
 	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var label: UILabel!
-	@IBOutlet weak var unreadCountView: TimelineUnreadCountView!
+	@IBOutlet weak var unreadCountView: MainTimelineUnreadCountView!
 
 	private lazy var pointerInteraction: UIPointerInteraction = {
 		UIPointerInteraction(delegate: self)
@@ -44,7 +44,7 @@ class TimelineTitleView: UIView {
 	}
 }
 
-extension TimelineTitleView: UIPointerInteractionDelegate {
+extension MainTimelineTitleView: UIPointerInteractionDelegate {
 	
 	func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
 		var rect = self.frame

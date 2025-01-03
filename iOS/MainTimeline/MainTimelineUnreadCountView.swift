@@ -1,5 +1,5 @@
 //
-//  TimelineUnreadCountView.swift
+//  MainTimelineUnreadCountView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 9/30/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TimelineUnreadCountView: MainFeedUnreadCountView {
+class MainTimelineUnreadCountView: MainFeedUnreadCountView {
 
 	override var padding: UIEdgeInsets {
 		return UIEdgeInsets(top: 2.0, left: 9.0, bottom: 2.0, right: 9.0)

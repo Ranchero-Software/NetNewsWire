@@ -1,5 +1,5 @@
 //
-//  TimelineViewController.swift
+//  MainTimelineViewController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/8/19.
@@ -11,7 +11,7 @@ import RSCore
 import Account
 import Articles
 
-class TimelineViewController: UITableViewController, UndoableCommandRunner {
+class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -85,7 +85,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
 
-		if let titleView = Bundle.main.loadNibNamed("TimelineTitleView", owner: self, options: nil)?[0] as? TimelineTitleView {
+		if let titleView = Bundle.main.loadNibNamed("TimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
 			navigationItem.titleView = titleView
 		}
 		
@@ -445,7 +445,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		
-		if let titleView = navigationItem.titleView as? TimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		
@@ -483,7 +483,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? TimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
 		if coordinator.showIcons {
@@ -508,7 +508,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? TimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 		}
 	}
@@ -564,7 +564,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 // MARK: Searching
 
-extension TimelineViewController: UISearchControllerDelegate {
+extension MainTimelineViewController: UISearchControllerDelegate {
 
 	func willPresentSearchController(_ searchController: UISearchController) {
 		coordinator.beginSearching()
@@ -578,7 +578,7 @@ extension TimelineViewController: UISearchControllerDelegate {
 
 }
 
-extension TimelineViewController: UISearchResultsUpdating {
+extension MainTimelineViewController: UISearchResultsUpdating {
 
 	func updateSearchResults(for searchController: UISearchController) {
 		let searchScope = SearchScope(rawValue: searchController.searchBar.selectedScopeButtonIndex)!
@@ -587,7 +587,7 @@ extension TimelineViewController: UISearchResultsUpdating {
 
 }
 
-extension TimelineViewController: UISearchBarDelegate {
+extension MainTimelineViewController: UISearchBarDelegate {
 	func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
 		let searchScope = SearchScope(rawValue: selectedScope)!
 		coordinator.searchArticles(searchBar.text!, searchScope)
@@ -596,7 +596,7 @@ extension TimelineViewController: UISearchBarDelegate {
 
 // MARK: Private
 
-private extension TimelineViewController {
+private extension MainTimelineViewController {
 
 	func configureToolbar() {
 		
@@ -617,7 +617,7 @@ private extension TimelineViewController {
 		
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
 
-		if let titleView = navigationItem.titleView as? TimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			let timelineIconImage = coordinator.timelineIconImage
 			titleView.iconView.iconImage = timelineIconImage
 			if let preferredColor = timelineIconImage?.preferredColor {
@@ -688,7 +688,7 @@ private extension TimelineViewController {
 	}
 	
 	func updateTitleUnreadCount() {
-		if let titleView = navigationItem.titleView as? TimelineTitleView {
+		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.unreadCountView.unreadCount = coordinator.timelineUnreadCount
 		}
 	}
@@ -712,7 +712,7 @@ private extension TimelineViewController {
 	
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
-			TimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
+			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
 				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainTimelineTableViewCell
 				self?.configure(cell, article: article)
 				return cell

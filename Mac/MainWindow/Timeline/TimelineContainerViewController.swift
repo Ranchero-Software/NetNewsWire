@@ -27,7 +27,7 @@ final class TimelineContainerViewController: NSViewController {
 	@IBOutlet weak var readFilteredButton: NSButton!
 	@IBOutlet var containerView: TimelineContainerView!
 
-	var currentTimelineViewController: TimelineViewController? {
+	var currentTimelineViewController: MainTimelineViewController? {
 		didSet {
 			let view = currentTimelineViewController?.view
 			if containerView.contentView === view {
@@ -51,10 +51,10 @@ final class TimelineContainerViewController: NSViewController {
 	}
 	
 	lazy var regularTimelineViewController = {
-		return TimelineViewController(delegate: self)
+		return MainTimelineViewController(delegate: self)
 	}()
-	private lazy var searchTimelineViewController: TimelineViewController = {
-		let viewController = TimelineViewController(delegate: self)
+	private lazy var searchTimelineViewController: MainTimelineViewController = {
+		let viewController = MainTimelineViewController(delegate: self)
 		viewController.showsSearchResults = true
 		return viewController
 	}()
@@ -137,15 +137,15 @@ final class TimelineContainerViewController: NSViewController {
 
 extension TimelineContainerViewController: TimelineDelegate {
 
-	func timelineSelectionDidChange(_ timelineViewController: TimelineViewController, selectedArticles: [Article]?) {
+	func timelineSelectionDidChange(_ timelineViewController: MainTimelineViewController, selectedArticles: [Article]?) {
 		delegate?.timelineSelectionDidChange(self, articles: selectedArticles, mode: mode(for: timelineViewController))
 	}
 
-	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed) {
+	func timelineRequestedFeedSelection(_: MainTimelineViewController, feed: Feed) {
 		delegate?.timelineRequestedFeedSelection(self, feed: feed)
 	}
 	
-	func timelineInvalidatedRestorationState(_: TimelineViewController) {
+	func timelineInvalidatedRestorationState(_: MainTimelineViewController) {
 		delegate?.timelineInvalidatedRestorationState(self)
 	}
 	
@@ -158,7 +158,7 @@ private extension TimelineContainerViewController {
 													  attributes: [NSAttributedString.Key.font: NSFont.controlContentFont(ofSize: NSFont.systemFontSize)])
 	}
 	
-	func timelineViewController(for mode: TimelineSourceMode) -> TimelineViewController {
+	func timelineViewController(for mode: TimelineSourceMode) -> MainTimelineViewController {
 		switch mode {
 		case .regular:
 			return regularTimelineViewController
@@ -167,7 +167,7 @@ private extension TimelineContainerViewController {
 		}
 	}
 
-	func mode(for timelineViewController: TimelineViewController) -> TimelineSourceMode {
+	func mode(for timelineViewController: MainTimelineViewController) -> TimelineSourceMode {
 		if timelineViewController === regularTimelineViewController {
 			return .regular
 		}
