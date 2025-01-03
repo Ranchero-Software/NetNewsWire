@@ -98,8 +98,12 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			return nil
 		}()
 
-		if let httpURLResponse = response as? HTTPURLResponse, let cacheControlInfo = CacheControlInfo(urlResponse: httpURLResponse) {
-			feed.cacheControlInfo = cacheControlInfo
+		if url.isOpenRSSOrgURL {
+			// Supported only for openrss.org. Cache-Control headers are
+			// otherwise not intentional for feeds, unfortunately.
+			if let httpURLResponse = response as? HTTPURLResponse, let cacheControlInfo = CacheControlInfo(urlResponse: httpURLResponse) {
+				feed.cacheControlInfo = cacheControlInfo
+			}
 		}
 
 		let dataHash = data.md5String
@@ -176,24 +180,27 @@ private extension LocalAccountRefresher {
 		return false
 	}
 
-	// These hosts are immune to Cache-Control checking.
-	// We could certainly add more hosts to this if requested by site owners.
-	static let hostsThatShouldNeverBeSkipped = Set(["inessential.com", "netnewswire.blog", "nnw.ranchero.com"])
-
 	static func feedShouldBeSkipped(_ feed: WebFeed) -> Bool {
+		feedShouldBeSkippedForCacheControlReasons(feed) || feedIsDisallowed(feed)
+	}
 
-		if let host = url(for: feed)?.host() {
-			if hostsThatShouldNeverBeSkipped.contains(host) {
-				return false
+	static func feedShouldBeSkippedForCacheControlReasons(_ feed: WebFeed) -> Bool {
+		// We support Cache-Control only for openrss.org. The rest of the feed-providing
+		// universe hasn’t dealt with Cache-Control, and we routinely see days-long
+		// max-ages for even fast-moving feeds.
+		//
+		// However, openrss.org does make sure their Cache-Control headers are
+		// intentional, and we should honor those.
+		guard let url = url(for: feed) else {
+			return false
+		}
+
+		if url.isOpenRSSOrgURL {
+			if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
+				os_log(.debug, "Dropping request for Cache-Control reasons: \(feed.url)")
+				return true
 			}
 		}
-
-		if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
-			os_log(.debug, "Dropping request for Cache-Control reasons: \(feed.url)")
-			return true
-		}
-
-		return feedIsDisallowed(feed)
 	}
 
 	static var urlCache = [String: URL]()
