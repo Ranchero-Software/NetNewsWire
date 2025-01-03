@@ -273,8 +273,7 @@ class WebViewController: UIViewController {
 		if AppDefaults.shared.useSystemBrowser {
 			UIApplication.shared.open(url, options: [:])
 		} else {
-			let vc = SFSafariViewController(url: url)
-			present(vc, animated: true)
+			openURLInSafariViewController(url)
 		}
 	}
 }
@@ -378,8 +377,7 @@ extension WebViewController: WKNavigationDelegate {
 						guard didOpen == false else {
 							return
 						}
-						let vc = SFSafariViewController(url: url)
-						self.present(vc, animated: true)
+						self.openURLInSafariViewController(url)
 					}
 				}
 				
@@ -595,7 +593,6 @@ private extension WebViewController {
 
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
-		
 	}
 	
 	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
@@ -794,11 +791,15 @@ private extension WebViewController {
 			guard didOpen == false else {
 				return
 			}
-			let vc = SFSafariViewController(url: url)
-			self.present(vc, animated: true)
+			self.openURLInSafariViewController(url)
 		}
 	}
 
+	func openURLInSafariViewController(_ url: URL) {
+
+		let viewController = SFSafariViewController(url: url)
+		present(viewController, animated: true)
+	}
 }
 
 // MARK: Find in Article

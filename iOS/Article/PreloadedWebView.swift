@@ -13,7 +13,7 @@ class PreloadedWebView: WKWebView {
 	
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?
-	
+
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false

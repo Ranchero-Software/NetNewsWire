@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import Account
 import BackgroundTasks
-import os.log
+import os
 import Secrets
 import WidgetKit
 
@@ -36,17 +36,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
 	}
 	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
-	
+	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
-	var imageDownloader: ImageDownloader!
-	var authorAvatarDownloader: AuthorAvatarDownloader!
-	var feedIconDownloader: FeedIconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	var widgetDataEncoder: WidgetDataEncoder!
-	
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -82,7 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
-			os_log("Is first run.", log: log, type: .info)
+			logger.info("Is first run.")
 		}
 		
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
@@ -114,9 +111,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 		
 		widgetDataEncoder = WidgetDataEncoder()
-		
+
 		syncTimer = ArticleStatusSyncTimer()
-		
+
 		#if DEBUG
 		syncTimer!.update()
 		#endif
@@ -167,7 +164,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	func resumeDatabaseProcessingIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
-			os_log("Application processing resumed.", log: self.log, type: .info)
+			logger.info("Application processing resumed.")
 		}
 	}
 	
@@ -179,7 +176,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		widgetDataEncoder.encode()
 		waitForSyncTasksToFinish()
 	}
-	
+
 	func prepareAccountsForForeground() {
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
@@ -230,24 +227,15 @@ private extension AppDelegate {
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
 		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-		
+
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
 		let faviconsFolder = faviconsFolderURL.absoluteString
 		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
 		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
-		
-		let imagesFolder = imagesFolderURL.absoluteString
-		let imagesFolderPath = imagesFolder.suffix(from: imagesFolder.index(imagesFolder.startIndex, offsetBy: 7))
+
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-		imageDownloader = ImageDownloader(folder: String(imagesFolderPath))
-		
-		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
-		
-		let tempFolder = tempDir.absoluteString
-		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
-		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
 	}
-	
+
 	private func initializeHomeScreenQuickActions() {
 		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
 		let unreadIcon = UIApplicationShortcutIcon(systemImageName: "chevron.down.circle")
@@ -278,7 +266,7 @@ private extension AppDelegate {
 		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
 			guard let self = self else { return }
 			self.completeProcessing(true)
-			os_log("Accounts wait for progress terminated for running too long.", log: self.log, type: .info)
+			logger.info("Accounts wait for progress terminated for running too long.")
 		}
 		
 		DispatchQueue.main.async { [weak self] in
@@ -290,18 +278,18 @@ private extension AppDelegate {
 	
 	func waitToComplete(completion: @escaping (Bool) -> Void) {
 		guard UIApplication.shared.applicationState == .background else {
-			os_log("App came back to foreground, no longer waiting.", log: self.log, type: .info)
+			logger.info("App came back to foreground, no longer waiting.")
 			completion(false)
 			return
 		}
 		
 		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || widgetDataEncoder.isRunning {
-			os_log("Waiting for sync to finish...", log: self.log, type: .info)
+			logger.info("Waiting for sync to finish…")
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)
 			}
 		} else {
-			os_log("Refresh progress complete.", log: self.log, type: .info)
+			logger.info("Refresh progress complete.")
 			completion(true)
 		}
 	}
@@ -328,7 +316,7 @@ private extension AppDelegate {
 		
 		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
 			completeProcessing()
-			os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
+			self.logger.info("Accounts sync processing terminated for running too long.")
 		}
 		
 		DispatchQueue.main.async {
@@ -352,7 +340,7 @@ private extension AppDelegate {
 			}
 		}
 		
-		os_log("Application processing suspended.", log: self.log, type: .info)
+		logger.info("Application processing suspended.")
 	}
 	
 }
@@ -380,7 +368,7 @@ private extension AppDelegate {
 			do {
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
-				os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
+				self.logger.error("Could not schedule app refresh: \(error.localizedDescription)")
 			}
 		}
 	}
@@ -389,10 +377,10 @@ private extension AppDelegate {
 	/// - Parameter task: `BGAppRefreshTask`
 	/// - Warning: As of Xcode 11 beta 2, when triggered from the debugger this doesn't work.
 	func performBackgroundFeedRefresh(with task: BGAppRefreshTask) {
-		
+
 		scheduleBackgroundFeedRefresh() // schedule next refresh
-		
-		os_log("Woken to perform account refresh.", log: self.log, type: .info)
+
+		logger.info("Woken to perform account refresh.")
 
 		DispatchQueue.main.async {
 			if AccountManager.shared.isSuspended {
@@ -401,22 +389,21 @@ private extension AppDelegate {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
 					self.suspendApplication()
-					os_log("Account refresh operation completed.", log: self.log, type: .info)
+					logger.info("Account refresh operation completed.")
 					task.setTaskCompleted(success: true)
 				}
 			}
 		}
-					
+
 		// set expiration handler
 		task.expirationHandler = { [weak task] in
-			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
+			self.logger.info("Accounts refresh processing terminated for running too long.")
 			DispatchQueue.main.async {
 				self.suspendApplication()
 				task?.setTaskCompleted(success: false)
 			}
 		}
 	}
-	
 }
 
 // Handle Notification Actions
