@@ -23,10 +23,10 @@ class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate,
 
 	func heightFor(width: CGFloat) -> CGFloat {
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			let layout = TimelineAccessibilityCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = MainTimelineAccessibilityCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			return layout.height
 		} else {
-			let layout = TimelineDefaultCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = MainTimelineDefaultCellLayout(width: width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			return layout.height
 		}
 	}
@@ -42,7 +42,7 @@ class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate,
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! TimelineTableViewCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainTimelineTableViewCell
 		cell.cellData = prototypeCellData
 		return cell
 	}
@@ -62,7 +62,7 @@ class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate,
 
 private extension TimelinePreviewTableViewController {
 
-	var prototypeCellData: TimelineCellData {
+	var prototypeCellData: MainTimelineCellData {
 		let longTitle = "Enim ut tellus elementum sagittis vitae et. Nibh praesent tristique magna sit amet purus gravida quis blandit. Neque volutpat ac tincidunt vitae semper quis lectus nulla. Massa id neque aliquam vestibulum morbi blandit. Ultrices vitae auctor eu augue. Enim eu turpis egestas pretium aenean pharetra magna. Eget gravida cum sociis natoque. Sit amet consectetur adipiscing elit. Auctor eu augue ut lectus arcu bibendum. Maecenas volutpat blandit aliquam etiam erat velit. Ut pharetra sit amet aliquam id diam maecenas ultricies. In hac habitasse platea dictumst quisque sagittis purus sit amet."
 		
 		let prototypeID = "prototype"
@@ -71,7 +71,7 @@ private extension TimelinePreviewTableViewController {
 		
 		let iconImage = IconImage(AppAssets.faviconTemplateImage.withTintColor(AppAssets.secondaryAccentColor))
 		
-		return TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Feed Name", byline: nil, iconImage: iconImage, showIcon: true, featuredImage: nil, numberOfLines: AppDefaults.shared.timelineNumberOfLines, iconSize: AppDefaults.shared.timelineIconSize)
+		return MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Feed Name", byline: nil, iconImage: iconImage, showIcon: true, featuredImage: nil, numberOfLines: AppDefaults.shared.timelineNumberOfLines, iconSize: AppDefaults.shared.timelineIconSize)
 	}
 		
 }

@@ -436,7 +436,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
-				if let cell = tableView.cellForRow(at: indexPath) as? TimelineTableViewCell {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell {
 					configure(cell, article: article)
 				}
 			}
@@ -457,7 +457,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 				guard let article = dataSource.itemIdentifier(for: indexPath) else {
 					continue
 				}
-				if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? TimelineTableViewCell, let image = iconImageFor(article) {
+				if article.feed == feed, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
 					cell.setIconImage(image)
 				}
 			}
@@ -474,7 +474,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 					continue
 				}
 				for author in authors {
-					if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? TimelineTableViewCell, let image = iconImageFor(article) {
+					if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
 						cell.setIconImage(image)
 					}
 				}
@@ -548,13 +548,13 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: Constants.prototypeText, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			let layout = TimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = MainTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		} else {
-			let layout = TimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
+			let layout = MainTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		}
 		
@@ -713,7 +713,7 @@ private extension TimelineViewController {
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
 			TimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
-				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! TimelineTableViewCell
+				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainTimelineTableViewCell
 				self?.configure(cell, article: article)
 				return cell
 			})
@@ -721,14 +721,14 @@ private extension TimelineViewController {
 		return dataSource
     }
 	
-	func configure(_ cell: TimelineTableViewCell, article: Article) {
+	func configure(_ cell: MainTimelineTableViewCell, article: Article) {
 		
 		let iconImage = iconImageFor(article)
 		let featuredImage = featuredImageFor(article)
 		
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 	}
 	

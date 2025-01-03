@@ -1,5 +1,5 @@
 //
-//  TimelineCellLayout.swift
+//  MainTimelineCellLayout.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 4/29/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol TimelineCellLayout {
+protocol MainTimelineCellLayout {
 	
 	var height: CGFloat {get}
 	var unreadIndicatorRect: CGRect {get}
@@ -21,11 +21,11 @@ protocol TimelineCellLayout {
 	
 }
 
-extension TimelineCellLayout {
+extension MainTimelineCellLayout {
 	
 	static func rectForUnreadIndicator(_ point: CGPoint) -> CGRect {
 		var r = CGRect.zero
-		r.size = CGSize(width: TimelineDefaultCellLayout.unreadCircleDimension, height: TimelineDefaultCellLayout.unreadCircleDimension)
+		r.size = CGSize(width: MainTimelineDefaultCellLayout.unreadCircleDimension, height: MainTimelineDefaultCellLayout.unreadCircleDimension)
 		r.origin.x = point.x
 		r.origin.y = point.y + 5
 		return r
@@ -34,9 +34,9 @@ extension TimelineCellLayout {
 	
 	static func rectForStar(_ point: CGPoint) -> CGRect {
 		var r = CGRect.zero
-		r.size.width = TimelineDefaultCellLayout.starDimension
-		r.size.height = TimelineDefaultCellLayout.starDimension
-		r.origin.x = floor(point.x - ((TimelineDefaultCellLayout.starDimension - TimelineDefaultCellLayout.unreadCircleDimension) / 2.0))
+		r.size.width = MainTimelineDefaultCellLayout.starDimension
+		r.size.height = MainTimelineDefaultCellLayout.starDimension
+		r.origin.x = floor(point.x - ((MainTimelineDefaultCellLayout.starDimension - MainTimelineDefaultCellLayout.unreadCircleDimension) / 2.0))
 		r.origin.y = point.y + 3
 		return r
 	}
@@ -49,7 +49,7 @@ extension TimelineCellLayout {
 		return r
 	}
 	
-	static func rectForTitle(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> (CGRect, Int) {
+	static func rectForTitle(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> (CGRect, Int) {
 		
 		var r = CGRect.zero
 		if cellData.title.isEmpty {
@@ -58,7 +58,7 @@ extension TimelineCellLayout {
 		
 		r.origin = point
 		
-		let sizeInfo = MultilineUILabelSizer.size(for: cellData.title, font: TimelineDefaultCellLayout.titleFont, numberOfLines: cellData.numberOfLines, width: Int(textAreaWidth))
+		let sizeInfo = MultilineUILabelSizer.size(for: cellData.title, font: MainTimelineDefaultCellLayout.titleFont, numberOfLines: cellData.numberOfLines, width: Int(textAreaWidth))
 		
 		r.size.width = textAreaWidth
 		r.size.height = sizeInfo.size.height
@@ -70,7 +70,7 @@ extension TimelineCellLayout {
 		
 	}
 	
-	static func rectForSummary(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat, _ linesUsed: Int) -> CGRect {
+	static func rectForSummary(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat, _ linesUsed: Int) -> CGRect {
 		
 		let linesLeft = cellData.numberOfLines - linesUsed
 		
@@ -81,7 +81,7 @@ extension TimelineCellLayout {
 		
 		r.origin = point
 		
-		let sizeInfo = MultilineUILabelSizer.size(for: cellData.summary, font: TimelineDefaultCellLayout.summaryFont, numberOfLines: linesLeft, width: Int(textAreaWidth))
+		let sizeInfo = MultilineUILabelSizer.size(for: cellData.summary, font: MainTimelineDefaultCellLayout.summaryFont, numberOfLines: linesLeft, width: Int(textAreaWidth))
 		
 		r.size.width = textAreaWidth
 		r.size.height = sizeInfo.size.height
@@ -93,13 +93,13 @@ extension TimelineCellLayout {
 		
 	}
 
-	static func rectForFeedName(_ cellData: TimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
+	static func rectForFeedName(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 		
 		var r = CGRect.zero
 		r.origin = point
 		
 		let feedName = cellData.showFeedName == .feed ? cellData.feedName : cellData.byline
-		let size = SingleLineUILabelSizer.size(for: feedName, font: TimelineDefaultCellLayout.feedNameFont)
+		let size = SingleLineUILabelSizer.size(for: feedName, font: MainTimelineDefaultCellLayout.feedNameFont)
 		r.size = size
 		
 		if r.size.width > textAreaWidth {

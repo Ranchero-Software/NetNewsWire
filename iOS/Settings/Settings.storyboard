@@ -946,7 +946,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="300" height="128"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="Zaq-yo-L5h" customClass="TimelineTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="Zaq-yo-L5h" customClass="MainTimelineTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="300" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Zaq-yo-L5h" id="fD5-nw-z0z">

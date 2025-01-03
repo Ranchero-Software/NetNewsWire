@@ -1,48 +1,51 @@
 //
-//  TimelineCellData.swift
+//  MainTimelineCellData.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 2/6/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-import AppKit
+import UIKit
 import Articles
 
-struct TimelineCellData {
-	
+struct MainTimelineCellData {
+
 	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
 	
 	let title: String
 	let attributedTitle: NSAttributedString
-	let text: String
+	let summary: String
 	let dateString: String
 	let feedName: String
 	let byline: String
-	let showFeedName: TimelineShowFeedName
+	let showFeedName: ShowFeedName
 	let iconImage: IconImage? // feed icon, user avatar, or favicon
 	let showIcon: Bool // Make space even when icon is nil
-	let featuredImage: NSImage? // image from within the article
+	let featuredImage: UIImage? // image from within the article
 	let read: Bool
 	let starred: Bool
+	let numberOfLines: Int
+	let iconSize: IconSize
 
-	init(article: Article, showFeedName: TimelineShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: NSImage?) {
+	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: UIImage?, numberOfLines: Int, iconSize: IconSize) {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
 		self.attributedTitle = ArticleStringFormatter.attributedTruncatedTitle(article)
 
 		let truncatedSummary = ArticleStringFormatter.truncatedSummary(article)
 		if self.title.isEmpty && truncatedSummary.isEmpty {
-			self.text = Self.noText
+			self.summary = Self.noText
 		} else {
-			self.text = truncatedSummary
+			self.summary = truncatedSummary
 		}
 		
 		self.dateString = ArticleStringFormatter.dateString(article.logicalDatePublished)
 
 		if let feedName = feedName {
 			self.feedName = ArticleStringFormatter.truncatedFeedName(feedName)
-		} else {
+		}
+		else {
 			self.feedName = ""
 		}
 		
@@ -60,11 +63,15 @@ struct TimelineCellData {
 		
 		self.read = article.status.read
 		self.starred = article.status.starred
+		self.numberOfLines = numberOfLines
+		self.iconSize = iconSize
+		
 	}
 
 	init() { //Empty
 		self.title = ""
-		self.text = ""
+		self.attributedTitle = NSAttributedString()
+		self.summary = ""
 		self.dateString = ""
 		self.feedName = ""
 		self.byline = ""
@@ -74,6 +81,8 @@ struct TimelineCellData {
 		self.featuredImage = nil
 		self.read = true
 		self.starred = false
-		self.attributedTitle = NSAttributedString()
+		self.numberOfLines = 0
+		self.iconSize = .medium
 	}
+	
 }

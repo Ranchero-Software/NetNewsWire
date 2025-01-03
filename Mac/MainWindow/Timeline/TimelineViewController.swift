@@ -723,7 +723,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: Constants.prototypeText, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil)
+		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
@@ -876,7 +876,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 		let iconImage = article.iconImage()
-		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
+		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
 	}
 
 	private func iconFor(_ article: Article) -> IconImage? {
@@ -892,7 +892,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
 		cell.objectValue = nil
-		cell.cellData = TimelineCellData()
+		cell.cellData = MainTimelineCellData()
 	}
 
 	private func toggleArticleRead(_ article: Article) {

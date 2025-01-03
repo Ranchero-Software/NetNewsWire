@@ -8,7 +8,7 @@
 
 import AppKit
 
-class UnreadIndicatorView: NSView {
+class MainUnreadIndicatorView: NSView {
 
 	static let unreadCircleDimension: CGFloat = 8.0
 	
@@ -39,7 +39,7 @@ class UnreadIndicatorView: NSView {
 		} else {
 			NSColor.controlAccentColor.setFill()
 		}
-		UnreadIndicatorView.bezierPath.fill()
+		MainUnreadIndicatorView.bezierPath.fill()
     }
     
 }

@@ -48,7 +48,7 @@ struct TimelineCellLayout {
 		}
 	}
 
-	init(width: CGFloat, height: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance, hasIcon: Bool) {
+	init(width: CGFloat, height: CGFloat, cellData: MainTimelineCellData, appearance: TimelineCellAppearance, hasIcon: Bool) {
 
 		// If height == 0.0, then height is calculated.
 
@@ -82,7 +82,7 @@ struct TimelineCellLayout {
 		self.init(width: width, height: height, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, numberOfLinesForTitle: numberOfLinesForTitle, summaryRect: summaryRect, textRect: textRect, unreadIndicatorRect: unreadIndicatorRect, starRect: starRect, iconImageRect: iconImageRect, separatorRect: separatorRect, paddingBottom: paddingBottom)
 	}
 
-	static func height(for width: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance) -> CGFloat {
+	static func height(for width: CGFloat, cellData: MainTimelineCellData, appearance: TimelineCellAppearance) -> CGFloat {
 
 		let layout = TimelineCellLayout(width: width, height: 0.0, cellData: cellData, appearance: appearance, hasIcon: true)
 		return layout.height
@@ -93,7 +93,7 @@ struct TimelineCellLayout {
 
 private extension TimelineCellLayout {
 
-	static func rectForTextBox(_ appearance: TimelineCellAppearance, _ cellData: TimelineCellData, _ showIcon: Bool, _ width: CGFloat) -> NSRect {
+	static func rectForTextBox(_ appearance: TimelineCellAppearance, _ cellData: MainTimelineCellData, _ showIcon: Bool, _ width: CGFloat) -> NSRect {
 
 		// Returned height is a placeholder. Not needed when this is calculated.
 
@@ -106,7 +106,7 @@ private extension TimelineCellLayout {
 		return textBoxRect
 	}
 
-	static func rectForTitle(_ textBoxRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> (NSRect, Int) {
+	static func rectForTitle(_ textBoxRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: MainTimelineCellData) -> (NSRect, Int) {
 
 		var r = textBoxRect
 
@@ -124,7 +124,7 @@ private extension TimelineCellLayout {
 		return (r, sizeInfo.numberOfLinesUsed)
 	}
 
-	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int,  _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
+	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int,  _ appearance: TimelineCellAppearance, _ cellData: MainTimelineCellData) -> NSRect {
 		if titleNumberOfLines >= appearance.titleNumberOfLines || cellData.text.isEmpty {
 			return NSRect.zero
 		}
@@ -142,7 +142,7 @@ private extension TimelineCellLayout {
 
 	}
 
-	static func rectForText(_ textBoxRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
+	static func rectForText(_ textBoxRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: MainTimelineCellData) -> NSRect {
 		var r = textBoxRect
 
 		if cellData.text.isEmpty {
@@ -158,7 +158,7 @@ private extension TimelineCellLayout {
 		return r
 	}
 
-	static func rectForDate(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
+	static func rectForDate(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ appearance: TimelineCellAppearance, _ cellData: MainTimelineCellData) -> NSRect {
 		let textFieldSize = SingleLineTextFieldSizer.size(for: cellData.dateString, font: appearance.dateFont)
 		
 		var r = NSZeroRect
@@ -171,7 +171,7 @@ private extension TimelineCellLayout {
 		return r
 	}
 
-	static func rectForFeedName(_ textBoxRect: NSRect, _ dateRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
+	static func rectForFeedName(_ textBoxRect: NSRect, _ dateRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: MainTimelineCellData) -> NSRect {
 		if cellData.showFeedName == .none {
 			return NSZeroRect
 		}
@@ -208,7 +208,7 @@ private extension TimelineCellLayout {
 		return r
 	}
 
-	static func rectForIcon(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ showIcon: Bool, _ textBoxRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
+	static func rectForIcon(_ cellData: MainTimelineCellData, _ appearance: TimelineCellAppearance, _ showIcon: Bool, _ textBoxRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
 
 		var r = NSRect.zero
 		if !showIcon {
@@ -221,7 +221,7 @@ private extension TimelineCellLayout {
 		return r
 	}
 	
-	static func rectForSeparator(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ alignmentRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
+	static func rectForSeparator(_ cellData: MainTimelineCellData, _ appearance: TimelineCellAppearance, _ alignmentRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
 		return NSRect(x: alignmentRect.minX, y: height - 1, width: width - alignmentRect.minX, height: 1)
 	}
 }
