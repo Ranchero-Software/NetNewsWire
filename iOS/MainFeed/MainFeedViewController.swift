@@ -1,5 +1,5 @@
 //
-//  FeedViewController.swift
+//  MainFeedViewController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/8/19.
@@ -13,7 +13,7 @@ import RSCore
 import RSTree
 import SafariServices
 
-class FeedViewController: UITableViewController, UndoableCommandRunner {
+class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
@@ -55,7 +55,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 		frame.size.height = .leastNormalMagnitude
 		tableView.tableHeaderView = UIView(frame: frame)
 		
-		tableView.register(FeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+		tableView.register(MainFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		tableView.dragDelegate = self
 		tableView.dropDelegate = self
 		tableView.dragInteractionEnabled = true
@@ -100,7 +100,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 		if let account = unreadCountProvider as? Account {
 			if let node = coordinator.rootNode.childNodeRepresentingObject(account) {
 				let sectionIndex = coordinator.rootNode.indexOfChild(node)!
-				if let headerView = tableView.headerView(forSection: sectionIndex) as? FeedTableViewSectionHeader {
+				if let headerView = tableView.headerView(forSection: sectionIndex) as? MainFeedTableViewSectionHeader {
 					headerView.unreadCount = account.unreadCount
 				}
 			}
@@ -115,7 +115,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 
 		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
-		if let cell = tableView.cellForRow(at: indexPath) as? FeedTableViewCell {
+		if let cell = tableView.cellForRow(at: indexPath) as? MainFeedTableViewCell {
 			cell.unreadCount = unreadCountProvider.unreadCount
 		}
 	}
@@ -160,7 +160,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! FeedTableViewCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainFeedTableViewCell
 		configure(cell, indexPath)
 		return cell
 	}
@@ -179,7 +179,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 			return 44
 		}
 		
-		let headerView = FeedTableViewSectionHeader()
+		let headerView = MainFeedTableViewSectionHeader()
 		headerView.name = nameProvider.nameForDisplay
 
 		let size = headerView.sizeThatFits(CGSize(width: tableView.bounds.width, height: 0.0))
@@ -193,7 +193,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 			return nil
 		}
 		
-		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! FeedTableViewSectionHeader
+		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MainFeedTableViewSectionHeader
 		headerView.delegate = self
 		headerView.name = nameProvider.nameForDisplay
 		
@@ -330,7 +330,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-		guard let identifier = configuration.identifier as? FeedRowIdentifier,
+		guard let identifier = configuration.identifier as? MainFeedRowIdentifier,
 			  let cell = tableView.cellForRow(at: identifier.indexPath) else {
 				  return nil
 			  }
@@ -427,7 +427,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
-		guard let headerView = sender.view as? FeedTableViewSectionHeader else {
+		guard let headerView = sender.view as? MainFeedTableViewSectionHeader else {
 			return
 		}
 		toggle(headerView)
@@ -644,7 +644,7 @@ class FeedViewController: UITableViewController, UndoableCommandRunner {
 
 // MARK: UIContextMenuInteractionDelegate
 
-extension FeedViewController: UIContextMenuInteractionDelegate {
+extension MainFeedViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
 
 		guard let sectionIndex = interaction.view?.tag,
@@ -682,9 +682,9 @@ extension FeedViewController: UIContextMenuInteractionDelegate {
 
 // MARK: FeedTableViewSectionHeaderDelegate
 
-extension FeedViewController: FeedTableViewSectionHeaderDelegate {
-	
-	func feedTableViewSectionHeaderDisclosureDidToggle(_ sender: FeedTableViewSectionHeader) {
+extension MainFeedViewController: MainFeedTableViewSectionHeaderDelegate {
+
+	func feedTableViewSectionHeaderDisclosureDidToggle(_ sender: MainFeedTableViewSectionHeader) {
 		toggle(sender)
 	}
 	
@@ -692,9 +692,9 @@ extension FeedViewController: FeedTableViewSectionHeaderDelegate {
 
 // MARK: FeedTableViewCellDelegate
 
-extension FeedViewController: FeedTableViewCellDelegate {
-	
-	func feedTableViewCellDisclosureDidToggle(_ sender: FeedTableViewCell, expanding: Bool) {
+extension MainFeedViewController: MainFeedTableViewCellDelegate {
+
+	func feedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool) {
 		if expanding {
 			expand(sender)
 		} else {
@@ -706,8 +706,8 @@ extension FeedViewController: FeedTableViewCellDelegate {
 
 // MARK: Private
 
-private extension FeedViewController {
-	
+private extension MainFeedViewController {
+
 	func configureToolbar() {
 		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
 			return
@@ -732,14 +732,14 @@ private extension FeedViewController {
 		let titleLabel = NonIntrinsicLabel()
 		titleLabel.text = "But I must explain"
 		
-		let unreadCountView = FeedUnreadCountView()
+		let unreadCountView = MainFeedUnreadCountView()
 		unreadCountView.unreadCount = 10
 		
-		let layout = FeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false)
+		let layout = MainFeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false)
 		tableView.estimatedRowHeight = layout.height
 	}
 	
-	func configure(_ cell: FeedTableViewCell, _ indexPath: IndexPath) {
+	func configure(_ cell: MainFeedTableViewCell, _ indexPath: IndexPath) {
 		guard let node = coordinator.nodeFor(indexPath) else { return }
 
 		cell.delegate = self
@@ -772,7 +772,7 @@ private extension FeedViewController {
 		
 	}
 	
-	func configureIcon(_ cell: FeedTableViewCell, _ indexPath: IndexPath) {
+	func configureIcon(_ cell: MainFeedTableViewCell, _ indexPath: IndexPath) {
 		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? SidebarItem, let feedID = feed.sidebarItemID else {
 			return
 		}
@@ -790,7 +790,7 @@ private extension FeedViewController {
 		applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
-	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (FeedTableViewCell, IndexPath) -> Void) {
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedTableViewCell, IndexPath) -> Void) {
 		applyToAvailableCells { (cell, indexPath) in
 			if let node = coordinator.nodeFor(indexPath),
 			   let representedFeed = representedObject as? SidebarItem,
@@ -801,12 +801,12 @@ private extension FeedViewController {
 		}
 	}
 	
-	func applyToAvailableCells(_ completion: (FeedTableViewCell, IndexPath) -> Void) {
+	func applyToAvailableCells(_ completion: (MainFeedTableViewCell, IndexPath) -> Void) {
 		for cell in tableView.visibleCells {
 			guard let indexPath = tableView.indexPath(for: cell) else {
 				continue
 			}
-			completion(cell as! FeedTableViewCell, indexPath)
+			completion(cell as! MainFeedTableViewCell, indexPath)
 		}
 	}
 
@@ -829,7 +829,7 @@ private extension FeedViewController {
 		return nil
 	}
 
-	func toggle(_ headerView: FeedTableViewSectionHeader) {
+	func toggle(_ headerView: MainFeedTableViewSectionHeader) {
 		guard let sectionNode = coordinator.rootNode.childAtIndex(headerView.tag) else {
 			return
 		}
@@ -843,14 +843,14 @@ private extension FeedViewController {
 		}
 	}
 
-	func expand(_ cell: FeedTableViewCell) {
+	func expand(_ cell: MainFeedTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
 			return
 		}
 		coordinator.expand(node)
 	}
 
-	func collapse(_ cell: FeedTableViewCell) {
+	func collapse(_ cell: MainFeedTableViewCell) {
 		guard let indexPath = tableView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
 			return
 		}
@@ -858,8 +858,8 @@ private extension FeedViewController {
 	}
 
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: FeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
-			
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
+
 			guard let self = self else { return nil }
 			
 			var menuElements = [UIMenuElement]()
@@ -903,7 +903,7 @@ private extension FeedViewController {
 	}
 	
 	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: FeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
 			guard let self = self else { return nil }
 			
@@ -930,7 +930,7 @@ private extension FeedViewController {
 			return nil
 		}
 
-		return UIContextMenuConfiguration(identifier: FeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { suggestedActions in
 			return UIMenu(title: "", children: [markAllAction])
 		})
 	}
@@ -1246,7 +1246,7 @@ private extension FeedViewController {
 	
 }
 
-extension FeedViewController: UIGestureRecognizerDelegate {
+extension MainFeedViewController: UIGestureRecognizerDelegate {
 	func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 		guard let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
 			return false

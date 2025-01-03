@@ -1,5 +1,5 @@
 //
-//  FeedRowIdentifier.swift
+//  MainFeedRowIdentifier.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 10/20/21.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FeedRowIdentifier: NSObject, NSCopying {
+class MainFeedRowIdentifier: NSObject, NSCopying {
 
 	var indexPath: IndexPath
 	

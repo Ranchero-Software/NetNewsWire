@@ -60,7 +60,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	private var rootSplitViewController: RootSplitViewController!
 	private var navigationController: UINavigationController!
-	private var feedViewController: FeedViewController!
+	private var feedViewController: MainFeedViewController!
 	private var timelineViewController: TimelineViewController?
 	private var subSplitViewController: UISplitViewController?
 	
@@ -339,7 +339,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		navigationController = (rootSplitViewController.viewControllers.first as! UINavigationController)
 		navigationController.delegate = self
 		
-		feedViewController = UIStoryboard.main.instantiateController(ofType: FeedViewController.self)
+		feedViewController = UIStoryboard.main.instantiateController(ofType: MainFeedViewController.self)
 		feedViewController.coordinator = self
 		navigationController.pushViewController(feedViewController, animated: false)
 		

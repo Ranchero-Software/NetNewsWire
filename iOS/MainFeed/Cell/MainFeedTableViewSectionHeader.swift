@@ -1,5 +1,5 @@
 //
-//  TableViewSectionHeader.swift
+//  MainFeedTableViewSectionHeader.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/18/19.
@@ -8,13 +8,13 @@
 
 import UIKit
 
-protocol FeedTableViewSectionHeaderDelegate {
-	func feedTableViewSectionHeaderDisclosureDidToggle(_ sender: FeedTableViewSectionHeader)
+protocol MainFeedTableViewSectionHeaderDelegate {
+	func feedTableViewSectionHeaderDisclosureDidToggle(_ sender: MainFeedTableViewSectionHeader)
 }
 
-class FeedTableViewSectionHeader: UITableViewHeaderFooterView {
-	
-	var delegate: FeedTableViewSectionHeaderDelegate?
+class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
+
+	var delegate: MainFeedTableViewSectionHeaderDelegate?
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -81,7 +81,7 @@ class FeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		return label
 	}()
 	
-	private let unreadCountView = FeedUnreadCountView(frame: CGRect.zero)
+	private let unreadCountView = MainFeedUnreadCountView(frame: CGRect.zero)
 
 	private lazy var disclosureButton: UIButton = {
 		let button = NonIntrinsicButton()
@@ -116,14 +116,14 @@ class FeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = FeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
+		let layout = MainFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
 		return CGSize(width: bounds.width, height: layout.height)
 		
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = FeedTableViewSectionHeaderLayout(cellWidth: contentView.bounds.size.width,
+		let layout = MainFeedTableViewSectionHeaderLayout(cellWidth: contentView.bounds.size.width,
 															insets: contentView.safeAreaInsets,
 															label: titleView,
 															unreadCountView: unreadCountView)
@@ -132,8 +132,8 @@ class FeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
 }
 
-private extension FeedTableViewSectionHeader {
-	
+private extension MainFeedTableViewSectionHeader {
+
 	@objc func toggleDisclosure() {
 		delegate?.feedTableViewSectionHeaderDisclosureDidToggle(self)
 	}
@@ -187,7 +187,7 @@ private extension FeedTableViewSectionHeader {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
-	func layoutWith(_ layout: FeedTableViewSectionHeaderLayout) {
+	func layoutWith(_ layout: MainFeedTableViewSectionHeaderLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton.setFrameIfNotEqual(layout.disclosureButtonRect)
