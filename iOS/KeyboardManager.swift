@@ -51,7 +51,6 @@ class KeyboardManager {
 		keyCommand.wantsPriorityOverSystemBehavior = true
 		return keyCommand
 	}
-	
 }
 
 private extension KeyboardManager {
@@ -60,7 +59,7 @@ private extension KeyboardManager {
 		guard let input = createKeyCommandInput(keyEntry: keyEntry) else { return nil }
 		let modifiers = createKeyModifierFlags(keyEntry: keyEntry)
 		let action = keyEntry["action"] as! String
-		
+
 		if let title = keyEntry["title"] as? String {
 			return KeyboardManager.createKeyCommand(title: title, action: action, input: input, modifiers: modifiers)
 		} else {
@@ -69,7 +68,7 @@ private extension KeyboardManager {
 			return keyCommand
 		}
 	}
-		
+
 	static func createKeyCommandInput(keyEntry: [String: Any]) -> String? {
 		guard let key = keyEntry["key"] as? String else { return nil }
 		

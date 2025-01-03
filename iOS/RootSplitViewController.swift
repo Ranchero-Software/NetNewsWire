@@ -25,9 +25,9 @@ class RootSplitViewController: UISplitViewController {
 		coordinator.resetFocus()
 	}
 	
-	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-		self.coordinator.configurePanelMode(for: size)
-		super.viewWillTransition(to: size, with: coordinator)
+	override func show(_ column: UISplitViewController.Column) {
+		guard !coordinator.isNavigationDisabled else { return }
+		super.show(column)
 	}
 	
 	// MARK: Keyboard Shortcuts

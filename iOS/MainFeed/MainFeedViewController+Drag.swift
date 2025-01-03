@@ -1,5 +1,5 @@
 //
-//  FeedViewController+Drag.swift
+//  MainFeedViewController+Drag.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/20/19.

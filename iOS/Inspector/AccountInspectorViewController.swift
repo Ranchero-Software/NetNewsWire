@@ -18,7 +18,7 @@ class AccountInspectorViewController: UITableViewController {
 	@IBOutlet weak var activeSwitch: UISwitch!
 	@IBOutlet weak var deleteAccountButton: VibrantButton!
 	@IBOutlet weak var limitationsAndSolutionsButton: UIButton!
-	
+
 	var isModal = false
 	weak var account: Account?
 	
@@ -41,7 +41,7 @@ class AccountInspectorViewController: UITableViewController {
 		if account.type != .cloudKit {
 			limitationsAndSolutionsButton.isHidden = true
 		}
-		
+
 		if isModal {
 			let doneBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
 			navigationItem.leftBarButtonItem = doneBarButtonItem
@@ -121,13 +121,12 @@ class AccountInspectorViewController: UITableViewController {
 		
 		present(alertController, animated: true)
 	}
-	
+
 	@IBAction func openLimitationsAndSolutions(_ sender: Any) {
 		let vc = SFSafariViewController(url: CloudKitWebDocumentation.limitationsAndSolutionsURL)
 		vc.modalPresentationStyle = .pageSheet
 		present(vc, animated: true)
 	}
-	
 }
 
 // MARK: Table View

@@ -12,7 +12,7 @@ import Account
 import RSTree
 
 protocol MainFeedTableViewCellDelegate: AnyObject {
-	func feedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool)
+	func mainFeedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool)
 }
 
 class MainFeedTableViewCell : VibrantTableViewCell {
@@ -149,7 +149,7 @@ class MainFeedTableViewCell : VibrantTableViewCell {
 	@objc func buttonPressed(_ sender: UIButton) {
 		if isDisclosureAvailable {
 			setDisclosure(isExpanded: !isDisclosureExpanded, animated: true)
-			delegate?.feedTableViewCellDisclosureDidToggle(self, expanding: isDisclosureExpanded)
+			delegate?.mainFeedTableViewCellDisclosureDidToggle(self, expanding: isDisclosureExpanded)
 		}
 	}
 	

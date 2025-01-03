@@ -68,17 +68,19 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		
+
 		configureToolbar()
 		becomeFirstResponder()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
+		navigationController?.isToolbarHidden = false		
 		updateUI()
 		super.viewWillAppear(animated)
 	}
@@ -90,6 +92,16 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		reloadAllVisibleCells()
 	}
 
+	private func headerViewForAccount(_ account: Account) -> MainFeedTableViewSectionHeader? {
+
+		guard let node = coordinator.rootNode.childNodeRepresentingObject(account),
+			  let sectionIndex = coordinator.rootNode.indexOfChild(node) else {
+			return nil
+		}
+
+		return tableView.headerView(forSection: sectionIndex) as? MainFeedTableViewSectionHeader
+	}
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateUI()
 
@@ -98,15 +110,12 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if let account = unreadCountProvider as? Account {
-			if let node = coordinator.rootNode.childNodeRepresentingObject(account) {
-				let sectionIndex = coordinator.rootNode.indexOfChild(node)!
-				if let headerView = tableView.headerView(forSection: sectionIndex) as? MainFeedTableViewSectionHeader {
-					headerView.unreadCount = account.unreadCount
-				}
+			if let headerView = headerViewForAccount(account) {
+				headerView.unreadCount = account.unreadCount
 			}
 			return
 		}
-		
+
 		var node: Node? = nil
 		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
@@ -139,7 +148,21 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 			configureCellsForRepresentedObject(feed)
 		}
 	}
-	
+
+	@objc func displayNameDidChange(_ note: Notification) {
+
+		if let account = note.object as? Account {
+			if let headerView = headerViewForAccount(account) {
+				headerView.name = account.nameForDisplay
+			}
+			return
+		}
+
+		if let representedObject = note.object as? AnyObject {
+			configureCellsForRepresentedObject(representedObject)
+		}
+	}
+
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		resetEstimatedRowHeight()
 		tableView.reloadData()
@@ -473,7 +496,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		return super.canPerformAction(action, withSender: sender)
 	}
-	
+
 	@objc func expandSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath, let node = coordinator.nodeFor(indexPath) {
 			coordinator.expand(node)
@@ -512,7 +535,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 	// MARK: API
 	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
-		if let indexPath = coordinator.feedIndexPathForCurrentTimeline() {
+		if let indexPath = coordinator.mainFeedIndexPathForCurrentTimeline() {
 			if adjustScroll {
 				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
@@ -680,21 +703,21 @@ extension MainFeedViewController: UIContextMenuInteractionDelegate {
 	}
 }
 
-// MARK: FeedTableViewSectionHeaderDelegate
+// MARK: MainFeedTableViewSectionHeaderDelegate
 
 extension MainFeedViewController: MainFeedTableViewSectionHeaderDelegate {
-
-	func feedTableViewSectionHeaderDisclosureDidToggle(_ sender: MainFeedTableViewSectionHeader) {
+	
+	func mainFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MainFeedTableViewSectionHeader) {
 		toggle(sender)
 	}
 	
 }
 
-// MARK: FeedTableViewCellDelegate
+// MARK: MainTableViewCellDelegate
 
 extension MainFeedViewController: MainFeedTableViewCellDelegate {
-
-	func feedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool) {
+	
+	func mainFeedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool) {
 		if expanding {
 			expand(sender)
 		} else {

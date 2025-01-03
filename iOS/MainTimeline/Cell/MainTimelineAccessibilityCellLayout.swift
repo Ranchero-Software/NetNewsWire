@@ -10,7 +10,7 @@ import UIKit
 import RSCore
 
 struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
-	
+
 	let height: CGFloat
 	let unreadIndicatorRect: CGRect
 	let starRect: CGRect
@@ -21,18 +21,18 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 	let dateRect: CGRect
 	
 	init(width: CGFloat, insets: UIEdgeInsets, cellData: MainTimelineCellData) {
-		
+
 		var currentPoint = CGPoint.zero
 		currentPoint.x = MainTimelineDefaultCellLayout.cellPadding.left + insets.left + MainTimelineDefaultCellLayout.unreadCircleMarginLeft
 		currentPoint.y = MainTimelineDefaultCellLayout.cellPadding.top
-		
+
 		// Unread Indicator and Star
 		self.unreadIndicatorRect = MainTimelineAccessibilityCellLayout.rectForUnreadIndicator(currentPoint)
 		self.starRect = MainTimelineAccessibilityCellLayout.rectForStar(currentPoint)
-		
+
 		// Start the point at the beginning position of the main block
 		currentPoint.x += MainTimelineDefaultCellLayout.unreadCircleDimension + MainTimelineDefaultCellLayout.unreadCircleMarginRight
-		
+
 		// Icon Image
 		if cellData.showIcon {
 			self.iconImageRect = MainTimelineAccessibilityCellLayout.rectForIconView(currentPoint, iconSize: cellData.iconSize)
@@ -42,7 +42,7 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 		}
 		
 		let textAreaWidth = width - (currentPoint.x + MainTimelineDefaultCellLayout.cellPadding.right + insets.right)
-		
+
 		// Title Text Block
 		let (titleRect, numberOfLinesForTitle) = MainTimelineAccessibilityCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
@@ -52,7 +52,7 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 			currentPoint.y = self.titleRect.maxY + MainTimelineDefaultCellLayout.titleBottomMargin
 		}
 		self.summaryRect = MainTimelineAccessibilityCellLayout.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
-		
+
 		currentPoint.y = [self.titleRect, self.summaryRect].maxY()
 		
 		if cellData.showFeedName != .none {
@@ -64,9 +64,9 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 		
 		// Feed Name and Pub Date
 		self.dateRect = MainTimelineAccessibilityCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)
-		
+
 		self.height = self.dateRect.maxY + MainTimelineDefaultCellLayout.cellPadding.bottom
-		
+
 	}
 	
 }
@@ -74,9 +74,9 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 // MARK: - Calculate Rects
 
 private extension MainTimelineAccessibilityCellLayout {
-	
+
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
-		
+
 		var r = CGRect.zero
 		
 		let size = SingleLineUILabelSizer.size(for: cellData.dateString, font: MainTimelineDefaultCellLayout.dateFont)

@@ -85,7 +85,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
 
-		if let titleView = Bundle.main.loadNibNamed("TimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
+		if let titleView = Bundle.main.loadNibNamed("MainTimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
 			navigationItem.titleView = titleView
 		}
 		
@@ -110,10 +110,14 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
+		self.navigationController?.isToolbarHidden = false
+
 		// If the nav bar is hidden, fade it in to avoid it showing stuff as it is getting laid out
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
+		
+		super.viewWillAppear(animated)
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -531,7 +535,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
 		reloadCells(visibleArticles)
 	}
-	
+
 	private func reloadCells(_ articles: [Article]) {
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(articles)
@@ -598,9 +602,8 @@ extension MainTimelineViewController: UISearchBarDelegate {
 
 private extension MainTimelineViewController {
 
-	func configureToolbar() {
-		
-		guard !coordinator.isThreePanelMode else {
+	func configureToolbar() {		
+		guard !(splitViewController?.isCollapsed ?? true) else {
 			return
 		}
 		
@@ -722,10 +725,9 @@ private extension MainTimelineViewController {
     }
 	
 	func configure(_ cell: MainTimelineTableViewCell, article: Article) {
-		
+
 		let iconImage = iconImageFor(article)
-		let featuredImage = featuredImageFor(article)
-		
+
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
 		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
@@ -737,13 +739,6 @@ private extension MainTimelineViewController {
 			return nil
 		}
 		return article.iconImage()
-	}
-	
-	func featuredImageFor(_ article: Article) -> UIImage? {
-		if let link = article.imageLink, let data = appDelegate.imageDownloader.image(for: link) {
-			return RSImage(data: data)
-		}
-		return nil
 	}
 	
 	func toggleArticleReadStatusAction(_ article: Article) -> UIAction? {
@@ -842,7 +837,7 @@ private extension MainTimelineViewController {
 		}
 		return action
 	}
-	
+
 	func discloseFeedAction(_ article: Article) -> UIAction? {
 		guard let feed = article.feed,
 			!coordinator.timelineFeedIsEqualTo(feed) else { return nil }

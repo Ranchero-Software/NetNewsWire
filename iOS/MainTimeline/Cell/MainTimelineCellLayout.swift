@@ -9,7 +9,7 @@
 import UIKit
 
 protocol MainTimelineCellLayout {
-	
+
 	var height: CGFloat {get}
 	var unreadIndicatorRect: CGRect {get}
 	var starRect: CGRect {get}
@@ -22,7 +22,7 @@ protocol MainTimelineCellLayout {
 }
 
 extension MainTimelineCellLayout {
-	
+
 	static func rectForUnreadIndicator(_ point: CGPoint) -> CGRect {
 		var r = CGRect.zero
 		r.size = CGSize(width: MainTimelineDefaultCellLayout.unreadCircleDimension, height: MainTimelineDefaultCellLayout.unreadCircleDimension)
@@ -50,7 +50,7 @@ extension MainTimelineCellLayout {
 	}
 	
 	static func rectForTitle(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> (CGRect, Int) {
-		
+
 		var r = CGRect.zero
 		if cellData.title.isEmpty {
 			return (r, 0)
@@ -59,7 +59,7 @@ extension MainTimelineCellLayout {
 		r.origin = point
 		
 		let sizeInfo = MultilineUILabelSizer.size(for: cellData.title, font: MainTimelineDefaultCellLayout.titleFont, numberOfLines: cellData.numberOfLines, width: Int(textAreaWidth))
-		
+
 		r.size.width = textAreaWidth
 		r.size.height = sizeInfo.size.height
 		if sizeInfo.numberOfLinesUsed < 1 {
@@ -71,7 +71,7 @@ extension MainTimelineCellLayout {
 	}
 	
 	static func rectForSummary(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat, _ linesUsed: Int) -> CGRect {
-		
+
 		let linesLeft = cellData.numberOfLines - linesUsed
 		
 		var r = CGRect.zero
@@ -82,7 +82,7 @@ extension MainTimelineCellLayout {
 		r.origin = point
 		
 		let sizeInfo = MultilineUILabelSizer.size(for: cellData.summary, font: MainTimelineDefaultCellLayout.summaryFont, numberOfLines: linesLeft, width: Int(textAreaWidth))
-		
+
 		r.size.width = textAreaWidth
 		r.size.height = sizeInfo.size.height
 		if sizeInfo.numberOfLinesUsed < 1 {
@@ -94,7 +94,7 @@ extension MainTimelineCellLayout {
 	}
 
 	static func rectForFeedName(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
-		
+
 		var r = CGRect.zero
 		r.origin = point
 		

@@ -1,5 +1,5 @@
 //
-//  TimelineDefaultCellLayout.swift
+//  MainTimelineDefaultCellLayout.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 2/6/16.
@@ -57,14 +57,14 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		var currentPoint = CGPoint.zero
 		currentPoint.x = MainTimelineDefaultCellLayout.cellPadding.left + insets.left + MainTimelineDefaultCellLayout.unreadCircleMarginLeft
 		currentPoint.y = MainTimelineDefaultCellLayout.cellPadding.top
-		
+
 		// Unread Indicator and Star
 		self.unreadIndicatorRect = MainTimelineDefaultCellLayout.rectForUnreadIndicator(currentPoint)
 		self.starRect = MainTimelineDefaultCellLayout.rectForStar(currentPoint)
-		
+
 		// Start the point at the beginning position of the main block
 		currentPoint.x += MainTimelineDefaultCellLayout.unreadCircleDimension + MainTimelineDefaultCellLayout.unreadCircleMarginRight
-		
+
 		// Icon Image
 		if cellData.showIcon {
 			self.iconImageRect = MainTimelineDefaultCellLayout.rectForIconView(currentPoint, iconSize: cellData.iconSize)
@@ -74,7 +74,7 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		}
 		
 		let textAreaWidth = width - (currentPoint.x + MainTimelineDefaultCellLayout.cellPadding.right + insets.right)
-		
+
 		// Title Text Block
 		let (titleRect, numberOfLinesForTitle) = MainTimelineDefaultCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
@@ -84,7 +84,7 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 			currentPoint.y = self.titleRect.maxY + MainTimelineDefaultCellLayout.titleBottomMargin
 		}
 		self.summaryRect = MainTimelineDefaultCellLayout.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
-		
+
 		var y = [self.titleRect, self.summaryRect].maxY()
 		if y == 0 {
 			y = iconImageRect.origin.y + iconImageRect.height
@@ -96,10 +96,10 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		
 		// Feed Name and Pub Date
 		self.dateRect = MainTimelineDefaultCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)
-		
+
 		let feedNameWidth = textAreaWidth - (MainTimelineDefaultCellLayout.feedRightMargin + self.dateRect.size.width)
 		self.feedNameRect = MainTimelineDefaultCellLayout.rectForFeedName(cellData, currentPoint, feedNameWidth)
-		
+
 		self.height = [self.iconImageRect, self.feedNameRect].maxY() + MainTimelineDefaultCellLayout.cellPadding.bottom
 
 	}
@@ -111,7 +111,7 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 extension MainTimelineDefaultCellLayout {
 
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
-		
+
 		var r = CGRect.zero
 		
 		let size = SingleLineUILabelSizer.size(for: cellData.dateString, font: MainTimelineDefaultCellLayout.dateFont)

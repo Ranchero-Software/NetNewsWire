@@ -10,13 +10,13 @@ import UIKit
 import RSCore
 
 class MainTimelineTableViewCell: VibrantTableViewCell {
-	
+
 	private let titleView = MainTimelineTableViewCell.multiLineUILabel()
 	private let summaryView = MainTimelineTableViewCell.multiLineUILabel()
 	private let unreadIndicatorView = MainUnreadIndicatorView(frame: CGRect.zero)
 	private let dateView = MainTimelineTableViewCell.singleLineUILabel()
 	private let feedNameView = MainTimelineTableViewCell.singleLineUILabel()
-	
+
 	private lazy var iconView = IconView()
 	
 	private lazy var starView = {
@@ -107,7 +107,7 @@ class MainTimelineTableViewCell: VibrantTableViewCell {
 // MARK: - Private
 
 private extension MainTimelineTableViewCell {
-	
+
 	static func singleLineUILabel() -> UILabel {
 		let label = NonIntrinsicLabel()
 		label.lineBreakMode = .byTruncatingTail
