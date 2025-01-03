@@ -37,6 +37,8 @@
 				<string>feed</string>
 				<string>feeds</string>
 				<string>x-netnewswire-feed</string>
+				<string>http</string>
+				<string>https</string>
 			</array>
 		</dict>
 	</array>
