@@ -12,12 +12,8 @@ import RSCore
 import RSTree
 import Parser
 
-enum AddFeedType {
-	case web
-}
-
 class AddFeedViewController: UITableViewController {
-	
+
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!
 	@IBOutlet weak var urlTextField: UITextField!
@@ -29,7 +25,6 @@ class AddFeedViewController: UITableViewController {
 	private var folderLabel = ""
 	private var userCancelled = false
 
-	var addFeedType = AddFeedType.web
 	var initialFeed: String?
 	var initialFeedName: String?
 
@@ -37,7 +32,7 @@ class AddFeedViewController: UITableViewController {
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-		
+
 		activityIndicator.isHidden = true
 		activityIndicator.color = .label
 		
@@ -151,7 +146,6 @@ class AddFeedViewController: UITableViewController {
 			navController.modalPresentationStyle = .currentContext
 			let folderViewController = navController.topViewController as! AddFeedFolderViewController
 			folderViewController.delegate = self
-			folderViewController.addFeedType = addFeedType
 			folderViewController.initialContainer = container
 			present(navController, animated: true)
 		}
