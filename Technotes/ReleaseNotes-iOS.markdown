@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+## 6.1.6 TestFlight build 6142 2 Jan 2025 - branch: 6.1.6-ios tag: iOS-6.1.6-6142
+
+Fix a bug where some feeds can be slow to update. (Technical change: drop Cache-Control support except for openrss.org, which requested the support in the first place. Most feed providers aren’t providing intentional Cache-Control headers, it appears, and our continuing Cache-Control support means too-long delays between feed updates in many cases.)
+
 ## 6.1.6 TestFlight build 6141 1 Jan 2025 - branch: 6.1.6-ios tag: iOS-6.1.6-6141
 
 Fix bug updating account and feed names on Feeds screen after names have been edited
