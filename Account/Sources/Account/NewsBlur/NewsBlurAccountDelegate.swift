@@ -64,6 +64,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+
+		refreshProgress.reset()
+		
 		self.refreshProgress.addToNumberOfTasksAndRemaining(4)
 
 		refreshFeeds(for: account) { result in
@@ -92,7 +95,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 									case .failure(let error):
 										DispatchQueue.main.async {
-											self.refreshProgress.clear()
+											self.refreshProgress.reset()
 											let wrappedError = AccountError.wrappedError(error: error, account: account)
 											completion(.failure(wrappedError))
 										}

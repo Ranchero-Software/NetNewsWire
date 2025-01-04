@@ -34,6 +34,7 @@ DEVELOPER_ENTITLEMENTS =
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 #include "./common/NetNewsWire_mac_target_common.xcconfig"
 
+ENABLE_HARDENED_RUNTIME = YES
 CODE_SIGN_ENTITLEMENTS = Mac/ShareExtension/ShareExtension.entitlements
 INFOPLIST_FILE = Mac/ShareExtension/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks

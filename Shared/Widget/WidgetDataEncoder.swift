@@ -16,51 +16,53 @@ import Account
 
 
 public final class WidgetDataEncoder {
-	
+
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	private let fetchLimit = 7
-	
+
 	private lazy var appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 	private lazy var containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 	private lazy var imageContainer = containerURL?.appendingPathComponent("widgetImages", isDirectory: true)
 	private lazy var dataURL = containerURL?.appendingPathComponent("widget-data.json")
-	
+
 	public var isRunning = false
-	
+
 	init () {
 		if imageContainer != nil {
 			try? FileManager.default.createDirectory(at: imageContainer!, withIntermediateDirectories: true, attributes: nil)
 		}
 	}
-	
+
 	func encode() {
-		isRunning = true
-		
-		flushSharedContainer()
-		os_log(.debug, log: log, "Starting encoding widget data.")
-		
-		DispatchQueue.main.async {
-			self.encodeWidgetData() { latestData in
-				guard let latestData = latestData else {
+		if #available(iOS 14, *) {
+			isRunning = true
+
+			flushSharedContainer()
+			os_log(.debug, log: log, "Starting encoding widget data.")
+
+			DispatchQueue.main.async {
+				self.encodeWidgetData() { latestData in
+					guard let latestData = latestData else {
+						self.isRunning = false
+						return
+					}
+
+					let encodedData = try? JSONEncoder().encode(latestData)
+
+					os_log(.debug, log: self.log, "Finished encoding widget data.")
+
+					if self.fileExists() {
+						try? FileManager.default.removeItem(at: self.dataURL!)
+						os_log(.debug, log: self.log, "Removed widget data from container.")
+					}
+
+					if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
+						os_log(.debug, log: self.log, "Wrote widget data to container.")
+						WidgetCenter.shared.reloadAllTimelines()
+					}
+
 					self.isRunning = false
-					return
 				}
-				
-				let encodedData = try? JSONEncoder().encode(latestData)
-				
-				os_log(.debug, log: self.log, "Finished encoding widget data.")
-				
-				if self.fileExists() {
-					try? FileManager.default.removeItem(at: self.dataURL!)
-					os_log(.debug, log: self.log, "Removed widget data from container.")
-				}
-				
-				if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
-					os_log(.debug, log: self.log, "Wrote widget data to container.")
-					WidgetCenter.shared.reloadAllTimelines()
-				}
-				
-				self.isRunning = false
 			}
 		}
 	}
@@ -68,7 +70,7 @@ public final class WidgetDataEncoder {
 	private func encodeWidgetData(completion: @escaping (WidgetData?) -> Void) {
 		let dispatchGroup = DispatchGroup()
 		var groupError: Error? = nil
-		
+
 		var unread = [LatestArticle]()
 
 		dispatchGroup.enter()
@@ -89,9 +91,9 @@ public final class WidgetDataEncoder {
 			}
 			dispatchGroup.leave()
 		}
-		
+
 		var starred = [LatestArticle]()
-		
+
 		dispatchGroup.enter()
 		AccountManager.shared.fetchArticlesAsync(.starred(fetchLimit)) { (articleSetResult) in
 			switch articleSetResult {
@@ -147,13 +149,13 @@ public final class WidgetDataEncoder {
 				completion(latestData)
 			}
 		}
-			
+
 	}
-	
+
 	private func fileExists() -> Bool {
 		FileManager.default.fileExists(atPath: dataURL!.path)
 	}
-	
+
 	private func writeImageDataToSharedContainer(_ imageData: Data?) -> String? {
 		if imageData == nil { return nil }
 		// Each image gets a UUID
@@ -166,16 +168,17 @@ public final class WidgetDataEncoder {
 				return nil
 			}
 		}
-		
+
 		return nil
 	}
-	
+
 	private func flushSharedContainer() {
 		if let imageContainer = imageContainer {
 			try? FileManager.default.removeItem(atPath: imageContainer.path)
 			try? FileManager.default.createDirectory(at: imageContainer, withIntermediateDirectories: true, attributes: nil)
 		}
 	}
-	
+
 }
+
 

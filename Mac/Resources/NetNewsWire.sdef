@@ -4,7 +4,7 @@
 
 <!-- declare the namespace for using XInclude so we can include the standard suite -->
 <dictionary title="NetNewsWire Terminology" xmlns:xi="http://www.w3.org/2003/XInclude">
-    
+
     <suite name="Standard Suite" code="core" description="Subset of the Standard Suite.">
         <access-group identifier="com.ranchero.NetNewsWire-Evergreen" access="rw"/>
         <command name="delete" code="coredelo" description="Delete an object.">

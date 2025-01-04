@@ -34,6 +34,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 #include "./common/NetNewsWire_mac_target_common.xcconfig"
 
+ENABLE_HARDENED_RUNTIME = YES
 CODE_SIGN_ENTITLEMENTS = Mac/SafariExtension/Subscribe_to_Feed.entitlements
 INFOPLIST_FILE = Mac/SafariExtension/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks

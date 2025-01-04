@@ -11,7 +11,7 @@ import Articles
 import Parser
 
 public extension Notification.Name {
-	static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
+	static let feedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
 }
 
 public extension Feed {
@@ -27,6 +27,7 @@ public extension Feed {
 		public static let authors = "authors"
 		public static let contentHash = "contentHash"
 		public static let conditionalGetInfo = "conditionalGetInfo"
+		public static let cacheControlInfo = "cacheControlInfo"
 	}
 }
 
@@ -42,7 +43,7 @@ extension Feed {
 
 	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
 		let userInfo = [Feed.FeedSettingUserInfoKey: codingKey.stringValue]
-		NotificationCenter.default.post(name: .FeedSettingDidChange, object: self, userInfo: userInfo)
+		NotificationCenter.default.post(name: .feedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }
 

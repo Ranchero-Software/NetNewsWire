@@ -83,13 +83,7 @@ final class AccountMetadata: Codable {
 		}
 	}
 
-	var performedApril2020RetentionPolicyChange: Bool? {
-		didSet {
-			if performedApril2020RetentionPolicyChange != oldValue {
-				valueDidChange(.performedApril2020RetentionPolicyChange)
-			}
-		}
-	}
+	var performedApril2020RetentionPolicyChange: Bool? // No longer used.
 
 	var externalID: String? {
 		didSet {

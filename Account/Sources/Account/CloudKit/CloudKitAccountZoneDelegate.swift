@@ -22,12 +22,10 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
 	weak var account: Account?
-	weak var refreshProgress: DownloadProgress?
 	weak var articlesZone: CloudKitArticlesZone?
 
-	init(account: Account, refreshProgress: DownloadProgress, articlesZone: CloudKitArticlesZone) {
+	init(account: Account, articlesZone: CloudKitArticlesZone) {
 		self.account = account
-		self.refreshProgress = refreshProgress
 		self.articlesZone = articlesZone
 	}
 	

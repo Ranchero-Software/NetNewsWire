@@ -13,7 +13,7 @@ import Account
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	var window: UIWindow?
-	var coordinator = SceneCoordinator()
+	var coordinator: SceneCoordinator!
 	
 	// UIWindowScene delegate
 	

@@ -81,7 +81,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
+		refreshProgress.reset()
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
 		refreshAccount(account) { result in
@@ -94,7 +95,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 						completion(.success(()))
 					case .failure(let error):
 						DispatchQueue.main.async {
-							self.refreshProgress.clear()
+							self.refreshProgress.reset()
 							let wrappedError = AccountError.wrappedError(error: error, account: account)
 							completion(.failure(wrappedError))
 						}
@@ -103,7 +104,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				
 			case .failure(let error):
 				DispatchQueue.main.async {
-					self.refreshProgress.clear()
+					self.refreshProgress.reset()
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
 					completion(.failure(wrappedError))
 				}
@@ -720,7 +721,7 @@ private extension FeedbinAccountDelegate {
 									case .success:
 										
 										DispatchQueue.main.async {
-											self.refreshProgress.clear()
+											self.refreshProgress.reset()
 											completion(.success(()))
 										}
 										

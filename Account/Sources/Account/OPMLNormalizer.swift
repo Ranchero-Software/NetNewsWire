@@ -60,5 +60,7 @@ final class OPMLNormalizer {
 				normalizedOPMLItems.append(feed)
 			}
 		}
+		
 	}
+	
 }

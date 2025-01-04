@@ -16,6 +16,8 @@ final class PreferencesTableViewBackgroundView: NSView {
 	override func draw(_ dirtyRect: NSRect) {
 		let color = self.effectiveAppearance.isDarkMode ? darkBorderColor : lightBorderColor
 		color.setFill()
-		dirtyRect.fill()
+
+		let r = NSIntersectionRect(dirtyRect, bounds)
+		r.fill()
 	}
 }

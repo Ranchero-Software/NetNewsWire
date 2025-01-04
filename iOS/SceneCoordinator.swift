@@ -69,10 +69,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	// Which Feeds have the Read Articles Filter enabled
 	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
-	
+
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
-	
+
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
@@ -924,6 +924,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			return
 		}
 		
+		isNavigationDisabled = true
+		defer {
+			isNavigationDisabled = false
+		}
+		
 		if selectPrevUnreadArticleInTimeline() {
 			return
 		}
@@ -1064,14 +1069,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if isSearching {
 			mainTimelineViewController?.hideSearch()
 		}
-		
+
 		guard let account = feed.account else {
 			completion?()
 			return
 		}
-		
+
 		let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(feed) })
-		
+
 		markExpanded(account)
 		if let parentFolder = parentFolder {
 			markExpanded(parentFolder)
@@ -1089,10 +1094,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.selectFeed(nil) {
 				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
 					DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-						self.selectFeed(webFeed, animations: animations, completion: completion)
+						self.selectFeed(feed, animations: animations, completion: completion)
 					}
 				} else {
-					self.selectFeed(webFeed, animations: animations, completion: completion)
+					self.selectFeed(feed, animations: animations, completion: completion)
 				}
 			}
 		})
@@ -1549,7 +1554,7 @@ private extension SceneCoordinator {
 
 		return ShadowTableChanges(deletes: deletes, inserts: inserts, moves: moves, rowChanges: changes)
 	}
-	
+
 	func shadowTableContains(_ feed: SidebarItem) -> Bool {
 		for section in shadowTable {
 			for feedNode in section.feedNodes {
@@ -2086,7 +2091,7 @@ private extension SceneCoordinator {
 			}
 			
 			self.discloseFeed(feed, initialLoad: true) {
-				self.feedViewController.focus()
+				self.mainFeedViewController.focus()
 			}
 		}
 	}

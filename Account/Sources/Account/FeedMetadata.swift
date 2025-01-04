@@ -27,7 +27,7 @@ final class FeedMetadata: Codable {
 		case isNotifyAboutNewArticles
 		case isArticleExtractorAlwaysOn
 		case conditionalGetInfo
-		case sinceToken
+		case cacheControlInfo
 		case externalID = "subscriptionID"
 		case folderRelationship
 	}
@@ -111,15 +111,15 @@ final class FeedMetadata: Codable {
 			}
 		}
 	}
-	
-	var sinceToken: String? {
+
+	var cacheControlInfo: CacheControlInfo? {
 		didSet {
-			if externalID != oldValue {
-				valueDidChange(.externalID)
+			if cacheControlInfo != oldValue {
+				valueDidChange(.cacheControlInfo)
 			}
 		}
 	}
-	
+
 	var externalID: String? {
 		didSet {
 			if externalID != oldValue {

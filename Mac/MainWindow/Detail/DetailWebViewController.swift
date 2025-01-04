@@ -73,6 +73,16 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 
+	static let userScripts: [WKUserScript] = {
+		let filenames = ["main", "main_mac", "newsfoot"]
+		let scripts = filenames.map { filename in
+			let scriptURL = Bundle.main.url(forResource: filename, withExtension: ".js")!
+			let scriptSource = try! String(contentsOf: scriptURL)
+			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+		}
+		return scripts
+	}()
+
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
@@ -86,13 +96,16 @@ final class DetailWebViewController: NSViewController {
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.windowDidScroll)
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
+		for script in Self.userScripts {
+			userContentController.addUserScript(script)
+		}
 		configuration.userContentController = userContentController
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
@@ -106,6 +119,19 @@ final class DetailWebViewController: NSViewController {
 
 		view = webView
 
+		// Use the safe area layout guides if they are available.
+		if #available(OSX 11.0, *) {
+			// These constraints have been removed as they were unsatisfiable after removing NSBox.
+		} else {
+			let constraints = [
+				webView.topAnchor.constraint(equalTo: view.topAnchor),
+				webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+				webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+				webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			]
+			NSLayoutConstraint.activate(constraints)
+		}
+
 		// Hide the web view until the first reload (navigation) is complete (plus some delay) to avoid the awful white flash that happens on the initial display in dark mode.
 		// See bug #901.
 		webView.isHidden = true
@@ -116,7 +142,7 @@ final class DetailWebViewController: NSViewController {
 			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 		#endif
 
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
@@ -313,11 +339,14 @@ private extension DetailWebViewController {
 		]
 		
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 
 	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
-		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
+		var javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
+		if #available(macOS 10.15, *) {
+			javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
+		}
 
 		webView.evaluateJavaScript(javascriptString) { (info, error) in
 			guard let info = info as? [String: Any] else {

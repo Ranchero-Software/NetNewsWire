@@ -32,8 +32,8 @@ final class ArticlesTable: DatabaseTable {
 	let articleCutoffDate = Date().bySubtracting(days: 90)
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
-    private typealias ArticlesCountFetchMethod = (FMDatabase) -> Int
-    
+	private typealias ArticlesCountFetchMethod = (FMDatabase) -> Int
+
 	init(name: String, accountID: String, queue: DatabaseQueue, retentionStyle: ArticlesDatabase.RetentionStyle) {
 
 		self.name = name
@@ -104,10 +104,10 @@ final class ArticlesTable: DatabaseTable {
 		fetchArticlesAsync({ self.fetchStarredArticles(feedIDs, limit, $0) }, completion)
 	}
 
-    func fetchStarredArticlesCount(_ feedIDs: Set<String>) throws -> Int {
-        return try fetchArticlesCount{ self.fetchStarredArticlesCount(feedIDs, $0) }
-    }
-    
+	func fetchStarredArticlesCount(_ feedIDs: Set<String>) throws -> Int {
+		return try fetchArticlesCount{ self.fetchStarredArticlesCount(feedIDs, $0) }
+	}
+
 	// MARK: - Fetching Search Articles
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
@@ -660,23 +660,23 @@ private extension ArticlesTable {
 		return articles
 	}
 
-    private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) throws -> Int {
-        var articlesCount = 0
-        var error: DatabaseError? = nil
-        queue.runInDatabaseSync { databaseResult in
-            switch databaseResult {
-            case .success(let database):
-                articlesCount = fetchMethod(database)
-            case .failure(let databaseError):
-                error = databaseError
-            }
-        }
-        if let error = error {
-            throw(error)
-        }
-        return articlesCount
-    }
-    
+	private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) throws -> Int {
+		var articlesCount = 0
+		var error: DatabaseError? = nil
+		queue.runInDatabaseSync { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				articlesCount = fetchMethod(database)
+			case .failure(let databaseError):
+				error = databaseError
+			}
+		}
+		if let error = error {
+			throw(error)
+		}
+		return articlesCount
+	}
+
 	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ completion: @escaping ArticleSetResultBlock) {
 		queue.runInDatabase { databaseResult in
 
@@ -751,19 +751,19 @@ private extension ArticlesTable {
 		return articlesWithSQL(sql, parameters, database)
 	}
 
-    func fetchArticleCountsWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]) -> Int {
-        let sql = "select count(*) from articles natural join statuses where \(whereClause);"
-        guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
-            return 0
-        }
-        var articlesCount = 0
-        if resultSet.next() {
-            articlesCount = resultSet.long(forColumnIndex: 0)
-        }
-        resultSet.close()
-        return articlesCount
-    }
-    
+	func fetchArticleCountsWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]) -> Int {
+		let sql = "select count(*) from articles natural join statuses where \(whereClause);"
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+			return 0
+		}
+		var articlesCount = 0
+		if resultSet.next() {
+			articlesCount = resultSet.long(forColumnIndex: 0)
+		}
+		resultSet.close()
+		return articlesCount
+	}
+
 	func fetchArticlesMatching(_ searchString: String, _ database: FMDatabase) -> Set<Article> {
 		let sql = "select rowid from search where search match ?;"
 		let sqlSearchString = sqliteSearchString(with: searchString)

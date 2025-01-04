@@ -1,5 +1,5 @@
 //
-//  ArticleFetcherType.swift
+//  SidebarItemIdentifier.swift
 //  Account
 //
 //  Created by Maurice Parker on 11/13/19.

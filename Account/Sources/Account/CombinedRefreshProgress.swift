@@ -9,34 +9,102 @@
 import Foundation
 import RSWeb
 
-// Combines the refresh progress of multiple accounts into one struct,
-// for use by refresh status view and so on.
+extension Notification.Name {
+	public static let combinedRefreshProgressDidChange = Notification.Name("combinedRefreshProgressDidChange")
+}
 
-public struct CombinedRefreshProgress {
+/// Combine the refresh progress of multiple accounts into one place,
+/// for use by refresh status view and so on.
+public final class CombinedRefreshProgress {
 
-	public let numberOfTasks: Int
-	public let numberRemaining: Int
-	public let numberCompleted: Int
-	public let isComplete: Bool
+	public private(set) var numberOfTasks = 0
+	public private(set) var numberRemaining = 0
+	public private(set) var numberCompleted = 0
 
-	init(numberOfTasks: Int, numberRemaining: Int, numberCompleted: Int) {
-		self.numberOfTasks = max(numberOfTasks, 0)
-		self.numberRemaining = max(numberRemaining, 0)
-		self.numberCompleted = max(numberCompleted, 0)
-		self.isComplete = numberRemaining < 1
+	public var isComplete: Bool {
+		!isStarted || numberRemaining < 1
 	}
 
-	public init(downloadProgressArray: [DownloadProgress]) {
-		var numberOfTasks = 0
-		var numberRemaining = 0
-		var numberCompleted = 0
+	var isStarted = false
 
-		for downloadProgress in downloadProgressArray {
-			numberOfTasks += downloadProgress.numberOfTasks
-			numberRemaining += downloadProgress.numberRemaining
-			numberCompleted += downloadProgress.numberCompleted
+	init() {
+
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
+	}
+
+	func start() {
+		reset()
+		isStarted = true
+	}
+
+	func stop() {
+		reset()
+		isStarted = false
+	}
+
+	@objc func refreshProgressDidChange(_ notification: Notification) {
+
+		guard isStarted else {
+			return
+		}
+		
+		var updatedNumberOfTasks = 0
+		var updatedNumberRemaining = 0
+		var updatedNumberCompleted = 0
+
+		var didMakeChange = false
+
+		let downloadProgresses = AccountManager.shared.activeAccounts.map { $0.refreshProgress }
+		for downloadProgress in downloadProgresses {
+			updatedNumberOfTasks += downloadProgress.numberOfTasks
+			updatedNumberRemaining += downloadProgress.numberRemaining
+			updatedNumberCompleted += downloadProgress.numberCompleted
 		}
 
-		self.init(numberOfTasks: numberOfTasks, numberRemaining: numberRemaining, numberCompleted: numberCompleted)
+		if updatedNumberOfTasks > numberOfTasks {
+			numberOfTasks = updatedNumberOfTasks
+			didMakeChange = true
+		}
+
+		assert(updatedNumberRemaining <= numberOfTasks)
+		updatedNumberRemaining = max(updatedNumberRemaining, numberRemaining)
+		updatedNumberRemaining = min(updatedNumberRemaining, numberOfTasks)
+		if updatedNumberRemaining != numberRemaining {
+			numberRemaining = updatedNumberRemaining
+			didMakeChange = true
+		}
+
+		assert(updatedNumberCompleted <= numberOfTasks)
+		updatedNumberCompleted = max(updatedNumberCompleted, numberCompleted)
+		updatedNumberCompleted = min(updatedNumberCompleted, numberOfTasks)
+		if updatedNumberCompleted != numberCompleted {
+			numberCompleted = updatedNumberCompleted
+			didMakeChange = true
+		}
+
+		if didMakeChange {
+			postDidChangeNotification()
+		}
+	}
+}
+
+private extension CombinedRefreshProgress {
+
+	func reset() {
+
+		let didMakeChange = numberOfTasks != 0 || numberRemaining != 0 || numberCompleted != 0
+
+		numberOfTasks = 0
+		numberRemaining = 0
+		numberCompleted = 0
+
+		if didMakeChange {
+			postDidChangeNotification()
+		}
+	}
+
+	func postDidChangeNotification() {
+
+		NotificationCenter.default.post(name: .combinedRefreshProgressDidChange, object: self)
 	}
 }

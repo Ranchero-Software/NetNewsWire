@@ -168,3 +168,7 @@ function processPage() {
 	removeWpSmiley()
 	postRenderProcessing();
 }
+
+document.addEventListener("DOMContentLoaded", function(event) {
+	processPage();
+})

@@ -32,7 +32,8 @@ public struct HTTPResponseCode {
 	public static let useProxy = 305
 	public static let unused = 306
 	public static let redirectVeryTemporary = 307
-	
+	public static let redirectPermanentPreservingMethod = 308
+
 	public static let badRequest = 400
 	public static let unauthorized = 401
 	public static let paymentRequired = 402
@@ -51,7 +52,18 @@ public struct HTTPResponseCode {
 	public static let unsupportedMediaType = 415
 	public static let requestedRangeNotSatisfiable = 416
 	public static let expectationFailed = 417
-	
+	public static let imATeapot = 418
+	public static let misdirectedRequest = 421
+	public static let unprocessableContentWebDAV = 422
+	public static let lockedWebDAV = 423
+	public static let failedDependencyWebDAV = 424
+	public static let tooEarly = 425
+	public static let upgradeRequired = 426
+	public static let preconditionRequired = 428
+	public static let tooManyRequests = 429
+	public static let requestHeaderFieldsTooLarge = 431
+	public static let unavailableForLegalReasons = 451
+
 	public static let internalServerError = 500
 	public static let notImplemented = 501
 	public static let badGateway = 502

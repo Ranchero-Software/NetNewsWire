@@ -84,7 +84,7 @@ private extension IconImageCache {
 		if let iconImage = feedIconImageCache[feedID] {
 			return iconImage
 		}
-		if let iconImage = appDelegate.feedIconDownloader.icon(for: feed) {
+		if let iconImage = FeedIconDownloader.shared.icon(for: feed) {
 			feedIconImageCache[feedID] = iconImage
 			return iconImage
 		}
@@ -120,7 +120,7 @@ private extension IconImageCache {
 		if let iconImage = authorIconImageCache[author] {
 			return iconImage
 		}
-		if let iconImage = appDelegate.authorAvatarDownloader.image(for: author) {
+		if let iconImage = AuthorAvatarDownloader.shared.image(for: author) {
 			authorIconImageCache[author] = iconImage
 			return iconImage
 		}

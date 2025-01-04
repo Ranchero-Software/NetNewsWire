@@ -40,7 +40,7 @@ class ActivityManager {
 	}
 	
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 	}
 	
 	func invalidateCurrentActivities() {

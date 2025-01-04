@@ -5,6 +5,7 @@
 //  Created by Brent Simmons on 9/22/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
+
 import AppKit
 
 enum FontSize: Int {
@@ -17,9 +18,8 @@ enum FontSize: Int {
 final class AppDefaults {
 	
 	static let defaultThemeName = "Default"
-	
-	static var shared = AppDefaults()
-	private init() {}
+
+	static let shared = AppDefaults()
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
@@ -41,6 +41,7 @@ final class AppDefaults {
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
+		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -299,6 +300,15 @@ final class AppDefaults {
 		}
 	}
 
+	var isArticleContentJavascriptEnabled: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+		}
+	}
+
 	func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
@@ -306,15 +316,18 @@ final class AppDefaults {
  		let showDebugMenu = false
  		#endif
 
-		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue,
-										Key.timelineFontSize: FontSize.medium.rawValue,
-										Key.detailFontSize: FontSize.medium.rawValue,
-										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-										Key.timelineGroupByFeed: false,
-										"NSScrollViewShouldScrollUnderTitlebar": false,
-										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
-										Key.showDebugMenu: showDebugMenu,
-										Key.currentThemeName: Self.defaultThemeName]
+		let defaults: [String : Any] = [
+			Key.sidebarFontSize: FontSize.medium.rawValue,
+			Key.timelineFontSize: FontSize.medium.rawValue,
+			Key.detailFontSize: FontSize.medium.rawValue,
+			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+			Key.timelineGroupByFeed: false,
+			"NSScrollViewShouldScrollUnderTitlebar": false,
+			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+			Key.showDebugMenu: showDebugMenu,
+			Key.currentThemeName: Self.defaultThemeName,
+			Key.articleContentJavascriptEnabled: true
+		]
 
 		UserDefaults.standard.register(defaults: defaults)
 

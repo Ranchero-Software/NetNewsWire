@@ -11,7 +11,7 @@
         <!--Add Web Feed-->
         <scene sceneID="2Tc-JN-edX">
             <objects>
-                <tableViewController storyboardIdentifier="AddWebFeedViewController" id="7aE-6a-iP7" customClass="AddFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="AddFeedViewController" id="7aE-6a-iP7" customClass="AddFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="D0S-TM-mtm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -158,7 +158,7 @@
         <!--Web Feed Folder-->
         <scene sceneID="wnD-aY-W32">
             <objects>
-                <tableViewController storyboardIdentifier="AddWebFeedFolderViewController" title="Web Feed Folder" id="acA-n7-ohN" customClass="AddFeedFolderViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="AddFeedFolderViewController" title="Web Feed Folder" id="acA-n7-ohN" customClass="AddFeedFolderViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="new-nW-ba2">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

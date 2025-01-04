@@ -48,6 +48,9 @@ struct AppAssets {
 		return RSImage(named: "accountTheOldReader")
 	}()
 
+	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
+
+	@available(macOS 11.0, *)
 	static var addNewSidebarItemImage: RSImage = {
 		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 	}()

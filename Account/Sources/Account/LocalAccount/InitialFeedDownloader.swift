@@ -14,7 +14,7 @@ struct InitialFeedDownloader {
 
 	static func download(_ url: URL,_ completion: @escaping (_ parsedFeed: ParsedFeed?) -> Void) {
 
-		downloadUsingCache(url) { (data, response, error) in
+		Downloader.shared.download(url) { (data, response, error) in
 			guard let data = data else {
 				completion(nil)
 				return

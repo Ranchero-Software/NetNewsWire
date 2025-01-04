@@ -30,9 +30,6 @@ public final class DownloadProgress {
 	
 	public var numberRemaining = 0 {
 		didSet {
-			if numberRemaining == 0 && numberOfTasks != 0 {
-				numberOfTasks = 0
-			}
 			if numberRemaining != oldValue {
 				postDidChangeNotification()
 			}
@@ -85,8 +82,9 @@ public final class DownloadProgress {
 		}
 	}
 	
-	public func clear() {
+	public func reset() {
 		assert(Thread.isMainThread)
+		numberRemaining = 0
 		numberOfTasks = 0
 	}
 }

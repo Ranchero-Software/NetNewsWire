@@ -10,12 +10,12 @@ import WidgetKit
 import SwiftUI
 
 struct StarredWidgetView : View {
-	
+
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
-	
+
 	var entry: Provider.Entry
-	
+
 	var body: some View {
 		if entry.widgetData.starredArticles.count == 0 {
 			inboxZero
@@ -23,40 +23,28 @@ struct StarredWidgetView : View {
 		}
 		else {
 			GeometryReader { metrics in
-				HStack {
-					VStack {
-						starredImage
-							.padding(.vertical, 12)
-							.padding(.leading, 8)
-						Spacer()
-					
-					}
-				}
-				.frame(width: metrics.size.width * 0.15)
-				
-				Spacer()
-				
+				starredImage
+					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
 				VStack(alignment:.leading, spacing: 0) {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.starredArticles[i],
 											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-								.padding(.top, 8)
-								.padding(.bottom, 4)
+							.padding(.top, WidgetLayout.articleItemViewPaddingTop)
+							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						} else {
 							ArticleItemView(article: entry.widgetData.starredArticles[i],
 											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-								.padding(.bottom, 4)
+							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						}
 					})
 					Spacer()
 				}
-				.padding(.leading, metrics.size.width * 0.175)
+				.padding(.leading, WidgetLayout.leftSideWidth)
 				.padding([.bottom, .trailing])
-				.padding(.top, 12)
 				.overlay(
-					 VStack {
+					VStack {
 						Spacer()
 						HStack {
 							Spacer()
@@ -68,35 +56,34 @@ struct StarredWidgetView : View {
 							}
 						}
 					}
-					.padding(.horizontal)
-					.padding(.bottom, 6)
+						.padding(.horizontal)
 				)
-			
-			}.widgetURL(WidgetDeepLink.starred.url)
-			
+
+			}
+			.widgetURL(WidgetDeepLink.starred.url)
 		}
 	}
-	
+
 	var starredImage: some View {
 		Image(systemName: "star.fill")
 			.resizable()
-			.frame(width: 30, height: 30, alignment: .center)
+			.frame(width: WidgetLayout.titleImageSize, height: WidgetLayout.titleImageSize, alignment: .top)
 			.cornerRadius(4)
 			.foregroundColor(.yellow)
 	}
-	
+
 	func maxCount() -> Int {
 		var reduceAccessibilityCount: Int = 0
 		if SizeCategories().isSizeCategoryLarge(category: sizeCategory) {
 			reduceAccessibilityCount = 1
 		}
-		
+
 		if family == .systemLarge {
 			return entry.widgetData.currentStarredCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
 		}
 		return entry.widgetData.currentStarredCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
 	}
-	
+
 	var inboxZero: some View {
 		VStack(alignment: .center) {
 			Spacer()
@@ -105,12 +92,12 @@ struct StarredWidgetView : View {
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 30)
 				.foregroundColor(.yellow)
-				
+
 
 			Text(L10n.starredWidgetNoItemsTitle)
 				.font(.headline)
 				.foregroundColor(.primary)
-			
+
 			Text(L10n.starredWidgetNoItems)
 				.font(.caption)
 				.foregroundColor(.gray)
@@ -119,5 +106,5 @@ struct StarredWidgetView : View {
 		.multilineTextAlignment(.center)
 		.padding()
 	}
-	
+
 }

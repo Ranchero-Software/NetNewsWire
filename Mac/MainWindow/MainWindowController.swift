@@ -64,7 +64,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		super.windowDidLoad()
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
-		
+
 		updateArticleThemeMenu()
 
 		let toolbar = NSToolbar(identifier: "MainWindowToolbar")
@@ -914,11 +914,11 @@ private extension MainWindowController {
 		return viewController.children.first as? NSSplitViewController
 	}
 
-	var currentTimelineViewController: MainTimelineViewController? {
+	var currentTimelineViewController: TimelineViewController? {
 		return timelineContainerViewController?.currentTimelineViewController
 	}
 
-	var regularTimelineViewController: MainTimelineViewController? {
+	var regularTimelineViewController: TimelineViewController? {
 		return timelineContainerViewController?.regularTimelineViewController
 	}
 
@@ -1041,7 +1041,6 @@ private extension MainWindowController {
 			return false
 		}
 
-
 		guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? ArticleExtractorButton else {
 			if let menuItem = item as? NSMenuItem {
 				menuItem.state = isShowingExtractedArticle ? .on : .off
@@ -1066,7 +1065,6 @@ private extension MainWindowController {
 		case .ready, .cancelled, .complete:
 			toolbarButton.buttonState = isShowingExtractedArticle ? .on : .off
 		}
-
 
 		return true
 	}
@@ -1200,13 +1198,13 @@ private extension MainWindowController {
 			let formattedLabel = NSString.localizedStringWithFormat(localizedLabel as NSString, count)
 			window?.subtitle = formattedLabel as String
 		}
-		
+
 		guard let selectedObjects = selectedObjectsInSidebar(), selectedObjects.count > 0 else {
 			window?.title = appDelegate.appName!
 			setSubtitle(appDelegate.unreadCount)
 			return
 		}
-		
+
 		guard selectedObjects.count == 1 else {
 			window?.title = NSLocalizedString("Multiple", comment: "Multiple")
 			let unreadCount = selectedObjects.reduce(0, { result, selectedObject in
@@ -1217,6 +1215,7 @@ private extension MainWindowController {
 				}
 			})
 			setSubtitle(unreadCount)
+
 			return
 		}
 

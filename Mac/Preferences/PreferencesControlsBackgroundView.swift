@@ -26,9 +26,11 @@ final class PreferencesControlsBackgroundView: NSView {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
+
 		let fillColor = self.effectiveAppearance.isDarkMode ? darkModeFillColor : lightModeFillColor
 		fillColor.setFill()
-		dirtyRect.fill()
+		let r = NSIntersectionRect(dirtyRect, bounds)
+		r.fill()
 
 		let borderColor = self.effectiveAppearance.isDarkMode ? darkModeBorderColor : lightModeBorderColor
 		borderColor.set()

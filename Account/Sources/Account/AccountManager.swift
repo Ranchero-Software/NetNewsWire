@@ -88,12 +88,9 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return false
 	}
-	
-	public var combinedRefreshProgress: CombinedRefreshProgress {
-		let downloadProgressArray = activeAccounts.map { $0.refreshProgress }
-		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
-	}
-	
+
+	public let combinedRefreshProgress = CombinedRefreshProgress()
+
 	public init(accountsFolder: String) {
 		self.accountsFolder = accountsFolder
 		
@@ -251,8 +248,13 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() -> Void)? = nil) {
-		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
+	public func refreshAll(errorHandler: ((Error) -> Void)? = nil, completion: (() -> Void)? = nil) {
+
+		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else {
+			return
+		}
+
+		combinedRefreshProgress.start()
 
 		let group = DispatchGroup()
 		
@@ -264,42 +266,15 @@ public final class AccountManager: UnreadCountProvider {
 				case .success:
 					break
 				case .failure(let error):
-					errorHandler(error)
+					errorHandler?(error)
 				}
 			}
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
+			self.combinedRefreshProgress.stop()
 			completion?()
 		}
-	}
-	
-	public func refreshAll(completion: (() -> Void)? = nil) {
-		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
-
-		var syncErrors = [AccountSyncError]()
-		let group = DispatchGroup()
-		
-		for account in activeAccounts {
-			group.enter()
-			account.refreshAll() { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					syncErrors.append(AccountSyncError(account: account, error: error))
-				}
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			if syncErrors.count > 0 {
-				NotificationCenter.default.post(Notification(name: .AccountsDidFailToSyncWithErrors, object: self, userInfo: [Account.UserInfoKey.syncErrors: syncErrors]))
-			}
-			completion?()
-		}
-		
 	}
 
 	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
@@ -374,7 +349,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return articles
 	}
-    
+
     public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
         precondition(Thread.isMainThread)
         

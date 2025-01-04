@@ -10,11 +10,11 @@ import SwiftUI
 import RSWeb
 
 struct ArticleItemView: View {
-	
+
 	var article: LatestArticle
 	var deepLink: URL
 	@State private var iconImage: Image?
-	
+
 	var body: some View {
 		Link(destination: deepLink, label: {
 			HStack(alignment: .top, spacing: nil, content: {
@@ -22,10 +22,10 @@ struct ArticleItemView: View {
 				if iconImage != nil {
 					iconImage!
 						.resizable()
-						.frame(width: 30, height: 30)
+						.frame(width: WidgetLayout.feedIconSize, height: WidgetLayout.feedIconSize)
 						.cornerRadius(4)
 				}
-				
+
 				// Title and Feed Name
 				VStack(alignment: .leading) {
 					Text(article.articleTitle ?? "Untitled")
@@ -34,7 +34,7 @@ struct ArticleItemView: View {
 						.lineLimit(1)
 						.foregroundColor(.primary)
 						.padding(.top, -3)
-					
+
 					HStack {
 						Text(article.feedTitle)
 							.font(.caption)
@@ -52,33 +52,34 @@ struct ArticleItemView: View {
 			iconImage = thumbnail(from: article.feedIconPath)
 		}
 	}
-	
+
 	func thumbnail(from path: String?) -> Image? {
 		guard let imagePath = path else {
-            return Image(uiImage: UIImage(systemName: "globe")!)
-        }
-        
-        let url = URL(fileURLWithPath: imagePath)
-        
-        guard let data = try? Data(contentsOf: url),
-              let uiImage = UIImage(data: data) else {
-            return Image(uiImage: UIImage(systemName: "globe")!)
-        }
-        
-        return Image(uiImage: uiImage)
+			return Image(uiImage: UIImage(systemName: "globe")!)
+		}
+
+		let url = URL(fileURLWithPath: imagePath)
+
+		guard let data = try? Data(contentsOf: url),
+			  let uiImage = UIImage(data: data) else {
+			return Image(uiImage: UIImage(systemName: "globe")!)
+		}
+
+		return Image(uiImage: uiImage)
 	}
-	
+
 	func pubDate(_ dateString: String) -> String {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
 		guard let date = dateFormatter.date(from: dateString) else {
 			return ""
 		}
-		
+
 		let displayFormatter = DateFormatter()
 		displayFormatter.dateStyle = .medium
 		displayFormatter.timeStyle = .none
-		
+
 		return displayFormatter.string(from: date)
 	}
 }
+

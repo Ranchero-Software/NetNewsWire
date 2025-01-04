@@ -13,19 +13,19 @@ import SwiftUI
 
 struct UnreadWidget: Widget {
 	let kind: String = "com.ranchero.NetNewsWire.UnreadWidget"
-	
+
 	var body: some WidgetConfiguration {
-		
+
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			UnreadWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
-			
+				.containerBackground(for: .widget) {
+					Color.clear
+				}
 		})
 		.configurationDisplayName(L10n.unreadWidgetTitle)
 		.description(L10n.unreadWidgetDescription)
 		.supportedFamilies([.systemMedium, .systemLarge])
-		
 	}
 }
 
@@ -37,13 +37,13 @@ struct TodayWidget: Widget {
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			TodayWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
-			
+				.containerBackground(for: .widget) {
+					Color.clear
+				}
 		})
 		.configurationDisplayName(L10n.todayWidgetTitle)
 		.description(L10n.todayWidgetDescription)
 		.supportedFamilies([.systemMedium, .systemLarge])
-		
 	}
 }
 
@@ -55,34 +55,15 @@ struct StarredWidget: Widget {
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			StarredWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
-			
+				.containerBackground(for: .widget) {
+					Color.clear
+				}
 		})
 		.configurationDisplayName(L10n.starredWidgetTitle)
 		.description(L10n.starredWidgetDescription)
 		.supportedFamilies([.systemMedium, .systemLarge])
-		
 	}
 }
-
-struct SmartFeedSummaryWidget: Widget {
-	let kind: String = "com.ranchero.NetNewsWire.SmartFeedSummaryWidget"
-	
-	var body: some WidgetConfiguration {
-		
-		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
-			SmartFeedSummaryWidgetView(entry: entry)
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("AccentColor"))
-			
-		})
-		.configurationDisplayName(L10n.smartFeedSummaryWidgetTitle)
-		.description(L10n.smartFeedSummaryWidgetDescription)
-		.supportedFamilies([.systemSmall])
-		
-	}
-}
-
 
 // MARK: - WidgetBundle
 @main

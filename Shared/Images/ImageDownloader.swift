@@ -18,20 +18,21 @@ extension Notification.Name {
 
 final class ImageDownloader {
 
+	public static let shared = ImageDownloader()
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
 
-	private let folder: String
 	private var diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
 	private var imageCache = [String: Data]() // url: image
 	private var urlsInProgress = Set<String>()
 	private var badURLs = Set<String>() // That return a 404 or whatever. Just skip them in the future.
 
-	init(folder: String) {
+	init() {
 
-		self.folder = folder
-		self.diskCache = BinaryDiskCache(folder: folder)
-		self.queue = DispatchQueue(label: "ImageDownloader serial queue - \(folder)")
+		let folder = AppConfig.cacheSubfolder(named: "Images")
+		self.diskCache = BinaryDiskCache(folder: folder.path)
+		self.queue = DispatchQueue(label: "ImageDownloader serial queue - \(folder.path)")
 	}
 
 	@discardableResult
@@ -103,7 +104,7 @@ private extension ImageDownloader {
 			return
 		}
 
-		downloadUsingCache(imageURL) { (data, response, error) in
+		Downloader.shared.download(imageURL) { (data, response, error) in
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				self.saveToDisk(url, data)
