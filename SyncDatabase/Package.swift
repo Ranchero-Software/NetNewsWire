@@ -14,7 +14,7 @@ let package = Package(
 	dependencies: [
 		.package(path: "../RSCore"),
 		.package(path: "../Articles"),
-		.package(path: "../RSDatabase.git"),
+		.package(path: "../RSDatabase"),
 	],
 	targets: [
 		.target(

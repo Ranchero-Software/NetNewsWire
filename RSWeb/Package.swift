@@ -12,10 +12,16 @@ let package = Package(
 			targets: ["RSWeb"]),
 	],
 	dependencies: [
+		.package(path: "../Parser"),
+		.package(path: "../RSCore"),
 	],
 	targets: [
 		.target(
 			name: "RSWeb",
+			dependencies: [
+				"Parser",
+				"RSCore"
+			],
 			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
 		),
 		.testTarget(
