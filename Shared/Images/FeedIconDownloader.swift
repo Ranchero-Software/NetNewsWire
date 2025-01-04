@@ -24,8 +24,9 @@ public final class FeedIconDownloader {
 
 	private let imageDownloader = ImageDownloader.shared
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
-
-	private let imageDownloader: ImageDownloader
+	private var homePagesWithNoIconURL = Set<String>()
+	private var cache = [Feed: IconImage]()
+	private var waitingForFeedURLs = [String: Feed]()
 
 	private var feedURLToIconURLCache = [String: String]()
 	private var feedURLToIconURLCachePath: URL

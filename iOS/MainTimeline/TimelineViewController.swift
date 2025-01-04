@@ -11,7 +11,7 @@ import RSCore
 import Account
 import Articles
 
-class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
+class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -552,7 +552,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: Constants.prototypeText, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 
-		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MainTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
@@ -568,7 +568,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 // MARK: Searching
 
-extension MainTimelineViewController: UISearchControllerDelegate {
+extension TimelineViewController: UISearchControllerDelegate {
 
 	func willPresentSearchController(_ searchController: UISearchController) {
 		coordinator.beginSearching()
@@ -582,7 +582,7 @@ extension MainTimelineViewController: UISearchControllerDelegate {
 
 }
 
-extension MainTimelineViewController: UISearchResultsUpdating {
+extension TimelineViewController: UISearchResultsUpdating {
 
 	func updateSearchResults(for searchController: UISearchController) {
 		let searchScope = SearchScope(rawValue: searchController.searchBar.selectedScopeButtonIndex)!
@@ -591,7 +591,7 @@ extension MainTimelineViewController: UISearchResultsUpdating {
 
 }
 
-extension MainTimelineViewController: UISearchBarDelegate {
+extension TimelineViewController: UISearchBarDelegate {
 	func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
 		let searchScope = SearchScope(rawValue: selectedScope)!
 		coordinator.searchArticles(searchBar.text!, searchScope)
@@ -600,7 +600,7 @@ extension MainTimelineViewController: UISearchBarDelegate {
 
 // MARK: Private
 
-private extension MainTimelineViewController {
+private extension TimelineViewController {
 
 	func configureToolbar() {		
 		guard !(splitViewController?.isCollapsed ?? true) else {

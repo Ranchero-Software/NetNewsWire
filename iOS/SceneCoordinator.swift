@@ -53,7 +53,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var rootSplitViewController: RootSplitViewController!
 
 	private var mainFeedViewController: MainFeedViewController!
-	private var mainTimelineViewController: MainTimelineViewController?
+	private var mainTimelineViewController: TimelineViewController?
 	private var articleViewController: ArticleViewController?
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
@@ -284,7 +284,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		self.mainFeedViewController.coordinator = self
 		self.mainFeedViewController?.navigationController?.delegate = self
 
-		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MainTimelineViewController
+		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? TimelineViewController
 		self.mainTimelineViewController?.coordinator = self
 		self.mainTimelineViewController?.navigationController?.delegate = self
 

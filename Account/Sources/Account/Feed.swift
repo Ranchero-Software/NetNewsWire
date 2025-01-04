@@ -168,15 +168,6 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 		}
 	}
 	
-	public var sinceToken: String? {
-		get {
-			return metadata.sinceToken
-		}
-		set {
-			metadata.sinceToken = newValue
-		}
-	}
-
 	public var externalID: String? {
 		get {
 			return metadata.externalID

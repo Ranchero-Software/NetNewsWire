@@ -12,7 +12,7 @@ import Articles
 import Account
 import RSCore
 import RSWeb
-import RSParser
+import Parser
 import UniformTypeIdentifiers
 
 extension Notification.Name {
@@ -305,18 +305,18 @@ private extension FaviconDownloader {
 	}
 }
 
-private extension RSHTMLMetadata {
+private extension HTMLMetadata {
 
 	func usableFaviconURLs() -> [String]? {
 
-		favicons.compactMap { favicon in
+		favicons?.compactMap { favicon in
 			shouldAllowFavicon(favicon) ? favicon.urlString : nil
 		}
 	}
 
 	static let ignoredTypes = [UTType.svg]
 
-	private func shouldAllowFavicon(_ favicon: RSHTMLMetadataFavicon) -> Bool {
+	private func shouldAllowFavicon(_ favicon: HTMLMetadataFavicon) -> Bool {
 
 		// Check mime type.
 		if let mimeType = favicon.type, let utType = UTType(mimeType: mimeType) {

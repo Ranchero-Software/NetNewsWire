@@ -5,7 +5,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="MainTimelineViewController" customModule="NetNewsWire" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="TimelineViewController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="tableView" destination="opA-RM-DKR" id="Hnf-mE-gcq"/>
                 <outlet property="view" destination="dbt-sN-FU2" id="96u-gC-hW0"/>

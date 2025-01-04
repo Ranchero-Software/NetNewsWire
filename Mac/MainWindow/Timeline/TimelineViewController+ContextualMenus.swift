@@ -11,7 +11,7 @@ import RSCore
 import Articles
 import Account
 
-extension MainTimelineViewController {
+extension TimelineViewController {
 
 	func contextualMenuForClickedRows() -> NSMenu? {
 
@@ -30,7 +30,7 @@ extension MainTimelineViewController {
 
 // MARK: Contextual Menu Actions
 
-extension MainTimelineViewController {
+extension TimelineViewController {
 
 	@objc func markArticlesReadFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else { return }
@@ -107,7 +107,7 @@ extension MainTimelineViewController {
 }
 
 
-private extension MainTimelineViewController {
+private extension TimelineViewController {
 
 	func markArticles(_ articles: [Article], read: Bool) {
 		markArticles(articles, statusKey: .read, flag: read)

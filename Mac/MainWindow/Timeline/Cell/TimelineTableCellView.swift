@@ -14,7 +14,7 @@ class TimelineTableCellView: NSTableCellView {
 	private let titleView = TimelineTableCellView.multiLineTextField()
 	private let summaryView = TimelineTableCellView.multiLineTextField()
 	private let textView = TimelineTableCellView.multiLineTextField()
-	private let unreadIndicatorView = MainUnreadIndicatorView(frame: NSZeroRect)
+	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
 	private let dateView = TimelineTableCellView.singleLineTextField()
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
@@ -36,7 +36,7 @@ class TimelineTableCellView: NSTableCellView {
 		}
 	}
 	
-	var cellData: MainTimelineCellData! {
+	var cellData: TimelineCellData! {
 		didSet {
 			updateSubviews()
 		}

@@ -216,7 +216,7 @@ private extension LocalAccountRefresher {
 		if let url = urlCache[urlString] {
 			return url
 		}
-		if let url = URL(unicodeString: urlString) {
+		if let url = URL(string: urlString) {
 			urlCache[urlString] = url
 			return url
 		}

@@ -779,7 +779,8 @@ internal extension AppDelegate {
 		guard let window = mainWindowController?.window else { return }
 		
 		do {
-			let theme = try ArticleTheme(path: filename, isAppTheme: false)
+			let themeURL = URL(filePath: filename)
+			let theme = try ArticleTheme(url: themeURL, isAppTheme: false)
 			let alert = NSAlert()
 			alert.alertStyle = .informational
 

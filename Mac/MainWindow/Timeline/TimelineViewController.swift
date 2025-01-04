@@ -13,9 +13,9 @@ import Account
 import os.log
 
 protocol TimelineDelegate: AnyObject  {
-	func timelineSelectionDidChange(_: MainTimelineViewController, selectedArticles: [Article]?)
-	func timelineRequestedFeedSelection(_: MainTimelineViewController, feed: Feed)
-	func timelineInvalidatedRestorationState(_: MainTimelineViewController)
+	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
+	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
+	func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
 enum TimelineShowFeedName {
@@ -24,7 +24,7 @@ enum TimelineShowFeedName {
 	case feed
 }
 
-final class MainTimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
+final class TimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
 
 	@IBOutlet var tableView: TimelineTableView!
 
@@ -211,7 +211,7 @@ final class MainTimelineViewController: NSViewController, UndoableCommandRunner,
 		
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
@@ -723,7 +723,7 @@ final class MainTimelineViewController: NSViewController, UndoableCommandRunner,
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: Constants.prototypeText, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 
-		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
@@ -759,7 +759,7 @@ final class MainTimelineViewController: NSViewController, UndoableCommandRunner,
 
 // MARK: - NSMenuDelegate
 
-extension MainTimelineViewController: NSMenuDelegate {
+extension TimelineViewController: NSMenuDelegate {
 
 	public func menuNeedsUpdate(_ menu: NSMenu) {
 		menu.removeAllItems()
@@ -772,7 +772,7 @@ extension MainTimelineViewController: NSMenuDelegate {
 
 // MARK: - NSUserInterfaceValidations
 
-extension MainTimelineViewController: NSUserInterfaceValidations {
+extension TimelineViewController: NSUserInterfaceValidations {
 
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		if item.action == #selector(openArticleInBrowser(_:)) {
@@ -794,7 +794,7 @@ extension MainTimelineViewController: NSUserInterfaceValidations {
 
 // MARK: - NSTableViewDataSource
 
-extension MainTimelineViewController: NSTableViewDataSource {
+extension TimelineViewController: NSTableViewDataSource {
 	func numberOfRows(in tableView: NSTableView) -> Int {
 		return articles.count
 	}
@@ -813,15 +813,15 @@ extension MainTimelineViewController: NSTableViewDataSource {
 
 // MARK: - NSTableViewDelegate
 
-extension MainTimelineViewController: NSTableViewDelegate {
+extension TimelineViewController: NSTableViewDelegate {
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineRow")
 
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-		if let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: MainTimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
+		if let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: TimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
 			return rowView
 		}
 		let rowView = TimelineTableRowView()
-		rowView.identifier = MainTimelineViewController.rowViewIdentifier
+		rowView.identifier = TimelineViewController.rowViewIdentifier
 		return rowView
 	}
 
@@ -839,13 +839,13 @@ extension MainTimelineViewController: NSTableViewDelegate {
 			}
 		}
 
-		if let cell = tableView.makeView(withIdentifier: MainTimelineViewController.timelineCellIdentifier, owner: nil) as? TimelineTableCellView {
+		if let cell = tableView.makeView(withIdentifier: TimelineViewController.timelineCellIdentifier, owner: nil) as? TimelineTableCellView {
 			configure(cell)
 			return cell
 		}
 
 		let cell = TimelineTableCellView()
-		cell.identifier = MainTimelineViewController.timelineCellIdentifier
+		cell.identifier = TimelineViewController.timelineCellIdentifier
 		configure(cell)
 		return cell
 	}
@@ -876,7 +876,7 @@ extension MainTimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 		let iconImage = article.iconImage()
-		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
+		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
 	}
 
 	private func iconFor(_ article: Article) -> IconImage? {
@@ -887,12 +887,12 @@ extension MainTimelineViewController: NSTableViewDelegate {
 	}
 
 	private func avatarForAuthor(_ author: Author) -> IconImage? {
-		return appDelegate.authorAvatarDownloader.image(for: author)
+		return AuthorAvatarDownloader.shared.image(for: author)
 	}
 
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
 		cell.objectValue = nil
-		cell.cellData = MainTimelineCellData()
+		cell.cellData = TimelineCellData()
 	}
 
 	private func toggleArticleRead(_ article: Article) {
@@ -943,7 +943,7 @@ extension MainTimelineViewController: NSTableViewDelegate {
 
 // MARK: - Private
 
-private extension MainTimelineViewController {
+private extension TimelineViewController {
 	
 	func fetchAndReplacePreservingSelection() {
 		if let article = oneSelectedArticle, let account = article.account {
@@ -1187,7 +1187,7 @@ private extension MainTimelineViewController {
 	}
 
 	func queueFetchAndMergeArticles() {
-		MainTimelineViewController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+		TimelineViewController.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
 	}
 
 	func representedObjectArraysAreEqual(_ objects1: [AnyObject]?, _ objects2: [AnyObject]?) -> Bool {
