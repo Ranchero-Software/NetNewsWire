@@ -1,5 +1,16 @@
 # iOS Release Notes
 
+## 6.1.6 App Store build 6142 6 Jan 2025 - branch: 6.1.6-ios tag: iOS-6.1.6-6142
+
+(Releasing build 6142 as App Store release)
+
+Fix a crashing bug that would most commonly appear on closing a web page
+Fix weird border issues with widgets
+Fix bug updating account and feed names on Feeds screen after names have been edited
+Fix a bug where some feeds can be slow to update (drop Cache-Control support except for openrss.org)
+Fix display bug with footnote links (remove link underline)
+Adopt modern iOS split view
+
 ## 6.1.6 TestFlight build 6142 2 Jan 2025 - branch: 6.1.6-ios tag: iOS-6.1.6-6142
 
 Fix a bug where some feeds can be slow to update. (Technical change: drop Cache-Control support except for openrss.org, which requested the support in the first place. Most feed providers aren’t providing intentional Cache-Control headers, it appears, and our continuing Cache-Control support means too-long delays between feed updates in many cases.)
