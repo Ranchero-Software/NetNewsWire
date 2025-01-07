@@ -1,5 +1,4 @@
-// swift-tools-version:6.0
-
+// swift-tools-version: 5.10
 import PackageDescription
 
 let package = Package(
@@ -8,7 +7,6 @@ let package = Package(
 	products: [
 		.library(
 			name: "Secrets",
-			type: .dynamic,
 			targets: ["Secrets"]
 		)
 	],
@@ -17,7 +15,10 @@ let package = Package(
 		.target(
 			name: "Secrets",
 			dependencies: [],
-			exclude: ["SecretKey.swift.gyb"]
+			exclude: ["SecretKey.swift.gyb"],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency")
+			]
 		)
 	]
 )

@@ -56,7 +56,7 @@ final class NewsBlurAPICaller: NSObject {
 
 				let cookies = HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
 				for cookie in cookies where cookie.name == Self.SessionIdCookie {
-					let credentials = Credentials(type: .newsBlurSessionId, username: username, secret: cookie.value)
+					let credentials = Credentials(type: .newsBlurSessionID, username: username, secret: cookie.value)
 					completion(.success(credentials))
 					return
 				}

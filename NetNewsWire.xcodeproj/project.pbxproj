@@ -396,7 +396,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/NewsFax.nnwtheme,
-				Secrets.swift.gyb,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
 				Widget/WidgetData.swift,
@@ -413,7 +412,6 @@
 				ExtensionPoints/SendToMarsEditCommand.swift,
 				ExtensionPoints/SendToMicroBlogCommand.swift,
 				"Extensions/NSView-Extensions.swift",
-				Secrets.swift.gyb,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
 				SmartFeeds/SmartFeedPasteboardWriter.swift,

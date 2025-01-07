@@ -8,15 +8,15 @@
 
 import Foundation
 
-public enum CredentialsError: Error {
+public enum CredentialsError: Error, Sendable {
 	case incompleteCredentials
 	case unhandledError(status: OSStatus)
 }
 
-public enum CredentialsType: String {
+public enum CredentialsType: String, Sendable {
 	case basic = "password"
 	case newsBlurBasic = "newsBlurBasic"
-	case newsBlurSessionId = "newsBlurSessionId"
+	case newsBlurSessionID = "newsBlurSessionId"
 	case readerBasic = "readerBasic"
 	case readerAPIKey = "readerAPIKey"
 	case oauthAccessToken = "oauthAccessToken"
@@ -24,7 +24,7 @@ public enum CredentialsType: String {
 	case oauthRefreshToken = "oauthRefreshToken"
 }
 
-public struct Credentials: Equatable {
+public struct Credentials: Equatable, Sendable {
 	public let type: CredentialsType
 	public let username: String
 	public let secret: String
