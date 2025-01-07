@@ -60,7 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		super.init()
 		appDelegate = self
 
-		SecretsManager.provider = Secrets()
 		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
