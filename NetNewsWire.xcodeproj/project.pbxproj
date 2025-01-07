@@ -267,21 +267,11 @@
 		51314714235C420900387FDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Intents.strings; sourceTree = "<group>"; };
 		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		518B2ED22351B3DD00400001 /* NetNewsWire-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NetNewsWire-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		51CD32A824D2CB25009ABAEF /* SyncDatabase */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SyncDatabase; sourceTree = "<group>"; };
-		51CD32C324D2CD57009ABAEF /* ArticlesDatabase */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ArticlesDatabase; sourceTree = "<group>"; };
-		51CD32C424D2CF1D009ABAEF /* Articles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Articles; sourceTree = "<group>"; };
-		51CD32C624D2DEF9009ABAEF /* Account */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Account; sourceTree = "<group>"; };
-		51CD32C724D2E06C009ABAEF /* Secrets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Secrets; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D617C2029031C009BC708 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8413876B2CD896E000E8490F /* RSCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSCore; sourceTree = "<group>"; };
-		8413878C2CDC78EE00E8490F /* RSWeb */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSWeb; sourceTree = "<group>"; };
-		8417FA3E2CDF2E31005F989B /* RSDatabase */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSDatabase; sourceTree = "<group>"; };
 		845B14A51FC2299E0013CF92 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		847C4C0C2CDF22DD008BF5FE /* RSTree */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RSTree; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		849E61B82CE85D09008AF514 /* Parser */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Parser; sourceTree = "<group>"; };
 		84CBDDAE1FD3674C005A61AA /* Technotes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Technotes; sourceTree = "<group>"; };
 		84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -503,6 +493,7 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		841361432D2CEE2E009FE996 /* Modules */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Modules; sourceTree = "<group>"; };
 		8498E4B22D27A766009F5438 /* iOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8498E53C2D27A766009F5438 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 8498E53D2D27A766009F5438 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 8498E53E2D27A766009F5438 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = iOS; sourceTree = "<group>"; };
 		84BAE0AA2CE1C4D500402E69 /* Mac */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84BAE1402CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84BAE1412CE1C4D500402E69 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, 84BAE1422CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84BAE1432CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Mac; sourceTree = "<group>"; };
 		84C1EB5E2CDFE18E00C7456A /* xcconfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1EB602CDFE18E00C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (common, ); path = xcconfig; sourceTree = "<group>"; };
@@ -636,16 +627,7 @@
 				84C1EB7C2CDFE31700C7456A /* Tests */,
 				84C1EB5E2CDFE18E00C7456A /* xcconfig */,
 				849C64611ED37A5D003D8FC0 /* Products */,
-				51CD32C624D2DEF9009ABAEF /* Account */,
-				51CD32C424D2CF1D009ABAEF /* Articles */,
-				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,
-				51CD32C724D2E06C009ABAEF /* Secrets */,
-				51CD32A824D2CB25009ABAEF /* SyncDatabase */,
-				849E61B82CE85D09008AF514 /* Parser */,
-				8417FA3E2CDF2E31005F989B /* RSDatabase */,
-				847C4C0C2CDF22DD008BF5FE /* RSTree */,
-				8413878C2CDC78EE00E8490F /* RSWeb */,
-				8413876B2CD896E000E8490F /* RSCore */,
+				841361432D2CEE2E009FE996 /* Modules */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
