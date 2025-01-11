@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+## 6.1.9b1 build 6134 11 Jan 2024 - branch 6.1.9-mac tag: mac-6.1.9b1
+
+Fix some glitches in the default article theme
+Fix an issue with slow updates for some feeds (by not paying attention to http Cache-Control response headers [except for openrss.org])
+
 ## 6.1.8 build 6133 19 Dec 2024 - branch 6.1.8-mac tag: mac-6.1.8
 
 Fix state restoration bug by building on Xcode 14
