@@ -7,6 +7,19 @@
     <language>en</language>
 
 <item>
+    <title>NetNewsWire 6.1.9b1</title>
+    <description><![CDATA[
+        <ul>
+        <li>Fix some glitches in the default article theme</li>
+        <li>Fix an issue with slow updates for some feeds (by not paying attention to http Cache-Control response headers [except for openrss.org])</li>
+        </ul>
+    ]]></description>
+    <pubDate>Sat, 11 Dec 2024 15:30:00 -0800</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.9b1/NetNewsWire6.1.9b1.zip" sparkle:version="6134" sparkle:shortVersionString="6.1.9b1" length="10086881" type="application/zip" />
+    <sparkle:minimumSystemVersion>13.0.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
     <title>NetNewsWire 6.1.8</title>
     <description><![CDATA[
         <ul>
