@@ -26,11 +26,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		let rootViewController = window!.rootViewController as! RootSplitViewController
 		rootViewController.presentsWithGesture = true
 		rootViewController.showsSecondaryOnlyButton = true
-		if AppDefaults.shared.isFirstRun {
-			// This ensures that the Feeds view shows on first-run.
-			rootViewController.preferredDisplayMode = .twoBesideSecondary
-		} else {
-			rootViewController.preferredDisplayMode = .oneBesideSecondary
+		rootViewController.preferredDisplayMode = .oneBesideSecondary
+
+		Task { @MainActor in
+			// Ensure Feeds view shows on first run on iPad — otherwise the UI is empty.
+			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.shared.isFirstRun {
+				rootViewController.show(.primary)
+			}
 		}
 
 		coordinator = SceneCoordinator(rootSplitViewController: rootViewController)
