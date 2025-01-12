@@ -147,7 +147,7 @@ class ArticleViewController: UIViewController {
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
-		if AppDefaults.shared.articleFullscreenEnabled {
+		if AppDefaults.shared.logicalArticleFullscreenEnabled {
 			controller.hideBars()
 		}
 		
@@ -163,7 +163,7 @@ class ArticleViewController: UIViewController {
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
-		let hideToolbars = AppDefaults.shared.articleFullscreenEnabled
+		let hideToolbars = AppDefaults.shared.logicalArticleFullscreenEnabled
 		if hideToolbars {
 			currentWebViewController?.hideBars()
 		} else {
@@ -255,7 +255,7 @@ class ArticleViewController: UIViewController {
 	
 	@objc func willEnterForeground(_ note: Notification) {
 		// The toolbar will come back on you if you don't hide it again
-		if AppDefaults.shared.articleFullscreenEnabled {
+		if AppDefaults.shared.logicalArticleFullscreenEnabled {
 			currentWebViewController?.hideBars()
 		}
 	}
