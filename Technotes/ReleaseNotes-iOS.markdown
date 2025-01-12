@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+## 6.1.7 TestFlight build 6143 11 Jan 2025 - branch: 6.1.7-ios tag: iOS-6.1.7-6143
+
+Made the split view on iPad less obtrusive and hard to use in portrait view
+Fixed bug where controls could disappear when not in fullscreen mode
+
 ## 6.1.6 App Store build 6142 6 Jan 2025 - branch: 6.1.6-ios tag: iOS-6.1.6-6142
 
 (Releasing build 6142 as App Store release)
