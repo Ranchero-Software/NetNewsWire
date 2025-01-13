@@ -1180,7 +1180,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
-		let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
+		let imageVC = ImageViewController()
 		imageVC.image = image
 		imageVC.imageTitle = imageTitle
 		imageVC.modalPresentationStyle = .currentContext

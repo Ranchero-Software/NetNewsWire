@@ -114,7 +114,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="MainTimelineViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" clearsSelectionOnViewWillAppear="NO" id="Kyk-vK-QRX" customClass="TimelineViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="mtv-Ik-FoJ">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="721"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
@@ -232,95 +232,6 @@
             </objects>
             <point key="canvasLocation" x="452" y="-1794"/>
         </scene>
-        <!--Image View Controller-->
-        <scene sceneID="TT4-oA-DBw">
-            <objects>
-                <viewController storyboardIdentifier="ImageViewController" id="vO9-a3-Dnu" customClass="ImageViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="w6Q-vH-063">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView verifyAmbiguity="off" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msG-pz-EKk" customClass="ImageScrollView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                                <viewLayoutGuide key="contentLayoutGuide" id="phv-DN-krZ"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="NNU-C8-Fsz"/>
-                            </scrollView>
-                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bHh-pW-oTS">
-                                <rect key="frame" x="-4" y="850" width="422" height="8"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="StS-kO-TuW">
-                                    <rect key="frame" x="0.0" y="0.0" width="422" height="8"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </view>
-                                <blurEffect style="systemUltraThinMaterial"/>
-                            </visualEffectView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eMj-1g-3xm">
-                                <rect key="frame" x="0.0" y="854" width="414" height="0.0"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-a3-hUg">
-                                <rect key="frame" x="362" y="48" width="44" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="56o-Zr-T0w"/>
-                                    <constraint firstAttribute="height" constant="44" id="lBg-Wy-k9P"/>
-                                </constraints>
-                                <color key="tintColor" name="primaryAccentColor"/>
-                                <state key="normal" image="square.and.arrow.up.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="share:" destination="vO9-a3-Dnu" eventType="touchUpInside" id="m8y-Gs-YF1"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" clipsSubviews="YES" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXR-ll-xBx">
-                                <rect key="frame" x="8" y="48" width="44" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="6kc-Gw-KbZ"/>
-                                    <constraint firstAttribute="width" constant="44" id="cBq-gs-WzN"/>
-                                </constraints>
-                                <color key="tintColor" name="primaryAccentColor"/>
-                                <state key="normal" image="multiply.circle.fill" catalog="system">
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
-                                </state>
-                                <connections>
-                                    <action selector="done:" destination="vO9-a3-Dnu" eventType="touchUpInside" id="tgd-ov-4Ft"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="mbY-02-GFL"/>
-                        <color key="backgroundColor" name="fullScreenBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="RmY-a3-hUg" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="A0i-Hs-1Ac"/>
-                            <constraint firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
-                            <constraint firstItem="eMj-1g-3xm" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="mbY-02-GFL" secondAttribute="trailing" id="E7e-Lv-6ZA"/>
-                            <constraint firstItem="eMj-1g-3xm" firstAttribute="centerX" secondItem="w6Q-vH-063" secondAttribute="centerX" id="H2b-IA-6hz"/>
-                            <constraint firstItem="bHh-pW-oTS" firstAttribute="bottom" secondItem="eMj-1g-3xm" secondAttribute="bottom" constant="4" id="P3m-i2-3pJ"/>
-                            <constraint firstAttribute="trailing" secondItem="msG-pz-EKk" secondAttribute="trailing" id="R49-qV-8nm"/>
-                            <constraint firstItem="msG-pz-EKk" firstAttribute="leading" secondItem="w6Q-vH-063" secondAttribute="leading" id="XN1-xN-hYS"/>
-                            <constraint firstItem="eMj-1g-3xm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="mbY-02-GFL" secondAttribute="leading" id="Xni-Dn-I3Z"/>
-                            <constraint firstItem="mbY-02-GFL" firstAttribute="trailing" secondItem="RmY-a3-hUg" secondAttribute="trailing" constant="8" id="Zlz-lM-LV8"/>
-                            <constraint firstItem="mbY-02-GFL" firstAttribute="bottom" secondItem="eMj-1g-3xm" secondAttribute="bottom" constant="8" id="eaS-iG-yMv"/>
-                            <constraint firstItem="bHh-pW-oTS" firstAttribute="leading" secondItem="eMj-1g-3xm" secondAttribute="leading" constant="-4" id="f8r-dq-Irr"/>
-                            <constraint firstItem="bHh-pW-oTS" firstAttribute="top" secondItem="eMj-1g-3xm" secondAttribute="top" constant="-4" id="gTP-i5-FYQ"/>
-                            <constraint firstItem="msG-pz-EKk" firstAttribute="top" secondItem="w6Q-vH-063" secondAttribute="top" id="p1a-s0-wdK"/>
-                            <constraint firstItem="bHh-pW-oTS" firstAttribute="trailing" secondItem="eMj-1g-3xm" secondAttribute="trailing" constant="4" id="qB9-zk-5JN"/>
-                            <constraint firstItem="cXR-ll-xBx" firstAttribute="leading" secondItem="mbY-02-GFL" secondAttribute="leading" constant="8" id="vJs-LN-Ydd"/>
-                            <constraint firstItem="cXR-ll-xBx" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="xVN-Qt-WYA"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="closeButton" destination="cXR-ll-xBx" id="sDG-49-joi"/>
-                        <outlet property="imageScrollView" destination="msG-pz-EKk" id="dGi-M6-dcO"/>
-                        <outlet property="shareButton" destination="RmY-a3-hUg" id="Z54-ah-WAI"/>
-                        <outlet property="titleBackground" destination="bHh-pW-oTS" id="o2K-cY-90c"/>
-                        <outlet property="titleLabel" destination="eMj-1g-3xm" id="6wF-IZ-fNw"/>
-                        <outlet property="titleLeading" destination="Xni-Dn-I3Z" id="8Ik-la-Qkw"/>
-                        <outlet property="titleTrailing" destination="E7e-Lv-6ZA" id="lGu-iv-C9W"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ZPN-tH-JAG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3056.521739130435" y="-759.375"/>
-        </scene>
         <!--Context Menu Preview View Controller-->
         <scene sceneID="Tc4-Ma-XSa">
             <objects>
@@ -417,14 +328,9 @@
         <image name="gear" catalog="system" width="128" height="122"/>
         <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="123"/>
         <image name="markAllAsRead" width="13" height="20"/>
-        <image name="multiply.circle.fill" catalog="system" width="128" height="123"/>
         <image name="square.and.arrow.up" catalog="system" width="110" height="128"/>
-        <image name="square.and.arrow.up.fill" catalog="system" width="117" height="128"/>
         <image name="star" catalog="system" width="128" height="116"/>
         <namedColor name="barBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </namedColor>
-        <namedColor name="fullScreenBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </namedColor>
         <namedColor name="primaryAccentColor">

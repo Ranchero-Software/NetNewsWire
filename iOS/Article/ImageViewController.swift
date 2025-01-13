@@ -8,9 +8,8 @@
 
 import UIKit
 
-class ImageViewController: UIViewController {
+final class ImageViewController: UIViewController {
 
-	
 	@IBOutlet weak var closeButton: UIButton!
 	@IBOutlet weak var shareButton: UIButton!
 	@IBOutlet weak var imageScrollView: ImageScrollView!
@@ -23,6 +22,14 @@ class ImageViewController: UIViewController {
 	var imageTitle: String?
 	var zoomedFrame: CGRect {
 		return imageScrollView.zoomedFrame
+	}
+
+	init() {
+		super.init(nibName: "ImageViewController", bundle: nil)
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
 	}
 	
 	override func viewDidLoad() {
