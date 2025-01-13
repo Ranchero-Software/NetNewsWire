@@ -3,7 +3,7 @@
 ## 6.1.7 TestFlight build 6144 12 Jan 2025 - branch: 6.1.7-ios tag: iOS-6.1.7-6144
 
 Fix crash on rotation on Max phone when in fullscreen and going from portrait to landscape
-Improved the look of tables in the default article theme
+Improve the look of tables in the default article theme
 
 ## 6.1.7 TestFlight build 6143 11 Jan 2025 - branch: 6.1.7-ios tag: iOS-6.1.7-6143
 
