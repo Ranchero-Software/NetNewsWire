@@ -205,8 +205,8 @@ pre code {
 .nnw-overflow table {
 	margin-bottom: 1px;
 	border-spacing: 0;
-	border: 1px solid var(--secondary-accent-color);
 	font-size: inherit;
+	border-collapse: collapse;
 }
 
 .nnw-overflow table table {
@@ -220,7 +220,9 @@ pre code {
 	border: 1px solid var(--table-cell-border-color);
 	border-top: none;
 	border-left: none;
-	padding: 5px;
+	border-right: none;
+	padding: 8px 11px;
+	text-align: left;
 }
 
 .nnw-overflow tr :matches(td, th):last-child {
@@ -444,10 +446,6 @@ a.footnote:hover,
 		padding: 5px;
 	}
 
-	.nnw-overflow table {
-		border: 1px solid var(--secondary-accent-color);
-	}
-
 }
 
 /* macOS Specific */
@@ -518,7 +516,4 @@ a.footnote:hover,
 		padding: 10px;
 	}
 
-	.nnw-overflow table {
-		border: 1px solid var(--accent-color);
-	}
 }
