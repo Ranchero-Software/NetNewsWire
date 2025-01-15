@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ContextMenuPreviewViewController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="articleTitleLabel" destination="euU-Ij-5LS" id="SaE-2x-Lmt"/>
+                <outlet property="blogAuthorLabel" destination="yxD-bn-7rJ" id="e6N-4a-9gZ"/>
+                <outlet property="blogNameLabel" destination="VwJ-Ji-WmN" id="rvk-Ef-eXK"/>
+                <outlet property="dateTimeLabel" destination="tZE-CV-RS5" id="hvo-tH-m4w"/>
+                <outlet property="view" destination="reY-47-9dn" id="Uul-on-hM9"/>
+            </connections>
+        </placeholder>
+        <view contentMode="scaleToFill" id="reY-47-9dn">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Blog Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VwJ-Ji-WmN">
+                    <rect key="frame" x="20" y="8.0000000000000018" width="87" height="20.666666666666671"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                    <color key="textColor" name="primaryAccentColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Blog Author" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yxD-bn-7rJ">
+                    <rect key="frame" x="20" y="36.666666666666664" width="90" height="21"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Title" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="euU-Ij-5LS">
+                    <rect key="frame" x="20" y="74.666666666666671" width="136" height="33.666666666666671"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tZE-CV-RS5">
+                    <rect key="frame" x="20" y="116.33333333333333" width="44" height="20.333333333333329"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xxd-ws-vsN">
+                    <rect key="frame" x="325" y="8" width="48" height="48"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="48" id="3zG-fk-K1j"/>
+                        <constraint firstAttribute="height" constant="48" id="LUF-bb-x6X"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PEP-UU-rG9">
+                    <rect key="frame" x="20" y="65.666666666666671" width="353" height="1"/>
+                    <color key="backgroundColor" systemColor="separatorColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="K9J-bi-mdi"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="Hb5-Na-kgr"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="tZE-CV-RS5" secondAttribute="bottom" constant="8" id="3rq-hS-dk8"/>
+                <constraint firstItem="yxD-bn-7rJ" firstAttribute="top" secondItem="VwJ-Ji-WmN" secondAttribute="bottom" constant="8" id="5xH-dU-ncD"/>
+                <constraint firstItem="PEP-UU-rG9" firstAttribute="top" secondItem="yxD-bn-7rJ" secondAttribute="bottom" constant="8" id="HaH-jK-jid"/>
+                <constraint firstItem="euU-Ij-5LS" firstAttribute="leading" secondItem="Hb5-Na-kgr" secondAttribute="leading" constant="20" id="OHK-XM-nZh"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="euU-Ij-5LS" secondAttribute="trailing" constant="20" id="ShD-8C-ek1"/>
+                <constraint firstItem="Xxd-ws-vsN" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="yxD-bn-7rJ" secondAttribute="trailing" constant="8" id="U9x-ti-Tu2"/>
+                <constraint firstItem="VwJ-Ji-WmN" firstAttribute="leading" secondItem="Hb5-Na-kgr" secondAttribute="leading" constant="20" id="VWZ-aZ-O9Q"/>
+                <constraint firstItem="tZE-CV-RS5" firstAttribute="top" secondItem="euU-Ij-5LS" secondAttribute="bottom" constant="8" id="YKK-UR-dnH"/>
+                <constraint firstItem="Xxd-ws-vsN" firstAttribute="top" secondItem="reY-47-9dn" secondAttribute="top" constant="8" id="ZyL-ai-qvZ"/>
+                <constraint firstAttribute="trailing" secondItem="PEP-UU-rG9" secondAttribute="trailing" constant="20" id="eKG-67-YFm"/>
+                <constraint firstItem="PEP-UU-rG9" firstAttribute="leading" secondItem="reY-47-9dn" secondAttribute="leading" constant="20" id="ebf-0Y-flG"/>
+                <constraint firstItem="VwJ-Ji-WmN" firstAttribute="top" secondItem="reY-47-9dn" secondAttribute="top" constant="8" id="ecl-RK-Ffb"/>
+                <constraint firstItem="Hb5-Na-kgr" firstAttribute="trailing" secondItem="Xxd-ws-vsN" secondAttribute="trailing" constant="20" id="kT7-Pv-6je"/>
+                <constraint firstItem="yxD-bn-7rJ" firstAttribute="leading" secondItem="Hb5-Na-kgr" secondAttribute="leading" constant="20" id="sqt-wW-SeY"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="tZE-CV-RS5" secondAttribute="trailing" constant="20" id="xac-fb-QAh"/>
+                <constraint firstItem="Xxd-ws-vsN" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="VwJ-Ji-WmN" secondAttribute="trailing" constant="8" id="xgp-8f-SqT"/>
+                <constraint firstItem="PEP-UU-rG9" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Xxd-ws-vsN" secondAttribute="bottom" constant="8" id="yzA-bn-qZ1"/>
+                <constraint firstItem="euU-Ij-5LS" firstAttribute="top" secondItem="PEP-UU-rG9" secondAttribute="bottom" constant="8" id="zq0-Jn-mdy"/>
+                <constraint firstItem="tZE-CV-RS5" firstAttribute="leading" secondItem="Hb5-Na-kgr" secondAttribute="leading" constant="20" id="zs5-jN-xgs"/>
+            </constraints>
+            <point key="canvasLocation" x="3292" y="-1399"/>
+        </view>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+    </objects>
+    <resources>
+        <namedColor name="primaryAccentColor">
+            <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="separatorColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

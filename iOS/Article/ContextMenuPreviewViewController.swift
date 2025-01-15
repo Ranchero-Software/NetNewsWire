@@ -9,24 +9,34 @@
 import UIKit
 import Articles
 
-class ContextMenuPreviewViewController: UIViewController {
+/// Used in the WebView when in full screen mode.
+final class ContextMenuPreviewViewController: UIViewController {
 
 	@IBOutlet weak var blogNameLabel: UILabel!
 	@IBOutlet weak var blogAuthorLabel: UILabel!
 	@IBOutlet weak var articleTitleLabel: UILabel!
 	@IBOutlet weak var dateTimeLabel: UILabel!
 	
-	var article: Article!
+	var article: Article?
+
+	init(article: Article?) {
+		self.article = article
+		super.init(nibName: "ContextMenuPreviewViewController", bundle: nil)
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+	}
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
 		
-		blogNameLabel.text = article.feed?.nameForDisplay ?? ""
-		blogAuthorLabel.text = article.byline()
-		articleTitleLabel.text = article.title ?? ""
-		
+		blogNameLabel.text = article?.feed?.nameForDisplay ?? ""
+		blogAuthorLabel.text = article?.byline()
+		articleTitleLabel.text = article?.title ?? ""
+
 		let icon = IconView()
-		icon.iconImage = article.iconImage()
+		icon.iconImage = article?.iconImage()
 		icon.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(icon)
 		
@@ -40,8 +50,10 @@ class ContextMenuPreviewViewController: UIViewController {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateStyle = .long
 		dateFormatter.timeStyle = .medium
-		dateTimeLabel.text = dateFormatter.string(from: article.logicalDatePublished)
-		
+		if let article {
+			dateTimeLabel.text = dateFormatter.string(from: article.logicalDatePublished)
+		}
+
 		// When in landscape the context menu preview will force this controller into a tiny
 		// view space.  If it is documented anywhere what that is, I haven't found it.  This
 		// set of magic numbers is what I worked out by testing a variety of phones.

@@ -232,93 +232,6 @@
             </objects>
             <point key="canvasLocation" x="452" y="-1794"/>
         </scene>
-        <!--Context Menu Preview View Controller-->
-        <scene sceneID="Tc4-Ma-XSa">
-            <objects>
-                <viewController storyboardIdentifier="ContextMenuPreviewViewController" id="CoM-D3-PNS" customClass="ContextMenuPreviewViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="eH6-Fa-Tfi">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="200"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Blog Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YsT-Lt-Zry">
-                                <rect key="frame" x="20" y="8" width="87" height="20.5"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                <color key="textColor" name="primaryAccentColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Blog Author" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7GV-PV-YVq">
-                                <rect key="frame" x="20" y="36.5" width="90" height="21"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Title" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iFp-rn-HhQ">
-                                <rect key="frame" x="20" y="74.5" width="136" height="33.5"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Hz-Dv-MhU">
-                                <rect key="frame" x="20" y="116" width="44" height="20.5"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Ms-dt-2M8">
-                                <rect key="frame" x="346" y="8" width="48" height="48"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="48" id="d19-Jv-DFz"/>
-                                    <constraint firstAttribute="height" constant="48" id="vvL-LM-Qkp"/>
-                                </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0ko-zB-cnS">
-                                <rect key="frame" x="20" y="65.5" width="374" height="1"/>
-                                <color key="backgroundColor" systemColor="separatorColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="1" id="IVk-Gd-niT"/>
-                                </constraints>
-                            </view>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="d1t-hb-otl"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="9Ms-dt-2M8" firstAttribute="top" secondItem="eH6-Fa-Tfi" secondAttribute="top" constant="8" id="ECM-0Y-axL"/>
-                            <constraint firstItem="0Hz-Dv-MhU" firstAttribute="leading" secondItem="d1t-hb-otl" secondAttribute="leading" constant="20" id="GCs-jq-FwF"/>
-                            <constraint firstItem="iFp-rn-HhQ" firstAttribute="top" secondItem="0ko-zB-cnS" secondAttribute="bottom" constant="8" id="HCu-Fi-dC8"/>
-                            <constraint firstItem="7GV-PV-YVq" firstAttribute="top" secondItem="YsT-Lt-Zry" secondAttribute="bottom" constant="8" id="HCw-VQ-FWp"/>
-                            <constraint firstItem="YsT-Lt-Zry" firstAttribute="top" secondItem="eH6-Fa-Tfi" secondAttribute="top" constant="8" id="IbT-5V-iPB"/>
-                            <constraint firstItem="iFp-rn-HhQ" firstAttribute="leading" secondItem="d1t-hb-otl" secondAttribute="leading" constant="20" id="MyB-pX-SCv"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="iFp-rn-HhQ" secondAttribute="trailing" constant="20" id="NF0-QV-MJa"/>
-                            <constraint firstItem="7GV-PV-YVq" firstAttribute="leading" secondItem="d1t-hb-otl" secondAttribute="leading" constant="20" id="Rh6-Ug-Rkf"/>
-                            <constraint firstAttribute="trailing" secondItem="0ko-zB-cnS" secondAttribute="trailing" constant="20" id="Sfv-FQ-fXh"/>
-                            <constraint firstItem="0Hz-Dv-MhU" firstAttribute="top" secondItem="iFp-rn-HhQ" secondAttribute="bottom" constant="8" id="b1a-tF-MdY"/>
-                            <constraint firstItem="YsT-Lt-Zry" firstAttribute="leading" secondItem="d1t-hb-otl" secondAttribute="leading" constant="20" id="fXj-St-fed"/>
-                            <constraint firstItem="9Ms-dt-2M8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="7GV-PV-YVq" secondAttribute="trailing" constant="8" id="hkE-jR-WyS"/>
-                            <constraint firstItem="0ko-zB-cnS" firstAttribute="top" relation="greaterThanOrEqual" secondItem="9Ms-dt-2M8" secondAttribute="bottom" constant="8" id="kvc-Go-qdz"/>
-                            <constraint firstItem="d1t-hb-otl" firstAttribute="trailing" secondItem="9Ms-dt-2M8" secondAttribute="trailing" constant="20" id="mO6-1A-xSW"/>
-                            <constraint firstItem="9Ms-dt-2M8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="YsT-Lt-Zry" secondAttribute="trailing" constant="8" id="pAW-iQ-2lB"/>
-                            <constraint firstItem="0ko-zB-cnS" firstAttribute="top" secondItem="7GV-PV-YVq" secondAttribute="bottom" constant="8" id="rVh-Lq-DrY"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="0Hz-Dv-MhU" secondAttribute="trailing" constant="20" id="sg6-sh-fl5"/>
-                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="0Hz-Dv-MhU" secondAttribute="bottom" constant="8" id="usR-Xq-BeL"/>
-                            <constraint firstItem="0ko-zB-cnS" firstAttribute="leading" secondItem="eH6-Fa-Tfi" secondAttribute="leading" constant="20" id="wPH-RZ-ZJq"/>
-                        </constraints>
-                    </view>
-                    <nil key="simulatedTopBarMetrics"/>
-                    <nil key="simulatedBottomBarMetrics"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="414" height="200"/>
-                    <connections>
-                        <outlet property="articleTitleLabel" destination="iFp-rn-HhQ" id="nxQ-GW-QP3"/>
-                        <outlet property="blogAuthorLabel" destination="7GV-PV-YVq" id="xoY-pG-H7S"/>
-                        <outlet property="blogNameLabel" destination="YsT-Lt-Zry" id="WVx-Mh-Fn7"/>
-                        <outlet property="dateTimeLabel" destination="0Hz-Dv-MhU" id="QaU-do-WRo"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vGQ-wP-i7Q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3763.7681159420295" y="-983.03571428571422"/>
-        </scene>
     </scenes>
     <resources>
         <image name="chevron.down" catalog="system" width="128" height="70"/>
@@ -333,12 +246,6 @@
         <namedColor name="barBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </namedColor>
-        <namedColor name="primaryAccentColor">
-            <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <systemColor name="separatorColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

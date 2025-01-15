@@ -720,9 +720,7 @@ private extension WebViewController {
 	}
 	
 	func contextMenuPreviewProvider() -> UIViewController {
-		let previewProvider = UIStoryboard.main.instantiateController(ofType: ContextMenuPreviewViewController.self)
-		previewProvider.article = article
-		return previewProvider
+		ContextMenuPreviewViewController(article: article)
 	}
 	
 	func prevArticleAction() -> UIAction? {
