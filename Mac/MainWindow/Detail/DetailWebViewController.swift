@@ -73,16 +73,6 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 
-	static let userScripts: [WKUserScript] = {
-		let filenames = ["main", "main_mac", "newsfoot"]
-		let scripts = filenames.map { filename in
-			let scriptURL = Bundle.main.url(forResource: filename, withExtension: ".js")!
-			let scriptSource = try! String(contentsOf: scriptURL, encoding: .utf8)
-			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-		}
-		return scripts
-	}()
-
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
@@ -90,23 +80,8 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	override func loadView() {
-		let preferences = WKPreferences()
-		preferences.minimumFontSize = 12.0
-		preferences.javaScriptCanOpenWindowsAutomatically = false
 
-		let configuration = WKWebViewConfiguration()
-		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
-		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
-
-		let userContentController = WKUserContentController()
-		userContentController.add(self, name: MessageName.windowDidScroll)
-		userContentController.add(self, name: MessageName.mouseDidEnter)
-		userContentController.add(self, name: MessageName.mouseDidExit)
-		for script in Self.userScripts {
-			userContentController.addUserScript(script)
-		}
-		configuration.userContentController = userContentController
+		let configuration = WebViewConfiguration.configuration(with: detailIconSchemeHandler)
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self

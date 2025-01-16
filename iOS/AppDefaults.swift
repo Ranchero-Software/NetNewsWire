@@ -57,6 +57,7 @@ final class AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
+		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -225,7 +226,16 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.currentThemeName, newValue)
 		}
 	}
-	
+
+	var isArticleContentJavascriptEnabled: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+		}
+	}
+
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,

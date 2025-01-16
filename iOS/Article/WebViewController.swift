@@ -31,14 +31,15 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	private var webView: PreloadedWebView? {
-		return view.subviews[0] as? PreloadedWebView
+	var webView: WKWebView? {
+		return view.subviews[0] as? WKWebView
 	}
-	
+
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
 		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
+	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator);
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
 
@@ -351,14 +352,6 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 
 extension WebViewController: WKNavigationDelegate {
 	
-	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		for (index, view) in view.subviews.enumerated() {
-			if index != 0, let oldWebView = view as? PreloadedWebView {
-				oldWebView.removeFromSuperview()
-			}
-		}
-	}
-	
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 		
 		if navigationAction.navigationType == .linkActivated {
@@ -513,55 +506,45 @@ private extension WebViewController {
 
 	func loadWebView(replaceExistingWebView: Bool = false) {
 		guard isViewLoaded else { return }
-		
-		if !replaceExistingWebView, let webView = webView {
+
+		if !replaceExistingWebView, let webView {
 			self.renderPage(webView)
 			return
 		}
-		
-		coordinator.webViewProvider.dequeueWebView() { webView in
-			
-			webView.ready {
-				
-				// Add the webview
-				webView.translatesAutoresizingMaskIntoConstraints = false
-				self.view.insertSubview(webView, at: 0)
-				NSLayoutConstraint.activate([
-					self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
-					self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
-					self.view.topAnchor.constraint(equalTo: webView.topAnchor),
-					self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
-				])
-			
-				// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
-				// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
-				// us from easily swiping between WKWebViews.  This hack fixes that.
-				webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
 
-				webView.scrollView.setZoomScale(1.0, animated: false)
+		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 
-				self.view.setNeedsLayout()
-				self.view.layoutIfNeeded()
+		let webView = WKWebView(frame: self.view.bounds, configuration: configuration)
+		webView.isOpaque = false;
+		webView.backgroundColor = .clear;
 
-				// Configure the webview
-				webView.navigationDelegate = self
-				webView.uiDelegate = self
-				webView.scrollView.delegate = self
-				self.configureContextMenuInteraction()
+		// Add the webview - using autolayout will cause fullscreen video to fail and lose the web view
+		webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		self.view.insertSubview(webView, at: 0)
 
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
-				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
+		// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
+		// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
+		// us from easily swiping between WKWebViews.  This hack fixes that.
+		webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
 
-				self.renderPage(webView)
-				
-			}
-			
-		}
-		
+		webView.scrollView.setZoomScale(1.0, animated: false)
+
+		self.view.setNeedsLayout()
+
+		// Configure the webview
+		webView.navigationDelegate = self
+		webView.uiDelegate = self
+		webView.scrollView.delegate = self
+		self.configureContextMenuInteraction()
+
+		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
+		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
+		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
+
+		self.renderPage(webView)
 	}
 
-	func renderPage(_ webView: PreloadedWebView?) {
+	func renderPage(_ webView: WKWebView?) {
 		guard let webView = webView else { return }
 		 
 		let theme = ArticleThemesManager.shared.currentTheme
@@ -592,7 +575,7 @@ private extension WebViewController {
 		]
 
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 	
 	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
