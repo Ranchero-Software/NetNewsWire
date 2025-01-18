@@ -59,7 +59,10 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-
+		
+		// Split View Controller Delegate
+		splitViewController?.delegate = self
+		
 		// Initialize Programmatic Buttons
 		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 		firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
@@ -600,11 +603,44 @@ extension MainTimelineViewController: UISearchBarDelegate {
 	}
 }
 
+extension TimelineViewController: UISplitViewControllerDelegate {
+	
+	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+		switch displayMode {
+		case .automatic:
+			return
+		case .secondaryOnly:
+			return
+		case .oneBesideSecondary:
+			// Timeline + Article - show the refresh control on the timeline
+			self.toolbarItems?[2].customView?.alpha = 1.0
+		case .oneOverSecondary:
+			return
+		case .twoBesideSecondary:
+			return
+		case .twoOverSecondary:
+			return
+		case .twoDisplaceSecondary:
+			// Sidebar + Timeline + Article - hide the refresh control on the timeline
+			self.toolbarItems?[2].customView?.alpha = 0.0
+		case .primaryHidden:
+			return
+		case .allVisible:
+			return
+		case .primaryOverlay:
+			return
+		@unknown default:
+			return
+		}
+	}
+	
+}
+
 // MARK: Private
 
 private extension MainTimelineViewController {
 
-	func configureToolbar() {		
+	func configureToolbar() {
 		guard !(splitViewController?.isCollapsed ?? true) else {
 			return
 		}
