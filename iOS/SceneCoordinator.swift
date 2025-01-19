@@ -1311,34 +1311,21 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 	
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+
+		var sidebarIsShowing = false
+
 		switch displayMode {
-		case .automatic:
-			return
-		case .secondaryOnly:
-			return
-		case .oneBesideSecondary:
-			// Timeline + Article - show the refresh control on the timeline
-			mainTimelineViewController?.toolbarItems?[2].customView?.alpha = 1.0
-		case .oneOverSecondary:
-			return
-		case .twoBesideSecondary:
-			return
-		case .twoOverSecondary:
-			return
-		case .twoDisplaceSecondary:
-			// Sidebar + Timeline + Article - hide the refresh control on the timeline
-			mainTimelineViewController?.toolbarItems?[2].customView?.alpha = 0.0
-		case .primaryHidden:
-			return
-		case .allVisible:
-			return
-		case .primaryOverlay:
-			return
+		case .automatic, .secondaryOnly, .oneBesideSecondary, .oneOverSecondary:
+			sidebarIsShowing = false
+		case .twoBesideSecondary, .twoOverSecondary, .twoDisplaceSecondary:
+			sidebarIsShowing = true
 		@unknown default:
-			return
+			break
 		}
+
+		let timelineShouldShowRefreshProgress = !sidebarIsShowing
+		mainTimelineViewController?.setRefreshToolbarItemVisibility(visible: timelineShouldShowRefreshProgress)
 	}
-	
 }
 
 // MARK: UINavigationControllerDelegate

@@ -257,6 +257,10 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		becomeFirstResponder()
 	}
 
+	func setRefreshToolbarItemVisibility(visible: Bool) {
+		refreshProgressView?.alpha = visible ? 1.0 : 0
+	}
+	
 	// MARK: - Table view
 
 	override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
