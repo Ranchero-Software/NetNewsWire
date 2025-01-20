@@ -50,8 +50,8 @@ public final class FeedIconDownloader {
 		if let cachedImage = cache[feed] {
 			return cachedImage
 		}
-		
-		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), (homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog") {
+
+		if let feedURL = URL(string: feed.url), ImageUtilities.shouldUseNNWFeedIcon(with: feedURL) {
 			return IconImage.nnwFeedIcon
 		}
 
