@@ -515,8 +515,8 @@ private extension WebViewController {
 		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 
 		let webView = WKWebView(frame: self.view.bounds, configuration: configuration)
-		webView.isOpaque = false;
-		webView.backgroundColor = .clear;
+		webView.isOpaque = false
+		webView.backgroundColor = .clear
 
 		// Add the webview - using autolayout will cause fullscreen video to fail and lose the web view
 		webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
