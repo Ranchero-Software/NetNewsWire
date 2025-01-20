@@ -35,6 +35,9 @@ final class AtomParser {
 	private var parsingSource = false
 	private var endFeedFound = false
 
+	private var depth = 0
+	private var entryDepth = -1
+
 	static func parsedFeed(urlString: String, data: Data) -> RSSFeed {
 
 		let parser = AtomParser(urlString: urlString, data: data)
@@ -293,6 +296,8 @@ extension AtomParser: SAXParserDelegate {
 
 	public func saxParser(_ saxParser: SAXParser, xmlStartElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
 
+		depth += 1
+
 		if endFeedFound {
 			return
 		}
@@ -307,6 +312,7 @@ extension AtomParser: SAXParserDelegate {
 
 		if SAXEqualTags(localName, XMLName.entry) {
 			parsingArticle = true
+			entryDepth = depth
 			addArticle()
 			return
 		}
@@ -352,6 +358,10 @@ extension AtomParser: SAXParserDelegate {
 	}
 
 	public func saxParser(_ saxParser: SAXParser, xmlEndElement localName: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
+
+		defer {
+			depth -= 1
+		}
 
 		if SAXEqualTags(localName, XMLName.feed) {
 			endFeedFound = true
@@ -417,9 +427,10 @@ extension AtomParser: SAXParserDelegate {
 
 		else if SAXEqualTags(localName, XMLName.entry) {
 			parsingArticle = false
+			entryDepth = -1
 		}
 
-		else if parsingArticle && !parsingSource {
+		else if parsingArticle && !parsingSource && depth == entryDepth + 1 {
 			addArticleElement(saxParser, localName, prefix)
 		}
 
