@@ -34,35 +34,33 @@ public final class WidgetDataEncoder {
 	}
 
 	func encode() {
-		if #available(iOS 14, *) {
-			isRunning = true
-
-			flushSharedContainer()
-			os_log(.debug, log: log, "Starting encoding widget data.")
-
-			DispatchQueue.main.async {
-				self.encodeWidgetData() { latestData in
-					guard let latestData = latestData else {
-						self.isRunning = false
-						return
-					}
-
-					let encodedData = try? JSONEncoder().encode(latestData)
-
-					os_log(.debug, log: self.log, "Finished encoding widget data.")
-
-					if self.fileExists() {
-						try? FileManager.default.removeItem(at: self.dataURL!)
-						os_log(.debug, log: self.log, "Removed widget data from container.")
-					}
-
-					if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
-						os_log(.debug, log: self.log, "Wrote widget data to container.")
-						WidgetCenter.shared.reloadAllTimelines()
-					}
-
+		isRunning = true
+		
+		flushSharedContainer()
+		os_log(.debug, log: log, "Starting encoding widget data.")
+		
+		DispatchQueue.main.async {
+			self.encodeWidgetData() { latestData in
+				guard let latestData = latestData else {
 					self.isRunning = false
+					return
 				}
+				
+				let encodedData = try? JSONEncoder().encode(latestData)
+				
+				os_log(.debug, log: self.log, "Finished encoding widget data.")
+				
+				if self.fileExists() {
+					try? FileManager.default.removeItem(at: self.dataURL!)
+					os_log(.debug, log: self.log, "Removed widget data from container.")
+				}
+				
+				if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
+					os_log(.debug, log: self.log, "Wrote widget data to container.")
+					WidgetCenter.shared.reloadAllTimelines()
+				}
+				
+				self.isRunning = false
 			}
 		}
 	}
