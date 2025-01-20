@@ -56,8 +56,8 @@ final class DetailWebViewController: NSViewController {
 			webView.configuration.preferences._developerExtrasEnabled = newValue
 		}
 	}
-	
-	private let detailIconSchemeHandler = DetailIconSchemeHandler()
+
+	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(delegate: self)
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	private var windowScrollY: CGFloat?
@@ -79,7 +79,7 @@ final class DetailWebViewController: NSViewController {
 
 	override func loadView() {
 
-		let configuration = WebViewConfiguration.configuration(with: detailIconSchemeHandler)
+		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self
@@ -169,6 +169,25 @@ final class DetailWebViewController: NSViewController {
 		state[UserInfoKey.articleWindowScrollY] = windowScrollY
 	}
 	
+}
+
+// MARK: - ArticleIconSchemeHandlerDelegate
+
+extension DetailWebViewController: ArticleIconSchemeHandlerDelegate {
+
+	func articleIconSchemeHandler(_: ArticleIconSchemeHandler, imageForArticleID articleID: String) -> IconImage? {
+
+		guard let article else {
+			assertionFailure("Did not expect request for article image when there is no current article.")
+			return nil
+		}
+		guard articleID == article.articleID else {
+			assertionFailure("Expected articleID to match current articleID.")
+			return nil
+		}
+
+		return article.iconImage() // May be nil — not a programming error
+	}
 }
 
 // MARK: - WKScriptMessageHandler
@@ -282,10 +301,8 @@ private extension DetailWebViewController {
 		case .loading:
 			rendering = ArticleRenderer.loadingHTML(theme: theme)
 		case .article(let article, _):
-			detailIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
 		case .extracted(let article, let extractedArticle, _):
-			detailIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
 		}
 		

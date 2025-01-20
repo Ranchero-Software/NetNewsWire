@@ -18,8 +18,8 @@ protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
 
-class WebViewController: UIViewController {
-	
+final class WebViewController: UIViewController {
+
 	private struct MessageName {
 		static let imageWasClicked = "imageWasClicked"
 		static let imageWasShown = "imageWasShown"
@@ -39,7 +39,7 @@ class WebViewController: UIViewController {
 	private var isFullScreenAvailable: Bool {
 		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
-	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator);
+	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(delegate: self)
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
 
@@ -279,6 +279,25 @@ class WebViewController: UIViewController {
 	}
 }
 
+// MARK: - ArticleIconSchemeHandlerDelegate
+
+extension WebViewController: ArticleIconSchemeHandlerDelegate {
+
+	func articleIconSchemeHandler(_: ArticleIconSchemeHandler, imageForArticleID articleID: String) -> IconImage? {
+
+		guard let article else {
+			assertionFailure("Did not expect request for article image when there is no current article.")
+			return nil
+		}
+		guard articleID == article.articleID else {
+			assertionFailure("Expected articleID to match current articleID.")
+			return nil
+		}
+
+		return article.iconImage() // May be nil — not a programming error
+	}
+}
+
 // MARK: ArticleExtractorDelegate
 
 extension WebViewController: ArticleExtractorDelegate {
@@ -300,7 +319,6 @@ extension WebViewController: ArticleExtractorDelegate {
 			articleExtractorButtonState = .on
 		}
 	}
-
 }
 
 // MARK: UIContextMenuInteractionDelegate
