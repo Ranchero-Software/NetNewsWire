@@ -9,19 +9,19 @@ import Foundation
 import Core
 @preconcurrency import RSParser
 
-extension Notification.Name {
+public extension Notification.Name {
 	// Sent when HTMLMetadata is cached. Posted on any thread.
 	static let htmlMetadataAvailable = Notification.Name("htmlMetadataAvailable")
 }
 
-final class HTMLMetadataCache: Sendable {
+public final class HTMLMetadataCache: Sendable {
 
 	static let shared = HTMLMetadataCache()
 	
 	// Sent along with .htmlMetadataAvailable notification
-	struct UserInfoKey {
-		static let htmlMetadata = "htmlMetadata"
-		static let url = "url" // String value
+	public struct UserInfoKey {
+		public static let htmlMetadata = "htmlMetadata"
+		public static let url = "url" // String value
 	}
 
 	private struct HTMLMetadataCacheRecord: CacheRecord {
