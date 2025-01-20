@@ -65,6 +65,7 @@ final class FaviconDownloader {
 		loadHomePageURLsWithNoFaviconURLCache()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(htmlMetadataIsAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 	}
 
 	// MARK: - API
@@ -179,7 +180,20 @@ final class FaviconDownloader {
 
 		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
 	}
-	
+
+	@objc func htmlMetadataIsAvailable(_ note: Notification) {
+
+		guard let url = note.userInfo?[HTMLMetadataCache.UserInfoKey.url] as? String else {
+			assertionFailure("Expected URL string in .htmlMetadataAvailable Notification userInfo.")
+			return
+		}
+
+		Task { @MainActor in
+			// This will fetch the favicon (if possible) and post a .FaviconDidBecomeAvailable Notification.
+			_ = favicon(withHomePageURL: url)
+		}
+	}
+
 	@objc func saveHomePageToFaviconURLCacheIfNeeded() {
 		if homePageToFaviconURLCacheDirty {
 			saveHomePageToFaviconURLCache()
