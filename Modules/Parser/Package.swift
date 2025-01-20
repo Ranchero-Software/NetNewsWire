@@ -18,8 +18,7 @@ let package = Package(
 			name: "Parser",
 			dependencies: [
 				"RSCore"
-			],
-			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
+			]
 		),
 		.testTarget(
 			name: "ParserTests",

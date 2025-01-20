@@ -11,8 +11,7 @@ let package = Package(
 	],
 	targets: [
 		.target(
-			name: "RSCore",
-			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
+			name: "RSCore"
 		),
 		.target(
 			name: "RSCoreResources",
