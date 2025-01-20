@@ -51,6 +51,24 @@ final class RSSParserTests: XCTestCase {
 		}
 	}
 
+	func testAllThisPerformance() {
+
+		// 0.003 sec on my 2012 iMac.
+		// 0.002 2022 Mac Studio
+		let d = parserData("allthis", "rss", "http://leancrew.com/all-this")
+		self.measure {
+			let _ = try! FeedParser.parse(d)
+		}
+	}
+
+	func testGettingHomePageLink() {
+
+		let d = parserData("allthis", "rss", "http://leancrew.com/all-this")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		XCTAssertTrue(parsedFeed.homePageURL == "http://leancrew.com/all-this")
+	}
+
 	func testNatashaTheRobot() async {
 
 		let d = parserData("natasha", "xml", "https://www.natashatherobot.com/")
