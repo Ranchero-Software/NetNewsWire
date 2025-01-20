@@ -10,6 +10,8 @@ import Foundation
 import os
 import RSParser
 
+// To get a notification when HTMLMetadata is cached, see HTMLMetadataCache.
+
 public final class HTMLMetadataDownloader: Sendable {
 
 	public static let shared = HTMLMetadataDownloader()
