@@ -104,4 +104,26 @@ final class AtomParserTests: XCTestCase {
 			XCTAssertEqual(attachment.mimeType!, "audio/mpeg")
 		}
 	}
+
+	func testIgnoringBadTitle() {
+
+		// This feed has a title tag inside a thing, like this,
+		// and we need to ignore the title.
+		// https://github.com/Ranchero-Software/NetNewsWire/issues/4422
+		//
+		//     <s:variant>
+		//     <id>https://draw-down.com/products/8726135046398</id>
+		//     		<title>Default Title</title>
+		//     		<s:price currency="USD">38.50</s:price>
+		//     		<s:sku/>
+		//     		<s:grams>862</s:grams>
+		//     </s:variant>
+
+		let d = parserData("draw-down", "atom", "https://draw-down.com/collections/magazines.atom")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			XCTAssertNotEqual(article.title, "Default Title")
+		}
+	}
 }
