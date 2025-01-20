@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23504"/>
     </dependencies>
     <scenes>
@@ -97,12 +96,6 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="importOPMLFromFile:" target="Ady-hI-5gd" id="eGY-fm-uvK"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Import NNW 3 Subscriptions…" id="ely-yi-STg">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="mu3-gN-7uA"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Export Subscriptions…" keyEquivalent="e" id="Xy2-v8-Lj8">
@@ -552,6 +545,13 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="openApplicationSupportFolder:" target="Ady-hI-5gd" id="gT9-ry-evV"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="UXN-ae-jDQ"/>
+                                        <menuItem title="Import NNW 3 Subscriptions…" id="hmz-bb-Lws">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="jnT-kt-Ary"/>
                                             </connections>
                                         </menuItem>
                                     </items>

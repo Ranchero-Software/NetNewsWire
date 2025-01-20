@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23504"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -119,7 +118,7 @@
                                                             <rect key="frame" x="11" y="0.0" width="217" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fNJ-z1-0Up">
+                                                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fNJ-z1-0Up">
                                                                     <rect key="frame" x="0.0" y="1" width="145" height="14"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="HEADER CELL" id="dRB-0K-qxz">
@@ -174,7 +173,7 @@
                                             <constraint firstAttribute="width" constant="40" id="1Yw-ER-8pT"/>
                                         </constraints>
                                     </progressIndicator>
-                                    <textField hidden="YES" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iyL-pW-cT6">
+                                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iyL-pW-cT6">
                                         <rect key="frame" x="62" y="6" width="160" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="dVE-XG-mlU">
                                             <font key="font" metaFont="system"/>
@@ -345,7 +344,7 @@
                             <customView hidden="YES" alphaValue="0.90000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="6" y="2" width="12" height="20"/>
                                 <subviews>
-                                    <textField focusRingType="none" horizontalHuggingPriority="850" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
+                                    <textField horizontalHuggingPriority="850" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
                                         <rect key="frame" x="4" y="2" width="4" height="16"/>
                                         <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" usesSingleLineMode="YES" id="znU-Fh-L7H">
                                             <font key="font" metaFont="system"/>
