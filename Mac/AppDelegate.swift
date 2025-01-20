@@ -17,15 +17,7 @@ import RSCoreResources
 import Secrets
 import OSLog
 import CrashReporter
-
-// If we're not going to import Sparkle, provide dummy protocols to make it easy
-// for AppDelegate to comply
-#if MAC_APP_STORE || TEST
-protocol SPUStandardUserDriverDelegate {}
-protocol SPUUpdaterDelegate {}
-#else
 import Sparkle
-#endif
 
 var appDelegate: AppDelegate!
 
@@ -100,22 +92,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var inspectorWindowController: InspectorWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private let appMovementMonitor = RSAppMovementMonitor()
-	#if !MAC_APP_STORE && !TEST
 	private var softwareUpdater: SPUUpdater!
 	private var crashReporter: PLCrashReporter!
-	#endif
-	
+
 	private var themeImportPath: String?
 
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
 
-		#if !MAC_APP_STORE
 		let crashReporterConfig = PLCrashReporterConfig.defaultConfiguration()
 		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
 		crashReporter.enable()
-		#endif
 
 		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
@@ -171,22 +159,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
 
-		#if MAC_APP_STORE || TEST
-			checkForUpdatesMenuItem.isHidden = true
-		#else
-			// Initialize Sparkle...
-			let hostBundle = Bundle.main
-			let updateDriver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
-			self.softwareUpdater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: updateDriver, delegate: self)
+		// Initialize Sparkle...
+		let hostBundle = Bundle.main
+		let updateDriver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
+		self.softwareUpdater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: updateDriver, delegate: self)
 
-			do {
-				try self.softwareUpdater.start()
-			}
-			catch {
-				NSLog("Failed to start software updater with error: \(error)")
-			}
-		#endif
-		
+		do {
+			try self.softwareUpdater.start()
+		}
+		catch {
+			NSLog("Failed to start software updater with error: \(error)")
+		}
+
 		AppDefaults.shared.registerDefaults()
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
@@ -258,25 +242,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 		#endif
 		
-		if AppDefaults.shared.showDebugMenu {
-  			// The Web Inspector uses SPI and can never appear in a MAC_APP_STORE build.
- 			#if MAC_APP_STORE
- 			let debugMenu = debugMenuItem.submenu!
- 			let toggleWebInspectorItemIndex = debugMenu.indexOfItem(withTarget: self, andAction: #selector(toggleWebInspectorEnabled(_:)))
- 			if toggleWebInspectorItemIndex != -1 {
- 				debugMenu.removeItem(at: toggleWebInspectorItemIndex)
- 			}
- 			#endif
- 		} else {
+		if !AppDefaults.shared.showDebugMenu {
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 		}
 
-		#if !MAC_APP_STORE
 		DispatchQueue.main.async {
 			CrashReporter.check(crashReporter: self.crashReporter)
 		}
-		#endif
-		
 	}
 	
 	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
@@ -456,12 +428,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		
-		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
 		}
-		#endif
-		
+
 		return true
 	}
 
@@ -682,11 +652,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func checkForUpdates(_ sender: Any?) {
-		#if !MAC_APP_STORE && !TEST
-			self.softwareUpdater.checkForUpdates()
-		#endif
+		self.softwareUpdater.checkForUpdates()
 	}
-
 }
 
 // MARK: - Debug Menu
@@ -728,18 +695,16 @@ extension AppDelegate {
 	}
 
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
-		#if !MAC_APP_STORE
+
 		let newValue = !AppDefaults.shared.webInspectorEnabled
 		AppDefaults.shared.webInspectorEnabled = newValue
 
-			// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
-			// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
-			// accidentally reattached.
+		// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
+		// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
+		// accidentally reattached.
 		AppDefaults.shared.webInspectorStartsAttached = false
-			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
-		#endif
+		NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
-
 }
 
 internal extension AppDelegate {

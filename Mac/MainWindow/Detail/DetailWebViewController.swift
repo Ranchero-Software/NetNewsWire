@@ -47,17 +47,15 @@ final class DetailWebViewController: NSViewController {
 	}
 	
 	private var articleTextSize = AppDefaults.shared.articleTextSize
-
-	#if !MAC_APP_STORE
-		private var webInspectorEnabled: Bool {
-			get {
-				return webView.configuration.preferences._developerExtrasEnabled
-			}
-			set {
-				webView.configuration.preferences._developerExtrasEnabled = newValue
-			}
+	
+	private var webInspectorEnabled: Bool {
+		get {
+			return webView.configuration.preferences._developerExtrasEnabled
 		}
-	#endif
+		set {
+			webView.configuration.preferences._developerExtrasEnabled = newValue
+		}
+	}
 	
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
@@ -98,11 +96,9 @@ final class DetailWebViewController: NSViewController {
 		// See bug #901.
 		webView.isHidden = true
 		waitingForFirstReload = true
-
-		#if !MAC_APP_STORE
-			webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
-			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
-		#endif
+		
+		webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
+		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
@@ -322,11 +318,9 @@ private extension DetailWebViewController {
 		}
 	}
 
-	#if !MAC_APP_STORE
-		@objc func webInspectorEnabledDidChange(_ notification: Notification) {
-			self.webInspectorEnabled = notification.object! as! Bool
-		}
-	#endif
+	@objc func webInspectorEnabledDidChange(_ notification: Notification) {
+		self.webInspectorEnabled = notification.object! as! Bool
+	}
 }
 
 // MARK: - ScrollInfo

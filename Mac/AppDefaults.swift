@@ -49,13 +49,11 @@ final class AppDefaults {
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 		static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
 		static let suppressSyncOnLaunch = "DevroeSuppressSyncOnLaunch"
-
-		#if !MAC_APP_STORE
-			static let webInspectorEnabled = "WebInspectorEnabled"
-			static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
-		#endif
+		
+		static let webInspectorEnabled = "WebInspectorEnabled"
+		static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
 	}
-
+	
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
 	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
@@ -237,27 +235,25 @@ final class AppDefaults {
 			AppDefaults.setBool(for: Key.suppressSyncOnLaunch, newValue)
 		}
 	}
-
-	#if !MAC_APP_STORE
-		var webInspectorEnabled: Bool {
-			get {
-				return AppDefaults.bool(for: Key.webInspectorEnabled)
-			}
-			set {
-				AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
-			}
+	
+	var webInspectorEnabled: Bool {
+		get {
+			return AppDefaults.bool(for: Key.webInspectorEnabled)
 		}
-
-		var webInspectorStartsAttached: Bool {
-			get {
-				return AppDefaults.bool(for: Key.webInspectorStartsAttached)
-			}
-			set {
-				AppDefaults.setBool(for: Key.webInspectorStartsAttached, newValue)
-			}
+		set {
+			AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
 		}
-	#endif
-
+	}
+	
+	var webInspectorStartsAttached: Bool {
+		get {
+			return AppDefaults.bool(for: Key.webInspectorStartsAttached)
+		}
+		set {
+			AppDefaults.setBool(for: Key.webInspectorStartsAttached, newValue)
+		}
+	}
+	
 	var timelineSortDirection: ComparisonResult {
 		get {
 			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
