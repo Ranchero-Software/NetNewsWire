@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+## 6.1.8 TestFlight build 6145 18 Jan 2025 - branch: 6.1.8-ios tag: iOS-6.1.8-6145
+
+Improved usability of split view in iPad
+Fixed bug where you could get two refresh progress bars at the same time on iPad (one in feeds view toolbar and one in timeline view toolbar)
+
 ## 6.1.7 TestFlight build 6144 12 Jan 2025 - branch: 6.1.7-ios tag: iOS-6.1.7-6144
 
 Fix crash on rotation on Max phone when in fullscreen and going from portrait to landscape
