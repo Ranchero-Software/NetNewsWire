@@ -84,7 +84,7 @@ private extension SyncDatabase {
 	
 	static let tableCreationStatements = """
 	CREATE TABLE if not EXISTS syncStatus (articleID TEXT NOT NULL, key TEXT NOT NULL, flag BOOL NOT NULL DEFAULT 0, selected BOOL NOT NULL DEFAULT 0, PRIMARY KEY (articleID, key));
- 
+
 	CREATE INDEX if not EXISTS syncStatus_selected_index on syncStatus (selected);
 	"""
 }
