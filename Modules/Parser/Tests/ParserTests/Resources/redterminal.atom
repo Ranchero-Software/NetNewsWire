@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>What's on fabs mind?</title>
+  <subtitle>Some random things I like to write about</subtitle>
+  <link rel='self' href='https://redterminal.org/gemlog/atom.web.xml'/>
+  <link rel='alternate' href='https://redterminal.org/gemlog/index.gmi'/>
+  <updated>2025-01-13T03:01:09+0100</updated>
+  <author>
+    <name>-fab-</name>
+    <email>fab@redterminal.org</email>
+    <uri>https://redterminal.org/</uri>
+  </author>
+  <id>https://redterminal.org/gemlog/</id>
+  <generator uri='https://git.sr.ht/~nytpu/gemlog.sh'>gemlog.sh</generator>
+  <rights>© -fab- - CC BY-SA 4.0</rights>
+
+  <entry>
+    <title>Ollama - llama3.1 8B jailbroken</title>
+    <id>https://redterminal.org/gemlog/2025-01-13-Ollama_-_llama3.1_8B_jailbroken.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2025-01-13-Ollama_-_llama3.1_8B_jailbroken.gmi'/>
+    <updated>2025-01-13T12:00:00+0100</updated>
+<content type='text'>
+# Ollama - llama3.1 8B jailbroken
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Mon, 13 Jan 2025 02:58:17 +0100
+Last updated: Mon, 13 Jan 2025 02:58:17 +0100
+```
+
+Recently, I have discovered that there is a "jailbroken" version of llama3.1:8B Large Language Models for Ollama. If you are interested in experimenting with "AI" and want to do it locally on your computer without the prying eyes of companies or state institutions, then this might be something for you.
+
+I assume that you have already installed and configured Ollama. Instructions for this can be found on the internet.
+
+To use the models, one must download one of the following 'gguf' files from the web and import it into Ollama:
+
+=> https://huggingface.co/grimjim/Llama-3.1-8B-Instruct-abliterated_via_adapter-GGUF/resolve/main/Llama-3.1-8B-Instruct-abliterated_via_adapter.Q4_K_M.gguf?download=true Llama-3.1-8B-Instruct-abliterated_via_adapter.Q4_K_M.gguf (4.92GB)
+=> https://huggingface.co/grimjim/Llama-3.1-8B-Instruct-abliterated_via_adapter-GGUF/resolve/main/Llama-3.1-8B-Instruct-abliterated_via_adapter.Q5_K_M.gguf?download=true Llama-3.1-8B-Instruct-abliterated_via_adapter.Q5_K_M.gguf (5.73GB)
+=> https://huggingface.co/grimjim/Llama-3.1-8B-Instruct-abliterated_via_adapter-GGUF/resolve/main/Llama-3.1-8B-Instruct-abliterated_via_adapter.Q6_K.gguf?download=true Llama-3.1-8B-Instruct-abliterated_via_adapter.Q6_K_M.gguf (6.6GB)
+=> https://huggingface.co/grimjim/Llama-3.1-8B-Instruct-abliterated_via_adapter-GGUF/resolve/main/Llama-3.1-8B-Instruct-abliterated_via_adapter.Q8_0.gguf?download=true Llama-3.1-8B-Instruct-abliterated_via_adapter.Q8_K_M.gguf (8.54GB)
+
+To import the 'gguf' file into Ollama, you need to create a 'Modelfile' with the following content (if the file is located in the Downloads folder):
+
+> FROM ~/Downloads/Llama-3.1-8B-Instruct-abliterated_via_adapter.Q4_K_M.gguf
+
+After that, you import the LLM with the following command:
+
+> ollama create YourModelName> -f Modelfile
+
+This should go quite quickly on modern hardware. Now, you can already use this command with the new model:
+
+> ollama run YourModelName>
+
+## Freedom for "AI" finally
+
+Now you can have any experience you like with your "AI". You can make it right-wing or left-wing and have any bias you want. Much more fun than the "neutral" and boring standard Models. You can make it weak or strong in it's opinions and make it convincible in any topic you like. Freedom without borders!
+
+
+All in all - Have fun!
+-fab-
+
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>re: Emacs from Scratch</title>
+    <id>https://redterminal.org/gemlog/2024-12-16-re_Emacs_from_Scratch.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-12-16-re_Emacs_from_Scratch.gmi'/>
+    <updated>2024-12-16T12:00:00+0100</updated>
+<content type='text'>
+# re: Emacs from Scratch
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Mon, 16 Dec 2024 20:14:37 +0100
+Last updated: Mon, 16 Dec 2024 20:14:37 +0100
+```
+
+Like @hedy I started to fiddle with Emacs out of curiosity and to check out something new.
+
+=> gemini://hedy.smol.pub/re-baty-emacs-from-scratch re: emacs from scratch
+
+But as it seems most people start with DoomEmacs or SpacEmacs to begin with. But because I had absolutely no idea about Emacs at all and wanted to learn from the ground up I chose to build up my Emacs from Scratch. I followed the videos from SystemCrafters YouTube playlist:
+
+=> https://youtube.com/playlist?list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ Emacs from Scratch (SystemCrafters Youtube)
+
+I played two times with Emacs. Once for a month and the last time for around 1 1/2 month until beginning of November.
+
+Emacs surely is a rabbit hole and a lot of fun to tinker with. I built up my configuration mainly from the videos as a base and then added mu4e, elpher, Mastodon.el, Org-Roam and some other little things to have a full Emacs system. I used EVIL mode but some plugins don't support it (like Mastodon.el), which I don't like.
+
+I got a fairly complete system but Emacs still seems to cumbersome for me as a decades long vim user. Vim fits better to my workflow because I'm mainly in the command line and the terminal (never checked Emacs in the CLI) and a TUI editor is simply easier to integrate in my TUI/CLI applications like NeoMutt or tut (Mastodon client for the terminal) and others. So I went back fulltime to NeoVim.
+
+Another thing that bothered me with Emacs is that there are always some kind of problems to solve. I'm not sure how I solved this, but the link completion in Org-Roam don't seem to work all the time for example. I'm still not sure what the problem was.
+
+But as a beginning Emacs user I would advise people to build their Emacs configuration from scratch after some tutorial like the one above to learn all the little gizmos (although it's impossible to learn all of Emacs). Of course you have to dive into elisp a little :)
+
+All in all - Have fun!
+-fab-
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>redterminal.org now runs on FreeBSD-14.2-RELEASE</title>
+    <id>https://redterminal.org/gemlog/2024-12-04-redterminal.org_now_runs_on_FreeBSD-14.2-RELEASE.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-12-04-redterminal.org_now_runs_on_FreeBSD-14.2-RELEASE.gmi'/>
+    <updated>2024-12-04T12:00:00+0100</updated>
+<content type='text'>
+# redterminal.org now runs on FreeBSD-14.2-RELEASE
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Wed, 04 Dec 2024 22:22:10 +0100
+Last updated: Wed, 04 Dec 2024 22:22:10 +0100
+```
+
+I upgraded the redterminal.org Gemini/Gopher/Finger/WWW server from the 14.1 branch to FreeBSD-14.2-RELEASE. Nobody should have noticed besides a brief downtime for the reboot. The update went painless and smoothly thanks to the FreeBSD maintainers. All packages are up-to-date too and everything is fine so far. Small problems will be ironed out with the first update if any, but as far as I can tell there are no problems.
+
+All in all - Have fun!
+-fab-
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>In Support of Richard Stallman</title>
+    <id>https://redterminal.org/gemlog/2024-10-18-In_Support_of_Richard_Stallman.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-10-18-In_Support_of_Richard_Stallman.gmi'/>
+    <updated>2024-10-18T12:00:00+0100</updated>
+<content type='text'>
+# In Support of Richard Stallman
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Fri, 18 Oct 2024 13:54:54 +0200
+Last updated: Fri, 18 Oct 2024 17:00:00 +0200
+```
+
+I know I've not much of a voice but I want the people who read my posts to know what position I'm on the Stallman case. I'm sure I'll get a lot of pushback but I want to take a stance for Richard Stallman and all the great work he's done to free/libre software.
+
+A few days ago an anonymous "Stallman report" apeared on the internet. This is what I want to talk about.
+
+Maybe Stallman is an odd and strange character, socially awkward and has *a lot* of views and ideas that I also don't share. The simplest thing would be for him to simply remain silent on the topic of "sex". But the self-proclaimed and anonymous accusers bring nothing new in their "Report" except to regurgitate well-known statements that have been out for a long time. It's just another campaign to remove Stallman (and others from the board who probably don't share the views of the accusers) with malicious intent from the FSF and GNU Project boards.
+
+The malicious intention behind this smear campaign, in my opinion, is the desire to distort free software and the movement around it according to their own conceptions. I can imagine what kind of distortions that would be, but I take a strong stance against it.
+
+In my opinion, the supporters of the campaign want to replace free software with some kind of "Ethical Source" software and its licenses. I strictly reject that. They split and separate the members of the free software movement into different camps for political reasons. And lets not forget that the "Ethical Source" movement are a very small, but very loud and vocal group.
+
+The campaign against Stallman and the other board members has only one purpose: to take over or destroy the leadership of the FSF and the GNU Project in order to promote the "Ethical Source" ideology. Stallman's mistakes serve only as a pretext. The goals of the "Stallman Report" can be easily derived from the "Recommendations" section on their page.
+
+I want free software to remain free and reject the restrictions that "Ethical Source" licenses impose on software. The GPL should not disappear or be changed. The four freedoms are all that's needed. And Richard Stallman is the one we have to thank for this. His work and devotion to free the source code are undisputed and his changes to society are a big part of our lives.
+
+Here is everything about the defamation campaign against Richard Stallman in much better words:
+
+=> https://stallmansupport.org/ In Support of Richard Stallman (www)
+
+=> https://youtu.be/NLq5e3W7rZU A Lunduke video on the report (youtube)
+
+This is just written, to make my position clear to my readers.
+
+ *EDIT (2024-10-18 17:00)*
+It seems that Drew Devault is one of the authors behind the "Stallman Report" as Lunduke points out in a second video on the case:
+
+=> https://youtu.be/9jkxnM0gJdo *Anonymous* Author Behind Stallman-Report.org Hit Piece Unmasked (youtube)
+
+All in all - Have fun!
+-fab-
+
+PS: I wrote this post in german and translated it with "ollama" and the llama3.1:8b LLM with the "ellama" Emacs package.
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>Google deprecating Manifest v2 - Use Qutebrowser</title>
+    <id>https://redterminal.org/gemlog/2024-10-09-Google_deprecating_Manifest_v2_-_Use_Qutebrowser.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-10-09-Google_deprecating_Manifest_v2_-_Use_Qutebrowser.gmi'/>
+    <updated>2024-10-09T12:00:00+0100</updated>
+<content type='text'>
+# Google deprecating Manifest v2 - Use Qutebrowser
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Wed, 09 Oct 2024 06:51:59 +0200
+Last updated: Wed, 09 Oct 2024 06:51:59 +0200
+```
+
+I've just seen this video on YouTube from Mental Outlaw, where he goes over the deprecation of Manifest V2 in chromium-based browsers and the end of ad blocking in these browsers.
+
+=> https://youtu.be/TO48wxdjWMg The End of Ad Blockers In Chrome (YouTube)
+
+So one might think this is the end of ad blocking in internet browsers based on Chromium. Some might take rescue in Firefox, Brave Browser or Librewolf and I endorse these browsers for most people. But I want to recommend another browser, which can be nearly completely controlled with the keyboard and vim bindings as I like it: Qutebrowser!
+
+## Qutebrowser - Completely keyboard controllable web browser
+
+=> https://qutebrowser.org/ Qutebrowser homepage (www)
+=> https://github.com/qutebrowser/qutebrowser Qutebrowser Github Repository (www)
+
+While you can control Qutebrowser with the mouse (and on some pages this may be necessary) you also can and should only use the keyboard to navigate through the web. The keybindings are based on the Vim keybindings and you can configure nearly everything. For example:
+
+* "o" lets you enter a new URL which is opened in the current tab
+* "O" lets you enter a new URL which is opened in a new tab
+* "f" lets you choose a link to follow in the current tab with some keys
+* "F" same as "f" but opens in new tab
+* "i" enters insert mode for input fields
+* "H" goes back one page in the current tab
+* "L" goes forward one page in current tab
+* "d" closes a tab
+* "SHIFT-RIGHT>" goes to next tab
+* "SHIFT-LEFT>" goes to previous tab
+* ...
+
+There are many more shortcuts and you can also define your own.
+
+## Built in Ad Blocker
+
+Qutebrowser also has a built in Ad Blocker which supports hosts file lists and AdBlock Plus lists. You can use one of them or both. So although it uses the chromium engine (from QTWebEngine) and doesn't support extensions at all you have reliable ad blocking. Who needs extensions anyway?
+
+## Updated Chromium engine
+
+While Qutebrowser is based on the QT toolkit which only updates to a new Chromium release on every minor QT release, every patch release backports security fixes from newer Chromium versions. So as long as you're on an up-to-date QT version you should receive security updates regularly.
+
+## Highly customizable
+
+It is highly customizable although it doesn't support browser plugins. Qutebrowser can be easily extended with userscripts e.g. I have a script which adds RSS feeds to my feed reader (newsboat) bound to ",f".
+
+I also use "password-store" (pass) for my passwords and I have a rofi script which fuzzy finds my passwords in a list and copies the selected one to the clipboard. Then I can paste it to the web site or where ever else.
+
+## Final words
+
+Even if Qutebrowser doesn't support extensions you can build it up the way you like it with self built user scripts. It focuses on efficiency and if you already favorite CLI/TUI applications like Vim and prefer the keyboard over the mouse for most tasks you should give Qutebrowser a try. Of course it's completely free software and licensed under the GPL-3.0.
+
+
+All in all - Have fun!
+-fab-
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>LoRa transmission - Follow up</title>
+    <id>https://redterminal.org/gemlog/2024-09-14-LoRa_transmission_-_Follow_up.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-09-14-LoRa_transmission_-_Follow_up.gmi'/>
+    <updated>2024-09-14T12:00:00+0100</updated>
+<content type='text'>
+# LoRa transmission - Follow up
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Sat, 14 Sep 2024 02:20:44 +0200
+Last updated: Sat, 14 Sep 2024 02:20:44 +0200
+```
+
+This is a little follow up to my second ROOPHLOCH'24 post:
+
+=> gopher://redterminal.org:70/0/phlog/2024-09-13-ROOPHLOCH_2024_Post_2_-_LoRa_transmission.txt ROOPHLOCH 2024 Post 2 - LoRa transmission (Gopher)
+
+I uploaded a repository to Codeberg.org with the scripts I used to do my LoRa transmission, which may be of interest to some people. I've found out most things by trial and error and the scripts are a little messy. But if you want to peek on the perl sources look here:
+
+=> https://codeberg.org/fab/USB-LoRa USB-LoRa Transmission Scripts on Codeberg.org (WWW)
+
+As said before I've just begun to mess around with LoRa and LoRaWAN so don't expect too much. The scripts are written to work in my special environment so you can't use them without some editing.
+
+Here's a link to USB-LoRa adapters I use:
+
+=> https://www.amazon.de/dp/B0C23QP97G Waveshare USB to LoRa Data Transfer Module (Link goes to Amazon)
+
+I ordered two new antennas for outdoors which I hope expand the range significantly if placed on a more open space on my balcony.
+
+=> https://www.amazon.de/dp/B0B18P3Z7C LoRa Antenna 868MHz 5.8dBi (Link goes to Amazon)
+
+With the antennas included with the USB-LoRa adapter I managed to transfer my post over ~247m and the receiving Raspberry Pi 3 is placed in a roofed area with walls in 3 directions. So it's really not ideal. With the new ordered antennas I can place one in a more open space of the balcony. That should give me some more reach. Unfortunately the delivery is 3 weeks so they won't arrive before ROOPHLOCH is over :(.
+
+But anyway, I'll continue to work on this and look how far I can get.
+
+All in all - Have fun!
+-fab-
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>ROOPHLOCH 2024 - Post from the Mueggenburg park</title>
+    <id>https://redterminal.org/gemlog/2024-09-03-ROOPHLOCH_2024_-_Post_from_the_Mueggenburg_park.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-09-03-ROOPHLOCH_2024_-_Post_from_the_Mueggenburg_park.gmi'/>
+    <updated>2024-09-03T12:00:00+0100</updated>
+<content type='text'>
+# ROOPHLOCH 2024 - Post from the Mueggenburg park
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Tue, 03 Sep 2024 15:30:53 +0200
+Last updated: Tue, 03 Sep 2024 15:30:53 +0200
+```
+
+Hello from the "Müggenburg" park near my home at the Norf creek. So I'm outing myself as living in Norf/NRW/Germany. But I'm most likely the only one here in this town who regularly uses the Gemini protocol. If you really live in or near Norf, you can send me an email, but I won't tell you my real name :)
+
+## ROOPHLOCH'24
+
+This is written with my Lenovo T460s Laptop on my knees and my OnePlus Nord phone as a hotspot. I'm sitting on a bench in the shadow of some trees. I post this as my first participation in the ROOPHLOCH. At first I wanted to make my ROOPHLOCH post with LoraWAN, but that idea turned out to be too difficult to realize because of the LoraWAN restrictions (and too expensive). Then I planned to write my ROOPHLOCH'24 post from the Rhinetower in Düsseldorf - which would have missed the point of being *outdoors*. I traveled to the Rhinetower anyway and made a non-ROOPHLOCH post from there nonetheless:
+
+=> /gemlog/2024-07-26-Post_from_the_Rhinetower_in_Duesseldorf.gmi 2024-07-26 Post from the Rhinetower in Düsseldorf
+
+So now I come up with this as my *real* ROOPHLOCH'24 post. No special setup just a Laptop and a Smartphone. I hope it counts anyway. I've thought about a nice place near to my home which I can reach by walking. I remembered the Müggenburg park from my childhood and early adulthood - I believe I haven't been here for ~35-36 years. But I remember it as a very beautiful park here in Norf. So I chose the Müggenburg park and here is my post :)
+
+## The Müggenburg Park
+
+=> https://www.openstreetmap.org/directions#map=17/51.15534/6.72050 Müggenburgpark on OpenStreetMap.org
+
+The park is not very big and it goes along the Norf creek on one side and a wall to some private property on the other. There is a little pond here with a little island in it. It's kept a little ragged, but I think it's intended and I like it. The pond is surrounded by some trail so you can walk around it. There is also a big tree here which is fenced in. As far as I can tell it's not an oak tree but it looks cool anyway. I took a picture of it and it's a really cool looking tree. There are mushrooms on the sides of the tree like plates, but I don't know their name. I believe they're in some kind of symbiosis. If someone knows the name of these plate-shaped mushrooms, send me an email. The Müggenburg Park is a small but very beautiful quiet place to take a rest. I think this is a good choice for the challenge.
+
+## Going outdoors again
+
+I take this challenge as an opportunity to come out of my apartment again and get my ass up and "touch some grass". I'll take this as an reminder to get out of my house more often, too, although I'm not very good on my feet. I need a lot of rest during my walk.
+
+I really leave my apartment too seldom and this is already something special. Too bad ROOPHLOCH is only once a year, but on the other hand I could go out and post from outdoors all over the year without some special reason.
+
+Around 9 or 10 years ago I did some geocaching and I'm curious if there are some caches around here. This would be quite a good place to hide them. When I think about it, it would be cool to get involved in geocaching again and write about my searching adventures in my gemlog (Do 50 year old men still do geocaching?) :)
+
+## Pictures
+
+I took some pictures of the park with my shitty smartphone cam (resized to 33%):
+
+=> /images/2024-09-03/Park1.jpg Müggenburgpark - Entrance (585k jpg)
+=> /images/2024-09-03/Park2.jpg Müggenburgpark - The Norf creek (627k jpg)
+=> /images/2024-09-03/Park3.jpg Müggenburgpark - Big tree from east (615k jpg)
+=> /images/2024-09-03/Park4.jpg Müggenburgpark - Pond with little isle (638k jpg)
+=> /images/2024-09-03/Park5.jpg Müggenburgpark - Pond from the south (699k jpg)
+=> /images/2024-09-03/Park6.jpg Müggenburgpark - Big tree from the west (695k jpg)
+
+## A nice walk
+
+It's good to be outdoors again. The weather is fine and I'm enjoying the fresh air and the view of the park. After sending this post, I'll go on with my walk and have a Coke with two ice cubes and a lemon piece in "Le Petit Café" just a few meters from the Catholic Church here in Norf. I think I'll walk that route now more often just because it's a lot of fun and I really need to get in touch with nature more often. Maybe I'll be better on my feet if I try to do this regularly.
+
+All in all - have fun!
+-fab-
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>The joys of a self hosted Atuin server</title>
+    <id>https://redterminal.org/gemlog/2024-08-19-The_joys_of_a_self_hosted_Atuin_server.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-08-19-The_joys_of_a_self_hosted_Atuin_server.gmi'/>
+    <updated>2024-08-19T12:00:00+0100</updated>
+<content type='text'>
+# The joys of a self hosted Atuin server
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Mon, 19 Aug 2024 10:19:20 +0200
+Last updated: Mon, 19 Aug 2024 10:19:20 +0200
+```
+
+Yesterday (or better last night) I set up my own Atuin shell history server. I've been using Atuin for a while now, since February'24 I think. But these were only the isolated shell histories of my 3 main machines. I wasn't aware of the Atuin history sync server, which I can easily self-host. Until now!
+
+=> https://atuin.sh/ Atuin - Making your shell magical
+=> https://docs.atuin.sh/ Atuin - Documentation
+=> https://docs.atuin.sh/self-hosting/server-setup/ Atuin - Server setup guide
+
+## Free History Hosting Service or Self-Hosted
+
+The developers even host a public end-to-end encrypted Atuin History Sync Service for free. They couldn't see my history, but I don't want to rely on an external service provider (who maybe changes terms of service), when I can self-host this thing on my infrastructure which is already in place.
+
+## Features
+
+Only with the server I can get the full potential from my collected CLI history. I have all the commands from all machines available on all of them instantly. It furthermore adds some more context to my inputs. I can filter commands by host, users, directories or sessions if I like, it also stores timestamps, duration and exit code, and then I can make a fuzzy search through them.
+
+## Atuin Setup
+
+Atuin is packaged in the [extra] Arch repo which I enabled on my Artix systems. So it's pretty current. And it's the only package I need on the machines I want to use Atuin on. It also has a daemon in the binary, which needs to run in the background to get the full performance from the server.
+
+On Artix I had to write a little OpenRC script to start/stop the Atuin daemon and put it into '/etc/init.d/atuin-daemon'. It has to be executable.
+
+```
+#!/usr/bin/openrc-run
+# file: /etc/init.d/atuin-daemon
+
+supervisor=supervise-daemon
+# change this to the user using atuin
+USER=artix
+
+command_user="${USER}"
+command_args=""
+
+command="/usr/bin/atuin daemon"
+```
+
+Then I had to add it to the OpenRC startup scripts and start it afterwards to avoid a reboot.
+
+```
+$ sudo rc-update add atuin-daemon default
+$ sudo rc-service atuin-daemon start
+```
+
+On systems with different init systems this process has to be done accordingly to the used init system. But most of the time you'll have to create your own init scripts (eg. for systemd).
+
+After that comes the configuration of Atuin in the '~/.config/atuin/config.toml' user file. The defaults are pretty sensible and I just needed to add a few lines at the end of the file.
+
+```
+[sync]
+records = true
+
+[daemon]
+enabled = true
+```
+
+Later after the installation of the server I just had to adjust the 'sync_address' setting to point to my own server.
+
+Now I had to add the Atuin history tool to the shell resource file. I show it here for the ZSH shell, but bash and others are similar:
+
+```
+$ echo 'eval "$(atuin init zsh)"' >> ~/.zshrc
+```
+
+After that I restarted my shell and imported my local history:
+
+```
+# restart shell
+$ exec zsh
+
+# To import the history of the running shell (ZSH)
+$ atuin import auto
+```
+
+Now I could use Atuin already locally with my current history.
+
+## Server Installation
+
+While the Atuin binary also includes the corresponding server, I chose the docker-compose setup though, because a postgresql database is also needed. Therefore I created an .env file containing the postgresql credentials, and a docker-compose.yml file.
+
+.env:
+```
+# file: ~/.env
+ATUIN_DB_NAME=atuin
+ATUIN_DB_USERNAME=atuin
+# Choose your own secure password
+ATUIN_DB_PASSWORD=supersecurepassword
+```
+
+docker-compose.yml:
+```
+# file: ~/docker-compose.yml (needs editing)
+services:
+  atuin:
+    restart: always
+    # The docs suggest to choose the latest tagged release but I simply used
+    # image: ghcr.io/atuinsh/atuin
+    # because I got errors concerning GLIBC
+    image: ghcr.io/atuinsh/atuin:LATEST TAGGED RELEASE>
+    command: server start
+    volumes:
+      - "./config:/config"
+    links:
+      - postgresql:db
+    ports:
+      - 8888:8888
+    environment:
+      ATUIN_HOST: "0.0.0.0"
+      ATUIN_OPEN_REGISTRATION: "true"
+      ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@db/$ATUIN_DB_NAME
+      RUST_LOG: info,atuin_server=debug
+  postgresql:
+    # I use postgresql version 16 instead of 14 as written in the docs
+    image: postgres:16
+    restart: unless-stopped
+    volumes: # Don't remove permanent storage for index database files!
+      - "./database:/var/lib/postgresql/data/"
+    environment:
+      POSTGRES_USER: ${ATUIN_DB_USERNAME}
+      POSTGRES_PASSWORD: ${ATUIN_DB_PASSWORD}
+      POSTGRES_DB: ${ATUIN_DB_NAME}
+```
+
+I had to fix some file permission problems on my Proxmox container, which shouldn't be too difficult if needed. When everything was in place I already could start the server.
+
+```
+# At first omit the -d flag to see if some errors occur
+$ docker-compose up
+
+# If no errors occur and the server runs you can abort with CTRL-C
+# and start the server in daemon mode
+$ docker-compose up -d
+```
+
+It should automatically restart now if I for example restart my server.
+
+## Create Account and first Login
+
+Now I had to have the right server address in place in my Atuin config on my workstations: 'sync_address = "https://services.srv:8888"' and restarted my shell: 'exec zsh'. Then I entered the following command to create an account on my server:
+
+```
+$ atuin register --username name> --password secret> --email email>
+```
+
+Then I needed to log into my newly created account and did my first sync:
+
+```
+$ atuin login --username name> --password secret>
+
+# We use the -f (force) option here to make a complete sync
+$ atuin sync -f
+```
+
+Now the workstation was already syncing but still lonely. If I wanted to merge all the history list into one on all computers I needed to get the right key for the repository while I'm logged into the first computer. This is the way to get the encryption key for the account to connect further systems:
+
+```
+$ atuin key
+```
+
+This spitted out a list of words which I needed to provide for logging into subsequent machines:
+
+```
+$ atuin login --username name> --password secret> --key "list of words>"
+
+# We also do a initial sync to merge the histories
+$ atuin sync -f
+```
+
+With the last two commands I could add my other two machines to the merged history list. And it works perfectly! I have a merged history list from 3 machines which I can search through with fuzzy finding filtered by hosts, users, directories and sessions. I believe searching through time periods is also possible although I haven't checked that out yet.
+
+## TLS
+
+Although TLS (https) is not strictly needed in a homelab environment I do appreciate the additional security. Especially because I have a local net certificate authority already in place. So I created a certificate signed by my local CA and added it to the server ~/config/ directory and edited the server.toml file accordingly.
+
+If you really want this you need to create a certificate/key pair signed by your local Certificate Authority which must be added to your certificate store on all connected machines. But I won't cover that in this walkthrough. There are some good tutorials out there how to maintain your own CA. Maybe I'll make a tutorial on that later, too.
+
+## I'm already hooked
+
+I've used Atuin in local mode for half a year now and got used to it's convenient features. But merged histories are a huge level higher. For example I used a lot of awk commands on my desktop for different purposes. Now I have these commands also available in the history of my other machines. Same with other commands like sed, grep or find. Or commands sequences with lots of pipes. All available everywhere. It's simply awesome! I can only recommend it to you!
+
+All in all - Have fun!
+-fab-
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>The thing I still cannot explain</title>
+    <id>https://redterminal.org/gemlog/2024-08-14-The_thing_I_still_cannot_explain.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-08-14-The_thing_I_still_cannot_explain.gmi'/>
+    <updated>2024-08-14T12:00:00+0100</updated>
+<content type='text'>
+# The thing I still cannot explain
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Wed, 14 Aug 2024 02:34:35 +0200
+Last updated: Wed, 14 Aug 2024 02:34:35 +0200
+```
+
+This post is just a link to my gopher phlog post about my confession. And I still can't explain how I got out of this mess. I'm an agnostic but this maybe was a miracle.
+
+=> gopher://redterminal.org:70/0/phlog/2024-08-11-Solitude_-_My_Confession.txt Solitude - My Confession (gopher link)
+
+This is an answer to an openmentions.com question.
+=> https://openmentions.com/news/question-of-the-week/what-is-something-that-you-still-cannot-explain/ What is something that you still cannot explain?
+
+All in all - Have fun!
+-fab-
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+
+  <entry>
+    <title>Site Timeline</title>
+    <id>https://redterminal.org/gemlog/2024-08-11-Site_Timeline.gmi</id>
+    <link rel='alternate' href='https://redterminal.org/gemlog/2024-08-11-Site_Timeline.gmi'/>
+    <updated>2024-08-11T12:00:00+0100</updated>
+<content type='text'>
+# Site Timeline
+
+``` Author, date and license
+Author:       -fab- fab@redterminal.org>
+License:      CC BY-SA 4.0
+Published on: Sun, 11 Aug 2024 17:01:49 +0200
+Last updated: Mon, 30 Dec 2024 09:40:00 +0100
+```
+
+Robert Birming came up with the idea to create a continuous blogging timeline:
+=> https://birming.com/blogging-timeline/ Robert Birming - blogging timeline
+
+Because I really like the idea of a blogging timeline, here's mine. I have to admit that I regard my site more as a gemini/gopher/finger server, which you can see through the page layout. Nevertheless I'm trying to make this site as accessible for the WWW and the IndyWeb as possible.
+
+## 2021
+In september'21 I installed my first gemlog server which was then named "foobucket.xyz" and run on a Debian system. I believe short after setting it up and posting my first post (which was just an "about" page), I found out about kineto, a gemini-to-web proxy which then made my gemini content available on the www (behind a nginx proxy). I use kineto (by Drew Devault) to this day, although the system changed a lot since.
+
+I used nytpu's gemlog.sh shell script to create my gemlog index page and my feeds right from the start, although I heavily modified them to my needs over time.
+
+I made 5 posts in 2021, so not very much.
+
+## 2022
+The most remarkable change in '22 is the switch to a smaller VPS and in the same turn changing from Debian 11 to FreeBSD 13.1 which nobody should have noticed because the transition went very smooth.
+
+=> gemini://redterminal.org/gemlog/2022-10-04-A_rare_update.gmi 2022-10-04 - A rare update
+
+I made 8 posts in '22 so a little more than in '21 mostly about Linux and computer stuff.
+
+## 2023
+I made my first tinylog entries in January '23, but I think nobody reads them :)
+
+=> gemini://redterminal.org/tinylog.gmi fab's shorts (tinylog)
+
+In August '23 the name of the site changed from "foobucket.xyz" to "redterminal.org" but I had a redirect in place for Gemini and the WWW to avoid broken links or at least give some time to update to the new domain until the old one expires in august 2024. This went more or less smoothly.
+
+=> gemini://redterminal.org/gemlog/2023-08-16-foobucket.xyz_is_now_redterminal.org.gmi 2023-08-16 - foobucket.xyz is now redterminal.org
+
+I posted 7 articles in 2023.
+
+## 2024
+In 2024 there were by far the most changes to the site so far. In January I added support for the finger protocol:
+
+=> gemini://redterminal.org/gemlog/2024-01-26-Finger_protocol_support.gmi 2024-01-26 - Finger protocol support.
+
+Shortly after that I set up a gopher hole on my server where I post longer form text documents more suitable for gopher:
+
+=> gopher://redterminal.org/
+
+Then I had a little server breakdown in February because I (stupidly) wanted to switch from the gmid gemini server by Omar Polo to gemserv by int80h, which ran very unstable so I had to revert back to gmid together with the certificates.
+
+In March '24 I added Webmentions support for the pages that are reachable via https:
+
+=> gemini://redterminal.org/gemlog/2024-03-07-My_Website_now_supports_Webmentions.gmi 2024-03-07 - My Website now supports Webmentions
+
+In August '24 I updated my feeds script for web links to contain the content of the latest 10 Gemini posts in plain text:
+
+=> gemini://redterminal.org/gemlog/2024-08-10-Updates_to_my_Atom_web_feed.gmi 2024-08-10 - Updates to my Atom web feed
+
+At the beginning of December I upgraded my server from FreeBSD-14.1-RELEASE to FreeBSD-14.2-RELEASE. Upgrade went smoothly.
+
+In 2024 I posted 26 gemlog posts and 7 phlog entries. This year was the most active so far. I hope to post even more in the next year.
+
+## 2025
+We'll see what will happen in '25 - Hopefully (no promises) I come up with some new projects.
+
+### This page will be updated regularly
+I'll try to update this timeline page at least in a yearly period so all bigger (or smaller) changes will be logged and comprehensible.
+
+All in all - have fun!
+-fab-
+
+-- 
+=> /gemlog/ Back to index
+=> / Homepage
+</content>
+  </entry>
+</feed>

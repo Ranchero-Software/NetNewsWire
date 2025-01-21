@@ -89,6 +89,7 @@ private extension AtomParser {
 		static let href = "href"
 		static let title = "title"
 		static let type = "type"
+		static let text = "text"
 		static let length = "length"
 		static let xmlLang = "xml:lang"
 		static let xmlBase = "xml:base"
@@ -218,7 +219,13 @@ private extension AtomParser {
 
 	func addContent(_ saxParser: SAXParser, _ article: RSSArticle) {
 
-		article.body = currentString(saxParser)
+		var content = currentString(saxParser)
+
+		if currentAttributes?[XMLString.type] == XMLString.text {
+			content = content?.replacingOccurrences(of: "\n", with: "\n<br>")
+		}
+
+		article.body = content
 	}
 
 	func addSummary(_ saxParser: SAXParser, _ article: RSSArticle) {

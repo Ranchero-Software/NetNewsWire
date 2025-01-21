@@ -127,4 +127,24 @@ final class AtomParserTests: XCTestCase {
 			XCTAssertTrue(article.url!.hasPrefix("https://blog.adobe.com/en/publish/20"))
 		}
 	}
+
+	func testPlainTextContent() {
+
+		// This feed has <link> elements that look like this…
+		//		<link href="/en/publish/2022/07/01/great-moments-in-document-history-reimagining-the-declaration-of-independence-as-pdf"/>
+		// …and it also has, in the feed declaration…
+		// 		xml:base="https://blog.adobe.com"
+		// …and so the <link> values should be parsed as (for example):
+		// https://blog.adobe.com/en/publish/2022/07/01/great-moments-in-document-history-reimagining-the-declaration-of-independence-as-pdf
+		// Issue: https://github.com/Ranchero-Software/NetNewsWire/issues/3662
+
+		let d = parserData("redterminal", "atom", "https://redterminal.org/gemlog/atom.web.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			let content = article.contentHTML!
+			XCTAssert(!content.contains("<p>"))
+			XCTAssert(content.contains("\n<br>\n<br>"))
+		}
+	}
 }
