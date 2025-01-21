@@ -25,6 +25,7 @@ final class AtomParser {
 		attributesStack.last
 	}
 
+	private var xmlBaseURL: URL?
 	private var parsingXHTML = false
 	private var xhtmlString: String?
 
@@ -90,6 +91,7 @@ private extension AtomParser {
 		static let type = "type"
 		static let length = "length"
 		static let xmlLang = "xml:lang"
+		static let xmlBase = "xml:base"
 	}
 
 	func currentString(_ saxParser: SAXParser) -> String? {
@@ -139,13 +141,23 @@ private extension AtomParser {
 		}
 	}
 
-	func addFeedLanguage() {
+	func addFeedAttributes() {
 
-		guard feed.language == nil, let currentAttributes else {
+		guard let currentAttributes else {
 			return
 		}
 
-		feed.language = currentAttributes[XMLString.xmlLang]
+		if feed.language == nil {
+			feed.language = currentAttributes[XMLString.xmlLang]
+		}
+
+		if xmlBaseURL == nil {
+			if let xmlBase = currentAttributes[XMLString.xmlBase] {
+				if let baseURL = URL(string: xmlBase) {
+					xmlBaseURL = baseURL
+				}
+			}
+		}
 	}
 
 	func addArticle() {
@@ -225,7 +237,8 @@ private extension AtomParser {
 		guard let urlString = attributes[XMLString.href], !urlString.isEmpty else {
 			return
 		}
-		
+		let resolvedURLString = linkResolvedAgainstXMLBase(urlString)
+
 		var rel = attributes[XMLString.rel]
 		if rel?.isEmpty ?? true {
 			rel = XMLString.alternate
@@ -233,19 +246,31 @@ private extension AtomParser {
 
 		if rel == XMLString.related {
 			if article.link == nil {
-				article.link = urlString
+				article.link = resolvedURLString
 			}
 		}
 		else if rel == XMLString.alternate {
 			if article.permalink == nil {
-				article.permalink = urlString
+				article.permalink = resolvedURLString
 			}
 		}
 		else if rel == XMLString.enclosure {
-			if let enclosure = enclosure(urlString, attributes) {
+			if let enclosure = enclosure(resolvedURLString, attributes) {
 				article.addEnclosure(enclosure)
 			}
 		}
+	}
+
+	func linkResolvedAgainstXMLBase(_ urlString: String) -> String {
+
+		guard let xmlBaseURL else {
+			return urlString
+		}
+
+		if let resolvedURL = URL(string: urlString, relativeTo: xmlBaseURL) {
+			return resolvedURL.absoluteString
+		}
+		return urlString
 	}
 
 	func enclosure(_ urlString: String, _ attributes: StringDictionary) -> RSSEnclosure? {
@@ -351,7 +376,7 @@ extension AtomParser: SAXParserDelegate {
 		}
 
 		if SAXEqualTags(localName, XMLName.feed) {
-			addFeedLanguage()
+			addFeedAttributes()
 		}
 
 		saxParser.beginStoringCharacters()
