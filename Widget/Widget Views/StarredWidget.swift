@@ -78,10 +78,11 @@ struct StarredWidgetView : View {
 			reduceAccessibilityCount = 1
 		}
 
+		let starredCount = entry.widgetData.starredArticles.count
 		if family == .systemLarge {
-			return entry.widgetData.currentStarredCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
+			return starredCount >= 7 ? (7 - reduceAccessibilityCount) : starredCount
 		}
-		return entry.widgetData.currentStarredCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
+		return starredCount >= 3 ? (3 - reduceAccessibilityCount) : starredCount
 	}
 
 	var inboxZero: some View {
