@@ -7,13 +7,13 @@
 */
 
 /* Bundle */
-"Unread_Widget_Title" = "Your Unread Articles";
+"Unread_Widget_Title" = "Unread Articles";
 "Unread_Widget_Description" = "See unread articles.";
 
-"Today_Widget_Title" = "Your Today Articles";
+"Today_Widget_Title" = "Today Articles";
 "Today_Widget_Description" = "See the latest articles.";
 
-"Starred_Widget_Title" = "Your Starred Articles";
+"Starred_Widget_Title" = "Starred Articles";
 "Starred_Widget_Description" = "See your starred articles.";
 
 "SmartFeedSummary_Widget_Title" = "Your Smart Feed Summary";
