@@ -89,7 +89,8 @@ final class IconView: NSView {
 
 		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? IconView.darkBackgroundColor : IconView.lightBackgroundColor
 		color.set()
-		dirtyRect.fill()
+		let r = NSIntersectionRect(dirtyRect, bounds)
+		r.fill()
 	}
 }
 
