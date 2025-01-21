@@ -81,18 +81,21 @@ private extension AtomParser {
 		static let modified = "modified".utf8CString
 	}
 
-	private struct XMLString {
+	private struct AttributeKey {
 		static let rel = "rel"
-		static let alternate = "alternate"
-		static let related = "related"
-		static let enclosure = "enclosure"
 		static let href = "href"
 		static let title = "title"
 		static let type = "type"
-		static let text = "text"
 		static let length = "length"
 		static let xmlLang = "xml:lang"
 		static let xmlBase = "xml:base"
+	}
+
+	private struct AttributeValue {
+		static let text = "text"
+		static let alternate = "alternate"
+		static let related = "related"
+		static let enclosure = "enclosure"
 	}
 
 	func currentString(_ saxParser: SAXParser) -> String? {
@@ -126,12 +129,12 @@ private extension AtomParser {
 		guard feed.link == nil, let currentAttributes else {
 			return
 		}
-		guard let link = currentAttributes[XMLString.href] else {
+		guard let link = currentAttributes[AttributeKey.href] else {
 			return
 		}
 
 		let isRelated: Bool = {
-			if let related = currentAttributes[XMLString.rel], related == XMLString.alternate { // rel="alternate"
+			if let related = currentAttributes[AttributeKey.rel], related == AttributeValue.alternate { // rel="alternate"
 				return true
 			}
 			return currentAttributes.count == 1 // Example: <link href="https://www.allenpike.com/"/> — no rel or anything
@@ -149,11 +152,11 @@ private extension AtomParser {
 		}
 
 		if feed.language == nil {
-			feed.language = currentAttributes[XMLString.xmlLang]
+			feed.language = currentAttributes[AttributeKey.xmlLang]
 		}
 
 		if xmlBaseURL == nil {
-			if let xmlBase = currentAttributes[XMLString.xmlBase] {
+			if let xmlBase = currentAttributes[AttributeKey.xmlBase] {
 				if let baseURL = URL(string: xmlBase) {
 					xmlBaseURL = baseURL
 				}
@@ -221,7 +224,7 @@ private extension AtomParser {
 
 		var content = currentString(saxParser)
 
-		if currentAttributes?[XMLString.type] == XMLString.text {
+		if currentAttributes?[AttributeKey.type] == AttributeValue.text {
 			content = content?.replacingOccurrences(of: "\n", with: "\n<br>")
 		}
 
@@ -241,27 +244,27 @@ private extension AtomParser {
 		guard let attributes = currentAttributes else {
 			return
 		}
-		guard let urlString = attributes[XMLString.href], !urlString.isEmpty else {
+		guard let urlString = attributes[AttributeKey.href], !urlString.isEmpty else {
 			return
 		}
 		let resolvedURLString = linkResolvedAgainstXMLBase(urlString)
 
-		var rel = attributes[XMLString.rel]
+		var rel = attributes[AttributeKey.rel]
 		if rel?.isEmpty ?? true {
-			rel = XMLString.alternate
+			rel = AttributeValue.alternate
 		}
 
-		if rel == XMLString.related {
+		if rel == AttributeValue.related {
 			if article.link == nil {
 				article.link = resolvedURLString
 			}
 		}
-		else if rel == XMLString.alternate {
+		else if rel == AttributeValue.alternate {
 			if article.permalink == nil {
 				article.permalink = resolvedURLString
 			}
 		}
-		else if rel == XMLString.enclosure {
+		else if rel == AttributeValue.enclosure {
 			if let enclosure = enclosure(resolvedURLString, attributes) {
 				article.addEnclosure(enclosure)
 			}
@@ -283,10 +286,10 @@ private extension AtomParser {
 	func enclosure(_ urlString: String, _ attributes: StringDictionary) -> RSSEnclosure? {
 
 		let enclosure = RSSEnclosure(url: urlString)
-		enclosure.title = attributes[XMLString.title]
-		enclosure.mimeType = attributes[XMLString.type]
+		enclosure.title = attributes[AttributeKey.title]
+		enclosure.mimeType = attributes[AttributeKey.type]
 
-		if let lengthString = attributes[XMLString.length] {
+		if let lengthString = attributes[AttributeKey.length] {
 			enclosure.length = Int(lengthString)
 		}
 
