@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+## 6.1.8 TestFlight build 6146 21 Jan 2025 - branch: 6.1.8-ios tag: iOS-6.1.8-6146
+
+Fixed a bug where sometimes feed icons wouldn’t show up until switching screens
+Fixed crash in the starred articles widget
+
 ## 6.1.8 TestFlight build 6145 18 Jan 2025 - branch: 6.1.8-ios tag: iOS-6.1.8-6145
 
 Improved usability of split view in iPad
