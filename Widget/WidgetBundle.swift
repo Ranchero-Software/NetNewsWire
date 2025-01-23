@@ -31,9 +31,9 @@ struct UnreadWidget: Widget {
 
 struct TodayWidget: Widget {
 	let kind: String = "com.ranchero.NetNewsWire.TodayWidget"
-	
+
 	var body: some WidgetConfiguration {
-		
+
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			TodayWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -49,9 +49,9 @@ struct TodayWidget: Widget {
 
 struct StarredWidget: Widget {
 	let kind: String = "com.ranchero.NetNewsWire.StarredWidget"
-	
+
 	var body: some WidgetConfiguration {
-		
+
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			StarredWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)

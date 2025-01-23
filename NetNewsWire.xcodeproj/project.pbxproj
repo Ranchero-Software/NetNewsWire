@@ -445,7 +445,7 @@
 		84C1ECF02CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Article Rendering/ArticleTextSize.swift",
+				ArticleRendering/ArticleTextSize.swift,
 				ShareExtension/ExtensionContainers.swift,
 				ShareExtension/ExtensionContainersFile.swift,
 				ShareExtension/ExtensionFeedAddRequest.swift,
