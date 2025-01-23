@@ -15,7 +15,7 @@ public struct Author: Codable, Hashable {
 	public let url: String?
 	public let avatarURL: String?
 	public let emailAddress: String?
-	
+
 	public init?(authorID: String?, name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
 		if name == nil && url == nil && emailAddress == nil {
 			return nil
@@ -27,8 +27,7 @@ public struct Author: Codable, Hashable {
 
 		if let authorID = authorID {
 			self.authorID = authorID
-		}
-		else {
+		} else {
 			var s = name ?? ""
 			s += url ?? ""
 			s += avatarURL ?? ""
@@ -47,8 +46,7 @@ public struct Author: Codable, Hashable {
 		do {
 			let authors = try decoder.decode([Author].self, from: data)
 			return Set(authors)
-		}
-		catch {
+		} catch {
 			assertionFailure("JSON representation of Author array could not be decoded: \(jsonString) error: \(error)")
 		}
 		return nil
@@ -76,8 +74,7 @@ extension Set where Element == Author {
 		do {
 			let jsonData = try encoder.encode(Array(self))
 			return String(data: jsonData, encoding: .utf8)
-		}
-		catch {
+		} catch {
 			assertionFailure("JSON representation of Author array could not be encoded: \(self) error: \(error)")
 		}
 		return nil

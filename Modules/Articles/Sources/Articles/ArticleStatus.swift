@@ -15,7 +15,7 @@ public final class ArticleStatus: Sendable, Hashable {
 		case read = "read"
 		case starred = "starred"
 	}
-	
+
 	public let articleID: String
 	public let dateArrived: Date
 
@@ -59,7 +59,7 @@ public final class ArticleStatus: Sendable, Hashable {
 			return starred
 		}
 	}
-	
+
 	public func setBoolStatus(_ status: Bool, forKey key: ArticleStatus.Key) {
 		switch key {
 		case .read:

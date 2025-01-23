@@ -9,10 +9,10 @@ let package = Package(
 		.library(
 			name: "Articles",
 			type: .dynamic,
-			targets: ["Articles"]),
+			targets: ["Articles"])
 	],
 	dependencies: [
-		.package(path: "../RSCore"),
+		.package(path: "../RSCore")
 	],
 	targets: [
 		.target(
@@ -21,6 +21,6 @@ let package = Package(
 				"RSCore"
 			],
 			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
-		),
+		)
 	]
 )
