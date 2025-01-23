@@ -9,7 +9,7 @@
 import WidgetKit
 import SwiftUI
 
-struct UnreadWidgetView : View {
+struct UnreadWidgetView: View {
 
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
@@ -20,12 +20,11 @@ struct UnreadWidgetView : View {
 		if entry.widgetData.currentUnreadCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.unread.url)
-		}
-		else {
-			GeometryReader { metrics in
+		} else {
+			GeometryReader { _ in
 				unreadImage
 					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
-				VStack(alignment:.leading, spacing: 0) {
+				VStack(alignment: .leading, spacing: 0) {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
@@ -105,4 +104,3 @@ struct UnreadWidgetView : View {
 	}
 
 }
-

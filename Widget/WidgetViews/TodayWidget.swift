@@ -9,7 +9,7 @@
 import WidgetKit
 import SwiftUI
 
-struct TodayWidgetView : View {
+struct TodayWidgetView: View {
 
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
@@ -20,12 +20,11 @@ struct TodayWidgetView : View {
 		if entry.widgetData.todayArticles.count == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.today.url)
-		}
-		else {
-			GeometryReader { metrics in
+		} else {
+			GeometryReader { _ in
 				todayImage
 					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
-				VStack(alignment:.leading, spacing: 0) {
+				VStack(alignment: .leading, spacing: 0) {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
@@ -92,7 +91,6 @@ struct TodayWidgetView : View {
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 30)
 				.foregroundColor(.orange)
-
 
 			Text(L10n.todayWidgetNoItemsTitle)
 				.font(.headline)
