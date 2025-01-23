@@ -1,6 +1,6 @@
 identifier_name:
   min_length: 1
-  max_length: 40
+  max_length: 50
   allowed_patterns: ^_.*$
 
 line_length:

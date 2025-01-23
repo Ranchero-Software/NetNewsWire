@@ -38,7 +38,7 @@ struct NewsBlurStoriesResponse: Decodable {
 
 extension NewsBlurStoriesResponse {
 	private enum CodingKeys: String, CodingKey {
-		case stories = "stories"
+		case stories
 	}
 }
 

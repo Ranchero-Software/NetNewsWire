@@ -265,7 +265,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
+	public static func ==(lhs: Feed, rhs: Feed) -> Bool {
 		return lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
 	}
 }
