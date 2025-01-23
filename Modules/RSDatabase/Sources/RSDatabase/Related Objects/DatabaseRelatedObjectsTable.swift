@@ -15,7 +15,7 @@ public protocol DatabaseRelatedObjectsTable: DatabaseTable {
 
 	var databaseIDKey: String { get}
 	var cache: DatabaseObjectCache { get }
-	
+
 	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]?
 	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject]
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject?
@@ -39,8 +39,7 @@ public extension DatabaseRelatedObjectsTable {
 		for databaseID in databaseIDs {
 			if let cachedObject = cache[databaseID] {
 				cachedObjects += [cachedObject]
-			}
-			else {
+			} else {
 				databaseIDsToFetch.insert(databaseID)
 			}
 		}

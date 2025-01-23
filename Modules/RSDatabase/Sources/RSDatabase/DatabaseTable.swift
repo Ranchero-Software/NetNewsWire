@@ -15,11 +15,11 @@ public protocol DatabaseTable {
 }
 
 public extension DatabaseTable {
-	
+
 	// MARK: Fetching
 
 	func selectRowsWhere(key: String, equals value: Any, in database: FMDatabase) -> FMResultSet? {
-		
+
 		return database.rs_selectRowsWhereKey(key, equalsValue: value, tableName: name)
 	}
 
@@ -39,7 +39,7 @@ public extension DatabaseTable {
 	// MARK: Deleting
 
 	func deleteRowsWhere(key: String, equalsAnyValue values: [Any], in database: FMDatabase) {
-		
+
 		if values.isEmpty {
 			return
 		}
@@ -49,21 +49,21 @@ public extension DatabaseTable {
 	// MARK: Updating
 
 	func updateRowsWithValue(_ value: Any, valueKey: String, whereKey: String, matches: [Any], database: FMDatabase) {
-		
-		let _ = database.rs_updateRows(withValue: value, valueKey: valueKey, whereKey: whereKey, inValues: matches, tableName: self.name)
+
+		_ = database.rs_updateRows(withValue: value, valueKey: valueKey, whereKey: whereKey, inValues: matches, tableName: self.name)
 	}
-	
+
 	func updateRowsWithDictionary(_ dictionary: DatabaseDictionary, whereKey: String, matches: Any, database: FMDatabase) {
-		
-		let _ = database.rs_updateRows(with: dictionary, whereKey: whereKey, equalsValue: matches, tableName: self.name)
+
+		_ = database.rs_updateRows(with: dictionary, whereKey: whereKey, equalsValue: matches, tableName: self.name)
 	}
-	
+
 	// MARK: Saving
 
 	func insertRows(_ dictionaries: [DatabaseDictionary], insertType: RSDatabaseInsertType, in database: FMDatabase) {
 
 		for oneDictionary in dictionaries {
-			let _ = database.rs_insertRow(with: oneDictionary, insertType: insertType, tableName: self.name)
+			_ = database.rs_insertRow(with: oneDictionary, insertType: insertType, tableName: self.name)
 		}
 	}
 
@@ -136,4 +136,3 @@ public extension FMResultSet {
 		return Set(compactMap(completion))
 	}
 }
-

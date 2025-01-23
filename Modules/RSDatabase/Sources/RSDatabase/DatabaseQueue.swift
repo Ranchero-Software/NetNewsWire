@@ -152,7 +152,7 @@ public final class DatabaseQueue {
 	/// Use this to create tables, indexes, etc.
 	public func runCreateStatements(_ statements: String) throws {
 		precondition(Thread.isMainThread)
-		var error: DatabaseError? = nil
+		var error: DatabaseError?
 		runInDatabaseSync { result in
 			switch result {
 			case .success(let database):
@@ -236,8 +236,7 @@ private extension DatabaseQueue {
 		autoreleasepool {
 			if _isSuspended {
 				databaseBlock(.failure(.isSuspended))
-			}
-			else {
+			} else {
 				if useTransaction {
 					database.beginTransaction()
 				}
@@ -256,4 +255,3 @@ private extension DatabaseQueue {
 		database.setShouldCacheStatements(true)
 	}
 }
-

@@ -13,7 +13,7 @@ let package = Package(
 		.library(
 			name: "RSDatabaseObjC",
 			type: .dynamic,
-			targets: ["RSDatabaseObjC"]),
+			targets: ["RSDatabaseObjC"])
 	],
 	dependencies: [
 	],
@@ -29,6 +29,6 @@ let package = Package(
 		),
 		.testTarget(
 			name: "RSDatabaseTests",
-			dependencies: ["RSDatabase"]),
+			dependencies: ["RSDatabase"])
 	]
 )
