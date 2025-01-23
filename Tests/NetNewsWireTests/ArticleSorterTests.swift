@@ -13,44 +13,44 @@ import XCTest
 @testable import NetNewsWire
 
 class ArticleSorterTests: XCTestCase {
-	
+
 	// MARK: sortByDate ascending tests
-	
+
 	func testSortByDateAscending() {
 		let now = Date()
-		
+
 		let article1 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-60.0), sortableArticleID: "1", sortableFeedID: "4")
 		let article2 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(60.0), sortableArticleID: "2", sortableFeedID: "6")
 		let article3 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(120.0), sortableArticleID: "3", sortableFeedID: "6")
 		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-120.0), sortableArticleID: "4", sortableFeedID: "5")
-		
+
 		let articles = [article1, article2, article3, article4]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
 														sortDirection: .orderedAscending,
 														groupByFeed: false)
-		
+
 		XCTAssertEqual(sortedArticles.count, articles.count)
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article4)
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article1)
 		XCTAssertEqual(sortedArticles.articleAtRow(2), article2)
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article3)
 	}
-	
+
 	func testSortByDateAscendingWithSameDate() {
 		let now = Date()
-		
+
 		// Articles with the same date should end up being sorted by their article ID
 		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "1")
 		let article2 = TestArticle(sortableName: "Matt's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "2")
 		let article3 = TestArticle(sortableName: "Sally's Feed", sortableDate: now, sortableArticleID: "3", sortableFeedID: "3")
 		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: Date(timeInterval: -60.0, since: now), sortableArticleID: "4", sortableFeedID: "4")
 		let article5 = TestArticle(sortableName: "Paul's Feed", sortableDate: Date(timeInterval: -120.0, since: now), sortableArticleID: "5", sortableFeedID: "5")
-		
+
 		let articles = [article1, article2, article3, article4, article5]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
 														sortDirection: .orderedAscending,
 														groupByFeed: false)
-		
+
 		XCTAssertEqual(sortedArticles.count, articles.count)
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article5)
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article4)
@@ -58,7 +58,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article2)
 		XCTAssertEqual(sortedArticles.articleAtRow(4), article3)
 	}
-	
+
 	func testSortByDateAscendingWithGroupByFeed() {
 		let now = Date()
 
@@ -71,12 +71,12 @@ class ArticleSorterTests: XCTestCase {
 		let article7 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "1")
 		let article8 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "0")
 		let article9 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "0")
-		
+
 		let articles = [article1, article2, article3, article4, article5, article6, article7, article8, article9]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles, sortDirection: .orderedAscending, groupByFeed: true)
-		
+
 		XCTAssertEqual(sortedArticles.count, 9)
-		
+
 		// Gordy's feed articles
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article4)
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article5)
@@ -93,42 +93,42 @@ class ArticleSorterTests: XCTestCase {
 	}
 
 	// MARK: sortByDate descending tests
-	
+
 	func testSortByDateDescending() {
 		let now = Date()
-		
+
 		let article1 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-60.0), sortableArticleID: "1", sortableFeedID: "4")
 		let article2 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(60.0), sortableArticleID: "2", sortableFeedID: "6")
 		let article3 = TestArticle(sortableName: "Phil's Feed", sortableDate: now.addingTimeInterval(120.0), sortableArticleID: "3", sortableFeedID: "6")
 		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: now.addingTimeInterval(-120.0), sortableArticleID: "4", sortableFeedID: "5")
-		
+
 		let articles = [article1, article2, article3, article4]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
 														sortDirection: .orderedDescending,
 														groupByFeed: false)
-		
+
 		XCTAssertEqual(sortedArticles.count, articles.count)
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article3)
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article2)
 		XCTAssertEqual(sortedArticles.articleAtRow(2), article1)
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article4)
 	}
-	
+
 	func testSortByDateDescendingWithSameDate() {
 		let now = Date()
-		
+
 		// Articles with the same date should end up being sorted by their article ID
 		let article1 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "1")
 		let article2 = TestArticle(sortableName: "Matt's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "2")
 		let article3 = TestArticle(sortableName: "Sally's Feed", sortableDate: now, sortableArticleID: "3", sortableFeedID: "3")
 		let article4 = TestArticle(sortableName: "Susie's Feed", sortableDate: Date(timeInterval: -60.0, since: now), sortableArticleID: "4", sortableFeedID: "4")
 		let article5 = TestArticle(sortableName: "Paul's Feed", sortableDate: Date(timeInterval: -120.0, since: now), sortableArticleID: "5", sortableFeedID: "5")
-		
+
 		let articles = [article1, article2, article3, article4, article5]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles,
 														sortDirection: .orderedDescending,
 														groupByFeed: false)
-		
+
 		XCTAssertEqual(sortedArticles.count, articles.count)
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article1)
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article2)
@@ -136,7 +136,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article4)
 		XCTAssertEqual(sortedArticles.articleAtRow(4), article5)
 	}
-	
+
 	func testSortByDateDescendingWithGroupByFeed() {
 		let now = Date()
 
@@ -149,12 +149,12 @@ class ArticleSorterTests: XCTestCase {
 		let article7 = TestArticle(sortableName: "Phil's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "1")
 		let article8 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "0")
 		let article9 = TestArticle(sortableName: "Zippy's Feed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "0")
-		
+
 		let articles = [article1, article2, article3, article4, article5, article6, article7, article8, article9]
 		let sortedArticles = ArticleSorter.sortedByDate(articles: articles, sortDirection: .orderedDescending, groupByFeed: true)
-		
+
 		XCTAssertEqual(sortedArticles.count, 9)
-		
+
 		// Gordy's feed articles
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article5)
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article4)
@@ -169,12 +169,12 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(7), article8)
 		XCTAssertEqual(sortedArticles.articleAtRow(8), article9)
 	}
-	
+
 	// MARK: Additional group by feed tests
 
 	func testGroupByFeedWithCaseInsensitiveFeedNames() {
 		let now = Date()
-		
+
 		let article1 = TestArticle(sortableName: "phil's feed", sortableDate: now, sortableArticleID: "1", sortableFeedID: "1")
 		let article2 = TestArticle(sortableName: "PhIl's FEed", sortableDate: now, sortableArticleID: "2", sortableFeedID: "1")
 		let article3 = TestArticle(sortableName: "APPLE's feed", sortableDate: now, sortableArticleID: "3", sortableFeedID: "2")
@@ -187,7 +187,7 @@ class ArticleSorterTests: XCTestCase {
 														groupByFeed: true)
 
 		XCTAssertEqual(sortedArticles.count, articles.count)
-		
+
 		// Apple's feed articles
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article3)
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article5)
@@ -196,7 +196,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article2)
 		XCTAssertEqual(sortedArticles.articleAtRow(4), article4)
 	}
-	
+
 	func testGroupByFeedWithSameFeedNames() {
 		let now = Date()
 
@@ -219,7 +219,7 @@ class ArticleSorterTests: XCTestCase {
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article2)
 		XCTAssertEqual(sortedArticles.articleAtRow(4), article4)
 	}
-					
+
 }
 
 private struct TestArticle: SortableArticle, Equatable {
@@ -236,5 +236,5 @@ private extension Array where Element == TestArticle {
 		}
 		return self[row]
 	}
-	
+
 }

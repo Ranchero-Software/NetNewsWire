@@ -17,23 +17,23 @@ import Foundation
              returns an analogous Swift dictionary
 */
 extension NSAppleEventDescriptor {
-    public func usrfDictionary() -> [String:NSAppleEventDescriptor] {
+    public func usrfDictionary() -> [String: NSAppleEventDescriptor] {
         guard self.isRecordDescriptor else {
-            print ("error: usrfDictionary() expected input to be a record")
+            print("error: usrfDictionary() expected input to be a record")
             return [:]
         }
 		guard let usrfList = self.forKeyword("usrf".fourCharCode) else {
-            print ("error: usrfDictionary() couldn't find usrf")
+            print("error: usrfDictionary() couldn't find usrf")
             return [:]
         }
         let listCount = usrfList.numberOfItems
-        guard (listCount%2 == 0) else {
-            print ("error: usrfDictionary() expected even number of items in usrf")
+        guard listCount%2 == 0 else {
+            print("error: usrfDictionary() expected even number of items in usrf")
             return [:]
         }
-        var usrfDictionary:[String:NSAppleEventDescriptor] = [:]
+        var usrfDictionary: [String: NSAppleEventDescriptor] = [:]
         var processedItems = 0
-        while (processedItems < listCount) {
+        while processedItems < listCount {
             processedItems = processedItems + 2
             guard let nthlabel = usrfList.atIndex(processedItems-1) else {
                 print("usrfDictionary() couldn't get item \(processedItems+1) in usrf list")
@@ -49,6 +49,6 @@ extension NSAppleEventDescriptor {
             }
             usrfDictionary[nthLabelString] = nthvalue
         }
-        return usrfDictionary;
+        return usrfDictionary
     }
 }
