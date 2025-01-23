@@ -28,8 +28,7 @@ public final class DateParser {
 
 			if dateIsW3CDate(buffer, numberOfBytes) {
 				return parseW3CDate(buffer, numberOfBytes)
-			}
-			else if dateIsPubDate(buffer, numberOfBytes) {
+			} else if dateIsPubDate(buffer, numberOfBytes) {
 				return parsePubDate(buffer, numberOfBytes)
 			}
 
@@ -293,7 +292,7 @@ private extension DateParser {
 
 		let day = nextNumericValue(bytes, numberOfBytes, 0, 2, &finalIndex) ?? 1
 		let month = nextMonthValue(bytes, numberOfBytes, finalIndex + 1, &finalIndex) ?? .January
-		
+
 		guard let year = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 4, &finalIndex) else {
 			return nil
 		}
@@ -335,13 +334,13 @@ private extension DateParser {
 		timeInfo.tm_min = CInt(minute)
 		timeInfo.tm_hour = CInt(hour)
 		timeInfo.tm_mday = CInt(day)
-		timeInfo.tm_mon = CInt(month - 1) //It's 1-based coming in
-		timeInfo.tm_year = CInt(year - 1900) //see time.h -- it's years since 1900
+		timeInfo.tm_mon = CInt(month - 1) // It's 1-based coming in
+		timeInfo.tm_year = CInt(year - 1900) // see time.h -- it's years since 1900
 		timeInfo.tm_wday = -1
 		timeInfo.tm_yday = -1
 		timeInfo.tm_isdst = -1
-		timeInfo.tm_gmtoff = 0;
-		timeInfo.tm_zone = nil;
+		timeInfo.tm_gmtoff = 0
+		timeInfo.tm_zone = nil
 
 		let rawTime = timegm(&timeInfo) - timeZoneOffset
 		if rawTime == time_t(UInt32.max) {
@@ -451,7 +450,7 @@ private extension DateParser {
 			}
 			characters.append(character)
 		}
-		
+
 		let name = String(decoding: characters, as: UTF8.self)
 		return timeZoneTable[name]
 	}
@@ -469,7 +468,7 @@ private extension DateParser {
 
 			finalIndex = i
 			let ch = bytes[i]
-			
+
 			let isAlphaCharacter = isAlpha(ch)
 			if !isAlphaCharacter {
 				if numberOfAlphaCharactersFound < 1 {
@@ -543,7 +542,7 @@ private extension DateParser {
 
 		// Maximum for the maximum is 4 (for time zone offsets and years)
 		assert(maximumNumberOfDigits > 0 && maximumNumberOfDigits <= 4)
-		
+
 		var numberOfDigitsFound = 0
 		var digits = [0, 0, 0, 0]
 
@@ -560,7 +559,7 @@ private extension DateParser {
 				break
 			}
 
-			digits[numberOfDigitsFound] = ch - 48; // '0' is 48
+			digits[numberOfDigitsFound] = ch - 48 // '0' is 48
 			numberOfDigitsFound+=1
 			if numberOfDigitsFound >= maximumNumberOfDigits {
 				break
