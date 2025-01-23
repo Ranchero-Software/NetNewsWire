@@ -11,12 +11,12 @@ import os.log
 import RSCore
 
 final class AccountMetadataFile {
-	
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "accountMetadataFile")
 
 	private let fileURL: URL
 	private let account: Account
-	
+
 	private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
@@ -28,11 +28,11 @@ final class AccountMetadataFile {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
-	
+
 	func markAsDirty() {
 		isDirty = true
 	}
-	
+
 	func load() {
 		if let fileData = try? Data(contentsOf: fileURL) {
 			let decoder = PropertyListDecoder()
@@ -40,10 +40,10 @@ final class AccountMetadataFile {
 		}
 		account.metadata.delegate = account
 	}
-	
+
 	func save() {
 		guard !account.isDeleted else { return }
-		
+
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
 
@@ -54,7 +54,7 @@ final class AccountMetadataFile {
 			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
 		}
 	}
-	
+
 }
 
 private extension AccountMetadataFile {

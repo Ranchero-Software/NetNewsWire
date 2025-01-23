@@ -17,7 +17,7 @@ public struct OAuthAuthorizationClient: Equatable {
 	public var redirectUri: String
 	public var state: String?
 	public var secret: String
-	
+
 	public init(id: String, redirectUri: String, state: String?, secret: String) {
 		self.id = id
 		self.redirectUri = redirectUri
@@ -34,20 +34,20 @@ public struct OAuthAuthorizationRequest {
 	public var redirectUri: String
 	public var scope: String
 	public var state: String?
-	
+
 	public init(clientId: String, redirectUri: String, scope: String, state: String?) {
 		self.clientId = clientId
 		self.redirectUri = redirectUri
 		self.scope = scope
 		self.state = state
 	}
-	
+
 	public var queryItems: [URLQueryItem] {
 		return [
 			URLQueryItem(name: "response_type", value: responseType),
 			URLQueryItem(name: "client_id", value: clientId),
 			URLQueryItem(name: "scope", value: scope),
-			URLQueryItem(name: "redirect_uri", value: redirectUri),
+			URLQueryItem(name: "redirect_uri", value: redirectUri)
 		]
 	}
 }
@@ -60,7 +60,7 @@ public struct OAuthAuthorizationResponse {
 }
 
 public extension OAuthAuthorizationResponse {
-	
+
 	init(url: URL, client: OAuthAuthorizationClient) throws {
 		guard let scheme = url.scheme, client.redirectUri.hasPrefix(scheme) else {
 			throw URLError(.unsupportedURL)
@@ -75,10 +75,10 @@ public extension OAuthAuthorizationResponse {
 		guard let codeValue = code?.value, !codeValue.isEmpty else {
 			throw URLError(.unsupportedURL)
 		}
-		
+
 		let state = queryItems.first { $0.name.lowercased() == "state" }
 		let stateValue = state?.value
-		
+
 		self.init(code: codeValue, state: stateValue)
 	}
 }
@@ -89,7 +89,7 @@ public struct OAuthAuthorizationErrorResponse: Error {
 	public var error: OAuthAuthorizationError
 	public var state: String?
 	public var errorDescription: String?
-	
+
 	public var localizedDescription: String {
 		return errorDescription ?? error.rawValue
 	}
@@ -115,11 +115,11 @@ public struct OAuthAccessTokenRequest: Encodable {
 	public var redirectUri: String
 	public var state: String?
 	public var clientId: String
-	
+
 	// Possibly not part of the standard but specific to certain implementations (e.g.: Feedly).
 	public var clientSecret: String
 	public var scope: String
-	
+
 	public init(authorizationResponse: OAuthAuthorizationResponse, scope: String, client: OAuthAuthorizationClient) {
 		self.code = authorizationResponse.code
 		self.redirectUri = client.redirectUri
@@ -152,22 +152,21 @@ public struct OAuthAuthorizationGrant: Equatable {
 /// https://tools.ietf.org/html/rfc6749#section-4.1
 public protocol OAuthAuthorizationCodeGrantRequesting {
 	associatedtype AccessTokenResponse: OAuthAccessTokenResponse
-	
+
 	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
 	/// - Parameter request: The information about the client requesting authorization to be granted access tokens.
 	/// - Parameter baseUrlComponents: The scheme and host of the url except for the path.
 	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest
-		
-	
+
 	/// Performs the request for the access token given an authorization code.
 	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokens on the user's behalf.
 	/// - Parameter completion: On success, the access token response appropriate for concrete type's service. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
-	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completion: @escaping (Result<AccessTokenResponse, Error>) -> ())
+	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completion: @escaping (Result<AccessTokenResponse, Error>) -> Void)
 }
 
 protocol OAuthAuthorizationGranting: AccountDelegate {
-		
+
 	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
-	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> Void)
 }

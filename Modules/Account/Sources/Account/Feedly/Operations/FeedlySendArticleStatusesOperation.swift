@@ -11,7 +11,6 @@ import Articles
 import SyncDatabase
 import os.log
 
-
 /// Take changes to statuses of articles locally and apply them to the corresponding the articles remotely.
 final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 
@@ -24,7 +23,7 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 		self.service = service
 		self.log = log
 	}
-	
+
 	override func run() {
 		os_log(.debug, log: log, "Sending article statuses...")
 
@@ -33,7 +32,7 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 				self.didFinish()
 				return
 			}
-			
+
 			switch result {
 			case .success(let syncStatuses):
 				self.processStatuses(syncStatuses)
@@ -51,7 +50,7 @@ private extension FeedlySendArticleStatusesOperation {
 			(.read, false, .unread),
 			(.read, true, .read),
 			(.starred, true, .saved),
-			(.starred, false, .unsaved),
+			(.starred, false, .unsaved)
 		]
 
 		let group = DispatchGroup()

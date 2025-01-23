@@ -9,12 +9,12 @@ let package = Package(
 		.library(
 			name: "SyncDatabase",
 			type: .dynamic,
-			targets: ["SyncDatabase"]),
+			targets: ["SyncDatabase"])
 	],
 	dependencies: [
 		.package(path: "../RSCore"),
 		.package(path: "../Articles"),
-		.package(path: "../RSDatabase"),
+		.package(path: "../RSDatabase")
 	],
 	targets: [
 		.target(
@@ -22,9 +22,9 @@ let package = Package(
 			dependencies: [
 				"RSCore",
 				"RSDatabase",
-				"Articles",
+				"Articles"
 			],
 			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
-		),
+		)
 	]
 )

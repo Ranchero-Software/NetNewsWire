@@ -28,7 +28,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	var accountMetadata: AccountMetadata? = nil
+	var accountMetadata: AccountMetadata?
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	let caller: NewsBlurAPICaller
@@ -59,14 +59,14 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		database = SyncDatabase(databaseFilePath: dataFolder.appending("/DB.sqlite3"))
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any], completion: @escaping () -> Void) {
 		completion()
 	}
-	
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+
+	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		refreshProgress.reset()
-		
+
 		self.refreshProgress.addToNumberOfTasksAndRemaining(4)
 
 		refreshFeeds(for: account) { result in
@@ -135,8 +135,8 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
-	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+
+	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		os_log(.debug, log: log, "Sending story statuses...")
 
 		database.selectForProcessing { result in
@@ -209,7 +209,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+	func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		os_log(.debug, log: log, "Refreshing story statuses...")
 
 		let group = DispatchGroup()
@@ -349,18 +349,18 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> ()) {
+	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		completion(.success(()))
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
+	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 		self.refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		caller.addFolder(named: name) { result in
 			self.refreshProgress.completeTask()
 
 			switch result {
-			case .success():
+			case .success:
 				if let folder = account.ensureFolder(with: name) {
 					completion(.success(folder))
 				} else {
@@ -372,7 +372,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folderToRename = folder.name else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -397,7 +397,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		folder.name = name
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
+	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folderToRemove = folder.name else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -427,7 +427,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> ()) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		let folderName = (container as? Folder)?.name
@@ -446,7 +446,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -473,7 +473,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder else {
 			DispatchQueue.main.async {
 				if let account = container as? Account {
@@ -492,11 +492,11 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		deleteFeed(for: account, with: feed, from: container, completion: completion)
 	}
 
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -515,7 +515,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			case .success:
 				from.removeFeed(feed)
 				to.addFeed(feed)
-				
+
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
@@ -523,7 +523,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {
@@ -545,7 +545,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
+	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folderName = folder.name else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -613,13 +613,13 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func accountWillBeDeleted(_ account: Account) {
-		caller.logout() { _ in }
+		caller.logout { _ in }
 	}
 
-	class func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> ()) {
+	class func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		let caller = NewsBlurAPICaller(transport: transport)
 		caller.credentials = credentials
-		caller.validateCredentials() { result in
+		caller.validateCredentials { result in
 			DispatchQueue.main.async {
 				completion(result)
 			}
