@@ -8,12 +8,13 @@
 
 import Foundation
 import CoreServices
+import UniformTypeIdentifiers
+import os
 import Articles
 import Account
 import RSCore
 import RSWeb
 import Parser
-import UniformTypeIdentifiers
 
 extension Notification.Name {
 
@@ -23,6 +24,9 @@ extension Notification.Name {
 final class FaviconDownloader {
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FaviconDownloader")
+	private static let debugLoggingEnabled = false
 
 	private let folder: String
 	private let diskCache: BinaryDiskCache
@@ -78,6 +82,10 @@ final class FaviconDownloader {
 
 		assert(Thread.isMainThread)
 
+		if Self.debugLoggingEnabled {
+			Self.logger.debug("FaviconDownloader: favicon for feed \(feed.url)")
+		}
+
 		var homePageURL = feed.homePageURL
 		if let faviconURL = feed.faviconURL {
 			return favicon(with: faviconURL, homePageURL: homePageURL)
@@ -114,6 +122,11 @@ final class FaviconDownloader {
 	}
 
 	func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
+
+		if Self.debugLoggingEnabled {
+			Self.logger.debug("FaviconDownloader: downloading favicon with favicon URL \(faviconURL) and home page URL \(homePageURL ?? "()")")
+		}
+
 		let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
 		return downloader.iconImage
 	}
@@ -128,15 +141,30 @@ final class FaviconDownloader {
 			}
 		}
 
+		if Self.debugLoggingEnabled {
+			Self.logger.debug("FaviconDownloader: downloading favicon for home page URL \(url)")
+		}
+
 		if homePageURLsWithNoFaviconURLCache.contains(url) {
+			if Self.debugLoggingEnabled {
+				Self.logger.debug("FaviconDownloader: home page URL \(url) is known to have no favicon")
+			}
 			return nil
 		}
 
 		if let faviconURL = homePageToFaviconURLCache[url] {
+			if Self.debugLoggingEnabled {
+				Self.logger.debug("FaviconDownloader: home page URL \(url) has cached favicon URL \(faviconURL)")
+			}
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
 		if let faviconURLs = findFaviconURLs(with: url) {
+
+			if Self.debugLoggingEnabled {
+				Self.logger.debug("FaviconDownloader: found favicon URLs for home page URL \(url): \(faviconURLs)")
+			}
+
 			// If the site explicitly specifies favicon.ico, it will appear twice.
 			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 
@@ -154,11 +182,17 @@ final class FaviconDownloader {
 	@objc func didLoadFavicon(_ note: Notification) {
 
 		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
+			assertionFailure("Expected singleFaviconDownloader as note.object for .DidLoadFavicon notification.")
 			return
 		}
 		guard let homePageURL = singleFaviconDownloader.homePageURL else {
 			return
 		}
+
+		if Self.debugLoggingEnabled {
+			Self.logger.debug("FaviconDownloader: received didLoadFavicon notification for home page URL \(homePageURL)")
+		}
+
 		guard let _ = singleFaviconDownloader.iconImage else {
 			if let faviconURLs = remainingFaviconURLs[homePageURL] {
 				if let nextIconURL = faviconURLs.first {
@@ -188,6 +222,10 @@ final class FaviconDownloader {
 			return
 		}
 
+		if Self.debugLoggingEnabled {
+			Self.logger.debug("FaviconDownloader: received .htmlMetadataAvailable notification for URL \(url)")
+		}
+
 		Task { @MainActor in
 			// This will fetch the favicon (if possible) and post a .FaviconDidBecomeAvailable Notification.
 			_ = favicon(withHomePageURL: url)
@@ -213,10 +251,17 @@ private extension FaviconDownloader {
 
 	func findFaviconURLs(with homePageURL: String) -> [String]? {
 
+		if Self.debugLoggingEnabled {
+			Self.logger.debug("FaviconDownloader: finding favicon URLs for home page URL \(homePageURL)")
+		}
+
 		guard let url = URL(string: homePageURL) else {
 			return nil
 		}
 		guard let htmlMetadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
+			if Self.debugLoggingEnabled {
+				Self.logger.debug("FaviconDownloader: skipping finding favicon URLs for home page URL \(homePageURL) because no HTMLMetadata is available yet")
+			}
 			return nil
 		}
 		let faviconURLs = htmlMetadata.usableFaviconURLs() ?? [String]()
@@ -258,6 +303,11 @@ private extension FaviconDownloader {
 	func postFaviconDidBecomeAvailableNotification(_ faviconURL: String) {
 
 		DispatchQueue.main.async {
+
+			if Self.debugLoggingEnabled {
+				Self.logger.debug("FaviconDownloader: posting favicon available notification for favicon URL \(faviconURL)")
+			}
+
 			let userInfo: [AnyHashable: Any] = [UserInfoKey.faviconURL: faviconURL]
 			NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
@@ -291,6 +341,11 @@ private extension FaviconDownloader {
 	}
 
 	func saveHomePageToFaviconURLCache() {
+
+		if Self.debugLoggingEnabled {
+			Self.logger.debug("FaviconDownloader: saving homePageToFaviconURLCache")
+		}
+
 		homePageToFaviconURLCacheDirty = false
 
 		let encoder = PropertyListEncoder()
@@ -305,6 +360,11 @@ private extension FaviconDownloader {
 	}
 	
 	func saveHomePageURLsWithNoFaviconURLCache() {
+
+		if Self.debugLoggingEnabled {
+			Self.logger.debug("FaviconDownloader: saving homePageURLsWithNoFaviconURLCache")
+		}
+
 		homePageURLsWithNoFaviconURLCacheDirty = false
 
 		let encoder = PropertyListEncoder()
