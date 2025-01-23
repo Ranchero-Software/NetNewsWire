@@ -12,7 +12,7 @@ import RSWeb
 import RSCore
 
 class FeedFinder {
-	
+
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		Downloader.shared.download(url) { (data, response, error) in
 
@@ -28,33 +28,33 @@ class FeedFinder {
 				}
 				return
 			}
-			
+
 			if let error = error {
 				completion(.failure(error))
 				return
 			}
-			
+
 			guard let data = data, let response = response else {
 				completion(.failure(AccountError.createErrorNotFound))
 				return
 			}
-			
+
 			if !response.statusIsOK || data.isEmpty {
 				completion(.failure(AccountError.createErrorNotFound))
 				return
 			}
-			
+
 			if FeedFinder.isFeed(data) {
 				let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
 				completion(.success(Set([feedSpecifier])))
 				return
 			}
-			
+
 			if !FeedFinder.isHTML(data) {
 				completion(.failure(AccountError.createErrorNotFound))
 				return
 			}
-			
+
 			FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString, completion: completion)
 		}
 	}
@@ -68,8 +68,7 @@ private extension FeedFinder {
 		if let existingFeedSpecifier = feedSpecifiers[feedSpecifier.urlString] {
 			let mergedFeedSpecifier = existingFeedSpecifier.feedSpecifierByMerging(feedSpecifier)
 			feedSpecifiers[feedSpecifier.urlString] = mergedFeedSpecifier
-		}
-		else {
+		} else {
 			feedSpecifiers[feedSpecifier.urlString] = feedSpecifier
 		}
 	}
@@ -90,8 +89,7 @@ private extension FeedFinder {
 			if oneFeedSpecifier.source == .HTMLHead {
 				addFeedSpecifier(oneFeedSpecifier, feedSpecifiers: &feedSpecifiers)
 				didFindFeedInHTMLHead = true
-			}
-			else {
+			} else {
 				if feedSpecifiers[oneFeedSpecifier.urlString] == nil {
 					feedSpecifiersToDownload.insert(oneFeedSpecifier)
 				}
@@ -101,12 +99,10 @@ private extension FeedFinder {
 		if didFindFeedInHTMLHead {
 			completion(.success(Set(feedSpecifiers.values)))
 			return
-		}
-		else if feedSpecifiersToDownload.isEmpty {
+		} else if feedSpecifiersToDownload.isEmpty {
 			completion(.failure(AccountError.createErrorNotFound))
 			return
-		}
-		else {
+		} else {
 			downloadFeedSpecifiers(feedSpecifiersToDownload, feedSpecifiers: feedSpecifiers, completion: completion)
 		}
 	}
@@ -140,12 +136,12 @@ private extension FeedFinder {
 
 		var resultFeedSpecifiers = feedSpecifiers
 		let group = DispatchGroup()
-		
+
 		for downloadFeedSpecifier in downloadFeedSpecifiers {
 			guard let url = URL(string: downloadFeedSpecifier.urlString) else {
 				continue
 			}
-			
+
 			group.enter()
 			Downloader.shared.download(url) { (data, response, error) in
 				if let data = data, let response = response, response.statusIsOK, error == nil {
@@ -155,7 +151,7 @@ private extension FeedFinder {
 				}
 				group.leave()
 			}
-			
+
 		}
 
 		group.notify(queue: DispatchQueue.main) {

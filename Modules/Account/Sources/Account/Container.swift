@@ -1,4 +1,3 @@
-
 //
 //  Container.swift
 //  NetNewsWire
@@ -12,7 +11,7 @@ import RSCore
 import Articles
 
 extension Notification.Name {
-	
+
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
 
@@ -22,7 +21,7 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 	var topLevelFeeds: Set<Feed> { get set }
 	var folders: Set<Folder>? { get set }
 	var externalID: String? { get set }
-	
+
 	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
@@ -32,7 +31,7 @@ public protocol Container: AnyObject, ContainerIdentifiable {
     func removeFeed(_ feed: Feed)
 	func addFeed(_ feed: Feed)
 
-	//Recursive — checks subfolders
+	// Recursive — checks subfolders
 	func flattenedFeeds() -> Set<Feed>
 	func has(_ feed: Feed) -> Bool
 	func hasFeed(with feedID: String) -> Bool
@@ -100,7 +99,7 @@ public extension Container {
 	func has(_ feed: Feed) -> Bool {
 		return flattenedFeeds().contains(feed)
 	}
-	
+
 	func existingFeed(withFeedID feedID: String) -> Feed? {
 		for feed in flattenedFeeds() {
 			if feed.feedID == feedID {
@@ -118,7 +117,7 @@ public extension Container {
 		}
 		return nil
 	}
-	
+
 	func existingFeed(withExternalID externalID: String) -> Feed? {
 		for feed in flattenedFeeds() {
 			if feed.externalID == externalID {
@@ -164,4 +163,3 @@ public extension Container {
 		NotificationCenter.default.post(name: .ChildrenDidChange, object: self)
 	}
 }
-

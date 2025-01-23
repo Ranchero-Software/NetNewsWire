@@ -10,27 +10,27 @@ import Foundation
 
 struct ReaderAPITagContainer: Codable {
 	let tags: [ReaderAPITag]
-	
+
 	enum CodingKeys: String, CodingKey {
 		case tags = "tags"
 	}
 }
 
 struct ReaderAPITag: Codable {
-	
+
 	let tagID: String
 	let type: String?
-	
+
 	enum CodingKeys: String, CodingKey {
 		case tagID = "id"
 		case type = "type"
 	}
-	
+
 	var folderName: String? {
 		guard let range = tagID.range(of: "/label/") else {
 			return nil
 		}
 		return String(tagID.suffix(from: range.upperBound))
 	}
-	
+
 }

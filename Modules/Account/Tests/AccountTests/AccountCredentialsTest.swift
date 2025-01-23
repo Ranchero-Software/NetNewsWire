@@ -14,7 +14,7 @@ import Secrets
 class AccountCredentialsTest: XCTestCase {
 
 	private var account: Account!
-	
+
     override func setUp() {
 		account = TestAccountManager.shared.createAccount(type: .feedbin, transport: TestTransport())
     }
@@ -24,7 +24,7 @@ class AccountCredentialsTest: XCTestCase {
     }
 
     func testCreateRetrieveDelete() {
-		
+
 		// Make sure any left over from failed tests are gone
 		do {
 			try account.removeCredentials(type: .basic)
@@ -33,14 +33,14 @@ class AccountCredentialsTest: XCTestCase {
 		}
 
 		var credentials: Credentials? = Credentials(type: .basic, username: "maurice", secret: "hardpasswd")
-		
+
 		// Store the credentials
 		do {
 			try account.storeCredentials(credentials!)
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
-		
+
 		// Retrieve them
 		credentials = nil
 		do {
@@ -48,7 +48,7 @@ class AccountCredentialsTest: XCTestCase {
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
-		
+
 		switch credentials!.type {
 		case .basic:
 			XCTAssertEqual("maurice", credentials?.username)
@@ -56,7 +56,7 @@ class AccountCredentialsTest: XCTestCase {
 		default:
 			XCTFail("Expected \(CredentialsType.basic), received \(credentials!.type)")
 		}
-		
+
 		// Update them
 		credentials = Credentials(type: .basic, username: "maurice", secret: "easypasswd")
 		do {
@@ -64,7 +64,7 @@ class AccountCredentialsTest: XCTestCase {
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
-		
+
 		// Retrieve them again
 		credentials = nil
 		do {
@@ -94,7 +94,7 @@ class AccountCredentialsTest: XCTestCase {
 		} catch {
 			XCTFail(error.localizedDescription)
 		}
-		
+
 		XCTAssertNil(credentials)
     }
 

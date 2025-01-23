@@ -10,13 +10,13 @@ import XCTest
 @testable import Account
 
 class TestMarkArticlesService: FeedlyMarkArticlesService {
-	
+
 	var didMarkExpectation: XCTestExpectation?
-	var parameterTester: ((Set<String>, FeedlyMarkAction) -> ())?
+	var parameterTester: ((Set<String>, FeedlyMarkAction) -> Void)?
 	var mockResult: Result<Void, Error> = .success(())
-	
-	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
-		
+
+	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> Void) {
+
 		DispatchQueue.main.async {
 			self.parameterTester?(articleIds, action)
 			completion(self.mockResult)

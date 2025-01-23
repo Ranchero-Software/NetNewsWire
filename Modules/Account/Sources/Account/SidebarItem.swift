@@ -19,11 +19,11 @@ public protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNam
 
 	var account: Account? { get }
 	var defaultReadFilterType: ReadFilterType { get }
-	
+
 }
 
 public extension SidebarItem {
-	
+
 	func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool]) -> Bool {
 		guard defaultReadFilterType != .alwaysRead else {
 			return true
@@ -35,5 +35,5 @@ public extension SidebarItem {
 		}
 
 	}
-	
+
 }

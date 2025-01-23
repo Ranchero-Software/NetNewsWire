@@ -44,8 +44,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 		set {
 			if let url = newValue, !url.isEmpty {
 				metadata.homePageURL = url.normalizedURL
-			}
-			else {
+			} else {
 				metadata.homePageURL = nil
 			}
 		}
@@ -95,8 +94,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 		set {
 			if let authorsSet = newValue {
 				metadata.authors = Array(authorsSet)
-			}
-			else {
+			} else {
 				metadata.authors = nil
 			}
 		}
@@ -114,8 +112,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			if newValue != editedName {
 				if let valueToSet = newValue, !valueToSet.isEmpty {
 					metadata.editedName = valueToSet
-				}
-				else {
+				} else {
 					metadata.editedName = nil
 				}
 				postDisplayNameDidChangeNotification()
@@ -140,7 +137,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			metadata.cacheControlInfo = newValue
 		}
 	}
-	
+
 	public var contentHash: String? {
 		get {
 			return metadata.contentHash
@@ -158,7 +155,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			metadata.isNotifyAboutNewArticles = newValue
 		}
 	}
-	
+
 	public var isArticleExtractorAlwaysOn: Bool? {
 		get {
             metadata.isArticleExtractorAlwaysOn
@@ -167,7 +164,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			metadata.isArticleExtractorAlwaysOn = newValue
 		}
 	}
-	
+
 	public var externalID: String? {
 		get {
 			return metadata.externalID
@@ -186,7 +183,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			metadata.folderRelationship = newValue
 		}
 	}
-	
+
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
@@ -207,7 +204,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 	}
 
 	// MARK: - UnreadCountProvider
-	
+
 	public var unreadCount: Int {
 		get {
 			return account?.unreadCount(for: self) ?? 0
@@ -220,7 +217,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			postUnreadCountDidChangeNotification()
 		}
 	}
-    
+
     // MARK: - NotificationDisplayName
     public var notificationDisplayName: String {
         #if os(macOS)
@@ -289,7 +286,7 @@ extension Feed: OPMLRepresentable {
 			nameToUse = ""
 		}
 		let escapedName = nameToUse!.escapingSpecialXMLCharacters
-		
+
 		var escapedHomePageURL = ""
 		if let homePageURL = homePageURL {
 			escapedHomePageURL = homePageURL.escapingSpecialXMLCharacters
@@ -308,8 +305,8 @@ extension Set where Element == Feed {
 	func feedIDs() -> Set<String> {
 		return Set<String>(map { $0.feedID })
 	}
-	
-	func sorted() -> Array<Feed> {
+
+	func sorted() -> [Feed] {
 		return sorted(by: { (feed1, feed2) -> Bool in
 			if feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedSame {
 				return feed1.url < feed2.url
@@ -317,5 +314,5 @@ extension Set where Element == Feed {
 			return feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedAscending
 		})
 	}
-	
+
 }

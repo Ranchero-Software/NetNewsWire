@@ -10,15 +10,15 @@ import Foundation
 import Parser
 
 final class OPMLNormalizer {
-	
+
 	var normalizedOPMLItems = [OPMLItem]()
-	
+
 	static func normalize(_ items: [OPMLItem]) -> [OPMLItem] {
 		let opmlNormalizer = OPMLNormalizer()
 		opmlNormalizer.normalize(items)
 		return opmlNormalizer.normalizedOPMLItems
 	}
-	
+
 	private func normalize(_ items: [OPMLItem], parentFolder: OPMLItem? = nil) {
 		var feedsToAdd = [OPMLItem]()
 
@@ -60,7 +60,7 @@ final class OPMLNormalizer {
 				normalizedOPMLItems.append(feed)
 			}
 		}
-		
+
 	}
-	
+
 }

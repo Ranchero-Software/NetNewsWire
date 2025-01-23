@@ -19,25 +19,25 @@ import ArticlesDatabase
 class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-	
+
 	weak var account: Account?
 	var database: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
 	var compressionQueue = DispatchQueue(label: "Articles Zone Delegate Compression Queue")
-	
+
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
 		self.account = account
 		self.database = database
 		self.articlesZone = articlesZone
 	}
-	
+
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		database.selectPendingReadStatusArticleIDs() { result in
+
+		database.selectPendingReadStatusArticleIDs { result in
 			switch result {
 			case .success(let pendingReadStatusArticleIDs):
 
-				self.database.selectPendingStarredStatusArticleIDs() { result in
+				self.database.selectPendingStarredStatusArticleIDs { result in
 					switch result {
 					case .success(let pendingStarredStatusArticleIDs):
 
@@ -47,7 +47,7 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 										 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
 										 completion: completion)
 						}
-						
+
 					case .failure(let error):
 						os_log(.error, log: self.log, "Error occurred getting pending starred records: %@", error.localizedDescription)
 						completion(.failure(CloudKitZoneError.unknown))
@@ -59,9 +59,9 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 			}
 
 		}
-		
+
 	}
-	
+
 }
 
 private extension CloudKitArticlesZoneDelegate {
@@ -70,12 +70,12 @@ private extension CloudKitArticlesZoneDelegate {
 		let receivedRecordIDs = recordKeys.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticleStatus.recordType }).map({ $0.recordID })
 		let receivedArticleIDs = Set(receivedRecordIDs.map({ stripPrefix($0.externalID) }))
 		let deletableArticleIDs = receivedArticleIDs.subtracting(pendingStarredStatusArticleIDs)
-		
+
 		guard !deletableArticleIDs.isEmpty else {
 			completion()
 			return
 		}
-		
+
 		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
 			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
 				completion()
@@ -97,7 +97,7 @@ private extension CloudKitArticlesZoneDelegate {
 
 		var errorOccurred = false
 		let group = DispatchGroup()
-		
+
 		group.enter()
 		account?.markAsUnread(updateableUnreadArticleIDs) { result in
 			if case .failure(let databaseError) = result {
@@ -106,7 +106,7 @@ private extension CloudKitArticlesZoneDelegate {
 			}
 			group.leave()
 		}
-		
+
 		group.enter()
 		account?.markAsRead(updateableReadArticleIDs) { result in
 			if case .failure(let databaseError) = result {
@@ -115,7 +115,7 @@ private extension CloudKitArticlesZoneDelegate {
 			}
 			group.leave()
 		}
-		
+
 		group.enter()
 		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
 			if case .failure(let databaseError) = result {
@@ -124,7 +124,7 @@ private extension CloudKitArticlesZoneDelegate {
 			}
 			group.leave()
 		}
-		
+
 		group.enter()
 		account?.markAsStarred(updateableStarredArticleIDs) { result in
 			if case .failure(let databaseError) = result {
@@ -133,12 +133,12 @@ private extension CloudKitArticlesZoneDelegate {
 			}
 			group.leave()
 		}
-		
+
 		group.enter()
 		compressionQueue.async {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
-			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-			
+			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
+
 			DispatchQueue.main.async {
 				for (feedID, parsedItems) in feedIDsAndItems {
 					group.enter()
@@ -162,9 +162,9 @@ private extension CloudKitArticlesZoneDelegate {
 				}
 				group.leave()
 			}
-			
+
 		}
-		
+
 		group.notify(queue: DispatchQueue.main) {
 			if errorOccurred {
 				completion(.failure(CloudKitZoneError.unknown))
@@ -173,7 +173,7 @@ private extension CloudKitArticlesZoneDelegate {
 			}
 		}
 	}
-	
+
 	func stripPrefix(_ externalID: String) -> String {
 		return String(externalID[externalID.index(externalID.startIndex, offsetBy: 2)..<externalID.endIndex])
 	}
@@ -182,11 +182,11 @@ private extension CloudKitArticlesZoneDelegate {
 		guard articleRecord.recordType == CloudKitArticlesZone.CloudKitArticle.recordType else {
 			return nil
 		}
-		
+
 		var parsedAuthors = Set<ParsedAuthor>()
-		
+
 		let decoder = JSONDecoder()
-		
+
 		if let encodedParsedAuthors = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.parsedAuthors] as? [String] {
 			for encodedParsedAuthor in encodedParsedAuthors {
 				if let data = encodedParsedAuthor.data(using: .utf8), let parsedAuthor = try? decoder.decode(ParsedAuthor.self, from: data) {
@@ -194,26 +194,26 @@ private extension CloudKitArticlesZoneDelegate {
 				}
 			}
 		}
-		
+
 		guard let uniqueID = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.uniqueID] as? String,
 			let feedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.feedURL] as? String else {
 			return nil
 		}
-		
+
 		var contentHTML = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String
 		if let contentHTMLData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTMLData] as? NSData {
 			if let decompressedContentHTMLData = try? contentHTMLData.decompressed(using: .lzfse) {
 				contentHTML = String(data: decompressedContentHTMLData as Data, encoding: .utf8)
 			}
 		}
-		
+
 		var contentText = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String
 		if let contentTextData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentTextData] as? NSData {
 			if let decompressedContentTextData = try? contentTextData.decompressed(using: .lzfse) {
 				contentText = String(data: decompressedContentTextData as Data, encoding: .utf8)
 			}
 		}
-		
+
 		let parsedItem = ParsedItem(syncServiceID: nil,
 									uniqueID: uniqueID,
 									feedURL: feedURL,
@@ -231,8 +231,8 @@ private extension CloudKitArticlesZoneDelegate {
 									authors: parsedAuthors,
 									tags: nil,
 									attachments: nil)
-		
+
 		return parsedItem
 	}
-	
+
 }

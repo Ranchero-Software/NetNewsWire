@@ -31,11 +31,11 @@ struct FeedbinSubscription: Hashable, Codable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(subscriptionID)
 	}
-	
+
 	static func == (lhs: FeedbinSubscription, rhs: FeedbinSubscription) -> Bool {
 		return lhs.subscriptionID == rhs.subscriptionID
 	}
-	
+
 }
 
 struct FeedbinSubscriptionJSONFeed: Codable {
@@ -62,13 +62,13 @@ struct FeedbinUpdateSubscription: Codable {
 }
 
 struct FeedbinSubscriptionChoice: Codable {
-	
+
 	let name: String?
 	let url: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case name = "title"
 		case url = "feed_url"
 	}
-	
+
 }

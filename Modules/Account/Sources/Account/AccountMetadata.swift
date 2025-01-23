@@ -34,7 +34,7 @@ final class AccountMetadata: Codable {
 			}
 		}
 	}
-	
+
 	var isActive: Bool = true {
 		didSet {
 			if isActive != oldValue {
@@ -42,7 +42,7 @@ final class AccountMetadata: Codable {
 			}
 		}
 	}
-	
+
 	var username: String? {
 		didSet {
 			if username != oldValue {
@@ -50,7 +50,7 @@ final class AccountMetadata: Codable {
 			}
 		}
 	}
-	
+
 	var conditionalGetInfo = [String: HTTPConditionalGetInfo]() {
 		didSet {
 			if conditionalGetInfo != oldValue {
@@ -58,7 +58,7 @@ final class AccountMetadata: Codable {
 			}
 		}
 	}
-	
+
 	var lastArticleFetchStartTime: Date? {
 		didSet {
 			if lastArticleFetchStartTime != oldValue {
@@ -66,7 +66,7 @@ final class AccountMetadata: Codable {
 			}
 		}
 	}
-	
+
 	var lastArticleFetchEndTime: Date? {
 		didSet {
 			if lastArticleFetchEndTime != oldValue {
@@ -74,7 +74,7 @@ final class AccountMetadata: Codable {
 			}
 		}
 	}
-	
+
 	var endpointURL: URL? {
 		didSet {
 			if endpointURL != oldValue {
@@ -94,7 +94,7 @@ final class AccountMetadata: Codable {
 	}
 
 	weak var delegate: AccountMetadataDelegate?
-	
+
 	func valueDidChange(_ key: CodingKeys) {
 		delegate?.valueDidChange(self, key: key)
 	}

@@ -12,8 +12,8 @@ import XCTest
 final class TestGetCollectionsService: FeedlyGetCollectionsService {
 	var mockResult: Result<[FeedlyCollection], Error>?
 	var getCollectionsExpectation: XCTestExpectation?
-	
-	func getCollections(completion: @escaping (Result<[FeedlyCollection], Error>) -> ()) {
+
+	func getCollections(completion: @escaping (Result<[FeedlyCollection], Error>) -> Void) {
 		guard let result = mockResult else {
 			XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 			return

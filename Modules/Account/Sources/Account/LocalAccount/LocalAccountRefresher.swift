@@ -25,7 +25,7 @@ final class LocalAccountRefresher {
 		downloadSession.downloadProgress
 	}
 
-	private var completion: (() -> Void)? = nil
+	private var completion: (() -> Void)?
 	private var isSuspended = false
 
 	private lazy var downloadSession: DownloadSession = {
@@ -117,11 +117,11 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 		let parserData = ParserData(url: feed.url, data: data)
 		FeedParser.parse(parserData) { (parsedFeed, error) in
-			
+
 			guard let account = feed.account, let parsedFeed, error == nil else {
 				return
 			}
-			
+
 			account.update(feed, with: parsedFeed) { result in
 				if case .success(let articleChanges) = result {
 					feed.contentHash = dataHash
@@ -131,7 +131,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			}
 		}
 	}
-	
+
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, url: URL) -> Bool {
 
 		guard !data.isDefinitelyNotFeed(), !isSuspended else {
@@ -139,7 +139,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 		return true
 	}
-	
+
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession) {
 
 		Task { @MainActor in
@@ -148,7 +148,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 	}
 }
-
 
 // MARK: - Private
 
@@ -228,7 +227,7 @@ private extension LocalAccountRefresher {
 // MARK: - Utility
 
 private extension Data {
-	
+
 	func isDefinitelyNotFeed() -> Bool {
 		// We only detect a few image types for now. This should get fleshed-out at some later date.
 		return self.isImage

@@ -72,9 +72,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .DownloadProgressDidChange, object: syncProgress)
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any], completion: @escaping () -> Void) {
 		let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
-		op.completionBlock = { mainThreadOperaion in
+		op.completionBlock = { _ in
 			completion()
 		}
 		mainThreadOperationQueue.add(op)
@@ -88,7 +88,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 
 		syncProgress.reset()
-		
+
 		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
 		var flags = SCNetworkReachabilityFlags()
 		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
@@ -133,7 +133,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		mainThreadOperationQueue.add(op)
 	}
 
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		guard refreshProgress.isComplete else {
 			completion(.success(()))
@@ -167,7 +167,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
-		
+
 		syncProgress.addToNumberOfTasksAndRemaining(1)
 		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
 			self.syncProgress.completeTask()
@@ -299,7 +299,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		syncProgress.addToNumberOfTasksAndRemaining(2)
 		accountZone.findFeedExternalIDs(for: folder) { result in
 			self.syncProgress.completeTask()
@@ -410,7 +410,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				self.database.insertStatuses(syncStatuses) { _ in
 					self.database.selectPendingCount { result in
 						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account, showProgress: false)  { _ in }
+							self.sendArticleStatus(for: account, showProgress: false) { _ in }
 						}
 						completion(.success(()))
 					}
@@ -431,7 +431,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
-			accountZone.findOrCreateAccount() { result in
+			accountZone.findOrCreateAccount { result in
 				switch result {
 				case .success(let externalID):
 					account.externalID = externalID
@@ -511,7 +511,7 @@ private extension CloudKitAccountDelegate {
 		}
 
 		syncProgress.addToNumberOfTasksAndRemaining(3)
-		accountZone.fetchChangesInZone() { result in
+		accountZone.fetchChangesInZone { result in
 			self.syncProgress.completeTask()
 
 			let feeds = account.flattenedFeeds()
@@ -539,7 +539,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		syncProgress.addToNumberOfTasksAndRemaining(3)
 
 		func fail(_ error: Error) {
@@ -548,10 +548,10 @@ private extension CloudKitAccountDelegate {
 			completion(.failure(error))
 		}
 
-		accountZone.fetchChangesInZone() { result in
+		accountZone.fetchChangesInZone { result in
 			switch result {
 			case .success:
-				
+
 				self.syncProgress.completeTask()
 				let feeds = account.flattenedFeeds()
 
@@ -608,7 +608,7 @@ private extension CloudKitAccountDelegate {
 
 		syncProgress.addToNumberOfTasksAndRemaining(5)
 		FeedFinder.find(url: url) { result in
-			
+
 			self.syncProgress.completeTask()
 			switch result {
 			case .success(let feedSpecifiers):
@@ -697,7 +697,7 @@ private extension CloudKitAccountDelegate {
 					self.sendArticleStatus(for: account, showProgress: true) { result in
 						switch result {
 						case .success:
-							self.articlesZone.fetchChangesInZone() { _ in }
+							self.articlesZone.fetchChangesInZone { _ in }
 						case .failure(let error):
 							os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
 						}
@@ -774,7 +774,6 @@ private extension CloudKitAccountDelegate {
 		}
 		mainThreadOperationQueue.add(op)
 	}
-
 
 	func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		syncProgress.addToNumberOfTasksAndRemaining(2)

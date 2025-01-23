@@ -11,7 +11,7 @@ import os.log
 import RSCore
 
 final class FeedMetadataFile {
-	
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "FeedMetadataFile")
 
 	private let fileURL: URL
@@ -28,11 +28,11 @@ final class FeedMetadataFile {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
-	
+
 	func markAsDirty() {
 		isDirty = true
 	}
-	
+
 	func load() {
 		if let fileData = try? Data(contentsOf: fileURL) {
 			let decoder = PropertyListDecoder()
@@ -42,10 +42,10 @@ final class FeedMetadataFile {
 			value.delegate = account
 		}
 	}
-	
+
 	func save() {
 		guard !account.isDeleted else { return }
-		
+
 		let feedMetadata = metadataForOnlySubscribedToFeeds()
 
 		let encoder = PropertyListEncoder()
@@ -58,7 +58,7 @@ final class FeedMetadataFile {
 			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
 		}
 	}
-		
+
 }
 
 private extension FeedMetadataFile {
@@ -76,7 +76,7 @@ private extension FeedMetadataFile {
 
 	private func metadataForOnlySubscribedToFeeds() -> Account.FeedMetadataDictionary {
 		let feedIDs = account.idToFeedDictionary.keys
-		return account.feedMetadata.filter { (feedID: String, metadata: FeedMetadata) -> Bool in
+		return account.feedMetadata.filter { (_: String, metadata: FeedMetadata) -> Bool in
 			return feedIDs.contains(metadata.feedID)
 		}
 	}

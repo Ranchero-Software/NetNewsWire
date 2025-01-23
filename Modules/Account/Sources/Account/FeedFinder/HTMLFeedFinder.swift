@@ -12,13 +12,13 @@ import Parser
 private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
 
 class HTMLFeedFinder {
-	
+
 	var feedSpecifiers: Set<FeedSpecifier> {
 		return Set(feedSpecifiersDictionary.values)
 	}
-	
+
 	private var feedSpecifiersDictionary = [String: FeedSpecifier]()
-	
+
 	init(parserData: ParserData) {
 		let metadata = HTMLMetadataParser.metadata(with: parserData)
 		var orderFound = 0
@@ -52,8 +52,7 @@ private extension HTMLFeedFinder {
 		if let existingFeedSpecifier = feedSpecifiersDictionary[feedSpecifier.urlString] {
 			let mergedFeedSpecifier = existingFeedSpecifier.feedSpecifierByMerging(feedSpecifier)
 			feedSpecifiersDictionary[feedSpecifier.urlString] = mergedFeedSpecifier
-		}
-		else {
+		} else {
 			feedSpecifiersDictionary[feedSpecifier.urlString] = feedSpecifier
 		}
 	}

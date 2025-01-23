@@ -13,12 +13,12 @@ public protocol SidebarItemIdentifiable {
 }
 
 public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable {
-	
+
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
 	case feed(String, String) // accountID, feedID
 	case folder(String, String) // accountID, folderName
-	
+
 	public var description: String {
 		switch self {
 		case .smartFeed(let id):
@@ -31,7 +31,7 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 			return "folder: \(accountID)_\(folderName)"
 		}
 	}
-	
+
 	public var userInfo: [AnyHashable: AnyHashable] {
 		switch self {
 		case .smartFeed(let id):
@@ -58,10 +58,10 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 			]
 		}
 	}
-	
+
 	public init?(userInfo: [AnyHashable: AnyHashable]) {
 		guard let type = userInfo["type"] as? String else { return nil }
-		
+
 		switch type {
 		case "smartFeed":
 			guard let id = userInfo["id"] as? String else { return nil }

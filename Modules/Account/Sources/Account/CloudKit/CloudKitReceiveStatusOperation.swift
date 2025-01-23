@@ -11,7 +11,7 @@ import os.log
 import RSCore
 
 class CloudKitReceiveStatusOperation: MainThreadOperation {
-	
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
 	// MainThreadOperation
@@ -22,20 +22,20 @@ class CloudKitReceiveStatusOperation: MainThreadOperation {
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	private weak var articlesZone: CloudKitArticlesZone?
-	
+
 	init(articlesZone: CloudKitArticlesZone) {
 		self.articlesZone = articlesZone
 	}
-	
+
 	func run() {
 		guard let articlesZone = articlesZone else {
 			self.operationDelegate?.operationDidComplete(self)
 			return
 		}
-		
+
 		os_log(.debug, log: log, "Refreshing article statuses...")
-		
- 		articlesZone.refreshArticles() { result in
+
+ 		articlesZone.refreshArticles { result in
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
 			switch result {
 			case .success:
@@ -46,5 +46,5 @@ class CloudKitReceiveStatusOperation: MainThreadOperation {
 			}
 		}
 	}
-	
+
 }

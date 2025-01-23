@@ -12,7 +12,7 @@ import RSCore
 import Parser
 
 final class OPMLFile {
-	
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "opmlFile")
 
 	private let fileURL: URL
@@ -29,32 +29,32 @@ final class OPMLFile {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
-	
+
 	func markAsDirty() {
 		isDirty = true
 	}
-	
+
 	func load() {
 		guard let fileData = opmlFileData(), let opmlItems = parsedOPMLItems(fileData: fileData) else {
 			return
 		}
-		
+
 		BatchUpdate.shared.perform {
 			account.loadOPMLItems(opmlItems)
 		}
 	}
-	
+
 	func save() {
 		guard !account.isDeleted else { return }
 		let opmlDocumentString = opmlDocument()
-		
+
 		do {
 			try opmlDocumentString.write(to: fileURL, atomically: true, encoding: .utf8)
 		} catch let error as NSError {
 			os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
 		}
 	}
-	
+
 }
 
 private extension OPMLFile {
@@ -71,8 +71,8 @@ private extension OPMLFile {
 	}
 
 	func opmlFileData() -> Data? {
-		var fileData: Data? = nil
-		
+		var fileData: Data?
+
 		do {
 			fileData = try Data(contentsOf: fileURL)
 		} catch {
@@ -81,7 +81,7 @@ private extension OPMLFile {
 
 		return fileData
 	}
-	
+
 	func parsedOPMLItems(fileData: Data) -> [OPMLItem]? {
 
 		let parserData = ParserData(url: fileURL.absoluteString, data: fileData)
@@ -92,7 +92,7 @@ private extension OPMLFile {
 
 		return opmlDocument.items
 	}
-	
+
 	func opmlDocument() -> String {
 		let escapedTitle = account.nameForDisplay.escapingSpecialXMLCharacters
 		let openingText =
@@ -118,5 +118,5 @@ private extension OPMLFile {
 		let opml = openingText + middleText + closingText
 		return opml
 	}
-	
+
 }

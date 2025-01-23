@@ -10,12 +10,12 @@ import Foundation
 import RSWeb
 
 public enum AccountError: LocalizedError {
-	
+
 	case createErrorNotFound
 	case createErrorAlreadySubscribed
 	case opmlImportInProgress
 	case wrappedError(error: Error, account: Account)
-	
+
 	public var account: Account? {
 		if case .wrappedError(_, let account) = self {
 			return account
@@ -23,7 +23,7 @@ public enum AccountError: LocalizedError {
 			return nil
 		}
 	}
-	
+
 	public var isCredentialsError: Bool {
 		if case .wrappedError(let error, _) = self {
 			if case TransportError.httpError(let status) = error {
@@ -32,7 +32,7 @@ public enum AccountError: LocalizedError {
 		}
 		return false
 	}
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .createErrorNotFound:
@@ -55,7 +55,7 @@ public enum AccountError: LocalizedError {
 			}
 		}
 	}
-	
+
 	public var recoverySuggestion: String? {
 		switch self {
 		case .createErrorNotFound:
@@ -77,20 +77,20 @@ public enum AccountError: LocalizedError {
 			return NSLocalizedString("Please try again later.", comment: "Try later")
 		}
 	}
-	
+
 }
 
 // MARK: Private
 
 private extension AccountError {
-	
+
 	func unknownError(_ error: Error, _ account: Account) -> String {
 		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
 		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
 	}
-	
+
 	func isCredentialsError(status: Int) -> Bool {
 		return status == 401  || status == 403
 	}
-	
+
 }

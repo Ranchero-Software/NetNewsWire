@@ -38,7 +38,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return true
 	}
-	
+
 	public var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -63,9 +63,9 @@ public final class AccountManager: UnreadCountProvider {
 	public var sortedActiveAccounts: [Account] {
 		return sortByName(activeAccounts)
 	}
-	
+
 	public var lastArticleFetchEndTime: Date? {
-		var lastArticleFetchEndTime: Date? = nil
+		var lastArticleFetchEndTime: Date?
 		for account in activeAccounts {
 			if let accountLastArticleFetchEndTime = account.metadata.lastArticleFetchEndTime {
 				if lastArticleFetchEndTime == nil || lastArticleFetchEndTime! < accountLastArticleFetchEndTime {
@@ -79,7 +79,7 @@ public final class AccountManager: UnreadCountProvider {
 	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
 		return AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
 	}
-	
+
 	public var refreshInProgress: Bool {
 		for account in activeAccounts {
 			if account.refreshInProgress {
@@ -93,13 +93,12 @@ public final class AccountManager: UnreadCountProvider {
 
 	public init(accountsFolder: String) {
 		self.accountsFolder = accountsFolder
-		
+
 		// The local "On My Mac" account must always exist, even if it's empty.
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
 		do {
 			try FileManager.default.createDirectory(atPath: localAccountFolder, withIntermediateDirectories: true, attributes: nil)
-		}
-		catch {
+		} catch {
 			assertionFailure("Could not create folder for OnMyMac account.")
 			abort()
 		}
@@ -119,7 +118,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	// MARK: - API
-	
+
 	public func createAccount(type: AccountType) -> Account {
 		let accountID = type == .cloudKit ? "iCloud" : UUID().uuidString
 		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
@@ -130,42 +129,41 @@ public final class AccountManager: UnreadCountProvider {
 			assertionFailure("Could not create folder for \(accountID) account.")
 			abort()
 		}
-		
+
 		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)
 		accountsDictionary[accountID] = account
-		
+
 		var userInfo = [String: Any]()
 		userInfo[Account.UserInfoKey.account] = account
 		NotificationCenter.default.post(name: .UserDidAddAccount, object: self, userInfo: userInfo)
-		
+
 		return account
 	}
-	
+
 	public func deleteAccount(_ account: Account) {
 		guard !account.refreshInProgress else {
 			return
 		}
-		
+
 		account.prepareForDeletion()
-		
+
 		accountsDictionary.removeValue(forKey: account.accountID)
 		account.isDeleted = true
-		
+
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
-		}
-		catch {
+		} catch {
 			assertionFailure("Could not create folder for OnMyMac account.")
 			abort()
 		}
-		
+
 		updateUnreadCount()
 
 		var userInfo = [String: Any]()
 		userInfo[Account.UserInfoKey.account] = account
 		NotificationCenter.default.post(name: .UserDidDeleteAccount, object: self, userInfo: userInfo)
 	}
-	
+
 	public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
 		guard type != .onMyMac else {
 			return false
@@ -177,11 +175,11 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return false
 	}
-	
+
 	public func existingAccount(with accountID: String) -> Account? {
 		return accountsDictionary[accountID]
 	}
-	
+
 	public func existingContainer(with containerID: ContainerIdentifier) -> Container? {
 		switch containerID {
 		case .account(let accountID):
@@ -193,7 +191,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return nil
 	}
-	
+
 	public func existingFeed(with feedID: SidebarItemIdentifier) -> SidebarItem? {
 		switch feedID {
 		case .folder(let accountID, let folderName):
@@ -209,7 +207,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 		return nil
 	}
-	
+
 	public func suspendNetworkAll() {
 		isSuspended = true
 		for account in accounts {
@@ -233,16 +231,16 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: (() -> Void)? = nil) {
+	public func receiveRemoteNotification(userInfo: [AnyHashable: Any], completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
-		
+
 		for account in activeAccounts {
 			group.enter()
-			account.receiveRemoteNotification(userInfo: userInfo) { 
+			account.receiveRemoteNotification(userInfo: userInfo) {
 				group.leave()
 			}
 		}
-		
+
 		group.notify(queue: DispatchQueue.main) {
 			completion?()
 		}
@@ -257,10 +255,10 @@ public final class AccountManager: UnreadCountProvider {
 		combinedRefreshProgress.start()
 
 		let group = DispatchGroup()
-		
+
 		for account in activeAccounts {
 			group.enter()
-			account.refreshAll() { result in
+			account.refreshAll { result in
 				group.leave()
 				switch result {
 				case .success:
@@ -270,7 +268,7 @@ public final class AccountManager: UnreadCountProvider {
 				}
 			}
 		}
-		
+
 		group.notify(queue: DispatchQueue.main) {
 			self.combinedRefreshProgress.stop()
 			completion?()
@@ -279,10 +277,10 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
-		
+
 		for account in activeAccounts {
 			group.enter()
-			account.sendArticleStatus() { _ in
+			account.sendArticleStatus { _ in
 				group.leave()
 			}
 		}
@@ -294,10 +292,10 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
-		
+
 		for account in activeAccounts {
 			group.enter()
-			account.syncArticleStatus() { _ in
+			account.syncArticleStatus { _ in
 				group.leave()
 			}
 		}
@@ -306,13 +304,13 @@ public final class AccountManager: UnreadCountProvider {
 			completion?()
 		}
 	}
-	
+
 	public func saveAll() {
 		for account in accounts {
 			account.save()
 		}
 	}
-	
+
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
 			if account.hasAtLeastOneFeed() {
@@ -322,7 +320,7 @@ public final class AccountManager: UnreadCountProvider {
 
 		return false
 	}
-	
+
 	public func anyAccountHasNetNewsWireNewsSubscription() -> Bool {
 		return anyAccountHasFeedWithURL(Self.netNewsWireNewsURL) || anyAccountHasFeedWithURL(Self.jsonNetNewsWireNewsURL)
 	}
@@ -352,46 +350,45 @@ public final class AccountManager: UnreadCountProvider {
 
     public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
         precondition(Thread.isMainThread)
-        
+
         guard activeAccounts.count > 0 else {
             completion(.success(Set<Article>()))
             return
         }
-        
+
         var allFetchedArticles = Set<Article>()
         var databaseError: DatabaseError?
         let dispatchGroup = DispatchGroup()
-        
+
         for account in activeAccounts {
-            
+
             dispatchGroup.enter()
-            
+
             account.fetchArticlesAsync(fetchType) { (articleSetResult) in
                 precondition(Thread.isMainThread)
-                
+
                 switch articleSetResult {
                 case .success(let articles):
                     allFetchedArticles.formUnion(articles)
                 case .failure(let error):
                     databaseError = error
                 }
-                
+
                 dispatchGroup.leave()
             }
         }
-        
+
         dispatchGroup.notify(queue: .main) {
             if let databaseError {
                 completion(.failure(databaseError))
-            }
-            else {
+            } else {
                 completion(.success(allFetchedArticles))
             }
         }
     }
-    
+
     // MARK: - Fetching Article Counts
-    
+
     public func fetchCountForStarredArticles() throws -> Int {
         precondition(Thread.isMainThread)
         var count = 0
@@ -411,7 +408,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	// MARK: - Notifications
-	
+
 	@objc func unreadCountDidInitialize(_ notification: Notification) {
 		guard let _ = notification.object as? Account else {
 			return
@@ -420,14 +417,14 @@ public final class AccountManager: UnreadCountProvider {
 			postUnreadCountDidInitializeNotification()
 		}
 	}
-	
+
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		guard let _ = notification.object as? Account else {
 			return
 		}
 		updateUnreadCount()
 	}
-	
+
 	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
@@ -458,12 +455,11 @@ private extension AccountManager {
 
 		do {
 			filenames = try FileManager.default.contentsOfDirectory(atPath: accountsFolder)
-		}
-		catch {
+		} catch {
 			print("Error reading Accounts folder: \(error)")
 			return
 		}
-		
+
 		filenames = filenames?.sorted()
 
 		if let filenames {
@@ -479,14 +475,14 @@ private extension AccountManager {
 			}
 		}
 	}
-	
+
 	func duplicateServiceAccount(_ account: Account) -> Bool {
 		return duplicateServiceAccount(type: account.type, username: account.username)
 	}
 
 	func sortByName(_ accounts: [Account]) -> [Account] {
 		// LocalAccount is first.
-		
+
 		return accounts.sorted { (account1, account2) -> Bool in
 			if account1 === defaultAccount {
 				return true
@@ -507,19 +503,18 @@ private struct AccountSpecifier {
 	let folderName: String
 	let dataFilePath: String
 
-
 	init?(folderPath: String) {
 		if !FileManager.default.isFolder(atPath: folderPath) {
 			return nil
 		}
-		
+
 		let name = NSString(string: folderPath).lastPathComponent
 		if name.hasPrefix(".") {
 			return nil
 		}
-		
+
 		let nameComponents = name.components(separatedBy: "_")
-		
+
 		guard nameComponents.count == 2, let rawType = Int(nameComponents[0]), let accountType = AccountType(rawValue: rawType) else {
 			return nil
 		}

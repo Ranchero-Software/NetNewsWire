@@ -14,8 +14,7 @@ struct ReaderAPIEntryWrapper: Codable {
 	let id: String
 	let updated: Int
 	let entries: [ReaderAPIEntry]
-	
-	
+
 	enum CodingKeys: String, CodingKey {
 		case id = "id"
 		case updated = "updated"
@@ -56,7 +55,7 @@ struct ReaderAPIEntry: Codable {
 	let publishedTimestamp: Double?
 	let crawledTimestamp: String?
 	let timestampUsec: String?
-	
+
 	let summary: ReaderAPIArticleSummary
 	let alternates: [ReaderAPIAlternateLocation]?
 	let categories: [String]
@@ -74,22 +73,22 @@ struct ReaderAPIEntry: Codable {
 		case origin = "origin"
 		case timestampUsec = "timestampUsec"
 	}
-	
+
 	func parseDatePublished() -> Date? {
 		guard let unixTime = publishedTimestamp else {
 			return nil
 		}
 		return Date(timeIntervalSince1970: unixTime)
 	}
-	
+
 	func uniqueID(variant: ReaderAPIVariant) -> String {
 		// Should look something like "tag:google.com,2005:reader/item/00058b10ce338909"
 		// REGEX feels heavy, I should be able to just split on / and take the last element
-		
+
 		guard let idPart =  articleID.components(separatedBy: "/").last else {
 			return articleID
 		}
-		
+
 		guard variant != .theOldReader else {
 			return idPart
 		}
@@ -98,15 +97,15 @@ struct ReaderAPIEntry: Codable {
 		guard let idNumber = Int(idPart, radix: 16) else {
 			return articleID
 		}
-		
+
 		return String(idNumber, radix: 10, uppercase: false)
 	}
-	
+
 }
 
 struct ReaderAPIArticleSummary: Codable {
 	let content: String?
-	
+
 	enum CodingKeys: String, CodingKey {
 		case content = "content"
 	}
@@ -114,7 +113,7 @@ struct ReaderAPIArticleSummary: Codable {
 
 struct ReaderAPIAlternateLocation: Codable {
 	let url: String?
-	
+
 	enum CodingKeys: String, CodingKey {
 		case url = "href"
 	}

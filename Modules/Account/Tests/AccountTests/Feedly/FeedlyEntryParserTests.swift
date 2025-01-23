@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 
 class FeedlyEntryParserTests: XCTestCase {
-	
+
 	func testParsing() {
 		let content = FeedlyEntry.Content(content: "Test Content", direction: .leftToRight)
 		let summary = FeedlyEntry.Content(content: "Test Summary", direction: .leftToRight)
@@ -34,9 +34,9 @@ class FeedlyEntryParserTests: XCTestCase {
 								tags: tags,
 								categories: nil,
 								enclosure: nil)
-		
+
 		let parser = FeedlyEntryParser(entry: entry)
-		
+
 		XCTAssertEqual(parser.id, entry.id)
 		XCTAssertEqual(parser.feedUrl, origin.streamId)
 		XCTAssertEqual(parser.externalUrl, canonicalLink.href)
@@ -45,15 +45,15 @@ class FeedlyEntryParserTests: XCTestCase {
 		XCTAssertEqual(parser.summary, summary.content)
 		XCTAssertEqual(parser.datePublished, .distantPast)
 		XCTAssertEqual(parser.dateModified, Date(timeIntervalSinceReferenceDate: 0))
-		
+
 		guard let item = parser.parsedItemRepresentation else {
 			XCTFail("Expected a parsed item representation.")
 			return
 		}
-		
+
 		XCTAssertEqual(item.syncServiceID, entry.id)
 		XCTAssertEqual(item.uniqueID, entry.id)
-		
+
 		// The following is not an error.
 		// The feedURL must match the feedID for the article to be connected to its matching feed.
 		XCTAssertEqual(item.feedURL, origin.streamId)
@@ -63,15 +63,15 @@ class FeedlyEntryParserTests: XCTestCase {
 		XCTAssertEqual(item.summary, summary.content)
 		XCTAssertEqual(item.datePublished, entry.crawled)
 		XCTAssertEqual(item.dateModified, entry.recrawled)
-		
+
 		let expectedTags = Set(tags.compactMap { $0.label })
 		XCTAssertEqual(item.tags, expectedTags)
-		
+
 		let expectedAuthors = Set([entry.author])
 		let calculatedAuthors = Set(item.authors?.compactMap { $0.name } ?? [])
 		XCTAssertEqual(calculatedAuthors, expectedAuthors)
 	}
-	
+
 	func testSanitization() {
 		let content = FeedlyEntry.Content(content: "<div style=\"direction:rtl;text-align:right\">Test Content</div>", direction: .rightToLeft)
 		let summaryContent = "Test Summary"
@@ -92,17 +92,17 @@ class FeedlyEntryParserTests: XCTestCase {
 								tags: nil,
 								categories: nil,
 								enclosure: nil)
-		
+
 		let parser = FeedlyEntryParser(entry: entry)
-		
+
 		// These should be sanitized
 		XCTAssertEqual(parser.title, title)
 		XCTAssertEqual(parser.summary, summaryContent)
-		
+
 		// These should not be sanitized because it is supposed to be HTML content.
 		XCTAssertEqual(parser.contentHMTL, content.content)
 	}
-	
+
 	func testLocatesCanonicalExternalUrl() {
 		let canonicalLink = FeedlyLink(href: "tests://feeds/1/entries/1", type: "text/html")
 		let alternateLink = FeedlyLink(href: "tests://feeds/1/entries/alternate/1", type: "text/html")
@@ -120,12 +120,12 @@ class FeedlyEntryParserTests: XCTestCase {
 								tags: nil,
 								categories: nil,
 								enclosure: nil)
-		
+
 		let parser = FeedlyEntryParser(entry: entry)
-		
+
 		XCTAssertEqual(parser.externalUrl, canonicalLink.href)
 	}
-	
+
 	func testLocatesAlternateExternalUrl() {
 		let canonicalLink = FeedlyLink(href: "tests://feeds/1/entries/1", type: "text/json")
 		let alternateLink = FeedlyLink(href: "tests://feeds/1/entries/alternate/1", type: nil)
@@ -143,12 +143,12 @@ class FeedlyEntryParserTests: XCTestCase {
 								tags: nil,
 								categories: nil,
 								enclosure: nil)
-		
+
 		let parser = FeedlyEntryParser(entry: entry)
-		
+
 		XCTAssertEqual(parser.externalUrl, alternateLink.href)
 	}
-	
+
 	func testContentPreferredToSummary() {
 		let content = FeedlyEntry.Content(content: "Test Content", direction: .leftToRight)
 		let summary = FeedlyEntry.Content(content: "Test Summary", direction: .leftToRight)
@@ -166,12 +166,12 @@ class FeedlyEntryParserTests: XCTestCase {
 								tags: nil,
 								categories: nil,
 								enclosure: nil)
-		
+
 		let parser = FeedlyEntryParser(entry: entry)
-		
+
 		XCTAssertEqual(parser.contentHMTL, content.content)
 	}
-	
+
 	func testSummaryUsedAsContentWhenContentMissing() {
 		let summary = FeedlyEntry.Content(content: "Test Summary", direction: .leftToRight)
 		let entry = FeedlyEntry(id: "tests/feeds/1/entries/1",
@@ -188,9 +188,9 @@ class FeedlyEntryParserTests: XCTestCase {
 								tags: nil,
 								categories: nil,
 								enclosure: nil)
-		
+
 		let parser = FeedlyEntryParser(entry: entry)
-		
+
 		XCTAssertEqual(parser.contentHMTL, summary.content)
 	}
 }

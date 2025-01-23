@@ -30,8 +30,7 @@ final class FeedbinEntry: Decodable {
 	lazy var parsedDatePublished: Date? = {
 		if let datePublished = datePublished {
 			return DateParser.date(string: datePublished)
-		}
-		else {
+		} else {
 			return nil
 		}
 	}()
@@ -58,7 +57,7 @@ struct FeedbinEntryJSONFeed: Decodable {
 		case jsonFeedAuthor = "author"
 		case jsonFeedExternalURL = "external_url"
 	}
-	
+
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		do {

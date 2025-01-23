@@ -9,7 +9,7 @@ let package = Package(
 		.library(
 			name: "Account",
 			type: .dynamic,
-			targets: ["Account"]),
+			targets: ["Account"])
 	],
 	dependencies: [
 		.package(path: "../RSWeb"),
@@ -19,7 +19,7 @@ let package = Package(
 		.package(path: "../SyncDatabase"),
 		.package(path: "../RSCore"),
 		.package(path: "../RSDatabase"),
-		.package(path: "../Parser"),
+		.package(path: "../Parser")
 	],
 	targets: [
 		.target(
@@ -32,7 +32,7 @@ let package = Package(
 				"Articles",
 				"ArticlesDatabase",
 				"Secrets",
-				"SyncDatabase",
+				"SyncDatabase"
 			],
 			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
 		),
@@ -40,7 +40,7 @@ let package = Package(
 			name: "AccountTests",
 			dependencies: ["Account"],
 			resources: [
-				.copy("JSON"),
-			]),
+				.copy("JSON")
+			])
 	]
 )

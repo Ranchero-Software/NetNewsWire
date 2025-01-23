@@ -13,7 +13,7 @@ public enum ReaderAPIVariant {
 	case inoreader
 	case bazQux
 	case theOldReader
-	
+
 	public var host: String {
 		switch self {
 		case .inoreader:
@@ -26,5 +26,5 @@ public enum ReaderAPIVariant {
 			return ""
 		}
 	}
-	
+
 }
