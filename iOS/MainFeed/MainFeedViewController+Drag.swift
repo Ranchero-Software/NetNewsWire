@@ -22,7 +22,9 @@ extension MainFeedViewController: UITableViewDragDelegate {
 		let itemProvider = NSItemProvider()
 		  
 		itemProvider.registerDataRepresentation(forTypeIdentifier: UTType.url.identifier, visibility: .ownProcess) { completion in
-			completion(data, nil)
+			Task { @MainActor in
+				completion(data, nil)
+			}
 			return nil
 		}
 		
