@@ -35,7 +35,7 @@ private extension RSToolbarItem {
 			return false
 		}
 
-		while(true) {
+		while true {
 			if let validated = validateWithResponder(responder!) {
 				return validated
 			}

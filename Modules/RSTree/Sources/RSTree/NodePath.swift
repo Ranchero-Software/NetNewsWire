@@ -21,8 +21,7 @@ public struct NodePath {
 			if let parent = nomad.parent {
 				tempArray.append(parent)
 				nomad = parent
-			}
-			else {
+			} else {
 				break
 			}
 		}
@@ -34,8 +33,7 @@ public struct NodePath {
 
 		if let node = treeController.nodeInTreeRepresentingObject(representedObject) {
 			self.init(node: node)
-		}
-		else {
+		} else {
 			return nil
 		}
 	}

@@ -17,7 +17,7 @@ final class OPMLTests: XCTestCase {
 
 		// 0.003 sec on my M1 Mac Studio 2022
 		self.measure {
-			let _ = OPMLParser.document(with: self.subsData)
+			_ = OPMLParser.document(with: self.subsData)
 		}
 	}
 
@@ -35,7 +35,6 @@ final class OPMLTests: XCTestCase {
 		XCTAssertEqual("http://example.org/", opmlDocument!.url)
 		recursivelyCheckOPMLStructure(opmlDocument!)
 	}
-
 
 	func testFindingTitles() {
 		// https://github.com/brentsimmons/NetNewsWire/issues/527
@@ -66,8 +65,7 @@ private extension OPMLTests {
 		if !isFolder {
 			XCTAssertNotNil(feedSpecifier!.title)
 			XCTAssertNotNil(feedSpecifier!.feedURL)
-		}
-		else {
+		} else {
 			XCTAssertNil(feedSpecifier)
 		}
 

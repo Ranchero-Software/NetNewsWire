@@ -16,11 +16,11 @@ public extension CGRect {
 	/// - Returns: A new rectangle, cenetered vertically in `containerRect`,
 	///   with the same size as the source rectangle.
 	func centeredVertically(in containerRect: CGRect) -> CGRect {
-		var r = self;
-		r.origin.y = containerRect.midY - (r.height / 2.0);
-		r = r.integral;
-		r.size = self.size;
-		return r;
+		var r = self
+		r.origin.y = containerRect.midY - (r.height / 2.0)
+		r = r.integral
+		r.size = self.size
+		return r
 	}
 
 	/// Centers a rectangle horizontally in another rectangle.
@@ -29,11 +29,11 @@ public extension CGRect {
 	/// - Returns: A new rectangle, cenetered horizontally in `containerRect`,
 	///   with the same size as the source rectangle.
 	func centeredHorizontally(in containerRect: CGRect) -> CGRect {
-		var r = self;
-		r.origin.x = containerRect.midX - (r.width / 2.0);
-		r = r.integral;
-		r.size = self.size;
-		return r;
+		var r = self
+		r.origin.x = containerRect.midX - (r.width / 2.0)
+		r = r.integral
+		r.size = self.size
+		return r
 	}
 
 	/// Centers a rectangle in another rectangle.

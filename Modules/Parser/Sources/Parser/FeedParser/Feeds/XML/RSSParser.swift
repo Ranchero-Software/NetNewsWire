@@ -79,11 +79,9 @@ private extension RSSParser {
 			if feed.link == nil {
 				feed.link = saxParser.currentString
 			}
-		}
-		else if SAXEqualTags(localName, XMLName.title) {
+		} else if SAXEqualTags(localName, XMLName.title) {
 			feed.title = saxParser.currentString
-		}
-		else if SAXEqualTags(localName, XMLName.language) {
+		} else if SAXEqualTags(localName, XMLName.language) {
 			feed.language = saxParser.currentString
 		}
 	}
@@ -118,26 +116,20 @@ private extension RSSParser {
 		if let currentString = saxParser.currentString {
 			if SAXEqualTags(localName, XMLName.guid) {
 				addGuid(currentString, currentArticle)
-			}
-			else if SAXEqualTags(localName, XMLName.author) {
+			} else if SAXEqualTags(localName, XMLName.author) {
 				addAuthorWithString(currentString, currentArticle)
-			}
-			else if SAXEqualTags(localName, XMLName.link) {
+			} else if SAXEqualTags(localName, XMLName.link) {
 				currentArticle.link = urlString(currentString)
-			}
-			else if SAXEqualTags(localName, XMLName.description) {
+			} else if SAXEqualTags(localName, XMLName.description) {
 				if currentArticle.body == nil {
 					currentArticle.body = currentString
 				}
-			}
-			else if !parsingAuthor && SAXEqualTags(localName, XMLName.title) {
+			} else if !parsingAuthor && SAXEqualTags(localName, XMLName.title) {
 				currentArticle.title = currentString
-			}
-			else if SAXEqualTags(localName, XMLName.pubDate) {
+			} else if SAXEqualTags(localName, XMLName.pubDate) {
 				currentArticle.datePublished = currentDate(saxParser)
 			}
-		}
-		else if SAXEqualTags(localName, XMLName.enclosure), let currentAttributes {
+		} else if SAXEqualTags(localName, XMLName.enclosure), let currentAttributes {
 			addEnclosure(currentAttributes, currentArticle)
 		}
 	}
@@ -148,8 +140,7 @@ private extension RSSParser {
 			if let currentString = saxParser.currentString {
 				addAuthorWithString(currentString, currentArticle)
 			}
-		}
-		else if SAXEqualTags(localName, XMLName.date) {
+		} else if SAXEqualTags(localName, XMLName.date) {
 			currentArticle.datePublished = currentDate(saxParser)
 		}
 	}
@@ -298,7 +289,7 @@ extension RSSParser: SAXParserDelegate {
 			return
 		}
 
-		var xmlAttributes: StringDictionary? = nil
+		var xmlAttributes: StringDictionary?
 		if (isRDF && SAXEqualTags(localName, XMLName.item)) || SAXEqualTags(localName, XMLName.guid) || SAXEqualTags(localName, XMLName.enclosure) {
 			xmlAttributes = saxParser.attributesDictionary(attributes, attributeCount: attributeCount)
 		}
@@ -314,11 +305,9 @@ extension RSSParser: SAXParserDelegate {
 				currentArticle.guid = rdfGuid
 				currentArticle.permalink = rdfGuid
 			}
-		}
-		else if prefix == nil && SAXEqualTags(localName, XMLName.image) {
+		} else if prefix == nil && SAXEqualTags(localName, XMLName.image) {
 			parsingChannelImage = true
-		}
-		else if prefix == nil && SAXEqualTags(localName, XMLName.author) {
+		} else if prefix == nil && SAXEqualTags(localName, XMLName.author) {
 			if parsingArticle {
 				parsingAuthor = true
 			}
@@ -337,23 +326,18 @@ extension RSSParser: SAXParserDelegate {
 
 		if isRDF && SAXEqualTags(localName, XMLName.uppercaseRDF) {
 			endRSSFound = true
-		}
-		else if SAXEqualTags(localName, XMLName.rss) {
+		} else if SAXEqualTags(localName, XMLName.rss) {
 			endRSSFound = true
-		}
-		else if SAXEqualTags(localName, XMLName.image) {
+		} else if SAXEqualTags(localName, XMLName.image) {
 			parsingChannelImage = false
-		}
-		else if SAXEqualTags(localName, XMLName.item) {
+		} else if SAXEqualTags(localName, XMLName.item) {
 			parsingArticle = false
-		}
-		else if parsingArticle {
+		} else if parsingArticle {
 			addArticleElement(saxParser, localName, prefix)
 			if SAXEqualTags(localName, XMLName.author) {
 				parsingAuthor = false
 			}
-		}
-		else if !parsingChannelImage {
+		} else if !parsingChannelImage {
 			addFeedElement(saxParser, localName, prefix)
 		}
 	}
@@ -363,4 +347,3 @@ extension RSSParser: SAXParserDelegate {
 		// Required method.
 	}
 }
-

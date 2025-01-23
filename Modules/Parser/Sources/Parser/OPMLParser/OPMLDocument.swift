@@ -9,8 +9,8 @@ import Foundation
 
 public final class OPMLDocument: OPMLItem {
 
-	public var title: String? = nil
-	public var url: String? = nil
+	public var title: String?
+	public var url: String?
 
 	init(url: String?) {
 		self.url = url

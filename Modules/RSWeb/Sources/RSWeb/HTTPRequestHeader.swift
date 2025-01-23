@@ -13,9 +13,9 @@ public struct HTTPRequestHeader {
 	public static let userAgent = "User-Agent"
 	public static let authorization = "Authorization"
 	public static let contentType = "Content-Type"
-	
+
 	// Conditional GET
-	
+
 	public static let ifModifiedSince = "If-Modified-Since"
-	public static let ifNoneMatch = "If-None-Match" //Etag
+	public static let ifNoneMatch = "If-None-Match" // Etag
 }

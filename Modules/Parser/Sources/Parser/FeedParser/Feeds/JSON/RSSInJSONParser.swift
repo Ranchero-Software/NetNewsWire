@@ -53,8 +53,7 @@ public struct RSSInJSONParser {
 
 			return ParsedFeed(type: .rssInJSON, title: title, homePageURL: homePageURL, feedURL: feedURL, language: feedLanguage, feedDescription: feedDescription, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 
-		}
-		catch { throw error }
+		} catch { throw error }
 	}
 }
 
@@ -62,7 +61,7 @@ private extension RSSInJSONParser {
 
 	static func parseItems(_ itemsObject: JSONArray, _ feedURL: String) -> Set<ParsedItem> {
 
-		return Set(itemsObject.compactMap{ (oneItemDictionary) -> ParsedItem? in
+		return Set(itemsObject.compactMap { (oneItemDictionary) -> ParsedItem? in
 
 			return parsedItemWithDictionary(oneItemDictionary, feedURL)
 		})
@@ -74,7 +73,7 @@ private extension RSSInJSONParser {
 		let title = itemDictionary["title"] as? String
 
 		var contentHTML = itemDictionary["description"] as? String
-		var contentText: String? = nil
+		var contentText: String?
 		if contentHTML != nil && !(contentHTML!.contains("<")) {
 			contentText = contentHTML
 			contentHTML = nil
@@ -83,7 +82,7 @@ private extension RSSInJSONParser {
 			return nil
 		}
 
-		var datePublished: Date? = nil
+		var datePublished: Date?
 		if let datePublishedString = itemDictionary["pubDate"] as? String {
 			datePublished = DateParser.date(string: datePublishedString)
 		}
@@ -150,9 +149,8 @@ private extension RSSInJSONParser {
 				return Set([oneTag])
 			}
 			return nil
-		}
-		else if let categoryArray = itemDictionary["category"] as? JSONArray {
-			return Set(categoryArray.compactMap{ $0["#value"] as? String })
+		} else if let categoryArray = itemDictionary["category"] as? JSONArray {
+			return Set(categoryArray.compactMap { $0["#value"] as? String })
 		}
 		return nil
 	}

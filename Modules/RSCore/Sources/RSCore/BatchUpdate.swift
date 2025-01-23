@@ -23,7 +23,7 @@ public final class BatchUpdate {
 
 	/// The shared batch update object.
 	public static let shared = BatchUpdate()
-	
+
 	private var count = 0
 
 	/// Is updating in progress?
@@ -50,15 +50,15 @@ public final class BatchUpdate {
 	public func end() {
 		precondition(Thread.isMainThread)
 		decrementCount()
-	}	
+	}
 }
 
 private extension BatchUpdate {
-	
+
 	func incrementCount() {
 		count = count + 1
 	}
-	
+
 	func decrementCount() {
 		count = count - 1
 		if count < 1 {
@@ -67,7 +67,7 @@ private extension BatchUpdate {
 			postBatchUpdateDidPerform()
 		}
 	}
-	
+
 	func postBatchUpdateDidPerform() {
 		if !Thread.isMainThread {
 			DispatchQueue.main.sync {
@@ -77,5 +77,5 @@ private extension BatchUpdate {
 			NotificationCenter.default.post(name: .BatchUpdateDidPerform, object: nil, userInfo: nil)
 		}
 	}
-	
+
 }

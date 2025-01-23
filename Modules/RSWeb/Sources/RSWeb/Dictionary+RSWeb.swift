@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension Dictionary where Key == String, Value == String  {
+public extension Dictionary where Key == String, Value == String {
 
 	/// Translates a dictionary into a string like `foo=bar&param2=some%20thing`.
 	var urlQueryString: String? {

@@ -39,23 +39,19 @@ public struct BinaryDiskCache {
 		get {
 			do {
 				return try data(forKey: key)
-			}
-			catch {}
+			} catch {}
 			return nil
 		}
-		
+
 		set {
 			if let data = newValue {
 				do {
 					try setData(data, forKey: key)
-				}
-				catch {}
-			}
-			else {
+				} catch {}
+			} else {
 				do {
 					try deleteData(forKey: key)
-				}
-				catch{}
+				} catch {}
 			}
 		}
 	}

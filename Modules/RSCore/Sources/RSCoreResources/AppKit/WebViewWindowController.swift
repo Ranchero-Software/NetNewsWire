@@ -13,7 +13,7 @@ public final class WebViewWindowController: NSWindowController {
 
 	@IBOutlet private var webview: WKWebView!
 	private var title: String!
-    
+
 	public convenience init(title: String) {
         self.init(window: nil)
 		self.title = title
@@ -29,7 +29,7 @@ public final class WebViewWindowController: NSWindowController {
 
 		// We assume there might be images, style sheets, etc. contained by the folder that the file appears in, so we get read access to the parent folder.
 
-		let _ = self.window
+		_ = self.window
 
 		let fileURL = URL(fileURLWithPath: path)
 		let folderURL = fileURL.deletingLastPathComponent()

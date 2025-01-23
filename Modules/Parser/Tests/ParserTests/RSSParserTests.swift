@@ -17,7 +17,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.002 2022 Mac Studio
 		let d = parserData("scriptingNews", "rss", "http://scripting.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -27,7 +27,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.001 2022 Mac Studio
 		let d = parserData("KatieFloyd", "rss", "http://katiefloyd.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -37,7 +37,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.0004 2022 Mac Studio
 		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -47,7 +47,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.0006 2022 Mac Studio
 		let d = parserData("manton", "rss", "http://manton.org/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -57,7 +57,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.002 2022 Mac Studio
 		let d = parserData("allthis", "rss", "http://leancrew.com/all-this")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -241,8 +241,7 @@ final class RSSParserTests: XCTestCase {
 				// Tue, 07 Mar 2023 15:15:29 -0500
 				let expectedDatePublished = dateWithValues(2023, 3, 7, 20, 15, 29)
 				XCTAssertEqual(article.datePublished, expectedDatePublished)
-			}
-			else if article.title == "Ventura’s System Settings" {
+			} else if article.title == "Ventura’s System Settings" {
 				didFindSecondTestArticle = true
 				// Sun, 30 Oct 2022 11:58:26 -0500
 				let expectedDatePublished = dateWithValues(2022, 10, 30, 16, 58, 26)

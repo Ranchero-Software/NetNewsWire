@@ -70,7 +70,7 @@ private func decodedEntities(_ sourceBuffer: UnsafeBufferPointer<UInt8>, _ didDe
 
 	resultBuffer.initializeMemory(as: UInt8.self, repeating: 0, count: resultBufferByteCount)
 	let result = resultBuffer.assumingMemoryBound(to: UInt8.self)
-	
+
 	var sourceLocation = 0
 	var resultLocation = 0
 
@@ -78,7 +78,7 @@ private func decodedEntities(_ sourceBuffer: UnsafeBufferPointer<UInt8>, _ didDe
 
 		let ch = sourceBuffer[sourceLocation]
 
-		var decodedEntity: String? = nil
+		var decodedEntity: String?
 
 		if ch == ampersandCharacter {
 			decodedEntity = decodedEntityValue(sourceBuffer, byteCount, &sourceLocation)
@@ -112,7 +112,7 @@ private func addDecodedEntity(_ decodedEntity: String, _ result: UnsafeMutablePo
 	}
 }
 
-private func decodedEntityValue(_ buffer: UnsafeBufferPointer<UInt8>, _ byteCount: Int, _ sourceLocation: inout Int) -> /*[UInt8]?*/ String? {
+private func decodedEntityValue(_ buffer: UnsafeBufferPointer<UInt8>, _ byteCount: Int, _ sourceLocation: inout Int) -> String? {
 
 	guard let rawEntity = rawEntityValue(buffer, byteCount, &sourceLocation) else {
 		return nil
@@ -153,8 +153,7 @@ private func decodedNumericEntity(_ rawEntity: ContiguousArray<UInt8>) -> String
 
 	if rawEntity[1] == xCharacter || rawEntity[1] == XCharacter { // Hex?
 		decodedNumber = decodedHexEntity(rawEntity)
-	}
-	else {
+	} else {
 		decodedNumber = decodedDecimalEntity(rawEntity)
 	}
 
@@ -247,7 +246,7 @@ private func decodedDecimalEntity(_ rawEntity: ContiguousArray<UInt8>) -> UInt32
 	if number == 0 {
 		return nil
 	}
-	
+
 	return number
 }
 
@@ -271,7 +270,7 @@ private func rawEntityValue(_ buffer: UnsafeBufferPointer<UInt8>, _ byteCount: I
 	while true {
 
 		sourceLocation += 1
-		if sourceLocation >= byteCount || entityCharactersIndex >= maxEntityCharacters  { // did not parse entity
+		if sourceLocation >= byteCount || entityCharactersIndex >= maxEntityCharacters { // did not parse entity
 			sourceLocation = savedSourceLocation
 			return nil
 		}

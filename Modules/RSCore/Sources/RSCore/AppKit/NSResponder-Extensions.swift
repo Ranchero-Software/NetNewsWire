@@ -9,22 +9,21 @@
 import AppKit
 
 public extension NSResponder {
-	
+
 	func hasAncestor(_ ancestor: NSResponder) -> Bool {
-		
+
 		var nomad: NSResponder = self
-		while(true) {
+		while true {
 			if nomad === ancestor {
 				return true
 			}
 			if let _ = nomad.nextResponder {
 				nomad = nomad.nextResponder!
-			}
-			else {
+			} else {
 				break
 			}
 		}
-		
+
 		return false
 	}
 }

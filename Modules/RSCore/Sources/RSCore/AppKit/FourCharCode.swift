@@ -34,4 +34,3 @@ public extension Int {
 		return UInt32(self)
 	}
 }
-

@@ -61,7 +61,7 @@ public final class SAXParser {
 	}
 
 	public func parse() {
-		
+
 		guard !data.isEmpty else {
 			return
 		}
@@ -99,7 +99,7 @@ public final class SAXParser {
 		}
 
 		var dictionary = [String: String]()
-		
+
 		let fieldCount = 5
 		var i = 0, j = 0
 		while i < attributeCount {
@@ -201,4 +201,3 @@ nonisolated(unsafe) private var saxHandlerStruct: xmlSAXHandler = {
 
 	return handler
 }()
-

@@ -46,4 +46,3 @@ public protocol SendToCommand {
 	///   - selectedText: The currently selected text.
 	func sendObject(_ object: Any?, selectedText: String?)
 }
-

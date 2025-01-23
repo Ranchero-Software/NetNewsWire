@@ -16,7 +16,7 @@ final class HTMLLinkTests: XCTestCase {
 		// 0.003 sec on my 2012 iMac
 		let d = parserData("sixcolors", "html", "http://sixcolors.com/")
 		self.measure {
-			let _ = HTMLLinkParser.htmlLinks(with: d)
+			_ = HTMLLinkParser.htmlLinks(with: d)
 		}
 	}
 

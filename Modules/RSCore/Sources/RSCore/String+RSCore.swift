@@ -25,14 +25,14 @@ public extension String {
 	static func htmlWithLink(_ link: String) -> String {
 		return link.htmlByAddingLink(link)
 	}
-	
+
     func hmacUsingSHA1(key: String) -> String {
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
         CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA1), key, key.count, self, self.count, &digest)
         let data = Data(digest)
         return data.map { String(format: "%02hhx", $0) }.joined()
     }
-	
+
 }
 
 public extension String {
@@ -87,7 +87,7 @@ public extension String {
 
 		let s = self.trimmingWhitespace
 
-		if (s.isEmpty || (!s.contains(".") && !s.mayBeIPv6URL && !s.hostMayBeLocalhost)) {
+		if s.isEmpty || (!s.contains(".") && !s.mayBeIPv6URL && !s.hostMayBeLocalhost) {
 			return false
 		}
 
@@ -184,7 +184,7 @@ public extension String {
 			return self.replacingCharacters(in: range, with: "")
 		}
 
-		return self;
+		return self
 	}
 
 	/// Removes an HTML tag and everything between its start and end tags.
@@ -264,7 +264,7 @@ public extension String {
 
 				if let maxCharacters = maxCharacters {
 					charactersAdded += 1
-					if (charactersAdded >= maxCharacters) {
+					if charactersAdded >= maxCharacters {
 						break
 					}
 				}
@@ -308,7 +308,6 @@ public extension String {
 
 		return s.replacingOccurrences(of: "\\n{3,}", with: "\n\n", options: .regularExpression)
 	}
-
 
 	/// Returns a Boolean value indicating whether the string contains another string, case-insensitively.
 	///

@@ -20,7 +20,7 @@ public class OPMLItem {
 		(items?.count ?? 0) > 0
 	}
 
-	init(attributes: [String : String]?) {
+	init(attributes: [String: String]?) {
 
 		self.titleFromAttributes = attributes?.opml_title ?? attributes?.opml_text
 		self.attributes = attributes
@@ -33,7 +33,7 @@ public class OPMLItem {
 	}
 
 	public func add(_ item: OPMLItem) {
-		
+
 		if items == nil {
 			items = [OPMLItem]()
 		}

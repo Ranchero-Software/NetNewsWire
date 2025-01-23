@@ -10,8 +10,8 @@
 import UIKit
 
 extension UIResponder {
-	
-	private weak static var _currentFirstResponder: UIResponder? = nil
+
+	private weak static var _currentFirstResponder: UIResponder?
 
 	public static var isFirstResponderTextField: Bool {
 		var isTextField = false
@@ -27,7 +27,7 @@ extension UIResponder {
 		UIApplication.shared.sendAction(#selector(findFirstResponder(sender:)), to: nil, from: nil, for: nil)
 		return UIResponder._currentFirstResponder
 	}
-	
+
 	public static func resignCurrentFirstResponder() {
 		if let responder = currentFirstResponder {
 			responder.resignFirstResponder()
@@ -37,6 +37,6 @@ extension UIResponder {
 	@objc internal func findFirstResponder(sender: AnyObject) {
 		UIResponder._currentFirstResponder = self
 	}
-	
+
 }
 #endif

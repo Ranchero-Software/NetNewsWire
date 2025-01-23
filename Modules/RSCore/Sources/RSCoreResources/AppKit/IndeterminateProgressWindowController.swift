@@ -67,5 +67,3 @@ private final class IndeterminateProgressWindowController: NSWindowController {
 	}
 }
 #endif
-
-

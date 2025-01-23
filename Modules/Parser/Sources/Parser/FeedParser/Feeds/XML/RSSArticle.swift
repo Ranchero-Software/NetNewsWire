@@ -6,7 +6,7 @@
 //
 
 import Foundation
-//import FoundationExtras
+// import FoundationExtras
 
 final class RSSArticle {
 
@@ -81,28 +81,21 @@ private extension RSSArticle {
 		if let permalink, !permalink.isEmpty, let datePublishedTimeStampString {
 			s.append(permalink)
 			s.append(datePublishedTimeStampString)
-		}
-		else if let link, !link.isEmpty, let datePublishedTimeStampString {
+		} else if let link, !link.isEmpty, let datePublishedTimeStampString {
 			s.append(link)
 			s.append(datePublishedTimeStampString)
-		}
-		else if let title, !title.isEmpty, let datePublishedTimeStampString {
+		} else if let title, !title.isEmpty, let datePublishedTimeStampString {
 			s.append(title)
 			s.append(datePublishedTimeStampString)
-		}
-		else if let datePublishedTimeStampString {
+		} else if let datePublishedTimeStampString {
 			s.append(datePublishedTimeStampString)
-		}
-		else if let permalink, !permalink.isEmpty {
+		} else if let permalink, !permalink.isEmpty {
 			s.append(permalink)
-		}
-		else if let link, !link.isEmpty {
+		} else if let link, !link.isEmpty {
 			s.append(link)
-		}
-		else if let title, !title.isEmpty {
+		} else if let title, !title.isEmpty {
 			s.append(title)
-		}
-		else if let body, !body.isEmpty {
+		} else if let body, !body.isEmpty {
 			s.append(body)
 		}
 

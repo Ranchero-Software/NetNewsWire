@@ -14,7 +14,7 @@ public final class ParsedAuthor: Hashable, Codable, Sendable {
 	public let url: String?
 	public let avatarURL: String?
 	public let emailAddress: String?
-	
+
 	public init(name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
 		self.name = name
 		self.url = url
@@ -39,17 +39,13 @@ public final class ParsedAuthor: Hashable, Codable, Sendable {
 	public func hash(into hasher: inout Hasher) {
 		if let name {
 			hasher.combine(name)
-		}
-		else if let url {
+		} else if let url {
 			hasher.combine(url)
-		}
-		else if let emailAddress {
+		} else if let emailAddress {
 			hasher.combine(emailAddress)
-		}
-		else if let avatarURL{
+		} else if let avatarURL {
 			hasher.combine(avatarURL)
-		}
-		else {
+		} else {
 			hasher.combine("")
 		}
 	}

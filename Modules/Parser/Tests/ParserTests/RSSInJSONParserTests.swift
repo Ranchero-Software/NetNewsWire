@@ -16,7 +16,7 @@ final class RSSInJSONParserTests: XCTestCase {
 		// 0.003 sec on my 2012 iMac.
 		let d = parserData("ScriptingNews", "json", "http://scripting.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 

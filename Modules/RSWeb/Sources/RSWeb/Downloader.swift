@@ -25,7 +25,7 @@ public final class Downloader {
 		sessionConfiguration.httpCookieAcceptPolicy = .never
 		sessionConfiguration.httpMaximumConnectionsPerHost = 1
 		sessionConfiguration.httpCookieStorage = nil
-		
+
 		if let userAgentHeaders = UserAgent.headers() {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
@@ -47,7 +47,7 @@ public final class Downloader {
 		urlRequestToUse.addSpecialCaseUserAgentIfNeeded()
 
 		let task = urlSession.dataTask(with: urlRequestToUse) { (data, response, error) in
-			DispatchQueue.main.async() {
+			DispatchQueue.main.async {
 				completion?(data, response, error)
 			}
 		}

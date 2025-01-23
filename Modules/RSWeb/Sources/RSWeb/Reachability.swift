@@ -48,8 +48,8 @@ public class Reachability {
 		return reachability.connection != .unavailable
 	}
 
-    public typealias NetworkReachable = (Reachability) -> ()
-    public typealias NetworkUnreachable = (Reachability) -> ()
+    public typealias NetworkReachable = (Reachability) -> Void
+    public typealias NetworkUnreachable = (Reachability) -> Void
 
     public enum Connection: CustomStringConvertible {
         @available(*, deprecated, renamed: "unavailable")
@@ -72,7 +72,7 @@ public class Reachability {
         if flags == nil {
             try? setReachabilityFlags()
         }
-        
+
         switch flags?.connection {
         case .unavailable?, nil: return .unavailable
         case .none?: return .unavailable

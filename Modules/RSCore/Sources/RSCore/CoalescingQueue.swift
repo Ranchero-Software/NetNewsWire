@@ -21,7 +21,7 @@ struct QueueCall: Equatable {
 
 	func perform() {
 
-		let _ = target?.perform(selector)
+		_ = target?.perform(selector)
 	}
 
 	static func ==(lhs: QueueCall, rhs: QueueCall) -> Bool {
@@ -38,7 +38,7 @@ struct QueueCall: Equatable {
 	private let interval: TimeInterval
 	private let maxInterval: TimeInterval
 	private var lastCallTime = Date.distantFuture
-	private var timer: Timer? = nil
+	private var timer: Timer?
 	private var calls = [QueueCall]()
 
 	public init(name: String, interval: TimeInterval = 0.05, maxInterval: TimeInterval = 2.0) {
@@ -63,12 +63,12 @@ struct QueueCall: Equatable {
 			call.perform()
 		}
 	}
-	
+
 	@objc func timerDidFire(_ sender: Any?) {
 		lastCallTime = Date()
 		performCallsImmediately()
 	}
-	
+
 }
 
 private extension CoalescingQueue {

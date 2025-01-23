@@ -31,7 +31,7 @@ final class HTMLMetadataTests: XCTestCase {
 		// 0.002 sec on my 2012 iMac
 		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
 		self.measure {
-			let _ = HTMLMetadataParser.metadata(with: d)
+			_ = HTMLMetadataParser.metadata(with: d)
 		}
 	}
 
@@ -54,7 +54,7 @@ final class HTMLMetadataTests: XCTestCase {
 		// 0.001 sec on my 2012 iMac
 		let d = parserData("furbo", "html", "http://furbo.org/")
 		self.measure {
-			let _ = HTMLMetadataParser.metadata(with: d)
+			_ = HTMLMetadataParser.metadata(with: d)
 		}
 	}
 
@@ -71,7 +71,7 @@ final class HTMLMetadataTests: XCTestCase {
 		XCTAssertEqual(feedLink.type, "application/rss+xml")
 		XCTAssertEqual(feedLink.urlString, "http://inessential.com/xml/rss.xml")
 
-		XCTAssertEqual(metadata.appleTouchIcons?.count ?? 0, 0);
+		XCTAssertEqual(metadata.appleTouchIcons?.count ?? 0, 0)
 	}
 
 	func testInessentialPerformance() {
@@ -79,7 +79,7 @@ final class HTMLMetadataTests: XCTestCase {
 		// 0.001 sec on my 2012 iMac
 		let d = parserData("inessential", "html", "http://inessential.com/")
 		self.measure {
-			let _ = HTMLMetadataParser.metadata(with: d)
+			_ = HTMLMetadataParser.metadata(with: d)
 		}
 	}
 
@@ -88,7 +88,7 @@ final class HTMLMetadataTests: XCTestCase {
 		// 0.004 sec on my 2012 iMac
 		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
 		self.measure {
-			let _ = HTMLMetadataParser.metadata(with: d)
+			_ = HTMLMetadataParser.metadata(with: d)
 		}
 	}
 
@@ -99,17 +99,17 @@ final class HTMLMetadataTests: XCTestCase {
 
 		XCTAssertEqual(metadata.favicons?.first?.urlString, "https://sixcolors.com/images/favicon.ico")
 
-		XCTAssertEqual(metadata.feedLinks?.count, 1);
+		XCTAssertEqual(metadata.feedLinks?.count, 1)
 		let feedLink = (metadata.feedLinks?.first!)!
-		XCTAssertEqual(feedLink.title, "RSS");
-		XCTAssertEqual(feedLink.type, "application/rss+xml");
-		XCTAssertEqual(feedLink.urlString, "http://feedpress.me/sixcolors");
+		XCTAssertEqual(feedLink.title, "RSS")
+		XCTAssertEqual(feedLink.type, "application/rss+xml")
+		XCTAssertEqual(feedLink.urlString, "http://feedpress.me/sixcolors")
 
-		XCTAssertEqual(metadata.appleTouchIcons!.count, 6);
-		let icon = metadata.appleTouchIcons![3];
-		XCTAssertEqual(icon.rel, "apple-touch-icon");
-		XCTAssertEqual(icon.sizes, "120x120");
-		XCTAssertEqual(icon.urlString, "https://sixcolors.com/apple-touch-icon-120.png");
+		XCTAssertEqual(metadata.appleTouchIcons!.count, 6)
+		let icon = metadata.appleTouchIcons![3]
+		XCTAssertEqual(icon.rel, "apple-touch-icon")
+		XCTAssertEqual(icon.sizes, "120x120")
+		XCTAssertEqual(icon.urlString, "https://sixcolors.com/apple-touch-icon-120.png")
 	}
 
 	func testSixColorsPerformance() {
@@ -117,7 +117,7 @@ final class HTMLMetadataTests: XCTestCase {
 		// 0.002 sec on my 2012 iMac
 		let d = parserData("sixcolors", "html", "http://sixcolors.com/")
 		self.measure {
-			let _ = HTMLMetadataParser.metadata(with: d)
+			_ = HTMLMetadataParser.metadata(with: d)
 		}
 	}
 
@@ -144,10 +144,10 @@ final class HTMLMetadataTests: XCTestCase {
 		let d = parserData("YouTubeTheVolvoRocks", "html", "https://www.youtube.com/user/TheVolvorocks")
 		let metadata = HTMLMetadataParser.metadata(with: d)
 
-		XCTAssertEqual(metadata.feedLinks!.count, 1);
+		XCTAssertEqual(metadata.feedLinks!.count, 1)
 		let feedLink = metadata.feedLinks!.first!
-		XCTAssertEqual(feedLink.title, "RSS");
-		XCTAssertEqual(feedLink.type, "application/rss+xml");
-		XCTAssertEqual(feedLink.urlString, "https://www.youtube.com/feeds/videos.xml?channel_id=UCct7QF2jcWRY6dhXWMSq9LQ");
+		XCTAssertEqual(feedLink.title, "RSS")
+		XCTAssertEqual(feedLink.type, "application/rss+xml")
+		XCTAssertEqual(feedLink.urlString, "https://www.youtube.com/feeds/videos.xml?channel_id=UCct7QF2jcWRY6dhXWMSq9LQ")
 	}
 }

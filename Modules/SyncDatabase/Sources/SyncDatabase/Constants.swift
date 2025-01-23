@@ -9,13 +9,13 @@
 import Foundation
 
 struct DatabaseTableName {
-	
+
 	static let syncStatus = "syncStatus"
-	
+
 }
 
 struct DatabaseKey {
-	
+
 	// Sync Status
 	static let articleID = "articleID"
 	static let key = "key"

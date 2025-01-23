@@ -20,7 +20,7 @@ final class RSSAuthor {
 		self.avatarURL = avatarURL
 		self.emailAddress = emailAddress
 	}
-	
+
 	/// Use when the actual property is unknown. Guess based on contents of the string. (This is common with RSS.)
 	convenience init(singleString: String) {
 

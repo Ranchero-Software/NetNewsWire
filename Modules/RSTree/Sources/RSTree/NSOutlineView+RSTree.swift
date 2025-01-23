@@ -21,7 +21,7 @@ public extension NSOutlineView {
 		if numberOfNodes < 2 {
 			return false
 		}
-		
+
 		let indexOfNodeToSelect = numberOfNodes - 1
 
 		for i in 1...indexOfNodeToSelect { // Start at 1 to skip root node.
@@ -36,8 +36,7 @@ public extension NSOutlineView {
 				selectRowIndexes(NSIndexSet(index: oneRow) as IndexSet, byExtendingSelection: false)
 				scrollRowToVisible(oneRow)
 				return true
-			}
-			else {
+			} else {
 				expandItem(oneNode)
 			}
 		}

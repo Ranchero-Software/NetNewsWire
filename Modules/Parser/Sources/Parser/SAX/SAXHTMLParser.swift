@@ -103,7 +103,7 @@ public final class SAXHTMLParser {
 
 		var dictionary = [String: String]()
 		var ix = 0
-		var currentKey: String? = nil
+		var currentKey: String?
 
 		while true {
 			let oneAttribute = attributes[ix]

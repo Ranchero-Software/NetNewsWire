@@ -44,7 +44,7 @@ class MacroProcessorTests: XCTestCase {
 	func testEmptyDelimiters() {
 		do {
 			let template = "foo bar"
-			let _ = try MacroProcessor.renderedText(withTemplate: template, substitutions: substitutions, macroStart: "")
+			_ = try MacroProcessor.renderedText(withTemplate: template, substitutions: substitutions, macroStart: "")
 			XCTFail("Error should be thrown")
 		} catch {
 			// Success
@@ -52,7 +52,7 @@ class MacroProcessorTests: XCTestCase {
 
 		do {
 			let template = "foo bar"
-			let _ = try MacroProcessor.renderedText(withTemplate: template, substitutions: substitutions, macroEnd: "")
+			_ = try MacroProcessor.renderedText(withTemplate: template, substitutions: substitutions, macroEnd: "")
 			XCTFail("Error should be thrown")
 		} catch {
 			// Success

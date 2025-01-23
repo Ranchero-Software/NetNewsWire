@@ -34,13 +34,13 @@ private extension HTMLMetadataParser {
 extension HTMLMetadataParser: SAXHTMLParserDelegate {
 
 	private struct HTMLName {
-		
+
 		static let link = "link".utf8CString
 		static let meta = "meta".utf8CString
 	}
 
 	private struct HTMLKey {
-		
+
 		static let href = "href"
 		static let src = "src"
 		static let rel = "rel"
@@ -81,8 +81,7 @@ extension HTMLMetadataParser: SAXHTMLParserDelegate {
 			if let d, !d.isEmpty {
 				handleLinkAttributes(d)
 			}
-		}
-		else if SAXEqualTags(name, HTMLName.meta) {
+		} else if SAXEqualTags(name, HTMLName.meta) {
 			let d = saxHTMLParser.attributesDictionary(attributes)
 			if let d, !d.isEmpty {
 				handleMetaAttributes(d)

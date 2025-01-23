@@ -15,7 +15,7 @@ public extension Array {
 			Array(self[$0 ..< Swift.min($0 + size, count)])
 		}
 	}
-	
+
 }
 
 public extension Array where Element: Equatable {

@@ -20,7 +20,7 @@ public final class ParsedAttachment: Hashable, Sendable {
 		if url.isEmpty {
 			return nil
 		}
-		
+
 		self.url = url
 		self.mimeType = mimeType
 		self.title = title

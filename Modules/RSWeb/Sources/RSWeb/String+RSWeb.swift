@@ -35,5 +35,5 @@ public extension String {
 
 		return escaped
 	}
-	
+
 }

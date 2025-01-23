@@ -10,7 +10,6 @@ import Foundation
 
 public extension FileManager {
 
-
 	/// Returns whether a path refers to a folder.
 	///
 	/// - Parameter path: The file path to check.
@@ -82,7 +81,7 @@ public extension FileManager {
 		guard let filenames = self.filenames(inFolder: folder) else {
 			return nil
 		}
-		
+
 		let url = URL(fileURLWithPath: folder)
 		return filenames.map { url.appendingPathComponent($0).path }
 	}
@@ -101,7 +100,7 @@ private extension FileManager {
 		assert(fileExists(atPath: source))
 
 		if fileExists(atPath: destination) {
-			if (overwriting) {
+			if overwriting {
 				try removeItem(atPath: destination)
 			}
 		}

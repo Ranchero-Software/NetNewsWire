@@ -40,13 +40,12 @@ public protocol DownloadSessionDelegate {
 	/// These URLs are skipped for the rest of the session.
 	private var urlsWith400s = Set<URL>()
 
-
 	public init(delegate: DownloadSessionDelegate) {
 
 		self.delegate = delegate
 
 		super.init()
-		
+
 		let sessionConfiguration = URLSessionConfiguration.ephemeral
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 15.0
@@ -60,9 +59,9 @@ public protocol DownloadSessionDelegate {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
 
-		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)		
+		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
 	}
-	
+
 	deinit {
 		urlSession.invalidateAndCancel()
 	}
@@ -170,7 +169,7 @@ extension DownloadSession: URLSessionDataDelegate {
 		addDataTaskFromQueueIfNecessary()
 		completionHandler(.allow)
 	}
-	
+
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 
 		guard let info = infoForTask(dataTask) else {
@@ -279,7 +278,7 @@ private extension DownloadSession {
 
 		var currentURL = url
 
-		while(true) {
+		while true {
 
 			if let oneRedirectURL = redirectCache[currentURL] {
 
@@ -289,9 +288,7 @@ private extension DownloadSession {
 				}
 				urls.insert(oneRedirectURL)
 				currentURL = oneRedirectURL
-			}
-
-			else {
+			} else {
 				break
 			}
 		}
@@ -449,7 +446,7 @@ extension URLSessionTask {
 // MARK: - DownloadInfo
 
 private final class DownloadInfo {
-	
+
 	let url: URL
 	let data = NSMutableData()
 	var urlResponse: URLResponse?
@@ -458,9 +455,9 @@ private final class DownloadInfo {
 
 		self.url = url
 	}
-	
+
 	func addData(_ d: Data) {
-		
+
 		data.append(d)
 	}
 }

@@ -28,8 +28,7 @@ public final class HTMLMetadata: Sendable {
 			self.appleTouchIcons = appleTouchIconTags.map { htmlTag in
 				HTMLMetadataAppleTouchIcon(urlString, htmlTag)
 			}
-		}
-		else {
+		} else {
 			self.appleTouchIcons = nil
 		}
 
@@ -37,8 +36,7 @@ public final class HTMLMetadata: Sendable {
 			self.feedLinks = feedLinkTags.map { htmlTag in
 				HTMLMetadataFeedLink(urlString, htmlTag)
 			}
-		}
-		else {
+		} else {
 			self.feedLinks = nil
 		}
 
@@ -89,7 +87,7 @@ public final class HTMLMetadata: Sendable {
 		}
 
 		let feedLinkTags = alternateLinkTags.filter { tag in
-			
+
 			guard let attributes = tag.attributes, let type = attributes.object(forCaseInsensitiveKey: "type"), typeIsFeedType(type) else {
 				return false
 			}
@@ -206,8 +204,7 @@ public final class HTMLMetadataAppleTouchIcon: Sendable {
 		let sizeComponents = sizes.components(separatedBy: CharacterSet(charactersIn: "x"))
 		if sizeComponents.count == 2, let width = Double(sizeComponents[0]), let height = Double(sizeComponents[1]) {
 			self.size = CGSize(width: width, height: height)
-		}
-		else {
+		} else {
 			self.size = nil
 		}
 	}
@@ -313,25 +310,19 @@ private extension HTMLOpenGraphProperties {
 
 			if propertyName == OGValue.ogImage {
 				url = content
-			}
-			else if propertyName == OGValue.ogImageURL {
+			} else if propertyName == OGValue.ogImageURL {
 				url = content
-			}
-			else if propertyName == OGValue.ogImageSecureURL {
+			} else if propertyName == OGValue.ogImageSecureURL {
 				secureURL = content
-			}
-			else if propertyName == OGValue.ogImageType {
+			} else if propertyName == OGValue.ogImageType {
 				mimeType = content
-			}
-			else if propertyName == OGValue.ogImageAlt {
+			} else if propertyName == OGValue.ogImageAlt {
 				altText = content
-			}
-			else if propertyName == OGValue.ogImageWidth {
+			} else if propertyName == OGValue.ogImageWidth {
 				if let value = Double(content) {
 					width = CGFloat(value)
 				}
-			}
-			else if propertyName == OGValue.ogImageHeight {
+			} else if propertyName == OGValue.ogImageHeight {
 				if let value = Double(content) {
 					height = CGFloat(value)
 				}
@@ -341,14 +332,14 @@ private extension HTMLOpenGraphProperties {
 		if url == nil && secureURL == nil && mimeType == nil && width == nil && height == nil && altText == nil {
 			return nil
 		}
-		
+
 		return HTMLOpenGraphImage(url: url, secureURL: secureURL, mimeType: mimeType, width: width, height: height, altText: altText)
 	}
 }
 
 public final class HTMLOpenGraphImage: Sendable {
 
-	public let url : String?
+	public let url: String?
 	public let secureURL: String?
 	public let mimeType: String?
 	public let width: CGFloat?
@@ -434,4 +425,3 @@ private func absoluteURLStringWithRelativeURLString(_ relativeURLString: String,
 	}
 	return absoluteURL.absoluteURL.standardized.absoluteString
 }
-

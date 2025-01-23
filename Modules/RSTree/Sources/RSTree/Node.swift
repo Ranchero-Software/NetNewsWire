@@ -11,7 +11,7 @@ import Foundation
 // Main thread only.
 
 public final class Node: Hashable {
-	
+
 	public weak var parent: Node?
 	public let representedObject: AnyObject
 	public var canHaveChildNodes = false
@@ -26,11 +26,11 @@ public final class Node: Hashable {
 		}
 		return true
 	}
-	
+
 	public var numberOfChildNodes: Int {
 		return childNodes.count
 	}
-	
+
 	public var indexPath: IndexPath {
 		if let parent = parent {
 			let parentPath = parent.indexPath
@@ -39,22 +39,22 @@ public final class Node: Hashable {
 			}
 			preconditionFailure("A Node’s parent must contain it as a child.")
 		}
-		return IndexPath(index: 0) //root node
+		return IndexPath(index: 0) // root node
 	}
-	
+
 	public var level: Int {
 		if let parent = parent {
 			return parent.level + 1
 		}
 		return 0
 	}
-	
+
 	public var isLeaf: Bool {
 		return numberOfChildNodes < 1
 	}
-	
+
 	public init(representedObject: AnyObject, parent: Node?) {
-		
+
 		precondition(Thread.isMainThread)
 
 		self.representedObject = representedObject
@@ -63,9 +63,9 @@ public final class Node: Hashable {
 		self.uniqueID = Node.incrementingID
 		Node.incrementingID += 1
 	}
-	
+
 	public class func genericRootNode() -> Node {
-		
+
 		let node = Node(representedObject: TopLevelRepresentedObject(), parent: nil)
 		node.canHaveChildNodes = true
 		return node
@@ -86,7 +86,7 @@ public final class Node: Hashable {
 	}
 
 	public func childAtIndex(_ index: Int) -> Node? {
-		
+
 		if index >= childNodes.count || index < 0 {
 			return nil
 		}
@@ -94,12 +94,12 @@ public final class Node: Hashable {
 	}
 
 	public func indexOfChild(_ node: Node) -> Int? {
-		
-		return childNodes.firstIndex{ (oneChildNode) -> Bool in
+
+		return childNodes.firstIndex { (oneChildNode) -> Bool in
 			oneChildNode === node
 		}
 	}
-	
+
 	public func childNodeRepresentingObject(_ obj: AnyObject) -> Node? {
 		return findNodeRepresentingObject(obj, recursively: false)
 	}
@@ -182,12 +182,11 @@ public final class Node: Hashable {
 	}
 }
 
-
 public extension Array where Element == Node {
 
 	func representedObjects() -> [AnyObject] {
 
-		return self.map{ $0.representedObject }
+		return self.map { $0.representedObject }
 	}
 }
 

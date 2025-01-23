@@ -69,8 +69,7 @@ public extension NSOutlineView {
 					selectRowAndScrollToVisible(row)
 					return
 				}
-			}
-			else {
+			} else {
 				return // if there are no more items, we’re out of rows
 			}
 		}
@@ -180,4 +179,3 @@ public extension NSOutlineView {
 	}
 }
 #endif
-

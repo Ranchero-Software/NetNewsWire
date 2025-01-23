@@ -18,9 +18,9 @@ public extension Set {
 
 		return self[index]
 	}
-	
+
 	func anyObject() -> Element? {
-		
+
 		if self.isEmpty {
 			return nil
 		}

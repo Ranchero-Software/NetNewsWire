@@ -26,5 +26,5 @@ public extension Calendar {
 	static var startOfToday: Date {
 		cached.startOfDay(for: Date())
 	}
-	
+
 }

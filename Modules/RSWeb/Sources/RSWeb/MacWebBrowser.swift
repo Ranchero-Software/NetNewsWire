@@ -21,7 +21,7 @@ public class MacWebBrowser {
 			return false
 		}
 
-		if (inBackground) {
+		if inBackground {
 
 			let configuration = NSWorkspace.OpenConfiguration()
 			configuration.activates = false
@@ -124,23 +124,23 @@ public class MacWebBrowser {
 	///   - url: The URL to open.
 	///   - inBackground: If `true`, attempt to load the URL without bringing the browser to the foreground.
 	@discardableResult public func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
-		
+
 		// TODO: make this function async.
-		
+
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false
 		}
-		
+
 		Task { @MainActor in
-			
+
 			let configuration = NSWorkspace.OpenConfiguration()
 			if inBackground {
 				configuration.activates = false
 			}
-			
+
 			NSWorkspace.shared.open([preparedURL], withApplicationAt: self.url, configuration: configuration, completionHandler: nil)
 		}
-		
+
 		return true
 	}
 }
@@ -148,7 +148,7 @@ public class MacWebBrowser {
 extension MacWebBrowser: CustomDebugStringConvertible {
 
 	public var debugDescription: String {
-		if let name = name, let bundleIdentifier = bundleIdentifier{
+		if let name = name, let bundleIdentifier = bundleIdentifier {
 			return "MacWebBrowser: \(name) (\(bundleIdentifier))"
 		} else {
 			return "MacWebBrowser"

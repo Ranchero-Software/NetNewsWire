@@ -17,7 +17,7 @@ public final class ParsedHub: Hashable, Sendable {
 		self.type = type
 		self.url = url
 	}
-	
+
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {

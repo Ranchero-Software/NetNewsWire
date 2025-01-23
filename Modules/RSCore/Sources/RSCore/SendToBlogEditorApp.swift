@@ -13,7 +13,7 @@ import Foundation
 
 public struct SendToBlogEditorApp {
 
-	///The target descriptor of the application.
+	/// The target descriptor of the application.
 	///
 	/// The easiest way to get this is probably `UserApp.targetDescriptor` or `NSAppleEventDescriptor(runningApplication:)`.
 	///
@@ -49,7 +49,6 @@ public struct SendToBlogEditorApp {
 		self.sourceFeedURL = sourceFeedURL
 	}
 
-
 	/// Sends the receiver's data to the blog editor application described by `targetDescriptor`.
 	public func send() {
 
@@ -57,7 +56,7 @@ public struct SendToBlogEditorApp {
 
 		appleEvent.setParam(paramDescriptor, forKeyword: keyDirectObject)
 
-		let _ = try? appleEvent.sendEvent(options: [.noReply, .canSwitchLayer, .alwaysInteract], timeout: .AEDefaultTimeout)
+		_ = try? appleEvent.sendEvent(options: [.noReply, .canSwitchLayer, .alwaysInteract], timeout: .AEDefaultTimeout)
 
 	}
 

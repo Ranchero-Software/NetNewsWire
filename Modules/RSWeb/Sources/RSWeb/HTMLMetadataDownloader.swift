@@ -19,7 +19,7 @@ public final class HTMLMetadataDownloader: Sendable {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
 	private static let debugLoggingEnabled = false
-	
+
 	private let cache = HTMLMetadataCache()
 	private let attemptDatesLock = OSAllocatedUnfairLock(initialState: [String: Date]())
 	private let urlsReturning4xxsLock = OSAllocatedUnfairLock(initialState: Set<String>())
@@ -88,7 +88,7 @@ private extension HTMLMetadataDownloader {
 			Self.logger.debug("HTMLMetadataDownloader downloading for \(url)")
 		}
 
-		Downloader.shared.download(actualURL) { data, response, error in
+		Downloader.shared.download(actualURL) { data, response, _ in
 			if let data, !data.isEmpty, let response, response.statusIsOK {
 				let urlToUse = response.url ?? actualURL
 				let parserData = ParserData(url: urlToUse.absoluteString, data: data)

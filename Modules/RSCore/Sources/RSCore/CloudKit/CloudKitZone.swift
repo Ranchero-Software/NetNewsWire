@@ -27,7 +27,7 @@ public enum CloudKitZoneError: LocalizedError {
 }
 
 public protocol CloudKitZoneDelegate: AnyObject {
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void);
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
@@ -54,7 +54,7 @@ public protocol CloudKitZone: AnyObject {
 	func subscribeToZoneChanges()
 
 	/// Process a remove notification
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any], completion: @escaping () -> Void)
 
 }
 
@@ -111,21 +111,21 @@ public extension CloudKitZone {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: zoneID)
 	}
 
-	func retryIfPossible(after: Double, block: @escaping () -> ()) {
+	func retryIfPossible(after: Double, block: @escaping () -> Void) {
 		let delayTime = DispatchTime.now() + after
 		DispatchQueue.main.asyncAfter(deadline: delayTime, execute: {
 			block()
 		})
 	}
 
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any], completion: @escaping () -> Void) {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == zoneID.zoneName else {
 			completion()
 			return
 		}
 
-		fetchChangesInZone() { result in
+		fetchChangesInZone { result in
 			if case .failure(let error) = result {
 				os_log(.error, log: self.log, "%@ zone remote notification fetch error: %@", self.zoneID.zoneName, error.localizedDescription)
 			}
@@ -140,7 +140,7 @@ public extension CloudKitZone {
 			return
 		}
 
-		database.save(CKRecordZone(zoneID: zoneID)) { (recordZone, error) in
+		database.save(CKRecordZone(zoneID: zoneID)) { (_, error) in
 			if let error = error {
 				DispatchQueue.main.async {
 					completion(.failure(CloudKitError(error)))
@@ -211,7 +211,7 @@ public extension CloudKitZone {
 				switch CloudKitZoneResult.resolve(error) {
 
 				case .zoneNotFound:
-					self.createZoneRecord() { result in
+					self.createZoneRecord { result in
 						switch result {
 						case .success:
 							self.query(ckQuery, desiredKeys: desiredKeys, completion: completion)
@@ -285,7 +285,7 @@ public extension CloudKitZone {
 				switch CloudKitZoneResult.resolve(error) {
 
 				case .zoneNotFound:
-					self.createZoneRecord() { result in
+					self.createZoneRecord { result in
 						switch result {
 						case .success:
 							self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
@@ -315,7 +315,6 @@ public extension CloudKitZone {
 		database?.add(op)
 	}
 
-
 	/// Fetch a CKRecord by using its externalID
 	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
 		guard let externalID = externalID else {
@@ -341,7 +340,7 @@ public extension CloudKitZone {
 					}
 				}
 			case .zoneNotFound:
-				self.createZoneRecord() { result in
+				self.createZoneRecord { result in
 					switch result {
 					case .success:
 						self.fetch(externalID: externalID, completion: completion)
@@ -405,7 +404,7 @@ public extension CloudKitZone {
 					}
 
 				case .zoneNotFound:
-					self.createZoneRecord() { result in
+					self.createZoneRecord { result in
 						switch result {
 						case .success:
 							self.saveIfNew(records, completion: completion)
@@ -473,7 +472,7 @@ public extension CloudKitZone {
 					completion(.success((savedSubscription!)))
 				}
 			case .zoneNotFound:
-				self.createZoneRecord() { result in
+				self.createZoneRecord { result in
 					switch result {
 					case .success:
 						self.save(subscription, completion: completion)
@@ -666,7 +665,7 @@ public extension CloudKitZone {
 				switch CloudKitZoneResult.resolve(error) {
 
 				case .zoneNotFound:
-					self.createZoneRecord() { result in
+					self.createZoneRecord { result in
 						switch result {
 						case .success:
 							self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
@@ -727,7 +726,7 @@ public extension CloudKitZone {
 						}
 					}
 
-					saveChunks() { result in
+					saveChunks { result in
 						switch result {
 						case .success:
 							deleteChunks()
@@ -763,11 +762,11 @@ public extension CloudKitZone {
 		op.fetchAllChanges = true
 		op.qualityOfService = Self.qualityOfService
 
-		op.recordZoneChangeTokensUpdatedBlock = { zoneID, token, _ in
+		op.recordZoneChangeTokensUpdatedBlock = { _, token, _ in
 			savedChangeToken = token
 		}
 
-		op.recordWasChangedBlock = { recordID, result in
+		op.recordWasChangedBlock = { _, result in
 			if let record = try? result.get() {
 				changedRecords.append(record)
 			}
@@ -778,7 +777,7 @@ public extension CloudKitZone {
 			deletedRecordKeys.append(recordKey)
 		}
 
-		op.recordZoneFetchResultBlock = { recordZoneID, result in
+		op.recordZoneFetchResultBlock = { _, result in
 			if let (token, _, _) = try? result.get() {
 				savedChangeToken = token
 			}
@@ -809,7 +808,7 @@ public extension CloudKitZone {
 				switch CloudKitZoneResult.resolve(error) {
 
 				case .zoneNotFound:
-					self.createZoneRecord() { result in
+					self.createZoneRecord { result in
 						switch result {
 						case .success:
 							self.fetchChangesInZone(completion: completion)

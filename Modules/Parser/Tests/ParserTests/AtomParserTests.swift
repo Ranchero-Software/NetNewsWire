@@ -14,15 +14,15 @@ final class AtomParserTests: XCTestCase {
 	func testDaringFireballPerformance() {
 
 		// 0.009 sec on my 2012 iMac.
-		let d = parserData("DaringFireball", "atom", "http://daringfireball.net/") //It’s actually an Atom feed
+		let d = parserData("DaringFireball", "atom", "http://daringfireball.net/") // It’s actually an Atom feed
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
 	func testDaringFireball() {
 
-		let d = parserData("DaringFireball", "atom", "http://daringfireball.net/") //It’s actually an Atom feed
+		let d = parserData("DaringFireball", "atom", "http://daringfireball.net/") // It’s actually an Atom feed
 		let parsedFeed = try! FeedParser.parse(d)!
 
 		for article in parsedFeed.items {
@@ -35,8 +35,7 @@ final class AtomParserTests: XCTestCase {
 			let author = article.authors!.first!
 			if author.name == "Daring Fireball Department of Commerce" {
 				XCTAssertNil(author.url)
-			}
-			else {
+			} else {
 				XCTAssertEqual(author.name, "John Gruber")
 				XCTAssertEqual(author.url, "http://daringfireball.net/")
 			}
@@ -78,7 +77,7 @@ final class AtomParserTests: XCTestCase {
 			guard let attachments = article.attachments else {
 				continue
 			}
-			
+
 			XCTAssertEqual(attachments.count, 1)
 			let attachment = attachments.first!
 

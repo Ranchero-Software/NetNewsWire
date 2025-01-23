@@ -36,7 +36,7 @@ public enum FeedType: Sendable {
 				return .unknown
 			}
 			let cCharPointer = baseAddress.assumingMemoryBound(to: CChar.self)
-			
+
 			if isProbablyJSON(cCharPointer, count) {
 
 				if isPartialData {

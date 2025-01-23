@@ -37,4 +37,3 @@ public struct OPMLFeedSpecifier: Sendable {
 		self.feedURL = feedURL
 	}
 }
-

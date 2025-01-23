@@ -17,7 +17,7 @@ public extension Notification.Name {
 public final class HTMLMetadataCache: Sendable {
 
 	static let shared = HTMLMetadataCache()
-	
+
 	// Sent along with .htmlMetadataAvailable notification
 	public struct UserInfoKey {
 		public static let htmlMetadata = "htmlMetadata"

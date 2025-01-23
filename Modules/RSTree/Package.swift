@@ -9,7 +9,7 @@ let package = Package(
 		.library(
 			name: "RSTree",
 			type: .dynamic,
-			targets: ["RSTree"]),
+			targets: ["RSTree"])
 	],
 	targets: [
 		.target(

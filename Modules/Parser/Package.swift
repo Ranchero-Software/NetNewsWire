@@ -8,7 +8,7 @@ let package = Package(
 	products: [
 		.library(
 			name: "Parser",
-			targets: ["Parser"]),
+			targets: ["Parser"])
 	],
 	dependencies: [
 		.package(path: "../RSCore")
@@ -26,6 +26,6 @@ let package = Package(
 				"Parser"
 			],
 			resources: [.copy("Resources")]
-		),
+		)
 	]
 )

@@ -11,7 +11,7 @@ import Foundation
 // These functions eat errors.
 
 public func propertyList(withData data: Data) -> Any? {
-	
+
 	do {
 		return try PropertyListSerialization.propertyList(from: data, options: [], format: nil)
 	} catch {
@@ -22,11 +22,10 @@ public func propertyList(withData data: Data) -> Any? {
 // Create a binary plist.
 
 public func data(withPropertyList plist: Any) -> Data? {
-	
+
 	do {
 		return try PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0)
-	}
-	catch {
+	} catch {
 		return nil
 	}
 }

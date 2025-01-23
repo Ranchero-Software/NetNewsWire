@@ -13,7 +13,7 @@ final class DateParserTests: XCTestCase {
 
 	func testDateWithString() {
 		var expectedDateResult = dateWithValues(2010, 5, 28, 21, 3, 38)
-		
+
 		var d = date("Fri, 28 May 2010 21:03:38 +0000")
 		XCTAssertEqual(d, expectedDateResult)
 
@@ -78,7 +78,7 @@ final class DateParserTests: XCTestCase {
 		let d = date("2010-11-17 08:40:07-05:00")
 		XCTAssertEqual(d, expectedDateResult)
 	}
-	
+
 	func testFeedbinDate() {
 		let expectedDateResult = dateWithValues(2019, 9, 27, 21, 01, 48)
 		let d = date("2019-09-27T21:01:48.000000Z")
@@ -106,7 +106,7 @@ final class DateParserTests: XCTestCase {
 	}
 
 	func testPubDateParsingPerformance() {
-		
+
 		// 0.0001 seconds on my Mac Studio M1
 		self.measure {
 			_ = date("21 May 2010 21:22:53 GMT")

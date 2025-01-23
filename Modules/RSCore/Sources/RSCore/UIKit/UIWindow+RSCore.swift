@@ -9,9 +9,9 @@
 import UIKit
 
 extension UIWindow {
-	
+
 	public var topViewController: UIViewController? {
-		
+
 		var top = self.rootViewController
 		while true {
 			if let presented = top?.presentedViewController {
@@ -33,10 +33,10 @@ extension UIWindow {
 				break
 			}
 		}
-		
+
 		return top
-		
+
 	}
-	
+
 }
 #endif

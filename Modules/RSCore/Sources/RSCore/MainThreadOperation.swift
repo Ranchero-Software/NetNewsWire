@@ -89,8 +89,7 @@ public extension MainThreadOperation {
 		}
 		if Thread.isMainThread {
 			operationDelegate?.operationDidComplete(self)
-		}
-		else {
+		} else {
 			DispatchQueue.main.async {
 				self.informOperationDelegateOfCompletion()
 			}

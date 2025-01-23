@@ -9,7 +9,7 @@
 import Foundation
 
 public struct UserAgent {
-	
+
 	public static func fromInfoPlist() -> String? {
 
 		return Bundle.main.object(forInfoDictionaryKey: "UserAgent") as? String

@@ -8,10 +8,10 @@
 #if os(macOS)
 import AppKit
 
-//let keypadEnter: unichar = 3
+// let keypadEnter: unichar = 3
 
 @objc public protocol KeyboardDelegate: AnyObject {
-	
+
 	// Return true if handled.
 	func keydown(_: NSEvent, in view: NSView) -> Bool
 }

@@ -10,8 +10,8 @@ import libxml2
 
 public func SAXEqualTags(_ localName: XMLPointer, _ tag: ContiguousArray<Int8>) -> Bool {
 
-	return tag.withUnsafeBufferPointer { bufferPointer in
-		
+	return tag.withUnsafeBufferPointer { _ in
+
 		let tagCount = tag.count // includes 0 terminator
 
 		for i in 0..<tagCount - 1 {

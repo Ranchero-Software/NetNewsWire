@@ -14,7 +14,7 @@ public extension Dictionary where Key == String, Value == String {
 		if let object = self[key] {
 			return object
 		}
-		
+
 		let lowercaseKey = key.lowercased()
 
 		for (oneKey, oneValue) in self {

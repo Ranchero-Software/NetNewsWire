@@ -14,7 +14,7 @@ public enum TransportError: LocalizedError {
     case noURL
 	case suspended
 	case httpError(status: Int)
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .httpError(let status):
@@ -111,27 +111,27 @@ public enum TransportError: LocalizedError {
 			return NSLocalizedString("An unknown network error occurred.", comment: "Unknown error")
 		}
 	}
-	
+
 }
 
 public protocol Transport {
-	
+
 	/// Cancels all pending requests
 	func cancelAll()
-	
+
 	/// Sends URLRequest and returns the HTTP headers and the data payload.
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
-	
+
 	/// Sends URLRequest that doesn't require any result information.
 	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void)
-	
+
 	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
 	func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
-	
+
 }
 
 extension URLSession: Transport {
-	
+
 	public func cancelAll() {
 		getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
 			for dataTask in dataTasks {
@@ -145,7 +145,7 @@ extension URLSession: Transport {
 			}
 		}
 	}
-	
+
 	public func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		let task = self.dataTask(with: request) { (data, response, error) in
 			DispatchQueue.main.async {
@@ -169,11 +169,11 @@ extension URLSession: Transport {
 	}
 
 	public func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		var sendRequest = request
 		sendRequest.httpMethod = method
-		
-		let task = self.dataTask(with: sendRequest) { (data, response, error) in
+
+		let task = self.dataTask(with: sendRequest) { (_, response, error) in
 			DispatchQueue.main.async {
 				if let error = error {
 					return completion(.failure(error))
@@ -193,12 +193,12 @@ extension URLSession: Transport {
 		}
 		task.resume()
 	}
-	
+
 	public func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
-		
+
 		var sendRequest = request
 		sendRequest.httpMethod = method
-		
+
 		let task = self.uploadTask(with: sendRequest, from: payload) { (data, response, error) in
 			DispatchQueue.main.async {
 				if let error = error {
@@ -215,14 +215,14 @@ extension URLSession: Transport {
 				default:
 					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
 				}
-				
+
 			}
 		}
 		task.resume()
 	}
-	
+
 	public static func webserviceTransport() -> Transport {
-	
+
 		let sessionConfiguration = URLSessionConfiguration.default
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 60.0
@@ -231,11 +231,11 @@ extension URLSession: Transport {
 		sessionConfiguration.httpMaximumConnectionsPerHost = 2
 		sessionConfiguration.httpCookieStorage = nil
 		sessionConfiguration.urlCache = nil
-		
+
 		if let userAgentHeaders = UserAgent.headers() {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
-		
+
 		return URLSession(configuration: sessionConfiguration)
 	}
 }

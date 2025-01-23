@@ -95,7 +95,7 @@ public final class MainThreadOperationQueue {
 	/// those operations will be canceled also.
 	public func cancelOperations(_ operations: [MainThreadOperation]) {
 		precondition(Thread.isMainThread)
-		let operationIDsToCancel = operations.map{ ensureOperationID($0) }
+		let operationIDsToCancel = operations.map { ensureOperationID($0) }
 		assert(allOperationIDsArePendingOrCurrent(operationIDsToCancel))
 		assert(allOperationIDsAreInStorage(operationIDsToCancel))
 
@@ -182,8 +182,7 @@ private extension MainThreadOperationQueue {
 
 		if operation.isCanceled {
 			dependencies.operationIDWasCanceled(operationID)
-		}
-		else {
+		} else {
 			dependencies.operationIDDidComplete(operationID)
 		}
 
@@ -249,7 +248,7 @@ private extension MainThreadOperationQueue {
 		guard !operationIDs.isEmpty else {
 			return
 		}
-		
+
 		let operationIDsToCancel = operationIDsByAddingChildOperationIDs(operationIDs)
 		setCanceledAndRemoveDelegate(for: operationIDsToCancel)
 		callCompletionBlockForOperationIDs(operationIDsToCancel)

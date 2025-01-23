@@ -22,8 +22,7 @@ extension URL {
 			let result: Bool
 			if let host = host(), host.contains("openrss.org") {
 				result = true
-			}
-			else {
+			} else {
 				result = false
 			}
 
@@ -69,7 +68,7 @@ extension Set where Element == URL {
 extension URLRequest {
 
 	mutating func addSpecialCaseUserAgentIfNeeded() {
-		
+
 		if let url, url.isOpenRSSOrgURL {
 			setValue(UserAgent.openRSSOrgUserAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
 		}

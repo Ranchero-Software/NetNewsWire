@@ -181,29 +181,17 @@ private extension AtomParser {
 
 		if SAXEqualTags(localName, XMLName.id) {
 			currentArticle.guid = currentString(saxParser)
-		}
-
-		else if SAXEqualTags(localName, XMLName.title) {
+		} else if SAXEqualTags(localName, XMLName.title) {
 			currentArticle.title = currentString(saxParser)
-		}
-
-		else if SAXEqualTags(localName, XMLName.content) {
+		} else if SAXEqualTags(localName, XMLName.content) {
 			addContent(saxParser, currentArticle)
-		}
-
-		else if SAXEqualTags(localName, XMLName.summary) {
+		} else if SAXEqualTags(localName, XMLName.summary) {
 			addSummary(saxParser, currentArticle)
-		}
-
-		else if SAXEqualTags(localName, XMLName.link) {
+		} else if SAXEqualTags(localName, XMLName.link) {
 			addLink(currentArticle)
-		}
-
-		else if SAXEqualTags(localName, XMLName.published) {
+		} else if SAXEqualTags(localName, XMLName.published) {
 			currentArticle.datePublished = currentDate(saxParser)
-		}
-
-		else if SAXEqualTags(localName, XMLName.updated) {
+		} else if SAXEqualTags(localName, XMLName.updated) {
 			currentArticle.dateModified = currentDate(saxParser)
 		}
 
@@ -212,8 +200,7 @@ private extension AtomParser {
 			if currentArticle.datePublished == nil {
 				currentArticle.datePublished = currentDate(saxParser)
 			}
-		}
-		else if SAXEqualTags(localName, XMLName.modified) {
+		} else if SAXEqualTags(localName, XMLName.modified) {
 			if currentArticle.dateModified == nil {
 				currentArticle.dateModified = currentDate(saxParser)
 			}
@@ -258,13 +245,11 @@ private extension AtomParser {
 			if article.link == nil {
 				article.link = resolvedURLString
 			}
-		}
-		else if rel == AttributeValue.alternate {
+		} else if rel == AttributeValue.alternate {
 			if article.permalink == nil {
 				article.permalink = resolvedURLString
 			}
-		}
-		else if rel == AttributeValue.enclosure {
+		} else if rel == AttributeValue.enclosure {
 			if let enclosure = enclosure(resolvedURLString, attributes) {
 				article.addEnclosure(enclosure)
 			}
@@ -372,7 +357,7 @@ extension AtomParser: SAXParserDelegate {
 				currentArticle?.language = xmlAttributes["xml:lang"]
 			}
 
-			let contentType = xmlAttributes["type"];
+			let contentType = xmlAttributes["type"]
 			if contentType == "xhtml" {
 				parsingXHTML = true
 				xhtmlString = ""
@@ -416,9 +401,7 @@ extension AtomParser: SAXParserDelegate {
 
 				if isContentTag {
 					currentArticle?.body = xhtmlString
-				}
-
-				else if isSummaryTag {
+				} else if isSummaryTag {
 					if (currentArticle?.body?.count ?? 0) < 1 {
 						currentArticle?.body = xhtmlString
 					}
@@ -438,9 +421,7 @@ extension AtomParser: SAXParserDelegate {
 			} else {
 				assertionFailure("xhtmlString must not be nil when parsingXHTML in xmlEndElement.")
 			}
-		}
-
-		else if parsingAuthor {
+		} else if parsingAuthor {
 
 			if SAXEqualTags(localName, XMLName.author) {
 				parsingAuthor = false
@@ -448,32 +429,21 @@ extension AtomParser: SAXParserDelegate {
 					currentArticle?.addAuthor(currentAuthor)
 				}
 				currentAuthor = nil
-			}
-			else if SAXEqualTags(localName, XMLName.name) {
+			} else if SAXEqualTags(localName, XMLName.name) {
 				currentAuthor?.name = saxParser.currentStringWithTrimmedWhitespace
-			}
-			else if SAXEqualTags(localName, XMLName.email) {
+			} else if SAXEqualTags(localName, XMLName.email) {
 				currentAuthor?.emailAddress = saxParser.currentStringWithTrimmedWhitespace
-			}
-			else if SAXEqualTags(localName, XMLName.uri) {
+			} else if SAXEqualTags(localName, XMLName.uri) {
 				currentAuthor?.url = saxParser.currentStringWithTrimmedWhitespace
 			}
-		}
-
-		else if SAXEqualTags(localName, XMLName.entry) {
+		} else if SAXEqualTags(localName, XMLName.entry) {
 			parsingArticle = false
 			entryDepth = -1
-		}
-
-		else if parsingArticle && !parsingSource && depth == entryDepth + 1 {
+		} else if parsingArticle && !parsingSource && depth == entryDepth + 1 {
 			addArticleElement(saxParser, localName, prefix)
-		}
-
-		else if SAXEqualTags(localName, XMLName.source) {
+		} else if SAXEqualTags(localName, XMLName.source) {
 			parsingSource = false
-		}
-
-		else if !parsingArticle && !parsingSource && SAXEqualTags(localName, XMLName.title) {
+		} else if !parsingArticle && !parsingSource && SAXEqualTags(localName, XMLName.title) {
 			addFeedTitle(saxParser)
 		}
 

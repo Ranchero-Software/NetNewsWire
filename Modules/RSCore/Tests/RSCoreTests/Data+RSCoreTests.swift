@@ -10,7 +10,7 @@ import XCTest
 import Foundation
 @testable import RSCore
 
-//class Data_RSCoreTests: XCTestCase {
+// class Data_RSCoreTests: XCTestCase {
 //	var bigHTML: String!
 //
 //	var pngData: Data!
@@ -125,10 +125,10 @@ import Foundation
 //
 //	}
 //
-//}
+// }
 
 // Tests to compare the result of Data+RSCore with the old Objective-C versions.
-//extension Data_RSCoreTests {
+// extension Data_RSCoreTests {
 //
 //	func testCompare_isProbablyHTML() {
 //		let noLT = "html body".data(using: .utf8)!
@@ -186,4 +186,4 @@ import Foundation
 //
 //	}
 //
-//}
+// }

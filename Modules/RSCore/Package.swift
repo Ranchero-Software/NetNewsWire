@@ -21,6 +21,6 @@ let package = Package(
 			]),
 		.testTarget(
 			name: "RSCoreTests",
-			dependencies: ["RSCore"]),
+			dependencies: ["RSCore"])
 	]
 )

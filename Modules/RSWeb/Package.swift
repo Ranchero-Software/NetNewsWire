@@ -9,11 +9,11 @@ let package = Package(
 		.library(
 			name: "RSWeb",
 			type: .dynamic,
-			targets: ["RSWeb"]),
+			targets: ["RSWeb"])
 	],
 	dependencies: [
 		.package(path: "../Parser"),
-		.package(path: "../RSCore"),
+		.package(path: "../RSCore")
 	],
 	targets: [
 		.target(
@@ -26,6 +26,6 @@ let package = Package(
 		),
 		.testTarget(
 			name: "RSWebTests",
-			dependencies: ["RSWeb"]),
+			dependencies: ["RSWeb"])
 	]
 )

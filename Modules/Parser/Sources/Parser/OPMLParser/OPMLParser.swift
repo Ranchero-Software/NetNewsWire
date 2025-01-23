@@ -50,7 +50,7 @@ private extension OPMLParser {
 	}
 
 	func canParseData() -> Bool {
-		
+
 		data.containsASCIIString("<opml")
 	}
 

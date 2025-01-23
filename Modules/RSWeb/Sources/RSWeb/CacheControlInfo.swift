@@ -21,7 +21,7 @@ public struct CacheControlInfo: Codable, Equatable {
 	public var canResume: Bool {
 		Date() >= resumeDate
 	}
-	
+
 	public init?(urlResponse: HTTPURLResponse) {
 		guard let cacheControlValue = urlResponse.valueForHTTPHeaderField(HTTPResponseHeader.cacheControl) else {
 			return nil
@@ -35,7 +35,7 @@ public struct CacheControlInfo: Codable, Equatable {
 		guard let maxAge = Self.parseMaxAge(value) else {
 			return nil
 		}
-		
+
 		let d = Date()
 		self.dateCreated = d
 		self.maxAge = maxAge
