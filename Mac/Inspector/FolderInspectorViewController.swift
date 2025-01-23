@@ -14,7 +14,7 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet var nameTextField: NSTextField?
 	@IBOutlet weak var folderImageView: NSImageView!
-	
+
 	private var folder: Folder? {
 		didSet {
 			if folder != oldValue {
@@ -46,18 +46,18 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 	override func viewDidLoad() {
 		updateUI()
-		
+
 		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 		folderImageView.image = image
 		folderImageView.contentTintColor = NSColor.controlAccentColor
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 	}
 
 	override func viewDidDisappear() {
 		renameFolderIfNecessary()
 	}
-	
+
 	// MARK: Notifications
 
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -73,7 +73,7 @@ extension FolderInspectorViewController: NSTextFieldDelegate {
 	func controlTextDidEndEditing(_ obj: Notification) {
 		renameFolderIfNecessary()
 	}
-	
+
 }
 
 private extension FolderInspectorViewController {
@@ -104,7 +104,7 @@ private extension FolderInspectorViewController {
 		}
 		windowTitle = folder?.nameForDisplay ?? NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
 	}
-	
+
 	func renameFolderIfNecessary() {
 		guard let folder = folder,
 			  let account = folder.account,
@@ -112,7 +112,7 @@ private extension FolderInspectorViewController {
 			  folder.nameForDisplay != nameTextField.stringValue else {
 			return
 		}
-		
+
 		account.renameFolder(folder, to: nameTextField.stringValue) { [weak self] result in
 			if case .failure(let error) = result {
 				self?.presentError(error)
@@ -121,5 +121,5 @@ private extension FolderInspectorViewController {
 			}
 		}
 	}
-	
+
 }

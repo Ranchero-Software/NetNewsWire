@@ -16,14 +16,14 @@ enum TimelineSourceMode {
 	case regular, search
 }
 
-class MainWindowController : NSWindowController, NSUserInterfaceValidations {
+class MainWindowController: NSWindowController, NSUserInterfaceValidations {
 
     @IBOutlet weak var articleThemePopUpButton: NSPopUpButton?
-    
+
     private var activityManager = ActivityManager()
 
 	private var isShowingExtractedArticle = false
-	private var articleExtractor: ArticleExtractor? = nil
+	private var articleExtractor: ArticleExtractor?
 	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
@@ -36,7 +36,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 		return selectedObjects.first
 	}
-	
+
 	private var shareToolbarItem: NSToolbarItem? {
 		return window?.toolbar?.existingItem(withIdentifier: .share)
 	}
@@ -45,17 +45,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private var sidebarViewController: SidebarViewController?
 	private var timelineContainerViewController: TimelineContainerViewController?
 	private var detailViewController: DetailViewController?
-	private var currentSearchField: NSSearchField? = nil
+	private var currentSearchField: NSSearchField?
 	private let articleThemeMenuToolbarItem = NSMenuToolbarItem(itemIdentifier: .articleThemeMenu)
-	private var searchString: String? = nil
-	private var lastSentSearchString: String? = nil
+	private var searchString: String?
+	private var lastSentSearchString: String?
 	private var timelineSourceMode: TimelineSourceMode = .regular {
 		didSet {
 			timelineContainerViewController?.showTimeline(for: timelineSourceMode)
 			detailViewController?.showDetail(for: timelineSourceMode)
 		}
 	}
-	private var searchSmartFeed: SmartFeed? = nil
+	private var searchSmartFeed: SmartFeed?
 	private var restoreArticleWindowScrollY: CGFloat?
 
 	// MARK: - NSWindowController
@@ -97,10 +97,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
-		
+
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
 		}
@@ -115,14 +115,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	func handle(_ response: UNNotificationResponse) {
 		let userInfo = response.notification.request.content.userInfo
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any] else { return }
 		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
 		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
 
 	func handle(_ activity: NSUserActivity) {
 		guard let userInfo = activity.userInfo else { return }
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any] else { return }
 		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
 		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
@@ -131,14 +131,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		AppDefaults.shared.windowState = savableState()
 		window?.saveFrame(usingName: windowAutosaveName)
 	}
-	
+
 	func restoreStateFromUserDefaults() {
 		if let state = AppDefaults.shared.windowState {
 			restoreState(from: state)
 			window?.setFrameUsingName(windowAutosaveName, force: true)
 		}
 	}
-	
+
 	// MARK: - Notifications
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
@@ -148,7 +148,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateWindowTitleIfNecessary(note.object)
 	}
-	
+
 	@objc func displayNameDidChange(_ note: Notification) {
 		updateWindowTitleIfNecessary(note.object)
 	}
@@ -162,21 +162,21 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	private func updateWindowTitleIfNecessary(_ noteObject: Any?) {
-		
+
 		if let folder = currentFeedOrFolder as? Folder, let noteObject = noteObject as? Folder {
 			if folder == noteObject {
 				updateWindowTitle()
 				return
 			}
 		}
-		
+
 		if let feed = currentFeedOrFolder as? Feed, let noteObject = noteObject as? Feed {
 			if feed == noteObject {
 				updateWindowTitle()
 				return
 			}
 		}
-		
+
 		// If we don't recognize the changed object, we will test it for identity instead
 		// of equality.  This works well for us if the window title is displaying a
 		// PsuedoFeed object.
@@ -185,28 +185,28 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 				updateWindowTitle()
 			}
 		}
-		
+
 	}
 
 	// MARK: - Toolbar
-	
+
 	@objc func makeToolbarValidate() {
-		
+
 		window?.toolbar?.validateVisibleItems()
 	}
 
 	// MARK: - NSUserInterfaceValidations
-	
+
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		
+
 		if item.action == #selector(copyArticleURL(_:)) {
 			return canCopyArticleURL()
 		}
-		
+
 		if item.action == #selector(copyExternalURL(_:)) {
 			return canCopyExternalURL()
 		}
-		
+
 		if item.action == #selector(openArticleInBrowser(_:)) {
 			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
 				item.title = Browser.titleForOpenInBrowserInverted
@@ -214,11 +214,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 			return currentLink != nil
 		}
-		
+
 		if item.action == #selector(nextUnread(_:)) {
 			return canGoToNextUnread(wrappingToTop: true)
 		}
-		
+
 		if item.action == #selector(markAllAsRead(_:)) {
 			return canMarkAllAsRead()
 		}
@@ -242,7 +242,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if item.action == #selector(toggleArticleExtractor(_:)) {
 			return validateToggleArticleExtractor(item)
 		}
-		
+
 		if item.action == #selector(toolbarShowShareMenu(_:)) {
 			return canShowShareMenu()
 		}
@@ -283,7 +283,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return
 		}
 		detailViewController.canScrollUp { (canScroll) in
-			if (canScroll) {
+			if canScroll {
 				NSCursor.setHiddenUntilMouseMoves(true)
 				detailViewController.scrollPageUp(sender)
 			}
@@ -306,7 +306,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		if let link = currentLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		}		
+		}
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -340,8 +340,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		// TODO: handle search mode
 		if timelineViewController.canGoToNextUnread(wrappingToTop: false) {
 			goToNextUnreadInTimeline(wrappingToTop: false)
-		}
-		else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
+		} else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
 			sidebarViewController.goToNextUnread(wrappingToTop: true)
 
 			// If we ended up on the same timelineViewController, we may need to wrap
@@ -373,7 +372,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func toggleArticleExtractor(_ sender: Any?) {
-		
+
 		guard let currentLink = currentLink, let article = oneSelectedArticle else {
 			return
 		}
@@ -381,12 +380,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		defer {
 			makeToolbarValidate()
 		}
-		
+
 		if articleExtractor?.state == .failedToParse {
 			startArticleExtractorForCurrentLink()
 			return
 		}
-		
+
 		guard articleExtractor?.state != .processing else {
 			articleExtractor?.cancel()
 			articleExtractor = nil
@@ -394,13 +393,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			detailViewController?.setState(DetailState.article(article, nil), mode: timelineSourceMode)
 			return
 		}
-		
+
 		guard !isShowingExtractedArticle else {
 			isShowingExtractedArticle = false
 			detailViewController?.setState(DetailState.article(article, nil), mode: timelineSourceMode)
 			return
 		}
-		
+
 		if let articleExtractor = articleExtractor, let extractedArticle = articleExtractor.article {
 			if currentLink == articleExtractor.articleLink {
 				isShowingExtractedArticle = true
@@ -410,11 +409,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		} else {
 			startArticleExtractorForCurrentLink()
 		}
-		
+
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		currentTimelineViewController?.markAllAsRead() {
+		currentTimelineViewController?.markAllAsRead {
 			self.nextUnread(sender)
 		}
 	}
@@ -432,7 +431,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
 		currentTimelineViewController?.markOlderArticlesRead()
 	}
-	
+
 	@IBAction func markAboveArticlesAsRead(_ sender: Any?) {
 		currentTimelineViewController?.markAboveArticlesRead()
 	}
@@ -452,7 +451,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func navigateToDetail(_ sender: Any?) {
 		detailViewController?.focus()
 	}
-	
+
 	@IBAction func goToPreviousSubscription(_ sender: Any?) {
 		sidebarViewController?.outlineView.selectPreviousRow(sender)
 	}
@@ -504,31 +503,31 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func cleanUp(_ sender: Any?) {
 		timelineContainerViewController?.cleanUp()
 	}
-	
+
 	@IBAction func toggleReadFeedsFilter(_ sender: Any?) {
 		sidebarViewController?.toggleReadFilter()
 	}
-	
+
 	@IBAction func toggleReadArticlesFilter(_ sender: Any?) {
 		timelineContainerViewController?.toggleReadFilter()
 	}
-	
+
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
 		ArticleThemesManager.shared.currentThemeName = menuItem.title
 	}
-	
+
 }
 
 // MARK: NSWindowDelegate
 
 extension MainWindowController: NSWindowDelegate {
-	
+
 	func window(_ window: NSWindow, willEncodeRestorableState coder: NSCoder) {
 		coder.encode(savableState(), forKey: UserInfoKey.windowState)
 	}
 
 	func window(_ window: NSWindow, didDecodeRestorableState coder: NSCoder) {
-		guard let state = try? coder.decodeTopLevelObject(forKey: UserInfoKey.windowState) as? [AnyHashable : Any] else { return }
+		guard let state = try? coder.decodeTopLevelObject(forKey: UserInfoKey.windowState) as? [AnyHashable: Any] else { return }
 		restoreState(from: state)
 	}
 
@@ -536,7 +535,7 @@ extension MainWindowController: NSWindowDelegate {
 		detailViewController?.stopMediaPlayback()
 		appDelegate.removeMainWindow(self)
 	}
-	
+
 }
 
 // MARK: - SidebarDelegate
@@ -563,11 +562,11 @@ extension MainWindowController: SidebarDelegate {
 		}
 		return timelineViewController.unreadCount
 	}
-	
+
 	func sidebarInvalidatedRestorationState(_: SidebarViewController) {
 		invalidateRestorableState()
 	}
-	
+
 }
 
 // MARK: - TimelineContainerViewControllerDelegate
@@ -576,12 +575,12 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode) {
 		activityManager.invalidateReading()
-		
+
 		articleExtractor?.cancel()
 		articleExtractor = nil
 		isShowingExtractedArticle = false
 		makeToolbarValidate()
-		
+
 		let detailState: DetailState
 		if let articles = articles {
 			if articles.count == 1 {
@@ -606,11 +605,11 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed) {
 		sidebarViewController?.selectFeed(feed)
 	}
-	
+
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController) {
 		invalidateRestorableState()
 	}
-	
+
 }
 
 // MARK: - NSSearchFieldDelegate
@@ -683,11 +682,11 @@ extension MainWindowController: NSSearchFieldDelegate {
 // MARK: - ArticleExtractorDelegate
 
 extension MainWindowController: ArticleExtractorDelegate {
-	
+
 	func articleExtractionDidFail(with: Error) {
 		makeToolbarValidate()
 	}
-	
+
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
 		if let article = oneSelectedArticle, articleExtractor?.state != .cancelled {
 			isShowingExtractedArticle = true
@@ -697,7 +696,7 @@ extension MainWindowController: ArticleExtractorDelegate {
 			makeToolbarValidate()
 		}
 	}
-	
+
 }
 
 // MARK: - Scripting Access
@@ -710,7 +709,7 @@ extension MainWindowController: ArticleExtractorDelegate {
     but for now, we'll keep the stratification of visibility
 */
 
-extension MainWindowController : ScriptingMainWindowController {
+extension MainWindowController: ScriptingMainWindowController {
 
     internal var scriptingCurrentArticle: Article? {
         return self.oneSelectedArticle
@@ -827,7 +826,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		return nil
 	}
-	
+
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
 		[
 			NSToolbarItem.Identifier.toggleSidebar,
@@ -929,7 +928,7 @@ private extension MainWindowController {
 	var detailSplitViewItem: NSSplitViewItem? {
 		return splitViewController?.splitViewItems[2]
 	}
-	
+
 	var selectedArticles: [Article]? {
 		return currentTimelineViewController?.selectedArticles
 	}
@@ -946,9 +945,9 @@ private extension MainWindowController {
 	}
 
 	// MARK: - State Restoration
-	
-	func savableState() -> [AnyHashable : Any] {
-		var state = [AnyHashable : Any]()
+
+	func savableState() -> [AnyHashable: Any] {
+		var state = [AnyHashable: Any]()
 		state[UserInfoKey.windowFullScreenState] = window?.styleMask.contains(.fullScreen) ?? false
 		saveSplitViewState(to: &state)
 		sidebarViewController?.saveState(to: &state)
@@ -957,56 +956,56 @@ private extension MainWindowController {
 		return state
 	}
 
-	func restoreState(from state: [AnyHashable : Any]) {
+	func restoreState(from state: [AnyHashable: Any]) {
 		if let fullScreen = state[UserInfoKey.windowFullScreenState] as? Bool, fullScreen {
 			window?.toggleFullScreen(self)
 		}
 		restoreSplitViewState(from: state)
-		
+
 		sidebarViewController?.restoreState(from: state)
-		
+
 		let articleWindowScrollY = state[UserInfoKey.articleWindowScrollY] as? CGFloat
 		restoreArticleWindowScrollY = articleWindowScrollY
 		timelineContainerViewController?.restoreState(from: state)
-		
+
 		let isShowingExtractedArticle = state[UserInfoKey.isShowingExtractedArticle] as? Bool ?? false
 		if isShowingExtractedArticle {
 			restoreArticleWindowScrollY = articleWindowScrollY
 			startArticleExtractorForCurrentLink()
 		}
-		
+
 	}
 
 	// MARK: - Command Validation
-	
+
 	func canCopyArticleURL() -> Bool {
 		return currentLink != nil
 	}
-	
+
 	func canCopyExternalURL() -> Bool {
 		return oneSelectedArticle?.externalLink != nil && oneSelectedArticle?.externalLink != currentLink
 	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		
+
 		guard let timelineViewController = currentTimelineViewController, let sidebarViewController = sidebarViewController else {
 			return false
 		}
 		// TODO: handle search mode
 		return timelineViewController.canGoToNextUnread(wrappingToTop: wrapping) || sidebarViewController.canGoToNextUnread(wrappingToTop: wrapping)
 	}
-	
+
 	func canMarkAllAsRead() -> Bool {
-		
+
 		return currentTimelineViewController?.canMarkAllAsRead() ?? false
 	}
-	
+
 	func validateToggleRead(_ item: NSValidatedUserInterfaceItem) -> Bool {
 
 		let validationStatus = currentTimelineViewController?.markReadCommandStatus() ?? .canDoNothing
 		let markingRead: Bool
 		let result: Bool
-		
+
 		switch validationStatus {
 		case .canMark:
 			markingRead = true
@@ -1018,21 +1017,21 @@ private extension MainWindowController {
 			markingRead = true
 			result = false
 		}
-		
+
 		let commandName = markingRead ? NSLocalizedString("Mark as Read", comment: "Command") : NSLocalizedString("Mark as Unread", comment: "Command")
-		
+
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
 		}
-		
+
 		if let menuItem = item as? NSMenuItem {
 			menuItem.title = commandName
 		}
-		
+
 		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
 		}
-		
+
 		return result
 	}
 
@@ -1076,7 +1075,7 @@ private extension MainWindowController {
 	func canMarkBelowArticlesAsRead() -> Bool {
 		return currentTimelineViewController?.canMarkBelowArticlesAsRead() ?? false
 	}
-	
+
 	func canShowShareMenu() -> Bool {
 
 		guard let selectedArticles = selectedArticles else {
@@ -1119,7 +1118,7 @@ private extension MainWindowController {
 
 		return result
 	}
-	
+
 	func validateCleanUp(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		return timelineContainerViewController?.isCleanUpAvailable ?? false
 	}
@@ -1159,7 +1158,7 @@ private extension MainWindowController {
 				button.image = AppAssets.filterInactive
 			}
 		}
-		
+
 		return true
 	}
 
@@ -1192,7 +1191,7 @@ private extension MainWindowController {
 			window?.subtitle = ""
 			return
 		}
-		
+
 		func setSubtitle(_ count: Int) {
 			let localizedLabel = NSLocalizedString("%d unread", comment: "Unread")
 			let formattedLabel = NSString.localizedStringWithFormat(localizedLabel as NSString, count)
@@ -1235,16 +1234,16 @@ private extension MainWindowController {
 		}
 	}
 
-	func saveSplitViewState(to state: inout [AnyHashable : Any]) {
+	func saveSplitViewState(to state: inout [AnyHashable: Any]) {
 		guard let splitView = splitViewController?.splitView else {
 			return
 		}
 
-		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
+		let widths = splitView.arrangedSubviews.map { Int(floor($0.frame.width)) }
 		state[MainWindowController.mainWindowWidthsStateKey] = widths
 	}
 
-	func restoreSplitViewState(from state: [AnyHashable : Any]) {
+	func restoreSplitViewState(from state: [AnyHashable: Any]) {
 		guard let splitView = splitViewController?.splitView,
 			let widths = state[MainWindowController.mainWindowWidthsStateKey] as? [Int],
 			widths.count == 3,
@@ -1269,13 +1268,13 @@ private extension MainWindowController {
 	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String) -> NSToolbarItem {
 		let toolbarItem = RSToolbarItem(itemIdentifier: itemIdentifier)
 		toolbarItem.autovalidates = true
-		
+
 		let button = NSButton()
 		button.bezelStyle = .texturedRounded
 		button.image = image
 		button.imageScaling = .scaleProportionallyDown
 		button.action = Selector((selector))
-		
+
 		toolbarItem.view = button
 		toolbarItem.toolTip = title
 		toolbarItem.label = title
@@ -1284,23 +1283,23 @@ private extension MainWindowController {
 
 	func buildNewSidebarItemMenu() -> NSMenu {
 		let menu = NSMenu()
-		
+
 		let newFeedItem = NSMenuItem()
 		newFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
 		newFeedItem.action = Selector(("showAddFeedWindow:"))
 		menu.addItem(newFeedItem)
-		
+
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")
 		newFolderFeedItem.action = Selector(("showAddFolderWindow:"))
 		menu.addItem(newFolderFeedItem)
-		
+
 		return menu
 	}
 
 	func updateArticleThemeMenu() {
 		let articleThemeMenu = NSMenu()
-		
+
 		let defaultThemeItem = NSMenuItem()
 		defaultThemeItem.title = ArticleTheme.defaultTheme.name
 		defaultThemeItem.action = #selector(selectArticleTheme(_:))
@@ -1322,4 +1321,3 @@ private extension MainWindowController {
 	}
 
 }
-

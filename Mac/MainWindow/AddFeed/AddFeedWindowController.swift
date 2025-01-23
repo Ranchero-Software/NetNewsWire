@@ -16,8 +16,8 @@ protocol AddFeedWindowControllerDelegate: AnyObject {
 	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)
 }
 
-//protocol AddFeedWindowController {
+// protocol AddFeedWindowController {
 //
 //	var window: NSWindow? { get }
 //	func runSheetOnWindow(_ hostWindow: NSWindow)
-//}
+// }

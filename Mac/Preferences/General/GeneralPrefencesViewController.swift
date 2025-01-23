@@ -51,7 +51,7 @@ final class GeneralPreferencesViewController: NSViewController {
 		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
 		NSWorkspace.shared.open(url)
 	}
-	
+
 	@IBAction func articleThemePopUpDidChange(_ sender: Any) {
 		guard let menuItem = articleThemePopup.selectedItem else {
 			return
@@ -59,7 +59,7 @@ final class GeneralPreferencesViewController: NSViewController {
 		ArticleThemesManager.shared.currentThemeName = menuItem.title
 		updateArticleThemePopup()
 	}
-	
+
 	@IBAction func browserPopUpDidChangeValue(_ sender: Any?) {
 		guard let menuItem = defaultBrowserPopup.selectedItem else {
 			return
@@ -84,18 +84,18 @@ private extension GeneralPreferencesViewController {
 		updateArticleThemePopup()
 		updateBrowserPopup()
 	}
-	
+
 	func updateArticleThemePopup() {
 		let menu = articleThemePopup.menu!
 		menu.removeAllItems()
-		
+
 		menu.addItem(NSMenuItem(title: ArticleTheme.defaultTheme.name, action: nil, keyEquivalent: ""))
 		menu.addItem(NSMenuItem.separator())
 
 		for themeName in ArticleThemesManager.shared.themeNames {
 			menu.addItem(NSMenuItem(title: themeName, action: nil, keyEquivalent: ""))
 		}
-		
+
 		articleThemePopup.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
 		if articleThemePopup.indexOfSelectedItem == -1 {
 			articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)

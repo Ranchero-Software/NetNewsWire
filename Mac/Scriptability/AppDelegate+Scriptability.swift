@@ -25,19 +25,19 @@ protocol AppDelegateAppleEvents {
 }
 
 protocol ScriptingAppDelegate {
-    var  scriptingCurrentArticle: Article?  {get}
-    var  scriptingSelectedArticles: [Article]  {get}
-    var  scriptingMainWindowController:ScriptingMainWindowController? {get}
+    var  scriptingCurrentArticle: Article? {get}
+    var  scriptingSelectedArticles: [Article] {get}
+    var  scriptingMainWindowController: ScriptingMainWindowController? {get}
 }
 
-extension AppDelegate : AppDelegateAppleEvents {
-    
+extension AppDelegate: AppDelegateAppleEvents {
+
     // MARK: GetURL Apple Event
 
     func installAppleEventHandlers() {
         NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
     }
-    
+
     @objc func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
 
         guard var urlString = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {
@@ -51,14 +51,14 @@ extension AppDelegate : AppDelegateAppleEvents {
 				  let themeURLString = queryItems.first(where: { $0.name == "url" })?.value else {
 					  return
 				  }
-			
+
 			if let themeURL = URL(string: themeURLString) {
 				let request = URLRequest(url: themeURL)
-				let task = URLSession.shared.downloadTask(with: request) { location, response, error in
+				let task = URLSession.shared.downloadTask(with: request) { location, _, error in
 					guard let location = location else {
 						return
 					}
-					
+
 					do {
 						try ArticleThemeDownloader.shared.handleFile(at: location)
 					} catch {
@@ -68,10 +68,9 @@ extension AppDelegate : AppDelegateAppleEvents {
 				task.resume()
 			}
 			return
-		
+
 		}
-		
-		
+
 		// Special case URL with specific scheme handler x-netnewswire-feed: intended to ensure we open
 		// it regardless of which news reader may be set as the default
 		let nnwScheme = "x-netnewswire-feed:"
@@ -91,13 +90,13 @@ extension AppDelegate : AppDelegateAppleEvents {
     }
 }
 
-class NetNewsWireCreateElementCommand : NSCreateCommand {
+class NetNewsWireCreateElementCommand: NSCreateCommand {
     override func performDefaultImplementation() -> Any? {
          let classDescription = self.createClassDescription
-         if (classDescription.className == "feed") {
-             return ScriptableFeed.handleCreateElement(command:self)
-         } else if (classDescription.className == "folder") {
-             return ScriptableFolder.handleCreateElement(command:self)
+         if classDescription.className == "feed" {
+             return ScriptableFeed.handleCreateElement(command: self)
+         } else if classDescription.className == "folder" {
+             return ScriptableFolder.handleCreateElement(command: self)
          }
          return nil
     }
@@ -111,7 +110,7 @@ class NetNewsWireCreateElementCommand : NSCreateCommand {
     is ambiguity about whether specifiers are lists or single objects, the code switches
     based on which it is.
 */
-class NetNewsWireDeleteCommand : NSDeleteCommand {
+class NetNewsWireDeleteCommand: NSDeleteCommand {
 
     /*
         delete(objectToDelete:, from container:)
@@ -119,16 +118,16 @@ class NetNewsWireDeleteCommand : NSDeleteCommand {
         Here the code unravels the case of objectToDelete being a list or a single object,
         ultimately calling container.deleteElement(element) for each element to delete
     */
-    func delete(objectToDelete:Any, from container:ScriptingObjectContainer) {
+    func delete(objectToDelete: Any, from container: ScriptingObjectContainer) {
         if let objectList = objectToDelete as? [Any] {
             for nthObject in objectList {
-                self.delete(objectToDelete:nthObject, from:container)
+                self.delete(objectToDelete: nthObject, from: container)
             }
         } else if let element = objectToDelete as? ScriptingObject {
             container.deleteElement(element)
         }
     }
-    
+
     /*
         delete(specifier:, from container:)
         At this point in handling the command, the container could be a list or a single object,
@@ -138,14 +137,14 @@ class NetNewsWireDeleteCommand : NSDeleteCommand {
         After resolving, we call delete(objectToDelete:, from container:) with the container and
         the resolved objects
     */
-    func delete(specifier:NSScriptObjectSpecifier, from container:Any) {
+    func delete(specifier: NSScriptObjectSpecifier, from container: Any) {
         if let containerList = container as? [Any] {
             for nthObject in containerList {
-                self.delete(specifier:specifier, from:nthObject)
+                self.delete(specifier: specifier, from: nthObject)
             }
         } else if let container = container as? ScriptingObjectContainer {
-            if let resolvedObjects = specifier.objectsByEvaluating(withContainers:container) {
-                self.delete(objectToDelete:resolvedObjects, from:container)
+            if let resolvedObjects = specifier.objectsByEvaluating(withContainers: container) {
+                self.delete(objectToDelete: resolvedObjects, from: container)
             }
         }
     }
@@ -159,14 +158,14 @@ class NetNewsWireDeleteCommand : NSDeleteCommand {
     override func performDefaultImplementation() -> Any? {
          if let receiversSpecifier = self.receiversSpecifier {
              if let receiverObjects = receiversSpecifier.objectsByEvaluatingSpecifier {
-                self.delete(specifier:self.keySpecifier, from:receiverObjects)
-             } 
+                self.delete(specifier: self.keySpecifier, from: receiverObjects)
+             }
          }
          return nil
     }
 }
 
-class NetNewsWireExistsCommand : NSExistsCommand {
+class NetNewsWireExistsCommand: NSExistsCommand {
 
     // cocoa default behavior doesn't work here, because of cases where we define an object's property
     // to be another object type.  e.g., 'permalink of the current article' parses as
@@ -177,10 +176,9 @@ class NetNewsWireExistsCommand : NSExistsCommand {
     // must not exist.  Otherwise, we return the result of the defaultImplementation
     // The wrinkle is that it is possible that the direct object is a list, so we need to
     // handle that case as well
-    
+
     override func performDefaultImplementation() -> Any? {
-         guard let result = super.performDefaultImplementation() else { return NSNumber(booleanLiteral:false) }
+         guard let result = super.performDefaultImplementation() else { return NSNumber(booleanLiteral: false) }
          return result
     }
 }
-

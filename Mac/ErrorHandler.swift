@@ -13,13 +13,13 @@ import os.log
 struct ErrorHandler {
 
 	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Account")
-	
+
 	public static func present(_ error: Error) {
 		NSApplication.shared.presentError(error)
 	}
-	
+
 	public static func log(_ error: Error) {
 		os_log(.error, log: self.log, "%@", error.localizedDescription)
 	}
-	
+
 }

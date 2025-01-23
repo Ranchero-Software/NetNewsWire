@@ -33,4 +33,3 @@ final class MainWindowKeyboardHandler: KeyboardDelegate {
 		return true
 	}
 }
-

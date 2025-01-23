@@ -78,11 +78,9 @@ private extension ArticlePasteboardWriter {
 		}
 		if let text = article.contentText {
 			s += "\(text)\n\n"
-		}
-		else if let summary = article.summary {
+		} else if let summary = article.summary {
 			s += "\(summary)\n\n"
-		}
-		else if let html = article.contentHTML {
+		} else if let html = article.contentHTML {
 			let convertedHTML = html.convertingToPlainText()
 			s += "\(convertedHTML)\n\n"
 		}
@@ -184,7 +182,6 @@ private extension ArticlePasteboardWriter {
 		guard let authors = article.authors, !authors.isEmpty else {
 			return nil
 		}
-		return authors.map{ authorDictionary($0) }
+		return authors.map { authorDictionary($0) }
 	}
 }
-

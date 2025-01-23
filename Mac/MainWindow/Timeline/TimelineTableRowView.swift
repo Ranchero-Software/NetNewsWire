@@ -8,10 +8,10 @@
 
 import AppKit
 
-class TimelineTableRowView : NSTableRowView {
+class TimelineTableRowView: NSTableRowView {
 
 	private var separator: NSView?
-	
+
 	override var isOpaque: Bool {
 		return true
 	}
@@ -21,14 +21,14 @@ class TimelineTableRowView : NSTableRowView {
 			cellView?.isEmphasized = isEmphasized
 		}
 	}
-	
+
 	override var isSelected: Bool {
 		didSet {
 			cellView?.isSelected = isSelected
 			separator?.isHidden = isSelected
 		}
 	}
-	
+
 	init() {
 		super.init(frame: NSRect.zero)
 	}
@@ -36,7 +36,7 @@ class TimelineTableRowView : NSTableRowView {
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 	}
-	
+
 	private var cellView: TimelineTableCellView? {
 		for oneSubview in subviews {
 			if let foundView = oneSubview as? TimelineTableCellView {
@@ -51,7 +51,7 @@ class TimelineTableRowView : NSTableRowView {
 			addSeparatorView()
 		}
 	}
-	
+
 	private func addSeparatorView() {
 		guard let cellView = cellView, separator == nil else { return }
 		separator = NSView()

@@ -13,17 +13,17 @@ import Articles
 @objc(ScriptableArticle)
 class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
-    let article:Article
-    let container:ScriptingObjectContainer
-    
-    init (_ article:Article, container:ScriptingObjectContainer) {
+    let article: Article
+    let container: ScriptingObjectContainer
+
+    init (_ article: Article, container: ScriptingObjectContainer) {
         self.article = article
         self.container = container
     }
 
     @objc(objectSpecifier)
     override var objectSpecifier: NSScriptObjectSpecifier? {
-        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
+        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject: self)
         return (scriptObjectSpecifier)
     }
 
@@ -39,76 +39,76 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     // article.uniqueID here is the feed unique id
 
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    var scriptingUniqueId: Any {
         return article.uniqueID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
-    
+
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
-    
-    func deleteElement(_ element:ScriptingObject) {
-        print ("delete event not handled")
+
+    func deleteElement(_ element: ScriptingObject) {
+        print("delete event not handled")
     }
 
     // MARK: --- Scriptable properties ---
-    
+
     @objc(url)
-    var url:String?  {
+    var url: String? {
         return article.preferredLink
     }
 
     @objc(permalink)
-    var permalink:String?  {
+    var permalink: String? {
         return article.link
     }
 
     @objc(externalUrl)
-    var externalUrl:String?  {
+    var externalUrl: String? {
         return article.externalLink
     }
-    
+
     @objc(title)
-    var title:String  {
+    var title: String {
         return article.title ?? ""
     }
 
     @objc(contents)
-    var contents:String  {
+    var contents: String {
         return article.contentText ?? ""
     }
 
     @objc(html)
-    var html:String  {
+    var html: String {
         return article.contentHTML ?? ""
     }
 
     @objc(summary)
-    var summary:String  {
+    var summary: String {
         return article.summary ?? ""
     }
 
     @objc(datePublished)
-    var datePublished:Date?  {
+    var datePublished: Date? {
         return article.datePublished
     }
 
     @objc(dateModified)
-    var dateModified:Date?  {
+    var dateModified: Date? {
         return article.dateModified
     }
 
     @objc(dateArrived)
-    var dateArrived:Date  {
+    var dateArrived: Date {
         return article.status.dateArrived
     }
 
     @objc(read)
-    var read:Bool  {
+    var read: Bool {
 		get {
-			return article.status.boolStatus(forKey:.read)
+			return article.status.boolStatus(forKey: .read)
 		}
 		set {
 			markArticles([self.article], statusKey: .read, flag: newValue)
@@ -116,9 +116,9 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     }
 
     @objc(starred)
-    var starred:Bool  {
+    var starred: Bool {
 		get {
-			return article.status.boolStatus(forKey:.starred)
+			return article.status.boolStatus(forKey: .starred)
 		}
 		set {
 			markArticles([self.article], statusKey: .starred, flag: newValue)
@@ -126,19 +126,19 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     }
 
     @objc(deleted)
-    var deleted:Bool  {
+    var deleted: Bool {
         return false
     }
 
     @objc(imageURL)
-    var imageURL:String  {
+    var imageURL: String {
         return article.imageLink ?? ""
     }
-    
+
     @objc(authors)
-    var authors:NSArray {
+    var authors: NSArray {
         let articleAuthors = article.authors ?? []
-        return articleAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
+        return articleAuthors.map { ScriptableAuthor($0, container: self) } as NSArray
     }
 
 	@objc(feed)

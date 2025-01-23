@@ -12,7 +12,7 @@ import RSWeb
 import Secrets
 
 class AccountsNewsBlurWindowController: NSWindowController {
-	
+
 	@IBOutlet weak var signInTextField: NSTextField!
 	@IBOutlet weak var noAccountTextField: NSTextField!
 	@IBOutlet weak var createNewAccountButton: NSButton!
@@ -65,12 +65,12 @@ class AccountsNewsBlurWindowController: NSWindowController {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username required.", comment: "Credentials Error")
 			return
 		}
-		
+
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: usernameTextField.stringValue) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
 			return
 		}
-		
+
 		actionButton.isEnabled = false
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)
@@ -101,7 +101,7 @@ class AccountsNewsBlurWindowController: NSWindowController {
 					try self.account?.storeCredentials(credentials)
 					try self.account?.storeCredentials(validatedCredentials)
 
-					self.account?.refreshAll() { result in
+					self.account?.refreshAll { result in
 						switch result {
 						case .success:
 							break
@@ -109,7 +109,7 @@ class AccountsNewsBlurWindowController: NSWindowController {
 							NSApplication.shared.presentError(error)
 						}
 					}
-					
+
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
@@ -122,14 +122,14 @@ class AccountsNewsBlurWindowController: NSWindowController {
 			}
 		}
 	}
-	
+
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		NSWorkspace.shared.open(URL(string: "https://newsblur.com")!)
 	}
-	
+
 	// MARK: Autofill
 	func enableAutofill() {
 		usernameTextField.contentType = .username
 		passwordTextField.contentType = .password
-	}	
+	}
 }

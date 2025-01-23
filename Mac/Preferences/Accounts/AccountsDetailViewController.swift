@@ -17,7 +17,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 	@IBOutlet weak var limitationsAndSolutionsRow: NSGridRow!
 	@IBOutlet weak var limitationsAndSolutionsTextField: NSTextField!
 	@IBOutlet weak var credentialsButton: NSButton!
-	
+
 	private var accountsWindowController: NSWindowController?
 	private var account: Account?
 
@@ -29,7 +29,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 	public required init?(coder: NSCoder) {
 		super.init(coder: coder)
 	}
-	
+
 	private var hidesCredentialsButton: Bool {
 		guard let account = account else {
 			return true
@@ -41,25 +41,25 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			return false
 		}
 	}
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
+
 		nameTextField.delegate = self
 		typeLabel.stringValue = account?.defaultName ?? ""
 		nameTextField.stringValue = account?.name ?? ""
 		activeButton.state = account?.isActive ?? false ? .on : .off
-		
+
 		if account?.type == .cloudKit {
 			let attrString = NSAttributedString(linkText: CloudKitWebDocumentation.limitationsAndSolutionsText, linkURL: CloudKitWebDocumentation.limitationsAndSolutionsURL)
 			limitationsAndSolutionsTextField.attributedStringValue = attrString
 		} else {
 			limitationsAndSolutionsRow.isHidden = true
 		}
-		
+
 		credentialsButton.isHidden = hidesCredentialsButton
 	}
-	
+
 	func controlTextDidEndEditing(_ obj: Notification) {
 		if !nameTextField.stringValue.isEmpty {
 			account?.name = nameTextField.stringValue
@@ -67,28 +67,27 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			account?.name = nil
 		}
 	}
-	
+
 	@IBAction func active(_ sender: NSButtonCell) {
 		account?.isActive = sender.state == .on ? true : false
 	}
-	
+
 	@IBAction func credentials(_ sender: Any) {
-		
+
 		guard let account = account else { return }
-		
+
 		switch account.type {
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.account = account
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsFeedbinWindowController
-		case .inoreader, .bazQux, .theOldReader, .freshRSS:
+			case .inoreader, .bazQux, .theOldReader, .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = account.type
 			accountsReaderAPIWindowController.account = account
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsReaderAPIWindowController
-			break
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.account = account
@@ -97,7 +96,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		default:
 			break
 		}
-		
+
 	}
-	
+
 }

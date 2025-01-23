@@ -10,7 +10,7 @@ import AppKit
 import RSCore
 
 struct TimelineCellLayout {
-	
+
 	let width: CGFloat
 	let height: CGFloat
 	let feedNameRect: NSRect
@@ -24,9 +24,9 @@ struct TimelineCellLayout {
 	let iconImageRect: NSRect
 	let separatorRect: NSRect
 	let paddingBottom: CGFloat
-	
+
 	init(width: CGFloat, height: CGFloat, feedNameRect: NSRect, dateRect: NSRect, titleRect: NSRect, numberOfLinesForTitle: Int, summaryRect: NSRect, textRect: NSRect, unreadIndicatorRect: NSRect, starRect: NSRect, iconImageRect: NSRect, separatorRect: NSRect, paddingBottom: CGFloat) {
-		
+
 		self.width = width
 		self.feedNameRect = feedNameRect
 		self.dateRect = dateRect
@@ -42,8 +42,7 @@ struct TimelineCellLayout {
 
 		if height > 0.1 {
 			self.height = height
-		}
-		else {
+		} else {
 			self.height = [feedNameRect, dateRect, titleRect, summaryRect, textRect, unreadIndicatorRect, iconImageRect].maxY() + paddingBottom
 		}
 	}
@@ -62,8 +61,7 @@ struct TimelineCellLayout {
 		var lastTextRect = titleRect
 		if numberOfLinesForTitle == 0 {
 			lastTextRect = textRect
-		}
-		else if numberOfLinesForTitle < appearance.titleNumberOfLines {
+		} else if numberOfLinesForTitle < appearance.titleNumberOfLines {
 			if summaryRect.height > 0.1 {
 				lastTextRect = summaryRect
 			}
@@ -114,7 +112,7 @@ private extension TimelineCellLayout {
 			r.size.height = 0
 			return (r, 0)
 		}
-		
+
 		let attributedTitle = cellData.attributedTitle.adding(font: appearance.titleFont)
 		let sizeInfo = MultilineTextFieldSizer.size(for: attributedTitle, numberOfLines: appearance.titleNumberOfLines, width: Int(textBoxRect.width))
 		r.size.height = sizeInfo.size.height
@@ -124,15 +122,15 @@ private extension TimelineCellLayout {
 		return (r, sizeInfo.numberOfLinesUsed)
 	}
 
-	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int,  _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
+	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 		if titleNumberOfLines >= appearance.titleNumberOfLines || cellData.text.isEmpty {
 			return NSRect.zero
 		}
 
 		var r = textBoxRect
-		r.origin.y = NSMaxY(titleRect)
+		r.origin.y = titleRect.maxY
 		let summaryNumberOfLines = appearance.titleNumberOfLines - titleNumberOfLines
-		
+
 		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.text, font: appearance.textOnlyFont, numberOfLines: summaryNumberOfLines, width: Int(textBoxRect.width))
 		r.size.height = sizeInfo.size.height
 		if sizeInfo.numberOfLinesUsed < 1 {
@@ -160,10 +158,10 @@ private extension TimelineCellLayout {
 
 	static func rectForDate(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 		let textFieldSize = SingleLineTextFieldSizer.size(for: cellData.dateString, font: appearance.dateFont)
-		
-		var r = NSZeroRect
+
+		var r = NSRect.zero
 		r.size = textFieldSize
-		r.origin.y = NSMaxY(rectAbove) + appearance.titleBottomMargin
+		r.origin.y = rectAbove.maxY + appearance.titleBottomMargin
 		r.size.width = textFieldSize.width
 
 		r.origin.x = textBoxRect.maxX - textFieldSize.width
@@ -173,22 +171,22 @@ private extension TimelineCellLayout {
 
 	static func rectForFeedName(_ textBoxRect: NSRect, _ dateRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 		if cellData.showFeedName == .none {
-			return NSZeroRect
+			return NSRect.zero
 		}
 
 		let textFieldSize = SingleLineTextFieldSizer.size(for: cellData.feedName, font: appearance.feedNameFont)
-		var r = NSZeroRect
+		var r = NSRect.zero
 		r.size = textFieldSize
 		r.origin.y = dateRect.minY
 		r.origin.x = textBoxRect.origin.x
 		r.size.width = (textBoxRect.maxX - (dateRect.size.width + appearance.dateMarginLeft)) - textBoxRect.origin.x
-		
+
 		return r
 	}
 
 	static func rectForUnreadIndicator(_ appearance: TimelineCellAppearance, _ titleRect: NSRect) -> NSRect {
 
-		var r = NSZeroRect
+		var r = NSRect.zero
 		r.size = NSSize(width: appearance.unreadCircleDimension, height: appearance.unreadCircleDimension)
 		r.origin.x = appearance.cellPadding.left
 		r.origin.y = titleRect.minY + 6
@@ -220,7 +218,7 @@ private extension TimelineCellLayout {
 
 		return r
 	}
-	
+
 	static func rectForSeparator(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ alignmentRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
 		return NSRect(x: alignmentRect.minX, y: height - 1, width: width - alignmentRect.minX, height: 1)
 	}
@@ -237,4 +235,3 @@ private extension Array where Element == NSRect {
 		return y
 	}
 }
-

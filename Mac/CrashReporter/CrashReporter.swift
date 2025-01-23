@@ -37,7 +37,7 @@ struct CrashReporter {
 		} else {
 			runCrashReporterWindow(crashLogText)
 		}
-		
+
 		crashReporter.purgePendingCrashReport()
 	}
 
@@ -48,7 +48,7 @@ struct CrashReporter {
 		let boundary = "0xKhTmLbOuNdArY"
 
 		let contentType = "multipart/form-data; boundary=\(boundary)"
-		request.setValue(contentType, forHTTPHeaderField:HTTPRequestHeader.contentType)
+		request.setValue(contentType, forHTTPHeaderField: HTTPRequestHeader.contentType)
 
 		let formString = "--\(boundary)\r\nContent-Disposition: form-data; name=\"crashlog\"\r\n\r\n\(crashLogText)\r\n--\(boundary)--\r\n"
 		let formData = formString.data(using: .utf8, allowLossyConversion: true)

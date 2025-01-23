@@ -14,17 +14,17 @@ import RSCore
 @objc(ScriptableFolder)
 class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
-    let folder:Folder
-    let container:ScriptingObjectContainer
+    let folder: Folder
+    let container: ScriptingObjectContainer
 
-    init (_ folder:Folder, container:ScriptingObjectContainer) {
+    init (_ folder: Folder, container: ScriptingObjectContainer) {
         self.folder = folder
         self.container = container
     }
 
     @objc(objectSpecifier)
     override var objectSpecifier: NSScriptObjectSpecifier? {
-        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
+        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject: self)
         return (scriptObjectSpecifier)
     }
 
@@ -40,20 +40,20 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    var scriptingUniqueId: Any {
         return folder.folderID
     }
-    
+
     // MARK: --- ScriptingObjectContainer protocol ---
-    
+
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
- 
-    func deleteElement(_ element:ScriptingObject) {
+
+    func deleteElement(_ element: ScriptingObject) {
        if let scriptableFeed = element as? ScriptableFeed {
             BatchUpdate.shared.perform {
-				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { result in }
+				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { _ in }
             }
         }
     }
@@ -65,52 +65,52 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
         or
            tell account X to make new folder at end with properties {name:"new folder name"}
     */
-    class func handleCreateElement(command:NSCreateCommand) -> Any?  {
-        guard command.isCreateCommand(forClass:"fold") else { return nil }
-        let name = command.property(forKey:"name") as? String ?? ""
+    class func handleCreateElement(command: NSCreateCommand) -> Any? {
+        guard command.isCreateCommand(forClass: "fold") else { return nil }
+        let name = command.property(forKey: "name") as? String ?? ""
 
         // some combination of the tell target and the location specifier ("in" or "at")
         // identifies where the new folder should be created
         let (account, folder) = command.accountAndFolderForNewChild()
         guard folder == nil else {
-            print("support for folders within folders is NYI");
+            print("support for folders within folders is NYI")
             return nil
         }
-		
+
 		command.suspendExecution()
-		
+
 		account.addFolder(name) { result in
 			switch result {
 			case .success(let folder):
 				let scriptableAccount = ScriptableAccount(account)
-				let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
-				command.resumeExecution(withResult:scriptableFolder.objectSpecifier)
+				let scriptableFolder = ScriptableFolder(folder, container: scriptableAccount)
+				command.resumeExecution(withResult: scriptableFolder.objectSpecifier)
 			case .failure:
-				command.resumeExecution(withResult:nil)
+				command.resumeExecution(withResult: nil)
 			}
 		}
-		
+
         return nil
     }
-    
+
     // MARK: --- Scriptable elements ---
-    
+
     @objc(feeds)
-    var feeds:NSArray  {
+    var feeds: NSArray {
 		let feeds = Array(folder.topLevelFeeds)
-        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
+        return feeds.map { ScriptableFeed($0, container: self) } as NSArray
     }
 
     // MARK: --- Scriptable properties ---
-    
+
     @objc(name)
-    var name:String  {
+    var name: String {
         return self.folder.name ?? ""
     }
 
     @objc(opmlRepresentation)
-    var opmlRepresentation:String  {
-        return self.folder.OPMLString(indentLevel:0)
+    var opmlRepresentation: String {
+        return self.folder.OPMLString(indentLevel: 0)
     }
 
 }

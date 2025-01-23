@@ -34,4 +34,3 @@ final class TimelineContainerView: NSView {
 		}
 	}
 }
-

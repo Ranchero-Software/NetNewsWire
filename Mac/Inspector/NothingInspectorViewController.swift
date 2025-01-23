@@ -39,8 +39,7 @@ private extension NothingInspectorViewController {
 		if let objects = objects, objects.count > 1 {
 			nothingTextField?.isHidden = true
 			multipleTextField?.isHidden = false
-		}
-		else {
+		} else {
 			nothingTextField?.isHidden = false
 			multipleTextField?.isHidden = true
 		}

@@ -13,13 +13,13 @@ import RSCore
 final class DetailWebView: WKWebView {
 
 	weak var keyboardDelegate: KeyboardDelegate?
-	
+
 	override func accessibilityLabel() -> String? {
 		return NSLocalizedString("Article", comment: "Article")
 	}
 
 	// MARK: - NSResponder
-	
+
 	override func keyDown(with event: NSEvent) {
 		if keyboardDelegate?.keydown(event, in: self) ?? false {
 			return
@@ -55,16 +55,16 @@ final class DetailWebView: WKWebView {
 		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
 		bigSurOffsetFix()
 	}
-	
+
 	override func setFrameSize(_ newSize: NSSize) {
 		super.setFrameSize(newSize)
-		if (!inLiveResize) {
+		if !inLiveResize {
 			bigSurOffsetFix()
 		}
 	}
-		
+
 	private var inBigSurOffsetFix = false
-	
+
 	private func bigSurOffsetFix() {
 		/*
 		 On macOS 11, when a user exits full screen
@@ -77,17 +77,17 @@ final class DetailWebView: WKWebView {
 		guard var frame = window?.frame else {
 			return
 		}
-		
+
 		guard !inBigSurOffsetFix else {
 			return
 		}
-		
+
 		inBigSurOffsetFix = true
-		
+
 		defer {
 			inBigSurOffsetFix = false
 		}
-		
+
 		frame.size = NSSize(width: window!.frame.width, height: window!.frame.height - 1)
 		window!.setFrame(frame, display: false)
 		frame.size = NSSize(width: window!.frame.width, height: window!.frame.height + 1)
@@ -128,4 +128,3 @@ private extension DetailWebView {
 		return false
 	}
 }
-

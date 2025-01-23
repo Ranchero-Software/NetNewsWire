@@ -30,7 +30,7 @@ final class MultilineTextFieldSizer {
 
 	private let numberOfLines: Int
 	private let font: NSFont
-	private let textField:NSTextField
+	private let textField: NSTextField
 	private let singleLineHeightEstimate: Int
 	private let doubleLineHeightEstimate: Int
 	private var cache = [String: WidthHeightCache]() // Each string has a cache.
@@ -56,7 +56,7 @@ final class MultilineTextFieldSizer {
 		guard attributedString.length > 0 else {
 			return TextFieldSizeInfo(size: NSSize.zero, numberOfLinesUsed: 0)
 		}
-		
+
 		// Assumes the same font family/size for the whole string
 		let font = attributedString.attribute(.font, at: 0, effectiveRange: nil) as! NSFont
 
@@ -227,8 +227,7 @@ private extension MultilineTextFieldSizer {
 
 			if oneWidth < width && (oneWidth > smallNeighbor.width || smallNeighbor.width == 0) {
 				smallNeighbor = (oneWidth, oneHeight)
-			}
-			else if oneWidth > width && (oneWidth < largeNeighbor.width || largeNeighbor.width == 0) {
+			} else if oneWidth > width && (oneWidth < largeNeighbor.width || largeNeighbor.width == 0) {
 				largeNeighbor = (oneWidth, oneHeight)
 			}
 

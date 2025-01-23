@@ -9,14 +9,14 @@
 import Foundation
 
 protocol ScriptingObject {
-    var objectSpecifier: NSScriptObjectSpecifier?  { get }
+    var objectSpecifier: NSScriptObjectSpecifier? { get }
     var scriptingKey: String { get }
 }
 
 protocol NamedScriptingObject: ScriptingObject {
-    var name:String { get }
+    var name: String { get }
 }
 
 protocol UniqueIdScriptingObject: ScriptingObject {
-    var scriptingUniqueId:Any { get }
+    var scriptingUniqueId: Any { get }
 }

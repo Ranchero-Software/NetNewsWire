@@ -10,30 +10,29 @@ import AppKit
 import Account
 
 protocol ScriptingObjectContainer: ScriptingObject {
-    var scriptingClassDescription:NSScriptClassDescription { get }
-    func deleteElement(_ element:ScriptingObject)
+    var scriptingClassDescription: NSScriptClassDescription { get }
+    func deleteElement(_ element: ScriptingObject)
 }
 
 extension ScriptingObjectContainer {
 
-    func makeFormNameScriptObjectSpecifier(forObject object:NamedScriptingObject) -> NSScriptObjectSpecifier? {
+    func makeFormNameScriptObjectSpecifier(forObject object: NamedScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier
         let scriptingKey = object.scriptingKey
         let name = object.name
-        let specifier = NSNameSpecifier(containerClassDescription:containerClassDescription,
-                                        containerSpecifier:containerScriptObjectSpecifier, key:scriptingKey, name:name)
+        let specifier = NSNameSpecifier(containerClassDescription: containerClassDescription,
+                                        containerSpecifier: containerScriptObjectSpecifier, key: scriptingKey, name: name)
         return specifier
     }
-    
-    func makeFormUniqueIDScriptObjectSpecifier(forObject object:UniqueIdScriptingObject) -> NSScriptObjectSpecifier? {
+
+    func makeFormUniqueIDScriptObjectSpecifier(forObject object: UniqueIdScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier
         let scriptingKey = object.scriptingKey
         let uniqueId = object.scriptingUniqueId
-        let specifier = NSUniqueIDSpecifier(containerClassDescription:containerClassDescription,
-                                            containerSpecifier:containerScriptObjectSpecifier, key:scriptingKey, uniqueID: uniqueId)
+        let specifier = NSUniqueIDSpecifier(containerClassDescription: containerClassDescription,
+                                            containerSpecifier: containerScriptObjectSpecifier, key: scriptingKey, uniqueID: uniqueId)
         return specifier
     }
 }
-

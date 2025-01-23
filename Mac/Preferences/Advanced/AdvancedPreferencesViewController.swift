@@ -53,12 +53,11 @@ private extension AdvancedPreferencesViewController {
 	func updateUI() {
 		if wantsTestBuilds {
 			testBuildsButton.state = .on
-		}
-		else {
+		} else {
 			releaseBuildsButton.state = .on
 		}
 	}
-	
+
 	func currentAppcastURL() -> String {
 		return UserDefaults.standard.string(forKey: appcastDefaultsKey) ?? ""
 	}

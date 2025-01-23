@@ -10,7 +10,7 @@ import AppKit
 import RSCore
 import RSTree
 
-class SidebarOutlineView : NSOutlineView {
+class SidebarOutlineView: NSOutlineView {
 
 	@IBOutlet var keyboardDelegate: KeyboardDelegate!
 
@@ -40,15 +40,15 @@ class SidebarOutlineView : NSOutlineView {
 	// MARK: NSView
 
 	override func viewWillStartLiveResize() {
-		
+
 		if let scrollView = self.enclosingScrollView {
 			scrollView.hasVerticalScroller = false
 		}
 		super.viewWillStartLiveResize()
 	}
-	
+
 	override func viewDidEndLiveResize() {
-		
+
 		if let scrollView = self.enclosingScrollView {
 			scrollView.hasVerticalScroller = true
 		}

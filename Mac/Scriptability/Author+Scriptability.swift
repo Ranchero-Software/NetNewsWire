@@ -13,17 +13,17 @@ import Articles
 @objc(ScriptableAuthor)
 class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
 
-    let author:Author
-    let container:ScriptingObjectContainer
-    
-    init (_ author:Author, container:ScriptingObjectContainer) {
+    let author: Author
+    let container: ScriptingObjectContainer
+
+    init (_ author: Author, container: ScriptingObjectContainer) {
         self.author = author
         self.container = container
     }
 
     @objc(objectSpecifier)
     override var objectSpecifier: NSScriptObjectSpecifier? {
-        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
+        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject: self)
         return (scriptObjectSpecifier)
     }
 
@@ -41,29 +41,29 @@ class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
     // MARK: --- UniqueIdScriptingObject protocol ---
 
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    var scriptingUniqueId: Any {
         return author.authorID
     }
-    
+
     // MARK: --- Scriptable properties ---
-    
+
     @objc(url)
-    var url:String  {
+    var url: String {
         return self.author.url ?? ""
     }
-    
+
     @objc(name)
-    var name:String  {
+    var name: String {
         return self.author.name ?? ""
     }
 
     @objc(avatarURL)
-    var avatarURL:String  {
+    var avatarURL: String {
         return self.author.avatarURL ?? ""
     }
 
     @objc(emailAddress)
-    var emailAddress:String  {
+    var emailAddress: String {
         return self.author.emailAddress ?? ""
     }
 }

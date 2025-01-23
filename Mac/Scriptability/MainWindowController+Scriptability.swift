@@ -13,4 +13,3 @@ protocol ScriptingMainWindowController {
     var scriptingCurrentArticle: Article? { get }
     var scriptingSelectedArticles: [Article] { get }
 }
-

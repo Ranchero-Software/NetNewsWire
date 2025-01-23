@@ -12,7 +12,7 @@ import RSTree
 import Articles
 import Account
 
-final class AddFeedWindowController : NSWindowController {
+final class AddFeedWindowController: NSWindowController {
 
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
@@ -34,7 +34,7 @@ final class AddFeedWindowController : NSWindowController {
 		}
 		return s
 	}
-	
+
     var hostWindow: NSWindow!
 
 	convenience init(urlString: String?, name: String?, account: Account?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
@@ -46,9 +46,9 @@ final class AddFeedWindowController : NSWindowController {
 		self.delegate = delegate
 		self.folderTreeController = folderTreeController
 	}
-	
+
     func runSheetOnWindow(_ hostWindow: NSWindow) {
-		hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
+		hostWindow.beginSheet(window!) { (_: NSApplication.ModalResponse) in
 		}
     }
 
@@ -61,7 +61,7 @@ final class AddFeedWindowController : NSWindowController {
 		}
 
 		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController.rootNode)
-		
+
 		if let account = initialAccount {
 			FolderTreeMenu.select(account: account, folder: initialFolder, in: folderPopupButton)
 		} else if let container = AddFeedDefaultContainer.defaultContainer {
@@ -73,41 +73,41 @@ final class AddFeedWindowController : NSWindowController {
 				}
 			}
 		}
-		
+
 		updateUI()
 	}
 
     // MARK: Actions
-    
+
     @IBAction func cancel(_ sender: Any?) {
 		cancelSheet()
     }
-    
+
     @IBAction func addFeed(_ sender: Any?) {
 		let urlString = urlTextField.stringValue
 		let normalizedURLString = urlString.normalizedURL
 
 		if normalizedURLString.isEmpty {
 			cancelSheet()
-			return;
+			return
 		}
 		guard let url = URL(string: normalizedURLString) else {
 			cancelSheet()
 			return
 		}
-		
+
 		guard let container = selectedContainer() else { return }
 		AddFeedDefaultContainer.saveDefaultContainer(container)
 
 		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
-		
+
     }
 
 	@IBAction func localShowFeedList(_ sender: Any?) {
 		NSApplication.shared.sendAction(NSSelectorFromString("showFeedList:"), to: nil, from: sender)
 		hostWindow.endSheet(window!, returnCode: NSApplication.ModalResponse.continue)
 	}
-	
+
 	// MARK: NSTextFieldDelegate
 
 	@objc func controlTextDidEndEditing(_ obj: Notification) {
@@ -117,7 +117,7 @@ final class AddFeedWindowController : NSWindowController {
 	@objc func controlTextDidChange(_ obj: Notification) {
 		updateUI()
 	}
-	
+
 	private func updateUI() {
 		addButton.isEnabled = urlTextField.stringValue.mayBeURL && selectedContainer() != nil
 	}

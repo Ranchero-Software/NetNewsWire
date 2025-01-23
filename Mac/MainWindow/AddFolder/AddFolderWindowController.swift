@@ -10,8 +10,8 @@ import AppKit
 import Articles
 import Account
 
-class AddFolderWindowController : NSWindowController {
-    
+class AddFolderWindowController: NSWindowController {
+
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!
 	@IBOutlet var addFolderButton: NSButton!
@@ -22,11 +22,11 @@ class AddFolderWindowController : NSWindowController {
 	}
 
     // MARK: - API
-    
+
     func runSheetOnWindow(_ w: NSWindow) {
 		hostWindow = w
-		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
-			
+		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) in
+
 			if returnCode == NSApplication.ModalResponse.OK {
 				self.addFolderIfNeeded()
 			}
@@ -34,37 +34,37 @@ class AddFolderWindowController : NSWindowController {
     }
 
 	// MARK: - NSViewController
-	
+
 	override func windowDidLoad() {
 		let preferredAccountID = AppDefaults.shared.addFolderAccountID
 		accountPopupButton.removeAllItems()
-		
+
 		let menu = NSMenu()
 		accountPopupButton.menu = menu
-		
+
 		let accounts = AccountManager.shared
 			.sortedActiveAccounts
 			.filter { !$0.behaviors.contains(.disallowFolderManagement) }
-		
+
 		for oneAccount in accounts {
-			
+
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
 			oneMenuItem.representedObject = oneAccount
 			menu.addItem(oneMenuItem)
-			
+
 			if oneAccount.accountID == preferredAccountID {
 				accountPopupButton.select(oneMenuItem)
 			}
 		}
 	}
-	
+
 	// MARK: - Actions
-	
+
     @IBAction func cancel(_ sender: Any?) {
 		hostWindow!.endSheet(window!, returnCode: .cancel)
     }
-    
+
     @IBAction func addFolder(_ sender: Any?) {
 		hostWindow!.endSheet(window!, returnCode: .OK)
     }

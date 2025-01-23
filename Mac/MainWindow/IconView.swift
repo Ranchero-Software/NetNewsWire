@@ -10,7 +10,7 @@ import AppKit
 
 final class IconView: NSView {
 
-	var iconImage: IconImage? = nil {
+	var iconImage: IconImage? {
 		didSet {
 			if iconImage !== oldValue {
 				imageView.image = iconImage?.image
@@ -36,7 +36,7 @@ final class IconView: NSView {
 	}
 
 	private var isDiscernable = true
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
@@ -76,7 +76,7 @@ final class IconView: NSView {
 	}
 
 	override func layout() {
-		resizeSubviews(withOldSize: NSZeroSize)
+		resizeSubviews(withOldSize: NSSize.zero)
 	}
 
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
@@ -89,7 +89,7 @@ final class IconView: NSView {
 
 		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? IconView.darkBackgroundColor : IconView.lightBackgroundColor
 		color.set()
-		let r = NSIntersectionRect(dirtyRect, bounds)
+		let r = dirtyRect.intersection(bounds)
 		r.fill()
 	}
 }
@@ -104,9 +104,9 @@ private extension IconView {
 
 	func rectForImageView() -> NSRect {
 		guard !(iconImage?.isSymbol ?? false) else {
-			return NSMakeRect(0.0, 0.0, bounds.size.width, bounds.size.height)
+			return NSRect(x: 0.0, y: 0.0, width: bounds.size.width, height: bounds.size.height)
 		}
-		
+
 		guard let image = iconImage?.image else {
 			return NSRect.zero
 		}
@@ -116,22 +116,21 @@ private extension IconView {
 		if imageSize.height == imageSize.width {
 			if imageSize.height >= viewSize.height * 0.75 {
 				// Close enough to viewSize to scale up the image.
-				return NSMakeRect(0.0, 0.0, viewSize.width, viewSize.height)
+				return NSRect(x: 0.0, y: 0.0, width: viewSize.width, height: viewSize.height)
 			}
 			let offset = floor((viewSize.height - imageSize.height) / 2.0)
-			return NSMakeRect(offset, offset, imageSize.width, imageSize.height)
-		}
-		else if imageSize.height > imageSize.width {
+			return NSRect(x: offset, y: offset, width: imageSize.width, height: imageSize.height)
+		} else if imageSize.height > imageSize.width {
 			let factor = viewSize.height / imageSize.height
 			let width = imageSize.width * factor
 			let originX = floor((viewSize.width - width) / 2.0)
-			return NSMakeRect(originX, 0.0, width, viewSize.height)
+			return NSRect(x: originX, y: 0.0, width: width, height: viewSize.height)
 		}
 
 		// Wider than tall: imageSize.width > imageSize.height
 		let factor = viewSize.width / imageSize.width
 		let height = imageSize.height * factor
 		let originY = floor((viewSize.height - height) / 2.0)
-		return NSMakeRect(0.0, originY, viewSize.width, height)
+		return NSRect(x: 0.0, y: originY, width: viewSize.width, height: height)
 	}
 }

@@ -10,7 +10,7 @@ import AppKit
 import Account
 import Articles
 
-extension NSApplication : ScriptingObjectContainer {
+extension NSApplication: ScriptingObjectContainer {
 
     // MARK: --- ScriptingObjectContainer protocol ---
 
@@ -18,21 +18,21 @@ extension NSApplication : ScriptingObjectContainer {
         return NSApplication.shared.classDescription as! NSScriptClassDescription
     }
 
-    func deleteElement(_ element:ScriptingObject) {
-        print ("delete event not handled")
+    func deleteElement(_ element: ScriptingObject) {
+        print("delete event not handled")
     }
 
     var scriptingKey: String {
         return "application"
     }
-    
+
     @objc(currentArticle)
     func currentArticle() -> ScriptableArticle? {
         var scriptableArticle: ScriptableArticle?
         if let currentArticle = appDelegate.scriptingCurrentArticle {
             if let feed = currentArticle.feed {
-                let scriptableFeed = ScriptableFeed(feed, container:self)
-                scriptableArticle = ScriptableArticle(currentArticle, container:scriptableFeed)
+                let scriptableFeed = ScriptableFeed(feed, container: self)
+                scriptableArticle = ScriptableArticle(currentArticle, container: scriptableFeed)
             }
         }
         return scriptableArticle
@@ -41,8 +41,8 @@ extension NSApplication : ScriptingObjectContainer {
     @objc(selectedArticles)
     func selectedArticles() -> NSArray {
         let articles = appDelegate.scriptingSelectedArticles
-        let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
-			if let feed = article.feed, let account = feed.account  {
+        let scriptableArticles: [ScriptableArticle] = articles.compactMap { article in
+			if let feed = article.feed, let account = feed.account {
                 let scriptableFeed = ScriptableFeed(feed, container: ScriptableAccount(account))
                 return ScriptableArticle(article, container: scriptableFeed)
             } else {
@@ -59,11 +59,11 @@ extension NSApplication : ScriptingObjectContainer {
         let accounts = AccountManager.shared.accounts
         return accounts.map { ScriptableAccount($0) } as NSArray
     }
-    
+
     @objc(valueInAccountsWithUniqueID:)
-    func valueInAccounts(withUniqueID id:String) -> ScriptableAccount? {
+    func valueInAccounts(withUniqueID id: String) -> ScriptableAccount? {
         let accounts = AccountManager.shared.accounts
-        guard let account = accounts.first(where:{$0.accountID == id}) else { return nil }
+        guard let account = accounts.first(where: {$0.accountID == id}) else { return nil }
         return ScriptableAccount(account)
     }
 
@@ -72,10 +72,10 @@ extension NSApplication : ScriptingObjectContainer {
         this allows a script like 'articles of feed "The Shape of Everything"' as a shorthand
         for  'articles of feed "The Shape of Everything" of account "On My Mac"'
     */  
-      
+
     func allFeeds() -> [Feed] {
         let accounts = AccountManager.shared.activeAccounts
-        let emptyFeeds:[Feed] = []
+        let emptyFeeds: [Feed] = []
         return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
               let accountFeeds = Array(nthAccount.topLevelFeeds)
               return result + accountFeeds
@@ -85,15 +85,13 @@ extension NSApplication : ScriptingObjectContainer {
     @objc(feeds)
     func feeds() -> NSArray {
         let feeds = self.allFeeds()
-        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
+        return feeds.map { ScriptableFeed($0, container: self) } as NSArray
     }
 
     @objc(valueInFeedsWithUniqueID:)
-    func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
+    func valueInFeeds(withUniqueID id: String) -> ScriptableFeed? {
         let feeds = self.allFeeds()
-        guard let feed = feeds.first(where:{$0.feedID == id}) else { return nil }
-        return ScriptableFeed(feed, container:self)
+        guard let feed = feeds.first(where: {$0.feedID == id}) else { return nil }
+        return ScriptableFeed(feed, container: self)
     }
 }
-
-

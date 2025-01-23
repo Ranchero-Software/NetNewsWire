@@ -34,7 +34,7 @@ final class DetailWebViewController: NSViewController {
 			}
 		}
 	}
-	
+
 	var article: Article? {
 		switch state {
 		case .article(let article, _):
@@ -45,9 +45,9 @@ final class DetailWebViewController: NSViewController {
 			return nil
 		}
 	}
-	
+
 	private var articleTextSize = AppDefaults.shared.articleTextSize
-	
+
 	private var webInspectorEnabled: Bool {
 		get {
 			return webView.configuration.preferences._developerExtrasEnabled
@@ -64,7 +64,7 @@ final class DetailWebViewController: NSViewController {
 
 	private var isShowingExtractedArticle: Bool {
 		switch state {
-		case .extracted(_, _, _):
+		case .extracted:
 			return true
 		default:
 			return false
@@ -96,7 +96,7 @@ final class DetailWebViewController: NSViewController {
 		// See bug #901.
 		webView.isHidden = true
 		waitingForFirstReload = true
-		
+
 		webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
 		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
@@ -110,7 +110,7 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	// MARK: Notifications
-	
+
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
 	}
@@ -122,24 +122,24 @@ final class DetailWebViewController: NSViewController {
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
 	}
-	
+
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		if articleTextSize != AppDefaults.shared.articleTextSize {
 			articleTextSize = AppDefaults.shared.articleTextSize
 			reloadHTMLMaintainingScrollPosition()
 		}
 	}
-	
+
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
 		reloadHTMLMaintainingScrollPosition()
 	}
-	
+
 	// MARK: Media Functions
-	
+
 	func stopMediaPlayback() {
 		webView.evaluateJavaScript("stopMediaPlayback();")
 	}
-	
+
 	// MARK: Scrolling
 
 	func canScrollDown(_ completion: @escaping (Bool) -> Void) {
@@ -163,12 +163,12 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	// MARK: State Restoration
-	
-	func saveState(to state: inout [AnyHashable : Any]) {
+
+	func saveState(to state: inout [AnyHashable: Any]) {
 		state[UserInfoKey.isShowingExtractedArticle] = isShowingExtractedArticle
 		state[UserInfoKey.articleWindowScrollY] = windowScrollY
 	}
-	
+
 }
 
 // MARK: - ArticleIconSchemeHandlerDelegate
@@ -228,7 +228,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 
 		decisionHandler(.allow)
 	}
-	
+
 	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
 		// See note in viewDidLoad()
 		if waitingForFirstReload {
@@ -250,7 +250,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 	}
 
 	// WKUIDelegate
-	
+
 	func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
 		// This method is reached when WebKit handles a JavaScript based window.open() invocation, for example. One
 		// example where this is used is in YouTube's embedded video player when a user clicks on the video's title
@@ -270,18 +270,18 @@ private extension DetailWebViewController {
 
 	func reloadArticleImage() {
 		guard let article = article else { return }
-		
+
 		var components = URLComponents()
 		components.scheme = ArticleRenderer.imageIconScheme
 		components.path = article.articleID
-		
+
 		if let imageSrc = components.string {
 			webView?.evaluateJavaScript("reloadArticleImage(\"\(imageSrc)\")")
 		}
 	}
-	
+
 	func reloadHTMLMaintainingScrollPosition() {
-		fetchScrollInfo() { scrollInfo in
+		fetchScrollInfo { scrollInfo in
 			self.windowScrollY = scrollInfo?.offsetY
 			self.reloadHTML()
 		}
@@ -289,7 +289,7 @@ private extension DetailWebViewController {
 
 	func reloadHTML() {
 		delegate?.mouseDidExit(self)
-		
+
 		let theme = ArticleThemesManager.shared.currentTheme
 		let rendering: ArticleRenderer.Rendering
 
@@ -305,14 +305,14 @@ private extension DetailWebViewController {
 		case .extracted(let article, let extractedArticle, _):
 			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
 		}
-		
+
 		let substitutions = [
 			"title": rendering.title,
 			"baseURL": rendering.baseURL,
 			"style": rendering.style,
 			"body": rendering.html
 		]
-		
+
 		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
@@ -320,7 +320,7 @@ private extension DetailWebViewController {
 	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
 
-		webView.evaluateJavaScript(javascriptString) { (info, error) in
+		webView.evaluateJavaScript(javascriptString) { (info, _) in
 			guard let info = info as? [String: Any] else {
 				completion(nil)
 				return

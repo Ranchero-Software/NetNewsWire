@@ -82,7 +82,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	func stopMediaPlayback() {
 		currentWebViewController.stopMediaPlayback()
 	}
-	
+
 	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
 		currentWebViewController.canScrollDown(callback)
 	}
@@ -98,22 +98,22 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	override func scrollPageUp(_ sender: Any?) {
 		currentWebViewController.scrollPageUp(sender)
 	}
-	
+
 	// MARK: - Navigation
-	
+
 	func focus() {
 		guard let window = currentWebViewController.webView.window else {
 			return
 		}
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(currentWebViewController.webView)
 	}
-	
+
 	// MARK: State Restoration
-	
-	func saveState(to state: inout [AnyHashable : Any]) {
+
+	func saveState(to state: inout [AnyHashable: Any]) {
 		currentWebViewController.saveState(to: &state)
 	}
-	
+
 }
 
 // MARK: - DetailWebViewControllerDelegate
@@ -158,7 +158,7 @@ private extension DetailViewController {
 		}
 	}
 
-	@objc func userDefaultsDidChange(_ : Notification) {
+	@objc func userDefaultsDidChange(_: Notification) {
 		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
 			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
 			createNewWebViewsAndRestoreState()

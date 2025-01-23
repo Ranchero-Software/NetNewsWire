@@ -10,12 +10,12 @@ import SwiftUI
 import Account
 
 struct AddAccountHelpView: View {
-	
+
 	let accountTypes: [AccountType] = AddAccountSections.allOrdered.sectionContent
 	var delegate: AccountsPreferencesAddAccountDelegate?
 	var helpText: String
 	@State private var iCloudUnavailableError: Bool = false
-	
+
 	var body: some View {
 		VStack {
 			HStack {
@@ -36,11 +36,11 @@ struct AddAccountHelpView: View {
 					}
 				}
 			}
-			
+
 			Text(helpText)
 				.multilineTextAlignment(.center)
 				.padding(.top, 8)
-			
+
 		}
 		.alert(isPresented: $iCloudUnavailableError, content: {
 			Alert(title: Text(NSLocalizedString("Error", comment: "Error")),
@@ -50,5 +50,5 @@ struct AddAccountHelpView: View {
 				  }))
 		})
 	}
-	
+
 }

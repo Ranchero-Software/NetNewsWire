@@ -68,7 +68,7 @@ extension SidebarViewController {
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [Any] else {
 			return
 		}
-		
+
 		let articles = unreadArticles(for: objects)
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
 			return
@@ -80,7 +80,7 @@ extension SidebarViewController {
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [AnyObject] else {
 			return
 		}
-		
+
 		let nodes = objects.compactMap { treeController.nodeInTreeRepresentingObject($0) }
 
 		let alert = SidebarDeleteItemsAlert.build(nodes)
@@ -103,7 +103,7 @@ extension SidebarViewController {
 		}
 		window.beginSheet(renameSheet)
 	}
-	
+
 	@objc func toggleNotificationsFromContextMenu(_ sender: Any?) {
 		guard let item = sender as? NSMenuItem,
 			  let feed = item.representedObject as? Feed else {
@@ -119,7 +119,7 @@ extension SidebarViewController {
 					NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 				}
 			} else {
-				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
 					if granted {
 						DispatchQueue.main.async {
 							if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
@@ -134,7 +134,7 @@ extension SidebarViewController {
 			}
 		}
 	}
-	
+
 	@objc func toggleArticleExtractorFromContextMenu(_ sender: Any?) {
 		guard let item = sender as? NSMenuItem,
 			  let feed = item.representedObject as? Feed else {
@@ -144,7 +144,7 @@ extension SidebarViewController {
 		feed.isArticleExtractorAlwaysOn?.toggle()
 		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 	}
-	
+
 	func showNotificationsNotEnabledAlert() {
 		DispatchQueue.main.async {
 			let alert = NSAlert()
@@ -163,7 +163,7 @@ extension SidebarViewController {
 			}
 		}
 	}
-	
+
 }
 
 extension SidebarViewController: RenameWindowControllerDelegate {
@@ -229,9 +229,9 @@ private extension SidebarViewController {
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
-		
+
 		let notificationText = feed.notificationDisplayName.capitalized
-		
+
 		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed)
 		if feed.isNotifyAboutNewArticles == nil || feed.isNotifyAboutNewArticles! == false {
 			notificationMenuItem.state = .off
@@ -251,7 +251,7 @@ private extension SidebarViewController {
 		menu.addItem(articleExtractorMenuItem)
 
 		menu.addItem(NSMenuItem.separator())
-		
+
 		menu.addItem(renameMenuItem(feed))
 		menu.addItem(deleteMenuItem([feed]))
 
@@ -362,4 +362,3 @@ private extension SidebarViewController {
 		return articles
 	}
 }
-

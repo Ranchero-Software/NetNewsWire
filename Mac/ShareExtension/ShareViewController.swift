@@ -14,7 +14,7 @@ class ShareViewController: NSViewController {
 
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var folderPopUpButton: NSPopUpButton!
-	
+
 	private var url: URL?
 	private var extensionContainers: ExtensionContainers?
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ShareViewController")
@@ -25,11 +25,11 @@ class ShareViewController: NSViewController {
 
     override func loadView() {
         super.loadView()
-		
+
 		extensionContainers = ExtensionContainersFile.read()
 		buildFolderPopupMenu()
-		
-		var provider: NSItemProvider? = nil
+
+		var provider: NSItemProvider?
 
 		// Try to get any HTML that is maybe passed in
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
@@ -40,7 +40,7 @@ class ShareViewController: NSViewController {
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.propertyList.identifier, options: nil, completionHandler: { [weak self] (pList, error) in
 				if error != nil {
 					return
@@ -67,7 +67,7 @@ class ShareViewController: NSViewController {
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil, completionHandler: { [weak self] (urlCoded, error) in
 				if error != nil {
 					return
@@ -93,7 +93,7 @@ class ShareViewController: NSViewController {
 		let name = nameTextField.stringValue.isEmpty ? nil : nameTextField.stringValue
 		let request = ExtensionFeedAddRequest(name: name, feedURL: url, destinationContainerID: containerID)
 		ExtensionFeedAddRequestFile.save(request)
-		
+
 		self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 	}
 
@@ -105,31 +105,31 @@ class ShareViewController: NSViewController {
 }
 
 private extension ShareViewController {
-	
+
 	func buildFolderPopupMenu() {
-		
+
 		let menu = NSMenu(title: "Folders")
 		menu.autoenablesItems = false
-		
+
 		guard let extensionContainers = extensionContainers else {
 			folderPopUpButton.menu = nil
 			return
 		}
 
 		let defaultContainer = ShareDefaultContainer.defaultContainer(containers: extensionContainers)
-		var defaultMenuItem: NSMenuItem? = nil
-		
+		var defaultMenuItem: NSMenuItem?
+
 		for account in extensionContainers.accounts {
-			
+
 			let menuItem = NSMenuItem(title: account.name, action: nil, keyEquivalent: "")
 			menuItem.representedObject = account
-			
+
 			if account.disallowFeedInRootFolder {
 				menuItem.isEnabled = false
 			}
-			
+
 			menu.addItem(menuItem)
-			
+
 			if defaultContainer?.containerID == account.containerID {
 				defaultMenuItem = menuItem
 			}
@@ -143,15 +143,15 @@ private extension ShareViewController {
 					defaultMenuItem = menuItem
 				}
 			}
-			
+
 		}
-		
+
 		folderPopUpButton.menu = menu
 		folderPopUpButton.select(defaultMenuItem)
 	}
-	
+
 	func selectedContainer() -> ExtensionContainer? {
 		return folderPopUpButton.selectedItem?.representedObject as? ExtensionContainer
 	}
-	
+
 }
