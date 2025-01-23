@@ -13,10 +13,10 @@ import RSDatabase
 public struct SyncStatus: Hashable, Equatable {
 
 	public enum Key: String {
-		case read = "read"
-		case starred = "starred"
-		case deleted = "deleted"
-		case new = "new"
+		case read
+		case starred
+		case deleted
+		case new
 
 		public init(_ articleStatusKey: ArticleStatus.Key) {
 			switch articleStatusKey {
