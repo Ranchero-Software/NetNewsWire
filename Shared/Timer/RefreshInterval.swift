@@ -16,7 +16,7 @@ enum RefreshInterval: Int, CaseIterable, Identifiable {
 	case every2Hours = 5
 	case every4Hours = 6
 	case every8Hours = 7
-	
+
 	func inSeconds() -> TimeInterval {
 		switch self {
 		case .manually:
@@ -35,9 +35,9 @@ enum RefreshInterval: Int, CaseIterable, Identifiable {
 			return 8 * 60 * 60
 		}
 	}
-	
+
 	var id: String { description() }
-	
+
 	func description() -> String {
 		switch self {
 		case .manually:
@@ -56,5 +56,5 @@ enum RefreshInterval: Int, CaseIterable, Identifiable {
 			return NSLocalizedString("Every 8 Hours", comment: "Every 8 Hours")
 		}
 	}
-	
+
 }

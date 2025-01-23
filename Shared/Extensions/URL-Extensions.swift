@@ -9,12 +9,12 @@
 import Foundation
 
 extension URL {
-	
+
 	/// Extracts email address from a `URL` with a `mailto` scheme, otherwise `nil`.
 	var emailAddress: String? {
 		scheme == "mailto" ? URLComponents(url: self, resolvingAgainstBaseURL: false)?.path : nil
 	}
-	
+
 	/// Percent encoded `mailto` URL for use with `canOpenUrl`. If the URL doesn't contain the `mailto` scheme, this is `nil`.
 	var percentEncodedEmailAddress: URL? {
 		guard scheme == "mailto" else {
@@ -25,7 +25,7 @@ extension URL {
 		}
 		return URL(string: urlString)
 	}
-	
+
 	/// Reverse chronological list of release notes.
 	static var releaseNotes = URL(string: "https://github.com/Ranchero-Software/NetNewsWire/releases/")!
 
@@ -36,9 +36,9 @@ extension URL {
 			return nil
 		}
 		return value
-		
+
 	}
-	
+
 	static func reparingIfRequired(_ link: String?) -> URL? {
 		// If required, we replace any space characters to handle malformed links that are otherwise percent
 		// encoded but contain spaces. For performance reasons, only try this if initial URL init fails.

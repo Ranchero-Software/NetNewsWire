@@ -54,49 +54,49 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		self.currentTheme = ArticleTheme.defaultTheme
 
 		super.init()
-		
+
 		do {
 			try FileManager.default.createDirectory(atPath: folderPath, withIntermediateDirectories: true, attributes: nil)
 		} catch {
 			assertionFailure("Could not create folder for Themes.")
 			abort()
 		}
-		
+
 		updateThemeNames()
 		updateCurrentTheme()
 
 		NSFileCoordinator.addFilePresenter(self)
 	}
-	
+
 	func presentedSubitemDidChange(at url: URL) {
 		updateThemeNames()
 		updateCurrentTheme()
 	}
 
 	// MARK: API
-	
+
 	func themeExists(filename: String) -> Bool {
 		let filenameLastPathComponent = (filename as NSString).lastPathComponent
 		let toFilename = (folderPath as NSString).appendingPathComponent(filenameLastPathComponent)
 		return FileManager.default.fileExists(atPath: toFilename)
 	}
-	
+
 	func importTheme(filename: String) throws {
 		let filenameLastPathComponent = (filename as NSString).lastPathComponent
 		let toFilename = (folderPath as NSString).appendingPathComponent(filenameLastPathComponent)
-		
+
 		if FileManager.default.fileExists(atPath: toFilename) {
 			try FileManager.default.removeItem(atPath: toFilename)
 		}
-		
+
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
 	}
-	
+
 	func articleThemeWithThemeName(_ themeName: String) -> ArticleTheme? {
 		if themeName == AppDefaults.defaultThemeName {
 			return ArticleTheme.defaultTheme
 		}
-		
+
 		let url: URL
 		let isAppTheme: Bool
 		if let appThemeURL = Bundle.main.url(forResource: themeName, withExtension: ArticleTheme.nnwThemeSuffix) {
@@ -108,14 +108,14 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		} else {
 			return nil
 		}
-		
+
 		do {
 			return try ArticleTheme(url: url, isAppTheme: isAppTheme)
 		} catch {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
 			return nil
 		}
-		
+
 	}
 
 	func deleteTheme(themeName: String) {
@@ -123,10 +123,10 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 			try? FileManager.default.removeItem(atPath: filename)
 		}
 	}
-	
+
 }
 
-// MARK : Private
+// MARK: Private
 
 private extension ArticleThemesManager {
 
@@ -137,7 +137,7 @@ private extension ArticleThemesManager {
 		let installedThemeNames = Set(allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) })
 
 		let allThemeNames = appThemeNames.union(installedThemeNames)
-		
+
 		let sortedThemeNames = allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
 		if sortedThemeNames != themeNames {
 			themeNames = sortedThemeNames
@@ -179,5 +179,5 @@ private extension ArticleThemesManager {
 		}
 		return nil
 	}
-	
+
 }

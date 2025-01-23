@@ -57,9 +57,9 @@ private extension SendToMarsEditCommand {
 		let authorName = article.authors?.first?.name
 
 		let sender = SendToBlogEditorApp(targetDescriptor: targetDescriptor, title: article.title, body: body, summary: article.summary, link: article.externalLink, permalink: article.link, subject: nil, creator: authorName, commentsURL: nil, guid: article.uniqueID, sourceName: article.feed?.nameForDisplay, sourceHomeURL: article.feed?.homePageURL, sourceFeedURL: article.feed?.url)
-		let _ = sender.send()
+		sender.send()
 	}
-	
+
 	func appToUse() -> UserApp? {
 
 		for app in marsEditApps {

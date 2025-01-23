@@ -30,4 +30,3 @@ struct LatestArticle: Codable, Identifiable {
 	let pubDate: String
 
 }
-

@@ -20,7 +20,7 @@ struct CacheCleaner {
 			AppDefaults.shared.lastImageCacheFlushDate = Date()
 			return
 		}
-		
+
 		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
 		if flushDate.addingTimeInterval(3600 * 24 * 3) < Date() {
 			if let reachability = try? Reachability(hostname: "apple.com") {
@@ -41,13 +41,13 @@ struct CacheCleaner {
 							os_log(.error, log: self.log, "Could not delete cache file: %@", error.localizedDescription)
 						}
 					}
-					
+
 					AppDefaults.shared.lastImageCacheFlushDate = Date()
-					
+
 				}
 			}
 		}
-		
+
 	}
-	
+
 }

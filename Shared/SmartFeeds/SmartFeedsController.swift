@@ -11,7 +11,7 @@ import RSCore
 import Account
 
 final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
-	
+
 	var containerID: ContainerIdentifier? {
 		return ContainerIdentifier.smartFeedController
 	}
@@ -27,7 +27,7 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 	private init() {
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}
-	
+
 	func find(by identifier: SidebarItemIdentifier) -> PseudoFeed? {
 		switch identifier {
 		case .smartFeed(let stringIdentifer):
@@ -45,5 +45,5 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 			return nil
 		}
 	}
-	
+
 }

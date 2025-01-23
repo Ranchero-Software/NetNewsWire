@@ -31,21 +31,20 @@ final class AuthorAvatarDownloader {
 	func resetCache() {
 		cache = [String: IconImage]()
 	}
-	
+
 	func image(for author: Author) -> IconImage? {
 
 		guard let avatarURL = author.avatarURL else {
 			return nil
 		}
-		
+
 		if let cachedImage = cache[avatarURL] {
 			return cachedImage
 		}
-		
+
 		if let imageData = imageDownloader.image(for: avatarURL) {
 			scaleAndCacheImageData(imageData, avatarURL)
-		}
-		else {
+		} else {
 			waitingForAvatarURLs.insert(avatarURL)
 		}
 

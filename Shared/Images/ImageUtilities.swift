@@ -31,4 +31,3 @@ struct ImageUtilities {
 		return false
 	}
 }
-

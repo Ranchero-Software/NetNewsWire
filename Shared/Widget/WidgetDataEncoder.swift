@@ -14,7 +14,6 @@ import RSCore
 import Articles
 import Account
 
-
 public final class WidgetDataEncoder {
 
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
@@ -35,39 +34,39 @@ public final class WidgetDataEncoder {
 
 	func encode() {
 		isRunning = true
-		
+
 		flushSharedContainer()
 		os_log(.debug, log: log, "Starting encoding widget data.")
-		
+
 		DispatchQueue.main.async {
-			self.encodeWidgetData() { latestData in
+			self.encodeWidgetData { latestData in
 				guard let latestData = latestData else {
 					self.isRunning = false
 					return
 				}
-				
+
 				let encodedData = try? JSONEncoder().encode(latestData)
-				
+
 				os_log(.debug, log: self.log, "Finished encoding widget data.")
-				
+
 				if self.fileExists() {
 					try? FileManager.default.removeItem(at: self.dataURL!)
 					os_log(.debug, log: self.log, "Removed widget data from container.")
 				}
-				
+
 				if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
 					os_log(.debug, log: self.log, "Wrote widget data to container.")
 					WidgetCenter.shared.reloadAllTimelines()
 				}
-				
+
 				self.isRunning = false
 			}
 		}
 	}
-	
+
 	private func encodeWidgetData(completion: @escaping (WidgetData?) -> Void) {
 		let dispatchGroup = DispatchGroup()
-		var groupError: Error? = nil
+		var groupError: Error?
 
 		var unread = [LatestArticle]()
 
@@ -142,7 +141,7 @@ public final class WidgetDataEncoder {
 											currentStarredCount: (try? AccountManager.shared.fetchCountForStarredArticles()) ?? 0,
 											unreadArticles: unread,
 											starredArticles: starred,
-											todayArticles:today,
+											todayArticles: today,
 											lastUpdateTime: Date())
 				completion(latestData)
 			}
@@ -178,5 +177,3 @@ public final class WidgetDataEncoder {
 	}
 
 }
-
-

@@ -10,9 +10,9 @@ import Foundation
 import Account
 
 struct AddFeedDefaultContainer {
-	
+
 	static var defaultContainer: Container? {
-		
+
 		if let accountID = AppDefaults.shared.addFeedAccountID, let account = AccountManager.shared.activeAccounts.first(where: { $0.accountID == accountID }) {
 			if let folderName = AppDefaults.shared.addFeedFolderName, let folder = account.existingFolder(withDisplayName: folderName) {
 				return folder
@@ -24,9 +24,9 @@ struct AddFeedDefaultContainer {
 		} else {
 			return nil
 		}
-		
+
 	}
-	
+
 	static func saveDefaultContainer(_ container: Container) {
 		AppDefaults.shared.addFeedAccountID = container.account?.accountID
 		if let folder = container as? Folder {
@@ -35,7 +35,7 @@ struct AddFeedDefaultContainer {
 			AppDefaults.shared.addFeedFolderName = nil
 		}
 	}
-	
+
 	private static func substituteContainerIfNeeded(account: Account) -> Container? {
 		if !account.behaviors.contains(.disallowFeedInRootFolder) {
 			return account
@@ -47,5 +47,5 @@ struct AddFeedDefaultContainer {
 			}
 		}
 	}
-	
+
 }

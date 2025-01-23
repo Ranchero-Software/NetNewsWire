@@ -15,13 +15,13 @@ protocol ExtensionContainer: ContainerIdentifiable, Codable {
 }
 
 struct ExtensionContainers: Codable {
-	
+
 	enum CodingKeys: String, CodingKey {
 		case accounts
 	}
 
 	let accounts: [ExtensionAccount]
-	
+
 	var flattened: [ExtensionContainer] {
 		return accounts.reduce([ExtensionContainer](), { (containers, account) in
 			var result = containers
@@ -30,11 +30,11 @@ struct ExtensionContainers: Codable {
 			return result
 		})
 	}
-	
+
 	func findAccount(forName name: String) -> ExtensionAccount? {
 		return accounts.first(where: { $0.name == name })
 	}
-	
+
 }
 
 struct ExtensionAccount: ExtensionContainer {
@@ -67,7 +67,7 @@ struct ExtensionAccount: ExtensionContainer {
 	func findFolder(forName name: String) -> ExtensionFolder? {
 		return folders.first(where: { $0.name == name })
 	}
-	
+
 }
 
 struct ExtensionFolder: ExtensionContainer {
@@ -90,5 +90,5 @@ struct ExtensionFolder: ExtensionContainer {
 		self.name = folder.nameForDisplay
 		self.containerID = folder.containerID
 	}
-	
+
 }

@@ -36,4 +36,3 @@ struct SearchFeedDelegate: SmartFeedDelegate {
 		// TODO: after 5.0
 	}
 }
-

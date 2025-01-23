@@ -17,7 +17,7 @@ extension HTMLMetadata {
 			return nil
 		}
 
-		var bestImage: HTMLMetadataAppleTouchIcon? = nil
+		var bestImage: HTMLMetadataAppleTouchIcon?
 
 		for image in icons {
 			if let size = image.size {
@@ -31,7 +31,7 @@ extension HTMLMetadata {
 			}
 			if let size = image.size, let bestImageSize = bestImage!.size {
 				if size.height > bestImageSize.height && size.width > bestImageSize.width {
-					bestImage = image;
+					bestImage = image
 				}
 			}
 		}
@@ -46,7 +46,7 @@ extension HTMLMetadata {
 		if let appleTouchIcon = largestAppleTouchIcon() {
 			return appleTouchIcon
 		}
-		
+
 		if let openGraphImageURL = openGraphProperties?.image?.url {
 			return openGraphImageURL
 		}

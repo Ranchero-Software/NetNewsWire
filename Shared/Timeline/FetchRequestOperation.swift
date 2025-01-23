@@ -61,14 +61,14 @@ final class FetchRequestOperation {
 		let numberOfFetchers = fetchers.count
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
-		
+
 		func process(_ articles: Set<Article>) {
 			precondition(Thread.isMainThread)
 			guard !self.isCanceled else {
 				callCompletionIfNeeded()
 				return
 			}
-			
+
 			assert(!self.isFinished)
 
 			fetchedArticles.formUnion(articles)
@@ -79,7 +79,7 @@ final class FetchRequestOperation {
 				callCompletionIfNeeded()
 			}
 		}
-		
+
 		for fetcher in fetchers {
 			if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
 				fetcher.fetchUnreadArticlesAsync { articleSetResult in
@@ -92,8 +92,7 @@ final class FetchRequestOperation {
 					process(articles)
 				}
 			}
-			
+
 		}
 	}
 }
-

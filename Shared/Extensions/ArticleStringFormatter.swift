@@ -116,4 +116,3 @@ struct ArticleStringFormatter {
 		return dateFormatter.string(from: date)
 	}
 }
-

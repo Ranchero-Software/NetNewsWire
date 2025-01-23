@@ -40,4 +40,3 @@ import RSCore
 		return plist
 	}
 }
-

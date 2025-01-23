@@ -20,11 +20,11 @@ final class DeleteCommand: UndoableCommand {
 	var redoActionName: String {
 		return undoActionName
 	}
-	let errorHandler: (Error) -> ()
+	let errorHandler: (Error) -> Void
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
 
-	init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
+	init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> Void) {
 
 		guard DeleteCommand.canDelete(nodesToDelete) else {
 			return nil
@@ -38,7 +38,7 @@ final class DeleteCommand: UndoableCommand {
 		self.undoManager = undoManager
 		self.errorHandler = errorHandler
 
-		let itemSpecifiers = nodesToDelete.compactMap{ SidebarItemSpecifier(node: $0, errorHandler: errorHandler) }
+		let itemSpecifiers = nodesToDelete.compactMap { SidebarItemSpecifier(node: $0, errorHandler: errorHandler) }
 		guard !itemSpecifiers.isEmpty else {
 			return nil
 		}
@@ -46,21 +46,21 @@ final class DeleteCommand: UndoableCommand {
 	}
 
 	func perform() {
-		
+
 		let group = DispatchGroup()
 		for itemSpecifier in itemSpecifiers {
 			group.enter()
-			itemSpecifier.delete() {
+			itemSpecifier.delete {
 				group.leave()
 			}
 		}
-	
+
 		group.notify(queue: DispatchQueue.main) {
 			self.treeController?.rebuild()
 			self.registerUndo()
 		}
 	}
-	
+
 	func undo() {
 		for itemSpecifier in itemSpecifiers {
 			itemSpecifier.restore()
@@ -101,7 +101,7 @@ private struct SidebarItemSpecifier {
 	private let folder: Folder?
 	private let feed: Feed?
 	private let path: ContainerPath
-	private let errorHandler: (Error) -> ()
+	private let errorHandler: (Error) -> Void
 
 	private var container: Container? {
 		if let parentFolder = parentFolder {
@@ -113,7 +113,7 @@ private struct SidebarItemSpecifier {
 		return nil
 	}
 
-	init?(node: Node, errorHandler: @escaping (Error) -> ()) {
+	init?(node: Node, errorHandler: @escaping (Error) -> Void) {
 
 		var account: Account?
 
@@ -123,13 +123,11 @@ private struct SidebarItemSpecifier {
 			self.feed = feed
 			self.folder = nil
 			account = feed.account
-		}
-		else if let folder = node.representedObject as? Folder {
+		} else if let folder = node.representedObject as? Folder {
 			self.feed = nil
 			self.folder = folder
 			account = folder.account
-		}
-		else {
+		} else {
 			return nil
 		}
 		if account == nil {
@@ -138,36 +136,36 @@ private struct SidebarItemSpecifier {
 
 		self.account = account!
 		self.path = ContainerPath(account: account!, folders: node.containingFolders())
-		
+
 		self.errorHandler = errorHandler
-		
+
 	}
 
 	func delete(completion: @escaping () -> Void) {
 
 		if let feed = feed {
-			
+
 			guard let container = path.resolveContainer() else {
 				completion()
 				return
 			}
-			
+
 			BatchUpdate.shared.start()
 			account?.removeFeed(feed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-			
+
 		} else if let folder = folder {
-			
+
 			BatchUpdate.shared.start()
 			account?.removeFolder(folder) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-			
+
 		}
 	}
 
@@ -175,8 +173,7 @@ private struct SidebarItemSpecifier {
 
 		if let _ = feed {
 			restoreFeed()
-		}
-		else if let _ = folder {
+		} else if let _ = folder {
 			restoreFolder()
 		}
 	}
@@ -186,13 +183,13 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let feed = feed, let container = path.resolveContainer() else {
 			return
 		}
-		
+
 		BatchUpdate.shared.start()
 		account.restoreFeed(feed, container: container) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-		
+
 	}
 
 	private func restoreFolder() {
@@ -200,17 +197,17 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let folder = folder else {
 			return
 		}
-		
+
 		BatchUpdate.shared.start()
 		account.restoreFolder(folder) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-		
+
 	}
 
 	private func checkResult(_ result: Result<Void, Error>) {
-		
+
 		switch result {
 		case .success:
 			break
@@ -219,11 +216,11 @@ private struct SidebarItemSpecifier {
 		}
 
 	}
-	
+
 }
 
 private extension Node {
-	
+
 	func parentFolder() -> Folder? {
 
 		guard let parentNode = self.parent else {
@@ -246,8 +243,7 @@ private extension Node {
 		while nomad != nil {
 			if let folder = nomad!.representedObject as? Folder {
 				folders += [folder]
-			}
-			else {
+			} else {
 				break
 			}
 			nomad = nomad!.parent
@@ -274,11 +270,9 @@ private struct DeleteActionName {
 		for node in nodes {
 			if let _ = node.representedObject as? Feed {
 				numberOfFeeds += 1
-			}
-			else if let _ = node.representedObject as? Folder {
+			} else if let _ = node.representedObject as? Folder {
 				numberOfFolders += 1
-			}
-			else {
+			} else {
 				return nil // Delete only Feeds and Folders.
 			}
 		}

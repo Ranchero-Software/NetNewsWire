@@ -25,7 +25,7 @@ import Account
 import RSCore
 
 protocol PseudoFeed: AnyObject, SidebarItem, SmallIconProvider {
-	
+
 }
 
 #endif

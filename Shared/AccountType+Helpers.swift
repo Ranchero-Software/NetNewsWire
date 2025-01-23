@@ -16,11 +16,11 @@ import UIKit
 import SwiftUI
 
 extension AccountType {
-	
+
 	// TODO: Move this to the Account Package.
-	
+
 	func localizedAccountName() -> String {
-		
+
 		switch self {
 		case .onMyMac:
 			let defaultName: String
@@ -52,7 +52,7 @@ extension AccountType {
 			return NSLocalizedString("The Old Reader", comment: "Account name")
 		}
 	}
-	
+
 	// MARK: - SwiftUI Images
 	func image() -> Image {
 		switch self {

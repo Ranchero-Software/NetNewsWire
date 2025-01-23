@@ -32,7 +32,7 @@ extension SmartFeedDelegate {
 	}
 
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync{ articleSetResult in
+		fetchArticlesAsync { articleSetResult in
 			switch articleSetResult {
 			case .success(let articles):
 				completion(.success(articles.unreadArticles()))

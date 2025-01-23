@@ -17,7 +17,7 @@ protocol SortableArticle {
 }
 
 struct ArticleSorter {
-		
+
 	static func sortedByDate<T: SortableArticle>(articles: [T],
 												 sortDirection: ComparisonResult,
 												 groupByFeed: Bool) -> [T] {
@@ -27,9 +27,9 @@ struct ArticleSorter {
 			return sortedByDate(articles: articles, sortDirection: sortDirection)
 		}
 	}
-	
+
 	// MARK: -
-		
+
 	private static func sortedByFeedName<T: SortableArticle>(articles: [T],
 															 sortByDateDirection: ComparisonResult) -> [T] {
 		// Group articles by "feed-feedID" - feed ID is used to differentiate between
@@ -39,11 +39,11 @@ struct ArticleSorter {
 			.sorted { $0.key < $1.key }
 			.flatMap { (tuple) -> [T] in
 				let (_, articles) = tuple
-				
+
 				return sortedByDate(articles: articles, sortDirection: sortByDateDirection)
 		}
 	}
-	
+
 	private static func sortedByDate<T: SortableArticle>(articles: [T],
 														 sortDirection: ComparisonResult) -> [T] {
 		return articles.sorted { (article1, article2) -> Bool in
@@ -53,9 +53,9 @@ struct ArticleSorter {
 			if sortDirection == .orderedDescending {
 				return article1.sortableDate > article2.sortableDate
 			}
-			
+
 			return article1.sortableDate < article2.sortableDate
 		}
 	}
-	
+
 }

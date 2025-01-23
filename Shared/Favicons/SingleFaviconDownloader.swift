@@ -30,7 +30,7 @@ final class SingleFaviconDownloader {
 	let homePageURL: String?
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "SingleFaviconDownloader")
-	
+
 	private var lastDownloadAttemptDate: Date
 	private var diskStatus = DiskStatus.unknown
 	private var diskCache: BinaryDiskCache
@@ -66,7 +66,7 @@ final class SingleFaviconDownloader {
 
 		lastDownloadAttemptDate = Date()
 		findFavicon()
-		
+
 		return true
 	}
 }
@@ -93,7 +93,7 @@ private extension SingleFaviconDownloader {
 				}
 
 				self.postDidLoadFaviconNotification()
-				
+
 			}
 		}
 	}
@@ -127,8 +127,7 @@ private extension SingleFaviconDownloader {
 				DispatchQueue.main.async {
 					self.diskStatus = .onDisk
 				}
-			}
-			catch {}
+			} catch {}
 		}
 	}
 
@@ -160,5 +159,5 @@ private extension SingleFaviconDownloader {
 		assert(Thread.isMainThread)
 		NotificationCenter.default.post(name: .DidLoadFavicon, object: self)
 	}
-	
+
 }

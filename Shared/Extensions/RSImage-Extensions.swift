@@ -13,12 +13,10 @@ import AppKit
 import UIKit
 #endif
 
-import RSCore
-
 extension RSImage {
-	
+
 	static let maxIconSize = 48
-	
+
 	static func scaledForIcon(_ data: Data, imageResultBlock: @escaping ImageResultBlock) {
 		IconScalerQueue.shared.scaledForIcon(data, imageResultBlock)
 	}
@@ -34,7 +32,7 @@ extension RSImage {
 		#else
 		let size = NSSize(width: cgImage.width, height: cgImage.height)
 		return RSImage(cgImage: cgImage, size: size)
-		#endif		
+		#endif
 	}
 }
 

@@ -70,7 +70,7 @@ public final class FeedIconDownloader {
 				}
 			}
 		}
-		
+
 		func checkFeedIconURL() {
 			if let iconURL = feed.iconURL {
 				icon(forURL: iconURL, feed: feed) { (image) in

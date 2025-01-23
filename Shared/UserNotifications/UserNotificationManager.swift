@@ -12,19 +12,19 @@ import Articles
 import UserNotifications
 
 final class UserNotificationManager: NSObject {
-	
+
 	override init() {
 		super.init()
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		registerCategoriesAndActions()
 	}
-	
+
 	@objc func accountDidDownloadArticles(_ note: Notification) {
 		guard let articles = note.userInfo?[Account.UserInfoKey.newArticles] as? Set<Article> else {
 			return
 		}
-		
+
 		for article in articles {
 			if !article.status.read, let feed = article.feed, feed.isNotifyAboutNewArticles ?? false {
 				sendNotification(feed: feed, article: article)
@@ -38,7 +38,7 @@ final class UserNotificationManager: NSObject {
 			UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
 			return
 		}
-		
+
 		if let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>,
 		   let statusKey = note.userInfo?[Account.UserInfoKey.statusKey] as? ArticleStatus.Key,
 		   let flag = note.userInfo?[Account.UserInfoKey.statusFlag] as? Bool,
@@ -48,14 +48,14 @@ final class UserNotificationManager: NSObject {
 			UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
 		}
 	}
-	
+
 }
 
 private extension UserNotificationManager {
-	
+
 	func sendNotification(feed: Feed, article: Article) {
 		let content = UNMutableNotificationContent()
-						
+
 		content.title = feed.nameForDisplay
 		if !ArticleStringFormatter.truncatedTitle(article).isEmpty {
 			content.subtitle = ArticleStringFormatter.truncatedTitle(article)
@@ -68,11 +68,11 @@ private extension UserNotificationManager {
 		if let attachment = thumbnailAttachment(for: article, feed: feed) {
 			content.attachments.append(attachment)
 		}
-		
+
 		let request = UNNotificationRequest.init(identifier: "articleID:\(article.articleID)", content: content, trigger: nil)
 		UNUserNotificationCenter.current().add(request)
 	}
-	
+
 	/// Determine if there is an available icon for the article. This will then move it to the caches directory and make it avialble for the notification. 
 	/// - Parameters:
 	///   - article: `Article`
@@ -86,20 +86,20 @@ private extension UserNotificationManager {
 		}
 		return nil
 	}
-	
+
 	func registerCategoriesAndActions() {
 		let readAction = UNNotificationAction(identifier: "MARK_AS_READ", title: NSLocalizedString("Mark as Read", comment: "Mark as Read"), options: [])
 		let starredAction = UNNotificationAction(identifier: "MARK_AS_STARRED", title: NSLocalizedString("Mark as Starred", comment: "Mark as Starred"), options: [])
 		let openAction = UNNotificationAction(identifier: "OPEN_ARTICLE", title: NSLocalizedString("Open", comment: "Open"), options: [.foreground])
-		
+
 		let newArticleCategory =
 			  UNNotificationCategory(identifier: "NEW_ARTICLE_NOTIFICATION_CATEGORY",
 			  actions: [openAction, readAction, starredAction],
 			  intentIdentifiers: [],
 			  hiddenPreviewsBodyPlaceholder: "",
 			  options: [])
-		
+
 		UNUserNotificationCenter.current().setNotificationCategories([newArticleCategory])
 	}
-	
+
 }

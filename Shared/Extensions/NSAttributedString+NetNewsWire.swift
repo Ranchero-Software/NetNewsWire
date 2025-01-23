@@ -40,7 +40,7 @@ extension NSAttributedString {
 		let baseDescriptor = baseFont.fontDescriptor
 		let baseSymbolicTraits = baseDescriptor.symbolicTraits
 
-		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
+		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font: Any?, range: NSRange, _: UnsafeMutablePointer<ObjCBool>) in
 			guard let font = font as? Font else { return }
 
 			let currentDescriptor = font.fontDescriptor
@@ -108,7 +108,7 @@ extension NSAttributedString {
 	public convenience init(linkText: String, linkURL: URL) {
 		let attrString = NSMutableAttributedString(string: linkText)
 		let range = NSRange(location: 0, length: attrString.length)
-		
+
 		attrString.addAttribute(.font, value: NSFont.systemFont(ofSize: NSFont.systemFontSize), range: range)
 		attrString.addAttribute(.cursor, value: NSCursor.pointingHand, range: range)
 		attrString.addAttribute(.foregroundColor, value: NSColor.linkColor, range: range)
@@ -186,19 +186,18 @@ extension NSAttributedString {
 			} else {
 				if char == "&" {
 					var entity = "&"
-					var lastchar: Character? = nil
+					var lastchar: Character?
 
 					while let entitychar = iterator.next() {
 						if entitychar.isWhitespace {
 							lastchar = entitychar
-							break;
+							break
 						}
 
 						entity.append(entitychar)
 
-						if (entitychar == ";") { break }
+						if entitychar == ";" { break }
 					}
-
 
 					result.mutableString.append(entity.decodedEntity)
 

@@ -13,7 +13,7 @@ import Parser
 import Account
 
 final class ExtensionContainersFile {
-	
+
 	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionContainersFile")
 
 	private static var filePath: String = {
@@ -21,7 +21,7 @@ final class ExtensionContainersFile {
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 		return containerURL!.appendingPathComponent("extension_containers.plist").path
 	}()
-	
+
 	private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
@@ -33,7 +33,7 @@ final class ExtensionContainersFile {
 		if !FileManager.default.fileExists(atPath: ExtensionContainersFile.filePath) {
 			save()
 		}
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(markAsDirty), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(markAsDirty), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(markAsDirty), name: .AccountStateDidChange, object: nil)
@@ -45,7 +45,7 @@ final class ExtensionContainersFile {
 		let errorPointer: NSErrorPointer = nil
 		let fileCoordinator = NSFileCoordinator()
 		let fileURL = URL(fileURLWithPath: ExtensionContainersFile.filePath)
-		var extensionContainers: ExtensionContainers? = nil
+		var extensionContainers: ExtensionContainers?
 
 		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
 			if let fileData = try? Data(contentsOf: readURL) {
@@ -53,14 +53,14 @@ final class ExtensionContainersFile {
 				extensionContainers = try? decoder.decode(ExtensionContainers.self, from: fileData)
 			}
 		})
-		
+
 		if let error = errorPointer?.pointee {
 			os_log(.error, log: log, "Read from disk coordination failed: %@.", error.localizedDescription)
 		}
 
 		return extensionContainers
 	}
-	
+
 }
 
 private extension ExtensionContainersFile {
@@ -68,7 +68,7 @@ private extension ExtensionContainersFile {
 	@objc func markAsDirty() {
 		isDirty = true
 	}
-	
+
 	func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
@@ -87,7 +87,7 @@ private extension ExtensionContainersFile {
 		let errorPointer: NSErrorPointer = nil
 		let fileCoordinator = NSFileCoordinator()
 		let fileURL = URL(fileURLWithPath: ExtensionContainersFile.filePath)
-		
+
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
 			do {
 				let extensionAccounts = AccountManager.shared.sortedActiveAccounts.map { ExtensionAccount(account: $0) }
@@ -98,7 +98,7 @@ private extension ExtensionContainersFile {
 				os_log(.error, log: Self.log, "Save to disk failed: %@.", error.localizedDescription)
 			}
 		})
-		
+
 		if let error = errorPointer?.pointee {
 			os_log(.error, log: Self.log, "Save to disk coordination failed: %@.", error.localizedDescription)
 		}

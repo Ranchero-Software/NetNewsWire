@@ -15,15 +15,15 @@ final class FeedTreeControllerDelegate: TreeControllerDelegate {
 
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
-	
+
 	func addFilterException(_ feedID: SidebarItemIdentifier) {
 		filterExceptions.insert(feedID)
 	}
-	
+
 	func resetFilterExceptions() {
 		filterExceptions = Set<SidebarItemIdentifier>()
 	}
-	
+
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 		if node.isRoot {
 			return childNodesForRootNode(node)
@@ -36,11 +36,11 @@ final class FeedTreeControllerDelegate: TreeControllerDelegate {
 		}
 
 		return nil
-	}	
+	}
 }
 
 private extension FeedTreeControllerDelegate {
-	
+
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()
 
@@ -50,7 +50,7 @@ private extension FeedTreeControllerDelegate {
 		topLevelNodes.append(smartFeedsNode)
 
 		topLevelNodes.append(contentsOf: sortedAccountNodes(rootNode))
-		
+
 		return topLevelNodes
 	}
 
@@ -65,13 +65,13 @@ private extension FeedTreeControllerDelegate {
 		let container = containerNode.representedObject as! Container
 
 		var children = [AnyObject]()
-		
+
 		for feed in container.topLevelFeeds {
 			if let feedID = feed.sidebarItemID, !(!filterExceptions.contains(feedID) && isReadFiltered && feed.unreadCount == 0) {
 				children.append(feed)
 			}
 		}
-		
+
 		if let folders = container.folders {
 			for folder in folders {
 				if let feedID = folder.sidebarItemID, !(!filterExceptions.contains(feedID) && isReadFiltered && folder.unreadCount == 0) {
@@ -107,18 +107,18 @@ private extension FeedTreeControllerDelegate {
 		if let folder = representedObject as? Folder {
 			return createNode(folder: folder, parent: parent)
 		}
-		
+
 		if let account = representedObject as? Account {
 			return createNode(account: account, parent: parent)
 		}
 
 		return nil
 	}
-	
+
 	func createNode(feed: Feed, parent: Node) -> Node {
 		return parent.createChildNode(feed)
 	}
-	
+
 	func createNode(folder: Folder, parent: Node) -> Node {
 		let node = parent.createChildNode(folder)
 		node.canHaveChildNodes = true

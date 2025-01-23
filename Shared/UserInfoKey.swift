@@ -14,7 +14,7 @@ struct UserInfoKey {
 	static let url = "url"
 	static let articlePath = "articlePath"
 	static let feedIdentifier = "feedIdentifier"
-	
+
 	static let windowState = "windowState"
 	static let windowFullScreenState = "windowFullScreenState"
 	static let containerExpandedWindowState = "containerExpandedWindowState"
@@ -25,5 +25,5 @@ struct UserInfoKey {
 	static let selectedFeedsState = "selectedFeedsState"
 	static let isShowingExtractedArticle = "isShowingExtractedArticle"
 	static let articleWindowScrollY = "articleWindowScrollY"
-	
+
 }
