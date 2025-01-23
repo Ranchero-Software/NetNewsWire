@@ -9,16 +9,16 @@
 import Intents
 
 public enum AddWebFeedIntentHandlerError: LocalizedError {
-	
+
 	case communicationFailure
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .communicationFailure:
 			return NSLocalizedString("Unable to communicate with NetNewsWire.", comment: "Communication failure")
 		}
 	}
-	
+
 }
 
 public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
@@ -26,7 +26,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 	override init() {
 		super.init()
 	}
-	
+
 	public func resolveUrl(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedUrlResolutionResult) -> Void) {
 		guard let url = intent.url else {
 			completion(.unsupported(forReason: .required))
@@ -34,7 +34,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		}
 		completion(.success(with: url))
 	}
-	
+
 	public func provideAccountNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
 		guard let extensionContainers = ExtensionContainersFile.read() else {
 			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
@@ -44,7 +44,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		let accountNames = extensionContainers.accounts.map { $0.name }
 		completion(accountNames, nil)
 	}
-	
+
 	public func resolveAccountName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedAccountNameResolutionResult) -> Void) {
 		guard let accountName = intent.accountName else {
 			completion(AddWebFeedAccountNameResolutionResult.notRequired())
@@ -62,7 +62,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 			completion(.success(with: accountName))
 		}
 	}
-	
+
 	public func provideFolderNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
 		guard let extensionContainers = ExtensionContainersFile.read() else {
 			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
@@ -77,13 +77,13 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		let folderNames = account.folders.map { $0.name }
 		completion(folderNames, nil)
 	}
-	
+
 	public func resolveFolderName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedFolderNameResolutionResult) -> Void) {
 		guard let accountName = intent.accountName, let folderName = intent.folderName else {
 			completion(AddWebFeedFolderNameResolutionResult.notRequired())
 			return
 		}
-		
+
 		guard let extensionContainers = ExtensionContainersFile.read() else {
 			completion(.unsupported(forReason: .communication))
 			return
@@ -93,7 +93,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 			completion(.unsupported(forReason: .invalid))
 			return
 		}
-		
+
 		if account.findFolder(forName: folderName) == nil {
 			completion(.unsupported(forReason: .invalid))
 		} else {
@@ -102,13 +102,13 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		return
 
 	}
-	
+
 	public func handle(intent: AddWebFeedIntent, completion: @escaping (AddWebFeedIntentResponse) -> Void) {
 		guard let url = intent.url, let extensionContainers = ExtensionContainersFile.read() else {
 			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
 			return
 		}
-		
+
 		let account: ExtensionAccount? = {
 			if let accountName = intent.accountName {
 				return extensionContainers.findAccount(forName: accountName)
@@ -139,5 +139,5 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		ExtensionFeedAddRequestFile.save(request)
 		completion(AddWebFeedIntentResponse(code: .success, userActivity: nil))
 	}
-		
+
 }
