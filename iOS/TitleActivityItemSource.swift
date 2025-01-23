@@ -37,5 +37,5 @@ class TitleActivityItemSource: NSObject, UIActivityItemSource {
 			return NSNull()
 		}
 	}
-	
+
 }

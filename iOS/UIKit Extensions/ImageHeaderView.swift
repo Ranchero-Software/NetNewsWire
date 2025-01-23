@@ -11,19 +11,19 @@ import UIKit
 class ImageHeaderView: UITableViewHeaderFooterView {
 
 	static let rowHeight = CGFloat(integerLiteral: 88)
-	
+
 	var imageView = UIImageView()
-	
+
 	override init(reuseIdentifier: String?) {
 		super.init(reuseIdentifier: reuseIdentifier)
 		commonInit()
 	}
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	func commonInit() {
 		imageView.tintColor = UIColor.label
 		imageView.contentMode = .scaleAspectFit

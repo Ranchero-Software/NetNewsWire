@@ -17,17 +17,17 @@ struct MainFeedTableViewSectionHeaderLayout {
 	private static let verticalPadding = CGFloat(integerLiteral: 11)
 
 	private static let minRowHeight = CGFloat(integerLiteral: 44)
-	
+
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
 	let disclosureButtonRect: CGRect
-	
+
 	let height: CGFloat
-	
+
 	init(cellWidth: CGFloat, insets: UIEdgeInsets, label: UILabel, unreadCountView: MainFeedUnreadCountView) {
 
 		let bounds = CGRect(x: insets.left, y: 0.0, width: floor(cellWidth - insets.right), height: 0.0)
-		
+
 		// Disclosure Button
 		var rDisclosure = CGRect.zero
 		rDisclosure.size = MainFeedTableViewSectionHeaderLayout.disclosureButtonSize
@@ -42,7 +42,7 @@ struct MainFeedTableViewSectionHeaderLayout {
 			rUnread.size = unreadCountSize
 			rUnread.origin.x = bounds.maxX - (MainFeedTableViewSectionHeaderLayout.unreadCountMarginRight + unreadCountSize.width)
 		}
-		
+
 		// Max Unread Count
 		// We can't reload Section Headers so we don't let the title extend into the (probably) worse case Unread Count area.
 		let maxUnreadCountView = MainFeedUnreadCountView(frame: CGRect.zero)
@@ -58,7 +58,7 @@ struct MainFeedTableViewSectionHeaderLayout {
 
 		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
 		var rLabel = CGRect(x: rLabelx, y: rLabely, width: labelWidth, height: labelSizeInfo.size.height)
-		
+
 		// Determine cell height
 		let paddedLabelHeight = rLabel.maxY + UIFontMetrics.default.scaledValue(for: MainFeedTableViewSectionHeaderLayout.verticalPadding)
 		let maxGraphicsHeight = [rUnread, rDisclosure].maxY()
@@ -66,7 +66,7 @@ struct MainFeedTableViewSectionHeaderLayout {
 		if cellHeight < MainFeedTableViewSectionHeaderLayout.minRowHeight {
 			cellHeight = MainFeedTableViewSectionHeaderLayout.minRowHeight
 		}
-		
+
 		// Center in Cell
 		let newBounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.width, height: cellHeight)
 		if !unreadCountIsHidden {
@@ -78,13 +78,13 @@ struct MainFeedTableViewSectionHeaderLayout {
 		if cellHeight == MainFeedTableViewSectionHeaderLayout.minRowHeight {
 			rLabel = MainFeedTableViewCellLayout.centerVertically(rLabel, newBounds)
 		}
-		
+
 		//  Assign the properties
 		self.height = cellHeight
 		self.unreadCountRect = rUnread
 		self.disclosureButtonRect = rDisclosure
 		self.titleRect = rLabel
-		
+
 	}
-	
+
 }

@@ -16,7 +16,7 @@ import UniformTypeIdentifiers
 class SettingsViewController: UITableViewController {
 
 	private weak var opmlAccount: Account?
-	
+
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
 	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
@@ -25,10 +25,10 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
 	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
-	
+
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
-	
+
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
 		NotificationCenter.default.removeObserver(tableView!, name: UIContentSizeCategory.didChangeNotification, object: nil)
@@ -40,14 +40,14 @@ class SettingsViewController: UITableViewController {
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
-		
+
 		tableView.rowHeight = UITableView.automaticDimension
 		tableView.estimatedRowHeight = 44
 	}
-	
+
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		
+
 		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
 			timelineSortOrderSwitch.isOn = true
 		} else {
@@ -66,7 +66,6 @@ class SettingsViewController: UITableViewController {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
-		
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
@@ -80,11 +79,10 @@ class SettingsViewController: UITableViewController {
 		} else {
 			showFullscreenArticlesSwitch.isOn = false
 		}
-		
+
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
-		
+
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
-		
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -92,27 +90,27 @@ class SettingsViewController: UITableViewController {
 		buildLabel.text = "\(Bundle.main.appName) \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
 		buildLabel.sizeToFit()
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
-		
+
 		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
 		wrapperView.translatesAutoresizingMaskIntoConstraints = false
 		wrapperView.addSubview(buildLabel)
 		tableView.tableFooterView = wrapperView
 
 	}
-	
+
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-		
+
 		if scrollToArticlesSection {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 4), at: .top, animated: true)
 			scrollToArticlesSection = false
 		}
 
 	}
-	
+
 	// MARK: UITableView
-	
+
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
 		switch section {
@@ -237,7 +235,7 @@ class SettingsViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 		return false
 	}
-	
+
 	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
 		return false
 	}
@@ -245,21 +243,21 @@ class SettingsViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
 		return .none
 	}
-	
+
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return UITableView.automaticDimension
 	}
-	
+
 	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
 		return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 1))
 	}
-	
+
 	// MARK: Actions
-	
+
 	@IBAction func done(_ sender: Any) {
 		dismiss(animated: true)
 	}
-	
+
 	@IBAction func switchTimelineOrder(_ sender: Any) {
 		if timelineSortOrderSwitch.isOn {
 			AppDefaults.shared.timelineSortDirection = .orderedAscending
@@ -267,7 +265,7 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.timelineSortDirection = .orderedDescending
 		}
 	}
-	
+
 	@IBAction func switchGroupByFeed(_ sender: Any) {
 		if groupByFeedSwitch.isOn {
 			AppDefaults.shared.timelineGroupByFeed = true
@@ -275,7 +273,7 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.timelineGroupByFeed = false
 		}
 	}
-	
+
 	@IBAction func switchClearsReadArticles(_ sender: Any) {
 		if refreshClearsReadArticlesSwitch.isOn {
 			AppDefaults.shared.refreshClearsReadArticles = true
@@ -283,7 +281,7 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.refreshClearsReadArticles = false
 		}
 	}
-	
+
 	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
 		if confirmMarkAllAsReadSwitch.isOn {
 			AppDefaults.shared.confirmMarkAllAsRead = true
@@ -291,7 +289,7 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.confirmMarkAllAsRead = false
 		}
 	}
-	
+
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
 		if showFullscreenArticlesSwitch.isOn {
 			AppDefaults.shared.articleFullscreenAvailable = true
@@ -299,7 +297,7 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.articleFullscreenAvailable = false
 		}
 	}
-	
+
 	@IBAction func switchBrowserPreference(_ sender: Any) {
 		if openLinksInNetNewsWire.isOn {
 			AppDefaults.shared.useSystemBrowser = false
@@ -307,14 +305,13 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.useSystemBrowser = true
 		}
 	}
-	
-	
+
 	// MARK: Notifications
-	
+
 	@objc func contentSizeCategoryDidChange() {
 		tableView.reloadData()
 	}
-	
+
 	@objc func accountsDidChange() {
 		tableView.reloadData()
 	}
@@ -322,17 +319,17 @@ class SettingsViewController: UITableViewController {
 	@objc func displayNameDidChange() {
 		tableView.reloadData()
 	}
-	
+
 	@objc func browserPreferenceDidChange() {
 		tableView.reloadData()
 	}
-	
+
 }
 
 // MARK: OPML Document Picker
 
 extension SettingsViewController: UIDocumentPickerDelegate {
-	
+
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		for url in urls {
 			opmlAccount?.importOPML(url) { result in
@@ -347,13 +344,13 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 			}
 		}
 	}
-	
+
 }
 
 // MARK: Private
 
 private extension SettingsViewController {
-	
+
 	func addFeed() {
 		self.dismiss(animated: true)
 
@@ -363,10 +360,10 @@ private extension SettingsViewController {
 		addViewController.initialFeedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		
+
 		presentingParentController?.present(addNavViewController, animated: true)
 	}
-	
+
 	func importOPML(sourceView: UIView, sourceRect: CGRect) {
 		switch AccountManager.shared.activeAccounts.count {
 		case 0:
@@ -378,18 +375,18 @@ private extension SettingsViewController {
 			importOPMLAccountPicker(sourceView: sourceView, sourceRect: sourceRect)
 		}
 	}
-	
+
 	func importOPMLAccountPicker(sourceView: UIView, sourceRect: CGRect) {
 		let title = NSLocalizedString("Choose an account to receive the imported feeds and folders", comment: "Import Account")
 		let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-		
+
 		if let popoverController = alert.popoverPresentationController {
 			popoverController.sourceView = view
 			popoverController.sourceRect = sourceRect
 		}
 
 		for account in AccountManager.shared.sortedActiveAccounts {
-			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
+			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] _ in
 				self?.opmlAccount = account
 				self?.importOPMLDocumentPicker()
 			}
@@ -401,15 +398,15 @@ private extension SettingsViewController {
 
 		self.present(alert, animated: true)
 	}
-	
+
 	func importOPMLDocumentPicker() {
-		
+
 		let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.opml, UTType.xml], asCopy: true)
 		documentPicker.delegate = self
 		documentPicker.modalPresentationStyle = .formSheet
 		self.present(documentPicker, animated: true)
 	}
-	
+
 	func exportOPML(sourceView: UIView, sourceRect: CGRect) {
 		if AccountManager.shared.accounts.count == 1 {
 			opmlAccount = AccountManager.shared.accounts.first!
@@ -418,18 +415,18 @@ private extension SettingsViewController {
 			exportOPMLAccountPicker(sourceView: sourceView, sourceRect: sourceRect)
 		}
 	}
-	
+
 	func exportOPMLAccountPicker(sourceView: UIView, sourceRect: CGRect) {
 		let title = NSLocalizedString("Choose an account with the subscriptions to export", comment: "Export Account")
 		let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-		
+
 		if let popoverController = alert.popoverPresentationController {
 			popoverController.sourceView = view
 			popoverController.sourceRect = sourceRect
 		}
 
 		for account in AccountManager.shared.sortedAccounts {
-			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
+			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] _ in
 				self?.opmlAccount = account
 				self?.exportOPMLDocumentPicker()
 			}
@@ -441,10 +438,10 @@ private extension SettingsViewController {
 
 		self.present(alert, animated: true)
 	}
-	
+
 	func exportOPMLDocumentPicker() {
 		guard let account = opmlAccount else { return }
-		
+
 		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
 		let filename = "Subscriptions-\(accountName).opml"
 		let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
@@ -454,16 +451,16 @@ private extension SettingsViewController {
 		} catch {
 			self.presentError(title: "OPML Export Error", message: error.localizedDescription)
 		}
-		
+
 		let documentPicker = UIDocumentPickerViewController(forExporting: [tempFile])
 		documentPicker.modalPresentationStyle = .formSheet
 		self.present(documentPicker, animated: true)
 	}
-	
+
 	func openURL(_ urlString: String) {
 		let vc = SFSafariViewController(url: URL(string: urlString)!)
 		vc.modalPresentationStyle = .pageSheet
 		present(vc, animated: true)
 	}
-	
+
 }

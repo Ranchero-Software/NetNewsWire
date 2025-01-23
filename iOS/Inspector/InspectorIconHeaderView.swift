@@ -11,17 +11,17 @@ import UIKit
 class InspectorIconHeaderView: UITableViewHeaderFooterView {
 
 	var iconView = IconView()
-	
+
 	override init(reuseIdentifier: String?) {
 		super.init(reuseIdentifier: reuseIdentifier)
 		commonInit()
 	}
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	func commonInit() {
 		addSubview(iconView)
 	}

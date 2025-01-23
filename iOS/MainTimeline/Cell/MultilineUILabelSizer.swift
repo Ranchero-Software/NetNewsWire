@@ -42,7 +42,7 @@ final class MultilineUILabelSizer {
 
 		self.singleLineHeightEstimate = MultilineUILabelSizer.calculateHeight("AqLjJ0/y", 200, font)
 		self.doubleLineHeightEstimate = MultilineUILabelSizer.calculateHeight("AqLjJ0/y\nAqLjJ0/y", 200, font)
-		
+
 	}
 
 	static func size(for string: String, font: UIFont, numberOfLines: Int, width: Int) -> TextFieldSizeInfo {
@@ -52,7 +52,7 @@ final class MultilineUILabelSizer {
 	static func emptyCache() {
 		sizers = [UILabelSizerSpecifier: MultilineUILabelSizer]()
 	}
-	
+
 }
 
 // MARK: - Private
@@ -69,7 +69,7 @@ private extension MultilineUILabelSizer {
 		let newSizer = MultilineUILabelSizer(numberOfLines: numberOfLines, font: font)
 		sizers[specifier] = newSizer
 		return newSizer
-		
+
 	}
 
 	func sizeInfo(for string: String, width: Int) -> TextFieldSizeInfo {
@@ -80,7 +80,7 @@ private extension MultilineUILabelSizer {
 		let size = CGSize(width: width, height: textFieldHeight)
 		let sizeInfo = TextFieldSizeInfo(size: size, numberOfLinesUsed: numberOfLinesUsed)
 		return sizeInfo
-		
+
 	}
 
 	func height(for string: String, width: Int) -> Int {
@@ -98,14 +98,14 @@ private extension MultilineUILabelSizer {
 		}
 
 		var height = MultilineUILabelSizer.calculateHeight(string, width, font)
-		
+
 		if numberOfLines != 0 {
 			let maxHeight = singleLineHeightEstimate * numberOfLines
 			if height > maxHeight {
 				height = maxHeight
 			}
 		}
-		
+
 		cache[string]![width] = height
 
 		return height
@@ -123,7 +123,7 @@ private extension MultilineUILabelSizer {
 		let averageHeight = CGFloat(doubleLineHeightEstimate) / 2.0
 		let lines = Int(round(CGFloat(height) / averageHeight))
 		return lines
-		
+
 	}
 
 	func heightIsProbablySingleLineHeight(_ height: Int) -> Bool {
@@ -140,7 +140,7 @@ private extension MultilineUILabelSizer {
 		let minimum = estimate - slop
 		let maximum = estimate + slop
 		return height >= minimum && height <= maximum
-		
+
 	}
 
 	func heightConsideringNeighbors(_ heightCache: WidthHeightCache, _ width: Int) -> Int? {
@@ -165,8 +165,7 @@ private extension MultilineUILabelSizer {
 
 			if oneWidth < width && (oneWidth > smallNeighbor.width || smallNeighbor.width == 0) {
 				smallNeighbor = (oneWidth, oneHeight)
-			}
-			else if oneWidth > width && (oneWidth < largeNeighbor.width || largeNeighbor.width == 0) {
+			} else if oneWidth > width && (oneWidth < largeNeighbor.width || largeNeighbor.width == 0) {
 				largeNeighbor = (oneWidth, oneHeight)
 			}
 
@@ -176,7 +175,7 @@ private extension MultilineUILabelSizer {
 		}
 
 		return nil
-		
+
 	}
-	
+
 }

@@ -10,10 +10,10 @@ import UIKit
 import Account
 
 class RefreshProgressView: UIView {
-	
+
 	@IBOutlet weak var progressView: UIProgressView!
 	@IBOutlet weak var label: UILabel!
-	
+
 	override func awakeFromNib() {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
@@ -24,7 +24,7 @@ class RefreshProgressView: UIView {
 		isAccessibilityElement = true
 		accessibilityTraits = [.updatesFrequently, .notEnabled]
 	}
-	
+
 	func update() {
 		if !AccountManager.shared.combinedRefreshProgress.isComplete {
 			progressChanged(animated: false)
@@ -50,7 +50,7 @@ class RefreshProgressView: UIView {
 	deinit {
 		NotificationCenter.default.removeObserver(self)
 	}
-	
+
 }
 
 // MARK: Private
@@ -68,7 +68,7 @@ private extension RefreshProgressView {
 			if isInViewHierarchy {
 				progressView.setProgress(1, animated: animated)
 			}
-			
+
 			func completeLabel() {
 				// Check that there are no pending downloads.
 				if AccountManager.shared.combinedRefreshProgress.isComplete {
@@ -101,7 +101,7 @@ private extension RefreshProgressView {
 			}
 		}
 	}
-	
+
 	func updateRefreshLabel() {
 		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
 
@@ -131,5 +131,5 @@ private extension RefreshProgressView {
 			self?.scheduleUpdateRefreshLabel()
 		}
 	}
-	
+
 }

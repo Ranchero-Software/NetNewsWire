@@ -15,11 +15,11 @@ class AboutViewController: UITableViewController {
 	@IBOutlet weak var acknowledgmentsTextView: UITextView!
 	@IBOutlet weak var thanksTextView: UITextView!
 	@IBOutlet weak var dedicationTextView: UITextView!
-	
+
 	override func viewDidLoad() {
-		
+
 		super.viewDidLoad()
-		
+
 		configureCell(file: "About", textView: aboutTextView)
 		configureCell(file: "Credits", textView: creditsTextView)
 		configureCell(file: "Thanks", textView: thanksTextView)
@@ -32,7 +32,7 @@ class AboutViewController: UITableViewController {
 		buildLabel.numberOfLines = 0
 		buildLabel.sizeToFit()
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
-		
+
 		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
 		wrapperView.translatesAutoresizingMaskIntoConstraints = false
 		wrapperView.addSubview(buildLabel)
@@ -42,11 +42,11 @@ class AboutViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return UITableView.automaticDimension
 	}
-	
+
 }
 
 private extension AboutViewController {
-	
+
 	func configureCell(file: String, textView: UITextView) {
 		let url = Bundle.main.url(forResource: file, withExtension: "rtf")!
 		let string = try! NSAttributedString(url: url, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
@@ -55,5 +55,5 @@ private extension AboutViewController {
 		textView.adjustsFontForContentSizeCategory = true
 		textView.font = .preferredFont(forTextStyle: .body)
 	}
-	
+
 }

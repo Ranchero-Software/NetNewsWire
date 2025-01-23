@@ -9,21 +9,21 @@
 import UIKit
 
 extension UIFont {
-	
-	func withTraits(traits:UIFontDescriptor.SymbolicTraits) -> UIFont {
+
+	func withTraits(traits: UIFontDescriptor.SymbolicTraits) -> UIFont {
 		if let descriptor = fontDescriptor.withSymbolicTraits(traits) {
-			return UIFont(descriptor: descriptor, size: 0) //size 0 means keep the size as it is
+			return UIFont(descriptor: descriptor, size: 0) // size 0 means keep the size as it is
 		} else {
 			return self
 		}
 	}
-	
+
 	func bold() -> UIFont {
 		return withTraits(traits: .traitBold)
 	}
-	
+
 	func italic() -> UIFont {
 		return withTraits(traits: .traitItalic)
 	}
-	
+
 }

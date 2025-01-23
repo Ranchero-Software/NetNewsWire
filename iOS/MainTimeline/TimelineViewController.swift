@@ -17,8 +17,8 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
-	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
-	
+	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
+
 	private var refreshProgressView: RefreshProgressView?
 
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
@@ -28,28 +28,28 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
-	
+
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
-		
+
 		// If the first responder is the WKWebView we don't want to supply any keyboard
 		// commands that the system is looking for by going up the responder chain. They will interfere with
 		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
 		guard let current = UIResponder.currentFirstResponder, !(current is WKWebView) else { return nil }
-		
+
 		return keyboardManager.keyCommands
 	}
-	
+
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
 
 	override func viewDidLoad() {
-		
+
 		super.viewDidLoad()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -68,11 +68,11 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-		
+
 		// Initialize Programmatic Buttons
 		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 		firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
-		
+
 		// Setup the Search Controller
 		searchController.delegate = self
 		searchController.searchResultsUpdater = self
@@ -97,27 +97,27 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		if let titleView = Bundle.main.loadNibNamed("MainTimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
 			navigationItem.titleView = titleView
 		}
-		
+
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		
+
 		configureToolbar()
 		resetUI(resetScroll: true)
-		
+
 		// Load the table and then scroll to the saved position if available
 		applyChanges(animated: false) {
 			if let restoreIndexPath = self.coordinator.timelineMiddleIndexPath {
 				self.tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
 			}
 		}
-		
+
 		// Disable swipe back on iPad Mice
 		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
 			return
 		}
 		gesture.allowedScrollTypesMask = []
 	}
-	
+
 	override func viewWillAppear(_ animated: Bool) {
 		self.navigationController?.isToolbarHidden = false
 
@@ -125,10 +125,10 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		
+
 		super.viewWillAppear(animated)
 	}
-	
+
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isTimelineViewControllerPending = false
@@ -139,9 +139,9 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			}
 		}
 	}
-	
+
 	// MARK: Actions
-	
+
 	@objc func openInBrowser(_ sender: Any?) {
 		coordinator.showBrowserForCurrentArticle()
 	}
@@ -149,35 +149,35 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	@objc func openInAppBrowser(_ sender: Any?) {
 		coordinator.showInAppBrowser()
 	}
-	
+
 	@IBAction func toggleFilter(_ sender: Any) {
 		coordinator.toggleReadArticlesFilter()
 	}
-	
+
 	@IBAction func markAllAsRead(_ sender: Any) {
 		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
-		
+
 		if let source = sender as? UIBarButtonItem {
 			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: source) { [weak self] in
 				self?.coordinator.markAllAsReadInTimeline()
 			}
 		}
-		
+
 		if let _ = sender as? UIKeyCommand {
 			guard let indexPath = tableView.indexPathForSelectedRow, let contentView = tableView.cellForRow(at: indexPath)?.contentView else {
 				return
 			}
-			
+
 			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markAllAsReadInTimeline()
 			}
 		}
 	}
-	
+
 	@IBAction func firstUnread(_ sender: Any) {
 		coordinator.selectFirstUnread()
 	}
-	
+
 	@objc func refreshAccounts(_ sender: Any) {
 		refreshControl?.endRefreshing()
 
@@ -187,9 +187,9 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 		}
 	}
-	
+
 	// MARK: Keyboard shortcuts
-	
+
 	@objc func selectNextUp(_ sender: Any?) {
 		coordinator.selectPrevArticle()
 	}
@@ -201,17 +201,17 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	@objc func navigateToSidebar(_ sender: Any?) {
 		coordinator.navigateToFeeds()
 	}
-	
+
 	@objc func navigateToDetail(_ sender: Any?) {
 		coordinator.navigateToDetail()
 	}
-	
+
 	@objc func showFeedInspector(_ sender: Any?) {
 		coordinator.showFeedInspector()
 	}
 
 	// MARK: API
-	
+
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if adjustScroll {
@@ -225,11 +225,11 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	func reinitializeArticles(resetScroll: Bool) {
 		resetUI(resetScroll: resetScroll)
 	}
-	
+
 	func reloadArticles(animated: Bool) {
 		applyChanges(animated: animated)
 	}
-	
+
 	func updateArticleSelection(animations: Animations) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if tableView.indexPathForSelectedRow != indexPath {
@@ -238,7 +238,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		} else {
 			tableView.selectRow(at: nil, animated: animations.contains(.select), scrollPosition: .none)
 		}
-		
+
 		updateUI()
 	}
 
@@ -247,7 +247,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		updateTitleUnreadCount()
 		updateToolbar()
 	}
-	
+
 	func hideSearch() {
 		navigationItem.searchController?.isActive = false
 	}
@@ -257,7 +257,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		navigationItem.searchController?.searchBar.selectedScopeButtonIndex = 1
 		navigationItem.searchController?.searchBar.becomeFirstResponder()
 	}
-	
+
 	func focus() {
 		becomeFirstResponder()
 	}
@@ -265,7 +265,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	func setRefreshToolbarItemVisibility(visible: Bool) {
 		refreshProgressView?.alpha = visible ? 1.0 : 0
 	}
-	
+
 	// MARK: - Table view
 
 	override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -276,41 +276,41 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		let readTitle = article.status.read ?
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		
-		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completion) in
+
+		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (_, _, completion) in
 			self?.coordinator.toggleRead(article)
 			completion(true)
 		}
-		
+
 		readAction.image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 		readAction.backgroundColor = AppAssets.primaryAccentColor
-		
+
 		return UISwipeActionsConfiguration(actions: [readAction])
 	}
-	
+
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-		
+
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
-		
+
 		// Set up the star action
 		let starTitle = article.status.starred ?
 			NSLocalizedString("Unstar", comment: "Unstar") :
 			NSLocalizedString("Star", comment: "Star")
-		
-		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completion) in
+
+		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (_, _, completion) in
 			self?.coordinator.toggleStar(article)
 			completion(true)
 		}
-		
+
 		starAction.image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		starAction.backgroundColor = AppAssets.starColor
-		
+
 		// Set up the read action
 		let moreTitle = NSLocalizedString("More", comment: "More")
 		let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completion) in
-			
+
 			if let self = self {
-			
+
 				let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 				if let popoverController = alert.popoverPresentationController {
 					popoverController.sourceView = view
@@ -324,11 +324,11 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 				if let action = self.markBelowAsReadAlertAction(article, indexPath: indexPath, completion: completion) {
 					alert.addAction(action)
 				}
-				
+
 				if let action = self.discloseFeedAlertAction(article, completion: completion) {
 					alert.addAction(action)
 				}
-				
+
 				if let action = self.markAllInFeedAsReadAlertAction(article, indexPath: indexPath, completion: completion) {
 					alert.addAction(action)
 				}
@@ -347,28 +347,28 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 				})
 
 				self.present(alert, animated: true)
-				
+
 			}
-			
+
 		}
-		
+
 		moreAction.image = AppAssets.moreImage
 		moreAction.backgroundColor = UIColor.systemGray
 
 		return UISwipeActionsConfiguration(actions: [starAction, moreAction])
-		
+
 	}
 
 	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
 
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
-		
-		return UIContextMenuConfiguration(identifier: indexPath.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+
+		return UIContextMenuConfiguration(identifier: indexPath.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
 
 			guard let self = self else { return nil }
-			
+
 			var menuElements = [UIMenuElement]()
-			
+
 			var markActions = [UIAction]()
 			if let action = self.toggleArticleReadStatusAction(article) {
 				markActions.append(action)
@@ -381,7 +381,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 				markActions.append(action)
 			}
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: markActions))
-			
+
 			var secondaryActions = [UIAction]()
 			if let action = self.discloseFeedAction(article) {
 				secondaryActions.append(action)
@@ -392,7 +392,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			if !secondaryActions.isEmpty {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: secondaryActions))
 			}
-			
+
 			var copyActions = [UIAction]()
 			if let action = self.copyArticleURLAction(article) {
 				copyActions.append(action)
@@ -403,19 +403,19 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			if !copyActions.isEmpty {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: copyActions))
 			}
-			
+
 			if let action = self.openInBrowserAction(article) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
 			}
-			
+
 			if let action = self.shareAction(article, indexPath: indexPath) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
 			}
-			
+
 			return UIMenu(title: "", children: menuElements)
 
 		})
-		
+
 	}
 
 	override func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
@@ -423,7 +423,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) else {
 				return nil
 		}
-		
+
 		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
 	}
 
@@ -432,17 +432,17 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		let article = dataSource.itemIdentifier(for: indexPath)
 		coordinator.selectArticle(article, animations: [.scroll, .select, .navigation])
 	}
-	
+
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
-	
+
 	// MARK: Notifications
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		updateUI()
 	}
-	
+
 	@objc func statusesDidChange(_ note: Notification) {
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
 			return
@@ -461,11 +461,11 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		
+
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 		}
-		
+
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
@@ -519,27 +519,27 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			self.updateToolbar()
 		}
 	}
-	
+
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		reloadAllVisibleCells()
 	}
-	
+
 	@objc func displayNameDidChange(_ note: Notification) {
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 		}
 	}
-	
+
 	@objc func willEnterForeground(_ note: Notification) {
 		updateUI()
 	}
-	
+
 	@objc func scrollPositionDidChange() {
 		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
 	}
-	
+
 	// MARK: Reloading
-	
+
 	func queueReloadAvailableCells() {
 		CoalescingQueue.standard.add(self, #selector(reloadAllVisibleCells))
 	}
@@ -566,7 +566,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: Constants.prototypeText, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 
 		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, numberOfLines: numberOfTextLines, iconSize: iconSize)
-		
+
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MainTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
@@ -574,9 +574,9 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			let layout = MainTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		}
-		
+
 	}
-	
+
 }
 
 // MARK: Searching
@@ -619,7 +619,7 @@ private extension TimelineViewController {
 		guard !(splitViewController?.isCollapsed ?? true) else {
 			return
 		}
-		
+
 		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
 			return
 		}
@@ -630,7 +630,7 @@ private extension TimelineViewController {
 	}
 
 	func resetUI(resetScroll: Bool) {
-		
+
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
 
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
@@ -641,7 +641,7 @@ private extension TimelineViewController {
 			} else {
 				titleView.iconView.tintColor = nil
 			}
-			
+
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 			updateTitleUnreadCount()
 
@@ -652,7 +652,7 @@ private extension TimelineViewController {
 				titleView.debuttonize()
 				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
 			}
-			
+
 			navigationItem.titleView = titleView
 		}
 
@@ -662,7 +662,7 @@ private extension TimelineViewController {
 		case .alwaysRead:
 			navigationItem.rightBarButtonItem = nil
 		}
-		
+
 		if coordinator.isReadArticlesFiltered {
 			filterButton?.image = AppAssets.filterActiveImage
 			filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
@@ -679,16 +679,16 @@ private extension TimelineViewController {
 				tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 			}
 		}
-		
+
 		updateToolbar()
 	}
-	
+
 	func updateToolbar() {
 		guard firstUnreadButton != nil else { return }
-		
+
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
-		
+
 		if coordinator.isRootSplitCollapsed {
 			if let toolbarItems = toolbarItems, toolbarItems.last != firstUnreadButton {
 				var items = toolbarItems
@@ -702,20 +702,20 @@ private extension TimelineViewController {
 			}
 		}
 	}
-	
+
 	func updateTitleUnreadCount() {
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
 			titleView.unreadCountView.unreadCount = coordinator.timelineUnreadCount
 		}
 	}
-	
+
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
 		if coordinator.articles.count == 0 {
 			tableView.rowHeight = tableView.estimatedRowHeight
 		} else {
 			tableView.rowHeight = UITableView.automaticDimension
 		}
-		
+
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(coordinator.articles, toSection: 0)
@@ -725,7 +725,7 @@ private extension TimelineViewController {
 			completion?()
 		}
 	}
-	
+
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
 			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
@@ -736,7 +736,7 @@ private extension TimelineViewController {
 		dataSource.defaultRowAnimation = .middle
 		return dataSource
     }
-	
+
 	func configure(_ cell: MainTimelineTableViewCell, article: Article) {
 
 		let iconImage = iconImageFor(article)
@@ -746,29 +746,29 @@ private extension TimelineViewController {
 		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
 
 	}
-	
+
 	func iconImageFor(_ article: Article) -> IconImage? {
 		if !coordinator.showIcons {
 			return nil
 		}
 		return article.iconImage()
 	}
-	
+
 	func toggleArticleReadStatusAction(_ article: Article) -> UIAction? {
 		guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
-		
+
 		let title = article.status.read ?
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")
 		let image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 
-		let action = UIAction(title: title, image: image) { [weak self] action in
+		let action = UIAction(title: title, image: image) { [weak self] _ in
 			self?.coordinator.toggleRead(article)
 		}
-		
+
 		return action
 	}
-	
+
 	func toggleArticleStarStatusAction(_ article: Article) -> UIAction {
 
 		let title = article.status.starred ?
@@ -776,10 +776,10 @@ private extension TimelineViewController {
 			NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
 		let image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
 
-		let action = UIAction(title: title, image: image) { [weak self] action in
+		let action = UIAction(title: title, image: image) { [weak self] _ in
 			self?.coordinator.toggleStar(article)
 		}
-		
+
 		return action
 	}
 
@@ -790,14 +790,14 @@ private extension TimelineViewController {
 
 		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
 		let image = AppAssets.markAboveAsReadImage
-		let action = UIAction(title: title, image: image) { [weak self] action in
+		let action = UIAction(title: title, image: image) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markAboveAsRead(article)
 			}
 		}
 		return action
 	}
-	
+
 	func markBelowAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard coordinator.canMarkBelowAsRead(for: article), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
@@ -805,14 +805,14 @@ private extension TimelineViewController {
 
 		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
 		let image = AppAssets.markBelowAsReadImage
-		let action = UIAction(title: title, image: image) { [weak self] action in
+		let action = UIAction(title: title, image: image) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markBelowAsRead(article)
 			}
 		}
 		return action
 	}
-	
+
 	func markAboveAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard coordinator.canMarkAboveAsRead(for: article), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
@@ -823,7 +823,7 @@ private extension TimelineViewController {
 			completion(true)
 		}
 
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.coordinator.markAboveAsRead(article)
 				completion(true)
@@ -841,8 +841,8 @@ private extension TimelineViewController {
 		let cancel = {
 			completion(true)
 		}
-		
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.coordinator.markBelowAsRead(article)
 				completion(true)
@@ -854,26 +854,26 @@ private extension TimelineViewController {
 	func discloseFeedAction(_ article: Article) -> UIAction? {
 		guard let feed = article.feed,
 			!coordinator.timelineFeedIsEqualTo(feed) else { return nil }
-		
+
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
-		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] _ in
 			self?.coordinator.discloseFeed(feed, animations: [.scroll, .navigation])
 		}
 		return action
 	}
-	
+
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let feed = article.feed,
 			!coordinator.timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.coordinator.discloseFeed(feed, animations: [.scroll, .navigation])
 			completion(true)
 		}
 		return action
 	}
-	
+
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard let feed = article.feed else { return nil }
 		guard let fetchedArticles = try? feed.fetchArticles() else {
@@ -884,12 +884,11 @@ private extension TimelineViewController {
 		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
-		
-		
+
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
-		
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markAllAsRead(articles)
 			}
@@ -902,19 +901,19 @@ private extension TimelineViewController {
 		guard let fetchedArticles = try? feed.fetchArticles() else {
 			return nil
 		}
-		
+
 		let articles = Array(fetchedArticles)
 		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
-		
+
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
 		}
-		
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.coordinator.markAllAsRead(articles)
 				completion(true)
@@ -922,30 +921,29 @@ private extension TimelineViewController {
 		}
 		return action
 	}
-	
+
 	func copyArticleURLAction(_ article: Article) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Copy Article URL", comment: "Copy Article URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
-			UIPasteboard.general.url = url
-		}
-		return action
-	}
-	
-	func copyExternalURLAction(_ article: Article) -> UIAction? {
-		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
-		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: AppAssets.copyImage) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
 	}
 
+	func copyExternalURLAction(_ article: Article) -> UIAction? {
+		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
+		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
+		let action = UIAction(title: title, image: AppAssets.copyImage) { _ in
+			UIPasteboard.general.url = url
+		}
+		return action
+	}
 
 	func openInBrowserAction(_ article: Article) -> UIAction? {
 		guard let _ = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] _ in
 			self?.coordinator.showBrowserForArticle(article)
 		}
 		return action
@@ -955,41 +953,41 @@ private extension TimelineViewController {
 		guard let _ = article.preferredURL else { return nil }
 
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.coordinator.showBrowserForArticle(article)
 			completion(true)
 		}
 		return action
 	}
-	
+
 	func shareDialogForTableCell(indexPath: IndexPath, url: URL, title: String?) {
 		let activityViewController = UIActivityViewController(url: url, title: title, applicationActivities: nil)
-		
+
 		guard let cell = tableView.cellForRow(at: indexPath) else { return }
 		let popoverController = activityViewController.popoverPresentationController
 		popoverController?.sourceView = cell
 		popoverController?.sourceRect = CGRect(x: 0, y: 0, width: cell.frame.size.width, height: cell.frame.size.height)
-		
+
 		present(activityViewController, animated: true)
 	}
-	
+
 	func shareAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
-		let action = UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.shareImage) { [weak self] _ in
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
 		return action
 	}
-	
+
 	func shareAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			completion(true)
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
 		return action
 	}
-	
+
 }

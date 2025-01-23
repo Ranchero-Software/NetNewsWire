@@ -18,7 +18,7 @@ protocol MainTimelineCellLayout {
 	var summaryRect: CGRect {get}
 	var feedNameRect: CGRect {get}
 	var dateRect: CGRect {get}
-	
+
 }
 
 extension MainTimelineCellLayout {
@@ -30,8 +30,7 @@ extension MainTimelineCellLayout {
 		r.origin.y = point.y + 5
 		return r
 	}
-	
-	
+
 	static func rectForStar(_ point: CGPoint) -> CGRect {
 		var r = CGRect.zero
 		r.size.width = MainTimelineDefaultCellLayout.starDimension
@@ -40,7 +39,7 @@ extension MainTimelineCellLayout {
 		r.origin.y = point.y + 3
 		return r
 	}
-	
+
 	static func rectForIconView(_ point: CGPoint, iconSize: IconSize) -> CGRect {
 		var r = CGRect.zero
 		r.size = iconSize.size
@@ -48,16 +47,16 @@ extension MainTimelineCellLayout {
 		r.origin.y = point.y + 4
 		return r
 	}
-	
+
 	static func rectForTitle(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> (CGRect, Int) {
 
 		var r = CGRect.zero
 		if cellData.title.isEmpty {
 			return (r, 0)
 		}
-		
+
 		r.origin = point
-		
+
 		let sizeInfo = MultilineUILabelSizer.size(for: cellData.title, font: MainTimelineDefaultCellLayout.titleFont, numberOfLines: cellData.numberOfLines, width: Int(textAreaWidth))
 
 		r.size.width = textAreaWidth
@@ -65,22 +64,22 @@ extension MainTimelineCellLayout {
 		if sizeInfo.numberOfLinesUsed < 1 {
 			r.size.height = 0
 		}
-		
+
 		return (r, sizeInfo.numberOfLinesUsed)
-		
+
 	}
-	
+
 	static func rectForSummary(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat, _ linesUsed: Int) -> CGRect {
 
 		let linesLeft = cellData.numberOfLines - linesUsed
-		
+
 		var r = CGRect.zero
 		if cellData.summary.isEmpty || linesLeft < 1 {
 			return r
 		}
-		
+
 		r.origin = point
-		
+
 		let sizeInfo = MultilineUILabelSizer.size(for: cellData.summary, font: MainTimelineDefaultCellLayout.summaryFont, numberOfLines: linesLeft, width: Int(textAreaWidth))
 
 		r.size.width = textAreaWidth
@@ -88,26 +87,26 @@ extension MainTimelineCellLayout {
 		if sizeInfo.numberOfLinesUsed < 1 {
 			r.size.height = 0
 		}
-		
+
 		return r
-		
+
 	}
 
 	static func rectForFeedName(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 
 		var r = CGRect.zero
 		r.origin = point
-		
+
 		let feedName = cellData.showFeedName == .feed ? cellData.feedName : cellData.byline
 		let size = SingleLineUILabelSizer.size(for: feedName, font: MainTimelineDefaultCellLayout.feedNameFont)
 		r.size = size
-		
+
 		if r.size.width > textAreaWidth {
 			r.size.width = textAreaWidth
 		}
-		
+
 		return r
-		
+
 	}
-	
+
 }

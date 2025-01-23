@@ -19,9 +19,9 @@ class AddFeedViewController: UITableViewController {
 	@IBOutlet weak var urlTextField: UITextField!
 	@IBOutlet weak var urlTextFieldToSuperViewConstraint: NSLayoutConstraint!
 	@IBOutlet weak var nameTextField: UITextField!
-	
+
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
-	
+
 	private var folderLabel = ""
 	private var userCancelled = false
 
@@ -29,88 +29,88 @@ class AddFeedViewController: UITableViewController {
 	var initialFeedName: String?
 
 	var container: Container?
-	
+
 	override func viewDidLoad() {
         super.viewDidLoad()
 
 		activityIndicator.isHidden = true
 		activityIndicator.color = .label
-		
+
 		if initialFeed == nil, let urlString = UIPasteboard.general.string {
 			if urlString.mayBeURL {
 				initialFeed = urlString.normalizedURL
 			}
 		}
-		
+
 		urlTextField.autocorrectionType = .no
 		urlTextField.autocapitalizationType = .none
 		urlTextField.text = initialFeed
 		urlTextField.delegate = self
-		
+
 		if initialFeed != nil {
 			addButton.isEnabled = true
 		}
-		
+
 		nameTextField.text = initialFeedName
 		nameTextField.delegate = self
-		
+
 		if let defaultContainer = AddFeedDefaultContainer.defaultContainer {
 			container = defaultContainer
 		} else {
 			addButton.isEnabled = false
 		}
-		
+
 		updateFolderLabel()
-		
+
 		tableView.register(UINib(nibName: "AddFeedSelectFolderTableViewCell", bundle: nil), forCellReuseIdentifier: "AddFeedSelectFolderTableViewCell")
 
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: urlTextField)
-		
+
 		if initialFeed == nil {
 			urlTextField.becomeFirstResponder()
 		}
 	}
-	
+
 	@IBAction func cancel(_ sender: Any) {
 		userCancelled = true
 		dismiss(animated: true)
 	}
-	
+
 	@IBAction func add(_ sender: Any) {
 
 		let urlString = urlTextField.text ?? ""
 		let normalizedURLString = urlString.normalizedURL
-		
+
 		guard !normalizedURLString.isEmpty, let url = URL(string: normalizedURLString) else {
 			return
 		}
-		
+
 		guard let container = container else { return }
-		
+
 		var account: Account?
 		if let containerAccount = container as? Account {
 			account = containerAccount
 		} else if let containerFolder = container as? Folder, let containerAccount = containerFolder.account {
 			account = containerAccount
 		}
-		
+
 		if account!.hasFeed(withURL: url.absoluteString) {
 			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}
-		
+
 		addButton.isEnabled = false
 		activityIndicator.isHidden = false
 		activityIndicator.startAnimating()
-		
+
 		let feedName = (nameTextField.text?.isEmpty ?? true) ? nil : nameTextField.text
-		
+
 		BatchUpdate.shared.start()
-		
+
 		account!.createFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
 
 			BatchUpdate.shared.end()
-			
+
 			switch result {
 			case .success(let feed):
 				self.dismiss(animated: true)
@@ -125,11 +125,11 @@ class AddFeedViewController: UITableViewController {
 		}
 
 	}
-	
+
 	@objc func textDidChange(_ note: Notification) {
 		updateUI()
 	}
-	
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		if indexPath.row == 2 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "AddFeedSelectFolderTableViewCell", for: indexPath) as? AddFeedSelectFolderTableViewCell
@@ -139,7 +139,7 @@ class AddFeedViewController: UITableViewController {
 			return super.tableView(tableView, cellForRowAt: indexPath)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.row == 2 {
 			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedFolderNavViewController") as! UINavigationController
@@ -150,7 +150,7 @@ class AddFeedViewController: UITableViewController {
 			present(navController, animated: true)
 		}
 	}
-	
+
 }
 
 // MARK: AddFeedFolderViewControllerDelegate
@@ -166,22 +166,22 @@ extension AddFeedViewController: AddFeedFolderViewControllerDelegate {
 // MARK: UITextFieldDelegate
 
 extension AddFeedViewController: UITextFieldDelegate {
-	
+
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return true
 	}
-	
+
 }
 
 // MARK: Private
 
 private extension AddFeedViewController {
-	
+
 	func updateUI() {
 		addButton.isEnabled = (urlTextField.text?.mayBeURL ?? false)
 	}
-	
+
 	func updateFolderLabel() {
 		if let containerName = (container as? DisplayNameProvider)?.nameForDisplay {
 			if container is Folder {

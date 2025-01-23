@@ -14,5 +14,5 @@ class NonIntrinsicLabel: UILabel {
 	override var intrinsicContentSize: CGSize {
 		return CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
 	}
-	
+
 }

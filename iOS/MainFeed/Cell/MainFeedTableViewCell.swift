@@ -15,7 +15,7 @@ protocol MainFeedTableViewCellDelegate: AnyObject {
 	func mainFeedTableViewCellDisclosureDidToggle(_ sender: MainFeedTableViewCell, expanding: Bool)
 }
 
-class MainFeedTableViewCell : VibrantTableViewCell {
+class MainFeedTableViewCell: VibrantTableViewCell {
 
 	weak var delegate: MainFeedTableViewCellDelegate?
 
@@ -44,7 +44,7 @@ class MainFeedTableViewCell : VibrantTableViewCell {
 			}
 		}
 	}
-	
+
 	var isSeparatorShown = true {
 		didSet {
 			if isSeparatorShown != oldValue {
@@ -56,7 +56,7 @@ class MainFeedTableViewCell : VibrantTableViewCell {
 			}
 		}
 	}
-	
+
 	var unreadCount: Int {
 		get {
 			return unreadCountView.unreadCount
@@ -100,17 +100,17 @@ class MainFeedTableViewCell : VibrantTableViewCell {
 		view.alpha = 0.5
 		return view
 	}()
-	
+
 	private var isDisclosureExpanded = false
 	private var disclosureButton: UIButton?
 	private var unreadCountView = MainFeedUnreadCountView(frame: CGRect.zero)
 	private var isShowingEditControl = false
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	func setDisclosure(isExpanded: Bool, animated: Bool) {
 		isDisclosureExpanded = isExpanded
 		let duration = animated ? 0.3 : 0.0
@@ -120,42 +120,38 @@ class MainFeedTableViewCell : VibrantTableViewCell {
 				self.disclosureButton?.accessibilityLabel = NSLocalizedString("Collapse Folder", comment: "Collapse Folder")
 				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 1.570796)
 			} else {
-				self.disclosureButton?.accessibilityLabel = NSLocalizedString("Expand Folder", comment: "Expand Folder") 
+				self.disclosureButton?.accessibilityLabel = NSLocalizedString("Expand Folder", comment: "Expand Folder")
 				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 0)
 			}
 		}
-	}
-	
-	override func applyThemeProperties() {
-		super.applyThemeProperties()
 	}
 
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
 		isShowingEditControl = state.contains(.showingEditControl)
 	}
-	
+
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
 		return CGSize(width: bounds.width, height: layout.height)
 	}
-	
+
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
 		layoutWith(layout)
 	}
-	
+
 	@objc func buttonPressed(_ sender: UIButton) {
 		if isDisclosureAvailable {
 			setDisclosure(isExpanded: !isDisclosureExpanded, animated: true)
 			delegate?.mainFeedTableViewCellDisclosureDidToggle(self, expanding: isDisclosureExpanded)
 		}
 	}
-	
+
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
-		
+
 		let iconTintColor: UIColor
 		if isHighlighted || isSelected {
 			iconTintColor = AppAssets.vibrantTextColor
@@ -166,7 +162,7 @@ class MainFeedTableViewCell : VibrantTableViewCell {
 				iconTintColor = AppAssets.secondaryAccentColor
 			}
 		}
-		
+
 		if animated {
 			UIView.animate(withDuration: Self.duration) {
 				self.iconView.tintColor = iconTintColor
@@ -174,10 +170,10 @@ class MainFeedTableViewCell : VibrantTableViewCell {
 		} else {
 			self.iconView.tintColor = iconTintColor
 		}
-		
+
 		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
 	}
-	
+
 }
 
 private extension MainFeedTableViewCell {
@@ -200,7 +196,7 @@ private extension MainFeedTableViewCell {
 		disclosureButton?.addInteraction(UIPointerInteraction())
 		addSubviewAtInit(disclosureButton!)
 	}
-	
+
 	func addSubviewAtInit(_ view: UIView) {
 		addSubview(view)
 		view.translatesAutoresizingMaskIntoConstraints = false
@@ -220,11 +216,11 @@ private extension MainFeedTableViewCell {
 			view.isHidden = true
 		}
 	}
-	
+
 	func showView(_ view: UIView) {
 		if view.isHidden {
 			view.isHidden = false
 		}
 	}
-	
+
 }

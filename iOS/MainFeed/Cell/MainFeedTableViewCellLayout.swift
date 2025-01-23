@@ -21,7 +21,7 @@ struct MainFeedTableViewCellLayout {
 	private static let verticalPadding = CGFloat(integerLiteral: 11)
 
 	private static let minRowHeight = CGFloat(integerLiteral: 44)
-	
+
 	static let faviconCornerRadius = CGFloat(integerLiteral: 2)
 
 	let faviconRect: CGRect
@@ -29,9 +29,9 @@ struct MainFeedTableViewCellLayout {
 	let unreadCountRect: CGRect
 	let disclosureButtonRect: CGRect
 	let separatorRect: CGRect
-	
+
 	let height: CGFloat
-	
+
 	init(cellWidth: CGFloat, insets: UIEdgeInsets, label: UILabel, unreadCountView: MainFeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
 
 		var initialIndent = insets.left
@@ -39,7 +39,7 @@ struct MainFeedTableViewCellLayout {
 			initialIndent += MainFeedTableViewCellLayout.indentWidth
 		}
 		let bounds = CGRect(x: initialIndent, y: 0.0, width: floor(cellWidth - initialIndent - insets.right), height: 0.0)
-		
+
 		// Disclosure Button
 		var rDisclosure = CGRect.zero
 		if shouldShowDisclosure {
@@ -66,7 +66,7 @@ struct MainFeedTableViewCellLayout {
 			rUnread.size = unreadCountSize
 			rUnread.origin.x = bounds.maxX - (MainFeedTableViewCellLayout.unreadCountMarginRight + unreadCountSize.width)
 		}
-		
+
 		// Title
 		var rLabelx = insets.left + MainFeedTableViewCellLayout.disclosureButtonSize.width
 		if !shouldShowDisclosure {
@@ -80,7 +80,7 @@ struct MainFeedTableViewCellLayout {
 		} else {
 			labelWidth = cellWidth - (rLabelx + MainFeedTableViewCellLayout.labelMarginRight)
 		}
-		
+
 		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
 
 		// Now that we've got everything (especially the label) computed without the editing controls, update for them.
@@ -99,7 +99,7 @@ struct MainFeedTableViewCellLayout {
 		}
 
 		var rLabel = CGRect(x: rLabelx, y: rLabely, width: labelWidth, height: labelSizeInfo.size.height)
-		
+
 		// Determine cell height
 		let paddedLabelHeight = rLabel.maxY + UIFontMetrics.default.scaledValue(for: MainFeedTableViewCellLayout.verticalPadding)
 		let maxGraphicsHeight = [rFavicon, rUnread, rDisclosure].maxY()
@@ -107,7 +107,7 @@ struct MainFeedTableViewCellLayout {
 		if cellHeight < MainFeedTableViewCellLayout.minRowHeight {
 			cellHeight = MainFeedTableViewCellLayout.minRowHeight
 		}
-		
+
 		// Center in Cell
 		let newBounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: bounds.width, height: cellHeight)
 		if !unreadCountIsHidden {
@@ -126,16 +126,16 @@ struct MainFeedTableViewCellLayout {
 		//  Separator Insets
 		let separatorInset = MainFeedTableViewCellLayout.disclosureButtonSize.width
 		separatorRect = CGRect(x: separatorInset, y: cellHeight - 0.5, width: cellWidth - separatorInset, height: 0.5)
-		
+
 		//  Assign the properties
 		self.height = cellHeight
 		self.faviconRect = rFavicon
 		self.unreadCountRect = rUnread
 		self.disclosureButtonRect = rDisclosure
 		self.titleRect = rLabel
-		
+
 	}
-	
+
 	// Ideally this will be implemented in RSCore (see RSGeometry)
 	static func centerVertically(_ originalRect: CGRect, _ containerRect: CGRect) -> CGRect {
 		var result = originalRect
@@ -144,5 +144,5 @@ struct MainFeedTableViewCellLayout {
 		result.size = originalRect.size
 		return result
 	}
-	
+
 }

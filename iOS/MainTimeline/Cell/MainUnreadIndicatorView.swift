@@ -15,5 +15,5 @@ class MainUnreadIndicatorView: UIView {
 		layer.cornerRadius = frame.size.width / 2.0
 		clipsToBounds = true
 	}
-    
+
 }

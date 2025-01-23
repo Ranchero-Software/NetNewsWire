@@ -12,10 +12,10 @@ class SelectComboTableViewCell: VibrantTableViewCell {
 
 	@IBOutlet weak var icon: UIImageView!
 	@IBOutlet weak var label: UILabel!
-	
+
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
-		
+
 		let iconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
 		if animated {
 			UIView.animate(withDuration: Self.duration) {
@@ -24,8 +24,8 @@ class SelectComboTableViewCell: VibrantTableViewCell {
 		} else {
 			self.icon.tintColor = iconTintColor
 		}
-		
+
 		updateLabelVibrancy(label, color: labelColor, animated: animated)
 	}
-	
+
 }

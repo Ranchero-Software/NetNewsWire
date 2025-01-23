@@ -17,15 +17,15 @@ extension UTType {
 class ArticleThemesTableViewController: UITableViewController {
 
 	override func viewDidLoad() {
-		let importBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importTheme(_:)));
-		importBarButtonItem.title = NSLocalizedString("Import Theme", comment: "Import Theme");
+		let importBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importTheme(_:)))
+		importBarButtonItem.title = NSLocalizedString("Import Theme", comment: "Import Theme")
 		navigationItem.rightBarButtonItem = importBarButtonItem
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 	}
-	
+
 	// MARK: Notifications
-	
+
 	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
 		tableView.reloadData()
 	}
@@ -49,21 +49,21 @@ class ArticleThemesTableViewController: UITableViewController {
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-		
+
 		let themeName: String
 		if indexPath.row == 0 {
 			themeName = ArticleTheme.defaultTheme.name
 		} else {
 			themeName = ArticleThemesManager.shared.themeNames[indexPath.row - 1]
 		}
-		
+
 		cell.textLabel?.text = themeName
 		if themeName == ArticleThemesManager.shared.currentTheme.name {
 			cell.accessoryType = .checkmark
 		} else {
 			cell.accessoryType = .none
 		}
-		
+
 		return cell
 	}
 
@@ -80,33 +80,33 @@ class ArticleThemesTableViewController: UITableViewController {
 			  !theme.isAppTheme	else { return nil }
 
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in
+		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (_, _, completion) in
 			let title = NSLocalizedString("Delete Theme?", comment: "Delete Theme")
-			
+
 			let localizedMessageText = NSLocalizedString("Are you sure you want to delete the theme “%@”?.", comment: "Delete Theme Message")
 			let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
 
 			let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-			
+
 			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { action in
+			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 				completion(true)
 			}
 			alertController.addAction(cancelAction)
 
 			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-			let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { action in
+			let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { _ in
 				ArticleThemesManager.shared.deleteTheme(themeName: themeName)
 				completion(true)
 			}
 			alertController.addAction(deleteAction)
-			
+
 			self?.present(alertController, animated: true)
 		}
-		
+
 		deleteAction.image = AppAssets.trashImage
 		deleteAction.backgroundColor = UIColor.systemRed
-		
+
 		return UISwipeActionsConfiguration(actions: [deleteAction])
 	}
 }
@@ -114,12 +114,12 @@ class ArticleThemesTableViewController: UITableViewController {
 // MARK: UIDocumentPickerDelegate
 
 extension ArticleThemesTableViewController: UIDocumentPickerDelegate {
-	
+
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		guard let url = urls.first else { return }
 
 		if url.startAccessingSecurityScopedResource() {
-			
+
 			defer {
 				url.stopAccessingSecurityScopedResource()
 			}

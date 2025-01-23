@@ -12,7 +12,7 @@ import RSCore
 struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 
 	static let cellPadding = UIEdgeInsets(top: 12, left: 8, bottom: 12, right: 20)
-	
+
 	static let unreadCircleMarginLeft = CGFloat(integerLiteral: 0)
 	static let unreadCircleDimension = CGFloat(integerLiteral: 12)
 	static let unreadCircleSize = CGSize(width: MainTimelineDefaultCellLayout.unreadCircleDimension, height: MainTimelineDefaultCellLayout.unreadCircleDimension)
@@ -33,7 +33,7 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		return UIFont.preferredFont(forTextStyle: .footnote)
 	}
 	static let feedRightMargin = CGFloat(integerLiteral: 8)
-	
+
 	static var dateFont: UIFont {
 		return UIFont.preferredFont(forTextStyle: .footnote)
 	}
@@ -72,13 +72,13 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		} else {
 			self.iconImageRect = CGRect.zero
 		}
-		
+
 		let textAreaWidth = width - (currentPoint.x + MainTimelineDefaultCellLayout.cellPadding.right + insets.right)
 
 		// Title Text Block
 		let (titleRect, numberOfLinesForTitle) = MainTimelineDefaultCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
-		
+
 		// Summary Text Block
 		if self.titleRect != CGRect.zero {
 			currentPoint.y = self.titleRect.maxY + MainTimelineDefaultCellLayout.titleBottomMargin
@@ -93,7 +93,7 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 			y -= tmp.height
 		}
 		currentPoint.y = y
-		
+
 		// Feed Name and Pub Date
 		self.dateRect = MainTimelineDefaultCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)
 
@@ -103,7 +103,7 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		self.height = [self.iconImageRect, self.feedNameRect].maxY() + MainTimelineDefaultCellLayout.cellPadding.bottom
 
 	}
-	
+
 }
 
 // MARK: - Calculate Rects
@@ -113,14 +113,14 @@ extension MainTimelineDefaultCellLayout {
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 
 		var r = CGRect.zero
-		
+
 		let size = SingleLineUILabelSizer.size(for: cellData.dateString, font: MainTimelineDefaultCellLayout.dateFont)
 		r.size = size
 		r.origin.x = (point.x + textAreaWidth) - size.width
 		r.origin.y = point.y
 
 		return r
-		
+
 	}
-	
+
 }

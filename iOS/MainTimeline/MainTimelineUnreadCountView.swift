@@ -17,11 +17,11 @@ class MainTimelineUnreadCountView: MainFeedUnreadCountView {
 	override var textColor: UIColor {
 		return UIColor.systemBackground
 	}
-	
+
 	override var intrinsicContentSize: CGSize {
 		return contentSize
 	}
-	
+
 	override func draw(_ dirtyRect: CGRect) {
 
 		let cornerRadii = CGSize(width: cornerRadius, height: cornerRadius)
@@ -33,7 +33,7 @@ class MainTimelineUnreadCountView: MainFeedUnreadCountView {
 		if unreadCount > 0 {
 			unreadCountString.draw(at: textRect().origin, withAttributes: textAttributes)
 		}
-		
+
 	}
-	
+
 }

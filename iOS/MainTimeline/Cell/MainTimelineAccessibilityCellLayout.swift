@@ -19,7 +19,7 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 	let summaryRect: CGRect
 	let feedNameRect: CGRect
 	let dateRect: CGRect
-	
+
 	init(width: CGFloat, insets: UIEdgeInsets, cellData: MainTimelineCellData) {
 
 		var currentPoint = CGPoint.zero
@@ -40,13 +40,13 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 		} else {
 			self.iconImageRect = CGRect.zero
 		}
-		
+
 		let textAreaWidth = width - (currentPoint.x + MainTimelineDefaultCellLayout.cellPadding.right + insets.right)
 
 		// Title Text Block
 		let (titleRect, numberOfLinesForTitle) = MainTimelineAccessibilityCellLayout.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
-		
+
 		// Summary Text Block
 		if self.titleRect != CGRect.zero {
 			currentPoint.y = self.titleRect.maxY + MainTimelineDefaultCellLayout.titleBottomMargin
@@ -54,21 +54,21 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 		self.summaryRect = MainTimelineAccessibilityCellLayout.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
 
 		currentPoint.y = [self.titleRect, self.summaryRect].maxY()
-		
+
 		if cellData.showFeedName != .none {
 			self.feedNameRect = MainTimelineAccessibilityCellLayout.rectForFeedName(cellData, currentPoint, textAreaWidth)
 			currentPoint.y = self.feedNameRect.maxY
 		} else {
 			self.feedNameRect = CGRect.zero
 		}
-		
+
 		// Feed Name and Pub Date
 		self.dateRect = MainTimelineAccessibilityCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)
 
 		self.height = self.dateRect.maxY + MainTimelineDefaultCellLayout.cellPadding.bottom
 
 	}
-	
+
 }
 
 // MARK: - Calculate Rects
@@ -78,13 +78,13 @@ private extension MainTimelineAccessibilityCellLayout {
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
 
 		var r = CGRect.zero
-		
+
 		let size = SingleLineUILabelSizer.size(for: cellData.dateString, font: MainTimelineDefaultCellLayout.dateFont)
 		r.size = size
 		r.origin = point
-		
+
 		return r
-		
+
 	}
-	
+
 }

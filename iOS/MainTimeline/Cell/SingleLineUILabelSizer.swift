@@ -30,10 +30,10 @@ final class SingleLineUILabelSizer {
 		let height = text.height(withConstrainedWidth: .greatestFiniteMagnitude, font: font)
 		let width = text.width(withConstrainedHeight: .greatestFiniteMagnitude, font: font)
 		let calculatedSize = CGSize(width: ceil(width), height: ceil(height))
-		
+
 		cache[text] = calculatedSize
 		return calculatedSize
-		
+
 	}
 
 	static private var sizers = [UIFont: SingleLineUILabelSizer]()
@@ -48,7 +48,7 @@ final class SingleLineUILabelSizer {
 		sizers[font] = newSizer
 
 		return newSizer
-		
+
 	}
 
 	// Use this call. It’s easiest.
@@ -60,5 +60,5 @@ final class SingleLineUILabelSizer {
 	static func emptyCache() {
 		sizers = [UIFont: SingleLineUILabelSizer]()
 	}
-	
+
 }

@@ -19,14 +19,14 @@ var appDelegate: AppDelegate!
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
-	
+
 	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
-	
+
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-	
+
 	var syncTimer: ArticleStatusSyncTimer?
-	
+
 	var shuttingDown = false {
 		didSet {
 			if shuttingDown {
@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			}
 		}
 	}
-	
+
 	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
 	var userNotificationManager: UserNotificationManager!
@@ -52,10 +52,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			}
 		}
 	}
-	
+
 	var isSyncArticleStatusRunning = false
 	var isWaitingForSyncTasks = false
-	
+
 	override init() {
 		super.init()
 		appDelegate = self
@@ -64,15 +64,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
 		AccountManager.shared = AccountManager(accountsFolder: documentAccountsFolderPath)
-		
+
 		let documentThemesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
 		let documentThemesFolderPath = String(documentThemesFolder.suffix(from: documentAccountsFolder.index(documentThemesFolder.startIndex, offsetBy: 7)))
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: documentThemesFolderPath)
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
 	}
-	
+
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		AppDefaults.registerDefaults()
 
@@ -80,22 +80,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		if isFirstRun {
 			logger.info("Is first run.")
 		}
-		
+
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
 			let localAccount = AccountManager.shared.defaultAccount
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
-		
+
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
 		initializeDownloaders()
 		initializeHomeScreenQuickActions()
-		
+
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
-		
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
+
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
 			if granted {
 				DispatchQueue.main.async {
 					UIApplication.shared.registerForRemoteNotifications()
@@ -108,7 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 		extensionContainersFile = ExtensionContainersFile()
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
-		
+
 		widgetDataEncoder = WidgetDataEncoder()
 
 		syncTimer = ArticleStatusSyncTimer()
@@ -116,12 +116,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		#if DEBUG
 		syncTimer!.update()
 		#endif
-			
+
 		return true
-		
+
 	}
-	
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		DispatchQueue.main.async {
 			self.resumeDatabaseProcessingIfNecessary()
 			AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
@@ -130,7 +130,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			}
 		}
     }
-	
+
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
 	}
@@ -138,35 +138,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	func applicationDidEnterBackground(_ application: UIApplication) {
 		IconImageCache.shared.emptyCache()
 	}
-	
+
 	// MARK: Notifications
-	
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
 		}
 	}
-	
+
 	@objc func accountRefreshDidFinish(_ note: Notification) {
 		AppDefaults.shared.lastRefresh = Date()
 	}
-	
+
 	// MARK: - API
-	
-	func manualRefresh(errorHandler: @escaping (Error) -> ()) {
-		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
+
+	func manualRefresh(errorHandler: @escaping (Error) -> Void) {
+		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate }).forEach {
 			$0.cleanUp(conditional: true)
 		}
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
 	}
-	
+
 	func resumeDatabaseProcessingIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			logger.info("Application processing resumed.")
 		}
 	}
-	
+
 	func prepareAccountsForBackground() {
 		extensionFeedAddRequestFile.suspend()
 		syncTimer?.invalidate()
@@ -190,16 +190,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 		}
 	}
-	
+
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 		completionHandler([.list, .banner, .badge, .sound])
     }
-	
+
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 		defer { completionHandler() }
-		
+
 		let userInfo = response.notification.request.content.userInfo
-		
+
 		switch response.actionIdentifier {
 		case "MARK_AS_READ":
 			handleMarkAsRead(userInfo: userInfo)
@@ -213,15 +213,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 				})
 			}
 		}
-		
+
     }
-	
+
 }
 
 // MARK: App Initialization
 
 private extension AppDelegate {
-	
+
 	private func initializeDownloaders() {
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
@@ -239,7 +239,7 @@ private extension AppDelegate {
 		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
 		let unreadIcon = UIApplicationShortcutIcon(systemImageName: "chevron.down.circle")
 		let unreadItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.FirstUnread", localizedTitle: unreadTitle, localizedSubtitle: nil, icon: unreadIcon, userInfo: nil)
-		
+
 		let searchTitle = NSLocalizedString("Search", comment: "Search")
 		let searchIcon = UIApplicationShortcutIcon(systemImageName: "magnifyingglass")
 		let searchItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowSearch", localizedTitle: searchTitle, localizedSubtitle: nil, icon: searchIcon, userInfo: nil)
@@ -250,38 +250,38 @@ private extension AppDelegate {
 
 		UIApplication.shared.shortcutItems = [addItem, searchItem, unreadItem]
 	}
-	
+
 }
 
 // MARK: Go To Background
 
 private extension AppDelegate {
-	
+
 	func waitForSyncTasksToFinish() {
 		guard !isWaitingForSyncTasks && UIApplication.shared.applicationState == .background else { return }
-		
+
 		isWaitingForSyncTasks = true
-		
+
 		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
 			guard let self = self else { return }
 			self.completeProcessing(true)
 			logger.info("Accounts wait for progress terminated for running too long.")
 		}
-		
+
 		DispatchQueue.main.async { [weak self] in
-			self?.waitToComplete() { [weak self] suspend in
+			self?.waitToComplete { [weak self] suspend in
 				self?.completeProcessing(suspend)
 			}
 		}
 	}
-	
+
 	func waitToComplete(completion: @escaping (Bool) -> Void) {
 		guard UIApplication.shared.applicationState == .background else {
 			logger.info("App came back to foreground, no longer waiting.")
 			completion(false)
 			return
 		}
-		
+
 		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || widgetDataEncoder.isRunning {
 			logger.info("Waiting for sync to finish…")
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
@@ -292,7 +292,7 @@ private extension AppDelegate {
 			completion(true)
 		}
 	}
-	
+
 	func completeProcessing(_ suspend: Bool) {
 		if suspend {
 			suspendApplication()
@@ -301,33 +301,33 @@ private extension AppDelegate {
 		self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 		isWaitingForSyncTasks = false
 	}
-	
+
 	func syncArticleStatus() {
 		guard !isSyncArticleStatusRunning else { return }
-		
+
 		isSyncArticleStatusRunning = true
-		
+
 		let completeProcessing = { [unowned self] in
 			self.isSyncArticleStatusRunning = false
 			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
 			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 		}
-		
+
 		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
 			completeProcessing()
 			self.logger.info("Accounts sync processing terminated for running too long.")
 		}
-		
+
 		DispatchQueue.main.async {
-			AccountManager.shared.syncArticleStatusAll() {
+			AccountManager.shared.syncArticleStatusAll {
 				completeProcessing()
 			}
 		}
 	}
-	
+
 	func suspendApplication() {
 		guard UIApplication.shared.applicationState == .background else { return }
-		
+
 		AccountManager.shared.suspendNetworkAll()
 		AccountManager.shared.suspendDatabaseAll()
 		ArticleThemeDownloader.shared.cleanUp()
@@ -338,10 +338,10 @@ private extension AppDelegate {
 				sceneDelegate.suspend()
 			}
 		}
-		
+
 		logger.info("Application processing suspended.")
 	}
-	
+
 }
 
 // MARK: Background Tasks
@@ -355,7 +355,7 @@ private extension AppDelegate {
 			self.performBackgroundFeedRefresh(with: task as! BGAppRefreshTask)
 		}
 	}
-	
+
 	/// Schedules a background app refresh based on `AppDefaults.refreshInterval`.
 	func scheduleBackgroundFeedRefresh() {
 		let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
@@ -371,7 +371,7 @@ private extension AppDelegate {
 			}
 		}
 	}
-	
+
 	/// Performs background feed refresh.
 	/// - Parameter task: `BGAppRefreshTask`
 	/// - Warning: As of Xcode 11 beta 2, when triggered from the debugger this doesn't work.
@@ -408,9 +408,9 @@ private extension AppDelegate {
 // Handle Notification Actions
 
 private extension AppDelegate {
-	
+
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
@@ -435,9 +435,9 @@ private extension AppDelegate {
 			}
 		})
 	}
-	
+
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return

@@ -24,8 +24,7 @@ class MainTimelineTitleView: UIView {
 			if let name = label.text {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
 				return "\(name) \(unreadCountView.unreadCount) \(unreadLabel)"
-			}
-			else {
+			} else {
 				return nil
 			}
 		}
@@ -36,7 +35,7 @@ class MainTimelineTitleView: UIView {
 		accessibilityTraits = .button
 		addInteraction(pointerInteraction)
 	}
-	
+
 	func debuttonize() {
 		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
 		accessibilityTraits.remove(.button)
@@ -45,7 +44,7 @@ class MainTimelineTitleView: UIView {
 }
 
 extension MainTimelineTitleView: UIPointerInteractionDelegate {
-	
+
 	func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
 		var rect = self.frame
 		rect.origin.x = rect.origin.x - 10

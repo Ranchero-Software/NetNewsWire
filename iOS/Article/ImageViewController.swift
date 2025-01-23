@@ -17,7 +17,7 @@ final class ImageViewController: UIViewController {
 	@IBOutlet weak var titleBackground: UIVisualEffectView!
 	@IBOutlet weak var titleLeading: NSLayoutConstraint!
 	@IBOutlet weak var titleTrailing: NSLayoutConstraint!
-	
+
 	var image: UIImage!
 	var imageTitle: String?
 	var zoomedFrame: CGRect {
@@ -27,27 +27,27 @@ final class ImageViewController: UIViewController {
 	init() {
 		super.init(nibName: "ImageViewController", bundle: nil)
 	}
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 	}
-	
+
 	override func viewDidLoad() {
         super.viewDidLoad()
-		
+
 		closeButton.imageView?.contentMode = .scaleAspectFit
 		closeButton.accessibilityLabel = NSLocalizedString("Close", comment: "Close")
 		shareButton.accessibilityLabel = NSLocalizedString("Share", comment: "Share")
-		
+
         imageScrollView.setup()
         imageScrollView.imageScrollViewDelegate = self
         imageScrollView.imageContentMode = .aspectFit
         imageScrollView.initialOffset = .center
 		imageScrollView.display(image: image)
-		
+
 		titleLabel.text = imageTitle ?? ""
 		layoutTitleLabel()
-		
+
 		guard imageTitle != "" else {
 			titleBackground.removeFromSuperview()
 			return
@@ -57,11 +57,11 @@ final class ImageViewController: UIViewController {
 
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 		super.viewWillTransition(to: size, with: coordinator)
-		coordinator.animate(alongsideTransition: { [weak self] context in
+		coordinator.animate(alongsideTransition: { [weak self] _ in
 			self?.imageScrollView.resize()
 		})
 	}
-	
+
 	@IBAction func share(_ sender: Any) {
 		guard let image = image else { return }
 		let activityViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
@@ -69,12 +69,12 @@ final class ImageViewController: UIViewController {
 		activityViewController.popoverPresentationController?.sourceRect = shareButton.bounds
 		present(activityViewController, animated: true)
 	}
-	
+
 	@IBAction func done(_ sender: Any) {
 		dismiss(animated: true)
 	}
-	
-	private func layoutTitleLabel(){
+
+	private func layoutTitleLabel() {
 		let width = view.frame.width
 		let multiplier = UIDevice.current.userInterfaceIdiom == .pad ? CGFloat(0.1) : CGFloat(0.04)
 		titleLeading.constant += width * multiplier
@@ -90,10 +90,9 @@ extension ImageViewController: ImageScrollViewDelegate {
 	func imageScrollViewDidGestureSwipeUp(imageScrollView: ImageScrollView) {
 		dismiss(animated: true)
 	}
-	
+
 	func imageScrollViewDidGestureSwipeDown(imageScrollView: ImageScrollView) {
 		dismiss(animated: true)
 	}
-	
-	
+
 }

@@ -12,52 +12,52 @@ import SafariServices
 import UserNotifications
 
 class FeedInspectorViewController: UITableViewController {
-	
+
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 500.0)
-	
+
 	var feed: Feed!
 	@IBOutlet weak var nameTextField: UITextField!
 	@IBOutlet weak var notifyAboutNewArticlesSwitch: UISwitch!
 	@IBOutlet weak var alwaysShowReaderViewSwitch: UISwitch!
 	@IBOutlet weak var homePageLabel: InteractiveLabel!
 	@IBOutlet weak var feedURLLabel: InteractiveLabel!
-	
+
 	private var headerView: InspectorIconHeaderView?
 	private var iconImage: IconImage? {
 		return IconImageCache.shared.imageForFeed(feed)
 	}
-	
+
 	private let homePageIndexPath = IndexPath(row: 0, section: 1)
-	
+
 	private var shouldHideHomePageSection: Bool {
 		return feed.homePageURL == nil
 	}
-	
+
 	private var userNotificationSettings: UNNotificationSettings?
-	
+
 	override func viewDidLoad() {
 		tableView.register(InspectorIconHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
-		
+
 		navigationItem.title = feed.nameForDisplay
 		nameTextField.text = feed.nameForDisplay
-		
+
 		notifyAboutNewArticlesSwitch.setOn(feed.isNotifyAboutNewArticles ?? false, animated: false)
-		
+
 		alwaysShowReaderViewSwitch.setOn(feed.isArticleExtractorAlwaysOn ?? false, animated: false)
 
 		homePageLabel.text = feed.homePageURL
 		feedURLLabel.text = feed.url
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNotificationSettings), name: UIApplication.willEnterForegroundNotification, object: nil)
-		
+
 	}
-	
+
 	override func viewDidAppear(_ animated: Bool) {
 		updateNotificationSettings()
 	}
-	
+
 	override func viewDidDisappear(_ animated: Bool) {
 		if nameTextField.text != feed.nameForDisplay {
 			let nameText = nameTextField.text ?? ""
@@ -65,12 +65,12 @@ class FeedInspectorViewController: UITableViewController {
 			feed.rename(to: newName) { _ in }
 		}
 	}
-	
+
 	// MARK: Notifications
 	@objc func feedIconDidBecomeAvailable(_ notification: Notification) {
 		headerView?.iconView.iconImage = iconImage
 	}
-	
+
 	@IBAction func notifyAboutNewArticlesChanged(_ sender: Any) {
 		guard let settings = userNotificationSettings else {
 			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
@@ -82,7 +82,7 @@ class FeedInspectorViewController: UITableViewController {
 		} else if settings.authorizationStatus == .authorized {
 			feed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
 		} else {
-			UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
+			UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
 				self.updateNotificationSettings()
 				if granted {
 					DispatchQueue.main.async {
@@ -97,22 +97,22 @@ class FeedInspectorViewController: UITableViewController {
 			}
 		}
 	}
-	
+
 	@IBAction func alwaysShowReaderViewChanged(_ sender: Any) {
 		feed.isArticleExtractorAlwaysOn = alwaysShowReaderViewSwitch.isOn
 	}
-	
+
 	@IBAction func done(_ sender: Any) {
 		dismiss(animated: true)
 	}
-	
+
 	/// Returns a new indexPath, taking into consideration any
 	/// conditions that may require the tableView to be
 	/// displayed differently than what is setup in the storyboard.
 	private func shift(_ indexPath: IndexPath) -> IndexPath {
 		return IndexPath(row: indexPath.row, section: shift(indexPath.section))
 	}
-	
+
 	/// Returns a new section, taking into consideration any
 	/// conditions that may require the tableView to be
 	/// displayed differently than what is setup in the storyboard.
@@ -123,7 +123,6 @@ class FeedInspectorViewController: UITableViewController {
 		return section
 	}
 
-	
 }
 
 // MARK: Table View
@@ -134,15 +133,15 @@ extension FeedInspectorViewController {
 		let numberOfSections = super.numberOfSections(in: tableView)
 		return shouldHideHomePageSection ? numberOfSections - 1 : numberOfSections
 	}
-	
+
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return super.tableView(tableView, numberOfRowsInSection: shift(section))
 	}
-	
+
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: shift(section))
 	}
-	
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = super.tableView(tableView, cellForRowAt: shift(indexPath))
 		if indexPath.section == 0 && indexPath.row == 1 {
@@ -154,11 +153,11 @@ extension FeedInspectorViewController {
 		}
 		return cell
 	}
-	
+
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		super.tableView(tableView, titleForHeaderInSection: shift(section))
 	}
-	
+
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if shift(section) == 0 {
 			headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as? InspectorIconHeaderView
@@ -168,12 +167,12 @@ extension FeedInspectorViewController {
 			return super.tableView(tableView, viewForHeaderInSection: shift(section))
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if shift(indexPath) == homePageIndexPath,
 			let homePageUrlString = feed.homePageURL,
 			let homePageUrl = URL(string: homePageUrlString) {
-			
+
 			let safari = SFSafariViewController(url: homePageUrl)
 			safari.modalPresentationStyle = .pageSheet
 			present(safari, animated: true) {
@@ -181,24 +180,24 @@ extension FeedInspectorViewController {
 			}
 		}
 	}
-	
+
 }
 
 // MARK: UITextFieldDelegate
 
 extension FeedInspectorViewController: UITextFieldDelegate {
-	
+
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return true
 	}
-	
+
 }
 
 // MARK: UNUserNotificationCenter
 
 extension FeedInspectorViewController {
-	
+
 	@objc
 	func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
@@ -210,12 +209,12 @@ extension FeedInspectorViewController {
 			}
 		}
 	}
-	
+
 	func notificationUpdateErrorAlert() -> UIAlertController {
 		let alert = UIAlertController(title: NSLocalizedString("Enable Notifications", comment: "Notifications"),
 									  message: NSLocalizedString("Notifications need to be enabled in the Settings app.", comment: "Notifications need to be enabled in the Settings app."), preferredStyle: .alert)
-		let openSettings = UIAlertAction(title: NSLocalizedString("Open Settings", comment: "Open Settings"), style: .default) { (action) in
-			UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
+		let openSettings = UIAlertAction(title: NSLocalizedString("Open Settings", comment: "Open Settings"), style: .default) { (_) in
+			UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false], completionHandler: nil)
 		}
 		let dismiss = UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil)
 		alert.addAction(openSettings)
@@ -223,5 +222,5 @@ extension FeedInspectorViewController {
 		alert.preferredAction = openSettings
 		return alert
 	}
-	
+
 }

@@ -8,18 +8,18 @@
 
 import UIKit
 
-class MainFeedUnreadCountView : UIView {
+class MainFeedUnreadCountView: UIView {
 
 	var padding: UIEdgeInsets {
 		return UIEdgeInsets(top: 1.0, left: 9.0, bottom: 1.0, right: 9.0)
 	}
-	
+
 	let cornerRadius = 8.0
 	let bgColor = AppAssets.controlBackgroundColor
 	var textColor: UIColor {
 		return UIColor.white
 	}
-	
+
 	var textAttributes: [NSAttributedString.Key: AnyObject] {
 		let textFont = UIFont.preferredFont(forTextStyle: .caption1).bold()
 		return [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
@@ -33,7 +33,7 @@ class MainFeedUnreadCountView : UIView {
 			setNeedsDisplay()
 		}
 	}
-	
+
 	var unreadCountString: String {
 		return unreadCount < 1 ? "" : "\(unreadCount)"
 	}
@@ -45,18 +45,18 @@ class MainFeedUnreadCountView : UIView {
 		super.init(frame: frame)
 		self.isOpaque = false
 	}
-	
+
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		self.isOpaque = false
 	}
-	
+
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 		textSizeCache = [Int: CGSize]()
 		contentSizeIsValid = false
 		setNeedsDisplay()
 	}
-	
+
 	var contentSize: CGSize {
 		if !contentSizeIsValid {
 			var size = CGSize.zero
@@ -70,7 +70,7 @@ class MainFeedUnreadCountView : UIView {
 		}
 		return _contentSize
 	}
-	
+
 	// Prevent autolayout from messing around with our frame settings
 	override var intrinsicContentSize: CGSize {
 		return CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
@@ -92,7 +92,7 @@ class MainFeedUnreadCountView : UIView {
 
 		textSizeCache[unreadCount] = size
 		return size
-		
+
 	}
 
 	func textRect() -> CGRect {
@@ -103,7 +103,7 @@ class MainFeedUnreadCountView : UIView {
 		r.origin.x = (bounds.maxX - padding.right) - r.size.width
 		r.origin.y = padding.top
 		return r
-		
+
 	}
 
 	override func draw(_ dirtyRect: CGRect) {
@@ -116,8 +116,7 @@ class MainFeedUnreadCountView : UIView {
 		if unreadCount > 0 {
 			unreadCountString.draw(at: textRect().origin, withAttributes: textAttributes)
 		}
-		
-	}
-	
-}
 
+	}
+
+}

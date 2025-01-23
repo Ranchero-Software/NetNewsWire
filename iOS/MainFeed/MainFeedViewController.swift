@@ -125,7 +125,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 
-		var node: Node? = nil
+		var node: Node?
 		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
 		} else {
@@ -249,7 +249,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 
 		headerView.gestureRecognizers?.removeAll()
-		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
+		let tap = UITapGestureRecognizer(target: self, action: #selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
 
 		// Without this the swipe gesture registers on the cell below
@@ -279,7 +279,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		// Set up the delete action
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in
+		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (_, _, completion) in
 			self?.delete(indexPath: indexPath)
 			completion(true)
 		}
@@ -288,7 +288,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		// Set up the rename action
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
-		let renameAction = UIContextualAction(style: .normal, title: renameTitle) { [weak self] (action, view, completion) in
+		let renameAction = UIContextualAction(style: .normal, title: renameTitle) { [weak self] (_, _, completion) in
 			self?.rename(indexPath: indexPath)
 			completion(true)
 		}
@@ -354,7 +354,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else if feed is Folder {
 			return makeFolderContextMenu(indexPath: indexPath)
-		} else if feed is PseudoFeed  {
+		} else if feed is PseudoFeed {
 			return makePseudoFeedContextMenu(indexPath: indexPath)
 		} else {
 			return nil
@@ -686,7 +686,7 @@ extension MainFeedViewController: UIContextMenuInteractionDelegate {
 					return nil
 		}
 
-		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { suggestedActions in
+		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { _ in
 
 			var menuElements = [UIMenuElement]()
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountInfoAction(account: account)]))
@@ -890,7 +890,7 @@ private extension MainFeedViewController {
 	}
 
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -935,7 +935,7 @@ private extension MainFeedViewController {
 	}
 
 	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -962,7 +962,7 @@ private extension MainFeedViewController {
 			return nil
 		}
 
-		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { _ in
 			return UIMenu(title: "", children: [markAllAction])
 		})
 	}
@@ -973,7 +973,7 @@ private extension MainFeedViewController {
 		}
 
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] _ in
 			self?.coordinator.showBrowserForFeed(indexPath)
 		}
 		return action
@@ -985,7 +985,7 @@ private extension MainFeedViewController {
 		}
 
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.coordinator.showBrowserForFeed(indexPath)
 			completion(true)
 		}
@@ -999,7 +999,7 @@ private extension MainFeedViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: AppAssets.copyImage) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -1012,7 +1012,7 @@ private extension MainFeedViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
-		let action = UIAlertAction(title: title, style: .default) { action in
+		let action = UIAlertAction(title: title, style: .default) { _ in
 			UIPasteboard.general.url = url
 			completion(true)
 		}
@@ -1027,7 +1027,7 @@ private extension MainFeedViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: AppAssets.copyImage) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -1041,7 +1041,7 @@ private extension MainFeedViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
-		let action = UIAlertAction(title: title, style: .default) { action in
+		let action = UIAlertAction(title: title, style: .default) { _ in
 			UIPasteboard.general.url = url
 			completion(true)
 		}
@@ -1061,8 +1061,7 @@ private extension MainFeedViewController {
 			completion(true)
 		}
 
-
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.coordinator.markAllAsRead(Array(articles))
 				completion(true)
@@ -1074,7 +1073,7 @@ private extension MainFeedViewController {
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
 
-		let action = UIAction(title: title, image: AppAssets.trashImage, attributes: .destructive) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.trashImage, attributes: .destructive) { [weak self] _ in
 			self?.delete(indexPath: indexPath)
 		}
 		return action
@@ -1082,7 +1081,7 @@ private extension MainFeedViewController {
 
 	func renameAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Rename", comment: "Rename")
-		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] _ in
 			self?.rename(indexPath: indexPath)
 		}
 		return action
@@ -1094,7 +1093,7 @@ private extension MainFeedViewController {
 		}
 
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] _ in
 			self?.coordinator.showFeedInspector(for: feed)
 		}
 		return action
@@ -1102,7 +1101,7 @@ private extension MainFeedViewController {
 
 	func getAccountInfoAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] _ in
 			self?.coordinator.showAccountInspector(for: account)
 		}
 		return action
@@ -1110,7 +1109,7 @@ private extension MainFeedViewController {
 
 	func deactivateAccountAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Deactivate", comment: "Deactivate")
-		let action = UIAction(title: title, image: AppAssets.deactivateImage) { action in
+		let action = UIAction(title: title, image: AppAssets.deactivateImage) { _ in
 			account.isActive = false
 		}
 		return action
@@ -1122,7 +1121,7 @@ private extension MainFeedViewController {
 		}
 
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.coordinator.showFeedInspector(for: feed)
 			completion(true)
 		}
@@ -1138,7 +1137,7 @@ private extension MainFeedViewController {
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				if let articles = try? feed.fetchUnreadArticles() {
 					self?.coordinator.markAllAsRead(Array(articles))
@@ -1156,7 +1155,7 @@ private extension MainFeedViewController {
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -1170,7 +1169,6 @@ private extension MainFeedViewController {
 		return action
 	}
 
-
 	func rename(indexPath: IndexPath) {
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
 
@@ -1183,7 +1181,7 @@ private extension MainFeedViewController {
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
-		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
+		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] _ in
 
 			guard let name = alertController.textFields?[0].text, !name.isEmpty else {
 				return
@@ -1214,7 +1212,7 @@ private extension MainFeedViewController {
 		alertController.addAction(renameAction)
 		alertController.preferredAction = renameAction
 
-		alertController.addTextField() { textField in
+		alertController.addTextField { textField in
 			textField.text = feed.nameForDisplay
 			textField.placeholder = NSLocalizedString("Name", comment: "Name")
 		}
@@ -1234,7 +1232,7 @@ private extension MainFeedViewController {
 			title = NSLocalizedString("Delete Folder", comment: "Delete folder")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
-		} else  {
+		} else {
 			title = NSLocalizedString("Delete Feed", comment: "Delete feed")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
@@ -1246,7 +1244,7 @@ private extension MainFeedViewController {
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-		let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] action in
+		let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
 			self?.performDelete(indexPath: indexPath)
 		}
 		alertController.addAction(deleteAction)
@@ -1284,6 +1282,6 @@ extension MainFeedViewController: UIGestureRecognizerDelegate {
 			return false
 		}
 		let velocity = gestureRecognizer.velocity(in: self.view)
-		return abs(velocity.x) > abs(velocity.y);
+		return abs(velocity.x) > abs(velocity.y)
 	}
 }

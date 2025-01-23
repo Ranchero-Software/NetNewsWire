@@ -18,11 +18,11 @@ class MainTimelineTableViewCell: VibrantTableViewCell {
 	private let feedNameView = MainTimelineTableViewCell.singleLineUILabel()
 
 	private lazy var iconView = IconView()
-	
+
 	private lazy var starView = {
 		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
 	}()
-	
+
 	private var unreadIndicatorPropertyAnimator: UIViewPropertyAnimator?
 	private var starViewPropertyAnimator: UIViewPropertyAnimator?
 
@@ -31,12 +31,12 @@ class MainTimelineTableViewCell: VibrantTableViewCell {
 			updateSubviews()
 		}
 	}
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	override func prepareForReuse() {
 		unreadIndicatorPropertyAnimator?.stopAnimation(true)
 		unreadIndicatorPropertyAnimator = nil
@@ -46,19 +46,19 @@ class MainTimelineTableViewCell: VibrantTableViewCell {
 		starViewPropertyAnimator = nil
 		starView.isHidden = true
 	}
-	
+
 	override var frame: CGRect {
 		didSet {
 			setNeedsLayout()
 		}
 	}
-	
+
 	override func updateVibrancy(animated: Bool) {
 		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
 		updateLabelVibrancy(summaryView, color: labelColor, animated: animated)
 		updateLabelVibrancy(dateView, color: secondaryLabelColor, animated: animated)
 		updateLabelVibrancy(feedNameView, color: secondaryLabelColor, animated: animated)
-		
+
 		if animated {
 			UIView.animate(withDuration: Self.duration) {
 				if self.isHighlighted || self.isSelected {
@@ -75,16 +75,16 @@ class MainTimelineTableViewCell: VibrantTableViewCell {
 			}
 		}
 	}
-	
+
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		let layout = updatedLayout(width: size.width)
 		return CGSize(width: size.width, height: layout.height)
 	}
 
 	override func layoutSubviews() {
-		
+
 		super.layoutSubviews()
-		
+
 		let layout = updatedLayout(width: bounds.width)
 
 		unreadIndicatorView.setFrameIfNotEqual(layout.unreadIndicatorRect)
@@ -97,11 +97,11 @@ class MainTimelineTableViewCell: VibrantTableViewCell {
 
 		separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 	}
-	
+
 	func setIconImage(_ image: IconImage) {
 		iconView.iconImage = image
 	}
-	
+
 }
 
 // MARK: - Private
@@ -115,7 +115,7 @@ private extension MainTimelineTableViewCell {
 		label.adjustsFontForContentSizeCategory = true
 		return label
 	}
-	
+
 	static func multiLineUILabel() -> UILabel {
 		let label = NonIntrinsicLabel()
 		label.numberOfLines = 0
@@ -124,16 +124,16 @@ private extension MainTimelineTableViewCell {
 		label.adjustsFontForContentSizeCategory = true
 		return label
 	}
-	
+
 	func setFrame(for label: UILabel, rect: CGRect) {
-		
+
 		if Int(floor(rect.height)) == 0 || Int(floor(rect.width)) == 0 {
 			hideView(label)
 		} else {
 			showView(label)
 			label.setFrameIfNotEqual(rect)
 		}
-		
+
 	}
 
 	func addSubviewAtInit(_ view: UIView, hidden: Bool) {
@@ -141,9 +141,9 @@ private extension MainTimelineTableViewCell {
 		view.translatesAutoresizingMaskIntoConstraints = false
 		view.isHidden = hidden
 	}
-	
+
 	func commonInit() {
-		
+
 		addSubviewAtInit(titleView, hidden: false)
 		addSubviewAtInit(summaryView, hidden: true)
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
@@ -152,7 +152,7 @@ private extension MainTimelineTableViewCell {
 		addSubviewAtInit(iconView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
 	}
-	
+
 	func updatedLayout(width: CGFloat) -> MainTimelineCellLayout {
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			return MainTimelineAccessibilityCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
@@ -160,25 +160,25 @@ private extension MainTimelineTableViewCell {
 			return MainTimelineDefaultCellLayout(width: width, insets: safeAreaInsets, cellData: cellData)
 		}
 	}
-	
+
 	func updateTitleView() {
 		titleView.font = MainTimelineDefaultCellLayout.titleFont
 		titleView.textColor = labelColor
 		updateTextFieldAttributedText(titleView, cellData?.attributedTitle)
 	}
-	
+
 	func updateSummaryView() {
 		summaryView.font = MainTimelineDefaultCellLayout.summaryFont
 		summaryView.textColor = labelColor
 		updateTextFieldText(summaryView, cellData?.summary)
 	}
-	
+
 	func updateDateView() {
 		dateView.font = MainTimelineDefaultCellLayout.dateFont
 		dateView.textColor = secondaryLabelColor
 		updateTextFieldText(dateView, cellData.dateString)
 	}
-	
+
 	func updateTextFieldText(_ label: UILabel, _ text: String?) {
 		let s = text ?? ""
 		if label.text != s {
@@ -199,7 +199,7 @@ private extension MainTimelineTableViewCell {
 			setNeedsLayout()
 		}
 	}
-	
+
 	func updateFeedNameView() {
 		switch cellData.showFeedName {
 		case .feed:
@@ -216,7 +216,7 @@ private extension MainTimelineTableViewCell {
 			hideView(feedNameView)
 		}
 	}
-	
+
 	func updateUnreadIndicator() {
 		if !unreadIndicatorView.isHidden && cellData.read && !cellData.starred {
 			unreadIndicatorPropertyAnimator = UIViewPropertyAnimator(duration: 0.66, curve: .easeInOut) { [weak self] in
@@ -233,7 +233,7 @@ private extension MainTimelineTableViewCell {
 			showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
 		}
 	}
-	
+
 	func updateStarView() {
 		if !starView.isHidden && cellData.read && !cellData.starred {
 			starViewPropertyAnimator = UIViewPropertyAnimator(duration: 0.66, curve: .easeInOut) { [weak self] in
@@ -250,7 +250,7 @@ private extension MainTimelineTableViewCell {
 			showOrHideView(starView, !cellData.starred)
 		}
 	}
-	
+
 	func updateIconImage() {
 		guard let image = cellData.iconImage, cellData.showIcon else {
 			makeIconEmpty()
@@ -258,20 +258,20 @@ private extension MainTimelineTableViewCell {
 		}
 
 		showView(iconView)
-		
+
 		if iconView.iconImage !== cellData.iconImage {
 			iconView.iconImage = image
 			setNeedsLayout()
 		}
 	}
-	
+
 	func updateAccessiblityLabel() {
 		let starredStatus = cellData.starred ? "\(NSLocalizedString("Starred", comment: "Starred article for accessibility")), " : ""
 		let unreadStatus = cellData.read ? "" : "\(NSLocalizedString("Unread", comment: "Unread")), "
 		let label = starredStatus + unreadStatus + "\(cellData.feedName), \(cellData.title), \(cellData.summary), \(cellData.dateString)"
 		accessibilityLabel = label
 	}
-	
+
 	func makeIconEmpty() {
 		if iconView.iconImage != nil {
 			iconView.iconImage = nil
@@ -279,23 +279,23 @@ private extension MainTimelineTableViewCell {
 		}
 		hideView(iconView)
 	}
-	
+
 	func hideView(_ view: UIView) {
 		if !view.isHidden {
 			view.isHidden = true
 		}
 	}
-	
+
 	func showView(_ view: UIView) {
 		if view.isHidden {
 			view.isHidden = false
 		}
 	}
-	
+
 	func showOrHideView(_ view: UIView, _ shouldHide: Bool) {
 		shouldHide ? hideView(view) : showView(view)
 	}
-	
+
 	func updateSubviews() {
 		updateTitleView()
 		updateSummaryView()
@@ -306,5 +306,5 @@ private extension MainTimelineTableViewCell {
 		updateIconImage()
 		updateAccessiblityLabel()
 	}
-	
+
 }

@@ -9,7 +9,7 @@
 import UIKit
 
 public extension UIBarButtonItem {
-	
+
 	@IBInspectable var accEnabled: Bool {
 		get {
 			return isAccessibilityElement
@@ -18,7 +18,7 @@ public extension UIBarButtonItem {
 			isAccessibilityElement = newValue
 		}
 	}
-	
+
 	@IBInspectable var accLabelText: String? {
 		get {
 			return accessibilityLabel
@@ -27,5 +27,5 @@ public extension UIBarButtonItem {
 			accessibilityLabel = newValue
 		}
 	}
-	
+
 }

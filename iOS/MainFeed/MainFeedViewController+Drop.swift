@@ -12,16 +12,16 @@ import Account
 import RSTree
 
 extension MainFeedViewController: UITableViewDropDelegate {
-	
+
 	func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
 		return session.localDragSession != nil
 	}
-	
+
 	func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-		guard let destIndexPath = destinationIndexPath,	destIndexPath.section > 0, tableView.hasActiveDrag else {
+		guard let destIndexPath = destinationIndexPath, destIndexPath.section > 0, tableView.hasActiveDrag else {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
-			
+
 		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? SidebarItem,
 			  let destAccount = destFeed.account,
 			  let destCell = tableView.cellForRow(at: destIndexPath) else {
@@ -48,7 +48,7 @@ extension MainFeedViewController: UITableViewDropDelegate {
 		}
 
 	}
-	
+
 	func tableView(_ tableView: UITableView, performDropWith dropCoordinator: UITableViewDropCoordinator) {
 		guard let dragItem = dropCoordinator.items.first?.dragItem,
 			  let dragNode = dragItem.localObject as? Node,
@@ -56,17 +56,17 @@ extension MainFeedViewController: UITableViewDropDelegate {
 			  let destIndexPath = dropCoordinator.destinationIndexPath else {
 				  return
 			  }
-		
+
 		let isFolderDrop: Bool = {
 			if coordinator.nodeFor(destIndexPath)?.representedObject is Folder, let propCell = tableView.cellForRow(at: destIndexPath) {
 				return dropCoordinator.session.location(in: propCell).y >= 0
 			}
 			return false
 		}()
-		
+
 		// Based on the drop we have to determine a node to start looking for a parent container.
 		let destNode: Node? = {
-			
+
 			if isFolderDrop {
 				return coordinator.nodeFor(destIndexPath)
 			} else {
@@ -78,7 +78,7 @@ extension MainFeedViewController: UITableViewDropDelegate {
 					return nil
 				}
 			}
-				
+
 		}()
 
 		// Now we start looking for the parent container
@@ -90,9 +90,9 @@ extension MainFeedViewController: UITableViewDropDelegate {
 				return coordinator.rootNode.childAtIndex(destIndexPath.section)?.representedObject as? Account
 			}
 		}()
-		
+
 		guard let destination = destinationContainer, let feed = dragNode.representedObject as? Feed else { return }
-		
+
 		if source.account == destination.account {
 			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
 		} else {
@@ -102,7 +102,7 @@ extension MainFeedViewController: UITableViewDropDelegate {
 
 	func moveFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		guard sourceContainer !== destinationContainer else { return }
-		
+
 		BatchUpdate.shared.start()
 		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
 			BatchUpdate.shared.end()
@@ -114,11 +114,11 @@ extension MainFeedViewController: UITableViewDropDelegate {
 			}
 		}
 	}
-	
+
 	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
-		
+
 		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
-			
+
 			BatchUpdate.shared.start()
 			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
@@ -137,9 +137,9 @@ extension MainFeedViewController: UITableViewDropDelegate {
 					self.presentError(error)
 				}
 			}
-			
+
 		} else {
-			
+
 			BatchUpdate.shared.start()
 			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {
@@ -158,9 +158,8 @@ extension MainFeedViewController: UITableViewDropDelegate {
 					self.presentError(error)
 				}
 			}
-			
+
 		}
 	}
-
 
 }

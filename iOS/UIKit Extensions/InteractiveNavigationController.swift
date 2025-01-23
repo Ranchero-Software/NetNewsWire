@@ -9,7 +9,7 @@
 import UIKit
 
 class InteractiveNavigationController: UINavigationController {
-	
+
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
 
 	static func template() -> UINavigationController {
@@ -17,13 +17,13 @@ class InteractiveNavigationController: UINavigationController {
 		navController.configure()
 		return navController
 	}
-	
+
 	static func template(rootViewController: UIViewController) -> UINavigationController {
 		let navController = InteractiveNavigationController(rootViewController: rootViewController)
 		navController.configure()
 		return navController
 	}
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		poppableDelegate.navigationController = self
@@ -40,21 +40,21 @@ class InteractiveNavigationController: UINavigationController {
 // MARK: Private
 
 private extension InteractiveNavigationController {
-	
+
 	func configure() {
 		isToolbarHidden = false
-		
+
 		let navigationStandardAppearance = UINavigationBarAppearance()
 		navigationStandardAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
 		navigationStandardAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
 		navigationBar.standardAppearance = navigationStandardAppearance
-		
+
 		let scrollEdgeStandardAppearance = UINavigationBarAppearance()
 		scrollEdgeStandardAppearance.backgroundColor = .systemBackground
 		navigationBar.scrollEdgeAppearance = scrollEdgeStandardAppearance
-		
+
 		navigationBar.tintColor = AppAssets.primaryAccentColor
-		
+
 		let toolbarAppearance = UIToolbarAppearance()
 		toolbar.standardAppearance = toolbarAppearance
 		toolbar.compactAppearance = toolbarAppearance

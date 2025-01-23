@@ -46,7 +46,7 @@ class NewsBlurAccountViewController: UITableViewController {
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 	}
-	
+
 	private func setupFooter() {
 		footerLabel.text = NSLocalizedString("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account?", comment: "NewsBlur")
 	}
@@ -93,7 +93,7 @@ class NewsBlurAccountViewController: UITableViewController {
 			showError(NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error"))
 			return
 		}
-		
+
 		let password = passwordTextField.text ?? ""
 
 		startAnimatingActivityIndicator()
@@ -122,7 +122,7 @@ class NewsBlurAccountViewController: UITableViewController {
 						try self.account?.storeCredentials(basicCredentials)
 						try self.account?.storeCredentials(sessionCredentials)
 
-						self.account?.refreshAll() { result in
+						self.account?.refreshAll { result in
 							switch result {
 							case .success:
 								break
@@ -145,7 +145,7 @@ class NewsBlurAccountViewController: UITableViewController {
 
 		}
 	}
-	
+
 	@IBAction func signUpWithProvider(_ sender: Any) {
 		let url = URL(string: "https://newsblur.com")!
 		let safari = SFSafariViewController(url: url)

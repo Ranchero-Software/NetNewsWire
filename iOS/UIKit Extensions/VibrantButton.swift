@@ -9,7 +9,7 @@
 import UIKit
 
 class VibrantButton: UIButton {
-	
+
 	@IBInspectable var backgroundHighlightColor: UIColor = AppAssets.secondaryAccentColor
 
 	override init(frame: CGRect) {
@@ -20,7 +20,7 @@ class VibrantButton: UIButton {
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	private func commonInit() {
 		setTitleColor(AppAssets.vibrantTextColor, for: .highlighted)
 		let disabledColor = AppAssets.secondaryAccentColor.withAlphaComponent(0.5)
@@ -47,5 +47,5 @@ class VibrantButton: UIButton {
         isHighlighted = false
         super.touchesCancelled(touches, with: event)
     }
-	
+
 }
