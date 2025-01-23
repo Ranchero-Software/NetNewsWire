@@ -22,16 +22,16 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 		self.organisedItemsProvider = organisedItemsProvider
 		self.log = log
 	}
-	
+
 	override func run() {
 		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
-		
+
 		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { databaseError in
 			if let error = databaseError {
 				self.didFinish(with: error)
 				return
 			}
-			
+
 			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", feedIDsAndItems.count, self.organisedItemsProvider.parsedItemsByFeedProviderName)
 			self.didFinish()
 		}

@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlyAddFeedToCollectionService {
-	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
+	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> Void)
 }
 
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
@@ -29,13 +29,13 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 		self.collectionId = collectionId
 		self.service = service
 	}
-	
+
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
-	
+
 	var resource: FeedlyResourceId {
 		return feedResource
 	}
-	
+
 	override func run() {
 		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
 			guard let self = self else {
@@ -56,15 +56,15 @@ private extension FeedlyAddFeedToCollectionOperation {
 		switch result {
 		case .success(let feedlyFeeds):
 			feedsAndFolders = [(feedlyFeeds, folder)]
-			
+
 			let feedsWithCreatedFeedId = feedlyFeeds.filter { $0.id == resource.id }
-			
+
 			if feedsWithCreatedFeedId.isEmpty {
 				didFinish(with: AccountError.createErrorNotFound)
 			} else {
 				didFinish()
 			}
-			
+
 		case .failure(let error):
 			didFinish(with: error)
 		}

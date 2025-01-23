@@ -15,11 +15,11 @@ public struct OAuthRefreshAccessTokenRequest: Encodable {
 	public let grantType = "refresh_token"
 	public var refreshToken: String
 	public var scope: String?
-	
+
 	// Possibly not part of the standard but specific to certain implementations (e.g.: Feedly).
 	public var clientId: String
 	public var clientSecret: String
-	
+
 	public init(refreshToken: String, scope: String?, client: OAuthAuthorizationClient) {
 		self.refreshToken = refreshToken
 		self.scope = scope
@@ -32,15 +32,15 @@ public struct OAuthRefreshAccessTokenRequest: Encodable {
 /// https://tools.ietf.org/html/rfc6749#section-6
 public protocol OAuthAcessTokenRefreshRequesting {
 	associatedtype AccessTokenResponse: OAuthAccessTokenResponse
-	
+
 	/// Access tokens expire. Perform a request for a fresh access token given the long life refresh token received when authorization was granted.
 	/// - Parameter refreshRequest: The refresh token and other information the authorization server requires to grant the client fresh access tokens on the user's behalf.
 	/// - Parameter completion: On success, the access token response appropriate for concrete type's service. Both the access and refresh token should be stored, preferably on the Keychain. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
-	func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest, completion: @escaping (Result<AccessTokenResponse, Error>) -> ())
+	func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest, completion: @escaping (Result<AccessTokenResponse, Error>) -> Void)
 }
 
 /// Implemented by concrete types to perform the actual request.
 protocol OAuthAccessTokenRefreshing: AnyObject {
-	
-	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+
+	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> Void)
 }

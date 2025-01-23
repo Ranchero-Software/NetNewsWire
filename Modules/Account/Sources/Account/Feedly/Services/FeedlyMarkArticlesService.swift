@@ -13,7 +13,7 @@ enum FeedlyMarkAction: String {
 	 case unread
 	 case saved
 	 case unsaved
-	 
+
 	/// These values are paired with the "action" key in POST requests to the markers API.
 	/// See for example: https://developer.feedly.com/v3/markers/#mark-one-or-multiple-articles-as-read
 	 var actionValue: String {
@@ -31,5 +31,5 @@ enum FeedlyMarkAction: String {
  }
 
 protocol FeedlyMarkArticlesService: AnyObject {
-	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ())
+	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> Void)
 }

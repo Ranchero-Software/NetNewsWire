@@ -28,14 +28,13 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	private let getStreamContentsService: FeedlyGetStreamContentsService
 	private let log: OSLog
 	private var feedResourceId: FeedlyFeedResourceId?
-	var addCompletionHandler: ((Result<Feed, Error>) -> ())?
+	var addCompletionHandler: ((Result<Feed, Error>) -> Void)?
 
 	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress, log: OSLog) throws {
-		
 
 		let validator = FeedlyFeedContainerValidator(container: container)
 		(self.folder, self.collectionId) = try validator.getValidContainer()
-		
+
 		self.url = url
 		self.operationQueue.suspend()
 		self.account = account
@@ -50,14 +49,14 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		super.init()
 
 		self.downloadProgress = progress
-		
+
 		let search = FeedlySearchOperation(query: url, locale: .current, service: searchService)
 		search.delegate = self
 		search.searchDelegate = self
 		search.downloadProgress = progress
 		self.operationQueue.add(search)
 	}
-	
+
 	override func run() {
 		operationQueue.resume()
 	}
@@ -67,7 +66,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		addCompletionHandler = nil
 		super.didCancel()
 	}
-	
+
 	override func didFinish(with error: Error) {
 		assert(Thread.isMainThread)
 		addCompletionHandler?(.failure(error))
@@ -82,33 +81,33 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		guard let first = response.results.first else {
 			return didFinish(with: AccountError.createErrorNotFound)
 		}
-		
+
 		let feedResourceId = FeedlyFeedResourceId(id: first.feedId)
 		self.feedResourceId = feedResourceId
-		
+
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: feedResourceId, feedName: feedName, collectionId: collectionId, service: addToCollectionService)
 		addRequest.delegate = self
 		addRequest.downloadProgress = downloadProgress
 		operationQueue.add(addRequest)
-		
+
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 		createFeeds.delegate = self
 		createFeeds.addDependency(addRequest)
 		createFeeds.downloadProgress = downloadProgress
 		operationQueue.add(createFeeds)
-		
+
 		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: syncUnreadIdsService, database: database, newerThan: nil, log: log)
 		syncUnread.addDependency(createFeeds)
 		syncUnread.downloadProgress = downloadProgress
 		syncUnread.delegate = self
 		operationQueue.add(syncUnread)
-		
+
 		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil, log: log)
 		syncFeed.addDependency(syncUnread)
 		syncFeed.downloadProgress = downloadProgress
 		syncFeed.delegate = self
 		operationQueue.add(syncFeed)
-		
+
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = downloadProgress
@@ -116,16 +115,16 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		finishOperation.delegate = self
 		operationQueue.add(finishOperation)
 	}
-	
+
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		addCompletionHandler?(.failure(error))
 		addCompletionHandler = nil
-		
+
 		os_log(.debug, log: log, "Unable to add new feed: %{public}@.", error as NSError)
-		
+
 		cancel()
 	}
-	
+
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
 		guard !isCanceled else {
 			return
@@ -133,14 +132,13 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		defer {
 			didFinish()
 		}
-		
+
 		guard let handler = addCompletionHandler else {
 			return
 		}
 		if let feedResource = feedResourceId, let feed = folder.existingFeed(withFeedID: feedResource.id) {
 			handler(.success(feed))
-		}
-		else {
+		} else {
 			handler(.failure(AccountError.createErrorNotFound))
 		}
 		addCompletionHandler = nil

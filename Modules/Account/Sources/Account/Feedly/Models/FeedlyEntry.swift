@@ -11,30 +11,30 @@ import Foundation
 struct FeedlyEntry: Decodable {
     /// the unique, immutable ID for this particular article.
     let id: String
-    
+
     /// the article’s title. This string does not contain any HTML markup.
     let title: String?
-    
+
     struct Content: Decodable {
-		
+
 		enum Direction: String, Decodable {
 			case leftToRight = "ltr"
 			case rightToLeft = "rtl"
 		}
-		
+
         let content: String?
         let direction: Direction?
     }
-    
+
     /// This object typically has two values: “content” for the content itself, and “direction” (“ltr” for left-to-right, “rtl” for right-to-left). The content itself contains sanitized HTML markup.
     let content: Content?
-    
+
     /// content object the article summary. See the content object above.
     let summary: Content?
-    
+
     /// the author’s name
     let author: String?
-    
+
     ///  the immutable timestamp, in ms, when this article was processed by the feedly Cloud servers.
     let crawled: Date
 
@@ -43,7 +43,7 @@ struct FeedlyEntry: Decodable {
 
 	/// the feed from which this article was crawled. If present, “streamId” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
 	let origin: FeedlyOrigin?
-	
+
 	/// Used to help find the URL to visit an article on a web site.
 	/// See https://groups.google.com/forum/#!searchin/feedly-cloud/feed$20url%7Csort:date/feedly-cloud/Rx3dVd4aTFQ/Hf1ZfLJoCQAJ
 	let canonical: [FeedlyLink]?

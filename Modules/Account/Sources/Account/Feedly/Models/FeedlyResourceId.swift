@@ -10,7 +10,7 @@ import Foundation
 
 /// The kinds of Resource Ids is documented here: https://developer.feedly.com/cloud/
 protocol FeedlyResourceId {
-	
+
 	/// The resource Id from Feedly.
 	var id: String { get }
 }
@@ -18,7 +18,7 @@ protocol FeedlyResourceId {
 /// The Feed Resource is documented here: https://developer.feedly.com/cloud/
 struct FeedlyFeedResourceId: FeedlyResourceId {
 	let id: String
-	
+
 	/// The location of the kind of resource a concrete type represents.
 	/// If the concrete type cannot strip the resource type from the Id, it should just return the Id
 	/// since the Id is a legitimate URL.
@@ -32,7 +32,7 @@ struct FeedlyFeedResourceId: FeedlyResourceId {
 			mutant.removeSubrange(range)
 			return mutant
 		}
-		
+
 		// It seems values like "something/https://my.blog/posts.xml" is a legit URL.
 		return id
 	}
@@ -46,22 +46,22 @@ extension FeedlyFeedResourceId {
 
 struct FeedlyCategoryResourceId: FeedlyResourceId {
 	let id: String
-	
+
 	enum Global {
-		
+
 		static func uncategorized(for userId: String) -> FeedlyCategoryResourceId {
 			// https://developer.feedly.com/cloud/#global-resource-ids
 			let id = "user/\(userId)/category/global.uncategorized"
 			return FeedlyCategoryResourceId(id: id)
 		}
-		
+
 		/// All articles from all the feeds the user subscribes to.
 		static func all(for userId: String) -> FeedlyCategoryResourceId {
 			// https://developer.feedly.com/cloud/#global-resource-ids
 			let id = "user/\(userId)/category/global.all"
 			return FeedlyCategoryResourceId(id: id)
 		}
-		
+
 		/// All articles from all the feeds the user loves most.
 		static func mustRead(for userId: String) -> FeedlyCategoryResourceId {
 			// https://developer.feedly.com/cloud/#global-resource-ids
@@ -73,9 +73,9 @@ struct FeedlyCategoryResourceId: FeedlyResourceId {
 
 struct FeedlyTagResourceId: FeedlyResourceId {
 	let id: String
-	
+
 	enum Global {
-		
+
 		static func saved(for userId: String) -> FeedlyTagResourceId {
 			// https://developer.feedly.com/cloud/#global-resource-ids
 			let id = "user/\(userId)/tag/global.saved"

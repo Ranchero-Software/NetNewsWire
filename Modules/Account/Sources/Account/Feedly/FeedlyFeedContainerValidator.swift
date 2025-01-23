@@ -10,16 +10,16 @@ import Foundation
 
 struct FeedlyFeedContainerValidator {
 	var container: Container
-	
+
 	func getValidContainer() throws -> (Folder, String) {
 		guard let folder = container as? Folder else {
 			throw FeedlyAccountDelegateError.addFeedChooseFolder
 		}
-		
+
 		guard let collectionId = folder.externalID else {
 			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder)
 		}
-		
+
 		return (folder, collectionId)
 	}
 }

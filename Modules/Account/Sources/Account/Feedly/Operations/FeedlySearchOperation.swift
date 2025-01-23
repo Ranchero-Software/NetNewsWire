@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlySearchService: AnyObject {
-	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> ())
+	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> Void)
 }
 
 protocol FeedlySearchOperationDelegate: AnyObject {
@@ -30,7 +30,7 @@ class FeedlySearchOperation: FeedlyOperation {
 		self.locale = locale
 		self.searchService = service
 	}
-	
+
 	override func run() {
 		searchService.getFeeds(for: query, count: 1, locale: locale.identifier) { result in
 			switch result {
@@ -38,7 +38,7 @@ class FeedlySearchOperation: FeedlyOperation {
 				assert(Thread.isMainThread)
 				self.searchDelegate?.feedlySearchOperation(self, didGet: response)
 				self.didFinish()
-				
+
 			case .failure(let error):
 				self.didFinish(with: error)
 			}

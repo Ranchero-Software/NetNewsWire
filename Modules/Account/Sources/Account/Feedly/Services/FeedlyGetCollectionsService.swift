@@ -9,5 +9,5 @@
 import Foundation
 
 protocol FeedlyGetCollectionsService: AnyObject {
-	func getCollections(completion: @escaping (Result<[FeedlyCollection], Error>) -> ())
+	func getCollections(completion: @escaping (Result<[FeedlyCollection], Error>) -> Void)
 }

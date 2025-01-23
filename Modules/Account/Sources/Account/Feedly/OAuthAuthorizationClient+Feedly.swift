@@ -10,7 +10,7 @@ import Foundation
 import Secrets
 
 extension OAuthAuthorizationClient {
-	
+
 	static var feedlyCloudClient: OAuthAuthorizationClient {
 		/// Models private NetNewsWire client secrets.
 		/// These placeholders are substituted at build time using a Run Script phase with build settings.
@@ -20,7 +20,7 @@ extension OAuthAuthorizationClient {
 										state: nil,
 										secret: SecretKey.feedlyClientSecret)
 	}
-	
+
 	static var feedlySandboxClient: OAuthAuthorizationClient {
 		/// We use this funky redirect URI because ASWebAuthenticationSession will try to load http://localhost URLs.
 		/// See https://developer.feedly.com/v3/sandbox/ for more information.

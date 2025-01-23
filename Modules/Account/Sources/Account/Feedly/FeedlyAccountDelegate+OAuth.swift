@@ -25,9 +25,9 @@ public struct FeedlyOAuthAccessTokenResponse: Decodable, OAuthAccessTokenRespons
 }
 
 extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
-	
+
 	private static let oauthAuthorizationGrantScope = "https://cloud.feedly.com/subscriptions"
-	
+
 	static func oauthAuthorizationCodeGrantRequest() -> URLRequest {
 		let client = environment.oauthAuthorizationClient
 		let authorizationRequest = OAuthAuthorizationRequest(clientId: client.id,
@@ -37,8 +37,8 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 		let baseURLComponents = environment.baseUrlComponents
 		return FeedlyAPICaller.authorizationCodeUrlRequest(for: authorizationRequest, baseUrlComponents: baseURLComponents)
 	}
-	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> Void) {
 		let client = environment.oauthAuthorizationClient
 		let request = OAuthAccessTokenRequest(authorizationResponse: response,
 											  scope: oauthAuthorizationGrantScope,
@@ -48,18 +48,18 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 			switch result {
 			case .success(let response):
 				let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
-				
+
 				let refreshToken: Credentials? = {
 					guard let token = response.refreshToken else {
 						return nil
 					}
 					return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
 				}()
-				
+
 				let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
-				
+
 				completion(.success(grant))
-				
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -68,25 +68,25 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 }
 
 extension FeedlyAccountDelegate: OAuthAccessTokenRefreshing {
-	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> Void) {
 		let request = OAuthRefreshAccessTokenRequest(refreshToken: refreshToken, scope: nil, client: client)
-		
+
 		caller.refreshAccessToken(request) { result in
 			switch result {
 			case .success(let response):
 				let accessToken = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
-				
+
 				let refreshToken: Credentials? = {
 					guard let token = response.refreshToken else {
 						return nil
 					}
 					return Credentials(type: .oauthRefreshToken, username: response.id, secret: token)
 				}()
-				
+
 				let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
-				
+
 				completion(.success(grant))
-				
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
