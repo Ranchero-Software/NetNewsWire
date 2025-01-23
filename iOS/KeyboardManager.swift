@@ -47,7 +47,18 @@ class KeyboardManager {
 
 	static func createKeyCommand(title: String, action: String, input: String, modifiers: UIKeyModifierFlags) -> UIKeyCommand {
 		let selector = NSSelectorFromString(action)
-		let keyCommand = UIKeyCommand(title: title, image: nil, action: selector, input: input, modifierFlags: modifiers, propertyList: nil, alternates: [], discoverabilityTitle: nil, attributes: [], state: .on)
+		let keyCommand = UIKeyCommand(
+			title: title,
+			image: nil,
+			action: selector,
+			input: input,
+			modifierFlags: modifiers,
+			propertyList: nil,
+			alternates: [],
+			discoverabilityTitle: nil,
+			attributes: [],
+			state: .on
+		)
 		keyCommand.wantsPriorityOverSystemBehavior = true
 		return keyCommand
 	}
@@ -91,12 +102,11 @@ private extension KeyboardManager {
 			return "\u{8}"
 		case "[deletefunction]":
 			return nil
-        case "[tab]":
-            return "\t"
+		case "[tab]":
+			return "\t"
 		default:
 			return key
 		}
-
 	}
 
 	static func createKeyModifierFlags(keyEntry: [String: Any]) -> UIKeyModifierFlags {

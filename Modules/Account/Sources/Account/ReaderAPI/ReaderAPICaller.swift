@@ -476,11 +476,11 @@ final class ReaderAPICaller: NSObject {
 					switch result {
 					case .success:
 						completion(.success(()))
-						case .failure(let error):
+					case .failure(let error):
 						completion(.failure(error))
 					}
 				})
-
+				
 			case .failure(let error):
 				completion(.failure(error))
 			}
