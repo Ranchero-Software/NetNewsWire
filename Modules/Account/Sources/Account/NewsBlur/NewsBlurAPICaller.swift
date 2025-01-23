@@ -77,7 +77,7 @@ final class NewsBlurAPICaller: NSObject {
 				.appendingPathComponent("reader/feeds")
 				.appendingQueryItems([
 					URLQueryItem(name: "flat", value: "true"),
-					URLQueryItem(name: "update_counts", value: "false"),
+					URLQueryItem(name: "update_counts", value: "false")
 				])
 
 		requestData(callURL: url, resultType: NewsBlurFeedsResponse.self) { result in
@@ -94,7 +94,7 @@ final class NewsBlurAPICaller: NSObject {
 		let url = baseURL
 				.appendingPathComponent(endpoint)
 				.appendingQueryItems([
-					URLQueryItem(name: "include_timestamps", value: "true"),
+					URLQueryItem(name: "include_timestamps", value: "true")
 				])
 
 		requestData(
@@ -114,14 +114,14 @@ final class NewsBlurAPICaller: NSObject {
 
 	func retrieveUnreadStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
 		retrieveStoryHashes(
-				endpoint: "reader/unread_story_hashes", 
+				endpoint: "reader/unread_story_hashes",
 				completion: completion
 		)
 	}
 
 	func retrieveStarredStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
 		retrieveStoryHashes(
-				endpoint: "reader/starred_story_hashes", 
+				endpoint: "reader/starred_story_hashes",
 				completion: completion
 		)
 	}
@@ -134,7 +134,7 @@ final class NewsBlurAPICaller: NSObject {
 					URLQueryItem(name: "order", value: "newest"),
 					URLQueryItem(name: "read_filter", value: "all"),
 					URLQueryItem(name: "include_hidden", value: "false"),
-					URLQueryItem(name: "include_story_content", value: "true"),
+					URLQueryItem(name: "include_story_content", value: "true")
 				])
 
 		requestData(callURL: url, resultType: NewsBlurStoriesResponse.self) { result in
@@ -167,7 +167,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func markAsUnread(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/mark_story_hash_as_unread", 
+				endpoint: "reader/mark_story_hash_as_unread",
 				payload: NewsBlurStoryStatusChange(hashes: hashes),
 				completion: completion
 		)
@@ -175,7 +175,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func markAsRead(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/mark_story_hashes_as_read", 
+				endpoint: "reader/mark_story_hashes_as_read",
 				payload: NewsBlurStoryStatusChange(hashes: hashes),
 				completion: completion
 		)
@@ -183,7 +183,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func star(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/mark_story_hash_as_starred", 
+				endpoint: "reader/mark_story_hash_as_starred",
 				payload: NewsBlurStoryStatusChange(hashes: hashes),
 				completion: completion
 		)
@@ -191,7 +191,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/mark_story_hash_as_unstarred", 
+				endpoint: "reader/mark_story_hash_as_unstarred",
 				payload: NewsBlurStoryStatusChange(hashes: hashes),
 				completion: completion
 		)
@@ -199,7 +199,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func addFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/add_folder", 
+				endpoint: "reader/add_folder",
 				payload: NewsBlurFolderChange.add(name),
 				completion: completion
 		)
@@ -207,7 +207,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func renameFolder(with folder: String, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/rename_folder", 
+				endpoint: "reader/rename_folder",
 				payload: NewsBlurFolderChange.rename(folder, name),
 				completion: completion
 		)
@@ -215,7 +215,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func removeFolder(named name: String, feedIDs: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/delete_folder", 
+				endpoint: "reader/delete_folder",
 				payload: NewsBlurFolderChange.delete(name, feedIDs),
 				completion: completion
 		)
@@ -223,7 +223,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func addURL(_ url: String, folder: String?, completion: @escaping (Result<NewsBlurFeed?, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/add_url", 
+				endpoint: "reader/add_url",
 				payload: NewsBlurFeedChange.add(url, folder),
 				resultType: NewsBlurAddURLResponse.self
 		) { result in
@@ -238,7 +238,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	func renameFeed(feedID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		sendUpdates(
-				endpoint: "reader/rename_feed", 
+				endpoint: "reader/rename_feed",
 				payload: NewsBlurFeedChange.rename(feedID, newName)
 		) { result in
 			switch result {

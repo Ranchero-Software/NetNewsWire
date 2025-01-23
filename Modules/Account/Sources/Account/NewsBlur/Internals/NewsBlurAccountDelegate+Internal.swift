@@ -17,7 +17,7 @@ import SyncDatabase
 import os.log
 
 extension NewsBlurAccountDelegate {
-	
+
 	func refreshFeeds(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		os_log(.debug, log: log, "Refreshing feeds...")
 
@@ -111,8 +111,7 @@ extension NewsBlurAccountDelegate {
 				feed.homePageURL = feed.homePageURL
 				feed.externalID = String(feed.feedID)
 				feed.faviconURL = feed.faviconURL
-			}
-			else {
+			} else {
 				feedsToAdd.insert(feed)
 			}
 		}
@@ -178,7 +177,7 @@ extension NewsBlurAccountDelegate {
 				}
 			}
 		}
-		
+
 		// Handle the account level feeds.  If there isn't the special folder, that means all the feeds are
 		// in folders and we need to remove them all from the account level.
 		if let folderRelationships = newsBlurFolderDict[" "] {
@@ -193,7 +192,7 @@ extension NewsBlurAccountDelegate {
 				account.removeFeed(feed)
 			}
 		}
-		
+
 	}
 
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
@@ -297,12 +296,12 @@ extension NewsBlurAccountDelegate {
 			apiCall(storyHashGroup) { result in
 				switch result {
 				case .success:
-					self.database.deleteSelectedForProcessing(storyHashGroup.map { String($0) } )
+					self.database.deleteSelectedForProcessing(storyHashGroup.map { String($0) })
 					group.leave()
 				case .failure(let error):
 					errorOccurred = true
 					os_log(.error, log: self.log, "Story status sync call failed: %@.", error.localizedDescription)
-					self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
+					self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) })
 					group.leave()
 				}
 			}
@@ -323,10 +322,10 @@ extension NewsBlurAccountDelegate {
 			return
 		}
 
-		database.selectPendingReadStatusArticleIDs() { result in
+		database.selectPendingReadStatusArticleIDs { result in
 			func process(_ pendingStoryHashes: Set<String>) {
 
-				let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
+				let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash })
 				let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
 
 				account.fetchUnreadArticleIDs { articleIDsResult in
@@ -335,7 +334,7 @@ extension NewsBlurAccountDelegate {
 					}
 
 					let group = DispatchGroup()
-					
+
 					// Mark articles as unread
 					let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
 					group.enter()
@@ -349,7 +348,7 @@ extension NewsBlurAccountDelegate {
 					account.markAsRead(deltaReadArticleIDs) { _ in
 						group.leave()
 					}
-					
+
 					group.notify(queue: DispatchQueue.main) {
 						completion()
 					}
@@ -371,10 +370,10 @@ extension NewsBlurAccountDelegate {
 			return
 		}
 
-		database.selectPendingStarredStatusArticleIDs() { result in
+		database.selectPendingStarredStatusArticleIDs { result in
 			func process(_ pendingStoryHashes: Set<String>) {
 
-				let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
+				let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash })
 				let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
 
 				account.fetchStarredArticleIDs { articleIDsResult in
@@ -383,7 +382,7 @@ extension NewsBlurAccountDelegate {
 					}
 
 					let group = DispatchGroup()
-					
+
 					// Mark articles as starred
 					let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
 					group.enter()
@@ -475,7 +474,7 @@ extension NewsBlurAccountDelegate {
 						completion(.success(()))
 						return
 					}
-					
+
 					self.downloadFeed(account: account, feed: feed, page: page + 1, completion: completion)
 				}
 
