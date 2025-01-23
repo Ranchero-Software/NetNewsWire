@@ -22,7 +22,7 @@ final class ArticleSearchInfo: Hashable {
 	let summary: String?
 	let authorsNames: String?
 	let searchRowID: Int?
-	
+
 	var preferredText: String {
 		if let body = contentHTML, !body.isEmpty {
 			return body
@@ -117,7 +117,7 @@ final class SearchTable: DatabaseTable {
 
 	/// Index new articles.
 	func indexNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-		let articleSearchInfos = Set(articles.map{ ArticleSearchInfo(article: $0) })
+		let articleSearchInfos = Set(articles.map { ArticleSearchInfo(article: $0) })
 		performInitialIndexForArticles(articleSearchInfos, database)
 	}
 

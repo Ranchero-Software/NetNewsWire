@@ -13,7 +13,7 @@ import Articles
 import Parser
 
 extension Article {
-	
+
 	convenience init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
 			assertionFailure("Expected articleID.")
@@ -61,7 +61,7 @@ extension Article {
 		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
 	}
 
-	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
+	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article, String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
 		if self[keyPath: comparisonKeyPath] != otherArticle[keyPath: comparisonKeyPath] {
 			dictionary[key] = self[keyPath: comparisonKeyPath] ?? ""
 		}
@@ -78,7 +78,7 @@ extension Article {
 		if self == existingArticle {
 			return nil
 		}
-		
+
 		var d = DatabaseDictionary()
 		if uniqueID != existingArticle.uniqueID {
 			d[DatabaseKey.uniqueID] = uniqueID
@@ -132,7 +132,7 @@ extension Article {
 
 	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ feedID: String, _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
 		let maximumDateAllowed = _maximumDateAllowed()
-		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
+		return Set(parsedItems.map { Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
 	}
 }
 
@@ -174,7 +174,7 @@ extension Article: @retroactive DatabaseObject {
 		}
 		return d
 	}
-	
+
 	public var databaseID: String {
 		return articleID
 	}
@@ -201,7 +201,7 @@ extension Set where Element == Article {
 	func statuses() -> Set<ArticleStatus> {
 		return Set<ArticleStatus>(map { $0.status })
 	}
-	
+
 	func dictionary() -> [String: Article] {
 		var d = [String: Article]()
 		for article in self {
@@ -211,7 +211,7 @@ extension Set where Element == Article {
 	}
 
 	func databaseObjects() -> [DatabaseObject] {
-		return self.map{ $0 as DatabaseObject }
+		return self.map { $0 as DatabaseObject }
 	}
 
 	func databaseDictionaries() -> [DatabaseDictionary]? {

@@ -9,13 +9,13 @@ let package = Package(
 		.library(
 			name: "ArticlesDatabase",
 			type: .dynamic,
-			targets: ["ArticlesDatabase"]),
+			targets: ["ArticlesDatabase"])
 	],
 	dependencies: [
 		.package(path: "../RSDatabase"),
 		.package(path: "../Parser"),
 		.package(path: "../RSCore"),
-		.package(path: "../Articles"),
+		.package(path: "../Articles")
 	],
 	targets: [
 		.target(
@@ -24,9 +24,9 @@ let package = Package(
 				"RSCore",
 				"RSDatabase",
 				"Parser",
-				"Articles",
+				"Articles"
 			],
 			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
-		),
+		)
 	]
 )

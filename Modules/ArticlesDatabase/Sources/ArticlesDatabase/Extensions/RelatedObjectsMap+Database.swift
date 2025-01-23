@@ -11,7 +11,7 @@ import RSDatabase
 import Articles
 
 extension RelatedObjectsMap {
-	
+
 	func authors(for articleID: String) -> Set<Author>? {
 		if let objects = self[articleID] {
 			return objects.asAuthors()

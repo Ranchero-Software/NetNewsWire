@@ -17,9 +17,8 @@ import Articles
 // CREATE TABLE if not EXISTS authors (authorID TEXT NOT NULL PRIMARY KEY, name TEXT, url TEXT, avatarURL TEXT, emailAddress TEXT);
 // CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
 
-
 final class AuthorsTable: DatabaseRelatedObjectsTable {
-	
+
 	let name: String
 	let databaseIDKey = DatabaseKey.authorID
 	var cache = DatabaseObjectCache()
@@ -27,7 +26,7 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	init(name: String) {
 		self.name = name
 	}
-	
+
 	// MARK: - DatabaseRelatedObjectsTable
 
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {
@@ -37,4 +36,3 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 		return nil
 	}
 }
-

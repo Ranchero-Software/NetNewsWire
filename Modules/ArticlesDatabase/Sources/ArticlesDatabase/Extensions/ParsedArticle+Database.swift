@@ -11,7 +11,7 @@ import Parser
 import Articles
 
 extension ParsedItem {
-	
+
 	var articleID: String {
 		if let s = syncServiceID {
 			return s

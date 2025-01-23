@@ -18,7 +18,7 @@ import Articles
 // Main thread only.
 
 public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
-public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary,DatabaseError>
+public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary, DatabaseError>
 public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCompletionResult) -> Void
 
 public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
@@ -34,13 +34,13 @@ public struct ArticleChanges {
 		self.updatedArticles = Set<Article>()
 		self.deletedArticles = Set<Article>()
 	}
-	
+
 	public init(newArticles: Set<Article>?, updatedArticles: Set<Article>?, deletedArticles: Set<Article>?) {
 		self.newArticles = newArticles
 		self.updatedArticles = updatedArticles
 		self.deletedArticles = deletedArticles
 	}
-	
+
 }
 
 public typealias UpdateArticlesResult = Result<ArticleChanges, DatabaseError>
@@ -93,7 +93,7 @@ public final class ArticlesDatabase {
 	public func fetchArticles(_ feedID: String) throws -> Set<Article> {
 		return try articlesTable.fetchArticles(feedID)
 	}
-	
+
 	public func fetchArticles(_ feedIDs: Set<String>) throws -> Set<Article> {
 		return try articlesTable.fetchArticles(feedIDs)
 	}
@@ -117,7 +117,7 @@ public final class ArticlesDatabase {
     public func fetchStarredArticlesCount(_ feedIDs: Set<String>) throws -> Int {
         return try articlesTable.fetchStarredArticlesCount(feedIDs)
     }
-    
+
 	public func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) throws -> Set<Article> {
 		return try articlesTable.fetchArticlesMatching(searchString, feedIDs)
 	}
@@ -230,7 +230,7 @@ public final class ArticlesDatabase {
 	public func fetchUnreadArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
 		articlesTable.fetchUnreadArticleIDsAsync(completion)
 	}
-	
+
 	/// Fetch the articleIDs of starred articles.
 	public func fetchStarredArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
 		articlesTable.fetchStarredArticleIDsAsync(completion)
@@ -277,7 +277,7 @@ public final class ArticlesDatabase {
 		operationQueue.resume()
 	}
 #endif
-	
+
 	// MARK: - Caches
 
 	/// Call to free up some memory. Should be done when the app is backgrounded, for instance.
