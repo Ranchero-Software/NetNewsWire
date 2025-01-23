@@ -11,7 +11,7 @@ import libxml2
 
 public typealias XMLPointer = UnsafePointer<xmlChar>
 
-public protocol SAXParserDelegate {
+public protocol SAXParserDelegate: AnyObject {
 
 	func saxParser(_: SAXParser, xmlStartElement: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?)
 
@@ -22,7 +22,7 @@ public protocol SAXParserDelegate {
 
 public final class SAXParser {
 
-	fileprivate let delegate: SAXParserDelegate
+	private weak var delegate: SAXParserDelegate?
 
 	public var currentCharacters: Data? { // UTF-8 encoded
 
@@ -140,17 +140,17 @@ private extension SAXParser {
 			characters.append(xmlCharacters, count: count)
 		}
 
-		delegate.saxParser(self, xmlCharactersFound: xmlCharacters, count: count)
+		delegate?.saxParser(self, xmlCharactersFound: xmlCharacters, count: count)
 	}
 
 	func startElement(_ name: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?, namespaceCount: Int, namespaces: UnsafePointer<XMLPointer?>?, attributeCount: Int, attributesDefaultedCount: Int, attributes: UnsafePointer<XMLPointer?>?) {
 
-		delegate.saxParser(self, xmlStartElement: name, prefix: prefix, uri: uri, namespaceCount: namespaceCount, namespaces: namespaces, attributeCount: attributeCount, attributesDefaultedCount: attributesDefaultedCount, attributes: attributes)
+		delegate?.saxParser(self, xmlStartElement: name, prefix: prefix, uri: uri, namespaceCount: namespaceCount, namespaces: namespaces, attributeCount: attributeCount, attributesDefaultedCount: attributesDefaultedCount, attributes: attributes)
 	}
 
 	func endElement(_ name: XMLPointer, prefix: XMLPointer?, uri: XMLPointer?) {
 
-		delegate.saxParser(self, xmlEndElement: name, prefix: prefix, uri: uri)
+		delegate?.saxParser(self, xmlEndElement: name, prefix: prefix, uri: uri)
 		endStoringCharacters()
 	}
 }

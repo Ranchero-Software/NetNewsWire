@@ -1,7 +1,6 @@
 identifier_name:
   min_length: 1
   max_length: 50
-  allowed_patterns: ^_.*$
 
 line_length:
   warning: 200
@@ -12,3 +11,5 @@ line_length:
 disabled_rules:
   - todo
 
+excluded:
+  - Modules/Secrets/Sources/Secrets/SecretKey.swift
