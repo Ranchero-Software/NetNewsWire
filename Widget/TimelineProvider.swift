@@ -51,7 +51,8 @@ struct Provider: TimelineProvider {
 			let widgetData = try WidgetDataDecoder.decodeWidgetData()
 			entry = WidgetTimelineEntry(date: date, widgetData: widgetData)
 		} catch {
-			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date()))
+			let widgetData = WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date())
+			entry = WidgetTimelineEntry(date: date, widgetData: widgetData)
 		}
 
 		// Configure next update in 1 hour.
