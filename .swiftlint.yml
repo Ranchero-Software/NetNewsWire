@@ -10,6 +10,8 @@ line_length:
 
 disabled_rules:
   - todo
+  - for_where
+  - file_length
 
 excluded:
   - Modules/Secrets/Sources/Secrets/SecretKey.swift

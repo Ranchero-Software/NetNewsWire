@@ -12,6 +12,7 @@ import Articles
 import ArticlesDatabase
 import RSCore
 
+// swiftlint:disable:next class_delegate_protocol
 protocol SmartFeedDelegate: SidebarItemIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 	var fetchType: FetchType { get }
 	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock)

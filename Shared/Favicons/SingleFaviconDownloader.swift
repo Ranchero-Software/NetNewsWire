@@ -55,7 +55,7 @@ final class SingleFaviconDownloader {
 
 		// If we don’t have an image, and lastDownloadAttemptDate is a while ago, try again.
 
-		if let _ = iconImage {
+		if iconImage != nil {
 			return false
 		}
 

@@ -11,6 +11,7 @@ import Foundation
 struct WidgetDataDecoder {
 
 	static func decodeWidgetData() throws -> WidgetData {
+		// swiftlint:disable:next force_cast
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 		let dataURL = containerURL?.appendingPathComponent("widget-data.json")

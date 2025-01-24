@@ -62,6 +62,7 @@ private extension FeedTreeControllerDelegate {
 	}
 
 	func childNodesForContainerNode(_ containerNode: Node) -> [Node]? {
+		// swiftlint:disable:next force_cast
 		let container = containerNode.representedObject as! Container
 
 		var children = [AnyObject]()
