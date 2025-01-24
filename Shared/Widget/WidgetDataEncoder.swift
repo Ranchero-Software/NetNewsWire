@@ -64,6 +64,7 @@ public final class WidgetDataEncoder {
 		}
 	}
 
+	// swiftlint:disable:next function_body_length
 	private func encodeWidgetData(completion: @escaping (WidgetData?) -> Void) {
 		let dispatchGroup = DispatchGroup()
 		var groupError: Error?

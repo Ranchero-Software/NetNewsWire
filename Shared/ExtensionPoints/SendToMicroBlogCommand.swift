@@ -22,7 +22,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
 
 		microBlogApp.updateStatus()
-		guard microBlogApp.existsOnDisk, let article = (object as? ArticlePasteboardWriter)?.article, let _ = article.preferredLink else {
+		guard microBlogApp.existsOnDisk, let article = (object as? ArticlePasteboardWriter)?.article, article.preferredLink != nil else {
 			return false
 		}
 

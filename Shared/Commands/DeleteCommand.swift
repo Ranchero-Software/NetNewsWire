@@ -78,10 +78,7 @@ final class DeleteCommand: UndoableCommand {
 		}
 
 		for node in nodes {
-			if let _ = node.representedObject as? Feed {
-				continue
-			}
-			if let _ = node.representedObject as? Folder {
+			if node.representedObject is Feed || node.representedObject is Folder {
 				continue
 			}
 			return false
@@ -171,9 +168,9 @@ private struct SidebarItemSpecifier {
 
 	func restore() {
 
-		if let _ = feed {
+		if feed != nil {
 			restoreFeed()
-		} else if let _ = folder {
+		} else if folder != nil {
 			restoreFolder()
 		}
 	}
@@ -268,9 +265,9 @@ private struct DeleteActionName {
 		var numberOfFolders = 0
 
 		for node in nodes {
-			if let _ = node.representedObject as? Feed {
+			if node.representedObject is Feed {
 				numberOfFeeds += 1
-			} else if let _ = node.representedObject as? Folder {
+			} else if node.representedObject is Folder {
 				numberOfFolders += 1
 			} else {
 				return nil // Delete only Feeds and Folders.

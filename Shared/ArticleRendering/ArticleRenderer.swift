@@ -16,7 +16,12 @@ import Account
 
 struct ArticleRenderer {
 
-	typealias Rendering = (style: String, html: String, title: String, baseURL: String)
+	struct Rendering {
+		let style: String
+		let html: String
+		let title: String
+		let baseURL: String
+	}
 
 	struct Page {
 		let url: URL
@@ -123,27 +128,27 @@ struct ArticleRenderer {
 
 	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, theme: theme)
-		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
+		return Rendering(style: renderer.articleCSS, html: renderer.articleHTML, title: renderer.title, baseURL: renderer.baseURL ?? "")
 	}
 
 	static func multipleSelectionHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.multipleSelectionHTML, renderer.title, renderer.baseURL ?? "")
+		return Rendering(style: renderer.articleCSS, html: renderer.multipleSelectionHTML, title: renderer.title, baseURL: renderer.baseURL ?? "")
 	}
 
 	static func loadingHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.loadingHTML, renderer.title, renderer.baseURL ?? "")
+		return Rendering(style: renderer.articleCSS, html: renderer.loadingHTML, title: renderer.title, baseURL: renderer.baseURL ?? "")
 	}
 
 	static func noSelectionHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
+		return Rendering(style: renderer.articleCSS, html: renderer.noSelectionHTML, title: renderer.title, baseURL: renderer.baseURL ?? "")
 	}
 
 	static func noContentHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
+		return Rendering(style: renderer.articleCSS, html: renderer.noContentHTML, title: renderer.title, baseURL: renderer.baseURL ?? "")
 	}
 }
 
@@ -259,6 +264,7 @@ private extension ArticleRenderer {
 		return d
 	}
 
+	// swiftlint:disable:next cyclomatic_complexity
 	func byline() -> String {
 		guard let authors = article?.authors ?? article?.feed?.authors, !authors.isEmpty else {
 			return ""

@@ -18,7 +18,7 @@ public enum ArticleExtractorState {
 	case cancelled
 }
 
-protocol ArticleExtractorDelegate {
+protocol ArticleExtractorDelegate: AnyObject {
     func articleExtractionDidFail(with: Error)
     func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }
@@ -29,7 +29,7 @@ class ArticleExtractor {
 
     var state: ArticleExtractorState!
     var article: ExtractedArticle?
-    var delegate: ArticleExtractorDelegate?
+    weak var delegate: ArticleExtractorDelegate?
 	var articleLink: String?
 
     private var url: URL!

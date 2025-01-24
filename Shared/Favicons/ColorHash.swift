@@ -41,7 +41,7 @@ public class ColorHash {
 		for char in "\(str)x" {
 			if let scl = String(char).unicodeScalars.first?.value {
 				if hash > maxSafeInteger {
-					hash = hash / seed2
+					hash /= seed2
 				}
 				hash = hash * seed + CGFloat(scl)
 			}

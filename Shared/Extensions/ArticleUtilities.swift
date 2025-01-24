@@ -138,6 +138,7 @@ extension Article {
 		}
 	}
 
+	// swiftlint:disable:next cyclomatic_complexity
 	func byline() -> String {
 		guard let authors = authors ?? feed?.authors, !authors.isEmpty else {
 			return ""
