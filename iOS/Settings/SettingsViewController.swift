@@ -13,6 +13,7 @@ import SafariServices
 import SwiftUI
 import UniformTypeIdentifiers
 
+// swiftlint:disable:next type_body_length
 class SettingsViewController: UITableViewController {
 
 	private weak var opmlAccount: Account?
@@ -155,6 +156,7 @@ class SettingsViewController: UITableViewController {
 		return cell
 	}
 
+	// swiftlint:disable:next function_body_length
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
 		switch indexPath.section {

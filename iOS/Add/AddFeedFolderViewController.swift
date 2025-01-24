@@ -10,13 +10,13 @@ import UIKit
 import RSCore
 import Account
 
-protocol AddFeedFolderViewControllerDelegate {
+protocol AddFeedFolderViewControllerDelegate: AnyObject {
 	func didSelect(container: Container)
 }
 
 class AddFeedFolderViewController: UITableViewController {
 
-	var delegate: AddFeedFolderViewControllerDelegate?
+	weak var delegate: AddFeedFolderViewControllerDelegate?
 	var initialContainer: Container?
 
 	var containers = [Container]()

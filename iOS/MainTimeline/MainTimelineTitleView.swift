@@ -19,7 +19,6 @@ class MainTimelineTitleView: UIView {
 	}()
 
 	override var accessibilityLabel: String? {
-		set { }
 		get {
 			if let name = label.text {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
@@ -27,6 +26,8 @@ class MainTimelineTitleView: UIView {
 			} else {
 				return nil
 			}
+		}
+		set {
 		}
 	}
 
@@ -47,8 +48,8 @@ extension MainTimelineTitleView: UIPointerInteractionDelegate {
 
 	func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
 		var rect = self.frame
-		rect.origin.x = rect.origin.x - 10
-		rect.size.width = rect.width + 20
+		rect.origin.x -= 10
+		rect.size.width += 20
 
 		return UIPointerStyle(effect: .automatic(UITargetedPreview(view: self)), shape: .roundedRect(rect))
 	}

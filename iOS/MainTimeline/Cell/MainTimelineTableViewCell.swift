@@ -293,7 +293,11 @@ private extension MainTimelineTableViewCell {
 	}
 
 	func showOrHideView(_ view: UIView, _ shouldHide: Bool) {
-		shouldHide ? hideView(view) : showView(view)
+		if shouldHide {
+			hideView(view)
+		} else {
+			showView(view)
+		}
 	}
 
 	func updateSubviews() {

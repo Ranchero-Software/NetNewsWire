@@ -16,12 +16,14 @@ extension UIBarButtonItem: MarkAsReadAlertControllerSourceType {}
 
 struct MarkAsReadAlertController {
 
-	static func confirm<T>(_ controller: UIViewController?,
-						   coordinator: SceneCoordinator?,
-						   confirmTitle: String,
-						   sourceType: T,
-						   cancelCompletion: (() -> Void)? = nil,
-						   completion: @escaping () -> Void) where T: MarkAsReadAlertControllerSourceType {
+	static func confirm<T>(
+		_ controller: UIViewController?,
+		coordinator: SceneCoordinator?,
+		confirmTitle: String,
+		sourceType: T,
+		cancelCompletion: (() -> Void)? = nil,
+		completion: @escaping () -> Void
+	) where T: MarkAsReadAlertControllerSourceType {
 
 		guard let controller = controller, let coordinator = coordinator else {
 			completion()
@@ -38,11 +40,13 @@ struct MarkAsReadAlertController {
 		}
 	}
 
-	private static func alert<T>(coordinator: SceneCoordinator,
-							  confirmTitle: String,
-							  cancelCompletion: (() -> Void)?,
-							  sourceType: T,
-							  completion: @escaping (UIAlertAction) -> Void) -> UIAlertController where T: MarkAsReadAlertControllerSourceType {
+	private static func alert<T>(
+		coordinator: SceneCoordinator,
+		confirmTitle: String,
+		cancelCompletion: (() -> Void)?,
+		sourceType: T,
+		completion: @escaping (UIAlertAction) -> Void
+	) -> UIAlertController where T: MarkAsReadAlertControllerSourceType {
 
 		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
 		let message = NSLocalizedString("You can turn this confirmation off in Settings.",

@@ -767,7 +767,15 @@ private extension MainFeedViewController {
 		let unreadCountView = MainFeedUnreadCountView()
 		unreadCountView.unreadCount = 10
 
-		let layout = MainFeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false)
+		let layout = MainFeedTableViewCellLayout(
+			cellWidth: tableView.bounds.size.width,
+			insets: tableView.safeAreaInsets,
+			label: titleLabel,
+			unreadCountView: unreadCountView,
+			showingEditingControl: false,
+			indent: false,
+			shouldShowDisclosure: false
+		)
 		tableView.estimatedRowHeight = layout.height
 	}
 

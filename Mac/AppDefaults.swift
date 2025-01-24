@@ -65,10 +65,10 @@ final class AppDefaults {
 	}()
 
 	var isFirstRun: Bool = {
-		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
-			return false
+		if UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date == nil {
+			firstRunDate = Date()
+			return true
 		}
-		firstRunDate = Date()
 		return true
 	}()
 

@@ -68,11 +68,11 @@ final class AppDefaults {
 	}()
 
 	let isFirstRun: Bool = {
-		if let _ = AppDefaults.store.object(forKey: Key.firstRunDate) as? Date {
-			return false
+		if AppDefaults.store.object(forKey: Key.firstRunDate) as? Date == nil {
+			firstRunDate = Date()
+			return true
 		}
-		firstRunDate = Date()
-		return true
+		return false
 	}()
 
 	static var userInterfaceColorPalette: UserInterfaceColorPalette {

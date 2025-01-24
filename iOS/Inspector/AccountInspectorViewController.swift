@@ -96,7 +96,10 @@ class AccountInspectorViewController: UITableViewController {
 		let message: String = {
 			switch account.type {
 			case .feedly:
-				return NSLocalizedString("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Log Out and Remove Account")
+				return NSLocalizedString(
+					"Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.",
+					comment: "Log Out and Remove Account"
+				)
 			default:
 				return NSLocalizedString("Are you sure you want to remove this account? This cannot be undone.", comment: "Remove Account")
 			}

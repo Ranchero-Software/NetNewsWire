@@ -10,6 +10,7 @@ import Account
 import UIKit
 import RSCore
 
+// swiftlint:disable:next class_delegate_protocol
 protocol AddAccountDismissDelegate: UIViewController {
 	func dismiss()
 }

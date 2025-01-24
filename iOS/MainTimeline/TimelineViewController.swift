@@ -563,7 +563,23 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: Constants.prototypeText, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
+		let prototypeArticle = Article(
+			accountID: prototypeID,
+			articleID: prototypeID,
+			feedID: prototypeID,
+			uniqueID: prototypeID,
+			title: Constants.prototypeText,
+			contentHTML: nil,
+			contentText: nil,
+			url: nil,
+			externalURL: nil,
+			summary: nil,
+			imageURL: nil,
+			datePublished: nil,
+			dateModified: nil,
+			authors: nil,
+			status: status
+		)
 
 		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, numberOfLines: numberOfTextLines, iconSize: iconSize)
 
@@ -574,9 +590,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			let layout = MainTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
 			tableView.estimatedRowHeight = layout.height
 		}
-
 	}
-
 }
 
 // MARK: Searching
