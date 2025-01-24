@@ -193,7 +193,7 @@ final class FaviconDownloader {
 			Self.logger.debug("FaviconDownloader: received didLoadFavicon notification for home page URL \(homePageURL)")
 		}
 
-		guard let _ = singleFaviconDownloader.iconImage else {
+		if singleFaviconDownloader.iconImage == nil {
 			if let faviconURLs = remainingFaviconURLs[homePageURL] {
 				if let nextIconURL = faviconURLs.first {
 					_ = favicon(with: nextIconURL, homePageURL: singleFaviconDownloader.homePageURL)
