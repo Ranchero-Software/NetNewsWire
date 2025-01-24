@@ -1,5 +1,5 @@
 //
-//  NetNewsWire_iOSTests.swift
+//  NetNewsWire-iOSTests.swift
 //  NetNewsWire-iOSTests
 //
 //  Created by Brent Simmons on 2/5/18.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class NetNewsWire_iOSTests: XCTestCase {
+class NetNewsWire-iOSTests: XCTestCase {
 
     func testExample() {
         // This is an example of a functional test case.

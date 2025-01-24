@@ -370,7 +370,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"NetNewsWire-iOSTests/Info.plist",
-				"NetNewsWire-iOSTests/NetNewsWire_iOSTests.swift",
+				"NetNewsWire-iOSTests/NetNewsWire-iOSTests.swift",
 				NetNewsWireTests/Info.plist,
 			);
 			target = 849C64701ED37A5D003D8FC0 /* NetNewsWireTests */;
@@ -378,7 +378,7 @@
 		84C1EB962CDFE31700C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"NetNewsWire-iOSTests/NetNewsWire_iOSTests.swift",
+				"NetNewsWire-iOSTests/NetNewsWire-iOSTests.swift",
 			);
 			target = 518B2ED12351B3DD00400001 /* NetNewsWire-iOSTests */;
 		};

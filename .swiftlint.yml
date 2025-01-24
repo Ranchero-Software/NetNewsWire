@@ -14,3 +14,5 @@ disabled_rules:
 excluded:
   - Modules/Secrets/Sources/Secrets/SecretKey.swift
   - Modules/Account/Tests/AccountTests/Feedly/
+  - Widget/Resources/Localized.swift
+

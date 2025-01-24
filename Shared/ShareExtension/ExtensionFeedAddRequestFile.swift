@@ -15,6 +15,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionFeedAddRequestFile")
 
 	private static var filePath: String = {
+		// swiftlint:disable:next force_cast
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 		return containerURL!.appendingPathComponent("extension_feed_add_request.plist").path

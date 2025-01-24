@@ -143,11 +143,7 @@ private extension FeedTreeControllerDelegate {
 	}
 
 	func nodeInArrayRepresentingObject(_ nodes: [Node], _ representedObject: AnyObject) -> Node? {
-		for oneNode in nodes {
-			if oneNode.representedObject === representedObject {
-				return oneNode
-			}
-		}
-		return nil
+
+		nodes.first { $0.representedObject === representedObject }
 	}
 }

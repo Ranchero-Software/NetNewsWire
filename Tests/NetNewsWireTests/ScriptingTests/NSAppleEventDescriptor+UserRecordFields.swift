@@ -34,7 +34,7 @@ extension NSAppleEventDescriptor {
         var usrfDictionary: [String: NSAppleEventDescriptor] = [:]
         var processedItems = 0
         while processedItems < listCount {
-            processedItems = processedItems + 2
+            processedItems += 2
             guard let nthlabel = usrfList.atIndex(processedItems-1) else {
                 print("usrfDictionary() couldn't get item \(processedItems+1) in usrf list")
                 continue
