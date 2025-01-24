@@ -20,7 +20,6 @@ class MainFeedTableViewCell: VibrantTableViewCell {
 	weak var delegate: MainFeedTableViewCellDelegate?
 
 	override var accessibilityLabel: String? {
-		set {}
 		get {
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")

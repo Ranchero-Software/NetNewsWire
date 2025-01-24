@@ -23,7 +23,6 @@ class ShareViewController: NSViewController {
         return NSNib.Name("ShareViewController")
     }
 
-	// swiftlint:disable:next function_body_length
     override func loadView() {
         super.loadView()
 

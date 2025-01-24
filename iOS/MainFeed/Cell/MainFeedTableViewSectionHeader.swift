@@ -8,16 +8,15 @@
 
 import UIKit
 
-protocol MainFeedTableViewSectionHeaderDelegate {
+protocol MainFeedTableViewSectionHeaderDelegate: AnyObject {
 	func mainFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MainFeedTableViewSectionHeader)
 }
 
 class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
-	var delegate: MainFeedTableViewSectionHeaderDelegate?
+	weak var delegate: MainFeedTableViewSectionHeaderDelegate?
 
 	override var accessibilityLabel: String? {
-		set {}
 		get {
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
@@ -29,7 +28,6 @@ class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}
 
 	private var expandedStateMessage: String {
-		set {}
 		get {
 			if disclosureExpanded {
 				return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")

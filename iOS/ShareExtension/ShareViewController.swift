@@ -22,7 +22,6 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 	private var selectedContainer: ExtensionContainer?
 	private var folderItem: SLComposeSheetConfigurationItem!
 
-	// swiftlint:disable:next function_body_length
 	override func viewDidLoad() {
 
 		extensionContainers = ExtensionContainersFile.read()

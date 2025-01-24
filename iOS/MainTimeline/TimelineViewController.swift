@@ -581,7 +581,16 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			status: status
 		)
 
-		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let prototypeCellData = MainTimelineCellData(
+			article: prototypeArticle,
+			showFeedName: .feed,
+			feedName: "Prototype Feed Name",
+			byline: nil,
+			iconImage: nil,
+			showIcon: false,
+			numberOfLines: numberOfTextLines,
+			iconSize: iconSize
+		)
 
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MainTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)

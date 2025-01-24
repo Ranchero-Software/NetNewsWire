@@ -21,6 +21,8 @@ disabled_rules:
   - force_try
   - cyclomatic_complexity
   - generic_type_name
+  - function_body_length
+  - type_body_length
 
 excluded:
   - Modules/Secrets/Sources/Secrets/SecretKey.swift

@@ -156,7 +156,6 @@ class SettingsViewController: UITableViewController {
 		return cell
 	}
 
-	// swiftlint:disable:next function_body_length
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
 		switch indexPath.section {
