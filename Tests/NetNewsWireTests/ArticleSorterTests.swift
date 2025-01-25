@@ -12,7 +12,7 @@ import XCTest
 
 @testable import NetNewsWire
 
-class ArticleSorterTests: XCTestCase {
+final class ArticleSorterTests: XCTestCase {
 
 	// MARK: sortByDate ascending tests
 

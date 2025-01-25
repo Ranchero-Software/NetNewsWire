@@ -10,7 +10,7 @@ import Cocoa
 import os.log
 import UniformTypeIdentifiers
 
-class ShareViewController: NSViewController {
+final class ShareViewController: NSViewController {
 
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var folderPopUpButton: NSPopUpButton!

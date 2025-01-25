@@ -11,7 +11,7 @@ import Parser
 
 private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
 
-class HTMLFeedFinder {
+final class HTMLFeedFinder {
 
 	var feedSpecifiers: Set<FeedSpecifier> {
 		return Set(feedSpecifiersDictionary.values)

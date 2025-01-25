@@ -8,7 +8,7 @@
 
 import UIKit
 
-class InteractiveNavigationController: UINavigationController {
+final class InteractiveNavigationController: UINavigationController {
 
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
 

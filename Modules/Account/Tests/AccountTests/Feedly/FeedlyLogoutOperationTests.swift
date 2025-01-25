@@ -11,7 +11,7 @@ import XCTest
 import RSCore
 import Secrets
 
-class FeedlyLogoutOperationTests: XCTestCase {
+final class FeedlyLogoutOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -36,7 +36,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		return (accessToken, refreshToken)
 	}
 
-	class TestFeedlyLogoutService: FeedlyLogoutService {
+	final class TestFeedlyLogoutService: FeedlyLogoutService {
 		var mockResult: Result<Void, Error>?
 		var logoutExpectation: XCTestExpectation?
 
@@ -123,7 +123,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		}
 	}
 
-	class TestLogoutDelegate: FeedlyOperationDelegate {
+	final class TestLogoutDelegate: FeedlyOperationDelegate {
 		var error: Error?
 		var didFailExpectation: XCTestExpectation?
 

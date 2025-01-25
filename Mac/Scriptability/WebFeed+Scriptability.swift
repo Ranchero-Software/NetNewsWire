@@ -12,7 +12,7 @@ import Account
 import Articles
 
 @objc(ScriptableFeed)
-class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+final class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let feed: Feed
     let container: ScriptingObjectContainer

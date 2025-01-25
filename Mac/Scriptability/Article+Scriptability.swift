@@ -11,7 +11,7 @@ import Account
 import Articles
 
 @objc(ScriptableArticle)
-class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let article: Article
     let container: ScriptingObjectContainer

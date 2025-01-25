@@ -11,7 +11,7 @@ import XCTest
 
 @testable import NetNewsWire
 
-class SharingTests: XCTestCase {
+final class SharingTests: XCTestCase {
 
     func testSharingSubject() {
         let sharingServiceDelegate = SharingServiceDelegate(nil)

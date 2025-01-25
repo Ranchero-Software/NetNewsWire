@@ -70,7 +70,7 @@ class VibrantTableViewCell: UITableViewCell {
 
 }
 
-class VibrantBasicTableViewCell: VibrantTableViewCell {
+final class VibrantBasicTableViewCell: VibrantTableViewCell {
 
 	@IBOutlet private var label: UILabel!
 	@IBOutlet private var detail: UILabel!

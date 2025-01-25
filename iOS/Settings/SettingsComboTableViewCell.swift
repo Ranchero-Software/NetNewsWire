@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsComboTableViewCell: VibrantTableViewCell {
+final class SettingsComboTableViewCell: VibrantTableViewCell {
 
 	@IBOutlet weak var comboImage: UIImageView!
 	@IBOutlet weak var comboNameLabel: UILabel!

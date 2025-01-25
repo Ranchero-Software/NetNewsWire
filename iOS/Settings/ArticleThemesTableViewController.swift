@@ -14,7 +14,7 @@ extension UTType {
 	static var netNewsWireTheme: UTType { UTType(importedAs: "com.ranchero.netnewswire.theme") }
 }
 
-class ArticleThemesTableViewController: UITableViewController {
+final class ArticleThemesTableViewController: UITableViewController {
 
 	override func viewDidLoad() {
 		let importBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importTheme(_:)))

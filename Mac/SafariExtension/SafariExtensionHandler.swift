@@ -8,7 +8,7 @@
 
 import SafariServices
 
-class SafariExtensionHandler: SFSafariExtensionHandler {
+final class SafariExtensionHandler: SFSafariExtensionHandler {
 
 	// Safari App Extensions don't support any reasonable means of detecting whether a
 	// specific Safari page was loaded with the benefit of the extension's injected
@@ -20,7 +20,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 	// I tried to use a NSMapTable from String to the closure directly, but Swift
 	// complains that the object has to be a class type.
 	typealias ValidationHandler = (Bool, String) -> Void
-	class ValidationWrapper {
+	final class ValidationWrapper {
 		let validationHandler: ValidationHandler
 
 		init(validationHandler: @escaping ValidationHandler) {

@@ -9,7 +9,7 @@
 import UIKit
 import Account
 
-class RefreshProgressView: UIView {
+final class RefreshProgressView: UIView {
 
 	@IBOutlet weak var progressView: UIProgressView!
 	@IBOutlet weak var label: UILabel!

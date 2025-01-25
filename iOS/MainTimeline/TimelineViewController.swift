@@ -13,7 +13,7 @@ import Account
 import Articles
 import WebKit
 
-class TimelineViewController: UITableViewController, UndoableCommandRunner {
+final class TimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium

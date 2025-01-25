@@ -8,7 +8,7 @@
 #if os(macOS)
 import AppKit
 
-public class RSToolbarItem: NSToolbarItem {
+public final class RSToolbarItem: NSToolbarItem {
 
 	override public func validate() {
 

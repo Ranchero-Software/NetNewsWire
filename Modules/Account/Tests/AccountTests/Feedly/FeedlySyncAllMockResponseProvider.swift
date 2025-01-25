@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FeedlyMockResponseProvider: TestTransportMockResponseProviding {
+final class FeedlyMockResponseProvider: TestTransportMockResponseProviding {
 
 	let subdirectory: String
 

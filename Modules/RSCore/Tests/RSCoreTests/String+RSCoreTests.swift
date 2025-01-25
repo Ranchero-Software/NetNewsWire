@@ -8,7 +8,7 @@
 
 import XCTest
 
-class StringRSCore: XCTestCase {
+final class StringRSCore: XCTestCase {
 
 	func testCollapsingWhitespace() {
 

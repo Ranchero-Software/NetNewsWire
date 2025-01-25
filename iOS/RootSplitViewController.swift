@@ -9,7 +9,7 @@
 import UIKit
 import Account
 
-class RootSplitViewController: UISplitViewController {
+final class RootSplitViewController: UISplitViewController {
 
 	var coordinator: SceneCoordinator!
 

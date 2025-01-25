@@ -14,7 +14,7 @@ protocol ShareFolderPickerControllerDelegate: AnyObject {
 	func shareFolderPickerDidSelect(_ container: ExtensionContainer)
 }
 
-class ShareFolderPickerController: UITableViewController {
+final class ShareFolderPickerController: UITableViewController {
 
 	var containers: [ExtensionContainer]?
 	var selectedContainerID: ContainerIdentifier?

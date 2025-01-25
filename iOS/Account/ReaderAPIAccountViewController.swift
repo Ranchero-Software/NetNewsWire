@@ -12,7 +12,7 @@ import Secrets
 import RSWeb
 import SafariServices
 
-class ReaderAPIAccountViewController: UITableViewController {
+final class ReaderAPIAccountViewController: UITableViewController {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!

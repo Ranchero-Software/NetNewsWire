@@ -9,7 +9,7 @@
 import XCTest
 @testable import RSWeb
 
-class RSWebTests: XCTestCase {
+final class RSWebTests: XCTestCase {
 
     func testExample() {
         // This is an example of a functional test case.

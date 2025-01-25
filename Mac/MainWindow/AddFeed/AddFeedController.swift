@@ -22,7 +22,7 @@ import Parser
 //   Else,
 //      display error sheet.
 
-class AddFeedController: AddFeedWindowControllerDelegate {
+final class AddFeedController: AddFeedWindowControllerDelegate {
 
 	private let hostWindow: NSWindow
 	private var addFeedWindowController: AddFeedWindowController?

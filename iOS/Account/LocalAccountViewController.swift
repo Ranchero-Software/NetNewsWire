@@ -9,7 +9,7 @@
 import UIKit
 import Account
 
-class LocalAccountViewController: UITableViewController {
+final class LocalAccountViewController: UITableViewController {
 
 	@IBOutlet weak var nameTextField: UITextField!
 	@IBOutlet weak var footerLabel: UILabel!

@@ -16,7 +16,7 @@ import WatchKit
 import AppKit
 #endif
 
-public class ColorHash {
+public final class ColorHash {
 
 	public static let defaultSaturation = [CGFloat(0.35), CGFloat(0.5), CGFloat(0.65)]
 	public static let defaultBrightness = [CGFloat(0.5), CGFloat(0.65), CGFloat(0.80)]

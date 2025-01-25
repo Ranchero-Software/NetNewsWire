@@ -9,7 +9,7 @@
 import Foundation
 import WebKit
 
-class WrapperScriptMessageHandler: NSObject, WKScriptMessageHandler {
+final class WrapperScriptMessageHandler: NSObject, WKScriptMessageHandler {
 
 	// We need to wrap a message handler to prevent a circlular reference
 	private weak var handler: WKScriptMessageHandler?

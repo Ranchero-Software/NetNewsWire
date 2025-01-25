@@ -8,7 +8,7 @@
 
 import XCTest
 
-class NetNewsWire-iOSTests: XCTestCase {
+final class NetNewsWire-iOSTests: XCTestCase {
 
     func testExample() {
         // This is an example of a functional test case.

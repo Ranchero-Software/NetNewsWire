@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 import RSCore
 
-class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
+final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -27,7 +27,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		super.tearDown()
 	}
 
-	class FeedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding {
+	final class FeedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding {
 		var feedsAndFolders = [([FeedlyFeed], Folder)]()
 	}
 

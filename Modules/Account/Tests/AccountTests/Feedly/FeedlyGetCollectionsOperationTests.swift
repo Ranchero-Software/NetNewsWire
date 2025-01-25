@@ -11,7 +11,7 @@ import XCTest
 import os.log
 import RSCore
 
-class FeedlyGetCollectionsOperationTests: XCTestCase {
+final class FeedlyGetCollectionsOperationTests: XCTestCase {
 
 	func testGetCollections() {
 		let support = FeedlyTestSupport()
@@ -58,7 +58,7 @@ class FeedlyGetCollectionsOperationTests: XCTestCase {
 
 	func testGetCollectionsError() {
 
-		class TestDelegate: FeedlyOperationDelegate {
+		final class TestDelegate: FeedlyOperationDelegate {
 			var errorExpectation: XCTestExpectation?
 			var error: Error?
 

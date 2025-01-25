@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ArticleActivityItemSource: NSObject, UIActivityItemSource {
+final class ArticleActivityItemSource: NSObject, UIActivityItemSource {
 
 	private let url: URL
 	private let subject: String?

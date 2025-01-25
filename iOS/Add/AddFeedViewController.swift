@@ -12,7 +12,7 @@ import RSCore
 import RSTree
 import Parser
 
-class AddFeedViewController: UITableViewController {
+final class AddFeedViewController: UITableViewController {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!

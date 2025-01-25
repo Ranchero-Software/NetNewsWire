@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 import RSCore
 
-class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
+final class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -27,7 +27,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		super.tearDown()
 	}
 
-	class CollectionsProvider: FeedlyCollectionProviding {
+	final class CollectionsProvider: FeedlyCollectionProviding {
 		var collections = [
 			FeedlyCollection(feeds: [], label: "One", id: "collections/1"),
 			FeedlyCollection(feeds: [], label: "Two", id: "collections/2")
@@ -105,7 +105,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		XCTAssertTrue(removeFolders.feedsAndFolders.isEmpty)
 	}
 
-	class CollectionsAndFeedsProvider: FeedlyCollectionProviding {
+	final class CollectionsAndFeedsProvider: FeedlyCollectionProviding {
 		var feedsForCollectionOne = [
 			FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil),
 			FeedlyFeed(id: "feed/2", title: "Feed Two", updated: nil, website: nil)

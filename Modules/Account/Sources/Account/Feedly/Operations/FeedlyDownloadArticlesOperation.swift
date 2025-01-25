@@ -11,7 +11,7 @@ import os.log
 import RSCore
 import RSWeb
 
-class FeedlyDownloadArticlesOperation: FeedlyOperation {
+final class FeedlyDownloadArticlesOperation: FeedlyOperation {
 
 	private let account: Account
 	private let log: OSLog

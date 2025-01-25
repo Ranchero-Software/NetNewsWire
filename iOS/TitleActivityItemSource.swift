@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TitleActivityItemSource: NSObject, UIActivityItemSource {
+final class TitleActivityItemSource: NSObject, UIActivityItemSource {
 
 	private let title: String?
 

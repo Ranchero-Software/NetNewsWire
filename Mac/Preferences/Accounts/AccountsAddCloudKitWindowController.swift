@@ -17,7 +17,7 @@ enum AccountsAddCloudKitWindowControllerError: LocalizedError {
 	}
 }
 
-class AccountsAddCloudKitWindowController: NSWindowController {
+final class AccountsAddCloudKitWindowController: NSWindowController {
 
 	@IBOutlet weak var limitationsAndSolutionsTextField: NSTextField!
 

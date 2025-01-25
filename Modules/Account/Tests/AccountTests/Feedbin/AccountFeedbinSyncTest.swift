@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-class AccountFeedbinSyncTest: XCTestCase {
+final class AccountFeedbinSyncTest: XCTestCase {
 
     override func setUp() {
     }

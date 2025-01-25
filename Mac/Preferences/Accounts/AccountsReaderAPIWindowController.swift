@@ -11,7 +11,7 @@ import Account
 import RSWeb
 import Secrets
 
-class AccountsReaderAPIWindowController: NSWindowController {
+final class AccountsReaderAPIWindowController: NSWindowController {
 
 	@IBOutlet weak var titleImageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!

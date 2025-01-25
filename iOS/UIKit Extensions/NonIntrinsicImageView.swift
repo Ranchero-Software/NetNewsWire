@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NonIntrinsicImageView: UIImageView {
+final class NonIntrinsicImageView: UIImageView {
 
 	// Prevent autolayout from messing around with our frame settings
 	override var intrinsicContentSize: CGSize {

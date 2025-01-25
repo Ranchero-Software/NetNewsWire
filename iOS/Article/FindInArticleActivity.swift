@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FindInArticleActivity: UIActivity {
+final class FindInArticleActivity: UIActivity {
 	override var activityTitle: String? {
 		NSLocalizedString("Find in Article", comment: "Find in Article")
 	}

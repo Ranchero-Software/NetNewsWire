@@ -12,7 +12,7 @@ import Articles
 import RSCore
 
 @objc(ScriptableAccount)
-class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let account: Account
     init (_ account: Account) {

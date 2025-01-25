@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-class FeedlyTextSanitizationTests: XCTestCase {
+final class FeedlyTextSanitizationTests: XCTestCase {
 
 	func testRTLSanitization() {
 

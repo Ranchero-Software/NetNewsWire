@@ -15,7 +15,7 @@ import Articles
 import Intents
 import UniformTypeIdentifiers
 
-class ActivityManager {
+final class ActivityManager {
 
 	private var nextUnreadActivity: NSUserActivity?
 	private var selectingActivity: NSUserActivity?

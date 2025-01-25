@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 import RSCore
 
-class FeedlySyncStreamContentsOperationTests: XCTestCase {
+final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()

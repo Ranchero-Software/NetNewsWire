@@ -33,7 +33,7 @@ public enum ReachabilityError: Error {
 	case unableToGetFlags(Int32)
 }
 
-public class Reachability {
+public final class Reachability {
 
 	/// Returns true if the internet is reachable.
 	///

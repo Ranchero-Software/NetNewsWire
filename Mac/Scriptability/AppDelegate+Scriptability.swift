@@ -90,7 +90,7 @@ extension AppDelegate: AppDelegateAppleEvents {
     }
 }
 
-class NetNewsWireCreateElementCommand: NSCreateCommand {
+final class NetNewsWireCreateElementCommand: NSCreateCommand {
     override func performDefaultImplementation() -> Any? {
          let classDescription = self.createClassDescription
          if classDescription.className == "feed" {
@@ -110,7 +110,7 @@ class NetNewsWireCreateElementCommand: NSCreateCommand {
     is ambiguity about whether specifiers are lists or single objects, the code switches
     based on which it is.
 */
-class NetNewsWireDeleteCommand: NSDeleteCommand {
+final class NetNewsWireDeleteCommand: NSDeleteCommand {
 
     /*
         delete(objectToDelete:, from container:)
@@ -165,7 +165,7 @@ class NetNewsWireDeleteCommand: NSDeleteCommand {
     }
 }
 
-class NetNewsWireExistsCommand: NSExistsCommand {
+final class NetNewsWireExistsCommand: NSExistsCommand {
 
     // cocoa default behavior doesn't work here, because of cases where we define an object's property
     // to be another object type.  e.g., 'permalink of the current article' parses as

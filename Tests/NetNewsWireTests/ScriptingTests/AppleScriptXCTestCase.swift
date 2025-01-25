@@ -8,7 +8,7 @@
 
 import XCTest
 
-class AppleScriptXCTestCase: XCTestCase {
+final class AppleScriptXCTestCase: XCTestCase {
 
     /*
         @function doIndividualScript

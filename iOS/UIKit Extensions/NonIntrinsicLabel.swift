@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NonIntrinsicLabel: UILabel {
+final class NonIntrinsicLabel: UILabel {
 
 	// Prevent autolayout from messing around with our frame settings
 	override var intrinsicContentSize: CGSize {

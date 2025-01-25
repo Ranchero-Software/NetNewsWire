@@ -8,7 +8,7 @@
 #if os(macOS)
 import AppKit
 
-class RSDarkModeAdaptingToolbarButton: NSButton {
+final class RSDarkModeAdaptingToolbarButton: NSButton {
 	// Clients probably should not bother using this class unless they want
 	// to force the template in dark mode, but if you are using this in a more
 	// general context where you want to control and/or override it on a

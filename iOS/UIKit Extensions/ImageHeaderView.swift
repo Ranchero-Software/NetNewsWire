@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImageHeaderView: UITableViewHeaderFooterView {
+final class ImageHeaderView: UITableViewHeaderFooterView {
 
 	static let rowHeight = CGFloat(integerLiteral: 88)
 

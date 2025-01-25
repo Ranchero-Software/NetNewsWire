@@ -11,7 +11,7 @@ import Account
 import RSWeb
 import Secrets
 
-class AccountsNewsBlurWindowController: NSWindowController {
+final class AccountsNewsBlurWindowController: NSWindowController {
 
 	@IBOutlet weak var signInTextField: NSTextField!
 	@IBOutlet weak var noAccountTextField: NSTextField!

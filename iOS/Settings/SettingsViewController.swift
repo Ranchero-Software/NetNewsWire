@@ -14,7 +14,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 // swiftlint:disable:next type_body_length
-class SettingsViewController: UITableViewController {
+final class SettingsViewController: UITableViewController {
 
 	private weak var opmlAccount: Account?
 

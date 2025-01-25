@@ -13,7 +13,7 @@ import CloudKit
 import RSCore
 import Articles
 
-class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
+final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 	struct UnclaimedFeed {
 		let url: URL

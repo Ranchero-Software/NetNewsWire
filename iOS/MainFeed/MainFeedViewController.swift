@@ -15,7 +15,7 @@ import RSWeb
 import SafariServices
 import WebKit
 
-class MainFeedViewController: UITableViewController, UndoableCommandRunner {
+final class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
@@ -126,11 +126,11 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 
 		var node: Node?
-		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
-			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
-		} else {
+//		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
+//			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
+//		} else {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
-		}
+//		}
 
 		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
 		if let cell = tableView.cellForRow(at: indexPath) as? MainFeedTableViewCell {

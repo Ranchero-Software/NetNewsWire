@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-class FeedlyEntryParserTests: XCTestCase {
+final class FeedlyEntryParserTests: XCTestCase {
 
 	func testParsing() {
 		let content = FeedlyEntry.Content(content: "Test Content", direction: .leftToRight)
