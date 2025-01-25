@@ -12,7 +12,7 @@ import os
 // Create a DownloadSessionDelegate, then create a DownloadSession.
 // To download things: call download with a set of URLs. DownloadSession will call the various delegate methods.
 
-public protocol DownloadSessionDelegate {
+public protocol DownloadSessionDelegate: AnyObject {
 
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
@@ -246,7 +246,7 @@ private extension DownloadSession {
 		updateDownloadProgress()
 	}
 
-	func urlStringIsBlackListedRedirect(_ urlString: String) -> Bool {
+	func urlStringIsDisallowedRedirect(_ urlString: String) -> Bool {
 
 		// Hotels and similar often do permanent redirects. We can catch some of those.
 
@@ -263,7 +263,7 @@ private extension DownloadSession {
 	}
 
 	func cacheRedirect(_ oldURL: URL, _ newURL: URL) {
-		if urlStringIsBlackListedRedirect(newURL.absoluteString) {
+		if urlStringIsDisallowedRedirect(newURL.absoluteString) {
 			return
 		}
 		redirectCache[oldURL] = newURL

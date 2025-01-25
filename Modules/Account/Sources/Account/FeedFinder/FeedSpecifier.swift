@@ -11,7 +11,7 @@ import Foundation
 struct FeedSpecifier: Hashable {
 
 	enum Source: Int {
-		case UserEntered = 0, HTMLHead, HTMLLink
+		case userEntered = 0, htmlHead, htmlLink
 
 		func equalToOrBetterThan(_ otherSource: Source) -> Bool {
 			return self.rawValue <= otherSource.rawValue
@@ -64,39 +64,39 @@ private extension FeedSpecifier {
 	func calculatedScore() -> Int {
 		var score = 0
 
-		if source == .UserEntered {
+		if source == .userEntered {
 			return 1000
-		} else if source == .HTMLHead {
-			score = score + 50
+		} else if source == .htmlHead {
+			score += 50
 		}
 
-		score = score - ((orderFound - 1) * 5)
+		score -= (orderFound - 1) * 5
 
 		if urlString.caseInsensitiveContains("comments") {
-			score = score - 10
+			score -= 10
 		}
 		if urlString.caseInsensitiveContains("podcast") {
-			score = score - 10
+			score -= 10
 		}
 		if urlString.caseInsensitiveContains("rss") {
-			score = score + 5
+			score += 5
 		}
 		if urlString.hasSuffix("/feed/") {
-			score = score + 5
+			score += 5
 		}
 		if urlString.hasSuffix("/feed") {
-			score = score + 4
+			score += 4
 		}
 		if urlString.caseInsensitiveContains("json") {
-			score = score + 6
+			score += 6
 		}
 
 		if let title = title {
 			if title.caseInsensitiveContains("comments") {
-				score = score - 10
+				score -= 10
 			}
 			if title.caseInsensitiveContains("json") {
-				score = score + 1
+				score += 1
 			}
 		}
 

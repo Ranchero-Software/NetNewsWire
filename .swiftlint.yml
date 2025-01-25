@@ -30,7 +30,7 @@ disabled_rules:
 
 excluded:
   - Modules/Secrets/Sources/Secrets/SecretKey.swift
-  - Modules/Account/Tests/AccountTests/Feedly/
+  - Modules/Account/Tests/
   - Modules/Account/Sources/Account/Feedly/
   - Widget/Resources/Localized.swift
   - Shared/Extensions/NSAttributedString+NetNewsWire.swift

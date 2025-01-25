@@ -11,7 +11,7 @@ import Articles
 import RSWeb
 import Secrets
 
-protocol AccountDelegate {
+protocol AccountDelegate: AnyObject {
 
 	var behaviors: AccountBehaviors { get }
 

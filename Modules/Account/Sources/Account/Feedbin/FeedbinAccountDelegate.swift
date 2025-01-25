@@ -938,9 +938,7 @@ private extension FeedbinAccountDelegate {
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: [SyncStatus],
-							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
-							 completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
 		guard !statuses.isEmpty else {
 			completion(.success(()))
@@ -1011,8 +1009,8 @@ private extension FeedbinAccountDelegate {
 		var orderFound = 0
 
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
-			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
-			orderFound = orderFound + 1
+			let source = url == choice.url ? FeedSpecifier.Source.userEntered : FeedSpecifier.Source.htmlLink
+			orderFound += 1
 			let specifier = FeedSpecifier(title: choice.name, urlString: choice.url, source: source, orderFound: orderFound)
 			return specifier
 		}

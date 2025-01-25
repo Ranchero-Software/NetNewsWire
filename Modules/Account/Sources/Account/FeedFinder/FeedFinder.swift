@@ -20,7 +20,7 @@ class FeedFinder {
 				if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
 					urlComponents.path = "\(urlComponents.path).json"
 					if let newURLString = urlComponents.url?.absoluteString {
-						let microblogFeedSpecifier = FeedSpecifier(title: nil, urlString: newURLString, source: .HTMLLink, orderFound: 1)
+						let microblogFeedSpecifier = FeedSpecifier(title: nil, urlString: newURLString, source: .htmlLink, orderFound: 1)
 						completion(.success(Set([microblogFeedSpecifier])))
 					}
 				} else {
@@ -45,7 +45,7 @@ class FeedFinder {
 			}
 
 			if FeedFinder.isFeed(data) {
-				let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
+				let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .userEntered, orderFound: 1)
 				completion(.success(Set([feedSpecifier])))
 				return
 			}
@@ -86,7 +86,7 @@ private extension FeedFinder {
 		var didFindFeedInHTMLHead = false
 
 		for oneFeedSpecifier in possibleFeedSpecifiers {
-			if oneFeedSpecifier.source == .HTMLHead {
+			if oneFeedSpecifier.source == .htmlHead {
 				addFeedSpecifier(oneFeedSpecifier, feedSpecifiers: &feedSpecifiers)
 				didFindFeedInHTMLHead = true
 			} else {
@@ -116,11 +116,11 @@ private extension FeedFinder {
 			// It’s also fairly common for /index.xml to work.
 			if let url = URL(string: urlString) {
 				let feedURL = url.appendingPathComponent("feed", isDirectory: true)
-				let wordpressFeedSpecifier = FeedSpecifier(title: nil, urlString: feedURL.absoluteString, source: .HTMLLink, orderFound: 1)
+				let wordpressFeedSpecifier = FeedSpecifier(title: nil, urlString: feedURL.absoluteString, source: .htmlLink, orderFound: 1)
 				feedSpecifiers.insert(wordpressFeedSpecifier)
 
 				let indexXMLURL = url.appendingPathComponent("index.xml", isDirectory: false)
-				let indexXMLFeedSpecifier = FeedSpecifier(title: nil, urlString: indexXMLURL.absoluteString, source: .HTMLLink, orderFound: 1)
+				let indexXMLFeedSpecifier = FeedSpecifier(title: nil, urlString: indexXMLURL.absoluteString, source: .htmlLink, orderFound: 1)
 				feedSpecifiers.insert(indexXMLFeedSpecifier)
 			}
 		}

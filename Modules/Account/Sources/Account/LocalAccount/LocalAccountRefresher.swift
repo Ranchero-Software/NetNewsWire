@@ -14,13 +14,13 @@ import Articles
 import ArticlesDatabase
 import os
 
-protocol LocalAccountRefresherDelegate {
+protocol LocalAccountRefresherDelegate: AnyObject {
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges)
 }
 
 final class LocalAccountRefresher {
 
-	var delegate: LocalAccountRefresherDelegate?
+	weak var delegate: LocalAccountRefresherDelegate?
 	var downloadProgress: DownloadProgress {
 		downloadSession.downloadProgress
 	}

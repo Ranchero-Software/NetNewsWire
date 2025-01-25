@@ -86,17 +86,13 @@ public class Reachability {
     fileprivate let reachabilitySerialQueue: DispatchQueue
 	fileprivate(set) var flags: SCNetworkReachabilityFlags?
 
-	required public init(reachabilityRef: SCNetworkReachability,
-						 queueQoS: DispatchQoS = .default,
-						 targetQueue: DispatchQueue? = nil) {
+	required public init(reachabilityRef: SCNetworkReachability, queueQoS: DispatchQoS = .default, targetQueue: DispatchQueue? = nil) {
 		self.allowsCellularConnection = true
 		self.reachabilityRef = reachabilityRef
 		self.reachabilitySerialQueue = DispatchQueue(label: "uk.co.ashleymills.reachability", qos: queueQoS, target: targetQueue)
 	}
 
-	public convenience init(hostname: String,
-							queueQoS: DispatchQoS = .default,
-							targetQueue: DispatchQueue? = nil) throws {
+	public convenience init(hostname: String, queueQoS: DispatchQoS = .default, targetQueue: DispatchQueue? = nil) throws {
 		guard let ref = SCNetworkReachabilityCreateWithName(nil, hostname) else {
 			throw ReachabilityError.failedToCreateWithHostname(hostname, SCError())
 		}
@@ -192,16 +188,16 @@ extension SCNetworkReachabilityFlags {
 	}
 
 	var description: String {
-		let W = isOnWWANFlagSet ? "W" : "-"
-		let R = isReachableFlagSet ? "R" : "-"
-		let c = isConnectionRequiredFlagSet ? "c" : "-"
-		let t = isTransientConnectionFlagSet ? "t" : "-"
-		let i = isInterventionRequiredFlagSet ? "i" : "-"
-		let C = isConnectionOnTrafficFlagSet ? "C" : "-"
-		let D = isConnectionOnDemandFlagSet ? "D" : "-"
-		let l = isLocalAddressFlagSet ? "l" : "-"
-		let d = isDirectFlagSet ? "d" : "-"
+		let onWWANFlagSet = isOnWWANFlagSet ? "W" : "-"
+		let reachableFlagSet = isReachableFlagSet ? "R" : "-"
+		let connectionRequiredFlagSet = isConnectionRequiredFlagSet ? "c" : "-"
+		let transientConnectionFlagSet = isTransientConnectionFlagSet ? "t" : "-"
+		let interventionRequiredFlagSet = isInterventionRequiredFlagSet ? "i" : "-"
+		let connectionOnTrafficFlagSet = isConnectionOnTrafficFlagSet ? "C" : "-"
+		let connectionOnDemandFlagSet = isConnectionOnDemandFlagSet ? "D" : "-"
+		let localAddressFlagSet = isLocalAddressFlagSet ? "l" : "-"
+		let directFlagSet = isDirectFlagSet ? "d" : "-"
 
-		return "\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)"
+		return "\(onWWANFlagSet)\(reachableFlagSet) \(connectionRequiredFlagSet)\(transientConnectionFlagSet)\(interventionRequiredFlagSet)\(connectionOnTrafficFlagSet)\(connectionOnDemandFlagSet)\(localAddressFlagSet)\(directFlagSet)"
 	}
 }

@@ -486,6 +486,7 @@ final class FeedbinAPICaller: NSObject {
 
 	}
 
+	// swiftlint:disable:next large_tuple
 	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Date?, Int?), Error>) -> Void) {
 
 		// If this is an initial sync, go and grab the previous 3 months of entries.  If not, use the last

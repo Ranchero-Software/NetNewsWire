@@ -59,26 +59,26 @@ public final class DownloadProgress {
 
 	public func addToNumberOfTasks(_ n: Int) {
 		assert(Thread.isMainThread)
-		numberOfTasks = numberOfTasks + n
+		numberOfTasks += n
 	}
 
 	public func addToNumberOfTasksAndRemaining(_ n: Int) {
 		assert(Thread.isMainThread)
-		numberOfTasks = numberOfTasks + n
-		numberRemaining = numberRemaining + n
+		numberOfTasks += n
+		numberRemaining += n
 	}
 
 	public func completeTask() {
 		assert(Thread.isMainThread)
 		if numberRemaining > 0 {
-			numberRemaining = numberRemaining - 1
+			numberRemaining -= 1
 		}
 	}
 
 	public func completeTasks(_ tasks: Int) {
 		assert(Thread.isMainThread)
 		if numberRemaining >= tasks {
-			numberRemaining = numberRemaining - tasks
+			numberRemaining -= tasks
 		}
 	}
 
