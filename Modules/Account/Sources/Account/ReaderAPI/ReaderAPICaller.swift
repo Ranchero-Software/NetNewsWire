@@ -64,16 +64,14 @@ final class ReaderAPICaller: NSObject {
 	}
 
 	private var apiBaseURL: URL? {
-		get {
-			switch variant {
-			case .generic, .freshRSS:
-				guard let accountMetadata = accountMetadata else {
-					return nil
-				}
-				return accountMetadata.endpointURL
-			default:
-				return URL(string: variant.host)
+		switch variant {
+		case .generic, .freshRSS:
+			guard let accountMetadata = accountMetadata else {
+				return nil
 			}
+			return accountMetadata.endpointURL
+		default:
+			return URL(string: variant.host)
 		}
 	}
 
@@ -234,13 +232,14 @@ final class ReaderAPICaller: NSObject {
 
 				let oldTagName = "user/-/label/\(encodedOldName)"
 				let newTagName = "user/-/label/\(encodedNewName)"
-				let postData = "T=\(token)&s=\(oldTagName)&dest=\(newTagName)".data(using: String.Encoding.utf8)
+				let postDataString = "T=\(token)&s=\(oldTagName)&dest=\(newTagName)"
+				let postData = Data(postDataString.utf8)
 
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData, completion: { (result) in
 					switch result {
 					case .success:
 						completion(.success(()))
-						case .failure(let error):
+					case .failure(let error):
 						completion(.failure(error))
 					}
 				})
@@ -270,13 +269,14 @@ final class ReaderAPICaller: NSObject {
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 
-				let postData = "T=\(token)&s=\(folderExternalID)".data(using: String.Encoding.utf8)
+				let postDataString = "T=\(token)&s=\(folderExternalID)"
+				let postData = Data(postDataString.utf8)
 
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData, completion: { (result) in
 					switch result {
 					case .success:
 						completion(.success(()))
-						case .failure(let error):
+					case .failure(let error):
 						completion(.failure(error))
 					}
 				})
@@ -362,9 +362,10 @@ final class ReaderAPICaller: NSObject {
 					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 					return
 				}
-				let postData = "T=\(token)&quickadd=\(encodedFeedURL)".data(using: String.Encoding.utf8)
+				let postDataString = "T=\(token)&quickadd=\(encodedFeedURL)"
+				let postData = Data(postDataString.utf8)
 
-				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIQuickAddResult.self, completion: { (result) in
+				self.transport.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIQuickAddResult.self, completion: { (result) in
 					switch result {
 					case .success(let (_, subResult)):
 
@@ -412,13 +413,14 @@ final class ReaderAPICaller: NSObject {
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 
-				let postData = "T=\(token)&s=\(subscriptionID)&ac=unsubscribe".data(using: String.Encoding.utf8)
+				let postDataString = "T=\(token)&s=\(subscriptionID)&ac=unsubscribe"
+				let postData = Data(postDataString.utf8)
 
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData, completion: { (result) in
 					switch result {
 					case .success:
 						completion(.success(()))
-						case .failure(let error):
+					case .failure(let error):
 						completion(.failure(error))
 					}
 				})
@@ -480,7 +482,7 @@ final class ReaderAPICaller: NSObject {
 						completion(.failure(error))
 					}
 				})
-				
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -518,9 +520,10 @@ final class ReaderAPICaller: NSObject {
 					}
 				}).joined(separator: "&")
 
-				let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
+				let postDataString = "T=\(token)&output=json&\(idsToFetch)"
+				let postData = Data(postDataString.utf8)
 
-				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
+				self.transport.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
 					switch result {
 					case .success(let (_, entryWrapper)):
 						guard let entryWrapper = entryWrapper else {
@@ -713,9 +716,10 @@ private extension ReaderAPICaller {
 
 				let actionIndicator = add ? "a" : "r"
 
-				let postData = "T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".data(using: String.Encoding.utf8)
+				let postDataString = "T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)"
+				let postData = Data(postDataString.utf8)
 
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData, completion: { (result) in
 					switch result {
 					case .success:
 						completion(.success(()))

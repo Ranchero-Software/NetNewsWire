@@ -17,7 +17,7 @@ public extension NSResponder {
 			if nomad === ancestor {
 				return true
 			}
-			if let _ = nomad.nextResponder {
+			if nomad.nextResponder != nil {
 				nomad = nomad.nextResponder!
 			} else {
 				break

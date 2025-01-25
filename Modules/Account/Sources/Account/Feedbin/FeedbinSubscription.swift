@@ -32,7 +32,7 @@ struct FeedbinSubscription: Hashable, Codable {
 		hasher.combine(subscriptionID)
 	}
 
-	static func == (lhs: FeedbinSubscription, rhs: FeedbinSubscription) -> Bool {
+	static func ==(lhs: FeedbinSubscription, rhs: FeedbinSubscription) -> Bool {
 		return lhs.subscriptionID == rhs.subscriptionID
 	}
 

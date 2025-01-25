@@ -64,7 +64,7 @@ public extension NSOutlineView {
 
 		while true {
 			row += 1
-			if let _ = item(atRow: row) {
+			if item(atRow: row) != nil {
 				if canSelect(row) {
 					selectRowAndScrollToVisible(row)
 					return

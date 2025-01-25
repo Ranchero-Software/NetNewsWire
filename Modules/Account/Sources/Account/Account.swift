@@ -388,11 +388,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return grantingType.oauthAuthorizationCodeGrantRequest()
 	}
 
-	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
-											   client: OAuthAuthorizationClient,
-											   accountType: AccountType,
-											   transport: Transport = URLSession.webserviceTransport(),
-											   completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> Void) {
+	public static func requestOAuthAccessToken(
+		with response: OAuthAuthorizationResponse,
+		client: OAuthAuthorizationClient,
+		accountType: AccountType,
+		transport: Transport = URLSession.webserviceTransport(),
+		completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> Void) {
+
 		let grantingType: OAuthAuthorizationGranting.Type
 
 		switch accountType {
@@ -994,7 +996,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Account, rhs: Account) -> Bool {
+	public static func ==(lhs: Account, rhs: Account) -> Bool {
 		return lhs === rhs
 	}
 }

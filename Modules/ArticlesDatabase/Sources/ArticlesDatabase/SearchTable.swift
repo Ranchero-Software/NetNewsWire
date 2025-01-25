@@ -72,7 +72,7 @@ final class ArticleSearchInfo: Hashable {
 
 	// MARK: Equatable
 
-	static func == (lhs: ArticleSearchInfo, rhs: ArticleSearchInfo) -> Bool {
+	static func ==(lhs: ArticleSearchInfo, rhs: ArticleSearchInfo) -> Bool {
 		return lhs.articleID == rhs.articleID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.authorsNames == rhs.authorsNames && lhs.searchRowID == rhs.searchRowID
 	}
 }

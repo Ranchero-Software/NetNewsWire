@@ -24,7 +24,7 @@ protocol AppDelegateAppleEvents {
     func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor)
 }
 
-protocol ScriptingAppDelegate {
+protocol ScriptingAppDelegate: AnyObject {
     var  scriptingCurrentArticle: Article? {get}
     var  scriptingSelectedArticles: [Article] {get}
     var  scriptingMainWindowController: ScriptingMainWindowController? {get}
@@ -171,14 +171,14 @@ class NetNewsWireExistsCommand: NSExistsCommand {
     // to be another object type.  e.g., 'permalink of the current article' parses as
     //    <property> of <property> of <top level object>
     // cocoa would send the top level object (the app) a doesExist message for a nested property, and
-    // it errors out because it doesn't know how to handle that
+    // it errors out because it doesn't know how to handle that`
     // What we do instead is simply see if the defaultImplementation errors, and if it does, the object
     // must not exist.  Otherwise, we return the result of the defaultImplementation
     // The wrinkle is that it is possible that the direct object is a list, so we need to
     // handle that case as well
 
     override func performDefaultImplementation() -> Any? {
-         guard let result = super.performDefaultImplementation() else { return NSNumber(booleanLiteral: false) }
+         guard let result = super.performDefaultImplementation() else { return NSNumber(value: false) }
          return result
     }
 }

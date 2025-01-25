@@ -153,28 +153,28 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     }
 
     @objc(accountType)
-    var accountType: OSType {
-        var osType: String = ""
-        switch self.account.type {
-        case .onMyMac:
-                osType = "Locl"
+	var accountType: OSType {
+		var osType: String = ""
+		switch self.account.type {
+		case .onMyMac:
+			osType = "Locl"
 		case .cloudKit:
-				osType = "Clkt"
-        case .feedly:
-                osType = "Fdly"
-        case .feedbin:
-                osType = "Fdbn"
-        case .newsBlur:
-                osType = "NBlr"
+			osType = "Clkt"
+		case .feedly:
+			osType = "Fdly"
+		case .feedbin:
+			osType = "Fdbn"
+		case .newsBlur:
+			osType = "NBlr"
 		case .freshRSS:
-				osType = "Frsh"
+			osType = "Frsh"
 		case .inoreader:
-				osType = "Inrd"
+			osType = "Inrd"
 		case .bazQux:
-				osType = "Bzqx"
+			osType = "Bzqx"
 		case .theOldReader:
-				osType = "Tord"
-        }
-        return osType.fourCharCode
-    }
+			osType = "Tord"
+		}
+		return osType.fourCharCode
+	}
 }

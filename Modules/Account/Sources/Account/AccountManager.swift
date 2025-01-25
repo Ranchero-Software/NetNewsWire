@@ -410,7 +410,7 @@ public final class AccountManager: UnreadCountProvider {
 	// MARK: - Notifications
 
 	@objc func unreadCountDidInitialize(_ notification: Notification) {
-		guard let _ = notification.object as? Account else {
+		guard notification.object is Account else {
 			return
 		}
 		if isUnreadCountsInitialized {
@@ -419,7 +419,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
-		guard let _ = notification.object as? Account else {
+		guard notification.object is Account else {
 			return
 		}
 		updateUnreadCount()

@@ -342,7 +342,7 @@ private extension MainThreadOperationQueue {
 	func allOperationIDsAreInStorage(_ operationIDs: [Int]) -> Bool {
 		// Used by an assert.
 		for operationID in operationIDs {
-			guard let _ = operations[operationID] else {
+			if operations[operationID] == nil {
 				return false
 			}
 		}

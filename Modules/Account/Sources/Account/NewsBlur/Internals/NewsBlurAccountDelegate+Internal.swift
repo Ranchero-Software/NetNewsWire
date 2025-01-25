@@ -277,10 +277,12 @@ extension NewsBlurAccountDelegate {
 		return Set(parsedItems)
 	}
 
-	func sendStoryStatuses(_ statuses: [SyncStatus],
-						   throttle: Bool,
-						   apiCall: ([String], @escaping (Result<Void, Error>) -> Void) -> Void,
-						   completion: @escaping (Result<Void, Error>) -> Void) {
+	func sendStoryStatuses(
+		_ statuses: [SyncStatus],
+		throttle: Bool,
+		apiCall: ([String], @escaping (Result<Void, Error>) -> Void) -> Void,
+		completion: @escaping (Result<Void, Error>) -> Void) {
+
 		guard !statuses.isEmpty else {
 			completion(.success(()))
 			return

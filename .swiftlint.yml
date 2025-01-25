@@ -25,11 +25,14 @@ disabled_rules:
   - type_body_length
   - function_parameter_count
   - line_length
+  - operator_whitespace
 
 excluded:
   - Modules/Secrets/Sources/Secrets/SecretKey.swift
   - Modules/Account/Tests/AccountTests/Feedly/
+  - Modules/Account/Sources/Account/Feedly/
   - Widget/Resources/Localized.swift
   - Shared/Extensions/NSAttributedString+NetNewsWire.swift
+  - buildscripts/
 
 

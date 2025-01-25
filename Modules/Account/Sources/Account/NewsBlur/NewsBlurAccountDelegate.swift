@@ -616,7 +616,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		caller.logout { _ in }
 	}
 
-	class func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		let caller = NewsBlurAPICaller(transport: transport)
 		caller.credentials = credentials
 		caller.validateCredentials { result in
