@@ -147,11 +147,14 @@ class MainFeedTableViewCell: VibrantTableViewCell {
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView,
-												 unreadCountView: unreadCountView,
-												 showingEditingControl: isShowingEditControl,
-												 indent: indentationLevel == 1,
-												 shouldShowDisclosure: isDisclosureAvailable
+		let layout = MainFeedTableViewCellLayout(
+			cellWidth: bounds.size.width,
+			insets: safeAreaInsets,
+			label: titleView,
+			unreadCountView: unreadCountView,
+			showingEditingControl: isShowingEditControl,
+			indent: indentationLevel == 1,
+			shouldShowDisclosure: isDisclosureAvailable
 		)
 		layoutWith(layout)
 	}
