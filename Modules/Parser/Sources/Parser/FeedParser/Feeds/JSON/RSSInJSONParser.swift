@@ -117,11 +117,10 @@ private extension RSSInJSONParser {
 			}
 			if s.isEmpty {
 				// Sheesh. Tough case.
-				if let _ = contentHTML {
-					s = contentHTML!
-				}
-				if let _ = contentText {
-					s = contentText!
+				if let contentHTML {
+					s = contentHTML
+				} else if let contentText {
+					s = contentText
 				}
 			}
 			uniqueID = s.md5String

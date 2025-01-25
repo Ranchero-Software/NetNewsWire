@@ -131,9 +131,10 @@ private func decodedRawEntityValue(_ rawEntity: ContiguousArray<UInt8>) -> Strin
 		entityCharacters.append(character)
 	}
 
-	let key = String(decoding: entityCharacters, as: UTF8.self)
-	if let entityString = entitiesDictionary[key] {
-		return entityString
+	if let key = String(bytes: entityCharacters, encoding: .utf8) {
+		if let entityString = entitiesDictionary[key] {
+			return entityString
+		}
 	}
 
 	if rawEntity[0] == numberSignCharacter {
