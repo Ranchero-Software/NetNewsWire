@@ -215,7 +215,7 @@ private extension SidebarViewController {
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		if let homePageURL = feed.homePageURL, let _ = URL(string: homePageURL) {
+		if let homePageURL = feed.homePageURL, URL(string: homePageURL) != nil {
 			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())

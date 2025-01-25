@@ -14,10 +14,12 @@ import SafariServices
 
 class ArticleViewController: UIViewController {
 
-	typealias State = (extractedArticle: ExtractedArticle?,
-		isShowingExtractedArticle: Bool,
-		articleExtractorButtonState: ArticleExtractorButtonState,
-		windowScrollY: Int)
+	struct State {
+		let extractedArticle: ExtractedArticle?
+		let isShowingExtractedArticle: Bool
+		let articleExtractorButtonState: ArticleExtractorButtonState
+		let windowScrollY: Int
+	}
 
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
@@ -360,8 +362,7 @@ public extension Notification.Name {
 extension ArticleViewController: SearchBarDelegate {
 
 	func searchBar(_ searchBar: ArticleSearchBar, textDidChange searchText: String) {
-		currentWebViewController?.searchText(searchText) {
-			found in
+		currentWebViewController?.searchText(searchText) { found in
 			searchBar.resultsCount = found.count
 
 			if let index = found.index {

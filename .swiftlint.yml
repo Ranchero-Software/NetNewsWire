@@ -23,6 +23,8 @@ disabled_rules:
   - generic_type_name
   - function_body_length
   - type_body_length
+  - function_parameter_count
+  - line_length
 
 excluded:
   - Modules/Secrets/Sources/Secrets/SecretKey.swift

@@ -835,8 +835,7 @@ extension WebViewController {
 		}
 		let encoded = json.base64EncodedString()
 
-		webView?.evaluateJavaScript("updateFind(\"\(encoded)\")") {
-			(result, error) in
+		webView?.evaluateJavaScript("updateFind(\"\(encoded)\")") { (result, error) in
 			guard error == nil,
 				let b64 = result as? String,
 				let rawData = Data(base64Encoded: b64),

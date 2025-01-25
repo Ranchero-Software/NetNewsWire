@@ -8,7 +8,7 @@
 
 import AppKit
 
-protocol RenameWindowControllerDelegate {
+protocol RenameWindowControllerDelegate: AnyObject {
 
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject: Any, withNewName: String)
 }
@@ -21,7 +21,7 @@ final class RenameWindowController: NSWindowController {
 
 	private var originalTitle: String?
 	private var representedObject: Any?
-	private var delegate: RenameWindowControllerDelegate?
+	private weak var delegate: RenameWindowControllerDelegate?
 
 	convenience init(originalTitle: String, representedObject: Any, delegate: RenameWindowControllerDelegate) {
 
