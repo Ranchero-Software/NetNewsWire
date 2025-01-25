@@ -21,10 +21,7 @@ public final class Node: Hashable {
 	private static var incrementingID = 0
 
 	public var isRoot: Bool {
-		if let _ = parent {
-			return false
-		}
-		return true
+		parent == nil
 	}
 
 	public var numberOfChildNodes: Int {

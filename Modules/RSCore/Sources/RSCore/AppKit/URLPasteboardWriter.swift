@@ -30,7 +30,7 @@ import AppKit
 
 	public func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		if let _ = URL(string: urlString) {
+		if URL(string: urlString) != nil {
 			return [.URL, .string]
 		}
 		return [.string]

@@ -88,6 +88,8 @@ public extension Data {
 		static let lessThan = "<".utf8.first!
 		static let greaterThan = ">".utf8.first!
 
+		// swiftlint:disable non_optional_string_data_conversion
+
 		/// Tags in UTF-8/ASCII format.
 		enum UTF8 {
 			static let lowercaseHTML = "html".data(using: .utf8)!
@@ -104,6 +106,7 @@ public extension Data {
 			static let uppercaseBody = "BODY".data(using: .utf16LittleEndian)!
 		}
 
+		// swiftlint:enable non_optional_string_data_conversion
 	}
 
 	/// Returns `true` if the data looks like it could be HTML.

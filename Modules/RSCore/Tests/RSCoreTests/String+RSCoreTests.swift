@@ -8,14 +8,13 @@
 
 import XCTest
 
-class String_RSCore: XCTestCase {
+class StringRSCore: XCTestCase {
 
 	func testCollapsingWhitespace() {
 
 		let str = "   lots\t\tof   random\n\nwhitespace\r\n"
 		let expected = "lots of random whitespace"
 		XCTAssertEqual(str.collapsingWhitespace, expected)
-
 	}
 
 	func testTrimmingWhitespace() {
@@ -103,7 +102,6 @@ class String_RSCore: XCTestCase {
 		let str = #"<foo attr="value">bar&baz</foo>"#
 		let expected = "&lt;foo attr=&quot;value&quot;&gt;bar&amp;baz&lt;/foo&gt;"
 		XCTAssertEqual(str.escapingSpecialXMLCharacters, expected)
-
 	}
 
 	func testStrippingHTTPOrHTTPSScheme() {
@@ -117,7 +115,6 @@ class String_RSCore: XCTestCase {
 
 		let noreplacement = "example://ranchero.com/"
 		XCTAssertEqual(noreplacement.strippingHTTPOrHTTPSScheme, noreplacement)
-
 	}
 
 	func testNormalizedURL() {
@@ -150,7 +147,6 @@ class String_RSCore: XCTestCase {
 		// bare
 		let http = "http://daringfireball.net/"
 		XCTAssertEqual(http.normalizedURL, "http://daringfireball.net/")
-
 	}
 
 	func testMD5StringPerformance() {
@@ -181,5 +177,4 @@ class String_RSCore: XCTestCase {
 			}
 		}
 	}
-
 }

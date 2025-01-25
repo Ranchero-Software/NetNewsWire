@@ -192,18 +192,18 @@ private extension DateParser {
 
 	enum Month: Int {
 
-		case January = 1,
-		February,
-		March,
-		April,
-		May,
-		June,
-		July,
-		August,
-		September,
-		October,
-		November,
-		December
+		case january = 1,
+		february,
+		march,
+		april,
+		may,
+		june,
+		july,
+		august,
+		september,
+		october,
+		november,
+		december
 	}
 
 	// MARK: - Standard Formats
@@ -291,7 +291,7 @@ private extension DateParser {
 		var finalIndex = 0
 
 		let day = nextNumericValue(bytes, numberOfBytes, 0, 2, &finalIndex) ?? 1
-		let month = nextMonthValue(bytes, numberOfBytes, finalIndex + 1, &finalIndex) ?? .January
+		let month = nextMonthValue(bytes, numberOfBytes, finalIndex + 1, &finalIndex) ?? .january
 
 		guard let year = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 4, &finalIndex) else {
 			return nil
@@ -451,7 +451,9 @@ private extension DateParser {
 			characters.append(character)
 		}
 
-		let name = String(decoding: characters, as: UTF8.self)
+		guard let name = String(bytes: characters, encoding: .utf8) else {
+			return nil
+		}
 		return timeZoneTable[name]
 	}
 
@@ -482,19 +484,19 @@ private extension DateParser {
 			numberOfAlphaCharactersFound+=1
 			if numberOfAlphaCharactersFound == 1 {
 				if ch == DateCharacter.F || ch == DateCharacter.f {
-					return .February
+					return .february
 				}
 				if ch == DateCharacter.S || ch == DateCharacter.s {
-					return .September
+					return .september
 				}
 				if ch == DateCharacter.O || ch == DateCharacter.o {
-					return .October
+					return .october
 				}
 				if ch == DateCharacter.N || ch == DateCharacter.n {
-					return .November
+					return .november
 				}
 				if ch == DateCharacter.D || ch == DateCharacter.d {
-					return .December
+					return .december
 				}
 			}
 
@@ -510,32 +512,32 @@ private extension DateParser {
 
 		if monthCharacters[0] == DateCharacter.J || monthCharacters[0] == DateCharacter.j { // Jan, Jun, Jul
 			if monthCharacters[1] == DateCharacter.A || monthCharacters[1] == DateCharacter.a {
-				return .January
+				return .january
 			}
 			if monthCharacters[1] == DateCharacter.U || monthCharacters[1] == DateCharacter.u {
 				if monthCharacters[2] == DateCharacter.N || monthCharacters[2] == DateCharacter.n {
-					return .June
+					return .june
 				}
-				return .July
+				return .july
 			}
-			return .January
+			return .january
 		}
 
 		if monthCharacters[0] == DateCharacter.M || monthCharacters[0] == DateCharacter.m { // March, May
 			if monthCharacters[2] == DateCharacter.Y || monthCharacters[2] == DateCharacter.y {
-				return .May
+				return .may
 			}
-			return .March
+			return .march
 		}
 
 		if monthCharacters[0] == DateCharacter.A || monthCharacters[0] == DateCharacter.a { // April, August
 			if monthCharacters[1] == DateCharacter.U || monthCharacters[1] == DateCharacter.u {
-				return .August
+				return .august
 			}
-			return .April
+			return .april
 		}
 
-		return .January // Should never get here (but possibly do)
+		return .january // Should never get here (but possibly do)
 	}
 
 	private static func nextNumericValue(_ bytes: DateBuffer, _ numberOfBytes: Int, _ startingIndex: Int, _ maximumNumberOfDigits: Int, _ finalIndex: inout Int) -> Int? {

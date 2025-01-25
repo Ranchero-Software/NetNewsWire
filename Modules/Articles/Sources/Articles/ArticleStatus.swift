@@ -12,8 +12,8 @@ import os
 public final class ArticleStatus: Sendable, Hashable {
 
 	public enum Key: String {
-		case read = "read"
-		case starred = "starred"
+		case read
+		case starred
 	}
 
 	public let articleID: String

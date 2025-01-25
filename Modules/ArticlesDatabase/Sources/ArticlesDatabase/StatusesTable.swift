@@ -299,7 +299,7 @@ private final class StatusCache {
 
 		for status in statuses {
 			let articleID = status.articleID
-			if let _ = self[articleID] {
+			if self[articleID] != nil {
 				continue
 			}
 			self[articleID] = status

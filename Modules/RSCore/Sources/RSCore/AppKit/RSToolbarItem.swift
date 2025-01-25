@@ -12,7 +12,7 @@ public class RSToolbarItem: NSToolbarItem {
 
 	override public func validate() {
 
-		guard let view = view, let _ = view.window else {
+		guard view?.window != nil else {
 			isEnabled = false
 			return
 		}
