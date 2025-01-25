@@ -25,9 +25,9 @@ struct ReaderAPIQuickAddResult: Codable {
 	let streamId: String?
 
 	enum CodingKeys: String, CodingKey {
-		case numResults = "numResults"
-		case error = "error"
-		case streamId = "streamId"
+		case numResults
+		case error
+		case streamId
 	}
 }
 
@@ -35,7 +35,7 @@ struct ReaderAPISubscriptionContainer: Codable {
 	let subscriptions: [ReaderAPISubscription]
 
 	enum CodingKeys: String, CodingKey {
-		case subscriptions = "subscriptions"
+		case subscriptions
 	}
 }
 

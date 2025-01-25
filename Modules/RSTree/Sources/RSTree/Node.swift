@@ -64,7 +64,7 @@ public final class Node: Hashable {
 		Node.incrementingID += 1
 	}
 
-	public class func genericRootNode() -> Node {
+	public static func genericRootNode() -> Node {
 
 		let node = Node(representedObject: TopLevelRepresentedObject(), parent: nil)
 		node.canHaveChildNodes = true
@@ -140,13 +140,13 @@ public final class Node: Hashable {
 		}
 	}
 
-	public class func nodesOrganizedByParent(_ nodes: [Node]) -> [Node: [Node]] {
+	public static func nodesOrganizedByParent(_ nodes: [Node]) -> [Node: [Node]] {
 
 		let nodesWithParents = nodes.filter { $0.parent != nil }
 		return Dictionary(grouping: nodesWithParents, by: { $0.parent! })
 	}
 
-	public class func indexSetsGroupedByParent(_ nodes: [Node]) -> [Node: IndexSet] {
+	public static func indexSetsGroupedByParent(_ nodes: [Node]) -> [Node: IndexSet] {
 
 		let d = nodesOrganizedByParent(nodes)
 		let indexSetDictionary = d.mapValues { (nodes) -> IndexSet in
@@ -177,7 +177,7 @@ public final class Node: Hashable {
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Node, rhs: Node) -> Bool {
+	public static func ==(lhs: Node, rhs: Node) -> Bool {
 		return lhs === rhs
 	}
 }

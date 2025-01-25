@@ -63,15 +63,15 @@ struct ReaderAPIEntry: Codable {
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
-		case title = "title"
-		case author = "author"
-		case summary = "summary"
+		case title
+		case author
+		case summary
 		case alternates = "alternate"
-		case categories = "categories"
+		case categories
 		case publishedTimestamp = "published"
 		case crawledTimestamp = "crawlTimeMsec"
-		case origin = "origin"
-		case timestampUsec = "timestampUsec"
+		case origin
+		case timestampUsec
 	}
 
 	func parseDatePublished() -> Date? {
@@ -107,7 +107,7 @@ struct ReaderAPIArticleSummary: Codable {
 	let content: String?
 
 	enum CodingKeys: String, CodingKey {
-		case content = "content"
+		case content
 	}
 }
 
@@ -124,7 +124,7 @@ struct ReaderAPIEntryOrigin: Codable {
 	let title: String?
 
 	enum CodingKeys: String, CodingKey {
-		case streamId = "streamId"
-		case title = "title"
+		case streamId
+		case title
 	}
 }

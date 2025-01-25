@@ -53,9 +53,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	var server: String? {
-		get {
-			return caller.server
-		}
+		caller.server
 	}
 
 	var isOPMLImportInProgress = false

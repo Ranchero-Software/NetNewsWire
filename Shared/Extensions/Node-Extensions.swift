@@ -26,7 +26,7 @@ extension Array where Element == Node {
 
 private extension Node {
 
-	class func nodesSortedAlphabetically(_ nodes: [Node]) -> [Node] {
+	static func nodesSortedAlphabetically(_ nodes: [Node]) -> [Node] {
 
 		return nodes.sorted { (node1, node2) -> Bool in
 
@@ -41,7 +41,7 @@ private extension Node {
 		}
 	}
 
-	class func nodesSortedAlphabeticallyWithFoldersAtEnd(_ nodes: [Node]) -> [Node] {
+	static func nodesSortedAlphabeticallyWithFoldersAtEnd(_ nodes: [Node]) -> [Node] {
 
 		return nodes.sorted { (node1, node2) -> Bool in
 

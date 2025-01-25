@@ -13,7 +13,7 @@ import UniformTypeIdentifiers
 public class MacWebBrowser {
 
 	/// Opens a URL in the default browser.
-	@discardableResult public class func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
+	@discardableResult public static func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
 
 		// TODO: make this function async
 
@@ -36,7 +36,7 @@ public class MacWebBrowser {
 	/// Returns an array of the browsers installed on the system, sorted by name.
 	///
 	/// "Browsers" are applications that can both handle `https` URLs and display HTML documents.
-	public class func sortedBrowsers() -> [MacWebBrowser] {
+	public static func sortedBrowsers() -> [MacWebBrowser] {
 
 		let httpsAppURLs = NSWorkspace.shared.urlsForApplications(toOpen: URL(string: "https://apple.com/")!)
 		let htmlAppURLs = NSWorkspace.shared.urlsForApplications(toOpen: UTType.html)
@@ -52,12 +52,12 @@ public class MacWebBrowser {
 	}
 
 	/// The filesystem URL of the default web browser.
-	private class var defaultBrowserURL: URL? {
+	private static var defaultBrowserURL: URL? {
 		return NSWorkspace.shared.urlForApplication(toOpen: URL(string: "https:///")!)
 	}
 
 	/// The user's default web browser.
-	public class var `default`: MacWebBrowser {
+	public static var `default`: MacWebBrowser {
 		return MacWebBrowser(url: defaultBrowserURL!)
 	}
 

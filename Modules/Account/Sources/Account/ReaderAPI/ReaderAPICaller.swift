@@ -58,9 +58,7 @@ final class ReaderAPICaller: NSObject {
 	var credentials: Credentials?
 
 	var server: String? {
-		get {
-			return apiBaseURL?.host
-		}
+		return apiBaseURL?.host
 	}
 
 	private var apiBaseURL: URL? {

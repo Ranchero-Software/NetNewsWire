@@ -12,7 +12,7 @@ struct ReaderAPITagContainer: Codable {
 	let tags: [ReaderAPITag]
 
 	enum CodingKeys: String, CodingKey {
-		case tags = "tags"
+		case tags
 	}
 }
 
@@ -23,7 +23,7 @@ struct ReaderAPITag: Codable {
 
 	enum CodingKeys: String, CodingKey {
 		case tagID = "id"
-		case type = "type"
+		case type
 	}
 
 	var folderName: String? {

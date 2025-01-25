@@ -24,7 +24,7 @@ class OpenInBrowserActivity: UIActivity {
 		return UIActivity.ActivityType(rawValue: "com.rancharo.NetNewsWire-Evergreen.safari")
 	}
 
-	override class var activityCategory: UIActivity.Category {
+	override static var activityCategory: UIActivity.Category {
 		return .action
 	}
 

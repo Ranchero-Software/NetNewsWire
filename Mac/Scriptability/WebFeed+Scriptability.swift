@@ -59,7 +59,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
 
     // MARK: --- handle NSCreateCommand ---
 
-    class func urlForNewFeed(arguments: [String: Any]) -> String? {
+    static func urlForNewFeed(arguments: [String: Any]) -> String? {
         var url: String?
         if let withDataParam = arguments["ObjectData"] {
             if let objectDataDescriptor = withDataParam as? NSAppleEventDescriptor {
@@ -71,7 +71,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         return url
     }
 
-    class func scriptableFeed(_ feed: Feed, account: Account, folder: Folder?) -> ScriptableFeed {
+    static func scriptableFeed(_ feed: Feed, account: Account, folder: Folder?) -> ScriptableFeed {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
             let scriptableFolder = ScriptableFolder(folder, container: scriptableAccount)
@@ -81,7 +81,7 @@ class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContaine
         }
     }
 
-    class func handleCreateElement(command: NSCreateCommand) -> Any? {
+    static func handleCreateElement(command: NSCreateCommand) -> Any? {
         guard command.isCreateCommand(forClass: "Feed") else { return nil }
         guard let arguments = command.arguments else {return nil}
         let titleFromArgs = command.property(forKey: "name") as? String

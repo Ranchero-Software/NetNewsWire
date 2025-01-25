@@ -13,8 +13,8 @@ struct ReaderAPIReferenceWrapper: Codable {
 	let continuation: String?
 
 	enum CodingKeys: String, CodingKey {
-		case itemRefs = "itemRefs"
-		case continuation = "continuation"
+		case itemRefs
+		case continuation
 	}
 }
 

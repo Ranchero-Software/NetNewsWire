@@ -65,7 +65,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
         or
            tell account X to make new folder at end with properties {name:"new folder name"}
     */
-    class func handleCreateElement(command: NSCreateCommand) -> Any? {
+    static func handleCreateElement(command: NSCreateCommand) -> Any? {
         guard command.isCreateCommand(forClass: "fold") else { return nil }
         let name = command.property(forKey: "name") as? String ?? ""
 

@@ -21,7 +21,7 @@ class FindInArticleActivity: UIActivity {
 		UIImage(systemName: "magnifyingglass", withConfiguration: UIImage.SymbolConfiguration(pointSize: 20, weight: .regular))
 	}
 
-	override class var activityCategory: UIActivity.Category {
+	override static var activityCategory: UIActivity.Category {
 		.action
 	}
 

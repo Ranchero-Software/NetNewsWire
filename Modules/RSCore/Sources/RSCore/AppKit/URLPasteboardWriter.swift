@@ -19,7 +19,7 @@ import AppKit
 		self.urlString = urlString
 	}
 
-	public class func write(urlString: String, to pasteboard: NSPasteboard) {
+	public static func write(urlString: String, to pasteboard: NSPasteboard) {
 
 		pasteboard.clearContents()
 		let writer = URLPasteboardWriter(urlString: urlString)
