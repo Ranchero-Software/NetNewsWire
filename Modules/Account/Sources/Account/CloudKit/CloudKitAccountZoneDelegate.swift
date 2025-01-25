@@ -15,7 +15,14 @@ import Articles
 
 class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
-	private typealias UnclaimedFeed = (url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String)
+	struct UnclaimedFeed {
+		let url: URL
+		let name: String?
+		let editedName: String?
+		let homePageURL: String?
+		let feedExternalID: String
+	}
+
 	private var newUnclaimedFeeds = [String: [UnclaimedFeed]]()
 	private var existingUnclaimedFeeds = [String: [Feed]]()
 

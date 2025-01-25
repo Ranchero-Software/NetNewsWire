@@ -26,6 +26,7 @@ disabled_rules:
   - function_parameter_count
   - line_length
   - operator_whitespace
+  - nesting
 
 excluded:
   - Modules/Secrets/Sources/Secrets/SecretKey.swift
