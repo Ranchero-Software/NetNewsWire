@@ -107,7 +107,7 @@ final class TimelineContainerViewController: NSViewController {
 			return false
 		}
 		for object in representedObjects {
-			guard let _ = currentObjects.firstIndex(where: { $0 === object }) else {
+			guard currentObjects.firstIndex(where: { $0 === object }) != nil else {
 				return false
 			}
 		}

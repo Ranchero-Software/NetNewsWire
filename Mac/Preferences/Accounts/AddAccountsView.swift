@@ -74,7 +74,7 @@ enum AddAccountSections: Int, CaseIterable {
 struct AddAccountsView: View {
 
 	weak var parent: NSHostingController<AddAccountsView>? // required because presentationMode.dismiss() doesn't work
-	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
+	weak var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
 	private let chunkLimit = 4 // use this to control number of accounts in each web account column
 	@State private var selectedAccount: AccountType = .onMyMac
 

@@ -12,7 +12,7 @@ import SwiftUI
 import RSCore
 
 // MARK: - AccountsPreferencesAddAccountDelegate
-protocol AccountsPreferencesAddAccountDelegate {
+protocol AccountsPreferencesAddAccountDelegate: AnyObject {
 	func presentSheetForAccount(_ accountType: AccountType)
 }
 
@@ -22,7 +22,7 @@ final class AccountsPreferencesViewController: NSViewController {
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var detailView: NSView!
 	@IBOutlet weak var deleteButton: NSButton!
-	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
+	weak var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
 	var addAccountWindowController: NSWindowController?
 	var addAccountsViewController: NSHostingController<AddAccountsView>?
 

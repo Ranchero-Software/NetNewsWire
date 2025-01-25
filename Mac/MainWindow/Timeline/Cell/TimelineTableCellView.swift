@@ -299,7 +299,11 @@ private extension TimelineTableCellView {
 	}
 
 	func showOrHideView(_ view: NSView, _ shouldHide: Bool) {
-		shouldHide ? hideView(view) : showView(view)
+		if shouldHide {
+			hideView(view)
+		} else {
+			showView(view)
+		}
 	}
 
 	func updateSubviews() {

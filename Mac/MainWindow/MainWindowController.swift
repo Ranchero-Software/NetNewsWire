@@ -272,9 +272,13 @@ class MainWindowController: NSWindowController, NSUserInterfaceValidations {
 		guard let detailViewController = detailViewController else {
 			return
 		}
-		detailViewController.canScrollDown { (canScroll) in
+		detailViewController.canScrollDown { canScroll in
 			NSCursor.setHiddenUntilMouseMoves(true)
-			canScroll ? detailViewController.scrollPageDown(sender) : self.nextUnread(sender)
+			if canScroll {
+				detailViewController.scrollPageDown(sender)
+			} else {
+				self.nextUnread(sender)
+			}
 		}
 	}
 

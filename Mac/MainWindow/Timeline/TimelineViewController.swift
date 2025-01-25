@@ -557,10 +557,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		guard let _ = indexOfNextUnreadArticle(wrappingToTop: wrapping) else {
-			return false
-		}
-		return true
+		indexOfNextUnreadArticle(wrappingToTop: wrapping) != nil
 	}
 
 	func indexOfNextUnreadArticle(wrappingToTop wrapping: Bool = false) -> Int? {
@@ -913,25 +910,25 @@ extension TimelineViewController: NSTableViewDelegate {
 		}
 
 		switch edge {
-			case .leading:
-				let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (_, _) in
-					self.toggleArticleRead(article)
-					tableView.rowActionsVisible = false
-				}
-				action.image = article.status.read ? AppAssets.swipeMarkUnreadImage : AppAssets.swipeMarkReadImage
-				return [action]
+		case .leading:
+			let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (_, _) in
+				self.toggleArticleRead(article)
+				tableView.rowActionsVisible = false
+			}
+			action.image = article.status.read ? AppAssets.swipeMarkUnreadImage : AppAssets.swipeMarkReadImage
+			return [action]
 
-			case .trailing:
-				let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (_, _) in
-					self.toggleArticleStarred(article)
-					tableView.rowActionsVisible = false
-				}
-				action.backgroundColor = AppAssets.starColor
-				action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
-				return [action]
+		case .trailing:
+			let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (_, _) in
+				self.toggleArticleStarred(article)
+				tableView.rowActionsVisible = false
+			}
+			action.backgroundColor = AppAssets.starColor
+			action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
+			return [action]
 
-			@unknown default:
-				os_log(.error, "Unknown table row edge: %ld", edge.rawValue)
+		@unknown default:
+			os_log(.error, "Unknown table row edge: %ld", edge.rawValue)
 		}
 
 		return []

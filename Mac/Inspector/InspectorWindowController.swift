@@ -21,7 +21,7 @@ typealias InspectorViewController = Inspector & NSViewController
 
 final class InspectorWindowController: NSWindowController {
 
-	class var shouldOpenAtStartup: Bool {
+	static var shouldOpenAtStartup: Bool {
 		return UserDefaults.standard.bool(forKey: DefaultsKey.windowIsOpen)
 	}
 

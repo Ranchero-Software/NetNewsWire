@@ -302,10 +302,7 @@ protocol SidebarDelegate: AnyObject {
 	// MARK: - Navigation
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		if let _ = nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) {
-			return true
-		}
-		return false
+		nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) != nil
 	}
 
 	func goToNextUnread(wrappingToTop wrapping: Bool = false) {

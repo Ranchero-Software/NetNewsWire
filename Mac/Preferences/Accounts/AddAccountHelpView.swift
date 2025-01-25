@@ -12,7 +12,7 @@ import Account
 struct AddAccountHelpView: View {
 
 	let accountTypes: [AccountType] = AddAccountSections.allOrdered.sectionContent
-	var delegate: AccountsPreferencesAddAccountDelegate?
+	weak var delegate: AccountsPreferencesAddAccountDelegate?
 	var helpText: String
 	@State private var iCloudUnavailableError: Bool = false
 

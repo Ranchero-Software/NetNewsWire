@@ -82,7 +82,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			accountsFeedbinWindowController.account = account
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsFeedbinWindowController
-			case .inoreader, .bazQux, .theOldReader, .freshRSS:
+		case .inoreader, .bazQux, .theOldReader, .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = account.type
 			accountsReaderAPIWindowController.account = account
@@ -96,7 +96,5 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		default:
 			break
 		}
-
 	}
-
 }

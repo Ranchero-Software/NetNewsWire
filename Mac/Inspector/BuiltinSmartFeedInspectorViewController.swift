@@ -30,17 +30,12 @@ final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector
 	var windowTitle: String = NSLocalizedString("Smart Feed Inspector", comment: "Smart Feed Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
-
-		guard let _ = singleSmartFeed(from: objects) else {
-			return false
-		}
-		return true
+		singleSmartFeed(from: objects) != nil
 	}
 
 	// MARK: NSViewController
 
 	override func viewDidLoad() {
-
 		updateUI()
 	}
 }
@@ -57,7 +52,6 @@ private extension BuiltinSmartFeedInspectorViewController {
 	}
 
 	func updateSmartFeed() {
-
 		smartFeed = singleSmartFeed(from: objects)
 	}
 
