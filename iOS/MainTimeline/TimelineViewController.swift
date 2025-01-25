@@ -163,7 +163,7 @@ class TimelineViewController: UITableViewController, UndoableCommandRunner {
 			}
 		}
 
-		if let _ = sender as? UIKeyCommand {
+		if sender is UIKeyCommand {
 			guard let indexPath = tableView.indexPathForSelectedRow, let contentView = tableView.cellForRow(at: indexPath)?.contentView else {
 				return
 			}
@@ -766,8 +766,16 @@ private extension TimelineViewController {
 
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
-
+		cell.cellData = MainTimelineCellData(
+			article: article,
+			showFeedName: showFeedNames,
+			feedName: article.feed?.nameForDisplay,
+			byline: article.byline(),
+			iconImage: iconImage,
+			showIcon: showIcon,
+			numberOfLines: numberOfTextLines,
+			iconSize: iconSize
+		)
 	}
 
 	func iconImageFor(_ article: Article) -> IconImage? {
@@ -964,7 +972,7 @@ private extension TimelineViewController {
 	}
 
 	func openInBrowserAction(_ article: Article) -> UIAction? {
-		guard let _ = article.preferredURL else { return nil }
+		guard article.preferredURL != nil else { return nil }
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] _ in
 			self?.coordinator.showBrowserForArticle(article)
@@ -973,7 +981,7 @@ private extension TimelineViewController {
 	}
 
 	func openInBrowserAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let _ = article.preferredURL else { return nil }
+		guard article.preferredURL != nil else { return nil }
 
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in

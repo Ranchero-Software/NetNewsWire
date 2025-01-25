@@ -25,15 +25,15 @@ class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 				return "\(name) \(expandedStateMessage) "
 			}
 		}
+		set {
+		}
 	}
 
 	private var expandedStateMessage: String {
-		get {
-			if disclosureExpanded {
-				return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
-			}
-			return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
+		if disclosureExpanded {
+			return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
 		}
+		return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
 	}
 
 	var unreadCount: Int {

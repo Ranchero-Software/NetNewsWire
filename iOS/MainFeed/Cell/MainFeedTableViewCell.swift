@@ -28,6 +28,8 @@ class MainFeedTableViewCell: VibrantTableViewCell {
 				return name
 			}
 		}
+		set {
+		}
 	}
 
 	var iconImage: IconImage? {
@@ -131,13 +133,26 @@ class MainFeedTableViewCell: VibrantTableViewCell {
 	}
 
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
+		let layout = MainFeedTableViewCellLayout(
+			cellWidth: bounds.size.width,
+			insets: safeAreaInsets,
+			label: titleView,
+			unreadCountView: unreadCountView,
+			showingEditingControl: isShowingEditControl,
+			indent: indentationLevel == 1,
+			shouldShowDisclosure: isDisclosureAvailable
+		)
 		return CGSize(width: bounds.width, height: layout.height)
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
+		let layout = MainFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView,
+												 unreadCountView: unreadCountView,
+												 showingEditingControl: isShowingEditControl,
+												 indent: indentationLevel == 1,
+												 shouldShowDisclosure: isDisclosureAvailable
+		)
 		layoutWith(layout)
 	}
 
