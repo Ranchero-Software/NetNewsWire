@@ -21,39 +21,6 @@ final class AppDefaults {
 
 	static let shared = AppDefaults()
 
-	struct Key {
-		static let firstRunDate = "firstRunDate"
-		static let windowState = "windowState"
-		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
-		static let sidebarFontSize = "sidebarFontSize"
-		static let timelineFontSize = "timelineFontSize"
-		static let timelineSortDirection = "timelineSortDirection"
-		static let timelineGroupByFeed = "timelineGroupByFeed"
-		static let detailFontSize = "detailFontSize"
-		static let openInBrowserInBackground = "openInBrowserInBackground"
-		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
-		static let articleTextSize = "articleTextSize"
-		static let refreshInterval = "refreshInterval"
-		static let addFeedAccountID = "addFeedAccountID"
-		static let addFeedFolderName = "addFeedFolderName"
-		static let addFolderAccountID = "addFolderAccountID"
-		static let importOPMLAccountID = "importOPMLAccountID"
-		static let exportOPMLAccountID = "exportOPMLAccountID"
-		static let defaultBrowserID = "defaultBrowserID"
-		static let currentThemeName = "currentThemeName"
-		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
-
-		// Hidden prefs
-		static let showDebugMenu = "ShowDebugMenu"
-		static let timelineShowsSeparators = "CorreiaSeparators"
-		static let showTitleOnMainWindow = "KafasisTitleMode"
-		static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
-		static let suppressSyncOnLaunch = "DevroeSuppressSyncOnLaunch"
-
-		static let webInspectorEnabled = "WebInspectorEnabled"
-		static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
-	}
-
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
 	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
@@ -65,7 +32,7 @@ final class AppDefaults {
 	}()
 
 	var isFirstRun: Bool = {
-		if UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date == nil {
+		if UserDefaults.standard.object(forKey: AppDefaultsKey.firstRunDate) as? Date == nil {
 			firstRunDate = Date()
 			return true
 		}
@@ -74,28 +41,28 @@ final class AppDefaults {
 
 	var windowState: [AnyHashable: Any]? {
 		get {
-			return UserDefaults.standard.object(forKey: Key.windowState) as? [AnyHashable: Any]
+			return UserDefaults.standard.object(forKey: AppDefaultsKey.windowState) as? [AnyHashable: Any]
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Key.windowState)
+			UserDefaults.standard.set(newValue, forKey: AppDefaultsKey.windowState)
 		}
 	}
 
 	var lastImageCacheFlushDate: Date? {
 		get {
-			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
+			return AppDefaults.date(for: AppDefaultsKey.lastImageCacheFlushDate)
 		}
 		set {
-			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
+			AppDefaults.setDate(for: AppDefaultsKey.lastImageCacheFlushDate, newValue)
 		}
 	}
 
 	var openInBrowserInBackground: Bool {
 		get {
-			return AppDefaults.bool(for: Key.openInBrowserInBackground)
+			return AppDefaults.bool(for: AppDefaultsKey.openInBrowserInBackground)
 		}
 		set {
-			AppDefaults.setBool(for: Key.openInBrowserInBackground, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.openInBrowserInBackground, newValue)
 		}
 	}
 
@@ -112,195 +79,195 @@ final class AppDefaults {
 
 	var subscribeToFeedsInDefaultBrowser: Bool {
 		get {
-			return subscribeToFeedDefaults.bool(forKey: Key.subscribeToFeedsInDefaultBrowser)
+			return subscribeToFeedDefaults.bool(forKey: AppDefaultsKey.subscribeToFeedsInDefaultBrowser)
 		}
 		set {
-			subscribeToFeedDefaults.set(newValue, forKey: Key.subscribeToFeedsInDefaultBrowser)
+			subscribeToFeedDefaults.set(newValue, forKey: AppDefaultsKey.subscribeToFeedsInDefaultBrowser)
 		}
 	}
 
 	var sidebarFontSize: FontSize {
 		get {
-			return fontSize(for: Key.sidebarFontSize)
+			return fontSize(for: AppDefaultsKey.sidebarFontSize)
 		}
 		set {
-			AppDefaults.setFontSize(for: Key.sidebarFontSize, newValue)
+			AppDefaults.setFontSize(for: AppDefaultsKey.sidebarFontSize, newValue)
 		}
 	}
 
 	var timelineFontSize: FontSize {
 		get {
-			return fontSize(for: Key.timelineFontSize)
+			return fontSize(for: AppDefaultsKey.timelineFontSize)
 		}
 		set {
-			AppDefaults.setFontSize(for: Key.timelineFontSize, newValue)
+			AppDefaults.setFontSize(for: AppDefaultsKey.timelineFontSize, newValue)
 		}
 	}
 
 	var detailFontSize: FontSize {
 		get {
-			return fontSize(for: Key.detailFontSize)
+			return fontSize(for: AppDefaultsKey.detailFontSize)
 		}
 		set {
-			AppDefaults.setFontSize(for: Key.detailFontSize, newValue)
+			AppDefaults.setFontSize(for: AppDefaultsKey.detailFontSize, newValue)
 		}
 	}
 
 	var addFeedAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.addFeedAccountID)
+			return AppDefaults.string(for: AppDefaultsKey.addFeedAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.addFeedAccountID, newValue)
 		}
 	}
 
 	var addFeedFolderName: String? {
 		get {
-			return AppDefaults.string(for: Key.addFeedFolderName)
+			return AppDefaults.string(for: AppDefaultsKey.addFeedFolderName)
 		}
 		set {
-			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.addFeedFolderName, newValue)
 		}
 	}
 
 	var addFolderAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.addFolderAccountID)
+			return AppDefaults.string(for: AppDefaultsKey.addFolderAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.addFolderAccountID, newValue)
 		}
 	}
 
 	var importOPMLAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.importOPMLAccountID)
+			return AppDefaults.string(for: AppDefaultsKey.importOPMLAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.importOPMLAccountID, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.importOPMLAccountID, newValue)
 		}
 	}
 
 	var exportOPMLAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.exportOPMLAccountID)
+			return AppDefaults.string(for: AppDefaultsKey.exportOPMLAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.exportOPMLAccountID, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.exportOPMLAccountID, newValue)
 		}
 	}
 
 	var defaultBrowserID: String? {
 		get {
-			return AppDefaults.string(for: Key.defaultBrowserID)
+			return AppDefaults.string(for: AppDefaultsKey.defaultBrowserID)
 		}
 		set {
-			AppDefaults.setString(for: Key.defaultBrowserID, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.defaultBrowserID, newValue)
 		}
 	}
 
 	var currentThemeName: String? {
 		get {
-			return AppDefaults.string(for: Key.currentThemeName)
+			return AppDefaults.string(for: AppDefaultsKey.currentThemeName)
 		}
 		set {
-			AppDefaults.setString(for: Key.currentThemeName, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.currentThemeName, newValue)
 		}
 	}
 
 	var showTitleOnMainWindow: Bool {
-		return AppDefaults.bool(for: Key.showTitleOnMainWindow)
+		return AppDefaults.bool(for: AppDefaultsKey.showTitleOnMainWindow)
 	}
 
 	var showDebugMenu: Bool {
-		return AppDefaults.bool(for: Key.showDebugMenu)
+		return AppDefaults.bool(for: AppDefaultsKey.showDebugMenu)
  	}
 
 	var feedDoubleClickMarkAsRead: Bool {
 		get {
-			return AppDefaults.bool(for: Key.feedDoubleClickMarkAsRead)
+			return AppDefaults.bool(for: AppDefaultsKey.feedDoubleClickMarkAsRead)
 		}
 		set {
-			AppDefaults.setBool(for: Key.feedDoubleClickMarkAsRead, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.feedDoubleClickMarkAsRead, newValue)
 		}
 	}
 
 	var suppressSyncOnLaunch: Bool {
 		get {
-			return AppDefaults.bool(for: Key.suppressSyncOnLaunch)
+			return AppDefaults.bool(for: AppDefaultsKey.suppressSyncOnLaunch)
 		}
 		set {
-			AppDefaults.setBool(for: Key.suppressSyncOnLaunch, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.suppressSyncOnLaunch, newValue)
 		}
 	}
 
 	var webInspectorEnabled: Bool {
 		get {
-			return AppDefaults.bool(for: Key.webInspectorEnabled)
+			return AppDefaults.bool(for: AppDefaultsKey.webInspectorEnabled)
 		}
 		set {
-			AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.webInspectorEnabled, newValue)
 		}
 	}
 
 	var webInspectorStartsAttached: Bool {
 		get {
-			return AppDefaults.bool(for: Key.webInspectorStartsAttached)
+			return AppDefaults.bool(for: AppDefaultsKey.webInspectorStartsAttached)
 		}
 		set {
-			AppDefaults.setBool(for: Key.webInspectorStartsAttached, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.webInspectorStartsAttached, newValue)
 		}
 	}
 
 	var timelineSortDirection: ComparisonResult {
 		get {
-			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
+			return AppDefaults.sortDirection(for: AppDefaultsKey.timelineSortDirection)
 		}
 		set {
-			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
+			AppDefaults.setSortDirection(for: AppDefaultsKey.timelineSortDirection, newValue)
 		}
 	}
 
 	var timelineGroupByFeed: Bool {
 		get {
-			return AppDefaults.bool(for: Key.timelineGroupByFeed)
+			return AppDefaults.bool(for: AppDefaultsKey.timelineGroupByFeed)
 		}
 		set {
-			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.timelineGroupByFeed, newValue)
 		}
 	}
 
 	var timelineShowsSeparators: Bool {
-		return AppDefaults.bool(for: Key.timelineShowsSeparators)
+		return AppDefaults.bool(for: AppDefaultsKey.timelineShowsSeparators)
 	}
 
 	var articleTextSize: ArticleTextSize {
 		get {
-			let rawValue = UserDefaults.standard.integer(forKey: Key.articleTextSize)
+			let rawValue = UserDefaults.standard.integer(forKey: AppDefaultsKey.articleTextSize)
 			return ArticleTextSize(rawValue: rawValue) ?? ArticleTextSize.large
 		}
 		set {
-			UserDefaults.standard.set(newValue.rawValue, forKey: Key.articleTextSize)
+			UserDefaults.standard.set(newValue.rawValue, forKey: AppDefaultsKey.articleTextSize)
 		}
 	}
 
 	var refreshInterval: RefreshInterval {
 		get {
-			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
+			let rawValue = UserDefaults.standard.integer(forKey: AppDefaultsKey.refreshInterval)
 			return RefreshInterval(rawValue: rawValue) ?? RefreshInterval.everyHour
 		}
 		set {
-			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
+			UserDefaults.standard.set(newValue.rawValue, forKey: AppDefaultsKey.refreshInterval)
 		}
 	}
 
 	var isArticleContentJavascriptEnabled: Bool {
 		get {
-			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
+			UserDefaults.standard.bool(forKey: AppDefaultsKey.articleContentJavascriptEnabled)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+			UserDefaults.standard.set(newValue, forKey: AppDefaultsKey.articleContentJavascriptEnabled)
 		}
 	}
 
@@ -312,16 +279,16 @@ final class AppDefaults {
  		#endif
 
 		let defaults: [String: Any] = [
-			Key.sidebarFontSize: FontSize.medium.rawValue,
-			Key.timelineFontSize: FontSize.medium.rawValue,
-			Key.detailFontSize: FontSize.medium.rawValue,
-			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-			Key.timelineGroupByFeed: false,
+			AppDefaultsKey.sidebarFontSize: FontSize.medium.rawValue,
+			AppDefaultsKey.timelineFontSize: FontSize.medium.rawValue,
+			AppDefaultsKey.detailFontSize: FontSize.medium.rawValue,
+			AppDefaultsKey.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+			AppDefaultsKey.timelineGroupByFeed: false,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
-			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
-			Key.showDebugMenu: showDebugMenu,
-			Key.currentThemeName: Self.defaultThemeName,
-			Key.articleContentJavascriptEnabled: true
+			AppDefaultsKey.refreshInterval: RefreshInterval.everyHour.rawValue,
+			AppDefaultsKey.showDebugMenu: showDebugMenu,
+			AppDefaultsKey.currentThemeName: Self.defaultThemeName,
+			AppDefaultsKey.articleContentJavascriptEnabled: true
 		]
 
 		UserDefaults.standard.register(defaults: defaults)
@@ -358,10 +325,10 @@ private extension AppDefaults {
 
 	static var firstRunDate: Date? {
 		get {
-			return AppDefaults.date(for: Key.firstRunDate)
+			return AppDefaults.date(for: AppDefaultsKey.firstRunDate)
 		}
 		set {
-			AppDefaults.setDate(for: Key.firstRunDate, newValue)
+			AppDefaults.setDate(for: AppDefaultsKey.firstRunDate, newValue)
 		}
 	}
 

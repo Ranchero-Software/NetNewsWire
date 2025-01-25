@@ -412,6 +412,7 @@
 		84C1ECED2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				AppDefaultsKey.swift,
 				Extensions/IconImage.swift,
 				"Extensions/Node-Extensions.swift",
 				ShareExtension/ExtensionContainers.swift,
@@ -445,6 +446,7 @@
 		84C1ECF02CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				AppDefaultsKey.swift,
 				ArticleRendering/ArticleTextSize.swift,
 				ShareExtension/ExtensionContainers.swift,
 				ShareExtension/ExtensionContainersFile.swift,

@@ -39,27 +39,6 @@ final class AppDefaults {
 		return UserDefaults.init(suiteName: suiteName)!
 	}()
 
-	struct Key {
-		static let userInterfaceColorPalette = "userInterfaceColorPalette"
-		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
-		static let firstRunDate = "firstRunDate"
-		static let timelineGroupByFeed = "timelineGroupByFeed"
-		static let refreshClearsReadArticles = "refreshClearsReadArticles"
-		static let timelineNumberOfLines = "timelineNumberOfLines"
-		static let timelineIconDimension = "timelineIconSize"
-		static let timelineSortDirection = "timelineSortDirection"
-		static let articleFullscreenAvailable = "articleFullscreenAvailable"
-		static let articleFullscreenEnabled = "articleFullscreenEnabled"
-		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
-		static let lastRefresh = "lastRefresh"
-		static let addFeedAccountID = "addFeedAccountID"
-		static let addFeedFolderName = "addFeedFolderName"
-		static let addFolderAccountID = "addFolderAccountID"
-		static let useSystemBrowser = "useSystemBrowser"
-		static let currentThemeName = "currentThemeName"
-		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
-	}
-
 	let isDeveloperBuild: Bool = {
 		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
 			return true
@@ -68,7 +47,7 @@ final class AppDefaults {
 	}()
 
 	let isFirstRun: Bool = {
-		if AppDefaults.store.object(forKey: Key.firstRunDate) as? Date == nil {
+		if AppDefaults.store.object(forKey: AppDefaultsKey.firstRunDate) as? Date == nil {
 			firstRunDate = Date()
 			return true
 		}
@@ -77,103 +56,103 @@ final class AppDefaults {
 
 	static var userInterfaceColorPalette: UserInterfaceColorPalette {
 		get {
-			if let result = UserInterfaceColorPalette(rawValue: int(for: Key.userInterfaceColorPalette)) {
+			if let result = UserInterfaceColorPalette(rawValue: int(for: AppDefaultsKey.userInterfaceColorPalette)) {
 				return result
 			}
 			return .automatic
 		}
 		set {
-			setInt(for: Key.userInterfaceColorPalette, newValue.rawValue)
+			setInt(for: AppDefaultsKey.userInterfaceColorPalette, newValue.rawValue)
 		}
 	}
 
 	var addFeedAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.addFeedAccountID)
+			return AppDefaults.string(for: AppDefaultsKey.addFeedAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.addFeedAccountID, newValue)
 		}
 	}
 
 	var addFeedFolderName: String? {
 		get {
-			return AppDefaults.string(for: Key.addFeedFolderName)
+			return AppDefaults.string(for: AppDefaultsKey.addFeedFolderName)
 		}
 		set {
-			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.addFeedFolderName, newValue)
 		}
 	}
 
 	var addFolderAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.addFolderAccountID)
+			return AppDefaults.string(for: AppDefaultsKey.addFolderAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.addFolderAccountID, newValue)
 		}
 	}
 
 	var useSystemBrowser: Bool {
 		get {
-			return UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
+			return UserDefaults.standard.bool(forKey: AppDefaultsKey.useSystemBrowser)
 		}
 		set {
-			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
+			UserDefaults.standard.setValue(newValue, forKey: AppDefaultsKey.useSystemBrowser)
 		}
 	}
 
 	var lastImageCacheFlushDate: Date? {
 		get {
-			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
+			return AppDefaults.date(for: AppDefaultsKey.lastImageCacheFlushDate)
 		}
 		set {
-			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
+			AppDefaults.setDate(for: AppDefaultsKey.lastImageCacheFlushDate, newValue)
 		}
 	}
 
 	var timelineGroupByFeed: Bool {
 		get {
-			return AppDefaults.bool(for: Key.timelineGroupByFeed)
+			return AppDefaults.bool(for: AppDefaultsKey.timelineGroupByFeed)
 		}
 		set {
-			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.timelineGroupByFeed, newValue)
 		}
 	}
 
 	var refreshClearsReadArticles: Bool {
 		get {
-			return AppDefaults.bool(for: Key.refreshClearsReadArticles)
+			return AppDefaults.bool(for: AppDefaultsKey.refreshClearsReadArticles)
 		}
 		set {
-			AppDefaults.setBool(for: Key.refreshClearsReadArticles, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.refreshClearsReadArticles, newValue)
 		}
 	}
 
 	var timelineSortDirection: ComparisonResult {
 		get {
-			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
+			return AppDefaults.sortDirection(for: AppDefaultsKey.timelineSortDirection)
 		}
 		set {
-			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
+			AppDefaults.setSortDirection(for: AppDefaultsKey.timelineSortDirection, newValue)
 		}
 	}
 
 	var articleFullscreenAvailable: Bool {
 		get {
-			return AppDefaults.bool(for: Key.articleFullscreenAvailable)
+			return AppDefaults.bool(for: AppDefaultsKey.articleFullscreenAvailable)
 		}
 		set {
-			AppDefaults.setBool(for: Key.articleFullscreenAvailable, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.articleFullscreenAvailable, newValue)
 		}
 	}
 
 	var articleFullscreenEnabled: Bool {
 		get {
-			return articleFullscreenAvailable && AppDefaults.bool(for: Key.articleFullscreenEnabled)
+			return articleFullscreenAvailable && AppDefaults.bool(for: AppDefaultsKey.articleFullscreenEnabled)
 		}
 		set {
-			AppDefaults.setBool(for: Key.articleFullscreenEnabled, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.articleFullscreenEnabled, newValue)
 		}
 	}
 
@@ -183,70 +162,70 @@ final class AppDefaults {
 
 	var confirmMarkAllAsRead: Bool {
 		get {
-			return AppDefaults.bool(for: Key.confirmMarkAllAsRead)
+			return AppDefaults.bool(for: AppDefaultsKey.confirmMarkAllAsRead)
 		}
 		set {
-			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
+			AppDefaults.setBool(for: AppDefaultsKey.confirmMarkAllAsRead, newValue)
 		}
 	}
 
 	var lastRefresh: Date? {
 		get {
-			return AppDefaults.date(for: Key.lastRefresh)
+			return AppDefaults.date(for: AppDefaultsKey.lastRefresh)
 		}
 		set {
-			AppDefaults.setDate(for: Key.lastRefresh, newValue)
+			AppDefaults.setDate(for: AppDefaultsKey.lastRefresh, newValue)
 		}
 	}
 
 	var timelineNumberOfLines: Int {
 		get {
-			return AppDefaults.int(for: Key.timelineNumberOfLines)
+			return AppDefaults.int(for: AppDefaultsKey.timelineNumberOfLines)
 		}
 		set {
-			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)
+			AppDefaults.setInt(for: AppDefaultsKey.timelineNumberOfLines, newValue)
 		}
 	}
 
 	var timelineIconSize: IconSize {
 		get {
-			let rawValue = AppDefaults.store.integer(forKey: Key.timelineIconDimension)
+			let rawValue = AppDefaults.store.integer(forKey: AppDefaultsKey.timelineIconDimension)
 			return IconSize(rawValue: rawValue) ?? IconSize.medium
 		}
 		set {
-			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconDimension)
+			AppDefaults.store.set(newValue.rawValue, forKey: AppDefaultsKey.timelineIconDimension)
 		}
 	}
 
 	var currentThemeName: String? {
 		get {
-			return AppDefaults.string(for: Key.currentThemeName)
+			return AppDefaults.string(for: AppDefaultsKey.currentThemeName)
 		}
 		set {
-			AppDefaults.setString(for: Key.currentThemeName, newValue)
+			AppDefaults.setString(for: AppDefaultsKey.currentThemeName, newValue)
 		}
 	}
 
 	var isArticleContentJavascriptEnabled: Bool {
 		get {
-			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
+			UserDefaults.standard.bool(forKey: AppDefaultsKey.articleContentJavascriptEnabled)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+			UserDefaults.standard.set(newValue, forKey: AppDefaultsKey.articleContentJavascriptEnabled)
 		}
 	}
 
 	static func registerDefaults() {
-		let defaults: [String: Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
-										Key.timelineGroupByFeed: false,
-										Key.refreshClearsReadArticles: false,
-										Key.timelineNumberOfLines: 2,
-										Key.timelineIconDimension: IconSize.medium.rawValue,
-										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-										Key.articleFullscreenAvailable: false,
-										Key.articleFullscreenEnabled: false,
-										Key.confirmMarkAllAsRead: true,
-										Key.currentThemeName: Self.defaultThemeName]
+		let defaults: [String: Any] = [AppDefaultsKey.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
+									   AppDefaultsKey.timelineGroupByFeed: false,
+									   AppDefaultsKey.refreshClearsReadArticles: false,
+									   AppDefaultsKey.timelineNumberOfLines: 2,
+									   AppDefaultsKey.timelineIconDimension: IconSize.medium.rawValue,
+									   AppDefaultsKey.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+									   AppDefaultsKey.articleFullscreenAvailable: false,
+									   AppDefaultsKey.articleFullscreenEnabled: false,
+									   AppDefaultsKey.confirmMarkAllAsRead: true,
+									   AppDefaultsKey.currentThemeName: Self.defaultThemeName]
 		AppDefaults.store.register(defaults: defaults)
 	}
 
@@ -256,10 +235,10 @@ private extension AppDefaults {
 
 	static var firstRunDate: Date? {
 		get {
-			return date(for: Key.firstRunDate)
+			return date(for: AppDefaultsKey.firstRunDate)
 		}
 		set {
-			setDate(for: Key.firstRunDate, newValue)
+			setDate(for: AppDefaultsKey.firstRunDate, newValue)
 		}
 	}
 
