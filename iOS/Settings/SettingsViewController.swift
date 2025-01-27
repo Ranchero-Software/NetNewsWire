@@ -55,35 +55,14 @@ final class SettingsViewController: UITableViewController {
 			timelineSortOrderSwitch.isOn = false
 		}
 
-		if AppDefaults.timelineGroupByFeed {
-			groupByFeedSwitch.isOn = true
-		} else {
-			groupByFeedSwitch.isOn = false
-		}
-
-		if AppDefaults.refreshClearsReadArticles {
-			refreshClearsReadArticlesSwitch.isOn = true
-		} else {
-			refreshClearsReadArticlesSwitch.isOn = false
-		}
+		groupByFeedSwitch.isOn = AppDefaults.timelineGroupByFeed
+		refreshClearsReadArticlesSwitch.isOn = AppDefaults.refreshClearsReadArticles
+		confirmMarkAllAsReadSwitch.isOn = AppDefaults.confirmMarkAllAsRead
+		showFullscreenArticlesSwitch.isOn = AppDefaults.articleFullscreenAvailable
+		openLinksInNetNewsWire.isOn = !AppDefaults.useSystemBrowser
 
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
-
-		if AppDefaults.confirmMarkAllAsRead {
-			confirmMarkAllAsReadSwitch.isOn = true
-		} else {
-			confirmMarkAllAsReadSwitch.isOn = false
-		}
-
-		if AppDefaults.articleFullscreenAvailable {
-			showFullscreenArticlesSwitch.isOn = true
-		} else {
-			showFullscreenArticlesSwitch.isOn = false
-		}
-
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
-
-		openLinksInNetNewsWire.isOn = !AppDefaults.useSystemBrowser
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -96,7 +75,6 @@ final class SettingsViewController: UITableViewController {
 		wrapperView.translatesAutoresizingMaskIntoConstraints = false
 		wrapperView.addSubview(buildLabel)
 		tableView.tableFooterView = wrapperView
-
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -107,7 +85,6 @@ final class SettingsViewController: UITableViewController {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 4), at: .top, animated: true)
 			scrollToArticlesSection = false
 		}
-
 	}
 
 	// MARK: UITableView
@@ -150,7 +127,6 @@ final class SettingsViewController: UITableViewController {
 			}
 		default:
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
-
 		}
 
 		return cell
@@ -234,23 +210,23 @@ final class SettingsViewController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		return false
+		false
 	}
 
 	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		return false
+		false
 	}
 
 	override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-		return .none
+		.none
 	}
 
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return UITableView.automaticDimension
+		UITableView.automaticDimension
 	}
 
 	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
-		return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 1))
+		super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 1))
 	}
 
 	// MARK: Actions
@@ -260,51 +236,27 @@ final class SettingsViewController: UITableViewController {
 	}
 
 	@IBAction func switchTimelineOrder(_ sender: Any) {
-		if timelineSortOrderSwitch.isOn {
-			AppDefaults.timelineSortDirection = .orderedAscending
-		} else {
-			AppDefaults.timelineSortDirection = .orderedDescending
-		}
+		AppDefaults.timelineSortDirection = timelineSortOrderSwitch.isOn ? .orderedAscending : .orderedDescending
 	}
 
 	@IBAction func switchGroupByFeed(_ sender: Any) {
-		if groupByFeedSwitch.isOn {
-			AppDefaults.timelineGroupByFeed = true
-		} else {
-			AppDefaults.timelineGroupByFeed = false
-		}
+		AppDefaults.timelineGroupByFeed = groupByFeedSwitch.isOn
 	}
 
 	@IBAction func switchClearsReadArticles(_ sender: Any) {
-		if refreshClearsReadArticlesSwitch.isOn {
-			AppDefaults.refreshClearsReadArticles = true
-		} else {
-			AppDefaults.refreshClearsReadArticles = false
-		}
+		AppDefaults.refreshClearsReadArticles = refreshClearsReadArticlesSwitch.isOn
 	}
 
 	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
-		if confirmMarkAllAsReadSwitch.isOn {
-			AppDefaults.confirmMarkAllAsRead = true
-		} else {
-			AppDefaults.confirmMarkAllAsRead = false
-		}
+		AppDefaults.confirmMarkAllAsRead = confirmMarkAllAsReadSwitch.isOn
 	}
 
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
-		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.articleFullscreenAvailable = true
-		} else {
-			AppDefaults.articleFullscreenAvailable = false
-		}
+		AppDefaults.articleFullscreenAvailable = showFullscreenArticlesSwitch.isOn
 	}
 
 	@IBAction func switchBrowserPreference(_ sender: Any) {
-		if openLinksInNetNewsWire.isOn {
-			AppDefaults.useSystemBrowser = false
-		} else {
-			AppDefaults.useSystemBrowser = true
-		}
+		AppDefaults.useSystemBrowser = !openLinksInNetNewsWire.isOn
 	}
 
 	// MARK: Notifications
@@ -324,7 +276,6 @@ final class SettingsViewController: UITableViewController {
 	@objc func browserPreferenceDidChange() {
 		tableView.reloadData()
 	}
-
 }
 
 // MARK: OPML Document Picker
@@ -345,7 +296,6 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 			}
 		}
 	}
-
 }
 
 // MARK: Private
@@ -463,5 +413,4 @@ private extension SettingsViewController {
 		vc.modalPresentationStyle = .pageSheet
 		present(vc, animated: true)
 	}
-
 }
