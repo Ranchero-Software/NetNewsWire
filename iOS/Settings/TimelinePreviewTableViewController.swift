@@ -92,8 +92,8 @@ private extension TimelinePreviewTableViewController {
 			feedName: "Feed Name",
 			byline: nil, iconImage: iconImage,
 			showIcon: true,
-			numberOfLines: AppDefaults.shared.timelineNumberOfLines,
-			iconSize: AppDefaults.shared.timelineIconSize
+			numberOfLines: AppDefaults.timelineNumberOfLines,
+			iconSize: AppDefaults.timelineIconSize
 		)
 	}
 }

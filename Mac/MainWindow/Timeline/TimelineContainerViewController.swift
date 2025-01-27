@@ -178,7 +178,7 @@ private extension TimelineContainerViewController {
 	}
 
 	func updateViewOptionsPopUpButton() {
-		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
+		if AppDefaults.timelineSortDirection == .orderedAscending {
 			newestToOldestMenuItem.state = .off
 			oldestToNewestMenuItem.state = .on
 			viewOptionsPopUpButton.setTitle(oldestToNewestMenuItem.title)
@@ -188,7 +188,7 @@ private extension TimelineContainerViewController {
 			viewOptionsPopUpButton.setTitle(newestToOldestMenuItem.title)
 		}
 
-		if AppDefaults.shared.timelineGroupByFeed == true {
+		if AppDefaults.timelineGroupByFeed == true {
 			groupByFeedMenuItem.state = .on
 		} else {
 			groupByFeedMenuItem.state = .off

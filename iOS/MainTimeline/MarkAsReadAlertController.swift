@@ -30,7 +30,7 @@ struct MarkAsReadAlertController {
 			return
 		}
 
-		if AppDefaults.shared.confirmMarkAllAsRead {
+		if AppDefaults.confirmMarkAllAsRead {
 			let alertController = MarkAsReadAlertController.alert(coordinator: coordinator, confirmTitle: confirmTitle, cancelCompletion: cancelCompletion, sourceType: sourceType) { _ in
 				completion()
 			}

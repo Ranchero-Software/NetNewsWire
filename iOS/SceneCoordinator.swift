@@ -81,7 +81,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
 
-	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
+	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
 				sortParametersDidChange()
@@ -89,7 +89,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 	}
 
-	private(set) var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
+	private(set) var groupByFeed = AppDefaults.timelineGroupByFeed {
 		didSet {
 			if groupByFeed != oldValue {
 				sortParametersDidChange()
@@ -491,8 +491,8 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		self.sortDirection = AppDefaults.shared.timelineSortDirection
-		self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		self.sortDirection = AppDefaults.timelineSortDirection
+		self.groupByFeed = AppDefaults.timelineGroupByFeed
 	}
 
 	@objc func accountDidDownloadArticles(_ note: Notification) {
@@ -548,7 +548,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
-		if isReadArticlesFiltered && (AppDefaults.shared.refreshClearsReadArticles || !conditional) {
+		if isReadArticlesFiltered && (AppDefaults.refreshClearsReadArticles || !conditional) {
 			refreshTimeline(resetScroll: false)
 		}
 	}

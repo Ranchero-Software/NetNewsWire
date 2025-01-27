@@ -46,7 +46,7 @@ private extension WebViewConfiguration {
 
 	static var webpagePreferences: WKWebpagePreferences {
 		let preferences = WKWebpagePreferences()
-		preferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
+		preferences.allowsContentJavaScript = AppDefaults.isArticleContentJavascriptEnabled
 		return preferences
 	}
 

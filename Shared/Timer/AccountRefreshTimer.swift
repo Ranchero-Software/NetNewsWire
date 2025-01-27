@@ -20,7 +20,7 @@ final class AccountRefreshTimer {
 	func fireOldTimer() {
 		if let timer = internalTimer {
 			if timer.fireDate < Date() {
-				if AppDefaults.shared.refreshInterval != .manually {
+				if AppDefaults.refreshInterval != .manually {
 					timedRefresh(nil)
 				}
 			}
@@ -42,7 +42,7 @@ final class AccountRefreshTimer {
 			return
 		}
 
-		let refreshInterval = AppDefaults.shared.refreshInterval
+		let refreshInterval = AppDefaults.refreshInterval
 		if refreshInterval == .manually {
 			invalidate()
 			return

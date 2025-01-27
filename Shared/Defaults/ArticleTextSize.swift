@@ -2,8 +2,8 @@
 //  ArticleTextSize.swift
 //  NetNewsWire
 //
-//  Created by Maurice Parker on 11/3/20.
-//  Copyright © 2020 Ranchero Software. All rights reserved.
+//  Created by Brent Simmons on 1/26/25.
+//  Copyright © 2025 Ranchero Software. All rights reserved.
 //
 
 import Foundation
@@ -46,5 +46,4 @@ enum ArticleTextSize: Int, CaseIterable, Identifiable {
 			return NSLocalizedString("Extra Extra Large", comment: "XX-Large")
 		}
 	}
-
 }

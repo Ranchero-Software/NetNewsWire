@@ -46,7 +46,7 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 
-	private var articleTextSize = AppDefaults.shared.articleTextSize
+	private var articleTextSize = AppDefaults.articleTextSize
 
 	private var webInspectorEnabled: Bool {
 		get {
@@ -97,7 +97,7 @@ final class DetailWebViewController: NSViewController {
 		webView.isHidden = true
 		waitingForFirstReload = true
 
-		webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
+		webInspectorEnabled = AppDefaults.webInspectorEnabled
 		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
@@ -124,8 +124,8 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		if articleTextSize != AppDefaults.shared.articleTextSize {
-			articleTextSize = AppDefaults.shared.articleTextSize
+		if articleTextSize != AppDefaults.articleTextSize {
+			articleTextSize = AppDefaults.articleTextSize
 			reloadHTMLMaintainingScrollPosition()
 		}
 	}

@@ -57,7 +57,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		}
 	}
 
-	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+	private var isArticleContentJavascriptEnabled = AppDefaults.isArticleContentJavascriptEnabled
 
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
@@ -159,8 +159,8 @@ private extension DetailViewController {
 	}
 
 	@objc func userDefaultsDidChange(_: Notification) {
-		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
-			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+		if AppDefaults.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.isArticleContentJavascriptEnabled
 			createNewWebViewsAndRestoreState()
 		}
 	}

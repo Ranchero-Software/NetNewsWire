@@ -30,7 +30,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 		Task { @MainActor in
 			// Ensure Feeds view shows on first run on iPad — otherwise the UI is empty.
-			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.shared.isFirstRun {
+			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.isFirstRun {
 				rootViewController.show(.primary)
 			}
 		}

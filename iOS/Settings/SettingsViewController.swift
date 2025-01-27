@@ -49,19 +49,19 @@ final class SettingsViewController: UITableViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
+		if AppDefaults.timelineSortDirection == .orderedAscending {
 			timelineSortOrderSwitch.isOn = true
 		} else {
 			timelineSortOrderSwitch.isOn = false
 		}
 
-		if AppDefaults.shared.timelineGroupByFeed {
+		if AppDefaults.timelineGroupByFeed {
 			groupByFeedSwitch.isOn = true
 		} else {
 			groupByFeedSwitch.isOn = false
 		}
 
-		if AppDefaults.shared.refreshClearsReadArticles {
+		if AppDefaults.refreshClearsReadArticles {
 			refreshClearsReadArticlesSwitch.isOn = true
 		} else {
 			refreshClearsReadArticlesSwitch.isOn = false
@@ -69,13 +69,13 @@ final class SettingsViewController: UITableViewController {
 
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
-		if AppDefaults.shared.confirmMarkAllAsRead {
+		if AppDefaults.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
 		} else {
 			confirmMarkAllAsReadSwitch.isOn = false
 		}
 
-		if AppDefaults.shared.articleFullscreenAvailable {
+		if AppDefaults.articleFullscreenAvailable {
 			showFullscreenArticlesSwitch.isOn = true
 		} else {
 			showFullscreenArticlesSwitch.isOn = false
@@ -83,7 +83,7 @@ final class SettingsViewController: UITableViewController {
 
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 
-		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
+		openLinksInNetNewsWire.isOn = !AppDefaults.useSystemBrowser
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -261,49 +261,49 @@ final class SettingsViewController: UITableViewController {
 
 	@IBAction func switchTimelineOrder(_ sender: Any) {
 		if timelineSortOrderSwitch.isOn {
-			AppDefaults.shared.timelineSortDirection = .orderedAscending
+			AppDefaults.timelineSortDirection = .orderedAscending
 		} else {
-			AppDefaults.shared.timelineSortDirection = .orderedDescending
+			AppDefaults.timelineSortDirection = .orderedDescending
 		}
 	}
 
 	@IBAction func switchGroupByFeed(_ sender: Any) {
 		if groupByFeedSwitch.isOn {
-			AppDefaults.shared.timelineGroupByFeed = true
+			AppDefaults.timelineGroupByFeed = true
 		} else {
-			AppDefaults.shared.timelineGroupByFeed = false
+			AppDefaults.timelineGroupByFeed = false
 		}
 	}
 
 	@IBAction func switchClearsReadArticles(_ sender: Any) {
 		if refreshClearsReadArticlesSwitch.isOn {
-			AppDefaults.shared.refreshClearsReadArticles = true
+			AppDefaults.refreshClearsReadArticles = true
 		} else {
-			AppDefaults.shared.refreshClearsReadArticles = false
+			AppDefaults.refreshClearsReadArticles = false
 		}
 	}
 
 	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
 		if confirmMarkAllAsReadSwitch.isOn {
-			AppDefaults.shared.confirmMarkAllAsRead = true
+			AppDefaults.confirmMarkAllAsRead = true
 		} else {
-			AppDefaults.shared.confirmMarkAllAsRead = false
+			AppDefaults.confirmMarkAllAsRead = false
 		}
 	}
 
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
 		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.shared.articleFullscreenAvailable = true
+			AppDefaults.articleFullscreenAvailable = true
 		} else {
-			AppDefaults.shared.articleFullscreenAvailable = false
+			AppDefaults.articleFullscreenAvailable = false
 		}
 	}
 
 	@IBAction func switchBrowserPreference(_ sender: Any) {
 		if openLinksInNetNewsWire.isOn {
-			AppDefaults.shared.useSystemBrowser = false
+			AppDefaults.useSystemBrowser = false
 		} else {
-			AppDefaults.shared.useSystemBrowser = true
+			AppDefaults.useSystemBrowser = true
 		}
 	}
 

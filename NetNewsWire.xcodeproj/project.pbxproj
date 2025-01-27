@@ -277,6 +277,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		848D19082D46D78E00DD0819 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Defaults/AppDefaults.swift,
+				Defaults/ArticleTextSize.swift,
+				Defaults/FontSize.swift,
+				Defaults/RefreshInterval.swift,
+				Defaults/UserInterfaceColorPalette.swift,
+			);
+			target = 6581C73220CED60000F4AD34 /* Subscribe to Feed */;
+		};
 		8498E53C2D27A766009F5438 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -298,7 +309,6 @@
 			membershipExceptions = (
 				/Localized/ShareExtension/MainInterface.storyboard,
 				AppAssets.swift,
-				AppDefaults.swift,
 				Resources/Assets.xcassets,
 				ShareExtension/ShareFolderPickerAccountCell.xib,
 				ShareExtension/ShareFolderPickerCell.swift,
@@ -353,7 +363,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				/Localized/ShareExtension/ShareViewController.xib,
-				AppDefaults.swift,
 				ShareExtension/icon.icns,
 				ShareExtension/ShareViewController.swift,
 			);
@@ -412,7 +421,10 @@
 		84C1ECED2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppDefaultsKey.swift,
+				Defaults/AppDefaults.swift,
+				Defaults/ArticleTextSize.swift,
+				Defaults/FontSize.swift,
+				Defaults/UserInterfaceColorPalette.swift,
 				Extensions/IconImage.swift,
 				"Extensions/Node-Extensions.swift",
 				ShareExtension/ExtensionContainers.swift,
@@ -446,15 +458,17 @@
 		84C1ECF02CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppDefaultsKey.swift,
-				ArticleRendering/ArticleTextSize.swift,
+				Defaults/AppDefaults.swift,
+				Defaults/ArticleTextSize.swift,
+				Defaults/FontSize.swift,
+				Defaults/RefreshInterval.swift,
+				Defaults/UserInterfaceColorPalette.swift,
 				ShareExtension/ExtensionContainers.swift,
 				ShareExtension/ExtensionContainersFile.swift,
 				ShareExtension/ExtensionFeedAddRequest.swift,
 				ShareExtension/ExtensionFeedAddRequestFile.swift,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
-				Timer/RefreshInterval.swift,
 			);
 			target = 510C415B24E5CDE3008226FD /* NetNewsWire Share Extension */;
 		};
@@ -500,7 +514,7 @@
 		84BAE0AA2CE1C4D500402E69 /* Mac */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84BAE1402CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84BAE1412CE1C4D500402E69 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, 84BAE1422CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84BAE1432CE1C4D500402E69 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Mac; sourceTree = "<group>"; };
 		84C1EB5E2CDFE18E00C7456A /* xcconfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1EB602CDFE18E00C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (common, ); path = xcconfig; sourceTree = "<group>"; };
 		84C1EB7C2CDFE31700C7456A /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1EB952CDFE31700C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1EB962CDFE31700C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
-		84C1EC192CDFE49100C7456A /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1ECEB2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEC2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECED2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEE2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEF2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECF02CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
+		84C1EC192CDFE49100C7456A /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1ECEB2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEC2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 848D19082D46D78E00DD0819 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECED2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEE2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECEF2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84C1ECF02CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		84C1ED042CDFE50500C7456A /* Widget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84C1ED132CDFE50500C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Widget; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 

@@ -27,11 +27,11 @@ final class TimelineCustomizerViewController: UIViewController {
         super.viewDidLoad()
 
 		iconSizeSliderContainerView.layer.cornerRadius = 10
-		iconSizeSlider.value = Float(AppDefaults.shared.timelineIconSize.rawValue)
+		iconSizeSlider.value = Float(AppDefaults.timelineIconSize.rawValue)
 		iconSizeSlider.addTickMarks()
 
 		numberOfLinesSliderContainerView.layer.cornerRadius = 10
-		numberOfLinesSlider.value = Float(AppDefaults.shared.timelineNumberOfLines)
+		numberOfLinesSlider.value = Float(AppDefaults.timelineNumberOfLines)
 		numberOfLinesSlider.addTickMarks()
     }
 
@@ -48,12 +48,12 @@ final class TimelineCustomizerViewController: UIViewController {
 
 	@IBAction func iconSizeChanged(_ sender: Any) {
 		guard let iconSize = IconSize(rawValue: Int(iconSizeSlider.value.rounded())) else { return }
-		AppDefaults.shared.timelineIconSize = iconSize
+		AppDefaults.timelineIconSize = iconSize
 		updatePreview()
 	}
 
 	@IBAction func numberOfLinesChanged(_ sender: Any) {
-		AppDefaults.shared.timelineNumberOfLines = Int(numberOfLinesSlider.value.rounded())
+		AppDefaults.timelineNumberOfLines = Int(numberOfLinesSlider.value.rounded())
 		updatePreview()
 	}
 

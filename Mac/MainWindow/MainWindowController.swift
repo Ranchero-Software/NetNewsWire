@@ -128,12 +128,12 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	func saveStateToUserDefaults() {
-		AppDefaults.shared.windowState = savableState()
+		AppDefaults.windowState = savableState()
 		window?.saveFrame(usingName: windowAutosaveName)
 	}
 
 	func restoreStateFromUserDefaults() {
-		if let state = AppDefaults.shared.windowState {
+		if let state = AppDefaults.windowState {
 			restoreState(from: state)
 			window?.setFrameUsingName(windowAutosaveName, force: true)
 		}
@@ -314,7 +314,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
-		if AppDefaults.shared.openInBrowserInBackground {
+		if AppDefaults.openInBrowserInBackground {
 			window?.makeKeyAndOrderFront(self)
 		}
 		openArticleInBrowser(sender)
@@ -326,11 +326,11 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func openInBrowserUsingOppositeOfSettings(_ sender: Any?) {
-		if !AppDefaults.shared.openInBrowserInBackground {
+		if !AppDefaults.openInBrowserInBackground {
 			window?.makeKeyAndOrderFront(self)
 		}
 		if let link = currentLink {
-			Browser.open(link, inBackground: !AppDefaults.shared.openInBrowserInBackground)
+			Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)
 		}
 	}
 
@@ -1040,7 +1040,7 @@ private extension MainWindowController {
 	}
 
 	func validateToggleArticleExtractor(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		guard !AppDefaults.shared.isDeveloperBuild else {
+		guard !AppDefaults.isDeveloperBuild else {
 			return false
 		}
 

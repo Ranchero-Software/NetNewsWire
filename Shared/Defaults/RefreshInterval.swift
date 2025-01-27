@@ -56,5 +56,4 @@ enum RefreshInterval: Int, CaseIterable, Identifiable {
 			return NSLocalizedString("Every 8 Hours", comment: "Every 8 Hours")
 		}
 	}
-
 }

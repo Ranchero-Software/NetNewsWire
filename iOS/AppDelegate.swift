@@ -76,7 +76,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		AppDefaults.registerDefaults()
 
-		let isFirstRun = AppDefaults.shared.isFirstRun
+		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			logger.info("Is first run.")
 		}
@@ -148,7 +148,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	}
 
 	@objc func accountRefreshDidFinish(_ note: Notification) {
-		AppDefaults.shared.lastRefresh = Date()
+		AppDefaults.lastRefresh = Date()
 	}
 
 	// MARK: - API
@@ -180,7 +180,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
 
-		if let lastRefresh = AppDefaults.shared.lastRefresh {
+		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			} else {

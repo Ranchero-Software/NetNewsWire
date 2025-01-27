@@ -65,7 +65,7 @@ final class GeneralPreferencesViewController: NSViewController {
 			return
 		}
 		let bundleID = menuItem.representedObject as? String
-		AppDefaults.shared.defaultBrowserID = bundleID
+		AppDefaults.defaultBrowserID = bundleID
 		updateBrowserPopup()
 	}
 
@@ -132,7 +132,7 @@ private extension GeneralPreferencesViewController {
 			menu.addItem(item)
 		}
 
-		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.shared.defaultBrowserID))
+		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.defaultBrowserID))
 	}
 
 	func updateNotificationSettings() {
@@ -161,10 +161,10 @@ private extension GeneralPreferencesViewController {
 
 	@objc var openFeedsInDefaultNewsReader: Bool {
 		get {
-			return AppDefaults.shared.subscribeToFeedsInDefaultBrowser
+			return AppDefaults.subscribeToFeedsInDefaultBrowser
 		}
 		set {
-			AppDefaults.shared.subscribeToFeedsInDefaultBrowser = newValue
+			AppDefaults.subscribeToFeedsInDefaultBrowser = newValue
 		}
 	}
 }

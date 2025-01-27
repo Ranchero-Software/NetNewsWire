@@ -37,7 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	var refreshTimer: AccountRefreshTimer?
 	var syncTimer: ArticleStatusSyncTimer?
-	var lastRefreshInterval = AppDefaults.shared.refreshInterval
+	var lastRefreshInterval = AppDefaults.refreshInterval
 
 	var shuttingDown = false {
 		didSet {
@@ -168,8 +168,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			NSLog("Failed to start software updater with error: \(error)")
 		}
 
-		AppDefaults.shared.registerDefaults()
-		let isFirstRun = AppDefaults.shared.isFirstRun
+		AppDefaults.registerDefaults()
+		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			os_log(.debug, "Is first run.")
 		}
@@ -228,7 +228,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		refreshTimer!.update()
 		syncTimer!.update()
 		#else
-		if AppDefaults.shared.suppressSyncOnLaunch {
+		if AppDefaults.suppressSyncOnLaunch {
 			refreshTimer!.update()
 			syncTimer!.update()
 		} else {
@@ -239,7 +239,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 		#endif
 
-		if !AppDefaults.shared.showDebugMenu {
+		if !AppDefaults.showDebugMenu {
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 		}
 
@@ -330,9 +330,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
 
-		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
+		if lastRefreshInterval != AppDefaults.refreshInterval {
 			refreshTimer?.update()
-			lastRefreshInterval = AppDefaults.shared.refreshInterval
+			lastRefreshInterval = AppDefaults.refreshInterval
 		}
 
 		updateDockBadge()
@@ -426,7 +426,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
-			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
+			(item as! NSMenuItem).state = AppDefaults.webInspectorEnabled ? .on : .off
 		}
 
 		return true
@@ -634,16 +634,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
 
-		AppDefaults.shared.timelineSortDirection = .orderedAscending
+		AppDefaults.timelineSortDirection = .orderedAscending
 	}
 
 	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
 
-		AppDefaults.shared.timelineSortDirection = .orderedDescending
+		AppDefaults.timelineSortDirection = .orderedDescending
 	}
 
 	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {
-		AppDefaults.shared.timelineGroupByFeed.toggle()
+		AppDefaults.timelineGroupByFeed.toggle()
 	}
 
 	@IBAction func checkForUpdates(_ sender: Any?) {
@@ -691,13 +691,13 @@ extension AppDelegate {
 
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
 
-		let newValue = !AppDefaults.shared.webInspectorEnabled
-		AppDefaults.shared.webInspectorEnabled = newValue
+		let newValue = !AppDefaults.webInspectorEnabled
+		AppDefaults.webInspectorEnabled = newValue
 
 		// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
 		// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
 		// accidentally reattached.
-		AppDefaults.shared.webInspectorStartsAttached = false
+		AppDefaults.webInspectorStartsAttached = false
 		NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
 }
@@ -724,13 +724,13 @@ internal extension AppDelegate {
 	}
 
 	func updateSortMenuItems() {
-		let sortByNewestOnTop = AppDefaults.shared.timelineSortDirection == .orderedDescending
+		let sortByNewestOnTop = AppDefaults.timelineSortDirection == .orderedDescending
 		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
 		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
 	}
 
 	func updateGroupByFeedMenuItem() {
-		let groupByFeedEnabled = AppDefaults.shared.timelineGroupByFeed
+		let groupByFeedEnabled = AppDefaults.timelineGroupByFeed
 		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
 	}
 

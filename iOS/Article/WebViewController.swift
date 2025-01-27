@@ -37,7 +37,7 @@ final class WebViewController: UIViewController {
 
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
-		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
+		return AppDefaults.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
 	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(delegate: self)
 	private lazy var transition = ImageTransition(controller: self)
@@ -197,7 +197,7 @@ final class WebViewController: UIViewController {
 	}
 
 	func showBars() {
-		AppDefaults.shared.articleFullscreenEnabled = false
+		AppDefaults.articleFullscreenEnabled = false
 		coordinator.showStatusBar()
 		topShowBarsViewConstraint?.constant = 0
 		bottomShowBarsViewConstraint?.constant = 0
@@ -208,7 +208,7 @@ final class WebViewController: UIViewController {
 
 	func hideBars() {
 		if isFullScreenAvailable {
-			AppDefaults.shared.articleFullscreenEnabled = true
+			AppDefaults.articleFullscreenEnabled = true
 			coordinator.hideStatusBar()
 			topShowBarsViewConstraint?.constant = -44.0
 			bottomShowBarsViewConstraint?.constant = 44.0
@@ -271,7 +271,7 @@ final class WebViewController: UIViewController {
 
 	func openInAppBrowser() {
 		guard let url = article?.preferredURL else { return }
-		if AppDefaults.shared.useSystemBrowser {
+		if AppDefaults.useSystemBrowser {
 			UIApplication.shared.open(url, options: [:])
 		} else {
 			openURLInSafariViewController(url)
@@ -381,7 +381,7 @@ extension WebViewController: WKNavigationDelegate {
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
 				decisionHandler(.cancel)
-				if AppDefaults.shared.useSystemBrowser {
+				if AppDefaults.useSystemBrowser {
 					UIApplication.shared.open(url, options: [:])
 				} else {
 					UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { didOpen in
@@ -674,7 +674,7 @@ private extension WebViewController {
 		topShowBarsView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(topShowBarsView)
 
-		if AppDefaults.shared.logicalArticleFullscreenEnabled {
+		if AppDefaults.logicalArticleFullscreenEnabled {
 			topShowBarsViewConstraint = view.topAnchor.constraint(equalTo: topShowBarsView.bottomAnchor, constant: -44.0)
 		} else {
 			topShowBarsViewConstraint = view.topAnchor.constraint(equalTo: topShowBarsView.bottomAnchor, constant: 0.0)
@@ -694,7 +694,7 @@ private extension WebViewController {
 		topShowBarsView.backgroundColor = .clear
 		bottomShowBarsView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(bottomShowBarsView)
-		if AppDefaults.shared.logicalArticleFullscreenEnabled {
+		if AppDefaults.logicalArticleFullscreenEnabled {
 			bottomShowBarsViewConstraint = view.bottomAnchor.constraint(equalTo: bottomShowBarsView.topAnchor, constant: 44.0)
 		} else {
 			bottomShowBarsViewConstraint = view.bottomAnchor.constraint(equalTo: bottomShowBarsView.topAnchor, constant: 0.0)

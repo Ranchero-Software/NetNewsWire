@@ -54,7 +54,7 @@ enum AddAccountSections: Int, CaseIterable {
 		case .icloud:
 			return [.cloudKit]
 		case .web:
-			if AppDefaults.shared.isDeveloperBuild {
+			if AppDefaults.isDeveloperBuild {
 				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader].filter({ $0.isDeveloperRestricted == false })
 			} else {
 				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
@@ -90,7 +90,7 @@ struct AddAccountsView: View {
 
 			localAccount
 
-			if !AppDefaults.shared.isDeveloperBuild {
+			if !AppDefaults.isDeveloperBuild {
 				icloudAccount
 			}
 

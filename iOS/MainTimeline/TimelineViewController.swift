@@ -90,8 +90,8 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 		tableView.dataSource = dataSource
 		tableView.isPrefetchingEnabled = false
 
-		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-		iconSize = AppDefaults.shared.timelineIconSize
+		numberOfTextLines = AppDefaults.timelineNumberOfLines
+		iconSize = AppDefaults.timelineIconSize
 		resetEstimatedRowHeight()
 
 		if let titleView = Bundle.main.loadNibNamed("MainTimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
@@ -510,9 +510,9 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		DispatchQueue.main.async {
-			if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
-				self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-				self.iconSize = AppDefaults.shared.timelineIconSize
+			if self.numberOfTextLines != AppDefaults.timelineNumberOfLines || self.iconSize != AppDefaults.timelineIconSize {
+				self.numberOfTextLines = AppDefaults.timelineNumberOfLines
+				self.iconSize = AppDefaults.timelineIconSize
 				self.resetEstimatedRowHeight()
 				self.reloadAllVisibleCells()
 			}

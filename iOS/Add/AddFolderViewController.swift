@@ -25,7 +25,7 @@ final class AddFolderViewController: UITableViewController {
 
 	private var accounts: [Account]! {
 		didSet {
-			if let predefinedAccount = accounts.first(where: { $0.accountID == AppDefaults.shared.addFolderAccountID }) {
+			if let predefinedAccount = accounts.first(where: { $0.accountID == AppDefaults.addFolderAccountID }) {
 				selectedAccount = predefinedAccount
 			} else {
 				selectedAccount = accounts[0]
@@ -67,7 +67,7 @@ final class AddFolderViewController: UITableViewController {
     }
 
 	private func didSelect(_ account: Account) {
-		AppDefaults.shared.addFolderAccountID = account.accountID
+		AppDefaults.addFolderAccountID = account.accountID
 		selectedAccount = account
 	}
 
