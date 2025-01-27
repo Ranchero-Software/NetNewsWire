@@ -11,47 +11,47 @@ import Account
 
 struct AppAssets {
 
-	static var accountBazQuxImage: UIImage = {
-		return UIImage(named: "accountBazQux")!
-	}()
+//	static var accountBazQuxImage: UIImage = {
+//		return UIImage(named: "accountBazQux")!
+//	}()
 
-	static var accountCloudKitImage: UIImage = {
-		return UIImage(named: "accountCloudKit")!
-	}()
+//	static var accountCloudKitImage: UIImage = {
+//		return UIImage(named: "accountCloudKit")!
+//	}()
+//
+//	static var accountFeedbinImage: UIImage = {
+//		return UIImage(named: "accountFeedbin")!
+//	}()
+//
+//	static var accountFeedlyImage: UIImage = {
+//		return UIImage(named: "accountFeedly")!
+//	}()
+//
+//	static var accountFreshRSSImage: UIImage = {
+//		return UIImage(named: "accountFreshRSS")!
+//	}()
+//
+//	static var accountInoreaderImage: UIImage = {
+//		return UIImage(named: "accountInoreader")!
+//	}()
+//
+//	static var accountLocalPadImage: UIImage = {
+//		return UIImage(named: "accountLocalPad")!
+//	}()
+//
+//	static var accountLocalPhoneImage: UIImage = {
+//		return UIImage(named: "accountLocalPhone")!
+//	}()
+//
+//	static var accountNewsBlurImage: UIImage = {
+//		return UIImage(named: "accountNewsBlur")!
+//	}()
+//
+//	static var accountTheOldReaderImage: UIImage = {
+//		return UIImage(named: "accountTheOldReader")!
+//	}()
 
-	static var accountFeedbinImage: UIImage = {
-		return UIImage(named: "accountFeedbin")!
-	}()
-
-	static var accountFeedlyImage: UIImage = {
-		return UIImage(named: "accountFeedly")!
-	}()
-
-	static var accountFreshRSSImage: UIImage = {
-		return UIImage(named: "accountFreshRSS")!
-	}()
-
-	static var accountInoreaderImage: UIImage = {
-		return UIImage(named: "accountInoreader")!
-	}()
-
-	static var accountLocalPadImage: UIImage = {
-		return UIImage(named: "accountLocalPad")!
-	}()
-
-	static var accountLocalPhoneImage: UIImage = {
-		return UIImage(named: "accountLocalPhone")!
-	}()
-
-	static var accountNewsBlurImage: UIImage = {
-		return UIImage(named: "accountNewsBlur")!
-	}()
-
-	static var accountTheOldReaderImage: UIImage = {
-		return UIImage(named: "accountTheOldReader")!
-	}()
-
-	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
+//	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
@@ -251,31 +251,31 @@ struct AppAssets {
 		return UIColor(named: "controlBackgroundColor")!
 	}()
 
-	static func image(for accountType: AccountType) -> UIImage? {
-		switch accountType {
-		case .onMyMac:
-			if UIDevice.current.userInterfaceIdiom == .pad {
-				return AppAssets.accountLocalPadImage
-			} else {
-				return AppAssets.accountLocalPhoneImage
-			}
-		case .cloudKit:
-			return AppAssets.accountCloudKitImage
-		case .feedbin:
-			return AppAssets.accountFeedbinImage
-		case .feedly:
-			return AppAssets.accountFeedlyImage
-		case .freshRSS:
-			return AppAssets.accountFreshRSSImage
-		case .newsBlur:
-			return AppAssets.accountNewsBlurImage
-		case .inoreader:
-			return AppAssets.accountInoreaderImage
-		case .bazQux:
-			return AppAssets.accountBazQuxImage
-		case .theOldReader:
-			return AppAssets.accountTheOldReaderImage
-		}
-	}
+//	static func image(for accountType: AccountType) -> UIImage? {
+//		switch accountType {
+//		case .onMyMac:
+//			if UIDevice.current.userInterfaceIdiom == .pad {
+//				return AppAssets.accountLocalPadImage
+//			} else {
+//				return AppAssets.accountLocalPhoneImage
+//			}
+//		case .cloudKit:
+//			return AppAssets.accountCloudKitImage
+//		case .feedbin:
+//			return AppAssets.accountFeedbinImage
+//		case .feedly:
+//			return AppAssets.accountFeedlyImage
+//		case .freshRSS:
+//			return AppAssets.accountFreshRSSImage
+//		case .newsBlur:
+//			return AppAssets.accountNewsBlurImage
+//		case .inoreader:
+//			return AppAssets.accountInoreaderImage
+//		case .bazQux:
+//			return AppAsset.accountBazQuxImage
+//		case .theOldReader:
+//			return AppAssets.accountTheOldReaderImage
+//		}
+//	}
 
 }

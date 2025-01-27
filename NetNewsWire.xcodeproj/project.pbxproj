@@ -421,6 +421,7 @@
 		84C1ECED2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				AppAsset.swift,
 				Defaults/AppDefaults.swift,
 				Defaults/ArticleTextSize.swift,
 				Defaults/FontSize.swift,

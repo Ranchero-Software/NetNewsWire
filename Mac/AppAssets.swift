@@ -12,43 +12,43 @@ import Account
 
 struct AppAssets {
 
-	static var accountBazQux: RSImage! = {
-		return RSImage(named: "accountBazQux")
-	}()
+//	static var accountBazQux: RSImage! = {
+//		return RSImage(named: "accountBazQux")
+//	}()
 
-	static var accountCloudKit: RSImage! = {
-		return RSImage(named: "accountCloudKit")
-	}()
+//	static var accountCloudKit: RSImage! = {
+//		return RSImage(named: "accountCloudKit")
+//	}()
+//
+//	static var accountFeedbin: RSImage! = {
+//		return RSImage(named: "accountFeedbin")
+//	}()
+//
+//	static var accountFeedly: RSImage! = {
+//		return RSImage(named: "accountFeedly")
+//	}()
+//
+//	static var accountFreshRSS: RSImage! = {
+//		return RSImage(named: "accountFreshRSS")
+//	}()
+//
+//	static var accountInoreader: RSImage! = {
+//		return RSImage(named: "accountInoreader")
+//	}()
+//
+//	static var accountLocal: RSImage! = {
+//		return RSImage(named: "accountLocal")
+//	}()
+//
+//	static var accountNewsBlur: RSImage! = {
+//		return RSImage(named: "accountNewsBlur")
+//	}()
+//
+//	static var accountTheOldReader: RSImage! = {
+//		return RSImage(named: "accountTheOldReader")
+//	}()
 
-	static var accountFeedbin: RSImage! = {
-		return RSImage(named: "accountFeedbin")
-	}()
-
-	static var accountFeedly: RSImage! = {
-		return RSImage(named: "accountFeedly")
-	}()
-
-	static var accountFreshRSS: RSImage! = {
-		return RSImage(named: "accountFreshRSS")
-	}()
-
-	static var accountInoreader: RSImage! = {
-		return RSImage(named: "accountInoreader")
-	}()
-
-	static var accountLocal: RSImage! = {
-		return RSImage(named: "accountLocal")
-	}()
-
-	static var accountNewsBlur: RSImage! = {
-		return RSImage(named: "accountNewsBlur")
-	}()
-
-	static var accountTheOldReader: RSImage! = {
-		return RSImage(named: "accountTheOldReader")
-	}()
-
-	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
+//	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 
 	@available(macOS 11.0, *)
 	static var addNewSidebarItemImage: RSImage = {
@@ -259,27 +259,27 @@ struct AppAssets {
 		return NSColor(named: NSColor.Name("StarColor"))!
 	}()
 
-	static func image(for accountType: AccountType) -> NSImage? {
-		switch accountType {
-		case .onMyMac:
-			return AppAssets.accountLocal
-		case .cloudKit:
-			return AppAssets.accountCloudKit
-		case .bazQux:
-			return AppAssets.accountBazQux
-		case .feedbin:
-			return AppAssets.accountFeedbin
-		case .feedly:
-			return AppAssets.accountFeedly
-		case .freshRSS:
-			return AppAssets.accountFreshRSS
-		case .inoreader:
-			return AppAssets.accountInoreader
-		case .newsBlur:
-			return AppAssets.accountNewsBlur
-		case .theOldReader:
-			return AppAssets.accountTheOldReader
-		}
-	}
+//	static func image(for accountType: AccountType) -> NSImage? {
+//		switch accountType {
+//		case .onMyMac:
+//			return AppAssets.accountLocal
+//		case .cloudKit:
+//			return AppAssets.accountCloudKit
+//		case .bazQux:
+//			return AppAsset.accountBazQuxImage
+//		case .feedbin:
+//			return AppAssets.accountFeedbin
+//		case .feedly:
+//			return AppAssets.accountFeedly
+//		case .freshRSS:
+//			return AppAssets.accountFreshRSS
+//		case .inoreader:
+//			return AppAssets.accountInoreader
+//		case .newsBlur:
+//			return AppAssets.accountNewsBlur
+//		case .theOldReader:
+//			return AppAssets.accountTheOldReader
+//		}
+//	}
 
 }
