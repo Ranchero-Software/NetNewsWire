@@ -55,33 +55,33 @@ struct AppAssets {
 		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 	}()
 
-	static var articleExtractorError: RSImage = {
-		return RSImage(named: "articleExtractorError")!
-	}()
+//	static var articleExtractorError: RSImage = {
+//		return RSImage(named: "articleExtractorError")!
+//	}()
+//
+//	static var articleExtractorOff: RSImage = {
+//		return RSImage(named: "articleExtractorOff")!
+//	}()
+//
+//	static var articleExtractorOn: RSImage = {
+//		return RSImage(named: "articleExtractorOn")!
+//	}()
 
-	static var articleExtractorOff: RSImage = {
-		return RSImage(named: "articleExtractorOff")!
-	}()
+//	static var articleTheme: RSImage = {
+//		return NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
+//	}()
 
-	static var articleExtractorOn: RSImage = {
-		return RSImage(named: "articleExtractorOn")!
-	}()
+//	static var cleanUpImage: RSImage = {
+//		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
+//	}()
 
-	static var articleTheme: RSImage = {
-		return NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
-	}()
-
-	static var cleanUpImage: RSImage = {
-		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
-	}()
-
-	static var marsEditIcon: RSImage = {
-		return RSImage(named: "MarsEditIcon")!
-	}()
-
-	static var microblogIcon: RSImage = {
-		return RSImage(named: "MicroblogIcon")!
-	}()
+//	static var marsEditIcon: RSImage = {
+//		return RSImage(named: "MarsEditIcon")!
+//	}()
+//
+//	static var microblogIcon: RSImage = {
+//		return RSImage(named: "MicroblogIcon")!
+//	}()
 
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
@@ -103,37 +103,37 @@ struct AppAssets {
 		return NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
 	}()
 
-	static var legacyArticleExtractor: RSImage! = {
-		return RSImage(named: "legacyArticleExtractor")
-	}()
-
-	static var legacyArticleExtractorError: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorError")
-	}()
-
-	static var legacyArticleExtractorInactiveDark: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorInactiveDark")
-	}()
-
-	static var legacyArticleExtractorInactiveLight: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorInactiveLight")
-	}()
-
-	static var legacyArticleExtractorProgress1: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorProgress1")
-	}()
-
-	static var legacyArticleExtractorProgress2: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorProgress2")
-	}()
-
-	static var legacyArticleExtractorProgress3: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorProgress3")
-	}()
-
-	static var legacyArticleExtractorProgress4: RSImage! = {
-		return RSImage(named: "legacyArticleExtractorProgress4")
-	}()
+//	static var legacyArticleExtractor: RSImage! = {
+//		return RSImage(named: "legacyArticleExtractor")
+//	}()
+//
+//	static var legacyArticleExtractorError: RSImage! = {
+//		return RSImage(named: "legacyArticleExtractorError")
+//	}()
+//
+//	static var legacyArticleExtractorInactiveDark: RSImage! = {
+//		return RSImage(named: "legacyArticleExtractorInactiveDark")
+//	}()
+//
+//	static var legacyArticleExtractorInactiveLight: RSImage! = {
+//		return RSImage(named: "legacyArticleExtractorInactiveLight")
+//	}()
+//
+//	static var legacyArticleExtractorProgress1: RSImage! = {
+//		return RSImage(named: "legacyArticleExtractorProgress1")
+//	}()
+//
+//	static var legacyArticleExtractorProgress2: RSImage! = {
+//		return RSImage(named: "legacyArticleExtractorProgress2")
+//	}()
+//
+//	static var legacyArticleExtractorProgress3: RSImage! = {
+//		return RSImage(named: "legacyArticleExtractorProgress3")
+//	}()
+//
+//	static var legacyArticleExtractorProgress4: RSImage! = {
+//		return RSImage(named: "legacyArticleExtractorProgress4")
+//	}()
 
 	static var folderImage: IconImage {
 		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
@@ -142,9 +142,9 @@ struct AppAssets {
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}
 
-	static var markAllAsReadImage: RSImage = {
-		return RSImage(named: "markAllAsRead")!
-	}()
+//	static var markAllAsReadImage: RSImage = {
+//		return RSImage(named: "markAllAsRead")!
+//	}()
 
 	static var nextUnreadImage: RSImage = {
 		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!

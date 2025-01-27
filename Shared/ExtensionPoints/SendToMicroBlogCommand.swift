@@ -15,7 +15,7 @@ import RSCore
 final class SendToMicroBlogCommand: SendToCommand {
 
 	let title = "Micro.blog"
-	let image: RSImage? = AppAssets.microblogIcon
+	let image = AppImage.microblogIcon
 
 	private let microBlogApp = UserApp(bundleID: "blog.micro.mac")
 

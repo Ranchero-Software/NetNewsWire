@@ -919,7 +919,7 @@ private extension TimelineViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markAllAsRead(articles)
 			}

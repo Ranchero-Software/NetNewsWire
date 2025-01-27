@@ -25,16 +25,16 @@ final class ArticleExtractorButton: UIButton {
 				switch buttonState {
 				case .error:
 					stripAnimatedSublayer()
-					setImage(AppAssets.articleExtractorError, for: .normal)
+					setImage(AppImage.articleExtractorError, for: .normal)
 				case .animated:
 					setImage(nil, for: .normal)
 					setNeedsLayout()
 				case .on:
 					stripAnimatedSublayer()
-					setImage(AppAssets.articleExtractorOn, for: .normal)
+					setImage(AppImage.articleExtractorOn, for: .normal)
 				case .off:
 					stripAnimatedSublayer()
-					setImage(AppAssets.articleExtractorOff, for: .normal)
+					setImage(AppImage.articleExtractorOff, for: .normal)
 				}
 			}
 		}
@@ -72,12 +72,12 @@ final class ArticleExtractorButton: UIButton {
 	}
 
 	private func addAnimatedSublayer(to hostedLayer: CALayer) {
-		let image1 = AppAssets.articleExtractorOffTinted.cgImage!
-		let image2 = AppAssets.articleExtractorOnTinted.cgImage!
+		let image1 = AppImage.articleExtractorOffTinted.cgImage!
+		let image2 = AppImage.articleExtractorOnTinted.cgImage!
 		let images = [image1, image2, image1]
 
 		animatedLayer = CALayer()
-		let imageSize = AppAssets.articleExtractorOff.size
+		let imageSize = AppImage.articleExtractorOff.size
 		animatedLayer!.bounds = CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height)
 		animatedLayer!.position = CGPoint(x: bounds.midX, y: bounds.midY)
 

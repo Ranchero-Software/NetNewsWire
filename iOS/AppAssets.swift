@@ -53,35 +53,35 @@ struct AppAssets {
 
 //	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 
-	static var articleExtractorError: UIImage = {
-		return UIImage(named: "articleExtractorError")!
-	}()
-
-	static var articleExtractorOff: UIImage = {
-		return UIImage(named: "articleExtractorOff")!
-	}()
-
-	static var articleExtractorOffSF: UIImage = {
-		return UIImage(systemName: "doc.plaintext")!
-	}()
-
-	static var articleExtractorOffTinted: UIImage = {
-		let image = UIImage(named: "articleExtractorOff")!
-		return image.tinted(color: AppAssets.primaryAccentColor)!
-	}()
-
-	static var articleExtractorOn: UIImage = {
-		return UIImage(named: "articleExtractorOn")!
-	}()
-
-	static var articleExtractorOnSF: UIImage = {
-		return UIImage(named: "articleExtractorOnSF")!
-	}()
-
-	static var articleExtractorOnTinted: UIImage = {
-		let image = UIImage(named: "articleExtractorOn")!
-		return image.tinted(color: AppAssets.primaryAccentColor)!
-	}()
+//	static var articleExtractorError: UIImage = {
+//		return UIImage(named: "articleExtractorError")!
+//	}()
+//
+//	static var articleExtractorOff: UIImage = {
+//		return UIImage(named: "articleExtractorOff")!
+//	}()
+//
+//	static var articleExtractorOffSF: UIImage = {
+//		return UIImage(systemName: "doc.plaintext")!
+//	}()
+//
+//	static var articleExtractorOffTinted: UIImage = {
+//		let image = UIImage(named: "articleExtractorOff")!
+//		return image.tinted(color: AppAssets.primaryAccentColor)!
+//	}()
+//
+//	static var articleExtractorOn: UIImage = {
+//		return UIImage(named: "articleExtractorOn")!
+//	}()
+//
+//	static var articleExtractorOnSF: UIImage = {
+//		return UIImage(named: "articleExtractorOnSF")!
+//	}()
+//
+//	static var articleExtractorOnTinted: UIImage = {
+//		let image = UIImage(named: "articleExtractorOn")!
+//		return image.tinted(color: AppAssets.primaryAccentColor)!
+//	}()
 
 	static var iconBackgroundColor: UIColor = {
 		return UIColor(named: "iconBackgroundColor")!
@@ -135,9 +135,9 @@ struct AppAssets {
 		UIImage(systemName: "info.circle")!
 	}()
 
-	static var markAllAsReadImage: UIImage = {
-		return UIImage(named: "markAllAsRead")!
-	}()
+//	static var markAllAsReadImage: UIImage = {
+//		return UIImage(named: "markAllAsRead")!
+//	}()
 
 	static var markBelowAsReadImage: UIImage = {
 		return UIImage(systemName: "arrowtriangle.down.circle")!

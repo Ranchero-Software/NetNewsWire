@@ -766,7 +766,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .markAllAsRead:
 			let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
-			return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
+			return buildToolbarButton(.markAllAsRead, title, AppImage.markAllAsRead, "markAllAsRead:")
 
 		case .toggleReadArticlesFilter:
 			let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
@@ -807,7 +807,7 @@ extension MainWindowController: NSToolbarDelegate {
 			return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
 
 		case .articleThemeMenu:
-			articleThemeMenuToolbarItem.image = AppAssets.articleTheme
+			articleThemeMenuToolbarItem.image = AppImage.articleTheme
 			let description = NSLocalizedString("Article Theme", comment: "Article Theme")
 			articleThemeMenuToolbarItem.toolTip = description
 			articleThemeMenuToolbarItem.label = description
@@ -822,7 +822,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .cleanUp:
 			let title = NSLocalizedString("Clean Up", comment: "Clean Up")
-			return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
+			return buildToolbarButton(.cleanUp, title, AppImage.cleanUp, "cleanUp:")
 
 		default:
 			break
