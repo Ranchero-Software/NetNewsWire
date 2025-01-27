@@ -54,15 +54,18 @@ struct AppImage {
 	static var articleExtractorOnTinted = articleExtractorOn.tinted(color: AppAssets.primaryAccentColor)!
 #endif
 
-	// MARK: - Actions
+	// MARK: - Action Images
 
 	static var markAllAsRead = RSImage(named: "markAllAsRead")!
 
 	// MARK: - Misc.
 
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
+}
 
-	// MARK: - Mac-only images
+// MARK: - Mac-only images
+
+extension AppImage {
 
 #if os(macOS)
 	static var articleTheme = NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
@@ -70,8 +73,11 @@ struct AppImage {
 	static var marsEditIcon = RSImage(named: "MarsEditIcon")!
 	static var microblogIcon = RSImage(named: "MicroblogIcon")!
 #endif
+}
 
-	// MARK: - iOS-only images
+// MARK: - iOS-only images
+
+extension AppImage {
 
 #if os(iOS)
 	static var markBelowAsRead = UIImage(systemName: "arrowtriangle.down.circle")!
@@ -91,6 +97,8 @@ struct AppImage {
 // MARK: - Private
 
 private extension AppImage {
+
+	// MARK: - Account Images
 
 	static var accountBazQux = RSImage(named: "accountBazQux")!
 	static var accountCloudKit = RSImage(named: "accountCloudKit")!
