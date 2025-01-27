@@ -40,13 +40,13 @@ struct AppImage {
 			AppImage.accountTheOldReader
 		}
 	}
-	
+
 	// MARK: - Article Extractor
-	
+
 	static var articleExtractorError = RSImage(named: "articleExtractorError")!
 	static var articleExtractorOff = RSImage(named: "articleExtractorOff")!
 	static var articleExtractorOn = RSImage(named: "articleExtractorOn")!
-	
+
 #if os(iOS)
 	static var articleExtractorOffSF = UIImage(systemName: "doc.plaintext")!
 	static var articleExtractorOnSF = UIImage(named: "articleExtractorOnSF")!
@@ -57,9 +57,9 @@ struct AppImage {
 	// MARK: - Actions
 
 	static var markAllAsRead = RSImage(named: "markAllAsRead")!
-	
+
 	// MARK: - Misc.
-	
+
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 
 	// MARK: - Mac-only images
@@ -87,7 +87,6 @@ struct AppImage {
 	static var disclosure = UIImage(named: "disclosure")!
 #endif
 }
-
 
 // MARK: - Private
 
