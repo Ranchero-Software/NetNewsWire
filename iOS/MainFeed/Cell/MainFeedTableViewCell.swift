@@ -206,7 +206,7 @@ private extension MainFeedTableViewCell {
 	func addDisclosureView() {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
-		disclosureButton?.setImage(AppAssets.disclosureImage, for: .normal)
+		disclosureButton?.setImage(AppImage.disclosure, for: .normal)
 		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false

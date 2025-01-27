@@ -62,20 +62,29 @@ struct AppImage {
 	
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 
-#if os(macOS)
 	// MARK: - Mac-only images
 
+#if os(macOS)
 	static var articleTheme = NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
 	static var cleanUp = NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
 	static var marsEditIcon = RSImage(named: "MarsEditIcon")!
 	static var microblogIcon = RSImage(named: "MicroblogIcon")!
-
 #endif
 
-#if os(iOS)
 	// MARK: - iOS-only images
 
-
+#if os(iOS)
+	static var markBelowAsRead = UIImage(systemName: "arrowtriangle.down.circle")!
+	static var markAboveAsRead = UIImage(systemName: "arrowtriangle.up.circle")!
+	static var more = UIImage(systemName: "ellipsis.circle")!
+	static var previousArticle = UIImage(systemName: "chevron.up")!
+	static var nextArticle = UIImage(systemName: "chevron.down")!
+	static var nextUnreadArticle = UIImage(systemName: "chevron.down.circle")!
+	static var openInSidebar = UIImage(systemName: "arrow.turn.down.left")!
+	static var safari = UIImage(systemName: "safari")!
+	static var deactivate = UIImage(systemName: "minus.circle")!
+	static var copy = UIImage(systemName: "doc.on.doc")!
+	static var disclosure = UIImage(named: "disclosure")!
 #endif
 }
 

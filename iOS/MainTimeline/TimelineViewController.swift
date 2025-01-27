@@ -71,7 +71,7 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Initialize Programmatic Buttons
 		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
-		firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
+		firstUnreadButton = UIBarButtonItem(image: AppImage.nextUnreadArticle, style: .plain, target: self, action: #selector(firstUnread(_:)))
 
 		// Setup the Search Controller
 		searchController.delegate = self
@@ -352,7 +352,7 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 
 		}
 
-		moreAction.image = AppAssets.moreImage
+		moreAction.image = AppImage.more
 		moreAction.backgroundColor = UIColor.systemGray
 
 		return UISwipeActionsConfiguration(actions: [starAction, moreAction])
@@ -820,7 +820,7 @@ private extension TimelineViewController {
 		}
 
 		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
-		let image = AppAssets.markAboveAsReadImage
+		let image = AppImage.markAboveAsRead
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markAboveAsRead(article)
@@ -835,7 +835,7 @@ private extension TimelineViewController {
 		}
 
 		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
-		let image = AppAssets.markBelowAsReadImage
+		let image = AppImage.markBelowAsRead
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markBelowAsRead(article)
@@ -887,7 +887,7 @@ private extension TimelineViewController {
 			!coordinator.timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
-		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.openInSidebar) { [weak self] _ in
 			self?.coordinator.discloseFeed(feed, animations: [.scroll, .navigation])
 		}
 		return action
@@ -956,7 +956,7 @@ private extension TimelineViewController {
 	func copyArticleURLAction(_ article: Article) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Copy Article URL", comment: "Copy Article URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { _ in
+		let action = UIAction(title: title, image: AppImage.copy) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -965,7 +965,7 @@ private extension TimelineViewController {
 	func copyExternalURLAction(_ article: Article) -> UIAction? {
 		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
 		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { _ in
+		let action = UIAction(title: title, image: AppImage.copy) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -974,7 +974,7 @@ private extension TimelineViewController {
 	func openInBrowserAction(_ article: Article) -> UIAction? {
 		guard article.preferredURL != nil else { return nil }
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.safari) { [weak self] _ in
 			self?.coordinator.showBrowserForArticle(article)
 		}
 		return action

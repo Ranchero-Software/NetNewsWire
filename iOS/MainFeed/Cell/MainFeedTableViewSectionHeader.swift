@@ -84,7 +84,7 @@ final class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	private lazy var disclosureButton: UIButton = {
 		let button = NonIntrinsicButton()
 		button.tintColor = UIColor.tertiaryLabel
-		button.setImage(AppAssets.disclosureImage, for: .normal)
+		button.setImage(AppImage.disclosure, for: .normal)
 		button.contentMode = .center
 		button.addInteraction(UIPointerInteraction())
 		button.addTarget(self, action: #selector(toggleDisclosure), for: .touchUpInside)

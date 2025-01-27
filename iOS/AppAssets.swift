@@ -95,17 +95,17 @@ struct AppAssets {
 		return UIImage(systemName: "circle")!
 	}()
 
-	static var disclosureImage: UIImage = {
-		return UIImage(named: "disclosure")!
-	}()
+//	static var disclosureImage: UIImage = {
+//		return UIImage(named: "disclosure")!
+//	}()
 
-	static var copyImage: UIImage = {
-		return UIImage(systemName: "doc.on.doc")!
-	}()
+//	static var copyImage: UIImage = {
+//		return UIImage(systemName: "doc.on.doc")!
+//	}()
 
-	static var deactivateImage: UIImage = {
-		UIImage(systemName: "minus.circle")!
-	}()
+//	static var deactivateImage: UIImage = {
+//		UIImage(systemName: "minus.circle")!
+//	}()
 
 	static var editImage: UIImage = {
 		UIImage(systemName: "square.and.pencil")!
@@ -139,49 +139,49 @@ struct AppAssets {
 //		return UIImage(named: "markAllAsRead")!
 //	}()
 
-	static var markBelowAsReadImage: UIImage = {
-		return UIImage(systemName: "arrowtriangle.down.circle")!
-	}()
+//	static var markBelowAsReadImage: UIImage = {
+//		return UIImage(systemName: "arrowtriangle.down.circle")!
+//	}()
 
-	static var markAboveAsReadImage: UIImage = {
-		return UIImage(systemName: "arrowtriangle.up.circle")!
-	}()
+//	static var markAboveAsReadImage: UIImage = {
+//		return UIImage(systemName: "arrowtriangle.up.circle")!
+//	}()
 
 	static var folderImage: IconImage = {
 		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
 
-	static var moreImage: UIImage = {
-		return UIImage(systemName: "ellipsis.circle")!
-	}()
+//	static var moreImage: UIImage = {
+//		return UIImage(systemName: "ellipsis.circle")!
+//	}()
 
-	static var nextArticleImage: UIImage = {
-		return UIImage(systemName: "chevron.down")!
-	}()
+//	static var nextArticleImage: UIImage = {
+//		return UIImage(systemName: "chevron.down")!
+//	}()
 
-	static var nextUnreadArticleImage: UIImage = {
-		return UIImage(systemName: "chevron.down.circle")!
-	}()
+//	static var nextUnreadArticleImage: UIImage = {
+//		return UIImage(systemName: "chevron.down.circle")!
+//	}()
 
 	static var plus: UIImage = {
 		UIImage(systemName: "plus")!
 	}()
 
-	static var prevArticleImage: UIImage = {
-		return UIImage(systemName: "chevron.up")!
-	}()
+//	static var prevArticleImage: UIImage = {
+//		return UIImage(systemName: "chevron.up")!
+//	}()
 
-	static var openInSidebarImage: UIImage = {
-		return UIImage(systemName: "arrow.turn.down.left")!
-	}()
+//	static var openInSidebarImage: UIImage = {
+//		return UIImage(systemName: "arrow.turn.down.left")!
+//	}()
 
 	static var primaryAccentColor: UIColor {
 		return UIColor(named: "primaryAccentColor")!
 	}
 
-	static var safariImage: UIImage = {
-		return UIImage(systemName: "safari")!
-	}()
+//	static var safariImage: UIImage = {
+//		return UIImage(systemName: "safari")!
+//	}()
 
 	static var searchFeedImage: IconImage = {
 		return IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)

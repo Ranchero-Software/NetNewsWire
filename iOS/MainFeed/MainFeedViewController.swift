@@ -981,7 +981,7 @@ private extension MainFeedViewController {
 		}
 
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.safari) { [weak self] _ in
 			self?.coordinator.showBrowserForFeed(indexPath)
 		}
 		return action
@@ -1007,7 +1007,7 @@ private extension MainFeedViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { _ in
+		let action = UIAction(title: title, image: AppImage.copy) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -1035,7 +1035,7 @@ private extension MainFeedViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { _ in
+		let action = UIAction(title: title, image: AppImage.copy) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -1117,7 +1117,7 @@ private extension MainFeedViewController {
 
 	func deactivateAccountAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Deactivate", comment: "Deactivate")
-		let action = UIAction(title: title, image: AppAssets.deactivateImage) { _ in
+		let action = UIAction(title: title, image: AppImage.deactivate) { _ in
 			account.isActive = false
 		}
 		return action
