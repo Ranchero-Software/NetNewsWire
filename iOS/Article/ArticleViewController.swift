@@ -223,11 +223,11 @@ final class ArticleViewController: UIViewController {
 		actionBarButtonItem.isEnabled = permalinkPresent
 
 		if article.status.read {
-			readBarButtonItem.image = AppAssets.circleOpenImage
+			readBarButtonItem.image = AppImage.circleOpen
 			readBarButtonItem.isEnabled = article.isAvailableToMarkUnread
 			readBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
 		} else {
-			readBarButtonItem.image = AppAssets.circleClosedImage
+			readBarButtonItem.image = AppImage.circleClosed
 			readBarButtonItem.isEnabled = true
 			readBarButtonItem.accLabelText = NSLocalizedString("Selected - Mark Article Unread", comment: "Selected - Mark Article Unread")
 		}

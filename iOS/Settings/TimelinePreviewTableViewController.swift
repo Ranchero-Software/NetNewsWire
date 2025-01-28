@@ -84,7 +84,7 @@ private extension TimelinePreviewTableViewController {
 			status: status
 		)
 
-		let iconImage = IconImage(AppAssets.faviconTemplateImage.withTintColor(AppAssets.secondaryAccentColor))
+		let iconImage = IconImage(AppImage.faviconTemplate.withTintColor(AppAssets.secondaryAccentColor))
 
 		return MainTimelineCellData(
 			article: prototypeArticle,

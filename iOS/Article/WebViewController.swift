@@ -742,7 +742,7 @@ private extension WebViewController {
 		guard let article = article, !article.status.read || article.isAvailableToMarkUnread else { return nil }
 
 		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		let readImage = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+		let readImage = article.status.read ? AppImage.circleClosed : AppImage.circleOpen
 		return UIAction(title: title, image: readImage) { [weak self] _ in
 			self?.coordinator.toggleReadForCurrentArticle()
 		}
@@ -776,7 +776,7 @@ private extension WebViewController {
 
 	func shareAction() -> UIAction {
 		let title = NSLocalizedString("Share", comment: "Share")
-		return UIAction(title: title, image: AppAssets.shareImage) { [weak self] _ in
+		return UIAction(title: title, image: AppImage.share) { [weak self] _ in
 			self?.showActivityDialog()
 		}
 	}

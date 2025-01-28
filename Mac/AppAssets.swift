@@ -83,9 +83,9 @@ struct AppAssets {
 //		return RSImage(named: "MicroblogIcon")!
 //	}()
 
-	static var faviconTemplateImage: RSImage = {
-		return RSImage(named: "faviconTemplateImage")!
-	}()
+//	static var faviconTemplateImage: RSImage = {
+//		return RSImage(named: "faviconTemplateImage")!
+//	}()
 
 	static var filterActive: RSImage = {
 		return NSImage(systemSymbolName: "line.horizontal.3.decrease.circle.fill", accessibilityDescription: nil)!
@@ -186,13 +186,13 @@ struct AppAssets {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSuppressed: true)
 	}()
 
-	static var shareImage: RSImage = {
-		return NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
-	}()
+//	static var shareImage: RSImage = {
+//		return NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
+//	}()
 
-	static var sidebarToggleImage: RSImage = {
-		return NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
-	}()
+//	static var sidebarToggleImage: RSImage = {
+//		return NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
+//	}()
 
 	static var starClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!

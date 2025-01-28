@@ -644,13 +644,13 @@ final class MainFeedViewController: UITableViewController, UndoableCommandRunner
 		var menuItems: [UIAction] = []
 
 		let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
-		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAssets.plus) { _ in
+		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppImage.plus) { _ in
 			self.coordinator.showAddFeed()
 		}
 		menuItems.append(addFeedAction)
 
 		let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
+		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppImage.folderOutlinePlus) { _ in
 			self.coordinator.showAddFolder()
 		}
 
@@ -751,12 +751,12 @@ private extension MainFeedViewController {
 	}
 
 	func setFilterButtonToActive() {
-		filterButton?.image = AppAssets.filterActiveImage
+		filterButton?.image = AppImage.filterActive
 		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
 	}
 
 	func setFilterButtonToInactive() {
-		filterButton?.image = AppAssets.filterInactiveImage
+		filterButton?.image = AppImage.filterInactive
 		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 
@@ -1081,7 +1081,7 @@ private extension MainFeedViewController {
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
 
-		let action = UIAction(title: title, image: AppAssets.trashImage, attributes: .destructive) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.trash, attributes: .destructive) { [weak self] _ in
 			self?.delete(indexPath: indexPath)
 		}
 		return action
@@ -1089,7 +1089,7 @@ private extension MainFeedViewController {
 
 	func renameAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Rename", comment: "Rename")
-		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.edit) { [weak self] _ in
 			self?.rename(indexPath: indexPath)
 		}
 		return action
@@ -1101,7 +1101,7 @@ private extension MainFeedViewController {
 		}
 
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.info) { [weak self] _ in
 			self?.coordinator.showFeedInspector(for: feed)
 		}
 		return action
@@ -1109,7 +1109,7 @@ private extension MainFeedViewController {
 
 	func getAccountInfoAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.info) { [weak self] _ in
 			self?.coordinator.showAccountInspector(for: account)
 		}
 		return action

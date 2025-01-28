@@ -800,7 +800,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .share:
 			let title = NSLocalizedString("Share", comment: "Share")
-			return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
+			return buildToolbarButton(.share, title, AppImage.share, "toolbarShowShareMenu:")
 
 		case .openInBrowser:
 			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")

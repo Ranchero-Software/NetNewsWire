@@ -87,13 +87,13 @@ struct AppAssets {
 		return UIColor(named: "iconBackgroundColor")!
 	}()
 
-	static var circleClosedImage: UIImage = {
-		return UIImage(systemName: "largecircle.fill.circle")!
-	}()
+//	static var circleClosedImage: UIImage = {
+//		return UIImage(systemName: "largecircle.fill.circle")!
+//	}()
 
-	static var circleOpenImage: UIImage = {
-		return UIImage(systemName: "circle")!
-	}()
+//	static var circleOpenImage: UIImage = {
+//		return UIImage(systemName: "circle")!
+//	}()
 
 //	static var disclosureImage: UIImage = {
 //		return UIImage(named: "disclosure")!
@@ -107,33 +107,33 @@ struct AppAssets {
 //		UIImage(systemName: "minus.circle")!
 //	}()
 
-	static var editImage: UIImage = {
-		UIImage(systemName: "square.and.pencil")!
-	}()
+//	static var editImage: UIImage = {
+//		UIImage(systemName: "square.and.pencil")!
+//	}()
 
-	static var faviconTemplateImage: RSImage = {
-		return RSImage(named: "faviconTemplateImage")!
-	}()
+//	static var faviconTemplateImage: RSImage = {
+//		return RSImage(named: "faviconTemplateImage")!
+//	}()
 
-	static var filterInactiveImage: UIImage = {
-		UIImage(systemName: "line.horizontal.3.decrease.circle")!
-	}()
+//	static var filterInactiveImage: UIImage = {
+//		UIImage(systemName: "line.horizontal.3.decrease.circle")!
+//	}()
 
-	static var filterActiveImage: UIImage = {
-		UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
-	}()
+//	static var filterActiveImage: UIImage = {
+//		UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
+//	}()
 
-	static var folderOutlinePlus: UIImage = {
-		UIImage(systemName: "folder.badge.plus")!
-	}()
+//	static var folderOutlinePlus: UIImage = {
+//		UIImage(systemName: "folder.badge.plus")!
+//	}()
 
 	static var fullScreenBackgroundColor: UIColor = {
 		return UIColor(named: "fullScreenBackgroundColor")!
 	}()
 
-	static var infoImage: UIImage = {
-		UIImage(systemName: "info.circle")!
-	}()
+//	static var infoImage: UIImage = {
+//		UIImage(systemName: "info.circle")!
+//	}()
 
 //	static var markAllAsReadImage: UIImage = {
 //		return UIImage(named: "markAllAsRead")!
@@ -163,9 +163,9 @@ struct AppAssets {
 //		return UIImage(systemName: "chevron.down.circle")!
 //	}()
 
-	static var plus: UIImage = {
-		UIImage(systemName: "plus")!
-	}()
+//	static var plus: UIImage = {
+//		UIImage(systemName: "plus")!
+//	}()
 
 //	static var prevArticleImage: UIImage = {
 //		return UIImage(systemName: "chevron.up")!
@@ -195,13 +195,13 @@ struct AppAssets {
 		return UIColor(named: "sectionHeaderColor")!
 	}()
 
-	static var shareImage: UIImage = {
-		return UIImage(systemName: "square.and.arrow.up")!
-	}()
+//	static var shareImage: UIImage = {
+//		return UIImage(systemName: "square.and.arrow.up")!
+//	}()
 
-	static var smartFeedImage: UIImage = {
-		return UIImage(systemName: "gear")!
-	}()
+//	static var smartFeedImage: UIImage = {
+//		return UIImage(systemName: "gear")!
+//	}()
 
 	static var starColor: UIColor = {
 		return UIColor(named: "starColor")!
@@ -224,19 +224,19 @@ struct AppAssets {
 		return UIColor(named: "tickMarkColor")!
 	}()
 
-	static var timelineStarImage: UIImage = {
-		let image = UIImage(systemName: "star.fill")!
-		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
-	}()
+//	static var timelineStarImage: UIImage = {
+//		let image = UIImage(systemName: "star.fill")!
+//		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
+//	}()
 
 	static var todayFeedImage: IconImage {
 		let image = UIImage(systemName: "sun.max.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange.cgColor)
 	}
 
-	static var trashImage: UIImage = {
-		return UIImage(systemName: "trash")!
-	}()
+//	static var trashImage: UIImage = {
+//		return UIImage(systemName: "trash")!
+//	}()
 
 	static var unreadFeedImage: IconImage {
 		let image = UIImage(systemName: "largecircle.fill.circle")!

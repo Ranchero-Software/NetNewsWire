@@ -70,7 +70,7 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		// Initialize Programmatic Buttons
-		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+		filterButton = UIBarButtonItem(image: AppImage.filterInactive, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 		firstUnreadButton = UIBarButtonItem(image: AppImage.nextUnreadArticle, style: .plain, target: self, action: #selector(firstUnread(_:)))
 
 		// Setup the Search Controller
@@ -282,7 +282,7 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 			completion(true)
 		}
 
-		readAction.image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+		readAction.image = article.status.read ? AppImage.circleClosed : AppImage.circleOpen
 		readAction.backgroundColor = AppAssets.primaryAccentColor
 
 		return UISwipeActionsConfiguration(actions: [readAction])
@@ -687,10 +687,10 @@ private extension TimelineViewController {
 		}
 
 		if coordinator.isReadArticlesFiltered {
-			filterButton?.image = AppAssets.filterActiveImage
+			filterButton?.image = AppImage.filterActive
 			filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
-			filterButton?.image = AppAssets.filterInactiveImage
+			filterButton?.image = AppImage.filterInactive
 			filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 
@@ -791,7 +791,7 @@ private extension TimelineViewController {
 		let title = article.status.read ?
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		let image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+		let image = article.status.read ? AppImage.circleClosed : AppImage.circleOpen
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			self?.coordinator.toggleRead(article)
@@ -1005,7 +1005,7 @@ private extension TimelineViewController {
 	func shareAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
-		let action = UIAction(title: title, image: AppAssets.shareImage) { [weak self] _ in
+		let action = UIAction(title: title, image: AppImage.share) { [weak self] _ in
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
 		return action

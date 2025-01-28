@@ -41,56 +41,58 @@ struct AppImage {
 		}
 	}
 
-	// MARK: - Article Extractor
-
-	static var articleExtractorError = RSImage(named: "articleExtractorError")!
-	static var articleExtractorOff = RSImage(named: "articleExtractorOff")!
-	static var articleExtractorOn = RSImage(named: "articleExtractorOn")!
-
-#if os(iOS)
-	static var articleExtractorOffSF = UIImage(systemName: "doc.plaintext")!
-	static var articleExtractorOnSF = UIImage(named: "articleExtractorOnSF")!
-	static var articleExtractorOffTinted = articleExtractorOff.tinted(color: AppAssets.primaryAccentColor)!
-	static var articleExtractorOnTinted = articleExtractorOn.tinted(color: AppAssets.primaryAccentColor)!
-#endif
-
-	// MARK: - Action Images
-
-	static var markAllAsRead = RSImage(named: "markAllAsRead")!
-
-	// MARK: - Misc.
-
+	static var articleExtractorError = appImage("articleExtractorError")
+	static var articleExtractorOff = appImage("articleExtractorOff")
+	static var articleExtractorOn = appImage("articleExtractorOn")
+	static var faviconTemplate = appImage("faviconTemplateImage")
+	static var markAllAsRead = appImage("markAllAsRead")
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
+	static var share = systemImage("square.and.arrow.up")
 }
 
-// MARK: - Mac-only images
+// MARK: - Mac
 
 extension AppImage {
 
 #if os(macOS)
-	static var articleTheme = NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
-	static var cleanUp = NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
-	static var marsEditIcon = RSImage(named: "MarsEditIcon")!
-	static var microblogIcon = RSImage(named: "MicroblogIcon")!
+	static var articleTheme = systemImage("doc.richtext")
+	static var cleanUp = systemImage("wind")
+	static var marsEditIcon = appImage("MarsEditIcon")
+	static var microblogIcon = appImage("MicroblogIcon")
 #endif
 }
 
-// MARK: - iOS-only images
+// MARK: - iOS
 
 extension AppImage {
 
 #if os(iOS)
-	static var markBelowAsRead = UIImage(systemName: "arrowtriangle.down.circle")!
-	static var markAboveAsRead = UIImage(systemName: "arrowtriangle.up.circle")!
-	static var more = UIImage(systemName: "ellipsis.circle")!
-	static var previousArticle = UIImage(systemName: "chevron.up")!
-	static var nextArticle = UIImage(systemName: "chevron.down")!
-	static var nextUnreadArticle = UIImage(systemName: "chevron.down.circle")!
-	static var openInSidebar = UIImage(systemName: "arrow.turn.down.left")!
-	static var safari = UIImage(systemName: "safari")!
-	static var deactivate = UIImage(systemName: "minus.circle")!
-	static var copy = UIImage(systemName: "doc.on.doc")!
-	static var disclosure = UIImage(named: "disclosure")!
+	static var articleExtractorOffSF = systemImage("doc.plaintext")
+	static var articleExtractorOnSF = appImage("articleExtractorOnSF")
+	static var articleExtractorOffTinted = articleExtractorOff.tinted(color: AppAssets.primaryAccentColor)!
+	static var articleExtractorOnTinted = articleExtractorOn.tinted(color: AppAssets.primaryAccentColor)!
+	static var circleClosed = systemImage("largecircle.fill.circle")
+	static var circleOpen = systemImage("circle")
+	static var copy = systemImage("doc.on.doc")
+	static var deactivate = systemImage("minus.circle")
+	static var disclosure = appImage("disclosure")
+	static var edit = systemImage("square.and.pencil")
+	static var filterActive = systemImage("line.horizontal.3.decrease.circle.fill")
+	static var filterInactive = systemImage("line.horizontal.3.decrease.circle")
+	static var folderOutlinePlus = systemImage("folder.badge.plus")
+	static var info = systemImage("info.circle")
+	static var markBelowAsRead = systemImage("arrowtriangle.down.circle")
+	static var markAboveAsRead = systemImage("arrowtriangle.up.circle")
+	static var more = systemImage("ellipsis.circle")
+	static var nextArticle = systemImage("chevron.down")
+	static var nextUnreadArticle = systemImage("chevron.down.circle")
+	static var openInSidebar = systemImage("arrow.turn.down.left")
+	static var plus = systemImage("plus")
+	static var previousArticle = systemImage("chevron.up")
+	static var safari = systemImage("safari")
+	static var timelineStar = systemImage("star.fill").withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
+	static var trash = systemImage("trash")
+
 #endif
 }
 
@@ -100,20 +102,32 @@ private extension AppImage {
 
 	// MARK: - Account Images
 
-	static var accountBazQux = RSImage(named: "accountBazQux")!
-	static var accountCloudKit = RSImage(named: "accountCloudKit")!
-	static var accountFeedbin = RSImage(named: "accountFeedbin")!
-	static var accountFeedly = RSImage(named: "accountFeedly")!
-	static var accountFreshRSS = RSImage(named: "accountFreshRSS")!
-	static var accountInoreader = RSImage(named: "accountInoreader")!
-	static var accountNewsBlur = RSImage(named: "accountNewsBlur")!
-	static var accountTheOldReader = RSImage(named: "accountTheOldReader")!
+	static var accountBazQux = appImage("accountBazQux")
+	static var accountCloudKit = appImage("accountCloudKit")
+	static var accountFeedbin = appImage("accountFeedbin")
+	static var accountFeedly = appImage("accountFeedly")
+	static var accountFreshRSS = appImage("accountFreshRSS")
+	static var accountInoreader = appImage("accountInoreader")
+	static var accountNewsBlur = appImage("accountNewsBlur")
+	static var accountTheOldReader = appImage("accountTheOldReader")
 
 #if os(macOS)
-	static var accountLocal = RSImage(named: "accountLocal")!
+	static var accountLocal = appImage("accountLocal")
 #elseif os(iOS)
-	static var accountLocalPad = UIImage(named: "accountLocalPad")!
-	static var accountLocalPhone = UIImage(named: "accountLocalPhone")!
+	static var accountLocalPad = appImage("accountLocalPad")
+	static var accountLocalPhone = appImage("accountLocalPhone")
 	static var accountLocal = UIDevice.current.userInterfaceIdiom == .pad ? accountLocalPad : accountLocalPhone
 #endif
+
+	static func appImage(_ name: String) -> RSImage {
+		RSImage(named: name)!
+	}
+
+	static func systemImage(_ name: String) -> RSImage {
+#if os(macOS)
+		RSImage(systemSymbolName: name, accessibilityDescription: nil)!
+#elseif os(iOS)
+		UIImage(systemName: name)!
+#endif
+	}
 }

@@ -20,7 +20,7 @@ final class MainTimelineTableViewCell: VibrantTableViewCell {
 	private lazy var iconView = IconView()
 
 	private lazy var starView = {
-		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
+		return NonIntrinsicImageView(image: AppImage.timelineStar)
 	}()
 
 	private var unreadIndicatorPropertyAnimator: UIViewPropertyAnimator?
