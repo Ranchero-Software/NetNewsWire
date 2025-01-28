@@ -57,7 +57,7 @@ final class TimelineTableRowView: NSTableRowView {
 		separator = NSView()
 		separator!.translatesAutoresizingMaskIntoConstraints = false
 		separator!.wantsLayer = true
-		separator!.layer?.backgroundColor = AppAssets.timelineSeparatorColor.cgColor
+		separator!.layer?.backgroundColor = AppColor.timelineSeparator.cgColor
 		addSubview(separator!)
 
 		NSLayoutConstraint.activate([

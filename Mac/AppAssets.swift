@@ -95,13 +95,13 @@ struct AppAssets {
 		return NSImage(systemSymbolName: "line.horizontal.3.decrease.circle", accessibilityDescription: nil)!
 	}()
 
-	static var iconLightBackgroundColor: NSColor = {
-		return NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
-	}()
+//	static var iconLightBackgroundColor: NSColor = {
+//		return NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
+//	}()
 
-	static var iconDarkBackgroundColor: NSColor = {
-		return NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
-	}()
+//	static var iconDarkBackgroundColor: NSColor = {
+//		return NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
+//	}()
 
 //	static var legacyArticleExtractor: RSImage! = {
 //		return RSImage(named: "legacyArticleExtractor")
@@ -209,10 +209,10 @@ struct AppAssets {
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
-	static var timelineSeparatorColor: NSColor = {
-		return NSColor(named: "timelineSeparatorColor")!
-	}()
-
+//	static var timelineSeparatorColor: NSColor = {
+//		return NSColor(named: "timelineSeparatorColor")!
+//	}()
+//
 	static var timelineStarSelected: RSImage! = {
 		return RSImage(named: "timelineStar")?.tinted(with: .white)
 	}()
