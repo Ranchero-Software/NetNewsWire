@@ -15,7 +15,6 @@ import UIKit
 
 struct AppColor {
 
-
 }
 
 // MARK: - Mac
