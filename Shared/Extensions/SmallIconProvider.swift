@@ -18,7 +18,7 @@ protocol SmallIconProvider {
 
 extension Account: SmallIconProvider {
 	var smallIcon: IconImage? {
-		if let image = AppImage.accountImage(type) {
+		if let image = AppImage.account(type) {
 			return IconImage(image)
 		}
 		return nil

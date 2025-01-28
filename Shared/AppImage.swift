@@ -18,7 +18,7 @@ struct AppImage {
 
 	// MARK: - Account
 
-	static func accountImage(_ accountType: AccountType) -> RSImage? {
+	static func account(_ accountType: AccountType) -> RSImage? {
 		switch accountType {
 		case .onMyMac:
 			AppImage.accountLocal
