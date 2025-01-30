@@ -16,7 +16,7 @@ final class SelectComboTableViewCell: VibrantTableViewCell {
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
 
-		let iconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
+		let iconTintColor = isHighlighted || isSelected ? AppColor.vibrantText : UIColor.label
 		if animated {
 			UIView.animate(withDuration: Self.duration) {
 				self.icon.tintColor = iconTintColor

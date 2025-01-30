@@ -283,7 +283,7 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 
 		readAction.image = article.status.read ? AppImage.circleClosed : AppImage.circleOpen
-		readAction.backgroundColor = AppAssets.primaryAccentColor
+		readAction.backgroundColor = AppColor.accent
 
 		return UISwipeActionsConfiguration(actions: [readAction])
 	}
@@ -302,8 +302,8 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 			completion(true)
 		}
 
-		starAction.image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
-		starAction.backgroundColor = AppAssets.starColor
+		starAction.image = article.status.starred ? AppImage.starOpen : AppImage.starClosed
+		starAction.backgroundColor = AppColor.star
 
 		// Set up the read action
 		let moreTitle = NSLocalizedString("More", comment: "More")
@@ -805,7 +805,7 @@ private extension TimelineViewController {
 		let title = article.status.starred ?
 			NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") :
 			NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
-		let image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		let image = article.status.starred ? AppImage.starOpen : AppImage.starClosed
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			self?.coordinator.toggleStar(article)

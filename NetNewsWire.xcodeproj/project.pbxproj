@@ -308,7 +308,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				/Localized/ShareExtension/MainInterface.storyboard,
-				AppAssets.swift,
 				Resources/Assets.xcassets,
 				ShareExtension/ShareFolderPickerAccountCell.xib,
 				ShareExtension/ShareFolderPickerCell.swift,
@@ -421,6 +420,7 @@
 		84C1ECED2CDFE49100C7456A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				AppColor.swift,
 				AppImage.swift,
 				Defaults/AppDefaults.swift,
 				Defaults/ArticleTextSize.swift,

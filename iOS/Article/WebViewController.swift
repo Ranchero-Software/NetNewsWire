@@ -751,7 +751,7 @@ private extension WebViewController {
 	func toggleStarredAction() -> UIAction {
 		let starred = article?.status.starred ?? false
 		let title = starred ? NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") : NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
-		let starredImage = starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		let starredImage = starred ? AppImage.starOpen : AppImage.starClosed
 		return UIAction(title: title, image: starredImage) { [weak self] _ in
 			self?.coordinator.toggleStarredForCurrentArticle()
 		}

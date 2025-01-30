@@ -203,7 +203,7 @@ private extension MainFeedTableViewSectionHeader {
 
 	func addBackgroundView() {
 		self.backgroundView = UIView(frame: self.bounds)
-		self.backgroundView?.backgroundColor = AppAssets.sectionHeaderColor
+		self.backgroundView?.backgroundColor = AppColor.sectionHeader
 	}
 
 }

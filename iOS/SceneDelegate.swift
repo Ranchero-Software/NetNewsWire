@@ -19,7 +19,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
-		window!.tintColor = AppAssets.primaryAccentColor
+		window!.tintColor = AppColor.accent
 		updateUserInterfaceStyle()
 		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
 

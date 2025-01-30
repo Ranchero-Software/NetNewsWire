@@ -753,11 +753,11 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .refresh:
 			let title = NSLocalizedString("Refresh", comment: "Refresh")
-			return buildToolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
+			return buildToolbarButton(.refresh, title, AppImage.refresh, "refreshAll:")
 
 		case .newSidebarItemMenu:
 			let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
-			toolbarItem.image = AppAssets.addNewSidebarItemImage
+			toolbarItem.image = AppImage.addNewSidebarItem
 			let description = NSLocalizedString("Add Item", comment: "Add Item")
 			toolbarItem.toolTip = description
 			toolbarItem.label = description
@@ -770,22 +770,22 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .toggleReadArticlesFilter:
 			let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
-			return buildToolbarButton(.toggleReadArticlesFilter, title, AppAssets.filterInactive, "toggleReadArticlesFilter:")
+			return buildToolbarButton(.toggleReadArticlesFilter, title, AppImage.filterInactive, "toggleReadArticlesFilter:")
 
 		case .timelineTrackingSeparator:
 			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
 		case .markRead:
 			let title = NSLocalizedString("Mark Read", comment: "Mark Read")
-			return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
+			return buildToolbarButton(.markRead, title, AppImage.readClosed, "toggleRead:")
 
 		case .markStar:
 			let title = NSLocalizedString("Star", comment: "Star")
-			return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
+			return buildToolbarButton(.markStar, title, AppImage.starOpen, "toggleStarred:")
 
 		case .nextUnread:
 			let title = NSLocalizedString("Next Unread", comment: "Next Unread")
-			return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
+			return buildToolbarButton(.nextUnread, title, AppImage.nextUnread, "nextUnread:")
 
 		case .readerView:
 			let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
@@ -804,7 +804,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .openInBrowser:
 			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-			return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
+			return buildToolbarButton(.openInBrowser, title, AppImage.openInBrowser, "openArticleInBrowser:")
 
 		case .articleThemeMenu:
 			articleThemeMenuToolbarItem.image = AppImage.articleTheme
@@ -1033,7 +1033,7 @@ private extension MainWindowController {
 		}
 
 		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
+			button.image = markingRead ? AppImage.readClosed : AppImage.readOpen
 		}
 
 		return result
@@ -1117,7 +1117,7 @@ private extension MainWindowController {
 		}
 
 		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
+			button.image = starring ? AppImage.starOpen : AppImage.starClosed
 		}
 
 		return result
@@ -1144,7 +1144,7 @@ private extension MainWindowController {
 			(item as? NSMenuItem)?.title = hideCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				button.image = AppImage.filterInactive
 			}
 			return false
 		}
@@ -1153,13 +1153,13 @@ private extension MainWindowController {
 			(item as? NSMenuItem)?.title = showCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = showCommand
-				button.image = AppAssets.filterActive
+				button.image = AppImage.filterActive
 			}
 		} else {
 			(item as? NSMenuItem)?.title = hideCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				button.image = AppImage.filterInactive
 			}
 		}
 

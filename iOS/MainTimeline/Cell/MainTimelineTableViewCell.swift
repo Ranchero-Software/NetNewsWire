@@ -62,16 +62,16 @@ final class MainTimelineTableViewCell: VibrantTableViewCell {
 		if animated {
 			UIView.animate(withDuration: Self.duration) {
 				if self.isHighlighted || self.isSelected {
-					self.unreadIndicatorView.backgroundColor = AppAssets.vibrantTextColor
+					self.unreadIndicatorView.backgroundColor = AppColor.vibrantText
 				} else {
-					self.unreadIndicatorView.backgroundColor = AppAssets.secondaryAccentColor
+					self.unreadIndicatorView.backgroundColor = AppColor.secondaryAccent
 				}
 			}
 		} else {
 			if self.isHighlighted || self.isSelected {
-				self.unreadIndicatorView.backgroundColor = AppAssets.vibrantTextColor
+				self.unreadIndicatorView.backgroundColor = AppColor.vibrantText
 			} else {
-				self.unreadIndicatorView.backgroundColor = AppAssets.secondaryAccentColor
+				self.unreadIndicatorView.backgroundColor = AppColor.secondaryAccent
 			}
 		}
 	}

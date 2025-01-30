@@ -13,11 +13,11 @@ class VibrantTableViewCell: UITableViewCell {
 	static let duration: TimeInterval = 0.6
 
 	var labelColor: UIColor {
-		return isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
+		return isHighlighted || isSelected ? AppColor.vibrantText : UIColor.label
 	}
 
 	var secondaryLabelColor: UIColor {
-		return isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.secondaryLabel
+		return isHighlighted || isSelected ? AppColor.vibrantText : UIColor.secondaryLabel
 	}
 
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -47,7 +47,7 @@ class VibrantTableViewCell: UITableViewCell {
 	/// Subclass overrides should call super
 	func applyThemeProperties() {
 		let selectedBackgroundView = UIView(frame: .zero)
-		selectedBackgroundView.backgroundColor = AppAssets.secondaryAccentColor
+		selectedBackgroundView.backgroundColor = AppColor.secondaryAccent
 		self.selectedBackgroundView = selectedBackgroundView
 	}
 
@@ -80,7 +80,7 @@ final class VibrantBasicTableViewCell: VibrantTableViewCell {
 	@IBInspectable var imageSelected: UIImage?
 
 	var iconTint: UIColor {
-		return isHighlighted || isSelected ? labelColor : AppAssets.primaryAccentColor
+		return isHighlighted || isSelected ? labelColor : AppColor.accent
 	}
 
 	var iconImage: UIImage? {

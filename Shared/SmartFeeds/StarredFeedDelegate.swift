@@ -23,7 +23,7 @@ struct StarredFeedDelegate: SmartFeedDelegate {
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
 	let fetchType: FetchType = .starred(nil)
 	var smallIcon: IconImage? {
-		return AppAssets.starredFeedImage
+		return AppImage.starredFeed
 	}
 
 	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {

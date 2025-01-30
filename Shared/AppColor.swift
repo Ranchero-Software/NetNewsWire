@@ -15,6 +15,8 @@ import UIKit
 
 struct AppColor {
 
+	static var accent = color(isMac ? "AccentColor" : "primaryAccentColor")
+	static var star = color(isMac ? "StarColor" : "starColor")
 }
 
 // MARK: - Mac
@@ -33,13 +35,27 @@ extension AppColor {
 extension AppColor {
 
 #if os(iOS)
+	static var controlBackground = color("controlBackgroundColor")
+	static var fullScreenBackground = color("fullScreenBackgroundColor")
+	static var iconBackground = color("iconBackgroundColor")
+	static var secondaryAccent = color("secondaryAccentColor")
+	static var sectionHeader = color("sectionHeaderColor")
 	static var tickMark = color("tickMarkColor")
+	static var vibrantText = color("vibrantTextColor")
 #endif
 }
 
 // MARK: - Private
 
 private extension AppColor {
+
+#if os(macOS)
+	static var isMac = true
+	static var isiOS = false
+#elseif os(iOS)
+	static var isMac = false
+	static var isiOS = true
+#endif
 
 #if os(macOS)
 	static func color(_ name: String) -> NSColor {

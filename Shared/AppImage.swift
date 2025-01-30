@@ -45,9 +45,13 @@ struct AppImage {
 	static var articleExtractorOff = appImage("articleExtractorOff")
 	static var articleExtractorOn = appImage("articleExtractorOn")
 	static var faviconTemplate = appImage("faviconTemplateImage")
+	static var filterActive = systemImage("line.horizontal.3.decrease.circle.fill")
+	static var filterInactive = systemImage("line.horizontal.3.decrease.circle")
 	static var markAllAsRead = appImage("markAllAsRead")
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 	static var share = systemImage("square.and.arrow.up")
+	static var starClosed = systemImage("star.fill")
+	static var starOpen = systemImage("star")
 }
 
 // MARK: - Mac
@@ -55,10 +59,75 @@ struct AppImage {
 extension AppImage {
 
 #if os(macOS)
+	static var addNewSidebarItem = systemImage("plus")
 	static var articleTheme = systemImage("doc.richtext")
 	static var cleanUp = systemImage("wind")
 	static var marsEditIcon = appImage("MarsEditIcon")
 	static var microblogIcon = appImage("MicroblogIcon")
+	static var nextUnread = systemImage("chevron.down.circle")
+	static var openInBrowser = systemImage("safari")
+	static var preferencesToolbarAccounts = systemImage("at")
+	static var preferencesToolbarAdvanced = systemImage("gearshape.2")
+	static var preferencesToolbarGeneral = systemImage("gearshape")
+	static var readClosed = systemImage("largecircle.fill.circle")
+	static var readOpen = systemImage("circle")
+	static var refresh = systemImage("arrow.clockwise")
+	static var timelineStarSelected = appImage("timelineStar").tinted(with: .white)
+	static var timelineStarUnselected = appImage("timelineStar").tinted(with: AppColor.star)
+
+	static var swipeMarkRead: RSImage = {
+		RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
+			.withSymbolConfiguration(.init(scale: .large))!
+	}()
+
+	static var swipeMarkUnread: RSImage = {
+		RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
+			.withSymbolConfiguration(.init(scale: .large))!
+	}()
+
+	static var swipeMarkStarred: RSImage = {
+		RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
+			.withSymbolConfiguration(.init(scale: .large))!
+	}()
+
+	static var swipeMarkUnstarred: RSImage = {
+		RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
+			.withSymbolConfiguration(.init(scale: .large))!
+	}()
+
+	// IconImages
+
+	static var searchFeed = IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSuppressed: true)
+
+	// TODO: handle color palette change
+
+	static var starredFeed: IconImage = {
+		let image = systemImage("star.fill")
+		let preferredColor = AppColor.star
+		let coloredImage = image.tinted(with: preferredColor)
+		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
+	}()
+
+	static var todayFeed: IconImage = {
+		let image = systemImage("sun.max.fill")
+		let preferredColor = NSColor.orange
+		let coloredImage = image.tinted(with: preferredColor)
+		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
+	}()
+
+	static var unreadFeed: IconImage = {
+		let image = systemImage("largecircle.fill.circle")
+		let preferredColor = AppColor.accent
+		let coloredImage = image.tinted(with: preferredColor)
+		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
+	}()
+
+	static var folder: IconImage = {
+		let image = systemImage("folder")
+		let preferredColor = AppColor.accent
+		let coloredImage = image.tinted(with: preferredColor)
+		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
+	}()
 #endif
 }
 
@@ -69,16 +138,14 @@ extension AppImage {
 #if os(iOS)
 	static var articleExtractorOffSF = systemImage("doc.plaintext")
 	static var articleExtractorOnSF = appImage("articleExtractorOnSF")
-	static var articleExtractorOffTinted = articleExtractorOff.tinted(color: AppAssets.primaryAccentColor)!
-	static var articleExtractorOnTinted = articleExtractorOn.tinted(color: AppAssets.primaryAccentColor)!
+	static var articleExtractorOffTinted = articleExtractorOff.tinted(color: AppColor.accent)!
+	static var articleExtractorOnTinted = articleExtractorOn.tinted(color: AppColor.accent)!
 	static var circleClosed = systemImage("largecircle.fill.circle")
 	static var circleOpen = systemImage("circle")
 	static var copy = systemImage("doc.on.doc")
 	static var deactivate = systemImage("minus.circle")
 	static var disclosure = appImage("disclosure")
 	static var edit = systemImage("square.and.pencil")
-	static var filterActive = systemImage("line.horizontal.3.decrease.circle.fill")
-	static var filterInactive = systemImage("line.horizontal.3.decrease.circle")
 	static var folderOutlinePlus = systemImage("folder.badge.plus")
 	static var info = systemImage("info.circle")
 	static var markBelowAsRead = systemImage("arrowtriangle.down.circle")
@@ -90,9 +157,34 @@ extension AppImage {
 	static var plus = systemImage("plus")
 	static var previousArticle = systemImage("chevron.up")
 	static var safari = systemImage("safari")
-	static var timelineStar = systemImage("star.fill").withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
+	static var timelineStar = systemImage("star.fill").withTintColor(AppColor.star, renderingMode: .alwaysOriginal)
 	static var trash = systemImage("trash")
 
+	// IconImages
+
+	static var searchFeed = IconImage(systemImage("magnifyingglass"), isSymbol: true)
+
+	// TODO: handle color palette change
+
+	static var starredFeed: IconImage = {
+		let image = systemImage("star.fill")
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.star.cgColor)
+	}()
+
+	static var todayFeed: IconImage = {
+		let image = systemImage("sun.max.fill")
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange.cgColor)
+	}()
+
+	static var unreadFeed: IconImage = {
+		let image = systemImage("largecircle.fill.circle")
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.secondaryAccent.cgColor)
+	}()
+
+	static var folder: IconImage = {
+		let image = systemImage("folder.fill")
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.secondaryAccent.cgColor)
+	}()
 #endif
 }
 

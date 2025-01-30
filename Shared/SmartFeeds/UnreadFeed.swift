@@ -42,7 +42,7 @@ final class UnreadFeed: PseudoFeed {
 	}
 
 	var smallIcon: IconImage? {
-		return AppAssets.unreadFeedImage
+		return AppImage.unreadFeed
 	}
 
 	#if os(macOS)

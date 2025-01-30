@@ -171,12 +171,12 @@ final class MainFeedTableViewCell: VibrantTableViewCell {
 
 		let iconTintColor: UIColor
 		if isHighlighted || isSelected {
-			iconTintColor = AppAssets.vibrantTextColor
+			iconTintColor = AppColor.vibrantText
 		} else {
 			if let preferredColor = iconImage?.preferredColor {
 				iconTintColor = UIColor(cgColor: preferredColor)
 			} else {
-				iconTintColor = AppAssets.secondaryAccentColor
+				iconTintColor = AppColor.secondaryAccent
 			}
 		}
 
@@ -207,7 +207,7 @@ private extension MainFeedTableViewCell {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
 		disclosureButton?.setImage(AppImage.disclosure, for: .normal)
-		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
+		disclosureButton?.tintColor = AppColor.controlBackground
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false
 		disclosureButton?.addInteraction(UIPointerInteraction())
