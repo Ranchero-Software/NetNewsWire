@@ -19,7 +19,7 @@ import OSLog
 import CrashReporter
 import Sparkle
 
-var appDelegate: AppDelegate!
+//var appDelegate: AppDelegate!
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
@@ -95,6 +95,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	private var themeImportPath: String?
 
+	private static var shared: AppDelegate?
+
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
@@ -113,7 +115,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		NotificationCenter.default.addObserver(self, selector: #selector(mainWindowWillClose(_:)), name: .mainWindowControllerWillClose, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
-		appDelegate = self
+		Self.shared = self
 	}
 
 	// MARK: - API
@@ -905,11 +907,14 @@ extension AppDelegate: NSWindowRestoration {
 	@objc static func restoreWindow(withIdentifier identifier: NSUserInterfaceItemIdentifier, state: NSCoder, completionHandler: @escaping (NSWindow?, Error?) -> Void) {
 		var mainWindow: NSWindow?
 		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
-			mainWindow = appDelegate.createAndShowMainWindow().window
+			if let shared {
+				mainWindow = shared.createAndShowMainWindow().window
+			} else {
+				assertionFailure("Expected shared instance of AppDelegate to exist during window restoration.")
+			}
 		}
 		completionHandler(mainWindow, nil)
 	}
-
 }
 
 // Handle Notification Actions
