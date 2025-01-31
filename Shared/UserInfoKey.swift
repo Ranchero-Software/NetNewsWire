@@ -14,6 +14,7 @@ struct UserInfoKey {
 	static let url = "url"
 	static let articlePath = "articlePath"
 	static let feedIdentifier = "feedIdentifier"
+	static let draggedFeed = "draggedFeed" // DraggedFeed struct
 
 	static let windowState = "windowState"
 	static let windowFullScreenState = "windowFullScreenState"

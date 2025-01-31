@@ -19,8 +19,6 @@ import OSLog
 import CrashReporter
 import Sparkle
 
-//var appDelegate: AppDelegate!
-
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
@@ -31,8 +29,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	var userNotificationManager: UserNotificationManager!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
-
-	var appName: String!
 
 	var refreshTimer: AccountRefreshTimer?
 	var syncTimer: ArticleStatusSyncTimer?
@@ -113,6 +109,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(mainWindowWillClose(_:)), name: .mainWindowControllerWillClose, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidDragFeedToSidebar(_:)), name: .userDidDragFeedToSidebar, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
 		Self.shared = self
@@ -148,8 +145,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
 		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-
-		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 	}
 
 	func applicationDidFinishLaunching(_ note: Notification) {
@@ -356,6 +351,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			return
 		}
 		removeMainWindowController(mainWindowController)
+	}
+
+	@objc func userDidDragFeedToSidebar(_ note: Notification) {
+		guard let draggedFeed = note.userInfo?[UserInfoKey.draggedFeed] as? DraggedFeed else {
+			assertionFailure("Expected userInfo to contain a DraggedFeed.")
+			return
+		}
+
+		addFeed(draggedFeed.url, name: draggedFeed.name, account: draggedFeed.account, folder: draggedFeed.folder)
 	}
 
 	// MARK: Main Window

@@ -1207,8 +1207,8 @@ private extension MainWindowController {
 		}
 
 		guard let selectedObjects = selectedObjectsInSidebar(), selectedObjects.count > 0 else {
-			window?.title = appDelegate.appName!
-			setSubtitle(appDelegate.unreadCount)
+			window?.title = AppConfig.appName
+			setSubtitle(AccountManager.shared.unreadCount)
 			return
 		}
 

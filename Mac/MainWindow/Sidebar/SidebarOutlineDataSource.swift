@@ -12,6 +12,17 @@ import Articles
 import RSCore
 import Account
 
+extension Notification.Name {
+	static let userDidDragFeedToSidebar = Notification.Name("userDidDragFeedToSidebar") // UserInfoKey.draggedFeed
+}
+
+struct DraggedFeed { // UserInfoKey.draggedFeed
+	let url: String
+	let name: String?
+	let account: Account?
+	let folder: Folder?
+}
+
 @objc final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
 
 	let treeController: TreeController
@@ -473,18 +484,22 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func acceptSingleNonLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> Bool {
+
 		guard nodeIsDropTarget(parentNode), index == NSOutlineViewDropOnItemIndex else {
 			return false
 		}
 
 		// Show the add-feed sheet.
+		let feedToAdd: DraggedFeed
 		if let account = parentNode.representedObject as? Account {
-			appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: nil)
+			feedToAdd = DraggedFeed(url: draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: nil)
 		} else {
 			let account = parentNode.parent?.representedObject as? Account
 			let folder = parentNode.representedObject as? Folder
-			appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: folder)
+			feedToAdd = DraggedFeed(url: draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: folder)
 		}
+
+		NotificationCenter.default.post(name: .userDidDragFeedToSidebar, object: self, userInfo: [UserInfoKey.draggedFeed: feedToAdd])
 
 		return true
 	}
