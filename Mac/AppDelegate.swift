@@ -110,6 +110,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(mainWindowWillClose(_:)), name: .mainWindowControllerWillClose, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
 		appDelegate = self
@@ -297,7 +298,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: timeout) && timeout > Date() { }
 	}
 
-	// MARK: Notifications
+	// MARK: - Notifications
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
@@ -346,6 +348,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 	}
 
+	@objc func mainWindowWillClose(_ note: Notification) {
+
+		guard let mainWindowController = note.object as? MainWindowController else {
+			return
+		}
+		removeMainWindowController(mainWindowController)
+	}
+
 	// MARK: Main Window
 
 	func createMainWindowController() -> MainWindowController {
@@ -384,7 +394,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 	}
 
-	func removeMainWindow(_ windowController: MainWindowController) {
+	func removeMainWindowController(_ windowController: MainWindowController) {
 		guard mainWindowControllers.count > 1 else { return }
 		if let index = mainWindowControllers.firstIndex(of: windowController) {
 			mainWindowControllers.remove(at: index)

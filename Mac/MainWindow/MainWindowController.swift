@@ -12,6 +12,10 @@ import Articles
 import Account
 import RSCore
 
+extension Notification.Name {
+	static let mainWindowControllerWillClose = Notification.Name("mainWindowControllerWillClose")
+}
+
 enum TimelineSourceMode {
 	case regular, search
 }
@@ -524,6 +528,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 // MARK: NSWindowDelegate
 
+
 extension MainWindowController: NSWindowDelegate {
 
 	func window(_ window: NSWindow, willEncodeRestorableState coder: NSCoder) {
@@ -537,9 +542,8 @@ extension MainWindowController: NSWindowDelegate {
 
 	func windowWillClose(_ notification: Notification) {
 		detailViewController?.stopMediaPlayback()
-		appDelegate.removeMainWindow(self)
+		NotificationCenter.default.post(name: .mainWindowControllerWillClose, object: self)
 	}
-
 }
 
 // MARK: - SidebarDelegate
