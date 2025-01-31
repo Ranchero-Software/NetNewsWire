@@ -91,7 +91,7 @@ private extension IconImageCache {
 		if let faviconImage = faviconImageCache[feedID] {
 			return faviconImage
 		}
-		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
+		if let faviconImage = FaviconDownloader.shared.faviconAsIcon(for: feed) {
 			faviconImageCache[feedID] = faviconImage
 			return faviconImage
 		}
