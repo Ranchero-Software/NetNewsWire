@@ -61,7 +61,8 @@ final class FaviconDownloader {
 
 	init() {
 
-		let folder = AppConfig.cacheSubfolder(named: "Favicons")
+		let folderURL = AppConfig.cacheSubfolder(named: "Favicons")
+		let folder = folderURL.path
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
