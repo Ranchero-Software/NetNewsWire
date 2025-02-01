@@ -267,7 +267,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	var isAnyUnreadAvailable: Bool {
-		return appDelegate.unreadCount > 0
+		return AccountManager.shared.unreadCount > 0
 	}
 
 	var timelineUnreadCount: Int = 0
@@ -918,7 +918,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
-		if appDelegate.unreadCount < 1 {
+		if AccountManager.shared.unreadCount < 1 {
 			return
 		}
 
@@ -939,7 +939,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
-		if appDelegate.unreadCount < 1 {
+		if AccountManager.shared.unreadCount < 1 {
 			return
 		}
 

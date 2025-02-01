@@ -15,7 +15,7 @@ struct UserInfoKey {
 	static let articlePath = "articlePath"
 	static let feedIdentifier = "feedIdentifier"
 	static let draggedFeed = "draggedFeed" // DraggedFeed struct
-
+	static let errorHandler = "errorHandler" // ErrorHandlerBlock
 	static let windowState = "windowState"
 	static let windowFullScreenState = "windowFullScreenState"
 	static let containerExpandedWindowState = "containerExpandedWindowState"

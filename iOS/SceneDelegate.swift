@@ -65,13 +65,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	}
 
 	func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-		appDelegate.resumeDatabaseProcessingIfNecessary()
+		AccountManager.shared.resumeAllIfSuspended()
 		handleShortcutItem(shortcutItem)
 		completionHandler(true)
 	}
 
 	func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-		appDelegate.resumeDatabaseProcessingIfNecessary()
+		AccountManager.shared.resumeAllIfSuspended()
 		coordinator.handle(userActivity)
 	}
 
@@ -81,7 +81,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	}
 
 	func sceneWillEnterForeground(_ scene: UIScene) {
-		appDelegate.resumeDatabaseProcessingIfNecessary()
+		AccountManager.shared.resumeAllIfSuspended()
 		appDelegate.prepareAccountsForForeground()
 		coordinator.resetFocus()
 	}
@@ -93,7 +93,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	// API
 
 	func handle(_ response: UNNotificationResponse) {
-		appDelegate.resumeDatabaseProcessingIfNecessary()
+		AccountManager.shared.resumeAllIfSuspended()
 		coordinator.handle(response)
 	}
 

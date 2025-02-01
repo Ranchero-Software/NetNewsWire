@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import RSCore
 import RSWeb
 import Articles
@@ -90,6 +91,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public let combinedRefreshProgress = CombinedRefreshProgress()
+	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountManager")
 
 	public init(accountsFolder: String) {
 		self.accountsFolder = accountsFolder
@@ -218,6 +220,13 @@ public final class AccountManager: UnreadCountProvider {
 	public func suspendDatabaseAll() {
 		for account in accounts {
 			account.suspendDatabase()
+		}
+	}
+
+	public func resumeAllIfSuspended() {
+		if isSuspended {
+			resumeAll()
+			logger.info("Account processing resumed.")
 		}
 	}
 

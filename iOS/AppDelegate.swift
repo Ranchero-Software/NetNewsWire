@@ -70,6 +70,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidTriggerManualRefresh(_:)), name: .userDidTriggerManualRefresh, object: nil)
 	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -122,7 +123,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		DispatchQueue.main.async {
-			self.resumeDatabaseProcessingIfNecessary()
+			AccountManager.shared.resumeAllIfSuspended()
 			AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
 				self.suspendApplication()
 				completionHandler(.newData)
@@ -150,20 +151,25 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		AppDefaults.lastRefresh = Date()
 	}
 
+	@objc func userDidTriggerManualRefresh(_ note: Notification) {
+
+		guard let errorHandler = note.userInfo?[UserInfoKey.errorHandler] as? ErrorHandlerBlock else {
+			assertionFailure("Expected errorHandler in .userDidTriggerManualRefresh userInfo")
+			return
+		}
+
+		manualRefresh(errorHandler: errorHandler)
+	}
+
 	// MARK: - API
 
-	func manualRefresh(errorHandler: @escaping (Error) -> Void) {
+	func manualRefresh(errorHandler: @escaping ErrorHandlerBlock) {
+
+		assert(Thread.isMainThread)
 		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate }).forEach {
 			$0.cleanUp(conditional: true)
 		}
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
-	}
-
-	func resumeDatabaseProcessingIfNecessary() {
-		if AccountManager.shared.isSuspended {
-			AccountManager.shared.resumeAll()
-			logger.info("Application processing resumed.")
-		}
 	}
 
 	func prepareAccountsForBackground() {
@@ -408,7 +414,7 @@ private extension AppDelegate {
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
 		}
-		resumeDatabaseProcessingIfNecessary()
+		AccountManager.shared.resumeAllIfSuspended()
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
 			os_log(.debug, "No account found from notification.")
@@ -435,7 +441,7 @@ private extension AppDelegate {
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
 		}
-		resumeDatabaseProcessingIfNecessary()
+		AccountManager.shared.resumeAllIfSuspended()
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
 			os_log(.debug, "No account found from notification.")

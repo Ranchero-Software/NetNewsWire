@@ -10,11 +10,13 @@ import UIKit
 import RSCore
 import os.log
 
+typealias ErrorHandlerBlock = (Error) -> Void
+
 struct ErrorHandler {
 
 	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
-	public static func present(_ viewController: UIViewController) -> (Error) -> Void {
+	public static func present(_ viewController: UIViewController) -> ErrorHandlerBlock {
 		return { [weak viewController] error in
 			if UIApplication.shared.applicationState == .active {
 				viewController?.presentError(error)
@@ -27,5 +29,4 @@ struct ErrorHandler {
 	public static func log(_ error: Error) {
 		os_log(.error, log: self.log, "%@", error.localizedDescription)
 	}
-
 }
