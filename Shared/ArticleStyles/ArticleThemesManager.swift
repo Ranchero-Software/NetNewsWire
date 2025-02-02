@@ -59,8 +59,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		do {
 			try FileManager.default.createDirectory(atPath: folderPath, withIntermediateDirectories: true, attributes: nil)
 		} catch {
-			assertionFailure("Could not create folder for Themes.")
-			abort()
+			fatalError("Could not create folder for Themes.")
 		}
 
 		updateThemeNames()
