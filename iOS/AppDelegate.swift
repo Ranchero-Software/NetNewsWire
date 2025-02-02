@@ -21,7 +21,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 
-	private var rootSplitViewController: RootSplitViewController?
 	private var sceneCoordinator: SceneCoordinator?
 
 	var syncTimer: ArticleStatusSyncTimer?
@@ -120,7 +119,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		// Create UI and add it to window.
 		let storyboard = UIStoryboard(name: "Main", bundle: nil)
 		let rootSplitViewController = storyboard.instantiateInitialViewController() as! RootSplitViewController
-		self.rootSplitViewController = rootSplitViewController
 		rootSplitViewController.presentsWithGesture = true
 		rootSplitViewController.showsSecondaryOnlyButton = true
 		rootSplitViewController.preferredDisplayMode = .oneBesideSecondary
@@ -140,8 +138,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		Task { @MainActor in
 			// Ensure Feeds view shows on first run on iPad — otherwise the UI is empty.
 			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.isFirstRun {
-				assert(self.rootSplitViewController != nil)
-				self.rootSplitViewController?.show(.primary)
+				rootSplitViewController.show(.primary)
 			}
 		}
 
