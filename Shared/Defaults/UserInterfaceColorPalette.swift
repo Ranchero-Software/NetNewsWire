@@ -6,9 +6,13 @@
 //  Copyright © 2025 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import Foundation
+import UIKit
 
 enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
+
 	case automatic = 0
 	case light = 1
 	case dark = 2
@@ -16,11 +20,24 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	var description: String {
 		switch self {
 		case .automatic:
-			return NSLocalizedString("Automatic", comment: "Automatic")
+			NSLocalizedString("Automatic", comment: "Automatic")
 		case .light:
-			return NSLocalizedString("Light", comment: "Light")
+			NSLocalizedString("Light", comment: "Light")
 		case .dark:
-			return NSLocalizedString("Dark", comment: "Dark")
+			NSLocalizedString("Dark", comment: "Dark")
+		}
+	}
+
+	var uiUserInterfaceStyle: UIUserInterfaceStyle {
+		switch self {
+		case .automatic:
+			.unspecified
+		case .light:
+			.light
+		case .dark:
+			.dark
 		}
 	}
 }
+
+#endif
