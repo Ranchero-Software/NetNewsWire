@@ -12,22 +12,9 @@ import UIKit
 extension UIView {
 
 	public func setFrameIfNotEqual(_ rect: CGRect) {
-		if !self.frame.equalTo(rect) {
-			self.frame = rect
+		if frame != rect {
+			frame = rect
 		}
-	}
-
-	public func addChildAndPin(_ view: UIView) {
-		view.translatesAutoresizingMaskIntoConstraints = false
-		addSubview(view)
-
-		NSLayoutConstraint.activate([
-			safeAreaLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-			safeAreaLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			safeAreaLayoutGuide.topAnchor.constraint(equalTo: view.topAnchor),
-			safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-		])
-
 	}
 
     public func asImage() -> UIImage {
@@ -36,6 +23,5 @@ extension UIView {
             layer.render(in: rendererContext.cgContext)
         }
     }
-
 }
 #endif
