@@ -8,8 +8,6 @@
 #if os(macOS)
 import AppKit
 
-// let keypadEnter: unichar = 3
-
 @objc public protocol KeyboardDelegate: AnyObject {
 
 	// Return true if handled.
