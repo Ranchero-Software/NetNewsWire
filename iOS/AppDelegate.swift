@@ -69,15 +69,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		CacheCleaner.purgeIfNecessary()
 		initializeHomeScreenQuickActions()
 
-		DispatchQueue.main.async {
-			self.unreadCount = AccountManager.shared.unreadCount
-		}
-
-		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
-			if granted {
-				DispatchQueue.main.async {
-					UIApplication.shared.registerForRemoteNotifications()
-				}
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { granted, _ in
+			guard granted else { return }
+			Task { @MainActor in
+				UIApplication.shared.registerForRemoteNotifications()
 			}
 		}
 
@@ -123,6 +118,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.isFirstRun {
 				rootSplitViewController.show(.primary)
 			}
+
+			// Update unread count.
+			self.unreadCount = AccountManager.shared.unreadCount
 		}
 
 		return true
