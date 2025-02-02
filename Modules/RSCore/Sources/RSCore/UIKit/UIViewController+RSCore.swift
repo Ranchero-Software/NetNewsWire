@@ -5,6 +5,7 @@
 //  Created by Maurice Parker on 4/15/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
+
 #if os(iOS)
 import UIKit
 import SwiftUI
@@ -21,34 +22,6 @@ extension UIViewController {
 		}
 		alertController.addAction(dismissAction)
 		self.present(alertController, animated: true, completion: nil)
-	}
-}
-
-// MARK: SwiftUI
-
-public struct ViewControllerHolder {
-	public weak var value: UIViewController?
-}
-
-public struct ViewControllerKey: EnvironmentKey {
-	public static var defaultValue: ViewControllerHolder { return ViewControllerHolder(value: nil ) }
-}
-
-extension EnvironmentValues {
-	public var viewController: UIViewController? {
-		get { return self[ViewControllerKey.self].value }
-		set { self[ViewControllerKey.self].value = newValue }
-	}
-}
-
-extension UIViewController {
-	public func present<Content: View>(style: UIModalPresentationStyle = .automatic, @ViewBuilder builder: () -> Content) {
-		let controller = UIHostingController(rootView: AnyView(EmptyView()))
-		controller.modalPresentationStyle = style
-		controller.rootView = AnyView(
-			builder().environment(\.viewController, controller)
-		)
-		self.present(controller, animated: true, completion: nil)
 	}
 }
 #endif
