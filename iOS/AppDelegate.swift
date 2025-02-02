@@ -20,12 +20,14 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 
-	private var window: UIWindow?
+	var window: UIWindow?
 	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 
+	private var sceneCoordinator: SceneCoordinator?
+	
 	var syncTimer: ArticleStatusSyncTimer?
 
 	var shuttingDown = false {
@@ -118,10 +120,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		syncTimer!.update()
 		#endif
 
-		window = UIWindow(frame: UIScreen.main.bounds)
-		
-		return true
+		// Create window and UI.
+		let window = UIWindow(frame: UIScreen.main.bounds)
+		self.window = window
+		let storyboard = UIStoryboard(name: "Main", bundle: nil)
+		let rootSplitViewController = storyboard.instantiateInitialViewController() as! RootSplitViewController
+		sceneCoordinator = SceneCoordinator(rootSplitViewController: rootSplitViewController)
+		rootSplitViewController.coordinator = sceneCoordinator
 
+		window.rootViewController = rootSplitViewController
+		window.makeKeyAndVisible()
+
+		return true
 	}
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
