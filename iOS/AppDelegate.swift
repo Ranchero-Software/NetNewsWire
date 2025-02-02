@@ -25,9 +25,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
-	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
-	var widgetDataEncoder: WidgetDataEncoder!
-
 	private var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -85,13 +82,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 
 		UNUserNotificationCenter.current().delegate = self
+		
 		_ = UserNotificationManager.shared
-
 		_ = ExtensionContainersFile.shared
-		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
-
-		widgetDataEncoder = WidgetDataEncoder()
-
+		_ = ExtensionFeedAddRequestFile.shared
+		_ = WidgetDataEncoder.shared
 		_ = ArticleStatusSyncTimer.shared
 
 		#if DEBUG
@@ -184,16 +179,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	}
 
 	func prepareAccountsForBackground() {
-		extensionFeedAddRequestFile.suspend()
+		ExtensionFeedAddRequestFile.shared.suspend()
 		ArticleStatusSyncTimer.shared.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
-		widgetDataEncoder.encode()
+		WidgetDataEncoder.shared.encode()
 		waitForSyncTasksToFinish()
 	}
 
 	func prepareAccountsForForeground() {
-		extensionFeedAddRequestFile.resume()
+		ExtensionFeedAddRequestFile.shared.resume()
 		ArticleStatusSyncTimer.shared.update()
 
 		if let lastRefresh = AppDefaults.lastRefresh {
@@ -307,7 +302,7 @@ private extension AppDelegate {
 			return
 		}
 
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || widgetDataEncoder.isRunning {
+		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || WidgetDataEncoder.shared.isRunning {
 			logger.info("Waiting for sync to finish…")
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)

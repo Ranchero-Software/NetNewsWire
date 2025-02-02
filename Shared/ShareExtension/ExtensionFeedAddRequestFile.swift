@@ -12,6 +12,8 @@ import Account
 
 final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 
+	static let shared = ExtensionFeedAddRequestFile()
+	
 	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionFeedAddRequestFile")
 
 	private static var filePath: String = {

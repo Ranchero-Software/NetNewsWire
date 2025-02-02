@@ -16,6 +16,8 @@ import Account
 
 public final class WidgetDataEncoder {
 
+	static let shared = WidgetDataEncoder()
+	
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	private let fetchLimit = 7
 
