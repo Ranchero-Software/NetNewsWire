@@ -16,7 +16,7 @@ public extension Notification.Name {
 
 final class ArticleThemesManager: NSObject, NSFilePresenter {
 
-	static var shared: ArticleThemesManager!
+	static let shared = ArticleThemesManager()
 	public let folderPath: String
 
 	lazy var presentedItemOperationQueue = OperationQueue.main
@@ -49,8 +49,9 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		}
 	}
 
-	init(folderPath: String) {
-		self.folderPath = folderPath
+	override init() {
+		let folderURL = AppConfig.dataSubfolder(named: "Themes")
+		self.folderPath = folderURL.path
 		self.currentTheme = ArticleTheme.defaultTheme
 
 		super.init()

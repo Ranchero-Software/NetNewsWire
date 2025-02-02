@@ -101,8 +101,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
 		crashReporter.enable()
 
-		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
-		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
+		_ = AccountManager.shared
+		_ = ArticleThemesManager.shared
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)

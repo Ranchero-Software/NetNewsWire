@@ -18,7 +18,7 @@ import RSDatabase
 
 public final class AccountManager: UnreadCountProvider {
 
-	public static var shared: AccountManager!
+	public static let shared = AccountManager()
 	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
 	private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
 
@@ -93,7 +93,10 @@ public final class AccountManager: UnreadCountProvider {
 	public let combinedRefreshProgress = CombinedRefreshProgress()
 	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountManager")
 
-	public init(accountsFolder: String) {
+	public init() {
+
+		let accountsFolderURL = AppConfig.dataSubfolder(named: "Accounts")
+		let accountsFolder = accountsFolderURL.path
 		self.accountsFolder = accountsFolder
 
 		// The local "On My Mac" account must always exist, even if it's empty.
@@ -101,8 +104,7 @@ public final class AccountManager: UnreadCountProvider {
 		do {
 			try FileManager.default.createDirectory(atPath: localAccountFolder, withIntermediateDirectories: true, attributes: nil)
 		} catch {
-			assertionFailure("Could not create folder for OnMyMac account.")
-			abort()
+			fatalError("Could not create folder for OnMyMac account.")
 		}
 
 		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
