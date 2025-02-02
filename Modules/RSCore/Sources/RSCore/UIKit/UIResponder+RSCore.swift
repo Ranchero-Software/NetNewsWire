@@ -28,15 +28,8 @@ extension UIResponder {
 		return UIResponder._currentFirstResponder
 	}
 
-	public static func resignCurrentFirstResponder() {
-		if let responder = currentFirstResponder {
-			responder.resignFirstResponder()
-		}
-	}
-
 	@objc internal func findFirstResponder(sender: AnyObject) {
 		UIResponder._currentFirstResponder = self
 	}
-
 }
 #endif
