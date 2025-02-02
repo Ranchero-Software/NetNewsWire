@@ -231,18 +231,24 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 private extension AppDelegate {
 
+	enum ShortcutItemType: String {
+		case firstUnread = "com.ranchero.NetNewsWire.FirstUnread"
+		case showSearch = "com.ranchero.NetNewsWire.ShowSearch"
+		case addFeed = "com.ranchero.NetNewsWire.ShowAdd"
+	}
+
 	private func initializeHomeScreenQuickActions() {
 		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
 		let unreadIcon = UIApplicationShortcutIcon(systemImageName: "chevron.down.circle")
-		let unreadItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.FirstUnread", localizedTitle: unreadTitle, localizedSubtitle: nil, icon: unreadIcon, userInfo: nil)
+		let unreadItem = UIApplicationShortcutItem(type: ShortcutItemType.firstUnread.rawValue, localizedTitle: unreadTitle, localizedSubtitle: nil, icon: unreadIcon, userInfo: nil)
 
 		let searchTitle = NSLocalizedString("Search", comment: "Search")
 		let searchIcon = UIApplicationShortcutIcon(systemImageName: "magnifyingglass")
-		let searchItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowSearch", localizedTitle: searchTitle, localizedSubtitle: nil, icon: searchIcon, userInfo: nil)
+		let searchItem = UIApplicationShortcutItem(type: ShortcutItemType.showSearch.rawValue, localizedTitle: searchTitle, localizedSubtitle: nil, icon: searchIcon, userInfo: nil)
 
 		let addTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
 		let addIcon = UIApplicationShortcutIcon(systemImageName: "plus")
-		let addItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowAdd", localizedTitle: addTitle, localizedSubtitle: nil, icon: addIcon, userInfo: nil)
+		let addItem = UIApplicationShortcutItem(type: ShortcutItemType.addFeed.rawValue, localizedTitle: addTitle, localizedSubtitle: nil, icon: addIcon, userInfo: nil)
 
 		UIApplication.shared.shortcutItems = [addItem, searchItem, unreadItem]
 	}
