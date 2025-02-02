@@ -26,8 +26,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 
+	private var rootSplitViewController: RootSplitViewController?
 	private var sceneCoordinator: SceneCoordinator?
-	
+
 	var syncTimer: ArticleStatusSyncTimer?
 
 	var shuttingDown = false {
@@ -74,9 +75,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidTriggerManualRefresh(_:)), name: .userDidTriggerManualRefresh, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 	}
 
+	// MARK: - Lifecycle
+
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
 		AppDefaults.registerDefaults()
 
 		let isFirstRun = AppDefaults.isFirstRun
@@ -120,16 +125,37 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		syncTimer!.update()
 		#endif
 
-		// Create window and UI.
+		// Create window.
 		let window = UIWindow(frame: UIScreen.main.bounds)
 		self.window = window
+
+		// Create UI and add it to window.
 		let storyboard = UIStoryboard(name: "Main", bundle: nil)
 		let rootSplitViewController = storyboard.instantiateInitialViewController() as! RootSplitViewController
+		self.rootSplitViewController = rootSplitViewController
+		rootSplitViewController.presentsWithGesture = true
+		rootSplitViewController.showsSecondaryOnlyButton = true
+		rootSplitViewController.preferredDisplayMode = .oneBesideSecondary
+
 		sceneCoordinator = SceneCoordinator(rootSplitViewController: rootSplitViewController)
 		rootSplitViewController.coordinator = sceneCoordinator
+		rootSplitViewController.delegate = sceneCoordinator
 
 		window.rootViewController = rootSplitViewController
+
+		window.tintColor = AppColor.accent
+		updateUserInterfaceStyle()
+		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
+
 		window.makeKeyAndVisible()
+
+		Task { @MainActor in
+			// Ensure Feeds view shows on first run on iPad — otherwise the UI is empty.
+			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.isFirstRun {
+				assert(self.rootSplitViewController != nil)
+				self.rootSplitViewController?.show(.primary)
+			}
+		}
 
 		return true
 	}
@@ -152,7 +178,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		IconImageCache.shared.emptyCache()
 	}
 
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
@@ -173,6 +199,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 		manualRefresh(errorHandler: errorHandler)
 	}
+
+	@objc func userDefaultsDidChange(_ note: Notification) {
+		updateUserInterfaceStyle()
+	}
+
 
 	// MARK: - API
 
@@ -236,7 +267,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 }
 
-// MARK: App Initialization
+// MARK: - App Initialization
 
 private extension AppDelegate {
 
@@ -265,7 +296,26 @@ private extension AppDelegate {
 
 }
 
-// MARK: Go To Background
+// MARK: - Private
+
+private extension AppDelegate {
+
+	func updateUserInterfaceStyle() {
+
+		assert(Thread.isMainThread)
+		guard let window = self.window else {
+			assertionFailure("Expected window.")
+			return
+		}
+
+		let updatedStyle = AppDefaults.userInterfaceColorPalette.uiUserInterfaceStyle
+		if window.overrideUserInterfaceStyle != updatedStyle {
+			window.overrideUserInterfaceStyle = updatedStyle
+		}
+	}
+}
+
+// MARK: - Go To Background
 
 private extension AppDelegate {
 
