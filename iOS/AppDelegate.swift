@@ -15,8 +15,6 @@ import os
 import Secrets
 import WidgetKit
 
-var appDelegate: AppDelegate!
-
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 
@@ -61,7 +59,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	override init() {
 		super.init()
-		appDelegate = self
 
 		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
