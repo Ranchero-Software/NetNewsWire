@@ -11,23 +11,6 @@ import SwiftUI
 
 extension UIViewController {
 
-	// MARK: Autolayout
-
-	public func addChildAndPinView(_ controller: UIViewController) {
-		view.addChildAndPin(controller.view)
-		addChild(controller)
-	}
-
-	public func replaceChildAndPinView(_ controller: UIViewController) {
-		for subview in view.subviews {
-			subview.removeFromSuperview()
-		}
-		for child in children {
-			child.removeFromParent()
-		}
-		addChildAndPinView(controller)
-	}
-
 	// MARK: Error Handling
 
 	public func presentError(title: String, message: String, dismiss: (() -> Void)? = nil) {
@@ -39,7 +22,6 @@ extension UIViewController {
 		alertController.addAction(dismissAction)
 		self.present(alertController, animated: true, completion: nil)
 	}
-
 }
 
 // MARK: SwiftUI

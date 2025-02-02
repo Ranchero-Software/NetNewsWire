@@ -21,10 +21,4 @@ public extension Calendar {
 	static func dateIsToday(_ date: Date) -> Bool {
 		return cached.isDateInToday(date)
 	}
-
-	/// The first moment of today.
-	static var startOfToday: Date {
-		cached.startOfDay(for: Date())
-	}
-
 }
