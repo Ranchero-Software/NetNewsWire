@@ -10,6 +10,7 @@ import UIKit
 import os
 import RSCore
 import Account
+import Articles
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -38,8 +39,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidTriggerManualRefresh(_:)), name: .userDidTriggerManualRefresh, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 	}
+}
 
-	// MARK: - Lifecycle
+// MARK: - Lifecycle
+
+extension AppDelegate {
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
@@ -300,56 +304,40 @@ extension AppDelegate: BackgroundTaskManagerDelegate {
 private extension AppDelegate {
 
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		AccountManager.shared.resumeAllIfSuspended()
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
-			return
-		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
-			return
-		}
-		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
-		prepareAccountsForBackground()
-		account!.syncArticleStatus(completion: { [weak self] _ in
-			if !AccountManager.shared.isSuspended {
-				self?.prepareAccountsForBackground()
-				self?.suspendApplication()
-			}
-		})
+		handleMarked(userInfo: userInfo, statusKey: .read)
 	}
 
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+		handleMarked(userInfo: userInfo, statusKey: .starred)
+	}
+
+	func handleMarked(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
+
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
 		}
+
 		AccountManager.shared.resumeAllIfSuspended()
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+
+		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+			logger.debug("No account found from notification with accountID \(accountID).")
 			return
 		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+		guard let article = try? account.fetchArticles(.articleIDs([articleID])) else {
+			logger.debug("No articles found from search using \(articleID)")
 			return
 		}
-		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
-		account!.syncArticleStatus(completion: { [weak self] _ in
+
+		account.markArticles(article, statusKey: statusKey, flag: true) { _ in }
+		prepareAccountsForBackground()
+		account.syncArticleStatus { _ in
 			if !AccountManager.shared.isSuspended {
-				self?.prepareAccountsForBackground()
-				self?.suspendApplication()
+				self.prepareAccountsForBackground()
+				self.suspendApplication()
 			}
-		})
+		}
 	}
 
 	func handle(_ response: UNNotificationResponse) {
