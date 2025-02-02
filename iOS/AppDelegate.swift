@@ -21,7 +21,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 
-	private var sceneCoordinator: SceneCoordinator?
+	private var coordinator: SceneCoordinator?
 
 	var syncTimer: ArticleStatusSyncTimer?
 
@@ -123,9 +123,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		rootSplitViewController.showsSecondaryOnlyButton = true
 		rootSplitViewController.preferredDisplayMode = .oneBesideSecondary
 
-		sceneCoordinator = SceneCoordinator(rootSplitViewController: rootSplitViewController)
-		rootSplitViewController.coordinator = sceneCoordinator
-		rootSplitViewController.delegate = sceneCoordinator
+		coordinator = SceneCoordinator(rootSplitViewController: rootSplitViewController)
+		rootSplitViewController.coordinator = coordinator
+		rootSplitViewController.delegate = coordinator
 
 		window.rootViewController = rootSplitViewController
 
@@ -193,7 +193,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	func manualRefresh(errorHandler: @escaping ErrorHandlerBlock) {
 		assert(Thread.isMainThread)
-		sceneCoordinator?.cleanUp(conditional: true)
+		coordinator?.cleanUp(conditional: true)
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
 	}
 
@@ -238,7 +238,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		default:
 			handle(response)
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-				self.sceneCoordinator?.dismissIfLaunchingFromExternalAction()
+				self.coordinator?.dismissIfLaunchingFromExternalAction()
 			}
 		}
 	}
@@ -372,7 +372,7 @@ private extension AppDelegate {
 		ArticleThemeDownloader.shared.cleanUp()
 
 		CoalescingQueue.standard.performCallsImmediately()
-		sceneCoordinator?.suspend()
+		coordinator?.suspend()
 		logger.info("Application processing suspended.")
 	}
 }
@@ -497,6 +497,6 @@ private extension AppDelegate {
 
 	func handle(_ response: UNNotificationResponse) {
 		AccountManager.shared.resumeAllIfSuspended()
-		sceneCoordinator?.handle(response)
+		coordinator?.handle(response)
 	}
 }
