@@ -133,7 +133,7 @@ private extension BackgroundTaskManager {
 			}
 		}
 	}
-	
+
 	func waitToComplete(completion: @escaping (Bool) -> Void) {
 		guard UIApplication.shared.applicationState == .background else {
 			Self.logger.info("App came back to foreground, no longer waiting.")
