@@ -32,7 +32,6 @@ public extension String {
         let data = Data(digest)
         return data.map { String(format: "%02hhx", $0) }.joined()
     }
-
 }
 
 public extension String {
@@ -374,19 +373,4 @@ public extension String {
 	var strippingHTTPOrHTTPSScheme: String {
 		self.stripping(prefix: "http://").stripping(prefix: "https://")
 	}
-
-}
-
-public extension String {
-    var isSingleEmoji: Bool { count == 1 && containsEmoji }
-
-    var containsEmoji: Bool { contains { $0.isEmoji } }
-
-    var containsOnlyEmoji: Bool { !isEmpty && !contains { !$0.isEmoji } }
-
-    var emojiString: String { emojis.map { String($0) }.reduce("", +) }
-
-    var emojis: [Character] { filter { $0.isEmoji } }
-
-    var emojiScalars: [UnicodeScalar] { filter { $0.isEmoji }.flatMap { $0.unicodeScalars } }
 }
