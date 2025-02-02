@@ -21,29 +21,72 @@ final class ArticleViewController: UIViewController {
 		let windowScrollY: Int
 	}
 
-	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
-	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
-	@IBOutlet private weak var nextArticleBarButtonItem: UIBarButtonItem!
-	@IBOutlet private weak var readBarButtonItem: UIBarButtonItem!
-	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
-	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
+	// Navigation items
 
-	@IBOutlet private var searchBar: ArticleSearchBar!
-	@IBOutlet private var searchBarBottomConstraint: NSLayoutConstraint!
-	private var defaultControls: [UIBarButtonItem]?
+	private lazy var previousArticleBarButtonItem = UIBarButtonItem(
+		image: UIImage(systemName: "chevron.up"),
+		style: .plain,
+		target: self,
+		action: #selector(goToPreviousArticle(_:))
+	)
+
+	private lazy var nextArticleBarButtonItem = UIBarButtonItem(
+		image: UIImage(systemName: "chevron.down"),
+		style: .plain,
+		target: self,
+		action: #selector(goToNextArticle(_:))
+	)
+
+	// Toolbar items
+
+	private lazy var toggleReadBarButtonItem = UIBarButtonItem(
+		image: UIImage(systemName: "circle"),
+		style: .plain,
+		target: self,
+		action: #selector(toggleRead(_:))
+	)
+
+	private lazy var toggleStarBarButtonItem = UIBarButtonItem(
+		image: UIImage(systemName: "star"),
+		style: .plain,
+		target: self,
+		action: #selector(toggleStar(_:))
+	)
+
+	private lazy var nextUnreadBarButtonItem = UIBarButtonItem(
+		image: UIImage(systemName: "chevron.down.circle"),
+		style: .plain,
+		target: self,
+		action: #selector(goToNextUnreadArticle(_:))
+	)
+
+	private lazy var articleExtractorBarButtonItem = UIBarButtonItem(customView: articleExtractorButton)
+
+	private lazy var articleExtractorButton: ArticleExtractorButton = {
+		let button = ArticleExtractorButton(type: .system)
+		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
+		button.setImage(AppImage.articleExtractorOff, for: .normal)
+		button.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
+		return button
+	}()
+
+	private lazy var activityBarButtonItem = UIBarButtonItem(
+		image: UIImage(systemName: "square.and.arrow.up"),
+		style: .plain,
+		target: self,
+		action: #selector(showActivityDialog(_:))
+	)
+
+	private lazy var flexibleSpaceBarButtonItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+	private lazy var searchBar = ArticleSearchBar(frame: CGRect.zero)
+	private var searchBarBottomConstraint: NSLayoutConstraint? // TODO: this needs to be non-nil
 
 	private var pageViewController: UIPageViewController!
 
 	private var currentWebViewController: WebViewController? {
 		return pageViewController?.viewControllers?.first as? WebViewController
 	}
-
-	private var articleExtractorButton: ArticleExtractorButton = {
-		let button = ArticleExtractorButton(type: .system)
-		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
-		button.setImage(AppImage.articleExtractorOff, for: .normal)
-		return button
-	}()
 
 	weak var coordinator: SceneCoordinator!
 
@@ -86,6 +129,19 @@ final class ArticleViewController: UIViewController {
 		return keyboardManager.keyCommands
 	}
 
+	init() {
+		super.init(nibName: nil, bundle: nil)
+	}
+
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+
+	override func loadView() {
+		view = UIView(frame: UIScreen.main.bounds)
+		view.addSubview(searchBar)
+	}
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
@@ -94,6 +150,9 @@ final class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
+		// Navigation items
+
+		navigationItem.rightBarButtonItems = [previousArticleBarButtonItem, nextArticleBarButtonItem]
 		let fullScreenTapZone = UIView()
 		NSLayoutConstraint.activate([
 			fullScreenTapZone.widthAnchor.constraint(equalToConstant: 150),
@@ -102,8 +161,19 @@ final class ArticleViewController: UIViewController {
 		fullScreenTapZone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapNavigationBar)))
 		navigationItem.titleView = fullScreenTapZone
 
-		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
+		// Toolbar items
+
+		toolbarItems = [
+			toggleReadBarButtonItem,
+			flexibleSpaceBarButtonItem,
+			toggleStarBarButtonItem,
+			flexibleSpaceBarButtonItem,
+			nextUnreadBarButtonItem,
+			flexibleSpaceBarButtonItem,
+			articleExtractorBarButtonItem,
+			flexibleSpaceBarButtonItem,
+			activityBarButtonItem
+		]
 
 		if let parentNavController = navigationController?.parent as? UINavigationController {
 			poppableDelegate.navigationController = parentNavController
@@ -181,7 +251,7 @@ final class ArticleViewController: UIViewController {
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-		if searchBar != nil && !searchBar.isHidden {
+		if !searchBar.isHidden {
 			endFind()
 		}
 	}
@@ -204,40 +274,40 @@ final class ArticleViewController: UIViewController {
 		guard let article = article else {
 			articleExtractorButton.isEnabled = false
 			nextUnreadBarButtonItem.isEnabled = false
-			prevArticleBarButtonItem.isEnabled = false
+			previousArticleBarButtonItem.isEnabled = false
 			nextArticleBarButtonItem.isEnabled = false
-			readBarButtonItem.isEnabled = false
-			starBarButtonItem.isEnabled = false
-			actionBarButtonItem.isEnabled = false
+			toggleReadBarButtonItem.isEnabled = false
+			toggleStarBarButtonItem.isEnabled = false
+			activityBarButtonItem.isEnabled = false
 			return
 		}
 
 		nextUnreadBarButtonItem.isEnabled = coordinator.isAnyUnreadAvailable
-		prevArticleBarButtonItem.isEnabled = coordinator.isPrevArticleAvailable
+		previousArticleBarButtonItem.isEnabled = coordinator.isPrevArticleAvailable
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
-		readBarButtonItem.isEnabled = true
-		starBarButtonItem.isEnabled = true
+		toggleReadBarButtonItem.isEnabled = true
+		toggleStarBarButtonItem.isEnabled = true
 
 		let permalinkPresent = article.preferredLink != nil
 		articleExtractorButton.isEnabled = permalinkPresent && !AppDefaults.isDeveloperBuild
-		actionBarButtonItem.isEnabled = permalinkPresent
+		activityBarButtonItem.isEnabled = permalinkPresent
 
 		if article.status.read {
-			readBarButtonItem.image = AppImage.circleOpen
-			readBarButtonItem.isEnabled = article.isAvailableToMarkUnread
-			readBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
+			toggleReadBarButtonItem.image = AppImage.circleOpen
+			toggleReadBarButtonItem.isEnabled = article.isAvailableToMarkUnread
+			toggleReadBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
 		} else {
-			readBarButtonItem.image = AppImage.circleClosed
-			readBarButtonItem.isEnabled = true
-			readBarButtonItem.accLabelText = NSLocalizedString("Selected - Mark Article Unread", comment: "Selected - Mark Article Unread")
+			toggleReadBarButtonItem.image = AppImage.circleClosed
+			toggleReadBarButtonItem.isEnabled = true
+			toggleReadBarButtonItem.accLabelText = NSLocalizedString("Selected - Mark Article Unread", comment: "Selected - Mark Article Unread")
 		}
 
 		if article.status.starred {
-			starBarButtonItem.image = AppImage.starClosed
-			starBarButtonItem.accLabelText = NSLocalizedString("Selected - Star Article", comment: "Selected - Star Article")
+			toggleStarBarButtonItem.image = AppImage.starClosed
+			toggleStarBarButtonItem.accLabelText = NSLocalizedString("Selected - Star Article", comment: "Selected - Star Article")
 		} else {
-			starBarButtonItem.image = AppImage.starOpen
-			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
+			toggleStarBarButtonItem.image = AppImage.starOpen
+			toggleStarBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
 		}
 	}
 
@@ -284,19 +354,19 @@ final class ArticleViewController: UIViewController {
 		currentWebViewController?.toggleArticleExtractor()
 	}
 
-	@IBAction func nextUnread(_ sender: Any) {
+	@objc func goToNextUnreadArticle(_ sender: Any) {
 		coordinator.selectNextUnread()
 	}
 
-	@IBAction func prevArticle(_ sender: Any) {
+	@objc func goToPreviousArticle(_ sender: Any) {
 		coordinator.selectPrevArticle()
 	}
 
-	@IBAction func nextArticle(_ sender: Any) {
+	@objc func goToNextArticle(_ sender: Any) {
 		coordinator.selectNextArticle()
 	}
 
-	@IBAction func toggleRead(_ sender: Any) {
+	@objc func toggleRead(_ sender: Any) {
 		coordinator.toggleReadForCurrentArticle()
 	}
 
@@ -305,7 +375,7 @@ final class ArticleViewController: UIViewController {
 	}
 
 	@IBAction func showActivityDialog(_ sender: Any) {
-		currentWebViewController?.showActivityDialog(popOverBarButtonItem: actionBarButtonItem)
+		currentWebViewController?.showActivityDialog(popOverBarButtonItem: activityBarButtonItem)
 	}
 
 	@objc func toggleReaderView(_ sender: Any?) {
@@ -416,13 +486,12 @@ extension ArticleViewController {
 			let curve = UIView.AnimationOptions(rawValue: curveRaw)
 			let newHeight = view.safeAreaLayoutGuide.layoutFrame.maxY - frame.minY
 			currentWebViewController?.additionalSafeAreaInsets.bottom = newHeight + searchBar.frame.height + 10
-			self.searchBarBottomConstraint.constant = newHeight
+			self.searchBarBottomConstraint?.constant = newHeight
 			UIView.animate(withDuration: duration, delay: 0, options: curve, animations: {
 				self.view.layoutIfNeeded()
 			})
 		}
 	}
-
 }
 
 // MARK: WebViewControllerDelegate
@@ -434,7 +503,6 @@ extension ArticleViewController: WebViewControllerDelegate {
 			articleExtractorButton.buttonState = buttonState
 		}
 	}
-
 }
 
 // MARK: UIPageViewControllerDataSource
@@ -458,7 +526,6 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 		}
 		return createWebViewController(article)
 	}
-
 }
 
 // MARK: UIPageViewControllerDelegate
@@ -474,7 +541,6 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 
 		previousViewControllers.compactMap({ $0 as? WebViewController }).forEach({ $0.stopWebViewActivity() })
 	}
-
 }
 
 // MARK: UIGestureRecognizerDelegate
@@ -492,7 +558,6 @@ extension ArticleViewController: UIGestureRecognizerDelegate {
 		}
 		return false
     }
-
 }
 
 // MARK: Private
@@ -506,5 +571,4 @@ private extension ArticleViewController {
 		controller.setArticle(article, updateView: updateView)
 		return controller
 	}
-
 }
