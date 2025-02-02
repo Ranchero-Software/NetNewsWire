@@ -17,9 +17,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	var window: UIWindow?
 
-	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
+	private var backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
+
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+	private var isWaitingForSyncTasks = false
+
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+	private var isSyncArticleStatusRunning = false
 
 	private var coordinator: SceneCoordinator?
 
@@ -33,16 +37,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 	}
 
-	var isSyncArticleStatusRunning = false
-	var isWaitingForSyncTasks = false
-
 	override init() {
 		super.init()
 
 		_ = AccountManager.shared
 		_ = ArticleThemesManager.shared
 
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: AccountManager.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidTriggerManualRefresh(_:)), name: .userDidTriggerManualRefresh, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
@@ -66,7 +67,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
-		initializeDownloaders()
 		initializeHomeScreenQuickActions()
 
 		DispatchQueue.main.async {
@@ -88,7 +88,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		_ = ExtensionFeedAddRequestFile.shared
 		_ = WidgetDataEncoder.shared
 		_ = ArticleStatusSyncTimer.shared
-
+		_ = FaviconDownloader.shared
+		_ = FeedIconDownloader.shared
+		
 		#if DEBUG
 		ArticleStatusSyncTimer.shared.update()
 		#endif
@@ -147,9 +149,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
-		if note.object is AccountManager {
-			unreadCount = AccountManager.shared.unreadCount
-		}
+		assert(Thread.isMainThread)
+		assert(note.object is AccountManager)
+		unreadCount = AccountManager.shared.unreadCount
 	}
 
 	@objc func accountRefreshDidFinish(_ note: Notification) {
@@ -229,13 +231,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 private extension AppDelegate {
 
-	private func initializeDownloaders() {
-		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-
-		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-	}
-
 	private func initializeHomeScreenQuickActions() {
 		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
 		let unreadIcon = UIApplicationShortcutIcon(systemImageName: "chevron.down.circle")
@@ -251,7 +246,6 @@ private extension AppDelegate {
 
 		UIApplication.shared.shortcutItems = [addItem, searchItem, unreadItem]
 	}
-
 }
 
 // MARK: - Private
@@ -362,22 +356,24 @@ private extension AppDelegate {
 
 private extension AppDelegate {
 
+	static let refreshTaskIdentifier = "com.ranchero.NetNewsWire.FeedRefresh"
+	
 	/// Register all background tasks.
 	func registerBackgroundTasks() {
 		// Register background feed refresh.
-		BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.ranchero.NetNewsWire.FeedRefresh", using: nil) { (task) in
+		BGTaskScheduler.shared.register(forTaskWithIdentifier: Self.refreshTaskIdentifier, using: nil) { (task) in
 			self.performBackgroundFeedRefresh(with: task as! BGAppRefreshTask)
 		}
 	}
 
 	/// Schedules a background app refresh based on `AppDefaults.refreshInterval`.
 	func scheduleBackgroundFeedRefresh() {
-		let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
+		let request = BGAppRefreshTaskRequest(identifier: Self.refreshTaskIdentifier)
 		request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
 
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
-		bgTaskDispatchQueue.async {
+		backgroundTaskDispatchQueue.async {
 			do {
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
