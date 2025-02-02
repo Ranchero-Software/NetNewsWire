@@ -191,8 +191,7 @@ private extension ArticleRenderer {
 
 	static let defaultTemplate: String = {
 		let path = Bundle.main.path(forResource: "template", ofType: "html")!
-		let s = try! String(contentsOfFile: path, encoding: .utf8)
-		return s as String
+		return try! String(contentsOfFile: path, encoding: .utf8)
 	}()
 
 	func styleString() -> String {

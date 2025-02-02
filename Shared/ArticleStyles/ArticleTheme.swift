@@ -87,10 +87,7 @@ struct ArticleTheme: Equatable {
 		}
 
 		var encoding = String.Encoding.utf8
-		if let s = try? String(contentsOfFile: f, usedEncoding: &encoding) {
-			return s
-		}
-		return nil
+		return try? String(contentsOfFile: f, usedEncoding: &encoding)
 	}
 
 	static func filenameWithThemeSuffixRemoved(_ filename: String) -> String {
