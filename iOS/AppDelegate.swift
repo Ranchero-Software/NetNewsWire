@@ -25,7 +25,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
-	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	var widgetDataEncoder: WidgetDataEncoder!
 
@@ -88,7 +87,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		UNUserNotificationCenter.current().delegate = self
 		_ = UserNotificationManager.shared
 
-		extensionContainersFile = ExtensionContainersFile()
+		_ = ExtensionContainersFile.shared
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 
 		widgetDataEncoder = WidgetDataEncoder()

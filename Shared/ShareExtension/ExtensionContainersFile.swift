@@ -14,6 +14,8 @@ import Account
 
 final class ExtensionContainersFile {
 
+	static let shared = ExtensionContainersFile()
+	
 	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionContainersFile")
 
 	private static var filePath: String = {

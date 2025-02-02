@@ -26,7 +26,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		static let mainWindow = "mainWindow"
 	}
 
-	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 
 	var refreshTimer: AccountRefreshTimer?
@@ -195,7 +194,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			self.toggleInspectorWindow(self)
 		}
 
-		extensionContainersFile = ExtensionContainersFile()
+		_ = ExtensionContainersFile.shared
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 
 		refreshTimer = AccountRefreshTimer()
