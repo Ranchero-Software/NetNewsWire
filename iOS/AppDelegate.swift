@@ -20,6 +20,7 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 
+	private var window: UIWindow?
 	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
@@ -117,6 +118,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		syncTimer!.update()
 		#endif
 
+		window = UIWindow(frame: UIScreen.main.bounds)
+		
 		return true
 
 	}
