@@ -297,7 +297,7 @@ private extension AppDelegate {
 
 		assert(Thread.isMainThread)
 		guard let window = self.window else {
-			assertionFailure("Expected window.")
+			// Could be nil legitimately — this can get called before window is set up.
 			return
 		}
 
