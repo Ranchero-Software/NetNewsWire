@@ -28,31 +28,22 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 	}
 
-	override init() {
-		super.init()
+	// MARK: - Lifecycle
+
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+		AppDefaults.registerDefaults()
+		let isFirstRun = AppDefaults.isFirstRun
+		if isFirstRun {
+			logger.info("Is first run.")
+		}
 
 		_ = AccountManager.shared
-		_ = ArticleThemesManager.shared
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: AccountManager.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidTriggerManualRefresh(_:)), name: .userDidTriggerManualRefresh, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-	}
-}
-
-// MARK: - Lifecycle
-
-extension AppDelegate {
-
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
-		AppDefaults.registerDefaults()
-
-		let isFirstRun = AppDefaults.isFirstRun
-		if isFirstRun {
-			logger.info("Is first run.")
-		}
 
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
 			DefaultFeedsImporter.importDefaultFeeds(account: AccountManager.shared.defaultAccount)
@@ -73,6 +64,7 @@ extension AppDelegate {
 
 		UNUserNotificationCenter.current().delegate = self
 
+		_ = ArticleThemesManager.shared
 		_ = UserNotificationManager.shared
 		_ = ExtensionContainersFile.shared
 		_ = ExtensionFeedAddRequestFile.shared
