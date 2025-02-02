@@ -7,20 +7,17 @@
 //
 
 import UIKit
-import RSCore
-import RSWeb
-import Account
 import BackgroundTasks
 import os
-import Secrets
-import WidgetKit
+import RSCore
+import Account
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 
 	var window: UIWindow?
-	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 
+	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 
@@ -384,7 +381,7 @@ private extension AppDelegate {
 	}
 }
 
-// MARK: Background Tasks
+// MARK: - Background Tasks
 
 private extension AppDelegate {
 
@@ -445,7 +442,7 @@ private extension AppDelegate {
 	}
 }
 
-// Handle Notification Actions
+// MARK: - Handle Notification Actions
 
 private extension AppDelegate {
 
