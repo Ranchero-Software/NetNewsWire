@@ -26,7 +26,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		static let mainWindow = "mainWindow"
 	}
 
-	var userNotificationManager: UserNotificationManager!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 
@@ -213,7 +212,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 
 		UNUserNotificationCenter.current().delegate = self
-		userNotificationManager = UserNotificationManager()
+		_ = UserNotificationManager.shared
 
 		#if DEBUG
 		refreshTimer!.update()

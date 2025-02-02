@@ -13,6 +13,8 @@ import UserNotifications
 
 final class UserNotificationManager: NSObject {
 
+	static let shared = UserNotificationManager()
+	
 	override init() {
 		super.init()
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
