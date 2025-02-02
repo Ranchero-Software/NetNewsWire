@@ -86,7 +86,8 @@ struct ArticleTheme: Equatable {
 			return nil
 		}
 
-		if let s = try? NSString(contentsOfFile: f, usedEncoding: nil) as String {
+		var encoding = String.Encoding.utf8
+		if let s = try? String(contentsOfFile: f, usedEncoding: &encoding) {
 			return s
 		}
 		return nil
