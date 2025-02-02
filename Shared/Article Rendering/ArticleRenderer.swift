@@ -26,7 +26,7 @@ struct ArticleRenderer {
 		init(name: String) {
 			url = Bundle.main.url(forResource: name, withExtension: "html")!
 			baseURL = url.deletingLastPathComponent()
-			html = try! NSString(contentsOfFile: url.path, encoding: String.Encoding.utf8.rawValue) as String
+			html = try! String(contentsOfFile: url.path, encoding: .utf8)
 		}
 	}
 
@@ -180,13 +180,13 @@ private extension ArticleRenderer {
 
 	static var defaultStyleSheet: String = {
 		let path = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
-		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
+		let s = try! String(contentsOfFile: path, encoding: .utf8)
 		return "\n\(s)\n"
 	}()
 
 	static let defaultTemplate: String = {
 		let path = Bundle.main.path(forResource: "template", ofType: "html")!
-		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
+		let s = try! String(contentsOfFile: path, encoding: .utf8)
 		return s as String
 	}()
 
