@@ -192,7 +192,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		updateUserInterfaceStyle()
 	}
 
-
 	// MARK: - API
 
 	func manualRefresh(errorHandler: @escaping ErrorHandlerBlock) {

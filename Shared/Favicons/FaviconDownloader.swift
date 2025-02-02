@@ -24,7 +24,7 @@ extension Notification.Name {
 final class FaviconDownloader {
 
 	static let shared = FaviconDownloader()
-	
+
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FaviconDownloader")

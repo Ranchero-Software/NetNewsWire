@@ -528,7 +528,6 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 // MARK: NSWindowDelegate
 
-
 extension MainWindowController: NSWindowDelegate {
 
 	func window(_ window: NSWindow, willEncodeRestorableState coder: NSCoder) {
