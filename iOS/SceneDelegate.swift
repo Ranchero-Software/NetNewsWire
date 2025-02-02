@@ -6,6 +6,8 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
+#if false
+
 import UIKit
 import UserNotifications
 import Account
@@ -250,3 +252,5 @@ private extension SceneDelegate {
 	}
 
 }
+
+#endif
