@@ -11,6 +11,8 @@ import Account
 
 final class ArticleStatusSyncTimer {
 
+	static let shared = ArticleStatusSyncTimer()
+	
 	private static let intervalSeconds = Double(120)
 
 	var shuttingDown = false
@@ -27,6 +29,11 @@ final class ArticleStatusSyncTimer {
 		}
 	}
 
+	func stop() {
+		shuttingDown = true
+		invalidate()
+	}
+	
 	func invalidate() {
 		guard let timer = internalTimer else {
 			return

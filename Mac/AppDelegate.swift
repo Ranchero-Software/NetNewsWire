@@ -34,13 +34,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	var syncTimer: ArticleStatusSyncTimer?
 	var lastRefreshInterval = AppDefaults.refreshInterval
 
-	var shuttingDown = false {
+	private var shuttingDown = false {
 		didSet {
 			if shuttingDown {
 				refreshTimer?.shuttingDown = shuttingDown
 				refreshTimer?.invalidate()
-				syncTimer?.shuttingDown = shuttingDown
-				syncTimer?.invalidate()
+				ArticleStatusSyncTimer.shared.stop()
 			}
 		}
 	}
@@ -201,7 +200,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 
 		refreshTimer = AccountRefreshTimer()
-		syncTimer = ArticleStatusSyncTimer()
+		_ = ArticleStatusSyncTimer.shared
 
 		UNUserNotificationCenter.current().requestAuthorization(options: [.badge]) { (_, _) in }
 
@@ -218,15 +217,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 		#if DEBUG
 		refreshTimer!.update()
-		syncTimer!.update()
+		ArticleStatusSyncTimer.shared.update()
 		#else
 		if AppDefaults.suppressSyncOnLaunch {
 			refreshTimer!.update()
-			syncTimer!.update()
+			ArticleStatusSyncTimer.shared.update()
 		} else {
 			DispatchQueue.main.async {
 				self.refreshTimer!.timedRefresh(nil)
-				self.syncTimer!.timedRefresh(nil)
+				ArticleStatusSyncTimer.shared.timedRefresh(nil)
 			}
 		}
 		#endif
@@ -704,7 +703,7 @@ internal extension AppDelegate {
 		// It’s possible there’s a refresh timer set to go off in the past.
 		// In that case, refresh now and update the timer.
 		refreshTimer?.fireOldTimer()
-		syncTimer?.fireOldTimer()
+		ArticleStatusSyncTimer.shared.fireOldTimer()
 	}
 
 	func objectsForInspector() -> [Any]? {

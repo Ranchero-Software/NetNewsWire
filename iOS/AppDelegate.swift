@@ -23,17 +23,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	private var coordinator: SceneCoordinator?
 
-	var syncTimer: ArticleStatusSyncTimer?
-
-	private var shuttingDown = false {
-		didSet {
-			if shuttingDown {
-				syncTimer?.shuttingDown = shuttingDown
-				syncTimer?.invalidate()
-			}
-		}
-	}
-
 	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
 	var userNotificationManager: UserNotificationManager!
@@ -106,10 +95,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 		widgetDataEncoder = WidgetDataEncoder()
 
-		syncTimer = ArticleStatusSyncTimer()
+		_ = ArticleStatusSyncTimer.shared
 
 		#if DEBUG
-		syncTimer!.update()
+		ArticleStatusSyncTimer.shared.update()
 		#endif
 
 		// Create window.
@@ -156,7 +145,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
     }
 
 	func applicationWillTerminate(_ application: UIApplication) {
-		shuttingDown = true
+		ArticleStatusSyncTimer.shared.stop()
 	}
 
 	func applicationDidEnterBackground(_ application: UIApplication) {
@@ -199,7 +188,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	func prepareAccountsForBackground() {
 		extensionFeedAddRequestFile.suspend()
-		syncTimer?.invalidate()
+		ArticleStatusSyncTimer.shared.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
 		widgetDataEncoder.encode()
@@ -208,7 +197,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	func prepareAccountsForForeground() {
 		extensionFeedAddRequestFile.resume()
-		syncTimer?.update()
+		ArticleStatusSyncTimer.shared.update()
 
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
