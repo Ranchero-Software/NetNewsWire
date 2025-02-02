@@ -13,7 +13,7 @@ import RSCore
 import Account
 
 @UIApplicationMain
-final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
+final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
 	var window: UIWindow?
 
@@ -30,10 +30,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	var widgetDataEncoder: WidgetDataEncoder!
 
-	var unreadCount = 0 {
+	private var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
-				postUnreadCountDidChangeNotification()
 				UNUserNotificationCenter.current().setBadgeCount(unreadCount)
 			}
 		}
