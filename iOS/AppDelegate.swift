@@ -208,11 +208,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	// MARK: - API
 
 	func manualRefresh(errorHandler: @escaping ErrorHandlerBlock) {
-
 		assert(Thread.isMainThread)
-		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate }).forEach {
-			$0.cleanUp(conditional: true)
-		}
+		sceneCoordinator?.cleanUp(conditional: true)
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
 	}
 
@@ -244,7 +241,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		completionHandler([.list, .banner, .badge, .sound])
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+	func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 		defer { completionHandler() }
 
 		let userInfo = response.notification.request.content.userInfo
@@ -255,16 +252,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		case "MARK_AS_STARRED":
 			handleMarkAsStarred(userInfo: userInfo)
 		default:
-			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
-				sceneDelegate.handle(response)
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-					sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
-				})
+			handle(response)
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+				self.sceneCoordinator?.dismissIfLaunchingFromExternalAction()
 			}
 		}
-
-    }
-
+	}
 }
 
 // MARK: - App Initialization
@@ -395,15 +388,9 @@ private extension AppDelegate {
 		ArticleThemeDownloader.shared.cleanUp()
 
 		CoalescingQueue.standard.performCallsImmediately()
-		for scene in UIApplication.shared.connectedScenes {
-			if let sceneDelegate = scene.delegate as? SceneDelegate {
-				sceneDelegate.suspend()
-			}
-		}
-
+		sceneCoordinator?.suspend()
 		logger.info("Application processing suspended.")
 	}
-
 }
 
 // MARK: Background Tasks
@@ -522,5 +509,10 @@ private extension AppDelegate {
 				self?.suspendApplication()
 			}
 		})
+	}
+
+	func handle(_ response: UNNotificationResponse) {
+		AccountManager.shared.resumeAllIfSuspended()
+		sceneCoordinator?.handle(response)
 	}
 }

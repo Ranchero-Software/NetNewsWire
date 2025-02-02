@@ -544,6 +544,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		fetchRequestQueue.cancelAllRequests()
 	}
 
+	// TODO: find out what `conditional` means in this context.
 	func cleanUp(conditional: Bool) {
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
