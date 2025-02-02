@@ -26,7 +26,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	var syncTimer: ArticleStatusSyncTimer?
 
-	var shuttingDown = false {
+	private var shuttingDown = false {
 		didSet {
 			if shuttingDown {
 				syncTimer?.shuttingDown = shuttingDown
