@@ -10,15 +10,6 @@ import Foundation
 
 public extension Set {
 
-	func anyObjectPassingTest( _ test: (Element) -> Bool) -> Element? {
-
-		guard let index = self.firstIndex(where: test) else {
-			return nil
-		}
-
-		return self[index]
-	}
-
 	func anyObject() -> Element? {
 
 		if self.isEmpty {

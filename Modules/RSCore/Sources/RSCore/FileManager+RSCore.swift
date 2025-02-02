@@ -26,35 +26,6 @@ public extension FileManager {
 		return false
 	}
 
-	/// Copies files from one folder to another, overwriting any existing files with the same name.
-	///
-	/// - Parameters:
-	/// 	- source: The path of the folder from which to copy files.
-	/// 	- destination: The path to the folder at which to place the copied files.
-	///
-	/// - Note: This function does not copy files whose names begin with a period.
-	func copyFiles(fromFolder source: String, toFolder destination: String) throws {
-		assert(isFolder(atPath: source))
-		assert(isFolder(atPath: destination))
-
-		let sourceURL = URL(fileURLWithPath: source)
-		let destinationURL = URL(fileURLWithPath: destination)
-
-		let filenames = try self.contentsOfDirectory(atPath: source)
-
-		for oneFilename in filenames {
-			if oneFilename.hasPrefix(".") {
-				continue
-			}
-
-			let sourceFile = sourceURL.appendingPathComponent(oneFilename)
-			let destinationFile = destinationURL.appendingPathComponent(oneFilename)
-
-			try copyFile(atPath: sourceFile.path, toPath: destinationFile.path, overwriting: true)
-		}
-
-	}
-
 	/// Retrieve the names of files contained in a folder.
 	///
 	/// - Parameter folder: The path to the folder whose contents to retrieve.
@@ -85,27 +56,4 @@ public extension FileManager {
 		let url = URL(fileURLWithPath: folder)
 		return filenames.map { url.appendingPathComponent($0).path }
 	}
-
-}
-
-private extension FileManager {
-
-	/// Copies a single file, possibly overwriting any existing file.
-	///
-	/// - Parameters:
-	///   - source: The source path.
-	///   - destination: The destination path.
-	///   - overwriting: `true` if an existing file at `destination` should be overwritten.
-	func copyFile(atPath source: String, toPath destination: String, overwriting: Bool) throws {
-		assert(fileExists(atPath: source))
-
-		if fileExists(atPath: destination) {
-			if overwriting {
-				try removeItem(atPath: destination)
-			}
-		}
-
-		try copyItem(atPath: source, toPath: destination)
-	}
-
 }

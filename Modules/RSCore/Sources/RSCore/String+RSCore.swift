@@ -18,10 +18,6 @@ public extension String {
 		return "<a href=\"\(link)\">\(self)</a>"
 	}
 
-	func htmlBySurroundingWithTag(_ tag: String) -> String {
-		return "<\(tag)>\(self)</\(tag)>"
-	}
-
 	static func htmlWithLink(_ link: String) -> String {
 		return link.htmlByAddingLink(link)
 	}

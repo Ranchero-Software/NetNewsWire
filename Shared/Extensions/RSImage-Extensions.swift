@@ -17,12 +17,19 @@ extension RSImage {
 
 	static let maxIconSize = 48
 
+#if os(macOS)
+		static let maxScreenScale = CGFloat(2)
+#elseif os(iOS)
+		static let maxScreenScale = CGFloat(3)
+#endif
+
 	static func scaledForIcon(_ data: Data, imageResultBlock: @escaping ImageResultBlock) {
 		IconScalerQueue.shared.scaledForIcon(data, imageResultBlock)
 	}
 
 	static func scaledForIcon(_ data: Data) -> RSImage? {
-		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.maxIconSize) * RSScreen.maxScreenScale))
+
+		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.maxIconSize) * Self.maxScreenScale))
 		guard var cgImage = RSImage.scaleImage(data, maxPixelSize: scaledMaxPixelSize) else {
 			return nil
 		}
