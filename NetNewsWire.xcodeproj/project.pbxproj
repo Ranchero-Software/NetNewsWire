@@ -291,7 +291,6 @@
 		8498E53C2D27A766009F5438 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				/Localized/MainWindow/Main.storyboard,
 				/Localized/ShareExtension/MainInterface.storyboard,
 				IntentsExtension/Info.plist,
 				IntentsExtension/IntentHandler.swift,
