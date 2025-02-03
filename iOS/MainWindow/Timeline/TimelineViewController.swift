@@ -45,6 +45,8 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 	private lazy var refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
 	private lazy var refreshProgressView: RefreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as! RefreshProgressView
 
+	private static let cellReuseIdentifier = "timelineCell"
+
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
 
@@ -110,6 +112,7 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 		definesPresentationContext = true
 
 		// Configure the table
+		tableView.register(MainTimelineTableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
 		tableView.dataSource = dataSource
 		tableView.isPrefetchingEnabled = false
 
@@ -767,7 +770,7 @@ private extension TimelineViewController {
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
 			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
-				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainTimelineTableViewCell
+				let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseIdentifier, for: indexPath) as! MainTimelineTableViewCell
 				self?.configure(cell, article: article)
 				return cell
 			})
