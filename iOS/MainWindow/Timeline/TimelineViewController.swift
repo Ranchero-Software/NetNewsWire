@@ -19,12 +19,31 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 	private var iconSize = IconSize.medium
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 
-	private var refreshProgressView: RefreshProgressView?
+	private lazy var filterButton = UIBarButtonItem(
+		image: AppImage.filterInactive,
+		style: .plain,
+		target: self,
+		action: #selector(toggleFilter(_:))
+	)
 
-	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
+	private lazy var markAllAsReadButton = UIBarButtonItem(
+		image: AppImage.markAllAsRead,
+		style: .plain,
+		target: self,
+		action: #selector(markAllAsRead(_:))
+	)
 
-	private var filterButton: UIBarButtonItem!
-	private var firstUnreadButton: UIBarButtonItem!
+	private lazy var firstUnreadButton = UIBarButtonItem(
+		image: AppImage.nextUnreadArticle,
+		style: .plain,
+		target: self,
+		action: #selector(firstUnread(_:))
+	)
+
+	private lazy var flexibleSpaceBarButtonItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+	private lazy var refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
+	private lazy var refreshProgressView: RefreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as! RefreshProgressView
 
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
@@ -48,6 +67,14 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 		return true
 	}
 
+	init() {
+		super.init(style: .plain)
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
 	override func viewDidLoad() {
 
 		super.viewDidLoad()
@@ -68,10 +95,6 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-
-		// Initialize Programmatic Buttons
-		filterButton = UIBarButtonItem(image: AppImage.filterInactive, style: .plain, target: self, action: #selector(toggleFilter(_:)))
-		firstUnreadButton = UIBarButtonItem(image: AppImage.nextUnreadArticle, style: .plain, target: self, action: #selector(firstUnread(_:)))
 
 		// Setup the Search Controller
 		searchController.delegate = self
@@ -101,7 +124,14 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 
-		configureToolbar()
+		toolbarItems = [
+			markAllAsReadButton,
+			flexibleSpaceBarButtonItem,
+			refreshProgressItemButton,
+			flexibleSpaceBarButtonItem,
+			firstUnreadButton
+		]
+
 		resetUI(resetScroll: true)
 
 		// Load the table and then scroll to the saved position if available
@@ -243,7 +273,7 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	func updateUI() {
-		refreshProgressView?.update()
+		refreshProgressView.update()
 		updateTitleUnreadCount()
 		updateToolbar()
 	}
@@ -263,7 +293,7 @@ final class TimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	func setRefreshToolbarItemVisibility(visible: Bool) {
-		refreshProgressView?.alpha = visible ? 1.0 : 0
+		refreshProgressView.alpha = visible ? 1.0 : 0
 	}
 
 	// MARK: - Table view
@@ -638,20 +668,6 @@ extension TimelineViewController: UISearchBarDelegate {
 
 private extension TimelineViewController {
 
-	func configureToolbar() {
-		guard !(splitViewController?.isCollapsed ?? true) else {
-			return
-		}
-
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		toolbarItems?.insert(refreshProgressItemButton, at: 2)
-	}
-
 	func resetUI(resetScroll: Bool) {
 
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
@@ -687,11 +703,11 @@ private extension TimelineViewController {
 		}
 
 		if coordinator.isReadArticlesFiltered {
-			filterButton?.image = AppImage.filterActive
-			filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
+			filterButton.image = AppImage.filterActive
+			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
-			filterButton?.image = AppImage.filterInactive
-			filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
+			filterButton.image = AppImage.filterInactive
+			filterButton.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
@@ -707,7 +723,6 @@ private extension TimelineViewController {
 	}
 
 	func updateToolbar() {
-		guard firstUnreadButton != nil else { return }
 
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
