@@ -11,8 +11,35 @@ import Account
 
 final class RootSplitViewController: UISplitViewController {
 
-	var coordinator: SceneCoordinator!
+	var coordinator: SceneCoordinator! {
+		didSet {
+			sidebarViewController.coordinator = coordinator
+			timelineViewController.coordinator = coordinator
+			articleViewController.coordinator = coordinator
+		}
+	}
 
+	private lazy var sidebarViewController = MainFeedViewController()
+	private lazy var timelineViewController = TimelineViewController()
+	private lazy var articleViewController = ArticleViewController()
+
+	init() {
+		super.init(style: .tripleColumn)
+
+		setViewController(self.sidebarViewController, for: .primary)
+		setViewController(self.timelineViewController, for: .supplementary)
+		setViewController(self.articleViewController, for: .secondary)
+
+		self.showsSecondaryOnlyButton = true
+		self.preferredDisplayMode = .oneBesideSecondary
+		self.preferredSplitBehavior = .displace
+		self.primaryBackgroundStyle = .sidebar
+	}
+
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
 	override var prefersStatusBarHidden: Bool {
 		return coordinator.prefersStatusBarHidden
 	}

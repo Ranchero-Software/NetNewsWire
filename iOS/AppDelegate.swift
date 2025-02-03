@@ -82,12 +82,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		self.window = window
 
 		// Create UI and add it to window.
-		let storyboard = UIStoryboard(name: "Main", bundle: nil)
-		let rootSplitViewController = storyboard.instantiateInitialViewController() as! RootSplitViewController
-		rootSplitViewController.presentsWithGesture = true
-		rootSplitViewController.showsSecondaryOnlyButton = true
-		rootSplitViewController.preferredDisplayMode = .oneBesideSecondary
-
+		let rootSplitViewController = RootSplitViewController()
 		coordinator = SceneCoordinator(rootSplitViewController: rootSplitViewController)
 		rootSplitViewController.coordinator = coordinator
 		rootSplitViewController.delegate = coordinator
