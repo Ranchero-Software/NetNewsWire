@@ -19,16 +19,23 @@ final class RootSplitViewController: UISplitViewController {
 		}
 	}
 
-	private lazy var sidebarViewController = MainFeedViewController()
-	private lazy var timelineViewController = TimelineViewController()
-	private lazy var articleViewController = ArticleViewController()
+	private let sidebarViewController: MainFeedViewController
+	private let timelineViewController: TimelineViewController
+	private let articleViewController: ArticleViewController
 
-	init() {
+	init(sidebarViewController: MainFeedViewController,
+		 timelineViewController: TimelineViewController,
+		 articleViewController: ArticleViewController) {
+
+		self.sidebarViewController = sidebarViewController
+		self.timelineViewController = timelineViewController
+		self.articleViewController = articleViewController
+
 		super.init(style: .tripleColumn)
 
-		setViewController(self.sidebarViewController, for: .primary)
-		setViewController(self.timelineViewController, for: .supplementary)
-		setViewController(self.articleViewController, for: .secondary)
+		setViewController(sidebarViewController, for: .primary)
+		setViewController(timelineViewController, for: .supplementary)
+		setViewController(articleViewController, for: .secondary)
 
 		self.showsSecondaryOnlyButton = true
 		self.preferredDisplayMode = .oneBesideSecondary

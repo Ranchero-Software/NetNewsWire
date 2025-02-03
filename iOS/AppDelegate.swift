@@ -17,6 +17,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	var window: UIWindow?
 
+	private var mainWindowController: MainWindowController?
 	private var coordinator: SceneCoordinator?
 	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
@@ -77,30 +78,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		ArticleStatusSyncTimer.shared.update()
 #endif
 
-		// Create window.
-		let window = UIWindow(frame: UIScreen.main.bounds)
-		self.window = window
-
-		// Create UI and add it to window.
-		let rootSplitViewController = RootSplitViewController()
-		coordinator = SceneCoordinator(rootSplitViewController: rootSplitViewController)
-		rootSplitViewController.coordinator = coordinator
-		rootSplitViewController.delegate = coordinator
-
-		window.rootViewController = rootSplitViewController
-
-		window.tintColor = AppColor.accent
-		updateUserInterfaceStyle()
-		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
-
-		window.makeKeyAndVisible()
+		// Create window and UI
+		mainWindowController = MainWindowController()
 
 		Task { @MainActor in
-			// Ensure Feeds view shows on first run on iPad — otherwise the UI is empty.
-			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.isFirstRun {
-				rootSplitViewController.show(.primary)
-			}
-
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
 
@@ -119,7 +100,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	func applicationWillEnterForeground(_ application: UIApplication) {
 		prepareAccountsForForeground()
-		coordinator?.resetFocus()
+		mainWindowController?.resetFocus()
 	}
 
 	private func prepareAccountsForForeground() {
@@ -167,7 +148,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		ArticleThemeDownloader.shared.cleanUp()
 
 		CoalescingQueue.standard.performCallsImmediately()
-		coordinator?.suspend()
+		mainWindowController?.suspend()
 		logger.info("Application processing suspended.")
 	}
 }
@@ -195,7 +176,7 @@ extension AppDelegate {
 			return
 		}
 
-		coordinator?.cleanUp(conditional: true)
+		mainWindowController?.cleanUp(conditional: true)
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
 	}
 
@@ -225,7 +206,7 @@ extension AppDelegate {
 		default:
 			handle(response)
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-				self.coordinator?.dismissIfLaunchingFromExternalAction()
+				self.mainWindowController?.dismissIfLaunchingFromExternalAction()
 			}
 		}
 	}
@@ -329,6 +310,6 @@ private extension AppDelegate {
 
 	func handle(_ response: UNNotificationResponse) {
 		AccountManager.shared.resumeAllIfSuspended()
-		coordinator?.handle(response)
+		mainWindowController?.handle(response)
 	}
 }
