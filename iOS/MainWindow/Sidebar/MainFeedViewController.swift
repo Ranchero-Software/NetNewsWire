@@ -17,13 +17,26 @@ import WebKit
 
 final class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 
-	@IBOutlet weak var filterButton: UIBarButtonItem!
-	private var refreshProgressView: RefreshProgressView?
-	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
-		didSet {
-			addNewItemButton.primaryAction = nil
-		}
-	}
+	private lazy var filterButton = UIBarButtonItem(
+		image: AppImage.filterInactive,
+		style: .plain,
+		target: self,
+		action: #selector(toggleFilter(_:))
+	)
+
+	private lazy var settingsButton = UIBarButtonItem(
+		image: AppImage.settings,
+		style: .plain,
+		target: self,
+		action: #selector(showSettings(_:))
+	)
+
+	private lazy var addNewItemButton = UIBarButtonItem(systemItem: .add)
+
+	private lazy var refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
+	private lazy var refreshProgressView: RefreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as! RefreshProgressView
+
+	private lazy var flexibleSpaceBarButtonItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
@@ -43,6 +56,16 @@ final class MainFeedViewController: UITableViewController, UndoableCommandRunner
 		return true
 	}
 
+	private static let cellReuseIdentifier = "sidebarCell"
+
+	init() {
+		super.init(style: .plain)
+	}
+
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+
 	override func viewDidLoad() {
 
 		super.viewDidLoad()
@@ -58,6 +81,7 @@ final class MainFeedViewController: UITableViewController, UndoableCommandRunner
 		tableView.tableHeaderView = UIView(frame: frame)
 
 		tableView.register(MainFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+		tableView.register(MainFeedTableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
 		tableView.dragDelegate = self
 		tableView.dropDelegate = self
 		tableView.dragInteractionEnabled = true
@@ -84,7 +108,16 @@ final class MainFeedViewController: UITableViewController, UndoableCommandRunner
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 
-		configureToolbar()
+		navigationItem.rightBarButtonItem = filterButton
+
+		toolbarItems = [
+			settingsButton,
+			flexibleSpaceBarButtonItem,
+			refreshProgressItemButton,
+			flexibleSpaceBarButtonItem,
+			addNewItemButton
+		]
+
 		becomeFirstResponder()
 	}
 
@@ -192,7 +225,7 @@ final class MainFeedViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainFeedTableViewCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseIdentifier, for: indexPath) as! MainFeedTableViewCell
 		configure(cell, indexPath)
 		return cell
 	}
@@ -447,7 +480,7 @@ final class MainFeedViewController: UITableViewController, UndoableCommandRunner
 
 	// MARK: Actions
 
-	@IBAction func settings(_ sender: UIBarButtonItem) {
+	@objc func showSettings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
 	}
 
@@ -627,8 +660,8 @@ final class MainFeedViewController: UITableViewController, UndoableCommandRunner
 		} else {
 			setFilterButtonToInactive()
 		}
-		refreshProgressView?.update()
-		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+		refreshProgressView.update()
+		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 
 		configureContextMenu()
 	}
@@ -733,31 +766,20 @@ extension MainFeedViewController: MainFeedTableViewCellDelegate {
 			collapse(sender)
 		}
 	}
-
 }
 
 // MARK: Private
 
 private extension MainFeedViewController {
 
-	func configureToolbar() {
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		toolbarItems?.insert(refreshProgressItemButton, at: 2)
-	}
-
 	func setFilterButtonToActive() {
-		filterButton?.image = AppImage.filterActive
-		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
+		filterButton.image = AppImage.filterActive
+		filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
 	}
 
 	func setFilterButtonToInactive() {
-		filterButton?.image = AppImage.filterInactive
-		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
+		filterButton.image = AppImage.filterInactive
+		filterButton.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 
 	func resetEstimatedRowHeight() {
@@ -1281,7 +1303,6 @@ private extension MainFeedViewController {
 		pushUndoableCommand(deleteCommand)
 		deleteCommand.perform()
 	}
-
 }
 
 extension MainFeedViewController: UIGestureRecognizerDelegate {

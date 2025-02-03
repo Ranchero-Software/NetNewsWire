@@ -157,6 +157,7 @@ extension AppImage {
 	static var plus = systemImage("plus")
 	static var previousArticle = systemImage("chevron.up")
 	static var safari = systemImage("safari")
+	static var settings = systemImage("gear")
 	static var timelineStar = systemImage("star.fill").withTintColor(AppColor.star, renderingMode: .alwaysOriginal)
 	static var trash = systemImage("trash")
 
