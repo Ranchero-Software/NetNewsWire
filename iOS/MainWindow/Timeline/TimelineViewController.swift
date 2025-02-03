@@ -794,10 +794,7 @@ private extension TimelineViewController {
 	}
 
 	func iconImageFor(_ article: Article) -> IconImage? {
-		if !coordinator.showIcons {
-			return nil
-		}
-		return article.iconImage()
+		coordinator.showIcons ? article.iconImage() : nil
 	}
 
 	func toggleArticleReadStatusAction(_ article: Article) -> UIAction? {
