@@ -136,6 +136,7 @@ extension AppImage {
 extension AppImage {
 
 #if os(iOS)
+	static var allUnread = systemImage("largecircle.fill.circle")
 	static var articleExtractorOffSF = systemImage("doc.plaintext")
 	static var articleExtractorOnSF = appImage("articleExtractorOnSF")
 	static var articleExtractorOffTinted = articleExtractorOff.tinted(color: AppColor.accent)!
@@ -158,7 +159,9 @@ extension AppImage {
 	static var previousArticle = systemImage("chevron.up")
 	static var safari = systemImage("safari")
 	static var settings = systemImage("gear")
+	static var starred = systemImage("star.fill")
 	static var timelineStar = systemImage("star.fill").withTintColor(AppColor.star, renderingMode: .alwaysOriginal)
+	static var today = systemImage("sun.max.fill")
 	static var trash = systemImage("trash")
 
 	// IconImages
@@ -167,20 +170,9 @@ extension AppImage {
 
 	// TODO: handle color palette change
 
-	static var starredFeed: IconImage = {
-		let image = systemImage("star.fill")
-		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.star.cgColor)
-	}()
-
-	static var todayFeed: IconImage = {
-		let image = systemImage("sun.max.fill")
-		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange.cgColor)
-	}()
-
-	static var unreadFeed: IconImage = {
-		let image = systemImage("largecircle.fill.circle")
-		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.secondaryAccent.cgColor)
-	}()
+	static var starredFeed = IconImage(starred, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.star.cgColor)
+	static var todayFeed = IconImage(today, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange.cgColor)
+	static var unreadFeed = IconImage(allUnread, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.secondaryAccent.cgColor)
 
 	static var folder: IconImage = {
 		let image = systemImage("folder.fill")

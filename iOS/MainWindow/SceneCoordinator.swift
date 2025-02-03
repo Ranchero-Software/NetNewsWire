@@ -50,7 +50,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	private var rootSplitViewController: RootSplitViewController!
 
-	private var mainFeedViewController: MainFeedViewController!
+	private var mainFeedViewController: MainFeedViewController?
 	private var mainTimelineViewController: TimelineViewController?
 	private var articleViewController: ArticleViewController?
 
@@ -279,7 +279,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		super.init()
 
 		self.mainFeedViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedViewController
-		self.mainFeedViewController.coordinator = self
+		self.mainFeedViewController?.coordinator = self
 		self.mainFeedViewController?.navigationController?.delegate = self
 
 		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? TimelineViewController
@@ -741,7 +741,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		currentFeedIndexPath = indexPath
-		mainFeedViewController.updateFeedSelection(animations: animations)
+		mainFeedViewController?.updateFeedSelection(animations: animations)
 
 		if deselectArticle {
 			selectArticle(nil)
@@ -1168,14 +1168,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedViewController.present(addNavViewController, animated: true)
+		mainFeedViewController?.present(addNavViewController, animated: true)
 	}
 
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedViewController.present(addNavViewController, animated: true)
+		mainFeedViewController?.present(addNavViewController, animated: true)
 	}
 
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
@@ -1223,7 +1223,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if currentArticle != nil {
 			articleViewController?.openInAppBrowser()
 		} else {
-			mainFeedViewController.openInAppBrowser()
+			mainFeedViewController?.openInAppBrowser()
 		}
 	}
 
@@ -1270,7 +1270,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	/// `SFSafariViewController` or `SettingsViewController`,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
-		guard let presentedController = mainFeedViewController.presentedViewController else { return }
+		guard let presentedController = mainFeedViewController?.presentedViewController else { return }
 
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
@@ -1462,7 +1462,7 @@ private extension SceneCoordinator {
 
 			updateExpandedNodes?()
 			let changes = rebuildShadowTable()
-			mainFeedViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
+			mainFeedViewController?.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
 		}
 	}
 
@@ -2072,7 +2072,7 @@ private extension SceneCoordinator {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
 					self.selectFeed(indexPath: indexPath) {
-						self.mainFeedViewController.focus()
+						self.mainFeedViewController?.focus()
 					}
 				}
 			})
@@ -2093,7 +2093,7 @@ private extension SceneCoordinator {
 
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
 					self.selectFeed(indexPath: indexPath) {
-						self.mainFeedViewController.focus()
+						self.mainFeedViewController?.focus()
 					}
 				}
 			})
@@ -2106,7 +2106,7 @@ private extension SceneCoordinator {
 			}
 
 			self.discloseFeed(feed, initialLoad: true) {
-				self.mainFeedViewController.focus()
+				self.mainFeedViewController?.focus()
 			}
 		}
 	}

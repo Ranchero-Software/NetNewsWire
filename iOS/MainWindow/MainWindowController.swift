@@ -14,7 +14,7 @@ final class MainWindowController {
 	let window: UIWindow
 
 	let rootSplitViewController: RootSplitViewController
-	let sidebarViewController = MainFeedViewController()
+	let sidebarViewController = SidebarViewController()
 	let timelineViewController = TimelineViewController()
 	let articleViewController = ArticleViewController()
 	
