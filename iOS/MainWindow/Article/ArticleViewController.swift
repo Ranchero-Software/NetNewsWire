@@ -140,6 +140,7 @@ final class ArticleViewController: UIViewController {
 	override func loadView() {
 		view = UIView(frame: UIScreen.main.bounds)
 		view.addSubview(searchBar)
+		searchBar.isHidden = true
 	}
 
 	override func viewDidLoad() {
