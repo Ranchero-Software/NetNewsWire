@@ -37,6 +37,6 @@ extension Feed: SmallIconProvider {
 
 extension Folder: SmallIconProvider {
 	var smallIcon: IconImage? {
-		AppImage.folder
+		AppImage.folderIconImage
 	}
 }

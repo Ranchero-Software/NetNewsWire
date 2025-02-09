@@ -47,6 +47,7 @@ struct AppImage {
 	static var faviconTemplate = appImage("faviconTemplateImage")
 	static var filterActive = systemImage("line.horizontal.3.decrease.circle.fill")
 	static var filterInactive = systemImage("line.horizontal.3.decrease.circle")
+	static var folder = systemImage("folder")
 	static var markAllAsRead = appImage("markAllAsRead")
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 	static var share = systemImage("square.and.arrow.up")
@@ -122,7 +123,7 @@ extension AppImage {
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
-	static var folder: IconImage = {
+	static var folderIconImage: IconImage = {
 		let image = systemImage("folder")
 		let preferredColor = AppColor.accent
 		let coloredImage = image.tinted(with: preferredColor)
@@ -174,10 +175,7 @@ extension AppImage {
 	static var todayFeed = IconImage(today, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange.cgColor)
 	static var unreadFeed = IconImage(allUnread, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.secondaryAccent.cgColor)
 
-	static var folder: IconImage = {
-		let image = systemImage("folder.fill")
-		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.secondaryAccent.cgColor)
-	}()
+	static var folderIconImage = IconImage(AppImage.folder, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppColor.secondaryAccent.cgColor)
 #endif
 }
 

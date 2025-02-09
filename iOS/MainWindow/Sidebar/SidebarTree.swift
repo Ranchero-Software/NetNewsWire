@@ -7,16 +7,41 @@
 //
 
 import Foundation
+import UIKit
 import Account
 
 typealias SectionID = Int
 typealias ItemID = Int
 
-protocol Section: Identifiable {}
-protocol Item: Identifiable {}
+// MARK: - Protocols
 
-@MainActor protocol SidebarContainer: Identifiable {
+/// A top-level collapsible item.
+///
+/// The Smart Feeds group and active `Account`s are `Section`s.
+@MainActor protocol Section: SidebarContainer, Identifiable where ID == SectionID {
+	var title: String { get }
 
+	/// All `Item`s in the `Section`, even if contained by a `SidebarFolder`
+	/// in that section.
+	func flattenedItems() -> [any Item]
+}
+
+/// `Item`s are contained by `Sections`. They never appear at the top level.
+/// They are hidden when a `Section` is collapsed.
+///
+/// Items are smart feeds, folders, and feeds.
+@MainActor protocol Item: Identifiable where ID == ItemID {
+	var title: String { get }
+	var image: UIImage? { get }
+}
+
+/// A `SidebarContainer` contains `Item`s and is collapsible.
+///
+/// All `Section`s are `SidebarContainer`s.
+///
+/// `SidebarFolder` is also a `SidebarContainer`,
+/// though it’s not a `Section`, because it contains `Item`s and is collapsible.
+@MainActor protocol SidebarContainer: Identifiable where ID == SectionID {
 	var isExpanded: Bool { get set }
 	var items: [any Item] { get }
 
@@ -24,6 +49,13 @@ protocol Item: Identifiable {}
 }
 
 extension SidebarContainer {
+
+	// These dictionaries make it fast to look up, given a Feed or Folder,
+	// the existing SidebarFeed and SidebarFolder.
+	// This way we can preserve identity across rebuilds of the tree.
+	// (Meaning: after rebuilding the tree, a given Feed in a given Account
+	// or Folder should have the same SidebarFeed object with the same id.
+	// Same with Folders and SidebarFolder.)
 
 	func createFeedsDictionary() -> [String: SidebarFeed] {
 		var d = [String: SidebarFeed]() // feedID: SidebarFeed
@@ -49,8 +81,13 @@ extension SidebarContainer {
 @MainActor final class SidebarSmartFeedsFolder: Section, SidebarContainer {
 
 	let id = createID()
-	var isExpanded = true
 
+	var title: String {
+		SmartFeedsController.shared.nameForDisplay
+	}
+
+	var isExpanded = true
+	
 	let items: [any Item] = [
 		SidebarSmartFeed(SmartFeedsController.shared.todayFeed),
 		SidebarSmartFeed(SmartFeedsController.shared.unreadFeed),
@@ -59,8 +96,11 @@ extension SidebarContainer {
 
 	func updateItems() {
 	}
-}
 
+	func flattenedItems() -> [any Item] {
+		items
+	}
+}
 
 // MARK: - SidebarSmartFeed
 
@@ -68,6 +108,14 @@ extension SidebarContainer {
 
 	let id = createID()
 	let smartFeed: any PseudoFeed
+
+	var title: String {
+		smartFeed.nameForDisplay
+	}
+	
+	var image: UIImage? {
+		smartFeed.smallIcon?.image
+	}
 
 	init(_ smartFeed: any PseudoFeed) {
 		self.smartFeed = smartFeed
@@ -79,6 +127,10 @@ extension SidebarContainer {
 @MainActor final class SidebarAccount: Section, SidebarContainer {
 
 	let id = createID()
+	var title: String {
+		account?.nameForDisplay ?? "Untitled Account"
+	}
+
 	let accountID: String
 	weak var account: Account?
 	var isExpanded = true
@@ -133,6 +185,20 @@ extension SidebarContainer {
 		// TODO: sort feeds
 		items = sidebarFeeds + sidebarFolders
 	}
+
+	func flattenedItems() -> [any Item] {
+
+		var temp = items
+
+		for item in items {
+			temp.append(item)
+			if let container = item as? any SidebarContainer {
+				temp.append(contentsOf: container.items)
+			}
+		}
+
+		return temp
+	}
 }
 
 // MARK: - SidebarFolder
@@ -140,6 +206,15 @@ extension SidebarContainer {
 @MainActor final class SidebarFolder: Item, SidebarContainer {
 
 	let id = createID()
+
+	var title: String {
+		folder?.nameForDisplay ?? Folder.untitledName
+	}
+
+	var image: UIImage? {
+		AppImage.folder
+	}
+
 	let folderID: Int
 	weak var folder: Folder?
 	var isExpanded = false
@@ -186,6 +261,18 @@ extension SidebarContainer {
 	let feedID: String
 	weak var feed: Feed?
 
+	var title: String {
+		feed?.nameForDisplay ?? Feed.untitledName
+	}
+
+	var image: UIImage? {
+		if let feed {
+			return IconImageCache.shared.imageForFeed(feed)?.image
+		} else {
+			return nil
+		}
+	}
+
 	init(_ feed: Feed) {
 		self.feedID = feed.feedID
 		self.feed = feed
@@ -197,17 +284,28 @@ extension SidebarContainer {
 @MainActor final class SidebarTree {
 
 	var sections = [any Section]()
+	private var idsToItems = [ItemID: any Item]()
+	private var idsToSections = [SectionID: any Section]()
 
 	private lazy var sidebarSmartFeedsFolder = SidebarSmartFeedsFolder()
 
-	func rebuildTree() {
+	func section(with id: SectionID) -> (any Section)? {
+		idsToSections[id]
+	}
+
+	func item(with id: ItemID) -> (any Item)? {
+		idsToItems[id]
+	}
+
+	func rebuild() {
+
+		// In my testing, with two accounts and hundreds of feeds,
+		// this function takes 2-3 milliseconds.
 
 		rebuildSections()
-
-		for section in sections where section is SidebarAccount {
-			let sidebarAccount = section as! SidebarAccount
-			sidebarAccount.updateItems()
-		}
+		updateAllItems()
+		rebuildIDsToItems()
+		rebuildIDsToSections()
 	}
 }
 
@@ -216,7 +314,6 @@ private extension SidebarTree {
 	func rebuildSections() {
 
 		var updatedSections = [any Section]()
-
 		updatedSections.append(sidebarSmartFeedsFolder)
 
 		for account in AccountManager.shared.activeAccounts {
@@ -230,6 +327,38 @@ private extension SidebarTree {
 		// TODO: sort accounts
 
 		sections = updatedSections
+	}
+
+	func updateAllItems() {
+
+		for section in sections where section is SidebarAccount {
+			let sidebarAccount = section as! SidebarAccount
+			sidebarAccount.updateItems()
+		}
+	}
+
+	func rebuildIDsToItems() {
+
+		var d = [ItemID: any Item]()
+
+		for section in sections {
+			for item in section.flattenedItems() {
+				d[item.id] = item
+			}
+		}
+
+		idsToItems = d
+	}
+
+	func rebuildIDsToSections() {
+
+		var d = [SectionID: any Section]()
+
+		for section in sections {
+			d[section.id] = section
+		}
+
+		idsToSections = d
 	}
 
 	func existingSection(for account: Account) -> (any Section)? {

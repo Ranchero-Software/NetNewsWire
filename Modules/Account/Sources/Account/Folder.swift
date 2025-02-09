@@ -42,7 +42,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		}
 	}
 
-	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
+	public static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
 	public var externalID: String?
 	static var incrementingID = 0

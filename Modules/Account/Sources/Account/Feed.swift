@@ -193,8 +193,10 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 		if let s = name, !s.isEmpty {
 			return s
 		}
-		return NSLocalizedString("Untitled", comment: "Feed name")
+		return Self.untitledName
 	}
+
+	public static let untitledName = NSLocalizedString("Untitled", comment: "Feed name")
 
 	// MARK: - Renamable
 
