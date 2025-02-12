@@ -61,12 +61,36 @@ final class SidebarViewController: UICollectionViewController {
 
 		super.viewDidLoad()
 
-		collectionView.backgroundColor = .systemRed
-		
 		title = "Feeds"
 		navigationController?.navigationBar.prefersLargeTitles = true
+
+		let appearance = UINavigationBarAppearance()
+		appearance.configureWithOpaqueBackground() // Ensures solid background
+		appearance.backgroundColor = AppColor.navigationBarBackground // Set your desired color
+		appearance.titleTextAttributes = [.foregroundColor: UIColor.white] // Regular title text
+		appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white] // Large title text
+		appearance.shadowColor = .clear
+		
+		// Apply the appearance settings
+		navigationController?.navigationBar.standardAppearance = appearance
+		navigationController?.navigationBar.scrollEdgeAppearance = appearance
+		navigationController?.navigationBar.compactAppearance = appearance // Optional
+		navigationController?.navigationBar.compactScrollEdgeAppearance = appearance
+
+		navigationController?.navigationBar.isTranslucent = false
+
+		if let subviews = navigationController?.navigationBar.subviews {
+			for subview in subviews {
+				if subview.frame.height < 2 {
+					subview.isHidden = true
+				}
+			}
+		}
+
 		navigationItem.rightBarButtonItem = filterButton
 
+		toolbar.barTintColor = AppColor.toolbarBackground
+		toolbar.isTranslucent = false
 		toolbar.translatesAutoresizingMaskIntoConstraints = false
 
 		view.addSubview(toolbar)

@@ -35,12 +35,15 @@ extension AppColor {
 extension AppColor {
 
 #if os(iOS)
+	static var barColor = UIColor(hex: "#708090")
 	static var controlBackground = color("controlBackgroundColor")
 	static var fullScreenBackground = color("fullScreenBackgroundColor")
 	static var iconBackground = color("iconBackgroundColor")
+	static var navigationBarBackground = barColor
 	static var secondaryAccent = color("secondaryAccentColor")
 	static var sectionHeader = color("sectionHeaderColor")
 	static var tickMark = color("tickMarkColor")
+	static var toolbarBackground = barColor
 	static var vibrantText = color("vibrantTextColor")
 #endif
 }

@@ -10,8 +10,9 @@ import Foundation
 
 public typealias ArticleSetBlock = (Set<Article>) -> Void
 
-public final class Article: Hashable {
+public final class Article: Hashable, Identifiable {
 
+	public let id: String // Combination of articleID and accountID — unique across all local databases and accounts (not persisted, though)
 	public let articleID: String // Unique database ID (possibly sync service ID)
 	public let accountID: String
 	public let feedID: String // Likely a URL, but not necessarily
@@ -44,11 +45,10 @@ public final class Article: Hashable {
 		self.authors = authors
 		self.status = status
 
-		if let articleID = articleID {
-			self.articleID = articleID
-		} else {
-			self.articleID = Article.calculatedArticleID(feedID: feedID, uniqueID: uniqueID)
-		}
+		let logicalArticleID = articleID ?? Article.calculatedArticleID(feedID: feedID, uniqueID: uniqueID)
+		self.articleID = logicalArticleID
+
+		self.id = "\(logicalArticleID):\(accountID)"
 	}
 
 	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {

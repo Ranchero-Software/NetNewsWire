@@ -78,6 +78,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		ArticleStatusSyncTimer.shared.update()
 #endif
 
+		configureAppearance()
+
 		// Create window and UI
 		mainWindowController = MainWindowController()
 
@@ -255,6 +257,37 @@ private extension AppDelegate {
 		if window.overrideUserInterfaceStyle != updatedStyle {
 			window.overrideUserInterfaceStyle = updatedStyle
 		}
+	}
+
+	// https://developer.apple.com/documentation/technotes/tn3106-customizing-uinavigationbar-appearance
+
+	func configureAppearance() {
+		let navigationBarAppearance = createNavigationBarAppearance()
+		let appearance = UINavigationBar.appearance()
+		appearance.scrollEdgeAppearance = navigationBarAppearance
+		appearance.compactAppearance = navigationBarAppearance
+		appearance.standardAppearance = navigationBarAppearance
+		appearance.compactScrollEdgeAppearance = navigationBarAppearance
+	}
+
+	func createNavigationBarAppearance() -> UINavigationBarAppearance {
+		let navigationBarAppearance = UINavigationBarAppearance()
+		navigationBarAppearance.configureWithOpaqueBackground()
+		navigationBarAppearance.backgroundColor = AppColor.navigationBarBackground
+		navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+		navigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+
+		let barButtonItemAppearance = UIBarButtonItemAppearance(style: .plain)
+		barButtonItemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+		barButtonItemAppearance.disabled.titleTextAttributes = [.foregroundColor: UIColor.lightText]
+		barButtonItemAppearance.highlighted.titleTextAttributes = [.foregroundColor: UIColor.label]
+		barButtonItemAppearance.focused.titleTextAttributes = [.foregroundColor: UIColor.white]
+
+		navigationBarAppearance.buttonAppearance = barButtonItemAppearance
+		navigationBarAppearance.backButtonAppearance = barButtonItemAppearance
+		navigationBarAppearance.doneButtonAppearance = barButtonItemAppearance
+
+		return navigationBarAppearance
 	}
 }
 
