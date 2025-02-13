@@ -10,8 +10,15 @@ import Foundation
 import UIKit
 import Account
 
+protocol SidebarViewControllerDelegate: AnyObject {
+
+	func sidebarViewController(_: SidebarViewController, didSelect: [any Item])
+}
+
 final class SidebarViewController: UICollectionViewController {
 
+	weak var delegate: SidebarViewControllerDelegate?
+	
 	private let tree = SidebarTree()
 
 	typealias DataSource = UICollectionViewDiffableDataSource<SectionID, ItemID>
@@ -63,20 +70,7 @@ final class SidebarViewController: UICollectionViewController {
 
 		title = "Feeds"
 		navigationController?.navigationBar.prefersLargeTitles = true
-
-		let appearance = UINavigationBarAppearance()
-		appearance.configureWithOpaqueBackground() // Ensures solid background
-		appearance.backgroundColor = AppColor.navigationBarBackground // Set your desired color
-		appearance.titleTextAttributes = [.foregroundColor: UIColor.white] // Regular title text
-		appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white] // Large title text
-		appearance.shadowColor = .clear
-		
-		// Apply the appearance settings
-		navigationController?.navigationBar.standardAppearance = appearance
-		navigationController?.navigationBar.scrollEdgeAppearance = appearance
-		navigationController?.navigationBar.compactAppearance = appearance // Optional
-		navigationController?.navigationBar.compactScrollEdgeAppearance = appearance
-
+		navigationController?.navigationBar.tintColor = .white
 		navigationController?.navigationBar.isTranslucent = false
 
 		if let subviews = navigationController?.navigationBar.subviews {
@@ -88,8 +82,10 @@ final class SidebarViewController: UICollectionViewController {
 		}
 
 		navigationItem.rightBarButtonItem = filterButton
-
+		navigationItem.largeTitleDisplayMode = .always
+		
 		toolbar.barTintColor = AppColor.toolbarBackground
+		toolbar.tintColor = .white
 		toolbar.isTranslucent = false
 		toolbar.translatesAutoresizingMaskIntoConstraints = false
 
@@ -124,24 +120,37 @@ final class SidebarViewController: UICollectionViewController {
 		collectionView.verticalScrollIndicatorInsets.bottom = toolbarHeight
 	}
 
-	func updateVisibleRows() {
+	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-		var itemIDsToReload = [ItemID]()
-
-		for indexPath in collectionView.indexPathsForVisibleItems {
-			if let itemID = dataSource.itemIdentifier(for: indexPath) {
-				itemIDsToReload.append(itemID)
-			}
+		guard let itemID = dataSource.itemIdentifier(for: indexPath) else {
+			assertionFailure("Expected itemID for indexPath \(indexPath).")
+			return
+		}
+		guard let item = tree.item(with: itemID) else {
+			assertionFailure("Expected item for itemID \(itemID).")
+			return
 		}
 
-		if !itemIDsToReload.isEmpty {
-			var snapshot = dataSource.snapshot()
-			snapshot.reloadItems(itemIDsToReload)
-			dataSource.apply(snapshot, animatingDifferences: false)
-		}
+		delegate?.sidebarViewController(self, didSelect: [item])
+	}
+}
+
+// MARK: - Actions
+
+// TODO: Implement actions
+
+extension SidebarViewController {
+
+	@objc func toggleFilter(_ sender: Any) {
 	}
 
-	// MARK: - Notifications
+	@objc func showSettings(_ sender: Any?) {
+	}
+}
+
+// MARK: - Notifications
+
+private extension SidebarViewController {
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		updateVisibleRows()
@@ -160,18 +169,7 @@ final class SidebarViewController: UICollectionViewController {
 	}
 }
 
-// MARK: - Actions
-
-// TODO: Implement actions
-
-extension SidebarViewController {
-
-	@objc func toggleFilter(_ sender: Any) {
-	}
-
-	@objc func showSettings(_ sender: Any?) {
-	}
-}
+// MARK: - Private
 
 private extension SidebarViewController {
 
@@ -251,5 +249,22 @@ private extension SidebarViewController {
 		}
 
 		dataSource.apply(snapshot, animatingDifferences: true)
+	}
+
+	func updateVisibleRows() {
+
+		var itemIDsToReload = [ItemID]()
+
+		for indexPath in collectionView.indexPathsForVisibleItems {
+			if let itemID = dataSource.itemIdentifier(for: indexPath) {
+				itemIDsToReload.append(itemID)
+			}
+		}
+
+		if !itemIDsToReload.isEmpty {
+			var snapshot = dataSource.snapshot()
+			snapshot.reloadItems(itemIDsToReload)
+			dataSource.apply(snapshot, animatingDifferences: false)
+		}
 	}
 }

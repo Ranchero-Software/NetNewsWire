@@ -15,7 +15,7 @@ final class MainWindowController {
 
 	let rootSplitViewController: RootSplitViewController
 	let sidebarViewController = SidebarViewController()
-	let timelineViewController = TimelineViewController()
+	let timelineViewController = TimelineCollectionViewController()
 	let articleViewController = ArticleViewController()
 	
 	let coordinator: SceneCoordinator
@@ -35,11 +35,12 @@ final class MainWindowController {
 		rootSplitViewController.delegate = coordinator
 		self.rootSplitViewController = rootSplitViewController
 
+		sidebarViewController.delegate = self
+
 		window.rootViewController = rootSplitViewController
 
 		window.tintColor = AppColor.accent
 		updateUserInterfaceStyle()
-		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
 
 		window.makeKeyAndVisible()
 
@@ -73,6 +74,21 @@ final class MainWindowController {
 		coordinator.handle(response)
 	}
 }
+
+// MARK: - SidebarViewControllerDelegate
+
+extension MainWindowController: SidebarViewControllerDelegate {
+
+	func sidebarViewController(_: SidebarViewController, didSelect items: [any Item]) {
+		timelineViewController.items = items
+		rootSplitViewController.show(.supplementary)
+	}
+}
+
+// MARK: - UISplitViewControllerDelegate
+
+
+// MARK: - Private
 
 private extension MainWindowController {
 

@@ -70,6 +70,14 @@ final class TimelineArticlesManager {
 
 final class TimelineCollectionViewController: UICollectionViewController {
 
+	var items = [any Item]() {
+		didSet {
+			updateTitle()
+		}
+	}
+
+	private static var defaultTitle = "Articles" // ToDo: localize
+
 	private let timelineArticlesManager = TimelineArticlesManager()
 
 	typealias DataSource = UICollectionViewDiffableDataSource<TimelineSectionID, TimelineArticleID>
@@ -90,7 +98,8 @@ final class TimelineCollectionViewController: UICollectionViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		title = "Articles"
+		navigationItem.largeTitleDisplayMode = .never
+		updateTitle()
 
 		collectionView.register(TimelineCell.self, forCellWithReuseIdentifier: TimelineCell.reuseIdentifier)
 
@@ -121,5 +130,9 @@ private extension TimelineCollectionViewController {
 		snapshot.appendItems(articleIDs, toSection: oneAndOnlySectionID)
 
 		dataSource.apply(snapshot, animatingDifferences: true)
+	}
+
+	func updateTitle() {
+		title = items.first?.title ?? Self.defaultTitle
 	}
 }

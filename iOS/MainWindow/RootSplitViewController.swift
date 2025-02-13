@@ -14,17 +14,17 @@ final class RootSplitViewController: UISplitViewController {
 	var coordinator: SceneCoordinator! {
 		didSet {
 //			sidebarViewController.coordinator = coordinator
-			timelineViewController.coordinator = coordinator
+//			timelineViewController.coordinator = coordinator
 			articleViewController.coordinator = coordinator
 		}
 	}
 
 	private let sidebarViewController: SidebarViewController
-	private let timelineViewController: TimelineViewController
+	private let timelineViewController: TimelineCollectionViewController
 	private let articleViewController: ArticleViewController
 
 	init(sidebarViewController: SidebarViewController,
-		 timelineViewController: TimelineViewController,
+		 timelineViewController: TimelineCollectionViewController,
 		 articleViewController: ArticleViewController) {
 
 		self.sidebarViewController = sidebarViewController

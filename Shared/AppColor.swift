@@ -35,7 +35,7 @@ extension AppColor {
 extension AppColor {
 
 #if os(iOS)
-	static var barColor = UIColor(hex: "#708090")
+	static var barColor = UIColor(hex: "#7080A0")
 	static var controlBackground = color("controlBackgroundColor")
 	static var fullScreenBackground = color("fullScreenBackgroundColor")
 	static var iconBackground = color("iconBackgroundColor")
