@@ -56,7 +56,7 @@ public enum FetchType {
 	case unread(_: Int? = nil)
 	case today(_: Int? = nil)
 	case folder(Folder, Bool)
-	case feed(Feed)
+	case feed(Feed) // TODO: use feedID instead of Feed
 	case articleIDs(Set<String>)
 	case search(String)
 	case searchWithArticleIDs(String, Set<String>)
@@ -668,6 +668,20 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return try fetchArticlesMatching(searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
 			return try fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+		}
+	}
+
+	@MainActor public func fetchArticles(_ fetchType: FetchType) async throws -> Set<Article> {
+		assert(Thread.isMainThread)
+		return try await withCheckedThrowingContinuation { continuation in
+			fetchArticlesAsync(fetchType) { articleSetResult in
+				switch articleSetResult {
+				case .success(let articles):
+					continuation.resume(returning: articles)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
 		}
 	}
 
