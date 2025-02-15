@@ -8,7 +8,10 @@
 
 import Foundation
 import UIKit
+import Account
 import Articles
+import RSCore
+import RSDatabase
 
 typealias TimelineSectionID = Int
 typealias TimelineArticleID = String
@@ -40,8 +43,18 @@ final class TimelineCell: UICollectionViewCell {
 		if let article {
 			titleLabel.text = article.title
 		} else {
-			titleLabel.text = ""
+			titleLabel.text = "Untitled"
 		}
+	}
+
+	// MARK: - UIView
+
+	override func layoutSubviews() {
+		var r = titleLabel.frame
+		r.origin.x = 16
+		r.size.width = contentView.bounds.width - 32
+		r.size.height = contentView.bounds.height
+		titleLabel.setFrameIfNotEqual(r)
 	}
 }
 
@@ -73,12 +86,15 @@ final class TimelineCollectionViewController: UICollectionViewController {
 	var items = [any Item]() {
 		didSet {
 			updateTitle()
+			updateArticles()
 		}
 	}
 
-	private static var defaultTitle = "Articles" // ToDo: localize
+	private static var defaultTitle = "Articles" // TODO: localize
+	private static var multipleItemsTitle = "Multiple" // TODO: localize
 
 	private let timelineArticlesManager = TimelineArticlesManager()
+	private var fetchArticlesTask: Task<Void, Never>?
 
 	typealias DataSource = UICollectionViewDiffableDataSource<TimelineSectionID, TimelineArticleID>
 	private lazy var dataSource = createDataSource()
@@ -129,10 +145,41 @@ private extension TimelineCollectionViewController {
 		let articleIDs = timelineArticlesManager.articles.map { $0.id }
 		snapshot.appendItems(articleIDs, toSection: oneAndOnlySectionID)
 
-		dataSource.apply(snapshot, animatingDifferences: true)
+		dataSource.apply(snapshot, animatingDifferences: false)
 	}
 
 	func updateTitle() {
-		title = items.first?.title ?? Self.defaultTitle
+		if items.count < 0 {
+			title = Self.defaultTitle
+		} else if items.count == 1 {
+			title = items.first?.title ?? Self.defaultTitle
+		} else {
+			title = Self.multipleItemsTitle
+		}
+	}
+
+	func updateArticles() {
+		if fetchArticlesTask != nil {
+			fetchArticlesTask?.cancel()
+		}
+
+		// TODO: handle multiple items, handle all types of Item
+		guard let item = items.first as? SidebarFeed,
+			  let feed = item.feed,
+			  let account = feed.account else {
+			return
+		}
+
+		fetchArticlesTask = Task { @MainActor in
+			let fetchType = FetchType.feed(feed)
+			let fetchedArticles = try? await account.fetchArticles(fetchType)
+
+			if Task.isCancelled { return }
+
+			let updatedArticles = fetchedArticles ?? Set([Article]())
+			timelineArticlesManager.articles = Array(updatedArticles)
+
+			applySnapshot()
+		}
 	}
 }
