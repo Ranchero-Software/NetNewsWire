@@ -15,11 +15,12 @@ public final class AppConfig {
 	public static let cacheFolder: URL = {
 
 		let folderURL: URL
+		let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 
+		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
 		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true) {
-			folderURL = userCacheFolder
+			folderURL = userCacheFolder.appendingPathComponent(bundleIdentifier, isDirectory: true)
 		} else {
-			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 			let tempFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
 			folderURL = URL(fileURLWithPath: tempFolder, isDirectory: true)
 			createFolderIfNecessary(folderURL)
