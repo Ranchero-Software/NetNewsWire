@@ -27,16 +27,14 @@ struct CacheCleaner {
 				if reachability.connection != .unavailable {
 
 					let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-					let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
-					let imagesFolderURL = tempDir.appendingPathComponent("Images")
-					let feedURLToIconURL = tempDir.appendingPathComponent("FeedURLToIconURLCache.plist")
-					let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
-					let homePagesWithNoIconURL = tempDir.appendingPathComponent("HomePagesWithNoIconURLCache.plist")
+						.appendingPathComponent((Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String), isDirectory: true)
 
-					for tempItem in [faviconsFolderURL, imagesFolderURL, feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL] {
+					for tempItem in ["Favicons", "Images", "FeedIcons"] {
+						let tempPath = tempDir.appendingPathComponent(tempItem)
+
 						do {
-							os_log(.info, log: self.log, "Removing cache file: %@", tempItem.absoluteString)
-							try FileManager.default.removeItem(at: tempItem)
+							os_log(.info, log: self.log, "Removing cache file: %@", tempPath.absoluteString)
+							try FileManager.default.removeItem(at: tempPath)
 						} catch {
 							os_log(.error, log: self.log, "Could not delete cache file: %@", error.localizedDescription)
 						}
