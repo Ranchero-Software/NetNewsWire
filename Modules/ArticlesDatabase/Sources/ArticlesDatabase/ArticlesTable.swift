@@ -107,6 +107,16 @@ final class ArticlesTable: DatabaseTable {
 	func fetchStarredArticlesCount(_ feedIDs: Set<String>) throws -> Int {
 		return try fetchArticlesCount { self.fetchStarredArticlesCount(feedIDs, $0) }
 	}
+	
+	// MARK: - Fetching Custom Smart Feed Articles
+	
+	func fetchArticlesWithCustomSmartFeed(_ clause: String, _ parameters: [String]) throws -> Set<Article> {
+		return try fetchArticles { self.fetchArticlesWithCustomSmartFeed(clause, parameters, $0) }
+	}
+	
+	func fetchArticlesWithCustomSmartFeedAsync(_ clause: String, _ parameters: [String], _ completion: @escaping ArticleSetResultBlock) {
+		fetchArticlesAsync({ self.fetchArticlesWithCustomSmartFeed(clause, parameters, $0) }, completion)
+	}
 
 	// MARK: - Fetching Search Articles
 
@@ -419,6 +429,36 @@ final class ArticlesTable: DatabaseTable {
 				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
 				let parameters = Array(feedIDs) as [Any]
+
+				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
+
+				DispatchQueue.main.async {
+					completion(.success(unreadCount))
+				}
+			}
+
+			switch databaseResult {
+			case .success(let database):
+				makeDatabaseCalls(database)
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(.failure(databaseError))
+				}
+			}
+		}
+	}
+	
+	func fetchUnreadCountForCustomSmartFeed(_ clause: String, _ parameters: [String], _ completion: @escaping SingleUnreadCountCompletionBlock) {
+		if parameters.isEmpty {
+			completion(.success(0))
+			return
+		}
+
+		queue.runInDatabase { databaseResult in
+
+			func makeDatabaseCalls(_ database: FMDatabase) {
+				let sql = "select count(*) from articles natural join statuses where \(clause) and read=0 and starred=1;"
+				let parameters = Array(parameters) as [Any]
 
 				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
@@ -884,6 +924,14 @@ private extension ArticlesTable {
         return fetchArticleCountsWithWhereClause(database, whereClause: whereClause, parameters: parameters)
     }
 
+	func fetchArticlesWithCustomSmartFeed(_ clause: String, _ parameters: [String], _ database: FMDatabase) -> Set<Article> {
+		if parameters.isEmpty {
+			return Set<Article>()
+		}
+		let parameters = parameters.map { $0 as AnyObject }
+		return fetchArticlesWithWhereClause(database, whereClause: clause, parameters: parameters)
+	}
+	
 	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
 		let articles = fetchArticlesMatching(searchString, database)
 		// TODO: include the feedIDs in the SQL rather than filtering here.

@@ -115,6 +115,13 @@ extension AppImage {
 		let coloredImage = image.tinted(with: preferredColor)
 		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}()
+	
+	static var customSmartFeed: IconImage = {
+		let image = systemImage("testtube.2")
+		let preferredColor = NSColor.magenta
+		let coloredImage = image.tinted(with: preferredColor)
+		return IconImage(coloredImage, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
+	}()
 
 	static var unreadFeed: IconImage = {
 		let image = systemImage("largecircle.fill.circle")

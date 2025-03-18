@@ -1295,6 +1295,11 @@ private extension MainWindowController {
 		newFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
 		newFeedItem.action = Selector(("showAddFeedWindow:"))
 		menu.addItem(newFeedItem)
+		
+		let newCustomSmartFeedItem = NSMenuItem()
+		newCustomSmartFeedItem.title = NSLocalizedString("New Smart Feed…", comment: "New Smart Feed")
+		newCustomSmartFeedItem.action = Selector(("showAddCustomSmartFeedWindow:"))
+		menu.addItem(newCustomSmartFeedItem)
 
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")

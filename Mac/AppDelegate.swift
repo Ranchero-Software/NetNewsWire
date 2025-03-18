@@ -74,6 +74,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	private var mainWindowControllers = [MainWindowController]()
 	private var preferencesWindowController: NSWindowController?
 	private var addFeedController: AddFeedController?
+	private var addCustomSmartFeedController: AddCustomSmartFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var importOPMLController: ImportOPMLWindowController?
 	private var exportOPMLController: ExportOPMLWindowController?
@@ -119,6 +120,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 		addFeedController = AddFeedController(hostWindow: window)
 		addFeedController?.showAddFeedSheet(urlString, name, account, folder)
+	}
+	
+	func showAddCustomSmartFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
+		addCustomSmartFeedController = AddCustomSmartFeedController(hostWindow: window)
+		addCustomSmartFeedController?.showAddFeedSheet(urlString, name, account, folder)
 	}
 
 	// MARK: - NSApplicationDelegate
@@ -468,6 +474,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, account: account, folder: folder)
 	}
+	
+	// MARK: Add Smart Feed
+	func addCustomSmartFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
+		createAndShowMainWindowIfNecessary()
+
+		if mainWindowController!.isDisplayingSheet {
+			return
+		}
+
+		showAddCustomSmartFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, account: account, folder: folder)
+	}
 
 	// MARK: - Dock Badge
 	@objc func updateDockBadge() {
@@ -499,6 +516,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {
 		addFeed(nil)
+	}
+	
+	@IBAction func showAddCustomSmartFeedWindow(_ sender: Any?) {
+		addCustomSmartFeed(nil)
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {

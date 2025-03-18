@@ -73,6 +73,7 @@ protocol SidebarDelegate: AnyObject {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddCustomSmartFeed(_:)), name: .UserDidAddCustomSmartFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
@@ -189,6 +190,13 @@ protocol SidebarDelegate: AnyObject {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
+	}
+	
+	@objc func userDidAddCustomSmartFeed(_ notification: Notification) {
+		guard let customSmartFeed = notification.userInfo?[UserInfoKey.customSmartFeed] else {
+			return
+		}
+		revealAndSelectRepresentedObject(customSmartFeed as AnyObject)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {

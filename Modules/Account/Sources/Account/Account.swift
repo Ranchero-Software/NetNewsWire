@@ -60,6 +60,7 @@ public enum FetchType {
 	case articleIDs(Set<String>)
 	case search(String)
 	case searchWithArticleIDs(String, Set<String>)
+	case customSmartFeed(clause: String, parameters: [String])
 }
 
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
@@ -668,6 +669,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return try fetchArticlesMatching(searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
 			return try fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+		case .customSmartFeed(let clause, let parameters):
+			return try fetchArticlesWithCustomSmartFeed(clause, parameters)
 		}
 	}
 
@@ -693,6 +696,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fetchArticlesMatchingAsync(searchString, completion)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
 			return fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
+		case .customSmartFeed(let clause, let parameters):
+			return fetchArticlesWithCustomSmartFeedAsync(clause, parameters, completion)
 		}
 	}
 
@@ -702,6 +707,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func fetchUnreadCountForStarredArticles(_ completion: @escaping SingleUnreadCountCompletionBlock) {
 		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), completion: completion)
+	}
+	
+	public func fetchUnreadCountForCustomSmartFeed(_ clause: String, _ parameters: [String], _ completion: @escaping SingleUnreadCountCompletionBlock) {
+		database.fetchUnreadCountCustomSmartFeed(clause, parameters, completion: completion)
 	}
 
     public func fetchCountForStarredArticles() throws -> Int {
@@ -1091,6 +1100,10 @@ private extension Account {
 	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
 		return try database.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
 	}
+	
+	func fetchArticlesWithCustomSmartFeed(_ clause: String, _ parameters: [String]) throws -> Set<Article> {
+		return try database.fetchArticlesWithCustomSmartFeed(clause, parameters)
+	}
 
 	func fetchArticlesMatchingAsync(_ searchString: String, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs(), completion)
@@ -1098,6 +1111,10 @@ private extension Account {
 
 	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
+	}
+	
+	func fetchArticlesWithCustomSmartFeedAsync(_ clause: String, _ parameters: [String], _ completion: @escaping ArticleSetResultBlock) {
+		database.fetchArticlesWithCustomSmartFeedAsync(clause, parameters, completion)
 	}
 
 	func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {

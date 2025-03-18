@@ -11,6 +11,7 @@ import Foundation
 struct UserInfoKey {
 
 	static let feed = "feed"
+	static let customSmartFeed = "customSmartFeed"
 	static let url = "url"
 	static let articlePath = "articlePath"
 	static let feedIdentifier = "feedIdentifier"

@@ -125,6 +125,10 @@ public final class ArticlesDatabase {
 	public func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
 		return try articlesTable.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
 	}
+	
+	public func fetchArticlesWithCustomSmartFeed(_ clause: String, _ parameters: [String]) throws -> Set<Article> {
+		return try articlesTable.fetchArticlesWithCustomSmartFeed(clause, parameters)
+	}
 
 	// MARK: - Fetching Articles Async
 
@@ -158,6 +162,10 @@ public final class ArticlesDatabase {
 
 	public func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
 		articlesTable.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
+	}
+	
+	public func fetchArticlesWithCustomSmartFeedAsync(_ clause: String, _ parameters: [String], _ completion: @escaping ArticleSetResultBlock) {
+		articlesTable.fetchArticlesWithCustomSmartFeedAsync(clause, parameters, completion)
 	}
 
 	// MARK: - Unread Counts
@@ -203,6 +211,10 @@ public final class ArticlesDatabase {
 
 	public func fetchStarredAndUnreadCount(for feedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
 		articlesTable.fetchStarredAndUnreadCount(feedIDs, completion)
+	}
+	
+	public func fetchUnreadCountCustomSmartFeed(_ clause: String, _ parameters: [String], completion: @escaping SingleUnreadCountCompletionBlock) {
+		articlesTable.fetchUnreadCountForCustomSmartFeed(clause, parameters, completion)
 	}
 
 	// MARK: - Saving, Updating, and Deleting Articles
