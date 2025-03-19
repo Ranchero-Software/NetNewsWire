@@ -19,9 +19,11 @@ struct CreateCustomSmartFeedView: View {
 	init(
 		feedName: String = "",
 		conjunction: Bool = false,
-		expressions: [CustomSmartFeedExpression] = [
-			.init(field: .title, constraint: .has, value: "")
-		],
+		expressions: [CustomSmartFeedExpression] = [(
+			field: CustomSmartFeedField.text(.feedID),
+			constraint: CustomSmartFeedConstraint.textHas,
+			value: CustomSmartFeedValue.text("")
+		)],
 		dismiss: @escaping (Result?) -> Void)
 	{
 		self.feedName = feedName
@@ -49,7 +51,7 @@ struct CreateCustomSmartFeedView: View {
 			bottomButtons
 				.padding()
 		}
-		.frame(width: 620, height: 400)
+		.frame(width: 700, height: 400)
 	}
 	
 	var nameField: some View {
@@ -77,33 +79,102 @@ struct CreateCustomSmartFeedView: View {
 	func expressionRow(at index: Int) -> some View {
 		HStack {
 			Picker("Field", selection: $expressions[index].field) {
-				Text("Feed ID").tag(CustomSmartFeedExpression.Field.feedID)
-				Text("Title").tag(CustomSmartFeedExpression.Field.title)
-				Text("Content HTML").tag(CustomSmartFeedExpression.Field.contentHTML)
-				Text("Content Text").tag(CustomSmartFeedExpression.Field.contentText)
-				Text("External URL").tag(CustomSmartFeedExpression.Field.externalURL)
+				ForEach(CustomSmartFeedField.TextField.allCases) { field in
+					Text(field.rawValue).tag(CustomSmartFeedField.text(field))
+				}
+				Divider()
+				ForEach(CustomSmartFeedField.DateField.allCases) { field in
+					Text(field.rawValue).tag(CustomSmartFeedField.date(field))
+				}
+				Divider()
+				ForEach(CustomSmartFeedField.BoolField.allCases) { field in
+					Text(field.rawValue).tag(CustomSmartFeedField.bool(field))
+				}
 			}
 			.frame(width: 160)
+			.onChange(of: expressions[index].field) { oldValue, newValue in
+				// update rest of form based on field type
+				switch (oldValue, newValue) {
+				case (.text, .text), (.date, .date), (.bool, .bool):
+					// no change - no update
+					return
+				case (_, .text):
+					expressions[index].constraint = .textHas
+					expressions[index].value = .text("")
+				case (_, .date):
+					expressions[index].constraint = .dateExact
+					expressions[index].value = .date(.now)
+				case (_, .bool):
+					expressions[index].constraint = .boolExact
+					expressions[index].value = .bool(true)
+				}
+			}
 			
 			Picker("", selection: $expressions[index].constraint) {
-				   Text("has").tag(CustomSmartFeedExpression.Constraint.has)
-				   Text("doesn't have").tag(CustomSmartFeedExpression.Constraint.hasNot)
-				   Text("starts with").tag(CustomSmartFeedExpression.Constraint.startsWith)
-				   Text("ends with").tag(CustomSmartFeedExpression.Constraint.endsWith)
-				   Text("is exactly").tag(CustomSmartFeedExpression.Constraint.exact)
-			   }
-			   .frame(width: 120)
+				switch expressions[index].field {
+				case .text:
+					ForEach(CustomSmartFeedConstraint.textConstraints) { constraint in
+						Text(constraint.rawValue).tag(constraint)
+					}
+				case .date:
+					ForEach(CustomSmartFeedConstraint.dateConstraints) { constraint in
+						Text(constraint.rawValue).tag(constraint)
+					}
+				case .bool:
+					ForEach(CustomSmartFeedConstraint.boolConstraints) { constraint in
+						Text(constraint.rawValue).tag(constraint)
+					}
+				}
+			}
+			.frame(width: 120)
+			.onChange(of: expressions[index].constraint) { oldValue, newValue in
+				// update value type if constraint changes
+				if oldValue.valueType != newValue.valueType {
+					expressions[index].value = newValue.valueType
+				}
+			}
 			
-			TextField("", text: $expressions[index].value)
-				  .textFieldStyle(.roundedBorder)
+			switch expressions[index].value {
+			case .text(let value):
+				TextField("", text: Binding(
+					get: { value },
+					set: { expressions[index].value = .text($0) }
+				))
+				.textFieldStyle(.roundedBorder)
+			case .date(let value):
+				DatePicker("", selection: Binding(
+					get: { value },
+					set: { expressions[index].value = .date($0) }
+				), displayedComponents: .date)
+					.fixedSize()
+			case .dateRange(let date1, let date2):
+				DatePicker("", selection: Binding(
+					get: { date1 },
+					set: { expressions[index].value = .dateRange($0, date2) }
+				), displayedComponents: .date)
+					.fixedSize()
+				Text("and")
+				DatePicker("", selection: Binding(
+					get: { date2 },
+					set: { expressions[index].value = .dateRange(date1, $0) }
+				), displayedComponents: .date)
+					.fixedSize()
+			case .bool(let value):
+				Toggle("", isOn: Binding(
+					get: { value },
+					set: { expressions[index].value = .bool($0) }
+				))
+			}
 			
 			Spacer()
 			
 			Button(
 				action: {
-					expressions.append(
-						.init(field: .title, constraint: .has, value: "")
-					)
+					expressions.append((
+						field: CustomSmartFeedField.text(.feedID),
+						constraint: CustomSmartFeedConstraint.textHas,
+						value: CustomSmartFeedValue.text("")
+					))
 				},
 				label: { Image(systemName: "plus.circle") }
 			)
@@ -135,6 +206,11 @@ struct CreateCustomSmartFeedView: View {
 
 #Preview {
 	CreateCustomSmartFeedView(
+		expressions: [(
+			field: .date(.datePublished),
+			constraint: .dateBetween,
+			value: .dateRange(.distantPast, .distantFuture)
+		)],
 		dismiss: { _ in }
 	)
 }

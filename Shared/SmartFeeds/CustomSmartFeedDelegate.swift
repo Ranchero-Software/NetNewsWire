@@ -20,10 +20,8 @@ struct CustomSmartFeedDelegate: SmartFeedDelegate {
 
 	var nameForDisplay: String { feedName }
 	var fetchType: FetchType {
-		let clause = expressions.map { exp in
-				  "(\(exp.field.rawValue) \(exp.constraint.queryFragment))"
-			  }.joined(separator: conjunction ? " AND " : " OR ")
-			  let parameters = expressions.map(\.value)
+		let clause = expressions.query(conjunction: conjunction)
+		let parameters = expressions.parameters
 		return .customSmartFeed(clause: clause, parameters: parameters)
 	}
 	var smallIcon: IconImage? {
@@ -31,10 +29,8 @@ struct CustomSmartFeedDelegate: SmartFeedDelegate {
 	}
 
 	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
-		let clause = expressions.map { exp in
-				  "(\(exp.field.rawValue) \(exp.constraint.queryFragment))"
-			  }.joined(separator: conjunction ? " AND " : " OR ")
-			  let parameters = expressions.map(\.value)
+		let clause = expressions.query(conjunction: conjunction)
+		let parameters = expressions.parameters
 		account.fetchUnreadCountForCustomSmartFeed(clause, parameters, completion)
 	}
 }

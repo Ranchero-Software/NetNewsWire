@@ -196,6 +196,7 @@ protocol SidebarDelegate: AnyObject {
 		guard let customSmartFeed = notification.userInfo?[UserInfoKey.customSmartFeed] else {
 			return
 		}
+		rebuildTreeAndReloadDataIfNeeded()
 		revealAndSelectRepresentedObject(customSmartFeed as AnyObject)
 	}
 
