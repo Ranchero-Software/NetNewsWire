@@ -316,8 +316,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
-		guard filename.hasSuffix(ArticleTheme.nnwThemeSuffix) else { return false }
-		importTheme(filename: filename)
+		guard filename.hasSuffix(ArticleTheme.nnwThemeSuffix) else {
+			return false
+		}
+
+		let url = URL(filePath: filename)
+		importTheme(url: url)
 		return true
 	}
 	
@@ -380,7 +384,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return
 		}
 		DispatchQueue.main.async {
-			self.importTheme(filename: url.path)
+			self.importTheme(url: url)
 		}
 	}
 
@@ -775,11 +779,11 @@ internal extension AppDelegate {
 		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
 	}
 	
-	func importTheme(filename: String) {
+	func importTheme(url: URL) {
 		guard let window = mainWindowController?.window else { return }
 		
 		do {
-			let theme = try ArticleTheme(path: filename, isAppTheme: false)
+			let theme = try ArticleTheme(url: url, isAppTheme: false)
 			let alert = NSAlert()
 			alert.alertStyle = .informational
 
@@ -826,7 +830,7 @@ internal extension AppDelegate {
 				
 			func importTheme() {
 				do {
-					try ArticleThemesManager.shared.importTheme(filename: filename)
+					try ArticleThemesManager.shared.importTheme(filename: url.path)
 					confirmImportSuccess(themeName: theme.name)
 				} catch {
 					NSApplication.shared.presentError(error)
@@ -836,7 +840,7 @@ internal extension AppDelegate {
 			alert.beginSheetModal(for: window) { result in
 				if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 
-					if ArticleThemesManager.shared.themeExists(filename: filename) {
+					if ArticleThemesManager.shared.themeExists(filename: url.path) {
 						let alert = NSAlert()
 						alert.alertStyle = .warning
 
@@ -857,7 +861,7 @@ internal extension AppDelegate {
 				}
 			}
 		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error, "path": filename])
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error, "path": url.path])
 		}
 	}
 	
