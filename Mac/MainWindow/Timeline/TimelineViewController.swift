@@ -665,9 +665,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		self.fontSize = AppDefaults.shared.timelineFontSize
-		self.sortDirection = AppDefaults.shared.timelineSortDirection
-		self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		Task { @MainActor in
+			self.fontSize = AppDefaults.shared.timelineFontSize
+			self.sortDirection = AppDefaults.shared.timelineSortDirection
+			self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		}
 	}
 	
 	// MARK: - Reloading Data

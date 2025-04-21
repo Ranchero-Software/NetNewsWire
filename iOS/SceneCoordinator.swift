@@ -493,8 +493,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		self.sortDirection = AppDefaults.shared.timelineSortDirection
-		self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		Task { @MainActor in
+			self.sortDirection = AppDefaults.shared.timelineSortDirection
+			self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		}
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {

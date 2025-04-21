@@ -508,7 +508,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
 				self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 				self.iconSize = AppDefaults.shared.timelineIconSize
@@ -518,7 +518,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			self.updateToolbar()
 		}
 	}
-	
+
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		reloadAllVisibleCells()
 	}

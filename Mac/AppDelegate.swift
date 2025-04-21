@@ -363,15 +363,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		updateSortMenuItems()
-		updateGroupByFeedMenuItem()
-		
-		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
-			refreshTimer?.update()
-			lastRefreshInterval = AppDefaults.shared.refreshInterval
+		Task { @MainActor in
+			updateSortMenuItems()
+			updateGroupByFeedMenuItem()
+
+			if lastRefreshInterval != AppDefaults.shared.refreshInterval {
+				refreshTimer?.update()
+				lastRefreshInterval = AppDefaults.shared.refreshInterval
+			}
+
+			updateDockBadge()
 		}
-		
-		updateDockBadge()
 	}
 	
 	@objc func didWakeNotification(_ note: Notification) {
@@ -504,8 +506,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	// MARK: - Dock Badge
 	@objc func updateDockBadge() {
-		let label = unreadCount > 0 ? "\(unreadCount)" : ""
-		NSApplication.shared.dockTile.badgeLabel = label
+		Task { @MainActor in
+			let label = unreadCount > 0 ? "\(unreadCount)" : ""
+			NSApplication.shared.dockTile.badgeLabel = label
+		}
 	}
 
 	// MARK: - Actions
@@ -768,13 +772,13 @@ internal extension AppDelegate {
 		inspectorWindowController?.saveState()
 	}
 
-	func updateSortMenuItems() {
+	@MainActor func updateSortMenuItems() {
 		let sortByNewestOnTop = AppDefaults.shared.timelineSortDirection == .orderedDescending
 		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
 		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
 	}
 	
-	func updateGroupByFeedMenuItem() {
+	@MainActor func updateGroupByFeedMenuItem() {
 		let groupByFeedEnabled = AppDefaults.shared.timelineGroupByFeed
 		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
 	}

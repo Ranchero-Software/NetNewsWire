@@ -50,7 +50,7 @@ final class AdvancedPreferencesViewController: NSViewController {
 
 private extension AdvancedPreferencesViewController {
 
-	func updateUI() {
+	@MainActor func updateUI() {
 		if wantsTestBuilds {
 			testBuildsButton.state = .on
 		}

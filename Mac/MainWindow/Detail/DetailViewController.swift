@@ -159,9 +159,11 @@ private extension DetailViewController {
 	}
 
 	@objc func userDefaultsDidChange(_ : Notification) {
-		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
-			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
-			createNewWebViewsAndRestoreState()
+		Task { @MainActor in
+			if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
+				isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+				createNewWebViewsAndRestoreState()
+			}
 		}
 	}
 

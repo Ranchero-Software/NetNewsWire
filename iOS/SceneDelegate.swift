@@ -234,22 +234,19 @@ private extension SceneDelegate {
 	}
 	
 	@objc func userDefaultsDidChange() {
-		updateUserInterfaceStyle()
-	}
-	
-	func updateUserInterfaceStyle() {
-		DispatchQueue.main.async {
-			switch AppDefaults.userInterfaceColorPalette {
-			case .automatic:
-				self.window?.overrideUserInterfaceStyle = .unspecified
-			case .light:
-				self.window?.overrideUserInterfaceStyle = .light
-			case .dark:
-				self.window?.overrideUserInterfaceStyle = .dark
-			}
+		Task {
+			updateUserInterfaceStyle()
 		}
 	}
-	
-	
-	
+
+	@MainActor func updateUserInterfaceStyle() {
+		switch AppDefaults.userInterfaceColorPalette {
+		case .automatic:
+			self.window?.overrideUserInterfaceStyle = .unspecified
+		case .light:
+			self.window?.overrideUserInterfaceStyle = .light
+		case .dark:
+			self.window?.overrideUserInterfaceStyle = .dark
+		}
+	}
 }
