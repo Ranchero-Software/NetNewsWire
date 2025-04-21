@@ -75,7 +75,9 @@ final class TimelineContainerViewController: NSViewController {
 	// MARK: - Notifications
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		updateViewOptionsPopUpButton()
+		Task {
+			updateViewOptionsPopUpButton()
+		}
 	}
 	
 	// MARK: - API
@@ -178,7 +180,7 @@ private extension TimelineContainerViewController {
 		return .regular // Should never get here.
 	}
 	
-	func updateViewOptionsPopUpButton() {
+	@MainActor func updateViewOptionsPopUpButton() {
 		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
 			newestToOldestMenuItem.state = .off
 			oldestToNewestMenuItem.state = .on
