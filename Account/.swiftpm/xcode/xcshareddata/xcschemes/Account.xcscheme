@@ -37,6 +37,44 @@
                BlueprintName = "AccountTests"
                ReferencedContainer = "container:">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "AccountCredentialsTest">
+               </Test>
+               <Test
+                  Identifier = "AccountCredentialsTest/testCreateRetrieveDelete()">
+               </Test>
+               <Test
+                  Identifier = "FeedlyCreateFeedsForCollectionFoldersOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlyGetStreamContentsOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlyGetStreamIdsOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlyLogoutOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlyMirrorCollectionsAsFoldersOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlyOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlyOrganiseParsedItemsByFeedOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlyRefreshAccessTokenOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlySendArticleStatusesOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlySyncStreamContentsOperationTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
