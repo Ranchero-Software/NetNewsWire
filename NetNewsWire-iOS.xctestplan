@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "46DF7BE7-2FD7-4D94-A536-30BB8603C906",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:NetNewsWire.xcodeproj",
+      "identifier" : "840D617B2029031C009BC708",
+      "name" : "NetNewsWire-iOS"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:NetNewsWire.xcodeproj",
+        "identifier" : "518B2ED12351B3DD00400001",
+        "name" : "NetNewsWire-iOSTests"
+      }
+    }
+  ],
+  "version" : 1
+}

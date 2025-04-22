@@ -11,15 +11,6 @@
         }
       },
       {
-        "package": "RSCore",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSCore.git",
-        "state": {
-          "branch": null,
-          "revision": "060b12a3d3b6d27d57b2fae84160bfec91ec7118",
-          "version": "1.0.7"
-        }
-      },
-      {
         "package": "RSDatabase",
         "repositoryURL": "https://github.com/Ranchero-Software/RSDatabase.git",
         "state": {
