@@ -45,6 +45,12 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:NetNewsWire.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -64,6 +70,36 @@
                BuildableName = "AccountTests"
                BlueprintName = "AccountTests"
                ReferencedContainer = "container:Account">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "RSParserTests"
+               BuildableName = "RSParserTests"
+               BlueprintName = "RSParserTests"
+               ReferencedContainer = "container:RSParser">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "RSWebTests"
+               BuildableName = "RSWebTests"
+               BlueprintName = "RSWebTests"
+               ReferencedContainer = "container:RSWeb">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CoreTests"
+               BuildableName = "CoreTests"
+               BlueprintName = "CoreTests"
+               ReferencedContainer = "container:Core">
             </BuildableReference>
          </TestableReference>
       </Testables>

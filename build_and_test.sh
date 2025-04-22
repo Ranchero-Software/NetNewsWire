@@ -41,17 +41,4 @@ xcodebuild \
   -destination "$DESTINATION_IOS" \
   test | xcbeautify
 
-echo "🔎 Running Swift Package tests..."
-
-
-# Run `swift test` for each directory containing a Package.swift
-find . -type f -name Package.swift | while read -r package_file; do
-  package_dir=$(dirname "$package_file")
-  echo "📦 Testing package in: $package_dir"
-  pushd "$package_dir" > /dev/null
-  swift test
-  popd > /dev/null
-done
-
-echo "🎉 All builds and tests completed successfully."
 echo "🎉 All builds and tests completed successfully."
