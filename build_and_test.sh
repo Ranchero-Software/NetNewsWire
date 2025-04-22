@@ -42,6 +42,16 @@ xcodebuild \
   test | xcbeautify
 
 echo "🔎 Running Swift Package tests..."
-swift test --enable-test-discovery
 
+
+# Run `swift test` for each directory containing a Package.swift
+find . -type f -name Package.swift | while read -r package_file; do
+  package_dir=$(dirname "$package_file")
+  echo "📦 Testing package in: $package_dir"
+  pushd "$package_dir" > /dev/null
+  swift test
+  popd > /dev/null
+done
+
+echo "🎉 All builds and tests completed successfully."
 echo "🎉 All builds and tests completed successfully."
