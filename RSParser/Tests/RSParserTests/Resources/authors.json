@@ -1,0 +1,28 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Author test feed",
+  "authors": [{ "name": "Root Author 1"}, { "name": "Root Author 2" }],
+  "author": { "name": "Legacy Root Author" },
+  "items": [
+    {
+      "id": "Item without authors",
+      "content_html": ""
+    },
+    {
+      "id": "Item with legacy author",
+      "author": { "name": "Legacy Item Author" },
+      "content_html": ""
+    },
+    {
+      "id": "Item with modern authors",
+      "authors": [{ "name": "Item Author 1" }, { "name": "Item Author 2" }],
+      "content_html": ""
+    },
+    {
+      "id": "Item with both",
+      "authors": [{ "name": "Item Author 1" }, { "name": "Item Author 2" }],
+      "author": { "name": "Legacy Item Author" },
+      "content_html": ""
+    }
+  ]
+}

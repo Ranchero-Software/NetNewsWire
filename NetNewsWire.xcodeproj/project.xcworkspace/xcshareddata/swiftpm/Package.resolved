@@ -29,15 +29,6 @@
         }
       },
       {
-        "package": "RSParser",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSParser.git",
-        "state": {
-          "branch": null,
-          "revision": "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
-          "version": "2.0.3"
-        }
-      },
-      {
         "package": "RSTree",
         "repositoryURL": "https://github.com/Ranchero-Software/RSTree.git",
         "state": {
