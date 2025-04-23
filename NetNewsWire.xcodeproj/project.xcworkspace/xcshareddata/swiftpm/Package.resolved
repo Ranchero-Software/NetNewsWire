@@ -20,15 +20,6 @@
         }
       },
       {
-        "package": "RSTree",
-        "repositoryURL": "https://github.com/Ranchero-Software/RSTree.git",
-        "state": {
-          "branch": null,
-          "revision": "9d051f42cfc4faa991fd79cdb32e4cc8c545e334",
-          "version": "1.0.0"
-        }
-      },
-      {
         "package": "RSSparkle",
         "repositoryURL": "https://github.com/Ranchero-Software/Sparkle-Binary.git",
         "state": {

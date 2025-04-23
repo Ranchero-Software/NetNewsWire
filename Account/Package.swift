@@ -18,7 +18,7 @@ dependencies.append(contentsOf: [
 let package = Package(
     name: "Account",
 	platforms: [.macOS(.v13), .iOS(.v17)],
-    products: [
+     products: [
         .library(
             name: "Account",
 			type: .dynamic,
