@@ -1,34 +1,29 @@
 // swift-tools-version:5.10
 import PackageDescription
 
-var dependencies: [Package.Dependency] = [
-	.package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0")),
-]
-
-dependencies.append(contentsOf: [
-	.package(path: "../Articles"),
-	.package(path: "../ArticlesDatabase"),
-	.package(path: "../Secrets"),
-	.package(path: "../SyncDatabase"),
-	.package(path: "../RSWeb"),
-	.package(path: "../RSParser"),
-	.package(path: "../RSCore"),
-])
-
 let package = Package(
-    name: "Account",
+	name: "Account",
 	platforms: [.macOS(.v13), .iOS(.v17)],
-     products: [
-        .library(
-            name: "Account",
+	products: [
+		.library(
+			name: "Account",
 			type: .dynamic,
-            targets: ["Account"]),
-    ],
-    dependencies: dependencies,
-    targets: [
-        .target(
-            name: "Account",
-            dependencies: [
+			targets: ["Account"]),
+	],
+	dependencies: [
+		.package(path: "../Articles"),
+		.package(path: "../ArticlesDatabase"),
+		.package(path: "../Secrets"),
+		.package(path: "../SyncDatabase"),
+		.package(path: "../RSWeb"),
+		.package(path: "../RSParser"),
+		.package(path: "../RSCore"),
+		.package(path: "../RSDatabase"),
+	],
+	targets: [
+		.target(
+			name: "Account",
+			dependencies: [
 				"RSCore",
 				"RSDatabase",
 				"RSParser",
@@ -38,11 +33,11 @@ let package = Package(
 				"Secrets",
 				"SyncDatabase",
 			]),
-        .testTarget(
-            name: "AccountTests",
-            dependencies: ["Account"],
+		.testTarget(
+			name: "AccountTests",
+			dependencies: ["Account"],
 			resources: [
 				.copy("JSON"),
 			]),
-    ]
+	]
 )
