@@ -738,7 +738,6 @@
 		8405DDA122168920008CE1BF /* TimelineTableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TimelineTableView.xib; sourceTree = "<group>"; };
 		8405DDA422168C62008CE1BF /* TimelineContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContainerViewController.swift; sourceTree = "<group>"; };
 		840BEE4021D70E64009BBAFA /* CrashReportWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReportWindowController.swift; sourceTree = "<group>"; };
-		840C544F2D0C9A4A00A240DB /* Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Core; sourceTree = "<group>"; };
 		840D617C2029031C009BC708 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		840D61952029031D009BC708 /* NetNewsWire_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetNewsWire_iOSTests.swift; sourceTree = "<group>"; };
 		840D61972029031D009BC708 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1537,7 +1536,6 @@
 				8424B3162DB73D320053AA11 /* RSParser */,
 				843E2F152CF2B43700ED170F /* RSWeb */,
 				848E84CB2DB749300023F3BA /* RSCore */,
-				840C544F2D0C9A4A00A240DB /* Core */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;

@@ -5,13 +5,13 @@ import PackageDescription
 
 var dependencies: [Package.Dependency] = [
     .package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0")),
-    .package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.2")),
 ]
 
 #if swift(>=5.6)
 dependencies.append(contentsOf: [
 	.package(path: "../Articles"),
 	.package(path: "../RSCore"),
+	.package(path: "../RSParser"),
 ])
 #else
 dependencies.append(contentsOf: [

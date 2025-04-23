@@ -10,7 +10,7 @@ import Foundation
 import os.log
 import RSCore
 import RSWeb
-import Core
+import RSCore
 
 extension Notification.Name {
 

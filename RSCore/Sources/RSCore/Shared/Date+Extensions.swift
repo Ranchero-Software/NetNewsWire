@@ -16,14 +16,22 @@ public extension Date {
 		return addingTimeInterval(0.0 - TimeInterval(days: days))
 	}
 
+	func bySubtracting(hours: Int) -> Date {
+		return addingTimeInterval(0.0 - TimeInterval(hours: hours))
+	}
+
 	func byAdding(days: Int) -> Date {
 		return addingTimeInterval(TimeInterval(days: days))
 	}
 }
 
-private extension TimeInterval {
+public extension TimeInterval {
 
 	init(days: Int) {
 		self.init(days * 24 * 60 * 60)
+	}
+
+	init(hours: Int) {
+		self.init(hours * 60 * 60)
 	}
 }
