@@ -2,20 +2,20 @@
 import PackageDescription
 
 let package = Package(
-    name: "Secrets",
+	name: "Secrets",
 	platforms: [.macOS(.v13), .iOS(.v17)],
-    products: [
-        .library(
-            name: "Secrets",
+	products: [
+		.library(
+			name: "Secrets",
 			type: .dynamic,
-            targets: ["Secrets"]
-        )
-    ],
-    dependencies: [],
-    targets: [
-        .target(
-            name: "Secrets",
-            dependencies: []
-        )
-    ]
+			targets: ["Secrets"]
+		)
+	],
+	dependencies: [],
+	targets: [
+		.target(
+			name: "Secrets",
+			dependencies: []
+		)
+	]
 )
