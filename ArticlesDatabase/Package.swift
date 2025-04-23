@@ -1,42 +1,29 @@
 // swift-tools-version:5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
-var dependencies: [Package.Dependency] = [
-    .package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0")),
-]
-
-#if swift(>=5.6)
-dependencies.append(contentsOf: [
-	.package(path: "../Articles"),
-	.package(path: "../RSCore"),
-	.package(path: "../RSParser"),
-])
-#else
-dependencies.append(contentsOf: [
-    .package(url: "../Articles", .upToNextMajor(from: "1.0.0")),
-])
-#endif
-
 let package = Package(
-    name: "ArticlesDatabase",
+	name: "ArticlesDatabase",
 	platforms: [.macOS(.v13), .iOS(.v17)],
-    products: [
-        .library(
-            name: "ArticlesDatabase",
+	products: [
+		.library(
+			name: "ArticlesDatabase",
 			type: .dynamic,
-            targets: ["ArticlesDatabase"]),
-    ],
-    dependencies: dependencies,
-    targets: [
-        .target(
-            name: "ArticlesDatabase",
-            dependencies: [
+			targets: ["ArticlesDatabase"]),
+	],
+	dependencies: [
+		.package(path: "../Articles"),
+		.package(path: "../RSCore"),
+		.package(path: "../RSParser"),
+		.package(path: "../RSDatabase"),
+	],
+	targets: [
+		.target(
+			name: "ArticlesDatabase",
+			dependencies: [
 				"RSCore",
 				"RSDatabase",
 				"RSParser",
 				"Articles",
 			]),
-    ]
+	]
 )
