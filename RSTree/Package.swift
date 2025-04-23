@@ -2,17 +2,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "RSTree",
+	name: "RSTree",
 	platforms: [.macOS(.v13), .iOS(.v17)],
-   products: [
-        .library(
-            name: "RSTree",
-            type: .dynamic,
-            targets: ["RSTree"]),
-    ],
-    targets: [
-        .target(
-            name: "RSTree",
-            dependencies: []),
-    ]
+	products: [
+		.library(
+			name: "RSTree",
+			type: .dynamic,
+			targets: ["RSTree"]),
+	],
+	targets: [
+		.target(
+			name: "RSTree",
+			dependencies: []),
+	]
 )
