@@ -18,6 +18,27 @@
   },
   "testTargets" : [
     {
+      "target" : {
+        "containerPath" : "container:RSWeb",
+        "identifier" : "RSWebTests",
+        "name" : "RSWebTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "RSCoreTests",
+        "name" : "RSCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Account",
+        "identifier" : "AccountTests",
+        "name" : "AccountTests"
+      }
+    },
+    {
       "skippedTests" : [
         "ScriptingTests\/testFeedOPML()"
       ],
@@ -29,30 +50,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Account",
-        "identifier" : "AccountTests",
-        "name" : "AccountTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:RSParser",
         "identifier" : "RSParserTests",
         "name" : "RSParserTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:RSWeb",
-        "identifier" : "RSWebTests",
-        "name" : "RSWebTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Core",
-        "identifier" : "CoreTests",
-        "name" : "CoreTests"
       }
     }
   ],

@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.10
 import PackageDescription
 
 var dependencies: [Package.Dependency] = [
@@ -18,7 +18,7 @@ dependencies.append(contentsOf: [
 
 let package = Package(
     name: "SyncDatabase",
-	platforms: [.macOS(.v13), .iOS(.v16)],
+	platforms: [.macOS(.v13), .iOS(.v17)],
     products: [
         .library(
             name: "SyncDatabase",

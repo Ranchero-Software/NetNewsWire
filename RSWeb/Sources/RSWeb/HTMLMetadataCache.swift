@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Core
+import RSCore
 @preconcurrency import RSParser
 
 public extension Notification.Name {

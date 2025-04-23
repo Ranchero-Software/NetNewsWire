@@ -1,10 +1,10 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.10
 
 import PackageDescription
 
 let package = Package(
 	name: "RSWeb",
-	platforms: [.macOS(.v13), .iOS(.v16)],
+	platforms: [.macOS(.v13), .iOS(.v17)],
 	products: [
 		.library(
 			name: "RSWeb",
@@ -12,15 +12,15 @@ let package = Package(
 			targets: ["RSWeb"]),
 	],
 	dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMinor(from: "2.0.2")),
-		.package(path: "../Core")
+		.package(path: "../RSParser"),
+		.package(path: "../RSCore")
 	],
 	targets: [
 		.target(
 			name: "RSWeb",
 			dependencies: [
 				"RSParser",
-				"Core"
+				"RSCore"
 			],
 			resources: [.copy("UTS46/uts46")],
 			swiftSettings: [.define("SWIFT_PACKAGE")]),
@@ -29,7 +29,7 @@ let package = Package(
 			dependencies: [
 				"RSWeb",
 				"RSParser",
-				"Core"
+				"RSCore"
 			]),
 	]
 )
