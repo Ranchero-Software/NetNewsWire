@@ -43,7 +43,7 @@ struct Browser {
 	/// - Note: Some browsers (specifically Chromium-derived ones) will ignore the request
 	///   to open in the background.
 	static func open(_ urlString: String, inBackground: Bool) {
-		guard let url = URL(unicodeString: urlString), let preparedURL = url.preparedForOpeningInBrowser() else { return }
+		guard let url = URL(string: urlString), let preparedURL = url.preparedForOpeningInBrowser() else { return }
 		
 		let configuration = NSWorkspace.OpenConfiguration()
 		configuration.requiresUniversalLinks = true

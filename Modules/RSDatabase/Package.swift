@@ -19,8 +19,8 @@ let package = Package(
 	targets: [
 		.target(
 			name: "RSDatabase",
-			dependencies: ["RSDatabaseObjC"],
-			exclude: ["ODB/README.markdown"]),
+			dependencies: ["RSDatabaseObjC"]
+		),
 		.target(
 			name: "RSDatabaseObjC",
 			dependencies: []
