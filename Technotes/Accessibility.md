@@ -1,7 +1,7 @@
 # Accessibility
 
 Millions of Mac users have some disability or special needs.  They use screen readers and special
-hardware to open up a world that they would otherwise be cut off from.  With a small amount of
+hardware to open up a world that they would otherwise be cut off from. With a small amount of
 developer work, we can help these users live better lives.
 
 Because NetNewsWire utilizes standard AppKit controls and views, accessibility is already built in.
