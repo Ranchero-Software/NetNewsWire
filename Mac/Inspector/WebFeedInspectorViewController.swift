@@ -162,11 +162,11 @@ private extension WebFeedInspectorViewController {
 	}
 
 	func updateHomePageURL() {
-		homePageURLTextField?.stringValue = feed?.homePageURL?.decodedURLString ?? ""
+		homePageURLTextField?.stringValue = feed?.homePageURL ?? ""
 	}
 
 	func updateFeedURL() {
-		urlTextField?.stringValue = feed?.url.decodedURLString ?? ""
+		urlTextField?.stringValue = feed?.url ?? ""
 	}
 
 	func updateNotifyAboutNewArticles() {

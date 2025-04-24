@@ -8,7 +8,7 @@ let package = Package(
 		.library(
 			name: "RSWeb",
 			type: .dynamic,
-			targets: ["RSWeb"]),
+			targets: ["RSWeb"])
 	],
 	dependencies: [
 		.package(path: "../RSParser"),
@@ -20,15 +20,11 @@ let package = Package(
 			dependencies: [
 				"RSParser",
 				"RSCore"
-			],
-			resources: [.copy("UTS46/uts46")],
-			swiftSettings: [.define("SWIFT_PACKAGE")]),
+			]
+			//swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
+		),
 		.testTarget(
 			name: "RSWebTests",
-			dependencies: [
-				"RSWeb",
-				"RSParser",
-				"RSCore"
-			]),
+			dependencies: ["RSWeb"])
 	]
 )

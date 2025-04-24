@@ -76,7 +76,7 @@ private extension HTMLMetadataDownloader {
 
 	func downloadMetadata(_ url: String) {
 
-		guard let actualURL = URL(unicodeString: url) else {
+		guard let actualURL = URL(string: url) else {
 			if Self.debugLoggingEnabled {
 				Self.logger.debug("HTMLMetadataDownloader skipping download for \(url) because it couldn’t construct a URL.")
 			}
