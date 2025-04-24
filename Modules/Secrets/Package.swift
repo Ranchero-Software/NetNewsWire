@@ -16,7 +16,7 @@ let package = Package(
 		.target(
 			name: "Secrets",
 			dependencies: [],
-			exclude: ["Secrets.swift.gyb"]
+			exclude: ["SecretKey.swift.gyb"]
 		)
 	]
 )
