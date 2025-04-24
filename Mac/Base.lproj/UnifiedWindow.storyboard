@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23504"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -250,10 +250,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
-                                <rect key="frame" x="8" y="176" width="47" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="18" id="DoO-KI-ena"/>
-                                </constraints>
+                                <rect key="frame" x="8" y="176" width="46" height="19"/>
                                 <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" tag="1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="bl0-6I-cH2">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                     <font key="font" metaFont="smallSystemBold"/>
@@ -282,6 +279,9 @@
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="18" id="DoO-KI-ena"/>
+                                </constraints>
                             </popUpButton>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iA5-go-AO0">
                                 <rect key="frame" x="350" y="180" width="13" height="13"/>
