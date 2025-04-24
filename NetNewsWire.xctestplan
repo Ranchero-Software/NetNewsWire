@@ -19,21 +19,14 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:RSWeb",
+        "containerPath" : "container:Modules\/RSWeb",
         "identifier" : "RSWebTests",
         "name" : "RSWebTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:",
-        "identifier" : "RSCoreTests",
-        "name" : "RSCoreTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Account",
+        "containerPath" : "container:Modules\/Account",
         "identifier" : "AccountTests",
         "name" : "AccountTests"
       }
@@ -50,9 +43,23 @@
     },
     {
       "target" : {
-        "containerPath" : "container:RSParser",
+        "containerPath" : "container:Modules\/RSDatabase",
+        "identifier" : "RSDatabaseTests",
+        "name" : "RSDatabaseTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/RSParser",
         "identifier" : "RSParserTests",
         "name" : "RSParserTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/RSCore",
+        "identifier" : "RSCoreTests",
+        "name" : "RSCoreTests"
       }
     }
   ],
