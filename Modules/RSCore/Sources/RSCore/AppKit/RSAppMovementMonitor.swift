@@ -128,8 +128,11 @@ public class RSAppMovementMonitor: NSObject {
 	func relaunchFromURL(_ appURL: URL) {
 		// Relaunching is best achieved by requesting that the system launch the app
 		// at the given URL with the "new instance" option to prevent it simply reactivating us.
-		let _ = try? NSWorkspace.shared.launchApplication(at: appURL, options: .newInstance, configuration: [:])
-		NSApp.terminate(self)
+		let configuration = NSWorkspace.OpenConfiguration()
+		configuration.createsNewApplicationInstance = true
+		NSWorkspace.shared.openApplication(at: appURL, configuration: configuration) { _, _  in
+			NSApp.terminate(self)
+		}
 	}
 
 	func defaultHandler() {
