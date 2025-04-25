@@ -37,24 +37,27 @@ final class SendToMicroBlogCommand: SendToCommand {
 		guard let article = (object as? ArticlePasteboardWriter)?.article else {
 			return
 		}
-		guard microBlogApp.launchIfNeeded(), microBlogApp.bringToFront() else {
-			return
+
+		Task {
+			guard await microBlogApp.launchIfNeeded(), microBlogApp.bringToFront() else {
+				return
+			}
+
+			// TODO: get text from contentHTML or contentText if no title and no selectedText.
+			// TODO: consider selectedText.
+
+			let s = article.attributionString + article.linkString
+
+			let urlQueryDictionary = ["text": s]
+			guard let urlQueryString = urlQueryDictionary.urlQueryString else {
+				return
+			}
+			guard let url = URL(string: "microblog://post?" + urlQueryString) else {
+				return
+			}
+
+			NSWorkspace.shared.open(url)
 		}
-
-		// TODO: get text from contentHTML or contentText if no title and no selectedText.
-		// TODO: consider selectedText.
-
-		let s = article.attributionString + article.linkString
-
-		let urlQueryDictionary = ["text": s]
-		guard let urlQueryString = urlQueryDictionary.urlQueryString else {
-			return
-		}
-		guard let url = URL(string: "microblog://post?" + urlQueryString) else {
-			return
-		}
-
-		NSWorkspace.shared.open(url)
 	}
 }
 
