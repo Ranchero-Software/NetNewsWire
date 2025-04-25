@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol UndoableCommand: class {
+public protocol UndoableCommand: AnyObject {
 
 	var undoActionName: String { get }
 	var redoActionName: String { get }
@@ -39,7 +39,7 @@ extension UndoableCommand {
 
 // Useful for view controllers.
 
-public protocol UndoableCommandRunner: class {
+public protocol UndoableCommandRunner: AnyObject {
     
     var undoableCommands: [UndoableCommand] { get set }
     var undoManager: UndoManager? { get }

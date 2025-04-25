@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol MainThreadOperationDelegate: class {
+public protocol MainThreadOperationDelegate: AnyObject {
 	func operationDidComplete(_ operation: MainThreadOperation)
 	func cancelOperation(_ operation: MainThreadOperation)
 	func make(_ childOperation: MainThreadOperation, dependOn parentOperation: MainThreadOperation)
