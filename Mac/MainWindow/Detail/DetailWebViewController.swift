@@ -7,7 +7,7 @@
 //
 
 import AppKit
-import WebKit
+@preconcurrency import WebKit
 import RSCore
 import RSWeb
 import Articles

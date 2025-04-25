@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import UniformTypeIdentifiers
 
 class ExportOPMLWindowController: NSWindowController {
 
@@ -75,7 +76,7 @@ class ExportOPMLWindowController: NSWindowController {
 	func exportOPML(account: Account) {
 		
 		let panel = NSSavePanel()
-		panel.allowedFileTypes = ["opml"]
+		panel.allowedContentTypes = [UTType.opml]
 		panel.allowsOtherFileTypes = false
 		panel.prompt = NSLocalizedString("Export OPML", comment: "Export OPML")
 		panel.title = NSLocalizedString("Export OPML", comment: "Export OPML")
