@@ -29,8 +29,6 @@ class TitleActivityItemSource: NSObject, UIActivityItemSource {
 		switch activityType.rawValue {
 		case "com.omnigroup.OmniFocus3.iOS.QuickEntry",
 			 "com.culturedcode.ThingsiPhone.ShareExtension",
-			 "com.tapbots.Tweetbot4.shareextension",
-			 "com.tapbots.Tweetbot6.shareextension",
 			 "com.buffer.buffer.Buffer":
 			return title
 		default:
