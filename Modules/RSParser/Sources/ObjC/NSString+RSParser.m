@@ -323,6 +323,7 @@ static NSDictionary *RSEntitiesDictionary(void) {
 			@"reg": @"®",
 			@"rsquo": @"’",
 			@"sect": @"§",
+			@"smallcircle": @"◦",
 			@"shy": RSParserStringWithValue(173),
 			@"sup1": @"¹",
 			@"sup2": @"²",
