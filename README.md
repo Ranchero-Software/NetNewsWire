@@ -10,9 +10,9 @@ More info: [https://netnewswire.com/](https://netnewswire.com/)
 
 You can [report bugs and make feature requests](https://github.com/Ranchero-Software/NetNewsWire/issues) here on GitHub. You can also [read change notes](https://github.com/Ranchero-Software/NetNewsWire/releases/) for current and previous releases.
 
-(NetNewsWire’s Help menu has these links, so you don’t have to remember to come back to this page.)
-
 Here’s [How to Support NetNewsWire](Technotes/HowToSupportNetNewsWire.markdown). Spoiler: don’t send money. :)
+
+(NetNewsWire’s Help menu has these links, so you don’t have to remember to come back to this page.)
 
 #### Community
 
