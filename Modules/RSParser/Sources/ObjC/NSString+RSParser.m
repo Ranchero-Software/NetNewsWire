@@ -165,11 +165,19 @@ static NSString *RSParserStringWithValue(uint32_t value);
 	
 	NSString *s = self.string;
 	NSUInteger initialScanLocation = self.scanLocation;
-	static NSUInteger maxEntityLength = 20; // It’s probably smaller, but this is just for sanity.
-	
+	unichar ch = 0;
+
+	static NSUInteger maxEntityLength = 0;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		for (NSString *entityName in RSEntitiesDictionary().allKeys) {
+			maxEntityLength = MAX(maxEntityLength, entityName.length);
+		}
+	});
+
 	while (true) {
-		
-		unichar ch = [s characterAtIndex:self.scanLocation];
+
+		ch = [s characterAtIndex:self.scanLocation];
 		if ([NSCharacterSet.whitespaceAndNewlineCharacterSet characterIsMember:ch]) {
 			break;
 		}
@@ -272,6 +280,7 @@ static NSDictionary *RSEntitiesDictionary(void) {
 			@"cedil": @"¸",
 			@"cent": @"¢",
 			@"copy": @"©",
+			@"CounterClockwiseContourIntegral": @"∳",
 			@"curren": @"¤",
 			@"deg": @"°",
 			@"die": @"¨",
