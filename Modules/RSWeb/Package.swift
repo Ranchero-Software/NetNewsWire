@@ -20,8 +20,8 @@ let package = Package(
 			dependencies: [
 				"RSParser",
 				"RSCore"
-			]
-			//swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
+			],
+			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
 		),
 		.testTarget(
 			name: "RSWebTests",
