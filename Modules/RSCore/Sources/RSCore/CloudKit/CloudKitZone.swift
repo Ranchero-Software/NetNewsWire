@@ -26,13 +26,13 @@ public enum CloudKitZoneError: LocalizedError {
 	}
 }
 
-public protocol CloudKitZoneDelegate: class {
+public protocol CloudKitZoneDelegate: AnyObject {
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void);
 }
 
 public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
 
-public protocol CloudKitZone: class {
+public protocol CloudKitZone: AnyObject {
 	
 	static var qualityOfService: QualityOfService { get }
 
