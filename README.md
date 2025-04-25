@@ -1,14 +1,16 @@
-# ![Icon](Technotes/Images/icon.png) NetNewsWire
+<img src=Technotes/Images/icon_1024.png height=128 width=128 style="display: block; margin: auto;"> 
 
-It’s a free and open-source feed reader for macOS and iOS.
+# NetNewsWire
+
+NetNewsWire is a free and open-source feed reader for macOS and iOS.
 
 It supports [RSS](https://cyber.harvard.edu/rss/rss.html), [Atom](https://datatracker.ietf.org/doc/html/rfc4287), [JSON Feed](https://jsonfeed.org/), and [RSS-in-JSON](https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md) formats.
 
 More info: [https://netnewswire.com/](https://netnewswire.com/)
 
-Also see the [Technotes](Technotes/) and the [Roadmap](Technotes/Roadmap.md).
+You can [report bugs and make feature requests](https://github.com/Ranchero-Software/NetNewsWire/issues) here on GitHub. You can also [read change notes](https://github.com/Ranchero-Software/NetNewsWire/releases/) for current and previous releases.
 
-Note: NetNewsWire’s Help menu has a bunch of these links, so you don’t have to remember to come back to this page.
+(NetNewsWire’s Help menu has these links, so you don’t have to remember to come back to this page.)
 
 Here’s [How to Support NetNewsWire](Technotes/HowToSupportNetNewsWire.markdown). Spoiler: don’t send money. :)
 
@@ -51,7 +53,7 @@ Make a directory `SharedXcodeSettings` next to where you have this repository.
 The directory structure is:
 
 ```
-aDirectory/
+directory/
   SharedXcodeSettings/
     DeveloperSettings.xcconfig
   NetNewsWire/
@@ -60,10 +62,10 @@ aDirectory/
 Example:
 
 If your NetNewsWire Xcode project file is at:
-`/Users/Shared/git/NetNewsWire/NetNewsWire.xcodeproj`
+`/Users/name/projects/NetNewsWire/NetNewsWire.xcodeproj`
 
 Create your `DeveloperSettings.xcconfig` file at
-`/Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig`
+`/Users/name/projects/SharedXcodeSettings/DeveloperSettings.xcconfig`
 
 Then create a plain text file in it: `SharedXcodeSettings/DeveloperSettings.xcconfig` and
 give it the contents:
