@@ -84,7 +84,7 @@ struct PasteboardFolder: Hashable {
 	}
 }
 
-extension Folder: PasteboardWriterOwner {
+extension Folder: @retroactive PasteboardWriterOwner {
 
 	public var pasteboardWriter: NSPasteboardWriting {
 		return FolderPasteboardWriter(folder: self)

@@ -10,7 +10,7 @@ import AppKit
 import Articles
 import RSCore
 
-extension Article: PasteboardWriterOwner {
+extension Article: @retroactive PasteboardWriterOwner {
 	public var pasteboardWriter: NSPasteboardWriting {
 		return ArticlePasteboardWriter(article: self)
 	}

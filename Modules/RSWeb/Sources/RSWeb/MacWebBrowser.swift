@@ -8,6 +8,7 @@
 
 #if os(macOS)
 import AppKit
+import UniformTypeIdentifiers
 
 public class MacWebBrowser {
 
@@ -18,34 +19,28 @@ public class MacWebBrowser {
 			return false
 		}
 		
-		if (inBackground) {
-			do {
-				try NSWorkspace.shared.open(preparedURL, options: [.withoutActivation], configuration: [:])
-				return true
-			}
-			catch {
-				return false
-			}
+		if inBackground {
+
+			let configuration = NSWorkspace.OpenConfiguration()
+			configuration.activates = false
+			NSWorkspace.shared.open(url, configuration: configuration, completionHandler: nil)
+
+			return true
 		}
-		
+
 		return NSWorkspace.shared.open(preparedURL)
 	}
 
 	/// Returns an array of the browsers installed on the system, sorted by name.
 	///
 	/// "Browsers" are applications that can both handle `https` URLs, and display HTML documents.
-	public class func sortedBrowsers() -> [MacWebBrowser] {
-		guard let httpsIDs = LSCopyAllHandlersForURLScheme("https" as CFString)?.takeRetainedValue() as? [String] else {
-			return []
-		}
+	public static func sortedBrowsers() -> [MacWebBrowser] {
 
-		guard let htmlIDs = LSCopyAllRoleHandlersForContentType(kUTTypeHTML, .viewer)?.takeRetainedValue() as? [String] else {
-			return []
-		}
+		let httpsAppURLs = NSWorkspace.shared.urlsForApplications(toOpen: URL(string: "https://apple.com/")!)
+		let htmlAppURLs = NSWorkspace.shared.urlsForApplications(toOpen: UTType.html)
+		let browserAppURLs = Set(httpsAppURLs).intersection(Set(htmlAppURLs))
 
-		let browserIDs = Set(httpsIDs).intersection(Set(htmlIDs))
-
-		return browserIDs.compactMap { MacWebBrowser(bundleIdentifier: $0) }.sorted {
+		return browserAppURLs.compactMap { MacWebBrowser(url: $0) }.sorted {
 			if let leftName = $0.name, let rightName = $1.name {
 				return leftName < rightName
 			}
@@ -127,15 +122,25 @@ public class MacWebBrowser {
 	///   - url: The URL to open.
 	///   - inBackground: If `true`, attempt to load the URL without bringing the browser to the foreground.
 	@discardableResult public func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
+
+		// TODO: make this function async.
+
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false
 		}
 
-		let options: NSWorkspace.LaunchOptions = inBackground ? [.withoutActivation] : []
+		Task { @MainActor in
 
-		return NSWorkspace.shared.open([preparedURL], withAppBundleIdentifier: self.bundleIdentifier, options: options, additionalEventParamDescriptor: nil, launchIdentifiers: nil)
+			let configuration = NSWorkspace.OpenConfiguration()
+			if inBackground {
+				configuration.activates = false
+			}
+
+			NSWorkspace.shared.open([preparedURL], withApplicationAt: self.url, configuration: configuration, completionHandler: nil)
+		}
+
+		return true
 	}
-
 }
 
 extension MacWebBrowser: CustomDebugStringConvertible {

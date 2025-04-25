@@ -915,7 +915,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1610;
+				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					176813F22564BB2C00D98635 = {
@@ -959,6 +959,7 @@
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = SHJK2V3AJG;
+						LastSwiftMigration = 1620;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
