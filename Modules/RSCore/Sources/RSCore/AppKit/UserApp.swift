@@ -63,7 +63,7 @@ public final class UserApp {
 				path = bundleURL.path
 			}
 			else {
-				path = NSWorkspace.shared.absolutePathForApplication(withBundleIdentifier: bundleID)
+				path = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID)?.path
 			}
 			if icon == nil, let path = path {
 				icon = NSWorkspace.shared.icon(forFile: path)
@@ -71,7 +71,7 @@ public final class UserApp {
 			return
 		}
 
-		path = NSWorkspace.shared.absolutePathForApplication(withBundleIdentifier: bundleID)
+		path = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID)?.path
 		if let path = path {
 			if icon == nil {
 				icon = NSWorkspace.shared.icon(forFile: path)
@@ -84,7 +84,7 @@ public final class UserApp {
 		}
 	}
 
-	public func launchIfNeeded() -> Bool {
+	public func launchIfNeeded() async -> Bool {
 
 		// Return true if already running.
 		// Return true if not running and successfully gets launched.
@@ -99,20 +99,29 @@ public final class UserApp {
 		}
 
 		let url = URL(fileURLWithPath: path)
-		if let app = try? NSWorkspace.shared.launchApplication(at: url, options: [.withErrorPresentation], configuration: [:]) {
-			runningApplication = app
-			if app.isFinishedLaunching {
-				return true
-			}
-			Thread.sleep(forTimeInterval: 1.0) // Give the app time to launch. This is ugly.
-			if app.isFinishedLaunching {
-				return true
-			}
-			Thread.sleep(forTimeInterval: 1.0) // Give it some *more* time.
-			return true
-		}
 
-		return false
+		do {
+			let configuration = NSWorkspace.OpenConfiguration()
+			configuration.promptsUserIfNeeded = true
+
+			let app = try await NSWorkspace.shared.openApplication(at: url, configuration: configuration)
+			runningApplication = app
+
+			if app.isFinishedLaunching {
+				return true
+			}
+
+			try? await Task.sleep(for: .seconds(1)) // Give the app time to launch. This is ugly.
+			if app.isFinishedLaunching {
+				return true
+			}
+
+			try? await Task.sleep(for: .seconds(1)) // Give it some *more* time.
+			return true
+
+		} catch {
+			return false
+		}
 	}
 
 	public func bringToFront() -> Bool {
