@@ -52,7 +52,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 				title = NSLocalizedString("FreshRSS", comment: "FreshRSS")
 				apiURLTextField.placeholder = NSLocalizedString("API URL: fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
 			case .inoreader:
-				title = NSLocalizedString("InoReader", comment: "InoReader")
+				title = NSLocalizedString("Inoreader", comment: "Inoreader")
 			case .bazQux:
 				title = NSLocalizedString("BazQux", comment: "BazQux")
 			case .theOldReader:
@@ -75,8 +75,8 @@ class ReaderAPIAccountViewController: UITableViewController {
 				footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
 				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
 			case .inoreader:
-				footerLabel.text = NSLocalizedString("Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account?", comment: "InoReader")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "InoReader SignUp"), for: .normal)
+				footerLabel.text = NSLocalizedString("Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an Inoreader account?", comment: "Inoreader")
+				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Inoreader SignUp"), for: .normal)
 			case .theOldReader:
 				footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
 				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)

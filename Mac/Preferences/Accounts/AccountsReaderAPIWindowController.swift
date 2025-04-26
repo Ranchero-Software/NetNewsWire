@@ -46,9 +46,9 @@ class AccountsReaderAPIWindowController: NSWindowController {
 				apiURLTextField.placeholderString = NSLocalizedString("fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
 			case .inoreader:
 				titleImageView.image = AppAssets.accountInoreader
-				titleLabel.stringValue = NSLocalizedString("Sign in to your InoReader account.", comment: "InoReader")
+				titleLabel.stringValue = NSLocalizedString("Sign in to your Inoreader account.", comment: "Inoreader")
 				gridView.row(at: 2).isHidden = true
-				noAccountTextField.stringValue = NSLocalizedString("Don’t have an InoReader account?", comment: "No InoReader")
+				noAccountTextField.stringValue = NSLocalizedString("Don’t have an Inoreader account?", comment: "No Inoreader")
 			case .bazQux:
 				titleImageView.image = AppAssets.accountBazQux
 				titleLabel.stringValue = NSLocalizedString("Sign in to your BazQux account.", comment: "BazQux")
