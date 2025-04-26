@@ -429,6 +429,14 @@ a.footnote:hover,
 		color: var(--sup-link-color);
 	}
 
+	sup .newsfoot-footnote-popover a:link, sup .newsfoot-footnote-popover a:visited {
+		text-decoration: underline;
+		text-decoration-color: var(--primary-accent-color);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 2px;
+		color: var(--secondary-accent-color);
+	}
+
 	body .header {
 		font: -apple-system-body;
 		font-size: [[font-size]]px;
