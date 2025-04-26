@@ -20,7 +20,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		
 		window!.tintColor = AppAssets.primaryAccentColor
-		updateUserInterfaceStyle()
 		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
 		
 		let rootViewController = window!.rootViewController as! RootSplitViewController
@@ -40,7 +39,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.delegate = coordinator
 		
 		coordinator.restoreWindowState(session.stateRestorationActivity)
-		
+
+		updateUserInterfaceStyle()
+
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 		
 		if let _ = connectionOptions.urlContexts.first?.url  {
