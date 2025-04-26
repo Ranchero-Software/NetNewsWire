@@ -338,7 +338,8 @@ private extension DetailWebViewController {
 			"body": rendering.html
 		]
 		
-		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
+		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
+		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
 		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 
