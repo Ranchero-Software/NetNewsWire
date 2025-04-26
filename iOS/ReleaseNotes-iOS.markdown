@@ -2,7 +2,6 @@
 
 ### 6.1.9 TestFlight build 6191 26 April 2025 - branch: main tag: iOS-6.1.9-6191
 
-Worked around The Verge’s bug in their feed — replacing â€™ with ’ (and so on)
 Fixed bug where links in footnotes — in light mode, using the default theme — would be invisible
 Fixed double-underlines on 404 Media links. (Fixed bug where using <u> tag inside an <a> would cause two underlines.)
 Added &smallcircle; to the entities decoder
