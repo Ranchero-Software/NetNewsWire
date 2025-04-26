@@ -292,6 +292,7 @@
 			membershipExceptions = (
 				/Localized/SafariExtension/SafariExtensionViewController.xib,
 				/Localized/ShareExtension/ShareViewController.xib,
+				"ReleaseNotes-Mac.markdown",
 				Resources/Info.plist,
 				Resources/NetNewsWire.provisionprofile,
 				"Resources/org.sparkle-project.Downloader.xpc",
@@ -366,6 +367,7 @@
 				/Localized/ShareExtension/MainInterface.storyboard,
 				IntentsExtension/Info.plist,
 				IntentsExtension/IntentHandler.swift,
+				"ReleaseNotes-iOS.markdown",
 				Resources/Info.plist,
 				ShareExtension/Info.plist,
 				ShareExtension/ShareFolderPickerAccountCell.xib,
