@@ -501,6 +501,10 @@ a.footnote:hover,
 		color: var(--accent-color);
 	}
 
+	a u {
+	  text-decoration: none;
+	}
+
 	.articleBody a:link, .articleBody a:visited {
 		border-bottom: 1px solid var(--accent-color);
 	}
@@ -510,6 +514,9 @@ a.footnote:hover,
 		border-bottom: 1px solid var(--hover-gradient-color-end);
 		color: white;
 		text-decoration: none;
+	}
+	.articleBody a:hover u {
+		color: white;
 	}
 
 	pre {
