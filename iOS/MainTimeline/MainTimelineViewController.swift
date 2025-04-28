@@ -540,7 +540,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
 		
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView.iconImage = timelineIconImage
+			titleView.iconView?.iconImage = timelineIconImage
 		}
 		
 		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
@@ -574,7 +574,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView.iconImage = timelineIconImage
+			titleView.iconView?.iconImage = timelineIconImage
 		}
 		if showIcons {
 			queueReloadAvailableCells()
@@ -599,7 +599,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func displayNameDidChange(_ note: Notification) {
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.label.text = timelineFeed?.nameForDisplay
+			titleView.label?.text = timelineFeed?.nameForDisplay
 		}
 	}
 	
@@ -714,14 +714,14 @@ private extension MainTimelineViewController {
 		title = timelineFeed?.nameForDisplay ?? "Timeline"
 
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView.iconImage = timelineIconImage
+			titleView.iconView?.iconImage = timelineIconImage
 			if let preferredColor = timelineIconImage?.preferredColor {
-				titleView.iconView.tintColor = UIColor(cgColor: preferredColor)
+				titleView.iconView?.tintColor = UIColor(cgColor: preferredColor)
 			} else {
-				titleView.iconView.tintColor = nil
+				titleView.iconView?.tintColor = nil
 			}
 			
-			titleView.label.text = timelineFeed?.nameForDisplay
+			titleView.label?.text = timelineFeed?.nameForDisplay
 			updateTitleUnreadCount()
 
 			if timelineFeed is WebFeed {
@@ -782,7 +782,7 @@ private extension MainTimelineViewController {
 	
 	func updateTitleUnreadCount() {
 		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.unreadCountView.unreadCount = coordinator?.timelineUnreadCount ?? 0
+			titleView.unreadCountView?.unreadCount = coordinator?.timelineUnreadCount ?? 0
 		}
 	}
 	

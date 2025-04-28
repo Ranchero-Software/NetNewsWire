@@ -10,9 +10,9 @@ import UIKit
 
 class MainTimelineTitleView: UIView {
 
-	@IBOutlet weak var iconView: IconView!
-	@IBOutlet weak var label: UILabel!
-	@IBOutlet weak var unreadCountView: MainTimelineUnreadCountView!
+	@IBOutlet var iconView: IconView?
+	@IBOutlet var label: UILabel?
+	@IBOutlet var unreadCountView: MainTimelineUnreadCountView?
 
 	@available(iOS 13.4, *)
 	private lazy var pointerInteraction: UIPointerInteraction = {
@@ -22,9 +22,9 @@ class MainTimelineTitleView: UIView {
 	override var accessibilityLabel: String? {
 		set { }
 		get {
-			if let name = label.text {
+			if let name = label?.text {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
-				return "\(name) \(unreadCountView.unreadCount) \(unreadLabel)"
+				return "\(name) \(unreadCountView?.unreadCount ?? 0) \(unreadLabel)"
 			}
 			else {
 				return nil
