@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.9 TestFlight build 6192 27 April 2025 - branch: main tag: iOS-6.1.9-6192
+
+Fix crash-on-launch bug. (Hopefully fix it, that is — we couldn’t reproduce it, so we can’t be sure)
+
 ### 6.1.9 TestFlight build 6191 26 April 2025 - branch: main tag: iOS-6.1.9-6191
 
 Fixed bug where links in footnotes — in light mode, using the default theme — would be invisible
