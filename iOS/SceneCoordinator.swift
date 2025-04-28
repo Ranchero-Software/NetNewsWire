@@ -921,7 +921,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func selectPrevUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
@@ -942,7 +942,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func selectNextUnread() {
 		
 		// This should never happen, but I don't want to risk throwing us
-		// into an infinate loop searching for an unread that isn't there.
+		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
