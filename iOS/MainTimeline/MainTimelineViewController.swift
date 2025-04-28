@@ -20,10 +20,10 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	
 	private var refreshProgressView: RefreshProgressView?
 
-	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
+	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
 
-	private var filterButton: UIBarButtonItem!
-	private var firstUnreadButton: UIBarButtonItem!
+	private lazy var filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+	private lazy var firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
 
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
@@ -131,10 +131,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-		
-		// Initialize Programmatic Buttons
-		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
-		firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
 		
 		// Setup the Search Controller
 		searchController.delegate = self
@@ -747,11 +743,11 @@ private extension MainTimelineViewController {
 		}
 
 		if isReadArticlesFiltered {
-			filterButton?.image = AppAssets.filterActiveImage
-			filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
+			filterButton.image = AppAssets.filterActiveImage
+			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
-			filterButton?.image = AppAssets.filterInactiveImage
-			filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
+			filterButton.image = AppAssets.filterInactiveImage
+			filterButton.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
@@ -767,9 +763,7 @@ private extension MainTimelineViewController {
 	}
 	
 	func updateToolbar() {
-		guard firstUnreadButton != nil else { return }
-		
-		markAllAsReadButton.isEnabled = isTimelineUnreadAvailable
+		markAllAsReadButton?.isEnabled = isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = isTimelineUnreadAvailable
 
 		if isRootSplitCollapsed {
