@@ -76,7 +76,7 @@ public class ArticleThemeDownloader {
 		if let directoryContents = FileManager.default.enumerator(atPath: searchPath) {
 			while let file = directoryContents.nextObject() as? String {
 				if file.hasPrefix("__MACOSX/") {
-					logger.debug("Ignoring theme file in __MACOSX folder.")
+					//logger.debug("Ignoring theme file in __MACOSX folder.")
 					continue
 				}
 				if file.hasSuffix(".nnwtheme") {
