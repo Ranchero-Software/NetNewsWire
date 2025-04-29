@@ -22,11 +22,11 @@ final class FaviconGenerator {
 		
 		let colorHash = ColorHash(webFeed.url)
 		if let favicon = AppAssets.faviconTemplateImage.maskWithColor(color: colorHash.color.cgColor) {
-			let iconImage = IconImage(favicon, isBackgroundSupressed: true)
+			let iconImage = IconImage(favicon, isBackgroundSuppressed: true)
 			FaviconGenerator.faviconGeneratorCache[webFeed.url] = iconImage
 			return iconImage
 		} else {
-			return IconImage(AppAssets.faviconTemplateImage, isBackgroundSupressed: true)
+			return IconImage(AppAssets.faviconTemplateImage, isBackgroundSuppressed: true)
 		}
 		
 	}

@@ -265,7 +265,7 @@ private extension MainTimelineTableViewCell {
 		}
 	}
 	
-	func updateAccessiblityLabel() {
+	func updateaccessibilityLabel() {
 		let starredStatus = cellData.starred ? "\(NSLocalizedString("Starred", comment: "Starred article for accessibility")), " : ""
 		let unreadStatus = cellData.read ? "" : "\(NSLocalizedString("Unread", comment: "Unread")), "
 		let label = starredStatus + unreadStatus + "\(cellData.feedName), \(cellData.title), \(cellData.summary), \(cellData.dateString)"
@@ -304,7 +304,7 @@ private extension MainTimelineTableViewCell {
 		updateUnreadIndicator()
 		updateStarView()
 		updateIconImage()
-		updateAccessiblityLabel()
+		updateaccessibilityLabel()
 	}
 	
 }

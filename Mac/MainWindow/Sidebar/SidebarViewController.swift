@@ -105,16 +105,16 @@ protocol SidebarDelegate: AnyObject {
 	func restoreState(from state: [AnyHashable : Any]) {
 		
 		if let containerExpandedWindowState = state[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-			let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
-			expandedTable = Set(containerIdentifers)
+			let containerIdentifiers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
+			expandedTable = Set(containerIdentifiers)
 		}
 
 		guard let selectedFeedsState = state[UserInfoKey.selectedFeedsState] as? [[AnyHashable: AnyHashable]] else {
 			return
 		}
 
-		let selectedFeedIdentifers = Set(selectedFeedsState.compactMap( { FeedIdentifier(userInfo: $0) }))
-		selectedFeedIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
+		let selectedFeedIdentifiers = Set(selectedFeedsState.compactMap( { FeedIdentifier(userInfo: $0) }))
+		selectedFeedIdentifiers.forEach { treeControllerDelegate.addFilterException($0) }
 		
 		rebuildTreeAndReloadDataIfNeeded()
 		
@@ -122,7 +122,7 @@ protocol SidebarDelegate: AnyObject {
 
 		func selectFeedsVisitor(node: Node) {
 			if let feedID = (node.representedObject as? FeedIdentifiable)?.feedID {
-				if selectedFeedIdentifers.contains(feedID) {
+				if selectedFeedIdentifiers.contains(feedID) {
 					selectIndexes.insert(outlineView.row(forItem: node) )
 				}
 			}
@@ -535,10 +535,10 @@ private extension SidebarViewController {
 	}
 	
 	func addAllSelectedToFilterExceptions() {
-		selectedFeeds.forEach { addToFilterExeptionsIfNecessary($0) }
+		selectedFeeds.forEach { addToFilterExceptionsIfNecessary($0) }
 	}
 	
-	func addToFilterExeptionsIfNecessary(_ feed: Feed?) {
+	func addToFilterExceptionsIfNecessary(_ feed: Feed?) {
 		if isReadFiltered, let feedID = feed?.feedID {
 			if feed is PseudoFeed {
 				treeControllerDelegate.addFilterException(feedID)

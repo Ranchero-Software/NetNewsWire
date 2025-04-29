@@ -112,7 +112,7 @@ class SidebarCell : NSTableCellView {
 
 	override func accessibilityLabel() -> String? {
 		if unreadCount > 0 {
-			let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
+			let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
 			return "\(name) \(unreadCount) \(unreadLabel)"
 		} else {
 			return name
@@ -153,7 +153,7 @@ private extension SidebarCell {
 					tintColor = NSColor.controlAccentColor.cgColor
 				}
 			}
-			updatedIconImage = IconImage(iconImage.image, isSymbol: iconImage.isSymbol, isBackgroundSupressed: iconImage.isBackgroundSupressed, preferredColor: tintColor)
+			updatedIconImage = IconImage(iconImage.image, isSymbol: iconImage.isSymbol, isBackgroundSuppressed: iconImage.isBackgroundSuppressed, preferredColor: tintColor)
 		}
 
 		if let image = updatedIconImage {
