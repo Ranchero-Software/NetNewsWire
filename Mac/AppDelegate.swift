@@ -655,7 +655,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func showPrivacyPolicy(_ sender: Any?) {
-		Browser.open("https://netnewswire.com/privacypolicy", inBackground: false)
+		Browser.open("https://netnewswire.com/privacypolicy.html", inBackground: false)
 	}
 
 	@IBAction func gotoToday(_ sender: Any?) {
