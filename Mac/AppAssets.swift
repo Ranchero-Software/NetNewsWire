@@ -177,14 +177,6 @@ struct AppAssets {
 		}
 	}()
 	
-	static var preferencesToolbarExtensionsImage: RSImage = {
-		if #available(macOS 11.0, *) {
-			return RSImage(named: "preferencesToolbarExtensions")!
-		} else {
-			return NSImage(contentsOfFile: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/KEXT.icns")!
-		}
-	}()
-	
 	static var preferencesToolbarGeneralImage: RSImage = {
 		if #available(macOS 11.0, *) {
 			return NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
