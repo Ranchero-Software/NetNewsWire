@@ -264,6 +264,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if item.action == #selector(toggleReadArticlesFilter(_:)) {
 			return validateToggleReadArticles(item)
 		}
+		
+		if item.action == #selector(printArticle(_:)) {
+			return oneSelectedArticle != nil
+		}
 
 		return true
 	}
@@ -519,6 +523,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		ArticleThemesManager.shared.currentThemeName = menuItem.title
 	}
 	
+	@IBAction func printArticle(_ sender: Any?) {
+		guard let detailViewController else {
+			// Should not reach here due to user interface item validation, but beep anyway.
+			NSSound.beep()
+			return
+		}
+		detailViewController.printArticle()
+	}
 }
 
 // MARK: NSWindowDelegate

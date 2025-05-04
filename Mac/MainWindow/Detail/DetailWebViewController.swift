@@ -204,6 +204,35 @@ final class DetailWebViewController: NSViewController {
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
 	}
+	
+	// MARK: Printing
+	
+	func printArticle() {
+		guard let window = self.view.window else {
+			NSSound.beep()
+			return
+		}
+		
+		let printInfo = NSPrintInfo.shared
+		printInfo.topMargin = 35.0
+		printInfo.bottomMargin = 35.0
+		printInfo.leftMargin = 35.0
+		printInfo.rightMargin = 35.0
+		
+		let printOperation = webView.printOperation(with: printInfo)
+		if let article = self.article, let articleTitle = article.title {
+			printOperation.jobTitle = articleTitle
+		}
+		
+		printOperation.showsPrintPanel = true
+		printOperation.printPanel.options = printOperation.printPanel.options.union([.showsPaperSize, .showsOrientation, .showsScaling, .showsPreview])
+		
+		printOperation.showsProgressPanel = true
+		// Without this line, the following error is printed to log, followed by a call to `AppKitBreakInDebugger`:
+		//		The NSPrintOperation view's frame was not initialized properly before knowsPageRange: returned
+		printOperation.view?.frame = self.webView.bounds
+		printOperation.runModal(for: window, delegate: nil, didRun: nil, contextInfo: nil)
+	}
 
 	// MARK: State Restoration
 	
