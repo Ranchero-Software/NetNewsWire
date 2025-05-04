@@ -264,7 +264,7 @@ class WebViewController: UIViewController {
 	
 	func showActivityDialog(popOverBarButtonItem: UIBarButtonItem? = nil) {
 		guard let url = article?.preferredURL else { return }
-		let activityViewController = UIActivityViewController(url: url, title: article?.title, applicationActivities: [FindInArticleActivity(), OpenInBrowserActivity()])
+		let activityViewController = UIActivityViewController(url: url, title: article?.title, applicationActivities: [FindInArticleActivity(), OpenInBrowserActivity(), PrintActivity(webView: webView)])
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
