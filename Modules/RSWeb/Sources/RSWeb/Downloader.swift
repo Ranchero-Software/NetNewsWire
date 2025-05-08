@@ -8,19 +8,24 @@
 
 import Foundation
 import os
+import RSCore
 
 public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> Swift.Void
 
 /// Simple downloader, for a one-shot download like an image
 /// or a web page. For a download-feeds session, see DownloadSession.
+/// Caches response for a short time for GET requests. May return cached response.
 @MainActor public final class Downloader {
 
 	public static let shared = Downloader()
 	private let urlSession: URLSession
 	private var callbacks = [URL: [DownloadCallback]]()
-	
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Downloader")
-	private static let debugLoggingEnabled = true
+
+	// Cache — short-lived
+	private let cache = Cache<DownloaderRecord>(timeToLive: 60 * 3, timeBetweenCleanups: 60 * 2)
+
+	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Downloader")
+	nonisolated private static let debugLoggingEnabled = true
 
 	private init() {
 		let sessionConfiguration = URLSessionConfiguration.ephemeral
@@ -41,11 +46,12 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		urlSession.invalidateAndCancel()
 	}
 
-	public func download(_ url: URL, _ completion: @escaping DownloadCallback) {
-		download(URLRequest(url: url), completion)
+	public func download(_ url: URL, _ callback: @escaping DownloadCallback) {
+		assert(Thread.isMainThread)
+		download(URLRequest(url: url), callback)
 	}
 
-	public func download(_ urlRequest: URLRequest, _ completion: @escaping DownloadCallback) {
+	public func download(_ urlRequest: URLRequest, _ callback: @escaping DownloadCallback) {
 		assert(Thread.isMainThread)
 
 		guard let url = urlRequest.url else {
@@ -53,25 +59,20 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 			return
 		}
 
-		addCallback(url: url, callback: completion)
+		let isCacheableRequest = urlRequest.httpMethod == HTTPMethod.get
 
-		var urlRequestToUse = urlRequest
-		urlRequestToUse.addSpecialCaseUserAgentIfNeeded()
-
-		let task = urlSession.dataTask(with: urlRequestToUse) { (data, response, error) in
-			Task { @MainActor in
-				self.callAndReleaseCallbacks(url, data, response, error)
+		// Return cached record if available.
+		if isCacheableRequest {
+			if let cachedRecord = cache[url.absoluteString] {
+				if Self.debugLoggingEnabled {
+					Self.logger.debug("Downloader: returning cached record for \(url)")
+				}
+				callback(cachedRecord.data, cachedRecord.response, cachedRecord.error)
+				return
 			}
 		}
-		task.resume()
-	}
-}
 
-private extension Downloader {
-
-	func addCallback(url: URL, callback: @escaping DownloadCallback) {
-		assert(Thread.isMainThread)
-
+		// Add callback. If there is already a download in progress for this URL, return early.
 		if callbacks[url] == nil {
 			if Self.debugLoggingEnabled {
 				Self.logger.debug("Downloader: downloading \(url)")
@@ -86,7 +87,29 @@ private extension Downloader {
 			callbacks[url]?.append(callback)
 			return
 		}
+
+		var urlRequestToUse = urlRequest
+		urlRequestToUse.addSpecialCaseUserAgentIfNeeded()
+
+		let task = urlSession.dataTask(with: urlRequestToUse) { (data, response, error) in
+
+			if isCacheableRequest {
+				if Self.debugLoggingEnabled {
+					Self.logger.debug("Downloader: caching record for \(url)")
+				}
+				let cachedRecord = DownloaderRecord(data: data, response: response, error: error)
+				self.cache[url.absoluteString] = cachedRecord
+			}
+
+			Task { @MainActor in
+				self.callAndReleaseCallbacks(url, data, response, error)
+			}
+		}
+		task.resume()
 	}
+}
+
+private extension Downloader {
 
 	func callAndReleaseCallbacks(_ url: URL, _ data: Data? = nil, _ response: URLResponse? = nil, _ error: Error? = nil) {
 		assert(Thread.isMainThread)
@@ -114,4 +137,12 @@ private extension Downloader {
 			callback(data, response, error)
 		}
 	}
+}
+
+struct DownloaderRecord: CacheRecord, Sendable {
+
+	let dateCreated = Date()
+	let data: Data?
+	let response: URLResponse?
+	let error: Error?
 }
