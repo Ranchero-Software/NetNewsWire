@@ -25,7 +25,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 	private let cache = Cache<DownloaderRecord>(timeToLive: 60 * 3, timeBetweenCleanups: 60 * 2)
 
 	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Downloader")
-	nonisolated private static let debugLoggingEnabled = true
+	nonisolated private static let debugLoggingEnabled = false
 
 	private init() {
 		let sessionConfiguration = URLSessionConfiguration.ephemeral
