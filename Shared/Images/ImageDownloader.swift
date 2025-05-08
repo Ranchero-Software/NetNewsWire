@@ -105,22 +105,24 @@ private extension ImageDownloader {
 			return
 		}
 
-		Downloader.shared.download(imageURL) { (data, response, error) in
-
-			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-				self.saveToDisk(url, data)
-				completion(data)
-				return
+		Task { @MainActor in
+			Downloader.shared.download(imageURL) { (data, response, error) in
+				
+				if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
+					self.saveToDisk(url, data)
+					completion(data)
+					return
+				}
+				
+				if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
+					self.badURLs.insert(url)
+				}
+				if let error = error {
+					os_log(.info, log: self.log, "Error downloading image at %@: %@.", url, error.localizedDescription)
+				}
+				
+				completion(nil)
 			}
-
-			if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
-				self.badURLs.insert(url)
-			}
-			if let error = error {
-				os_log(.info, log: self.log, "Error downloading image at %@: %@.", url, error.localizedDescription)
-			}
-
-			completion(nil)
 		}
 	}
 

@@ -54,7 +54,9 @@ struct CrashReporter {
 		let formData = formString.data(using: .utf8, allowLossyConversion: true)
 		request.httpBody = formData
 
-		Downloader.shared.download(request) // Don’t care about the result.
+		Task { @MainActor in
+			Downloader.shared.download(request) { _, _, _ in }
+		}
 	}
 
 	static func runCrashReporterWindow(_ crashLogText: String) {
