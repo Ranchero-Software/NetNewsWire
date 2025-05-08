@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 6.1.9 TestFlight build 6194 7 May 2025 - branch: main tag: iOS-6.1.9-6194
+
+Add caching to the downloader (the one that downloads feed icons, favicons, etc.) — make fewer network requests
+Work around The Verge’s bug with character encoding
+
 ### 6.1.9 TestFlight build 6193 27 April 2025 - branch: main tag: iOS-6.1.9-6193
 
 Fix crash-on-launch bug — take two. Hopefully this will do it. (Since we can’t reproduce it, we can’t know for sure if this will fix it.)
