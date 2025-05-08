@@ -1,19 +1,28 @@
 # Mac Release Notes
 
-## 6.1.9b1 build 6134 11 Jan 2024 - branch 6.1.9-mac tag: mac-6.1.9b1
+### 6.1.10b1 build 6136 7 May 2025 - branch main tag: mac-6.1.10b1
+
+Added caching to the downloader (the one that downloads feed icons, favicons, etc.) — make fewer network requests
+Worked around The Verge’s bug with character encoding
+Fixed bug where links in footnotes — in light mode, using the default theme — would be invisible
+Fixed double-underlines on 404 Media links. (Fixed bug where using <u> tag inside an <a> would cause two underlines.)
+Added &smallcircle; to the entities decoder
+Synced the Mac default theme with the iOS version
+
+### 6.1.9b1 build 6134 11 Jan 2024 - branch 6.1.9-mac tag: mac-6.1.9b1
 
 Fix some glitches in the default article theme
 Fix an issue with slow updates for some feeds (by not paying attention to http Cache-Control response headers [except for openrss.org])
 
-## 6.1.8 build 6133 19 Dec 2024 - branch 6.1.8-mac tag: mac-6.1.8
+### 6.1.8 build 6133 19 Dec 2024 - branch 6.1.8-mac tag: mac-6.1.8
 
 Fix state restoration bug by building on Xcode 14
 
-## 6.1.8b1 build 6132 18 Dec 2024 - branch 6.1.8-mac tag: mac-6.1.8b1
+### 6.1.8b1 build 6132 18 Dec 2024 - branch 6.1.8-mac tag: mac-6.1.8b1
 
 Hopefully fix state restoration bug by building on Xcode 14
 
-## 6.1.7 build 6131 16 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7-release
+### 6.1.7 build 6131 16 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7-release
 
 Fix bug clearing refresh progress
 Fix bandwidth bugs with downloading web pages to find feed icons and favicons
@@ -21,7 +30,7 @@ Update default theme with enhancements by John Gruber
 Space out requests made to openrss.org
 Send user-agent with platform, version, and build to openrss.org (and only to that site)
 
-## 6.1.7b1 build 6130 15 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7b1
+### 6.1.7b1 build 6130 15 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7b1
 
 Fix bug clearing refresh progress
 Fix bandwidth bugs with downloading web pages to find feed icons and favicons
@@ -29,11 +38,11 @@ Update default theme with enhancements by John Gruber
 Space out requests made to openrss.org
 Send user-agent with platform, version, and build to openrss.org (and only to that site)
 
-## 6.1.6 build 6127 4 Dec 2024 - branch: 6.1.6 tag: mac-6.1.6
+### 6.1.6 build 6127 4 Dec 2024 - branch: 6.1.6 tag: mac-6.1.6
 
 Fix bug clearing sync progress for Feedly accounts
 
-## 6.1.5 build 6126 3 Dec 2024 - branch: 6.1.5 tag: mac-6.1.5
+### 6.1.5 build 6126 3 Dec 2024 - branch: 6.1.5 tag: mac-6.1.5
 
 Restore toggle sidebar button to toolbar
 Add keyboard shortcut for Copy Article URL and Copy External URL menu items
@@ -43,17 +52,17 @@ Fix a bug with conditional GET support
 Support MarsEdit 5 - it will now appear in Share menu
 Fix a crashing bug that could happen when adding an account
 
-## 6.1.5b4 build 6125 2 Dec 2024
+### 6.1.5b4 build 6125 2 Dec 2024
 
 Make Cache-Control responses persist between runs
 Add MarsEdit 5 to Apple events entitlements
 
-## 6.1.5b3 build 6124 30 Nov 2024
+### 6.1.5b3 build 6124 30 Nov 2024
 
 Fix bug introduced in previous beta regarding conditional GET info — all back to normal now
 Write our own support for Cache-Control response header. Skip downloading a feed when Cache-Control says it’s too soon
 
-## 6.1.5b2 build 6123 29 Nov 2024
+### 6.1.5b2 build 6123 29 Nov 2024
 
 Restore toggle sidebar button to toolbar
 Add keyboard shortcut for Copy Article URL and Copy External URL menu items
@@ -65,21 +74,21 @@ Fix data race with article status (read/unread and starred/unstarred)
 Switch to using built-in URLSession caching — supports Cache-Control response header and other good things — means the app uses less bandwidth and is kinder to the servers it contacts
 Add support for handling 429 responses
 
-## 6.1.5b1 build 6121 1 Dec 2023
+### 6.1.5b1 build 6121 1 Dec 2023
 
 Add new setting — turn on/off JavaScript for the article pane. It’s on by default, which matches previous behavior. Note that some content — videos and embedded social media posts, for instance — will often require JavaScript to be _on_ in order to work properly. However, for those who want or need greater security and privacy, we’ve made this setting available.
 
 Fix a case where images might not load in the article pane.
 
-## 6.1.4 build 6120 27 June 2023
+### 6.1.4 build 6120 27 June 2023
 
 Same as 6.1.4b1 but as final release.
 
-## 6.1.4b1 build 6119 25 June 2023
+### 6.1.4b1 build 6119 25 June 2023
 
 Remove Reddit API integration. Remove UI and code for Extensions.
 
-## 6.1.3 build 6118 25 June 2023
+### 6.1.3 build 6118 25 June 2023
 
 Change release notes URL to point to release notes page: https://github.com/Ranchero-Software/NetNewsWire/releases/
 
@@ -87,15 +96,15 @@ Change release notes URL to point to release notes page: https://github.com/Ranc
 
 Show Reddit deprecation notice on startup if needed.
 
-## 6.1.2 build 6114 8 Apr 2023
+### 6.1.2 build 6114 8 Apr 2023
 
 Update default feeds to remove feeds that don’t appear to be active anymore (sadly!).
 
-## 6.1.1 build 6112 13 Mar 2023
+### 6.1.1 build 6112 13 Mar 2023
 
 Revised Twitter removal warning to not mention any specific month. We’re holding this release until Twitter shuts down free access to its API.
 
-## 6.1.1 build 6111 9 Feb 2023
+### 6.1.1 build 6111 9 Feb 2023
 
 Same as 6.1.1b4 but with updated build and version number.
 
