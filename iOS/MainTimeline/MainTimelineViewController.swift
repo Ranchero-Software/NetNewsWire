@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import WebKit
 import RSCore
 import RSWeb
 import Account

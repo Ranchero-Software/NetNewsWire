@@ -189,28 +189,13 @@ public extension String {
 
 	/// Removes an HTML tag and everything between its start and end tags.
 	///
-	/// The regex pattern `<tag>[\\s\\S]*?</tag>` explanation:
-	/// - `<` matches the literal `<` character.
-	/// - `tag` matches the literal parameter provided to the function, e.g., `style`.
-	/// - `>` matches the literal `>` character.
-	/// - `[\\s\\S]*?`
-	/// 	- `[\\s\\S]` matches _any_ character, including new lines.
-	/// 	- `*` will match zero or more of the preceeding character, in this case _any_
-	/// 	character.
-	/// 	- `?` switches the matching mode to [lazy](https://javascript.info/regexp-greedy-and-lazy)
-	/// 	so it will match as few as characters as possible before satisfying the rest of the pattern.
-	/// - `<` matches the literal `<` character.
-	/// - `/` matches the literal `/` character.
-	/// - `tag` matches the literal parameter provided to the function, e.g., `style`.
-	/// - `>` matches the literal `>` character.
-	///
 	/// - Parameter tag: The tag to remove.
 	///
 	/// - Returns: A new copy of `self` with the tag removed.
 	///
 	/// - Note: Doesn't work correctly with nested tags of the same name.
 	private func removingTagAndContents(_ tag: String) -> String {
-		return self.replacingOccurrences(of: "<\(tag)>[\\s\\S]*?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
+		return self.replacingOccurrences(of: "<\(tag).+?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
 	}
 
 	/// Strips HTML from a string.

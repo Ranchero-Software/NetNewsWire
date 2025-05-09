@@ -133,27 +133,25 @@ private extension SingleFaviconDownloader {
 	}
 
 	func downloadFavicon(_ completion: @escaping (RSImage?) -> Void) {
-
+		
 		guard let url = URL(string: faviconURL) else {
 			completion(nil)
 			return
 		}
-
-		Task { @MainActor in
-			Downloader.shared.download(url) { (data, response, error) in
-				
-				if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-					self.saveToDisk(data)
-					RSImage.image(with: data, imageResultBlock: completion)
-					return
-				}
-				
-				if let error = error {
-					os_log(.info, log: self.log, "Error downloading image at %@: %@.", url.absoluteString, error.localizedDescription)
-				}
-				
-				completion(nil)
+		
+		Downloader.shared.download(url) { (data, response, error) in
+			
+			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
+				self.saveToDisk(data)
+				RSImage.image(with: data, imageResultBlock: completion)
+				return
 			}
+			
+			if let error = error {
+				os_log(.info, log: self.log, "Error downloading image at %@: %@.", url.absoluteString, error.localizedDescription)
+			}
+			
+			completion(nil)
 		}
 	}
 

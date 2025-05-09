@@ -34,12 +34,11 @@ class WebViewController: UIViewController {
 	private var webView: PreloadedWebView? {
 		return view.subviews[0] as? PreloadedWebView
 	}
-
+	
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
 		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
-	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator);
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
 
@@ -359,15 +358,15 @@ extension WebViewController: WKNavigationDelegate {
 			}
 		}
 	}
-
+	
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-
+		
 		if navigationAction.navigationType == .linkActivated {
 			guard let url = navigationAction.request.url else {
 				decisionHandler(.allow)
 				return
 			}
-
+			
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
 				decisionHandler(.cancel)
@@ -381,14 +380,14 @@ extension WebViewController: WKNavigationDelegate {
 						self.openURLInSafariViewController(url)
 					}
 				}
-
+				
 			} else if components?.scheme == "mailto" {
 				decisionHandler(.cancel)
-
+				
 				guard let emailAddress = url.percentEncodedEmailAddress else {
 					return
 				}
-
+				
 				if UIApplication.shared.canOpenURL(emailAddress) {
 					UIApplication.shared.open(emailAddress, options: [.universalLinksOnly : false], completionHandler: nil)
 				} else {
@@ -398,11 +397,11 @@ extension WebViewController: WKNavigationDelegate {
 				}
 			} else if components?.scheme == "tel" {
 				decisionHandler(.cancel)
-
+				
 				if UIApplication.shared.canOpenURL(url) {
 					UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
 				}
-
+				
 			} else {
 				decisionHandler(.allow)
 			}
@@ -414,7 +413,7 @@ extension WebViewController: WKNavigationDelegate {
 	func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
 		fullReload()
 	}
-
+	
 }
 
 // MARK: WKUIDelegate
@@ -514,16 +513,16 @@ private extension WebViewController {
 
 	func loadWebView(replaceExistingWebView: Bool = false) {
 		guard isViewLoaded else { return }
-
+		
 		if !replaceExistingWebView, let webView = webView {
 			self.renderPage(webView)
 			return
 		}
-
+		
 		coordinator.webViewProvider.dequeueWebView() { webView in
-
+			
 			webView.ready {
-
+				
 				// Add the webview
 				webView.translatesAutoresizingMaskIntoConstraints = false
 				self.view.insertSubview(webView, at: 0)
@@ -533,7 +532,7 @@ private extension WebViewController {
 					self.view.topAnchor.constraint(equalTo: webView.topAnchor),
 					self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
 				])
-
+			
 				// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
 				// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
 				// us from easily swiping between WKWebViews.  This hack fixes that.
@@ -555,11 +554,11 @@ private extension WebViewController {
 				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
 
 				self.renderPage(webView)
-
+				
 			}
-
+			
 		}
-
+		
 	}
 
 	func renderPage(_ webView: PreloadedWebView?) {
@@ -592,8 +591,7 @@ private extension WebViewController {
 			"windowScrollY": String(windowScrollY)
 		]
 
-		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
+		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
 	}
 	
