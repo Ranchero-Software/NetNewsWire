@@ -31,8 +31,8 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	var webView: WKWebView? {
-		return view.subviews[0] as? WKWebView
+	private var webView: PreloadedWebView? {
+		return view.subviews[0] as? PreloadedWebView
 	}
 
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
@@ -352,14 +352,22 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 
 extension WebViewController: WKNavigationDelegate {
 	
+	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		for (index, view) in view.subviews.enumerated() {
+			if index != 0, let oldWebView = view as? PreloadedWebView {
+				oldWebView.removeFromSuperview()
+			}
+		}
+	}
+
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-		
+
 		if navigationAction.navigationType == .linkActivated {
 			guard let url = navigationAction.request.url else {
 				decisionHandler(.allow)
 				return
 			}
-			
+
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
 				decisionHandler(.cancel)
@@ -373,14 +381,14 @@ extension WebViewController: WKNavigationDelegate {
 						self.openURLInSafariViewController(url)
 					}
 				}
-				
+
 			} else if components?.scheme == "mailto" {
 				decisionHandler(.cancel)
-				
+
 				guard let emailAddress = url.percentEncodedEmailAddress else {
 					return
 				}
-				
+
 				if UIApplication.shared.canOpenURL(emailAddress) {
 					UIApplication.shared.open(emailAddress, options: [.universalLinksOnly : false], completionHandler: nil)
 				} else {
@@ -390,11 +398,11 @@ extension WebViewController: WKNavigationDelegate {
 				}
 			} else if components?.scheme == "tel" {
 				decisionHandler(.cancel)
-				
+
 				if UIApplication.shared.canOpenURL(url) {
 					UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
 				}
-				
+
 			} else {
 				decisionHandler(.allow)
 			}
@@ -406,7 +414,7 @@ extension WebViewController: WKNavigationDelegate {
 	func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
 		fullReload()
 	}
-	
+
 }
 
 // MARK: WKUIDelegate
@@ -506,63 +514,55 @@ private extension WebViewController {
 
 	func loadWebView(replaceExistingWebView: Bool = false) {
 		guard isViewLoaded else { return }
-		
+
 		if !replaceExistingWebView, let webView = webView {
 			self.renderPage(webView)
 			return
 		}
-		
-		let preferences = WKPreferences()
-		preferences.javaScriptCanOpenWindowsAutomatically = false
 
-		/// The defaults for `preferredContentMode` and `allowsContentJavaScript` are suitable
-		/// and don't need to be explicitly set.
-		/// `allowsContentJavaScript` replaces `WKPreferences.javascriptEnabled`.
-		let webpagePreferences = WKWebpagePreferences()
+		coordinator.webViewProvider.dequeueWebView() { webView in
 
-		let configuration = WKWebViewConfiguration()
-		configuration.defaultWebpagePreferences = webpagePreferences
-		configuration.preferences = preferences
-		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
-		configuration.allowsInlineMediaPlayback = true
-		configuration.mediaTypesRequiringUserActionForPlayback = .audio
-		if #available(iOS 15.4, *) {
-			configuration.preferences.isElementFullscreenEnabled = true
+			webView.ready {
+
+				// Add the webview
+				webView.translatesAutoresizingMaskIntoConstraints = false
+				self.view.insertSubview(webView, at: 0)
+				NSLayoutConstraint.activate([
+					self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
+					self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
+					self.view.topAnchor.constraint(equalTo: webView.topAnchor),
+					self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
+				])
+
+				// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
+				// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
+				// us from easily swiping between WKWebViews.  This hack fixes that.
+				webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
+
+				webView.scrollView.setZoomScale(1.0, animated: false)
+
+				self.view.setNeedsLayout()
+				self.view.layoutIfNeeded()
+
+				// Configure the webview
+				webView.navigationDelegate = self
+				webView.uiDelegate = self
+				webView.scrollView.delegate = self
+				self.configureContextMenuInteraction()
+
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
+
+				self.renderPage(webView)
+
+			}
+
 		}
-		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
-		let webView = WKWebView(frame: self.view.bounds, configuration: configuration)
-		webView.isOpaque = false;
-		webView.backgroundColor = .clear;
-
-		// Add the webview - using autolayout will cause fullscreen video to fail and lose the web view
-		webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-		self.view.insertSubview(webView, at: 0)
-
-		// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
-		// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
-		// us from easily swiping between WKWebViews.  This hack fixes that.
-		webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
-
-		webView.scrollView.setZoomScale(1.0, animated: false)
-
-		self.view.setNeedsLayout()
-		self.view.layoutIfNeeded()
-
-		// Configure the webview
-		webView.navigationDelegate = self
-		webView.uiDelegate = self
-		webView.scrollView.delegate = self
-		self.configureContextMenuInteraction()
-
-		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
-		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
-		webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
-
-		self.renderPage(webView)
 	}
 
-	func renderPage(_ webView: WKWebView?) {
+	func renderPage(_ webView: PreloadedWebView?) {
 		guard let webView = webView else { return }
 		 
 		let theme = ArticleThemesManager.shared.currentTheme

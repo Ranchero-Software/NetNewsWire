@@ -40,20 +40,22 @@ struct FeedNode: Hashable {
 }
 
 class SceneCoordinator: NSObject, UndoableCommandRunner {
-	
+
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
 		return rootSplitViewController.undoManager
 	}
-	
+
+	lazy var webViewProvider = WebViewProvider(coordinator: self)
+
 	private var activityManager = ActivityManager()
-	
+
 	private var rootSplitViewController: RootSplitViewController!
 
 	private var mainFeedViewController: MainFeedViewController!
 	private var mainTimelineViewController: MainTimelineViewController?
 	private var articleViewController: ArticleViewController?
-	
+
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 0.5)
 	private var fetchSerialNumber = 0
