@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.9 TestFlight build 6196 9 May 2025 - branch: main tag: iOS-6.1.9-6196
+
+Revert more recent changes in hopes of fixing the scrolling bug.
+
 ### 6.1.9 TestFlight build 6195 8 May 2025 - branch: main tag: iOS-6.1.9-6195
 
 Reverted some webview-related changes — which will hopefully fix the bug, introduced in the previous beta, where you couldn’t scroll an article after re-awakening the app
