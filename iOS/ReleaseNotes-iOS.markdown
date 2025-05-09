@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.9 TestFlight build 6195 8 May 2025 - branch: main tag: iOS-6.1.9-6195
+
+Reverted some webview-related changes — which will hopefully fix the bug, introduced in the previous beta, where you couldn’t scroll an article after re-awakening the app
+
 ### 6.1.9 TestFlight build 6194 7 May 2025 - branch: main tag: iOS-6.1.9-6194
 
 Add caching to the downloader (the one that downloads feed icons, favicons, etc.) — make fewer network requests
