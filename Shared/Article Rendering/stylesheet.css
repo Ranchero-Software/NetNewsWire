@@ -533,3 +533,56 @@ a.footnote:hover,
 	}
 
 }
+
+/* override styles when printing */
+@media print {
+	:root {
+		--primary-accent-color: #000;
+		--secondary-accent-color: #000;
+	}
+	
+	body {
+		margin: 0px;
+		padding: 0px;
+		max-width: 100%;
+		
+		word-break: break-word;
+		-webkit-hyphens: auto;
+	}
+	
+	/* Use macOS font sizes for printing, even on iOS*/
+	.smallText {
+		font-size: 14px;
+	}
+	
+	.mediumText {
+		font-size: 16px;
+	}
+	
+	.largeText {
+		font-size: 18px;
+	}
+	
+	.xlargeText {
+		font-size: 20px;
+	}
+	
+	.xxlargeText {
+		font-size: 22px;
+	}
+	
+	@supports not (-webkit-touch-callout: none) {
+		a:link {
+			color: #000;
+			text-decoration-color: #000;
+		}
+		
+		.articleBody a:link, .articleBody a:visited {
+			border-bottom: 1px solid #000;
+		}
+		
+		body a, body a:visited, body a * {
+			color: #000;
+		}
+	}
+}

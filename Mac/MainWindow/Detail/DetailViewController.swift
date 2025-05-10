@@ -99,6 +99,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		currentWebViewController.scrollPageUp(sender)
 	}
 	
+	func printArticle() {
+		currentWebViewController.printArticle()
+	}
+	
 	// MARK: - Navigation
 	
 	func focus() {
