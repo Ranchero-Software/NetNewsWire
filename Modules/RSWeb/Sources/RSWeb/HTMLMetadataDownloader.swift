@@ -75,36 +75,38 @@ private extension HTMLMetadataDownloader {
 	}
 
 	func downloadMetadata(_ url: String) {
-		
+
 		guard let actualURL = URL(string: url) else {
 			if Self.debugLoggingEnabled {
 				Self.logger.debug("HTMLMetadataDownloader skipping download for \(url) because it couldn’t construct a URL.")
 			}
 			return
 		}
-		
+
 		if Self.debugLoggingEnabled {
 			Self.logger.debug("HTMLMetadataDownloader downloading for \(url)")
 		}
-		
-		Downloader.shared.download(actualURL) { data, response, error in
-			if let data, !data.isEmpty, let response, response.statusIsOK {
-				let urlToUse = response.url ?? actualURL
-				let parserData = ParserData(url: urlToUse.absoluteString, data: data)
-				let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
-				if Self.debugLoggingEnabled {
-					Self.logger.debug("HTMLMetadataDownloader caching parsed metadata for \(url)")
+
+		Task { @MainActor in
+			Downloader.shared.download(actualURL) { data, response, error in
+				if let data, !data.isEmpty, let response, response.statusIsOK {
+					let urlToUse = response.url ?? actualURL
+					let parserData = ParserData(url: urlToUse.absoluteString, data: data)
+					let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
+					if Self.debugLoggingEnabled {
+						Self.logger.debug("HTMLMetadataDownloader caching parsed metadata for \(url)")
+					}
+					self.cache[url] = htmlMetadata
+					return
 				}
-				self.cache[url] = htmlMetadata
-				return
-			}
-			
-			if let statusCode = response?.forcedStatusCode, (400...499).contains(statusCode) {
-				self.noteURLDidReturn4xx(url)
-			}
-			
-			if Self.debugLoggingEnabled {
-				Self.logger.debug("HTMLMetadataDownloader failed download for \(url)")
+				
+				if let statusCode = response?.forcedStatusCode, (400...499).contains(statusCode) {
+					self.noteURLDidReturn4xx(url)
+				}
+				
+				if Self.debugLoggingEnabled {
+					Self.logger.debug("HTMLMetadataDownloader failed download for \(url)")
+				}
 			}
 		}
 	}
