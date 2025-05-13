@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 6.1.9 AppStore build 6197 13 May 2025 - branch: main tag iOS-6.1.9 (Same build as 6197 TestFlight)
+
+Fixed bug where links in footnotes — in light mode, using the default theme — would be invisible
+Fixed double-underlines on 404 Media links
+Fixed a number of other small bugs
+
+(Submitted to review 13 May 2025)
+
 ### 6.1.9 TestFlight build 6197 9 May 2025 - branch: main tag: iOS-6.1.9-6197
 
 Restore recent changes except for webview changes. Scrolling bug appears to be fixed.
