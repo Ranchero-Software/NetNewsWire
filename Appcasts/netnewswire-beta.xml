@@ -7,6 +7,18 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 6.1.10b2</title>
+			<description><![CDATA[
+<ul>
+<li>Fixed bug, introduced in previous test build, that prevented adding a Feedly account</li>
+</ul>
+			]]></description>
+			<pubDate>Tue, 13 May 2025 09:00:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.10b2/NetNewsWire6.1.10b2.zip" sparkle:version="6137" sparkle:shortVersionString="6.1.10b2" length="9382872" type="application/zip" />
+			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
             <title>NetNewsWire 6.1.10b1</title>
             <description><![CDATA[
 <ul>
