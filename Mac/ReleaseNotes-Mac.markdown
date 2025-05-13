@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 6.1.10b2 build 6137 13 May 2025 - branch main tag: mac-6.1.10b2
+
+Fixed bug, introduced in previous test build, that prevented adding a Feedly account
+
 ### 6.1.10b1 build 6136 7 May 2025 - branch main tag: mac-6.1.10b1
 
 Added caching to the downloader (the one that downloads feed icons, favicons, etc.) — make fewer network requests
