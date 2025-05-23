@@ -1,6 +1,6 @@
 # Contributing
 
-We welcome contributions — but it’s **really important to ask first** before working on a new feature or bug fix. Just because the app is open source doesn’t mean we add features just whenever someone codes one up. The app is planned the same way it would be if it weren’t open source.
+We welcome contributions — but it’s **really important to ask first** before working on a new feature or bug fix. Just because the app is open source doesn’t mean we add features just whenever someone codes one up. The app is planned the same way it would be if it weren’t open source. (See NetNewsWire [milestones](https://github.com/Ranchero-Software/NetNewsWire/milestones).)
 
 Here’s how to contribute:
 
