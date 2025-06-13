@@ -818,12 +818,14 @@ extension MainFeedViewController: MainFeedTableViewCellDelegate {
 private extension MainFeedViewController {
 	
 	func setFilterButtonToActive() {
-		filterButton?.image = AppAssets.filterActiveImage
+		filterButton.style = .prominent
+		filterButton.tintColor = AppAssets.primaryAccentColor
 		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
 	}
 	
 	func setFilterButtonToInactive() {
-		filterButton?.image = AppAssets.filterInactiveImage
+		filterButton.style = .plain
+		filterButton.tintColor = nil
 		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 	

@@ -23,7 +23,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
 
-	private lazy var filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+	private lazy var filterButton = UIBarButtonItem(image: AppAssets.filterImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
 
 	private lazy var dataSource = makeDataSource()
@@ -149,7 +149,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		// defaulted to "All Articles" as it is global. 
 		if UIDevice.current.userInterfaceIdiom == .pad {
 			searchController.searchBar.selectedScopeButtonIndex = 1
-			navigationItem.searchBarPlacementAllowsExternalIntegration = UIDevice.current.userInterfaceIdiom == .pad
+			navigationItem.searchBarPlacementAllowsExternalIntegration = true
 		}
 		definesPresentationContext = true
 		
@@ -742,12 +742,14 @@ private extension MainTimelineViewController {
 		case .alwaysRead:
 			navigationItem.rightBarButtonItem = nil
 		}
-
+		
 		if isReadArticlesFiltered {
-			filterButton.image = AppAssets.filterActiveImage
+			filterButton.style = .prominent
+			filterButton.tintColor = AppAssets.primaryAccentColor
 			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
-			filterButton.image = AppAssets.filterInactiveImage
+			filterButton.style = .plain
+			filterButton.tintColor = nil
 			filterButton.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 

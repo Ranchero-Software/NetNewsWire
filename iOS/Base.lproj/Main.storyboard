@@ -40,7 +40,6 @@
                                 <action selector="toggleRead:" destination="JEX-9P-axG" id="A8V-r1-o9u"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="n8Q-7d-yb4"/>
                         <barButtonItem title="Toggle Starred" image="star" catalog="system" id="wU4-eH-wC9">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Toggle Starred"/>
@@ -212,7 +211,7 @@
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
-                        <barButtonItem key="rightBarButtonItem" image="line.3.horizontal.decrease.circle" catalog="system" id="9ro-XY-5xU">
+                        <barButtonItem key="rightBarButtonItem" image="line.3.horizontal.decrease" catalog="system" id="9ro-XY-5xU">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Feeds Filter"/>
                             </userDefinedRuntimeAttributes>
@@ -415,7 +414,7 @@
         <image name="chevron.up" catalog="system" width="128" height="70"/>
         <image name="circle" catalog="system" width="128" height="123"/>
         <image name="gear" catalog="system" width="128" height="122"/>
-        <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="123"/>
+        <image name="line.3.horizontal.decrease" catalog="system" width="128" height="73"/>
         <image name="markAllAsRead" width="13" height="20"/>
         <image name="multiply.circle.fill" catalog="system" width="128" height="123"/>
         <image name="square.and.arrow.up" catalog="system" width="110" height="128"/>
