@@ -174,6 +174,7 @@ class ArticleViewController: UIViewController {
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
+		navigationController?.navigationBar.topItem?.subtitle = nil
 		coordinator.isArticleViewControllerPending = false
 	}
 	
