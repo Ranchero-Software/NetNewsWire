@@ -144,10 +144,9 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			NSLocalizedString("All Articles", comment: "All Articles")
 		]
 		navigationItem.searchController = searchController
-		// If the device is an iPad, the search bar is detached and placed
-		// in the top right of the article view. When that is the case, search is
-		// defaulted to "All Articles" as it is global. 
+		
 		if UIDevice.current.userInterfaceIdiom == .pad {
+			// FIXME: iPad scope buttons aren't showing in iOS 26 Beta 1. Set to All Articles.
 			searchController.searchBar.selectedScopeButtonIndex = 1
 			navigationItem.searchBarPlacementAllowsExternalIntegration = true
 		}
