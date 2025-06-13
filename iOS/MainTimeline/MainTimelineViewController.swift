@@ -195,7 +195,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		
+		navigationController?.navigationBar.topItem?.subtitle = nil
 		super.viewWillAppear(animated)
 	}
 	
