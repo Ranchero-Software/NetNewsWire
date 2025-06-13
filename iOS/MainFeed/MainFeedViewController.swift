@@ -50,22 +50,17 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 	override func viewDidLoad() {
 
 		super.viewDidLoad()
-
-		if traitCollection.userInterfaceIdiom == .phone {
-			navigationController?.navigationBar.prefersLargeTitles = true
-		}
 		
 		// If you don't have an empty table header, UIKit tries to help out by putting one in for you
 		// that makes a gap between the first section header and the navigation bar
-		var frame = CGRect.zero
-		frame.size.height = .leastNormalMagnitude
-		tableView.tableHeaderView = UIView(frame: frame)
+//		var frame = CGRect.zero
+//		frame.size.height = .leastNormalMagnitude
+//		tableView.tableHeaderView = UIView(frame: frame)
 		
 		tableView.register(MainFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		tableView.dragDelegate = self
 		tableView.dropDelegate = self
 		tableView.dragInteractionEnabled = true
-		resetEstimatedRowHeight()
 		tableView.separatorStyle = .none
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -85,10 +80,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 
-		refreshControl = UIRefreshControl()
-		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-
-		configureToolbar()
+		
 		becomeFirstResponder()
 	}
 
@@ -96,6 +88,14 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		navigationController?.isToolbarHidden = false		
 		updateUI()
 		super.viewWillAppear(animated)
+		
+		if traitCollection.userInterfaceIdiom == .phone {
+			navigationController?.navigationBar.prefersLargeTitles = true
+		}
+		resetEstimatedRowHeight()
+		refreshControl = UIRefreshControl()
+		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		configureToolbar()
 	}
 
 	// MARK: Notifications
