@@ -143,13 +143,12 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			NSLocalizedString("Here", comment: "Here"),
 			NSLocalizedString("All Articles", comment: "All Articles")
 		]
-		
+		navigationItem.searchController = searchController
 		// If the device is an iPad, the search bar is detached and placed
 		// in the top right of the article view. When that is the case, search is
 		// defaulted to "All Articles" as it is global. 
 		if UIDevice.current.userInterfaceIdiom == .pad {
 			searchController.searchBar.selectedScopeButtonIndex = 1
-			navigationItem.searchController = searchController
 			navigationItem.searchBarPlacementAllowsExternalIntegration = UIDevice.current.userInterfaceIdiom == .pad
 		}
 		definesPresentationContext = true
