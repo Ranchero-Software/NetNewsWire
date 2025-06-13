@@ -196,7 +196,7 @@
                     </tableView>
                     <toolbarItems>
                         <barButtonItem title="Settings" id="TlU-Pg-ATe">
-                            <imageReference key="image" image="gear" catalog="system" symbolScale="medium"/>
+                            <imageReference key="image" image="gear" catalog="system"/>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Settings"/>
                             </userDefinedRuntimeAttributes>
@@ -204,7 +204,6 @@
                                 <action selector="settings:" destination="7bK-jq-Zjz" id="Y8a-lz-Im7"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Rbh-Vg-Wo8"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="Vhj-bc-20A"/>
                         <barButtonItem systemItem="add" id="YFE-wd-vFC">
                             <userDefinedRuntimeAttributes>
