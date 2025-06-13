@@ -115,12 +115,8 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 	
-	static var filterInactiveImage: UIImage = {
-		UIImage(systemName: "line.horizontal.3.decrease.circle")!
-	}()
-	
-	static var filterActiveImage: UIImage = {
-		UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
+	static var filterImage: UIImage = {
+		UIImage(systemName: "line.3.horizontal.decrease")!
 	}()
 	
 	static var folderOutlinePlus: UIImage = {

@@ -23,7 +23,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
 
-	private lazy var filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+	private lazy var filterButton = UIBarButtonItem(image: AppAssets.filterImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
 
 	private lazy var dataSource = makeDataSource()
@@ -144,8 +144,14 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			NSLocalizedString("All Articles", comment: "All Articles")
 		]
 		navigationItem.searchController = searchController
+		
+		if UIDevice.current.userInterfaceIdiom == .pad {
+			// FIXME: iPad scope buttons aren't showing in iOS 26 Beta 1. Set to All Articles.
+			searchController.searchBar.selectedScopeButtonIndex = 1
+			navigationItem.searchBarPlacementAllowsExternalIntegration = true
+		}
 		definesPresentationContext = true
-
+		
 		// Configure the table
 		tableView.dataSource = dataSource
 		if #available(iOS 15.0, *) {
@@ -189,7 +195,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		
+		navigationController?.navigationBar.topItem?.subtitle = nil
 		super.viewWillAppear(animated)
 	}
 	
@@ -697,17 +703,10 @@ private extension MainTimelineViewController {
 	}
 
 	func configureToolbar() {
-		guard !(splitViewController?.isCollapsed ?? true) else {
-			return
+		if UIDevice.current.userInterfaceIdiom == .phone {
+			toolbarItems?.insert(.flexibleSpace(), at: 1)
+			toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
 		}
-		
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
 
 	func resetUI(resetScroll: Bool) {
@@ -742,12 +741,14 @@ private extension MainTimelineViewController {
 		case .alwaysRead:
 			navigationItem.rightBarButtonItem = nil
 		}
-
+		
 		if isReadArticlesFiltered {
-			filterButton.image = AppAssets.filterActiveImage
+			filterButton.style = .prominent
+			filterButton.tintColor = AppAssets.primaryAccentColor
 			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
-			filterButton.image = AppAssets.filterInactiveImage
+			filterButton.style = .plain
+			filterButton.tintColor = nil
 			filterButton.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 
