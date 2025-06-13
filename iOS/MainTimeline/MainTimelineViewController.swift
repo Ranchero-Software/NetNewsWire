@@ -143,9 +143,17 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			NSLocalizedString("Here", comment: "Here"),
 			NSLocalizedString("All Articles", comment: "All Articles")
 		]
-		navigationItem.searchController = searchController
+		
+		// If the device is an iPad, the search bar is detached and placed
+		// in the top right of the article view. When that is the case, search is
+		// defaulted to "All Articles" as it is global. 
+		if UIDevice.current.userInterfaceIdiom == .pad {
+			searchController.searchBar.selectedScopeButtonIndex = 1
+			navigationItem.searchController = searchController
+			navigationItem.searchBarPlacementAllowsExternalIntegration = UIDevice.current.userInterfaceIdiom == .pad
+		}
 		definesPresentationContext = true
-
+		
 		// Configure the table
 		tableView.dataSource = dataSource
 		if #available(iOS 15.0, *) {
@@ -697,17 +705,10 @@ private extension MainTimelineViewController {
 	}
 
 	func configureToolbar() {
-		guard !(splitViewController?.isCollapsed ?? true) else {
-			return
+		if UIDevice.current.userInterfaceIdiom == .phone {
+			toolbarItems?.insert(.flexibleSpace(), at: 1)
+			toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
 		}
-		
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
 
 	func resetUI(resetScroll: Bool) {
