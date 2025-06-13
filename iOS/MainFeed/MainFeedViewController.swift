@@ -77,6 +77,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 
@@ -95,7 +96,6 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		resetEstimatedRowHeight()
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		configureToolbar()
 	}
 
 	// MARK: Notifications
@@ -183,6 +183,10 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func willEnterForeground(_ note: Notification) {
 		updateUI()
+	}
+	
+	@objc func progressDidChange(_ note: Notification) {
+		updateNavigationBarSubtitle()
 	}
 	
 	// MARK: Table View
@@ -666,6 +670,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 
 		configureContextMenu()
+		updateNavigationBarSubtitle()
 	}
 	
 	@objc
@@ -696,6 +701,38 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 			let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
 			
 			self.addNewItemButton.menu = contextMenu
+		}
+	}
+	
+	func updateNavigationBarSubtitle() {
+		let progress = AccountManager.shared.combinedRefreshProgress
+
+		if progress.isComplete {
+			if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
+				if Date() > accountLastArticleFetchEndTime.addingTimeInterval(60) {
+					let relativeDateTimeFormatter = RelativeDateTimeFormatter()
+					relativeDateTimeFormatter.dateTimeStyle = .named
+					let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
+					let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
+					let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
+					navigationController?.navigationBar.topItem?.subtitle = refreshText
+				} else {
+					navigationController?.navigationBar.topItem?.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+				}
+			} else {
+				navigationController?.navigationBar.topItem?.subtitle = ""
+			}
+
+		} else {
+			navigationController?.navigationBar.topItem?.subtitle = NSLocalizedString("Updating...", comment: "Updating...")
+		}
+		
+		scheduleNavigationBarSubtitleUpdate()
+	}
+	
+	func scheduleNavigationBarSubtitleUpdate() {
+		DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+			self?.updateNavigationBarSubtitle()
 		}
 	}
 	
@@ -779,16 +816,6 @@ extension MainFeedViewController: MainFeedTableViewCellDelegate {
 // MARK: Private
 
 private extension MainFeedViewController {
-	
-	func configureToolbar() {
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		toolbarItems?.insert(refreshProgressItemButton, at: 2)
-	}
 	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
