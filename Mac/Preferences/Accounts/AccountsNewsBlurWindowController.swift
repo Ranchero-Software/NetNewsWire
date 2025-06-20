@@ -129,10 +129,8 @@ class AccountsNewsBlurWindowController: NSWindowController {
 	
 	// MARK: Autofill
 	func enableAutofill() {
-		if #available(macOS 11, *) {
-			usernameTextField.contentType = .username
-			passwordTextField.contentType = .password
-		}
+		usernameTextField.contentType = .username
+		passwordTextField.contentType = .password
 	}
 	
 }

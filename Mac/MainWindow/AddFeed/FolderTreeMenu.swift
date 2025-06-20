@@ -29,6 +29,7 @@ class FolderTreeMenu {
 			}
 			
 			let menuItem = NSMenuItem(title: account.nameForDisplay, action: nil, keyEquivalent: "")
+			menuItem.image = AppAssets.image(for: <#T##AccountType#>)
 			menuItem.representedObject = childNode.representedObject
 			
 			if account.behaviors.contains(.disallowFeedInRootFolder) {

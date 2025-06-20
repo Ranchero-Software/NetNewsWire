@@ -102,45 +102,23 @@ struct AddAccountsView: View {
 			
 			HStack(spacing: 12) {
 				Spacer()
-				if #available(OSX 11.0, *) {
-					Button(action: {
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Cancel")
-							.frame(width: 76)
-					})
-					.help("Cancel")
-					.keyboardShortcut(.cancelAction)
-					
-				} else {
-					Button(action: {
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Cancel")
-							.frame(width: 76)
-					})
-					.accessibility(label: Text("Add Account"))
-				}
-				if #available(OSX 11.0, *) {
-					Button(action: {
-						addAccountDelegate?.presentSheetForAccount(selectedAccount)
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Continue")
-							.frame(width: 76)
-					})
-					.help("Add Account")
-					.keyboardShortcut(.defaultAction)
-					
-				} else {
-					Button(action: {
-						addAccountDelegate?.presentSheetForAccount(selectedAccount)
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Continue")
-							.frame(width: 76)
-					})
-				}
+				Button(action: {
+					parent?.dismiss(nil)
+				}, label: {
+					Text("Cancel")
+						.frame(width: 76)
+				})
+				.help("Cancel")
+				.keyboardShortcut(.cancelAction)
+				Button(action: {
+					addAccountDelegate?.presentSheetForAccount(selectedAccount)
+					parent?.dismiss(nil)
+				}, label: {
+					Text("Continue")
+						.frame(width: 76)
+				})
+				.help("Add Account")
+				.keyboardShortcut(.defaultAction)
 			}
 			.padding(.top, 12)
 			.padding(.bottom, 4)
