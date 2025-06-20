@@ -262,22 +262,18 @@ struct AppAssets {
 
 	static var swipeMarkReadImage: RSImage = {
 		return RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
-			.withSymbolConfiguration(.init(scale: .large))!
 	}()
 
 	static var swipeMarkUnreadImage: RSImage = {
 		return RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
-			.withSymbolConfiguration(.init(scale: .large))!
 	}()
 
 	static var swipeMarkStarredImage: RSImage = {
 		return RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
-			.withSymbolConfiguration(.init(scale: .large))!
 	}()
 
 	static var swipeMarkUnstarredImage: RSImage = {
 		return RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
-			.withSymbolConfiguration(.init(scale: .large))!
 	}()
 	
 	static var starColor: NSColor = {
