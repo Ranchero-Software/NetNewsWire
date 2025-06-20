@@ -74,7 +74,7 @@ struct AppAssets {
 
 	
 	static var cleanUpImage: RSImage = {
-		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
+		return NSImage(systemSymbolName: "bubbles.and.sparkles", accessibilityDescription: nil)!
 	}()
 	
 	static var copyImage: RSImage = {
