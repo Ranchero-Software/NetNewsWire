@@ -76,6 +76,14 @@ struct AppAssets {
 	static var cleanUpImage: RSImage = {
 		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
 	}()
+	
+	static var copyImage: RSImage = {
+		return NSImage(systemSymbolName: "document.on.document", accessibilityDescription: nil)!
+	}()
+	
+	static var deleteImage: RSImage = {
+		return NSImage(systemSymbolName: "xmark.bin", accessibilityDescription: nil)!
+	}()
 
 	static var marsEditIcon: RSImage = {
 		return RSImage(named: "MarsEditIcon")!
@@ -143,8 +151,15 @@ struct AppAssets {
 		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}
 
+	
+	static var markAllAsReadMenuImage: RSImage = {
+		let image = RSImage(named: "markAllAsRead")
+		return image!
+	}()
+	
 	static var markAllAsReadImage: RSImage = {
-		return RSImage(named: "markAllAsRead")!
+		let image = RSImage(named: "markAllAsRead")
+		return image!
 	}()
 
 	
@@ -152,6 +167,9 @@ struct AppAssets {
 		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
 	}()
 
+	static var notificationImage: RSImage = {
+		return NSImage(systemSymbolName: "bell.badge", accessibilityDescription: nil)!
+	}()
 	
 	static var openInBrowserImage: RSImage = {
 		return NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
@@ -182,6 +200,10 @@ struct AppAssets {
 	
 	static var refreshImage: RSImage = {
 		return NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
+	}()
+	
+	static var renameImage: RSImage = {
+		return NSImage(systemSymbolName: "pencil", accessibilityDescription: nil)!
 	}()
 	
 	static var searchFeedImage: IconImage = {
