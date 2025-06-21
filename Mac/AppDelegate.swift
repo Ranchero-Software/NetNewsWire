@@ -798,30 +798,20 @@ internal extension AppDelegate {
 			attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
 			attrs[.foregroundColor] = NSColor.textColor
 			
-			if #available(macOS 11.0, *) {
-				let titleParagraphStyle = NSMutableParagraphStyle()
-				titleParagraphStyle.alignment = .center
-				attrs[.paragraphStyle] = titleParagraphStyle
-			}
-
+			let titleParagraphStyle = NSMutableParagraphStyle()
+			titleParagraphStyle.alignment = .center
+			attrs[.paragraphStyle] = titleParagraphStyle
+			
 			let websiteText = NSMutableAttributedString()
 			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attrs))
 
-			if #available(macOS 11.0, *) {
-				websiteText.append(NSAttributedString(string: "\n"))
-			} else {
-				websiteText.append(NSAttributedString(string: " "))
-			}
+			websiteText.append(NSAttributedString(string: "\n"))
 
 			attrs[.link] = theme.creatorHomePage
 			websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
 
 			let textViewWidth: CGFloat
-			if #available(macOS 11.0, *) {
-				textViewWidth = 200
-			} else {
-				textViewWidth = 400
-			}
+			textViewWidth = 200
 
 			let textView = NSTextView(frame: CGRect(x: 0, y: 0, width: textViewWidth, height: 15))
 			textView.isEditable = false

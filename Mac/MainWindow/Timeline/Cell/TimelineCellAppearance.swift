@@ -56,11 +56,7 @@ struct TimelineCellAppearance: Equatable {
 
 		self.showIcon = showIcon
 		
-		if #available(macOS 11.0, *) {
-			cellPadding = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 10.0, right: 4.0)
-		} else {
-			cellPadding = NSEdgeInsets(top: 8.0, left: 18.0, bottom: 10.0, right: 18.0)
-		}
+		cellPadding = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 10.0, right: 4.0)
 
 		let margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight
 		self.boxLeftMargin = margin

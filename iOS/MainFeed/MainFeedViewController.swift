@@ -18,7 +18,6 @@ import SafariServices
 class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
-	private var refreshProgressView: RefreshProgressView?
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
 		didSet {
 			if #available(iOS 14, *) {
@@ -72,7 +71,6 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 
@@ -81,7 +79,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
-		navigationController?.isToolbarHidden = false		
+		navigationController?.isToolbarHidden = false
 		updateUI()
 		super.viewWillAppear(animated)
 		
@@ -178,10 +176,6 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func willEnterForeground(_ note: Notification) {
 		updateUI()
-	}
-	
-	@objc func progressDidChange(_ note: Notification) {
-		updateNavigationBarSubtitle()
 	}
 	
 	// MARK: Table View
@@ -661,11 +655,9 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		} else {
 			setFilterButtonToInactive()
 		}
-		refreshProgressView?.update()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 
 		configureContextMenu()
-		updateNavigationBarSubtitle()
 	}
 	
 	@objc
@@ -699,37 +691,7 @@ class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	func updateNavigationBarSubtitle() {
-		let progress = AccountManager.shared.combinedRefreshProgress
-
-		if progress.isComplete {
-			if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
-				if Date() > accountLastArticleFetchEndTime.addingTimeInterval(60) {
-					let relativeDateTimeFormatter = RelativeDateTimeFormatter()
-					relativeDateTimeFormatter.dateTimeStyle = .named
-					let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
-					let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
-					let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
-					navigationController?.navigationBar.topItem?.subtitle = refreshText
-				} else {
-					navigationController?.navigationBar.topItem?.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
-				}
-			} else {
-				navigationController?.navigationBar.topItem?.subtitle = ""
-			}
-
-		} else {
-			navigationController?.navigationBar.topItem?.subtitle = NSLocalizedString("Updating...", comment: "Updating...")
-		}
-		
-		scheduleNavigationBarSubtitleUpdate()
-	}
 	
-	func scheduleNavigationBarSubtitleUpdate() {
-		DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
-			self?.updateNavigationBarSubtitle()
-		}
-	}
 	
 	func focus() {
 		becomeFirstResponder()

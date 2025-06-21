@@ -50,7 +50,7 @@ struct AppAssets {
 
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 
-	@available(macOS 11.0, *)
+	
 	static var addNewSidebarItemImage: RSImage = {
 		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 	}()
@@ -67,14 +67,22 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorOn")!
 	}()
 
-	@available(macOS 11.0, *)
+	
 	static var articleTheme: RSImage = {
 		return NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
+	
 	static var cleanUpImage: RSImage = {
-		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
+		return NSImage(systemSymbolName: "bubbles.and.sparkles", accessibilityDescription: nil)!
+	}()
+	
+	static var copyImage: RSImage = {
+		return NSImage(systemSymbolName: "document.on.document", accessibilityDescription: nil)!
+	}()
+	
+	static var deleteImage: RSImage = {
+		return NSImage(systemSymbolName: "xmark.bin", accessibilityDescription: nil)!
 	}()
 
 	static var marsEditIcon: RSImage = {
@@ -90,19 +98,11 @@ struct AppAssets {
 	}()
 
 	static var filterActive: RSImage = {
-		if #available(macOS 11.0, *) {
-			return NSImage(systemSymbolName: "line.horizontal.3.decrease.circle.fill", accessibilityDescription: nil)!
-		} else {
-			return RSImage(named: "filterActive")!
-		}
+		return NSImage(systemSymbolName: "line.horizontal.3.decrease.circle.fill", accessibilityDescription: nil)!
 	}()
 
 	static var filterInactive: RSImage = {
-		if #available(macOS 11.0, *) {
-			return NSImage(systemSymbolName: "line.horizontal.3.decrease.circle", accessibilityDescription: nil)!
-		} else {
-			return RSImage(named: "filterInactive")!
-		}
+		return NSImage(systemSymbolName: "line.horizontal.3.decrease.circle", accessibilityDescription: nil)!
 	}()
 
 	static var iconLightBackgroundColor: NSColor = {
@@ -146,100 +146,94 @@ struct AppAssets {
 	}()
 	
 	static var mainFolderImage: IconImage {
-		if #available(macOS 11.0, *) {
-			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
-			let preferredColor = NSColor(named: "AccentColor")!
-			return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
-		} else {
-			return IconImage(RSImage(named: NSImage.folderName)!)
-		}
+		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
+		let preferredColor = NSColor(named: "AccentColor")!
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}
 
+	
+	static var markAllAsReadMenuImage: RSImage = {
+		let image = RSImage(named: "markAllAsRead")
+		return image!
+	}()
+	
 	static var markAllAsReadImage: RSImage = {
-		return RSImage(named: "markAllAsRead")!
+		let image = RSImage(named: "markAllAsRead")
+		return image!
 	}()
 
-	@available(macOS 11.0, *)
+	
 	static var nextUnreadImage: RSImage = {
 		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
+	static var notificationImage: RSImage = {
+		return NSImage(systemSymbolName: "bell.badge", accessibilityDescription: nil)!
+	}()
+	
 	static var openInBrowserImage: RSImage = {
 		return NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
 	}()
 
 	static var preferencesToolbarAccountsImage: RSImage = {
-		if #available(macOS 11.0, *) {
-			return NSImage(systemSymbolName: "at", accessibilityDescription: nil)!
-		} else {
-			return NSImage(named: NSImage.userAccountsName)!
-		}
+		return NSImage(systemSymbolName: "at", accessibilityDescription: nil)!
 	}()
 	
 	static var preferencesToolbarGeneralImage: RSImage = {
-		if #available(macOS 11.0, *) {
-			return NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
-		} else {
-			return NSImage(named: NSImage.preferencesGeneralName)!
-		}
+		return NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
 	}()
 	
 	static var preferencesToolbarAdvancedImage: RSImage = {
-		if #available(macOS 11.0, *) {
-			return NSImage(systemSymbolName: "gearshape.2", accessibilityDescription: nil)!
-		} else {
-			return NSImage(named: NSImage.advancedName)!
-		}
+		return NSImage(systemSymbolName: "gearshape.2", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
+	
 	static var readClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
+	
 	static var readOpenImage: RSImage = {
 		return NSImage(systemSymbolName: "circle", accessibilityDescription: nil)!
 	}()
 	
-	@available(macOS 11.0, *)
+	
 	static var refreshImage: RSImage = {
 		return NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
+	}()
+	
+	static var renameImage: RSImage = {
+		return NSImage(systemSymbolName: "pencil", accessibilityDescription: nil)!
 	}()
 	
 	static var searchFeedImage: IconImage = {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSuppressed: true)
 	}()
 	
-	@available(macOS 11.0, *)
+	
 	static var shareImage: RSImage = {
 		return NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
+	
 	static var sidebarToggleImage: RSImage = {
 		return NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
 	}()
 	
-	@available(macOS 11.0, *)
+	
 	static var starClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 11.0, *)
+	
 	static var starOpenImage: RSImage = {
 		return NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
 	}()
 	
 	static var starredFeedImage: IconImage = {
-		if #available(macOS 11.0, *) {
-			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
-			let preferredColor = NSColor(named: "StarColor")!
-			return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
-		} else {
-			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSuppressed: true)
-		}
+		let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
+		let preferredColor = NSColor(named: "StarColor")!
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
 	static var timelineSeparatorColor: NSColor = {
@@ -255,61 +249,31 @@ struct AppAssets {
 	}()
 
 	static var todayFeedImage: IconImage = {
-		if #available(macOS 11.0, *) {
-			let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
-			let preferredColor = NSColor.orange
-			return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
-		} else {
-			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSuppressed: true)
-		}
+		let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
+		let preferredColor = NSColor.orange
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
 	static var unreadFeedImage: IconImage = {
-		if #available(macOS 11.0, *) {
-			let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
-			let preferredColor = NSColor(named: "AccentColor")!
-			return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
-		} else {
-			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSuppressed: true)
-		}
+		let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
+		let preferredColor = NSColor(named: "AccentColor")!
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
 	static var swipeMarkReadImage: RSImage = {
-		if #available(OSX 11.0, *) {
-			return RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
-				.withSymbolConfiguration(.init(scale: .large))!
-		} else {
-			// TODO: remove swipeMarkRead asset when dropping support for macOS 10.15
-			return RSImage(named: "swipeMarkRead")!
-		}
+		return RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
 	}()
 
 	static var swipeMarkUnreadImage: RSImage = {
-		if #available(OSX 11.0, *) {
-			return RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
-				.withSymbolConfiguration(.init(scale: .large))!
-		} else {
-			// TODO: remove swipeMarkUnread asset when dropping support for macOS 10.15
-			return RSImage(named: "swipeMarkUnread")!
-		}
+		return RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
 	}()
 
 	static var swipeMarkStarredImage: RSImage = {
-		if #available(OSX 11.0, *) {
-			return RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
-				.withSymbolConfiguration(.init(scale: .large))!
-		} else {
-			return RSImage(named: "swipeMarkStarred")!
-		}
+		return RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
 	}()
 
 	static var swipeMarkUnstarredImage: RSImage = {
-		if #available(OSX 11.0, *) {
-			return RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
-				.withSymbolConfiguration(.init(scale: .large))!
-		} else {
-			return RSImage(named: "swipeMarkUnstarred")!
-		}
+		return RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
 	}()
 	
 	static var starColor: NSColor = {

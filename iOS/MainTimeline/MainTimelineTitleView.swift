@@ -33,7 +33,7 @@ class MainTimelineTitleView: UIView {
 	}
 
 	func buttonize() {
-		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
+		heightAnchor.constraint(equalToConstant: 25.0).isActive = true
 		accessibilityTraits = .button
 		if #available(iOS 13.4, *) {
 			addInteraction(pointerInteraction)
@@ -41,7 +41,7 @@ class MainTimelineTitleView: UIView {
 	}
 	
 	func debuttonize() {
-		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
+		heightAnchor.constraint(equalToConstant: 25.0).isActive = true
 		accessibilityTraits.remove(.button)
 		if #available(iOS 13.4, *) {
 			removeInteraction(pointerInteraction)

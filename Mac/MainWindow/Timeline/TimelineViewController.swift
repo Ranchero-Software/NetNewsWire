@@ -208,9 +208,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 		tableView.keyboardDelegate = keyboardDelegate
 		
-		if #available(macOS 11.0, *) {
-			tableView.style = .inset
-		}
+		tableView.style = .inset
 		
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)

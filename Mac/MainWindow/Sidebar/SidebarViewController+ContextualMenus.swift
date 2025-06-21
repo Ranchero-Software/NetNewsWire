@@ -216,23 +216,23 @@ private extension SidebarViewController {
 		}
 
 		if let homePageURL = webFeed.homePageURL, let _ = URL(string: homePageURL) {
-			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL)
+			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL, image: AppAssets.openInBrowserImage)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), webFeed.url)
+		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), webFeed.url, image: AppAssets.copyImage)
 		menu.addItem(copyFeedURLItem)
 
 		if let homePageURL = webFeed.homePageURL {
-			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL)
+			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL, image: AppAssets.copyImage)
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
 		
 		let notificationText = webFeed.notificationDisplayName.capitalized
 		
-		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed)
+		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed, image: AppAssets.notificationImage)
 		if webFeed.isNotifyAboutNewArticles == nil || webFeed.isNotifyAboutNewArticles! == false {
 			notificationMenuItem.state = .off
 		} else {
@@ -241,7 +241,7 @@ private extension SidebarViewController {
 		menu.addItem(notificationMenuItem)
 
 		let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
-		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
+		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed, image: AppAssets.articleExtractorOff)
 
 		if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
 			articleExtractorMenuItem.state = .off
@@ -301,17 +301,17 @@ private extension SidebarViewController {
 
 	func markAllReadMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
+		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects, image: AppAssets.markAllAsReadMenuImage)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects)
+		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects, image: AppAssets.deleteImage)
 	}
 
 	func renameMenuItem(_ object: Any) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object)
+		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object, image: AppAssets.renameImage)
 	}
 
 	func anyObjectInArrayHasNonZeroUnreadCount(_ objects: [Any]) -> Bool {
@@ -341,11 +341,14 @@ private extension SidebarViewController {
 		return object is WebFeed || object is Folder
 	}
 
-	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {
+	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any, image: RSImage?) -> NSMenuItem {
 
 		let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
 		item.representedObject = representedObject
 		item.target = self
+		if let image {
+			item.image = image
+		}
 		return item
 	}
 

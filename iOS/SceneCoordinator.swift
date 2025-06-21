@@ -39,6 +39,7 @@ struct FeedNode: Hashable {
 	}
 }
 
+
 class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	var undoableCommands = [UndoableCommand]()
@@ -82,6 +83,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
+	
+	/// `Bool` to track whether a refresh is scheduled.
+	private var isRefreshScheduled: Bool = false
 	
 	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
@@ -272,7 +276,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return appDelegate.unreadCount > 0
 	}
 	
-	var timelineUnreadCount: Int = 0
+	var timelineUnreadCount: Int = 0 {
+		didSet {
+			updateNavigationBarSubtitles(nil)
+		}
+	}
 	
 	init(rootSplitViewController: RootSplitViewController) {
 		self.rootSplitViewController = rootSplitViewController
@@ -312,6 +320,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .combinedRefreshProgressDidChange, object: nil)
+		
 	}
 	
 	func restoreWindowState(_ activity: NSUserActivity?) {
@@ -539,6 +549,94 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.rootSplitViewController.presentError(error, dismiss: nil)
 		}
 	}
+	
+	
+	/// Updates navigation bar subtitles in response to feed selection, unread count changes,
+	/// `combinedRefreshProgressDidChange` notifications, and a timed refresh every
+	/// 60s.
+	///
+	/// Subtitles are handled differently on iPhone and iPad.
+	///
+	/// `MainFeedViewController`
+	/// - When refreshing: Feeds will display "Updating..." on both iPhone and iPad.
+	/// - When refreshed: Feeds will display "Updated <#relative_time#>" on both iPhone and iPad.
+	///
+	/// `MainTimelineViewController`
+	/// - Where the unread count for the timeline is > 0, this is displayed on both iPhone and iPad.
+	/// - If the timeline count is 0, the iPhone follows the same logic as `MainFeedViewController`
+	/// - Specific to iPad, if the unread count is 0, the iPad will not display a subtitle. The refresh text
+	/// will generally be visible in the sidebar and there's no need to display it twice.
+	///
+	/// - Parameter note: Optional `Notification`
+	@objc func updateNavigationBarSubtitles(_ note: Notification?) {
+		let progress = AccountManager.shared.combinedRefreshProgress
+
+		if progress.isComplete {
+			if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
+				if Date.now > accountLastArticleFetchEndTime.addingTimeInterval(60) {
+					let relativeDateTimeFormatter = RelativeDateTimeFormatter()
+					relativeDateTimeFormatter.dateTimeStyle = .named
+					let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
+					let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
+					let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
+					
+					// Update Feeds with Updated text
+					self.mainFeedViewController?.navigationItem.subtitle = refreshText
+					
+					// If unread count > 0, add unread string to timeline
+					if let _ = timelineFeed, timelineUnreadCount > 0 {
+						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
+						let unreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
+						self.mainTimelineViewController?.navigationItem.subtitle = unreadCount
+					} else {
+						// When unread count == 0, iPhone timeline displays Updated Just Now; iPad is blank
+						if UIDevice.current.userInterfaceIdiom == .phone {
+							self.mainTimelineViewController?.navigationItem.subtitle = refreshText
+						} else {
+							self.mainTimelineViewController?.navigationItem.subtitle = ""
+						}
+					}
+				} else {
+					// Use 'Updated Just Now' while <60s have passed since refresh.
+					self.mainFeedViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+					
+					// If unread count > 0, add unread string to timeline
+					if let _ = timelineFeed, timelineUnreadCount > 0 {
+						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
+						let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
+						self.mainTimelineViewController?.navigationItem.subtitle = refreshTextWithUnreadCount
+					} else {
+						// When unread count == 0, iPhone timeline displays Updated Just Now; iPad is blank
+						if UIDevice.current.userInterfaceIdiom == .phone {
+							self.mainTimelineViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+						} else {
+							self.mainTimelineViewController?.navigationItem.subtitle = ""
+						}
+					}
+				}
+			} else {
+				self.mainFeedViewController?.navigationItem.subtitle = ""
+				self.mainTimelineViewController?.navigationItem.subtitle = ""
+			}
+		} else {
+			// Updating in progress, apply to both iPhone and iPad Feeds.
+			self.mainFeedViewController?.navigationItem.subtitle = NSLocalizedString("Updating...", comment: "Updating...")
+		}
+		
+		scheduleNavigationBarSubtitleUpdate()
+		
+	}
+	
+	func scheduleNavigationBarSubtitleUpdate() {
+		if isRefreshScheduled {
+			return
+		}
+		isRefreshScheduled = true
+		DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+			self?.isRefreshScheduled = false
+			self?.updateNavigationBarSubtitles(nil)
+		}
+	}
 
 	// MARK: API
 	
@@ -735,6 +833,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}()
 		selectFeed(indexPath: indexPath, animations: animations, deselectArticle: deselectArticle, completion: completion)
+		updateNavigationBarSubtitles(nil)
 	}
 	
 	func selectFeed(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
@@ -773,6 +872,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 			
 		}
+		updateNavigationBarSubtitles(nil)
 		
 	}
 	
@@ -2212,4 +2312,5 @@ private extension SceneCoordinator {
 		return true
 	}
 	
+
 }
