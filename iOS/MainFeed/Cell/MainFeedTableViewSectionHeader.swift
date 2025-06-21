@@ -95,17 +95,6 @@ class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		return button
 	}()
 
-	private let topSeparatorView: UIView = {
-		let view = UIView()
-		view.backgroundColor = UIColor.separator
-		return view
-	}()
-	
-	private let bottomSeparatorView: UIView = {
-		let view = UIView()
-		view.backgroundColor = UIColor.separator
-		return view
-	}()
 	
 	override init(reuseIdentifier: String?) {
 		super.init(reuseIdentifier: reuseIdentifier)
@@ -145,15 +134,9 @@ private extension MainFeedTableViewSectionHeader {
 		addSubviewAtInit(titleView)
 		addSubviewAtInit(disclosureButton)
 		updateExpandedState(animate: false)
-		addBackgroundView()
-		addSubviewAtInit(topSeparatorView)
-		addSubviewAtInit(bottomSeparatorView)
 	}
 	
 	func updateExpandedState(animate: Bool) {
-		if !isLastSection && self.disclosureExpanded {
-			self.bottomSeparatorView.isHidden = false
-		}
 		
 		let duration = animate ? 0.3 : 0.0
 		
@@ -166,9 +149,6 @@ private extension MainFeedTableViewSectionHeader {
 					self.disclosureButton.transform = CGAffineTransform(rotationAngle: 0)
 				}
 			}, completion: { _ in
-				if !self.isLastSection && !self.disclosureExpanded {
-					self.bottomSeparatorView.isHidden = true
-				}
 			})
 	}
 	
@@ -193,21 +173,6 @@ private extension MainFeedTableViewSectionHeader {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton.setFrameIfNotEqual(layout.disclosureButtonRect)
-
-		let x = -safeAreaInsets.left
-		let width = safeAreaInsets.left + safeAreaInsets.right + frame.width
-		let height = 0.33
-
-		let top = CGRect(x: x, y: 0, width: width, height: height)
-		topSeparatorView.setFrameIfNotEqual(top)
-		
-		let bottom = CGRect(x: x, y: frame.height - height, width: width, height: height)
-		bottomSeparatorView.setFrameIfNotEqual(bottom)
-	}
-	
-	func addBackgroundView() {
-		self.backgroundView = UIView(frame: self.bounds)
-		self.backgroundView?.backgroundColor = AppAssets.sectionHeaderColor
 	}
 	
 }
