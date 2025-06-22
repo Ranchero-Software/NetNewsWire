@@ -161,6 +161,16 @@ struct AppAssets {
 		let image = RSImage(named: "markAllAsRead")
 		return image!
 	}()
+	
+	static var markBelowAsReadImage: RSImage = {
+		let image = RSImage(named: "markBelowAsRead")
+		return image!
+	}()
+	
+	static var markAboveAsReadImage: RSImage = {
+		let image = RSImage(named: "markAboveAsRead")
+		return image!
+	}()
 
 	
 	static var nextUnreadImage: RSImage = {
