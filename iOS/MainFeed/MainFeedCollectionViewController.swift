@@ -19,6 +19,14 @@ private let reuseIdentifier = "FeedCell"
 
 class MainFeedCollectionViewController: UICollectionViewController, UndoableCommandRunner {
 
+	@IBOutlet weak var filterButton: UIBarButtonItem!
+	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
+		didSet {
+			addNewItemButton.primaryAction = nil
+		}
+	}
+	
+	
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 	
@@ -29,21 +37,24 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
         // Do any additional setup after loading the view.
     }
 	
-	override func viewWillLayoutSubviews() {
-		configureCollectionView()
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		navigationController?.isToolbarHidden = false
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
-		var config = UICollectionLayoutListConfiguration(appearance: .sidebar)
-		config.separatorConfiguration.color = .tertiarySystemFill
-		let layout = UICollectionViewCompositionalLayout.list(using: config)
-		collectionView.setCollectionViewLayout(layout, animated: false)
 		super.viewDidAppear(animated)
+		configureCollectionView()
+		self.navigationController?.navigationBar.prefersLargeTitles = true
 	}
 	
 	// MARK: - Collection View Configuration
 	func configureCollectionView() {
-		
+		var config = UICollectionLayoutListConfiguration(appearance: UIDevice.current.userInterfaceIdiom == .pad ? .sidebar : .insetGrouped)
+		config.separatorConfiguration.color = .tertiarySystemFill
+		config.headerMode = .supplementary
+		let layout = UICollectionViewCompositionalLayout.list(using: config)
+		collectionView.setCollectionViewLayout(layout, animated: false)
 	}
 
     /*
@@ -55,6 +66,10 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
         // Pass the selected object to the new view controller.
     }
     */
+	
+	@IBAction func settings(_ sender: UIBarButtonItem) {
+		coordinator.showSettings()
+	}
 
     // MARK: UICollectionViewDataSource
 
@@ -75,6 +90,10 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
     
         return cell!
     }
+	
+	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		coordinator.selectFeed(indexPath: indexPath, animations: [.navigation, .select, .scroll])
+	}
 
     // MARK: UICollectionViewDelegate
 
@@ -211,7 +230,9 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	
 	func configure(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
 		#warning("Implement cell configuration")
-		
+		if UIDevice.current.userInterfaceIdiom == .pad {
+			cell.contentView.backgroundColor = .clear
+		}
 		guard let node = coordinator.nodeFor(indexPath) else { return }
 
 		//cell.delegate = self
@@ -231,6 +252,11 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		if let feed = node.representedObject as? Feed {
 			cell.feedTitle.text = feed.nameForDisplay
 			cell.unreadCountLabel.text = feed.unreadCount.formatted()
+			
+			if UIDevice.current.userInterfaceIdiom == .pad {
+				let isSelected = collectionView.indexPathsForSelectedItems?.contains(indexPath) ?? false
+				cell.feedTitle.textColor = isSelected ? .systemBlue : .label
+			}
 		}
 
 		//configureIcon(cell, indexPath)
