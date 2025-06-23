@@ -85,7 +85,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	var isArticleViewControllerPending = false
 	
 	/// `Bool` to track whether a refresh is scheduled.
-	private var isRefreshScheduled: Bool = false
+	private var isNavigationBarSubtitleRefreshScheduled: Bool = false
 	
 	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
@@ -628,12 +628,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func scheduleNavigationBarSubtitleUpdate() {
-		if isRefreshScheduled {
+		if isNavigationBarSubtitleRefreshScheduled {
 			return
 		}
-		isRefreshScheduled = true
+		isNavigationBarSubtitleRefreshScheduled = true
 		DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
-			self?.isRefreshScheduled = false
+			self?.isNavigationBarSubtitleRefreshScheduled = false
 			self?.updateNavigationBarSubtitles(nil)
 		}
 	}

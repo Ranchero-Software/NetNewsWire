@@ -35,7 +35,7 @@ class UnreadCountView : NSView {
 	}
 	
 	private var currentTextColor: NSColor {
-		return isSelected ? NSColor.white : NSColor.tertiaryLabelColor
+		return isSelected ? NSColor.white : NSColor.secondaryLabelColor
 	}
 	
 	private var textAttributes: [NSAttributedString.Key: AnyObject] {

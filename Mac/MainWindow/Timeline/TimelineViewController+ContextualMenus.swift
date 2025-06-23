@@ -241,11 +241,11 @@ private extension TimelineViewController {
 	}
 
 	func markAboveReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles, image: nil)
+		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles, image: AppAssets.markAboveAsReadImage)
 	}
 	
 	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: nil)
+		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: AppAssets.markBelowAsReadImage)
 	}
 
 	func selectFeedInSidebarMenuItem(_ feed: WebFeed) -> NSMenuItem {
