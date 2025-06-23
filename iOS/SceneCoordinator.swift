@@ -53,7 +53,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	private var rootSplitViewController: RootSplitViewController!
 
-	private var mainFeedViewController: MainFeedViewController!
+	private var mainFeedCollectionViewController: MainFeedCollectionViewController!
 	private var mainTimelineViewController: MainTimelineViewController?
 	private var articleViewController: ArticleViewController?
 
@@ -288,9 +288,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		super.init()
 
-		self.mainFeedViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedViewController
-		self.mainFeedViewController.coordinator = self
-		self.mainFeedViewController?.navigationController?.delegate = self
+		self.mainFeedCollectionViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedCollectionViewController
+		self.mainFeedCollectionViewController.coordinator = self
+		self.mainFeedCollectionViewController?.navigationController?.delegate = self
 
 		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MainTimelineViewController
 		self.mainTimelineViewController?.coordinator = self
@@ -382,7 +382,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if currentArticle != nil {
 			mainTimelineViewController?.focus()
 		} else {
-			mainFeedViewController?.focus()
+			mainFeedCollectionViewController?.focus()
 		}
 	}
 	
@@ -581,7 +581,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
 					
 					// Update Feeds with Updated text
-					self.mainFeedViewController?.navigationItem.subtitle = refreshText
+					self.mainFeedCollectionViewController?.navigationItem.subtitle = refreshText
 					
 					// If unread count > 0, add unread string to timeline
 					if let _ = timelineFeed, timelineUnreadCount > 0 {
@@ -598,7 +598,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					}
 				} else {
 					// Use 'Updated Just Now' while <60s have passed since refresh.
-					self.mainFeedViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+					self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
 					
 					// If unread count > 0, add unread string to timeline
 					if let _ = timelineFeed, timelineUnreadCount > 0 {
@@ -615,12 +615,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					}
 				}
 			} else {
-				self.mainFeedViewController?.navigationItem.subtitle = ""
+				self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
 				self.mainTimelineViewController?.navigationItem.subtitle = ""
 			}
 		} else {
 			// Updating in progress, apply to both iPhone and iPad Feeds.
-			self.mainFeedViewController?.navigationItem.subtitle = NSLocalizedString("Updating...", comment: "Updating...")
+			self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updating...", comment: "Updating...")
 		}
 		
 		scheduleNavigationBarSubtitleUpdate()
@@ -662,7 +662,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			treeControllerDelegate.isReadFiltered = true
 		}
 		rebuildBackingStores()
-		mainFeedViewController?.updateUI()
+		mainFeedCollectionViewController?.updateUI()
 	}
 	
 	func toggleReadArticlesFilter() {
@@ -843,7 +843,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		
 		currentFeedIndexPath = indexPath
-		mainFeedViewController.updateFeedSelection(animations: animations)
+		mainFeedCollectionViewController.updateFeedSelection(animations: animations)
 
 		if deselectArticle {
 			selectArticle(nil)
@@ -1271,14 +1271,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedViewController.present(addNavViewController, animated: true)
+		mainFeedCollectionViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedViewController.present(addNavViewController, animated: true)
+		mainFeedCollectionViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
@@ -1327,12 +1327,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			articleViewController?.openInAppBrowser()
 		}
 		else {
-			mainFeedViewController.openInAppBrowser()
+			mainFeedCollectionViewController.openInAppBrowser()
 		}
 	}
 
 	func navigateToFeeds() {
-		mainFeedViewController?.focus()
+		mainFeedCollectionViewController?.focus()
 		selectArticle(nil)
 	}
 	
@@ -1374,7 +1374,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	/// `SFSafariViewController` or `SettingsViewController`,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
-		guard let presentedController = mainFeedViewController.presentedViewController else { return }
+		guard let presentedController = mainFeedCollectionViewController.presentedViewController else { return }
 		
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
@@ -1444,7 +1444,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		}
 
 		// If we are showing the Feeds and only the feeds start clearing stuff
-		if viewController === mainFeedViewController && !isTimelineViewControllerPending {
+		if viewController === mainFeedCollectionViewController && !isTimelineViewControllerPending {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil, animations: [.scroll, .select, .navigation])
 			return
@@ -1566,7 +1566,7 @@ private extension SceneCoordinator {
 			
 			updateExpandedNodes?()
 			let changes = rebuildShadowTable()
-			mainFeedViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
+			mainFeedCollectionViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
 		}
 	}
 	
@@ -2175,7 +2175,7 @@ private extension SceneCoordinator {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
 					self.selectFeed(indexPath: indexPath) {
-						self.mainFeedViewController.focus()
+						self.mainFeedCollectionViewController.focus()
 					}
 				}
 			})
@@ -2196,7 +2196,7 @@ private extension SceneCoordinator {
 				
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
 					self.selectFeed(indexPath: indexPath) {
-						self.mainFeedViewController.focus()
+						self.mainFeedCollectionViewController.focus()
 					}
 				}
 			})
@@ -2209,7 +2209,7 @@ private extension SceneCoordinator {
 			}
 			
 			self.discloseWebFeed(webFeed, initialLoad: true) {
-				self.mainFeedViewController.focus()
+				self.mainFeedCollectionViewController.focus()
 			}
 		}
 	}

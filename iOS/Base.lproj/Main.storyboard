@@ -236,7 +236,7 @@
         <scene sceneID="NDp-hg-obE">
             <objects>
                 <collectionViewController title="Feeds" id="6Bn-mF-MPS" customClass="MainFeedCollectionViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="7gd-ro-2Jf">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" prefetchingEnabled="NO" id="7gd-ro-2Jf">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -247,19 +247,58 @@
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FeedCell" id="5DS-WK-qAz">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="72"/>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FeedCell" id="5DS-WK-qAz" customClass="MainFeedCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Frd-Hc-CpH">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="72"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Feed Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fHH-rW-0hD">
+                                            <rect key="frame" x="56" y="19.5" width="300" height="21"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="globe.asia.australia.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Cbb-MV-7QW">
+                                            <rect key="frame" x="8" y="10.5" width="40" height="39"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="40" id="cEn-jE-BAX"/>
+                                                <constraint firstAttribute="height" constant="40" id="w6G-ll-sdY"/>
+                                            </constraints>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="8888" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oRt-Cv-vvU">
+                                            <rect key="frame" x="364" y="19" width="42" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <viewLayoutGuide key="safeArea" id="k2W-kq-CtP"/>
+                                    <constraints>
+                                        <constraint firstItem="fHH-rW-0hD" firstAttribute="leading" secondItem="Cbb-MV-7QW" secondAttribute="trailing" constant="8" symbolic="YES" id="6O5-yk-TYC"/>
+                                        <constraint firstItem="k2W-kq-CtP" firstAttribute="trailing" secondItem="oRt-Cv-vvU" secondAttribute="trailing" constant="8" id="LXE-4f-rRh"/>
+                                        <constraint firstItem="Cbb-MV-7QW" firstAttribute="top" secondItem="k2W-kq-CtP" secondAttribute="top" constant="10" id="Nmp-4P-xXu"/>
+                                        <constraint firstItem="fHH-rW-0hD" firstAttribute="centerY" secondItem="Cbb-MV-7QW" secondAttribute="centerY" id="W9l-K1-Sbj"/>
+                                        <constraint firstItem="k2W-kq-CtP" firstAttribute="bottom" secondItem="Cbb-MV-7QW" secondAttribute="bottom" constant="10" id="grO-QA-Zco"/>
+                                        <constraint firstItem="Cbb-MV-7QW" firstAttribute="leading" secondItem="k2W-kq-CtP" secondAttribute="leading" constant="8" id="jan-LN-M3C"/>
+                                        <constraint firstItem="oRt-Cv-vvU" firstAttribute="top" secondItem="k2W-kq-CtP" secondAttribute="top" constant="19" id="qHG-pM-Qmp"/>
+                                        <constraint firstItem="oRt-Cv-vvU" firstAttribute="leading" secondItem="fHH-rW-0hD" secondAttribute="trailing" constant="8" symbolic="YES" id="zbs-Un-q0o"/>
+                                    </constraints>
                                 </collectionViewCellContentView>
-                                <size key="customSize" width="414" height="72"/>
+                                <size key="customSize" width="414" height="60"/>
+                                <connections>
+                                    <outlet property="faviconImageView" destination="Cbb-MV-7QW" id="d5P-2c-XY7"/>
+                                    <outlet property="feedTitle" destination="fHH-rW-0hD" id="4Cu-Jc-mlE"/>
+                                    <outlet property="unreadCountLabel" destination="oRt-Cv-vvU" id="GZ1-nb-Tvo"/>
+                                </connections>
                             </collectionViewCell>
                         </cells>
                         <connections>
                             <outlet property="dataSource" destination="6Bn-mF-MPS" id="PEd-As-4Sa"/>
                             <outlet property="delegate" destination="6Bn-mF-MPS" id="y0h-TF-MWp"/>
+                            <outlet property="dragDelegate" destination="6Bn-mF-MPS" id="1NE-Xu-KZw"/>
+                            <outlet property="dropDelegate" destination="6Bn-mF-MPS" id="kkq-e8-I1D"/>
                         </connections>
                     </collectionView>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
@@ -452,6 +491,7 @@
         <image name="chevron.up" catalog="system" width="128" height="70"/>
         <image name="circle" catalog="system" width="128" height="123"/>
         <image name="gear" catalog="system" width="128" height="122"/>
+        <image name="globe.asia.australia.fill" catalog="system" width="128" height="123"/>
         <image name="line.3.horizontal.decrease" catalog="system" width="128" height="73"/>
         <image name="markAllAsRead" width="13" height="20"/>
         <image name="multiply.circle.fill" catalog="system" width="128" height="123"/>

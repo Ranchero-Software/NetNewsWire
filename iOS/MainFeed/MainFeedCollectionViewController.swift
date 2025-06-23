@@ -24,16 +24,27 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	
 	
 	override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-
+		super.viewDidLoad()
+		
         // Do any additional setup after loading the view.
     }
+	
+	override func viewWillLayoutSubviews() {
+		configureCollectionView()
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		var config = UICollectionLayoutListConfiguration(appearance: .sidebar)
+		config.separatorConfiguration.color = .tertiarySystemFill
+		let layout = UICollectionViewCompositionalLayout.list(using: config)
+		collectionView.setCollectionViewLayout(layout, animated: false)
+		super.viewDidAppear(animated)
+	}
+	
+	// MARK: - Collection View Configuration
+	func configureCollectionView() {
+		
+	}
 
     /*
     // MARK: - Navigation
@@ -49,21 +60,20 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+		return coordinator.numberOfSections()
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        return 0
+		return coordinator.numberOfRows(in: section)
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? MainFeedCollectionViewCell
+		configure(cell!, indexPath)
     
-        // Configure the cell
-    
-        return cell
+        return cell!
     }
 
     // MARK: UICollectionViewDelegate
@@ -97,4 +107,142 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
     }
     */
 
+	
+	// MARK: - API
+	
+	func focus() {
+		becomeFirstResponder()
+	}
+	
+	func updateUI() {
+		#warning("Implement updateUI()")
+		
+//		if coordinator.isReadFeedsFiltered {
+//			setFilterButtonToActive()
+//		} else {
+//			setFilterButtonToInactive()
+//		}
+//		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+//
+//		configureContextMenu()
+	}
+	
+	
+	func updateFeedSelection(animations: Animations) {
+		#warning("Implement updateFeedSelection()")
+		
+//		if let indexPath = coordinator.currentFeedIndexPath {
+//			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
+//		} else {
+//			if let indexPath = tableView.indexPathForSelectedRow {
+//				if animations.contains(.select) {
+//					tableView.deselectRow(at: indexPath, animated: true)
+//				} else {
+//					tableView.deselectRow(at: indexPath, animated: false)
+//				}
+//			}
+//		}
+	}
+	
+	func openInAppBrowser() {
+		if let indexPath = coordinator.currentFeedIndexPath,
+			let url = coordinator.homePageURLForFeed(indexPath) {
+			let vc = SFSafariViewController(url: url)
+			vc.modalPresentationStyle = .overFullScreen
+			present(vc, animated: true)
+		}
+	}
+	
+	func reloadFeeds(initialLoad: Bool, changes: ShadowTableChanges, completion: (() -> Void)? = nil) {
+		updateUI()
+
+		guard !initialLoad else {
+			collectionView.reloadData()
+			completion?()
+			return
+		}
+		
+		collectionView.performBatchUpdates {
+			if let deletes = changes.deletes, !deletes.isEmpty {
+				collectionView.deleteSections(IndexSet(deletes))
+			}
+			
+			if let inserts = changes.inserts, !inserts.isEmpty {
+				collectionView.insertSections(IndexSet(inserts))
+			}
+			
+			if let moves = changes.moves, !moves.isEmpty {
+				for move in moves {
+					collectionView.moveSection(move.from, toSection: move.to)
+				}
+			}
+
+			if let rowChanges = changes.rowChanges {
+				for rowChange in rowChanges {
+					if let deletes = rowChange.deleteIndexPaths, !deletes.isEmpty {
+						collectionView.deleteItems(at: deletes)
+					}
+					
+					if let inserts = rowChange.insertIndexPaths, !inserts.isEmpty {
+						collectionView.insertItems(at: inserts)
+					}
+					
+					if let moves = rowChange.moveIndexPaths, !moves.isEmpty {
+						for move in moves {
+							collectionView.moveItem(at: move.0, to: move.1)
+						}
+					}
+				}
+			}
+		}
+		
+		if let rowChanges = changes.rowChanges {
+			for rowChange in rowChanges {
+				if let reloads = rowChange.reloadIndexPaths, !reloads.isEmpty {
+					collectionView.reloadItems(at: reloads)
+				}
+			}
+		}
+
+		completion?()
+	}
+	
+	// MARK: - Private
+	
+	func configure(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
+		#warning("Implement cell configuration")
+		
+		guard let node = coordinator.nodeFor(indexPath) else { return }
+
+		//cell.delegate = self
+		if node.representedObject is Folder {
+			//cell.indentationLevel = 0
+		} else {
+			//cell.indentationLevel = 1
+		}
+		
+		if let containerID = (node.representedObject as? Container)?.containerID {
+			//cell.setDisclosure(isExpanded: coordinator.isExpanded(containerID), animated: false)
+			//cell.isDisclosureAvailable = true
+		} else {
+			//cell.isDisclosureAvailable = false
+		}
+		
+		if let feed = node.representedObject as? Feed {
+			cell.feedTitle.text = feed.nameForDisplay
+			cell.unreadCountLabel.text = feed.unreadCount.formatted()
+		}
+
+		//configureIcon(cell, indexPath)
+
+		let rowsInSection = collectionView.numberOfItems(inSection: indexPath.section)
+		if indexPath.row == rowsInSection - 1 {
+			//cell.isSeparatorShown = false
+		} else {
+			//cell.isSeparatorShown = true
+		}
+		
+	}
+	
 }
+
