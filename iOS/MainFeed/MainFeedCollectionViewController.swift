@@ -15,7 +15,7 @@ import RSTree
 import RSWeb
 import SafariServices
 
-private let reuseIdentifier = "Cell"
+private let reuseIdentifier = "FeedCell"
 
 class MainFeedCollectionViewController: UICollectionViewController, UndoableCommandRunner {
 
