@@ -31,6 +31,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
         if UIDevice.current.userInterfaceIdiom == .pad {
             selectedBackgroundView = CapsuleBackgroundView()
 			selectedBackgroundView?.layoutSubviews()
+			backgroundColor = .clear
         }
     }
 

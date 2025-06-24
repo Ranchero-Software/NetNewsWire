@@ -242,7 +242,7 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" prefetchingEnabled="NO" id="7gd-ro-2Jf">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Ubr-IF-2WV">
                             <size key="itemSize" width="414" height="72"/>
@@ -283,7 +283,6 @@
                                         </view>
                                     </subviews>
                                     <viewLayoutGuide key="safeArea" id="k2W-kq-CtP"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="k2W-kq-CtP" firstAttribute="bottom" secondItem="oRt-Cv-vvU" secondAttribute="bottom" constant="11" id="4M1-T3-2Cd"/>
                                         <constraint firstItem="k2W-kq-CtP" firstAttribute="trailing" secondItem="oRt-Cv-vvU" secondAttribute="trailing" constant="16" id="4Xq-gT-ghB"/>
@@ -297,6 +296,7 @@
                                         <constraint firstItem="oRt-Cv-vvU" firstAttribute="leading" secondItem="fHH-rW-0hD" secondAttribute="trailing" constant="10" id="wHQ-PR-VOQ"/>
                                     </constraints>
                                 </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <size key="customSize" width="414" height="54"/>
                                 <connections>
                                     <outlet property="faviconView" destination="Ea0-VT-Gvl" id="OMb-Ty-3cf"/>
@@ -540,6 +540,9 @@
         </namedColor>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemGroupedBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="separatorColor">
             <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
