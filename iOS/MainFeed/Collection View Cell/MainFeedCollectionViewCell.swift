@@ -43,6 +43,17 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
         }
     }
 	
+	var iconImage: IconImage? {
+		didSet {
+			faviconView.iconImage = iconImage
+			if let preferredColor = iconImage?.preferredColor {
+				faviconView.tintColor = UIColor(cgColor: preferredColor)
+			} else {
+				faviconView.tintColor = AppAssets.secondaryAccentColor
+			}
+		}
+	}
+	
 	private var _unreadCount: Int = 0
 	
 	var unreadCount: Int {
@@ -60,17 +71,17 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 	}
 	
-//	override var accessibilityLabel: String? {
-//		set {}
-//		get {
-//			if unreadCount > 0 {
-//				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
-//				return "\(name) \(unreadCount) \(unreadLabel)"
-//			} else {
-//				return name
-//			}
-//		}
-//	}
+	override var accessibilityLabel: String? {
+		set {}
+		get {
+			if unreadCount > 0 {
+				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
+				return "\(String(describing: feedTitle.text)) \(unreadCount) \(unreadLabel)"
+			} else {
+				return (String(describing: feedTitle.text))
+			}
+		}
+	}
 		
 }
 

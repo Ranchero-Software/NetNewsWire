@@ -35,7 +35,7 @@ final class IconView: UIView {
 		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
 		imageView.contentMode = .scaleAspectFit
 		imageView.clipsToBounds = true
-		imageView.layer.cornerRadius = 6.0
+		imageView.layer.cornerRadius = 2.0
 		imageView.layer.cornerCurve = .continuous
 		return imageView
 	}()
@@ -64,11 +64,6 @@ final class IconView: UIView {
 	
 	convenience init() {
 		self.init(frame: .zero)
-	}
-
-	override func awakeFromNib() {
-		super.awakeFromNib()
-		commonInit()
 	}
 
 	override func didMoveToSuperview() {

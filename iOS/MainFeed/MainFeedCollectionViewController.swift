@@ -249,7 +249,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let feedID = feed.feedID else {
 			return
 		}
-		cell.faviconView.iconImage = IconImageCache.shared.imageFor(feedID)
+		cell.iconImage = IconImageCache.shared.imageFor(feedID)
 	}
 	
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
