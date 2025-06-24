@@ -33,7 +33,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
+		registerForNotifications()
         // Do any additional setup after loading the view.
     }
 	
@@ -46,6 +46,18 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		super.viewDidAppear(animated)
 		configureCollectionView()
 		self.navigationController?.navigationBar.prefersLargeTitles = true
+	}
+	
+	func registerForNotifications() {
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		// TODO: fix this temporary hack, which will probably require refactoring image handling.
+		// We want to know when to possibly reconfigure our cells with a new image, and we don’t
+		// always know when an image is available — but watching the .htmlMetadataAvailable Notification
+		// lets us know that it’s time to request an image.
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
+
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 	}
 	
 	// MARK: - Collection View Configuration
@@ -226,6 +238,35 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		completion?()
 	}
 	
+	func applyToAvailableCells(_ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
+		collectionView.visibleCells.forEach { cell in
+			guard let indexPath = collectionView.indexPath(for: cell) else { return }
+			completion(cell as! MainFeedCollectionViewCell, indexPath)
+		}
+	}
+	
+	func configureIcon(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
+		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let feedID = feed.feedID else {
+			return
+		}
+		cell.faviconView.iconImage = IconImageCache.shared.imageFor(feedID)
+	}
+	
+	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
+		applyToCellsForRepresentedObject(representedObject, configure)
+	}
+
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
+		applyToAvailableCells { (cell, indexPath) in
+			if let node = coordinator.nodeFor(indexPath),
+			   let representedFeed = representedObject as? Feed,
+			   let candidate = node.representedObject as? Feed,
+			   representedFeed.feedID == candidate.feedID {
+				completion(cell, indexPath)
+			}
+		}
+	}
+	
 	// MARK: - Private
 	
 	func configure(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
@@ -251,7 +292,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		
 		if let feed = node.representedObject as? Feed {
 			cell.feedTitle.text = feed.nameForDisplay
-			cell.unreadCountLabel.text = feed.unreadCount.formatted()
+			cell.unreadCount = feed.unreadCount
 			
 			if UIDevice.current.userInterfaceIdiom == .pad {
 				let isSelected = collectionView.indexPathsForSelectedItems?.contains(indexPath) ?? false
@@ -259,7 +300,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			}
 		}
 
-		//configureIcon(cell, indexPath)
+		configureIcon(cell, indexPath)
 
 		let rowsInSection = collectionView.numberOfItems(inSection: indexPath.section)
 		if indexPath.row == rowsInSection - 1 {
@@ -268,6 +309,49 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			//cell.isSeparatorShown = true
 		}
 		
+	}
+	
+	
+	// MARK: - Notifications
+	
+	@objc func unreadCountDidChange(_ note: Notification) {
+		updateUI()
+
+		guard let unreadCountProvider = note.object as? UnreadCountProvider else {
+			return
+		}
+		
+		if let account = unreadCountProvider as? Account {
+			#warning("Implement headerview logic")
+//			if let headerView = headerViewForAccount(account) {
+//				headerView.unreadCount = account.unreadCount
+//			}
+			return
+		}
+
+		var node: Node? = nil
+		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
+		} else {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
+		}
+
+		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
+		
+		if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
+			cell.unreadCount = unreadCountProvider.unreadCount
+		}
+	}
+	
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+		applyToAvailableCells(configureIcon)
+	}
+
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+			return
+		}
+		applyToCellsForRepresentedObject(webFeed, configureIcon(_:_:))
 	}
 	
 }

@@ -8,6 +8,7 @@
 
 import UIKit
 
+@IBDesignable
 final class IconView: UIView {
 
 	var iconImage: IconImage? = nil {
@@ -65,6 +66,11 @@ final class IconView: UIView {
 		self.init(frame: .zero)
 	}
 
+	override func awakeFromNib() {
+		super.awakeFromNib()
+		commonInit()
+	}
+
 	override func didMoveToSuperview() {
 		setNeedsLayout()
 	}
@@ -120,3 +126,4 @@ private extension IconView {
 		}
 	}
 }
+

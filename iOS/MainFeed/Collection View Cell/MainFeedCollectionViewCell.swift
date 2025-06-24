@@ -11,33 +11,66 @@ import RSCore
 import Account
 import RSTree
 
+class CapsuleBackgroundView: UIView {
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		self.layer.cornerRadius = self.bounds.height / 2
+		self.layer.masksToBounds = true
+	}
+}
+
+
 class MainFeedCollectionViewCell: UICollectionViewCell {
     
 	@IBOutlet weak var feedTitle: UILabel!
-	@IBOutlet weak var faviconImageView: UIImageView!
+	@IBOutlet weak var faviconView: IconView!
 	@IBOutlet weak var unreadCountLabel: UILabel!
 	
-    private var capsuleSelectedBackgroundView: UIView {
-        let view = UIView()
-		view.backgroundColor = UIColor.tertiarySystemFill
-        view.layer.cornerRadius = 22
-        view.layer.masksToBounds = true
-        return view
-    }
-
     override func awakeFromNib() {
         super.awakeFromNib()
         if UIDevice.current.userInterfaceIdiom == .pad {
-            selectedBackgroundView = capsuleSelectedBackgroundView
+            selectedBackgroundView = CapsuleBackgroundView()
+			selectedBackgroundView?.layoutSubviews()
         }
     }
 
     override var isSelected: Bool {
         didSet {
-            if UIDevice.current.userInterfaceIdiom == .pad {
+			if UIDevice.current.userInterfaceIdiom == .pad {
 				feedTitle.textColor = isSelected ? AppAssets.primaryAccentColor : .label
-            }
+				selectedBackgroundView?.backgroundColor = isSelected ? .tertiarySystemFill : .clear
+			}
         }
     }
+	
+	private var _unreadCount: Int = 0
+	
+	var unreadCount: Int {
+		get {
+			return _unreadCount
+		}
+		set {
+			_unreadCount = newValue
+			if newValue == 0 {
+				unreadCountLabel.isHidden = true
+			} else {
+				unreadCountLabel.isHidden = false
+			}
+			unreadCountLabel.text = newValue.formatted()
+		}
+	}
+	
+//	override var accessibilityLabel: String? {
+//		set {}
+//		get {
+//			if unreadCount > 0 {
+//				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
+//				return "\(name) \(unreadCount) \(unreadLabel)"
+//			} else {
+//				return name
+//			}
+//		}
+//	}
 		
 }
+
