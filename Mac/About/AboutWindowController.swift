@@ -42,7 +42,7 @@ class AboutWindowController: NSWindowController {
 	private func updateUI() {
 		
 		// App Icon
-		appIconImageView.image = NSImage(named: "AppIcon")
+		appIconImageView.image = NSApp.applicationIconImage
 		
 		// Version
 		let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
