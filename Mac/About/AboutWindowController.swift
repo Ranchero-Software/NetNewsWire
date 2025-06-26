@@ -64,9 +64,9 @@ class AboutWindowController: NSWindowController {
 		}
 		
 		let fullRange = NSRange(location: 0, length: creditsTextView.string.utf16.count)
-		let centeredParagraphStyle = NSMutableParagraphStyle()
-		centeredParagraphStyle.alignment = .center
-		creditsTextView.textStorage?.addAttribute(.paragraphStyle, value: centeredParagraphStyle, range: fullRange)
+		let leadingParagraphStyle = NSMutableParagraphStyle()
+		leadingParagraphStyle.alignment = .left
+		creditsTextView.textStorage?.addAttribute(.paragraphStyle, value: leadingParagraphStyle, range: fullRange)
 		
 		// URL
 		let url = URL(string: "https://inessential.com")!
