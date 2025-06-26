@@ -40,18 +40,21 @@ class AboutWindowController: NSWindowController {
 	}
 	
 	private func updateUI() {
+		
+		// App Icon
+		appIconImageView.image = NSImage(named: "AppIcon")
+		
+		// Version
 		let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
 		let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
 		let versionString = "Version \(version) (Build \(build))"
 		versionLabel.stringValue = versionString
 		
+		// Copyright
 		let copyright = Bundle.main.infoDictionary?["NSHumanReadableCopyright"] as? String ?? "Copyright © 2002-2025 Brent Simmons. All rights reserved."
 		copyrightLabel.stringValue = copyright
 		
-		websiteLabel.stringValue = "inessential.com"
-		
-		appIconImageView.image = NSImage(named: "AppIcon")
-		
+		// Credits
 		if let creditsURL = Bundle.main.url(forResource: "Credits", withExtension: "rtf"),
 		   let creditsData = try? Data(contentsOf: creditsURL),
 		   let attributedString = try? NSAttributedString(data: creditsData, options: [.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil) {
@@ -65,12 +68,12 @@ class AboutWindowController: NSWindowController {
 		centeredParagraphStyle.alignment = .center
 		creditsTextView.textStorage?.addAttribute(.paragraphStyle, value: centeredParagraphStyle, range: fullRange)
 		
+		// URL
 		let url = URL(string: "https://inessential.com")!
 		let attributedString = NSMutableAttributedString(string: "inessential.com")
 		attributedString.addAttribute(.link, value: url, range: NSRange(location: 0, length: attributedString.length))
 		attributedString.addAttribute(.foregroundColor, value: NSColor.systemBlue, range: NSRange(location: 0, length: attributedString.length))
 		attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: attributedString.length))
-
 		websiteLabel.attributedStringValue = attributedString
 	}
     
