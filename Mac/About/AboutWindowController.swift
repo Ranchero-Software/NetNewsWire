@@ -37,8 +37,6 @@ class AboutWindowController: NSWindowController {
 			visualEffectView.state = .active
 			contentView.addSubview(visualEffectView, positioned: .below, relativeTo: nil)
 		}
-		//creditsScrollView.backgroundColor = .clear
-		//creditsTextView.backgroundColor = .clear
 	}
 	
 	private func updateUI() {
