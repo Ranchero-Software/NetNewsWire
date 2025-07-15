@@ -144,11 +144,11 @@ struct AppAssets {
 	}()
 	
 	static var mainFolderImage: IconImage = {
-		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+		return IconImage(UIImage(systemName: "folder")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
 	
 	static var mainFolderImageNonIcon: UIImage = {
-		return UIImage(systemName: "folder.fill")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
+		return UIImage(systemName: "folder")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
 	}()
 	
 	static var moreImage: UIImage = {

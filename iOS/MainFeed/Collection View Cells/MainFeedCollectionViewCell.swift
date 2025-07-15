@@ -25,24 +25,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var feedTitle: UILabel!
 	@IBOutlet weak var faviconView: IconView!
 	@IBOutlet weak var unreadCountLabel: UILabel!
-	
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            selectedBackgroundView = CapsuleBackgroundView()
-			selectedBackgroundView?.layoutSubviews()
-			backgroundColor = .clear
-        }
-    }
-
-    override var isSelected: Bool {
-        didSet {
-			if UIDevice.current.userInterfaceIdiom == .pad {
-				feedTitle.textColor = isSelected ? AppAssets.primaryAccentColor : .label
-				selectedBackgroundView?.backgroundColor = isSelected ? .tertiarySystemFill : .clear
-			}
-        }
-    }
+	private var faviconLeadingConstraint: NSLayoutConstraint?
 	
 	var iconImage: IconImage? {
 		didSet {
@@ -72,6 +55,30 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 	}
 	
+	/// If the feed is contained in a folder, the indentation level is 1
+	/// and the cell's favicon leading constrain is increased. Otherwise,
+	/// it has the standard leading constraint.
+	///
+	/// On the storyboard, no leading constraint is set.
+	var indentationLevel: Int = 0 {
+		didSet {
+			if indentationLevel == 1 {
+				faviconLeadingConstraint?.constant = 32
+			} else {
+				faviconLeadingConstraint?.constant = 16
+			}
+		}
+	}
+	
+	override var isSelected: Bool {
+		didSet {
+			if UIDevice.current.userInterfaceIdiom == .pad {
+				feedTitle.textColor = isSelected ? AppAssets.primaryAccentColor : .label
+				selectedBackgroundView?.backgroundColor = isSelected ? .tertiarySystemFill : .clear
+			}
+		}
+	}
+	
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -83,6 +90,17 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 			}
 		}
 	}
+	
+    override func awakeFromNib() {
+        super.awakeFromNib()
+		faviconLeadingConstraint = faviconView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor)
+		faviconLeadingConstraint?.isActive = true
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            selectedBackgroundView = CapsuleBackgroundView()
+			selectedBackgroundView?.layoutSubviews()
+			backgroundColor = .clear
+        }
+    }
 		
 }
 
