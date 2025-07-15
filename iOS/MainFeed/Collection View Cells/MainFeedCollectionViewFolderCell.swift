@@ -111,4 +111,16 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 	
 	
+	override var accessibilityLabel: String? {
+		set {}
+		get {
+			if unreadCount > 0 {
+				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
+				return "\(String(describing: folderTitle.text)) \(unreadCount) \(unreadLabel)"
+			} else {
+				return (String(describing: folderTitle.text))
+			}
+		}
+	}
+	
 }

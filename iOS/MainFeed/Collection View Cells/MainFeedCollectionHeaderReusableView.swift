@@ -19,6 +19,31 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	@IBOutlet weak var headerTitle: UILabel!
 	@IBOutlet weak var disclosureIndicator: UIImageView!
 	@IBOutlet weak var unreadCountLabel: UILabel!
+	private var unreadLabelWidthConstraint: NSLayoutConstraint?
+	
+	
+	override var accessibilityLabel: String? {
+		set {}
+		get {
+			if unreadCount > 0 {
+				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
+				return "\(headerTitle.text ?? "") \(unreadCount) \(unreadLabel) \(expandedStateMessage) "
+			} else {
+				return "\(headerTitle.text ?? "") \(expandedStateMessage) "
+			}
+		}
+	}
+
+	private var expandedStateMessage: String {
+		set {}
+		get {
+			if disclosureExpanded {
+				return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
+			}
+			return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
+		}
+	}
+	
 	
 	private var _unreadCount: Int = 0
 	
@@ -42,6 +67,8 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	
 	override func awakeFromNib() {
 		super.awakeFromNib()
+		unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 80)
+		unreadLabelWidthConstraint?.isActive = true
 		configureUI()
 		addTapGesture()
 	}
@@ -66,7 +93,14 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	}
 	
 	func updateExpandedState(animate: Bool) {
-		// Down (expanded): 0 radians. Right (collapsed): -π/2 radians.
+	
+		if disclosureExpanded == false {
+			unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 80)
+		} else {
+			unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 0)
+			unreadLabelWidthConstraint?.isActive = false
+		}
+		
 		let angle: CGFloat = disclosureExpanded ? 0 : -.pi / 2
 		let transform = CGAffineTransform(rotationAngle: angle)
 		let animations = {

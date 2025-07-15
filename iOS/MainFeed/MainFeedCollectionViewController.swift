@@ -25,7 +25,11 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
 		didSet {
-			addNewItemButton.primaryAction = nil
+			if #available(iOS 14, *) {
+				addNewItemButton.primaryAction = nil
+			} else {
+				addNewItemButton.action = #selector(MainFeedViewController.add(_:))
+			}
 		}
 	}
 	
@@ -88,9 +92,85 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		var config = UICollectionLayoutListConfiguration(appearance: UIDevice.current.userInterfaceIdiom == .pad ? .sidebar : .insetGrouped)
 		config.separatorConfiguration.color = .tertiarySystemFill
 		config.headerMode = .supplementary
+		
+		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+			if indexPath.section == 0 { return UISwipeActionsConfiguration(actions: []) }
+			var actions = [UIContextualAction]()
+			
+			// Set up the delete action
+			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+			let deleteAction = UIContextualAction(style: .destructive, title: deleteTitle) { [weak self] (action, view, completion) in
+				self?.delete(indexPath: indexPath)
+				completion(true)
+			}
+			deleteAction.backgroundColor = UIColor.systemRed
+			actions.append(deleteAction)
+			
+			// Set up the rename action
+			let renameTitle = NSLocalizedString("Rename", comment: "Rename")
+			let renameAction = UIContextualAction(style: .normal, title: renameTitle) { [weak self] (action, view, completion) in
+				self?.rename(indexPath: indexPath)
+				completion(true)
+			}
+			renameAction.backgroundColor = UIColor.systemOrange
+			actions.append(renameAction)
+			
+			if let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed {
+				let moreTitle = NSLocalizedString("More", comment: "More")
+				let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completion) in
+					
+					if let self = self {
+					
+						let alert = UIAlertController(title: webFeed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
+						if let popoverController = alert.popoverPresentationController {
+							popoverController.sourceView = view
+							popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
+						}
+						
+						if let action = self.getInfoAlertAction(indexPath: indexPath, completion: completion) {
+							alert.addAction(action)
+						}
+						
+						if let action = self.homePageAlertAction(indexPath: indexPath, completion: completion) {
+							alert.addAction(action)
+						}
+							
+						if let action = self.copyFeedPageAlertAction(indexPath: indexPath, completion: completion) {
+							alert.addAction(action)
+						}
+
+						if let action = self.copyHomePageAlertAction(indexPath: indexPath, completion: completion) {
+							alert.addAction(action)
+						}
+						
+						if let action = self.markAllAsReadAlertAction(indexPath: indexPath, completion: completion) {
+							alert.addAction(action)
+						}
+						
+						let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+						alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
+							completion(true)
+						})
+
+						self.present(alert, animated: true)
+						
+					}
+					
+				}
+				
+				moreAction.backgroundColor = UIColor.systemGray
+				actions.append(moreAction)
+			}
+
+			let config = UISwipeActionsConfiguration(actions: actions)
+			config.performsFirstActionWithFullSwipe = false
+			
+			return config
+		}
+		
+		
 		let layout = UICollectionViewCompositionalLayout.list(using: config)
 		collectionView.setCollectionViewLayout(layout, animated: false)
-		collectionView.rightEdgeEffect.isHidden = true
 		collectionView.refreshControl = UIRefreshControl()
 		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 	}
@@ -157,6 +237,10 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		
 		headerView.tag = indexPath.section
 		headerView.disclosureExpanded = coordinator.isExpanded(sectionNode)
+		
+		if indexPath.section != 0 {
+			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
+		}
 		
 		return headerView
 	}
@@ -673,6 +757,8 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 		
 		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
 	}
+	
+	
 }
 
 extension MainFeedCollectionViewController {

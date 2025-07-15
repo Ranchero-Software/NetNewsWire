@@ -243,36 +243,36 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Ubr-IF-2WV">
-                            <size key="itemSize" width="414" height="54"/>
+                            <size key="itemSize" width="430" height="54"/>
                             <size key="headerReferenceSize" width="50" height="50"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FeedCell" id="5DS-WK-qAz" customClass="MainFeedCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="8" y="50" width="414" height="60"/>
+                                <rect key="frame" x="0.0" y="50" width="430" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Frd-Hc-CpH">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="430" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Feed Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fHH-rW-0hD">
-                                            <rect key="frame" x="270.66666666666669" y="15" width="75.333333333333314" height="30"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Feed Title" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fHH-rW-0hD">
+                                            <rect key="frame" x="286.66666666666669" y="15" width="75.333333333333314" height="30"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="8888" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oRt-Cv-vvU">
-                                            <rect key="frame" x="356" y="12" width="42" height="37"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oRt-Cv-vvU">
+                                            <rect key="frame" x="372" y="12" width="42" height="37"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="42" id="gcN-eE-3m0"/>
+                                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="gcN-eE-3m0"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ea0-VT-Gvl" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="238.66666666666666" y="18" width="23.999999999999972" height="24"/>
+                                            <rect key="frame" x="254.66666666666663" y="18" width="24" height="24"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="Bru-x6-68Z"/>
@@ -293,7 +293,7 @@
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
-                                <size key="customSize" width="414" height="60"/>
+                                <size key="customSize" width="430" height="60"/>
                                 <connections>
                                     <outlet property="faviconView" destination="Ea0-VT-Gvl" id="OMb-Ty-3cf"/>
                                     <outlet property="feedTitle" destination="fHH-rW-0hD" id="4Cu-Jc-mlE"/>
@@ -301,14 +301,14 @@
                                 </connections>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Folder" id="wZG-XA-czw" customClass="MainFeedCollectionViewFolderCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="8" y="120" width="414" height="60"/>
+                                <rect key="frame" x="0.0" y="120" width="430" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Gne-oO-8wx">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="430" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Folder Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qoe-rn-pwE">
-                                            <rect key="frame" x="48" y="15" width="272" height="30"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Folder Title" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qoe-rn-pwE">
+                                            <rect key="frame" x="48" y="15" width="288" height="30"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -321,17 +321,17 @@
                                                 <constraint firstAttribute="width" constant="24" id="ygW-tD-t1U"/>
                                             </constraints>
                                         </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="8888" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LVW-Zu-z90">
-                                            <rect key="frame" x="330" y="12" width="42" height="37"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LVW-Zu-z90">
+                                            <rect key="frame" x="346" y="12" width="42" height="37"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="42" id="bbK-t6-3yU"/>
+                                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="bbK-t6-3yU"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="noV-fz-88z">
-                                            <rect key="frame" x="372" y="10" width="39" height="39"/>
+                                            <rect key="frame" x="388" y="10" width="39" height="39"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="39" id="HBO-zo-rb2"/>
                                                 <constraint firstAttribute="height" constant="39" id="oUY-3E-b1N"/>
@@ -363,7 +363,7 @@
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
-                                <size key="customSize" width="414" height="60"/>
+                                <size key="customSize" width="430" height="60"/>
                                 <connections>
                                     <outlet property="disclosureButton" destination="noV-fz-88z" id="aBd-vX-4DN"/>
                                     <outlet property="faviconView" destination="AAi-mv-o14" id="6Zo-OH-fwi"/>
@@ -385,16 +385,16 @@
                                     </constraints>
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="semibold"/>
                                 </imageView>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ContainerTitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p16-Uj-CBX">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="ContainerTitle" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p16-Uj-CBX">
                                     <rect key="frame" x="16" y="8" width="327" height="34"/>
-                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                     <color key="textColor" systemColor="tertiaryLabelColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="8888" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="42" translatesAutoresizingMaskIntoConstraints="NO" id="TBA-io-5jo">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" preferredMaxLayoutWidth="42" translatesAutoresizingMaskIntoConstraints="NO" id="TBA-io-5jo">
                                     <rect key="frame" x="351" y="14.666666666666666" width="42" height="20.666666666666671"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="42" id="ICt-N6-dsh"/>
+                                        <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="ICt-N6-dsh"/>
                                     </constraints>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -452,7 +452,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="15O-aC-V5r" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="450.72463768115944" y="-1821.4285714285713"/>
+            <point key="canvasLocation" x="450.69767441860466" y="-1821.8884120171674"/>
         </scene>
         <!--Image View Controller-->
         <scene sceneID="TT4-oA-DBw">
