@@ -839,10 +839,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func selectFeed(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
-		guard indexPath != currentFeedIndexPath else {
-			completion?()
-			return
-		}
+//		guard indexPath != currentFeedIndexPath else {
+//			completion?()
+//			return
+//		}
 		
 		currentFeedIndexPath = indexPath
 		mainFeedCollectionViewController.updateFeedSelection(animations: animations)
