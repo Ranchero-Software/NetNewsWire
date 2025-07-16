@@ -107,7 +107,6 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	
 	func setDisclosure(isExpanded: Bool, animated: Bool) {
 		disclosureExpanded = isExpanded
-		print("disclosure is \(disclosureExpanded)")
 	}
 	
 	
