@@ -69,7 +69,6 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		
 		self.navigationController?.navigationBar.prefersLargeTitles = true
 	}
 	
@@ -246,6 +245,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	}
 	
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		becomeFirstResponder()
 		coordinator.selectFeed(indexPath: indexPath, animations: [.navigation, .select, .scroll])
 	}
 
