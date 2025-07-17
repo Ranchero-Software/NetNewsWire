@@ -12,9 +12,15 @@ import Account
 import RSTree
 
 class CapsuleBackgroundView: UIView {
+	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.layer.cornerRadius = self.bounds.height / 2
+		if UIDevice.current.userInterfaceIdiom == .pad {
+			self.layer.cornerRadius = self.bounds.height / 2
+		} else {
+			self.layer.cornerRadius = 8
+		}
+		
 		self.layer.masksToBounds = true
 	}
 }
@@ -74,7 +80,10 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		didSet {
 			if UIDevice.current.userInterfaceIdiom == .pad {
 				feedTitle.textColor = isSelected ? AppAssets.primaryAccentColor : .label
-				selectedBackgroundView?.backgroundColor = isSelected ? .tertiarySystemFill : .clear
+			}
+			selectedBackgroundView?.backgroundColor = isSelected ? .tertiarySystemFill : .clear
+			if UIDevice.current.userInterfaceIdiom == .phone {
+				backgroundColor = isSelected ? .clear : .systemBackground
 			}
 		}
 	}
@@ -95,11 +104,12 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
         super.awakeFromNib()
 		faviconLeadingConstraint = faviconView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor)
 		faviconLeadingConstraint?.isActive = true
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            selectedBackgroundView = CapsuleBackgroundView()
-			selectedBackgroundView?.layoutSubviews()
+		selectedBackgroundView = CapsuleBackgroundView()
+		selectedBackgroundView?.layoutSubviews()
+		if UIDevice.current.userInterfaceIdiom == .pad {
 			backgroundColor = .clear
-        }
+		}
+		
     }
 		
 }
