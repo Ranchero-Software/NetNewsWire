@@ -322,15 +322,6 @@
                                                 <constraint firstAttribute="width" constant="24" id="ygW-tD-t1U"/>
                                             </constraints>
                                         </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LVW-Zu-z90">
-                                            <rect key="frame" x="346" y="12" width="42" height="37"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="bbK-t6-3yU"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="noV-fz-88z">
                                             <rect key="frame" x="388" y="10" width="39" height="39"/>
                                             <constraints>
@@ -346,19 +337,27 @@
                                                 <action selector="toggleDisclosure" destination="wZG-XA-czw" eventType="touchUpInside" id="WG7-tr-rY6"/>
                                             </connections>
                                         </button>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LVW-Zu-z90">
+                                            <rect key="frame" x="344" y="19.333333333333336" width="42" height="20.333333333333336"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="bbK-t6-3yU"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <viewLayoutGuide key="safeArea" id="zOD-eb-9hW"/>
                                     <constraints>
                                         <constraint firstItem="qoe-rn-pwE" firstAttribute="top" secondItem="zOD-eb-9hW" secondAttribute="top" constant="15" id="9Jm-Re-nbY"/>
                                         <constraint firstItem="qoe-rn-pwE" firstAttribute="leading" secondItem="AAi-mv-o14" secondAttribute="trailing" constant="8" symbolic="YES" id="9Wl-bG-a7f"/>
                                         <constraint firstItem="AAi-mv-o14" firstAttribute="leading" secondItem="zOD-eb-9hW" secondAttribute="leading" constant="16" id="9l7-Qb-ElX"/>
-                                        <constraint firstItem="zOD-eb-9hW" firstAttribute="bottom" secondItem="LVW-Zu-z90" secondAttribute="bottom" constant="11" id="BFh-hS-AkJ"/>
                                         <constraint firstItem="zOD-eb-9hW" firstAttribute="trailing" secondItem="noV-fz-88z" secondAttribute="trailing" constant="3" id="VMX-rc-Ke5"/>
-                                        <constraint firstItem="LVW-Zu-z90" firstAttribute="leading" secondItem="qoe-rn-pwE" secondAttribute="trailing" constant="10" id="VwH-HK-EUl"/>
+                                        <constraint firstItem="LVW-Zu-z90" firstAttribute="leading" secondItem="qoe-rn-pwE" secondAttribute="trailing" constant="8" id="VwH-HK-EUl"/>
                                         <constraint firstItem="noV-fz-88z" firstAttribute="centerY" secondItem="qoe-rn-pwE" secondAttribute="centerY" constant="-0.5" id="Zgc-BX-2k3"/>
-                                        <constraint firstItem="noV-fz-88z" firstAttribute="leading" secondItem="LVW-Zu-z90" secondAttribute="trailing" id="dLf-j2-6U9"/>
-                                        <constraint firstItem="LVW-Zu-z90" firstAttribute="top" secondItem="zOD-eb-9hW" secondAttribute="top" constant="12" id="dk3-0o-s6g"/>
+                                        <constraint firstItem="noV-fz-88z" firstAttribute="leading" secondItem="LVW-Zu-z90" secondAttribute="trailing" constant="2" id="dLf-j2-6U9"/>
                                         <constraint firstItem="AAi-mv-o14" firstAttribute="centerY" secondItem="qoe-rn-pwE" secondAttribute="centerY" id="r8g-Gn-l0j"/>
+                                        <constraint firstItem="LVW-Zu-z90" firstAttribute="centerY" secondItem="noV-fz-88z" secondAttribute="centerY" id="ybI-HS-zvR"/>
                                         <constraint firstItem="zOD-eb-9hW" firstAttribute="bottom" secondItem="qoe-rn-pwE" secondAttribute="bottom" constant="15" id="ygc-Fi-6a4"/>
                                     </constraints>
                                 </collectionViewCellContentView>
