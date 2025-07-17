@@ -63,8 +63,24 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
 		navigationController?.isToolbarHidden = false
+		updateUI()
+		super.viewWillAppear(animated)
+		
+		if UIDevice.current.userInterfaceIdiom == .phone {
+			if let selected = collectionView.indexPathsForSelectedItems {
+				for indexPath in selected {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: { [weak self] in
+						self?.collectionView.deselectItem(at: indexPath, animated: true)
+						self?.coordinator.selectFeed(nil)
+					})
+				}
+			}
+		}
+		
+		collectionView.refreshControl = UIRefreshControl()
+		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
