@@ -277,7 +277,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			CrashReporter.check(crashReporter: self.crashReporter)
 		}
 		#endif
-		
 	}
 	
 	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
@@ -674,6 +673,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		createAndShowMainWindowIfNecessary()
 		mainWindowController!.gotoStarred(sender)
+	}
+	
+	@IBAction func showCustomAboutPanel(_ sender: Any?) {
+		let aboutWC = AboutWindowController(windowNibName: "AboutWindowController")
+		aboutWC.showWindow(nil)
+		aboutWC.window?.center()
+		aboutWC.window?.makeKeyAndOrderFront(nil)
 	}
 
 	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {

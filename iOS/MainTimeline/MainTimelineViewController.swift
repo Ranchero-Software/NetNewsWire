@@ -145,8 +145,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		]
 		navigationItem.searchController = searchController
 		
-		if UIDevice.current.userInterfaceIdiom == .pad {
-			// FIXME: iPad scope buttons aren't showing in iOS 26 Beta 1. Set to All Articles.
+		if traitCollection.userInterfaceIdiom == .pad {
 			searchController.searchBar.selectedScopeButtonIndex = 1
 			navigationItem.searchBarPlacementAllowsExternalIntegration = true
 		}
@@ -154,16 +153,11 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		
 		// Configure the table
 		tableView.dataSource = dataSource
-		if #available(iOS 15.0, *) {
-			tableView.isPrefetchingEnabled = false
-		}
+		tableView.isPrefetchingEnabled = false
+		
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
-
-		if let titleView = Bundle.main.loadNibNamed("MainTimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
-			navigationItem.titleView = titleView
-		}
 		
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -179,24 +173,22 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		// Disable swipe back on iPad Mice
-		if #available(iOS 13.4, *) {
-			guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
-				return
-			}
-			gesture.allowedScrollTypesMask = []
+		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
+			return
 		}
+		gesture.allowedScrollTypesMask = []
 		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
 		self.navigationController?.isToolbarHidden = false
 
 		// If the nav bar is hidden, fade it in to avoid it showing stuff as it is getting laid out
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		
-		super.viewWillAppear(animated)
+		navigationItem.subtitle = "" // don't inherit feeds subtitle on push
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -205,6 +197,14 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		if navigationController?.navigationBar.alpha == 0 {
 			UIView.animate(withDuration: 0.5) {
 				self.navigationController?.navigationBar.alpha = 1
+			}
+		}
+		if traitCollection.userInterfaceIdiom == .phone {
+			if let _ = coordinator?.currentArticle {
+				if let indexPath = tableView.indexPathForSelectedRow {
+					tableView.deselectRow(at: indexPath, animated: true)
+				}
+				coordinator?.selectArticle(nil)
 			}
 		}
 	}
@@ -536,8 +536,13 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
-				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell {
-					configure(cell, article: article)
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell {
+					let cellData = configure(article: article)
+					cell.cellData = cellData
+				}
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineFeedCell {
+					let cellData = configure(article: article)
+					cell.cellData = cellData
 				}
 			}
 		}
@@ -556,8 +561,10 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			if article.webFeed == feed, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
-				cell.setIconImage(image)
+			if article.webFeed == feed {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
+					cell.setIconImage(image)
+				}
 			}
 		}
 	}
@@ -702,41 +709,41 @@ private extension MainTimelineViewController {
 	}
 
 	func configureToolbar() {
-		if UIDevice.current.userInterfaceIdiom == .phone {
+		if traitCollection.userInterfaceIdiom == .phone {
 			toolbarItems?.insert(.flexibleSpace(), at: 1)
 			toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
 		}
 	}
 
 	func resetUI(resetScroll: Bool) {
-		
-		title = timelineFeed?.nameForDisplay ?? "Timeline"
+		tableView.reloadData() 
 
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView?.iconImage = timelineIconImage
-			if let preferredColor = timelineIconImage?.preferredColor {
-				titleView.iconView?.tintColor = UIColor(cgColor: preferredColor)
-			} else {
-				titleView.iconView?.tintColor = nil
-			}
-			
-			titleView.label?.text = timelineFeed?.nameForDisplay
-			updateTitleUnreadCount()
-
-			if timelineFeed is WebFeed {
-				titleView.buttonize()
-				titleView.addGestureRecognizer(feedTapGestureRecognizer)
-			} else {
-				titleView.debuttonize()
-				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
-			}
-			
-			navigationItem.titleView = titleView
-		}
+//		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
+//			titleView.iconView?.iconImage = timelineIconImage
+//			if let preferredColor = timelineIconImage?.preferredColor {
+//				titleView.iconView?.tintColor = UIColor(cgColor: preferredColor)
+//			} else {
+//				titleView.iconView?.tintColor = nil
+//			}
+//			
+//			titleView.label?.text = timelineFeed?.nameForDisplay
+//			updateTitleUnreadCount()
+//
+//			if timelineFeed is WebFeed {
+//				titleView.buttonize()
+//				titleView.addGestureRecognizer(feedTapGestureRecognizer)
+//			} else {
+//				titleView.debuttonize()
+//				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
+//			}
+//			
+//			navigationItem.titleView = titleView
+//		}
 
 		switch timelineDefaultReadFilterType {
 		case .none, .read:
 			navigationItem.rightBarButtonItem = filterButton
+			navigationItem.rightBarButtonItem?.isEnabled = true
 		case .alwaysRead:
 			navigationItem.rightBarButtonItem = nil
 		}
@@ -807,22 +814,29 @@ private extension MainTimelineViewController {
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
 			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
-				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainTimelineTableViewCell
-				self?.configure(cell, article: article)
-				return cell
+				let cellData = self!.configure(article: article)
+				if self!.showIcons {
+					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelinePseudoFeedCell", for: indexPath) as! MainTimelineIconFeedCell
+					cell.cellData = cellData
+					return cell
+				} else {
+					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell", for: indexPath) as! MainTimelineFeedCell
+					cell.cellData = cellData
+					return cell
+				}
+				
 			})
 		dataSource.defaultRowAnimation = .middle
 		return dataSource
     }
 	
-	func configure(_ cell: MainTimelineTableViewCell, article: Article) {
-
+	@discardableResult
+	func configure(article: Article) -> MainTimelineCellData {
 		let iconImage = iconImageFor(article)
-
 		let showFeedNames = coordinator?.showFeedNames ?? ShowFeedName.none
 		let showIcon = showIcons && iconImage != nil
-		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
-
+		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		return cellData
 	}
 	
 	func iconImageFor(_ article: Article) -> IconImage? {

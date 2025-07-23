@@ -11,9 +11,10 @@ import UIKit
 class TimelineCustomizerViewController: UIViewController {
 
 	@IBOutlet weak var iconSizeSliderContainerView: UIView!
-	@IBOutlet weak var iconSizeSlider: TickMarkSlider!
+	@IBOutlet weak var iconSizeModernSlider: UISlider!
+	
 	@IBOutlet weak var numberOfLinesSliderContainerView: UIView!
-	@IBOutlet weak var numberOfLinesSlider: TickMarkSlider!
+	@IBOutlet weak var numberOfLinesModernSlider: UISlider!
 	
 	@IBOutlet weak var previewWidthConstraint: NSLayoutConstraint!
 	@IBOutlet weak var previewHeightConstraint: NSLayoutConstraint!
@@ -25,14 +26,18 @@ class TimelineCustomizerViewController: UIViewController {
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
-
+		
+		iconSizeModernSlider.minimumValue = 1
+		iconSizeModernSlider.maximumValue = 3
+		iconSizeModernSlider.trackConfiguration = .init(allowsTickValuesOnly: true, numberOfTicks: 3)
+		iconSizeModernSlider.value = Float(AppDefaults.shared.timelineIconSize.rawValue)
 		iconSizeSliderContainerView.layer.cornerRadius = 10
-		iconSizeSlider.value = Float(AppDefaults.shared.timelineIconSize.rawValue)
-		iconSizeSlider.addTickMarks()
-
+		
+		numberOfLinesModernSlider.minimumValue = 1
+		numberOfLinesModernSlider.maximumValue = 6
+		numberOfLinesModernSlider.trackConfiguration = .init(allowsTickValuesOnly: true, numberOfTicks: 6)
+		numberOfLinesModernSlider.value = Float(AppDefaults.shared.timelineNumberOfLines)
 		numberOfLinesSliderContainerView.layer.cornerRadius = 10
-		numberOfLinesSlider.value = Float(AppDefaults.shared.timelineNumberOfLines)
-		numberOfLinesSlider.addTickMarks()
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -47,13 +52,13 @@ class TimelineCustomizerViewController: UIViewController {
 	}
 
 	@IBAction func iconSizeChanged(_ sender: Any) {
-		guard let iconSize = IconSize(rawValue: Int(iconSizeSlider.value.rounded())) else { return }
+		guard let iconSize = IconSize(rawValue: Int(iconSizeModernSlider.value.rounded())) else { return }
 		AppDefaults.shared.timelineIconSize = iconSize
 		updatePreview()
 	}
 	
 	@IBAction func numberOfLinesChanged(_ sender: Any) {
-		AppDefaults.shared.timelineNumberOfLines = Int(numberOfLinesSlider.value.rounded())
+		AppDefaults.shared.timelineNumberOfLines = Int(numberOfLinesModernSlider.value.rounded())
 		updatePreview()
 	}
 	
