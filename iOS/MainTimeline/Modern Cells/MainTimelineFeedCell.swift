@@ -19,7 +19,6 @@ class MainTimelineFeedCell: UITableViewCell {
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
-			configureStackView()
 		}
 	}
 	
@@ -40,7 +39,6 @@ class MainTimelineFeedCell: UITableViewCell {
 			metaDataStackView.alignment = .center
 			metaDataStackView.distribution = .fill
 		}
-		setNeedsLayout()
 	}
 	
 	private func configure(_ cellData: MainTimelineCellData) {
@@ -85,6 +83,7 @@ class MainTimelineFeedCell: UITableViewCell {
 				self.indicatorView.iconImage = nil
 			}
 		}
+		setNeedsLayout()
 	}
 	
 	private func applyTitleTextWithAttributes(_ state: UICellConfigurationState) {
@@ -108,6 +107,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			attributedCellText.append(summaryAttributed)
 		}
 		articleTitle.attributedText = attributedCellText
+		setNeedsLayout()
 	}
 	
 	override func updateConfiguration(using state: UICellConfigurationState) {
@@ -132,6 +132,7 @@ class MainTimelineFeedCell: UITableViewCell {
 		}
 		
 		self.backgroundConfiguration = backgroundConfig
+		setNeedsLayout()
 		
 	}
 	

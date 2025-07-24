@@ -41,7 +41,6 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			metaDataStackView.alignment = .center
 			metaDataStackView.distribution = .fill
 		}
-		setNeedsLayout()
 	}
 	
 	
