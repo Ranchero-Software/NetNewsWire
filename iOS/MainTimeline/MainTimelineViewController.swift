@@ -716,30 +716,6 @@ private extension MainTimelineViewController {
 	}
 
 	func resetUI(resetScroll: Bool) {
-		tableView.reloadData() 
-
-//		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-//			titleView.iconView?.iconImage = timelineIconImage
-//			if let preferredColor = timelineIconImage?.preferredColor {
-//				titleView.iconView?.tintColor = UIColor(cgColor: preferredColor)
-//			} else {
-//				titleView.iconView?.tintColor = nil
-//			}
-//			
-//			titleView.label?.text = timelineFeed?.nameForDisplay
-//			updateTitleUnreadCount()
-//
-//			if timelineFeed is WebFeed {
-//				titleView.buttonize()
-//				titleView.addGestureRecognizer(feedTapGestureRecognizer)
-//			} else {
-//				titleView.debuttonize()
-//				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
-//			}
-//			
-//			navigationItem.titleView = titleView
-//		}
-
 		switch timelineDefaultReadFilterType {
 		case .none, .read:
 			navigationItem.rightBarButtonItem = filterButton
@@ -816,7 +792,7 @@ private extension MainTimelineViewController {
 			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
 				let cellData = self!.configure(article: article)
 				if self!.showIcons {
-					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelinePseudoFeedCell", for: indexPath) as! MainTimelineIconFeedCell
+					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell", for: indexPath) as! MainTimelineIconFeedCell
 					cell.cellData = cellData
 					return cell
 				} else {
