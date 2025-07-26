@@ -116,7 +116,7 @@
         <scene sceneID="fag-XH-avP">
             <objects>
                 <tableViewController storyboardIdentifier="MainTimelineViewController" extendedLayoutIncludesOpaqueBars="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" clearsSelectionOnViewWillAppear="NO" id="Kyk-vK-QRX" customClass="MainTimelineViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="mtv-Ik-FoJ">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="mtv-Ik-FoJ">
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -134,7 +134,7 @@
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MainTimelineIconFeedCell" rowHeight="54" id="acC-QO-bO5" customClass="MainTimelineIconFeedCell" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="258" width="430" height="54"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="acC-QO-bO5" id="tKF-5C-f24">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" tableViewCell="acC-QO-bO5" id="tKF-5C-f24">
                                     <rect key="frame" x="0.0" y="0.0" width="430" height="54"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
@@ -181,18 +181,18 @@
                                             </constraints>
                                         </stackView>
                                     </subviews>
-                                    <viewLayoutGuide key="safeArea" id="00z-4G-APw"/>
+                                    <viewLayoutGuide key="safeArea" id="Adg-d9-egJ"/>
                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstItem="00z-4G-APw" firstAttribute="trailing" secondItem="wWh-bJ-tNe" secondAttribute="trailing" constant="20" id="Dcq-MR-g4e"/>
+                                        <constraint firstItem="Adg-d9-egJ" firstAttribute="trailing" secondItem="wWh-bJ-tNe" secondAttribute="trailing" constant="20" id="Dcq-MR-g4e"/>
                                         <constraint firstItem="ESv-eQ-b8X" firstAttribute="leading" secondItem="wWh-bJ-tNe" secondAttribute="leading" id="Ifb-Wc-i1h"/>
                                         <constraint firstItem="VIg-VB-r3d" firstAttribute="leading" secondItem="baQ-HK-mjy" secondAttribute="trailing" constant="8" symbolic="YES" id="NY7-Kg-7tF"/>
-                                        <constraint firstItem="baQ-HK-mjy" firstAttribute="leading" secondItem="00z-4G-APw" secondAttribute="leading" constant="20" id="SuA-f2-vgv"/>
-                                        <constraint firstItem="wWh-bJ-tNe" firstAttribute="top" secondItem="00z-4G-APw" secondAttribute="top" constant="10.999999999999998" id="VEu-g8-hf0"/>
-                                        <constraint firstItem="00z-4G-APw" firstAttribute="trailing" secondItem="ESv-eQ-b8X" secondAttribute="trailing" constant="20" id="WOi-Ux-1J5"/>
-                                        <constraint firstItem="00z-4G-APw" firstAttribute="bottom" secondItem="ESv-eQ-b8X" secondAttribute="bottom" constant="8" id="arj-Vg-UZ3"/>
-                                        <constraint firstItem="VIg-VB-r3d" firstAttribute="top" secondItem="tKF-5C-f24" secondAttribute="top" constant="15" id="fX5-pf-fYx"/>
-                                        <constraint firstItem="baQ-HK-mjy" firstAttribute="top" secondItem="00z-4G-APw" secondAttribute="top" constant="15" id="koo-1l-nsf"/>
+                                        <constraint firstItem="baQ-HK-mjy" firstAttribute="leading" secondItem="Adg-d9-egJ" secondAttribute="leading" constant="20" id="SuA-f2-vgv"/>
+                                        <constraint firstItem="wWh-bJ-tNe" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="10.999999999999998" id="VEu-g8-hf0"/>
+                                        <constraint firstAttribute="trailing" secondItem="ESv-eQ-b8X" secondAttribute="trailing" constant="20" id="WOi-Ux-1J5"/>
+                                        <constraint firstItem="Adg-d9-egJ" firstAttribute="bottom" secondItem="ESv-eQ-b8X" secondAttribute="bottom" constant="8" id="arj-Vg-UZ3"/>
+                                        <constraint firstItem="VIg-VB-r3d" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="15" id="fX5-pf-fYx"/>
+                                        <constraint firstItem="baQ-HK-mjy" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="15" id="koo-1l-nsf"/>
                                         <constraint firstItem="ESv-eQ-b8X" firstAttribute="top" secondItem="wWh-bJ-tNe" secondAttribute="bottom" constant="1.0000000000000142" id="qDB-Rk-dHi"/>
                                         <constraint firstItem="wWh-bJ-tNe" firstAttribute="leading" secondItem="VIg-VB-r3d" secondAttribute="trailing" constant="8" symbolic="YES" id="wjw-MH-sjG"/>
                                     </constraints>
@@ -250,12 +250,12 @@
                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="POG-WQ-rYn" firstAttribute="top" secondItem="xIH-Bj-Hfb" secondAttribute="bottom" constant="0.6666666666666714" id="2Ox-yz-4sV"/>
-                                        <constraint firstItem="qJ6-XG-BBa" firstAttribute="leading" secondItem="PcK-FO-XSf" secondAttribute="leading" constant="15" id="A2s-ne-OZX"/>
+                                        <constraint firstItem="qJ6-XG-BBa" firstAttribute="leading" secondItem="T0c-9w-8Vx" secondAttribute="leading" constant="15" id="A2s-ne-OZX"/>
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="trailing" secondItem="xIH-Bj-Hfb" secondAttribute="trailing" constant="20" id="CJm-OT-agU"/>
                                         <constraint firstItem="xIH-Bj-Hfb" firstAttribute="leading" secondItem="qJ6-XG-BBa" secondAttribute="trailing" constant="8" symbolic="YES" id="LBB-sr-Af3"/>
                                         <constraint firstItem="POG-WQ-rYn" firstAttribute="leading" secondItem="xIH-Bj-Hfb" secondAttribute="leading" id="NyL-bo-xK3"/>
-                                        <constraint firstItem="xIH-Bj-Hfb" firstAttribute="top" secondItem="PcK-FO-XSf" secondAttribute="top" constant="11" id="TCh-kO-fj1"/>
-                                        <constraint firstItem="qJ6-XG-BBa" firstAttribute="top" secondItem="PcK-FO-XSf" secondAttribute="top" constant="15" id="gwo-Xi-4nq"/>
+                                        <constraint firstItem="xIH-Bj-Hfb" firstAttribute="top" secondItem="T0c-9w-8Vx" secondAttribute="top" constant="11" id="TCh-kO-fj1"/>
+                                        <constraint firstItem="qJ6-XG-BBa" firstAttribute="top" secondItem="T0c-9w-8Vx" secondAttribute="top" constant="15" id="gwo-Xi-4nq"/>
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="bottom" secondItem="POG-WQ-rYn" secondAttribute="bottom" constant="7.6666666666666217" id="nQe-AM-26Q"/>
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="trailing" secondItem="POG-WQ-rYn" secondAttribute="trailing" constant="20" id="nrE-3J-lDa"/>
                                     </constraints>
@@ -301,7 +301,7 @@
         <!--Root Split View Controller-->
         <scene sceneID="FfI-oe-67h">
             <objects>
-                <splitViewController storyboardIdentifier="RootSplitViewController" allowDoubleColumnStyle="YES" preferredDisplayMode="beside" behavior="displace" preferredSupplementaryColumnWidthFraction="0.40000000000000002" primaryBackgroundStyle="sidebar" id="AJQ-jq-uMa" customClass="RootSplitViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <splitViewController storyboardIdentifier="RootSplitViewController" allowDoubleColumnStyle="YES" preferredDisplayMode="beside" behavior="displace" primaryBackgroundStyle="sidebar" id="AJQ-jq-uMa" customClass="RootSplitViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <connections>
                         <segue destination="Kyk-vK-QRX" kind="relationship" relationship="supplementaryViewController" id="FW6-KM-3C4"/>
                         <segue destination="JEX-9P-axG" kind="relationship" relationship="detailViewController" id="JbU-kn-u7r"/>
