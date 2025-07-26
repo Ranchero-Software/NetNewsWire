@@ -82,7 +82,6 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		])
 		
 		setNeedsLayout()
-		layoutIfNeeded()
 	}
 	
 	private func updateIndicatorView(_ cellData: MainTimelineCellData) {
