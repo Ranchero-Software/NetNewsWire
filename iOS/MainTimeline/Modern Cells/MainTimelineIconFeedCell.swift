@@ -141,7 +141,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		backgroundConfig.cornerRadius = 20
 		if traitCollection.userInterfaceIdiom == .pad {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
-			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -8, bottom: 0, trailing: -8)
+			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -4, bottom: 0, trailing: -4)
 		}
 		
 		if state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped {

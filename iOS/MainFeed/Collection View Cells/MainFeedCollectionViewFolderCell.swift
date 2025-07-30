@@ -115,6 +115,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			folderTitle.textColor = AppAssets.primaryAccentColor
+			folderTitle.font = folderTitle.font.bold()
 		case (true, .phone):
 			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
 			folderTitle.textColor = .white
@@ -123,6 +124,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		default:
 			folderTitle.textColor = .label
 			faviconView.tintColor = AppAssets.primaryAccentColor
+			folderTitle.font = UIFont.preferredFont(forTextStyle: .body)
 		}
 		
 		if state.cellDropState == .targeted {
