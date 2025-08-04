@@ -1242,7 +1242,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun -sdk macosx swift buildscripts/VerifyNoBS.swift  --xcode  ${PROJECT_DIR}/${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+			shellScript = "xcrun -sdk macosx swift buildscripts/VerifyNoBS.swift  --xcode  \"${PROJECT_DIR}/${PROJECT_NAME}.xcodeproj/project.pbxproj\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
