@@ -30,11 +30,9 @@ class AboutWindowController: NSWindowController {
 		window?.titleVisibility = .hidden
 		window?.styleMask.insert(.fullSizeContentView)
 		if let contentView = window?.contentView {
-			let visualEffectView = NSVisualEffectView(frame: contentView.bounds)
+			let visualEffectView = NSGlassEffectView(frame: contentView.bounds)
+			visualEffectView.tintColor = .clear
 			visualEffectView.autoresizingMask = [.width, .height]
-			visualEffectView.blendingMode = .behindWindow
-			visualEffectView.material = .titlebar
-			visualEffectView.state = .active
 			contentView.addSubview(visualEffectView, positioned: .below, relativeTo: nil)
 		}
 	}
