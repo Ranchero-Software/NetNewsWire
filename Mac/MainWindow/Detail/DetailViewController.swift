@@ -29,7 +29,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	private var searchWebViewController: DetailWebViewController?
 
 	var windowState: DetailWindowState {
-		return currentWebViewController.windowState
+		currentWebViewController.windowState
 	}
 	
 	private var currentWebViewController: DetailWebViewController! {
@@ -111,7 +111,6 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		}
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(currentWebViewController.webView)
 	}
-	
 }
 
 // MARK: - DetailWebViewControllerDelegate
