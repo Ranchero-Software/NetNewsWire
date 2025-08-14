@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1.10 TestFlight build 6198 11 Aug 2025 - branch: main tag iOS-6.1.10-6198
+
+Replaced BBC in default feeds (for new users) because its feeds have gone wonky. Replaced with Scripting News.
+
 ### 6.1.9 AppStore build 6197 13 May 2025 - branch: main tag iOS-6.1.9 (Same build as 6197 TestFlight)
 
 Fixed bug where links in footnotes — in light mode, using the default theme — would be invisible
