@@ -8,10 +8,10 @@
 
 import Foundation
 
-class MainWindowState: NSObject, NSSecureCoding {
-	
-	static var supportsSecureCoding = true
-	
+final class MainWindowState: NSObject, NSSecureCoding {
+
+	static let supportsSecureCoding = true
+
 	let isFullScreen: Bool
 	let splitViewWidths: [Int]
 	let isSidebarHidden: Bool
@@ -28,23 +28,30 @@ class MainWindowState: NSObject, NSSecureCoding {
 		self.detailWindowState = detailWindowState
 	}
 
-	required init?(coder: NSCoder) {
-		isFullScreen = coder.decodeBool(forKey: "isFullScreen")
-		splitViewWidths = coder.decodeObject(of: [NSArray.self, NSNumber.self], forKey: "splitViewWidths") as? [Int] ?? []
-		isSidebarHidden = coder.decodeBool(forKey: "isSidebarHidden")
-		sidebarWindowState = coder.decodeObject(of: SidebarWindowState.self, forKey: "sidebarWindowState")
-		timelineWindowState = coder.decodeObject(of: TimelineWindowState.self, forKey: "timelineWindowState")
-		detailWindowState = coder.decodeObject(of: DetailWindowState.self, forKey: "detailWindowState")
+	private struct Key {
+		static let isFullScreen = "isFullScreen"
+		static let splitViewWidths = "splitViewWidths"
+		static let isSidebarHidden = "isSidebarHidden"
+		static let sidebarWindowState = "sidebarWindowState"
+		static let timelineWindowState = "timelineWindowState"
+		static let detailWindowState = "detailWindowState"
 	}
 
+	required init?(coder: NSCoder) {
+		isFullScreen = coder.decodeBool(forKey: Key.isFullScreen)
+		splitViewWidths = coder.decodeObject(of: [NSArray.self, NSNumber.self], forKey: Key.splitViewWidths) as? [Int] ?? []
+		isSidebarHidden = coder.decodeBool(forKey: Key.isSidebarHidden)
+		sidebarWindowState = coder.decodeObject(of: SidebarWindowState.self, forKey: Key.sidebarWindowState)
+		timelineWindowState = coder.decodeObject(of: TimelineWindowState.self, forKey: Key.timelineWindowState)
+		detailWindowState = coder.decodeObject(of: DetailWindowState.self, forKey: Key.detailWindowState)
+	}
 
 	func encode(with coder: NSCoder) {
-		coder.encode(isFullScreen, forKey: "isFullScreen")
-		coder.encode(splitViewWidths, forKey: "splitViewWidths")
-		coder.encode(isSidebarHidden, forKey: "isSidebarHidden")
-		coder.encode(sidebarWindowState, forKey: "sidebarWindowState")
-		coder.encode(timelineWindowState, forKey: "timelineWindowState")
-		coder.encode(detailWindowState, forKey: "detailWindowState")
+		coder.encode(isFullScreen, forKey: Key.isFullScreen)
+		coder.encode(splitViewWidths, forKey: Key.splitViewWidths)
+		coder.encode(isSidebarHidden, forKey: Key.isSidebarHidden)
+		coder.encode(sidebarWindowState, forKey: Key.sidebarWindowState)
+		coder.encode(timelineWindowState, forKey: Key.timelineWindowState)
+		coder.encode(detailWindowState, forKey: Key.detailWindowState)
 	}
-	
 }

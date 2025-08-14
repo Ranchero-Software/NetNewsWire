@@ -8,26 +8,30 @@
 
 import Foundation
 
-class DetailWindowState: NSObject, NSSecureCoding {
+final class DetailWindowState: NSObject, NSSecureCoding {
 	
-	static var supportsSecureCoding = true
-	
+	static let supportsSecureCoding = true
+
 	let isShowingExtractedArticle: Bool
 	let windowScrollY: CGFloat
 	
-	internal init(isShowingExtractedArticle: Bool, windowScrollY: CGFloat) {
+	init(isShowingExtractedArticle: Bool, windowScrollY: CGFloat) {
 		self.isShowingExtractedArticle = isShowingExtractedArticle
 		self.windowScrollY = windowScrollY
 	}
-	
+
+	private struct Key {
+		static let isShowingExtractedArticle = "isShowingExtractedArticle"
+		static let windowScrollY = "windowScrollY"
+	}
+
 	required init?(coder: NSCoder) {
-		isShowingExtractedArticle = coder.decodeBool(forKey: "isShowingExtractedArticle")
-		windowScrollY = CGFloat(coder.decodeDouble(forKey: "windowScrollY"))
+		isShowingExtractedArticle = coder.decodeBool(forKey: Key.isShowingExtractedArticle)
+		windowScrollY = CGFloat(coder.decodeDouble(forKey: Key.windowScrollY))
 	}
 	
 	func encode(with coder: NSCoder) {
-		coder.encode(isShowingExtractedArticle, forKey: "isShowingExtractedArticle")
-		coder.encode(Double(windowScrollY), forKey: "windowScrollY")
+		coder.encode(isShowingExtractedArticle, forKey: Key.isShowingExtractedArticle)
+		coder.encode(Double(windowScrollY), forKey: Key.windowScrollY)
 	}
-	
 }
