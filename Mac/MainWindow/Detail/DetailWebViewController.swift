@@ -36,7 +36,7 @@ final class DetailWebViewController: NSViewController {
 	}
 	
 	var windowState: DetailWindowState {
-		return DetailWindowState(isShowingExtractedArticle: isShowingExtractedArticle, windowScrollY: windowScrollY ?? 0)
+		DetailWindowState(isShowingExtractedArticle: isShowingExtractedArticle, windowScrollY: windowScrollY ?? 0)
 	}
 	
 	var article: Article? {
@@ -208,7 +208,6 @@ final class DetailWebViewController: NSViewController {
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
 	}
-
 }
 
 // MARK: - WKScriptMessageHandler
