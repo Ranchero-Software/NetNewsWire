@@ -471,7 +471,8 @@
                                                 <constraint firstAttribute="height" constant="39" id="oUY-3E-b1N"/>
                                             </constraints>
                                             <state key="normal" title="Button"/>
-                                            <buttonConfiguration key="configuration" style="plain" image="chevron.down" catalog="system">
+                                            <buttonConfiguration key="configuration" style="plain">
+                                                <imageReference key="image" image="chevron.down" catalog="system" symbolScale="medium"/>
                                                 <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="small"/>
                                                 <color key="baseForegroundColor" systemColor="labelColor"/>
                                             </buttonConfiguration>
@@ -518,13 +519,13 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Edf-Sz-AqQ">
-                                    <rect key="frame" x="388" y="17" width="39" height="27.333333333333343"/>
+                                    <rect key="frame" x="388" y="16" width="39" height="29"/>
                                     <color key="tintColor" systemColor="labelColor"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="39" id="X7y-qK-C7p"/>
                                         <constraint firstAttribute="width" constant="39" id="uwr-KC-J0b"/>
                                     </constraints>
-                                    <imageReference key="image" image="chevron.down" catalog="system" symbolScale="small"/>
+                                    <imageReference key="image" image="chevron.down" catalog="system" symbolScale="medium"/>
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="small" weight="regular"/>
                                 </imageView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="ContainerTitle" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p16-Uj-CBX">
@@ -546,8 +547,8 @@
                             <constraints>
                                 <constraint firstItem="Edf-Sz-AqQ" firstAttribute="leading" secondItem="TBA-io-5jo" secondAttribute="trailing" constant="8" symbolic="YES" id="0kf-5h-6cE"/>
                                 <constraint firstItem="TBA-io-5jo" firstAttribute="leading" secondItem="p16-Uj-CBX" secondAttribute="trailing" constant="8" symbolic="YES" id="5AQ-Ya-Uda"/>
-                                <constraint firstItem="TBA-io-5jo" firstAttribute="centerY" secondItem="Edf-Sz-AqQ" secondAttribute="centerY" id="73s-rj-8xJ"/>
                                 <constraint firstAttribute="trailing" secondItem="Edf-Sz-AqQ" secondAttribute="trailing" constant="3" id="E5L-eG-OZk"/>
+                                <constraint firstItem="TBA-io-5jo" firstAttribute="centerY" secondItem="Edf-Sz-AqQ" secondAttribute="centerY" id="Ftr-fa-6Vy"/>
                                 <constraint firstItem="Edf-Sz-AqQ" firstAttribute="centerY" secondItem="p16-Uj-CBX" secondAttribute="centerY" id="Qbl-KG-5MX"/>
                                 <constraint firstItem="p16-Uj-CBX" firstAttribute="top" secondItem="Rza-3g-Ty5" secondAttribute="top" constant="8" id="kiC-3Z-Jev"/>
                                 <constraint firstAttribute="bottom" secondItem="p16-Uj-CBX" secondAttribute="bottom" constant="8" id="pB6-RK-FNH"/>
