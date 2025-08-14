@@ -116,8 +116,8 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			folderTitle.textColor = AppAssets.primaryAccentColor
-			folderTitle.font = folderTitle.font.bold()
-			unreadCountLabel.font = unreadCountLabel.font.bold()
+			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 		case (true, .phone):
 			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
 			folderTitle.textColor = .white

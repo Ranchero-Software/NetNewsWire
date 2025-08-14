@@ -87,8 +87,9 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			feedTitle.textColor = AppAssets.primaryAccentColor
-			feedTitle.font = feedTitle.font.bold()
-			unreadCountLabel.font = unreadCountLabel.font.bold()
+			feedTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize,
+											   weight: .semibold)
+			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 		case (true, .phone):
 			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
 			feedTitle.textColor = .white
