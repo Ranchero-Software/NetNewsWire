@@ -32,6 +32,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 				unreadCountLabel.isHidden = true
 			} else {
 				unreadCountLabel.isHidden = false
+				updateUnreadCount()
 			}
 			unreadCountLabel.text = newValue.formatted()
 		}
@@ -74,7 +75,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 	
 	func updateUnreadCount() {
-		if !disclosureExpanded && unreadCount > 0 {
+		if !disclosureExpanded && unreadCount > 0 && unreadCountLabel.alpha != 1 {
 			UIView.animate(withDuration: 0.3) {
 				self.unreadCountLabel.alpha = 1
 			}
