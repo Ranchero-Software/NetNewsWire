@@ -16,7 +16,15 @@ struct UserInfoKey {
 	static let feedIdentifier = "feedIdentifier"
 	
 	static let windowState = "windowState"
+	static let windowFullScreenState = "windowFullScreenState"
+	static let containerExpandedWindowState = "containerExpandedWindowState"
+	static let readFeedsFilterState = "readFeedsFilterState"
+	static let readArticlesFilterState = "readArticlesFilterState"
+	static let readArticlesFilterStateKeys = "readArticlesFilterStateKey"
+	static let readArticlesFilterStateValues = "readArticlesFilterStateValue"
+	static let selectedFeedsState = "selectedFeedsState"
+	static let isShowingExtractedArticle = "isShowingExtractedArticle"
 
 	static let articleWindowScrollY = "articleWindowScrollY"
-	
+	static let isSidebarHidden = "isSidebarHidden"
 }
