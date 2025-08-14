@@ -88,6 +88,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			feedTitle.textColor = AppAssets.primaryAccentColor
 			feedTitle.font = feedTitle.font.bold()
+			unreadCountLabel.font = unreadCountLabel.font.bold()
 		case (true, .phone):
 			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
 			feedTitle.textColor = .white
@@ -98,6 +99,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		default:
 			feedTitle.textColor = .label
 			feedTitle.font = UIFont.preferredFont(forTextStyle: .body)
+			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
 			unreadCountLabel.textColor = .secondaryLabel
 			if traitCollection.userInterfaceIdiom == .phone {
 				if feedTitle.text == "All Unread" {
