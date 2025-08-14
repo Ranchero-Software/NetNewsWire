@@ -8,10 +8,10 @@
 
 import Foundation
 
-class SidebarWindowState: NSObject, NSSecureCoding {
-	
-	static var supportsSecureCoding = true
-	
+final class SidebarWindowState: NSObject, NSSecureCoding {
+
+	static let supportsSecureCoding = true
+
 	let isReadFiltered: Bool
 	let expandedContainers: [[String: String]]
 	let selectedFeeds: [[String: String]]
@@ -21,17 +21,22 @@ class SidebarWindowState: NSObject, NSSecureCoding {
 		self.expandedContainers = expandedContainers
 		self.selectedFeeds = selectedFeeds
 	}
-	
+
+	private struct Key {
+		static let isReadFiltered = "isReadFiltered"
+		static let expandedContainers = "expandedContainers"
+		static let selectedFeeds = "selectedFeeds"
+	}
+
 	required init?(coder: NSCoder) {
-		isReadFiltered = coder.decodeBool(forKey: "isReadFiltered")
-		expandedContainers = coder.decodeObject(of: [NSArray.self, NSDictionary.self, NSString.self], forKey: "expandedContainers") as? [[String: String]] ?? []
-		selectedFeeds = coder.decodeObject(of: [NSArray.self, NSDictionary.self, NSString.self], forKey: "selectedFeeds") as? [[String: String]] ?? []
+		isReadFiltered = coder.decodeBool(forKey: Key.isReadFiltered)
+		expandedContainers = coder.decodeObject(of: [NSArray.self, NSDictionary.self, NSString.self], forKey: Key.expandedContainers) as? [[String: String]] ?? []
+		selectedFeeds = coder.decodeObject(of: [NSArray.self, NSDictionary.self, NSString.self], forKey: Key.selectedFeeds) as? [[String: String]] ?? []
 	}
 	
 	func encode(with coder: NSCoder) {
-		coder.encode(isReadFiltered, forKey: "isReadFiltered")
-		coder.encode(expandedContainers, forKey: "expandedContainers")
-		coder.encode(selectedFeeds, forKey: "selectedFeeds")
+		coder.encode(isReadFiltered, forKey: Key.isReadFiltered)
+		coder.encode(expandedContainers, forKey: Key.expandedContainers)
+		coder.encode(selectedFeeds, forKey: Key.selectedFeeds)
 	}
-	
 }
