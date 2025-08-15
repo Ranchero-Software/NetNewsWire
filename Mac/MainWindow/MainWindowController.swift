@@ -982,7 +982,7 @@ private extension MainWindowController {
 		timelineContainerViewController?.restoreState(from: state.timelineWindowState)
 		restoreArticleWindowScrollY = state.detailWindowState?.windowScrollY
 
-		let isShowingExtractedArticle = state.detailWindowState?.isShowingExtractedArticle as? Bool ?? false
+		let isShowingExtractedArticle = state.detailWindowState?.isShowingExtractedArticle ?? false
 		if isShowingExtractedArticle {
 			startArticleExtractorForCurrentLink()
 		}
