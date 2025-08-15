@@ -131,12 +131,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	func saveStateToUserDefaults() {
 		let data = try? NSKeyedArchiver.archivedData(withRootObject: savableState(), requiringSecureCoding: true)
-		AppDefaults.shared.windowState = data
+		AppDefaults.shared.secureWindowState = data
 		window?.saveFrame(usingName: windowAutosaveName)
 	}
 	
 	func restoreStateFromUserDefaults() {
-		if let data = AppDefaults.shared.windowState,
+		if let data = AppDefaults.shared.secureWindowState,
 		   let state = try? NSKeyedUnarchiver.unarchivedObject(ofClass: MainWindowState.self, from: data) {
 			restoreState(from: state)
 			window?.setFrameUsingName(windowAutosaveName, force: true)
