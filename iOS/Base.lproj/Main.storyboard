@@ -139,7 +139,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wWh-bJ-tNe">
-                                            <rect key="frame" x="88" y="11.000000000000002" width="322" height="19.666666666666671"/>
+                                            <rect key="frame" x="88" y="15" width="322" height="15.666666666666664"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -188,7 +188,7 @@
                                         <constraint firstItem="ESv-eQ-b8X" firstAttribute="leading" secondItem="wWh-bJ-tNe" secondAttribute="leading" id="Ifb-Wc-i1h"/>
                                         <constraint firstItem="VIg-VB-r3d" firstAttribute="leading" secondItem="baQ-HK-mjy" secondAttribute="trailing" constant="8" symbolic="YES" id="NY7-Kg-7tF"/>
                                         <constraint firstItem="baQ-HK-mjy" firstAttribute="leading" secondItem="Adg-d9-egJ" secondAttribute="leading" constant="20" id="SuA-f2-vgv"/>
-                                        <constraint firstItem="wWh-bJ-tNe" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="10.999999999999998" id="VEu-g8-hf0"/>
+                                        <constraint firstItem="wWh-bJ-tNe" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="15" id="VEu-g8-hf0"/>
                                         <constraint firstItem="Adg-d9-egJ" firstAttribute="trailing" secondItem="ESv-eQ-b8X" secondAttribute="trailing" constant="20" id="WOi-Ux-1J5"/>
                                         <constraint firstItem="Adg-d9-egJ" firstAttribute="bottom" secondItem="ESv-eQ-b8X" secondAttribute="bottom" constant="8" id="arj-Vg-UZ3"/>
                                         <constraint firstItem="VIg-VB-r3d" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="15" id="fX5-pf-fYx"/>
@@ -223,7 +223,7 @@
                                             </constraints>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xIH-Bj-Hfb">
-                                            <rect key="frame" x="39" y="10.999999999999998" width="371" height="20.333333333333329"/>
+                                            <rect key="frame" x="39" y="15" width="371" height="16"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -254,7 +254,7 @@
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="trailing" secondItem="xIH-Bj-Hfb" secondAttribute="trailing" constant="20" id="CJm-OT-agU"/>
                                         <constraint firstItem="xIH-Bj-Hfb" firstAttribute="leading" secondItem="qJ6-XG-BBa" secondAttribute="trailing" constant="8" symbolic="YES" id="LBB-sr-Af3"/>
                                         <constraint firstItem="POG-WQ-rYn" firstAttribute="leading" secondItem="xIH-Bj-Hfb" secondAttribute="leading" id="NyL-bo-xK3"/>
-                                        <constraint firstItem="xIH-Bj-Hfb" firstAttribute="top" secondItem="T0c-9w-8Vx" secondAttribute="top" constant="11" id="TCh-kO-fj1"/>
+                                        <constraint firstItem="xIH-Bj-Hfb" firstAttribute="top" secondItem="T0c-9w-8Vx" secondAttribute="top" constant="15" id="TCh-kO-fj1"/>
                                         <constraint firstItem="qJ6-XG-BBa" firstAttribute="top" secondItem="T0c-9w-8Vx" secondAttribute="top" constant="15" id="gwo-Xi-4nq"/>
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="bottom" secondItem="POG-WQ-rYn" secondAttribute="bottom" constant="7.6666666666666217" id="nQe-AM-26Q"/>
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="trailing" secondItem="POG-WQ-rYn" secondAttribute="trailing" constant="20" id="nrE-3J-lDa"/>
@@ -805,19 +805,19 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

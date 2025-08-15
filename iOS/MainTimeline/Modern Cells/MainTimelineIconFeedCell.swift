@@ -113,10 +113,17 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	
 	private func applyTitleTextWithAttributes(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
+		
+		
+		
 		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
 		if cellData.title != "" {
+			let paragraphStyle = NSMutableParagraphStyle()
+			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
+			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: UIFont.preferredFont(forTextStyle: .headline),
+				.paragraphStyle: paragraphStyle,
 				.foregroundColor: isSelected ? UIColor.white : UIColor.label
 			]
 			let titleWithNewline = cellData.title + "\n"
@@ -124,8 +131,12 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			attributedCellText.append(titleAttributed)
 		}
 		if cellData.summary != "" {
+			let paragraphStyle = NSMutableParagraphStyle()
+			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
+			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
 			let summaryAttributes: [NSAttributedString.Key: Any] = [
 				.font: UIFont.preferredFont(forTextStyle: .body),
+				.paragraphStyle: paragraphStyle,
 				.foregroundColor: isSelected ? UIColor.white : UIColor.label
 			]
 			let summaryAttributed = NSAttributedString(string: cellData.summary, attributes: summaryAttributes)
