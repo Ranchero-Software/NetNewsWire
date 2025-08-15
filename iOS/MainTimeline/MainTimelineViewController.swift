@@ -327,7 +327,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	func updateUI() {
 		refreshProgressView?.update()
-		updateTitleUnreadCount()
 		updateToolbar()
 	}
 	
@@ -549,11 +548,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView?.iconImage = timelineIconImage
-		}
-		
+
 		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
@@ -586,9 +581,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView?.iconImage = timelineIconImage
-		}
 		if showIcons {
 			queueReloadAvailableCells()
 		}
@@ -611,9 +603,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.label?.text = timelineFeed?.nameForDisplay
-		}
+		navigationItem.title = timelineFeed?.nameForDisplay
 	}
 	
 	@objc func willEnterForeground(_ note: Notification) {
@@ -761,12 +751,6 @@ private extension MainTimelineViewController {
 				let items = Array(toolbarItems[0..<toolbarItems.count - 1])
 				setToolbarItems(items, animated: false)
 			}
-		}
-	}
-	
-	func updateTitleUnreadCount() {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.unreadCountView?.unreadCount = coordinator?.timelineUnreadCount ?? 0
 		}
 	}
 	
