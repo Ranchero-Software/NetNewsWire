@@ -310,15 +310,47 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				}
 				focus()
 			}
-
 		} else {
-			
+			fetchAndReplaceArticlesSync()
+		}
+	}
+
+	/// Restore state using legacy state restoration data.
+	///
+	/// TODO: Delete for NetNewsWire 7.
+	func restoreLegacyState(from state: [AnyHashable: Any]) {
+		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[AnyHashable: AnyHashable]],
+			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
+			return
+		}
+
+		for i in 0..<readArticlesFilterStateKeys.count {
+			if let feedIdentifier = FeedIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
+				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
+			}
+		}
+
+		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable: Any],
+			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			let account = AccountManager.shared.existingAccount(with: accountID),
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String {
+
+			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 			fetchAndReplaceArticlesSync()
 
+			if let selectedIndex = articles.firstIndex(where: { $0.articleID == articleID }) {
+				tableView.selectRow(selectedIndex)
+				DispatchQueue.main.async {
+					self.tableView.scrollTo(row: selectedIndex)
+				}
+				focus()
+			}
+		} else {
+			fetchAndReplaceArticlesSync()
 		}
-		
 	}
-	
+
+
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {

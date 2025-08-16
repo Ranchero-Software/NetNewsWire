@@ -129,7 +129,45 @@ protocol SidebarDelegate: AnyObject {
 		
 		isReadFiltered = state.isReadFiltered
 	}
-	
+
+	/// Restore state using legacy state restoration data.
+	///
+	/// TODO: Delete for NetNewsWire 7.
+	func restoreLegacyState(from state: [AnyHashable : Any]) {
+
+		if let containerExpandedWindowState = state[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
+			let containerIdentifiers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
+			expandedTable = Set(containerIdentifiers)
+		}
+
+		guard let selectedFeedsState = state[UserInfoKey.selectedFeedsState] as? [[AnyHashable: AnyHashable]] else {
+			return
+		}
+
+		let selectedFeedIdentifiers = Set(selectedFeedsState.compactMap( { FeedIdentifier(userInfo: $0) }))
+		selectedFeedIdentifiers.forEach { treeControllerDelegate.addFilterException($0) }
+
+		rebuildTreeAndReloadDataIfNeeded()
+
+		var selectIndexes = IndexSet()
+
+		func selectFeedsVisitor(node: Node) {
+			if let feedID = (node.representedObject as? FeedIdentifiable)?.feedID {
+				if selectedFeedIdentifiers.contains(feedID) {
+					selectIndexes.insert(outlineView.row(forItem: node) )
+				}
+			}
+		}
+
+		treeController.visitNodes(selectFeedsVisitor(node:))
+		outlineView.selectRowIndexes(selectIndexes, byExtendingSelection: false)
+		focus()
+
+		if let readFeedsFilterState = state[UserInfoKey.readFeedsFilterState] as? Bool {
+			isReadFiltered = readFeedsFilterState
+		}
+	}
+
 	// MARK: - Notifications
 
 	@objc func unreadCountDidInitialize(_ notification: Notification) {

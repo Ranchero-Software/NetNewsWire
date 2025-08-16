@@ -23,7 +23,8 @@ final class AppDefaults {
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
-		static let windowState = "windowState"
+		static let legacyWindowState = "windowState"
+		static let secureWindowState = "secureWindowState"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let sidebarFontSize = "sidebarFontSize"
 		static let timelineFontSize = "timelineFontSize"
@@ -73,16 +74,28 @@ final class AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
-	
-	var windowState: Data? {
+
+	/// Stores window state prior to switching to secure state restoration.
+	///
+	/// This is referenced temporarily, only to be able to provide migration from legacy to secure window state.
+	/// TODO: delete for NetNewsWire 7.
+	var legacyWindowState: [AnyHashable: Any]? {
+		UserDefaults.standard.object(forKey: Key.legacyWindowState) as? [AnyHashable: Any]
+	}
+
+	func deleteLegacyWindowState() {
+		UserDefaults.standard.removeObject(forKey: Key.legacyWindowState)
+	}
+
+	var secureWindowState: Data? {
 		get {
-			return UserDefaults.standard.object(forKey: Key.windowState) as? Data
+			UserDefaults.standard.object(forKey: Key.secureWindowState) as? Data
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Key.windowState)
+			UserDefaults.standard.set(newValue, forKey: Key.secureWindowState)
 		}
 	}
-	
+
 	var lastImageCacheFlushDate: Date? {
 		get {
 			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
