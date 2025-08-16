@@ -140,9 +140,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		   let state = try? NSKeyedUnarchiver.unarchivedObject(ofClass: MainWindowState.self, from: data) {
 			restoreState(from: state)
 			window?.setFrameUsingName(windowAutosaveName, force: true)
+		} else if let state = AppDefaults.shared.legacyWindowState {
+			// Migrate from previous window state data. Delete data when finished.
+			restoreLegacyState(from: state)
+			window?.setFrameUsingName(windowAutosaveName, force: true)
+			AppDefaults.shared.deleteLegacyWindowState()
 		}
 	}
-	
+
 	// MARK: - Notifications
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
@@ -986,7 +991,32 @@ private extension MainWindowController {
 		if isShowingExtractedArticle {
 			startArticleExtractorForCurrentLink()
 		}
-		
+	}
+
+	/// Restore state using pre-secure-state-restoration data.
+	///
+	/// It’s up to the caller to call this only when:
+	/// 1. Legacy state exists, and
+	/// 2. Secure state data does not exist.
+	///
+	/// TODO: delete this for NetNewsWire 7.
+	func restoreLegacyState(from state: [AnyHashable: Any]) {
+		if let fullScreen = state[UserInfoKey.windowFullScreenState] as? Bool, fullScreen {
+			window?.toggleFullScreen(self)
+		}
+		restoreLegacySplitViewState(from: state)
+
+		sidebarViewController?.restoreLegacyState(from: state)
+
+		let articleWindowScrollY = state[UserInfoKey.articleWindowScrollY] as? CGFloat
+		restoreArticleWindowScrollY = articleWindowScrollY
+		timelineContainerViewController?.restoreLegacyState(from: state)
+
+		let isShowingExtractedArticle = state[UserInfoKey.isShowingExtractedArticle] as? Bool ?? false
+		if isShowingExtractedArticle {
+			restoreArticleWindowScrollY = articleWindowScrollY
+			startArticleExtractorForCurrentLink()
+		}
 	}
 
 	// MARK: - Command Validation
@@ -1269,6 +1299,37 @@ private extension MainWindowController {
 
 		Task { @MainActor in
 			sidebarSplitViewItem?.isCollapsed = state.isSidebarHidden
+		}
+	}
+
+	/// Restore main window split view using legacy state restoration data.
+	///
+	/// TODO: Delete this for NetNewsWire 7.
+	func restoreLegacySplitViewState(from state: [AnyHashable: Any]) {
+		guard let splitView = splitViewController?.splitView,
+			  let widths = state[MainWindowController.mainWindowWidthsStateKey] as? [Int],
+			  widths.count == 3,
+			  let window = window else {
+			return
+		}
+
+		let windowWidth = Int(floor(window.frame.width))
+		let dividerThickness: Int = Int(splitView.dividerThickness)
+		let sidebarWidth: Int = widths[0]
+		let timelineWidth: Int = widths[1]
+
+		// Make sure the detail view has its minimum thickness, at least.
+		if windowWidth < sidebarWidth + dividerThickness + timelineWidth + dividerThickness + MainWindowController.detailViewMinimumThickness {
+			return
+		}
+
+		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
+		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
+
+		let isSidebarHidden = state[UserInfoKey.isSidebarHidden] as? Bool ?? false
+
+		if !(sidebarSplitViewItem?.isCollapsed ?? false) && isSidebarHidden {
+			sidebarSplitViewItem?.isCollapsed = true
 		}
 	}
 

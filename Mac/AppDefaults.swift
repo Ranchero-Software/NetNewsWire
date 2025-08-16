@@ -80,7 +80,11 @@ final class AppDefaults {
 	/// This is referenced temporarily, only to be able to provide migration from legacy to secure window state.
 	/// TODO: delete for NetNewsWire 7.
 	var legacyWindowState: [AnyHashable: Any]? {
-		UserDefaults.standard.object(forKey: Key.legacyWindowState) as? [AnyHashable : Any]
+		UserDefaults.standard.object(forKey: Key.legacyWindowState) as? [AnyHashable: Any]
+	}
+
+	func deleteLegacyWindowState() {
+		UserDefaults.standard.removeObject(forKey: Key.legacyWindowState)
 	}
 
 	var secureWindowState: Data? {
