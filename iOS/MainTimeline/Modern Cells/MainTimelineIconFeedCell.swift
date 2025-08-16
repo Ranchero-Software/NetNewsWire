@@ -121,12 +121,13 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
 			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
+			paragraphStyle.lineBreakMode = .byTruncatingTail
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: UIFont.preferredFont(forTextStyle: .headline),
 				.paragraphStyle: paragraphStyle,
 				.foregroundColor: isSelected ? UIColor.white : UIColor.label
 			]
-			let titleWithNewline = cellData.title + "\n"
+			let titleWithNewline = cellData.title + (cellData.summary != "" ? "\n" : "" ) 
 			let titleAttributed = NSAttributedString(string: titleWithNewline, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
@@ -134,6 +135,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
 			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
+			paragraphStyle.lineBreakMode = .byTruncatingTail
 			let summaryAttributes: [NSAttributedString.Key: Any] = [
 				.font: UIFont.preferredFont(forTextStyle: .body),
 				.paragraphStyle: paragraphStyle,
