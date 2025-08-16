@@ -106,6 +106,30 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		return keyboardManager.keyCommands
 	}
 	
+	private var navigationBarTitleLabel: UILabel {
+		let label = UILabel()
+		label.font = UIFont.preferredFont(forTextStyle: .subheadline).bold()
+		label.isUserInteractionEnabled = true
+		label.numberOfLines = 1
+		label.textAlignment = .center
+		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
+		label.addGestureRecognizer(tap)
+		let pointerInteraction = UIPointerInteraction(delegate: nil)
+		label.addInteraction(pointerInteraction)
+		return label
+	}
+	
+	private var navigationBarSubtitleTitleLabel: UILabel {
+		let label = UILabel()
+		label.font = UIFont.preferredFont(forTextStyle: .footnote)
+		label.textColor = .systemGray
+		label.textAlignment = .center
+		label.isUserInteractionEnabled = true
+		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
+		label.addGestureRecognizer(tap)
+		return label
+	}
+	
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -177,6 +201,8 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		}
 		gesture.allowedScrollTypesMask = []
 		
+		navigationItem.titleView = navigationBarTitleLabel
+		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -187,7 +213,9 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		navigationItem.subtitle = "" // don't inherit feeds subtitle on push
+		//navigationItem.subtitle = "" // don't inherit feeds subtitle on push
+		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
+		updateNavigationBarSubtitle("")
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -301,6 +329,22 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			} else {
 				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
+		}
+	}
+	
+	func updateNavigationBarTitle(_ text: String) {
+		if let label = navigationItem.titleView as? UILabel {
+			label.text = text
+			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
+			label.sizeToFit()
+		}
+	}
+	
+	func updateNavigationBarSubtitle(_ text: String) {
+		if let label = navigationItem.subtitleView as? UILabel {
+			label.text = text
+			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
+			label.sizeToFit()
 		}
 	}
 
@@ -601,7 +645,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		navigationItem.title = timelineFeed?.nameForDisplay
+		updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
 	}
 	
 	@objc func willEnterForeground(_ note: Notification) {

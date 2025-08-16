@@ -161,7 +161,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var exceptionArticleFetcher: ArticleFetcher?
 	private(set) var timelineFeed: Feed? {
 		didSet {
-			mainTimelineViewController?.navigationItem.title = timelineFeed?.nameForDisplay
+			mainTimelineViewController?.updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
 			updateNavigationBarSubtitles(nil)
 		}
 	}
@@ -599,13 +599,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					if let _ = timelineFeed, timelineUnreadCount > 0 {
 						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
 						let unreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
-						self.mainTimelineViewController?.navigationItem.subtitle = unreadCount
+						self.mainTimelineViewController?.updateNavigationBarSubtitle(unreadCount)
 					} else {
 						// When unread count == 0, iPhone timeline displays Updated Just Now; iPad is blank
 						if UIDevice.current.userInterfaceIdiom == .phone {
-							self.mainTimelineViewController?.navigationItem.subtitle = refreshText
+							self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshText)
 						} else {
-							self.mainTimelineViewController?.navigationItem.subtitle = ""
+							self.mainTimelineViewController?.updateNavigationBarSubtitle("")
 						}
 					}
 				} else {
@@ -616,19 +616,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 					if let _ = timelineFeed, timelineUnreadCount > 0 {
 						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
 						let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
-						self.mainTimelineViewController?.navigationItem.subtitle = refreshTextWithUnreadCount
+						self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshTextWithUnreadCount)
 					} else {
 						// When unread count == 0, iPhone timeline displays Updated Just Now; iPad is blank
 						if UIDevice.current.userInterfaceIdiom == .phone {
-							self.mainTimelineViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+							self.mainTimelineViewController?.updateNavigationBarSubtitle(NSLocalizedString("Updated Just Now", comment: "Updated Just Now"))
 						} else {
-							self.mainTimelineViewController?.navigationItem.subtitle = ""
+							self.mainTimelineViewController?.updateNavigationBarSubtitle("")
 						}
 					}
 				}
 			} else {
 				self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
-				self.mainTimelineViewController?.navigationItem.subtitle = ""
+				self.mainTimelineViewController?.updateNavigationBarSubtitle("")
 			}
 		} else {
 			// Updating in progress, apply to both iPhone and iPad Feeds.
