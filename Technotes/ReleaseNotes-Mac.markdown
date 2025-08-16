@@ -4,8 +4,6 @@
 
 Adopt secure state restoration; fix bug with state restoration not working in previous betas.
 
-Fixed bug, introduced in previous test build, that prevented choosing an OPML file to import
-
 ### 6.1.10b3 build 6138 11 Aug 2025 - branch main tag: mac-6.1.10b3
 
 Fixed bug, introduced in previous test build, that prevented choosing an OPML file to import
