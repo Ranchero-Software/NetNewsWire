@@ -106,6 +106,30 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		return keyboardManager.keyCommands
 	}
 	
+	private var navigationBarTitleLabel: UILabel {
+		let label = UILabel()
+		label.font = UIFont.preferredFont(forTextStyle: .subheadline).bold()
+		label.isUserInteractionEnabled = true
+		label.numberOfLines = 1
+		label.textAlignment = .center
+		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
+		label.addGestureRecognizer(tap)
+		let pointerInteraction = UIPointerInteraction(delegate: nil)
+		label.addInteraction(pointerInteraction)
+		return label
+	}
+	
+	private var navigationBarSubtitleTitleLabel: UILabel {
+		let label = UILabel()
+		label.font = UIFont.preferredFont(forTextStyle: .footnote)
+		label.textColor = .systemGray
+		label.textAlignment = .center
+		label.isUserInteractionEnabled = true
+		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
+		label.addGestureRecognizer(tap)
+		return label
+	}
+	
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -157,7 +181,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
-		resetEstimatedRowHeight()
 		
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -178,6 +201,8 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		}
 		gesture.allowedScrollTypesMask = []
 		
+		navigationItem.titleView = navigationBarTitleLabel
+		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -188,7 +213,9 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		navigationItem.subtitle = "" // don't inherit feeds subtitle on push
+		//navigationItem.subtitle = "" // don't inherit feeds subtitle on push
+		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
+		updateNavigationBarSubtitle("")
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -304,6 +331,22 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			}
 		}
 	}
+	
+	func updateNavigationBarTitle(_ text: String) {
+		if let label = navigationItem.titleView as? UILabel {
+			label.text = text
+			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
+			label.sizeToFit()
+		}
+	}
+	
+	func updateNavigationBarSubtitle(_ text: String) {
+		if let label = navigationItem.subtitleView as? UILabel {
+			label.text = text
+			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
+			label.sizeToFit()
+		}
+	}
 
 	func reinitializeArticles(resetScroll: Bool) {
 		resetUI(resetScroll: resetScroll)
@@ -327,7 +370,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	func updateUI() {
 		refreshProgressView?.update()
-		updateTitleUnreadCount()
 		updateToolbar()
 	}
 	
@@ -549,11 +591,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView?.iconImage = timelineIconImage
-		}
-		
+
 		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
@@ -578,7 +616,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 				return
 			}
 			for author in authors {
-				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
+				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
 					cell.setIconImage(image)
 				}
 			}
@@ -586,9 +624,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView?.iconImage = timelineIconImage
-		}
 		if showIcons {
 			queueReloadAvailableCells()
 		}
@@ -599,7 +634,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 			if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
 				self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 				self.iconSize = AppDefaults.shared.timelineIconSize
-				self.resetEstimatedRowHeight()
 				self.reloadAllVisibleCells()
 			}
 			self.updateToolbar()
@@ -611,9 +645,7 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.label?.text = timelineFeed?.nameForDisplay
-		}
+		updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
 	}
 	
 	@objc func willEnterForeground(_ note: Notification) {
@@ -641,28 +673,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
-	}
-	
-	// MARK: Cell Configuring
-
-	private func resetEstimatedRowHeight() {
-		
-		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
-		
-		let prototypeID = "prototype"
-		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
-		
-		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, numberOfLines: numberOfTextLines, iconSize: iconSize)
-
-		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			let layout = MainTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
-			tableView.estimatedRowHeight = layout.height
-		} else {
-			let layout = MainTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
-			tableView.estimatedRowHeight = layout.height
-		}
-		
 	}
 	
 }
@@ -761,12 +771,6 @@ private extension MainTimelineViewController {
 				let items = Array(toolbarItems[0..<toolbarItems.count - 1])
 				setToolbarItems(items, animated: false)
 			}
-		}
-	}
-	
-	func updateTitleUnreadCount() {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.unreadCountView?.unreadCount = coordinator?.timelineUnreadCount ?? 0
 		}
 	}
 	

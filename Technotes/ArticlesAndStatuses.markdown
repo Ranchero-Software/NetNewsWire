@@ -20,7 +20,7 @@ This way the app can store those statuses without having to have their correspon
 
 ## Strange Behavior
 
-The articles database periodically deletes old articles that have been read. (In theory. This code has still to be written at this date (28 April 2019).)
+The articles database periodically deletes old articles that have been read.
 
 However, it retains old statuses for a considerably longer period of time.
 

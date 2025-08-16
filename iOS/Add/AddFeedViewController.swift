@@ -14,7 +14,6 @@ import RSParser
 
 class AddFeedViewController: UITableViewController {
 	
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!
 	@IBOutlet weak var urlTextField: UITextField!
 	@IBOutlet weak var urlTextFieldToSuperViewConstraint: NSLayoutConstraint!
@@ -24,6 +23,8 @@ class AddFeedViewController: UITableViewController {
 	
 	private var folderLabel = ""
 	private var userCancelled = false
+	
+	private let activityIndicator = UIActivityIndicatorView(style: .medium)
 
 	var initialFeed: String?
 	var initialFeedName: String?
@@ -33,9 +34,6 @@ class AddFeedViewController: UITableViewController {
 	override func viewDidLoad() {
         super.viewDidLoad()
 
-		activityIndicator.isHidden = true
-		activityIndicator.color = .label
-		
 		if initialFeed == nil, let urlString = UIPasteboard.general.string {
 			if urlString.mayBeURL {
 				initialFeed = urlString.normalizedURL
@@ -100,7 +98,8 @@ class AddFeedViewController: UITableViewController {
 		}
 		
 		addButton.isEnabled = false
-		activityIndicator.isHidden = false
+		addButton.customView = activityIndicator
+		addButton.customView?.isHidden = false
 		activityIndicator.startAnimating()
 		
 		let feedName = (nameTextField.text?.isEmpty ?? true) ? nil : nameTextField.text
@@ -117,8 +116,8 @@ class AddFeedViewController: UITableViewController {
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
 			case .failure(let error):
 				self.addButton.isEnabled = true
-				self.activityIndicator.isHidden = true
 				self.activityIndicator.stopAnimating()
+				self.addButton.customView = nil
 				self.presentError(error)
 			}
 

@@ -32,6 +32,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 				unreadCountLabel.isHidden = true
 			} else {
 				unreadCountLabel.isHidden = false
+				updateUnreadCount()
 			}
 			unreadCountLabel.text = newValue.formatted()
 		}
@@ -74,7 +75,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 	
 	func updateUnreadCount() {
-		if !disclosureExpanded && unreadCount > 0 {
+		if !disclosureExpanded && unreadCount > 0 && unreadCountLabel.alpha != 1 {
 			UIView.animate(withDuration: 0.3) {
 				self.unreadCountLabel.alpha = 1
 			}
@@ -115,7 +116,8 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			folderTitle.textColor = AppAssets.primaryAccentColor
-			folderTitle.font = folderTitle.font.bold()
+			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 		case (true, .phone):
 			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
 			folderTitle.textColor = .white
@@ -125,6 +127,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			folderTitle.textColor = .label
 			faviconView.tintColor = AppAssets.primaryAccentColor
 			folderTitle.font = UIFont.preferredFont(forTextStyle: .body)
+			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
 		}
 		
 		if state.cellDropState == .targeted {

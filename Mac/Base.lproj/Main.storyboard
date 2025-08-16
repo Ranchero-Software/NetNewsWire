@@ -638,12 +638,6 @@
                                                 <action selector="openBugTracker:" target="Ady-hI-5gd" id="fZQ-ng-gIm"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Technotes" id="Ou5-Cc-iCb">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="openTechnotes:" target="Ady-hI-5gd" id="M7A-Qg-mH8"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="Slack Group" id="4eb-qF-n9S">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

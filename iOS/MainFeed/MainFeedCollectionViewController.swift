@@ -28,7 +28,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			if #available(iOS 14, *) {
 				addNewItemButton.primaryAction = nil
 			} else {
-				addNewItemButton.action = #selector(MainFeedViewController.add(_:))
+				addNewItemButton.action = #selector(MainFeedCollectionViewController.add(_:))
 			}
 		}
 	}
@@ -711,6 +711,33 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 		}
+	}
+	
+	@IBAction func add(_ sender: UIBarButtonItem) {
+		let title = NSLocalizedString("Add Item", comment: "Add Item")
+		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+		
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
+		
+		let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+		let addWebFeedAction = UIAlertAction(title: addWebFeedActionTitle, style: .default) { _ in
+			self.coordinator.showAddWebFeed()
+		}
+		
+		let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
+			self.coordinator.showAddFolder()
+		}
+		
+		alertController.addAction(addWebFeedAction)
+		
+		alertController.addAction(addWebFolderAction)
+		alertController.addAction(cancelAction)
+		
+		alertController.popoverPresentationController?.barButtonItem = sender
+
+		present(alertController, animated: true)
 	}
 	
 	
