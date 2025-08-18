@@ -1,29 +1,20 @@
 # How To Do App Store Release
 
-Write release notes in ReleaseNotes-iOS.markdown on main
+Update release notes in ReleaseNotes-iOS.markdown on main to say that the TestFlight build has been submitted to App Store
 Commit release notes
 
-Tag the app if needed:
-
-	git tag iOS-6.1.9
-	git push origin iOS-6.1.9
-
 Click + near iOS App
-Type in new version name
-Scroll way down to Build section and choose the build (latest TestFlight build, presumably)
+Type in new version name (example: 6.1.10)
+Scroll halfway down to Build section, click + button, and choose the build (latest TestFlight build, presumably)
 Fill in What’s New text
 Click Save at top of screen
 Click Add for Review next to Save
 
 On next screen, click Submit to App Review
 
-Make new release from tag
+Once it appears on App Store…
 
-https://github.com/Ranchero-Software/NetNewsWire/tags
-
-Example title:
-NetNewsWire 6.1.6 (6140) for iOS - AppStore
-
+Optionally…
 Announce on Slack
 Announce on NetNewsWire blog
-Optionally announce on inessential
+Announce on inessential
