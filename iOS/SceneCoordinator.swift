@@ -294,6 +294,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		self.rootSplitViewController.minimumSupplementaryColumnWidth = 300
 		self.rootSplitViewController.maximumSupplementaryColumnWidth = 500
 		self.rootSplitViewController.preferredSupplementaryColumnWidthFraction = 0.4
+		self.rootSplitViewController.preferredSplitBehavior = .tile
 		
 		self.treeController = TreeController(delegate: treeControllerDelegate)
 
