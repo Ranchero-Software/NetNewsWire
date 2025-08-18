@@ -102,12 +102,11 @@ final class FaviconDownloader {
 			return image
 		}
 		
-		if let iconImage = favicon(for: webFeed), let imageData = iconImage.image.dataRepresentation() {
-			if let scaledImage = RSImage.scaledForIcon(imageData) {
-				let scaledIconImage = IconImage(scaledImage)
-				cache[webFeed] = scaledIconImage
-				return scaledIconImage
-			}
+		if let iconImage = favicon(for: webFeed) {
+			// Skip the data conversion roundtrip that can introduce artifacts
+			// Use the original image directly for better quality
+			cache[webFeed] = iconImage
+			return iconImage
 		}
 		
 		return nil

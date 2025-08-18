@@ -10,7 +10,10 @@
 import AppKit
 
 public class RSScreen {
-	public static var maxScreenScale = CGFloat(2)
+
+	public static var maxScreenScale: CGFloat {
+		NSScreen.screens.map(\.backingScaleFactor).max() ?? 2.0
+	}
 }
 
 #endif
