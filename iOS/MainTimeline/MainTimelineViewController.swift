@@ -386,10 +386,6 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 	func focus() {
 		becomeFirstResponder()
 	}
-
-	func setRefreshToolbarItemVisibility(visible: Bool) {
-		refreshProgressView?.alpha = visible ? 1.0 : 0
-	}
 	
 	// MARK: - Table view
 

@@ -294,6 +294,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		self.rootSplitViewController.minimumSupplementaryColumnWidth = 300
 		self.rootSplitViewController.maximumSupplementaryColumnWidth = 500
 		self.rootSplitViewController.preferredSupplementaryColumnWidthFraction = 0.4
+		self.rootSplitViewController.preferredSplitBehavior = .tile
 		
 		self.treeController = TreeController(delegate: treeControllerDelegate)
 
@@ -1425,22 +1426,6 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		}
 	}
 	
-	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-
-		var sidebarIsShowing = false
-
-		switch displayMode {
-		case .automatic, .secondaryOnly, .oneBesideSecondary, .oneOverSecondary:
-			sidebarIsShowing = false
-		case .twoBesideSecondary, .twoOverSecondary, .twoDisplaceSecondary:
-			sidebarIsShowing = true
-		@unknown default:
-			break
-		}
-
-		let timelineShouldShowRefreshProgress = !sidebarIsShowing
-		mainTimelineViewController?.setRefreshToolbarItemVisibility(visible: timelineShouldShowRefreshProgress)
-	}
 }
 
 // MARK: UINavigationControllerDelegate

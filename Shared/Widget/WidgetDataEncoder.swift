@@ -143,9 +143,9 @@ public final class WidgetDataEncoder {
 				let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
 											currentTodayCount: SmartFeedsController.shared.todayFeed.unreadCount,
 											currentStarredCount: (try? AccountManager.shared.fetchCountForStarredArticles()) ?? 0,
-											unreadArticles: unread,
-											starredArticles: starred,
-											todayArticles:today,
+											unreadArticles: unread.sorted(by: { $0.pubDate > $1.pubDate }),
+											starredArticles: starred.sorted(by: { $0.pubDate > $1.pubDate }),
+											todayArticles: today.sorted(by: { $0.pubDate > $1.pubDate }),
 											lastUpdateTime: Date())
 				completion(latestData)
 			}
