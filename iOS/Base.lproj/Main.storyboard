@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24118.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="AJQ-jq-uMa">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24123.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="AJQ-jq-uMa">
     <device id="retina6_7" orientation="portrait" appearance="light"/>
     <accessibilityOverrides dynamicTypePreference="6"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24059"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24062"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -327,24 +327,24 @@
                             <size key="itemSize" width="430" height="54"/>
                             <size key="headerReferenceSize" width="50" height="60"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            <inset key="sectionInset" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FeedCell" id="5DS-WK-qAz" customClass="MainFeedCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="60" width="430" height="60"/>
+                                <rect key="frame" x="16" y="60" width="398" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Frd-Hc-CpH">
-                                    <rect key="frame" x="0.0" y="0.0" width="430" height="60"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="398" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Feed Title" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fHH-rW-0hD">
-                                            <rect key="frame" x="286.66666666666669" y="15" width="75.333333333333314" height="30"/>
+                                            <rect key="frame" x="254.66666666666666" y="15" width="75.333333333333343" height="30"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oRt-Cv-vvU">
-                                            <rect key="frame" x="372" y="12" width="42" height="37"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oRt-Cv-vvU">
+                                            <rect key="frame" x="340" y="12" width="42" height="37"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="gcN-eE-3m0"/>
                                             </constraints>
@@ -353,7 +353,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ea0-VT-Gvl" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="254.66666666666663" y="18" width="24" height="24"/>
+                                            <rect key="frame" x="222.66666666666666" y="18" width="24" height="24"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="Bru-x6-68Z"/>
@@ -364,9 +364,9 @@
                                     <viewLayoutGuide key="safeArea" id="k2W-kq-CtP"/>
                                     <constraints>
                                         <constraint firstItem="k2W-kq-CtP" firstAttribute="bottom" secondItem="oRt-Cv-vvU" secondAttribute="bottom" constant="11" id="4M1-T3-2Cd"/>
-                                        <constraint firstItem="k2W-kq-CtP" firstAttribute="trailing" secondItem="oRt-Cv-vvU" secondAttribute="trailing" constant="16" id="4Xq-gT-ghB"/>
                                         <constraint firstItem="Ea0-VT-Gvl" firstAttribute="centerY" secondItem="fHH-rW-0hD" secondAttribute="centerY" id="DdZ-79-FC7"/>
                                         <constraint firstItem="fHH-rW-0hD" firstAttribute="leading" secondItem="Ea0-VT-Gvl" secondAttribute="trailing" constant="8" symbolic="YES" id="EbG-Wk-EDk"/>
+                                        <constraint firstItem="k2W-kq-CtP" firstAttribute="trailing" secondItem="oRt-Cv-vvU" secondAttribute="trailing" constant="16" id="P4H-Y2-La4"/>
                                         <constraint firstItem="fHH-rW-0hD" firstAttribute="top" secondItem="k2W-kq-CtP" secondAttribute="top" constant="15" id="SVd-pq-mhJ"/>
                                         <constraint firstItem="oRt-Cv-vvU" firstAttribute="top" secondItem="k2W-kq-CtP" secondAttribute="top" constant="12" id="dtl-tN-9g6"/>
                                         <constraint firstItem="k2W-kq-CtP" firstAttribute="bottom" secondItem="fHH-rW-0hD" secondAttribute="bottom" constant="15" id="sjj-gh-NuB"/>
@@ -374,7 +374,7 @@
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
-                                <size key="customSize" width="430" height="60"/>
+                                <size key="customSize" width="398" height="60"/>
                                 <connections>
                                     <outlet property="faviconView" destination="Ea0-VT-Gvl" id="OMb-Ty-3cf"/>
                                     <outlet property="feedTitle" destination="fHH-rW-0hD" id="4Cu-Jc-mlE"/>
@@ -382,14 +382,14 @@
                                 </connections>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Folder" id="wZG-XA-czw" customClass="MainFeedCollectionViewFolderCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="130" width="430" height="60"/>
+                                <rect key="frame" x="16" y="130" width="398" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Gne-oO-8wx">
-                                    <rect key="frame" x="0.0" y="0.0" width="430" height="60"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="398" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Folder Title" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qoe-rn-pwE">
-                                            <rect key="frame" x="48" y="15" width="290" height="30"/>
+                                            <rect key="frame" x="48" y="15" width="258" height="30"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -403,7 +403,7 @@
                                             </constraints>
                                         </view>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="noV-fz-88z">
-                                            <rect key="frame" x="388" y="10" width="39" height="39"/>
+                                            <rect key="frame" x="356" y="10" width="39" height="39"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="39" id="HBO-zo-rb2"/>
                                                 <constraint firstAttribute="height" constant="39" id="oUY-3E-b1N"/>
@@ -418,8 +418,8 @@
                                                 <action selector="toggleDisclosure" destination="wZG-XA-czw" eventType="touchUpInside" id="WG7-tr-rY6"/>
                                             </connections>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LVW-Zu-z90">
-                                            <rect key="frame" x="346" y="19.333333333333336" width="42" height="20.333333333333336"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LVW-Zu-z90">
+                                            <rect key="frame" x="314" y="19.333333333333336" width="42" height="20.333333333333336"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="bbK-t6-3yU"/>
                                             </constraints>
@@ -443,7 +443,7 @@
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
-                                <size key="customSize" width="430" height="60"/>
+                                <size key="customSize" width="398" height="60"/>
                                 <connections>
                                     <outlet property="disclosureButton" destination="noV-fz-88z" id="aBd-vX-4DN"/>
                                     <outlet property="faviconView" destination="AAi-mv-o14" id="6Zo-OH-fwi"/>
@@ -472,7 +472,7 @@
                                     <color key="textColor" systemColor="tertiaryLabelColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" preferredMaxLayoutWidth="42" translatesAutoresizingMaskIntoConstraints="NO" id="TBA-io-5jo">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="8888" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" preferredMaxLayoutWidth="42" translatesAutoresizingMaskIntoConstraints="NO" id="TBA-io-5jo">
                                     <rect key="frame" x="338" y="20" width="42" height="20.333333333333329"/>
                                     <constraints>
                                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="ICt-N6-dsh"/>
@@ -482,15 +482,16 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
+                            <viewLayoutGuide key="safeArea" id="xFb-yO-oa0"/>
                             <constraints>
                                 <constraint firstItem="Edf-Sz-AqQ" firstAttribute="leading" secondItem="TBA-io-5jo" secondAttribute="trailing" constant="8" symbolic="YES" id="0kf-5h-6cE"/>
                                 <constraint firstItem="TBA-io-5jo" firstAttribute="leading" secondItem="p16-Uj-CBX" secondAttribute="trailing" constant="8" symbolic="YES" id="5AQ-Ya-Uda"/>
-                                <constraint firstAttribute="trailing" secondItem="Edf-Sz-AqQ" secondAttribute="trailing" constant="3" id="E5L-eG-OZk"/>
+                                <constraint firstItem="xFb-yO-oa0" firstAttribute="trailing" secondItem="Edf-Sz-AqQ" secondAttribute="trailing" constant="3" id="E5L-eG-OZk"/>
                                 <constraint firstItem="TBA-io-5jo" firstAttribute="centerY" secondItem="Edf-Sz-AqQ" secondAttribute="centerY" id="Ftr-fa-6Vy"/>
                                 <constraint firstItem="Edf-Sz-AqQ" firstAttribute="centerY" secondItem="p16-Uj-CBX" secondAttribute="centerY" id="Qbl-KG-5MX"/>
                                 <constraint firstItem="p16-Uj-CBX" firstAttribute="top" secondItem="Rza-3g-Ty5" secondAttribute="top" constant="8" id="kiC-3Z-Jev"/>
                                 <constraint firstAttribute="bottom" secondItem="p16-Uj-CBX" secondAttribute="bottom" constant="8" id="pB6-RK-FNH"/>
-                                <constraint firstItem="p16-Uj-CBX" firstAttribute="leading" secondItem="Rza-3g-Ty5" secondAttribute="leading" constant="16" id="sax-aG-TV6"/>
+                                <constraint firstItem="p16-Uj-CBX" firstAttribute="leading" secondItem="xFb-yO-oa0" secondAttribute="leading" constant="16" id="sax-aG-TV6"/>
                             </constraints>
                             <connections>
                                 <outlet property="disclosureIndicator" destination="Edf-Sz-AqQ" id="cj3-wJ-UDt"/>
