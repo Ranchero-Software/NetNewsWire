@@ -1,30 +1,34 @@
 //
-//  MainTimelineFeedCell.swift
-//  NetNewsWire-iOS
+//  PseudoFeedTableViewCell.swift
+//  NetNewsWire
 //
-//  Created by Stuart Breckenridge on 20/07/2025.
+//  Created by Stuart Breckenridge on 19/07/2025.
 //  Copyright © 2025 Ranchero Software. All rights reserved.
 //
 
 import UIKit
 
-class MainTimelineFeedCell: UITableViewCell {
-
+class MainTimelineIconFeedCell: UITableViewCell {
+	
 	@IBOutlet weak var articleTitle: UILabel!
 	@IBOutlet weak var authorByLine: UILabel!
+	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var indicatorView: IconView!
 	@IBOutlet weak var articleDate: UILabel!
 	@IBOutlet weak var metaDataStackView: UIStackView!
-
+	
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
 		}
 	}
 	
+	var isPreview: Bool = false
+	
 	override func awakeFromNib() {
 		super.awakeFromNib()
 		indicatorView.alpha = 0.0
+		iconView.translatesAutoresizingMaskIntoConstraints = false
 		configureStackView()
 	}
 	
@@ -41,12 +45,12 @@ class MainTimelineFeedCell: UITableViewCell {
 		}
 	}
 	
+	
 	private func configure(_ cellData: MainTimelineCellData) {
 		updateIndicatorView(cellData)
 		articleTitle.numberOfLines = cellData.numberOfLines
-		
 		applyTitleTextWithAttributes(configurationState)
-
+		
 		if cellData.showFeedName == .feed {
 			authorByLine.text = cellData.feedName
 		} else if cellData.showFeedName == .byline {
@@ -55,7 +59,31 @@ class MainTimelineFeedCell: UITableViewCell {
 			authorByLine.text = ""
 		}
 		
+		setIconImage(cellData.iconImage, with: cellData.iconSize)
+		
 		articleDate.text = cellData.dateString
+	}
+	
+	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {
+		iconView.iconImage = iconImage
+		updateIconViewSizeConstraints(to: size.size)
+	}
+	
+	func setIconImage(_ iconImage: IconImage?) {
+		iconView.iconImage = iconImage
+	}
+	
+	private func updateIconViewSizeConstraints(to size: CGSize) {
+		for constraint in iconView.constraints {
+			constraint.isActive = false
+		}
+		
+		NSLayoutConstraint.activate([
+			iconView.widthAnchor.constraint(equalToConstant: size.width),
+			iconView.heightAnchor.constraint(equalToConstant: size.height)
+		])
+		
+		setNeedsLayout()
 	}
 	
 	private func updateIndicatorView(_ cellData: MainTimelineCellData) {
@@ -87,6 +115,9 @@ class MainTimelineFeedCell: UITableViewCell {
 	
 	private func applyTitleTextWithAttributes(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
+		
+		
+		
 		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
 		if cellData.title != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
@@ -97,7 +128,7 @@ class MainTimelineFeedCell: UITableViewCell {
 				.font: UIFont.preferredFont(forTextStyle: .headline),
 				.paragraphStyle: paragraphStyle,
 				.foregroundColor: isSelected ? UIColor.white : UIColor.label
- 			]
+			]
 			let titleWithNewline = cellData.title + (cellData.summary != "" ? "\n" : "" ) 
 			let titleAttributed = NSAttributedString(string: titleWithNewline, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
@@ -125,7 +156,7 @@ class MainTimelineFeedCell: UITableViewCell {
 		backgroundConfig.cornerRadius = 20
 		if traitCollection.userInterfaceIdiom == .pad {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
-			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -4, bottom: 0, trailing: -4)
+			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
 		
 		if state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped {
@@ -140,7 +171,7 @@ class MainTimelineFeedCell: UITableViewCell {
 		}
 		
 		self.backgroundConfiguration = backgroundConfig
+		
 	}
-	
 	
 }

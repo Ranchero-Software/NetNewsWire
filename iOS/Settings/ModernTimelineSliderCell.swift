@@ -18,6 +18,40 @@ class ModernTimelineSliderCell: UITableViewCell {
 	
 	@IBOutlet weak var slider: UISlider!
 	
+	private let container = UIView()
+	
+	
+	override func awakeFromNib() {
+		super.awakeFromNib()
+		setup()
+	}
+	
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		setup()
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		setup()
+	}
+	
+	private func setup() {
+		container.layer.cornerRadius = contentView.frame.height/2
+		container.backgroundColor = .systemBackground
+		container.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(container)
+		contentView.sendSubviewToBack(container)
+		
+		NSLayoutConstraint.activate([
+			container.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
+			container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
+			container.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+			container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+		])
+		contentView.backgroundColor = .systemGroupedBackground
+	}
+	
 	var sliderConfiguration: SliderConfiguration! {
 		didSet {
 			switch sliderConfiguration {
@@ -36,17 +70,13 @@ class ModernTimelineSliderCell: UITableViewCell {
 			}
 		}
 	}
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
+	
+	
+	override func setSelected(_ selected: Bool, animated: Bool) {
+		super.setSelected(selected, animated: animated)
+		
+		// Configure the view for the selected state
+	}
 	
 	@IBAction func sliderValueChanges(_ sender: Any) {
 		switch sliderConfiguration {
@@ -59,5 +89,5 @@ class ModernTimelineSliderCell: UITableViewCell {
 			return
 		}
 	}
-
+	
 }

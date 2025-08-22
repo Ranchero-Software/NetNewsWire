@@ -583,7 +583,7 @@
         <scene sceneID="6Fj-Lg-xsy">
             <objects>
                 <tableViewController storyboardIdentifier="ModernTimelineCustomizerTableViewController" id="Tc9-Yc-Fvc" customClass="ModernTimelineCustomizerTableViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="24" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Q8W-CZ-Qtv">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="24" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Q8W-CZ-Qtv">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="746"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
@@ -595,8 +595,8 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="mxj-aP-b1p">
-                                            <rect key="frame" x="20" y="9" width="374" height="37"/>
+                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mxj-aP-b1p">
+                                            <rect key="frame" x="40" y="9" width="334" height="37"/>
                                             <color key="thumbTintColor" name="primaryAccentColor"/>
                                             <connections>
                                                 <action selector="sliderValueChanges:" destination="yLd-K7-6Or" eventType="valueChanged" id="FRO-pj-Nml"/>
@@ -605,9 +605,9 @@
                                     </subviews>
                                     <viewLayoutGuide key="safeArea" id="YX7-cc-X0D"/>
                                     <constraints>
-                                        <constraint firstItem="YX7-cc-X0D" firstAttribute="trailing" secondItem="mxj-aP-b1p" secondAttribute="trailing" constant="20" id="6mr-Cs-f1B"/>
+                                        <constraint firstItem="YX7-cc-X0D" firstAttribute="trailing" secondItem="mxj-aP-b1p" secondAttribute="trailing" constant="40" id="6mr-Cs-f1B"/>
                                         <constraint firstAttribute="bottom" secondItem="mxj-aP-b1p" secondAttribute="bottom" constant="8" id="Bzo-NL-fl1"/>
-                                        <constraint firstItem="mxj-aP-b1p" firstAttribute="leading" secondItem="YX7-cc-X0D" secondAttribute="leading" constant="20" id="Qjf-Dg-6MF"/>
+                                        <constraint firstItem="mxj-aP-b1p" firstAttribute="leading" secondItem="YX7-cc-X0D" secondAttribute="leading" constant="40" id="Qjf-Dg-6MF"/>
                                         <constraint firstItem="mxj-aP-b1p" firstAttribute="top" secondItem="KDr-vA-pJ5" secondAttribute="top" constant="9" id="scs-Am-twE"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -622,8 +622,8 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="VrS-AA-rmv">
-                                            <rect key="frame" x="20" y="9" width="374" height="37"/>
+                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VrS-AA-rmv">
+                                            <rect key="frame" x="40" y="9" width="334" height="37"/>
                                             <color key="thumbTintColor" name="primaryAccentColor"/>
                                             <connections>
                                                 <action selector="sliderValueChanges:" destination="jcy-BU-y0G" eventType="valueChanged" id="S5x-LL-h8X"/>
@@ -632,12 +632,13 @@
                                     </subviews>
                                     <viewLayoutGuide key="safeArea" id="nuD-rL-VaM"/>
                                     <constraints>
-                                        <constraint firstItem="nuD-rL-VaM" firstAttribute="trailing" secondItem="VrS-AA-rmv" secondAttribute="trailing" constant="20" id="2V5-0G-7GV"/>
+                                        <constraint firstItem="nuD-rL-VaM" firstAttribute="trailing" secondItem="VrS-AA-rmv" secondAttribute="trailing" constant="40" id="2V5-0G-7GV"/>
                                         <constraint firstAttribute="bottom" secondItem="VrS-AA-rmv" secondAttribute="bottom" constant="8" id="AlG-yn-8Xh"/>
                                         <constraint firstItem="VrS-AA-rmv" firstAttribute="top" secondItem="MLf-8T-Iis" secondAttribute="top" constant="9" id="FR8-Zr-hlH"/>
-                                        <constraint firstItem="VrS-AA-rmv" firstAttribute="leading" secondItem="nuD-rL-VaM" secondAttribute="leading" constant="20" id="t3P-Yc-U15"/>
+                                        <constraint firstItem="VrS-AA-rmv" firstAttribute="leading" secondItem="nuD-rL-VaM" secondAttribute="leading" constant="40" id="t3P-Yc-U15"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
                                     <outlet property="slider" destination="VrS-AA-rmv" id="jf5-NH-dB4"/>
                                 </connections>
@@ -713,13 +714,13 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D08-JZ-OXx">
-                                            <rect key="frame" x="88" y="15" width="306" height="15.5"/>
+                                            <rect key="frame" x="83" y="15" width="311" height="15.5"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tms-jW-A6w" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="44" y="15" width="36" height="36"/>
+                                            <rect key="frame" x="39" y="15" width="36" height="36"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="36" id="MC4-Rl-S6b"/>
@@ -727,7 +728,7 @@
                                             </constraints>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bWD-9m-Fch" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="20" y="15" width="16" height="16"/>
+                                            <rect key="frame" x="15" y="15" width="16" height="16"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="16" id="T1h-cS-jdq"/>
@@ -735,16 +736,16 @@
                                             </constraints>
                                         </view>
                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zz9-ug-cmp">
-                                            <rect key="frame" x="88" y="31.5" width="306" height="14.5"/>
+                                            <rect key="frame" x="83" y="31.5" width="311" height="14.5"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M4A-5J-4Kd">
-                                                    <rect key="frame" x="0.0" y="0.0" width="167.5" height="14.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="170.5" height="14.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kvo-fg-kta">
-                                                    <rect key="frame" x="175.5" y="0.0" width="130.5" height="14.5"/>
+                                                    <rect key="frame" x="178.5" y="0.0" width="132.5" height="14.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                                     <nil key="highlightedColor"/>
@@ -759,7 +760,7 @@
                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="0dz-eB-6XG" firstAttribute="trailing" secondItem="Zz9-ug-cmp" secondAttribute="trailing" constant="20" id="2OC-lr-ZJf"/>
-                                        <constraint firstItem="bWD-9m-Fch" firstAttribute="leading" secondItem="0dz-eB-6XG" secondAttribute="leading" constant="20" id="3tX-qX-lRQ"/>
+                                        <constraint firstItem="bWD-9m-Fch" firstAttribute="leading" secondItem="0dz-eB-6XG" secondAttribute="leading" constant="15" id="3tX-qX-lRQ"/>
                                         <constraint firstItem="Zz9-ug-cmp" firstAttribute="top" secondItem="D08-JZ-OXx" secondAttribute="bottom" constant="1.0000000000000142" id="7FK-Vt-MAK"/>
                                         <constraint firstItem="bWD-9m-Fch" firstAttribute="top" secondItem="0dz-eB-6XG" secondAttribute="top" constant="15" id="Cpp-4m-3v3"/>
                                         <constraint firstItem="Tms-jW-A6w" firstAttribute="leading" secondItem="bWD-9m-Fch" secondAttribute="trailing" constant="8" symbolic="YES" id="Kz3-6y-5X7"/>
@@ -1054,10 +1055,10 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGroupedBackgroundColor">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tableCellGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -54,18 +54,19 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		if section == 2 { return 2 }
 		return 1
     }
 	
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if section == 0 { return NSLocalizedString("Icon Size", comment: "Icon Size")}
 		if section == 1 { return NSLocalizedString("Number of Lines", comment: "Number of Lines")}
-		return NSLocalizedString("Previews", comment: "Previews")
+		if section == 2 { return NSLocalizedString("Preview with Icon", comment: "Previews") }
+		if section == 3 { return NSLocalizedString("Preview without Icon", comment: "Previews") }
+		return nil
 	}
 
     
@@ -83,7 +84,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 		}
 		
 		
-		if indexPath.section == 2 && indexPath.row == 0 {
+		if indexPath.section == 2 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell") as? MainTimelineIconFeedCell ?? MainTimelineIconFeedCell()
 			cell.cellData = MainTimelineCellData(article: previewArticle,
 												 showFeedName: .byline,
@@ -93,10 +94,11 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 												 showIcon: true,
 												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
 												 iconSize: AppDefaults.shared.timelineIconSize)
+			cell.isPreview = true
 			return cell
 		}
 		
-		if indexPath.section == 2 && indexPath.row == 1 {
+		if indexPath.section == 3 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell") as? MainTimelineFeedCell ?? MainTimelineFeedCell()
 			cell.cellData = MainTimelineCellData(article: previewArticle,
 												 showFeedName: .byline,
@@ -106,6 +108,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 												 showIcon: false,
 												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
 												 iconSize: AppDefaults.shared.timelineIconSize)
+			cell.isPreview = true
 			return cell
 		}
 		
@@ -123,7 +126,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 	
 	// MARK: - Notifications
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		tableView.reloadSections(IndexSet(integer: 2), with: .none)
+		tableView.reloadSections(IndexSet(integersIn: 2...3), with: .none)
 	}
 
 }

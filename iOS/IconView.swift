@@ -79,7 +79,7 @@ final class IconView: UIView {
 private extension IconView {
 
 	func commonInit() {
-		layer.cornerRadius = MainTimelineDefaultCellLayout.iconCornerRadius
+		layer.cornerRadius = 4
 		clipsToBounds = true
 		addSubview(imageView)
 	}
