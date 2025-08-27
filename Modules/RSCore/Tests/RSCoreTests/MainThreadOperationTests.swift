@@ -240,7 +240,7 @@ class MainThreadOperationTests: XCTestCase {
 
             func run() {
                 guard let block = didStartRunBlock else {
-                    XCTFail("Unable to test cancelation of running operation.")
+                    XCTFail("Unable to test cancellation of running operation.")
                     return
                 }
                 block()
