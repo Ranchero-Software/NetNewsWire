@@ -195,7 +195,7 @@ public extension String {
 	/// - `>` matches the literal `>` character.
 	/// - `[\\s\\S]*?`
 	/// 	- `[\\s\\S]` matches _any_ character, including new lines.
-	/// 	- `*` will match zero or more of the preceeding character, in this case _any_
+	/// 	- `*` will match zero or more of the preceding character, in this case _any_
 	/// 	character.
 	/// 	- `?` switches the matching mode to [lazy](https://javascript.info/regexp-greedy-and-lazy)
 	/// 	so it will match as few as characters as possible before satisfying the rest of the pattern.
