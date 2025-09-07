@@ -3,7 +3,12 @@
     "allow": [
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(tail:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(xcodebuild:*)"
     ],
     "deny": []
   }

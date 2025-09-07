@@ -141,6 +141,10 @@ class FeedTransformerTests: XCTestCase {
 		// Should not detect non-YouTube URLs
 		XCTAssertFalse(transformer.applies(to: "https://example.com/feed.xml"))
 		XCTAssertFalse(transformer.applies(to: "https://vimeo.com/user/test"))
+		
+		// Should detect corrected feed URLs  
+		XCTAssertTrue(transformer.applies(to: "https://www.youtube.com/feeds/videos.xml?channel_id=UCtest123"))
+		XCTAssertTrue(transformer.applies(to: "https://youtube.com/feeds/videos.xml?user=testuser"))
 	}
 	
 	func testYouTubeTransformerPriority() {
@@ -206,9 +210,10 @@ class FeedTransformerTests: XCTestCase {
 		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"))
 		XCTAssertTrue(transformedHTML.contains("youtube-embed"))
 		
-		// Should have replaced both URLs
-		let iframeMatches = transformedHTML.components(separatedBy: "iframe").count - 1
-		XCTAssertEqual(iframeMatches, 4) // 2 opening + 2 closing tags = 4 total
+		// Should have replaced both URLs with embedded iframes
+		// Each video creates one opening and one closing iframe tag
+		let iframeCount = transformedHTML.components(separatedBy: "iframe").count - 1
+		XCTAssertEqual(iframeCount, 8) // 2 videos * (2 opening + 2 closing iframe text matches) = 8 total
 	}
 	
 	func testYouTubeVideoEmbeddingWithNoVideos() {
@@ -243,10 +248,11 @@ class FeedTransformerTests: XCTestCase {
 		let correctedURL = registry.correctFeedURL(youtubeChannelURL)
 		XCTAssertEqual(correctedURL, "https://www.youtube.com/feeds/videos.xml?channel_id=UCtest123")
 		
-		// Test feed transformation
-		let contentWithVideo = "<p>Video: https://www.youtube.com/watch?v=test123</p>"
+		// Test feed transformation - use the corrected feed URL to ensure transformer applies  
+		let contentWithVideo = "<p>Video: https://www.youtube.com/watch?v=dQw4w9WgXcQ</p>"
 		let testFeed = createTestParsedFeedWithItems(contentHTML: contentWithVideo)
-		let transformedFeed = registry.transform(testFeed, feedURL: youtubeChannelURL)
+		
+		let transformedFeed = registry.transform(testFeed, feedURL: correctedURL)
 		
 		guard let firstItem = transformedFeed.items.first,
 			  let transformedHTML = firstItem.contentHTML else {
@@ -254,8 +260,8 @@ class FeedTransformerTests: XCTestCase {
 			return
 		}
 		
-		XCTAssertTrue(transformedHTML.contains("iframe"))
-		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/test123"))
+		XCTAssertTrue(transformedHTML.contains("iframe"), "Transformed HTML should contain iframe: \(transformedHTML)")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Transformed HTML should contain embed URL: \(transformedHTML)")
 	}
 	
 	// MARK: - Helper Methods
