@@ -388,7 +388,7 @@ class FeedTransformerTests: XCTestCase {
 		print("DEBUG - Transformed content: \(transformedHTML)")
 		
 		XCTAssertTrue(transformedHTML.contains("iframe"), "Should contain iframe elements")
-		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Should contain embed URLs")
+		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ"), "Should contain embed URLs")
 	}
 	
 	func testYouTubeRSSFeedVideoEmbedding() {
@@ -430,8 +430,9 @@ class FeedTransformerTests: XCTestCase {
 		
 		// Should contain embedded video at the beginning
 		XCTAssertTrue(transformedHTML.contains("iframe"), "Should contain iframe for video embed")
-		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/7DKv5H5Frt0"), "Should contain embedded video URL")
+		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/7DKv5H5Frt0"), "Should contain embedded video URL")
 		XCTAssertTrue(transformedHTML.contains("This is the video description"), "Should preserve original description")
+		XCTAssertTrue(transformedHTML.contains("📺 Watch on YouTube"), "Should contain fallback link")
 		
 		// Video embed should come before the description  
 		let iframeIndex = transformedHTML.firstIndex(of: "i") // First character of "iframe"

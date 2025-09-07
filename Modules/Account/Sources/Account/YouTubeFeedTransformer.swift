@@ -255,13 +255,16 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	
 	private func createVideoEmbedHTML(videoID: String) -> String {
 		return """
-		<div class="youtube-embed">
-			<iframe width="560" height="315" 
-				src="https://www.youtube.com/embed/\(videoID)" 
+		<div class="youtube-embed" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 1em 0;">
+			<iframe 
+				src="https://www.youtube-nocookie.com/embed/\(videoID)" 
+				style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
 				frameborder="0" 
-				allowfullscreen>
+				allowfullscreen
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
 			</iframe>
 		</div>
+		<p style="margin-top: 0.5em;"><a href="https://www.youtube.com/watch?v=\(videoID)" target="_blank">📺 Watch on YouTube</a></p>
 		"""
 	}
 }
