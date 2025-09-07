@@ -361,6 +361,86 @@ class FeedTransformerTests: XCTestCase {
 		XCTAssertTrue(transformedHTML.contains("iframe"), "Content should contain embedded iframe")
 		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Content should contain embedded video")
 	}
+	
+	func testDebugYouTubeTransformerWithRealContent() {
+		// Test with actual YouTube RSS feed content patterns
+		let transformer = YouTubeFeedTransformer()
+		
+		// Test 1: Real YouTube RSS feed URL detection
+		XCTAssertTrue(transformer.applies(to: "https://www.youtube.com/feeds/videos.xml?channel_id=UCBa659QWEk1AI4Tg--mrJ2A"))
+		
+		// Test 2: Real video embedding with common YouTube content patterns
+		let realYouTubeContent = """
+		<p>New video: <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Watch on YouTube</a></p>
+		<p>Also check: https://youtu.be/dQw4w9WgXcQ</p>
+		<p>Embedded link: https://www.youtube.com/embed/dQw4w9WgXcQ</p>
+		"""
+		
+		let testItem = createTestParsedItem(contentHTML: realYouTubeContent)
+		let transformedItem = transformer.transformItem(testItem)
+		
+		guard let transformedHTML = transformedItem.contentHTML else {
+			XCTFail("Transformed item should have content HTML")
+			return
+		}
+		
+		print("DEBUG - Original content: \(realYouTubeContent)")
+		print("DEBUG - Transformed content: \(transformedHTML)")
+		
+		XCTAssertTrue(transformedHTML.contains("iframe"), "Should contain iframe elements")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Should contain embed URLs")
+	}
+	
+	func testYouTubeRSSFeedVideoEmbedding() {
+		// Test the primary use case: YouTube RSS feeds with video URLs in item.url
+		let transformer = YouTubeFeedTransformer()
+		
+		// Create a test item that mimics a YouTube RSS feed item
+		let youTubeVideoURL = "https://www.youtube.com/watch?v=7DKv5H5Frt0"
+		let videoDescription = "This is the video description from the RSS feed."
+		
+		let testItem = ParsedItem(
+			syncServiceID: nil,
+			uniqueID: "yt:video:7DKv5H5Frt0",
+			feedURL: "https://www.youtube.com/feeds/videos.xml?channel_id=UCtest",
+			url: youTubeVideoURL,
+			externalURL: nil,
+			title: "Test YouTube Video",
+			language: nil,
+			contentHTML: videoDescription,
+			contentText: nil,
+			summary: nil,
+			imageURL: nil,
+			bannerImageURL: nil,
+			datePublished: Date(),
+			dateModified: nil,
+			authors: nil,
+			tags: nil,
+			attachments: nil
+		)
+		
+		let transformedItem = transformer.transformItem(testItem)
+		
+		guard let transformedHTML = transformedItem.contentHTML else {
+			XCTFail("Transformed item should have content HTML")
+			return
+		}
+		
+		print("DEBUG - YouTube RSS transformed content: \(transformedHTML)")
+		
+		// Should contain embedded video at the beginning
+		XCTAssertTrue(transformedHTML.contains("iframe"), "Should contain iframe for video embed")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/7DKv5H5Frt0"), "Should contain embedded video URL")
+		XCTAssertTrue(transformedHTML.contains("This is the video description"), "Should preserve original description")
+		
+		// Video embed should come before the description  
+		let iframeIndex = transformedHTML.firstIndex(of: "i") // First character of "iframe"
+		let descriptionIndex = transformedHTML.range(of: "This is the video description")?.lowerBound
+		
+		if let iframeIdx = iframeIndex, let descIdx = descriptionIndex {
+			XCTAssertTrue(iframeIdx < descIdx, "Video embed should appear before description")
+		}
+	}
 }
 
 // MARK: - Mock Transformer for Testing

@@ -97,32 +97,81 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	}
 	
 	internal func transformItem(_ item: ParsedItem) -> ParsedItem {
-		guard let contentHTML = item.contentHTML else {
-			return item
+		// Check if the item URL is a YouTube video URL
+		if let itemURL = item.url,
+		   let videoID = extractVideoIDFromURL(itemURL) {
+			// For YouTube RSS feeds, embed the video based on the item URL
+			let videoEmbed = createVideoEmbedHTML(videoID: videoID)
+			let existingContent = item.contentHTML ?? ""
+			let transformedHTML = existingContent.isEmpty ? videoEmbed : videoEmbed + "\n\n" + existingContent
+			
+			return ParsedItem(
+				syncServiceID: item.syncServiceID,
+				uniqueID: item.uniqueID,
+				feedURL: item.feedURL,
+				url: item.url,
+				externalURL: item.externalURL,
+				title: item.title,
+				language: item.language,
+				contentHTML: transformedHTML,
+				contentText: item.contentText,
+				summary: item.summary,
+				imageURL: item.imageURL,
+				bannerImageURL: item.bannerImageURL,
+				datePublished: item.datePublished,
+				dateModified: item.dateModified,
+				authors: item.authors,
+				tags: item.tags,
+				attachments: item.attachments
+			)
+		} else if let contentHTML = item.contentHTML {
+			// Fall back to transforming YouTube URLs in the content (for other feed types)
+			let transformedHTML = embedYouTubeVideos(in: contentHTML)
+			
+			return ParsedItem(
+				syncServiceID: item.syncServiceID,
+				uniqueID: item.uniqueID,
+				feedURL: item.feedURL,
+				url: item.url,
+				externalURL: item.externalURL,
+				title: item.title,
+				language: item.language,
+				contentHTML: transformedHTML,
+				contentText: item.contentText,
+				summary: item.summary,
+				imageURL: item.imageURL,
+				bannerImageURL: item.bannerImageURL,
+				datePublished: item.datePublished,
+				dateModified: item.dateModified,
+				authors: item.authors,
+				tags: item.tags,
+				attachments: item.attachments
+			)
 		}
 		
-		// Extract video ID from YouTube URLs in the content
-		let transformedHTML = embedYouTubeVideos(in: contentHTML)
+		// No transformation needed - return original item
+		return item
+	}
+	
+	private func extractVideoIDFromURL(_ url: String) -> String? {
+		// Extract video ID from YouTube video URLs
+		let patterns = [
+			"youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
+			"www\\.youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
+			"youtu\\.be/([A-Za-z0-9_-]{11})",
+			"youtube\\.com/embed/([A-Za-z0-9_-]{11})",
+			"www\\.youtube\\.com/embed/([A-Za-z0-9_-]{11})"
+		]
 		
-		return ParsedItem(
-			syncServiceID: item.syncServiceID,
-			uniqueID: item.uniqueID,
-			feedURL: item.feedURL,
-			url: item.url,
-			externalURL: item.externalURL,
-			title: item.title,
-			language: item.language,
-			contentHTML: transformedHTML,
-			contentText: item.contentText,
-			summary: item.summary,
-			imageURL: item.imageURL,
-			bannerImageURL: item.bannerImageURL,
-			datePublished: item.datePublished,
-			dateModified: item.dateModified,
-			authors: item.authors,
-			tags: item.tags,
-			attachments: item.attachments
-		)
+		for pattern in patterns {
+			if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
+			   let match = regex.firstMatch(in: url, options: [], range: NSRange(url.startIndex..., in: url)) {
+				let range = Range(match.range(at: 1), in: url)!
+				return String(url[range])
+			}
+		}
+		
+		return nil
 	}
 	
 	private func extractChannelID(from url: String) -> String? {
