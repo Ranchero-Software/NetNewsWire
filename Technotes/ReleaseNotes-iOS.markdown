@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 6.1.10 TestFlight build 6198 11 Aug 2025 - branch: main tag iOS-6.1.10-6198
+### 6.1.10 TestFlight build 6198 11 Aug 2025 - branch: main tag iOS-6.1.10-6198 — submitted as App Store release build 18 Aug 2025
 
 Replaced BBC in default feeds (for new users) because its feeds have gone wonky. Replaced with Scripting News.
 

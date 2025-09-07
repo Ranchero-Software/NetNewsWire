@@ -80,6 +80,24 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
+	var windowState: TimelineWindowState {
+		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo as? [String: String] }
+		let readArticlesFilterStateValues = readFilterEnabledTable.values.compactMap( { $0 })
+		
+		if selectedArticles.count == 1 {
+			let path = selectedArticles.first!.pathUserInfo
+			return TimelineWindowState(readArticlesFilterStateKeys: readArticlesFilterStateKeys,
+									   readArticlesFilterStateValues: readArticlesFilterStateValues,
+									   selectedAccountID: path[ArticlePathKey.accountID] as? String,
+									   selectedArticleID: path[ArticlePathKey.articleID] as? String)
+		} else {
+			return TimelineWindowState(readArticlesFilterStateKeys: readArticlesFilterStateKeys,
+									   readArticlesFilterStateValues: readArticlesFilterStateValues,
+									   selectedAccountID: nil,
+									   selectedArticleID: nil)
+		}
+
+	}
 	weak var delegate: TimelineDelegate?
 	var sharingServiceDelegate: NSSharingServiceDelegate?
 
@@ -271,16 +289,36 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	// MARK: State Restoration
 	
-	func saveState(to state: inout [AnyHashable : Any]) {
-		state[UserInfoKey.readArticlesFilterStateKeys] = readFilterEnabledTable.keys.compactMap { $0.userInfo }
-		state[UserInfoKey.readArticlesFilterStateValues] = readFilterEnabledTable.values.compactMap( { $0 })
+	func restoreState(from state: TimelineWindowState) {
+		for i in 0..<state.readArticlesFilterStateKeys.count {
+			if let feedIdentifier = FeedIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
+				readFilterEnabledTable[feedIdentifier] = state.readArticlesFilterStateValues[i]
+			}
+		}
 		
-		if selectedArticles.count == 1 {
-			state[UserInfoKey.articlePath] = selectedArticles.first!.pathUserInfo
+		if let selectedAccountID = state.selectedAccountID,
+		   let account = AccountManager.shared.existingAccount(with: selectedAccountID),
+		   let selectedArticleID = state.selectedArticleID {
+			
+			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: selectedArticleID)
+			fetchAndReplaceArticlesSync()
+			
+			if let selectedIndex = articles.firstIndex(where: { $0.articleID == selectedArticleID }) {
+				tableView.selectRow(selectedIndex)
+				DispatchQueue.main.async {
+					self.tableView.scrollTo(row: selectedIndex)
+				}
+				focus()
+			}
+		} else {
+			fetchAndReplaceArticlesSync()
 		}
 	}
-	
-	func restoreState(from state: [AnyHashable : Any]) {
+
+	/// Restore state using legacy state restoration data.
+	///
+	/// TODO: Delete for NetNewsWire 7.
+	func restoreLegacyState(from state: [AnyHashable: Any]) {
 		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[AnyHashable: AnyHashable]],
 			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
 			return
@@ -291,15 +329,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
 			}
 		}
-		
-		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable : Any],
+
+		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let account = AccountManager.shared.existingAccount(with: accountID),
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String {
-			
+
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 			fetchAndReplaceArticlesSync()
-			
+
 			if let selectedIndex = articles.firstIndex(where: { $0.articleID == articleID }) {
 				tableView.selectRow(selectedIndex)
 				DispatchQueue.main.async {
@@ -307,15 +345,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				}
 				focus()
 			}
-
 		} else {
-			
 			fetchAndReplaceArticlesSync()
-
 		}
-		
 	}
-	
+
+
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {

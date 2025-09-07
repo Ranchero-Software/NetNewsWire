@@ -302,6 +302,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		return false
 	}
 
+	func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
+		return true
+	}
+	
 	func applicationDidBecomeActive(_ notification: Notification) {
 		fireOldTimers()
 	}
