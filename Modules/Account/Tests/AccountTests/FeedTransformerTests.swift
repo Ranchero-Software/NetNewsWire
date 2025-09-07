@@ -324,6 +324,43 @@ class FeedTransformerTests: XCTestCase {
 			items: Set([testItem])
 		)
 	}
+	
+	// MARK: - Integration Tests
+	
+	func testFeedFinderIntegration() {
+		// Test that FeedFinder properly applies URL correction
+		let originalURL = "https://youtube.com/channel/UCtest123"
+		let expectedCorrectedURL = "https://www.youtube.com/feeds/videos.xml?channel_id=UCtest123"
+		
+		// Register our transformer
+		let transformer = YouTubeFeedTransformer()
+		registry.register(transformer)
+		
+		// Test URL correction through registry
+		let correctedURL = registry.correctFeedURL(originalURL)
+		XCTAssertEqual(correctedURL, expectedCorrectedURL, "Registry should correct YouTube channel URLs")
+	}
+	
+	func testLocalAccountRefresherTransformation() {
+		// Test that the transformer registry correctly transforms feed content
+		let transformer = YouTubeFeedTransformer()
+		registry.register(transformer)
+		
+		let contentWithVideo = "<p>Check this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ</p>"
+		let testFeed = createTestParsedFeedWithItems(contentHTML: contentWithVideo)
+		let youtubeRSSURL = "https://www.youtube.com/feeds/videos.xml?channel_id=UCtest123"
+		
+		let transformedFeed = registry.transform(testFeed, feedURL: youtubeRSSURL)
+		
+		guard let firstItem = transformedFeed.items.first,
+			  let transformedHTML = firstItem.contentHTML else {
+			XCTFail("Should have transformed content")
+			return
+		}
+		
+		XCTAssertTrue(transformedHTML.contains("iframe"), "Content should contain embedded iframe")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Content should contain embedded video")
+	}
 }
 
 // MARK: - Mock Transformer for Testing
