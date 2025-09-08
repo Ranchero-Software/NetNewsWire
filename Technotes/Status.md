@@ -16,7 +16,6 @@ TestFlight: 6.1.10 (6198)
 
 ## Mac
 
-Mac shipping: 6.1.9
+Mac shipping: 6.1.10
 
-Beta: 6.1.10b4
-	https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-6.1.10b4
+Beta: none
