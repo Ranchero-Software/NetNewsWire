@@ -58,5 +58,5 @@ Announce on blog
 
 If release build:
 	Update netnewswire-release.xml
-	Update download on netnewswire.com
+	Update download on netnewswire.com — via .htaccess redirect
 
