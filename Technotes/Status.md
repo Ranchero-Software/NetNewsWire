@@ -1,7 +1,7 @@
 # NetNewsWire Status
 
-Current milestone: NetNewsWire 6.1.10
-	https://github.com/Ranchero-Software/NetNewsWire/milestone/60
+Current milestone: NetNewsWire 6.1.11
+	https://github.com/Ranchero-Software/NetNewsWire/milestone/62
 
 Current bug: TBD
 
