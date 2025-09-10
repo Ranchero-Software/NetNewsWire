@@ -18,4 +18,4 @@ TestFlight: 6.1.10 (6198)
 
 Mac shipping: 6.1.10
 
-Beta: none
+Beta: 6.1.1b1
