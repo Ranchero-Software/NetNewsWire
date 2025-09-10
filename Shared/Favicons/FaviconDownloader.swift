@@ -97,18 +97,16 @@ final class FaviconDownloader {
 	}
 	
 	func faviconAsIcon(for webFeed: WebFeed) -> IconImage? {
-		
+
 		if let image = cache[webFeed] {
 			return image
 		}
-		
+
 		if let iconImage = favicon(for: webFeed) {
-			// Skip the data conversion roundtrip that can introduce artifacts
-			// Use the original image directly for better quality
 			cache[webFeed] = iconImage
 			return iconImage
 		}
-		
+
 		return nil
 	}
 
