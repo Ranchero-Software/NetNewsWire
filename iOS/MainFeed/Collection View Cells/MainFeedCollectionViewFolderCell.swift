@@ -121,7 +121,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		case (true, .phone):
 			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
 			folderTitle.textColor = .white
-			unreadCountLabel.textColor = .lightText
+			unreadCountLabel.textColor = .secondaryLabel
 			faviconView.tintColor = .white
 		default:
 			folderTitle.textColor = .label
