@@ -7,6 +7,19 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 6.1.11b1</title>
+            <description><![CDATA[
+				<p>Changes since 6.1.9:</p>
+				<ul>
+					<li>Fixed bug with some favicons rendering weird, with dark vertical lines. Note: due to caching, the fix may take a few days to take effect</li>
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 09 Sep 2025 09:10:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.11b1/NetNewsWire6.1.11b1.zip" sparkle:version="6141" sparkle:shortVersionString="6.1.11b1" length="9397342" type="application/zip" />
+			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 6.1.10</title>
             <description><![CDATA[
             <p>Changes since 6.1.9:</p>
