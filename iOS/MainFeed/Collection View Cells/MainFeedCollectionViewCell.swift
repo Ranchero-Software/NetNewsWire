@@ -93,7 +93,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		case (true, .phone):
 			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
 			feedTitle.textColor = .white
-			unreadCountLabel.textColor = .lightText
+			unreadCountLabel.textColor = .secondaryLabel
 			if feedTitle.text == "All Unread" {
 				faviconView.tintColor = .white
 			}
