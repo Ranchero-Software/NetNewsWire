@@ -57,6 +57,7 @@ final class AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
+		static let disableJavaScript = "disableJavaScript"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -186,6 +187,15 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
+		}
+	}
+	
+	var disableJavaScript: Bool {
+		get {
+			return AppDefaults.bool(for: Key.disableJavaScript)
+		}
+		set {
+			AppDefaults.setBool(for: Key.disableJavaScript, newValue)
 		}
 	}
 	
