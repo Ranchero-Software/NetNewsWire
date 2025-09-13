@@ -63,7 +63,8 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	}
 	
 	public func transform(_ parsedFeed: ParsedFeed) -> ParsedFeed {
-		print("🎬 YouTubeFeedTransformer: transforming feed with \(parsedFeed.items.count) items")
+		print("🎬 YouTubeFeedTransformer: transforming feed '\(parsedFeed.title ?? "No title")' with \(parsedFeed.items.count) items")
+		print("🎬 Feed URL: \(parsedFeed.feedURL ?? "No URL")")
 		let transformedItems = Set(parsedFeed.items.map { transformItem($0) })
 		
 		return ParsedFeed(
@@ -101,6 +102,10 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	}
 	
 	internal func transformItem(_ item: ParsedItem) -> ParsedItem {
+		print("🎬 YouTubeFeedTransformer.transformItem() called for item: \(item.title ?? "No title")")
+		print("🎬 Item URL: \(item.url ?? "No URL")")
+		print("🎬 Item contentHTML length: \(item.contentHTML?.count ?? 0)")
+		
 		// Check if the item URL is a YouTube video URL
 		if let itemURL = item.url,
 		   let videoID = extractVideoIDFromURL(itemURL) {
@@ -109,6 +114,10 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 			let videoEmbed = createVideoEmbedHTML(videoID: videoID, item: item)
 			let existingContent = item.contentHTML ?? ""
 			let transformedHTML = existingContent.isEmpty ? videoEmbed : videoEmbed + "\n\n" + existingContent
+			
+			print("🎬 Generated video embed HTML length: \(videoEmbed.count)")
+			print("🎬 Final transformed HTML length: \(transformedHTML.count)")
+			print("🎬 First 200 chars of transformed HTML: \(String(transformedHTML.prefix(200)))")
 			
 			return ParsedItem(
 				syncServiceID: item.syncServiceID,
