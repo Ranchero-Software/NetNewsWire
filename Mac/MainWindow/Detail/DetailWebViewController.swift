@@ -103,15 +103,13 @@ final class DetailWebViewController: NSViewController {
 		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		
-		// Enable video playback for YouTube embeds (like successful YouTube players)
-		// Use the same configuration as working YouTube libraries
+		// Enable video playback for YouTube embeds
 		if #available(iOS 10.0, macOS 10.12, *) {
 			configuration.mediaTypesRequiringUserActionForPlayback = []
 		}
 		
 		#if os(iOS)
-		configuration.allowsInlineMediaPlayback = true  // Enable inline video playback (iOS only)
-		#else
+		    configuration.allowsInlineMediaPlayback = true  // Enable inline video playback (iOS only)
 		#endif
 
 		let userContentController = WKUserContentController()
