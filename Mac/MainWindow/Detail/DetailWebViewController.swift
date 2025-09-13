@@ -277,18 +277,6 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			}
 		}
 	}
-	
-	public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-		decisionHandler(.allow)
-	}
-
-	public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-		// Handle navigation failures if needed
-	}
-
-	public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-		// Handle provisional navigation failures if needed
-	}
 
 	// WKUIDelegate
 	
