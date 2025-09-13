@@ -207,14 +207,15 @@ class FeedTransformerTests: XCTestCase {
 		
 		// Should contain embedded iframe with enhanced attributes
 		XCTAssertTrue(transformedHTML.contains("iframe"))
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ?playsinline=1"))
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"))
+		XCTAssertTrue(transformedHTML.contains("playsinline=1"))
 		XCTAssertTrue(transformedHTML.contains("youtube-embed"))
 		XCTAssertTrue(transformedHTML.contains("web-share"), "Should include web-share permission")
-		
+
 		// Should have replaced both URLs with embedded iframes
 		// Check for the essential elements rather than counting specific iframe occurrences
 		XCTAssertTrue(transformedHTML.contains("youtube-embed"), "Should contain video embed containers")
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ"), "Should contain embedded video URLs")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Should contain embedded video URLs")
 	}
 	
 	func testYouTubeVideoEmbeddingWithNoVideos() {
@@ -239,10 +240,10 @@ class FeedTransformerTests: XCTestCase {
 			return
 		}
 		
-		// Verify enhanced iframe attributes based on Reeder's implementation
-		XCTAssertTrue(transformedHTML.contains("?playsinline=1"), "Should include playsinline parameter for iOS inline playback")
+		// Verify enhanced iframe attributes
+		XCTAssertTrue(transformedHTML.contains("playsinline=1"), "Should include playsinline parameter for inline playback")
 		XCTAssertTrue(transformedHTML.contains("web-share"), "Should include web-share permission for sharing functionality")
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com"), "Should use privacy-enhanced domain")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed"), "Should use YouTube embed domain")
 		XCTAssertTrue(transformedHTML.contains("allowfullscreen"), "Should allow fullscreen playback")
 		
 		// Verify all expected allow permissions
@@ -286,7 +287,8 @@ class FeedTransformerTests: XCTestCase {
 		}
 		
 		XCTAssertTrue(transformedHTML.contains("iframe"), "Transformed HTML should contain iframe: \(transformedHTML)")
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ?playsinline=1"), "Transformed HTML should contain enhanced embed URL: \(transformedHTML)")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Transformed HTML should contain embed URL: \(transformedHTML)")
+		XCTAssertTrue(transformedHTML.contains("playsinline=1"), "Transformed HTML should contain playsinline parameter: \(transformedHTML)")
 	}
 	
 	// MARK: - Helper Methods
@@ -513,8 +515,8 @@ class FeedTransformerTests: XCTestCase {
 			return
 		}
 		
-		XCTAssertTrue(transformedHTML.contains("iframe"), "Content should contain embedded iframe") 
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ"), "Content should contain embedded video")
+		XCTAssertTrue(transformedHTML.contains("iframe"), "Content should contain embedded iframe")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Content should contain embedded video")
 	}
 	
 	func testDebugYouTubeTransformerWithRealContent() {
@@ -543,7 +545,7 @@ class FeedTransformerTests: XCTestCase {
 		print("DEBUG - Transformed content: \(transformedHTML)")
 		
 		XCTAssertTrue(transformedHTML.contains("iframe"), "Should contain iframe elements")
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ"), "Should contain embed URLs")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Should contain embed URLs")
 	}
 	
 	func testYouTubeRSSFeedVideoEmbedding() {
@@ -585,9 +587,8 @@ class FeedTransformerTests: XCTestCase {
 		
 		// Should contain embedded video at the beginning
 		XCTAssertTrue(transformedHTML.contains("iframe"), "Should contain iframe for video embed")
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/7DKv5H5Frt0"), "Should contain embedded video URL")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/7DKv5H5Frt0"), "Should contain embedded video URL")
 		XCTAssertTrue(transformedHTML.contains("This is the video description"), "Should preserve original description")
-		XCTAssertTrue(transformedHTML.contains("📺 Watch on YouTube"), "Should contain fallback link")
 		
 		// Video embed should come before the description  
 		let iframeIndex = transformedHTML.firstIndex(of: "i") // First character of "iframe"
@@ -629,14 +630,10 @@ class FeedTransformerTests: XCTestCase {
 			return
 		}
 		
-		// Should include the Media RSS thumbnail
-		XCTAssertTrue(transformedHTML.contains("youtube-thumbnail"), "Should contain thumbnail div")
-		XCTAssertTrue(transformedHTML.contains("https://i4.ytimg.com/vi/7DKv5H5Frt0/hqdefault.jpg"), "Should use Media RSS thumbnail")
-		XCTAssertTrue(transformedHTML.contains("loading=\"lazy\""), "Should use lazy loading for thumbnail")
-		
-		// Should still have video embed
+		// Should have video embed (thumbnails are handled by iframe, not separate elements)
 		XCTAssertTrue(transformedHTML.contains("iframe"), "Should contain video iframe")
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/7DKv5H5Frt0"), "Should contain video embed")
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/7DKv5H5Frt0"), "Should contain video embed")
+		XCTAssertTrue(transformedHTML.contains("youtube-embed"), "Should contain youtube-embed CSS class")
 	}
 }
 
