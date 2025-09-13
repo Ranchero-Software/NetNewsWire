@@ -205,10 +205,11 @@ class FeedTransformerTests: XCTestCase {
 			return
 		}
 		
-		// Should contain embedded iframe
+		// Should contain embedded iframe with enhanced attributes
 		XCTAssertTrue(transformedHTML.contains("iframe"))
-		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ"))
+		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ?playsinline=1"))
 		XCTAssertTrue(transformedHTML.contains("youtube-embed"))
+		XCTAssertTrue(transformedHTML.contains("web-share"), "Should include web-share permission")
 		
 		// Should have replaced both URLs with embedded iframes
 		// Check for the essential elements rather than counting specific iframe occurrences
@@ -225,6 +226,30 @@ class FeedTransformerTests: XCTestCase {
 		
 		// Content should remain unchanged
 		XCTAssertEqual(transformedItem.contentHTML, contentWithoutVideo)
+	}
+	
+	func testYouTubeEmbedAttributesFollowReederBestPractices() {
+		let transformer = YouTubeFeedTransformer()
+		
+		let testItem = createTestParsedItemWithURL("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+		let transformedItem = transformer.transformItem(testItem)
+		
+		guard let transformedHTML = transformedItem.contentHTML else {
+			XCTFail("Transformed item should have content HTML")
+			return
+		}
+		
+		// Verify enhanced iframe attributes based on Reeder's implementation
+		XCTAssertTrue(transformedHTML.contains("?playsinline=1"), "Should include playsinline parameter for iOS inline playback")
+		XCTAssertTrue(transformedHTML.contains("web-share"), "Should include web-share permission for sharing functionality")
+		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com"), "Should use privacy-enhanced domain")
+		XCTAssertTrue(transformedHTML.contains("allowfullscreen"), "Should allow fullscreen playback")
+		
+		// Verify all expected allow permissions
+		let allowPermissions = ["accelerometer", "autoplay", "clipboard-write", "encrypted-media", "gyroscope", "picture-in-picture", "web-share"]
+		for permission in allowPermissions {
+			XCTAssertTrue(transformedHTML.contains(permission), "Should include \(permission) permission")
+		}
 	}
 	
 	func testYouTubeVideoEmbeddingWithNilContent() {
@@ -261,7 +286,7 @@ class FeedTransformerTests: XCTestCase {
 		}
 		
 		XCTAssertTrue(transformedHTML.contains("iframe"), "Transformed HTML should contain iframe: \(transformedHTML)")
-		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Transformed HTML should contain embed URL: \(transformedHTML)")
+		XCTAssertTrue(transformedHTML.contains("youtube-nocookie.com/embed/dQw4w9WgXcQ?playsinline=1"), "Transformed HTML should contain enhanced embed URL: \(transformedHTML)")
 	}
 	
 	// MARK: - Helper Methods
@@ -294,6 +319,28 @@ class FeedTransformerTests: XCTestCase {
 			title: "Test Item",
 			language: nil,
 			contentHTML: contentHTML,
+			contentText: nil,
+			summary: nil,
+			imageURL: nil,
+			bannerImageURL: nil,
+			datePublished: Date(),
+			dateModified: nil,
+			authors: nil,
+			tags: nil,
+			attachments: nil
+		)
+	}
+	
+	private func createTestParsedItemWithURL(_ itemURL: String) -> ParsedItem {
+		return ParsedItem(
+			syncServiceID: nil,
+			uniqueID: "test-item-\(UUID().uuidString)",
+			feedURL: "https://example.com/feed",
+			url: itemURL,
+			externalURL: nil,
+			title: "Test Item",
+			language: nil,
+			contentHTML: "",
 			contentText: nil,
 			summary: nil,
 			imageURL: nil,

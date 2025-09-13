@@ -23,6 +23,7 @@ public final class FeedTransformerRegistry {
 	/// Registers a new feed transformer
 	/// - Parameter transformer: The transformer to register
 	public func register(_ transformer: FeedTransformer) {
+		print("🔧 FeedTransformerRegistry: Registering transformer '\(transformer.identifier)' with priority \(transformer.priority)")
 		queue.async {
 			// Remove any existing transformer with the same identifier
 			self.transformers.removeAll { $0.identifier == transformer.identifier }
@@ -30,6 +31,8 @@ public final class FeedTransformerRegistry {
 			// Add the new transformer and sort by priority (highest first)
 			self.transformers.append(transformer)
 			self.transformers.sort { $0.priority > $1.priority }
+			
+			print("🔧 FeedTransformerRegistry: Now have \(self.transformers.count) registered transformers")
 		}
 	}
 	
@@ -63,11 +66,14 @@ public final class FeedTransformerRegistry {
 	///   - feedURL: The feed URL for determining applicable transformers
 	/// - Returns: The transformed parsed feed
 	public func transform(_ parsedFeed: ParsedFeed, feedURL: String) -> ParsedFeed {
+		print("🔧 FeedTransformerRegistry: transform() called for feedURL: \(feedURL) with \(transformers.count) registered transformers")
 		return queue.sync {
 			var result = parsedFeed
 			
 			for transformer in transformers {
+				print("🔧 FeedTransformerRegistry: checking transformer '\(transformer.identifier)'")
 				if transformer.applies(to: feedURL) {
+					print("🔧 FeedTransformerRegistry: applying transformer '\(transformer.identifier)'")
 					result = transformer.transform(result)
 				}
 			}
