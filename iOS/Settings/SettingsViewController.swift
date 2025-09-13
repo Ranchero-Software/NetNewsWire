@@ -25,6 +25,7 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
 	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
+	@IBOutlet weak var enableJavaScriptSwitch: UISwitch!
 	
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
@@ -81,6 +82,12 @@ class SettingsViewController: UITableViewController {
 			showFullscreenArticlesSwitch.isOn = false
 		}
 		
+		if AppDefaults.shared.isArticleContentJavascriptEnabled {
+			enableJavaScriptSwitch.isOn = true
+		} else {
+			enableJavaScriptSwitch.isOn = false
+		}
+		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 		
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
@@ -125,7 +132,7 @@ class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case 4:
-			return traitCollection.userInterfaceIdiom == .phone ? 4 : 3
+			return traitCollection.userInterfaceIdiom == .phone ? 5 : 4
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -307,6 +314,10 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.useSystemBrowser = true
 		}
 	}
+	
+	@IBAction func switchJavaScriptPreference(_ sender: Any) {
+		AppDefaults.shared.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
+ 	}
 	
 	
 	// MARK: Notifications
