@@ -82,10 +82,10 @@ class SettingsViewController: UITableViewController {
 			showFullscreenArticlesSwitch.isOn = false
 		}
 		
-		if AppDefaults.shared.disableJavaScript {
-			enableJavaScriptSwitch.isOn = false
-		} else {
+		if AppDefaults.shared.isArticleContentJavascriptEnabled {
 			enableJavaScriptSwitch.isOn = true
+		} else {
+			enableJavaScriptSwitch.isOn = false
 		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
@@ -316,11 +316,7 @@ class SettingsViewController: UITableViewController {
 	}
 	
 	@IBAction func switchJavaScriptPreference(_ sender: Any) {
-		if enableJavaScriptSwitch.isOn {
-			AppDefaults.shared.disableJavaScript = false
-		} else {
-			AppDefaults.shared.disableJavaScript = true
-		}
+		AppDefaults.shared.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
  	}
 	
 	

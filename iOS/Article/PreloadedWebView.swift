@@ -20,7 +20,7 @@ class PreloadedWebView: WKWebView {
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = !AppDefaults.shared.disableJavaScript
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 		configuration.allowsInlineMediaPlayback = true
 		configuration.mediaTypesRequiringUserActionForPlayback = .audio
@@ -49,7 +49,7 @@ class PreloadedWebView: WKWebView {
 	}
 	
 	@objc func userDefaultsDidChange(_ sender: Any) {
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = !AppDefaults.shared.disableJavaScript
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		reload()
 	}
  

@@ -57,7 +57,7 @@ final class AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
-		static let disableJavaScript = "disableJavaScript"
+		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -190,12 +190,12 @@ final class AppDefaults {
 		}
 	}
 	
-	var disableJavaScript: Bool {
+	var isArticleContentJavascriptEnabled: Bool {
 		get {
-			return AppDefaults.bool(for: Key.disableJavaScript)
+			return AppDefaults.bool(for: Key.articleContentJavascriptEnabled)
 		}
 		set {
-			AppDefaults.setBool(for: Key.disableJavaScript, newValue)
+			AppDefaults.setBool(for: Key.articleContentJavascriptEnabled, newValue)
 		}
 	}
 	
@@ -246,6 +246,7 @@ final class AppDefaults {
 										Key.articleFullscreenAvailable: false,
 										Key.articleFullscreenEnabled: false,
 										Key.confirmMarkAllAsRead: true,
+										Key.articleContentJavascriptEnabled: true,
 										Key.currentThemeName: Self.defaultThemeName]
 		AppDefaults.store.register(defaults: defaults)
 	}
