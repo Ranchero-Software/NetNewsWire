@@ -405,7 +405,6 @@ class FeedTransformerTests: XCTestCase {
 		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/kNry0bf7eC0"))
 		XCTAssertTrue(transformedHTML.contains("youtube-embed"))
 		
-		print("🎬 YouTube Shorts embedding result: \(transformedHTML)")
 	}
 	
 	func testYouTubeShortsInContentHTML() {
@@ -430,7 +429,6 @@ class FeedTransformerTests: XCTestCase {
 		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/kNry0bf7eC0"))
 		XCTAssertTrue(transformedHTML.contains("youtube-embed"))
 		
-		print("🎬 YouTube Shorts in content embedding result: \(transformedHTML)")
 	}
 	
 	func testInitialFeedCreationAppliesTransformers() {
@@ -496,8 +494,6 @@ class FeedTransformerTests: XCTestCase {
 		XCTAssertTrue(contentHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Should contain embedded YouTube URL")
 		XCTAssertTrue(contentHTML.contains("youtube-embed"), "Should contain youtube-embed CSS class")
 		
-		print("✅ Initial feed creation transformer test passed")
-		print("🎬 Transformed content: \(contentHTML)")
 	}
 	
 	func testLocalAccountRefresherTransformation() {

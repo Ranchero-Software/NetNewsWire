@@ -41,11 +41,8 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 		let lowercaseURL = feedURL.lowercased()
 		
 		// Check if it's already a YouTube feed URL or a channel/user page
-		let applies = Self.channelPatterns.contains { lowercaseURL.contains($0) } ||
-					  Self.feedPatterns.contains { lowercaseURL.contains($0) }
-		
-		print("🎬 YouTubeFeedTransformer.applies(to: \"\(feedURL)\") = \(applies)")
-		return applies
+		return Self.channelPatterns.contains { lowercaseURL.contains($0) } ||
+			   Self.feedPatterns.contains { lowercaseURL.contains($0) }
 	}
 	
 	public func correctFeedURL(_ feedURL: String) -> String? {
@@ -63,8 +60,6 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	}
 	
 	public func transform(_ parsedFeed: ParsedFeed) -> ParsedFeed {
-		print("🎬 YouTubeFeedTransformer: transforming feed '\(parsedFeed.title ?? "No title")' with \(parsedFeed.items.count) items")
-		print("🎬 Feed URL: \(parsedFeed.feedURL ?? "No URL")")
 		let transformedItems = Set(parsedFeed.items.map { transformItem($0) })
 		
 		return ParsedFeed(
@@ -102,22 +97,13 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	}
 	
 	internal func transformItem(_ item: ParsedItem) -> ParsedItem {
-		print("🎬 YouTubeFeedTransformer.transformItem() called for item: \(item.title ?? "No title")")
-		print("🎬 Item URL: \(item.url ?? "No URL")")
-		print("🎬 Item contentHTML length: \(item.contentHTML?.count ?? 0)")
-		
 		// Check if the item URL is a YouTube video URL
 		if let itemURL = item.url,
 		   let videoID = extractVideoIDFromURL(itemURL) {
-			print("🎬 Found YouTube video: \(videoID) from URL: \(itemURL)")
 			// For YouTube RSS feeds, embed the video based on the item URL
 			let videoEmbed = createVideoEmbedHTML(videoID: videoID, item: item)
 			let existingContent = item.contentHTML ?? ""
 			let transformedHTML = existingContent.isEmpty ? videoEmbed : videoEmbed + "\n\n" + existingContent
-			
-			print("🎬 Generated video embed HTML length: \(videoEmbed.count)")
-			print("🎬 Final transformed HTML length: \(transformedHTML.count)")
-			print("🎬 First 200 chars of transformed HTML: \(String(transformedHTML.prefix(200)))")
 			
 			return ParsedItem(
 				syncServiceID: item.syncServiceID,
@@ -139,12 +125,8 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 				attachments: item.attachments
 			)
 		} else if let contentHTML = item.contentHTML {
-			print("🎬 Checking content HTML for YouTube URLs...")
 			// Fall back to transforming YouTube URLs in the content (for other feed types)
 			let transformedHTML = embedYouTubeVideos(in: contentHTML)
-			if transformedHTML != contentHTML {
-				print("🎬 Found and transformed YouTube URLs in content")
-			}
 			
 			return ParsedItem(
 				syncServiceID: item.syncServiceID,

@@ -122,9 +122,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
 		
 		// Register feed transformers
-		print("🚀 AppDelegate: Registering YouTubeFeedTransformer")
 		FeedTransformerRegistry.shared.register(YouTubeFeedTransformer())
-		print("🚀 AppDelegate: YouTubeFeedTransformer registration completed")
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)

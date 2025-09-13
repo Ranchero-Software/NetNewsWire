@@ -111,9 +111,7 @@ final class DetailWebViewController: NSViewController {
 		
 		#if os(iOS)
 		configuration.allowsInlineMediaPlayback = true  // Enable inline video playback (iOS only)
-		print("🔧 WKWebView: Configured like successful YouTube libraries - allowsInlineMediaPlayback=true, no user action required")
 		#else
-		print("🔧 WKWebView: Configured like successful YouTube libraries - no user action required for media playback")
 		#endif
 
 		let userContentController = WKUserContentController()
@@ -531,7 +529,6 @@ private extension DetailWebViewController {
 		var finalBaseURL = URL(string: rendering.baseURL)
 		if html.contains("youtube.com/embed") || html.contains("youtube-nocookie.com/embed") {
 			finalBaseURL = URL(string: "https://netnewswire.com/")
-			print("🔧 Using HTTPS base URL for YouTube compatibility: https://netnewswire.com/")
 		}
 		
 		webView.loadHTMLString(html, baseURL: finalBaseURL)
