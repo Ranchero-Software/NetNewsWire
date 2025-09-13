@@ -388,6 +388,51 @@ class FeedTransformerTests: XCTestCase {
 		XCTAssertEqual(correctedURL, expectedCorrectedURL, "Registry should correct YouTube channel URLs")
 	}
 	
+	func testYouTubeShortsVideoEmbedding() {
+		let transformer = YouTubeFeedTransformer()
+		
+		// Test with YouTube Shorts URL
+		let testItem = createTestParsedItemWithURL("https://www.youtube.com/shorts/kNry0bf7eC0")
+		let transformedItem = transformer.transformItem(testItem)
+		
+		guard let transformedHTML = transformedItem.contentHTML else {
+			XCTFail("Transformed item should have content HTML")
+			return
+		}
+		
+		// Should contain embedded iframe
+		XCTAssertTrue(transformedHTML.contains("iframe"))
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/kNry0bf7eC0"))
+		XCTAssertTrue(transformedHTML.contains("youtube-embed"))
+		
+		print("🎬 YouTube Shorts embedding result: \(transformedHTML)")
+	}
+	
+	func testYouTubeShortsInContentHTML() {
+		let transformer = YouTubeFeedTransformer()
+		
+		let contentWithShorts = """
+		<p>Check out this awesome short video:</p>
+		<a href="https://www.youtube.com/shorts/kNry0bf7eC0">YouTube Short</a>
+		<p>And some other content.</p>
+		"""
+		
+		let testItem = createTestParsedItem(contentHTML: contentWithShorts)
+		let transformedItem = transformer.transformItem(testItem)
+		
+		guard let transformedHTML = transformedItem.contentHTML else {
+			XCTFail("Transformed item should have content HTML")
+			return
+		}
+		
+		// Should contain embedded iframe
+		XCTAssertTrue(transformedHTML.contains("iframe"))
+		XCTAssertTrue(transformedHTML.contains("youtube.com/embed/kNry0bf7eC0"))
+		XCTAssertTrue(transformedHTML.contains("youtube-embed"))
+		
+		print("🎬 YouTube Shorts in content embedding result: \(transformedHTML)")
+	}
+	
 	func testLocalAccountRefresherTransformation() {
 		// Test that the transformer registry correctly transforms feed content
 		let transformer = YouTubeFeedTransformer()

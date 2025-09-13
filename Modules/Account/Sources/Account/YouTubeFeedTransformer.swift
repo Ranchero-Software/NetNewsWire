@@ -178,7 +178,9 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 			"www\\.youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
 			"youtu\\.be/([A-Za-z0-9_-]{11})",
 			"youtube\\.com/embed/([A-Za-z0-9_-]{11})",
-			"www\\.youtube\\.com/embed/([A-Za-z0-9_-]{11})"
+			"www\\.youtube\\.com/embed/([A-Za-z0-9_-]{11})",
+			"youtube\\.com/shorts/([A-Za-z0-9_-]{11})",
+			"www\\.youtube\\.com/shorts/([A-Za-z0-9_-]{11})"
 		]
 		
 		for pattern in patterns {
@@ -243,7 +245,9 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 			"https://www\\.youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
 			"https://youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
 			"https://youtu\\.be/([A-Za-z0-9_-]{11})",
-			"https://www\\.youtube\\.com/embed/([A-Za-z0-9_-]{11})"
+			"https://www\\.youtube\\.com/embed/([A-Za-z0-9_-]{11})",
+			"https://www\\.youtube\\.com/shorts/([A-Za-z0-9_-]{11})",
+			"https://youtube\\.com/shorts/([A-Za-z0-9_-]{11})"
 		]
 		
 		var result = html
