@@ -263,9 +263,6 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	}
 	
 	private func createVideoEmbedHTML(videoID: String, item: ParsedItem? = nil) -> String {
-		// Try to get thumbnail from imageURL (Media RSS thumbnail)
-		let thumbnailHTML = createThumbnailHTML(videoID: videoID, item: item)
-		
 		// Try different parameters to work around CSP issues
 		let embedParams = [
 			"html5=1",           // Force HTML5 player
@@ -280,7 +277,6 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 		].joined(separator: "&")
 		
 		return """
-		\(thumbnailHTML)
 		<div class="youtube-embed" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 1em 0;">
 			<iframe 
 				src="https://www.youtube.com/embed/\(videoID)?\(embedParams)" 
@@ -292,28 +288,7 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 				referrerpolicy="no-referrer-when-downgrade">
 			</iframe>
 		</div>
-		<p style="margin-top: 0.5em;">
-			<a href="https://www.youtube.com/watch?v=\(videoID)" target="_blank">📺 Watch on YouTube</a>
-		</p>
 		"""
 	}
 	
-	private func createThumbnailHTML(videoID: String, item: ParsedItem?) -> String {
-		// Use imageURL from RSS if available (this is typically the Media RSS thumbnail)
-		if let thumbnailURL = item?.imageURL {
-			return """
-			<div class="youtube-thumbnail" style="margin-bottom: 1em;">
-				<img src="\(thumbnailURL)" alt="Video thumbnail" style="max-width: 100%; height: auto;" loading="lazy">
-			</div>
-			"""
-		}
-		
-		// Fallback to YouTube's default thumbnail
-		let thumbnailURL = "https://i.ytimg.com/vi/\(videoID)/hqdefault.jpg"
-		return """
-		<div class="youtube-thumbnail" style="margin-bottom: 1em;">
-			<img src="\(thumbnailURL)" alt="Video thumbnail" style="max-width: 100%; height: auto;" loading="lazy">
-		</div>
-		"""
-	}
 }
