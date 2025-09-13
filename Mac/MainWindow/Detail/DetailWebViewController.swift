@@ -358,15 +358,7 @@ private extension DetailWebViewController {
 		
 		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
-		
-		// Use HTTPS base URL for YouTube video compatibility
-		// YouTube blocks embeds from non-HTTPS origins
-		var finalBaseURL = URL(string: rendering.baseURL)
-		if html.contains("youtube.com/embed") || html.contains("youtube-nocookie.com/embed") {
-			finalBaseURL = URL(string: "https://netnewswire.com/")
-		}
-		
-		webView.loadHTMLString(html, baseURL: finalBaseURL)
+		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 
 	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
