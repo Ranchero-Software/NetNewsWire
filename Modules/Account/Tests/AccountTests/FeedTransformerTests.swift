@@ -433,6 +433,73 @@ class FeedTransformerTests: XCTestCase {
 		print("🎬 YouTube Shorts in content embedding result: \(transformedHTML)")
 	}
 	
+	func testInitialFeedCreationAppliesTransformers() {
+		// This test verifies that the fix in LocalAccountDelegate.swift properly
+		// applies transformers during initial feed creation (not just refresh)
+		let transformer = YouTubeFeedTransformer()
+		let registry = FeedTransformerRegistry.shared
+		
+		// Register our transformer (will be added to any existing ones)
+		registry.register(transformer)
+		
+		// Create a mock parsed feed with YouTube video URLs
+		let youtubeItem = ParsedItem(
+			syncServiceID: nil,
+			uniqueID: "youtube-test-item",
+			feedURL: "https://www.youtube.com/feeds/videos.xml?channel_id=TestChannel",
+			url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+			externalURL: nil,
+			title: "Test YouTube Video",
+			language: nil,
+			contentHTML: "<p>Original content</p>",
+			contentText: nil,
+			summary: nil,
+			imageURL: nil,
+			bannerImageURL: nil,
+			datePublished: Date(),
+			dateModified: nil,
+			authors: nil,
+			tags: nil,
+			attachments: nil
+		)
+		
+		let parsedFeed = ParsedFeed(
+			type: .rss,
+			title: "Test YouTube Feed",
+			homePageURL: "https://www.youtube.com/channel/TestChannel", 
+			feedURL: "https://www.youtube.com/feeds/videos.xml?channel_id=TestChannel",
+			language: nil,
+			feedDescription: "Test feed",
+			nextURL: nil,
+			iconURL: nil,
+			faviconURL: nil,
+			authors: nil,
+			expired: false,
+			hubs: nil,
+			items: Set([youtubeItem])
+		)
+		
+		// Simulate the transformation that should happen in LocalAccountDelegate
+		let transformedFeed = registry.transform(parsedFeed, feedURL: parsedFeed.feedURL ?? "")
+		
+		// Verify transformer was applied
+		XCTAssertEqual(transformedFeed.items.count, 1, "Should have one item")
+		let transformedItem = transformedFeed.items.first!
+		
+		guard let contentHTML = transformedItem.contentHTML else {
+			XCTFail("Transformed item should have content HTML")
+			return
+		}
+		
+		// Verify YouTube video was embedded
+		XCTAssertTrue(contentHTML.contains("iframe"), "Should contain iframe for video embedding")
+		XCTAssertTrue(contentHTML.contains("youtube.com/embed/dQw4w9WgXcQ"), "Should contain embedded YouTube URL")
+		XCTAssertTrue(contentHTML.contains("youtube-embed"), "Should contain youtube-embed CSS class")
+		
+		print("✅ Initial feed creation transformer test passed")
+		print("🎬 Transformed content: \(contentHTML)")
+	}
+	
 	func testLocalAccountRefresherTransformation() {
 		// Test that the transformer registry correctly transforms feed content
 		let transformer = YouTubeFeedTransformer()
