@@ -2,9 +2,6 @@
 //  YouTubeFeedTransformer.swift
 //  Account
 //
-//  Created by Claude on 9/7/25.
-//  Copyright © 2025 Ranchero Software, LLC. All rights reserved.
-//
 
 import Foundation
 import RSParser
