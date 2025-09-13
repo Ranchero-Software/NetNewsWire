@@ -118,136 +118,6 @@ final class DetailWebViewController: NSViewController {
 		userContentController.add(self, name: MessageName.windowDidScroll)
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
-		userContentController.add(self, name: "consoleLog")
-		
-		// Add Trusted Types policy and debugging script for YouTube issues  
-		let consoleScript = WKUserScript(source: """
-			// Create a trusted types policy to handle CSP requirement
-			if (window.trustedTypes && window.trustedTypes.createPolicy) {
-				try {
-					window.trustedTypes.createPolicy('default', {
-						createHTML: (string) => string,
-						createScript: (string) => string,
-						createScriptURL: (string) => string
-					});
-					window.webkit.messageHandlers.consoleLog.postMessage('TRUSTED TYPES: Created default policy');
-				} catch (e) {
-					// Policy might already exist, try creating a fallback one
-					try {
-						window.trustedTypes.createPolicy('youtube-fallback', {
-							createHTML: (string) => string,
-							createScript: (string) => string,
-							createScriptURL: (string) => string
-						});
-						window.webkit.messageHandlers.consoleLog.postMessage('TRUSTED TYPES: Created youtube-fallback policy');
-					} catch (e2) {
-						window.webkit.messageHandlers.consoleLog.postMessage('TRUSTED TYPES ERROR: ' + e2.message);
-					}
-				}
-			}
-			
-			// Override console.log, console.error, console.warn to capture YouTube debugging info
-			(function() {
-				const originalLog = console.log;
-				const originalError = console.error;
-				const originalWarn = console.warn;
-				
-				console.log = function(...args) {
-					window.webkit.messageHandlers.consoleLog.postMessage('LOG: ' + args.join(' '));
-					originalLog.apply(console, arguments);
-				};
-				
-				console.error = function(...args) {
-					window.webkit.messageHandlers.consoleLog.postMessage('ERROR: ' + args.join(' '));
-					originalError.apply(console, arguments);
-				};
-				
-				console.warn = function(...args) {
-					window.webkit.messageHandlers.consoleLog.postMessage('WARN: ' + args.join(' '));
-					originalWarn.apply(console, arguments);
-				};
-				
-				// Capture all unhandled errors
-				window.addEventListener('error', function(e) {
-					window.webkit.messageHandlers.consoleLog.postMessage('WINDOW ERROR: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
-				});
-				
-				// Enhanced iframe monitoring
-				function monitorIframe(iframe) {
-					window.webkit.messageHandlers.consoleLog.postMessage('IFRAME FOUND: ' + iframe.src);
-					
-					iframe.addEventListener('load', function(e) {
-						window.webkit.messageHandlers.consoleLog.postMessage('IFRAME LOADED: ' + iframe.src);
-						
-						// Try to inspect iframe content after load
-						setTimeout(function() {
-							try {
-								// Check if iframe has dimensions
-								const rect = iframe.getBoundingClientRect();
-								window.webkit.messageHandlers.consoleLog.postMessage('IFRAME DIMENSIONS: ' + rect.width + 'x' + rect.height);
-								
-								// Look for error text in the page
-								const errorElements = document.querySelectorAll('[class*="error"], [id*="error"]');
-								if (errorElements.length > 0) {
-									errorElements.forEach(el => {
-										if (el.textContent.includes('Error code')) {
-											window.webkit.messageHandlers.consoleLog.postMessage('ERROR ELEMENT FOUND: ' + el.textContent);
-										}
-									});
-								}
-								
-								// Check for any text containing "Error code"
-								const allText = document.body.innerText || document.body.textContent || '';
-								if (allText.includes('Error code')) {
-									window.webkit.messageHandlers.consoleLog.postMessage('ERROR IN PAGE TEXT: Found "Error code" in page content');
-								}
-								
-							} catch (err) {
-								window.webkit.messageHandlers.consoleLog.postMessage('IFRAME INSPECTION ERROR: ' + err.message);
-							}
-						}, 2000);
-					});
-					
-					iframe.addEventListener('error', function(e) {
-						window.webkit.messageHandlers.consoleLog.postMessage('IFRAME ERROR EVENT: ' + iframe.src);
-					});
-				}
-				
-				// Monitor existing iframes and future ones
-				document.addEventListener('DOMContentLoaded', function() {
-					window.webkit.messageHandlers.consoleLog.postMessage('DOM LOADED - checking for iframes');
-					const iframes = document.querySelectorAll('iframe[src*="youtube"]');
-					window.webkit.messageHandlers.consoleLog.postMessage('FOUND ' + iframes.length + ' YOUTUBE IFRAMES');
-					iframes.forEach(monitorIframe);
-					
-					// Watch for dynamically added iframes
-					const observer = new MutationObserver(function(mutations) {
-						mutations.forEach(function(mutation) {
-							mutation.addedNodes.forEach(function(node) {
-								if (node.nodeType === 1) { // Element node
-									if (node.tagName === 'IFRAME' && node.src && node.src.includes('youtube')) {
-										window.webkit.messageHandlers.consoleLog.postMessage('DYNAMIC IFRAME ADDED: ' + node.src);
-										monitorIframe(node);
-									}
-									// Check child iframes too
-									const childIframes = node.querySelectorAll && node.querySelectorAll('iframe[src*="youtube"]');
-									if (childIframes) {
-										childIframes.forEach(monitorIframe);
-									}
-								}
-							});
-						});
-					});
-					
-					observer.observe(document.body, {
-						childList: true,
-						subtree: true
-					});
-				});
-			})();
-		""", injectionTime: .atDocumentStart, forMainFrameOnly: false)
-		
-		userContentController.addUserScript(consoleScript)
 		
 		for script in Self.userScripts {
 			userContentController.addUserScript(script)
@@ -362,8 +232,6 @@ extension DetailWebViewController: WKScriptMessageHandler {
 			delegate?.mouseDidEnter(self, link: link)
 		} else if message.name == MessageName.mouseDidExit {
 			delegate?.mouseDidExit(self)
-		} else if message.name == "consoleLog", let logMessage = message.body as? String {
-			print("🔍 JavaScript Console: \(logMessage)")
 		}
 	}
 }
@@ -413,46 +281,15 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 	}
 	
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-		let url = navigationResponse.response.url?.absoluteString ?? "unknown"
-		
-		// Debug YouTube-related requests
-		if url.contains("youtube") || url.contains("ytimg") {
-			print("🔍 HTTP Response for \(url):")
-			
-			if let httpResponse = navigationResponse.response as? HTTPURLResponse {
-				print("🔍 Status Code: \(httpResponse.statusCode)")
-				print("🔍 Headers:")
-				for (key, value) in httpResponse.allHeaderFields {
-					if let key = key as? String {
-						print("🔍   \(key): \(value)")
-					}
-				}
-				
-				// Check for frame-related headers
-				if let frameOptions = httpResponse.allHeaderFields["X-Frame-Options"] as? String {
-					print("🔍 ⚠️ X-Frame-Options: \(frameOptions)")
-				}
-				if let csp = httpResponse.allHeaderFields["Content-Security-Policy"] as? String {
-					print("🔍 ⚠️ Content-Security-Policy: \(csp)")
-				}
-			}
-		}
-		
 		decisionHandler(.allow)
 	}
-	
+
 	public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-		if let url = webView.url?.absoluteString, url.contains("youtube") {
-			print("🔍 ❌ Navigation failed for YouTube URL: \(url)")
-			print("🔍 ❌ Error: \(error.localizedDescription)")
-		}
+		// Handle navigation failures if needed
 	}
-	
+
 	public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-		if let url = webView.url?.absoluteString, url.contains("youtube") {
-			print("🔍 ❌ Provisional navigation failed for YouTube URL: \(url)")
-			print("🔍 ❌ Error: \(error.localizedDescription)")
-		}
+		// Handle provisional navigation failures if needed
 	}
 
 	// WKUIDelegate

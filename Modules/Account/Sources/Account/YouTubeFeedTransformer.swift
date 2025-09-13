@@ -12,9 +12,14 @@ import RSCore
 
 /// Transformer for YouTube feeds that adds inline video embedding
 public final class YouTubeFeedTransformer: FeedTransformer {
-	
+
 	public var priority: Int { return 100 } // High priority for YouTube feeds
 	public var identifier: String { return "YouTubeFeedTransformer" }
+
+	// Constants
+	private static let videoIDLength = 11
+	private static let embedAspectRatio = "56.25%" // 16:9 aspect ratio
+	private static let embedMargin = "1em 0"
 	
 	// YouTube URL patterns
 	private static let channelPatterns = [
@@ -31,6 +36,41 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	private static let feedPatterns = [
 		"youtube.com/feeds/",
 		"www.youtube.com/feeds/"
+	]
+
+	// Consolidated YouTube URL patterns with video ID capture group
+	private static let videoIDPatterns = [
+		"youtube\\.com/watch\\?v=([A-Za-z0-9_-]{\(videoIDLength)})",
+		"www\\.youtube\\.com/watch\\?v=([A-Za-z0-9_-]{\(videoIDLength)})",
+		"youtu\\.be/([A-Za-z0-9_-]{\(videoIDLength)})",
+		"youtube\\.com/embed/([A-Za-z0-9_-]{\(videoIDLength)})",
+		"www\\.youtube\\.com/embed/([A-Za-z0-9_-]{\(videoIDLength)})",
+		"youtube\\.com/shorts/([A-Za-z0-9_-]{\(videoIDLength)})",
+		"www\\.youtube\\.com/shorts/([A-Za-z0-9_-]{\(videoIDLength)})"
+	]
+
+	// Patterns for matching full HTTPS URLs (used in content replacement)
+	private static let fullURLVideoIDPatterns = [
+		"https://www\\.youtube\\.com/watch\\?v=([A-Za-z0-9_-]{\(videoIDLength)})",
+		"https://youtube\\.com/watch\\?v=([A-Za-z0-9_-]{\(videoIDLength)})",
+		"https://youtu\\.be/([A-Za-z0-9_-]{\(videoIDLength)})",
+		"https://www\\.youtube\\.com/embed/([A-Za-z0-9_-]{\(videoIDLength)})",
+		"https://www\\.youtube\\.com/shorts/([A-Za-z0-9_-]{\(videoIDLength)})",
+		"https://youtube\\.com/shorts/([A-Za-z0-9_-]{\(videoIDLength)})"
+	]
+
+	private static let channelIDPatterns = [
+		"youtube\\.com/channel/([A-Za-z0-9_-]+)",
+		"www\\.youtube\\.com/channel/([A-Za-z0-9_-]+)"
+	]
+
+	private static let usernamePatterns = [
+		"youtube\\.com/@([A-Za-z0-9_.-]+)",
+		"www\\.youtube\\.com/@([A-Za-z0-9_.-]+)",
+		"youtube\\.com/user/([A-Za-z0-9_.-]+)",
+		"www\\.youtube\\.com/user/([A-Za-z0-9_.-]+)",
+		"youtube\\.com/c/([A-Za-z0-9_-]+)",
+		"www\\.youtube\\.com/c/([A-Za-z0-9_-]+)"
 	]
 	
 	public init() {}
@@ -104,137 +144,77 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 			let videoEmbed = createVideoEmbedHTML(videoID: videoID, item: item)
 			let existingContent = item.contentHTML ?? ""
 			let transformedHTML = existingContent.isEmpty ? videoEmbed : videoEmbed + "\n\n" + existingContent
-			
-			return ParsedItem(
-				syncServiceID: item.syncServiceID,
-				uniqueID: item.uniqueID,
-				feedURL: item.feedURL,
-				url: item.url,
-				externalURL: item.externalURL,
-				title: item.title,
-				language: item.language,
-				contentHTML: transformedHTML,
-				contentText: item.contentText,
-				summary: item.summary,
-				imageURL: item.imageURL,
-				bannerImageURL: item.bannerImageURL,
-				datePublished: item.datePublished,
-				dateModified: item.dateModified,
-				authors: item.authors,
-				tags: item.tags,
-				attachments: item.attachments
-			)
+
+			return createTransformedItem(from: item, contentHTML: transformedHTML)
 		} else if let contentHTML = item.contentHTML {
 			// Fall back to transforming YouTube URLs in the content (for other feed types)
 			let transformedHTML = embedYouTubeVideos(in: contentHTML)
-			
-			return ParsedItem(
-				syncServiceID: item.syncServiceID,
-				uniqueID: item.uniqueID,
-				feedURL: item.feedURL,
-				url: item.url,
-				externalURL: item.externalURL,
-				title: item.title,
-				language: item.language,
-				contentHTML: transformedHTML,
-				contentText: item.contentText,
-				summary: item.summary,
-				imageURL: item.imageURL,
-				bannerImageURL: item.bannerImageURL,
-				datePublished: item.datePublished,
-				dateModified: item.dateModified,
-				authors: item.authors,
-				tags: item.tags,
-				attachments: item.attachments
-			)
+
+			return createTransformedItem(from: item, contentHTML: transformedHTML)
 		}
-		
+
 		// No transformation needed - return original item
 		return item
 	}
-	
-	private func extractVideoIDFromURL(_ url: String) -> String? {
-		// Extract video ID from YouTube video URLs
-		let patterns = [
-			"youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
-			"www\\.youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
-			"youtu\\.be/([A-Za-z0-9_-]{11})",
-			"youtube\\.com/embed/([A-Za-z0-9_-]{11})",
-			"www\\.youtube\\.com/embed/([A-Za-z0-9_-]{11})",
-			"youtube\\.com/shorts/([A-Za-z0-9_-]{11})",
-			"www\\.youtube\\.com/shorts/([A-Za-z0-9_-]{11})"
-		]
-		
+
+	private func createTransformedItem(from item: ParsedItem, contentHTML: String) -> ParsedItem {
+		return ParsedItem(
+			syncServiceID: item.syncServiceID,
+			uniqueID: item.uniqueID,
+			feedURL: item.feedURL,
+			url: item.url,
+			externalURL: item.externalURL,
+			title: item.title,
+			language: item.language,
+			contentHTML: contentHTML,
+			contentText: item.contentText,
+			summary: item.summary,
+			imageURL: item.imageURL,
+			bannerImageURL: item.bannerImageURL,
+			datePublished: item.datePublished,
+			dateModified: item.dateModified,
+			authors: item.authors,
+			tags: item.tags,
+			attachments: item.attachments
+		)
+	}
+
+	// MARK: - Helper Methods
+
+	/// Generic method to extract a capture group from URL using regex patterns with proper error handling
+	private func extractFromURL(patterns: [String], url: String) -> String? {
 		for pattern in patterns {
-			if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
-			   let match = regex.firstMatch(in: url, options: [], range: NSRange(url.startIndex..., in: url)) {
-				let range = Range(match.range(at: 1), in: url)!
-				return String(url[range])
+			do {
+				let regex = try NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+				if let match = regex.firstMatch(in: url, options: [], range: NSRange(url.startIndex..., in: url)),
+				   let range = Range(match.range(at: 1), in: url) {
+					return String(url[range])
+				}
+			} catch {
+				// Skip invalid regex patterns and continue with next pattern
+				continue
 			}
 		}
-		
 		return nil
+	}
+
+	private func extractVideoIDFromURL(_ url: String) -> String? {
+		return extractFromURL(patterns: Self.videoIDPatterns, url: url)
 	}
 	
 	private func extractChannelID(from url: String) -> String? {
-		// Extract channel ID from URLs like:
-		// https://youtube.com/channel/UCxxxxxxxxxxxxxxx
-		// https://www.youtube.com/channel/UCxxxxxxxxxxxxxxx
-		let patterns = [
-			"youtube\\.com/channel/([A-Za-z0-9_-]+)",
-			"www\\.youtube\\.com/channel/([A-Za-z0-9_-]+)"
-		]
-		
-		for pattern in patterns {
-			if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
-			   let match = regex.firstMatch(in: url, options: [], range: NSRange(url.startIndex..., in: url)) {
-				let range = Range(match.range(at: 1), in: url)!
-				return String(url[range])
-			}
-		}
-		
-		return nil
+		return extractFromURL(patterns: Self.channelIDPatterns, url: url)
 	}
 	
 	private func extractUsername(from url: String) -> String? {
-		// Extract username from URLs like:
-		// https://youtube.com/@username
-		// https://youtube.com/user/username
-		// https://youtube.com/c/channelname
-		let patterns = [
-			"youtube\\.com/@([A-Za-z0-9_-]+)",
-			"www\\.youtube\\.com/@([A-Za-z0-9_-]+)",
-			"youtube\\.com/user/([A-Za-z0-9_-]+)",
-			"www\\.youtube\\.com/user/([A-Za-z0-9_-]+)",
-			"youtube\\.com/c/([A-Za-z0-9_-]+)",
-			"www\\.youtube\\.com/c/([A-Za-z0-9_-]+)"
-		]
-		
-		for pattern in patterns {
-			if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
-			   let match = regex.firstMatch(in: url, options: [], range: NSRange(url.startIndex..., in: url)) {
-				let range = Range(match.range(at: 1), in: url)!
-				return String(url[range])
-			}
-		}
-		
-		return nil
+		return extractFromURL(patterns: Self.usernamePatterns, url: url)
 	}
 	
 	private func embedYouTubeVideos(in html: String) -> String {
-		// Find YouTube video URLs and replace with embedded video players
-		let patterns = [
-			"https://www\\.youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
-			"https://youtube\\.com/watch\\?v=([A-Za-z0-9_-]{11})",
-			"https://youtu\\.be/([A-Za-z0-9_-]{11})",
-			"https://www\\.youtube\\.com/embed/([A-Za-z0-9_-]{11})",
-			"https://www\\.youtube\\.com/shorts/([A-Za-z0-9_-]{11})",
-			"https://youtube\\.com/shorts/([A-Za-z0-9_-]{11})"
-		]
-		
+		// Find YouTube video URLs and replace with embedded video players using consolidated patterns
 		var result = html
-		
-		for pattern in patterns {
+
+		for pattern in Self.fullURLVideoIDPatterns {
 			guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
 				continue
 			}
@@ -272,7 +252,7 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 		].joined(separator: "&")
 		
 		return """
-		<div class="youtube-embed" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 1em 0;">
+		<div class="youtube-embed" style="position: relative; padding-bottom: \(Self.embedAspectRatio); height: 0; overflow: hidden; max-width: 100%; margin: \(Self.embedMargin);">
 			<iframe 
 				src="https://www.youtube.com/embed/\(videoID)?\(embedParams)" 
 				style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
