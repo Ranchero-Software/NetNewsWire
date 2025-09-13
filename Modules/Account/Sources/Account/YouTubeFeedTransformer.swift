@@ -41,8 +41,11 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 		let lowercaseURL = feedURL.lowercased()
 		
 		// Check if it's already a YouTube feed URL or a channel/user page
-		return Self.channelPatterns.contains { lowercaseURL.contains($0) } ||
-			   Self.feedPatterns.contains { lowercaseURL.contains($0) }
+		let applies = Self.channelPatterns.contains { lowercaseURL.contains($0) } ||
+					  Self.feedPatterns.contains { lowercaseURL.contains($0) }
+		
+		print("🎬 YouTubeFeedTransformer.applies(to: \"\(feedURL)\") = \(applies)")
+		return applies
 	}
 	
 	public func correctFeedURL(_ feedURL: String) -> String? {
@@ -60,6 +63,7 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 	}
 	
 	public func transform(_ parsedFeed: ParsedFeed) -> ParsedFeed {
+		print("🎬 YouTubeFeedTransformer: transforming feed with \(parsedFeed.items.count) items")
 		let transformedItems = Set(parsedFeed.items.map { transformItem($0) })
 		
 		return ParsedFeed(
@@ -100,6 +104,7 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 		// Check if the item URL is a YouTube video URL
 		if let itemURL = item.url,
 		   let videoID = extractVideoIDFromURL(itemURL) {
+			print("🎬 Found YouTube video: \(videoID) from URL: \(itemURL)")
 			// For YouTube RSS feeds, embed the video based on the item URL
 			let videoEmbed = createVideoEmbedHTML(videoID: videoID, item: item)
 			let existingContent = item.contentHTML ?? ""
@@ -125,8 +130,12 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 				attachments: item.attachments
 			)
 		} else if let contentHTML = item.contentHTML {
+			print("🎬 Checking content HTML for YouTube URLs...")
 			// Fall back to transforming YouTube URLs in the content (for other feed types)
 			let transformedHTML = embedYouTubeVideos(in: contentHTML)
+			if transformedHTML != contentHTML {
+				print("🎬 Found and transformed YouTube URLs in content")
+			}
 			
 			return ParsedItem(
 				syncServiceID: item.syncServiceID,
@@ -257,15 +266,30 @@ public final class YouTubeFeedTransformer: FeedTransformer {
 		// Try to get thumbnail from imageURL (Media RSS thumbnail)
 		let thumbnailHTML = createThumbnailHTML(videoID: videoID, item: item)
 		
+		// Try different parameters to work around CSP issues
+		let embedParams = [
+			"html5=1",           // Force HTML5 player
+			"playsinline=1",     // Inline playback
+			"rel=0",             // No related videos
+			"modestbranding=1",  // Minimal YouTube branding
+			"enablejsapi=0",     // Disable JavaScript API (might help with CSP)
+			"controls=1",        // Show player controls
+			"disablekb=1",       // Disable keyboard controls (less JS)
+			"fs=1",              // Allow fullscreen
+			"iv_load_policy=3"   // Hide annotations (less JS)
+		].joined(separator: "&")
+		
 		return """
 		\(thumbnailHTML)
 		<div class="youtube-embed" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 1em 0;">
 			<iframe 
-				src="https://www.youtube-nocookie.com/embed/\(videoID)" 
+				src="https://www.youtube.com/embed/\(videoID)?\(embedParams)" 
 				style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
 				frameborder="0" 
 				allowfullscreen
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
+				referrerpolicy="no-referrer-when-downgrade">
 			</iframe>
 		</div>
 		<p style="margin-top: 0.5em;">
