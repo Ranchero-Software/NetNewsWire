@@ -116,7 +116,6 @@ final class DetailWebViewController: NSViewController {
 		userContentController.add(self, name: MessageName.windowDidScroll)
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
-		
 		for script in Self.userScripts {
 			userContentController.addUserScript(script)
 		}
