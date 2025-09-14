@@ -14,12 +14,8 @@ import RSCore
 class FeedFinder {
 	
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
-		// Apply feed transformers for URL correction before downloading
-		let correctedURLString = FeedTransformerRegistry.shared.correctFeedURL(url.absoluteString)
-		let finalURL = URL(string: correctedURLString) ?? url
-		
 		Task { @MainActor in
-			Downloader.shared.download(finalURL) { (data, response, error) in
+			Downloader.shared.download(url) { (data, response, error) in
 
 				if response?.forcedStatusCode == 404 {
 					if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
@@ -49,8 +45,8 @@ class FeedFinder {
 					return
 				}
 
-				if FeedFinder.isFeed(data, finalURL.absoluteString) {
-					let feedSpecifier = FeedSpecifier(title: nil, urlString: finalURL.absoluteString, source: .UserEntered, orderFound: 1)
+				if FeedFinder.isFeed(data, url.absoluteString) {
+					let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
 					completion(.success(Set([feedSpecifier])))
 					return
 				}
@@ -60,7 +56,7 @@ class FeedFinder {
 					return
 				}
 
-				FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: finalURL.absoluteString, completion: completion)
+				FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString, completion: completion)
 			}
 		}
 	}
