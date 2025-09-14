@@ -276,7 +276,6 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			}
 		}
 	}
-	
 	// WKUIDelegate
 	
 	func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
