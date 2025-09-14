@@ -49,8 +49,10 @@ class PreloadedWebView: WKWebView {
 	}
 	
 	@objc func userDefaultsDidChange(_ sender: Any) {
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
-		reload()
+		if configuration.defaultWebpagePreferences.allowsContentJavaScript != AppDefaults.shared.isArticleContentJavascriptEnabled {
+			configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
+			reload()
+		}
 	}
  
 }
