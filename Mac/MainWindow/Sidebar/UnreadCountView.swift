@@ -25,7 +25,7 @@ class UnreadCountView : NSView {
 		}
 	}
 	var unreadCountString: String {
-		return unreadCount < 1 ? "" : "\(unreadCount)"
+		return unreadCount < 1 ? "" : "\(unreadCount.formatted())"
 	}
 
 	var isSelected: Bool = false {
