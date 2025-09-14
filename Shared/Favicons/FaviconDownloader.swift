@@ -97,19 +97,16 @@ final class FaviconDownloader {
 	}
 	
 	func faviconAsIcon(for webFeed: WebFeed) -> IconImage? {
-		
+
 		if let image = cache[webFeed] {
 			return image
 		}
-		
-		if let iconImage = favicon(for: webFeed), let imageData = iconImage.image.dataRepresentation() {
-			if let scaledImage = RSImage.scaledForIcon(imageData) {
-				let scaledIconImage = IconImage(scaledImage)
-				cache[webFeed] = scaledIconImage
-				return scaledIconImage
-			}
+
+		if let iconImage = favicon(for: webFeed) {
+			cache[webFeed] = iconImage
+			return iconImage
 		}
-		
+
 		return nil
 	}
 

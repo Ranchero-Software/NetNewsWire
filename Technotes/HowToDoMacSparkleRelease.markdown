@@ -55,3 +55,8 @@ Test updating via appcast
 Optionally:
 Announce on Slack
 Announce on blog
+
+If release build:
+	Update netnewswire-release.xml
+	Update download on netnewswire.com — via .htaccess redirect
+

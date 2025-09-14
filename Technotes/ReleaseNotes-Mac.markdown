@@ -1,5 +1,13 @@
 # Mac Release Notes
 
+### 6.1.11b1 build 6141 9 Sep 2025 - branch main tag: mac-6.1.11b1
+
+Fixed bug with some favicons rendering weird, with dark vertical lines. Note: due to caching, the fix may take a few days to take effect. <https://github.com/Ranchero-Software/NetNewsWire/issues/4523>
+
+### 6.1.10 build 6140 8 Sep 2025 - branch main tag: mac-6.1.10
+
+Bump version, do release build
+
 ### 6.1.10b4 build 6139 16 Aug 2025 - branch main tag: mac-6.1.10b4
 
 Adopt secure state restoration; fix bug with state restoration not working in previous betas.
