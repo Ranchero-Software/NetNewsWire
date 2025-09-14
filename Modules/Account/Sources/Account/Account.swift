@@ -76,21 +76,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		public static let webFeeds = "webFeeds" // AccountDidDownloadArticles, StatusesDidChange
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
-
-	public static let defaultLocalAccountName: String = {
-		let defaultName: String
-		#if os(macOS)
-		defaultName = NSLocalizedString("On My Mac", comment: "Account name")
-		#else
-		if UIDevice.current.userInterfaceIdiom == .pad {
-			defaultName = NSLocalizedString("On My iPad", comment: "Account name")
-		} else {
-			defaultName = NSLocalizedString("On My iPhone", comment: "Account name")
-		}
-		#endif
-		
-		return defaultName
-	}()
+	
+	public static let defaultLocalAccountName = NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
 	
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
 
