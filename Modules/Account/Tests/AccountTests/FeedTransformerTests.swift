@@ -2,9 +2,6 @@
 //  FeedTransformerTests.swift
 //  AccountTests
 //
-//  Created by Claude on 9/7/25.
-//  Copyright © 2025 Ranchero Software, LLC. All rights reserved.
-//
 
 import XCTest
 @testable import Account
