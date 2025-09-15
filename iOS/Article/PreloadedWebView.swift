@@ -20,17 +20,19 @@ class PreloadedWebView: WKWebView {
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 		configuration.allowsInlineMediaPlayback = true
 		configuration.mediaTypesRequiringUserActionForPlayback = .audio
 		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		
 		super.init(frame: .zero, configuration: configuration)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 	}
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
+		
 	}
 	
 	func preload() {
@@ -46,6 +48,13 @@ class PreloadedWebView: WKWebView {
 		}
 	}
 	
+	@objc func userDefaultsDidChange(_ sender: Any) {
+		if configuration.defaultWebpagePreferences.allowsContentJavaScript != AppDefaults.shared.isArticleContentJavascriptEnabled {
+			configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
+			reload()
+		}
+	}
+ 
 }
 
 // MARK: WKScriptMessageHandler
