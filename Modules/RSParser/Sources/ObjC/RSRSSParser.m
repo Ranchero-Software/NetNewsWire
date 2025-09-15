@@ -279,6 +279,11 @@ static const NSInteger kLanguageLength = 9;
 	 and not even a relative path. This may need to evolve over time as we find
 	 feeds broken in different ways.*/
 
+	// https://github.com/Ranchero-Software/NetNewsWire/issues/1230
+	if ([s rsparser_contains:@" "]) {
+		return NO;
+	}
+	
 	if (![s rsparser_contains:@"/"]) {
 		// This seems to be just about the best possible check.
 		// Bad guids are often just integers, for instance.
