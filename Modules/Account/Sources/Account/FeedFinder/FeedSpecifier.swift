@@ -82,6 +82,9 @@ private extension FeedSpecifier {
 		if urlString.caseInsensitiveContains("rss") {
 			score = score + 5
 		}
+		if urlString.hasSuffix("/index.xml") {
+			score = score + 5
+		}
 		if urlString.hasSuffix("/feed/") {
 			score = score + 5
 		}
@@ -89,15 +92,12 @@ private extension FeedSpecifier {
 			score = score + 4
 		}
 		if urlString.caseInsensitiveContains("json") {
-			score = score + 6
+			score = score + 3
 		}
 		
 		if let title = title {
 			if title.caseInsensitiveContains("comments") {
 				score = score - 10
-			}
-			if title.caseInsensitiveContains("json") {
-				score = score + 1
 			}
 		}
 		
