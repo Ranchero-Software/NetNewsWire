@@ -1430,7 +1430,7 @@ private extension FeedbinAccountDelegate {
 			case .success:
 				complete()
 			case .failure(let error):
-				self.logger.error("Unable to remove feed from Feedbin. Removing locally and continue processing: \(error.localizedDescription, privacy: .public)")
+				os_log(.error, log: self.log, "Unable to remove feed from Feedbin. Removing locally and continuing processing: \(error.localizedDescription, privacy: .public)")
 				complete()
 			}
 		}
