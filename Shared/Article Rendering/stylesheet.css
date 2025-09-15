@@ -517,12 +517,26 @@ a.footnote:hover,
 	.articleBody a:link, .articleBody a:visited {
 		border-bottom: 1px solid var(--accent-color);
 	}
+	
+	.articleBody a:has(img),
+	.articleBody a:has(img):link,
+	.articleBody a:has(img):visited {
+		border-bottom: none;
+	}
+	
 	.articleBody a:hover {
 		border-radius: 2px;
 		background: linear-gradient(0deg, var(--hover-gradient-color-start) 0%, var(--hover-gradient-color-end) 100%);
 		border-bottom: 1px solid var(--hover-gradient-color-end);
 		color: white;
 		text-decoration: none;
+	}
+	
+	.articleBody a:has(img):hover {
+		background: none;
+		border-bottom: none;
+		color: inherit;
+		border-radius: 0;
 	}
 	.articleBody a:hover u {
 		color: white;
