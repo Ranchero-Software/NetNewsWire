@@ -15,7 +15,7 @@ import Secrets
 /// Typically, it pages through the article ids of the global.all stream.
 /// As the article ids are collected, a default read status is created for each.
 /// So this operation has side effects *for the entire account* it operates on.
-class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
+final class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 
 	private let account: Account
 	private let resource: FeedlyResourceId

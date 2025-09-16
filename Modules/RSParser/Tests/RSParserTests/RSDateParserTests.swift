@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 import RSParser
 
-class RSDateParserTests: XCTestCase {
+final class RSDateParserTests: XCTestCase {
 	
 	static func dateWithValues(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int) -> Date {
 		var dateComponents = DateComponents()

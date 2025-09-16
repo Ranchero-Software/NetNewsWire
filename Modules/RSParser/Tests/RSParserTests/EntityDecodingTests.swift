@@ -9,7 +9,7 @@
 import XCTest
 import RSParser
 
-class EntityDecodingTests: XCTestCase {
+final class EntityDecodingTests: XCTestCase {
 
     func test39Decoding() {
 

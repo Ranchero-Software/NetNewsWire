@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MainTimelineTitleView: UIView {
+final class MainTimelineTitleView: UIView {
 
 	@IBOutlet var iconView: IconView?
 	@IBOutlet var label: UILabel?

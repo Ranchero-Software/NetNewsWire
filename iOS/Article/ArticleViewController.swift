@@ -12,7 +12,7 @@ import Account
 import Articles
 import SafariServices
 
-class ArticleViewController: UIViewController {
+final class ArticleViewController: UIViewController {
 	
 	typealias State = (extractedArticle: ExtractedArticle?,
 		isShowingExtractedArticle: Bool,

@@ -9,7 +9,7 @@
 import UIKit
 import Articles
 
-class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+final class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
 	@IBOutlet weak var tableView: UITableView!
 	

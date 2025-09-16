@@ -13,7 +13,7 @@ import RSWeb
 import Account
 import Articles
 
-class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
+final class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium

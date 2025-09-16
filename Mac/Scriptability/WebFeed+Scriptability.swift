@@ -12,7 +12,7 @@ import Account
 import Articles
 
 @objc(ScriptableWebFeed)
-class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let webFeed:WebFeed
     let container:ScriptingObjectContainer

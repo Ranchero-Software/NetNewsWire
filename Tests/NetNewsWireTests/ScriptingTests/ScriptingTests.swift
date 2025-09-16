@@ -8,7 +8,7 @@
 
 import XCTest
 
-class ScriptingTests: AppleScriptXCTestCase {
+final class ScriptingTests: AppleScriptXCTestCase {
 
     override func setUp() {
         super.setUp()

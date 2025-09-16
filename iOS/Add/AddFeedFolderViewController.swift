@@ -14,7 +14,7 @@ protocol AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container)
 }
 
-class AddFeedFolderViewController: UITableViewController {
+final class AddFeedFolderViewController: UITableViewController {
 	
 	var delegate: AddFeedFolderViewControllerDelegate?
 	var initialContainer: Container?

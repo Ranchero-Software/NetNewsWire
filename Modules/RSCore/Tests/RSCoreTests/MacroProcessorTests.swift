@@ -9,7 +9,7 @@
 import XCTest
 @testable import RSCore
 
-class MacroProcessorTests: XCTestCase {
+final class MacroProcessorTests: XCTestCase {
 	let substitutions = ["one": "1", "two": "2"]
 
 	func testMacroProcessor() {

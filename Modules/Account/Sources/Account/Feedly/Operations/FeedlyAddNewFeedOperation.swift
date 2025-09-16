@@ -13,7 +13,7 @@ import RSWeb
 import RSCore
 import Secrets
 
-class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
+final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
 
 	private let operationQueue = MainThreadOperationQueue()
 	private let folder: Folder

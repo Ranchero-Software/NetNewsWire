@@ -18,7 +18,7 @@ enum CloudKitAccountViewControllerError: LocalizedError {
 	}
 }
 
-class CloudKitAccountViewController: UITableViewController {
+final class CloudKitAccountViewController: UITableViewController {
 
 	weak var delegate: AddAccountDismissDelegate?
 	@IBOutlet weak var footerLabel: UILabel!

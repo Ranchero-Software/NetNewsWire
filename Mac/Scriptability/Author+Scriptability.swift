@@ -11,7 +11,7 @@ import Account
 import Articles
 
 @objc(ScriptableAuthor)
-class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
+final class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
 
     let author:Author
     let container:ScriptingObjectContainer

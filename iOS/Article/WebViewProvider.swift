@@ -12,8 +12,8 @@ import WebKit
 
 /// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
 /// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-shite part of their lifecycle.
-class WebViewProvider: NSObject {
-	
+final class WebViewProvider: NSObject {
+
 	private let articleIconSchemeHandler: ArticleIconSchemeHandler
 	private let operationQueue = MainThreadOperationQueue()
 	private var queue = NSMutableArray()
@@ -35,8 +35,8 @@ class WebViewProvider: NSObject {
 	
 }
 
-class WebViewProviderReplenishQueueOperation: MainThreadOperation {
-	
+final class WebViewProviderReplenishQueueOperation: MainThreadOperation {
+
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -65,7 +65,7 @@ class WebViewProviderReplenishQueueOperation: MainThreadOperation {
 	
 }
 
-class WebViewProviderDequeueOperation: MainThreadOperation {
+final class WebViewProviderDequeueOperation: MainThreadOperation {
 	
 	// MainThreadOperation
 	public var isCanceled = false

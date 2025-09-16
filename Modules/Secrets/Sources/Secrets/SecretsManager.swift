@@ -7,6 +7,6 @@
 
 import Foundation
 
-public class SecretsManager {
+public final class SecretsManager {
 	public static var provider: SecretsProvider!
 }

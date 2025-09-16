@@ -11,7 +11,7 @@ import Account
 import RSWeb
 import Secrets
 
-class AccountsFeedbinWindowController: NSWindowController {
+final class AccountsFeedbinWindowController: NSWindowController {
 
 	@IBOutlet weak var signInTextField: NSTextField!
 	@IBOutlet weak var noAccountTextField: NSTextField!

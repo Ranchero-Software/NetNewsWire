@@ -15,7 +15,7 @@ import RSTree
 import RSWeb
 import SafariServices
 
-class MainFeedViewController: UITableViewController, UndoableCommandRunner {
+final class MainFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?

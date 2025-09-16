@@ -10,7 +10,7 @@ import AppKit
 import Account
 import UniformTypeIdentifiers
 
-class ImportOPMLWindowController: NSWindowController {
+final class ImportOPMLWindowController: NSWindowController {
 
 	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
 	private weak var hostWindow: NSWindow?

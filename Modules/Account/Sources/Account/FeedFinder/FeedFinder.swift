@@ -11,7 +11,7 @@ import RSParser
 import RSWeb
 import RSCore
 
-class FeedFinder {
+final class FeedFinder {
 	
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		Task { @MainActor in

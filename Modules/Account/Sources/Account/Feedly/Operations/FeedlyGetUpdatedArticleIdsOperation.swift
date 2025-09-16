@@ -14,7 +14,7 @@ import Secrets
 ///
 /// Typically, it pages through the article ids of the global.all stream.
 /// When all the article ids are collected, it is the responsibility of another operation to download them when appropriate.
-class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 
 	private let account: Account
 	private let resource: FeedlyResourceId

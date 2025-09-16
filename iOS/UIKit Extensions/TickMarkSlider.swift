@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TickMarkSlider: UISlider {
+final class TickMarkSlider: UISlider {
 
 	private var enableFeedback = false
 	private let feedbackGenerator = UISelectionFeedbackGenerator()

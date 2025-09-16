@@ -12,7 +12,7 @@ import Secrets
 import RSWeb
 import SafariServices
 
-class NewsBlurAccountViewController: UITableViewController {
+final class NewsBlurAccountViewController: UITableViewController {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!

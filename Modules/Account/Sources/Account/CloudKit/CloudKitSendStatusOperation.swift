@@ -13,7 +13,7 @@ import RSCore
 import RSWeb
 import SyncDatabase
 
-class CloudKitSendStatusOperation: MainThreadOperation {
+final class CloudKitSendStatusOperation: MainThreadOperation {
 	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 	private let blockSize = 150

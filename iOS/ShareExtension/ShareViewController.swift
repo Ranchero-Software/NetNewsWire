@@ -14,7 +14,7 @@ import RSCore
 import RSTree
 import UniformTypeIdentifiers
 
-class ShareViewController: SLComposeServiceViewController, ShareFolderPickerControllerDelegate {
+final class ShareViewController: SLComposeServiceViewController, ShareFolderPickerControllerDelegate {
 	
 	private var url: URL?
 	private var extensionContainers: ExtensionContainers?

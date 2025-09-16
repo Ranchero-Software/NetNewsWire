@@ -8,7 +8,7 @@
 
 import UIKit
 
-class InspectorIconHeaderView: UITableViewHeaderFooterView {
+final class InspectorIconHeaderView: UITableViewHeaderFooterView {
 
 	var iconView = IconView()
 	

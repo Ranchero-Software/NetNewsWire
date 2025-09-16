@@ -8,7 +8,7 @@
 
 import AppKit
 
-class UnreadIndicatorView: NSView {
+final class UnreadIndicatorView: NSView {
 
 	static let unreadCircleDimension: CGFloat = 8.0
 	

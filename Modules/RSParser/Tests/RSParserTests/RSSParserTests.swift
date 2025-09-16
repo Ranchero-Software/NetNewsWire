@@ -9,7 +9,7 @@
 import XCTest
 import RSParser
 
-class RSSParserTests: XCTestCase {
+final class RSSParserTests: XCTestCase {
 
 	func testScriptingNewsPerformance() {
 

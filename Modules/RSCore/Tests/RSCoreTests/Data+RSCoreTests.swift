@@ -10,7 +10,7 @@ import XCTest
 import Foundation
 @testable import RSCore
 
-//class Data_RSCoreTests: XCTestCase {
+//final class Data_RSCoreTests: XCTestCase {
 //	var bigHTML: String!
 //
 //	var pngData: Data!

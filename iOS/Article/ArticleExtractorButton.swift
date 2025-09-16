@@ -15,7 +15,7 @@ enum ArticleExtractorButtonState {
 	case off
 }
 
-class ArticleExtractorButton: UIButton {
+final class ArticleExtractorButton: UIButton {
 	
 	private var animatedLayer: CALayer?
 	

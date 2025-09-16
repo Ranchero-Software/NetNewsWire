@@ -12,7 +12,7 @@ import SyncDatabase
 import Articles
 import RSCore
 
-class FeedlySendArticleStatusesOperationTests: XCTestCase {
+final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	
 	private var account: Account!
 	private let support = FeedlyTestSupport()

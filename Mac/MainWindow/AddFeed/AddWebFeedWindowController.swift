@@ -12,7 +12,7 @@ import RSTree
 import Articles
 import Account
 
-class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
+final class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
     
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!

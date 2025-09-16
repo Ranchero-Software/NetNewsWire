@@ -23,7 +23,7 @@ protocol ArticleExtractorDelegate {
     func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }
 
-class ArticleExtractor {
+final class ArticleExtractor {
 	
 	private var dataTask: URLSessionDataTask? = nil
     

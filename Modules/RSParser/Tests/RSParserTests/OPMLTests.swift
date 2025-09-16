@@ -10,7 +10,7 @@ import XCTest
 import RSParser
 import RSParserObjC
 
-class OPMLTests: XCTestCase {
+final class OPMLTests: XCTestCase {
 
 	let subsData = parserData("Subs", "opml", "http://example.org/")
 

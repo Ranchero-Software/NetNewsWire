@@ -10,7 +10,7 @@ import XCTest
 import RSParser
 import RSParserObjC
 
-class HTMLLinkTests: XCTestCase {
+final class HTMLLinkTests: XCTestCase {
 
 	func testSixColorsPerformance() {
 

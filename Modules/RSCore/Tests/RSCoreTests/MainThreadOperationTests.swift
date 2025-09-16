@@ -9,7 +9,7 @@
 import XCTest
 @testable import RSCore
 
-class MainThreadOperationTests: XCTestCase {
+final class MainThreadOperationTests: XCTestCase {
 
 	func testSingleOperation() {
 		let queue = MainThreadOperationQueue()

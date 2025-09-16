@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-class FeedlyCollectionParserTests: XCTestCase {
+final class FeedlyCollectionParserTests: XCTestCase {
 	
 	func testParsing() {
 		let collection = FeedlyCollection(feeds: [], label: "Test Collection", id: "test/collection/1")

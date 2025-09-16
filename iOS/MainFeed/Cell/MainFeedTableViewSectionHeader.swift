@@ -12,7 +12,7 @@ protocol MainFeedTableViewSectionHeaderDelegate {
 	func mainFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MainFeedTableViewSectionHeader)
 }
 
-class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
+final class MainFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	var delegate: MainFeedTableViewSectionHeaderDelegate?
 	

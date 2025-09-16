@@ -16,7 +16,7 @@ enum TimelineSourceMode {
 	case regular, search
 }
 
-class MainWindowController : NSWindowController, NSUserInterfaceValidations {
+final class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
     @IBOutlet weak var articleThemePopUpButton: NSPopUpButton?
     

@@ -12,7 +12,7 @@ import Secrets
 import RSWeb
 import SafariServices
 
-class FeedbinAccountViewController: UITableViewController {
+final class FeedbinAccountViewController: UITableViewController {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!

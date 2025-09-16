@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MainTimelineUnreadCountView: MainFeedUnreadCountView {
+final class MainTimelineUnreadCountView: MainFeedUnreadCountView {
 
 	override var padding: UIEdgeInsets {
 		return UIEdgeInsets(top: 2.0, left: 9.0, bottom: 2.0, right: 9.0)

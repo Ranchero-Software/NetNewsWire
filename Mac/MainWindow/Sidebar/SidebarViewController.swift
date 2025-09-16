@@ -22,7 +22,7 @@ protocol SidebarDelegate: AnyObject {
 	func sidebarInvalidatedRestorationState(_: SidebarViewController)
 }
 
-@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
+@objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
     
 	@IBOutlet weak var outlineView: NSOutlineView!
 	

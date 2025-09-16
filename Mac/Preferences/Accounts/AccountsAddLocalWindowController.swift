@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-class AccountsAddLocalWindowController: NSWindowController {
+final class AccountsAddLocalWindowController: NSWindowController {
 
 	@IBOutlet private weak var nameTextField: NSTextField!
 	@IBOutlet private weak var localAccountNameTextField: NSTextField!

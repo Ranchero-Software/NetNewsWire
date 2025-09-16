@@ -10,7 +10,7 @@ import Foundation
 
 import UIKit
 
-class NonIntrinsicButton: UIButton {
+final class NonIntrinsicButton: UIButton {
 
 	// Prevent autolayout from messing around with our frame settings
 	override var intrinsicContentSize: CGSize {

@@ -9,7 +9,7 @@
 #if os(macOS)
 import AppKit
 
-public class RSScreen {
+public final class RSScreen {
 
 	public static var maxScreenScale: CGFloat {
 		NSScreen.screens.map(\.backingScaleFactor).max() ?? 2.0
@@ -21,7 +21,7 @@ public class RSScreen {
 #if os(iOS)
 import UIKit
 
-public class RSScreen {
+public final class RSScreen {
 	public static var maxScreenScale = CGFloat(3)
 }
 

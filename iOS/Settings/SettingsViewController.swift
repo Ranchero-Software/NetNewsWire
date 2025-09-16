@@ -13,7 +13,7 @@ import SafariServices
 import SwiftUI
 import UniformTypeIdentifiers
 
-class SettingsViewController: UITableViewController {
+final class SettingsViewController: UITableViewController {
 
 	private weak var opmlAccount: Account?
 	

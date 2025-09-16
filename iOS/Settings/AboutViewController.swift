@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AboutViewController: UITableViewController {
+final class AboutViewController: UITableViewController {
 
 	@IBOutlet weak var aboutTextView: UITextView!
 	@IBOutlet weak var creditsTextView: UITextView!

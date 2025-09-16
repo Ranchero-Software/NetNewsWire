@@ -12,7 +12,7 @@ import RSWeb
 import RSCore
 import Secrets
 
-class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
+final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
 
 	private let operationQueue = MainThreadOperationQueue()
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TimelineCustomizerViewController: UIViewController {
+final class TimelineCustomizerViewController: UIViewController {
 
 	@IBOutlet weak var iconSizeSliderContainerView: UIView!
 	@IBOutlet weak var iconSizeSlider: TickMarkSlider!

@@ -9,7 +9,7 @@
 import Foundation
 import WebKit
 
-class PreloadedWebView: WKWebView {
+final class PreloadedWebView: WKWebView {
 	
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?

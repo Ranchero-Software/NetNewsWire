@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AddFeedSelectFolderTableViewCell: VibrantTableViewCell {
+final class AddFeedSelectFolderTableViewCell: VibrantTableViewCell {
 	
 	@IBOutlet weak var folderLabel: UILabel!
 	@IBOutlet weak var detailLabel: UILabel!

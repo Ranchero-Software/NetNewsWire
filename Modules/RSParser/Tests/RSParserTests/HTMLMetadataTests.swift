@@ -10,7 +10,7 @@ import XCTest
 import RSParser
 import RSParserObjC
 
-class HTMLMetadataTests: XCTestCase {
+final class HTMLMetadataTests: XCTestCase {
 
 	func testDaringFireball() {
 

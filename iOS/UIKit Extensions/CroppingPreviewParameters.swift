@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CroppingPreviewParameters: UIPreviewParameters {
+final class CroppingPreviewParameters: UIPreviewParameters {
 	
 	override init() {
 		super.init()

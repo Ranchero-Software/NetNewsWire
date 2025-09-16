@@ -15,7 +15,7 @@ enum KeyboardType: String {
 	case detail = "DetailKeyboardShortcuts"
 }
 
-class KeyboardManager {
+final class KeyboardManager {
 	
 	private(set) var _keyCommands: [UIKeyCommand]
 	var keyCommands: [UIKeyCommand] {

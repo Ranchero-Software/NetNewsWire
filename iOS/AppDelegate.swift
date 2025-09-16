@@ -18,7 +18,7 @@ import WidgetKit
 var appDelegate: AppDelegate!
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
+final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 	
 	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 	

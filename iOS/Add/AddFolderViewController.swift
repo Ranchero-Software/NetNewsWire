@@ -10,7 +10,7 @@ import UIKit
 import Account
 import RSCore
 
-class AddFolderViewController: UITableViewController {
+final class AddFolderViewController: UITableViewController {
 
 	@IBOutlet private weak var addButton: UIBarButtonItem!
 	@IBOutlet private weak var nameTextField: UITextField!

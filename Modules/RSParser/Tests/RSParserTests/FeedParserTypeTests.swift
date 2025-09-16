@@ -10,7 +10,7 @@ import XCTest
 import RSParser
 import RSParserObjC
 
-class FeedParserTypeTests: XCTestCase {
+final class FeedParserTypeTests: XCTestCase {
 
 	// MARK: HTML
 

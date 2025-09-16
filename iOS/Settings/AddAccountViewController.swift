@@ -14,7 +14,7 @@ protocol AddAccountDismissDelegate: UIViewController {
 	func dismiss()
 }
 
-class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
+final class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	private enum AddAccountSections: Int, CaseIterable {
 		case local = 0

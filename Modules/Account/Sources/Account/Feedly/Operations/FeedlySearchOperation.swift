@@ -18,7 +18,7 @@ protocol FeedlySearchOperationDelegate: AnyObject {
 
 /// Find one and only one feed for a given query (usually, a URL).
 /// What happens when a feed is found for the URL is delegated to the `searchDelegate`.
-class FeedlySearchOperation: FeedlyOperation {
+final class FeedlySearchOperation: FeedlyOperation {
 
 	let query: String
 	let locale: Locale

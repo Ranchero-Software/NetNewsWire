@@ -13,7 +13,7 @@ import CloudKit
 import RSCore
 import Articles
 
-class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
+final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	
 	private typealias UnclaimedWebFeed = (url: URL, name: String?, editedName: String?, homePageURL: String?, webFeedExternalID: String)
 	private var newUnclaimedWebFeeds = [String: [UnclaimedWebFeed]]()
