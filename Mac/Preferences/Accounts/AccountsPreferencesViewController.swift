@@ -244,7 +244,7 @@ private extension AccountsPreferencesViewController {
 			if sortedAccounts.count == 0 {
 				helpText = NSLocalizedString("Add an account by clicking the + button.", comment: "Add Account Explainer")
 			} else {
-				helpText = NSLocalizedString("Select an account or add a new account by clicking the + button.", comment: "Add Account Explainer")
+				helpText = NSLocalizedString("To add an account to NetNewsWire,\nclick its icon above.\n\nOr click the + button in the lower left.", comment: "Add Account Explainer")
 			}
 			
 			let textHostingController = NSHostingController(rootView:
