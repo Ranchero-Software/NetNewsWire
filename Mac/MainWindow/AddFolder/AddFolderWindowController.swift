@@ -23,10 +23,12 @@ final class AddFolderWindowController : NSWindowController {
 
     // MARK: - API
     
-    func runSheetOnWindow(_ w: NSWindow) {
-		hostWindow = w
-		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
-			
+    func runSheetOnWindow(_ hostWindow: NSWindow) {
+		guard let window else {
+			return
+		}
+
+		hostWindow.beginSheet(window) { (returnCode: NSApplication.ModalResponse) -> Void in
 			if returnCode == NSApplication.ModalResponse.OK {
 				self.addFolderIfNeeded()
 			}

@@ -29,8 +29,12 @@ final class AccountsAddLocalWindowController: NSWindowController {
 	// MARK: API
 	
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!)
+		hostWindow.beginSheet(window)
 	}
 
 	// MARK: Actions

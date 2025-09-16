@@ -46,16 +46,18 @@ final class ImportOPMLWindowController: NSWindowController {
 	// MARK: API
 	
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
-		
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
 		
 		if AccountManager.shared.activeAccounts.count == 1 {
 			let account = AccountManager.shared.activeAccounts.first!
 			importOPML(account: account)
 		} else {
-			hostWindow.beginSheet(window!)
+			hostWindow.beginSheet(window)
 		}
-		
 	}
 	
 	// MARK: Actions

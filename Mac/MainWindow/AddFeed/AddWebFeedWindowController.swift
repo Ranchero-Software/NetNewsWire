@@ -13,7 +13,7 @@ import Articles
 import Account
 
 final class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
-    
+
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
@@ -47,10 +47,13 @@ final class AddWebFeedWindowController : NSWindowController, AddFeedWindowContro
 		self.folderTreeController = folderTreeController
 	}
 	
-    func runSheetOnWindow(_ hostWindow: NSWindow) {
-		hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
+	func runSheetOnWindow(_ hostWindow: NSWindow) {
+		guard let window else {
+			return
 		}
-    }
+		hostWindow.beginSheet(window) { (returnCode: NSApplication.ModalResponse) -> Void in
+		}
+	}
 
 	override func windowDidLoad() {
 		if let urlString = urlString {
