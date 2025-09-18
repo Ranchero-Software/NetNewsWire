@@ -94,6 +94,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
+			// Force the badge to update on launch.
+			UNUserNotificationCenter.current().setBadgeCount(self.unreadCount)
 		}
 		
 		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
