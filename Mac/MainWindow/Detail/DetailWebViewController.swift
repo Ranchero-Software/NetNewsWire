@@ -102,7 +102,15 @@ final class DetailWebViewController: NSViewController {
 		configuration.preferences = preferences
 		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
-		configuration.mediaTypesRequiringUserActionForPlayback = .audio
+		
+		// Enable video playback for YouTube embeds
+		if #available(iOS 10.0, macOS 10.12, *) {
+			configuration.mediaTypesRequiringUserActionForPlayback = []
+		}
+		
+		#if os(iOS)
+		    configuration.allowsInlineMediaPlayback = true  // Enable inline video playback (iOS only)
+		#endif
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.windowDidScroll)
@@ -268,7 +276,6 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			}
 		}
 	}
-
 	// WKUIDelegate
 	
 	func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
@@ -337,7 +344,23 @@ private extension DetailWebViewController {
 		
 		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
-		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
+
+		// Normalize base URL to bare domain over HTTPS (no path, query, or fragment).
+		var finalBaseURL: URL? = nil
+		if var comps = URLComponents(string: rendering.baseURL) {
+			// Force HTTPS scheme
+			comps.scheme = "https"
+			// Strip user/password, port, query, fragment, and set path to root
+			comps.user = nil
+			comps.password = nil
+			comps.port = nil
+			comps.query = nil
+			comps.fragment = nil
+			comps.path = "/"
+			finalBaseURL = comps.url
+		}
+		
+		webView.loadHTMLString(html, baseURL: finalBaseURL)
 	}
 
 	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {

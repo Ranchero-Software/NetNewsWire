@@ -122,7 +122,10 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 				return
 			}
 			
-			account.update(feed, with: parsedFeed) { result in
+			// Apply feed transformers
+			let transformedFeed = FeedTransformerRegistry.shared.transform(parsedFeed, feedURL: feed.url)
+			
+			account.update(feed, with: transformedFeed) { result in
 				if case .success(let articleChanges) = result {
 					feed.contentHash = dataHash
 					feed.conditionalGetInfo = conditionalGetInfo

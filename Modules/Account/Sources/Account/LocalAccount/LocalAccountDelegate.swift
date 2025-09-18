@@ -252,7 +252,10 @@ private extension LocalAccountDelegate {
 						feed.editedName = editedName
 						container.addWebFeed(feed)
 
-						account.update(feed, with: parsedFeed, {_ in
+						// Apply feed transformers for initial feed creation (same as refresh)
+						let transformedFeed = FeedTransformerRegistry.shared.transform(parsedFeed, feedURL: feed.url)
+						
+						account.update(feed, with: transformedFeed, {_ in
 							BatchUpdate.shared.end()
 							completion(.success(feed))
 						})
