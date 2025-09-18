@@ -10,14 +10,6 @@ import UIKit
 import SafariServices
 import Account
 
-enum CloudKitAccountViewControllerError: LocalizedError {
-	case iCloudDriveMissing
-	
-	var errorDescription: String? {
-		return NSLocalizedString("Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.", comment: "Unable to add iCloud Account.")
-	}
-}
-
 final class CloudKitAccountViewController: UITableViewController {
 
 	weak var delegate: AddAccountDismissDelegate?
@@ -40,8 +32,10 @@ final class CloudKitAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func add(_ sender: Any) {
-		guard FileManager.default.ubiquityIdentityToken != nil else {
-			presentError(CloudKitAccountViewControllerError.iCloudDriveMissing)
+		if FileManager.default.ubiquityIdentityToken == nil { // iCloud Drive not available?
+			let errorTitle = NSLocalizedString("Can’t add iCloud account because iCloud Drive is not enabled", comment:"iCloud not set up error title")
+			let errorMessage = NSLocalizedString("Make sure you have iCloud and iCloud Drive enabled in System Settings.", comment: "iCloud not set up error message.")
+			presentError(title: errorTitle, message: errorMessage)
 			return
 		}
 		
