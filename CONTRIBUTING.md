@@ -2,6 +2,8 @@
 
 We welcome contributions — but it’s **really important to ask first** before working on a new feature or bug fix. Just because the app is open source doesn’t mean we add features just whenever someone codes one up. The app is planned the same way it would be if it weren’t open source. (See NetNewsWire [milestones](https://github.com/Ranchero-Software/NetNewsWire/milestones).)
 
+Also: just because a ticket exists doesn’t mean we’re going to implement a fix or feature. Or not now, or not before some other things happen first.
+
 Here’s how to contribute:
 
 1. Find or file a ticket describing the bug you want to fix or feature you want to add.
