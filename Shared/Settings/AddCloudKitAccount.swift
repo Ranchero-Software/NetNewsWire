@@ -21,14 +21,6 @@ enum AddCloudKitAccountError: LocalizedError, RecoverableError {
 	var errorDescription: String? {
 		NSLocalizedString("Can’t Add iCloud Account", comment: "CloudKit account setup failure description — iCloud Drive not enabled.")
 	}
-
-	var failureReason: String? {
-		#if os(macOS)
-		NSLocalizedString("Make sure you have iCloud and iCloud Drive enabled in System Settings.", comment: "CloudKit account setup failure reason — iCloud Drive not enabled.")
-		#else
-		NSLocalizedString("Make sure you have iCloud and iCloud Drive enabled in Settings.", comment: "CloudKit account setup failure reason — iCloud Drive not enabled.")
-		#endif
-	}
 	
 	var recoverySuggestion: String? {
 		#if os(macOS)
