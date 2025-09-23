@@ -12,6 +12,8 @@ import WebKit
 final class WebViewConfiguration {
 
 	static func configuration(with urlSchemeHandler: WKURLSchemeHandler) -> WKWebViewConfiguration {
+		assert(Thread.isMainThread)
+		
 		let configuration = WKWebViewConfiguration()
 
 		configuration.preferences = preferences
