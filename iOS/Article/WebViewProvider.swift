@@ -11,7 +11,7 @@ import RSCore
 import WebKit
 
 /// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
-/// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-shite part of their lifecycle.
+/// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-white part of their lifecycle.
 final class WebViewProvider: NSObject {
 
 	private let articleIconSchemeHandler: ArticleIconSchemeHandler
