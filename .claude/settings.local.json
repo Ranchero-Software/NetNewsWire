@@ -3,7 +3,8 @@
     "allow": [
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(./buildscripts/quiet_build_and_test.sh:*)"
     ],
     "deny": []
   }
