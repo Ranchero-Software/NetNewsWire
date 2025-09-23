@@ -547,6 +547,13 @@
                                                 <action selector="openApplicationSupportFolder:" target="Ady-hI-5gd" id="gT9-ry-evV"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="dgO-u4-aEs"/>
+                                        <menuItem title="Show iCloud Drive Missing Alert" id="m0T-w3-neT">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showiCloudDriveMissingAlert:" target="Ady-hI-5gd" id="kfQ-dM-8vB"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

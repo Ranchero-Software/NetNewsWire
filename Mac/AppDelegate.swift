@@ -748,6 +748,14 @@ extension AppDelegate {
 		#endif
 	}
 
+	@IBAction func showiCloudDriveMissingAlert(_ sender: Any?) {
+		// Manual testing for alert in AccountsAddCloudKitWindowController
+		// Check for:
+		// - Expected text
+		// - Button for opening Settings
+		// - Button works
+		mainWindowController?.presentError(AddCloudKitAccountError.iCloudDriveMissing)
+	}
 }
 
 internal extension AppDelegate {
