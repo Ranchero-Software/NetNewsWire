@@ -14,7 +14,7 @@ final class CloudKitAccountViewController: UITableViewController {
 
 	weak var delegate: AddAccountDismissDelegate?
 	@IBOutlet weak var footerLabel: UILabel!
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setupFooter()
@@ -32,10 +32,8 @@ final class CloudKitAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func add(_ sender: Any) {
-		if FileManager.default.ubiquityIdentityToken == nil { // iCloud Drive not available?
-			let errorTitle = NSLocalizedString("Can’t add iCloud account because iCloud Drive is not enabled", comment:"iCloud not set up error title")
-			let errorMessage = NSLocalizedString("Make sure you have iCloud and iCloud Drive enabled in System Settings.", comment: "iCloud not set up error message.")
-			presentError(title: errorTitle, message: errorMessage)
+		guard AddCloudKitAccountUtilities.isiCloudDriveEnabled else {
+			presentError(AddCloudKitAccountError.iCloudDriveMissing)
 			return
 		}
 		
