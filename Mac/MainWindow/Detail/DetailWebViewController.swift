@@ -77,16 +77,6 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 
-	static let userScripts: [WKUserScript] = {
-		let filenames = ["main", "main_mac", "newsfoot"]
-		let scripts = filenames.map { filename in
-			let scriptURL = Bundle.main.url(forResource: filename, withExtension: ".js")!
-			let scriptSource = try! String(contentsOf: scriptURL)
-			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-		}
-		return scripts
-	}()
-
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
@@ -94,24 +84,12 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	override func loadView() {
-		let preferences = WKPreferences()
-		preferences.minimumFontSize = 12.0
-		preferences.javaScriptCanOpenWindowsAutomatically = false
 
-		let configuration = WKWebViewConfiguration()
-		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
-		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
-		configuration.mediaTypesRequiringUserActionForPlayback = .audio
+		let configuration = WebViewConfiguration.configuration(with: detailIconSchemeHandler)
 
-		let userContentController = WKUserContentController()
-		userContentController.add(self, name: MessageName.windowDidScroll)
-		userContentController.add(self, name: MessageName.mouseDidEnter)
-		userContentController.add(self, name: MessageName.mouseDidExit)
-		for script in Self.userScripts {
-			userContentController.addUserScript(script)
-		}
-		configuration.userContentController = userContentController
+		configuration.userContentController.add(self, name: MessageName.windowDidScroll)
+		configuration.userContentController.add(self, name: MessageName.mouseDidEnter)
+		configuration.userContentController.add(self, name: MessageName.mouseDidExit)
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self
@@ -124,28 +102,13 @@ final class DetailWebViewController: NSViewController {
 
 		view = webView
 
-		// Use the safe area layout guides if they are available.
-		if #available(OSX 11.0, *) {
-			// These constraints have been removed as they were unsatisfiable after removing NSBox.
-		} else {
-			let constraints = [
-				webView.topAnchor.constraint(equalTo: view.topAnchor),
-				webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-				webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-				webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			]
-			NSLayoutConstraint.activate(constraints)
-		}
-
 		// Hide the web view until the first reload (navigation) is complete (plus some delay) to avoid the awful white flash that happens on the initial display in dark mode.
 		// See bug #901.
 		webView.isHidden = true
 		waitingForFirstReload = true
 
-		#if !MAC_APP_STORE
-			webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
-			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
-		#endif
+		webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
+		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
