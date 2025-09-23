@@ -204,8 +204,8 @@ struct AddAccountsView: View {
 				})
 			})
 			.offset(x: 7.5, y: 0)
-			.disabled(isCloudInUse())
-			
+			.disabled(AccountManager.shared.hasiCloudAccount)
+
 			Text(AddAccountSections.icloud.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
@@ -280,15 +280,10 @@ struct AddAccountsView: View {
 				.fixedSize(horizontal: false, vertical: true)
 		}
 	}
-	
-	private func isCloudInUse() -> Bool {
-		AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit })
-	}
-	
+
 	private func chunkedWebAccounts() -> [[AccountType]] {
 		AddAccountSections.web.sectionContent.chunked(into: chunkLimit)
 	}
-
 }
 
 
