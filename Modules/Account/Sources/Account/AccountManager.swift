@@ -55,6 +55,16 @@ public final class AccountManager: UnreadCountProvider {
 		return sortByName(accounts)
 	}
 
+	public var hasiCloudAccount: Bool {
+		for account in accounts {
+			if account.type == .cloudKit {
+				return true
+			}
+		}
+		return false
+	}
+
+
 	public var activeAccounts: [Account] {
 		assert(Thread.isMainThread)
 		return Array(accountsDictionary.values.filter { $0.isActive })
@@ -121,6 +131,12 @@ public final class AccountManager: UnreadCountProvider {
 	// MARK: - API
 	
 	public func createAccount(type: AccountType) -> Account {
+		if type == .cloudKit {
+			if let existingiCloudAccount = accounts.first(where: { $0.type == .cloudKit }) {
+				return existingiCloudAccount
+			}
+		}
+		
 		let accountID = type == .cloudKit ? "iCloud" : UUID().uuidString
 		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
 
@@ -140,7 +156,7 @@ public final class AccountManager: UnreadCountProvider {
 		
 		return account
 	}
-	
+
 	public func deleteAccount(_ account: Account) {
 		guard !account.refreshInProgress else {
 			return
