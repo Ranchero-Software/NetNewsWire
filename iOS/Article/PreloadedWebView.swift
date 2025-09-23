@@ -15,24 +15,14 @@ final class PreloadedWebView: WKWebView {
 	private var readyCompletion: (() -> Void)?
 
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
-		let preferences = WKPreferences()
-		preferences.javaScriptCanOpenWindowsAutomatically = false
-
-		let configuration = WKWebViewConfiguration()
-		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
-		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
-		configuration.allowsInlineMediaPlayback = true
-		configuration.mediaTypesRequiringUserActionForPlayback = .audio
-		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
-		
+		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 		super.init(frame: .zero, configuration: configuration)
+
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 	}
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
-		
 	}
 	
 	func preload() {
@@ -49,12 +39,13 @@ final class PreloadedWebView: WKWebView {
 	}
 	
 	@objc func userDefaultsDidChange(_ sender: Any) {
-		if configuration.defaultWebpagePreferences.allowsContentJavaScript != AppDefaults.shared.isArticleContentJavascriptEnabled {
-			configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
-			reload()
+		Task { @MainActor in
+			if configuration.defaultWebpagePreferences.allowsContentJavaScript != AppDefaults.shared.isArticleContentJavascriptEnabled {
+				configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
+				reload()
+			}
 		}
 	}
- 
 }
 
 // MARK: WKScriptMessageHandler
@@ -68,7 +59,6 @@ extension PreloadedWebView: WKNavigationDelegate {
 			readyCompletion = nil
 		}
 	}
-		
 }
 
 // MARK: Private
@@ -80,5 +70,4 @@ private extension PreloadedWebView {
 		navigationDelegate = nil
 		completion()
 	}
-	
 }
