@@ -510,20 +510,3 @@ private extension ArticleViewController {
 	}
 	
 }
-
-
-extension UIResponder {
-	private struct Static {
-		static weak var firstResponder: UIResponder?
-	}
-	
-	static func currentFirstResponder() -> UIResponder? {
-		Static.firstResponder = nil
-		UIApplication.shared.sendAction(#selector(UIResponder._trapFirstResponder(_:)), to: nil, from: nil, for: nil)
-		return Static.firstResponder
-	}
-	
-	@objc private func _trapFirstResponder(_ sender: Any) {
-		UIResponder.Static.firstResponder = self
-	}
-}
