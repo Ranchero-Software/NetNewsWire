@@ -175,12 +175,14 @@ final class ArticleViewController: UIViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isArticleViewControllerPending = false
+		searchBar.shouldBeginEditing = true
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		if searchBar != nil && !searchBar.isHidden {
 			endFind()
+			searchBar.shouldBeginEditing = false
 		}
 	}
 	
