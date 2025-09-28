@@ -545,7 +545,31 @@ class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 				return nil
 		}
 		
-		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
+		let previewView = cell.contentView
+		let inset: CGFloat = 12
+		let visibleBounds = previewView.bounds.insetBy(dx: inset, dy: 2)
+		let parameters = UIPreviewParameters()
+		parameters.backgroundColor = .clear
+		parameters.visiblePath = UIBezierPath(roundedRect: visibleBounds,
+											  cornerRadius: 20)
+		return UITargetedPreview(view: previewView, parameters: parameters)
+	}
+	
+	override func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+		guard let row = configuration.identifier as? Int,
+			let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) else {
+				return nil
+		}
+		
+		let previewView = cell.contentView
+		let inset: CGFloat = 0
+		let visibleBounds = previewView.bounds.insetBy(dx: inset, dy: 2)
+		let parameters = UIPreviewParameters()
+		parameters.backgroundColor = .clear
+		parameters.visiblePath = UIBezierPath(roundedRect: visibleBounds,
+											  cornerRadius: 20)
+		
+		return UITargetedPreview(view: previewView, parameters: parameters)
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
