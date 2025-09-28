@@ -175,12 +175,14 @@ final class ArticleViewController: UIViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isArticleViewControllerPending = false
+		searchBar.shouldBeginEditing = true
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		if searchBar != nil && !searchBar.isHidden {
 			endFind()
+			searchBar.shouldBeginEditing = false
 		}
 	}
 	
@@ -507,4 +509,21 @@ private extension ArticleViewController {
 		return controller
 	}
 	
+}
+
+
+extension UIResponder {
+	private struct Static {
+		static weak var firstResponder: UIResponder?
+	}
+	
+	static func currentFirstResponder() -> UIResponder? {
+		Static.firstResponder = nil
+		UIApplication.shared.sendAction(#selector(UIResponder._trapFirstResponder(_:)), to: nil, from: nil, for: nil)
+		return Static.firstResponder
+	}
+	
+	@objc private func _trapFirstResponder(_ sender: Any) {
+		UIResponder.Static.firstResponder = self
+	}
 }
