@@ -9,6 +9,7 @@
 import UIKit
 @preconcurrency import WebKit
 import RSCore
+import RSWeb
 import Account
 import Articles
 import SafariServices
@@ -548,16 +549,19 @@ private extension WebViewController {
 				webView.scrollView.delegate = self
 				self.configureContextMenuInteraction()
 
+				// Remove possible existing message handlers
+				webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
+				webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
+				webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.showFeedInspector)
+
+				// Add handlers
 				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
 
 				self.renderPage(webView)
-
 			}
-
 		}
-
 	}
 
 	func renderPage(_ webView: PreloadedWebView?) {
@@ -635,30 +639,39 @@ private extension WebViewController {
 	}
 
 	func imageWasClicked(body: String?) {
-		guard let webView = webView,
-			let body = body,
-			let data = body.data(using: .utf8),
-			let clickMessage = try? JSONDecoder().decode(ImageClickMessage.self, from: data),
-			let range = clickMessage.imageURL.range(of: ";base64,")
-			else { return }
+		guard let webView, let body else { return }
 
-		let base64Image = String(clickMessage.imageURL.suffix(from: range.upperBound))
-		if let imageData = Data(base64Encoded: base64Image), let image = UIImage(data: imageData) {
-
-			let y = CGFloat(clickMessage.y) + webView.safeAreaInsets.top
-			let rect = CGRect(x: CGFloat(clickMessage.x), y: y, width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
-			transition.originFrame = webView.convert(rect, to: nil)
-
-			if navigationController?.navigationBar.isHidden ?? false {
-				transition.maskFrame = webView.convert(webView.frame, to: nil)
-			} else {
-				transition.maskFrame = webView.convert(webView.safeAreaLayoutGuide.layoutFrame, to: nil)
-			}
-
-			transition.originImage = image
-
-			coordinator.showFullScreenImage(image: image, imageTitle: clickMessage.imageTitle, transitioningDelegate: self)
+		let data = Data(body.utf8)
+		guard let clickMessage = try? JSONDecoder().decode(ImageClickMessage.self, from: data) else {
+			return
 		}
+
+		guard let imageURL = URL(string: clickMessage.imageURL) else { return }
+
+		Downloader.shared.download(imageURL) { [weak self] data, response, error in
+			guard let self, let data, error == nil, !data.isEmpty,
+				  let image = UIImage(data: data) else {
+				return
+			}
+			self.showFullScreenImage(image: image, clickMessage: clickMessage, webView: webView)
+		}
+	}
+	
+	private func showFullScreenImage(image: UIImage, clickMessage: ImageClickMessage, webView: WKWebView) {
+		
+		let y = CGFloat(clickMessage.y) + webView.safeAreaInsets.top
+		let rect = CGRect(x: CGFloat(clickMessage.x), y: y, width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
+		transition.originFrame = webView.convert(rect, to: nil)
+
+		if navigationController?.navigationBar.isHidden ?? false {
+			transition.maskFrame = webView.convert(webView.frame, to: nil)
+		} else {
+			transition.maskFrame = webView.convert(webView.safeAreaLayoutGuide.layoutFrame, to: nil)
+		}
+
+		transition.originImage = image
+
+		coordinator.showFullScreenImage(image: image, imageTitle: clickMessage.imageTitle, transitioningDelegate: self)
 	}
 
 	func stopMediaPlayback(_ webView: WKWebView) {
