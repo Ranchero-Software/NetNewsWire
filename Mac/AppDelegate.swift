@@ -723,10 +723,12 @@ extension AppDelegate {
 	}
 
 	@IBAction func openApplicationSupportFolder(_ sender: Any?) {
-		#if DEBUG
-			guard let appSupport = Platform.dataSubfolder(forApplication: nil, folderName: "") else { return }
-			NSWorkspace.shared.open(URL(fileURLWithPath: appSupport))
-		#endif
+		guard let appSupport = Platform.dataSubfolder(forApplication: nil, folderName: "") else {
+			assertionFailure("Expected non-nil app support folder path")
+			return
+		}
+		
+		NSWorkspace.shared.open(URL(fileURLWithPath: appSupport))
 	}
 
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
