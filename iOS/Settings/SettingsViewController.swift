@@ -222,13 +222,13 @@ final class SettingsViewController: UITableViewController {
 		case 6:
 			switch indexPath.row {
 			case 0:
-				openURL("https://netnewswire.com/help/ios/6.1/en/")
+				openURL(HelpURL.helpHome.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 1:
-				openURL(URL.releaseNotes.absoluteString)
+				openURL(HelpURL.releaseNotes.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 2:
-				openURL("https://github.com/brentsimmons/NetNewsWire/issues")
+				openURL(HelpURL.bugTracker.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 3:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
@@ -476,5 +476,4 @@ private extension SettingsViewController {
 		vc.modalPresentationStyle = .pageSheet
 		present(vc, animated: true)
 	}
-	
 }

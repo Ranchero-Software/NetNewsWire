@@ -616,45 +616,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	@IBAction func openWebsite(_ sender: Any?) {
-
-		Browser.open("https://netnewswire.com/", inBackground: false)
+		HelpURL.website.open()
 	}
 	
 	@IBAction func openReleaseNotes(_ sender: Any?) {
-		Browser.open(URL.releaseNotes.absoluteString, inBackground: false)
+		HelpURL.releaseNotes.open()
 	}
-	
 
 	@IBAction func openHowToSupport(_ sender: Any?) {
-		
-		Browser.open("https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/HowToSupportNetNewsWire.markdown", inBackground: false)
+		HelpURL.howToSupportNetNewsWire.open()
 	}
-	
-	@IBAction func openRepository(_ sender: Any?) {
 
-		Browser.open("https://github.com/brentsimmons/NetNewsWire", inBackground: false)
+	@IBAction func openTechnotes(_ sender: Any?) {
+		HelpURL.technotes.open()
+	}
+
+	@IBAction func openRepository(_ sender: Any?) {
+		HelpURL.githubRepo.open()
 	}
 
 	@IBAction func openBugTracker(_ sender: Any?) {
-
-		Browser.open("https://github.com/brentsimmons/NetNewsWire/issues", inBackground: false)
+		HelpURL.bugTracker.open()
 	}
 
 	@IBAction func openSlackGroup(_ sender: Any?) {
-		Browser.open("https://netnewswire.com/slack", inBackground: false)
+		HelpURL.slack.open()
 	}
 
 	@IBAction func showHelp(_ sender: Any?) {
-
-		Browser.open("https://netnewswire.com/help/mac/6.1/en/", inBackground: false)
-	}
-
-	@IBAction func donateToAppCampForGirls(_ sender: Any?) {
-		Browser.open("https://appcamp4girls.com/contribute/", inBackground: false)
+		HelpURL.helpHome.open()
 	}
 
 	@IBAction func showPrivacyPolicy(_ sender: Any?) {
-		Browser.open("https://netnewswire.com/privacypolicy.html", inBackground: false)
+		HelpURL.privacyPolicy.open()
 	}
 
 	@IBAction func gotoToday(_ sender: Any?) {
