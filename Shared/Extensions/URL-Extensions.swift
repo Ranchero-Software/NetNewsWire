@@ -26,9 +26,6 @@ extension URL {
 		return URL(string: urlString)
 	}
 	
-	/// Reverse chronological list of release notes.
-	static var releaseNotes = URL(string: "https://github.com/Ranchero-Software/NetNewsWire/releases/")!
-
 	func valueFor(_ parameter: String) -> String? {
 		guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
 			  let queryItems = components.queryItems,
