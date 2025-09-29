@@ -47,15 +47,15 @@ extension Article {
 	}
 	
 	var url: URL? {
-		return URL.reparingIfRequired(rawLink)
+		return URL.encodeSpacesIfNeeded(rawLink)
 	}
 	
 	var externalURL: URL? {
-		return URL.reparingIfRequired(rawExternalLink)
+		return URL.encodeSpacesIfNeeded(rawExternalLink)
 	}
 	
 	var imageURL: URL? {
-		return URL.reparingIfRequired(rawImageLink)
+		return URL.encodeSpacesIfNeeded(rawImageLink)
 	}
 	
 	var link: String? {

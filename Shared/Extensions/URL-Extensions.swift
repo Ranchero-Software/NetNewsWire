@@ -35,16 +35,14 @@ extension URL {
 		return value
 		
 	}
-	
-	static func reparingIfRequired(_ link: String?) -> URL? {
-		// If required, we replace any space characters to handle malformed links that are otherwise percent
-		// encoded but contain spaces. For performance reasons, only try this if initial URL init fails.
-		guard let link = link, !link.isEmpty else { return nil }
-		if let url = URL(string: link) {
-			return url
-		} else {
-			return URL(string: link.replacingOccurrences(of: " ", with: "%20"))
-		}
-	}
 
+	/// Percent-encode spaces in links that may contain spaces but are otherwise already percent-encoded.
+	///
+	/// For performance reasons, try this only if initial URL init fails.
+	static func encodeSpacesIfNeeded(_ link: String?) -> URL? {
+		guard let link, !link.isEmpty else {
+			return nil
+		}
+		return URL(string: link.replacingOccurrences(of: " ", with: "%20"))
+	}
 }
