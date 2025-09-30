@@ -38,6 +38,7 @@
 @property (nonatomic) RSSAXParser *parser;
 @property (nonatomic, readonly) RSParsedArticle *currentArticle;
 @property (nonatomic) RSParsedAuthor *currentAuthor;
+@property (nonatomic) RSParsedAuthor *rootAuthor;
 @property (nonatomic, readonly) NSDate *currentDate;
 @property (nonatomic) NSString *language;
 
@@ -215,6 +216,16 @@ static const NSInteger kLengthLength = 7;
 		[self.parser parseData:self.feedData];
 		[self.parser finishParsing];
 	}
+
+	// Add root author to individual articles as needed.
+	RSParsedAuthor *authorToAdd = self.rootAuthor;
+	if (authorToAdd) {
+		for (RSParsedArticle *article in self.articles) {
+			if (article.authors.count < 1) {
+				[article addAuthor:authorToAdd];
+			}
+		}
+	}
 }
 
 
@@ -268,8 +279,7 @@ static const NSInteger kLengthLength = 7;
 - (void)addFeedLanguage {
 
 	if (self.language.length < 0) {
-		self.language = self.currentAttributes[kXMLLangKey]
-;
+		self.language = self.currentAttributes[kXMLLangKey];
 	}
 }
 
@@ -525,8 +535,15 @@ static const NSInteger kLengthLength = 7;
 		if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
 			self.parsingAuthor = NO;
 			RSParsedAuthor *author = self.currentAuthor;
-			if (author.name || author.emailAddress || author.url) {
-				[self.currentArticle addAuthor:author];
+			if (self.parsingArticle) {
+				if (!author.isEmpty) {
+					[self.currentArticle addAuthor:author];
+				}
+			}
+			else {
+				if (!self.rootAuthor && !author.isEmpty) {
+					self.rootAuthor = author;
+				}
 			}
 			self.currentAuthor = nil;
 		}

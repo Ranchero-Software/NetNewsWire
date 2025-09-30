@@ -16,4 +16,6 @@
 
 + (instancetype _Nonnull )authorWithSingleString:(NSString *_Nonnull)s; // Don’t know which property it is. Guess based on contents of the string. Common with RSS.
 
+- (BOOL)isEmpty;
+
 @end

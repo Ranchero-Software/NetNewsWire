@@ -104,4 +104,20 @@ final class AtomParserTests: XCTestCase {
 			XCTAssertEqual(attachment.mimeType!, "audio/mpeg")
 		}
 	}
+
+	func testAuthorAtRoot() {
+		let d = parserData("root-author", "atom", "https://fvsch.com/feed.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+
+		for article in parsedFeed.items {
+			let author = article.authors?.first
+			XCTAssertNotNil(author)
+
+			XCTAssertEqual(author?.name, "Florens Verschelde")
+
+			XCTAssertNil(author?.url)
+			XCTAssertNil(author?.avatarURL)
+			XCTAssertNil(author?.emailAddress)
+		}
+	}
 }
