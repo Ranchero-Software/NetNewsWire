@@ -861,11 +861,11 @@ extension MainWindowController: NSToolbarDelegate {
 
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
 		[
+			NSToolbarItem.Identifier.toggleSidebar,
 			.flexibleSpace,
 			.refresh,
 			.newSidebarItemMenu,
 			.sidebarTrackingSeparator,
-			NSToolbarItem.Identifier.toggleSidebar,
 			.markAllAsRead,
 			.toggleReadArticlesFilter,
 			.timelineTrackingSeparator,
