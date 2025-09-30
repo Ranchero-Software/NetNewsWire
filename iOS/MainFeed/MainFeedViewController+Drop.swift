@@ -17,38 +17,64 @@ extension MainFeedViewController: UITableViewDropDelegate {
 		return session.localDragSession != nil
 	}
 	
-	func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-		guard let destIndexPath = destinationIndexPath,	destIndexPath.section > 0, tableView.hasActiveDrag else {
+	func tableView(
+		_ tableView: UITableView,
+		dropSessionDidUpdate session: UIDropSession,
+		withDestinationIndexPath destinationIndexPath: IndexPath?
+	) -> UITableViewDropProposal {
+		Self.logger.debug("--- dropSessionDidUpdate: destinationIndexPath = \(destinationIndexPath?.debugDescription ?? "nil")")
+		Self.logger.debug("dropSessionDidUpdate: tableView.hasActiveDrag = \(tableView.hasActiveDrag)")
+
+		guard let destIndexPath = destinationIndexPath,
+			  destIndexPath.section > 0,
+			  tableView.hasActiveDrag else {
+			Self.logger.debug("dropSessionDidUpdate: returning .forbidden after guard let destIndexPath = destinationIndexPath, destIndexPath.section > 0, tableView.hasActiveDrag")
 			return UITableViewDropProposal(operation: .forbidden)
 		}
-			
-		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? Feed,
-			  let destAccount = destFeed.account,
-			  let destCell = tableView.cellForRow(at: destIndexPath) else {
-				  return UITableViewDropProposal(operation: .forbidden)
-			  }
+
+		// Get the destination account - either from a feed or directly from the section if empty
+		let destinationAccount: Account? = {
+			if let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? Feed {
+				return destFeed.account
+			} else {
+				// Empty section - get account directly
+				return coordinator.rootNode.childAtIndex(destIndexPath.section)?.representedObject as? Account
+			}
+		}()
+		
+		guard let destinationAccount else {
+			Self.logger.debug("dropSessionDidUpdate: returning .forbidden - could not determine destination account")
+			return UITableViewDropProposal(operation: .forbidden)
+		}
 
 		// Validate account specific behaviors...
-		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
+		if destinationAccount.behaviors.contains(.disallowFeedInMultipleFolders),
 		   let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
 		   let sourceWebFeed = sourceNode.representedObject as? WebFeed,
-		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasWebFeed(withURL: sourceWebFeed.url) {
+		   sourceWebFeed.account?.accountID != destinationAccount.accountID && destinationAccount.hasWebFeed(withURL: sourceWebFeed.url) {
+			Self.logger.debug("dropSessionDidUpdate: returning .forbidden after guard statement validating account behaviors")
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 
 		// Determine the correct drop proposal
-		if destFeed is Folder {
+		let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? Feed
+		let destCell = tableView.cellForRow(at: destIndexPath)
+		
+		if let destFeed, destFeed is Folder, let destCell {
 			if session.location(in: destCell).y >= 0 {
+				Self.logger.debug("dropSessionDidUpdate: returning .move with intent .insertIntoDestinationIndexPath")
 				return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
 			} else {
+				Self.logger.debug("dropSessionDidUpdate: returning .move with intent .unspecified)")
 				return UITableViewDropProposal(operation: .move, intent: .unspecified)
 			}
 		} else {
+			// Either dropping on a feed or into an empty section
+			Self.logger.debug("dropSessionDidUpdate: returning .move with intent .insertAtDestinationIndexPath")
 			return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
 		}
-
 	}
-	
+
 	func tableView(_ tableView: UITableView, performDropWith dropCoordinator: UITableViewDropCoordinator) {
 		guard let dragItem = dropCoordinator.items.first?.dragItem,
 			  let dragNode = dragItem.localObject as? Node,

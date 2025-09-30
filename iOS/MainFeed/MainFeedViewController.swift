@@ -8,14 +8,17 @@
 
 import UIKit
 import WebKit
+import SafariServices
+import os
 import Account
 import Articles
 import RSCore
 import RSTree
 import RSWeb
-import SafariServices
 
 final class MainFeedViewController: UITableViewController, UndoableCommandRunner {
+
+	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainFeedViewController")
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
