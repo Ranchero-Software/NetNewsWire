@@ -61,3 +61,9 @@ NetNewsWire is a multi-platform RSS reader with separate targets for macOS and i
 - Some features disabled in development builds due to private API keys
 - Code signing configured through SharedXcodeSettings for development
 - Documentation and technical notes are located in the `Technotes/` folder
+
+## Code Formatting
+
+Prefer idiomatic modern Swift.
+
+Prefer `if let x` and `guard let x` over `if let x = x` and `guard let x = x`.
