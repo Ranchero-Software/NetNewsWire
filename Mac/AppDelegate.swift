@@ -8,6 +8,7 @@
 
 import AppKit
 import UserNotifications
+import os
 import Articles
 import RSTree
 import RSWeb
@@ -15,7 +16,6 @@ import Account
 import RSCore
 import RSCoreResources
 import Secrets
-import OSLog
 import CrashReporter
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
