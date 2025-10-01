@@ -48,7 +48,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		didSet {
 			if unreadCount != oldValue {
 				postUnreadCountDidChangeNotification()
-				UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+				updateBadge()
 			}
 		}
 	}
@@ -95,7 +95,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
 			// Force the badge to update on launch.
-			UNUserNotificationCenter.current().setBadgeCount(self.unreadCount)
+			self.updateBadge()
 		}
 		
 		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
@@ -139,9 +139,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	}
 
 	func applicationDidEnterBackground(_ application: UIApplication) {
+		updateBadge()
 		IconImageCache.shared.emptyCache()
 	}
-	
+
+	private func updateBadge() {
+		assert(unreadCount == AccountManager.shared.unreadCount)
+		UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+	}
+
 	// MARK: Notifications
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -171,15 +177,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	}
 	
 	func prepareAccountsForBackground() {
+		updateBadge()
 		extensionFeedAddRequestFile.suspend()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
 		widgetDataEncoder.encode()
 		waitForSyncTasksToFinish()
+		IconImageCache.shared.emptyCache()
 	}
 
 	func prepareAccountsForForeground() {
+		updateBadge()
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
 
