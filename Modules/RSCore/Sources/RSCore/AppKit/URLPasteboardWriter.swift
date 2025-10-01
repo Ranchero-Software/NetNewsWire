@@ -24,6 +24,11 @@ import AppKit
 	}
 
 	public class func write(urlStrings: [String], to pasteboard: NSPasteboard) {
+		assert(!urlStrings.isEmpty)
+		guard !urlStrings.isEmpty else {
+			return
+		}
+
 		pasteboard.clearContents()
 		let writers = urlStrings.map { URLPasteboardWriter(urlString: $0) }
 		pasteboard.writeObjects(writers)
