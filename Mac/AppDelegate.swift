@@ -30,8 +30,9 @@ import Sparkle
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate
-{
+final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
+
+	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")
 
 	private struct WindowRestorationIdentifiers {
 		static let mainWindow = "mainWindow"
@@ -184,14 +185,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 				try self.softwareUpdater.start()
 			}
 			catch {
-				NSLog("Failed to start software updater with error: \(error)")
+				Self.logger.error("Failed to start software updater with error: \(error.localizedDescription)")
 			}
 		#endif
 		
 		AppDefaults.shared.registerDefaults()
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
-			os_log(.debug, "Is first run.")
+			Self.logger.debug("Is first run.")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
 
@@ -727,7 +728,7 @@ extension AppDelegate {
 			assertionFailure("Expected non-nil app support folder path")
 			return
 		}
-		
+
 		NSWorkspace.shared.open(URL(fileURLWithPath: appSupport))
 	}
 
@@ -997,12 +998,12 @@ private extension AppDelegate {
 		
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+			Self.logger.error("No account with accountID \(accoundID) found from notification")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+			Self.logger.error("No article with articleID found \(articleID) from notification")
 			return
 		}
 		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
@@ -1016,12 +1017,12 @@ private extension AppDelegate {
 		}
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+			Self.logger.error("No account with accountID \(accoundID) found from notification")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+			Self.logger.error("No article with articleID found \(articleID) from notification")
 			return
 		}
 		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
