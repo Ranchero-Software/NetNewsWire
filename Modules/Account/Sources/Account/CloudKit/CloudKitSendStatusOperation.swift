@@ -14,10 +14,11 @@ import RSWeb
 import SyncDatabase
 
 final class CloudKitSendStatusOperation: MainThreadOperation {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+
+	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKitSendStatusOperation")
+
 	private let blockSize = 150
-	
+
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -38,12 +39,12 @@ final class CloudKitSendStatusOperation: MainThreadOperation {
 		self.showProgress = showProgress
 		self.database = database
 	}
-	
+
 	func run() {
-		os_log(.debug, log: log, "Sending article statuses...")
-		
+		Self.logger.debug("Sending article statuses")
+
 		if showProgress {
-			
+
 			database.selectPendingCount() { result in
 				switch result {
 				case .success(let count):
@@ -51,41 +52,36 @@ final class CloudKitSendStatusOperation: MainThreadOperation {
 					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
 					self.selectForProcessing()
 				case .failure(let databaseError):
-					os_log(.error, log: self.log, "Send status count pending error: %@.", databaseError.localizedDescription)
+					Self.logger.error("Send status count pending error: \(databaseError.localizedDescription)")
 					self.operationDelegate?.cancelOperation(self)
 				}
 			}
-			
 		} else {
-			
 			selectForProcessing()
-			
 		}
-		
 	}
-	
 }
 
 private extension CloudKitSendStatusOperation {
-	
+
 	func selectForProcessing() {
 		database.selectForProcessing(limit: blockSize) { result in
 			switch result {
 			case .success(let syncStatuses):
-				
+
 				func stopProcessing() {
 					if self.showProgress {
 						self.refreshProgress?.completeTask()
 					}
-					os_log(.debug, log: self.log, "Done sending article statuses.")
+					Self.logger.debug("Finished sending article statuses")
 					self.operationDelegate?.operationDidComplete(self)
 				}
-				
+
 				guard syncStatuses.count > 0 else {
 					stopProcessing()
 					return
 				}
-				
+
 				self.processStatuses(syncStatuses) { stop in
 					if stop {
 						stopProcessing()
@@ -93,25 +89,25 @@ private extension CloudKitSendStatusOperation {
 						self.selectForProcessing()
 					}
 				}
-				
+
 			case .failure(let databaseError):
-				os_log(.error, log: self.log, "Send status error: %@.", databaseError.localizedDescription)
+				Self.logger.error("Send status error \(databaseError.localizedDescription)")
 				self.operationDelegate?.cancelOperation(self)
 			}
 		}
 	}
-	
+
 	func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
 		guard let account = account, let articlesZone = articlesZone else {
 			completion(true)
 			return
 		}
-		
+
 		let articleIDs = syncStatuses.map({ $0.articleID })
 		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
-			
+
 			func processWithArticles(_ articles: Set<Article>) {
-				
+
 				let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
 				let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
 					result[article.articleID] = article
@@ -119,16 +115,16 @@ private extension CloudKitSendStatusOperation {
 				let statusUpdates = syncStatusesDict.compactMap { (key, value) in
 					return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
 				}
-				
+
 				func done(_ stop: Bool) {
 					// Don't clear the last one since we might have had additional ticks added
 					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 						self.refreshProgress?.completeTask()
 					}
-					os_log(.debug, log: self.log, "Done sending article status block...")
+					Self.logger.debug("Finished sending article status block")
 					completion(stop)
 				}
-				
+
 				// If this happens, we have somehow gotten into a state where we have new status records
 				// but the articles didn't come back in the fetch.  We need to clean up those sync records
 				// and stop processing.
@@ -147,13 +143,12 @@ private extension CloudKitSendStatusOperation {
 						case .failure(let error):
 							self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
 								self.processAccountError(account, error)
-								os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
+								Self.logger.error("Send article status modify articles error: \(error.localizedDescription)")
 								completion(true)
 							}
 						}
 					}
 				}
-				
 			}
 
 			switch result {
@@ -161,14 +156,13 @@ private extension CloudKitSendStatusOperation {
 				processWithArticles(articles)
 			case .failure(let databaseError):
 				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-					os_log(.error, log: self.log, "Send article status fetch articles error: %@.", databaseError.localizedDescription)
+					Self.logger.error("Send article status fetch articles error: \(databaseError.localizedDescription)")
 					completion(true)
 				}
 			}
-
 		}
 	}
-	
+
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeeds(account.topLevelWebFeeds)
@@ -177,5 +171,4 @@ private extension CloudKitSendStatusOperation {
 			}
 		}
 	}
-
 }
