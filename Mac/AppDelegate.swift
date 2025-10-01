@@ -988,43 +988,37 @@ extension AppDelegate: NSWindowRestoration {
 // Handle Notification Actions
 
 private extension AppDelegate {
-	
+
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			Self.logger.error("No account with accountID \(accoundID) found from notification")
-			return
-		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			Self.logger.error("No article with articleID found \(articleID) from notification")
-			return
-		}
-		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
+		handleStatusNotification(userInfo: userInfo, statusKey: .read)
 	}
-	
+
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+		handleStatusNotification(userInfo: userInfo, statusKey: .starred)
+	}
+
+	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			Self.logger.error("No account with accountID \(accoundID) found from notification")
+			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+			assertionFailure("Expected valid articlePathUserInfo from userInfo \(userInfo)")
+			Self.logger.error("No valid articlePathUserInfo from userInfo \(userInfo) in status notification")
 			return
 		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			Self.logger.error("No article with articleID found \(articleID) from notification")
+
+		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+			assertionFailure("Expected account with \(accountID)")
+			Self.logger.error("No account with accountID \(accountID) found from status notification")
 			return
 		}
-		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
+
+		guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
+			assertionFailure("Expected article with \(articleID)")
+			Self.logger.error("No article with articleID found \(articleID) from status notification")
+			return
+		}
+
+		assert(singleArticleSet.count == 1)
+		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
 	}
 }
