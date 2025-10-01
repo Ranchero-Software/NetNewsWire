@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import os.log
 import UniformTypeIdentifiers
 
 final class ShareViewController: NSViewController {
@@ -17,7 +16,6 @@ final class ShareViewController: NSViewController {
 	
 	private var url: URL?
 	private var extensionContainers: ExtensionContainers?
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ShareViewController")
 
 	override var nibName: NSNib.Name? {
         return NSNib.Name("ShareViewController")
