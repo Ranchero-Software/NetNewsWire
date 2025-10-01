@@ -41,7 +41,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation {
 	}
 
 	func run() {
-		Self.logger.debug("Sending article statuses")
+		Self.logger.debug("iCloud: Sending article statuses")
 
 		if showProgress {
 
@@ -52,7 +52,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation {
 					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
 					self.selectForProcessing()
 				case .failure(let databaseError):
-					Self.logger.error("Send status count pending error: \(databaseError.localizedDescription)")
+					Self.logger.error("iCloud: Send status count pending error: \(databaseError.localizedDescription)")
 					self.operationDelegate?.cancelOperation(self)
 				}
 			}
@@ -73,7 +73,7 @@ private extension CloudKitSendStatusOperation {
 					if self.showProgress {
 						self.refreshProgress?.completeTask()
 					}
-					Self.logger.debug("Finished sending article statuses")
+					Self.logger.debug("iCloud: Finished sending article statuses")
 					self.operationDelegate?.operationDidComplete(self)
 				}
 
@@ -91,7 +91,7 @@ private extension CloudKitSendStatusOperation {
 				}
 
 			case .failure(let databaseError):
-				Self.logger.error("Send status error \(databaseError.localizedDescription)")
+				Self.logger.error("iCloud: Send status error \(databaseError.localizedDescription)")
 				self.operationDelegate?.cancelOperation(self)
 			}
 		}
@@ -121,7 +121,7 @@ private extension CloudKitSendStatusOperation {
 					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 						self.refreshProgress?.completeTask()
 					}
-					Self.logger.debug("Finished sending article status block")
+					Self.logger.debug("iCloud: Finished sending article status block")
 					completion(stop)
 				}
 
@@ -143,7 +143,7 @@ private extension CloudKitSendStatusOperation {
 						case .failure(let error):
 							self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
 								self.processAccountError(account, error)
-								Self.logger.error("Send article status modify articles error: \(error.localizedDescription)")
+								Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
 								completion(true)
 							}
 						}
@@ -156,7 +156,7 @@ private extension CloudKitSendStatusOperation {
 				processWithArticles(articles)
 			case .failure(let databaseError):
 				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-					Self.logger.error("Send article status fetch articles error: \(databaseError.localizedDescription)")
+					Self.logger.error("iCloud: Send article status fetch articles error: \(databaseError.localizedDescription)")
 					completion(true)
 				}
 			}
