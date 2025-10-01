@@ -297,19 +297,22 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 				detailViewController.scrollPageUp(sender)
 			}
 		}
-
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.preferredURL?.absoluteString {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		guard let links = selectedArticles?.compactMap{ $0.preferredLink }, !links.isEmpty else {
+			assertionFailure("Expected at least one link")
+			return
 		}
+		URLPasteboardWriter.write(urlStrings: links, to: .general)
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.externalLink {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		guard let links = selectedArticles?.compactMap{ $0.externalLink }, !links.isEmpty else {
+			assertionFailure("Expected at least one external link")
+			return
 		}
+		URLPasteboardWriter.write(urlStrings: links, to: .general)
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
@@ -1022,11 +1025,29 @@ private extension MainWindowController {
 	// MARK: - Command Validation
 	
 	func canCopyArticleURL() -> Bool {
-		return currentLink != nil
+		guard let selectedArticles else {
+			return false
+		}
+
+		for article in selectedArticles {
+			if article.preferredLink != nil {
+				return true
+			}
+		}
+		return false
 	}
 	
 	func canCopyExternalURL() -> Bool {
-		return oneSelectedArticle?.externalLink != nil && oneSelectedArticle?.externalLink != currentLink
+		guard let selectedArticles else {
+			return false
+		}
+
+		for article in selectedArticles {
+			if article.externalLink != nil {
+				return true
+			}
+		}
+		return false
 	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
