@@ -17,7 +17,6 @@ import RSParser
 import RSDatabase
 import ArticlesDatabase
 import RSWeb
-import os.log
 import Secrets
 
 // Main thread only.
@@ -78,8 +77,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public static let defaultLocalAccountName = NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
 
 	public var isDeleted = false
 	
