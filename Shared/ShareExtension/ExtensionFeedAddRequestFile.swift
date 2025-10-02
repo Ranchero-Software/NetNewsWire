@@ -11,8 +11,8 @@ import os.log
 import Account
 
 final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
-	
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionFeedAddRequestFile")
+
+	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ExtensionFeedAddRequestFile")
 
 	private static var filePath: String = {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
@@ -82,15 +82,14 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 				try data.write(to: url)
 				
 			} catch let error as NSError {
-				os_log(.error, log: Self.log, "Save to disk failed: %@.", error.localizedDescription)
+				Self.logger.error("Save to disk failed: \(error.localizedDescription)")
 			}
 		})
 		
 		if let error = errorPointer?.pointee {
-			os_log(.error, log: Self.log, "Save to disk coordination failed: %@.", error.localizedDescription)
+			Self.logger.error("Save to disk coordination failed: \(error.localizedDescription)")
 		}
 	}
-	
 }
 
 private extension ExtensionFeedAddRequestFile {
@@ -119,12 +118,12 @@ private extension ExtensionFeedAddRequestFile {
 				try data.write(to: url)
 				
 			} catch let error as NSError {
-				os_log(.error, log: Self.log, "Save to disk failed: %@.", error.localizedDescription)
+				Self.logger.error("Save to disk failed: \(error.localizedDescription)")
 			}
 		})
 		
 		if let error = errorPointer?.pointee {
-			os_log(.error, log: Self.log, "Save to disk coordination failed: %@.", error.localizedDescription)
+			Self.logger.error("Save to disk coordination failed: \(error.localizedDescription)")
 		}
 
 		requests?.forEach { processRequest($0) }
@@ -156,5 +155,4 @@ private extension ExtensionFeedAddRequestFile {
 		
 		account.createWebFeed(url: request.feedURL.absoluteString, name: request.name, container: container, validateFeed: true) { _ in }
 	}
-	
 }
