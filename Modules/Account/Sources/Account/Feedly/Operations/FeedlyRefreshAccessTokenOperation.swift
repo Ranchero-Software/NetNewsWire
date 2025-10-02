@@ -16,13 +16,11 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 	let service: OAuthAccessTokenRefreshing
 	let oauthClient: OAuthAuthorizationClient
 	let account: Account
-	let log: OSLog
 	
-	init(account: Account, service: OAuthAccessTokenRefreshing, oauthClient: OAuthAuthorizationClient, log: OSLog) {
+	init(account: Account, service: OAuthAccessTokenRefreshing, oauthClient: OAuthAuthorizationClient) {
 		self.oauthClient = oauthClient
 		self.service = service
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {
@@ -30,7 +28,7 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 		
 		do {
 			guard let credentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
-				os_log(.debug, log: log, "Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
+				Feedly.logger.error("Feedly: Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again")
 				throw TransportError.httpError(status: 403)
 			}
 			
@@ -40,9 +38,9 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 			didFinish(with: error)
 			return
 		}
-		
-		os_log(.debug, log: log, "Refreshing access token.")
-		
+
+		Feedly.logger.info("Feedly: Refreshing access token")
+
 		// Ignore cancellation after the request is resumed otherwise we may continue storing a potentially invalid token!
 		service.refreshAccessToken(with: refreshToken.secret, client: oauthClient) { result in
 			self.didRefreshAccessToken(result)
@@ -55,13 +53,13 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 		switch result {
 		case .success(let grant):
 			do {
-				os_log(.debug, log: log, "Storing refresh token.")
+				Feedly.logger.info("Feedly: Storing refresh token")
 				// Store the refresh token first because it sends this token to the account delegate.
 				if let token = grant.refreshToken {
 					try account.storeCredentials(token)
 				}
 				
-				os_log(.debug, log: log, "Storing access token.")
+				Feedly.logger.info("Feedly: Storing access token")
 				// Now store the access token because we want the account delegate to use it.
 				try account.storeCredentials(grant.accessToken)
 				

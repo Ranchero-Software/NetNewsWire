@@ -19,7 +19,7 @@ final class FeedlyGetCollectionsOperationTests: XCTestCase {
 		let jsonName = "JSON/feedly_collections_initial"
 		transport.testFiles["/v3/collections"] = "\(jsonName).json"
 		
-		let getCollections = FeedlyGetCollectionsOperation(service: caller, log: support.log)
+		let getCollections = FeedlyGetCollectionsOperation(service: caller)
 		let completionExpectation = expectation(description: "Did Finish")
 		getCollections.completionBlock = { _ in
 			completionExpectation.fulfill()
@@ -71,11 +71,10 @@ final class FeedlyGetCollectionsOperationTests: XCTestCase {
 		let delegate = TestDelegate()
 		delegate.errorExpectation = expectation(description: "Did Fail With Expected Error")
 		
-		let support = FeedlyTestSupport()
 		let service = TestGetCollectionsService()
 		service.mockResult = .failure(URLError(.timedOut))
 		
-		let getCollections = FeedlyGetCollectionsOperation(service: service, log: support.log)
+		let getCollections = FeedlyGetCollectionsOperation(service: service)
 		getCollections.delegate = delegate
 		
 		let completionExpectation = expectation(description: "Did Finish")

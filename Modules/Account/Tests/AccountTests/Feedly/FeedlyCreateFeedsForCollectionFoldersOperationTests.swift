@@ -53,7 +53,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			return (feeds, accountFolder)
 		}
 		
-		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
+		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider)
 		let completionExpectation = expectation(description: "Did Finish")
 		createFeeds.completionBlock = { _ in
 			completionExpectation.fulfill()
@@ -124,7 +124,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 				return (feeds, accountFolder)
 			}
 			
-			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
+			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider)
 			let completionExpectation = expectation(description: "Did Finish")
 			createFeeds.completionBlock = { _ in
 				completionExpectation.fulfill()
@@ -148,7 +148,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			return (feeds, accountFolder)
 		}
 		
-		let removeFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
+		let removeFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider)
 		let completionExpectation = expectation(description: "Did Finish")
 		removeFeeds.completionBlock = { _ in
 			completionExpectation.fulfill()

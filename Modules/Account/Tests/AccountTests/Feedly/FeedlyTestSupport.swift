@@ -14,7 +14,7 @@ import os.log
 import SyncDatabase
 
 final class FeedlyTestSupport {
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "FeedlyTests")
+
 	var accessToken = Credentials(type: .oauthAccessToken, username: "Test", secret: "t3st-access-tok3n")
 	var refreshToken = Credentials(type: .oauthRefreshToken, username: "Test", secret: "t3st-refresh-tok3n")
 	var transport = TestTransport()

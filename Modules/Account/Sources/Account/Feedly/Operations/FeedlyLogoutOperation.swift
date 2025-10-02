@@ -17,12 +17,10 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 
 	let service: FeedlyLogoutService
 	let account: Account
-	let log: OSLog
 	
-	init(account: Account, service: FeedlyLogoutService, log: OSLog) {
+	init(account: Account, service: FeedlyLogoutService) {
 		self.service = service
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {

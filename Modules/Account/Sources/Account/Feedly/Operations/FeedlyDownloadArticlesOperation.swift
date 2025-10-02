@@ -14,21 +14,19 @@ import RSWeb
 final class FeedlyDownloadArticlesOperation: FeedlyOperation {
 
 	private let account: Account
-	private let log: OSLog
 	private let missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding
 	private let updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding
 	private let getEntriesService: FeedlyGetEntriesService
 	private let operationQueue = MainThreadOperationQueue()
 	private let finishOperation: FeedlyCheckpointOperation
 	
-	init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService, log: OSLog) {
+	init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService) {
 		self.account = account
 		self.operationQueue.suspend()
 		self.missingArticleEntryIdProvider = missingArticleEntryIdProvider
 		self.updatedArticleEntryIdProvider = updatedArticleEntryIdProvider
 		self.getEntriesService = getEntriesService
 		self.finishOperation = FeedlyCheckpointOperation()
-		self.log = log
 		super.init()
 		self.finishOperation.checkpointDelegate = self
 		self.operationQueue.add(self.finishOperation)
@@ -37,27 +35,29 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation {
 	override func run() {
 		var articleIds = missingArticleEntryIdProvider.entryIds
 		articleIds.formUnion(updatedArticleEntryIdProvider.entryIds)
-		
-		os_log(.debug, log: log, "Requesting %{public}i articles.", articleIds.count)
-		
+
+		Feedly.logger.info("Feedly: Requesting \(articleIds.count) articles")
+
 		let feedlyAPILimitBatchSize = 1000
 		for articleIds in Array(articleIds).chunked(into: feedlyAPILimitBatchSize) {
 			
 			let provider = FeedlyEntryIdentifierProvider(entryIds: Set(articleIds))
-			let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider, log: log)
+			let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider)
 			getEntries.delegate = self
 			self.operationQueue.add(getEntries)
 			
-			let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
-																		  parsedItemProvider: getEntries,
-																		  log: log)
+			let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(
+				account: account,
+				parsedItemProvider: getEntries
+			)
 			organiseByFeed.delegate = self
 			organiseByFeed.addDependency(getEntries)
 			self.operationQueue.add(organiseByFeed)
 			
-			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
-			organisedItemsProvider: organiseByFeed,
-			log: log)
+			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(
+				account: account,
+				organisedItemsProvider: organiseByFeed
+			)
 			
 			updateAccount.delegate = self
 			updateAccount.addDependency(organiseByFeed)
@@ -90,8 +90,7 @@ extension FeedlyDownloadArticlesOperation: FeedlyOperationDelegate {
 		assert(Thread.isMainThread)
 		
 		// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
-		os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", String(describing: operation), error as NSError)
-		
+		Feedly.logger.error("Feedly: FeedlyDownloadArticlesOperation did fail with error: \(error.localizedDescription)")
 		cancel()
 	}
 }

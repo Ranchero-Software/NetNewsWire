@@ -127,7 +127,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		let log = self.log
 
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
 
 		syncAllOperation.downloadProgress = refreshProgress
 		
@@ -168,7 +168,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
-		let send = FeedlySendArticleStatusesOperation(database: database, service: caller, log: log)
+		let send = FeedlySendArticleStatusesOperation(database: database, service: caller)
 		send.completionBlock = { operation in
 			// TODO: not call with success if operation was canceled? Not sure.
 			DispatchQueue.main.async {
@@ -191,7 +191,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil, log: log)
+		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil)
 		
 		group.enter()
 		ingestUnread.completionBlock = { _ in
@@ -199,7 +199,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			
 		}
 		
-		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil, log: log)
+		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil)
 		
 		group.enter()
 		ingestStarred.completionBlock = { _ in
@@ -334,9 +334,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 														   getStreamContentsService: caller,
 														   database: database,
 														   container: container,
-														   progress: refreshProgress,
-														   log: log)
-			
+														   progress: refreshProgress)
+
 			addNewFeed.addCompletionHandler = { result in
 				completion(result)
 			}
@@ -391,7 +390,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
                                                                      service: caller,
                                                                      container: container,
                                                                      progress: refreshProgress,
-                                                                     log: log,
                                                                      customFeedName: feed.editedName)
 			
 			
@@ -537,7 +535,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
-		let logout = FeedlyLogoutOperation(account: account, service: caller, log: log)
+		let logout = FeedlyLogoutOperation(account: account, service: caller)
 		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
 		MainThreadOperationQueue.shared.add(logout)
 	}
@@ -585,7 +583,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			}
 		}
 		
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient)
 		refreshAccessToken.downloadProgress = refreshProgress
 		
 		/// This must be strongly referenced by the completionBlock of the `FeedlyRefreshAccessTokenOperation`.

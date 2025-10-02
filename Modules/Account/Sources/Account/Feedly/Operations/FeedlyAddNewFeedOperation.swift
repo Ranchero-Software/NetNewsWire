@@ -26,11 +26,10 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 	private let addToCollectionService: FeedlyAddFeedToCollectionService
 	private let syncUnreadIdsService: FeedlyGetStreamIdsService
 	private let getStreamContentsService: FeedlyGetStreamContentsService
-	private let log: OSLog
 	private var feedResourceId: FeedlyFeedResourceId?
 	var addCompletionHandler: ((Result<WebFeed, Error>) -> ())?
 
-	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress, log: OSLog) throws {
+	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress) throws {
 		
 
 		let validator = FeedlyFeedContainerValidator(container: container)
@@ -45,7 +44,6 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 		self.addToCollectionService = addToCollectionService
 		self.syncUnreadIdsService = syncUnreadIdsService
 		self.getStreamContentsService = getStreamContentsService
-		self.log = log
 
 		super.init()
 
@@ -91,19 +89,19 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 		addRequest.downloadProgress = downloadProgress
 		operationQueue.add(addRequest)
 		
-		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
+		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest)
 		createFeeds.delegate = self
 		createFeeds.addDependency(addRequest)
 		createFeeds.downloadProgress = downloadProgress
 		operationQueue.add(createFeeds)
 		
-		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: syncUnreadIdsService, database: database, newerThan: nil, log: log)
+		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: syncUnreadIdsService, database: database, newerThan: nil)
 		syncUnread.addDependency(createFeeds)
 		syncUnread.downloadProgress = downloadProgress
 		syncUnread.delegate = self
 		operationQueue.add(syncUnread)
 		
-		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil, log: log)
+		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil)
 		syncFeed.addDependency(syncUnread)
 		syncFeed.downloadProgress = downloadProgress
 		syncFeed.delegate = self
@@ -120,9 +118,9 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		addCompletionHandler?(.failure(error))
 		addCompletionHandler = nil
-		
-		os_log(.debug, log: log, "Unable to add new feed: %{public}@.", error as NSError)
-		
+
+		Feedly.logger.error("Feedly: Unable to add new feed with error \(error.localizedDescription)")
+
 		cancel()
 	}
 	

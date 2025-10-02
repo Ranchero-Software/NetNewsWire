@@ -20,7 +20,6 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 
 	private let account: Account
 	private let parsedItemProvider: FeedlyParsedItemProviding
-	private let log: OSLog
 	
 	var parsedItemsByFeedProviderName: String {
 		return name ?? String(describing: Self.self)
@@ -33,10 +32,9 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 	
 	private var itemsKeyedByFeedId = [String: Set<ParsedItem>]()
 	
-	init(account: Account, parsedItemProvider: FeedlyParsedItemProviding, log: OSLog) {
+	init(account: Account, parsedItemProvider: FeedlyParsedItemProviding) {
 		self.account = account
 		self.parsedItemProvider = parsedItemProvider
-		self.log = log
 	}
 	
 	override func run() {
@@ -59,9 +57,9 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 			}()
 			dict[key] = value
 		}
-		
-		os_log(.debug, log: log, "Grouped %i items by %i feeds for %@", items.count, dict.count, parsedItemProvider.parsedItemProviderName)
-		
+
+		Feedly.logger.info("Feedly: Grouped \(items.count) items by \(dict.count) feeds for \(self.parsedItemProvider.parsedItemProviderName)")
+
 		itemsKeyedByFeedId = dict
 	}
 }

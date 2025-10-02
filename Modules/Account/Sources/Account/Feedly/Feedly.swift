@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import os.log
 
 struct Feedly {
 
+	// Convention with this logger is to put "Feedly: " at the beginning of each message.
 	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 }

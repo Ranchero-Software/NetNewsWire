@@ -24,19 +24,17 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	private let service: FeedlyGetStreamIdsService
 	private let database: SyncDatabase
 	private var remoteEntryIds = Set<String>()
-	private let log: OSLog
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		let resource = FeedlyTagResourceId.Global.saved(for: userId)
-		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan, log: log)
+		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.database = database
-		self.log = log
 	}
 	
 	override func run() {
