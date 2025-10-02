@@ -7,12 +7,12 @@
 //
 
 import Foundation
-import os.log
+import os
 import RSWeb
 
 struct CacheCleaner {
 
-	static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
+	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
 
 	static func purgeIfNecessary() {
 
@@ -35,19 +35,16 @@ struct CacheCleaner {
 
 					for tempItem in [faviconsFolderURL, imagesFolderURL, feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL] {
 						do {
-							os_log(.info, log: self.log, "Removing cache file: %@", tempItem.absoluteString)
+							logger.info("Removing cache file: \(tempItem.absoluteString)")
 							try FileManager.default.removeItem(at: tempItem)
 						} catch {
-							os_log(.error, log: self.log, "Could not delete cache file: %@", error.localizedDescription)
+							logger.error("Could not delete cache file: \(error.localizedDescription)")
 						}
 					}
 					
 					AppDefaults.shared.lastImageCacheFlushDate = Date()
-					
 				}
 			}
 		}
-		
 	}
-	
 }
