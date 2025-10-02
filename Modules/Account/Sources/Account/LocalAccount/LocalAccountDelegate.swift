@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 import RSParser
 import Articles
@@ -20,8 +19,6 @@ public enum LocalAccountDelegateError: String, Error {
 }
 
 final class LocalAccountDelegate: AccountDelegate {
-
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccount")
 
 	weak var account: Account?
 	
