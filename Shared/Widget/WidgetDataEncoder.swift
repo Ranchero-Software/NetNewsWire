@@ -135,7 +135,7 @@ public final class WidgetDataEncoder {
 		}
 
 		dispatchGroup.notify(queue: .main) {
-			if groupError != nil {
+			if let groupError {
 				Self.logger.error("WidgetDataEncoder failed to write the widget data: \(groupError.localizedDescription)")
 				completion(nil)
 			} else {
