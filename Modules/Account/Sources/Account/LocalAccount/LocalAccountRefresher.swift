@@ -34,6 +34,8 @@ final class LocalAccountRefresher {
 
 	private var urlToFeedDictionary = [String: WebFeed]()
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccountRefresher")
+
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
 
 		let filteredFeeds = feeds.filter { !Self.feedShouldBeSkipped($0) }
@@ -172,7 +174,7 @@ private extension LocalAccountRefresher {
 
 		for badHost in badHosts {
 			if lowercaseHost == badHost {
-				os_log(.debug, "Dropping request because it‘s X/Twitter, which doesn’t provide feeds: \(feed.url)")
+				Self.logger.info("Dropping request becasue it’s X/Twitter, which doesn’t provide feeds: \(feed.url)")
 				return true
 			}
 		}
@@ -197,7 +199,7 @@ private extension LocalAccountRefresher {
 
 		if url.isOpenRSSOrgURL {
 			if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
-				os_log(.debug, "Dropping request for Cache-Control reasons: \(feed.url)")
+				Self.logger.info("Dropping request for Cache-Control reasons: \(feed.url)")
 				return true
 			}
 		}
