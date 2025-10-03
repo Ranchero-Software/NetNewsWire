@@ -19,8 +19,6 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	private var newUnclaimedWebFeeds = [String: [UnclaimedWebFeed]]()
 	private var existingUnclaimedWebFeeds = [String: [WebFeed]]()
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-
 	weak var account: Account?
 	weak var articlesZone: CloudKitArticlesZone?
 
