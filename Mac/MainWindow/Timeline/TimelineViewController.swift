@@ -980,6 +980,9 @@ extension TimelineViewController: NSTableViewDelegate {
 				action.backgroundColor = AppAssets.starColor
 				action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
 				return [action]
+
+			@unknown default:
+				Self.logger.error("TimelineViewController: unknown edge \(edge.rawValue, privacy: .public)")
 		}
 
 		return []
