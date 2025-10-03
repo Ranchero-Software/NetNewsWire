@@ -67,3 +67,6 @@ NetNewsWire is a multi-platform RSS reader with separate targets for macOS and i
 Prefer idiomatic modern Swift.
 
 Prefer `if let x` and `guard let x` over `if let x = x` and `guard let x = x`.
+
+Don’t use `...` or `…` in Logger messages.
+
