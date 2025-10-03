@@ -14,9 +14,6 @@ import RSWeb
 import SyncDatabase
 
 final class CloudKitSendStatusOperation: MainThreadOperation {
-
-	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKitSendStatusOperation")
-
 	private let blockSize = 150
 
 	// MainThreadOperation
@@ -31,6 +28,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation {
 	private weak var refreshProgress: DownloadProgress?
 	private var showProgress: Bool
 	private var database: SyncDatabase
+	private static let logger = cloudKitLogger
 
 	init(account: Account, articlesZone: CloudKitArticlesZone, refreshProgress: DownloadProgress, showProgress: Bool, database: SyncDatabase) {
 		self.account = account

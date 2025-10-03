@@ -12,9 +12,6 @@ import os.log
 import RSCore
 
 final class CloudKitRemoteNotificationOperation: MainThreadOperation {
-
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKitRemoteNotificationOperation")
-
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -25,6 +22,7 @@ final class CloudKitRemoteNotificationOperation: MainThreadOperation {
 	private weak var accountZone: CloudKitAccountZone?
 	private weak var articlesZone: CloudKitArticlesZone?
 	private var userInfo: [AnyHashable : Any]
+	private static let logger = cloudKitLogger
 
 	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable : Any]) {
 		self.accountZone = accountZone
