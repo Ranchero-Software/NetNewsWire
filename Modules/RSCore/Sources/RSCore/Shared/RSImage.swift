@@ -208,10 +208,14 @@ public extension RSImage {
 	///   - imageSource: The `CGImageSource` from which to create the thumbnail.
 	///   - maxPixelSize: The maximum dimension of the resulting image.
 	static func createThumbnail(_ imageSource: CGImageSource, maxPixelSize: Int) -> CGImage? {
+		guard maxPixelSize > 0 else { return nil }
+		
+		let count = CGImageSourceGetCount(imageSource)
+		guard count > 0 else { return nil }
+		
 		let options = [kCGImageSourceCreateThumbnailWithTransform : true,
 					   kCGImageSourceCreateThumbnailFromImageIfAbsent : true,
 					   kCGImageSourceThumbnailMaxPixelSize : NSNumber(value: maxPixelSize)]
 		return CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary)
 	}
-	
 }
