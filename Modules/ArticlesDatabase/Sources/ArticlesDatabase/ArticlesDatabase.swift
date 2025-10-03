@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 import RSCore
 import RSDatabase
 import RSParser
@@ -40,7 +41,6 @@ public struct ArticleChanges {
 		self.updatedArticles = updatedArticles
 		self.deletedArticles = deletedArticles
 	}
-	
 }
 
 public typealias UpdateArticlesResult = Result<ArticleChanges, DatabaseError>
@@ -66,15 +66,22 @@ public final class ArticlesDatabase {
 	private let queue: DatabaseQueue
 	private let operationQueue = MainThreadOperationQueue()
 	private let retentionStyle: RetentionStyle
+	private let accountID: String
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticlesDatabase")
 
 	public init(databaseFilePath: String, accountID: String, retentionStyle: RetentionStyle) {
+		Self.logger.debug("Articles Database init \(accountID, privacy: .public)")
+
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
 		self.queue = queue
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue, retentionStyle: retentionStyle)
 		self.retentionStyle = retentionStyle
+		self.accountID = accountID
 
 		try! queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
 		queue.runInDatabase { databaseResult in
+			Self.logger.debug("Articles Database creating tables \(accountID, privacy: .public)")
 			let database = databaseResult.database!
 			if !self.articlesTable.containsColumn("searchRowID", in: database) {
 				database.executeStatements("ALTER TABLE articles add column searchRowID INTEGER;")
@@ -91,72 +98,89 @@ public final class ArticlesDatabase {
 	// MARK: - Fetching Articles
 
 	public func fetchArticles(_ webFeedID: String) throws -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticles(webFeedID)
 	}
 	
 	public func fetchArticles(_ webFeedIDs: Set<String>) throws -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticles(webFeedIDs)
 	}
 
 	public func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticles(articleIDs: articleIDs)
 	}
 
 	public func fetchUnreadArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchUnreadArticles(webFeedIDs, limit)
 	}
 
 	public func fetchTodayArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticlesSince(webFeedIDs, todayCutoffDate(), limit)
 	}
 
 	public func fetchStarredArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchStarredArticles(webFeedIDs, limit)
 	}
 
 	public func fetchStarredArticlesCount(_ webFeedIDs: Set<String>) throws -> Int {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchStarredArticlesCount(webFeedIDs)
 	}
 
 	public func fetchArticlesMatching(_ searchString: String, _ webFeedIDs: Set<String>) throws -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticlesMatching(searchString, webFeedIDs)
 	}
 
 	public func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
 	}
 
 	// MARK: - Fetching Articles Async
 
 	public func fetchArticlesAsync(_ webFeedID: String, _ completion: @escaping ArticleSetResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchArticlesAsync(webFeedID, completion)
 	}
 
 	public func fetchArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchArticlesAsync(webFeedIDs, completion)
 	}
 
 	public func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping  ArticleSetResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchArticlesAsync(articleIDs: articleIDs, completion)
 	}
 
 	public func fetchUnreadArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchUnreadArticlesAsync(webFeedIDs, limit, completion)
 	}
 
 	public func fetchTodayArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchArticlesSinceAsync(webFeedIDs, todayCutoffDate(), limit, completion)
 	}
 
 	public func fetchedStarredArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchStarredArticlesAsync(webFeedIDs, limit, completion)
 	}
 
 	public func fetchArticlesMatchingAsync(_ searchString: String, _ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchArticlesMatchingAsync(searchString, webFeedIDs, completion)
 	}
 
 	public func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
 	}
 
@@ -164,6 +188,7 @@ public final class ArticlesDatabase {
 
 	/// Fetch all non-zero unread counts.
 	public func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		let operation = FetchAllUnreadCountsOperation(databaseQueue: queue)
 		operationQueue.cancelOperations(named: operation.name!)
 		operation.completionBlock = { operation in
@@ -175,6 +200,7 @@ public final class ArticlesDatabase {
 
 	/// Fetch unread count for a single feed.
 	public func fetchUnreadCount(_ webFeedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		let operation = FetchFeedUnreadCountOperation(webFeedID: webFeedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
 		operation.completionBlock = { operation in
 			let fetchOperation = operation as! FetchFeedUnreadCountOperation
@@ -185,6 +211,7 @@ public final class ArticlesDatabase {
 
 	/// Fetch non-zero unread counts for given webFeedIDs.
 	public func fetchUnreadCounts(for webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		let operation = FetchUnreadCountsForFeedsOperation(webFeedIDs: webFeedIDs, databaseQueue: queue)
 		operation.completionBlock = { operation in
 			let fetchOperation = operation as! FetchUnreadCountsForFeedsOperation
@@ -194,14 +221,17 @@ public final class ArticlesDatabase {
 	}
 
 	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		fetchUnreadCount(for: webFeedIDs, since: todayCutoffDate(), completion: completion)
 	}
 
 	public func fetchUnreadCount(for webFeedIDs: Set<String>, since: Date, completion: @escaping SingleUnreadCountCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchUnreadCount(webFeedIDs, since, completion)
 	}
 
 	public func fetchStarredAndUnreadCount(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchStarredAndUnreadCount(webFeedIDs, completion)
 	}
 
@@ -209,18 +239,21 @@ public final class ArticlesDatabase {
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
 	public func update(with parsedItems: Set<ParsedItem>, webFeedID: String, deleteOlder: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		precondition(retentionStyle == .feedBased)
 		articlesTable.update(parsedItems, webFeedID, deleteOlder, completion)
 	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
 	public func update(webFeedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		precondition(retentionStyle == .syncSystem)
 		articlesTable.update(webFeedIDsAndItems, defaultRead, completion)
 	}
 
 	/// Delete articles
 	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.delete(articleIDs: articleIDs, completion: completion)
 	}
 
@@ -228,30 +261,36 @@ public final class ArticlesDatabase {
 
 	/// Fetch the articleIDs of unread articles.
 	public func fetchUnreadArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchUnreadArticleIDsAsync(completion)
 	}
 	
 	/// Fetch the articleIDs of starred articles.
 	public func fetchStarredArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchStarredArticleIDsAsync(completion)
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
 
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return articlesTable.mark(articles, statusKey, flag, completion)
 	}
 
 	public func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.markAndFetchNew(articleIDs, statusKey, flag, completion)
 	}
 
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
 	/// For newly-created statuses, mark them as read and not-starred.
 	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.createStatusesIfNeeded(articleIDs, completion)
 	}
 
@@ -260,6 +299,7 @@ public final class ArticlesDatabase {
 
 	/// Cancel current operations and close the database.
 	public func cancelAndSuspend() {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		cancelOperations()
 		suspend()
 	}
@@ -267,12 +307,14 @@ public final class ArticlesDatabase {
 	/// Close the database and stop running database calls.
 	/// Any pending calls will complete first.
 	public func suspend() {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		operationQueue.suspend()
 		queue.suspend()
 	}
 
 	/// Open the database and allow for running database calls again.
 	public func resume() {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		queue.resume()
 		operationQueue.resume()
 	}
@@ -283,6 +325,7 @@ public final class ArticlesDatabase {
 	/// Call to free up some memory. Should be done when the app is backgrounded, for instance.
 	/// This does not empty *all* caches — just the ones that are empty-able.
 	public func emptyCaches() {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.emptyCaches()
 	}
 
@@ -294,6 +337,7 @@ public final class ArticlesDatabase {
 	/// 1) The database would grow to an inordinate size, and
 	/// 2) the app would become very slow.
 	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		if retentionStyle == .syncSystem {
 			articlesTable.deleteOldArticles()
 		}
@@ -331,6 +375,7 @@ private extension ArticlesDatabase {
 	// MARK: - Operations
 
 	func cancelOperations() {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		operationQueue.cancelAllOperations()
 	}
 }
