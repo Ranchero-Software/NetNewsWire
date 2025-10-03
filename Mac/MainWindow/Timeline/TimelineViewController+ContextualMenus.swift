@@ -72,14 +72,22 @@ extension TimelineViewController {
 	}
 	
 	@objc func markAllInFeedAsRead(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let feedArticles = menuItem.representedObject as? ArticleArray else {
+		guard let menuItem = sender as? NSMenuItem,
+			  let feed = menuItem.representedObject as? WebFeed else {
 			return
 		}
-		
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: feedArticles, markingRead: true, undoManager: undoManager) else {
+
+		guard let unreadArticles = try? feed.fetchUnreadArticles(), !unreadArticles.isEmpty else {
 			return
 		}
-		
+		guard let undoManager, let markReadCommand = MarkStatusCommand(
+			initialArticles: Array(unreadArticles),
+			markingRead: true,
+			undoManager: undoManager
+		) else {
+			return
+		}
+
 		runCommand(markReadCommand)
 	}
 	
@@ -255,18 +263,14 @@ private extension TimelineViewController {
 	}
 
 	func markAllAsReadMenuItem(_ feed: WebFeed) -> NSMenuItem? {
-		guard let articlesSet = try? feed.fetchArticles() else {
-			return nil
-		}
-		let articles = Array(articlesSet)
-		guard articles.canMarkAllAsRead() else {
+		guard feed.unreadCount > 0 else {
 			return nil
 		}
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let menuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		
-		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), articles)
+		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), feed)
 	}
 	
 	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
