@@ -15,12 +15,10 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 
 	private let account: Account
 	private let organisedItemsProvider: FeedlyParsedItemsByFeedProviding
-	private let log: OSLog
 
-	init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding, log: OSLog) {
+	init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding) {
 		self.account = account
 		self.organisedItemsProvider = organisedItemsProvider
-		self.log = log
 	}
 	
 	override func run() {
@@ -31,8 +29,8 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 				self.didFinish(with: error)
 				return
 			}
-			
-			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", webFeedIDsAndItems.count, self.organisedItemsProvider.parsedItemsByFeedProviderName)
+
+			Feedly.logger.info("Feedly: updated \(webFeedIDsAndItems.count) for \(self.organisedItemsProvider.parsedItemsByFeedProviderName)")
 			self.didFinish()
 		}
 	}

@@ -300,18 +300,30 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
-		guard let links = selectedArticles?.compactMap{ $0.preferredLink }, !links.isEmpty else {
+		guard let articles = selectedArticles else {
+			assertionFailure("Expected selectedArticles to be non-nil")
+			return
+		}
+		let links = articles.compactMap { $0.preferredLink }
+		if links.isEmpty {
 			assertionFailure("Expected at least one link")
 			return
 		}
+
 		URLPasteboardWriter.write(urlStrings: links, to: .general)
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
-		guard let links = selectedArticles?.compactMap{ $0.externalLink }, !links.isEmpty else {
-			assertionFailure("Expected at least one external link")
+		guard let articles = selectedArticles else {
+			assertionFailure("Expected selectedArticles to be non-nil")
 			return
 		}
+		let links = articles.compactMap { $0.externalLink }
+		if links.isEmpty {
+			assertionFailure("Expected at least one link")
+			return
+		}
+
 		URLPasteboardWriter.write(urlStrings: links, to: .general)
 	}
 

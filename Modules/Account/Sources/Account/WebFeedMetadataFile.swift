@@ -11,9 +11,6 @@ import os.log
 import RSCore
 
 final class WebFeedMetadataFile {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "webFeedMetadataFile")
-
 	private let fileURL: URL
 	private let account: Account
 
@@ -22,17 +19,19 @@ final class WebFeedMetadataFile {
 			queueSaveToDiskIfNeeded()
 		}
 	}
+
 	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WebFeedMetadataFile")
 
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
-	
+
 	func markAsDirty() {
 		isDirty = true
 	}
-	
+
 	func load() {
 		if let fileData = try? Data(contentsOf: fileURL) {
 			let decoder = PropertyListDecoder()
@@ -40,10 +39,10 @@ final class WebFeedMetadataFile {
 		}
 		account.webFeedMetadata.values.forEach { $0.delegate = account }
 	}
-	
+
 	func save() {
 		guard !account.isDeleted else { return }
-		
+
 		let feedMetadata = metadataForOnlySubscribedToFeeds()
 
 		let encoder = PropertyListEncoder()
@@ -53,10 +52,9 @@ final class WebFeedMetadataFile {
 			let data = try encoder.encode(feedMetadata)
 			try data.write(to: fileURL)
 		} catch let error as NSError {
-			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
+			Self.logger.error("Save WebFeedMetadataFile file to disk failed: \(error.localizedDescription)")
 		}
 	}
-		
 }
 
 private extension WebFeedMetadataFile {
@@ -78,5 +76,4 @@ private extension WebFeedMetadataFile {
 			return webFeedIDs.contains(metadata.webFeedID)
 		}
 	}
-
 }

@@ -32,16 +32,14 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 	let resource: FeedlyResourceId
 	let unreadOnly: Bool?
 	let newerThan: Date?
-	let log: OSLog
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.continuation = continuation
 		self.newerThan = newerThan
 		self.unreadOnly = unreadOnly
-		self.log = log
 	}
 	
 	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
@@ -57,7 +55,7 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 				self.didFinish()
 				
 			case .failure(let error):
-				os_log(.debug, log: self.log, "Unable to get stream ids: %{public}@.", error as NSError)
+				Feedly.logger.error("Feedly: Unable to get stream IDs: \(error.localizedDescription)")
 				self.didFinish(with: error)
 			}
 		}

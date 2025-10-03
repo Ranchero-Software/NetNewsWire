@@ -54,7 +54,7 @@ final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		service.refreshAccessTokenExpectation?.isInverted = true
 		
 		let client = support.makeMockOAuthClient()
-		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client, log: support.log)
+		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
@@ -89,8 +89,8 @@ final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		service.refreshAccessTokenExpectation?.isInverted = true
 		
 		let client = support.makeMockOAuthClient()
-		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client, log: support.log)
-		
+		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client)
+
 		let delegate = TestRefreshTokenDelegate()
 		delegate.didFailExpectation = expectation(description: "Did Fail")
 		refresh.delegate = delegate
@@ -140,7 +140,7 @@ final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			XCTAssertEqual(serviceClient, client)
 		}
 		
-		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client, log: support.log)
+		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
@@ -194,7 +194,7 @@ final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			XCTAssertEqual(serviceClient, client)
 		}
 		
-		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client, log: support.log)
+		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")

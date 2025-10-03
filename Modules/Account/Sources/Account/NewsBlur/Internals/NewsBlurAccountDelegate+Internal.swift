@@ -18,7 +18,7 @@ import os.log
 extension NewsBlurAccountDelegate {
 	
 	func refreshFeeds(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		os_log(.debug, log: log, "Refreshing feeds...")
+		Self.logger.info("NewsBlur: Refreshing feeds")
 
 		caller.retrieveFeeds { result in
 			switch result {
@@ -39,7 +39,7 @@ extension NewsBlurAccountDelegate {
 		guard let folders = folders else { return }
 		assert(Thread.isMainThread)
 
-		os_log(.debug, log: log, "Syncing folders with %ld folders.", folders.count)
+		Self.logger.info("NewsBlur: Syncing folders with \(folders.count) folders")
 
 		let folderNames = folders.map { $0.name }
 
@@ -77,7 +77,7 @@ extension NewsBlurAccountDelegate {
 		guard let feeds = feeds else { return }
 		assert(Thread.isMainThread)
 
-		os_log(.debug, log: log, "Syncing feeds with %ld feeds.", feeds.count)
+		Self.logger.info("NewsBlur: Syncing feeds with \(feeds.count) feeds")
 
 		let newsBlurFeedIds = feeds.map { String($0.feedID) }
 
@@ -128,7 +128,7 @@ extension NewsBlurAccountDelegate {
 		guard let folders = folders else { return }
 		assert(Thread.isMainThread)
 
-		os_log(.debug, log: log, "Syncing folders with %ld folders.", folders.count)
+		Self.logger.info("NewsBlur: Syncing folders with \(folders.count) folders")
 
 		// Set up some structures to make syncing easier
 		let relationships = folders.map({ $0.asRelationships }).flatMap { $0 }
@@ -251,7 +251,7 @@ extension NewsBlurAccountDelegate {
 					}
 
 					self.refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: date) { result in
-						os_log(.debug, log: self.log, "Done refreshing stories.")
+						Self.logger.info("NewsBlur: Finished refreshing stories")
 						switch result {
 						case .success:
 							completion(.success(()))
@@ -300,7 +300,7 @@ extension NewsBlurAccountDelegate {
 					group.leave()
 				case .failure(let error):
 					errorOccurred = true
-					os_log(.error, log: self.log, "Story status sync call failed: %@.", error.localizedDescription)
+					Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
 					self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
 					group.leave()
 				}
@@ -359,7 +359,7 @@ extension NewsBlurAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Story Read Status failed: %@.", error.localizedDescription)
+				Self.logger.error("NewsBlur: Sync Story Read Status failed: \(error.localizedDescription)")
 			}
 		}
 	}
@@ -407,7 +407,7 @@ extension NewsBlurAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
+				Self.logger.error("NewsBlur: Sync Story Starred Status failed: \(error.localizedDescription)")
 			}
 		}
 	}

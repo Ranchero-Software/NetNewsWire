@@ -12,13 +12,11 @@ import os.log
 final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 
 	private let account: Account
-	private let log: OSLog
 	
 	private(set) var entryIds = Set<String>()
 	
-	init(account: Account, log: OSLog) {
+	init(account: Account) {
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {

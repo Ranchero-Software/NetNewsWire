@@ -45,7 +45,7 @@ final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			XCTAssertNil(serviceUnreadOnly)
 		}
 		
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, log: support.log)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
 		
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in
@@ -79,7 +79,7 @@ final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			XCTAssertNil(serviceUnreadOnly)
 		}
 		
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, log: support.log)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
 		
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in
@@ -120,7 +120,7 @@ final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			getStreamPageExpectation.fulfill()
 		}
 		
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, log: support.log)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
 		
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in

@@ -4,7 +4,8 @@
       "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
-      "Bash(./buildscripts/quiet_build_and_test.sh:*)"
+      "Bash(./buildscripts/quiet_build_and_test.sh:*)",
+      "WebSearch"
     ],
     "deny": []
   }

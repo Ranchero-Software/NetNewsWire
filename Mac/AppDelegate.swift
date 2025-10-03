@@ -8,6 +8,7 @@
 
 import AppKit
 import UserNotifications
+import os
 import Articles
 import RSTree
 import RSWeb
@@ -15,7 +16,6 @@ import Account
 import RSCore
 import RSCoreResources
 import Secrets
-import OSLog
 import CrashReporter
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
@@ -30,8 +30,9 @@ import Sparkle
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate
-{
+final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
+
+	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")
 
 	private struct WindowRestorationIdentifiers {
 		static let mainWindow = "mainWindow"
@@ -184,14 +185,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 				try self.softwareUpdater.start()
 			}
 			catch {
-				NSLog("Failed to start software updater with error: \(error)")
+				Self.logger.error("Failed to start software updater with error: \(error.localizedDescription)")
 			}
 		#endif
 		
 		AppDefaults.shared.registerDefaults()
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
-			os_log(.debug, "Is first run.")
+			Self.logger.debug("Is first run.")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
 
@@ -727,7 +728,7 @@ extension AppDelegate {
 			assertionFailure("Expected non-nil app support folder path")
 			return
 		}
-		
+
 		NSWorkspace.shared.open(URL(fileURLWithPath: appSupport))
 	}
 
@@ -987,43 +988,37 @@ extension AppDelegate: NSWindowRestoration {
 // Handle Notification Actions
 
 private extension AppDelegate {
-	
+
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
-			return
-		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
-			return
-		}
-		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
+		handleStatusNotification(userInfo: userInfo, statusKey: .read)
 	}
-	
+
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+		handleStatusNotification(userInfo: userInfo, statusKey: .starred)
+	}
+
+	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+			assertionFailure("Expected valid articlePathUserInfo from userInfo \(userInfo)")
+			Self.logger.error("No valid articlePathUserInfo from userInfo \(userInfo) in status notification")
 			return
 		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+
+		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+			assertionFailure("Expected account with \(accountID)")
+			Self.logger.error("No account with accountID \(accountID) found from status notification")
 			return
 		}
-		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
+
+		guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
+			assertionFailure("Expected article with \(articleID)")
+			Self.logger.error("No article with articleID found \(articleID) from status notification")
+			return
+		}
+
+		assert(singleArticleSet.count == 1)
+		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
 	}
 }

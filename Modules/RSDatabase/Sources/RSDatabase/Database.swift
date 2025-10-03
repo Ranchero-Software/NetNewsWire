@@ -9,8 +9,15 @@
 import Foundation
 import RSDatabaseObjC
 
-public enum DatabaseError: Error {
+public enum DatabaseError: Error, LocalizedError {
 	case isSuspended // On iOS, to support background refreshing, a database may be suspended.
+
+	public var errorDescription: String? {
+		switch self {
+		case .isSuspended:
+			return NSLocalizedString("Database is suspended", comment: "Database suspended error")
+		}
+	}
 }
 
 /// Result type that provides an FMDatabase or a DatabaseError.

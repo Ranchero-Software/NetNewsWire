@@ -31,7 +31,7 @@ final class FeedlyGetStreamIdsOperationTests: XCTestCase {
 		let service = TestGetStreamIdsService()
 		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
 		
-		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: service, continuation: nil, newerThan: nil, unreadOnly: nil, log: support.log)
+		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: service, continuation: nil, newerThan: nil, unreadOnly: nil)
 		
 		service.mockResult = .failure(URLError(.fileDoesNotExist))
 		
@@ -55,7 +55,7 @@ final class FeedlyGetStreamIdsOperationTests: XCTestCase {
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 1000)
 		let unreadOnly: Bool? = false
 		
-		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: service, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly, log: support.log)
+		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: service, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly)
 		
 		let mockStreamIds = FeedlyStreamIds(continuation: "1234", ids: ["item/1", "item/2", "item/3"])
 		service.mockResult = .success(mockStreamIds)
@@ -93,7 +93,7 @@ final class FeedlyGetStreamIdsOperationTests: XCTestCase {
 		transport.testFiles["/v3/streams/ids"] = "\(jsonName).json"
 		
 		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
-		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: caller, continuation: nil, newerThan: nil, unreadOnly: nil, log: support.log)
+		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: caller, continuation: nil, newerThan: nil, unreadOnly: nil)
 		
 		let completionExpectation = expectation(description: "Did Finish")
 		getStreamIds.completionBlock = { _ in

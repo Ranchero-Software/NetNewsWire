@@ -11,9 +11,6 @@ import os.log
 import RSCore
 
 final class CloudKitReceiveStatusOperation: MainThreadOperation {
-
-	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKitReceiveStatusOperation")
-
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -22,6 +19,7 @@ final class CloudKitReceiveStatusOperation: MainThreadOperation {
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	private weak var articlesZone: CloudKitArticlesZone?
+	private static let logger = cloudKitLogger
 
 	init(articlesZone: CloudKitArticlesZone) {
 		self.articlesZone = articlesZone

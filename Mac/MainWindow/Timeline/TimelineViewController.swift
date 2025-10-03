@@ -210,6 +210,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "TimelineViewController")
+
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
@@ -980,7 +982,7 @@ extension TimelineViewController: NSTableViewDelegate {
 				return [action]
 
 			@unknown default:
-				os_log(.error, "Unknown table row edge: %ld", edge.rawValue)
+				Self.logger.error("TimelineViewController: unknown edge \(edge.rawValue, privacy: .public)")
 		}
 
 		return []

@@ -40,6 +40,7 @@ public protocol DownloadSessionDelegate {
 	/// These URLs are skipped for the rest of the session.
 	private var urlsWith400s = Set<URL>()
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DownloadSession")
 
 	public init(delegate: DownloadSessionDelegate) {
 
@@ -194,11 +195,11 @@ private extension DownloadSession {
 		let urlToUse = cachedRedirect(for: url) ?? url
 
 		if requestShouldBeDroppedDueToActive429(urlToUse) {
-			os_log(.debug, "Dropping request for previous 429: \(urlToUse)")
+			Self.logger.info("Dropping request for previous 429: \(urlToUse)")
 			return
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
-			os_log(.debug, "Dropping request for previous 400-499: \(urlToUse)")
+			Self.logger.info("Dropping request for previous 400-499: \(urlToUse)")
 			return
 		}
 

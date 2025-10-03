@@ -60,8 +60,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private weak var initializedAccount: Account?
 	
 	internal let caller: FeedlyAPICaller
-	
-	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
+
+	private static let logger = Feedly.logger
 	private let database: SyncDatabase
 	
 	private weak var currentSyncAllOperation: MainThreadOperation?
@@ -112,22 +112,20 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		assert(Thread.isMainThread)
 		
 		guard currentSyncAllOperation == nil else {
-			os_log(.debug, log: log, "Ignoring refreshAll: Feedly sync already in progress.")
+			Self.logger.debug("Feedly: Ignoring refreshAll: sync already in progress")
 			completion(.success(()))
 			return
 		}
 		
 		guard let credentials = credentials else {
-			os_log(.debug, log: log, "Ignoring refreshAll: Feedly account has no credentials.")
+			Self.logger.info("Feedly: Ignoring refreshAll: account has no credentials")
 			completion(.failure(FeedlyAccountDelegateError.notLoggedIn))
 			return
 		}
 		
 		refreshProgress.reset()
 
-		let log = self.log
-
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
 
 		syncAllOperation.downloadProgress = refreshProgress
 		
@@ -137,8 +135,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				self?.accountMetadata?.lastArticleFetchStartTime = date
 				self?.accountMetadata?.lastArticleFetchEndTime = Date()
 			}
-			
-			os_log(.debug, log: log, "Sync took %{public}.3f seconds", -date.timeIntervalSinceNow)
+
+			Self.logger.debug("Feedly: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")
 			completion(result)
 			self?.refreshProgress.reset()
 		}
@@ -168,7 +166,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
-		let send = FeedlySendArticleStatusesOperation(database: database, service: caller, log: log)
+		let send = FeedlySendArticleStatusesOperation(database: database, service: caller)
 		send.completionBlock = { operation in
 			// TODO: not call with success if operation was canceled? Not sure.
 			DispatchQueue.main.async {
@@ -191,7 +189,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil, log: log)
+		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil)
 		
 		group.enter()
 		ingestUnread.completionBlock = { _ in
@@ -199,7 +197,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			
 		}
 		
-		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil, log: log)
+		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil)
 		
 		group.enter()
 		ingestStarred.completionBlock = { _ in
@@ -222,22 +220,22 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			completion(.failure(error))
 			return
 		}
-		
-		os_log(.debug, log: log, "Begin importing OPML...")
+
+		Self.logger.info("Feedly: Begin importing OPML")
 		isOPMLImportInProgress = true
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
 		caller.importOpml(data) { result in
 			switch result {
 			case .success:
-				os_log(.debug, log: self.log, "Import OPML done.")
+				Self.logger.info("Feedly: OPML import finished")
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
 					completion(.success(()))
 				}
 			case .failure(let error):
-				os_log(.debug, log: self.log, "Import OPML failed.")
+				Self.logger.error("Feedly: OPML import failed: \(error.localizedDescription)")
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
@@ -334,9 +332,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 														   getStreamContentsService: caller,
 														   database: database,
 														   container: container,
-														   progress: refreshProgress,
-														   log: log)
-			
+														   progress: refreshProgress)
+
 			addNewFeed.addCompletionHandler = { result in
 				completion(result)
 			}
@@ -391,7 +388,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
                                                                      service: caller,
                                                                      container: container,
                                                                      progress: refreshProgress,
-                                                                     log: log,
                                                                      customFeedName: feed.editedName)
 			
 			
@@ -497,10 +493,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				case .success:
 					break
 				case .failure(let error):
-					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+					Self.logger.error("Feedly: Restore folder feed error: \(error.localizedDescription)")
 				}
 			}
-			
 		}
 		
 		group.notify(queue: .main) {
@@ -537,7 +532,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
-		let logout = FeedlyLogoutOperation(account: account, service: caller, log: log)
+		let logout = FeedlyLogoutOperation(account: account, service: caller)
 		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
 		MainThreadOperationQueue.shared.add(logout)
 	}
@@ -585,7 +580,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			}
 		}
 		
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient)
 		refreshAccessToken.downloadProgress = refreshProgress
 		
 		/// This must be strongly referenced by the completionBlock of the `FeedlyRefreshAccessTokenOperation`.

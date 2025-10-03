@@ -17,7 +17,7 @@ final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDele
 	private let operationQueue = MainThreadOperationQueue()
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
 
-    init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, log: OSLog, customFeedName: String? = nil) throws {
+    init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, customFeedName: String? = nil) throws {
 		
 		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionId) = try validator.getValidContainer()
@@ -33,7 +33,7 @@ final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDele
 		addRequest.downloadProgress = progress
 		self.operationQueue.add(addRequest)
 		
-		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
+		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest)
 		createFeeds.downloadProgress = progress
 		createFeeds.addDependency(addRequest)
 		self.operationQueue.add(createFeeds)
