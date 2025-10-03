@@ -210,6 +210,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "TimelineViewController")
+
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
@@ -978,9 +980,6 @@ extension TimelineViewController: NSTableViewDelegate {
 				action.backgroundColor = AppAssets.starColor
 				action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
 				return [action]
-
-			@unknown default:
-				os_log(.error, "Unknown table row edge: %ld", edge.rawValue)
 		}
 
 		return []
