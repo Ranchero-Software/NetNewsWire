@@ -24,7 +24,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		os_log("Requesting logout of %{public}@ account.", "\(account.type)")
+		Feedly.logger.info("Feedly: Requesting logout \(self.account.accountID, privacy: .public)")
 		service.logout(completion: didCompleteLogout(_:))
 	}
 	
@@ -32,7 +32,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 		assert(Thread.isMainThread)
 		switch result {
 		case .success:
-			os_log("Logged out of %{public}@ account.", "\(account.type)")
+			Feedly.logger.info("Feedly: Logged out of \(self.account.accountID, privacy: .public)")
 			do {
 				try account.removeCredentials(type: .oauthAccessToken)
 				try account.removeCredentials(type: .oauthRefreshToken)
@@ -42,7 +42,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 			didFinish()
 			
 		case .failure(let error):
-			os_log("Logout failed because %{public}@.", error as NSError)
+			Feedly.logger.error("Feedly: Logout failed: \(error.localizedDescription)")
 			didFinish(with: error)
 		}
 	}

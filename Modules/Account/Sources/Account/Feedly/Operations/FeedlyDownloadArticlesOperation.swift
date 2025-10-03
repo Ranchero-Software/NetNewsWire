@@ -70,8 +70,7 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation {
 	}
 
 	override func didCancel() {
-		// TODO: fix error on below line: "Expression type '()' is ambiguous without more context"
-			//os_log(.debug, log: log, "Cancelling %{public}@.", self)
+		Feedly.logger.info("Feedly: Canceling FeedlyDownloadArticlesOperation")
 		operationQueue.cancelAllOperations()
 		super.didCancel()
 	}
