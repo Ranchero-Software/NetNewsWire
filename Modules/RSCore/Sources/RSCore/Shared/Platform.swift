@@ -11,6 +11,8 @@ import os
 
 public enum Platform {
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Platform")
+	
 	/// Get the path to a subfolder of the application's data folder (often `Application Support`).
 	/// - Parameters:
 	///   - appName: The name of the application.
@@ -24,7 +26,7 @@ public enum Platform {
 			try FileManager.default.createDirectory(at: dataFolder, withIntermediateDirectories: true, attributes: nil)
 			return dataFolder.path
 		} catch {
-			os_log(.error, log: .default, "Platform.dataSubfolder error: %@", error.localizedDescription)
+			Self.logger.error("Platform.dataSubfolder error: \(error.localizedDescription)")
 		}
 
 		return nil
@@ -46,7 +48,7 @@ private extension Platform {
 
 			return dataFolder
 		} catch {
-			os_log(.error, log: .default, "Platform.dataFolder error: %@", error.localizedDescription)
+			Self.logger.error("Platform.dataFolder error: \(error.localizedDescription)")
 		}
 
 		return nil
