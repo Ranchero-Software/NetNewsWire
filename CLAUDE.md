@@ -70,3 +70,7 @@ Prefer `if let x` and `guard let x` over `if let x = x` and `guard let x = x`.
 
 Don’t use `...` or `…` in Logger messages.
 
+Guard statements should always put the return in a separate line.
+
+Don’t do force unwrapping of optionals.
+
