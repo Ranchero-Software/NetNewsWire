@@ -5,7 +5,9 @@
       "Bash(grep:*)",
       "Bash(ls:*)",
       "Bash(./buildscripts/quiet_build_and_test.sh:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(gh issue view:*)"
     ],
     "deny": []
   }
