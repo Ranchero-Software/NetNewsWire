@@ -83,16 +83,25 @@ public extension RSImage {
 	}
 	#endif
 
+#if os(macOS)
+	/// Returns data as PNG. May be nil in some circumstances.
+	func pngData() -> Data? {
+		guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+			return nil
+		}
+		let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
+		return bitmapRep.representation(using: .png, properties: [:])
+	}
+#endif
+
 	/// Returns a data representation of the image.
-	///
-	/// The resultant data is TIFF data on macOS, and PNG data on iOS.
-	/// - Returns: Data representing the image.
+	/// - Returns: Image data. Normally PNG, though in rare cases it might TIFF on macOS.
 	func dataRepresentation() -> Data? {
-		#if os(macOS)
-			return tiffRepresentation
-		#else
-			return pngData()
-		#endif
+#if os(macOS)
+		pngData() ?? tiffRepresentation
+#else
+		return pngData()
+#endif
 	}
 
 	/// Asynchronously initializes an image from data.
