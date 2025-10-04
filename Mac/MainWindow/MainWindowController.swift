@@ -1330,9 +1330,7 @@ private extension MainWindowController {
 		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
 		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
 
-		Task { @MainActor in
-			sidebarSplitViewItem?.isCollapsed = state.isSidebarHidden
-		}
+		sidebarSplitViewItem?.isCollapsed = state.isSidebarHidden
 	}
 
 	/// Restore main window split view using legacy state restoration data.
