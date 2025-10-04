@@ -81,6 +81,24 @@ final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjec
         }
     }
     
+    class func scriptableWebFeed(for feed: WebFeed) -> ScriptableWebFeed? {
+        guard let account = feed.account else { return nil }
+        
+        // Find the proper container hierarchy
+        let containers = account.existingContainers(withWebFeed: feed)
+        var folder: Folder? = nil
+        
+        // Check if feed is in a folder
+        for container in containers {
+            if let foundFolder = container as? Folder {
+                folder = foundFolder
+                break
+            }
+        }
+        
+        return scriptableFeed(feed, account: account, folder: folder)
+    }
+    
     class func handleCreateElement(command:NSCreateCommand) -> Any?  {
         guard command.isCreateCommand(forClass:"Feed") else { return nil }
         guard let arguments = command.arguments else {return nil}

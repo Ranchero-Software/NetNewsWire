@@ -30,9 +30,9 @@ extension NSApplication : ScriptingObjectContainer {
     func currentArticle() -> ScriptableArticle? {
         var scriptableArticle: ScriptableArticle?
         if let currentArticle = appDelegate.scriptingCurrentArticle {
-            if let feed = currentArticle.webFeed {
-                let scriptableFeed = ScriptableWebFeed(feed, container:self)
-                scriptableArticle = ScriptableArticle(currentArticle, container:scriptableFeed)
+            if let feed = currentArticle.webFeed,
+               let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
+                scriptableArticle = ScriptableArticle(currentArticle, container: scriptableFeed)
             }
         }
         return scriptableArticle
