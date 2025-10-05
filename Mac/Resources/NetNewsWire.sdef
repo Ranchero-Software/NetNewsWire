@@ -114,6 +114,10 @@
 				<synonym name="feed"/>
 				<cocoa key="webFeeds"/>
             </element>
+            <element type="webFeed">
+				<synonym name="allFeeds"/>
+				<cocoa key="allWebFeeds"/>
+            </element>
             <element type="folder">
                 <cocoa key="folders"/>
             </element>

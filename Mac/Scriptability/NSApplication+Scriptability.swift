@@ -60,6 +60,18 @@ extension NSApplication : ScriptingObjectContainer {
         return accounts.map { ScriptableAccount($0) } as NSArray
     }
     
+    @objc(countOfAccounts)
+    func countOfAccounts() -> Int {
+        return AccountManager.shared.accounts.count
+    }
+    
+    @objc(objectInAccountsAtIndex:)
+    func objectInAccountsAtIndex(_ index: Int) -> ScriptableAccount? {
+        let accounts = Array(AccountManager.shared.accounts)
+        guard index >= 0 && index < accounts.count else { return nil }
+        return ScriptableAccount(accounts[index])
+    }
+    
     @objc(valueInAccountsWithUniqueID:)
     func valueInAccounts(withUniqueID id:String) -> ScriptableAccount? {
         let accounts = AccountManager.shared.accounts
