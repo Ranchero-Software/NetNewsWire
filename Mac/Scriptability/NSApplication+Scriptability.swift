@@ -42,8 +42,8 @@ extension NSApplication : ScriptingObjectContainer {
     func selectedArticles() -> NSArray {
         let articles = appDelegate.scriptingSelectedArticles
         let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
-            if let feed = article.webFeed  {
-                let scriptableFeed = ScriptableWebFeed(feed, container:self)
+            if let feed = article.webFeed,
+               let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
                 return ScriptableArticle(article, container:scriptableFeed)
             } else {
                 return nil
