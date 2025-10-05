@@ -7,7 +7,8 @@
       "Bash(./buildscripts/quiet_build_and_test.sh:*)",
       "WebSearch",
       "WebFetch(domain:github.com)",
-      "Bash(gh issue view:*)"
+      "Bash(gh issue view:*)",
+      "Bash(xcodebuild:*)"
     ],
     "deny": []
   }
