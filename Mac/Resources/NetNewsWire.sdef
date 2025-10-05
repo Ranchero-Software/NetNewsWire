@@ -193,6 +193,9 @@
 				<synonym name="feed"/>
                 <cocoa key="webFeeds"/>
             </element>
+            <element type="article">
+                <cocoa key="articles"/>
+            </element>
         </class>
 
         <class name="article" code="Arcl" plural="articles" description="An article in a feed">
