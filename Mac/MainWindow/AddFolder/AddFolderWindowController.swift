@@ -27,6 +27,7 @@ final class AddFolderWindowController : NSWindowController {
 		guard let window else {
 			return
 		}
+		self.hostWindow = hostWindow
 
 		hostWindow.beginSheet(window) { (returnCode: NSApplication.ModalResponse) -> Void in
 			if returnCode == NSApplication.ModalResponse.OK {
@@ -64,11 +65,19 @@ final class AddFolderWindowController : NSWindowController {
 	// MARK: - Actions
 	
     @IBAction func cancel(_ sender: Any?) {
-		hostWindow!.endSheet(window!, returnCode: .cancel)
+		guard let hostWindow, let window else {
+			return
+		}
+		hostWindow.endSheet(window, returnCode: .cancel)
+		self.hostWindow = nil
     }
     
     @IBAction func addFolder(_ sender: Any?) {
-		hostWindow!.endSheet(window!, returnCode: .OK)
+		guard let hostWindow, let window else {
+			return
+		}
+		hostWindow.endSheet(window, returnCode: .OK)
+		self.hostWindow = nil
     }
 }
 
