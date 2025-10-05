@@ -99,6 +99,18 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
         return account.topLevelWebFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
     }
     
+    @objc(countOfWebFeeds)
+    func countOfWebFeeds() -> Int {
+        return account.topLevelWebFeeds.count
+    }
+    
+    @objc(objectInWebFeedsAtIndex:)
+    func objectInWebFeedsAtIndex(_ index: Int) -> ScriptableWebFeed? {
+        let feeds = Array(account.topLevelWebFeeds)
+        guard index >= 0 && index < feeds.count else { return nil }
+        return ScriptableWebFeed(feeds[index], container: self)
+    }
+    
     @objc(valueInWebFeedsWithUniqueID:)
     func valueInWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
 		guard let feed = account.existingWebFeed(withWebFeedID: id) else { return nil }
@@ -117,6 +129,19 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
 		let foldersSet = account.folders ?? Set<Folder>()
 		let folders = Array(foldersSet)
 		return folders.map { ScriptableFolder($0, container:self) } as NSArray
+    }
+    
+    @objc(countOfFolders)
+    func countOfFolders() -> Int {
+        return account.folders?.count ?? 0
+    }
+    
+    @objc(objectInFoldersAtIndex:)
+    func objectInFoldersAtIndex(_ index: Int) -> ScriptableFolder? {
+        let foldersSet = account.folders ?? Set<Folder>()
+        let folders = Array(foldersSet)
+        guard index >= 0 && index < folders.count else { return nil }
+        return ScriptableFolder(folders[index], container: self)
     }
     
     @objc(valueInFoldersWithUniqueID:)

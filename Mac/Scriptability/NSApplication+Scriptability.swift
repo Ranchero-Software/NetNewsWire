@@ -118,6 +118,18 @@ extension NSApplication : ScriptingObjectContainer {
         let webFeeds = self.allWebFeeds()
         return webFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
     }
+    
+    @objc(countOfWebFeeds)
+    func countOfWebFeeds() -> Int {
+        return self.allWebFeeds().count
+    }
+    
+    @objc(objectInWebFeedsAtIndex:)
+    func objectInWebFeedsAtIndex(_ index: Int) -> ScriptableWebFeed? {
+        let webFeeds = self.allWebFeeds()
+        guard index >= 0 && index < webFeeds.count else { return nil }
+        return ScriptableWebFeed(webFeeds[index], container: self)
+    }
 
     @objc(valueInWebFeedsWithUniqueID:)
     func valueInWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
