@@ -70,6 +70,9 @@
              <element type="account">
                  <cocoa key="accounts"/>
              </element>
+             <element type="article">
+                 <cocoa key="selectedArticles"/>
+             </element>
              <element type="webFeed">
 				 <synonym name="feed"/>
                  <cocoa key="webFeeds"/>

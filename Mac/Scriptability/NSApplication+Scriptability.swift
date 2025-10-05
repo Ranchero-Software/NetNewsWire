@@ -51,6 +51,25 @@ extension NSApplication : ScriptingObjectContainer {
         }
         return scriptableArticles as NSArray
     }
+    
+    @objc(countOfSelectedArticles)
+    func countOfSelectedArticles() -> Int {
+        return appDelegate.scriptingSelectedArticles.count
+    }
+    
+    @objc(objectInSelectedArticlesAtIndex:)
+    func objectInSelectedArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
+        let articles = appDelegate.scriptingSelectedArticles
+        guard index >= 0 && index < articles.count else { return nil }
+        let article = articles[index]
+        
+        if let feed = article.webFeed,
+           let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
+            return ScriptableArticle(article, container: scriptableFeed)
+        } else {
+            return nil
+        }
+    }
 
     // MARK: --- scriptable elements ---
 
