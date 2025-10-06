@@ -44,7 +44,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard refreshProgress.isComplete else {
+		guard refreshProgress.isComplete, !Platform.isRunningUnitTests else {
 			completion(.success(()))
 			return
 		}

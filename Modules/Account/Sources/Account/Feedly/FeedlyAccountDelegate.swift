@@ -110,7 +110,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		assert(Thread.isMainThread)
-		
+
+		guard !Platform.isRunningUnitTests else {
+			Self.logger.debug("Feedly: Ignoring refreshAll: running unit tests")
+			completion(.success(()))
+			return
+		}
 		guard currentSyncAllOperation == nil else {
 			Self.logger.debug("Feedly: Ignoring refreshAll: sync already in progress")
 			completion(.success(()))
