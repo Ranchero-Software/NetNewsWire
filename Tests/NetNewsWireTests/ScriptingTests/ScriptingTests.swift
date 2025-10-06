@@ -56,13 +56,9 @@ final class ScriptingTests: AppleScriptXCTestCase {
         _ = doIndividualScript(filename: "testFeedOPML")
     }
 
-//    func testTitleOfArticlesWhoseScript() {
-//        _ = doIndividualScript(filename: "testTitleOfArticlesWhose")
-//    }
-//
-//    func testIterativeCreateAndDeleteScript() {
-//        _ = doIndividualScriptWithExpectation(filename: "testIterativeCreateAndDeleteFeed")
-//    }
+	func testCurrentArticleIsNilt() {
+		_ = doIndividualScript(filename: "testCurrentArticleIsNil")
+	}
 
     func doIndividualScriptWithExpectation(filename:String) {
         let queue = DispatchQueue(label:"testQueue")
@@ -94,7 +90,6 @@ final class ScriptingTests: AppleScriptXCTestCase {
         doIndividualScriptWithExpectation(filename: "uiScriptingTestSetup")
         doIndividualScriptWithExpectation(filename: "establishMainWindowStartingState")
         doIndividualScriptWithExpectation(filename: "selectAFeed")
-        doIndividualScriptWithExpectation(filename: "testCurrentArticleIsNil")
         doIndividualScriptWithExpectation(filename: "selectAnArticle")
         doIndividualScriptWithExpectation(filename: "testURLsOfCurrentArticle")
     }

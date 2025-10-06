@@ -32,9 +32,6 @@
       }
     },
     {
-      "skippedTests" : [
-        "ScriptingTests\/testFeedOPML()"
-      ],
       "target" : {
         "containerPath" : "container:NetNewsWire.xcodeproj",
         "identifier" : "849C64701ED37A5D003D8FC0",
