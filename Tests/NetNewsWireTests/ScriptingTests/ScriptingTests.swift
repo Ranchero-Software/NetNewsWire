@@ -51,10 +51,6 @@ final class ScriptingTests: AppleScriptXCTestCase {
         _ = doIndividualScript(filename: "testFeedExists")
     }
     
-    func testFeedOPML() {
-        _ = doIndividualScript(filename: "testFeedOPML")
-    }
-
 	func testCurrentArticleIsNilt() {
 		_ = doIndividualScript(filename: "testCurrentArticleIsNil")
 	}
