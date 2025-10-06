@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import RSWeb
 import CrashReporter
 
@@ -27,6 +28,9 @@ struct CrashReporter {
 	/// Look in ~/Library/Logs/DiagnosticReports/ for a new crash log for this app.
 	/// Show a crash log reporter window if found.
 	static func check(crashReporter: PLCrashReporter) {
+		guard !Platform.isRunningUnitTests else {
+			return
+		}
 		guard crashReporter.hasPendingCrashReport(),
 			  let crashData = crashReporter.loadPendingCrashReportData(),
 			  let crashReport = try? PLCrashReport(data: crashData),
