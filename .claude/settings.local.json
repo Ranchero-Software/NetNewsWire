@@ -8,7 +8,9 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "Bash(gh issue view:*)",
-      "Bash(xcodebuild:*)"
+      "Bash(xcodebuild:*)",
+      "Bash(swift test:*)",
+      "WebFetch(domain:swiftlang.github.io)"
     ],
     "deny": []
   }
