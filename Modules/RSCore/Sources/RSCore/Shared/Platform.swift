@@ -13,6 +13,45 @@ public enum Platform {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Platform")
 	
+	/// Returns true if the app is currently running unit tests.
+	public static var isRunningUnitTests: Bool {
+		return _isRunningUnitTests
+	}
+	
+	private static let _isRunningUnitTests: Bool = {
+
+		func checkIfRunningUnitTests() -> Bool {
+			// Check multiple indicators to be super-reliable
+			let environment = ProcessInfo.processInfo.environment
+
+			// XCTest sets this environment variable
+			if environment["XCTestConfigurationFilePath"] != nil {
+				return true
+			}
+
+			// Check if XCTest framework is loaded
+			if NSClassFromString("XCTestCase") != nil {
+				return true
+			}
+
+			// Check command line arguments for test-related flags
+			let arguments = ProcessInfo.processInfo.arguments
+			if arguments.contains("-XCTest") || arguments.contains("test") {
+				return true
+			}
+
+			return false
+		}
+
+		if checkIfRunningUnitTests() {
+			Self.logger.info("RUNNING UNIT TESTS")
+			return true
+		}
+
+		Self.logger.info("Not running unit tests")
+		return false
+	}()
+	
 	/// Get the path to a subfolder of the application's data folder (often `Application Support`).
 	/// - Parameters:
 	///   - appName: The name of the application.

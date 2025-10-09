@@ -500,7 +500,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return existingFolder(withExternalID: externalID)
 	}
 	
-	func existingContainers(withWebFeed webFeed: WebFeed) -> [Container] {
+	public func existingContainers(withWebFeed webFeed: WebFeed) -> [Container] {
 		var containers = [Container]()
 		if topLevelWebFeeds.contains(webFeed) {
 			containers.append(self)

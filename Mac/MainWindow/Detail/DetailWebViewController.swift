@@ -102,7 +102,7 @@ final class DetailWebViewController: NSViewController {
 
 		view = webView
 
-		// Hide the web view until the first reload (navigation) is complete (plus some delay) to avoid the awful white flash that happens on the initial display in dark mode.
+		// Hide the web view until the first reload (navigation) is committed (plus some delay) to avoid the white flash that happens on initial display in dark mode.
 		// See bug #901.
 		webView.isHidden = true
 		waitingForFirstReload = true
@@ -211,25 +211,30 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 
 		decisionHandler(.allow)
 	}
-	
-	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		// See note in viewDidLoad()
-		if waitingForFirstReload {
-			assert(webView.isHidden)
-			waitingForFirstReload = false
-			reloadHTML()
 
-			// Waiting for the first navigation to complete isn't long enough to avoid the flash of white.
-			// A hard coded value is awful, but 5/100th of a second seems to be enough.
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-				webView.isHidden = false
-			}
-		} else {
-			if let windowScrollY = windowScrollY {
-				webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
-				self.windowScrollY = nil
-			}
+	public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+		// See note in loadView()
+		guard waitingForFirstReload else {
+			return
 		}
+
+		assert(webView.isHidden)
+		waitingForFirstReload = false
+		reloadHTML()
+
+		// Waiting for the first navigation to commit isn't enough to avoid the flash of white.
+		// Delaying an additional half a second seems to be enough.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			webView.isHidden = false
+		}
+	}
+
+	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		guard let windowScrollY else {
+			return
+		}
+		webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
+		self.windowScrollY = nil
 	}
 
 	// WKUIDelegate

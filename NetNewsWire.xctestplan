@@ -19,9 +19,30 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:Modules\/RSWeb",
-        "identifier" : "RSWebTests",
-        "name" : "RSWebTests"
+        "containerPath" : "container:Modules\/RSParser",
+        "identifier" : "RSParserTests",
+        "name" : "RSParserTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/RSMarkdown",
+        "identifier" : "RSMarkdownTests",
+        "name" : "RSMarkdownTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/RSCore",
+        "identifier" : "RSCoreTests",
+        "name" : "RSCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:NetNewsWire.xcodeproj",
+        "identifier" : "849C64701ED37A5D003D8FC0",
+        "name" : "NetNewsWireTests"
       }
     },
     {
@@ -29,16 +50,6 @@
         "containerPath" : "container:Modules\/Account",
         "identifier" : "AccountTests",
         "name" : "AccountTests"
-      }
-    },
-    {
-      "skippedTests" : [
-        "ScriptingTests\/testFeedOPML()"
-      ],
-      "target" : {
-        "containerPath" : "container:NetNewsWire.xcodeproj",
-        "identifier" : "849C64701ED37A5D003D8FC0",
-        "name" : "NetNewsWireTests"
       }
     },
     {
@@ -50,16 +61,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Modules\/RSParser",
-        "identifier" : "RSParserTests",
-        "name" : "RSParserTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Modules\/RSCore",
-        "identifier" : "RSCoreTests",
-        "name" : "RSCoreTests"
+        "containerPath" : "container:Modules\/RSWeb",
+        "identifier" : "RSWebTests",
+        "name" : "RSWebTests"
       }
     }
   ],

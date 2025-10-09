@@ -30,9 +30,9 @@ extension NSApplication : ScriptingObjectContainer {
     func currentArticle() -> ScriptableArticle? {
         var scriptableArticle: ScriptableArticle?
         if let currentArticle = appDelegate.scriptingCurrentArticle {
-            if let feed = currentArticle.webFeed {
-                let scriptableFeed = ScriptableWebFeed(feed, container:self)
-                scriptableArticle = ScriptableArticle(currentArticle, container:scriptableFeed)
+            if let feed = currentArticle.webFeed,
+               let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
+                scriptableArticle = ScriptableArticle(currentArticle, container: scriptableFeed)
             }
         }
         return scriptableArticle
@@ -42,14 +42,33 @@ extension NSApplication : ScriptingObjectContainer {
     func selectedArticles() -> NSArray {
         let articles = appDelegate.scriptingSelectedArticles
         let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
-            if let feed = article.webFeed  {
-                let scriptableFeed = ScriptableWebFeed(feed, container:self)
+            if let feed = article.webFeed,
+               let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
                 return ScriptableArticle(article, container:scriptableFeed)
             } else {
                 return nil
             }
         }
         return scriptableArticles as NSArray
+    }
+    
+    @objc(countOfSelectedArticles)
+    func countOfSelectedArticles() -> Int {
+        return appDelegate.scriptingSelectedArticles.count
+    }
+    
+    @objc(objectInSelectedArticlesAtIndex:)
+    func objectInSelectedArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
+        let articles = appDelegate.scriptingSelectedArticles
+        guard index >= 0 && index < articles.count else { return nil }
+        let article = articles[index]
+        
+        if let feed = article.webFeed,
+           let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
+            return ScriptableArticle(article, container: scriptableFeed)
+        } else {
+            return nil
+        }
     }
 
     // MARK: --- scriptable elements ---
@@ -58,6 +77,18 @@ extension NSApplication : ScriptingObjectContainer {
     func accounts() -> NSArray {
         let accounts = AccountManager.shared.accounts
         return accounts.map { ScriptableAccount($0) } as NSArray
+    }
+    
+    @objc(countOfAccounts)
+    func countOfAccounts() -> Int {
+        return AccountManager.shared.accounts.count
+    }
+    
+    @objc(objectInAccountsAtIndex:)
+    func objectInAccountsAtIndex(_ index: Int) -> ScriptableAccount? {
+        let accounts = Array(AccountManager.shared.accounts)
+        guard index >= 0 && index < accounts.count else { return nil }
+        return ScriptableAccount(accounts[index])
     }
     
     @objc(valueInAccountsWithUniqueID:)
@@ -86,6 +117,18 @@ extension NSApplication : ScriptingObjectContainer {
     func webFeeds() -> NSArray {
         let webFeeds = self.allWebFeeds()
         return webFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
+    }
+    
+    @objc(countOfWebFeeds)
+    func countOfWebFeeds() -> Int {
+        return self.allWebFeeds().count
+    }
+    
+    @objc(objectInWebFeedsAtIndex:)
+    func objectInWebFeedsAtIndex(_ index: Int) -> ScriptableWebFeed? {
+        let webFeeds = self.allWebFeeds()
+        guard index >= 0 && index < webFeeds.count else { return nil }
+        return ScriptableWebFeed(webFeeds[index], container: self)
     }
 
     @objc(valueInWebFeedsWithUniqueID:)

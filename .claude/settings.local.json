@@ -6,7 +6,11 @@
       "Bash(ls:*)",
       "Bash(./buildscripts/quiet_build_and_test.sh:*)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(gh issue view:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(swift test:*)",
+      "WebFetch(domain:swiftlang.github.io)"
     ],
     "deny": []
   }
