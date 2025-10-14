@@ -35,7 +35,7 @@
 @property (nonatomic) BOOL parsingChannelImage;
 @property (nonatomic, readonly) NSDate *currentDate;
 @property (nonatomic) BOOL endRSSFound;
-@property (nonatomic) NSString *link;
+@property (nonatomic) NSString *homepageURLString;
 @property (nonatomic) NSString *title;
 @property (nonatomic) NSDate *dateParsed;
 @property (nonatomic) BOOL isRDF;
@@ -77,7 +77,7 @@
 	
 	[self parse];
 
-	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title link:self.link language:self.language articles:self.articles];
+	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title homepageURLString:self.homepageURLString language:self.language articles:self.articles];
 
 	return parsedFeed;
 }
@@ -206,8 +206,8 @@ static const NSInteger kLanguageLength = 9;
 	}
 
 	if (RSSAXEqualTags(localName, kLink, kLinkLength)) {
-		if (!self.link) {
-			self.link = [self currentString];
+		if (RSParserStringIsEmpty(self.homepageURLString)) {
+			self.homepageURLString = [self currentString];
 		}
 	}
 
@@ -304,12 +304,12 @@ static const NSInteger kLanguageLength = 9;
 		return s;
 	}
 
-	if (!self.link) {
+	if (!self.homepageURLString) {
 		//TODO: get feed URL and use that to resolve URL.*/
 		return s;
 	}
 
-	NSURL *baseURL = [NSURL URLWithString:self.link];
+	NSURL *baseURL = [NSURL URLWithString:self.homepageURLString];
 	if (!baseURL) {
 		return s;
 	}

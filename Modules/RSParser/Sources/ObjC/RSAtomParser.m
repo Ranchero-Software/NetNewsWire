@@ -16,6 +16,7 @@
 #import "ParserData.h"
 #import "RSParsedEnclosure.h"
 #import "RSParsedAuthor.h"
+#import "RSParserInternal.h"
 
 #import <libxml/xmlstring.h>
 
@@ -32,6 +33,7 @@
 @property (nonatomic, readonly) NSDictionary *currentAttributes;
 @property (nonatomic) NSMutableString *xhtmlString;
 @property (nonatomic) NSString *link;
+@property (nonatomic) NSString *homepageURLString;
 @property (nonatomic) NSString *title;
 @property (nonatomic) NSMutableArray *articles;
 @property (nonatomic) NSDate *dateParsed;
@@ -81,7 +83,7 @@
 
 	[self parse];
 
-	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title link:self.link language:self.language articles:self.articles];
+	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title homepageURLString:self.homepageURLString language:self.language articles:self.articles];
 
 	return parsedFeed;
 }
@@ -256,15 +258,24 @@ static const NSInteger kLengthLength = 7;
 }
 
 
-- (void)addFeedLink {
+- (void)addHomePageLink {
 
-	if (self.link && self.link.length > 0) {
+	if (!RSParserStringIsEmpty(self.homepageURLString)) {
 		return;
 	}
 
-	NSString *related = self.currentAttributes[kRelKey];
-	if (related == kAlternateValue) {
-		self.link = self.currentAttributes[kHrefKey];
+	NSString *rawLink = self.currentAttributes[kHrefKey];
+	if (RSParserStringIsEmpty(rawLink)) {
+		return;
+	}
+
+	NSString *rel = self.currentAttributes[kRelKey];
+
+	// rel="alternate" == home page URL
+	// Also: spec says "alternate" is default value if not present
+	// <https://datatracker.ietf.org/doc/html/rfc4287#section-4.2.7.2>
+	if (!rel || [rel isEqualToString:kAlternateValue]) {
+		self.homepageURLString = [self resolvedURLString:rawLink];
 	}
 }
 
@@ -339,6 +350,53 @@ static const NSInteger kLengthLength = 7;
 	}
 }
 
+- (NSString *)resolvedURLString:(NSString *)s {
+
+	// Resolve against home page URL (if available) or feed URL.
+	// Important: returns nil if the result does not begin with @"http://" or @"https://"
+	// This is because we don’t want relative paths that might get interpreted
+	// as file paths when displayed in the app.
+
+	// Already a full URL? No need to resolve?
+	if ([self isValidURLString:s]) {
+		return s;
+	}
+
+	NSString *baseURLString = self.homepageURLString;
+	if (RSParserStringIsEmpty(baseURLString)) {
+		baseURLString = self.urlString;
+	}
+	if (RSParserStringIsEmpty(baseURLString)) {
+		return nil; // Nothing to resolve against.
+	}
+
+	NSURL *baseURL = [NSURL URLWithString:baseURLString];
+	if (!baseURL) {
+		return nil; // Must have non-nil NSURL in order to resolve.
+	}
+
+	NSURL *resolvedURL = [NSURL URLWithString:s relativeToURL:baseURL];
+	NSString *urlString = resolvedURL.absoluteString;
+	if (!RSParserStringIsEmpty(urlString) && [self isValidURLString:urlString]) {
+		return urlString; // Must be valid, resolved URL
+	}
+
+	return nil;
+}
+
+- (BOOL)isValidURLString:(NSString *)s {
+
+	NSString *lowercaseString = [s lowercaseString];
+
+	if ([lowercaseString hasPrefix:@"https://"]) {
+		return YES;
+	}
+	if ([lowercaseString hasPrefix:@"http://"]) {
+		return YES;
+	}
+
+	return NO;
+}
 
 - (NSString *)currentString {
 
@@ -480,7 +538,7 @@ static const NSInteger kLengthLength = 7;
 	}
 
 	if (!self.parsingArticle && RSSAXEqualTags(localName, kLink, kLinkLength)) {
-		[self addFeedLink];
+		[self addHomePageLink];
 		return;
 	}
 

@@ -31,10 +31,29 @@ final class AtomParserTests: XCTestCase {
 
 	func testGettingHomePageLink() {
 
-		let d = parserData("allthis", "atom", "http://leancrew.com/all-this")
-		let parsedFeed = try! FeedParser.parse(d)!
-
+		var d = parserData("allthis", "atom", "http://leancrew.com/all-this")
+		var parsedFeed = try! FeedParser.parse(d)!
 		XCTAssertTrue(parsedFeed.homePageURL == "http://leancrew.com/all-this")
+
+		d = parserData("qemu", "atom", "https://www.qemu.org/feed.xml")
+		parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertTrue(parsedFeed.homePageURL == "https://www.qemu.org/")
+
+		d = parserData("yakubin", "atom", "https://yakubin.com/notes/atom.xml")
+		parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertTrue(parsedFeed.homePageURL == "https://yakubin.com/notes")
+
+		d = parserData("4fsodonline", "atom", "http://4fsodonline.blogspot.com/feeds/posts/default")
+		parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertTrue(parsedFeed.homePageURL == "http://4fsodonline.blogspot.com/")
+
+		d = parserData("DaringFireball", "atom", "https://daringfireball.net/feeds/main")
+		parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertTrue(parsedFeed.homePageURL == "https://daringfireball.net/")
+
+		d = parserData("neverworkintheory", "atom", "https://neverworkintheory.org/atom.xml")
+		parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertTrue(parsedFeed.homePageURL == "https://neverworkintheory.org/")
 	}
 
 	func testDaringFireball() {
