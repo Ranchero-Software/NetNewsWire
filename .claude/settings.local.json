@@ -10,7 +10,10 @@
       "Bash(gh issue view:*)",
       "Bash(xcodebuild:*)",
       "Bash(swift test:*)",
-      "WebFetch(domain:swiftlang.github.io)"
+      "WebFetch(domain:swiftlang.github.io)",
+      "Bash(git log:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh issue list:*)"
     ],
     "deny": []
   }
