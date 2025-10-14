@@ -384,18 +384,14 @@ static const NSInteger kLengthLength = 7;
 	return nil;
 }
 
+static NSString *httpsURLPrefix = @"https://";
+static NSString *httpURLPrefix = @"http://";
+
 - (BOOL)isValidURLString:(NSString *)s {
 
 	NSString *lowercaseString = [s lowercaseString];
 
-	if ([lowercaseString hasPrefix:@"https://"]) {
-		return YES;
-	}
-	if ([lowercaseString hasPrefix:@"http://"]) {
-		return YES;
-	}
-
-	return NO;
+	return ([lowercaseString hasPrefix:httpsURLPrefix] || [lowercaseString hasPrefix:httpURLPrefix]);
 }
 
 - (NSString *)currentString {
