@@ -75,9 +75,29 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor url: URL) -> HTTPConditionalGetInfo? {
 
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
+			assertionFailure("LocalAccountRefresher: expected feed for \(url)")
+			Self.logger.debug("LocalAccountRefresher: expected feed for \(url)")
 			return nil
 		}
-		return feed.conditionalGetInfo
+		guard let conditionalGetInfo = feed.conditionalGetInfo else {
+			Self.logger.debug("LocalAccountRefresher: no conditional GET info for \(url)")
+			return nil
+		}
+
+		// Conditional GET info is dropped every 8 days, because some servers just always
+		// respond with a 304 when *any* conditional GET info is sent, which means
+		// those feeds don’t get updated. By dropping conditional GET info periodically,
+		// we make sure those feeds get updated.
+		if let conditionalGetInfoDate = feed.conditionalGetInfoDate {
+			let eightDaysAgo = Date().bySubtracting(days: 8)
+			if conditionalGetInfoDate < eightDaysAgo {
+				Self.logger.info("LocalAccountRefresher: dropping conditional GET info for \(url) — more than 8 days old")
+				feed.conditionalGetInfo = nil
+				return nil
+			}
+		}
+
+		return conditionalGetInfo
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
@@ -174,7 +194,7 @@ private extension LocalAccountRefresher {
 
 		for badHost in badHosts {
 			if lowercaseHost == badHost {
-				Self.logger.info("Dropping request becasue it’s X/Twitter, which doesn’t provide feeds: \(feed.url)")
+				Self.logger.info("LocalAccountRefresher: Dropping request becasue it’s X/Twitter, which doesn’t provide feeds: \(feed.url)")
 				return true
 			}
 		}
@@ -199,7 +219,7 @@ private extension LocalAccountRefresher {
 
 		if url.isOpenRSSOrgURL {
 			if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
-				Self.logger.info("Dropping request for Cache-Control reasons: \(feed.url)")
+				Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons: \(feed.url)")
 				return true
 			}
 		}
