@@ -21,7 +21,7 @@ struct RSParsedFeedTransformer {
 	static func parsedFeed(_ rsParsedFeed: RSParsedFeed) -> ParsedFeed {
 
 		let items = parsedItems(rsParsedFeed.articles)
-		return ParsedFeed(type: .rss, title: rsParsedFeed.title, homePageURL: rsParsedFeed.link, feedURL: rsParsedFeed.urlString, language: rsParsedFeed.language, feedDescription: nil, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
+		return ParsedFeed(type: .rss, title: rsParsedFeed.title, homePageURL: rsParsedFeed.homepageURLString, feedURL: rsParsedFeed.urlString, language: rsParsedFeed.language, feedDescription: nil, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 	}
 }
 

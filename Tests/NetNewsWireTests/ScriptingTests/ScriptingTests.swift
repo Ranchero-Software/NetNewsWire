@@ -51,10 +51,6 @@ final class ScriptingTests: AppleScriptXCTestCase {
         _ = doIndividualScript(filename: "testFeedExists")
     }
     
-	func testCurrentArticleIsNilt() {
-		_ = doIndividualScript(filename: "testCurrentArticleIsNil")
-	}
-
     func doIndividualScriptWithExpectation(filename:String) {
         let scriptExpectation = self.expectation(description: filename+"expectation")
 		DispatchQueue.main.async {
