@@ -133,7 +133,10 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			// It’s possible that the conditional get info has changed even if the
 			// content hasn’t changed.
 			// https://inessential.com/2024/08/03/netnewswire_and_conditional_get_issues.html
-			feed.conditionalGetInfo = conditionalGetInfo
+			if feed.conditionalGetInfo != conditionalGetInfo {
+				Self.logger.debug("LocalAccountRefresher: setting conditional GET info for \(url.absoluteString) — contentHash hasn’t changed")
+				feed.conditionalGetInfo = conditionalGetInfo
+			}
 			return
 		}
 
@@ -146,8 +149,12 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			
 			account.update(feed, with: parsedFeed) { result in
 				if case .success(let articleChanges) = result {
+					Self.logger.debug("LocalAccountRefresher: setting contentHash for \(url.absoluteString)")
 					feed.contentHash = dataHash
-					feed.conditionalGetInfo = conditionalGetInfo
+					if feed.conditionalGetInfo != conditionalGetInfo {
+						Self.logger.debug("LocalAccountRefresher: setting conditional GET info for \(url.absoluteString)")
+						feed.conditionalGetInfo = conditionalGetInfo
+					}
 					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges)
 				}
 			}
