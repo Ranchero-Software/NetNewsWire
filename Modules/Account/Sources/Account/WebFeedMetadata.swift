@@ -27,6 +27,7 @@ final class WebFeedMetadata: Codable {
 		case isNotifyAboutNewArticles
 		case isArticleExtractorAlwaysOn
 		case conditionalGetInfo
+		case conditionalGetInfoDate
 		case cacheControlInfo
 		case externalID = "subscriptionID"
 		case folderRelationship
@@ -108,9 +109,22 @@ final class WebFeedMetadata: Codable {
 		didSet {
 			if conditionalGetInfo != oldValue {
 				valueDidChange(.conditionalGetInfo)
+				if conditionalGetInfo == nil {
+					conditionalGetInfoDate = nil
+				} else {
+					conditionalGetInfoDate = Date()
+				}
 			}
 		}
 	}
+
+	var conditionalGetInfoDate: Date? {
+		  didSet {
+			  if conditionalGetInfoDate != oldValue {
+				  valueDidChange(.conditionalGetInfoDate)
+			  }
+		  }
+	  }
 
 	var cacheControlInfo: CacheControlInfo? {
 		didSet {

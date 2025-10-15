@@ -132,6 +132,15 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
 
+	public var conditionalGetInfoDate: Date? {
+		get {
+			return metadata.conditionalGetInfoDate
+		}
+		set {
+			metadata.conditionalGetInfoDate = newValue
+		}
+	}
+
 	public var cacheControlInfo: CacheControlInfo? {
 		get {
 			metadata.cacheControlInfo
