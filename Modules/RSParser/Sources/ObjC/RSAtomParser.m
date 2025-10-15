@@ -43,6 +43,7 @@
 @property (nonatomic) RSParsedAuthor *rootAuthor;
 @property (nonatomic, readonly) NSDate *currentDate;
 @property (nonatomic) NSString *language;
+@property (nonatomic) BOOL isDaringFireball; // Special case — sometimes permalink and external link are swapped.
 
 @end
 
@@ -72,6 +73,7 @@
 	_parser = [[RSSAXParser alloc] initWithDelegate:self];
 	_attributesStack = [NSMutableArray new];
 	_articles = [NSMutableArray new];
+	_isDaringFireball =  [_urlString containsString:@"daringfireball.net/"];
 
 	return self;
 }
@@ -230,7 +232,6 @@ static const NSInteger kLengthLength = 7;
 	}
 }
 
-
 - (void)addArticle {
 
 	RSParsedArticle *article = [[RSParsedArticle alloc] initWithFeedURL:self.urlString];
@@ -245,18 +246,15 @@ static const NSInteger kLengthLength = 7;
 	return self.articles.lastObject;
 }
 
-
 - (NSDictionary *)currentAttributes {
 
 	return self.attributesStack.lastObject;
 }
 
-
 - (NSDate *)currentDate {
 
 	return RSDateWithBytes(self.parser.currentCharacters.bytes, self.parser.currentCharacters.length);
 }
-
 
 - (void)addHomePageLink {
 
@@ -279,7 +277,6 @@ static const NSInteger kLengthLength = 7;
 	}
 }
 
-
 - (void)addFeedTitle {
 
 	if (self.title.length < 1) {
@@ -294,12 +291,30 @@ static const NSInteger kLengthLength = 7;
 	}
 }
 
+- (void)addPermalink:(NSString *)resolvedURLString article:(RSParsedArticle *)article {
+	if (RSParserStringIsEmpty(article.permalink)) {
+		article.permalink = resolvedURLString;
+	}
+}
+
+- (void)addExternalLink:(NSString *)resolvedURLString article:(RSParsedArticle *)article  {
+	if (RSParserStringIsEmpty(article.link)) {
+		article.link = resolvedURLString;
+	}
+}
+
+static NSString *daringFireballPermalinkPrefix = @"https://daringfireball.net/";
+
 - (void)addLink {
 
 	NSDictionary *attributes = self.currentAttributes;
 
 	NSString *urlString = attributes[kHrefKey];
 	if (urlString.length < 1) {
+		return;
+	}
+	NSString *resolvedURLString = [self resolvedURLString:urlString];
+	if (RSParserStringIsEmpty(resolvedURLString)) {
 		return;
 	}
 
@@ -310,19 +325,33 @@ static const NSInteger kLengthLength = 7;
 		rel = kAlternateValue;
 	}
 
-	if (rel == kRelatedValue) {
-		if (!article.link) {
-			article.link = urlString;
-		}
-	}
-	else if (rel == kAlternateValue) {
-		if (!article.permalink) {
-			article.permalink = urlString;
-		}
-	}
-	else if (rel == kEnclosureValue) {
-		RSParsedEnclosure *enclosure = [self enclosureWithURLString:urlString attributes:attributes];
+	if ([rel isEqualToString:kEnclosureValue]) {
+		RSParsedEnclosure *enclosure = [self enclosureWithURLString:resolvedURLString attributes:attributes];
 		[article addEnclosure:enclosure];
+		return;
+	}
+
+	if (self.isDaringFireball) {
+		// Permalink and external link are swapped sometimes.
+		// Decide which is which by looking at the URL prefix — is it a link to daringfireball.net or to elsewhere?
+		BOOL isDaringFireballLink = [resolvedURLString hasPrefix:daringFireballPermalinkPrefix];
+		if (isDaringFireballLink) {
+			[self addPermalink:resolvedURLString article:article];
+		}
+		else {
+			[self addExternalLink:resolvedURLString article:article];
+		}
+		return;
+	}
+
+	// Standard behavior: rel="related" is external link
+	if (rel == kRelatedValue) {
+		[self addExternalLink:resolvedURLString article:article];
+	}
+
+	// Standard behavior: rel="alternate" is permalink
+	if (rel == kAlternateValue) {
+		[self addPermalink:resolvedURLString article:article];
 	}
 }
 
