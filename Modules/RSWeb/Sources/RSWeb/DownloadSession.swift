@@ -20,6 +20,16 @@ public protocol DownloadSessionDelegate {
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession)
 }
 
+struct HTTP4xxResponse {
+	let statusCode: Int
+	let date: Date
+
+	init(_ statusCode: Int) {
+		self.statusCode = statusCode
+		self.date = Date()
+	}
+}
+
 @objc public final class DownloadSession: NSObject {
 
 	public let downloadProgress = DownloadProgress(numberOfTasks: 0)
@@ -37,8 +47,8 @@ public protocol DownloadSessionDelegate {
 	private var retryAfterMessages = [String: HTTPResponse429]()
 
 	/// URLs with 400-499 responses (except for 429).
-	/// These URLs are skipped for the rest of the session.
-	private var urlsWith400s = Set<URL>()
+	/// These URLs are skipped for a period of time.
+	private var http4xxResponses = [URL: HTTP4xxResponse]()
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DownloadSession")
 
@@ -79,9 +89,9 @@ public protocol DownloadSessionDelegate {
 	}
 
 	public func download(_ urls: Set<URL>) {
+		cleanUp4xxResponsesCache()
 
 		let filteredURLs = Self.filteredURLs(urls)
-
 		for url in filteredURLs {
 			addDataTask(url)
 		}
@@ -156,7 +166,7 @@ extension DownloadSession: URLSessionDataDelegate {
 			if statusCode == HTTPResponseCode.tooManyRequests {
 				handle429Response(dataTask, response)
 			} else if (400...499).contains(statusCode), let url = response.url {
-				urlsWith400s.insert(url)
+				http4xxResponses[url] = HTTP4xxResponse(statusCode)
 			}
 
 			return
@@ -387,12 +397,25 @@ private extension DownloadSession {
 
 	// MARK: - 400-499 responses
 
-	func requestShouldBeDroppedDueToPrevious400(_ url: URL) -> Bool {
+	// Remove 4xx responses placed in the cache more than a while ago.
+	func cleanUp4xxResponsesCache() {
+		let oldDate = Date().bySubtracting(hours: 53)
 
-		if urlsWith400s.contains(url) {
+		for url in http4xxResponses.keys {
+			guard let response = http4xxResponses[url] else {
+				continue
+			}
+			if response.date < oldDate {
+				http4xxResponses[url] = nil
+			}
+		}
+	}
+
+	func requestShouldBeDroppedDueToPrevious400(_ url: URL) -> Bool {
+		if http4xxResponses[url] != nil {
 			return true
 		}
-		if let redirectedURL = cachedRedirect(for: url), urlsWith400s.contains(redirectedURL) {
+		if let redirectedURL = cachedRedirect(for: url), http4xxResponses[redirectedURL] != nil {
 			return true
 		}
 
