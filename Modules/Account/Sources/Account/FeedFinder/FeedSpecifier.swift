@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSWeb
 
 struct FeedSpecifier: Hashable {
 
@@ -25,7 +26,17 @@ struct FeedSpecifier: Hashable {
 	public var score: Int {
 		return calculatedScore()
 	}
-	
+
+	/// Some feed URLs are known in advance. Save time/bandwidth by special-casing those.
+	static func knownFeedSpecifier(url: URL) -> FeedSpecifier? {
+		if url.isRachelByTheBayURL {
+			let feedURLString = "https://rachelbythebay.com/w/atom.xml"
+			return FeedSpecifier(title: "writing - rachelbythebay", urlString: feedURLString, source: .UserEntered, orderFound: 0)
+		}
+
+		return nil
+	}
+
 	func feedSpecifierByMerging(_ feedSpecifier: FeedSpecifier) -> FeedSpecifier {
 		// Take the best data (non-nil title, better source) to create a new feed specifier;
 
