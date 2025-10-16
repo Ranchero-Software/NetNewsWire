@@ -243,9 +243,7 @@ private extension DownloadSession {
 			if let conditionalGetInfo = delegate.downloadSession(self, conditionalGetInfoFor: url) {
 				conditionalGetInfo.addRequestHeadersToURLRequest(&request)
 			}
-			if url.isOpenRSSOrgURL {
-				request.setValue(UserAgent.openRSSOrgUserAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
-			}
+			request.addSpecialCaseUserAgentIfNeeded()
 			return request
 		}()
 
