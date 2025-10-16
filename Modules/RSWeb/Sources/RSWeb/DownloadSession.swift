@@ -31,19 +31,6 @@ struct HTTP4xxResponse {
 	}
 }
 
-struct DownloadCacheRecord: CacheRecord {
-	let dateCreated = Date()
-	let data: Data
-	let response: URLResponse?
-	let error: NSError?
-
-	init(data: Data, response: URLResponse?, error: NSError?) {
-		self.data = data
-		self.response = response
-		self.error = error
-	}
-}
-
 @objc public final class DownloadSession: NSObject {
 
 	public let downloadProgress = DownloadProgress(numberOfTasks: 0)
@@ -56,12 +43,7 @@ struct DownloadCacheRecord: CacheRecord {
 	private let delegate: DownloadSessionDelegate
 	private var redirectCache = [URL: URL]()
 	private var queue = [URL]()
-
-	// Static so that it can be shared by all instances of DownloadSession.
-	// A feed might appear in both an On My Mac and iCloud account, for instance.
-	// Cache items live for 13 minutes, in order to ensure no feed is downloaded more often
-	// than 10 minutes (plus a little extra).
-	private static let responseCache = Cache<DownloadCacheRecord>(timeToLive: 13 * 60, timeBetweenCleanups: 4 * 60)
+	private let cache = DownloadCache.shared
 
 	// 429 Too Many Requests responses
 	private var retryAfterMessages = [String: HTTPResponse429]()
@@ -143,7 +125,7 @@ extension DownloadSession: URLSessionTaskDelegate {
 		if let url = task.originalRequest?.url {
 			Self.logger.debug("DownloadSession: Caching response for \(url)")
 			let responseToCache = DownloadCacheRecord(data: info.data as Data, response: info.urlResponse, error: error as NSError?)
-			Self.responseCache[url.absoluteString] = responseToCache
+			cache[url.absoluteString] = responseToCache
 		}
 
 		delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
@@ -192,8 +174,7 @@ extension DownloadSession: URLSessionDataDelegate {
 			if statusCode != HTTPResponseCode.tooManyRequests {
 				if let urlString = response.url?.absoluteString {
 					Self.logger.debug("DownloadSession: Caching >= 400 response for \(urlString)")
-					let responseToCache = DownloadCacheRecord(data: Data(), response: response, error: nil)
-					Self.responseCache[urlString] = responseToCache
+					cache.add(urlString, data: nil, response: response, error: nil)
 				}
 			}
 
@@ -253,9 +234,9 @@ private extension DownloadSession {
 		}
 
 		// Check cache
-		if let cachedResponse = Self.responseCache[urlToUse.absoluteString] {
+		if let cachedResponse = cache[urlToUse.absoluteString] {
 			Self.logger.info("DownloadSession: using cached response for \(urlToUse) - \(cachedResponse.response?.forcedStatusCode ?? -1)")
-			delegate.downloadSession(self, downloadDidComplete: url, response: cachedResponse.response, data: cachedResponse.data, error: cachedResponse.error)
+			delegate.downloadSession(self, downloadDidComplete: url, response: cachedResponse.response, data: cachedResponse.data ?? Data(), error: cachedResponse.error)
 			return
 		}
 
