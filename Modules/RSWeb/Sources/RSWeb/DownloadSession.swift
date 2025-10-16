@@ -143,9 +143,7 @@ extension DownloadSession: URLSessionTaskDelegate {
 
 		var modifiedRequest = request
 
-		if let url = request.url, url.isOpenRSSOrgURL {
-			modifiedRequest.setValue(UserAgent.openRSSOrgUserAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
-		}
+		modifiedRequest.addSpecialCaseUserAgentIfNeeded()
 
 		completionHandler(modifiedRequest)
 	}
