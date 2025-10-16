@@ -21,7 +21,6 @@ struct DownloadCacheRecord: CacheRecord {
 	}
 }
 
-
 final class DownloadCache: Sendable {
 	static let shared = DownloadCache()
 
