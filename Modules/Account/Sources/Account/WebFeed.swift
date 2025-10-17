@@ -195,7 +195,17 @@ public final class WebFeed: Feed, Renamable, Hashable {
 			metadata.folderRelationship = newValue
 		}
 	}
-	
+
+	/// Last time an attempt was made to read the feed.
+	/// (Not necessarily a successful attempt.)
+	public var lastCheckDate: Date? {
+		get {
+			metadata.lastCheckDate
+		}
+		set {
+			metadata.lastCheckDate = newValue
+		}
+	}
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {

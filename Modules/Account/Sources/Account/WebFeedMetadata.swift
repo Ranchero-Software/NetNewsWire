@@ -31,6 +31,7 @@ final class WebFeedMetadata: Codable {
 		case cacheControlInfo
 		case externalID = "subscriptionID"
 		case folderRelationship
+		case lastCheckDate
 	}
 
 	var webFeedID: String {
@@ -147,6 +148,16 @@ final class WebFeedMetadata: Codable {
 		didSet {
 			if folderRelationship != oldValue {
 				valueDidChange(.folderRelationship)
+			}
+		}
+	}
+
+	/// Last time an attempt was made to read the feed.
+	/// (Not necessarily a successful attempt.)
+	var lastCheckDate: Date? {
+		didSet {
+			if lastCheckDate != oldValue {
+				valueDidChange(.lastCheckDate)
 			}
 		}
 	}
