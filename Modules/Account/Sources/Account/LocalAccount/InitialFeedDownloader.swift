@@ -12,17 +12,17 @@ import RSWeb
 
 struct InitialFeedDownloader {
 
-	static func download(_ url: URL,_ completion: @escaping (_ parsedFeed: ParsedFeed?) -> Void) {
+	static func download(_ url: URL,_ completion: @escaping (_ parsedFeed: ParsedFeed?, _ data: Data?, _ response: URLResponse?, _ error: Error?) -> Void) {
 		Task { @MainActor in
 			Downloader.shared.download(url) { (data, response, error) in
 				guard let data = data else {
-					completion(nil)
+					completion(nil, nil, response, error)
 					return
 				}
 				
 				let parserData = ParserData(url: url.absoluteString, data: data)
 				FeedParser.parse(parserData) { (parsedFeed, error) in
-					completion(parsedFeed)
+					completion(parsedFeed, data, response, error)
 				}
 			}
 		}

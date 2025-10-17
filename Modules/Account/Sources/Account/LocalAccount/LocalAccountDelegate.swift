@@ -242,10 +242,17 @@ private extension LocalAccountDelegate {
 					return
 				}
 				
-				InitialFeedDownloader.download(url) { parsedFeed in
+				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 
-					if let parsedFeed = parsedFeed {
+					if let parsedFeed {
 						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+
+						// Save conditional GET info so that first refresh uses conditional GET.
+						if let httpResponse = response as? HTTPURLResponse,
+						   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
+							feed.conditionalGetInfo = conditionalGetInfo
+						}
+						
 						feed.editedName = editedName
 						container.addWebFeed(feed)
 
