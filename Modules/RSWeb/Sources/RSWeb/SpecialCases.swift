@@ -8,20 +8,38 @@
 import Foundation
 import os
 
+public let localeForLowercasing = Locale(identifier: "en_US")
+
+public struct SpecialCase {
+	public static let rachelByTheBayHostName = "rachelbythebay.com"
+	public static let openRSSOrgHostName = "openrss.org"
+
+	public static func urlStringContainSpecialCase(_ urlString: String, _ specialCases: [String]) -> Bool {
+		let lowerURLString = urlString.lowercased(with: localeForLowercasing)
+		for specialCase in specialCases {
+			if lowerURLString.contains(specialCase) {
+				return true
+			}
+		}
+		return false
+	}
+}
+
+
 extension URL {
 
 	public var isOpenRSSOrgURL: Bool {
 		guard let host = host() else {
 			return false
 		}
-		return host.contains("openrss.org")
+		return SpecialCase.urlStringContainSpecialCase(host, [SpecialCase.openRSSOrgHostName])
 	}
 
 	public var isRachelByTheBayURL: Bool {
 		guard let host = host() else {
 			return false
 		}
-		return host.contains("rachelbythebay.com")
+		return SpecialCase.urlStringContainSpecialCase(host, [SpecialCase.rachelByTheBayHostName])
 	}
 }
 

@@ -53,6 +53,9 @@ public final class FeedIconDownloader {
 		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), (homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog") {
 			return IconImage.nnwFeedIcon
 		}
+		if (Self.shouldSkipDownloadingFeedIcon(feed: feed)) {
+			return nil
+		}
 
 		func checkHomePageURL() {
 			guard let homePageURL = feed.homePageURL else {
@@ -113,11 +116,23 @@ public final class FeedIconDownloader {
 
 private extension FeedIconDownloader {
 
-	static let homePagesWithUglyIcons: Set<String> = Set(["https://www.macsparky.com/", "https://xkcd.com/"])
+	static let specialCasesToSkip = ["macsparky.com", "xkcd.com", SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
+
+	static func shouldSkipDownloadingFeedIcon(feed: WebFeed) -> Bool {
+		shouldSkipDownloadingFeedIcon(feed.url)
+	}
+
+	static func shouldSkipDownloadingFeedIcon(_ urlString: String) -> Bool {
+		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
+	}
 
 	func icon(forHomePageURL homePageURL: String, feed: WebFeed, _ resultBlock: @escaping (RSImage?, String?) -> Void) {
+		if Self.shouldSkipDownloadingFeedIcon(homePageURL) {
+			resultBlock(nil, nil)
+			return
+		}
 
-		if homePagesWithNoIconURL.contains(homePageURL) || Self.homePagesWithUglyIcons.contains(homePageURL) {
+		if homePagesWithNoIconURL.contains(homePageURL) {
 			resultBlock(nil, nil)
 			return
 		}
