@@ -385,7 +385,7 @@ private extension DownloadSession {
 
 	func cancelAndRemoveTasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) {
 
-		let lowercaseHost = host.lowercased()
+		let lowercaseHost = host.lowercased(with: localeForLowercasing)
 
 		let tasksToRemove = tasks.filter { task in
 			if let taskHost = task.lowercaseHost, taskHost.contains(lowercaseHost) {
@@ -484,7 +484,7 @@ extension URLSessionTask {
 		guard let request = currentRequest ?? originalRequest else {
 			return nil
 		}
-		return request.url?.host()?.lowercased()
+		return request.url?.host()?.lowercased(with: localeForLowercasing)
 	}
 }
 
