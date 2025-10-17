@@ -640,10 +640,17 @@ private extension CloudKitAccountDelegate {
 				feed.editedName = editedName
 				container.addWebFeed(feed)
 
-				InitialFeedDownloader.download(url) { parsedFeed in
+				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 					self.syncProgress.completeTask()
+					feed.lastCheckDate = Date()
+					
+					if let parsedFeed {
+						// Save conditional GET info so that first refresh uses conditional GET.
+						if let httpResponse = response as? HTTPURLResponse,
+						   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
+							feed.conditionalGetInfo = conditionalGetInfo
+						}
 
-					if let parsedFeed = parsedFeed {
 						account.update(feed, with: parsedFeed) { result in
 							switch result {
 							case .success:

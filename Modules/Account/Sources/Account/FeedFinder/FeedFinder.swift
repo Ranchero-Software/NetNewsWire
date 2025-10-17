@@ -7,14 +7,24 @@
 //
 
 import Foundation
+import os.log
 import RSParser
 import RSWeb
 import RSCore
 
 final class FeedFinder {
-	
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
+
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		Task { @MainActor in
+			// Check special cases first.
+			if let feedSpecifier = FeedSpecifier.knownFeedSpecifier(url: url) {
+				logger.info("FeedFinder: found special case feed URL: \(url.absoluteString) - \(feedSpecifier.urlString)")
+				completion(.success(Set([feedSpecifier])))
+				return
+			}
+
 			Downloader.shared.download(url) { (data, response, error) in
 
 				if response?.forcedStatusCode == 404 {
