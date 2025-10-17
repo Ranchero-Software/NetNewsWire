@@ -246,6 +246,7 @@ private extension LocalAccountDelegate {
 
 					if let parsedFeed {
 						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+						feed.lastCheckDate = Date()
 
 						// Save conditional GET info so that first refresh uses conditional GET.
 						if let httpResponse = response as? HTTPURLResponse,

@@ -642,7 +642,8 @@ private extension CloudKitAccountDelegate {
 
 				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 					self.syncProgress.completeTask()
-
+					feed.lastCheckDate = Date()
+					
 					if let parsedFeed {
 						// Save conditional GET info so that first refresh uses conditional GET.
 						if let httpResponse = response as? HTTPURLResponse,
