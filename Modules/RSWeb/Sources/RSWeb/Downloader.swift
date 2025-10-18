@@ -56,6 +56,12 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 			return
 		}
 
+		guard url.isHTTPOrHTTPSURL() else {
+			Self.logger.debug("Downloader: skipping download for non-http/https URL: \(url)")
+			callback(nil, nil, nil)
+			return
+		}
+
 		let isCacheableRequest = urlRequest.httpMethod == HTTPMethod.get
 
 		// Return cached record if available.
