@@ -102,65 +102,70 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
 
-		guard !isSuspended else {
-			return
-		}
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
+		feed.lastCheckDate = Date()
 
-		if error != nil {
+		guard error == nil else {
+			return
+		}
+		guard let httpResponse = response as? HTTPURLResponse else {
 			return
 		}
 
-		let conditionalGetInfo: HTTPConditionalGetInfo? = {
-			if let httpResponse = response as? HTTPURLResponse {
-				return HTTPConditionalGetInfo(urlResponse: httpResponse)
-			}
-			return nil
-		}()
+		let statusIsOK = httpResponse.statusIsOK
+		let statusIsOKOrNotModified = statusIsOK || httpResponse.statusCode == HTTPResponseCode.notModified
+		guard statusIsOKOrNotModified else {
+			return
+		}
+
+		let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+		if conditionalGetInfo != feed.conditionalGetInfo {
+			Self.logger.debug("LocalAccountRefresher: setting conditionalGetInfo for \(url.absoluteString)")
+			feed.conditionalGetInfo = conditionalGetInfo
+		}
+
+		guard statusIsOK else {
+			return
+		}
 
 		if url.isOpenRSSOrgURL {
 			// Supported only for openrss.org. Cache-Control headers are
 			// otherwise not intentional for feeds, unfortunately.
-			if let httpURLResponse = response as? HTTPURLResponse, let cacheControlInfo = CacheControlInfo(urlResponse: httpURLResponse) {
+			if let cacheControlInfo = CacheControlInfo(urlResponse: httpResponse) {
 				feed.cacheControlInfo = cacheControlInfo
 			}
 		}
 
 		let dataHash = data.md5String
 		if dataHash == feed.contentHash {
-			// It’s possible that the conditional get info has changed even if the
-			// content hasn’t changed.
-			// https://inessential.com/2024/08/03/netnewswire_and_conditional_get_issues.html
-			if feed.conditionalGetInfo != conditionalGetInfo {
-				Self.logger.debug("LocalAccountRefresher: setting conditional GET info for \(url.absoluteString) — contentHash hasn’t changed")
-				feed.conditionalGetInfo = conditionalGetInfo
-			}
 			return
 		}
 
-		let parserData = ParserData(url: feed.url, data: data)
-		FeedParser.parse(parserData) { (parsedFeed, error) in
-			
-			guard let account = feed.account, let parsedFeed, error == nil else {
+		Task { @MainActor in
+			Self.logger.debug("LocalAccountRefresher: parsing feed for \(url.absoluteString)")
+
+			let parserData = ParserData(url: feed.url, data: data)
+			guard let parsedFeed = try? await FeedParser.parse(parserData) else {
 				return
 			}
-			
-			account.update(feed, with: parsedFeed) { result in
-				if case .success(let articleChanges) = result {
-					Self.logger.debug("LocalAccountRefresher: setting contentHash for \(url.absoluteString)")
-					feed.contentHash = dataHash
-					if feed.conditionalGetInfo != conditionalGetInfo {
-						Self.logger.debug("LocalAccountRefresher: setting conditional GET info for \(url.absoluteString)")
-						feed.conditionalGetInfo = conditionalGetInfo
-					}
-					self.delegate?.localAccountRefresher(self, articleChanges: articleChanges)
-				}
+			guard let account = feed.account else {
+				return
 			}
+
+			assert(Thread.isMainThread)
+			guard let articleChanges = try? await account.update(feed, with: parsedFeed) else {
+				return
+			}
+
+			Self.logger.debug("LocalAccountRefresher: setting contentHash for \(url.absoluteString)")
+			feed.contentHash = dataHash
+
+			self.delegate?.localAccountRefresher(self, articleChanges: articleChanges)
 		}
 	}
-	
+
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, url: URL) -> Bool {
 
 		guard !data.isDefinitelyNotFeed(), !isSuspended else {
