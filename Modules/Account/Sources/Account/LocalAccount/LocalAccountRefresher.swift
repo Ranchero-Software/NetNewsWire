@@ -37,8 +37,8 @@ final class LocalAccountRefresher {
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccountRefresher")
 
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
-
-		let filteredFeeds = feeds.filter { !Self.feedShouldBeSkipped($0) }
+		let specialCaseCutoffDate = Date().bySubtracting(hours: 25)
+		let filteredFeeds = feeds.filter { !Self.feedShouldBeSkipped($0, specialCaseCutoffDate) }
 
 		guard !filteredFeeds.isEmpty else {
 			Task { @MainActor in
@@ -214,8 +214,25 @@ private extension LocalAccountRefresher {
 		return false
 	}
 
-	static func feedShouldBeSkipped(_ feed: WebFeed) -> Bool {
-		feedShouldBeSkippedForCacheControlReasons(feed) || feedIsDisallowed(feed)
+	static func feedShouldBeSkipped(_ feed: WebFeed, _ specialCaseCutoffDate: Date) -> Bool {
+		feedShouldBeSkippedForCacheControlReasons(feed) ||
+		feedIsDisallowed(feed) ||
+		feedShouldBeSkippedForTimingReasons(feed, specialCaseCutoffDate)
+	}
+
+	static func feedShouldBeSkippedForTimingReasons(_ feed: WebFeed, _ specialCaseCutoffDate: Date) -> Bool {
+		guard let lastCheckDate = feed.lastCheckDate else {
+			return false
+		}
+
+		if SpecialCase.urlStringContainSpecialCase(feed.url, [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]) {
+			if lastCheckDate > specialCaseCutoffDate {
+				Self.logger.info("LocalAccountRefresher: Dropping request for special case timing reasons: \(feed.url)")
+				return true
+			}
+		}
+
+		return false
 	}
 
 	static func feedShouldBeSkippedForCacheControlReasons(_ feed: WebFeed) -> Bool {
@@ -225,13 +242,9 @@ private extension LocalAccountRefresher {
 		//
 		// However, openrss.org does make sure their Cache-Control headers are
 		// intentional, and we should honor those.
-		guard let url = url(for: feed) else {
-			return false
-		}
-
-		if url.isOpenRSSOrgURL {
+		if SpecialCase.urlStringContainSpecialCase(feed.url, [SpecialCase.openRSSOrgHostName]) {
 			if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
-				Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons: \(feed.url)")
+				Self.logger.info("LocalAccountRefresher: Dropping request for special case Cache-Control reasons: \(feed.url)")
 				return true
 			}
 		}
