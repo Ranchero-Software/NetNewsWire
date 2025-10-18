@@ -122,10 +122,9 @@ extension DownloadSession: URLSessionTaskDelegate {
 			return
 		}
 
-		if let url = task.originalRequest?.url {
+		if let url = task.originalRequest?.url, error == nil {
 			Self.logger.debug("DownloadSession: Caching response for \(url)")
-			let responseToCache = DownloadCacheRecord(data: info.data as Data, response: info.urlResponse, error: error as NSError?)
-			cache[url.absoluteString] = responseToCache
+			cache.add(url.absoluteString, data: info.data as Data, response: info.urlResponse)
 		}
 
 		delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
@@ -172,7 +171,7 @@ extension DownloadSession: URLSessionDataDelegate {
 			if statusCode != HTTPResponseCode.tooManyRequests {
 				if let urlString = response.url?.absoluteString {
 					Self.logger.debug("DownloadSession: Caching >= 400 response for \(urlString)")
-					cache.add(urlString, data: nil, response: response, error: nil)
+					cache.add(urlString, data: nil, response: response)
 				}
 			}
 
@@ -234,7 +233,7 @@ private extension DownloadSession {
 		// Check cache
 		if let cachedResponse = cache[urlToUse.absoluteString] {
 			Self.logger.info("DownloadSession: using cached response for \(urlToUse) - \(cachedResponse.response?.forcedStatusCode ?? -1)")
-			delegate.downloadSession(self, downloadDidComplete: url, response: cachedResponse.response, data: cachedResponse.data ?? Data(), error: cachedResponse.error)
+			delegate.downloadSession(self, downloadDidComplete: url, response: cachedResponse.response, data: cachedResponse.data ?? Data(), error: nil)
 			return
 		}
 

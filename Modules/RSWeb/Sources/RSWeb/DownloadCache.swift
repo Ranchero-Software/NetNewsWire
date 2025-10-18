@@ -12,12 +12,10 @@ struct DownloadCacheRecord: CacheRecord {
 	let dateCreated = Date()
 	let data: Data?
 	let response: URLResponse?
-	let error: NSError?
 
-	init(data: Data?, response: URLResponse?, error: NSError?) {
+	init(data: Data?, response: URLResponse?) {
 		self.data = data
 		self.response = response
-		self.error = error
 	}
 }
 
@@ -35,8 +33,8 @@ final class DownloadCache: Sendable {
 		}
 	}
 
-	func add(_ urlString: String, data: Data?, response: URLResponse?, error: Error?) {
-		let cacheRecord = DownloadCacheRecord(data: data, response: response, error: error as? NSError)
+	func add(_ urlString: String, data: Data?, response: URLResponse?) {
+		let cacheRecord = DownloadCacheRecord(data: data, response: response)
 		cache[urlString] = cacheRecord
 	}
 }

@@ -62,7 +62,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		if isCacheableRequest {
 			if let cachedRecord = cache[url.absoluteString] {
 				Self.logger.debug("Downloader: returning cached record for \(url)")
-				callback(cachedRecord.data, cachedRecord.response, cachedRecord.error)
+				callback(cachedRecord.data, cachedRecord.response, nil)
 				return
 			}
 		}
@@ -86,7 +86,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 
 			if isCacheableRequest {
 				Self.logger.debug("Downloader: caching response for \(url)")
-				self.cache.add(url.absoluteString, data: data, response: response, error: error)
+				self.cache.add(url.absoluteString, data: data, response: response)
 			}
 
 			Task { @MainActor in
