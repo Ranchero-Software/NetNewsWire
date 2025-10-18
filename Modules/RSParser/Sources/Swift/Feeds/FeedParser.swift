@@ -72,6 +72,19 @@ public struct FeedParser {
 		catch { throw error }
 	}
 
+	public static func parse(_ parserData: ParserData) async throws -> ParsedFeed? {
+		try await withCheckedThrowingContinuation { continuation in
+			parse(parserData) { parsedFeed, error in
+				if let error {
+					continuation.resume(throwing: error)
+				}
+				else {
+					continuation.resume(returning: parsedFeed)
+				}
+			}
+		}
+	}
+
 	public static func parse(_ parserData: ParserData, _ completion: @escaping FeedParserCallback) {
 
 		parseQueue.async {
