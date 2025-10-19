@@ -72,3 +72,5 @@ NetNewsWire 6.1.6 (6140) for iOS - TestFlight
 
 Public TestFlight link:
 https://testflight.apple.com/join/wpedPMRR
+
+Update Technotes/Status.md
