@@ -1,10 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
     <channel>
         <title>NetNewsWire Betas</title>
         <link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
+
+		<item>
+			<title>NetNewsWire 6.2b1</title>
+            <description><![CDATA[
+				<p>Changes since 6.1.11b1:</p>
+				<ul>
+					<li>Improved http/https caching, reducing bandwidth and battery use</li>
+					<li>Fixed bug where a feed could be read twice on being added</li>
+					<li>Fixed bug where the initial download for a new feed didn’t store conditional GET info</li>
+					<li>Added some special cases where we can and should avoid doing some specific work (such as downloading the home page to find a feed icon)</li>
+					<li>Worked around a server bug where a server would always respond with a 304 when any conditional GET info is sent (the app drops conditional GET info every 8 days)</li>
+					<li>Fixed a possible cause of feeds not updating by caching (non-429) 4xx responses for some hours rather than for the duration of the app run</li>
+					<li>Fixed Atom parser bug with relative URLs</li>
+					<li>Fixed Atom parser bug where author at root level wasn’t applied to articles</li>
+					<li>Fixed a bug where the webview can sometimes take a surprisingly long time to appear after launch</li>
+					<li>Fixed a bunch of AppleScript bugs</li>
+					<li>Did a few micro performance optimizations</li>
+					<li>Fixed bug where contextual menu in timeline could be slow to appear</li>
+					<li>Fixed a possible cause of app icon unread count badge to be out of date</li>
+					<li>Fixed bug where timeline text could be truncated early when showing max number of lines in timeline and small text</li>
+					<li>Added ability to copy multiple article URLs</li>
+					<li>Made Sidebar the first item in toolbar by default</li>
+					<li>Added Open Application Support Folder (data folder) to Help menu (moved from Debug menu)</li>
+					<li>Made it so we don’t get one-time codes in random text views</li>
+					<li>Fixed a bug where images that are links could get underlined in the default theme</li>
+					<li>Fixed a bug finding a feed in a page that has no body tag</li>
+					<li>Now using a number formatter for unread counts in the sidebar</li>
+				</ul>
+			]]></description>
+        	<pubDate>Sun, 19 Oct 2025 13:55:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2b1/NetNewsWire6.2b1.zip" sparkle:version="6142" sparkle:shortVersionString="6.2b1" length="9504622" type="application/zip" />
+			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+		</item>
 
 		<item>
 			<title>NetNewsWire 6.1.11b1</title>
@@ -19,48 +52,7 @@
 			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
 		</item>
 
-		<item>
-			<title>NetNewsWire 6.1.10</title>
-            <description><![CDATA[
-            <p>Changes since 6.1.9:</p>
-            <ul>
-                <li>Added caching to the downloader (the one that downloads feed icons, favicons, etc.) — make fewer network requests</li>
-                <li>Worked around The Verge’s bug with character encoding</li>
-                <li>Fixed bug where links in footnotes — in light mode, using the default theme — would be invisible</li>
-                <li>Fixed double-underlines on 404 Media links. (Fixed bug where using tag inside an would cause two underlines.)</li>
-                <li>Added &smallcircle; to the entities decoder</li>
-                <li>Synced the Mac default theme with the iOS version</li>
-                <li>Adopted secure state restoration</li>
-</ul>
-			]]></description>
-        <pubDate>Mon, 08 Sep 2025 11:24:08 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.10/NetNewsWire6.1.10.zip" sparkle:version="6140" sparkle:shortVersionString="6.1.10" length="9396988" type="application/zip" />
-			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
-		</item>
 
-        <item>
-			<title>NetNewsWire 6.1.10b4</title>
-			<description><![CDATA[
-<ul>
-<li>Adopt secure state restoration; fix bug with state restoration not working in previous betas.</li>
-</ul>
-			]]></description>
-			<pubDate>Sat, 16 Aug 2025 10:10:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.10b4/NetNewsWire6.1.10b4.zip" sparkle:version="6139" sparkle:shortVersionString="6.1.10b4" length="9396988" type="application/zip" />
-			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 6.1.10b3</title>
-			<description><![CDATA[
-<ul>
-<li>Fixed bug, introduced in previous test build, that prevented choosing an OPML file to import</li>
-</ul>
-			]]></description>
-			<pubDate>Tue, 12 Aug 2025 10:10:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.10b3/NetNewsWire6.1.10b3.zip" sparkle:version="6138" sparkle:shortVersionString="6.1.10b3" length="9383040" type="application/zip" />
-			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
-		</item>
 
     </channel>
 </rss>
