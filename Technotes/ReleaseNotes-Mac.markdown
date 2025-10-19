@@ -1,5 +1,30 @@
 # Mac Release Notes
 
+### 6.2b1 build 6142 19 Oct 2025 - branch main tag: mac-6.2b1
+
+Improved http/https caching, reducing bandwidth and battery use
+Fixed bug where a feed could be read twice on being added
+Fixed bug where the initial download for a new feed didn’t store conditional GET info
+Added some special cases where we can and should avoid doing some specific work (such as downloading the home page to find a feed icon)
+Worked around a server bug where a server would always respond with a 304 when any conditional GET info is sent (the app drops conditional GET info every 8 days)
+Fixed a possible cause of feeds not updating by caching (non-429) 4xx responses for some hours rather than for the duration of the app run
+Fixed Atom parser bug with relative URLs
+Fixed Atom parser bug where author at root level wasn’t applied to articles
+Fixed a bug where the webview can sometimes take a surprisingly long time to appear after launch
+Fixed a bunch of AppleScript bugs
+Did a few micro performance optimizations
+Fixed bug where contextual menu in timeline could be slow to appear
+Fixed a possible cause of app icon unread count badge to be out of date
+Fixed bug where timeline text could be truncated early when showing max number of lines in timeline and small text
+Added ability to copy multiple article URLs
+Made Sidebar the first item in toolbar by default
+Added Open Application Support Folder (data folder) to Help menu (moved from Debug menu)
+Made it so we don’t get one-time codes in random text views
+Fixed a bug where images that are links could get underlined in the default theme
+Fixed a bug finding a feed in a page that has no body tag
+Now using a number formatter for unread counts in the sidebar
+
+
 ### 6.1.11b1 build 6141 9 Sep 2025 - branch main tag: mac-6.1.11b1
 
 Fixed bug with some favicons rendering weird, with dark vertical lines. Note: due to caching, the fix may take a few days to take effect. <https://github.com/Ranchero-Software/NetNewsWire/issues/4523>
