@@ -3,12 +3,14 @@
 NetNewsWire_mac_target_common.xcconfig
 	update MARKETING_VERSION and CURRENT_PROJECT_VERSION
 
+Run buildscripts/quiet_build_and_test.sh
+
+Run app
+
 ReleaseNotes-Mac.markdown
 main branch
 Write change notes in notes
 Include branch and tag
-
-Run buildscripts/quiet_build_and_test.sh
 
 Make sure there are no outstanding changes
 
