@@ -1,9 +1,7 @@
 # NetNewsWire Status
 
-Current milestone: NetNewsWire 6.1.11
+Current milestone: NetNewsWire 6.2
 	https://github.com/Ranchero-Software/NetNewsWire/milestone/62
-
-Current bug: TBD
 
 Stuart working on Liquid Glass UI for NetNewsWire 7
 
@@ -18,4 +16,4 @@ TestFlight: 6.1.10 (6198)
 
 Mac shipping: 6.1.10
 
-Beta: 6.1.1b1
+Beta: 6.2b1
