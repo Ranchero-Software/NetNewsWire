@@ -20,6 +20,7 @@ Fixed a bug finding a feed in a page that has no body tag
 Fixed bug with some favicons rendering weird, with dark vertical lines. Note: due to caching, the fix may take a few days to take effect
 Improved iCloud error dialog
 Fixed some cosmetic UI glitches
+Removed support for multiple windows
 
 ### 6.1.10 TestFlight build 6198 11 Aug 2025 - branch: main tag iOS-6.1.10-6198 — submitted as App Store release build 18 Aug 2025
 
