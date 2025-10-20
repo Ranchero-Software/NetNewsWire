@@ -10,7 +10,7 @@ import Foundation
 
 public typealias ArticleSetBlock = (Set<Article>) -> Void
 
-public struct Article: Hashable {
+public final class Article: Hashable {
 
 	public let articleID: String // Unique database ID (possibly sync service ID)
 	public let accountID: String
