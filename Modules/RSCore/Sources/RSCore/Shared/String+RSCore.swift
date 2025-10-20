@@ -216,6 +216,8 @@ public extension String {
 	/// Strips HTML from a string.
 	/// - Parameter maxCharacters: The maximum characters in the return string.
 	///	If `nil`, the whole string is used.
+	///
+	///	If the string contains HTML, then it also collapses inner whitespace.
 	func strippingHTML(maxCharacters: Int? = nil) -> String {
 		if !self.contains("<") {
 
@@ -236,8 +238,11 @@ public extension String {
 		preflight = preflight.removingTagAndContents("script")
 		preflight = preflight.removingTagAndContents("style")
 
+		let preflightCount = preflight.count
+		let maxChars = maxCharacters ?? preflightCount
+
 		var s = String()
-		s.reserveCapacity(preflight.count)
+		s.reserveCapacity(min(maxChars, preflightCount))
 		var lastCharacterWasSpace = false
 		var charactersAdded = 0
 		var level = 0
@@ -262,11 +267,9 @@ public extension String {
 
 				s.append(char)
 
-				if let maxCharacters = maxCharacters {
-					charactersAdded += 1
-					if (charactersAdded >= maxCharacters) {
-						break
-					}
+				charactersAdded += 1
+				if charactersAdded >= maxChars {
+					break
 				}
 			}
 		}
