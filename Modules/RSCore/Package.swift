@@ -17,11 +17,7 @@ let package = Package(
 			name: "RSCoreObjC",
 			dependencies: [],
 			cSettings: [
-				.headerSearchPath("include"),
-				.unsafeFlags(["-fprofile-instr-generate", "-fcoverage-mapping"])
-			],
-			linkerSettings: [
-				.unsafeFlags(["-fprofile-instr-generate"])
+				.headerSearchPath("include")
 			]
 		),
 		.target(
@@ -32,6 +28,9 @@ let package = Package(
 			]),
 		.testTarget(
 			name: "RSCoreTests",
-			dependencies: ["RSCore"]),
+			dependencies: ["RSCore"],
+			resources: [
+				.copy("Resources")
+			]),
 	]
 )

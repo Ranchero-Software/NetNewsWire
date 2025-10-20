@@ -8,3 +8,4 @@
 @import Foundation;
 
 #import "../NSData+RSCore.h"
+#import "../striphtml.h"
