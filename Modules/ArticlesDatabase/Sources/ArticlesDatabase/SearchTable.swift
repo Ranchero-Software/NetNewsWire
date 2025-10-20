@@ -35,7 +35,7 @@ final class ArticleSearchInfo: Hashable {
 
 	lazy var bodyForIndex: String = {
 		let s = preferredText.rsparser_stringByDecodingHTMLEntities()
-		let sanitizedBody = s.strippingHTML().collapsingWhitespace
+		let sanitizedBody = s.strippingHTML()
 
 		if let authorsNames = authorsNames {
 			return sanitizedBody.appending(" \(authorsNames)")
