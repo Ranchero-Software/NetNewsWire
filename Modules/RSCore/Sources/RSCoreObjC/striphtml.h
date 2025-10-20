@@ -3,7 +3,7 @@
 //  RSCore
 //
 //  Created by Brent Simmons on 10/20/25.
-//  Copyright © 2025 Ranchero Software, LLC. All rights reserved.
+//  Copyright © 2025 Brent Simmons. All rights reserved.
 //
 
 #ifndef striphtml_h
@@ -15,7 +15,7 @@
 /// Strip HTML tags from a UTF-8 encoded string.
 ///
 /// Remove all HTML tags and everything between script and style tags.
-/// It also collapses inner whitespace into single spaces.
+/// Also trim outer whitespace and collapse inner whitespace to single spaces.
 ///
 /// @param input UTF-8 encoded HTML string (does not need to be null-terminated if inputLength is correct)
 /// @param inputLength Length of input in bytes

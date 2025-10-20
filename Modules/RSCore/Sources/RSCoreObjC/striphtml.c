@@ -3,7 +3,7 @@
 //  RSCore
 //
 //  Created by Brent Simmons on 10/20/25.
-//  Copyright © 2025 Ranchero Software, LLC. All rights reserved.
+//  Copyright © 2025 Brent Simmons. All rights reserved.
 //
 
 #include "striphtml.h"
@@ -21,7 +21,7 @@ static bool matchesTag(const char *p, const char *tag) {
 	return true;
 }
 
-// Get the number of bytes in a UTF-8 character starting at p
+// Get the number of bytes in a UTF-8 character
 static inline int utf8CharLength(unsigned char firstByte) {
 	if ((firstByte & 0x80) == 0) return 1;      // 0xxxxxxx
 	if ((firstByte & 0xE0) == 0xC0) return 2;   // 110xxxxx
