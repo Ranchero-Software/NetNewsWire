@@ -13,7 +13,10 @@
       "WebFetch(domain:swiftlang.github.io)",
       "Bash(git log:*)",
       "Bash(gh pr list:*)",
-      "Bash(gh issue list:*)"
+      "Bash(gh issue list:*)",
+      "Bash(xcbeautify:*)",
+      "Bash(swift build:*)",
+      "Bash(1)"
     ],
     "deny": []
   }
