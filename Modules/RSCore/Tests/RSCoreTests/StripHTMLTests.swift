@@ -79,107 +79,61 @@ final class StripHTMLTests: XCTestCase {
 
 	func testStrippingHTMLBasic() {
 		let html = "<p>Hello <b>world</b>!</p>"
-		let legacyResult = html.legacyStrippingHTML()
 		let result = html.strippingHTML()
-
-		// Note: C implementation trims leading/trailing whitespace, legacy Swift doesn't
-
-		// Both should strip tags and collapse whitespace
-		XCTAssertFalse(legacyResult.contains("<"))
-		XCTAssertFalse(result.contains("<"))
-		XCTAssertTrue(legacyResult.contains("Hello"))
-		XCTAssertTrue(legacyResult.contains("world"))
-		XCTAssertTrue(result.contains("Hello"))
-		XCTAssertTrue(result.contains("world"))
+		XCTAssertEqual(result, "Hello world!")
 	}
 
 	func testStrippingHTMLWithScript() {
 		let html = "<p>Before</p><script>alert('test');</script><p>After</p>"
-		let legacyResult = html.legacyStrippingHTML()
 		let result = html.strippingHTML()
-
-		// Note: C implementation trims leading/trailing whitespace, legacy Swift doesn't
-
-		// Both should remove script content
-		XCTAssertFalse(legacyResult.contains("alert"))
-		XCTAssertFalse(result.contains("alert"))
-		XCTAssertTrue(legacyResult.contains("Before"))
-		XCTAssertTrue(legacyResult.contains("After"))
-		XCTAssertTrue(result.contains("Before"))
-		XCTAssertTrue(result.contains("After"))
+		XCTAssertEqual(result, "Before After")
 	}
 
 	func testStrippingHTMLWithStyle() {
 		let html = "<p>Content</p><style>body { color: red; }</style><p>More</p>"
-		let legacyResult = html.legacyStrippingHTML()
 		let result = html.strippingHTML()
-
-		// Note: C implementation trims leading/trailing whitespace, legacy Swift doesn't
-
-		// Both should remove style content
-		XCTAssertFalse(legacyResult.contains("color"))
-		XCTAssertFalse(result.contains("color"))
-		XCTAssertTrue(legacyResult.contains("Content"))
-		XCTAssertTrue(legacyResult.contains("More"))
-		XCTAssertTrue(result.contains("Content"))
-		XCTAssertTrue(result.contains("More"))
+		XCTAssertEqual(result, "Content More")
 	}
 
 	func testStrippingHTMLWithMaxCharacters() {
 		let html = "<p>This is a long piece of text that should be truncated at some point.</p>"
-		let legacyResult = html.legacyStrippingHTML(maxCharacters: 20)
 		let result = html.strippingHTML(maxCharacters: 20)
-
-		// Note: C implementation trims leading/trailing whitespace, legacy Swift doesn't
-
-		// Both should respect maxCharacters limit
-		XCTAssertLessThanOrEqual(legacyResult.count, 20)
 		XCTAssertLessThanOrEqual(result.count, 20)
+		XCTAssertEqual(result, "This is a long piece")
 	}
 
 	func testStrippingHTMLWithUTF8() {
 		let html = "<p>Hello 世界 🌍</p>"
-		let legacyResult = html.legacyStrippingHTML()
 		let result = html.strippingHTML()
-
-		// Note: C implementation trims leading/trailing whitespace, legacy Swift doesn't
-
-		// Both should handle UTF-8 correctly
-		XCTAssertTrue(legacyResult.contains("世界"))
-		XCTAssertTrue(legacyResult.contains("🌍"))
-		XCTAssertTrue(result.contains("世界"))
-		XCTAssertTrue(result.contains("🌍"))
+		XCTAssertEqual(result, "Hello 世界 🌍")
 	}
 
 	func testStrippingHTMLWhitespaceCollapsing() {
 		let html = "<p>Too     many\n\n\nspaces</p>"
-		let legacyResult = html.legacyStrippingHTML()
 		let result = html.strippingHTML()
-
-		// Note: C implementation trims leading/trailing whitespace, legacy Swift doesn't
-
-		// Both should collapse consecutive whitespace
-		XCTAssertFalse(legacyResult.contains("  "))
 		XCTAssertFalse(result.contains("  "))
+		XCTAssertEqual(result, "Too many spaces")
 	}
 
-	func testStrippingHTMLPerformanceLegacySwift() {
-		let html = """
-		<html><body>
-		<p>This is a test article with <b>bold text</b> and <i>italic text</i>.</p>
-		<script>console.log('test');</script>
-		<style>body { margin: 0; }</style>
-		<p>More content with <a href="http://example.com">links</a> and other tags.</p>
-		<div>Nested <span>tags</span> are common in HTML.</div>
-		</body></html>
-		"""
-
-		self.measure {
-			for _ in 0..<1000 {
-				let _ = html.legacyStrippingHTML(maxCharacters: 300)
-			}
-		}
-	}
+	// Commented out because this doesn’t need to run every time.
+	// Un-comment it when you want to compare legacy performance to C performance.
+//	func testStrippingHTMLPerformanceLegacySwift() {
+//		let html = """
+//		<html><body>
+//		<p>This is a test article with <b>bold text</b> and <i>italic text</i>.</p>
+//		<script>console.log('test');</script>
+//		<style>body { margin: 0; }</style>
+//		<p>More content with <a href="http://example.com">links</a> and other tags.</p>
+//		<div>Nested <span>tags</span> are common in HTML.</div>
+//		</body></html>
+//		"""
+//
+//		self.measure {
+//			for _ in 0..<1000 {
+//				let _ = html.legacyStrippingHTML(maxCharacters: 300)
+//			}
+//		}
+//	}
 
 	func testStrippingHTMLPerformance() {
 		let html = """
@@ -211,52 +165,38 @@ final class StripHTMLTests: XCTestCase {
 			let html = try String(contentsOf: url, encoding: .utf8)
 
 			// Test both implementations can process real-world HTML
-			let legacyResult = html.legacyStrippingHTML(maxCharacters: 300)
 			let result = html.strippingHTML(maxCharacters: 300)
 
-			// Note: Results may differ slightly because the legacy Swift implementation's regex-based
-			// script removal (<script>[\s\S]*?</script>) doesn't handle script tags with attributes
-			// like <script type="text/javascript">, while the C implementation correctly removes them.
-			// Both produce usable output for article previews.
-
-			// Both should produce non-empty results
-			XCTAssertFalse(legacyResult.isEmpty, "\(testFile): Legacy result should not be empty")
 			XCTAssertFalse(result.isEmpty, "\(testFile): Result should not be empty")
-
-			// Both should respect the maxCharacters limit
-			XCTAssertLessThanOrEqual(legacyResult.count, 300, "\(testFile): Legacy result should respect maxCharacters")
 			XCTAssertLessThanOrEqual(result.count, 300, "\(testFile): Result should respect maxCharacters")
-
-			// Both should strip HTML tags
-			XCTAssertFalse(legacyResult.contains("<"), "\(testFile): Legacy result should not contain HTML tags")
 			XCTAssertFalse(result.contains("<"), "\(testFile): Result should not contain HTML tags")
-
-			// C implementation should not contain script artifacts
 			XCTAssertFalse(result.contains("//"), "\(testFile): Should fully remove script content")
 		}
 	}
 
-	func testStrippingHTMLPerformanceRealWorldLegacySwift() throws {
-		let testFiles = ["daringfireball", "apple", "inessential", "scripting"]
-		var htmlFiles: [String] = []
-
-		for testFile in testFiles {
-			guard let url = Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources") else {
-				XCTFail("Could not find \(testFile).html")
-				return
-			}
-			let html = try String(contentsOf: url, encoding: .utf8)
-			htmlFiles.append(html)
-		}
-
-		self.measure {
-			for _ in 0..<100 {
-				for html in htmlFiles {
-					let _ = html.legacyStrippingHTML(maxCharacters: 300)
-				}
-			}
-		}
-	}
+	// Commented out because this doesn’t need to run every time.
+	// Un-comment it when you want to compare legacy performance to C performance.
+//	func testStrippingHTMLPerformanceRealWorldLegacySwift() throws {
+//		let testFiles = ["daringfireball", "apple", "inessential", "scripting"]
+//		var htmlFiles: [String] = []
+//
+//		for testFile in testFiles {
+//			guard let url = Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources") else {
+//				XCTFail("Could not find \(testFile).html")
+//				return
+//			}
+//			let html = try String(contentsOf: url, encoding: .utf8)
+//			htmlFiles.append(html)
+//		}
+//
+//		self.measure {
+//			for _ in 0..<100 {
+//				for html in htmlFiles {
+//					let _ = html.legacyStrippingHTML(maxCharacters: 300)
+//				}
+//			}
+//		}
+//	}
 
 	func testStrippingHTMLPerformanceRealWorld() throws {
 		let testFiles = ["daringfireball", "apple", "inessential", "scripting"]
@@ -303,5 +243,4 @@ final class StripHTMLTests: XCTestCase {
 			XCTAssertEqual(result, expectedOutput, "\(testFile): Implementation should match expected output")
 		}
 	}
-
 }
