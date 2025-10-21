@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.2 TestFlight build 6200 21 Oct 2025 - branch main tag: iOS-6.2-6200
+
+Made scrolling of the timeline view faster
+
 ### 6.2 TestFlight build 6199 19 Oct 2025 - branch: main tag iOS-6.2-6199
 
 New feature: you can now enable/disable JavaScript (in the Settings screen)
