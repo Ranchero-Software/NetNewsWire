@@ -16,7 +16,10 @@
       "Bash(gh issue list:*)",
       "Bash(xcbeautify:*)",
       "Bash(swift build:*)",
-      "Bash(1)"
+      "Bash(1)",
+      "Bash(sed:*)",
+      "Bash(cat:*)",
+      "Bash(dd:*)"
     ],
     "deny": []
   }
