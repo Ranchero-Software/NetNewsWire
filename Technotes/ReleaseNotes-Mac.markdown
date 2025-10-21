@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 6.2b2 build 6143 21 Oct 2025 - branch main tag: mac-6.2b2
+
+Made scrolling of the timeline view faster
+
 ### 6.2b1 build 6142 19 Oct 2025 - branch main tag: mac-6.2b1
 
 Improved http/https caching, reducing bandwidth and battery use
