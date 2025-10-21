@@ -194,8 +194,12 @@ public extension String {
 	///
 	/// This function removes HTML tags and script/style content, collapses whitespace, and trims leading/trailing whitespace.
 	/// Works on plain text as well to trim and collapse whitespace.
+	///
+	/// History: the original implementation, written in Swift, took up about 10% of the work during scrolling the timeline,
+	/// and was the single biggest chunk of work during scrolling. (According to the Instruments Time Profiler.)
+	/// This replacement implementation takes up about 2%.
 	func strippingHTML(maxCharacters: Int? = nil) -> String {
-		return self.withCString { cString in
+		self.withCString { cString in
 			let inputLength = strlen(cString)
 			let outputCapacity = inputLength + 1
 			let outputBuffer = UnsafeMutablePointer<CChar>.allocate(capacity: outputCapacity)
