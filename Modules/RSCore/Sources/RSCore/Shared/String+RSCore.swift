@@ -8,6 +8,7 @@
 
 import Foundation
 import CommonCrypto
+import RSCoreObjC
 
 public extension String {
 
@@ -187,91 +188,33 @@ public extension String {
 		return self;
 	}
 
-	/// Removes an HTML tag and everything between its start and end tags.
-	///
-	/// The regex pattern `<tag>[\\s\\S]*?</tag>` explanation:
-	/// - `<` matches the literal `<` character.
-	/// - `tag` matches the literal parameter provided to the function, e.g., `style`.
-	/// - `>` matches the literal `>` character.
-	/// - `[\\s\\S]*?`
-	/// 	- `[\\s\\S]` matches _any_ character, including new lines.
-	/// 	- `*` will match zero or more of the preceding character, in this case _any_
-	/// 	character.
-	/// 	- `?` switches the matching mode to [lazy](https://javascript.info/regexp-greedy-and-lazy)
-	/// 	so it will match as few as characters as possible before satisfying the rest of the pattern.
-	/// - `<` matches the literal `<` character.
-	/// - `/` matches the literal `/` character.
-	/// - `tag` matches the literal parameter provided to the function, e.g., `style`.
-	/// - `>` matches the literal `>` character.
-	///
-	/// - Parameter tag: The tag to remove.
-	///
-	/// - Returns: A new copy of `self` with the tag removed.
-	///
-	/// - Note: Doesn't work correctly with nested tags of the same name.
-	private func removingTagAndContents(_ tag: String) -> String {
-		return self.replacingOccurrences(of: "<\(tag)>[\\s\\S]*?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
-	}
-
 	/// Strips HTML from a string.
 	/// - Parameter maxCharacters: The maximum characters in the return string.
 	///	If `nil`, the whole string is used.
+	///
+	/// This function removes HTML tags and script/style content, collapses whitespace, and trims leading/trailing whitespace.
+	/// Works on plain text as well to trim and collapse whitespace.
+	///
+	/// History: the original implementation, written in Swift, took up about 10% of the work during scrolling the timeline,
+	/// and was the single biggest chunk of work during scrolling. (According to the Instruments Time Profiler.)
+	/// This replacement implementation takes up about 2%.
 	func strippingHTML(maxCharacters: Int? = nil) -> String {
-		if !self.contains("<") {
+		self.withCString { cString in
+			let inputLength = strlen(cString)
+			let outputCapacity = inputLength + 1
+			let outputBuffer = UnsafeMutablePointer<CChar>.allocate(capacity: outputCapacity)
+			defer { outputBuffer.deallocate() }
 
-			if let maxCharacters = maxCharacters, maxCharacters < count {
-				let ix = self.index(self.startIndex, offsetBy: maxCharacters)
-				return String(self[..<ix])
-			}
+			let _ = stripHTML(
+				cString,
+				inputLength,
+				outputBuffer,
+				outputCapacity,
+				maxCharacters ?? 0
+			)
 
-			return self
+			return String(cString: outputBuffer)
 		}
-
-		var preflight = self
-
-		// NOTE: If performance on repeated invocations becomes an issue here, the regexes can be cached.
-		let options: String.CompareOptions = [.regularExpression, .caseInsensitive]
-		preflight = preflight.replacingOccurrences(of: "</?(?:blockquote|p|div)>", with: " ", options: options)
-		preflight = preflight.replacingOccurrences(of: "<p>|</?div>|<br(?: ?/)?>|</li>", with: "\n", options: options)
-		preflight = preflight.removingTagAndContents("script")
-		preflight = preflight.removingTagAndContents("style")
-
-		var s = String()
-		s.reserveCapacity(preflight.count)
-		var lastCharacterWasSpace = false
-		var charactersAdded = 0
-		var level = 0
-
-		for var char in preflight {
-			if char == "<" {
-				level += 1
-			} else if char == ">" {
-				level -= 1
-			} else if level == 0 {
-
-				if char == " " || char == "\r" || char == "\t" || char == "\n" {
-					if lastCharacterWasSpace {
-						continue
-					} else {
-						lastCharacterWasSpace = true
-					}
-					char = " "
-				} else {
-					lastCharacterWasSpace = false
-				}
-
-				s.append(char)
-
-				if let maxCharacters = maxCharacters {
-					charactersAdded += 1
-					if (charactersAdded >= maxCharacters) {
-						break
-					}
-				}
-			}
-		}
-
-		return s
 	}
 
 	/// A copy of an HTML string converted to plain text.

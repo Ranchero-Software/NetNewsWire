@@ -100,8 +100,6 @@ struct ArticleStringFormatter {
 		}
 		var s = body.rsparser_stringByDecodingHTMLEntities()
 		s = s.strippingHTML(maxCharacters: 300)
-		s = s.trimmingWhitespace
-		s = s.collapsingWhitespace
 		if s == "Comments" { // Hacker News.
 			s = ""
 		}
