@@ -16,6 +16,7 @@ Make sure there are no outstanding changes
 
 Archive build
 Developer ID distribution - notarize
+Click Distribute App button
 Wait while processing
 
 Export
