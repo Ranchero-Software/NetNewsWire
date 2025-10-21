@@ -62,7 +62,10 @@ size_t stripHTML(const char *input, size_t inputLength,
 
 		// Handle tag opening
 		if (c == '<') {
-			tagLevel++;
+			// Only track tag level when not inside script/style
+			if (!inScript && !inStyle) {
+				tagLevel++;
+			}
 
 			// Check for script or style tags
 			if (in + 7 < inEnd && matchesTag(in + 1, "script")) {
@@ -102,7 +105,8 @@ size_t stripHTML(const char *input, size_t inputLength,
 
 		// Handle tag closing
 		if (c == '>') {
-			if (tagLevel > 0) {
+			// Only track tag level when not inside script/style
+			if (!inScript && !inStyle && tagLevel > 0) {
 				tagLevel--;
 			}
 			in++;
