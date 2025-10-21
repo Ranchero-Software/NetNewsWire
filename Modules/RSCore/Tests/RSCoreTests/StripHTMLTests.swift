@@ -220,6 +220,36 @@ final class StripHTMLTests: XCTestCase {
 		}
 	}
 
+	// Un-comment this to create the .txt files that contain the expected stripped-HTML results.
+//	func testRegenerateExpectedOutputFiles() throws {
+//		let testFiles = ["apple", "daringfireball", "inessential", "scripting"]
+//
+//		for testFile in testFiles {
+//			guard let htmlURL = Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources") else {
+//				XCTFail("Could not find \(testFile).html")
+//				return
+//			}
+//
+//			let html = try String(contentsOf: htmlURL, encoding: .utf8)
+//			let result = html.strippingHTML()
+//
+//			print("\n=== \(testFile) ===")
+//			print("Result length: \(result.count) characters")
+//			print("First 200 chars: \(String(result.prefix(200)))")
+//
+//			// Write to /tmp first, then user can copy to source
+//			let tmpPath = "/tmp/\(testFile).txt"
+//			try result.write(toFile: tmpPath, atomically: true, encoding: .utf8)
+//			print("Wrote to: \(tmpPath)")
+//		}
+//
+//		print("\n\nTo update the expected output files, run:")
+//		print("cp /tmp/apple.txt Tests/RSCoreTests/Resources/")
+//		print("cp /tmp/daringfireball.txt Tests/RSCoreTests/Resources/")
+//		print("cp /tmp/inessential.txt Tests/RSCoreTests/Resources/")
+//		print("cp /tmp/scripting.txt Tests/RSCoreTests/Resources/")
+//	}
+
 	func testStrippingHTMLMatchesExpectedOutput() throws {
 		let testFiles = ["apple", "daringfireball", "inessential", "scripting"]
 
