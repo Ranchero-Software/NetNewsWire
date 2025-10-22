@@ -91,9 +91,11 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		if let conditionalGetInfoDate = feed.conditionalGetInfoDate {
 			let eightDaysAgo = Date().bySubtracting(days: 8)
 			if conditionalGetInfoDate < eightDaysAgo {
-				Self.logger.info("LocalAccountRefresher: dropping conditional GET info for \(url) — more than 8 days old")
-				feed.conditionalGetInfo = nil
-				return nil
+				if !SpecialCase.urlStringContainSpecialCase( url.absoluteString, [SpecialCase.openRSSOrgHostName, SpecialCase.rachelByTheBayHostName]) {
+					Self.logger.info("LocalAccountRefresher: dropping conditional GET info for \(url) — more than 8 days old")
+					feed.conditionalGetInfo = nil
+					return nil
+				}
 			}
 		}
 
