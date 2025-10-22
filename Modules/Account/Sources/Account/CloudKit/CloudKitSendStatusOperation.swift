@@ -115,8 +115,7 @@ private extension CloudKitSendStatusOperation {
 				}
 
 				func done(_ stop: Bool) {
-					// Don't clear the last one since we might have had additional ticks added
-					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
+					if self.showProgress {
 						self.refreshProgress?.completeTask()
 					}
 					Self.logger.debug("iCloud: Finished sending article status block")
