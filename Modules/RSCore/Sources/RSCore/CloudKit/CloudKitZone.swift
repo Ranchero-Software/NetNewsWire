@@ -198,8 +198,8 @@ public extension CloudKitZone {
 
 	/// Subscribes to zone changes
 	func subscribeToZoneChanges() {
-		let subscription = CKRecordZoneSubscription(zoneID: zoneID)
-        
+		let subscription = CKRecordZoneSubscription(zoneID: zoneID, subscriptionID: zoneID.zoneName)
+
 		let info = CKSubscription.NotificationInfo()
         info.shouldSendContentAvailable = true
         subscription.notificationInfo = info
