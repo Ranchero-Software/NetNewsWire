@@ -220,6 +220,7 @@ private extension CloudKitArticlesZoneDelegate {
 									language: nil,
 									contentHTML: contentHTML,
 									contentText: contentText,
+									markdown: nil,
 									summary: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.summary] as? String,
 									imageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
 									bannerImageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
