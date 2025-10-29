@@ -254,35 +254,43 @@ final class CloudKitAccountZone: CloudKitZone {
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 		
-		database?.perform(ckQuery, inZoneWith: zoneID) { [weak self] records, error in
+		database?.fetch(withQuery: ckQuery, inZoneWith: zoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults) { [weak self] result in
 			guard let self = self else { return }
-			
-			switch CloudKitZoneResult.resolve(error) {
-            case .success:
+
+			switch result {
+			case .success(let (matchResults, _)):
+				let records = matchResults.compactMap { try? $0.1.get() }
 				DispatchQueue.main.async {
-					if records!.count > 0 {
-						completion(.success(records![0].externalID))
+					if !records.isEmpty {
+						completion(.success(records[0].externalID))
 					} else {
 						self.createContainer(name: "Account", isAccount: true, completion: completion)
 					}
 				}
-			case .retry(let timeToWait):
-				self.retryIfPossible(after: timeToWait) {
-					self.findOrCreateAccount(completion: completion)
-				}
-			case .zoneNotFound, .userDeletedZone:
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
+			case .failure(let error):
+				switch CloudKitZoneResult.resolve(error) {
+				case .success:
+					DispatchQueue.main.async {
+						self.createContainer(name: "Account", isAccount: true, completion: completion)
+					}
+				case .retry(let timeToWait):
+					self.retryIfPossible(after: timeToWait) {
 						self.findOrCreateAccount(completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(CloudKitError(error)))
+					}
+				case .zoneNotFound, .userDeletedZone:
+					self.createZoneRecord() { result in
+						switch result {
+						case .success:
+							self.findOrCreateAccount(completion: completion)
+						case .failure(let error):
+							DispatchQueue.main.async {
+								completion(.failure(CloudKitError(error)))
+							}
 						}
 					}
+				default:
+					self.createContainer(name: "Account", isAccount: true, completion: completion)
 				}
-			default:
-				self.createContainer(name: "Account", isAccount: true, completion: completion)
 			}
 		}
 		
