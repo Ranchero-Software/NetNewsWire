@@ -15,11 +15,12 @@ let package = Package(
 			targets: ["RSParserObjC"]),
 	],
 	dependencies: [
+		.package(path: "../RSMarkdown")
 	],
 	targets: [
 		.target(
 			name: "RSParser",
-			dependencies: ["RSParserObjC"],
+			dependencies: ["RSParserObjC", "RSMarkdown"],
 			path: "Sources/Swift"),
 		.target(
 			name: "RSParserObjC",

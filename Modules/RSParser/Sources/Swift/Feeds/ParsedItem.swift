@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSMarkdown
 
 public struct ParsedItem: Hashable {
 
@@ -41,7 +42,6 @@ public struct ParsedItem: Hashable {
 		self.externalURL = externalURL
 		self.title = title
 		self.language = language
-		self.contentHTML = contentHTML
 		self.contentText = contentText
 		self.markdown = markdown
 		self.summary = summary
@@ -52,6 +52,15 @@ public struct ParsedItem: Hashable {
 		self.authors = authors
 		self.tags = tags
 		self.attachments = attachments
+
+		// Render Markdown when contentHTML is nil and markdown is not nil.
+		if let contentHTML {
+			self.contentHTML = contentHTML
+		} else if let markdown {
+			self.contentHTML = RSMarkdown.markdownToHTML(markdown)
+		} else {
+			self.contentHTML = nil
+		}
 	}
 
 	// MARK: - Hashable
