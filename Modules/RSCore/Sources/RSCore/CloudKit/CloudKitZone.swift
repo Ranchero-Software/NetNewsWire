@@ -744,8 +744,10 @@ public extension CloudKitZone {
 			savedChangeToken = token
         }
 
-        op.recordChangedBlock = { record in
-			changedRecords.append(record)
+        op.recordWasChangedBlock = { recordID, result in
+			if let record = try? result.get() {
+				changedRecords.append(record)
+			}
         }
 
         op.recordWithIDWasDeletedBlock = { recordID, recordType in
