@@ -639,7 +639,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		}
 
 		var node: Node? = nil
-		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
+		if let feed = coordinator.timelineFeed {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
 		} else {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
