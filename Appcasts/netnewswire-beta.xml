@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 6.2b4</title>
+            <description><![CDATA[
+				<p>Changes since 6.2b3:</p>
+				<ul>
+					<li>Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body</li>
+					<li>Added a dotted underline to links in the Sepia theme, to make links more visible</li>
+				</ul>
+			]]></description>
+        	<pubDate>Thu, 30 Oct 2025 14:15:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2b4/NetNewsWire6.2b4.zip" sparkle:version="6145" sparkle:shortVersionString="6.2b4" length="10242407" type="application/zip" />
+			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 6.2b3</title>
             <description><![CDATA[
 				<p>Changes since 6.2b2:</p>
@@ -16,19 +30,6 @@
 			]]></description>
         	<pubDate>Wed, 29 Oct 2025 21:25:00 -0700</pubDate>
 			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2b3/NetNewsWire6.2b3.zip" sparkle:version="6144" sparkle:shortVersionString="6.2b3" length="10242202" type="application/zip" />
-			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 6.2b2</title>
-            <description><![CDATA[
-				<p>Changes since 6.2b1:</p>
-				<ul>
-					<li>Made scrolling of the timeline view faster</li>
-				</ul>
-			]]></description>
-        	<pubDate>Tue, 21 Oct 2025 11:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2b2/NetNewsWire6.2b2.zip" sparkle:version="6143" sparkle:shortVersionString="6.2b2" length="9436969" type="application/zip" />
 			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
 		</item>
 
