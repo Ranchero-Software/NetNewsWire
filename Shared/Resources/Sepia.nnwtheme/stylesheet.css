@@ -10,7 +10,9 @@ body {
 }
 
 a {
-	text-decoration: none;
+	text-decoration: underline;
+	text-decoration-style: dotted;
+	text-decoration-offset: 0.15em;
 }
 a:hover {
 	text-shadow: 0 1px rgba(255, 255, 255, 2);
