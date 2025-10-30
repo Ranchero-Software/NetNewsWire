@@ -47,6 +47,7 @@ final class SharingTests: XCTestCase {
 					   title: title,
 					   contentHTML: nil,
 					   contentText: nil,
+					   markdown: nil,
 					   url: nil,
 					   externalURL: nil,
 					   summary: nil,
