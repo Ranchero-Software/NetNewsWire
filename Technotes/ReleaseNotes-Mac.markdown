@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.2b4 build 6145 29 Oct 2025 - branch main tag: mac-6.2b4
+
+Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body
+Added a dotted underline to links in the Sepia theme, to make links more visible
+
 ### 6.2b3 build 6144 29 Oct 2025 - branch main tag: mac-6.2b3
 
 Added support for source:markdown to the RSS parser. Markdown is stored in the database. When an article doesn’t already have HTML content, the Markdown will be rendered as HTML. (Note: anyone reading this in October 2025 almost surely does not have any source:markdown elements in their feeds, so this won’t affect you. Here’s more info, for the curious <http://scripting.com/2022/07/19/152235.html?title=devNotesForMarkdownInFeeds>)
