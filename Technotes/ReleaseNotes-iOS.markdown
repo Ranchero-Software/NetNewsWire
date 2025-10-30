@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 6.2 TestFlight build 6201 30 Oct 2025 - branch main tag: iOS-6.2-6201
+
+Added support for source:markdown to the RSS parser
+Added a dotted underline to links in the Sepia theme, to make links more visible
+
 ### 6.2 TestFlight build 6200 21 Oct 2025 - branch main tag: iOS-6.2-6200
 
 Made scrolling of the timeline view faster
