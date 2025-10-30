@@ -53,13 +53,11 @@ public struct ParsedItem: Hashable {
 		self.tags = tags
 		self.attachments = attachments
 
-		// Render Markdown when contentHTML is nil and markdown is not nil.
-		if let contentHTML {
-			self.contentHTML = contentHTML
-		} else if let markdown {
+		// Render Markdown when present, else use contentHTML
+		if let markdown {
 			self.contentHTML = RSMarkdown.markdownToHTML(markdown)
 		} else {
-			self.contentHTML = nil
+			self.contentHTML = contentHTML
 		}
 	}
 
