@@ -1062,6 +1062,7 @@ private extension ReaderAPIAccountDelegate {
 							  language: nil,
 							  contentHTML: entry.summary.content,
 							  contentText: nil,
+							  markdown: nil,
 							  summary: entry.summary.content,
 							  imageURL: nil,
 							  bannerImageURL: nil,

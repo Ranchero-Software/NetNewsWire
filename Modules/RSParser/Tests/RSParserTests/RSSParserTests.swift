@@ -175,6 +175,22 @@ final class RSSParserTests: XCTestCase {
 		XCTAssertEqual(parsedFeed.language, "en-US")
 	}
 
+	func testMarkdown1() {
+		let d = parserData("markdown1", "rss", "https://wordland.social/scripting/237777565/rss.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.markdown)
+		}
+	}
+
+	func testMarkdown2() {
+		let d = parserData("markdown2", "rss", "https://wordland.social/scripting/246529703/rss.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.markdown)
+		}
+	}
+
 //	func testFeedWithGB2312Encoding() {
 //		// This feed has an encoding we don’t run into very often.
 //		// https://github.com/Ranchero-Software/NetNewsWire/issues/1477

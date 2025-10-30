@@ -81,10 +81,14 @@ public final class ArticlesDatabase {
 
 		try! queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
 		queue.runInDatabase { databaseResult in
-			Self.logger.debug("Articles Database creating tables \(accountID, privacy: .public)")
+			Self.logger.debug("ArticlesDatabase: creating tables \(accountID, privacy: .public)")
 			let database = databaseResult.database!
 			if !self.articlesTable.containsColumn("searchRowID", in: database) {
 				database.executeStatements("ALTER TABLE articles add column searchRowID INTEGER;")
+			}
+			if !self.articlesTable.containsColumn("markdown", in: database) {
+				Self.logger.debug("ArticlesDatabase: adding markdown column \(accountID, privacy: .public)")
+				database.executeStatements("ALTER TABLE articles add column markdown TEXT;")
 			}
 			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
@@ -351,7 +355,7 @@ public final class ArticlesDatabase {
 private extension ArticlesDatabase {
 
 	static let tableCreationStatements = """
-	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER);
+	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER);
 
 	CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 

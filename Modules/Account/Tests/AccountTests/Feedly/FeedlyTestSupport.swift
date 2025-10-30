@@ -294,6 +294,7 @@ final class FeedlyTestSupport {
 					language: nil,
 					contentHTML: "Content \(index) HTML.",
 					contentText: "Content \(index) Text",
+					markdown: nil,
 					summary: nil,
 					imageURL: nil,
 					bannerImageURL: nil,

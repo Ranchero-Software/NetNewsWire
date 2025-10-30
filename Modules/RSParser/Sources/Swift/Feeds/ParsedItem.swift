@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSMarkdown
 
 public struct ParsedItem: Hashable {
 
@@ -19,6 +20,7 @@ public struct ParsedItem: Hashable {
 	public let language: String?
 	public let contentHTML: String?
 	public let contentText: String?
+	public let markdown: String?
 	public let summary: String?
 	public let imageURL: String?
 	public let bannerImageURL: String?
@@ -29,7 +31,7 @@ public struct ParsedItem: Hashable {
 	public let attachments: Set<ParsedAttachment>?
 	
 	public init(syncServiceID: String?, uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?,
-				language: String?, contentHTML: String?, contentText: String?, summary: String?, imageURL: String?,
+				language: String?, contentHTML: String?, contentText: String?, markdown: String?, summary: String?, imageURL: String?,
 				bannerImageURL: String?,datePublished: Date?, dateModified: Date?, authors: Set<ParsedAuthor>?,
 				tags: Set<String>?, attachments: Set<ParsedAttachment>?) {
 		
@@ -40,8 +42,8 @@ public struct ParsedItem: Hashable {
 		self.externalURL = externalURL
 		self.title = title
 		self.language = language
-		self.contentHTML = contentHTML
 		self.contentText = contentText
+		self.markdown = markdown
 		self.summary = summary
 		self.imageURL = imageURL
 		self.bannerImageURL = bannerImageURL
@@ -50,6 +52,15 @@ public struct ParsedItem: Hashable {
 		self.authors = authors
 		self.tags = tags
 		self.attachments = attachments
+
+		// Render Markdown when contentHTML is nil and markdown is not nil.
+		if let contentHTML {
+			self.contentHTML = contentHTML
+		} else if let markdown {
+			self.contentHTML = RSMarkdown.markdownToHTML(markdown)
+		} else {
+			self.contentHTML = nil
+		}
 	}
 
 	// MARK: - Hashable

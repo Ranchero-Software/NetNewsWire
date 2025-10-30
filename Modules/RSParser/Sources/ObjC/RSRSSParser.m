@@ -111,6 +111,12 @@ static const NSInteger kTitleLength = 6;
 static const char *kDC = "dc";
 static const NSInteger kDCLength = 3;
 
+static const char *kSource = "source";
+static const NSInteger kSourceLength = 7;
+
+static const char *kMarkdown = "markdown";
+static const NSInteger kMarkdownLength = 9;
+
 static const char *kCreator = "creator";
 static const NSInteger kCreatorLength = 8;
 
@@ -240,6 +246,12 @@ static const NSInteger kLanguageLength = 9;
 	}
 }
 
+- (void)addSourceElement:(const xmlChar *)localName {
+
+	if (RSSAXEqualTags(localName, kMarkdown, kMarkdownLength)) {
+		self.currentArticle.markdown = [self currentString];
+	}
+}
 
 - (void)addGuid {
 
@@ -334,6 +346,11 @@ static const NSInteger kLanguageLength = 9;
 	if (RSSAXEqualTags(prefix, kDC, kDCLength)) {
 
 		[self addDCElement:localName];
+		return;
+	}
+
+	if (RSSAXEqualTags(prefix, kSource, kSourceLength)) {
+		[self addSourceElement:localName];
 		return;
 	}
 

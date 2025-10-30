@@ -42,12 +42,13 @@ private extension RSParsedFeedTransformer {
 		let title = parsedArticle.title
 		let language = parsedArticle.language
 		let contentHTML = parsedArticle.body
+		let markdown = parsedArticle.markdown
 		let datePublished = parsedArticle.datePublished
 		let dateModified = parsedArticle.dateModified
 		let authors = parsedAuthors(parsedArticle.authors)
 		let attachments = parsedAttachments(parsedArticle.enclosures)
 
-		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: parsedArticle.feedURL, url: url, externalURL: externalURL, title: title, language: language, contentHTML: contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: nil, attachments: attachments)
+		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: parsedArticle.feedURL, url: url, externalURL: externalURL, title: title, language: language, contentHTML: contentHTML, contentText: nil, markdown: markdown, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: nil, attachments: attachments)
 	}
 
 	static func parsedAuthors(_ authors: Set<RSParsedAuthor>?) -> Set<ParsedAuthor>? {
