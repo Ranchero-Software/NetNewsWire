@@ -12,8 +12,8 @@ import RSTree
 import Articles
 import Account
 
-class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
-    
+final class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
+
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
@@ -47,10 +47,13 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 		self.folderTreeController = folderTreeController
 	}
 	
-    func runSheetOnWindow(_ hostWindow: NSWindow) {
-		hostWindow.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
+	func runSheetOnWindow(_ hostWindow: NSWindow) {
+		guard let window else {
+			return
 		}
-    }
+		hostWindow.beginSheet(window) { (returnCode: NSApplication.ModalResponse) -> Void in
+		}
+	}
 
 	override func windowDidLoad() {
 		if let urlString = urlString {

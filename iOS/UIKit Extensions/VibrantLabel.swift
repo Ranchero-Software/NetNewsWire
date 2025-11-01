@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VibrantLabel: UILabel {
+final class VibrantLabel: UILabel {
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)

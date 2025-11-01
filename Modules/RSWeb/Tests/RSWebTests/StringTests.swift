@@ -8,7 +8,7 @@
 
 import XCTest
 
-class StringTests: XCTestCase {
+final class StringTests: XCTestCase {
 
     func testHTMLEscaping() {
 

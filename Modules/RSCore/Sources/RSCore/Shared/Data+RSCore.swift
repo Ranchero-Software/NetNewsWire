@@ -122,6 +122,16 @@ public extension Data {
 			static let lowercaseBody = "body".data(using: .utf8)!
 			static let uppercaseHTML = "HTML".data(using: .utf8)!
 			static let uppercaseBody = "BODY".data(using: .utf8)!
+			static let lowercaseHead = "head".data(using: .utf8)!
+			static let uppercaseHead = "HEAD".data(using: .utf8)!
+			static let lowercaseDoctype = "<!doctype".data(using: .utf8)!
+			static let uppercaseDoctype = "<!DOCTYPE".data(using: .utf8)!
+			static let lowercaseDiv = "div".data(using: .utf8)!
+			static let uppercaseDiv = "DIV".data(using: .utf8)!
+			static let lowercaseP = "p".data(using: .utf8)!
+			static let uppercaseP = "P".data(using: .utf8)!
+			static let lowercaseSpan = "span".data(using: .utf8)!
+			static let uppercaseSpan = "SPAN".data(using: .utf8)!
 		}
 
 		/// Tags in UTF-16 format.
@@ -130,6 +140,16 @@ public extension Data {
 			static let lowercaseBody = "body".data(using: .utf16LittleEndian)!
 			static let uppercaseHTML = "HTML".data(using: .utf16LittleEndian)!
 			static let uppercaseBody = "BODY".data(using: .utf16LittleEndian)!
+			static let lowercaseHead = "head".data(using: .utf16LittleEndian)!
+			static let uppercaseHead = "HEAD".data(using: .utf16LittleEndian)!
+			static let lowercaseDoctype = "<!doctype".data(using: .utf16LittleEndian)!
+			static let uppercaseDoctype = "<!DOCTYPE".data(using: .utf16LittleEndian)!
+			static let lowercaseDiv = "div".data(using: .utf16LittleEndian)!
+			static let uppercaseDiv = "DIV".data(using: .utf16LittleEndian)!
+			static let lowercaseP = "p".data(using: .utf16LittleEndian)!
+			static let uppercaseP = "P".data(using: .utf16LittleEndian)!
+			static let lowercaseSpan = "span".data(using: .utf16LittleEndian)!
+			static let uppercaseSpan = "SPAN".data(using: .utf16LittleEndian)!
 		}
 
 	}
@@ -140,23 +160,75 @@ public extension Data {
 	/// which for ASCII codepoints is essentially ASCII characters with nulls in between.
 	///
 	/// An uncommon exception is any EBCDIC-derived encoding.
+	///
+	/// This method uses detection algorithm that doesn't require both html and body tags.
+	/// It looks for DOCTYPE declarations, html tags, and common HTML structural elements.
 	var isProbablyHTML: Bool {
 
 		if !self.contains(RSSearch.lessThan) || !self.contains(RSSearch.greaterThan) {
 			return false
 		}
 
-		if (self.range(of: RSSearch.UTF8.lowercaseHTML) != nil || self.range(of: RSSearch.UTF8.uppercaseHTML) != nil)
-			&& (self.range(of: RSSearch.UTF8.lowercaseBody) != nil || self.range(of: RSSearch.UTF8.uppercaseBody) != nil) {
+		// Check for DOCTYPE declaration (strong indicator)
+		if self.range(of: RSSearch.UTF8.lowercaseDoctype) != nil || self.range(of: RSSearch.UTF8.uppercaseDoctype) != nil {
 			return true
 		}
 
-		if (self.range(of: RSSearch.UTF16.lowercaseHTML) != nil || self.range(of: RSSearch.UTF16.uppercaseHTML) != nil)
-			&& (self.range(of: RSSearch.UTF16.lowercaseBody) != nil || self.range(of: RSSearch.UTF16.uppercaseBody) != nil) {
+		if self.range(of: RSSearch.UTF16.lowercaseDoctype) != nil || self.range(of: RSSearch.UTF16.uppercaseDoctype) != nil {
 			return true
 		}
 
-		return false
+		// Check for html tag (strong indicator)
+		if self.range(of: RSSearch.UTF8.lowercaseHTML) != nil || self.range(of: RSSearch.UTF8.uppercaseHTML) != nil {
+			return true
+		}
+
+		if self.range(of: RSSearch.UTF16.lowercaseHTML) != nil || self.range(of: RSSearch.UTF16.uppercaseHTML) != nil {
+			return true
+		}
+
+		// Check for head tag (strong indicator)
+		if self.range(of: RSSearch.UTF8.lowercaseHead) != nil || self.range(of: RSSearch.UTF8.uppercaseHead) != nil {
+			return true
+		}
+
+		if self.range(of: RSSearch.UTF16.lowercaseHead) != nil || self.range(of: RSSearch.UTF16.uppercaseHead) != nil {
+			return true
+		}
+
+		// Check for body tag (good indicator)
+		if self.range(of: RSSearch.UTF8.lowercaseBody) != nil || self.range(of: RSSearch.UTF8.uppercaseBody) != nil {
+			return true
+		}
+
+		if self.range(of: RSSearch.UTF16.lowercaseBody) != nil || self.range(of: RSSearch.UTF16.uppercaseBody) != nil {
+			return true
+		}
+
+		// Check for common HTML structural elements (weaker but still useful indicators)
+		let hasCommonHTMLElements = {
+			// Check for div tags
+			if self.range(of: RSSearch.UTF8.lowercaseDiv) != nil || self.range(of: RSSearch.UTF8.uppercaseDiv) != nil ||
+			   self.range(of: RSSearch.UTF16.lowercaseDiv) != nil || self.range(of: RSSearch.UTF16.uppercaseDiv) != nil {
+				return true
+			}
+			
+			// Check for p tags
+			if self.range(of: RSSearch.UTF8.lowercaseP) != nil || self.range(of: RSSearch.UTF8.uppercaseP) != nil ||
+			   self.range(of: RSSearch.UTF16.lowercaseP) != nil || self.range(of: RSSearch.UTF16.uppercaseP) != nil {
+				return true
+			}
+			
+			// Check for span tags
+			if self.range(of: RSSearch.UTF8.lowercaseSpan) != nil || self.range(of: RSSearch.UTF8.uppercaseSpan) != nil ||
+			   self.range(of: RSSearch.UTF16.lowercaseSpan) != nil || self.range(of: RSSearch.UTF16.uppercaseSpan) != nil {
+				return true
+			}
+			
+			return false
+		}()
+
+		return hasCommonHTMLElements
 	}
 
 	/// A representation of the data as a hexadecimal string.

@@ -11,7 +11,7 @@ import XCTest
 import RSCore
 import Secrets
 
-class FeedlyLogoutOperationTests: XCTestCase {
+final class FeedlyLogoutOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -36,7 +36,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		return (accessToken, refreshToken)
 	}
 	
-	class TestFeedlyLogoutService: FeedlyLogoutService {
+	final class TestFeedlyLogoutService: FeedlyLogoutService {
 		var mockResult: Result<Void, Error>?
 		var logoutExpectation: XCTestExpectation?
 		
@@ -66,7 +66,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 			return
 		}
 		
-		let logout = FeedlyLogoutOperation(account: account, service: service, log: support.log)
+		let logout = FeedlyLogoutOperation(account: account, service: service)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
@@ -98,7 +98,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		service.logoutExpectation = expectation(description: "Did Call Logout")
 		service.mockResult = .success(())
 		
-		let logout = FeedlyLogoutOperation(account: account, service: service, log: support.log)
+		let logout = FeedlyLogoutOperation(account: account, service: service)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
@@ -123,7 +123,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		}
 	}
 	
-	class TestLogoutDelegate: FeedlyOperationDelegate {
+	final class TestLogoutDelegate: FeedlyOperationDelegate {
 		var error: Error?
 		var didFailExpectation: XCTestExpectation?
 		
@@ -139,7 +139,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		let (_, service) = support.makeMockNetworkStack()
 		service.credentials = nil
 		
-		let logout = FeedlyLogoutOperation(account: account, service: service, log: support.log)
+		let logout = FeedlyLogoutOperation(account: account, service: service)
 		
 		let delegate = TestLogoutDelegate()
 		delegate.didFailExpectation = expectation(description: "Did Fail")
@@ -190,7 +190,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 			return
 		}
 		
-		let logout = FeedlyLogoutOperation(account: account, service: service, log: support.log)
+		let logout = FeedlyLogoutOperation(account: account, service: service)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")

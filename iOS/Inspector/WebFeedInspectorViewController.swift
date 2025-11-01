@@ -11,7 +11,7 @@ import Account
 import SafariServices
 import UserNotifications
 
-class WebFeedInspectorViewController: UITableViewController {
+final class WebFeedInspectorViewController: UITableViewController {
 	
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 500.0)
 	

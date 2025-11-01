@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-class TimelineTableCellView: NSTableCellView {
+final class TimelineTableCellView: NSTableCellView {
 
 	private let titleView = TimelineTableCellView.multiLineTextField()
 	private let summaryView = TimelineTableCellView.multiLineTextField()

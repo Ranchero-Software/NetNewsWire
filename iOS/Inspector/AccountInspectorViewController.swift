@@ -10,7 +10,7 @@ import UIKit
 import SafariServices
 import Account
 
-class AccountInspectorViewController: UITableViewController {
+final class AccountInspectorViewController: UITableViewController {
 
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 
@@ -107,7 +107,7 @@ class AccountInspectorViewController: UITableViewController {
 		alertController.addAction(cancelAction)
 		
 		let markTitle = NSLocalizedString("Remove", comment: "Remove")
-		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
+		let markAction = UIAlertAction(title: markTitle, style: .destructive) { [weak self] (action) in
 			guard let self = self, let account = self.account else { return }
 			AccountManager.shared.deleteAccount(account)
 			if self.isModal {

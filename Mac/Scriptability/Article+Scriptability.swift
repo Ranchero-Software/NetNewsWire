@@ -11,7 +11,7 @@ import Account
 import Articles
 
 @objc(ScriptableArticle)
-class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let article:Article
     let container:ScriptingObjectContainer
@@ -143,11 +143,7 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
 	@objc(feed)
 	var feed: ScriptableWebFeed? {
-		guard let parentFeed = self.article.webFeed,
-			let account = parentFeed.account
-			else { return nil }
-
-		return ScriptableWebFeed(parentFeed, container: ScriptableAccount(account))
+		guard let parentFeed = self.article.webFeed else { return nil }
+		return ScriptableWebFeed.scriptableWebFeed(for: parentFeed)
 	}
-
 }

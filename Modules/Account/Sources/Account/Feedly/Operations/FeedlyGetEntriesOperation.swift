@@ -16,13 +16,11 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 	let account: Account
 	let service: FeedlyGetEntriesService
 	let provider: FeedlyEntryIdentifierProviding
-	let log: OSLog
 
-	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding, log: OSLog) {
+	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding) {
 		self.account = account
 		self.service = service
 		self.provider = provider
-		self.log = log
 	}
 	
 	private(set) var entries = [FeedlyEntry]()
@@ -63,7 +61,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 				self.didFinish()
 				
 			case .failure(let error):
-				os_log(.debug, log: self.log, "Unable to get entries: %{public}@.", error as NSError)
+				Feedly.logger.error("Feedly: Unable to get entries with error \(error.localizedDescription)")
 				self.didFinish(with: error)
 			}
 		}

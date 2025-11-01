@@ -8,7 +8,7 @@
 
 import UIKit
 
-class OpenInBrowserActivity: UIActivity {
+final class OpenInBrowserActivity: UIActivity {
 	
 	private var activityItems: [Any]?
 

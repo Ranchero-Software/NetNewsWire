@@ -11,7 +11,7 @@ import RSWeb
 @testable import Account
 import Secrets
 
-class AccountCredentialsTest: XCTestCase {
+final class AccountCredentialsTest: XCTestCase {
 
 	private var account: Account!
 	

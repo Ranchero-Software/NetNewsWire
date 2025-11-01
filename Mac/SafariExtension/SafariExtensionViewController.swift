@@ -8,7 +8,7 @@
 
 import SafariServices
 
-class SafariExtensionViewController: SFSafariExtensionViewController {
+final class SafariExtensionViewController: SFSafariExtensionViewController {
 
 	// This would be the place to handle a popover that could, for example, list the possibly multiple feeds offered by a site.
     static let shared: SafariExtensionViewController = {

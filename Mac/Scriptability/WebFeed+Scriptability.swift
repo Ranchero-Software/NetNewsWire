@@ -12,7 +12,7 @@ import Account
 import Articles
 
 @objc(ScriptableWebFeed)
-class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let webFeed:WebFeed
     let container:ScriptingObjectContainer
@@ -79,6 +79,24 @@ class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         } else  {
             return ScriptableWebFeed(feed, container:scriptableAccount)
         }
+    }
+    
+    class func scriptableWebFeed(for feed: WebFeed) -> ScriptableWebFeed? {
+        guard let account = feed.account else { return nil }
+        
+        // Find the proper container hierarchy
+        let containers = account.existingContainers(withWebFeed: feed)
+        var folder: Folder? = nil
+        
+        // Check if feed is in a folder
+        for container in containers {
+            if let foundFolder = container as? Folder {
+                folder = foundFolder
+                break
+            }
+        }
+        
+        return scriptableFeed(feed, account: account, folder: folder)
     }
     
     class func handleCreateElement(command:NSCreateCommand) -> Any?  {

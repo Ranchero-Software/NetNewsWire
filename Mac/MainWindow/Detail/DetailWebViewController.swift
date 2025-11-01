@@ -35,6 +35,10 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 	
+	var windowState: DetailWindowState {
+		DetailWindowState(isShowingExtractedArticle: isShowingExtractedArticle, windowScrollY: windowScrollY ?? 0)
+	}
+	
 	var article: Article? {
 		switch state {
 		case .article(let article, _):
@@ -73,16 +77,6 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 
-	static let userScripts: [WKUserScript] = {
-		let filenames = ["main", "main_mac", "newsfoot"]
-		let scripts = filenames.map { filename in
-			let scriptURL = Bundle.main.url(forResource: filename, withExtension: ".js")!
-			let scriptSource = try! String(contentsOf: scriptURL)
-			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-		}
-		return scripts
-	}()
-
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
@@ -90,24 +84,12 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	override func loadView() {
-		let preferences = WKPreferences()
-		preferences.minimumFontSize = 12.0
-		preferences.javaScriptCanOpenWindowsAutomatically = false
 
-		let configuration = WKWebViewConfiguration()
-		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
-		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
-		configuration.mediaTypesRequiringUserActionForPlayback = .audio
+		let configuration = WebViewConfiguration.configuration(with: detailIconSchemeHandler)
 
-		let userContentController = WKUserContentController()
-		userContentController.add(self, name: MessageName.windowDidScroll)
-		userContentController.add(self, name: MessageName.mouseDidEnter)
-		userContentController.add(self, name: MessageName.mouseDidExit)
-		for script in Self.userScripts {
-			userContentController.addUserScript(script)
-		}
-		configuration.userContentController = userContentController
+		configuration.userContentController.add(self, name: MessageName.windowDidScroll)
+		configuration.userContentController.add(self, name: MessageName.mouseDidEnter)
+		configuration.userContentController.add(self, name: MessageName.mouseDidExit)
 
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self
@@ -120,15 +102,13 @@ final class DetailWebViewController: NSViewController {
 
 		view = webView
 
-		// Hide the web view until the first reload (navigation) is complete (plus some delay) to avoid the awful white flash that happens on the initial display in dark mode.
+		// Hide the web view until the first reload (navigation) is committed (plus some delay) to avoid the white flash that happens on initial display in dark mode.
 		// See bug #901.
 		webView.isHidden = true
 		waitingForFirstReload = true
 
-		#if !MAC_APP_STORE
-			webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
-			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
-		#endif
+		webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
+		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
@@ -191,14 +171,6 @@ final class DetailWebViewController: NSViewController {
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
 	}
-
-	// MARK: State Restoration
-	
-	func saveState(to state: inout [AnyHashable : Any]) {
-		state[UserInfoKey.isShowingExtractedArticle] = isShowingExtractedArticle
-		state[UserInfoKey.articleWindowScrollY] = windowScrollY
-	}
-	
 }
 
 // MARK: - WKScriptMessageHandler
@@ -239,25 +211,30 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 
 		decisionHandler(.allow)
 	}
-	
-	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		// See note in viewDidLoad()
-		if waitingForFirstReload {
-			assert(webView.isHidden)
-			waitingForFirstReload = false
-			reloadHTML()
 
-			// Waiting for the first navigation to complete isn't long enough to avoid the flash of white.
-			// A hard coded value is awful, but 5/100th of a second seems to be enough.
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-				webView.isHidden = false
-			}
-		} else {
-			if let windowScrollY = windowScrollY {
-				webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
-				self.windowScrollY = nil
-			}
+	public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+		// See note in loadView()
+		guard waitingForFirstReload else {
+			return
 		}
+
+		assert(webView.isHidden)
+		waitingForFirstReload = false
+		reloadHTML()
+
+		// Waiting for the first navigation to commit isn't enough to avoid the flash of white.
+		// Delaying an additional half a second seems to be enough.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			webView.isHidden = false
+		}
+	}
+
+	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		guard let windowScrollY else {
+			return
+		}
+		webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
+		self.windowScrollY = nil
 	}
 
 	// WKUIDelegate

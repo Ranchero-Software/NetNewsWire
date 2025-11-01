@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RoundedProgressView: UIProgressView {
+final class RoundedProgressView: UIProgressView {
 
 	override func layoutSubviews() {
 		super.layoutSubviews()

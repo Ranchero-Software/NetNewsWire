@@ -24,7 +24,7 @@ struct UserInfoKey {
 	static let readArticlesFilterStateValues = "readArticlesFilterStateValue"
 	static let selectedFeedsState = "selectedFeedsState"
 	static let isShowingExtractedArticle = "isShowingExtractedArticle"
+
 	static let articleWindowScrollY = "articleWindowScrollY"
 	static let isSidebarHidden = "isSidebarHidden"
-	
 }

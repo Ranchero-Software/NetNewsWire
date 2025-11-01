@@ -9,7 +9,7 @@
 import UIKit
 
 @available(*, deprecated, message: "UISliders in iOS 26 come with tickmarks.")
-class TickMarkSlider: UISlider {
+final class TickMarkSlider: UISlider {
 
 	private var enableFeedback = false
 	private let feedbackGenerator = UISelectionFeedbackGenerator()

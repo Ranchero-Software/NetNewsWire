@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 import RSCore
 
-class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
+final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 	
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -27,7 +27,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		super.tearDown()
 	}
 	
-	class FeedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding {
+	final class FeedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding {
 		var feedsAndFolders = [([FeedlyFeed], Folder)]()
 	}
 	
@@ -53,7 +53,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			return (feeds, accountFolder)
 		}
 		
-		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
+		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider)
 		let completionExpectation = expectation(description: "Did Finish")
 		createFeeds.completionBlock = { _ in
 			completionExpectation.fulfill()
@@ -124,7 +124,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 				return (feeds, accountFolder)
 			}
 			
-			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
+			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider)
 			let completionExpectation = expectation(description: "Did Finish")
 			createFeeds.completionBlock = { _ in
 				completionExpectation.fulfill()
@@ -148,7 +148,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			return (feeds, accountFolder)
 		}
 		
-		let removeFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
+		let removeFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider)
 		let completionExpectation = expectation(description: "Did Finish")
 		removeFeeds.completionBlock = { _ in
 			completionExpectation.fulfill()

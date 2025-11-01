@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VibrantButton: UIButton {
+final class VibrantButton: UIButton {
 	
 	@IBInspectable var backgroundHighlightColor: UIColor = AppAssets.secondaryAccentColor
 

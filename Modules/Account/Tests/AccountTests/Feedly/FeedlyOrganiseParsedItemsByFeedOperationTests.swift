@@ -11,7 +11,7 @@ import XCTest
 import RSParser
 import RSCore
 
-class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
+final class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -40,7 +40,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		
-		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider, log: support.log)
+		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider)
 		
 		let completionExpectation = expectation(description: "Did Finish")
 		organise.completionBlock = { _ in
@@ -61,7 +61,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		
-		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider, log: support.log)
+		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider)
 		
 		let completionExpectation = expectation(description: "Did Finish")
 		organise.completionBlock = { _ in
@@ -82,7 +82,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		let parsedEntries = Set(entries.values.flatMap { $0 })
 		let provider = TestParsedItemsProvider(resource: resource, parsedEntries: parsedEntries)
 		
-		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider, log: support.log)
+		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider)
 		
 		let completionExpectation = expectation(description: "Did Finish")
 		organise.completionBlock = { _ in

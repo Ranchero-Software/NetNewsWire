@@ -47,15 +47,15 @@ extension Article {
 	}
 	
 	var url: URL? {
-		return URL.reparingIfRequired(rawLink)
+		return URL.encodeSpacesIfNeeded(rawLink)
 	}
 	
 	var externalURL: URL? {
-		return URL.reparingIfRequired(rawExternalLink)
+		return URL.encodeSpacesIfNeeded(rawExternalLink)
 	}
 	
 	var imageURL: URL? {
-		return URL.reparingIfRequired(rawImageLink)
+		return URL.encodeSpacesIfNeeded(rawImageLink)
 	}
 	
 	var link: String? {
@@ -126,11 +126,7 @@ extension Article {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
 			let feedID = webFeed.webFeedID.replacingOccurrences(of: "/", with: "_")
-			#if os(macOS)
-			path.appendPathComponent(feedID + "_smallIcon.tiff")
-			#else
 			path.appendPathComponent(feedID + "_smallIcon.png")
-			#endif
 			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
 			return path
 		} else {

@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DictionaryTests: XCTestCase {
+final class DictionaryTests: XCTestCase {
 
 	func testSimpleQueryString() {
 

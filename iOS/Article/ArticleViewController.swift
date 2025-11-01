@@ -12,7 +12,7 @@ import Account
 import Articles
 import SafariServices
 
-class ArticleViewController: UIViewController {
+final class ArticleViewController: UIViewController {
 	
 	typealias State = (extractedArticle: ExtractedArticle?,
 		isShowingExtractedArticle: Bool,
@@ -176,12 +176,14 @@ class ArticleViewController: UIViewController {
 		super.viewDidAppear(true)
 		navigationController?.navigationBar.topItem?.subtitle = nil
 		coordinator.isArticleViewControllerPending = false
+		searchBar.shouldBeginEditing = true
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		if searchBar != nil && !searchBar.isHidden {
 			endFind()
+			searchBar.shouldBeginEditing = false
 		}
 	}
 	

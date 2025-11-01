@@ -17,27 +17,25 @@ protocol FeedlyCollectionProviding: AnyObject {
 final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProviding {
 	
 	let service: FeedlyGetCollectionsService
-	let log: OSLog
 	
 	private(set) var collections = [FeedlyCollection]()
 
-	init(service: FeedlyGetCollectionsService, log: OSLog) {
+	init(service: FeedlyGetCollectionsService) {
 		self.service = service
-		self.log = log
 	}
 	
 	override func run() {
-		os_log(.debug, log: log, "Requesting collections.")
-		
+		Feedly.logger.info("Feedly: Requesting collections")
+
 		service.getCollections { result in
 			switch result {
 			case .success(let collections):
-				os_log(.debug, log: self.log, "Received collections: %{public}@", collections.map { $0.id })
+				Feedly.logger.info("Feedly: Received collections \(collections.map { $0.id })")
 				self.collections = collections
 				self.didFinish()
 				
 			case .failure(let error):
-				os_log(.debug, log: self.log, "Unable to request collections: %{public}@.", error as NSError)
+				Feedly.logger.error("Feedly: Unable to request collections with error \(error.localizedDescription)")
 				self.didFinish(with: error)
 			}
 		}

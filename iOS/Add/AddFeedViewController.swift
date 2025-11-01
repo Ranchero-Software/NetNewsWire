@@ -12,7 +12,7 @@ import RSCore
 import RSTree
 import RSParser
 
-class AddFeedViewController: UITableViewController {
+final class AddFeedViewController: UITableViewController {
 	
 	@IBOutlet weak var addButton: UIBarButtonItem!
 	@IBOutlet weak var urlTextField: UITextField!

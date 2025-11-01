@@ -26,6 +26,10 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	
 }
 
+extension Notification.Name {
+	public static let userInterfaceColorPaletteDidUpdate = Notification.Name(rawValue: "UserInterfaceColorPaletteDidUpdateNotification")
+}
+
 final class AppDefaults {
 
 	static let defaultThemeName = "Default"
@@ -84,6 +88,7 @@ final class AppDefaults {
 		}
 		set {
 			setInt(for: Key.userInterfaceColorPalette, newValue.rawValue)
+			NotificationCenter.default.post(name: .userInterfaceColorPaletteDidUpdate, object: self)
 		}
 	}
 

@@ -7,18 +7,19 @@
 //
 
 import UIKit
+import BackgroundTasks
+import os
+import WidgetKit
 import RSCore
 import RSWeb
 import Account
-import BackgroundTasks
-import os
+import Articles
 import Secrets
-import WidgetKit
 
 var appDelegate: AppDelegate!
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
+final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 	
 	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 	
@@ -36,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
 	}
 	
-	private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
@@ -48,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		didSet {
 			if unreadCount != oldValue {
 				postUnreadCountDidChangeNotification()
-				UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+				updateBadge()
 			}
 		}
 	}
@@ -79,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
-			logger.info("Is first run.")
+			Self.logger.info("Is first run.")
 		}
 		
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
@@ -94,6 +95,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
+			// Force the badge to update on launch.
+			self.updateBadge()
 		}
 		
 		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
@@ -137,9 +140,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 
 	func applicationDidEnterBackground(_ application: UIApplication) {
+		updateBadge()
 		IconImageCache.shared.emptyCache()
 	}
-	
+
+	private func updateBadge() {
+		assert(unreadCount == AccountManager.shared.unreadCount)
+		UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+	}
+
 	// MARK: Notifications
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -164,20 +173,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	func resumeDatabaseProcessingIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
-			logger.info("Application processing resumed.")
+			Self.logger.info("Application processing resumed.")
 		}
 	}
 	
 	func prepareAccountsForBackground() {
+		updateBadge()
 		extensionFeedAddRequestFile.suspend()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
 		widgetDataEncoder.encode()
 		waitForSyncTasksToFinish()
+		IconImageCache.shared.emptyCache()
 	}
 
 	func prepareAccountsForForeground() {
+		updateBadge()
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
 
@@ -266,7 +278,7 @@ private extension AppDelegate {
 		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
 			guard let self = self else { return }
 			self.completeProcessing(true)
-			logger.info("Accounts wait for progress terminated for running too long.")
+			Self.logger.info("Accounts wait for progress terminated for running too long.")
 		}
 		
 		DispatchQueue.main.async { [weak self] in
@@ -278,18 +290,18 @@ private extension AppDelegate {
 	
 	func waitToComplete(completion: @escaping (Bool) -> Void) {
 		guard UIApplication.shared.applicationState == .background else {
-			logger.info("App came back to foreground, no longer waiting.")
+			Self.logger.info("App came back to foreground, no longer waiting.")
 			completion(false)
 			return
 		}
 		
 		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || widgetDataEncoder.isRunning {
-			logger.info("Waiting for sync to finish…")
+			Self.logger.info("Waiting for sync to finish…")
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)
 			}
 		} else {
-			logger.info("Refresh progress complete.")
+			Self.logger.info("Refresh progress complete.")
 			completion(true)
 		}
 	}
@@ -316,7 +328,7 @@ private extension AppDelegate {
 		
 		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
 			completeProcessing()
-			self.logger.info("Accounts sync processing terminated for running too long.")
+			Self.logger.info("Accounts sync processing terminated for running too long.")
 		}
 		
 		DispatchQueue.main.async {
@@ -340,7 +352,7 @@ private extension AppDelegate {
 			}
 		}
 		
-		logger.info("Application processing suspended.")
+		Self.logger.info("Application processing suspended.")
 	}
 	
 }
@@ -368,7 +380,7 @@ private extension AppDelegate {
 			do {
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
-				self.logger.error("Could not schedule app refresh: \(error.localizedDescription)")
+				Self.logger.error("Could not schedule app refresh: \(error.localizedDescription)")
 			}
 		}
 	}
@@ -380,7 +392,7 @@ private extension AppDelegate {
 
 		scheduleBackgroundFeedRefresh() // schedule next refresh
 
-		logger.info("Woken to perform account refresh.")
+		Self.logger.info("Woken to perform account refresh.")
 
 		DispatchQueue.main.async {
 			if AccountManager.shared.isSuspended {
@@ -389,7 +401,7 @@ private extension AppDelegate {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
 					self.suspendApplication()
-					logger.info("Account refresh operation completed.")
+					Self.logger.info("Account refresh operation completed.")
 					task.setTaskCompleted(success: true)
 				}
 			}
@@ -397,7 +409,7 @@ private extension AppDelegate {
 
 		// set expiration handler
 		task.expirationHandler = { [weak task] in
-			self.logger.info("Accounts refresh processing terminated for running too long.")
+			Self.logger.info("Accounts refresh processing terminated for running too long.")
 			DispatchQueue.main.async {
 				self.suspendApplication()
 				task?.setTaskCompleted(success: false)
@@ -411,51 +423,38 @@ private extension AppDelegate {
 private extension AppDelegate {
 	
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		resumeDatabaseProcessingIfNecessary()
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
-			return
-		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
-			return
-		}
-		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
-		self.prepareAccountsForBackground()
-		account!.syncArticleStatus(completion: { [weak self] _ in
-			if !AccountManager.shared.isSuspended {
-				self?.prepareAccountsForBackground()
-				self?.suspendApplication()
-			}
-		})
+		handleStatusNotification(userInfo: userInfo, statusKey: .read)
 	}
 	
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+		handleStatusNotification(userInfo: userInfo, statusKey: .starred)
+	}
+
+	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
 		}
+
 		resumeDatabaseProcessingIfNecessary()
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+
+		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+			assertionFailure("Expected account with \(accountID)")
+			Self.logger.error("No account with accountID \(accountID) found from status notification")
 			return
 		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+
+		guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
+			assertionFailure("Expected article with \(articleID)")
+			Self.logger.error("No article with articleID found \(articleID) from status notification")
 			return
 		}
-		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
-		account!.syncArticleStatus(completion: { [weak self] _ in
+
+		assert(singleArticleSet.count == 1)
+		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
+
+		account.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
 				self?.prepareAccountsForBackground()
 				self?.suspendApplication()

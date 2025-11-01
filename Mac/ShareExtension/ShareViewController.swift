@@ -7,17 +7,15 @@
 //
 
 import Cocoa
-import os.log
 import UniformTypeIdentifiers
 
-class ShareViewController: NSViewController {
+final class ShareViewController: NSViewController {
 
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var folderPopUpButton: NSPopUpButton!
 	
 	private var url: URL?
 	private var extensionContainers: ExtensionContainers?
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ShareViewController")
 
 	override var nibName: NSNib.Name? {
         return NSNib.Name("ShareViewController")

@@ -12,7 +12,7 @@ import SyncDatabase
 import Articles
 import RSCore
 
-class FeedlySendArticleStatusesOperationTests: XCTestCase {
+final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -34,7 +34,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	
 	func testSendEmpty() {
 		let service = TestMarkArticlesService()
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -65,7 +65,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(action, .unread)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -108,7 +108,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(action, .unread)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -151,7 +151,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(action, .read)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -194,7 +194,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(action, .read)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -237,7 +237,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(action, .saved)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -280,7 +280,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(action, .saved)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -323,7 +323,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(action, .unsaved)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -366,7 +366,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(action, .unsaved)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -426,7 +426,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			let expectedArticleIds = Set(syncStatuses.map { $0.articleID })
 			XCTAssertEqual(serviceArticleIds, expectedArticleIds)
 		}
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in
@@ -487,7 +487,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			XCTAssertEqual(serviceArticleIds, expectedArticleIds)
 		}
 		
-		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
+		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
 		send.completionBlock = { _ in

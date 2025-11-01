@@ -16,7 +16,7 @@ enum TimelineSourceMode {
 	case regular, search
 }
 
-class MainWindowController : NSWindowController, NSUserInterfaceValidations {
+final class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
     @IBOutlet weak var articleThemePopUpButton: NSPopUpButton?
     
@@ -131,17 +131,24 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	func saveStateToUserDefaults() {
-		AppDefaults.shared.windowState = savableState()
+		let data = try? NSKeyedArchiver.archivedData(withRootObject: savableState(), requiringSecureCoding: true)
+		AppDefaults.shared.secureWindowState = data
 		window?.saveFrame(usingName: windowAutosaveName)
 	}
 	
 	func restoreStateFromUserDefaults() {
-		if let state = AppDefaults.shared.windowState {
+		if let data = AppDefaults.shared.secureWindowState,
+		   let state = try? NSKeyedUnarchiver.unarchivedObject(ofClass: MainWindowState.self, from: data) {
 			restoreState(from: state)
 			window?.setFrameUsingName(windowAutosaveName, force: true)
+		} else if let state = AppDefaults.shared.legacyWindowState {
+			// Migrate from previous window state data. Delete data when finished.
+			restoreLegacyState(from: state)
+			window?.setFrameUsingName(windowAutosaveName, force: true)
+			AppDefaults.shared.deleteLegacyWindowState()
 		}
 	}
-	
+
 	// MARK: - Notifications
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
@@ -291,19 +298,34 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 				detailViewController.scrollPageUp(sender)
 			}
 		}
-
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.preferredURL?.absoluteString {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		guard let articles = selectedArticles else {
+			assertionFailure("Expected selectedArticles to be non-nil")
+			return
 		}
+		let links = articles.compactMap { $0.preferredLink }
+		if links.isEmpty {
+			assertionFailure("Expected at least one link")
+			return
+		}
+
+		URLPasteboardWriter.write(urlStrings: links, to: .general)
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.externalLink {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		guard let articles = selectedArticles else {
+			assertionFailure("Expected selectedArticles to be non-nil")
+			return
 		}
+		let links = articles.compactMap { $0.externalLink }
+		if links.isEmpty {
+			assertionFailure("Expected at least one link")
+			return
+		}
+
+		URLPasteboardWriter.write(urlStrings: links, to: .general)
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
@@ -531,7 +553,7 @@ extension MainWindowController: NSWindowDelegate {
 	}
 
 	func window(_ window: NSWindow, didDecodeRestorableState coder: NSCoder) {
-		guard let state = try? coder.decodeTopLevelObject(forKey: UserInfoKey.windowState) as? [AnyHashable : Any] else { return }
+		guard let state = coder.decodeObject(of: MainWindowState.self, forKey: UserInfoKey.windowState) else { return }
 		restoreState(from: state)
 	}
 
@@ -950,44 +972,95 @@ private extension MainWindowController {
 
 	// MARK: - State Restoration
 	
-	func savableState() -> [AnyHashable : Any] {
-		var state = [AnyHashable : Any]()
-		state[UserInfoKey.windowFullScreenState] = window?.styleMask.contains(.fullScreen) ?? false
-		saveSplitViewState(to: &state)
-		sidebarViewController?.saveState(to: &state)
-		timelineContainerViewController?.saveState(to: &state)
-		detailViewController?.saveState(to: &state)
-		return state
+	func savableState() -> MainWindowState {
+		let isFullScreen = window?.styleMask.contains(.fullScreen) ?? false
+		
+		let splitViewWidths: [Int]
+		if let splitView = splitViewController?.splitView {
+			splitViewWidths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
+		} else {
+			splitViewWidths = []
+		}
+
+		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
+
+		return MainWindowState(isFullScreen: isFullScreen,
+							   splitViewWidths: splitViewWidths,
+							   isSidebarHidden: isSidebarHidden,
+							   sidebarWindowState: sidebarViewController?.windowState,
+							   timelineWindowState: timelineContainerViewController?.windowState,
+							   detailWindowState: detailViewController?.windowState)
 	}
 
-	func restoreState(from state: [AnyHashable : Any]) {
-		if let fullScreen = state[UserInfoKey.windowFullScreenState] as? Bool, fullScreen {
+	func restoreState(from state: MainWindowState) {
+		if state.isFullScreen {
 			window?.toggleFullScreen(self)
 		}
 		restoreSplitViewState(from: state)
 		
-		sidebarViewController?.restoreState(from: state)
+		sidebarViewController?.restoreState(from: state.sidebarWindowState)
 		
+		timelineContainerViewController?.restoreState(from: state.timelineWindowState)
+		restoreArticleWindowScrollY = state.detailWindowState?.windowScrollY
+
+		let isShowingExtractedArticle = state.detailWindowState?.isShowingExtractedArticle ?? false
+		if isShowingExtractedArticle {
+			startArticleExtractorForCurrentLink()
+		}
+	}
+
+	/// Restore state using pre-secure-state-restoration data.
+	///
+	/// It’s up to the caller to call this only when:
+	/// 1. Legacy state exists, and
+	/// 2. Secure state data does not exist.
+	///
+	/// TODO: delete this for NetNewsWire 7.
+	func restoreLegacyState(from state: [AnyHashable: Any]) {
+		if let fullScreen = state[UserInfoKey.windowFullScreenState] as? Bool, fullScreen {
+			window?.toggleFullScreen(self)
+		}
+		restoreLegacySplitViewState(from: state)
+
+		sidebarViewController?.restoreLegacyState(from: state)
+
 		let articleWindowScrollY = state[UserInfoKey.articleWindowScrollY] as? CGFloat
 		restoreArticleWindowScrollY = articleWindowScrollY
-		timelineContainerViewController?.restoreState(from: state)
-		
+		timelineContainerViewController?.restoreLegacyState(from: state)
+
 		let isShowingExtractedArticle = state[UserInfoKey.isShowingExtractedArticle] as? Bool ?? false
 		if isShowingExtractedArticle {
 			restoreArticleWindowScrollY = articleWindowScrollY
 			startArticleExtractorForCurrentLink()
 		}
-		
 	}
 
 	// MARK: - Command Validation
 	
 	func canCopyArticleURL() -> Bool {
-		return currentLink != nil
+		guard let selectedArticles else {
+			return false
+		}
+
+		for article in selectedArticles {
+			if article.preferredLink != nil {
+				return true
+			}
+		}
+		return false
 	}
 	
 	func canCopyExternalURL() -> Bool {
-		return oneSelectedArticle?.externalLink != nil && oneSelectedArticle?.externalLink != currentLink
+		guard let selectedArticles else {
+			return false
+		}
+
+		for article in selectedArticles {
+			if article.externalLink != nil {
+				return true
+			}
+		}
+		return false
 	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
@@ -1238,23 +1311,38 @@ private extension MainWindowController {
 		}
 	}
 
-	func saveSplitViewState(to state: inout [AnyHashable : Any]) {
-		guard let splitView = splitViewController?.splitView else {
+	func restoreSplitViewState(from state: MainWindowState) {
+		guard let splitView = splitViewController?.splitView,
+			  state.splitViewWidths.count == 3,
+			  let window = window else {
 			return
 		}
 
-		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
-		state[MainWindowController.mainWindowWidthsStateKey] = widths
-		
-		state[UserInfoKey.isSidebarHidden] = sidebarSplitViewItem?.isCollapsed
+		let windowWidth = Int(floor(window.frame.width))
+		let dividerThickness: Int = Int(splitView.dividerThickness)
+		let sidebarWidth: Int = state.splitViewWidths[0]
+		let timelineWidth: Int = state.splitViewWidths[1]
+
+		// Make sure the detail view has its minimum thickness, at least.
+		if windowWidth < sidebarWidth + dividerThickness + timelineWidth + dividerThickness + MainWindowController.detailViewMinimumThickness {
+			return
+		}
+
+		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
+		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
+
+		sidebarSplitViewItem?.isCollapsed = state.isSidebarHidden
 	}
 
-	func restoreSplitViewState(from state: [AnyHashable : Any]) {
+	/// Restore main window split view using legacy state restoration data.
+	///
+	/// TODO: Delete this for NetNewsWire 7.
+	func restoreLegacySplitViewState(from state: [AnyHashable: Any]) {
 		guard let splitView = splitViewController?.splitView,
-			let widths = state[MainWindowController.mainWindowWidthsStateKey] as? [Int],
-			widths.count == 3,
-			let window = window else {
-				return
+			  let widths = state[MainWindowController.mainWindowWidthsStateKey] as? [Int],
+			  widths.count == 3,
+			  let window = window else {
+			return
 		}
 
 		let windowWidth = Int(floor(window.frame.width))
@@ -1269,9 +1357,9 @@ private extension MainWindowController {
 
 		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
 		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
-		
+
 		let isSidebarHidden = state[UserInfoKey.isSidebarHidden] as? Bool ?? false
-		
+
 		if !(sidebarSplitViewItem?.isCollapsed ?? false) && isSidebarHidden {
 			sidebarSplitViewItem?.isCollapsed = true
 		}

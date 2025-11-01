@@ -11,7 +11,7 @@ import XCTest
 
 @testable import NetNewsWire
 
-class SharingTests: XCTestCase {
+final class SharingTests: XCTestCase {
 
     func testSharingSubject() {
         let sharingServiceDelegate = SharingServiceDelegate(nil)
@@ -47,6 +47,7 @@ class SharingTests: XCTestCase {
 					   title: title,
 					   contentHTML: nil,
 					   contentText: nil,
+					   markdown: nil,
 					   url: nil,
 					   externalURL: nil,
 					   summary: nil,

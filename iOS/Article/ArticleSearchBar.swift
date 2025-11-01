@@ -21,6 +21,7 @@ import UIKit
 	var nextButton: UIButton!
 	var prevButton: UIButton!
 	var background: UIView!
+	var shouldBeginEditing: Bool = true
 	
 	weak private var resultsLabel: UILabel!
 	
@@ -172,5 +173,9 @@ extension ArticleSearchBar: UITextFieldDelegate {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		delegate?.nextWasPressed?(self)
 		return false
+	}
+	
+	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+		return shouldBeginEditing
 	}
 }

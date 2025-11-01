@@ -11,7 +11,7 @@ import XCTest
 import RSWeb
 import RSCore
 
-class FeedlyOperationTests: XCTestCase {
+final class FeedlyOperationTests: XCTestCase {
 	
 	enum TestOperationError: Error, Equatable {
 		case mockError

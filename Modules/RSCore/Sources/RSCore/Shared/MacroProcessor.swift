@@ -12,7 +12,7 @@ enum MacroProcessorError: Error {
 	case emptyMacroDelimiter
 }
 
-public class MacroProcessor {
+public final class MacroProcessor {
 
 	let template: String
 	let substitutions: [String: String]

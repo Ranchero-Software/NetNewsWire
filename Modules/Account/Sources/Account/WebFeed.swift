@@ -132,6 +132,15 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
 
+	public var conditionalGetInfoDate: Date? {
+		get {
+			return metadata.conditionalGetInfoDate
+		}
+		set {
+			metadata.conditionalGetInfoDate = newValue
+		}
+	}
+
 	public var cacheControlInfo: CacheControlInfo? {
 		get {
 			metadata.cacheControlInfo
@@ -186,7 +195,17 @@ public final class WebFeed: Feed, Renamable, Hashable {
 			metadata.folderRelationship = newValue
 		}
 	}
-	
+
+	/// Last time an attempt was made to read the feed.
+	/// (Not necessarily a successful attempt.)
+	public var lastCheckDate: Date? {
+		get {
+			metadata.lastCheckDate
+		}
+		set {
+			metadata.lastCheckDate = newValue
+		}
+	}
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {

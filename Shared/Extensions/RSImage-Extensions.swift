@@ -40,7 +40,7 @@ extension RSImage {
 
 // MARK: - IconScalerQueue
 
-private class IconScalerQueue {
+private final class IconScalerQueue {
 
 	static let shared = IconScalerQueue()
 

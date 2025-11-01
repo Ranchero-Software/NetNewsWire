@@ -13,8 +13,8 @@ import Secrets
 import os.log
 import SyncDatabase
 
-class FeedlyTestSupport {
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "FeedlyTests")
+final class FeedlyTestSupport {
+
 	var accessToken = Credentials(type: .oauthAccessToken, username: "Test", secret: "t3st-access-tok3n")
 	var refreshToken = Credentials(type: .oauthRefreshToken, username: "Test", secret: "t3st-refresh-tok3n")
 	var transport = TestTransport()
@@ -58,7 +58,7 @@ class FeedlyTestSupport {
 		return TestDatabaseContainer()
 	}
 	
-	class TestDatabaseContainer {
+	final class TestDatabaseContainer {
 		private let path: String
 		private(set) var database: SyncDatabase!
 		
@@ -294,6 +294,7 @@ class FeedlyTestSupport {
 					language: nil,
 					contentHTML: "Content \(index) HTML.",
 					contentText: "Content \(index) Text",
+					markdown: nil,
 					summary: nil,
 					imageURL: nil,
 					bannerImageURL: nil,

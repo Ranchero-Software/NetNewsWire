@@ -11,7 +11,7 @@ import Account
 import RSWeb
 import Secrets
 
-class AccountsNewsBlurWindowController: NSWindowController {
+final class AccountsNewsBlurWindowController: NSWindowController {
 	
 	@IBOutlet weak var signInTextField: NSTextField!
 	@IBOutlet weak var noAccountTextField: NSTextField!
@@ -48,8 +48,12 @@ class AccountsNewsBlurWindowController: NSWindowController {
 	// MARK: API
 
 	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: completion)
+		hostWindow.beginSheet(window, completionHandler: completion)
 	}
 
 	// MARK: Actions

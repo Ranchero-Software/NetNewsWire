@@ -9,7 +9,7 @@
 #if os(macOS)
 import Cocoa
 
-public class RSAppMovementMonitor: NSObject {
+public final class RSAppMovementMonitor: NSObject {
 
 	// If provided, the handler will be consulted when the app is moved.
 	// Return true to indicate that the default handler should be invoked.

@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 import RSCore
 
-class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
+final class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 	
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -27,7 +27,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		super.tearDown()
 	}
 	
-	class CollectionsProvider: FeedlyCollectionProviding {
+	final class CollectionsProvider: FeedlyCollectionProviding {
 		var collections = [
 			FeedlyCollection(feeds: [], label: "One", id: "collections/1"),
 			FeedlyCollection(feeds: [], label: "Two", id: "collections/2")
@@ -36,7 +36,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 	
 	func testAddsFolders() {
 		let provider = CollectionsProvider()
-		let mirrorOperation = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
+		let mirrorOperation = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider)
 		let completionExpectation = expectation(description: "Did Finish")
 		mirrorOperation.completionBlock = { _ in
 			completionExpectation.fulfill()
@@ -65,7 +65,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		let provider = CollectionsProvider()
 		
 		do {
-			let addFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
+			let addFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider)
 			let completionExpectation = expectation(description: "Did Finish")
 			addFolders.completionBlock = { _ in
 				completionExpectation.fulfill()
@@ -79,7 +79,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		// Now that the folders are added, remove them all.
 		provider.collections = []
 		
-		let removeFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
+		let removeFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider)
 		let completionExpectation = expectation(description: "Did Finish")
 		removeFolders.completionBlock = { _ in
 			completionExpectation.fulfill()
@@ -105,7 +105,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		XCTAssertTrue(removeFolders.feedsAndFolders.isEmpty)
 	}
 	
-	class CollectionsAndFeedsProvider: FeedlyCollectionProviding {
+	final class CollectionsAndFeedsProvider: FeedlyCollectionProviding {
 		var feedsForCollectionOne = [
 			FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil),
 			FeedlyFeed(id: "feed/2", title: "Feed Two", updated: nil, website: nil)
@@ -126,7 +126,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 	
 	func testFeedMappedToFolders() {
 		let provider = CollectionsAndFeedsProvider()
-		let mirrorOperation = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
+		let mirrorOperation = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider)
 		let completionExpectation = expectation(description: "Did Finish")
 		mirrorOperation.completionBlock = { _ in
 			completionExpectation.fulfill()
@@ -166,9 +166,9 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 	func testRemovingFolderRemovesFeeds() {
 		do {
 			let provider = CollectionsAndFeedsProvider()
-			let addFoldersAndFeeds = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
+			let addFoldersAndFeeds = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider)
 			
-			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addFoldersAndFeeds, log: support.log)
+			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addFoldersAndFeeds)
 			MainThreadOperationQueue.shared.make(createFeeds, dependOn: addFoldersAndFeeds)
 			
 			let completionExpectation = expectation(description: "Did Finish")
@@ -187,7 +187,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		let provider = CollectionsProvider()
 		provider.collections = []
 		
-		let removeFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
+		let removeFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider)
 		let completionExpectation = expectation(description: "Did Finish")
 		removeFolders.completionBlock = { _ in
 			completionExpectation.fulfill()

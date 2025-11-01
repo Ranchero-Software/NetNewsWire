@@ -9,7 +9,7 @@
 import AppKit
 import Account
 
-class AccountsAddLocalWindowController: NSWindowController {
+final class AccountsAddLocalWindowController: NSWindowController {
 
 	@IBOutlet private weak var nameTextField: NSTextField!
 	@IBOutlet private weak var localAccountNameTextField: NSTextField!
@@ -29,8 +29,12 @@ class AccountsAddLocalWindowController: NSWindowController {
 	// MARK: API
 	
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!)
+		hostWindow.beginSheet(window)
 	}
 
 	// MARK: Actions

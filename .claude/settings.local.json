@@ -3,7 +3,23 @@
     "allow": [
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(./buildscripts/quiet_build_and_test.sh:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(gh issue view:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(swift test:*)",
+      "WebFetch(domain:swiftlang.github.io)",
+      "Bash(git log:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh issue list:*)",
+      "Bash(xcbeautify:*)",
+      "Bash(swift build:*)",
+      "Bash(1)",
+      "Bash(sed:*)",
+      "Bash(cat:*)",
+      "Bash(dd:*)"
     ],
     "deny": []
   }

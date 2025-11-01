@@ -39,9 +39,7 @@ struct FeedNode: Hashable {
 	}
 }
 
-
-class SceneCoordinator: NSObject, UndoableCommandRunner {
-
+final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
 		return rootSplitViewController.undoManager

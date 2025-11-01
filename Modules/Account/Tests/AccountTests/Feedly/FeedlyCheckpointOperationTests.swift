@@ -10,9 +10,9 @@ import XCTest
 @testable import Account
 import RSCore
 
-class FeedlyCheckpointOperationTests: XCTestCase {
+final class FeedlyCheckpointOperationTests: XCTestCase {
 	
-	class TestDelegate: FeedlyCheckpointOperationDelegate {
+	final class TestDelegate: FeedlyCheckpointOperationDelegate {
 		
 		var didReachCheckpointExpectation: XCTestExpectation?
 		

@@ -10,7 +10,7 @@ import AppKit
 import Articles
 import Account
 
-class AddFolderWindowController : NSWindowController {
+final class AddFolderWindowController : NSWindowController {
     
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!
@@ -23,10 +23,13 @@ class AddFolderWindowController : NSWindowController {
 
     // MARK: - API
     
-    func runSheetOnWindow(_ w: NSWindow) {
-		hostWindow = w
-		hostWindow!.beginSheet(window!) { (returnCode: NSApplication.ModalResponse) -> Void in
-			
+    func runSheetOnWindow(_ hostWindow: NSWindow) {
+		guard let window else {
+			return
+		}
+		self.hostWindow = hostWindow
+
+		hostWindow.beginSheet(window) { (returnCode: NSApplication.ModalResponse) -> Void in
 			if returnCode == NSApplication.ModalResponse.OK {
 				self.addFolderIfNeeded()
 			}
@@ -62,11 +65,19 @@ class AddFolderWindowController : NSWindowController {
 	// MARK: - Actions
 	
     @IBAction func cancel(_ sender: Any?) {
-		hostWindow!.endSheet(window!, returnCode: .cancel)
+		guard let hostWindow, let window else {
+			return
+		}
+		hostWindow.endSheet(window, returnCode: .cancel)
+		self.hostWindow = nil
     }
     
     @IBAction func addFolder(_ sender: Any?) {
-		hostWindow!.endSheet(window!, returnCode: .OK)
+		guard let hostWindow, let window else {
+			return
+		}
+		hostWindow.endSheet(window, returnCode: .OK)
+		self.hostWindow = nil
     }
 }
 

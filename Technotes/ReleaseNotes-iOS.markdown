@@ -1,6 +1,41 @@
 # iOS Release Notes
 
-### 6.1.10 TestFlight build 6198 11 Aug 2025 - branch: main tag iOS-6.1.10-6198
+### 6.2 TestFlight build 6202 31 Oct 2025 - branch main tag: iOS-6.2-6202
+
+Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body
+
+### 6.2 TestFlight build 6201 30 Oct 2025 - branch main tag: iOS-6.2-6201
+
+Added support for source:markdown to the RSS parser
+Added a dotted underline to links in the Sepia theme, to make links more visible
+
+### 6.2 TestFlight build 6200 21 Oct 2025 - branch main tag: iOS-6.2-6200
+
+Made scrolling of the timeline view faster
+
+### 6.2 TestFlight build 6199 19 Oct 2025 - branch: main tag iOS-6.2-6199
+
+New feature: you can now enable/disable JavaScript (in the Settings screen)
+Improved http/https caching, reducing bandwidth and battery use
+Fixed bug where a feed could be read twice on being added
+Fixed bug where the initial download for a new feed didn’t store conditional GET info
+Added some special cases where we can and should avoid doing some specific work (such as downloading the home page to find a feed icon)
+Worked around a server bug where a server would always respond with a 304 when any conditional GET info is sent (the app drops conditional GET info every 8 days)
+Fixed a possible cause of feeds not updating by caching (non-429) 4xx responses for some hours rather than for the duration of the app run
+Fixed Atom parser bug with relative URLs
+Fixed Atom parser bug where author at root level wasn’t applied to articles
+Did a few micro performance optimizations
+Fixed bug where contextual menu in timeline could be slow to appear
+Fixed a possible cause of app icon unread count badge to be out of date
+Fixed bug where timeline text could be truncated early when showing max number of lines in timeline and small text
+Fixed a bug where images that are links could get underlined in the default theme
+Fixed a bug finding a feed in a page that has no body tag
+Fixed bug with some favicons rendering weird, with dark vertical lines. Note: due to caching, the fix may take a few days to take effect
+Improved iCloud error dialog
+Fixed some cosmetic UI glitches
+Removed support for multiple windows
+
+### 6.1.10 TestFlight build 6198 11 Aug 2025 - branch: main tag iOS-6.1.10-6198 — submitted as App Store release build 18 Aug 2025
 
 Replaced BBC in default feeds (for new users) because its feeds have gone wonky. Replaced with Scripting News.
 

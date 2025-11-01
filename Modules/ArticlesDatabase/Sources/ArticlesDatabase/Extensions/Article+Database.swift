@@ -13,8 +13,8 @@ import Articles
 import RSParser
 
 extension Article {
-	
-	init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
+
+	convenience init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
 			assertionFailure("Expected articleID.")
 			return nil
@@ -31,6 +31,7 @@ extension Article {
 		let title = row.string(forColumn: DatabaseKey.title)
 		let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
 		let contentText = row.string(forColumn: DatabaseKey.contentText)
+		let markdown = row.string(forColumn: DatabaseKey.markdown)
 		let url = row.string(forColumn: DatabaseKey.url)
 		let externalURL = row.string(forColumn: DatabaseKey.externalURL)
 		let summary = row.string(forColumn: DatabaseKey.summary)
@@ -38,10 +39,10 @@ extension Article {
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 
-		self.init(accountID: accountID, articleID: articleID, webFeedID: webFeedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
+		self.init(accountID: accountID, articleID: articleID, webFeedID: webFeedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
 	}
 
-	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, webFeedID: String, status: ArticleStatus) {
+	convenience init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, webFeedID: String, status: ArticleStatus) {
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 
 		// Deal with future datePublished and dateModified dates.
@@ -58,7 +59,7 @@ extension Article {
 			dateModified = nil
 		}
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, webFeedID: webFeedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, webFeedID: webFeedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, markdown: parsedItem.markdown, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
@@ -71,7 +72,7 @@ extension Article {
 		if authors.isEmpty {
 			return self
 		}
-		return Article(accountID: self.accountID, articleID: self.articleID, webFeedID: self.webFeedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, url: self.rawLink, externalURL: self.rawExternalLink, summary: self.summary, imageURL: self.rawImageLink, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
+		return Article(accountID: self.accountID, articleID: self.articleID, webFeedID: self.webFeedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, markdown: self.markdown, url: self.rawLink, externalURL: self.rawExternalLink, summary: self.summary, imageURL: self.rawImageLink, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
 	}
 
 	func changesFrom(_ existingArticle: Article) -> DatabaseDictionary? {
@@ -153,6 +154,9 @@ extension Article: @retroactive DatabaseObject {
 		}
 		if let contentText = contentText {
 			d[DatabaseKey.contentText] = contentText
+		}
+		if let markdown = markdown {
+			d[DatabaseKey.markdown] = markdown
 		}
 		if let rawLink = rawLink {
 			d[DatabaseKey.url] = rawLink

@@ -28,6 +28,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	private lazy var regularWebViewController = createWebViewController()
 	private var searchWebViewController: DetailWebViewController?
 
+	var windowState: DetailWindowState {
+		currentWebViewController.windowState
+	}
+	
 	private var currentWebViewController: DetailWebViewController! {
 		didSet {
 			let webview = currentWebViewController.view
@@ -107,13 +111,6 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		}
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(currentWebViewController.webView)
 	}
-	
-	// MARK: State Restoration
-	
-	func saveState(to state: inout [AnyHashable : Any]) {
-		currentWebViewController.saveState(to: &state)
-	}
-	
 }
 
 // MARK: - DetailWebViewControllerDelegate

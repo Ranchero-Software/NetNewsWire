@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
+final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
 	private weak var webViewController: WebViewController?
 	private let duration = 0.4

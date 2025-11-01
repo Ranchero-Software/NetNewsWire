@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 import RSParser
 import Articles
@@ -20,8 +19,6 @@ public enum LocalAccountDelegateError: String, Error {
 }
 
 final class LocalAccountDelegate: AccountDelegate {
-
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccount")
 
 	weak var account: Account?
 	
@@ -47,7 +44,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard refreshProgress.isComplete else {
+		guard refreshProgress.isComplete, !Platform.isRunningUnitTests else {
 			completion(.success(()))
 			return
 		}
@@ -245,10 +242,18 @@ private extension LocalAccountDelegate {
 					return
 				}
 				
-				InitialFeedDownloader.download(url) { parsedFeed in
+				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 
-					if let parsedFeed = parsedFeed {
+					if let parsedFeed {
 						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+						feed.lastCheckDate = Date()
+
+						// Save conditional GET info so that first refresh uses conditional GET.
+						if let httpResponse = response as? HTTPURLResponse,
+						   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
+							feed.conditionalGetInfo = conditionalGetInfo
+						}
+						
 						feed.editedName = editedName
 						container.addWebFeed(feed)
 

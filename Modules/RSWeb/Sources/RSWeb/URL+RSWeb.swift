@@ -18,11 +18,11 @@ private struct URLConstants {
 public extension URL {
 
 	func isHTTPSURL() -> Bool {
-		return self.scheme?.lowercased() == URLConstants.schemeHTTPS
+		return self.scheme?.lowercased(with: localeForLowercasing) == URLConstants.schemeHTTPS
 	}
 
 	func isHTTPURL() -> Bool {
-		return self.scheme?.lowercased() == URLConstants.schemeHTTP
+		return self.scheme?.lowercased(with: localeForLowercasing) == URLConstants.schemeHTTP
 	}
 
 	func isHTTPOrHTTPSURL() -> Bool {

@@ -22,17 +22,15 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 	let collectionsProvider: FeedlyCollectionProviding
 	let service: FeedlyGetStreamContentsService
 	let account: Account
-	let log: OSLog
 	let newerThan: Date?
 	let unreadOnly: Bool?
 
-	init(account: Account, collectionsProvider: FeedlyCollectionProviding, newerThan: Date?, unreadOnly: Bool?, service: FeedlyGetStreamContentsService, log: OSLog) {
+	init(account: Account, collectionsProvider: FeedlyCollectionProviding, newerThan: Date?, unreadOnly: Bool?, service: FeedlyGetStreamContentsService) {
 		self.account = account
 		self.service = service
 		self.collectionsProvider = collectionsProvider
 		self.newerThan = newerThan
 		self.unreadOnly = unreadOnly
-		self.log = log
 	}
 	
 	override func run() {
@@ -46,15 +44,16 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 		
 		for collection in collectionsProvider.collections {
 			let resource = FeedlyCategoryResourceId(id: collection.id)
-			let operation = FeedlyGetStreamContentsOperation(account: account,
-															   resource: resource,
-															   service: service,
-															   newerThan: newerThan,
-															   unreadOnly: unreadOnly,
-															   log: log)
+			let operation = FeedlyGetStreamContentsOperation(
+				account: account,
+				resource: resource,
+				service: service,
+				newerThan: newerThan,
+				unreadOnly: unreadOnly
+			)
 			queueDelegate?.feedlyRequestStreamsOperation(self, enqueue: operation)
 		}
 		
-		os_log(.debug, log: log, "Requested %i collection streams", collectionsProvider.collections.count)
+		Feedly.logger.info("Feedly: Requested \(self.collectionsProvider.collections.count) collection streams")
 	}
 }

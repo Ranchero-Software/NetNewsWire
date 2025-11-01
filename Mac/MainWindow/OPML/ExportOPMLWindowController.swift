@@ -10,7 +10,7 @@ import AppKit
 import Account
 import UniformTypeIdentifiers
 
-class ExportOPMLWindowController: NSWindowController {
+final class ExportOPMLWindowController: NSWindowController {
 
 	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
 	private weak var hostWindow: NSWindow?
@@ -42,16 +42,18 @@ class ExportOPMLWindowController: NSWindowController {
 	// MARK: API
 	
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
-		
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
 		
 		if AccountManager.shared.accounts.count == 1 {
 			let account = AccountManager.shared.accounts.first!
 			exportOPML(account: account)
 		} else {
-			hostWindow.beginSheet(window!)
+			hostWindow.beginSheet(window)
 		}
-		
 	}
 	
 	// MARK: Actions

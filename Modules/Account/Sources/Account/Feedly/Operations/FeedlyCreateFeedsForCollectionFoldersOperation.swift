@@ -14,12 +14,10 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 	
 	let account: Account
 	let feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding
-	let log: OSLog
 
-	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding, log: OSLog) {
+	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding) {
 		self.feedsAndFoldersProvider = feedsAndFoldersProvider
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {
@@ -93,8 +91,8 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 				
 				return (feed, folder)
 			}
-		
-		os_log(.debug, log: log, "Processing %i feeds.", feedsAndFolders.count)
+
+		Feedly.logger.info("Feedly: Processing \(feedsAndFolders.count) feeds")
 		feedsAndFolders.forEach { (feed, folder) in
 			if !folder.has(feed) {
 				folder.addWebFeed(feed)
@@ -107,7 +105,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		account.removeFeeds(feedsWithoutCollections)
 		
 		if !feedsWithoutCollections.isEmpty {
-			os_log(.debug, log: log, "Removed %i feeds", feedsWithoutCollections.count)
+			Feedly.logger.info("Feedly: Removed \(feedsWithoutCollections.count) feeds")
 		}
 	}
 }

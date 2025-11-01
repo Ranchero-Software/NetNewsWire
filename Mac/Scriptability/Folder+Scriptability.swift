@@ -12,7 +12,7 @@ import Articles
 import RSCore
 
 @objc(ScriptableFolder)
-class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
     let folder:Folder
     let container:ScriptingObjectContainer
@@ -99,6 +99,41 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     var webFeeds:NSArray  {
 		let feeds = Array(folder.topLevelWebFeeds)
         return feeds.map { ScriptableWebFeed($0, container:self) } as NSArray
+    }
+
+    @objc(articles)
+    var articles:NSArray {
+        let feeds = Array(folder.topLevelWebFeeds)
+        let allArticles = feeds.flatMap { feed in
+            (try? feed.fetchArticles()) ?? Set<Article>()
+        }
+        // Sort articles by logical date published like WebFeed does
+        let sortedArticles = allArticles.sorted(by: {
+            return $0.logicalDatePublished > $1.logicalDatePublished
+        })
+        return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
+    }
+
+    @objc(countOfArticles)
+    func countOfArticles() -> Int {
+        let feeds = Array(folder.topLevelWebFeeds)
+        return feeds.reduce(0) { count, feed in
+            let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
+            return count + feedArticles.count
+        }
+    }
+
+    @objc(objectInArticlesAtIndex:)
+    func objectInArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
+        let feeds = Array(folder.topLevelWebFeeds)
+        let allArticles = feeds.flatMap { feed in
+            (try? feed.fetchArticles()) ?? Set<Article>()
+        }
+        let sortedArticles = allArticles.sorted(by: {
+            return $0.logicalDatePublished > $1.logicalDatePublished
+        })
+        guard index >= 0 && index < sortedArticles.count else { return nil }
+        return ScriptableArticle(sortedArticles[index], container: self)
     }
 
     // MARK: --- Scriptable properties ---

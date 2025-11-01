@@ -10,7 +10,7 @@ import UIKit
 import UserNotifications
 import Account
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	var window: UIWindow?
 	var coordinator: SceneCoordinator!
@@ -41,8 +41,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 		updateUserInterfaceStyle()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: AppDefaults.self)
+
 		if let _ = connectionOptions.urlContexts.first?.url  {
 			self.scene(scene, openURLContexts: connectionOptions.urlContexts)
 			return
@@ -232,8 +232,9 @@ private extension SceneDelegate {
 			break
 		}
 	}
-	
-	@objc func userDefaultsDidChange() {
+
+	@objc func handleUserInterfaceColorPaletteDidUpdate(_ notification: Notification) {
+		assert(Thread.isMainThread)
 		Task {
 			updateUserInterfaceStyle()
 		}

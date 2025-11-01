@@ -29,7 +29,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 final class CloudKitAccountDelegate: AccountDelegate {
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+	private static let logger = cloudKitLogger
 
 	private let database: SyncDatabase
 
@@ -322,7 +322,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					self.removeWebFeedFromCloud(for: account, with: webFeed, from: folder) { result in
 						group.leave()
 						if case .failure(let error) = result {
-							os_log(.error, log: self.log, "Remove folder, remove webfeed error: %@.", error.localizedDescription)
+							Self.logger.error("CloudKit: Remove folder, remove webfeed error: \(error.localizedDescription)")
 							errorOccurred = true
 						}
 					}
@@ -388,7 +388,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 						case .success:
 							break
 						case .failure(let error):
-							os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+							Self.logger.error("CloudKit: Restore folder feed error: \(error.localizedDescription)")
 						}
 					}
 
@@ -444,7 +444,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					account.externalID = externalID
 					self.initialRefreshAll(for: account) { _ in }
 				case .failure(let error):
-					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
+					Self.logger.error("CloudKit: Error adding account container: \(error.localizedDescription)")
 				}
 			}
 			accountZone.subscribeToZoneChanges()
@@ -640,10 +640,17 @@ private extension CloudKitAccountDelegate {
 				feed.editedName = editedName
 				container.addWebFeed(feed)
 
-				InitialFeedDownloader.download(url) { parsedFeed in
+				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 					self.syncProgress.completeTask()
+					feed.lastCheckDate = Date()
+					
+					if let parsedFeed {
+						// Save conditional GET info so that first refresh uses conditional GET.
+						if let httpResponse = response as? HTTPURLResponse,
+						   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
+							feed.conditionalGetInfo = conditionalGetInfo
+						}
 
-					if let parsedFeed = parsedFeed {
 						account.update(feed, with: parsedFeed) { result in
 							switch result {
 							case .success:
@@ -706,12 +713,12 @@ private extension CloudKitAccountDelegate {
 						case .success:
 							self.articlesZone.fetchChangesInZone() { _ in }
 						case .failure(let error):
-							os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
+							Self.logger.error("CloudKit: Feed send articles error: \(error.localizedDescription)")
 						}
 					}
 				}
 			case .failure(let error):
-				os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
+				Self.logger.error("CloudKit: Feed send articles error: \(error.localizedDescription)")
 			}
 		}
 	}

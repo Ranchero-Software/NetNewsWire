@@ -37,6 +37,10 @@ final class TimelineContainerViewController: NSViewController {
 			view?.window?.recalculateKeyViewLoop()
 		}
 	}
+	
+	var windowState: TimelineWindowState? {
+		return currentTimelineViewController?.windowState
+	}
 
 	weak var delegate: TimelineContainerViewControllerDelegate?
 
@@ -127,12 +131,18 @@ final class TimelineContainerViewController: NSViewController {
 	
 	// MARK: State Restoration
 	
-	func saveState(to state: inout [AnyHashable : Any]) {
-		regularTimelineViewController.saveState(to: &state)
-	}
-	
-	func restoreState(from state: [AnyHashable : Any]) {
+	func restoreState(from state: TimelineWindowState?) {
+		guard let state else { return }
+		
 		regularTimelineViewController.restoreState(from: state)
+		updateReadFilterButton()
+	}
+
+	/// Restore state using legacy state restoration data.
+	///
+	/// TODO: Delete for NetNewsWire 7.
+	func restoreLegacyState(from state: [AnyHashable: Any]) {
+		regularTimelineViewController.restoreLegacyState(from: state)
 		updateReadFilterButton()
 	}
 }

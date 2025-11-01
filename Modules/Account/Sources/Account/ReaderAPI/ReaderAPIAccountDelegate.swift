@@ -41,7 +41,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let database: SyncDatabase
 	
 	private let caller: ReaderAPICaller
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
 
 	var behaviors: AccountBehaviors {
 		var behaviors: AccountBehaviors = [.disallowOPMLImports, .disallowFeedInMultipleFolders]
@@ -199,7 +199,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		os_log(.debug, log: log, "Sending article statuses...")
+		Self.logger.info("ReaderAPI: Sending article statuses")
 
 		database.selectForProcessing { result in
 
@@ -232,7 +232,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 
 				group.notify(queue: DispatchQueue.main) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
+					Self.logger.info("ReaderAPI: finished sending article statuses")
 					completion(.success(()))
 				}
 			}
@@ -247,7 +247,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		os_log(.debug, log: log, "Refreshing article statuses...")
+		Self.logger.info("ReaderAPI: Refreshing article statuses")
 
 		let group = DispatchGroup()
 		var errorOccurred = false
@@ -261,7 +261,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
+				Self.logger.error("ReaderAPI: Retrieving unread entries failed: \(error.localizedDescription)")
 				group.leave()
 			}
 			
@@ -276,14 +276,14 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
+				Self.logger.error("ReaderAPI: Retrieving starred entries failed: \(error.localizedDescription)")
 				group.leave()
 			}
 
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
+			Self.logger.info("ReaderAPI: Finished refreshing article statuses")
 			if errorOccurred {
 				completion(.failure(ReaderAPIAccountDelegateError.unknown))
 			} else {
@@ -345,7 +345,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 								self.clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 							}
 						case .failure(let error):
-							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+							Self.logger.error("ReaderAPI: Remove feed error: \(error.localizedDescription)")
 						}
 					}
 				}
@@ -364,14 +364,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 								account.clearWebFeedMetadata(feed)
 							}
 						case .failure(let error):
-							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+							Self.logger.error("ReaderAPI: Remove feed error: \(error.localizedDescription)")
 						}
 					}
-					
 				}
-				
 			}
-			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
@@ -390,7 +387,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 			}
 		}
-		
 	}
 	
 	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
@@ -596,17 +592,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				case .success:
 					break
 				case .failure(let error):
-					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+					Self.logger.error("ReaderAPI: Restore folder feed error: \(error.localizedDescription)")
 				}
 			}
-			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
 			account.addFolder(folder)
 			completion(.success(()))
 		}
-		
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -713,8 +707,8 @@ private extension ReaderAPIAccountDelegate {
 		}
 		
 		guard !folderTags.isEmpty else { return }
-		
-		os_log(.debug, log: log, "Syncing folders with %ld tags.", folderTags.count)
+
+		Self.logger.info("ReaderAPI: Syncing folders with \(folderTags.count) tags")
 
 		let readerFolderExternalIDs = folderTags.compactMap { $0.tagID }
 
@@ -754,8 +748,8 @@ private extension ReaderAPIAccountDelegate {
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
 
-		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
-		
+		Self.logger.info("ReaderAPI: Syncing feeds with \(subscriptions.count) subscriptions")
+
 		let subFeedIds = subscriptions.map { $0.feedID }
 		
 		// Remove any feeds that are no longer in the subscriptions
@@ -796,8 +790,8 @@ private extension ReaderAPIAccountDelegate {
 	func syncFeedFolderRelationship(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
-		os_log(.debug, log: log, "Syncing taggings with %ld subscriptions.", subscriptions.count)
-		
+		Self.logger.info("ReaderAPI: Syncing taggings with \(subscriptions.count) subscriptions")
+
 		// Set up some structures to make syncing easier
 		let folderDict = externalIDToFolderDictionary(with: account.folders)
 		let taggingsDict = subscriptions.reduce([String: [ReaderAPISubscription]]()) { (dict, subscription) in
@@ -890,7 +884,7 @@ private extension ReaderAPIAccountDelegate {
 					self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
 					group.leave()
 				case .failure(let error):
-					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
+					Self.logger.error("ReaderAPI: Article status sync call failed: \(error.localizedDescription)")
 					self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
 					group.leave()
 				}
@@ -989,8 +983,8 @@ private extension ReaderAPIAccountDelegate {
 					completion()
 					return
 				}
-				
-				os_log(.debug, log: self.log, "Refreshing missing articles...")
+
+				Self.logger.info("ReaderAPI: Refreshing missing articles")
 				let group = DispatchGroup()
 
 				let articleIDs = Array(fetchedArticleIDs)
@@ -1010,7 +1004,7 @@ private extension ReaderAPIAccountDelegate {
 							}
 
 						case .failure(let error):
-							os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
+							Self.logger.error("ReaderAPI: Refresh missing articles failed: \(error.localizedDescription)")
 							group.leave()
 						}
 					}
@@ -1018,7 +1012,7 @@ private extension ReaderAPIAccountDelegate {
 
 				group.notify(queue: DispatchQueue.main) {
 					self.refreshProgress.completeTask()
-					os_log(.debug, log: self.log, "Done refreshing missing articles.")
+					Self.logger.info("ReaderAPI: Finished refreshing missing articles")
 					completion()
 				}
 			}
@@ -1068,6 +1062,7 @@ private extension ReaderAPIAccountDelegate {
 							  language: nil,
 							  contentHTML: entry.summary.content,
 							  contentText: nil,
+							  markdown: nil,
 							  summary: entry.summary.content,
 							  imageURL: nil,
 							  bannerImageURL: nil,
@@ -1124,11 +1119,9 @@ private extension ReaderAPIAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
+				Self.logger.error("ReaderAPI: Sync article read status failed: \(error.localizedDescription)")
 			}
-			
 		}
-		
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
@@ -1173,11 +1166,8 @@ private extension ReaderAPIAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
+				Self.logger.error("ReaderAPI: Sync article starred status failed: \(error.localizedDescription)")
 			}
-
 		}
-		
 	}
-
 }

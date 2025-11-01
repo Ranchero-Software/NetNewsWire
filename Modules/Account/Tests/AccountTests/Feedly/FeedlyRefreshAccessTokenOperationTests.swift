@@ -12,7 +12,7 @@ import RSWeb
 import RSCore
 import Secrets
 
-class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
+final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 	
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -29,7 +29,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		super.tearDown()
 	}
 	
-	class TestRefreshTokenService: OAuthAccessTokenRefreshing {
+	final class TestRefreshTokenService: OAuthAccessTokenRefreshing {
 		var mockResult: Result<OAuthAuthorizationGrant, Error>?
 		var refreshAccessTokenExpectation: XCTestExpectation?
 		var parameterTester: ((String, OAuthAuthorizationClient) -> ())?
@@ -54,7 +54,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		service.refreshAccessTokenExpectation?.isInverted = true
 		
 		let client = support.makeMockOAuthClient()
-		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client, log: support.log)
+		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
@@ -71,7 +71,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		XCTAssertTrue(refresh.isCanceled)
 	}
 	
-	class TestRefreshTokenDelegate: FeedlyOperationDelegate {
+	final class TestRefreshTokenDelegate: FeedlyOperationDelegate {
 		var error: Error?
 		var didFailExpectation: XCTestExpectation?
 		
@@ -89,8 +89,8 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		service.refreshAccessTokenExpectation?.isInverted = true
 		
 		let client = support.makeMockOAuthClient()
-		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client, log: support.log)
-		
+		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client)
+
 		let delegate = TestRefreshTokenDelegate()
 		delegate.didFailExpectation = expectation(description: "Did Fail")
 		refresh.delegate = delegate
@@ -140,7 +140,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			XCTAssertEqual(serviceClient, client)
 		}
 		
-		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client, log: support.log)
+		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
@@ -194,7 +194,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			XCTAssertEqual(serviceClient, client)
 		}
 		
-		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client, log: support.log)
+		let refresh = FeedlyRefreshAccessTokenOperation(account: account, service: service, oauthClient: client)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")

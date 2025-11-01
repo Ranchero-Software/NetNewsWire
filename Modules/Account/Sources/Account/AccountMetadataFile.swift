@@ -11,9 +11,6 @@ import os.log
 import RSCore
 
 final class AccountMetadataFile {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "accountMetadataFile")
-
 	private let fileURL: URL
 	private let account: Account
 	
@@ -23,6 +20,7 @@ final class AccountMetadataFile {
 		}
 	}
 	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountMetadataFile")
 
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
@@ -51,7 +49,7 @@ final class AccountMetadataFile {
 			let data = try encoder.encode(account.metadata)
 			try data.write(to: fileURL)
 		} catch let error as NSError {
-			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
+			Self.logger.error("AccountMetadataFile accountID: \(self.account.accountID) save to disk failed: \(error.localizedDescription)")
 		}
 	}
 	
@@ -69,5 +67,4 @@ private extension AccountMetadataFile {
 			save()
 		}
 	}
-
 }

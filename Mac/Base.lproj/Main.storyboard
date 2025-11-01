@@ -540,10 +540,11 @@
                                                 <action selector="toggleWebInspectorEnabled:" target="Voe-Tx-rLC" id="SNL-zh-XIE"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Open Application Support Folder" id="rg6-L6-JUr">
+                                        <menuItem isSeparatorItem="YES" id="dgO-u4-aEs"/>
+                                        <menuItem title="Show iCloud Drive Missing Alert" id="m0T-w3-neT">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="openApplicationSupportFolder:" target="Ady-hI-5gd" id="gT9-ry-evV"/>
+                                                <action selector="showiCloudDriveMissingAlert:" target="Ady-hI-5gd" id="kfQ-dM-8vB"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -607,6 +608,12 @@
                                                 <action selector="addAppNews:" target="Ady-hI-5gd" id="xHC-9j-EpT"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Open Application Support Folder" id="QxZ-DC-21I">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openApplicationSupportFolder:" target="Ady-hI-5gd" id="StO-ob-5HH"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="rK6-cL-4Vj"/>
                                         <menuItem title="Website" id="q2Z-9K-GBd">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -638,10 +645,16 @@
                                                 <action selector="openBugTracker:" target="Ady-hI-5gd" id="fZQ-ng-gIm"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Slack Group" id="4eb-qF-n9S">
+                                        <menuItem title="Slack Group" id="OKC-FV-V33">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="openSlackGroup:" target="Ady-hI-5gd" id="YX2-gA-pgV"/>
+                                                <action selector="openSlackGroup:" target="Ady-hI-5gd" id="5HZ-0D-vG5"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Technotes" id="4eb-qF-n9S">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openTechnotes:" target="Ady-hI-5gd" id="O06-UA-SCO"/>
                                             </connections>
                                         </menuItem>
                                     </items>

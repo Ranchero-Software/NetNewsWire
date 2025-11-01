@@ -12,9 +12,6 @@ import RSCore
 import RSParser
 
 final class OPMLFile {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "opmlFile")
-
 	private let fileURL: URL
 	private let account: Account
 
@@ -24,6 +21,7 @@ final class OPMLFile {
 		}
 	}
 	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "OPMLFile")
 
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
@@ -51,7 +49,7 @@ final class OPMLFile {
 		do {
 			try opmlDocumentString.write(to: fileURL, atomically: true, encoding: .utf8)
 		} catch let error as NSError {
-			os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
+			Self.logger.error("OPML save to disk failed: \(error.localizedDescription)")
 		}
 	}
 	
@@ -76,7 +74,7 @@ private extension OPMLFile {
 		do {
 			fileData = try Data(contentsOf: fileURL)
 		} catch {
-			os_log(.error, log: log, "OPML read from disk failed: %@.", error.localizedDescription)
+			Self.logger.error("OPML read from disk failed: \(error.localizedDescription)")
 		}
 
 		return fileData
@@ -89,7 +87,7 @@ private extension OPMLFile {
 		do {
 			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 		} catch {
-			os_log(.error, log: log, "OPML Import failed: %@.", error.localizedDescription)
+			Self.logger.error("OPML import failed: \(error.localizedDescription)")
 			return nil
 		}
 		
@@ -121,5 +119,4 @@ private extension OPMLFile {
 		let opml = openingText + middleText + closingText
 		return opml
 	}
-	
 }

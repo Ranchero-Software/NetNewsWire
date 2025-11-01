@@ -8,7 +8,7 @@
 
 import XCTest
 
-class NetNewsWire_iOSTests: XCTestCase {
+final class NetNewsWire_iOSTests: XCTestCase {
     
     override func setUp() {
         super.setUp()

@@ -13,13 +13,11 @@ import CloudKit
 import RSCore
 import Articles
 
-class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
+final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	
 	private typealias UnclaimedWebFeed = (url: URL, name: String?, editedName: String?, homePageURL: String?, webFeedExternalID: String)
 	private var newUnclaimedWebFeeds = [String: [UnclaimedWebFeed]]()
 	private var existingUnclaimedWebFeeds = [String: [WebFeed]]()
-
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
 	weak var account: Account?
 	weak var articlesZone: CloudKitArticlesZone?

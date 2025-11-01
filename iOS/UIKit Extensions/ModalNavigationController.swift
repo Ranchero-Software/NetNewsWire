@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ModalNavigationController: UINavigationController {
+final class ModalNavigationController: UINavigationController {
 
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()

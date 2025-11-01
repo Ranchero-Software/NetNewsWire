@@ -8,6 +8,8 @@
 
 import UIKit
 import WebKit
+import SafariServices
+import os
 import Account
 import Articles
 import RSCore

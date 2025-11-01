@@ -75,8 +75,11 @@ final class FaviconDownloader {
 	}
 	
 	func favicon(for webFeed: WebFeed) -> IconImage? {
-
 		assert(Thread.isMainThread)
+
+		if shouldSkipDownloadingFavicon(feed: webFeed) {
+			return nil
+		}
 
 		var homePageURL = webFeed.homePageURL
 		if let faviconURL = webFeed.faviconURL {
@@ -97,19 +100,16 @@ final class FaviconDownloader {
 	}
 	
 	func faviconAsIcon(for webFeed: WebFeed) -> IconImage? {
-		
+
 		if let image = cache[webFeed] {
 			return image
 		}
-		
-		if let iconImage = favicon(for: webFeed), let imageData = iconImage.image.dataRepresentation() {
-			if let scaledImage = RSImage.scaledForIcon(imageData) {
-				let scaledIconImage = IconImage(scaledImage)
-				cache[webFeed] = scaledIconImage
-				return scaledIconImage
-			}
+
+		if let iconImage = favicon(for: webFeed) {
+			cache[webFeed] = iconImage
+			return iconImage
 		}
-		
+
 		return nil
 	}
 
@@ -208,6 +208,12 @@ final class FaviconDownloader {
 }
 
 private extension FaviconDownloader {
+
+	static let specialCasesToSkip = [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
+
+	func shouldSkipDownloadingFavicon(feed: WebFeed) -> Bool {
+		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
+	}
 
 	static let localeForLowercasing = Locale(identifier: "en_US")
 

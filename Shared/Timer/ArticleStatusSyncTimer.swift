@@ -9,7 +9,7 @@
 import Foundation
 import Account
 
-class ArticleStatusSyncTimer {
+final class ArticleStatusSyncTimer {
 	
 	private static let intervalSeconds = Double(120)
 	

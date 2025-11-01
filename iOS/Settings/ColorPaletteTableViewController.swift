@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ColorPaletteTableViewController: UITableViewController {
+final class ColorPaletteTableViewController: UITableViewController {
 
     // MARK: - Table view data source
 

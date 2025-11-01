@@ -27,9 +27,11 @@ final class WebFeedMetadata: Codable {
 		case isNotifyAboutNewArticles
 		case isArticleExtractorAlwaysOn
 		case conditionalGetInfo
+		case conditionalGetInfoDate
 		case cacheControlInfo
 		case externalID = "subscriptionID"
 		case folderRelationship
+		case lastCheckDate
 	}
 
 	var webFeedID: String {
@@ -108,9 +110,22 @@ final class WebFeedMetadata: Codable {
 		didSet {
 			if conditionalGetInfo != oldValue {
 				valueDidChange(.conditionalGetInfo)
+				if conditionalGetInfo == nil {
+					conditionalGetInfoDate = nil
+				} else {
+					conditionalGetInfoDate = Date()
+				}
 			}
 		}
 	}
+
+	var conditionalGetInfoDate: Date? {
+		  didSet {
+			  if conditionalGetInfoDate != oldValue {
+				  valueDidChange(.conditionalGetInfoDate)
+			  }
+		  }
+	  }
 
 	var cacheControlInfo: CacheControlInfo? {
 		didSet {
@@ -133,6 +148,16 @@ final class WebFeedMetadata: Codable {
 		didSet {
 			if folderRelationship != oldValue {
 				valueDidChange(.folderRelationship)
+			}
+		}
+	}
+
+	/// Last time an attempt was made to read the feed.
+	/// (Not necessarily a successful attempt.)
+	var lastCheckDate: Date? {
+		didSet {
+			if lastCheckDate != oldValue {
+				valueDidChange(.lastCheckDate)
 			}
 		}
 	}

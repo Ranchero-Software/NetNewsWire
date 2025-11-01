@@ -17,7 +17,6 @@ import RSParser
 import RSDatabase
 import ArticlesDatabase
 import RSWeb
-import os.log
 import Secrets
 
 // Main thread only.
@@ -76,10 +75,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		public static let webFeeds = "webFeeds" // AccountDidDownloadArticles, StatusesDidChange
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
-	
+
 	public static let defaultLocalAccountName = NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
 
 	public var isDeleted = false
 	
@@ -503,7 +500,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return existingFolder(withExternalID: externalID)
 	}
 	
-	func existingContainers(withWebFeed webFeed: WebFeed) -> [Container] {
+	public func existingContainers(withWebFeed webFeed: WebFeed) -> [Container] {
 		var containers = [Container]()
 		if topLevelWebFeeds.contains(webFeed) {
 			containers.append(self)
@@ -717,6 +714,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		opmlFile.markAsDirty()
 		flattenedWebFeedsNeedUpdate = true
 		webFeedDictionariesNeedUpdate = true
+	}
+
+	@MainActor func update(_ feed: WebFeed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
+		try await withCheckedThrowingContinuation { continuation in
+			update(feed, with: parsedFeed) { result in
+				switch result {
+				case .success(let articleChanges):
+					continuation.resume(returning: articleChanges)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
 	}
 
 	func update(_ webFeed: WebFeed, with parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesCompletionBlock) {

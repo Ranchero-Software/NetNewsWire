@@ -14,10 +14,9 @@ import RSCore
 import Articles
 import Account
 
-
 public final class WidgetDataEncoder {
+	public var isRunning = false
 
-	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	private let fetchLimit = 7
 
 	private lazy var appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
@@ -25,7 +24,7 @@ public final class WidgetDataEncoder {
 	private lazy var imageContainer = containerURL?.appendingPathComponent("widgetImages", isDirectory: true)
 	private lazy var dataURL = containerURL?.appendingPathComponent("widget-data.json")
 
-	public var isRunning = false
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WidgetDataEncoder")
 
 	init () {
 		if imageContainer != nil {
@@ -38,7 +37,7 @@ public final class WidgetDataEncoder {
 			isRunning = true
 
 			flushSharedContainer()
-			os_log(.debug, log: log, "Starting encoding widget data.")
+			Self.logger.debug("Encoding widget data")
 
 			DispatchQueue.main.async {
 				self.encodeWidgetData() { latestData in
@@ -49,15 +48,15 @@ public final class WidgetDataEncoder {
 
 					let encodedData = try? JSONEncoder().encode(latestData)
 
-					os_log(.debug, log: self.log, "Finished encoding widget data.")
+					Self.logger.debug("Finished encoding widget data")
 
 					if self.fileExists() {
 						try? FileManager.default.removeItem(at: self.dataURL!)
-						os_log(.debug, log: self.log, "Removed widget data from container.")
+						Self.logger.debug("Removed widget data from container")
 					}
 
 					if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
-						os_log(.debug, log: self.log, "Wrote widget data to container.")
+						Self.logger.info("Wrote widget data to container")
 						WidgetCenter.shared.reloadAllTimelines()
 					}
 
@@ -136,8 +135,8 @@ public final class WidgetDataEncoder {
 		}
 
 		dispatchGroup.notify(queue: .main) {
-			if groupError != nil {
-				os_log(.error, log: self.log, "WidgetDataEncoder failed to write the widget data.")
+			if let groupError {
+				Self.logger.error("WidgetDataEncoder failed to write the widget data: \(groupError.localizedDescription)")
 				completion(nil)
 			} else {
 				let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
@@ -150,7 +149,6 @@ public final class WidgetDataEncoder {
 				completion(latestData)
 			}
 		}
-
 	}
 
 	private func fileExists() -> Bool {
@@ -179,7 +177,4 @@ public final class WidgetDataEncoder {
 			try? FileManager.default.createDirectory(at: imageContainer, withIntermediateDirectories: true, attributes: nil)
 		}
 	}
-
 }
-
-

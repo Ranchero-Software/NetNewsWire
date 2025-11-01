@@ -9,47 +9,51 @@
 import Foundation
 import Account
 
-enum AccountsAddCloudKitWindowControllerError: LocalizedError {
-	case iCloudDriveMissing
-	
-	var errorDescription: String? {
-		return NSLocalizedString("Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Preferences.", comment: "Unable to add iCloud Account.")
-	}
-}
-
-class AccountsAddCloudKitWindowController: NSWindowController {
+final class AccountsAddCloudKitWindowController: NSWindowController {
 
 	private weak var hostWindow: NSWindow?
 
 	convenience init() {
-		self.init(windowNibName: NSNib.Name("AccountsAddCloudKit"))
-	}
-	
-	override func windowDidLoad() {
-		super.windowDidLoad()
-	}
-	
-	// MARK: API
-	
-	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
-		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: completion)
+		self.init(windowNibName: "AccountsAddCloudKit")
 	}
 
-	// MARK: Actions
-	
-	@IBAction func cancel(_ sender: Any) {
-		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
+	// MARK: - API
+
+	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+		assert(window != nil)
+		guard let window else {
+			return
+		}
+
+		self.hostWindow = hostWindow
+		hostWindow.beginSheet(window, completionHandler: completion)
 	}
-	
-	@IBAction func create(_ sender: Any) {
-		guard FileManager.default.ubiquityIdentityToken != nil else {
-			NSApplication.shared.presentError(AccountsAddCloudKitWindowControllerError.iCloudDriveMissing)
+
+	// MARK: - Actions
+
+	@IBAction func cancel(_ sender: Any) {
+		assert(hostWindow != nil && window != nil)
+		guard let hostWindow, let window else {
 			return
 		}
 		
-		let _ = AccountManager.shared.createAccount(type: .cloudKit)
-		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
+		hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.cancel)
 	}
 	
+	@IBAction func create(_ sender: Any) {
+		assert(!AccountManager.shared.hasiCloudAccount)
+		
+		guard AddCloudKitAccountUtilities.isiCloudDriveEnabled else {
+			presentError(AddCloudKitAccountError.iCloudDriveMissing)
+			return
+		}
+
+		assert(hostWindow != nil && window != nil)
+		guard let hostWindow, let window else {
+			return
+		}
+
+		let _ = AccountManager.shared.createAccount(type: .cloudKit)
+		hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.OK)
+	}
 }

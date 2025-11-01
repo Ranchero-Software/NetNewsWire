@@ -16,6 +16,7 @@
 #import "ParserData.h"
 #import "RSParsedEnclosure.h"
 #import "RSParsedAuthor.h"
+#import "RSParserInternal.h"
 
 #import <libxml/xmlstring.h>
 
@@ -32,14 +33,17 @@
 @property (nonatomic, readonly) NSDictionary *currentAttributes;
 @property (nonatomic) NSMutableString *xhtmlString;
 @property (nonatomic) NSString *link;
+@property (nonatomic) NSString *homepageURLString;
 @property (nonatomic) NSString *title;
 @property (nonatomic) NSMutableArray *articles;
 @property (nonatomic) NSDate *dateParsed;
 @property (nonatomic) RSSAXParser *parser;
 @property (nonatomic, readonly) RSParsedArticle *currentArticle;
 @property (nonatomic) RSParsedAuthor *currentAuthor;
+@property (nonatomic) RSParsedAuthor *rootAuthor;
 @property (nonatomic, readonly) NSDate *currentDate;
 @property (nonatomic) NSString *language;
+@property (nonatomic) BOOL isDaringFireball; // Special case — sometimes permalink and external link are swapped.
 
 @end
 
@@ -69,6 +73,7 @@
 	_parser = [[RSSAXParser alloc] initWithDelegate:self];
 	_attributesStack = [NSMutableArray new];
 	_articles = [NSMutableArray new];
+	_isDaringFireball =  [_urlString containsString:@"daringfireball.net/"];
 
 	return self;
 }
@@ -80,7 +85,7 @@
 
 	[self parse];
 
-	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title link:self.link language:self.language articles:self.articles];
+	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title homepageURLString:self.homepageURLString language:self.language articles:self.articles];
 
 	return parsedFeed;
 }
@@ -215,8 +220,17 @@ static const NSInteger kLengthLength = 7;
 		[self.parser parseData:self.feedData];
 		[self.parser finishParsing];
 	}
-}
 
+	// Add root author to individual articles as needed.
+	RSParsedAuthor *authorToAdd = self.rootAuthor;
+	if (authorToAdd) {
+		for (RSParsedArticle *article in self.articles) {
+			if (article.authors.count < 1) {
+				[article addAuthor:authorToAdd];
+			}
+		}
+	}
+}
 
 - (void)addArticle {
 
@@ -232,31 +246,36 @@ static const NSInteger kLengthLength = 7;
 	return self.articles.lastObject;
 }
 
-
 - (NSDictionary *)currentAttributes {
 
 	return self.attributesStack.lastObject;
 }
-
 
 - (NSDate *)currentDate {
 
 	return RSDateWithBytes(self.parser.currentCharacters.bytes, self.parser.currentCharacters.length);
 }
 
+- (void)addHomePageLink {
 
-- (void)addFeedLink {
-
-	if (self.link && self.link.length > 0) {
+	if (!RSParserStringIsEmpty(self.homepageURLString)) {
 		return;
 	}
 
-	NSString *related = self.currentAttributes[kRelKey];
-	if (related == kAlternateValue) {
-		self.link = self.currentAttributes[kHrefKey];
+	NSString *rawLink = self.currentAttributes[kHrefKey];
+	if (RSParserStringIsEmpty(rawLink)) {
+		return;
+	}
+
+	NSString *rel = self.currentAttributes[kRelKey];
+
+	// rel="alternate" == home page URL
+	// Also: spec says "alternate" is default value if not present
+	// <https://datatracker.ietf.org/doc/html/rfc4287#section-4.2.7.2>
+	if (!rel || [rel isEqualToString:kAlternateValue]) {
+		self.homepageURLString = [self resolvedURLString:rawLink];
 	}
 }
-
 
 - (void)addFeedTitle {
 
@@ -268,10 +287,23 @@ static const NSInteger kLengthLength = 7;
 - (void)addFeedLanguage {
 
 	if (self.language.length < 0) {
-		self.language = self.currentAttributes[kXMLLangKey]
-;
+		self.language = self.currentAttributes[kXMLLangKey];
 	}
 }
+
+- (void)addPermalink:(NSString *)resolvedURLString article:(RSParsedArticle *)article {
+	if (RSParserStringIsEmpty(article.permalink)) {
+		article.permalink = resolvedURLString;
+	}
+}
+
+- (void)addExternalLink:(NSString *)resolvedURLString article:(RSParsedArticle *)article  {
+	if (RSParserStringIsEmpty(article.link)) {
+		article.link = resolvedURLString;
+	}
+}
+
+static NSString *daringFireballPermalinkPrefix = @"https://daringfireball.net/";
 
 - (void)addLink {
 
@@ -279,6 +311,10 @@ static const NSInteger kLengthLength = 7;
 
 	NSString *urlString = attributes[kHrefKey];
 	if (urlString.length < 1) {
+		return;
+	}
+	NSString *resolvedURLString = [self resolvedURLString:urlString];
+	if (RSParserStringIsEmpty(resolvedURLString)) {
 		return;
 	}
 
@@ -289,19 +325,33 @@ static const NSInteger kLengthLength = 7;
 		rel = kAlternateValue;
 	}
 
-	if (rel == kRelatedValue) {
-		if (!article.link) {
-			article.link = urlString;
-		}
-	}
-	else if (rel == kAlternateValue) {
-		if (!article.permalink) {
-			article.permalink = urlString;
-		}
-	}
-	else if (rel == kEnclosureValue) {
-		RSParsedEnclosure *enclosure = [self enclosureWithURLString:urlString attributes:attributes];
+	if ([rel isEqualToString:kEnclosureValue]) {
+		RSParsedEnclosure *enclosure = [self enclosureWithURLString:resolvedURLString attributes:attributes];
 		[article addEnclosure:enclosure];
+		return;
+	}
+
+	if (self.isDaringFireball) {
+		// Permalink and external link are swapped sometimes.
+		// Decide which is which by looking at the URL prefix — is it a link to daringfireball.net or to elsewhere?
+		BOOL isDaringFireballLink = [resolvedURLString hasPrefix:daringFireballPermalinkPrefix];
+		if (isDaringFireballLink) {
+			[self addPermalink:resolvedURLString article:article];
+		}
+		else {
+			[self addExternalLink:resolvedURLString article:article];
+		}
+		return;
+	}
+
+	// Standard behavior: rel="related" is external link
+	if (rel == kRelatedValue) {
+		[self addExternalLink:resolvedURLString article:article];
+	}
+
+	// Standard behavior: rel="alternate" is permalink
+	if (rel == kAlternateValue) {
+		[self addPermalink:resolvedURLString article:article];
 	}
 }
 
@@ -329,6 +379,49 @@ static const NSInteger kLengthLength = 7;
 	}
 }
 
+- (NSString *)resolvedURLString:(NSString *)s {
+
+	// Resolve against home page URL (if available) or feed URL.
+	// Important: returns nil if the result does not begin with @"http://" or @"https://"
+	// This is because we don’t want relative paths that might get interpreted
+	// as file paths when displayed in the app.
+
+	// Already a full URL? No need to resolve?
+	if ([self isValidURLString:s]) {
+		return s;
+	}
+
+	NSString *baseURLString = self.homepageURLString;
+	if (RSParserStringIsEmpty(baseURLString)) {
+		baseURLString = self.urlString;
+	}
+	if (RSParserStringIsEmpty(baseURLString)) {
+		return nil; // Nothing to resolve against.
+	}
+
+	NSURL *baseURL = [NSURL URLWithString:baseURLString];
+	if (!baseURL) {
+		return nil; // Must have non-nil NSURL in order to resolve.
+	}
+
+	NSURL *resolvedURL = [NSURL URLWithString:s relativeToURL:baseURL];
+	NSString *urlString = resolvedURL.absoluteString;
+	if (!RSParserStringIsEmpty(urlString) && [self isValidURLString:urlString]) {
+		return urlString; // Must be valid, resolved URL
+	}
+
+	return nil;
+}
+
+static NSString *httpsURLPrefix = @"https://";
+static NSString *httpURLPrefix = @"http://";
+
+- (BOOL)isValidURLString:(NSString *)s {
+
+	NSString *lowercaseString = [s lowercaseString];
+
+	return ([lowercaseString hasPrefix:httpsURLPrefix] || [lowercaseString hasPrefix:httpURLPrefix]);
+}
 
 - (NSString *)currentString {
 
@@ -470,7 +563,7 @@ static const NSInteger kLengthLength = 7;
 	}
 
 	if (!self.parsingArticle && RSSAXEqualTags(localName, kLink, kLinkLength)) {
-		[self addFeedLink];
+		[self addHomePageLink];
 		return;
 	}
 
@@ -525,8 +618,15 @@ static const NSInteger kLengthLength = 7;
 		if (RSSAXEqualTags(localName, kAuthor, kAuthorLength)) {
 			self.parsingAuthor = NO;
 			RSParsedAuthor *author = self.currentAuthor;
-			if (author.name || author.emailAddress || author.url) {
-				[self.currentArticle addAuthor:author];
+			if (self.parsingArticle) {
+				if (!author.isEmpty) {
+					[self.currentArticle addAuthor:author];
+				}
+			}
+			else {
+				if (!self.rootAuthor && !author.isEmpty) {
+					self.rootAuthor = author;
+				}
 			}
 			self.currentAuthor = nil;
 		}

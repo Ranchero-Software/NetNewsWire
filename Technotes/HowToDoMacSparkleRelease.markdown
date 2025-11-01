@@ -3,17 +3,20 @@
 NetNewsWire_mac_target_common.xcconfig
 	update MARKETING_VERSION and CURRENT_PROJECT_VERSION
 
+Run buildscripts/quiet_build_and_test.sh
+
+Run app
+
 ReleaseNotes-Mac.markdown
 main branch
 Write change notes in notes
 Include branch and tag
 
-Run buildscripts/quiet_build_and_test.sh
-
 Make sure there are no outstanding changes
 
 Archive build
 Developer ID distribution - notarize
+Click Distribute App button
 Wait while processing
 
 Export
@@ -55,3 +58,8 @@ Test updating via appcast
 Optionally:
 Announce on Slack
 Announce on blog
+
+If release build:
+	Update netnewswire-release.xml
+	Update download on netnewswire.com — via .htaccess redirect
+

@@ -21,7 +21,7 @@ final class ImageDownloader {
 
 	public static let shared = ImageDownloader()
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
+	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
 
 	private var diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
@@ -107,20 +107,20 @@ private extension ImageDownloader {
 
 		Task { @MainActor in
 			Downloader.shared.download(imageURL) { (data, response, error) in
-				
+
 				if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 					self.saveToDisk(url, data)
 					completion(data)
 					return
 				}
-				
+
 				if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
 					self.badURLs.insert(url)
 				}
 				if let error = error {
-					os_log(.info, log: self.log, "Error downloading image at %@: %@.", url, error.localizedDescription)
+					Self.logger.error("Error downloading image at \(url) \(error.localizedDescription)")
 				}
-				
+
 				completion(nil)
 			}
 		}

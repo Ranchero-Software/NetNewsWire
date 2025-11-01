@@ -11,7 +11,7 @@ import Account
 import RSWeb
 import Secrets
 
-class AccountsReaderAPIWindowController: NSWindowController {
+final class AccountsReaderAPIWindowController: NSWindowController {
 
 	@IBOutlet weak var titleImageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!
@@ -79,8 +79,12 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	// MARK: API
 	
 	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: completion)
+		hostWindow.beginSheet(window, completionHandler: completion)
 	}
 
 	// MARK: Actions

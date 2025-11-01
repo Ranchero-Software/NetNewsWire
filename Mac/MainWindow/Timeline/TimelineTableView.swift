@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-class TimelineTableView: NSTableView {
+final class TimelineTableView: NSTableView {
 	
 	weak var keyboardDelegate: KeyboardDelegate?
 	

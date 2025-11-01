@@ -11,7 +11,7 @@ import Account
 import RSWeb
 import Secrets
 
-class AccountsFeedbinWindowController: NSWindowController {
+final class AccountsFeedbinWindowController: NSWindowController {
 
 	@IBOutlet weak var signInTextField: NSTextField!
 	@IBOutlet weak var noAccountTextField: NSTextField!
@@ -50,8 +50,12 @@ class AccountsFeedbinWindowController: NSWindowController {
 	// MARK: API
 	
 	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: completion)
+		hostWindow.beginSheet(window, completionHandler: completion)
 	}
 
 	// MARK: Actions

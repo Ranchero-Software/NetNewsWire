@@ -31,4 +31,9 @@
  	return author;
 }
 
+- (BOOL)isEmpty {
+	
+	return !self.name && !self.url && !self.emailAddress;
+}
+
 @end

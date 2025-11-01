@@ -10,7 +10,7 @@ import Foundation
 
 public typealias ArticleSetBlock = (Set<Article>) -> Void
 
-public struct Article: Hashable {
+public final class Article: Hashable {
 
 	public let articleID: String // Unique database ID (possibly sync service ID)
 	public let accountID: String
@@ -19,6 +19,7 @@ public struct Article: Hashable {
 	public let title: String?
 	public let contentHTML: String?
 	public let contentText: String?
+	public let markdown: String?
 	public let rawLink: String? // We store raw source value, but use computed url or link other than where raw value required.
     public let rawExternalLink: String? // We store raw source value, but use computed externalURL or externalLink other than where raw value required.
 	public let summary: String?
@@ -28,13 +29,14 @@ public struct Article: Hashable {
 	public let authors: Set<Author>?
 	public let status: ArticleStatus
 
-	public init(accountID: String, articleID: String?, webFeedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, status: ArticleStatus) {
+	public init(accountID: String, articleID: String?, webFeedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, markdown: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, status: ArticleStatus) {
 		self.accountID = accountID
 		self.webFeedID = webFeedID
 		self.uniqueID = uniqueID
 		self.title = title
 		self.contentHTML = contentHTML
 		self.contentText = contentText
+		self.markdown = markdown
 		self.rawLink = url
 		self.rawExternalLink = externalURL
 		self.summary = summary
