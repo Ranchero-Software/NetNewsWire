@@ -52,17 +52,15 @@ final class DetailWebViewController: NSViewController {
 	
 	private var articleTextSize = AppDefaults.shared.articleTextSize
 
-	#if !MAC_APP_STORE
-		private var webInspectorEnabled: Bool {
-			get {
-				return webView.configuration.preferences._developerExtrasEnabled
-			}
-			set {
-				webView.configuration.preferences._developerExtrasEnabled = newValue
-			}
+	private var webInspectorEnabled: Bool {
+		get {
+			return webView.configuration.preferences._developerExtrasEnabled
 		}
-	#endif
-	
+		set {
+			webView.configuration.preferences._developerExtrasEnabled = newValue
+		}
+	}
+
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
@@ -326,11 +324,9 @@ private extension DetailWebViewController {
 		}
 	}
 
-	#if !MAC_APP_STORE
-		@objc func webInspectorEnabledDidChange(_ notification: Notification) {
-			self.webInspectorEnabled = notification.object! as! Bool
-		}
-	#endif
+	@objc func webInspectorEnabledDidChange(_ notification: Notification) {
+		self.webInspectorEnabled = notification.object! as! Bool
+	}
 }
 
 // MARK: - ScrollInfo

@@ -20,7 +20,7 @@ import CrashReporter
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
 // for AppDelegate to comply
-#if MAC_APP_STORE || TEST
+#if TEST
 protocol SPUStandardUserDriverDelegate {}
 protocol SPUUpdaterDelegate {}
 #else
@@ -101,7 +101,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	private var inspectorWindowController: InspectorWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private let appMovementMonitor = RSAppMovementMonitor()
-	#if !MAC_APP_STORE && !TEST
+	#if !TEST
 	private var softwareUpdater: SPUUpdater!
 	private var crashReporter: PLCrashReporter!
 	#endif
@@ -112,11 +112,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
 
-		#if !MAC_APP_STORE
 		let crashReporterConfig = PLCrashReporterConfig.defaultConfiguration()
 		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
 		crashReporter.enable()
-		#endif
 
 		SecretsManager.provider = Secrets()
 		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
@@ -173,7 +171,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
 
-		#if MAC_APP_STORE || TEST
+		#if TEST
 			checkForUpdatesMenuItem.isHidden = true
 		#else
 			// Initialize Sparkle...
@@ -260,26 +258,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 		#endif
 		
-		if AppDefaults.shared.showDebugMenu {
-  			// The Web Inspector uses SPI and can never appear in a MAC_APP_STORE build.
- 			#if MAC_APP_STORE
- 			let debugMenu = debugMenuItem.submenu!
- 			let toggleWebInspectorItemIndex = debugMenu.indexOfItem(withTarget: self, andAction: #selector(toggleWebInspectorEnabled(_:)))
- 			if toggleWebInspectorItemIndex != -1 {
- 				debugMenu.removeItem(at: toggleWebInspectorItemIndex)
- 			}
- 			#endif
- 		} else {
+		if !AppDefaults.shared.showDebugMenu {
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 		}
 
-		#if !MAC_APP_STORE
 		DispatchQueue.main.async {
 			CrashReporter.check(crashReporter: self.crashReporter)
 		}
-		#endif
 	}
-	
+
 	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
 		guard let mainWindowController = mainWindowController else {
 			return false
@@ -467,12 +454,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		
-		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
 		}
-		#endif
-		
+
 		return true
 	}
 
@@ -691,7 +676,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	@IBAction func checkForUpdates(_ sender: Any?) {
-		#if !MAC_APP_STORE && !TEST
+		#if !TEST
 			self.softwareUpdater.checkForUpdates()
 		#endif
 	}
@@ -739,7 +724,6 @@ extension AppDelegate {
 	}
 
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
-		#if !MAC_APP_STORE
 		let newValue = !AppDefaults.shared.webInspectorEnabled
 		AppDefaults.shared.webInspectorEnabled = newValue
 
@@ -748,7 +732,6 @@ extension AppDelegate {
 			// accidentally reattached.
 		AppDefaults.shared.webInspectorStartsAttached = false
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
-		#endif
 	}
 
 	@IBAction func showiCloudDriveMissingAlert(_ sender: Any?) {
