@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24093.8" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24093.8"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24412"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -96,12 +96,6 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="importOPMLFromFile:" target="Ady-hI-5gd" id="eGY-fm-uvK"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Import NNW 3 Subscriptions…" id="ely-yi-STg">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="mu3-gN-7uA"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Export Subscriptions…" keyEquivalent="e" id="Xy2-v8-Lj8">
@@ -545,6 +539,13 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="showiCloudDriveMissingAlert:" target="Ady-hI-5gd" id="kfQ-dM-8vB"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="AQO-MD-QVj"/>
+                                        <menuItem title="Import NNW 3 Subscriptions…" id="i8e-24-dto">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="Xut-dI-qDw"/>
                                             </connections>
                                         </menuItem>
                                     </items>
