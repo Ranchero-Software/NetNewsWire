@@ -44,7 +44,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		}
 		
 		// Pair each Feed with its Folder.
-		var feedsAdded = Set<WebFeed>()
+		var feedsAdded = Set<Feed>()
 		
 		let feedsAndFolders = pairs
 			.map({ (collectionFeeds, folder) -> [(FeedlyFeed, Folder)] in
@@ -53,7 +53,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 				}
 			})
 			.flatMap { $0 }
-			.compactMap { (collectionFeed, folder) -> (WebFeed, Folder) in
+			.compactMap { (collectionFeed, folder) -> (Feed, Folder) in
 
 				// find an existing feed previously added to the account
 				if let feed = account.existingWebFeed(withWebFeedID: collectionFeed.id) {

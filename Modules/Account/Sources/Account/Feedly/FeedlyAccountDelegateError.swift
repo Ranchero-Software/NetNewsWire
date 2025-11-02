@@ -14,11 +14,11 @@ enum FeedlyAccountDelegateError: LocalizedError {
 	case unableToAddFolder(String)
 	case unableToRenameFolder(String, String)
 	case unableToRemoveFolder(String)
-	case unableToMoveFeedBetweenFolders(WebFeed, Folder, Folder)
+	case unableToMoveFeedBetweenFolders(Feed, Folder, Folder)
 	case addFeedChooseFolder
 	case addFeedInvalidFolder(Folder)
 	case unableToRenameFeed(String, String)
-	case unableToRemoveFeed(WebFeed)
+	case unableToRemoveFeed(Feed)
 	
 	var errorDescription: String? {
 		switch self {

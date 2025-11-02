@@ -31,8 +31,8 @@ extension SidebarViewController {
 		let object = objects.first!
 
 		switch object {
-		case is WebFeed:
-			return menuForWebFeed(object as! WebFeed)
+		case is Feed:
+			return menuForWebFeed(object as! Feed)
 		case is Folder:
 			return menuForFolder(object as! Folder)
 		case is PseudoFeed:
@@ -93,7 +93,7 @@ extension SidebarViewController {
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
 
-		guard let window = view.window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is WebFeed || object is Folder else {
+		guard let window = view.window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is Feed || object is Folder else {
 			return
 		}
 
@@ -106,7 +106,7 @@ extension SidebarViewController {
 	
 	@objc func toggleNotificationsFromContextMenu(_ sender: Any?) {
 		guard let item = sender as? NSMenuItem,
-			  let feed = item.representedObject as? WebFeed else {
+			  let feed = item.representedObject as? Feed else {
 			return
 		}
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
@@ -137,7 +137,7 @@ extension SidebarViewController {
 	
 	@objc func toggleArticleExtractorFromContextMenu(_ sender: Any?) {
 		guard let item = sender as? NSMenuItem,
-			  let feed = item.representedObject as? WebFeed else {
+			  let feed = item.representedObject as? Feed else {
 			return
 		}
 		if feed.isArticleExtractorAlwaysOn == nil { feed.isArticleExtractorAlwaysOn = false }
@@ -170,7 +170,7 @@ extension SidebarViewController: RenameWindowControllerDelegate {
 
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
 
-		if let feed = object as? WebFeed {
+		if let feed = object as? Feed {
 			feed.rename(to: name) { result in
 				switch result {
 				case .success:
@@ -206,7 +206,7 @@ private extension SidebarViewController {
 		return menu
 	}
 
-	func menuForWebFeed(_ webFeed: WebFeed) -> NSMenu? {
+	func menuForWebFeed(_ webFeed: Feed) -> NSMenu? {
 
 		let menu = NSMenu(title: "")
 
@@ -338,7 +338,7 @@ private extension SidebarViewController {
 
 	func objectIsFeedOrFolder(_ object: Any) -> Bool {
 
-		return object is WebFeed || object is Folder
+		return object is Feed || object is Folder
 	}
 
 	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any, image: RSImage?) -> NSMenuItem {

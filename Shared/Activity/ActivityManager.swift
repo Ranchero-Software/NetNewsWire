@@ -54,7 +54,7 @@ final class ActivityManager {
 		
 		selectingActivity = makeSelectFeedActivity(sidebarItem: sidebarItem)
 		
-		if let webFeed = sidebarItem as? WebFeed {
+		if let webFeed = sidebarItem as? Feed {
 			updateSelectingActivityFeedSearchAttributes(with: webFeed)
 		}
 		
@@ -135,13 +135,13 @@ final class ActivityManager {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ webFeed: WebFeed) {
+	static func cleanUp(_ webFeed: Feed) {
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: webFeed))
 	}
 	#endif
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
 			return
 		}
 		
@@ -245,7 +245,7 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	func updateSelectingActivityFeedSearchAttributes(with feed: WebFeed) {
+	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(contentType: UTType.compositeContent)
 		attributeSet.title = feed.nameForDisplay
@@ -278,7 +278,7 @@ private extension ActivityManager {
 		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
 	}
 	
-	static func identifier(for feed: WebFeed) -> String {
+	static func identifier(for feed: Feed) -> String {
 		return "account_\(feed.account!.accountID)_feed_\(feed.webFeedID)"
 	}
 	
@@ -286,7 +286,7 @@ private extension ActivityManager {
 		return "account_\(article.accountID)_feed_\(article.webFeedID)_article_\(article.articleID)"
 	}
 	
-	static func identifiers(for feed: WebFeed) -> [String] {
+	static func identifiers(for feed: Feed) -> [String] {
 		var ids = [String]()
 		ids.append(identifier(for: feed))
 		if let articles = try? feed.fetchArticles() {

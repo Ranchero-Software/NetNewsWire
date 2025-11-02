@@ -612,7 +612,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
 
-		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in
@@ -972,12 +972,12 @@ private extension MainTimelineViewController {
 		return action
 	}
 
-	func timelineFeedIsEqualTo(_ feed: WebFeed) -> Bool {
+	func timelineFeedIsEqualTo(_ feed: Feed) -> Bool {
 		assert(coordinator != nil)
 		return coordinator?.timelineFeedIsEqualTo(feed) ?? false
 	}
 
-	func discloseWebFeed(_ feed: WebFeed, animations: Animations = []) {
+	func discloseWebFeed(_ feed: Feed, animations: Animations = []) {
 		assert(coordinator != nil)
 		coordinator?.discloseWebFeed(feed, animations: animations)
 	}

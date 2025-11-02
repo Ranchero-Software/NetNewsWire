@@ -14,7 +14,7 @@ final class FaviconGenerator {
 
 	private static var faviconGeneratorCache = [String: IconImage]() // feedURL: RSImage
 
-	static func favicon(_ webFeed: WebFeed) -> IconImage {
+	static func favicon(_ webFeed: Feed) -> IconImage {
 		
 		if let favicon = FaviconGenerator.faviconGeneratorCache[webFeed.url] {
 			return favicon

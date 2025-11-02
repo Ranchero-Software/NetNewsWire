@@ -32,11 +32,11 @@ final class LocalAccountRefresher {
 		return DownloadSession(delegate: self)
 	}()
 
-	private var urlToFeedDictionary = [String: WebFeed]()
+	private var urlToFeedDictionary = [String: Feed]()
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccountRefresher")
 
-	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
+	public func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
 		let specialCaseCutoffDate = Date().bySubtracting(hours: 25)
 		let filteredFeeds = feeds.filter { !Self.feedShouldBeSkipped($0, specialCaseCutoffDate) }
 
@@ -197,7 +197,7 @@ private extension LocalAccountRefresher {
 	static let badHosts = ["twitter.com", "www.twitter.com", "x.com", "www.x.com"]
 
 	/// Return true if we won’t download that feed.
-	static func feedIsDisallowed(_ feed: WebFeed) -> Bool {
+	static func feedIsDisallowed(_ feed: Feed) -> Bool {
 
 		guard let url = url(for: feed) else {
 			return true
@@ -216,13 +216,13 @@ private extension LocalAccountRefresher {
 		return false
 	}
 
-	static func feedShouldBeSkipped(_ feed: WebFeed, _ specialCaseCutoffDate: Date) -> Bool {
+	static func feedShouldBeSkipped(_ feed: Feed, _ specialCaseCutoffDate: Date) -> Bool {
 		feedShouldBeSkippedForCacheControlReasons(feed) ||
 		feedIsDisallowed(feed) ||
 		feedShouldBeSkippedForTimingReasons(feed, specialCaseCutoffDate)
 	}
 
-	static func feedShouldBeSkippedForTimingReasons(_ feed: WebFeed, _ specialCaseCutoffDate: Date) -> Bool {
+	static func feedShouldBeSkippedForTimingReasons(_ feed: Feed, _ specialCaseCutoffDate: Date) -> Bool {
 		guard let lastCheckDate = feed.lastCheckDate else {
 			return false
 		}
@@ -237,7 +237,7 @@ private extension LocalAccountRefresher {
 		return false
 	}
 
-	static func feedShouldBeSkippedForCacheControlReasons(_ feed: WebFeed) -> Bool {
+	static func feedShouldBeSkippedForCacheControlReasons(_ feed: Feed) -> Bool {
 		// We support Cache-Control only for openrss.org. The rest of the feed-providing
 		// universe hasn’t dealt with Cache-Control, and we routinely see days-long
 		// max-ages for even fast-moving feeds.
@@ -256,7 +256,7 @@ private extension LocalAccountRefresher {
 
 	static var urlCache = [String: URL]()
 
-	static func url(for feed: WebFeed) -> URL? {
+	static func url(for feed: Feed) -> URL? {
 
 		assert(Thread.isMainThread)
 

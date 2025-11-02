@@ -14,7 +14,7 @@ public extension Notification.Name {
 	static let WebFeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
 }
 
-public extension WebFeed {
+public extension Feed {
 
 	static let WebFeedSettingUserInfoKey = "feedSetting"
 
@@ -31,7 +31,7 @@ public extension WebFeed {
 	}
 }
 
-extension WebFeed {
+extension Feed {
 
 	func takeSettings(from parsedFeed: ParsedFeed) {
 		iconURL = parsedFeed.iconURL
@@ -42,7 +42,7 @@ extension WebFeed {
 	}
 
 	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
-		let userInfo = [WebFeed.WebFeedSettingUserInfoKey: codingKey.stringValue]
+		let userInfo = [Feed.WebFeedSettingUserInfoKey: codingKey.stringValue]
 		NotificationCenter.default.post(name: .WebFeedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }
@@ -57,7 +57,7 @@ public extension Article {
 		return manager.existingAccount(with: accountID)
 	}
 	
-	var webFeed: WebFeed? {
+	var webFeed: Feed? {
 		return account?.existingWebFeed(withWebFeedID: webFeedID)
 	}
 }

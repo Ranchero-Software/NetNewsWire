@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class WebFeed: SidebarItem, Renamable, Hashable {
+public final class Feed: SidebarItem, Renamable, Hashable {
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .none
@@ -287,14 +287,14 @@ public final class WebFeed: SidebarItem, Renamable, Hashable {
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: WebFeed, rhs: WebFeed) -> Bool {
+	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
 		return lhs.webFeedID == rhs.webFeedID && lhs.accountID == rhs.accountID
 	}
 }
 
 // MARK: - OPMLRepresentable
 
-extension WebFeed: OPMLRepresentable {
+extension Feed: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		// https://github.com/brentsimmons/NetNewsWire/issues/527
@@ -322,13 +322,13 @@ extension WebFeed: OPMLRepresentable {
 	}
 }
 
-extension Set where Element == WebFeed {
+extension Set where Element == Feed {
 
 	func webFeedIDs() -> Set<String> {
 		return Set<String>(map { $0.webFeedID })
 	}
 	
-	func sorted() -> Array<WebFeed> {
+	func sorted() -> Array<Feed> {
 		return sorted(by: { (webFeed1, webFeed2) -> Bool in
 			if webFeed1.nameForDisplay.localizedStandardCompare(webFeed2.nameForDisplay) == .orderedSame {
 				return webFeed1.url < webFeed2.url

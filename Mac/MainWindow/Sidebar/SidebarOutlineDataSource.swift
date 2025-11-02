@@ -144,7 +144,7 @@ private extension SidebarOutlineDataSource {
 		// Don’t allow PseudoFeed to be dragged.
 		// This will have to be revisited later. For instance,
 		// user-created smart feeds should be draggable, maybe.
-		return node.representedObject is Folder || node.representedObject is WebFeed
+		return node.representedObject is Folder || node.representedObject is Feed
 	}
 
 	// MARK: - Drag and Drop
@@ -257,7 +257,7 @@ private extension SidebarOutlineDataSource {
 		if let folder = node.representedObject as? Folder {
 			return folder.account
 		}
-		if let feed = node.representedObject as? WebFeed {
+		if let feed = node.representedObject as? Feed {
 			return feed.account
 		}
 		return nil
@@ -315,7 +315,7 @@ private extension SidebarOutlineDataSource {
 		return .copy	// different AccountIDs means can only copy
 	}
 	
-	func copyWebFeedInAccount(_ feed: WebFeed, _ destination: Container ) {
+	func copyWebFeedInAccount(_ feed: Feed, _ destination: Container ) {
 		destination.account?.addWebFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
@@ -326,7 +326,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 	
-	func moveWebFeedInAccount(_ feed: WebFeed, _ source: Container, _ destination: Container) {
+	func moveWebFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
 		BatchUpdate.shared.start()
 		source.account?.moveWebFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
@@ -339,7 +339,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 	
-	func copyWebFeedBetweenAccounts(_ feed: WebFeed, _ destinationContainer: Container) {
+	func copyWebFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
 		guard let destinationAccount = destinationContainer.account  else {
 			return
 		}
@@ -514,7 +514,7 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func nodeRepresentsAnyDraggedFeed(_ node: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
-		guard let feed = node.representedObject as? WebFeed else {
+		guard let feed = node.representedObject as? Feed else {
 			return false
 		}
 		for draggedFeed in draggedFeeds {
@@ -553,7 +553,7 @@ private extension SidebarOutlineDataSource {
 			return account
 		} else if let folder = node.representedObject as? Folder {
 			return folder.account
-		} else if let webFeed = node.representedObject as? WebFeed {
+		} else if let webFeed = node.representedObject as? Feed {
 			return webFeed.account
 		} else {
 			return nil

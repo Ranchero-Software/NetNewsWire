@@ -389,7 +389,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.createSubscription(url: url) { result in
@@ -421,7 +421,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameWebFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
@@ -448,7 +448,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeWebFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {
@@ -456,7 +456,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveWebFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if from is Account {
 			addWebFeed(for: account, with: feed, to: to, completion: completion)
 		} else {
@@ -471,7 +471,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addWebFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		if let folder = container as? Folder, let webFeedID = Int(feed.webFeedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -503,7 +503,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
 			account.addWebFeed(existingFeed, to: container) { result in
@@ -992,14 +992,14 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 	
-	func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
+	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
 			feed.folderRelationship = folderRelationship
 		}
 	}
 	
-	func saveFolderRelationship(for feed: WebFeed, withFolderName folderName: String, id: String) {
+	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = id
 			feed.folderRelationship = folderRelationship
@@ -1008,7 +1008,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<Feed, Error>) -> Void) {
 		var orderFound = 0
 		
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
@@ -1027,7 +1027,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 	
-	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		DispatchQueue.main.async {
 			
@@ -1060,7 +1060,7 @@ private extension FeedbinAccountDelegate {
 		
 	}
 
-	func initialFeedDownload( account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		// refreshArticles is being reused and will clear one of the tasks for us
 		refreshProgress.addToNumberOfTasksAndRemaining(4)
@@ -1369,7 +1369,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func deleteTagging(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -1399,7 +1399,7 @@ private extension FeedbinAccountDelegate {
 		
 	}
 
-	func deleteSubscription(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {

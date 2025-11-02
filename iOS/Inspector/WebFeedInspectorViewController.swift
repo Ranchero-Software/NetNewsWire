@@ -15,7 +15,7 @@ final class WebFeedInspectorViewController: UITableViewController {
 	
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 500.0)
 	
-	var webFeed: WebFeed!
+	var webFeed: Feed!
 	@IBOutlet weak var nameTextField: UITextField!
 	@IBOutlet weak var notifyAboutNewArticlesSwitch: UISwitch!
 	@IBOutlet weak var alwaysShowReaderViewSwitch: UISwitch!

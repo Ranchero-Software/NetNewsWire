@@ -14,10 +14,10 @@ import Articles
 @objc(ScriptableWebFeed)
 final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
 
-    let webFeed:WebFeed
+    let webFeed:Feed
     let container:ScriptingObjectContainer
     
-    init (_ webFeed:WebFeed, container:ScriptingObjectContainer) {
+    init (_ webFeed:Feed, container:ScriptingObjectContainer) {
         self.webFeed = webFeed
         self.container = container
     }
@@ -71,7 +71,7 @@ final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjec
         return url
     }
     
-    class func scriptableFeed(_ feed:WebFeed, account:Account, folder:Folder?) -> ScriptableWebFeed  {
+    class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableWebFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
             let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
@@ -81,7 +81,7 @@ final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjec
         }
     }
     
-    class func scriptableWebFeed(for feed: WebFeed) -> ScriptableWebFeed? {
+    class func scriptableWebFeed(for feed: Feed) -> ScriptableWebFeed? {
         guard let account = feed.account else { return nil }
         
         // Find the proper container hierarchy

@@ -18,7 +18,7 @@ public protocol ArticleFetcher {
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
 }
 
-extension WebFeed: ArticleFetcher {
+extension Feed: ArticleFetcher {
 	
 	public func fetchArticles() throws -> Set<Article> {
 		return try account?.fetchArticles(.webFeed(self)) ?? Set<Article>()

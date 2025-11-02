@@ -25,7 +25,7 @@ extension Account: SmallIconProvider {
 	}
 }
 
-extension WebFeed: SmallIconProvider {
+extension Feed: SmallIconProvider {
 
 	var smallIcon: IconImage? {
 		if let iconImage = FaviconDownloader.shared.favicon(for: self) {

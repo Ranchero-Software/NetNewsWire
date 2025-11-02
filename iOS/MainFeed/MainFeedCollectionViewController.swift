@@ -153,7 +153,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			renameAction.accessibilityLabel = renameTitle
 			actions.append(renameAction)
 			
-			if let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed {
+			if let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed {
 				let moreTitle = NSLocalizedString("More", comment: "More")
 				let moreAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completion) in
 					
@@ -328,7 +328,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
 			return nil
 		}
-		if sidebarItem is WebFeed {
+		if sidebarItem is Feed {
 			return makeWebFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else if sidebarItem is Folder {
 			return makeFolderContextMenu(indexPath: indexPath)
@@ -657,10 +657,10 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	}
 	
 	@objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
+		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
+		if key == Feed.WebFeedSettingKey.homePageURL || key == Feed.WebFeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
 	}
@@ -670,7 +670,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
 			return
 		}
 		applyToCellsForRepresentedObject(webFeed, configureIcon(_:_:))
@@ -945,7 +945,7 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let url = URL(string: webFeed.url) else {
 				  return nil
 			  }
@@ -958,7 +958,7 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyFeedPageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let url = URL(string: webFeed.url) else {
 				  return nil
 			  }
@@ -972,7 +972,7 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let homePageURL = webFeed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
@@ -986,7 +986,7 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyHomePageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let homePageURL = webFeed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
@@ -1001,7 +1001,7 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			webFeed.unreadCount > 0,
 			let articles = try? webFeed.fetchArticles(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
 				return nil
@@ -1041,7 +1041,7 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func getInfoAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed else {
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
 			return nil
 		}
 		
@@ -1069,7 +1069,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func getInfoAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed else {
+		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
 			return nil
 		}
 
@@ -1141,7 +1141,7 @@ extension MainFeedCollectionViewController {
 				return
 			}
 			
-			if let webFeed = sidebarItem as? WebFeed {
+			if let webFeed = sidebarItem as? Feed {
 				webFeed.rename(to: name) { result in
 					switch result {
 					case .success:
@@ -1216,7 +1216,7 @@ extension MainFeedCollectionViewController {
 
 		if let folder = deleteNode.representedObject as? Folder {
 			ActivityManager.cleanUp(folder)
-		} else if let feed = deleteNode.representedObject as? WebFeed {
+		} else if let feed = deleteNode.representedObject as? Feed {
 			ActivityManager.cleanUp(feed)
 		}
 		

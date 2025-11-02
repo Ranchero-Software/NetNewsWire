@@ -20,7 +20,7 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	@IBOutlet weak var isNotifyAboutNewArticlesCheckBox: NSButton!
 	@IBOutlet weak var isReaderViewAlwaysOnCheckBox: NSButton?
 	
-	private var feed: WebFeed? {
+	private var feed: Feed? {
 		didSet {
 			if feed != oldValue {
 				updateUI()
@@ -42,7 +42,7 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	var windowTitle: String = NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
-		return objects.count == 1 && objects.first is WebFeed
+		return objects.count == 1 && objects.first is Feed
 	}
 
 	// MARK: NSViewController
@@ -123,7 +123,7 @@ extension WebFeedInspectorViewController: NSTextFieldDelegate {
 private extension WebFeedInspectorViewController {
 
 	func updateFeed() {
-		guard let objects = objects, objects.count == 1, let singleFeed = objects.first as? WebFeed else {
+		guard let objects = objects, objects.count == 1, let singleFeed = objects.first as? Feed else {
 			feed = nil
 			return
 		}

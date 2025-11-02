@@ -117,7 +117,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
@@ -126,28 +126,28 @@ final class LocalAccountDelegate: AccountDelegate {
         createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 	}
 
-	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameWebFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		feed.editedName = name
 		completion(.success(()))
 	}
 
-	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeWebFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		container.removeWebFeed(feed)
 		completion(.success(()))
 	}
 	
-	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveWebFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		from.removeWebFeed(feed)
 		to.addWebFeed(feed)
 		completion(.success(()))
 	}
 	
-	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addWebFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		container.addWebFeed(feed)
 		completion(.success(()))
 	}
 	
-	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		container.addWebFeed(feed)
 		completion(.success(()))
 	}
@@ -219,7 +219,7 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 
 private extension LocalAccountDelegate {
 	
-	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		// We need to use a batch update here because we need to assign add the feed to the
 		// container before the name has been downloaded.  This will put it in the sidebar

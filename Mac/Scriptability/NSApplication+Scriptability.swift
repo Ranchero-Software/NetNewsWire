@@ -104,10 +104,10 @@ extension NSApplication : ScriptingObjectContainer {
         for  'articles of feed "The Shape of Everything" of account "On My Mac"'
     */  
       
-    func allWebFeeds() -> [WebFeed] {
+    func allWebFeeds() -> [Feed] {
         let accounts = AccountManager.shared.activeAccounts
-        let emptyFeeds:[WebFeed] = []
-        return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [WebFeed] in
+        let emptyFeeds:[Feed] = []
+        return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
               let accountFeeds = Array(nthAccount.topLevelWebFeeds)
               return result + accountFeeds
         }

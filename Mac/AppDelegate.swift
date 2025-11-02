@@ -332,10 +332,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	@objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
+		if key == Feed.WebFeedSettingKey.homePageURL || key == Feed.WebFeedSettingKey.faviconURL {
 			_ = FaviconDownloader.shared.favicon(for: feed)
 		}
 	}

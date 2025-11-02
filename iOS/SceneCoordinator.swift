@@ -507,7 +507,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? Feed else {
 			return
 		}
 		discloseWebFeed(webFeed, animations: [.scroll, .navigation])
@@ -521,7 +521,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
+		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<Feed> else {
 			return
 		}
 		
@@ -1171,15 +1171,15 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred)
 	}
 
-	func timelineFeedIsEqualTo(_ feed: WebFeed) -> Bool {
-		guard let timelineFeed = timelineFeed as? WebFeed else {
+	func timelineFeedIsEqualTo(_ feed: Feed) -> Bool {
+		guard let timelineFeed = timelineFeed as? Feed else {
 			return false
 		}
 
 		return timelineFeed == feed
 	}
 
-	func discloseWebFeed(_ webFeed: WebFeed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
+	func discloseWebFeed(_ webFeed: Feed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
 			mainTimelineViewController?.hideSearch()
 		}
@@ -1252,7 +1252,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func showFeedInspector() {
-		let timelineWebFeed = timelineFeed as? WebFeed
+		let timelineWebFeed = timelineFeed as? Feed
 		let articleFeed = currentArticle?.webFeed
 		guard let feed = timelineWebFeed ?? articleFeed else {
 			return
@@ -1260,7 +1260,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		showFeedInspector(for: feed)
 	}
 	
-	func showFeedInspector(for feed: WebFeed) {
+	func showFeedInspector(for feed: Feed) {
 		let feedInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
 		let feedInspectorController = feedInspectorNavController.topViewController as! WebFeedInspectorViewController
@@ -1304,7 +1304,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
 		guard let node = nodeFor(indexPath),
-			let feed = node.representedObject as? WebFeed,
+			let feed = node.representedObject as? Feed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
 				return nil
@@ -1517,7 +1517,7 @@ private extension SceneCoordinator {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
-			} else if let webFeed = sidebarItem as? WebFeed {
+			} else if let webFeed = sidebarItem as? Feed {
 				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 					addParentFolderToFilterExceptions(webFeed)
@@ -1704,7 +1704,7 @@ private extension SceneCoordinator {
 	
 	func updateShowNamesAndIcons() {
 		
-		if timelineFeed is WebFeed {
+		if timelineFeed is Feed {
 			showFeedNames = {
 				for article in articles {
 					if !article.byline().isEmpty {
@@ -2115,11 +2115,11 @@ private extension SceneCoordinator {
 		return false
 	}
 	
-	func timelineFetcherContainsAnyFeed(_ feeds: Set<WebFeed>) -> Bool {
+	func timelineFetcherContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
 		
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 		
-		if let feed = timelineFeed as? WebFeed {
+		if let feed = timelineFeed as? Feed {
 			for oneFeed in feeds {
 				if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
 					return true
@@ -2292,7 +2292,7 @@ private extension SceneCoordinator {
 	}
 
 	func findWebFeedNode(webFeedID: String, beginningAt startingNode: Node) -> Node? {
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? WebFeed)?.webFeedID == webFeedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.webFeedID == webFeedID }) {
 			return node
 		}
 		return nil

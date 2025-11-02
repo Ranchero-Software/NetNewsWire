@@ -38,7 +38,7 @@ final class IconImageCache {
 		if let smartFeed = sidebarItem as? PseudoFeed {
 			return imageForSmartFeed(smartFeed, sidebarItemID)
 		}
-		if let webFeed = sidebarItem as? WebFeed, let iconImage = imageForWebFeed(webFeed, sidebarItemID) {
+		if let webFeed = sidebarItem as? Feed, let iconImage = imageForWebFeed(webFeed, sidebarItemID) {
 			return iconImage
 		}
 		if let smallIconProvider = sidebarItem as? SmallIconProvider {
@@ -80,7 +80,7 @@ private extension IconImageCache {
 		return nil
 	}
 
-	func imageForWebFeed(_ webFeed: WebFeed, _ feedID: SidebarItemIdentifier) -> IconImage? {
+	func imageForWebFeed(_ webFeed: Feed, _ feedID: SidebarItemIdentifier) -> IconImage? {
 		if let iconImage = webFeedIconImageCache[feedID] {
 			return iconImage
 		}

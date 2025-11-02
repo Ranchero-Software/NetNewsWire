@@ -153,7 +153,7 @@ struct PasteboardWebFeed: Hashable {
 	}
 }
 
-extension WebFeed: @retroactive PasteboardWriterOwner {
+extension Feed: @retroactive PasteboardWriterOwner {
 
 	public var pasteboardWriter: NSPasteboardWriting {
 		return WebFeedPasteboardWriter(webFeed: self)
@@ -162,7 +162,7 @@ extension WebFeed: @retroactive PasteboardWriterOwner {
 
 @objc final class WebFeedPasteboardWriter: NSObject, NSPasteboardWriting {
 
-	private let webFeed: WebFeed
+	private let webFeed: Feed
 	static let webFeedUTI = "com.ranchero.webFeed"
 	static let webFeedUTIType = NSPasteboard.PasteboardType(rawValue: webFeedUTI)
 	static let webFeedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.webFeed"
@@ -170,7 +170,7 @@ extension WebFeed: @retroactive PasteboardWriterOwner {
 
 	var containerID: ContainerIdentifier? = nil
 
-	init(webFeed: WebFeed) {
+	init(webFeed: Feed) {
 		self.webFeed = webFeed
 	}
 
