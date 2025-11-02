@@ -471,13 +471,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	func addOPMLItems(_ items: [RSOPMLItem]) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
-				addFeed(newWebFeed(with: feedSpecifier))
+				addFeed(newFeed(with: feedSpecifier))
 			} else {
 				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
 					folder.externalID = item.attributes?["nnw_externalID"] as? String
 					item.children?.forEach { itemChild in
 						if let feedSpecifier = itemChild.feedSpecifier {
-							folder.addFeed(newWebFeed(with: feedSpecifier))
+							folder.addFeed(newFeed(with: feedSpecifier))
 						}
 					}
 				}
@@ -551,7 +551,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return folders?.first(where: { $0.externalID == externalID })
 	}
 	
-	func newWebFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
+	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let metadata = feedMetadata(feedURL: feedURL, webFeedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
@@ -563,12 +563,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return feed
 	}
 
-	public func addWebFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.addWebFeed(for: self, with: feed, to: container, completion: completion)
+	public func addFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.addFeed(for: self, with: feed, to: container, completion: completion)
 	}
 
 	public func createWebFeed(url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
-		delegate.createWebFeed(for: self, url: url, name: name, container: container, validateFeed: validateFeed, completion: completion)
+		delegate.createFeed(for: self, url: url, name: name, container: container, validateFeed: validateFeed, completion: completion)
 	}
 	
 	func createWebFeed(with name: String?, url: String, webFeedID: String, homePageURL: String?) -> Feed {
@@ -580,19 +580,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func removeWebFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeWebFeed(for: self, with: feed, from: container, completion: completion)
+		delegate.removeFeed(for: self, with: feed, from: container, completion: completion)
 	}
 	
 	public func moveWebFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.moveWebFeed(for: self, with: feed, from: from, to: to, completion: completion)
+		delegate.moveFeed(for: self, with: feed, from: from, to: to, completion: completion)
 	}
 	
 	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.renameWebFeed(for: self, with: feed, to: name, completion: completion)
+		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
 	}
 	
 	public func restoreWebFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.restoreWebFeed(for: self, feed: feed, container: container, completion: completion)
+		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
 	
 	public func addFolder(_ name: String, completion: @escaping (Result<Folder, Error>) -> Void) {

@@ -117,7 +117,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 	
-	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
@@ -126,28 +126,28 @@ final class LocalAccountDelegate: AccountDelegate {
         createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 	}
 
-	func renameWebFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		feed.editedName = name
 		completion(.success(()))
 	}
 
-	func removeWebFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		container.removeWebFeed(feed)
 		completion(.success(()))
 	}
 	
-	func moveWebFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		from.removeWebFeed(feed)
 		to.addFeed(feed)
 		completion(.success(()))
 	}
 	
-	func addWebFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		container.addFeed(feed)
 		completion(.success(()))
 	}
 	
-	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		container.addFeed(feed)
 		completion(.success(()))
 	}

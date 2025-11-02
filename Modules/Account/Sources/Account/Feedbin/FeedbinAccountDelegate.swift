@@ -389,7 +389,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.createSubscription(url: url) { result in
@@ -421,7 +421,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func renameWebFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
@@ -448,7 +448,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 
-	func removeWebFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {
@@ -456,14 +456,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func moveWebFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if from is Account {
-			addWebFeed(for: account, with: feed, to: to, completion: completion)
+			addFeed(for: account, with: feed, to: to, completion: completion)
 		} else {
 			deleteTagging(for: account, with: feed, from: from) { result in
 				switch result {
 				case .success:
-					self.addWebFeed(for: account, with: feed, to: to, completion: completion)
+					self.addFeed(for: account, with: feed, to: to, completion: completion)
 				case .failure(let error):
 					completion(.failure(error))
 				}
@@ -471,7 +471,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func addWebFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		if let folder = container as? Folder, let webFeedID = Int(feed.webFeedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -503,10 +503,10 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
-			account.addWebFeed(existingFeed, to: container) { result in
+			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -515,7 +515,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			}
 		} else {
-			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
+			createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -536,7 +536,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			folder.topLevelFeeds.remove(feed)
 			
 			group.enter()
-			restoreWebFeed(for: account, feed: feed, container: folder) { result in
+			restoreFeed(for: account, feed: feed, container: folder) { result in
 				group.leave()
 				switch result {
 				case .success:
@@ -1019,7 +1019,7 @@ private extension FeedbinAccountDelegate {
 		}
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
-			createWebFeed(for: account, url: bestSpecifier.urlString, name: name, container: container, validateFeed: true, completion: completion)
+			createFeed(for: account, url: bestSpecifier.urlString, name: name, container: container, validateFeed: true, completion: completion)
 		} else {
 			DispatchQueue.main.async {
 				completion(.failure(FeedbinAccountDelegateError.invalidParameter))
@@ -1036,7 +1036,7 @@ private extension FeedbinAccountDelegate {
 			feed.iconURL = sub.jsonFeed?.icon
 			feed.faviconURL = sub.jsonFeed?.favicon
 		
-			account.addWebFeed(feed, to: container) { result in
+			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {

@@ -423,7 +423,7 @@ extension NewsBlurAccountDelegate {
 			webFeed.externalID = String(feed.feedID)
 			webFeed.faviconURL = feed.faviconURL
 
-			account.addWebFeed(webFeed, to: container) { result in
+			account.addFeed(webFeed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {

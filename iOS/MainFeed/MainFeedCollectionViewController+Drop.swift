@@ -129,7 +129,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		if let existingFeed = destinationContainer.account?.existingWebFeed(withURL: feed.url) {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.addWebFeed(existingFeed, to: destinationContainer) { result in
+			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
 					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in

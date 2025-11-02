@@ -316,7 +316,7 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func copyWebFeedInAccount(_ feed: Feed, _ destination: Container ) {
-		destination.account?.addWebFeed(feed, to: destination) { result in
+		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
 				break
@@ -345,7 +345,7 @@ private extension SidebarOutlineDataSource {
 		}
 		
 		if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-			destinationAccount.addWebFeed(existingFeed, to: destinationContainer) { result in
+			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
 					break
@@ -445,7 +445,7 @@ private extension SidebarOutlineDataSource {
 			case .success(let destinationFolder):
 				for feed in folder.topLevelFeeds {
 					if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-						destinationAccount.addWebFeed(existingFeed, to: destinationFolder) { result in
+						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
 							switch result {
 							case .success:
 								break

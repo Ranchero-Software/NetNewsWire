@@ -320,7 +320,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 		
-	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		
 		do {
 			guard let credentials = credentials else {
@@ -352,7 +352,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func renameWebFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
 			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
@@ -379,7 +379,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		feed.editedName = name
 	}
 	
-	func addWebFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		do {
 			guard let credentials = credentials else {
@@ -409,7 +409,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func removeWebFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder, let collectionId = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed)))
@@ -429,18 +429,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		folder.removeWebFeed(feed)
 	}
 	
-	func moveWebFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let from = from as? Folder, let to = to as? Folder else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
 			}
 		}
 		
-		addWebFeed(for: account, with: feed, to: to) { [weak self] addResult in
+		addFeed(for: account, with: feed, to: to) { [weak self] addResult in
 			switch addResult {
 				// now that we have added the feed, remove it from the other collection
 			case .success:
-				self?.removeWebFeed(for: account, with: feed, from: from) { removeResult in
+				self?.removeFeed(for: account, with: feed, from: from) { removeResult in
 					switch removeResult {
 					case .success:
 						completion(.success(()))
@@ -462,9 +462,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		to.addFeed(feed)
 	}
 	
-	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
-			account.addWebFeed(existingFeed, to: container) { result in
+			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -473,7 +473,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				}
 			}
 		} else {
-			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
+			createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -492,7 +492,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			folder.topLevelFeeds.remove(feed)
 			
 			group.enter()
-			restoreWebFeed(for: account, feed: feed, container: folder) { result in
+			restoreFeed(for: account, feed: feed, container: folder) { result in
 				group.leave()
 				switch result {
 				case .success:
