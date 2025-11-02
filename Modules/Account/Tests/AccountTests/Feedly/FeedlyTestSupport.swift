@@ -210,7 +210,7 @@ final class FeedlyTestSupport {
 			for item in articleItems where item.id == article.articleID {
 				XCTAssertEqual(article.uniqueID, item.id)
 				XCTAssertEqual(article.contentHTML, item.content)
-				XCTAssertEqual(article.webFeedID, item.feedId)
+				XCTAssertEqual(article.feedID, item.feedId)
 				XCTAssertEqual(article.rawExternalLink, item.externalUrl)
 			}
 		}

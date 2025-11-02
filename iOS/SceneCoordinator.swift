@@ -2043,7 +2043,7 @@ private extension SceneCoordinator {
 				if !unsortedArticleIDs.contains(article.articleID) {
 					updatedArticles.insert(article)
 				}
-				if article.account?.existingWebFeed(withWebFeedID: article.webFeedID) == nil {
+				if article.account?.existingWebFeed(withWebFeedID: article.feedID) == nil {
 					updatedArticles.remove(article)
 				}
 			}

@@ -23,7 +23,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 		
 		return Article(accountID: "_testID",
 				articleID: "_testArticleID",
-				webFeedID: "_testWebFeedID",
+				feedID: "_testFeedID",
 				uniqueID: UUID().uuidString,
 				title: "Chapter 1",
 				contentHTML: nil,

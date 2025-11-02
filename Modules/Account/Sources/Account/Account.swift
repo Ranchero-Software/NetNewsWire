@@ -1166,7 +1166,7 @@ private extension Account {
 
 		var unreadCountStorage = [String: Int]() // [WebFeedID: Int]
 		for article in articles where !article.status.read {
-			unreadCountStorage[article.webFeedID, default: 0] += 1
+			unreadCountStorage[article.feedID, default: 0] += 1
 		}
 		webFeeds.forEach { (webFeed) in
 			let unreadCount = unreadCountStorage[webFeed.webFeedID, default: 0]
@@ -1179,7 +1179,7 @@ private extension Account {
 		// The unread number should match the feed’s unread count.
 
 		let feedUnreadCount = articles.reduce(0) { (result, article) -> Int in
-			if article.webFeed == feed && !article.status.read {
+			if article.feed == feed && !article.status.read {
 				return result + 1
 			}
 			return result
@@ -1243,7 +1243,7 @@ private extension Account {
     }
     
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
-		let feeds = Set(articles.compactMap { $0.webFeed })
+		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
 		let articleIDs = Set(articles.map { $0.articleID })
 
@@ -1334,10 +1334,10 @@ private extension Account {
 		var webFeeds = Set<Feed>()
 
 		if let newArticles = articleChanges.newArticles {
-			webFeeds.formUnion(Set(newArticles.compactMap { $0.webFeed }))
+			webFeeds.formUnion(Set(newArticles.compactMap { $0.feed }))
 		}
 		if let updatedArticles = articleChanges.updatedArticles {
-			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.webFeed }))
+			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.feed }))
 		}
 
 		var shouldSendNotification = false

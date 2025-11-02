@@ -111,7 +111,7 @@ private extension ArticlePasteboardWriter {
 		static let articleID = "articleID" // database ID, unique per account
 		static let uniqueID = "uniqueID" // unique ID, unique per feed (guid, or possibly calculated)
 		static let feedURL = "feedURL"
-		static let webFeedID = "webFeedID" // may differ from feedURL if coming from a syncing system
+		static let feedID = "feedID" // may differ from feedURL if coming from a syncing system
 		static let title = "title"
 		static let contentHTML = "contentHTML"
 		static let contentText = "contentText"
@@ -147,7 +147,7 @@ private extension ArticlePasteboardWriter {
 			d[Key.feedURL] = feed.url
 		}
 
-		d[Key.webFeedID] = article.webFeedID
+		d[Key.feedID] = article.feedID
 		d[Key.title] = article.title ?? nil
 		d[Key.contentHTML] = article.contentHTML ?? nil
 		d[Key.contentText] = article.contentText ?? nil
