@@ -257,7 +257,7 @@ public final class WebFeed: Feed, Renamable, Hashable {
         #endif
     }
 
-	var metadata: WebFeedMetadata
+	var metadata: FeedMetadata
 
 	// MARK: - Private
 
@@ -265,7 +265,7 @@ public final class WebFeed: Feed, Renamable, Hashable {
 
 	// MARK: - Init
 
-	init(account: Account, url: String, metadata: WebFeedMetadata) {
+	init(account: Account, url: String, metadata: FeedMetadata) {
 		self.account = account
 		self.accountID = account.accountID
 		self.url = url

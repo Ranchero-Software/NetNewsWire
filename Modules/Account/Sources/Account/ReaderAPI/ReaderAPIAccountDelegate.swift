@@ -361,7 +361,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 						switch result {
 						case .success:
 							DispatchQueue.main.async {
-								account.clearWebFeedMetadata(feed)
+								account.clearFeedMetadata(feed)
 							}
 						case .failure(let error):
 							Self.logger.error("ReaderAPI: Remove feed error: \(error.localizedDescription)")
@@ -477,7 +477,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
-					account.clearWebFeedMetadata(feed)
+					account.clearFeedMetadata(feed)
 					account.removeWebFeed(feed)
 					if let folders = account.folders {
 						for folder in folders {
@@ -765,7 +765,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		for feed in account.topLevelWebFeeds {
 			if !subFeedIds.contains(feed.webFeedID) {
-				account.clearWebFeedMetadata(feed)
+				account.clearFeedMetadata(feed)
 				account.removeWebFeed(feed)
 			}
 		}

@@ -213,14 +213,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		removeWebFeedFromCloud(for: account, with: feed, from: container) { result in
 			switch result {
 			case .success:
-				account.clearWebFeedMetadata(feed)
+				account.clearFeedMetadata(feed)
 				container.removeWebFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
 				switch error {
 				case CloudKitZoneError.corruptAccount:
 					// We got into a bad state and should remove the feed to clear up the bad data
-					account.clearWebFeedMetadata(feed)
+					account.clearFeedMetadata(feed)
 					container.removeWebFeed(feed)
 				default:
 					completion(.failure(error))

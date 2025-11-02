@@ -41,7 +41,7 @@ extension WebFeed {
 		authors = Author.authorsWithParsedAuthors(parsedFeed.authors)
 	}
 
-	func postFeedSettingDidChangeNotification(_ codingKey: WebFeedMetadata.CodingKeys) {
+	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
 		let userInfo = [WebFeed.WebFeedSettingUserInfoKey: codingKey.stringValue]
 		NotificationCenter.default.post(name: .WebFeedSettingDidChange, object: self, userInfo: userInfo)
 	}

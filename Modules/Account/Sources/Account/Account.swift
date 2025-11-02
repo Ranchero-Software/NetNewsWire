@@ -208,9 +208,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	private lazy var webFeedMetadataFile = WebFeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist"), account: self)
-	typealias WebFeedMetadataDictionary = [String: WebFeedMetadata]
-	var webFeedMetadata = WebFeedMetadataDictionary()
+	private lazy var feedMetadataFile = FeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist"), account: self)
+	typealias FeedMetadataDictionary = [String: FeedMetadata]
+	var feedMetadata = FeedMetadataDictionary()
 
     public var unreadCount = 0 {
         didSet {
@@ -302,7 +302,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
 		metadataFile.load()
-		webFeedMetadataFile.load()
+		feedMetadataFile.load()
 		opmlFile.load()
 
 		DispatchQueue.main.async {
@@ -460,7 +460,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func save() {
 		metadataFile.save()
-		webFeedMetadataFile.save()
+		feedMetadataFile.save()
 		opmlFile.save()
 	}
 	
@@ -553,7 +553,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	func newWebFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> WebFeed {
 		let feedURL = opmlFeedSpecifier.feedURL
-		let metadata = webFeedMetadata(feedURL: feedURL, webFeedID: feedURL)
+		let metadata = feedMetadata(feedURL: feedURL, webFeedID: feedURL)
 		let feed = WebFeed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
 		if let feedTitle = opmlFeedSpecifier.title {
 			if feed.name == nil {
@@ -572,7 +572,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	func createWebFeed(with name: String?, url: String, webFeedID: String, homePageURL: String?) -> WebFeed {
-		let metadata = webFeedMetadata(feedURL: url, webFeedID: webFeedID)
+		let metadata = feedMetadata(feedURL: url, webFeedID: webFeedID)
 		let feed = WebFeed(account: self, url: url, metadata: metadata)
 		feed.name = name
 		feed.homePageURL = homePageURL
@@ -611,8 +611,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.restoreFolder(for: self, folder: folder, completion: completion)
 	}
 	
-	func clearWebFeedMetadata(_ feed: WebFeed) {
-		webFeedMetadata[feed.url] = nil
+	func clearFeedMetadata(_ feed: WebFeed) {
+		feedMetadata[feed.url] = nil
 	}
 	
 	func addFolder(_ folder: Folder) {
@@ -1003,10 +1003,10 @@ extension Account: AccountMetadataDelegate {
 
 // MARK: - FeedMetadataDelegate
 
-extension Account: WebFeedMetadataDelegate {
+extension Account: FeedMetadataDelegate {
 
-	func valueDidChange(_ feedMetadata: WebFeedMetadata, key: WebFeedMetadata.CodingKeys) {
-		webFeedMetadataFile.markAsDirty()
+	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
+		feedMetadataFile.markAsDirty()
 		guard let feed = existingWebFeed(withWebFeedID: feedMetadata.webFeedID) else {
 			return
 		}
@@ -1193,14 +1193,14 @@ private extension Account {
 
 private extension Account {
 
-	func webFeedMetadata(feedURL: String, webFeedID: String) -> WebFeedMetadata {
-		if let d = webFeedMetadata[feedURL] {
+	func feedMetadata(feedURL: String, webFeedID: String) -> FeedMetadata {
+		if let d = feedMetadata[feedURL] {
 			assert(d.delegate === self)
 			return d
 		}
-		let d = WebFeedMetadata(webFeedID: webFeedID)
+		let d = FeedMetadata(webFeedID: webFeedID)
 		d.delegate = self
-		webFeedMetadata[feedURL] = d
+		feedMetadata[feedURL] = d
 		return d
 	}
 

@@ -1,5 +1,5 @@
 //
-//  WebFeedMetadataFile.swift
+//  FeedMetadataFile.swift
 //  Account
 //
 //  Created by Maurice Parker on 9/13/19.
@@ -10,7 +10,7 @@ import Foundation
 import os.log
 import RSCore
 
-final class WebFeedMetadataFile {
+final class FeedMetadataFile {
 	private let fileURL: URL
 	private let account: Account
 
@@ -21,7 +21,7 @@ final class WebFeedMetadataFile {
 	}
 
 	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WebFeedMetadataFile")
+	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedMetadataFile")
 
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
@@ -35,9 +35,9 @@ final class WebFeedMetadataFile {
 	func load() {
 		if let fileData = try? Data(contentsOf: fileURL) {
 			let decoder = PropertyListDecoder()
-			account.webFeedMetadata = (try? decoder.decode(Account.WebFeedMetadataDictionary.self, from: fileData)) ?? Account.WebFeedMetadataDictionary()
+			account.feedMetadata = (try? decoder.decode(Account.FeedMetadataDictionary.self, from: fileData)) ?? Account.FeedMetadataDictionary()
 		}
-		account.webFeedMetadata.values.forEach { $0.delegate = account }
+		account.feedMetadata.values.forEach { $0.delegate = account }
 	}
 
 	func save() {
@@ -52,12 +52,12 @@ final class WebFeedMetadataFile {
 			let data = try encoder.encode(feedMetadata)
 			try data.write(to: fileURL)
 		} catch let error as NSError {
-			Self.logger.error("Save WebFeedMetadataFile file to disk failed: \(error.localizedDescription)")
+			Self.logger.error("Save FeedMetadataFile file to disk failed: \(error.localizedDescription)")
 		}
 	}
 }
 
-private extension WebFeedMetadataFile {
+private extension FeedMetadataFile {
 
 	func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
@@ -70,9 +70,9 @@ private extension WebFeedMetadataFile {
 		}
 	}
 
-	private func metadataForOnlySubscribedToFeeds() -> Account.WebFeedMetadataDictionary {
+	private func metadataForOnlySubscribedToFeeds() -> Account.FeedMetadataDictionary {
 		let webFeedIDs = account.idToWebFeedDictionary.keys
-		return account.webFeedMetadata.filter { (feedID: String, metadata: WebFeedMetadata) -> Bool in
+		return account.feedMetadata.filter { (feedID: String, metadata: FeedMetadata) -> Bool in
 			return webFeedIDs.contains(metadata.webFeedID)
 		}
 	}
