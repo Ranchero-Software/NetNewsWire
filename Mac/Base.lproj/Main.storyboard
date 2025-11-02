@@ -652,12 +652,6 @@
                                                 <action selector="openSlackGroup:" target="Ady-hI-5gd" id="5HZ-0D-vG5"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Technotes" id="4eb-qF-n9S">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="openTechnotes:" target="Ady-hI-5gd" id="O06-UA-SCO"/>
-                                            </connections>
-                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
