@@ -481,11 +481,11 @@ protocol SidebarDelegate: AnyObject {
 
 	// MARK: - API
 	
-	func selectFeed(_ feed: Feed) {
-		if isReadFiltered, let sidebarItemID = feed.sidebarItemID {
+	func selectFeed(_ sidebarItem: SidebarItem) {
+		if isReadFiltered, let sidebarItemID = sidebarItem.sidebarItemID {
 			self.treeControllerDelegate.addFilterException(sidebarItemID)
 
-			if let webFeed = feed as? WebFeed, let account = webFeed.account {
+			if let webFeed = sidebarItem as? WebFeed, let account = webFeed.account {
 				let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
 				if let parentFolderSidebarItemID = parentFolder?.sidebarItemID {
 					self.treeControllerDelegate.addFilterException(parentFolderSidebarItemID)
@@ -496,16 +496,16 @@ protocol SidebarDelegate: AnyObject {
 			rebuildTreeAndRestoreSelection()
 		}
 
-		revealAndSelectRepresentedObject(feed as AnyObject)
+		revealAndSelectRepresentedObject(sidebarItem as AnyObject)
 	}
 
 	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
 		guard let accountNode = findAccountNode(userInfo),
 			let feedNode = findFeedNode(userInfo, beginningAt: accountNode),
-			let feed = feedNode.representedObject as? Feed else {
+			let sidebarItem = feedNode.representedObject as? SidebarItem else {
 			return
 		}
-		selectFeed(feed)
+		selectFeed(sidebarItem)
 	}
 
 	func toggleReadFilter() {
@@ -547,8 +547,8 @@ private extension SidebarViewController {
 		return [Node]()
 	}
 	
-	var selectedFeeds: [Feed] {
-		selectedNodes.compactMap { $0.representedObject as? Feed }
+	var selectedFeeds: [SidebarItem] {
+		selectedNodes.compactMap { $0.representedObject as? SidebarItem }
 	}
 
 	var singleSelectedNode: Node? {
@@ -569,15 +569,15 @@ private extension SidebarViewController {
 		selectedFeeds.forEach { addToFilterExceptionsIfNecessary($0) }
 	}
 	
-	func addToFilterExceptionsIfNecessary(_ feed: Feed?) {
-		if isReadFiltered, let sidebarItemID = feed?.sidebarItemID {
-			if feed is PseudoFeed {
+	func addToFilterExceptionsIfNecessary(_ sidebarItem: SidebarItem?) {
+		if isReadFiltered, let sidebarItemID = sidebarItem?.sidebarItemID {
+			if sidebarItem is PseudoFeed {
 				treeControllerDelegate.addFilterException(sidebarItemID)
-			} else if let folderFeed = feed as? Folder {
+			} else if let folderFeed = sidebarItem as? Folder {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
-			} else if let webFeed = feed as? WebFeed {
+			} else if let webFeed = sidebarItem as? WebFeed {
 				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 					addParentFolderToFilterExceptions(webFeed)
@@ -586,8 +586,8 @@ private extension SidebarViewController {
 		}
 	}
 	
-	func addParentFolderToFilterExceptions(_ feed: Feed) {
-		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
+	func addParentFolderToFilterExceptions(_ sidebarItem: SidebarItem) {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(sidebarItem as AnyObject),
 			let folder = node.parent?.representedObject as? Folder,
 			let folderSidebarItemID = folder.sidebarItemID else {
 				return
@@ -647,7 +647,7 @@ private extension SidebarViewController {
 	}
 
 	func addTreeControllerToFilterExceptionsVisitor(node: Node) {
-		if let feed = node.representedObject as? Feed, let sidebarItemID = feed.sidebarItemID {
+		if let sidebarItem = node.representedObject as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID {
 			treeControllerDelegate.addFilterException(sidebarItemID)
 		}
 	}

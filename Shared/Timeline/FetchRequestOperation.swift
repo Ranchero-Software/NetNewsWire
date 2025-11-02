@@ -81,7 +81,7 @@ final class FetchRequestOperation {
 		}
 		
 		for fetcher in fetchers {
-			if (fetcher as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+			if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
 				fetcher.fetchUnreadArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
 					process(articles)

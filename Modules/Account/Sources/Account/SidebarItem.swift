@@ -1,5 +1,5 @@
 //
-//  Feed.swift
+//  SidebarItem.swift
 //  Account
 //
 //  Created by Maurice Parker on 11/15/19.
@@ -15,14 +15,14 @@ public enum ReadFilterType {
 	case alwaysRead
 }
 
-public protocol Feed: SidebarItemIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
+public protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 
 	var account: Account? { get }
 	var defaultReadFilterType: ReadFilterType { get }
 	
 }
 
-public extension Feed {
+public extension SidebarItem {
 	
 	func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool]) -> Bool {
 		guard defaultReadFilterType != .alwaysRead else {

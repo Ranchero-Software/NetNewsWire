@@ -31,7 +31,7 @@ struct FeedNode: Hashable {
 
 	init(_ node: Node) {
 		self.node = node
-		self.sidebarItemID = (node.representedObject as! Feed).sidebarItemID!
+		self.sidebarItemID = (node.representedObject as! SidebarItem).sidebarItemID!
 	}
 	
 	func hash(into hasher: inout Hasher) {
@@ -72,7 +72,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 
-	private(set) var preSearchTimelineFeed: Feed?
+	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
 	private var isSearching: Bool = false
@@ -157,7 +157,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	private var exceptionArticleFetcher: ArticleFetcher?
-	private(set) var timelineFeed: Feed? {
+	private(set) var timelineFeed: SidebarItem? {
 		didSet {
 			mainTimelineViewController?.updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
 			updateNavigationBarSubtitles(nil)
@@ -692,8 +692,8 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	func nodeFor(sidebarItemID: SidebarItemIdentifier) -> Node? {
 		return treeController.rootNode.descendantNode(where: { node in
-			if let feed = node.representedObject as? Feed {
-				return feed.sidebarItemID == sidebarItemID
+			if let sidebarItem = node.representedObject as? SidebarItem {
+				return sidebarItem.sidebarItemID == sidebarItemID
 			} else {
 				return false
 			}
@@ -835,9 +835,9 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return indexPathFor(node)
 	}
 	
-	func selectFeed(_ feed: Feed?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+	func selectFeed(_ sidebarItem: SidebarItem?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		let indexPath: IndexPath? = {
-			if let feed = feed, let indexPath = indexPathFor(feed as AnyObject) {
+			if let sidebarItem, let indexPath = indexPathFor(sidebarItem as AnyObject) {
 				return indexPath
 			} else {
 				return nil
@@ -861,11 +861,11 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			selectArticle(nil)
 		}
 
-		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
-			
-			self.activityManager.selecting(feed: feed)
+		if let ip = indexPath, let node = nodeFor(ip), let sidebarItem = node.representedObject as? SidebarItem {
+
+			self.activityManager.selecting(sidebarItem: sidebarItem)
 			self.rootSplitViewController.show(.supplementary)
-			setTimelineFeed(feed, animated: false) {
+			setTimelineFeed(sidebarItem, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
@@ -1499,8 +1499,8 @@ private extension SceneCoordinator {
 		articleDictionaryNeedsUpdate = false
 	}
 	
-	func ensureFeedIsAvailableToSelect(_ feed: Feed, completion: @escaping () -> Void) {
-		addToFilterExceptionsIfNecessary(feed)
+	func ensureFeedIsAvailableToSelect(_ sidebarItem: SidebarItem, completion: @escaping () -> Void) {
+		addToFilterExceptionsIfNecessary(sidebarItem)
 		addShadowTableToFilterExceptions()
 		
 		rebuildBackingStores(completion:  {
@@ -1509,15 +1509,15 @@ private extension SceneCoordinator {
 		})
 	}
 
-	func addToFilterExceptionsIfNecessary(_ feed: Feed?) {
-		if isReadFeedsFiltered, let sidebarItemID = feed?.sidebarItemID {
-			if feed is SmartFeed {
+	func addToFilterExceptionsIfNecessary(_ sidebarItem: SidebarItem?) {
+		if isReadFeedsFiltered, let sidebarItemID = sidebarItem?.sidebarItemID {
+			if sidebarItem is SmartFeed {
 				treeControllerDelegate.addFilterException(sidebarItemID)
-			} else if let folderFeed = feed as? Folder {
+			} else if let folderFeed = sidebarItem as? Folder {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
-			} else if let webFeed = feed as? WebFeed {
+			} else if let webFeed = sidebarItem as? WebFeed {
 				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 					addParentFolderToFilterExceptions(webFeed)
@@ -1526,8 +1526,8 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func addParentFolderToFilterExceptions(_ feed: Feed) {
-		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
+	func addParentFolderToFilterExceptions(_ sidebarItem: SidebarItem) {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(sidebarItem as AnyObject),
 			let folder = node.parent?.representedObject as? Folder,
 			let folderSidebarItemID = folder.sidebarItemID else {
 				return
@@ -1539,7 +1539,7 @@ private extension SceneCoordinator {
 	func addShadowTableToFilterExceptions() {
 		for section in shadowTable {
 			for feedNode in section.feedNodes {
-				if let feed = feedNode.node.representedObject as? Feed, let sidebarItemID = feed.sidebarItemID {
+				if let feed = feedNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
 			}
@@ -1669,10 +1669,10 @@ private extension SceneCoordinator {
 		return ShadowTableChanges(deletes: deletes, inserts: inserts, moves: moves, rowChanges: changes)
 	}
 
-	func shadowTableContains(_ feed: Feed) -> Bool {
+	func shadowTableContains(_ sidebarItem: SidebarItem) -> Bool {
 		for section in shadowTable {
 			for feedNode in section.feedNodes {
-				if let nodeFeed = feedNode.node.representedObject as? Feed, nodeFeed.sidebarItemID == feed.sidebarItemID {
+				if let nodeSidebarItem = feedNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
 					return true
 				}
 			}
@@ -1693,8 +1693,8 @@ private extension SceneCoordinator {
 		return indexPathFor(node)
 	}
 	
-	func setTimelineFeed(_ feed: Feed?, animated: Bool, completion: (() -> Void)? = nil) {
-		timelineFeed = feed
+	func setTimelineFeed(_ sidebarItem: SidebarItem?, animated: Bool, completion: (() -> Void)? = nil) {
+		timelineFeed = sidebarItem
 		
 		fetchAndReplaceArticlesAsync(animated: animated) {
 			self.mainTimelineViewController?.reinitializeArticles(resetScroll: true)

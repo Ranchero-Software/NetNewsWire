@@ -33,7 +33,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	var undoableCommands = [UndoableCommand]()
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 
-	private var timelineFeed: Feed? {
+	private var timelineFeed: SidebarItem? {
 		assert(coordinator != nil)
 		return coordinator?.timelineFeed
 	}

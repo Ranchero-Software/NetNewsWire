@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class WebFeed: Feed, Renamable, Hashable {
+public final class WebFeed: SidebarItem, Renamable, Hashable {
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .none

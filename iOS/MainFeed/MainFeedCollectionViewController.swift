@@ -325,14 +325,14 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
     }
 	
 	override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
 			return nil
 		}
-		if feed is WebFeed {
+		if sidebarItem is WebFeed {
 			return makeWebFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
-		} else if feed is Folder {
+		} else if sidebarItem is Folder {
 			return makeFolderContextMenu(indexPath: indexPath)
-		} else if feed is PseudoFeed  {
+		} else if sidebarItem is PseudoFeed  {
 			return makePseudoFeedContextMenu(indexPath: indexPath)
 		} else {
 			return nil
@@ -514,14 +514,14 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	}
 	
 	func configureIcon(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let sidebarItemID = feed.sidebarItemID else {
+		guard let node = coordinator.nodeFor(indexPath), let sidebarItem = node.representedObject as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID else {
 			return
 		}
 		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
 	}
 	
 	func configureIcon(_ cell: MainFeedCollectionViewFolderCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let sidebarItemID = feed.sidebarItemID else {
+		guard let node = coordinator.nodeFor(indexPath), let sidebarItem = node.representedObject as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID else {
 			return
 		}
 		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
@@ -534,9 +534,9 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
 		applyToAvailableCells { (cell, indexPath) in
 			if let node = coordinator.nodeFor(indexPath),
-			   let representedFeed = representedObject as? Feed,
-			   let candidate = node.representedObject as? Feed,
-			   representedFeed.sidebarItemID == candidate.sidebarItemID {
+			   let representedSidebarItem = representedObject as? SidebarItem,
+			   let candidateSidebarItem = node.representedObject as? SidebarItem,
+			   representedSidebarItem.sidebarItemID == candidateSidebarItem.sidebarItemID {
 				completion(cell, indexPath)
 			}
 		}
@@ -564,9 +564,9 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			indentationLevel = 1
 		}
 		
-		if let feed = node.representedObject as? Feed {
-			cell.feedTitle.text = feed.nameForDisplay
-			cell.unreadCount = feed.unreadCount
+		if let sidebarItem = node.representedObject as? SidebarItem {
+			cell.feedTitle.text = sidebarItem.nameForDisplay
+			cell.unreadCount = sidebarItem.unreadCount
 			cell.indentationLevel = indentationLevel
 			configureIcon(cell, indexPath)
 		}
@@ -1082,17 +1082,17 @@ extension MainFeedCollectionViewController {
 	}
 
 	func markAllAsReadAction(indexPath: IndexPath) -> UIAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem,
 			  let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView,
-			  feed.unreadCount > 0 else {
+			  sidebarItem.unreadCount > 0 else {
 				  return nil
 			  }
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, sidebarItem.nameForDisplay) as String
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
+				if let articles = try? sidebarItem.fetchUnreadArticles() {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
@@ -1124,10 +1124,10 @@ extension MainFeedCollectionViewController {
 
 
 	func rename(indexPath: IndexPath) {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else { return	}
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
 
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Rename feed")
-		let title = NSString.localizedStringWithFormat(formatString as NSString, feed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(formatString as NSString, sidebarItem.nameForDisplay) as String
 		
 		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
 		
@@ -1141,7 +1141,7 @@ extension MainFeedCollectionViewController {
 				return
 			}
 			
-			if let webFeed = feed as? WebFeed {
+			if let webFeed = sidebarItem as? WebFeed {
 				webFeed.rename(to: name) { result in
 					switch result {
 					case .success:
@@ -1150,7 +1150,7 @@ extension MainFeedCollectionViewController {
 						self?.presentError(error)
 					}
 				}
-			} else if let folder = feed as? Folder {
+			} else if let folder = sidebarItem as? Folder {
 				folder.rename(to: name) { result in
 					switch result {
 					case .success:
@@ -1167,7 +1167,7 @@ extension MainFeedCollectionViewController {
 		alertController.preferredAction = renameAction
 		
 		alertController.addTextField() { textField in
-			textField.text = feed.nameForDisplay
+			textField.text = sidebarItem.nameForDisplay
 			textField.placeholder = NSLocalizedString("Name", comment: "Name")
 		}
 		
@@ -1178,18 +1178,18 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func delete(indexPath: IndexPath) {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else { return	}
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
 
 		let title: String
 		let message: String
-		if feed is Folder {
+		if sidebarItem is Folder {
 			title = NSLocalizedString("Delete Folder", comment: "Delete folder")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
-			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
+			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, sidebarItem.nameForDisplay) as String
 		} else  {
 			title = NSLocalizedString("Delete Feed", comment: "Delete feed")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
-			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
+			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, sidebarItem.nameForDisplay) as String
 		}
 		
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)

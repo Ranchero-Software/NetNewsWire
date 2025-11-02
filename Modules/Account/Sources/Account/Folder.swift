@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: Feed, Renamable, Container, Hashable {
+public final class Folder: SidebarItem, Renamable, Container, Hashable {
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .read
