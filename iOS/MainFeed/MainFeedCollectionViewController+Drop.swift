@@ -113,7 +113,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		guard sourceContainer !== destinationContainer else { return }
 		
 		BatchUpdate.shared.start()
-		sourceContainer.account?.moveWebFeed(feed, from: sourceContainer, to: destinationContainer) { result in
+		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -132,7 +132,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
-					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in
+					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
 						case .success:
@@ -150,10 +150,10 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		} else {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
+			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
-					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in
+					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
 						case .success:

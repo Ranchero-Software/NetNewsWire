@@ -855,7 +855,7 @@ private extension FeedbinAccountDelegate {
 
 		// Actually add subscriptions all in one go, so we don’t trigger various rebuilding things that Account does.
 		subscriptionsToAdd.forEach { subscription in
-			let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
+			let feed = account.createFeed(with: subscription.name, url: subscription.url, webFeedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
 			feed.externalID = String(subscription.subscriptionID)
 			account.addFeed(feed)
 		}
@@ -1031,7 +1031,7 @@ private extension FeedbinAccountDelegate {
 		
 		DispatchQueue.main.async {
 			
-			let feed = account.createWebFeed(with: sub.name, url: sub.url, webFeedID: String(sub.feedID), homePageURL: sub.homePageURL)
+			let feed = account.createFeed(with: sub.name, url: sub.url, webFeedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.externalID = String(sub.subscriptionID)
 			feed.iconURL = sub.jsonFeed?.icon
 			feed.faviconURL = sub.jsonFeed?.favicon

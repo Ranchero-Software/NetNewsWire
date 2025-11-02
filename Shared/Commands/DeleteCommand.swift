@@ -152,7 +152,7 @@ private struct SidebarItemSpecifier {
 			}
 			
 			BatchUpdate.shared.start()
-			account?.removeWebFeed(webFeed, from: container) { result in
+			account?.removeFeed(webFeed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
@@ -187,7 +187,7 @@ private struct SidebarItemSpecifier {
 		}
 		
 		BatchUpdate.shared.start()
-		account.restoreWebFeed(feed, container: container) { result in
+		account.restoreFeed(feed, container: container) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}

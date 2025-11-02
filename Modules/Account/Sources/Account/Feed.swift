@@ -30,10 +30,10 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 
 	public var webFeedID: String {
 		get {
-			return metadata.webFeedID
+			return metadata.feedID
 		}
 		set {
-			metadata.webFeedID = newValue
+			metadata.feedID = newValue
 		}
 	}
 

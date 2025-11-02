@@ -81,7 +81,7 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
 				} else {
 					container = account
 				}
-				account.removeWebFeed(scriptableFeed.webFeed, from: container!) { result in
+				account.removeFeed(scriptableFeed.webFeed, from: container!) { result in
 				}
 			}
 		}

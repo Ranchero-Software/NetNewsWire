@@ -118,7 +118,7 @@ extension NewsBlurAccountDelegate {
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
 		feedsToAdd.forEach { feed in
-			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
+			let webFeed = account.createFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
 			webFeed.externalID = String(feed.feedID)
 			account.addFeed(webFeed)
 		}
@@ -419,7 +419,7 @@ extension NewsBlurAccountDelegate {
 		}
 
 		DispatchQueue.main.async {
-			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
+			let webFeed = account.createFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
 			webFeed.externalID = String(feed.feedID)
 			webFeed.faviconURL = feed.faviconURL
 

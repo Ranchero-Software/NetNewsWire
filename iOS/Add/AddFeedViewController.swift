@@ -106,7 +106,7 @@ final class AddFeedViewController: UITableViewController {
 		
 		BatchUpdate.shared.start()
 		
-		account!.createWebFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
+		account!.createFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
 
 			BatchUpdate.shared.end()
 			

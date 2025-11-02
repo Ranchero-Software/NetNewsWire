@@ -32,7 +32,7 @@ extension SidebarViewController {
 
 		switch object {
 		case is Feed:
-			return menuForWebFeed(object as! Feed)
+			return menuForFeed(object as! Feed)
 		case is Folder:
 			return menuForFolder(object as! Folder)
 		case is PseudoFeed:
@@ -206,34 +206,34 @@ private extension SidebarViewController {
 		return menu
 	}
 
-	func menuForWebFeed(_ webFeed: Feed) -> NSMenu? {
+	func menuForFeed(_ feed: Feed) -> NSMenu? {
 
 		let menu = NSMenu(title: "")
 
-		if webFeed.unreadCount > 0 {
-			menu.addItem(markAllReadMenuItem([webFeed]))
+		if feed.unreadCount > 0 {
+			menu.addItem(markAllReadMenuItem([feed]))
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		if let homePageURL = webFeed.homePageURL, let _ = URL(string: homePageURL) {
+		if let homePageURL = feed.homePageURL, let _ = URL(string: homePageURL) {
 			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL, image: AppAssets.openInBrowserImage)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), webFeed.url, image: AppAssets.copyImage)
+		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), feed.url, image: AppAssets.copyImage)
 		menu.addItem(copyFeedURLItem)
 
-		if let homePageURL = webFeed.homePageURL {
+		if let homePageURL = feed.homePageURL {
 			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL, image: AppAssets.copyImage)
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
 		
-		let notificationText = webFeed.notificationDisplayName.capitalized
+		let notificationText = feed.notificationDisplayName.capitalized
 		
-		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed, image: AppAssets.notificationImage)
-		if webFeed.isNotifyAboutNewArticles == nil || webFeed.isNotifyAboutNewArticles! == false {
+		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed, image: AppAssets.notificationImage)
+		if feed.isNotifyAboutNewArticles == nil || feed.isNotifyAboutNewArticles! == false {
 			notificationMenuItem.state = .off
 		} else {
 			notificationMenuItem.state = .on
@@ -241,9 +241,9 @@ private extension SidebarViewController {
 		menu.addItem(notificationMenuItem)
 
 		let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
-		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed, image: AppAssets.articleExtractorOff)
+		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), feed, image: AppAssets.articleExtractorOff)
 
-		if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
+		if feed.isArticleExtractorAlwaysOn == nil || feed.isArticleExtractorAlwaysOn! == false {
 			articleExtractorMenuItem.state = .off
 		} else {
 			articleExtractorMenuItem.state = .on
@@ -252,8 +252,8 @@ private extension SidebarViewController {
 
 		menu.addItem(NSMenuItem.separator())
 		
-		menu.addItem(renameMenuItem(webFeed))
-		menu.addItem(deleteMenuItem([webFeed]))
+		menu.addItem(renameMenuItem(feed))
+		menu.addItem(deleteMenuItem([feed]))
 
 		return menu
 	}

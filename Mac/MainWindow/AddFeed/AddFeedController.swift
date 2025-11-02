@@ -65,7 +65,7 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 			return
 		}
 
-		account.createWebFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
+		account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
 			
 			DispatchQueue.main.async {
 				self.endShowingProgress()

@@ -85,7 +85,7 @@ final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjec
         guard let account = feed.account else { return nil }
         
         // Find the proper container hierarchy
-        let containers = account.existingContainers(withWebFeed: feed)
+        let containers = account.existingContainers(withFeed: feed)
         var folder: Folder? = nil
         
         // Check if feed is in a folder
@@ -120,7 +120,7 @@ final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjec
         // suspendExecution(). When we get the callback, we supply the event result and call resumeExecution().
         command.suspendExecution()
         
-		account.createWebFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
+		account.createFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
 			switch result {
 			case .success(let feed):
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])

@@ -592,7 +592,7 @@ private extension CloudKitAccountDelegate {
 	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		func addDeadFeed() {
-			let feed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+			let feed = account.createFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 			container.addFeed(feed)
 
 			self.accountZone.createWebFeed(url: url.absoluteString,
@@ -636,7 +636,7 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 
-				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+				let feed = account.createFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 				feed.editedName = editedName
 				container.addFeed(feed)
 

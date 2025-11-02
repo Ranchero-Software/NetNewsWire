@@ -328,7 +328,7 @@ private extension SidebarOutlineDataSource {
 	
 	func moveWebFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
 		BatchUpdate.shared.start()
-		source.account?.moveWebFeed(feed, from: source, to: destination) { result in
+		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -354,7 +354,7 @@ private extension SidebarOutlineDataSource {
 				}
 			}
 		} else {
-			destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
+			destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
 					break
@@ -454,7 +454,7 @@ private extension SidebarOutlineDataSource {
 							}
 						}
 					} else {
-						destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
+						destinationAccount.createFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
 							switch result {
 							case .success:
 								break
