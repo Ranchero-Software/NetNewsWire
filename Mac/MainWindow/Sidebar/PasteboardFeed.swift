@@ -13,7 +13,7 @@ import RSCore
 
 typealias PasteboardWebFeedDictionary = [String: String]
 
-struct PasteboardWebFeed: Hashable {
+struct PasteboardFeed: Hashable {
 
 	fileprivate struct Key {
 		static let url = "URL"
@@ -107,11 +107,11 @@ struct PasteboardWebFeed: Hashable {
 		return nil
 	}
 
-	static func pasteboardFeeds(with pasteboard: NSPasteboard) -> Set<PasteboardWebFeed>? {
+	static func pasteboardFeeds(with pasteboard: NSPasteboard) -> Set<PasteboardFeed>? {
 		guard let items = pasteboard.pasteboardItems else {
 			return nil
 		}
-		let webFeeds = items.compactMap { PasteboardWebFeed(pasteboardItem: $0) }
+		let webFeeds = items.compactMap { PasteboardFeed(pasteboardItem: $0) }
 		return webFeeds.isEmpty ? nil : Set(webFeeds)
 	}
 
@@ -129,25 +129,25 @@ struct PasteboardWebFeed: Hashable {
 
 	func internalDictionary() -> PasteboardWebFeedDictionary {
 		var d = PasteboardWebFeedDictionary()
-		d[PasteboardWebFeed.Key.webFeedID] = webFeedID
-		d[PasteboardWebFeed.Key.url] = url
+		d[PasteboardFeed.Key.webFeedID] = webFeedID
+		d[PasteboardFeed.Key.url] = url
 		if let homePageURL = homePageURL {
-			d[PasteboardWebFeed.Key.homePageURL] = homePageURL
+			d[PasteboardFeed.Key.homePageURL] = homePageURL
 		}
 		if let name = name {
-			d[PasteboardWebFeed.Key.name] = name
+			d[PasteboardFeed.Key.name] = name
 		}
 		if let editedName = editedName {
-			d[PasteboardWebFeed.Key.editedName] = editedName
+			d[PasteboardFeed.Key.editedName] = editedName
 		}
 		if let accountID = accountID {
-			d[PasteboardWebFeed.Key.accountID] = accountID
+			d[PasteboardFeed.Key.accountID] = accountID
 		}
 		if let accountType = accountType {
-			d[PasteboardWebFeed.Key.accountType] = String(accountType.rawValue)
+			d[PasteboardFeed.Key.accountType] = String(accountType.rawValue)
 		}
 		if let containerName = containerName {
-			d[PasteboardWebFeed.Key.containerName] = containerName
+			d[PasteboardFeed.Key.containerName] = containerName
 		}
 		return d
 	}
@@ -204,8 +204,8 @@ extension Feed: @retroactive PasteboardWriterOwner {
 
 private extension WebFeedPasteboardWriter {
 
-	var pasteboardFeed: PasteboardWebFeed {
-		return PasteboardWebFeed(url: webFeed.url, webFeedID: webFeed.webFeedID, homePageURL: webFeed.homePageURL, name: webFeed.name, editedName: webFeed.editedName, accountID: webFeed.account?.accountID, accountType: webFeed.account?.type)
+	var pasteboardFeed: PasteboardFeed {
+		return PasteboardFeed(url: webFeed.url, webFeedID: webFeed.webFeedID, homePageURL: webFeed.homePageURL, name: webFeed.name, editedName: webFeed.editedName, accountID: webFeed.account?.accountID, accountType: webFeed.account?.type)
 	}
 
 	var exportDictionary: PasteboardWebFeedDictionary {
@@ -214,10 +214,10 @@ private extension WebFeedPasteboardWriter {
 
 	var internalDictionary: PasteboardWebFeedDictionary {
 		var dictionary = pasteboardFeed.internalDictionary()
-		if dictionary[PasteboardWebFeed.Key.containerName] == nil,
+		if dictionary[PasteboardFeed.Key.containerName] == nil,
 		   case let .folder(accountID, folderName) = containerID {
-			assert(accountID == dictionary[PasteboardWebFeed.Key.accountID], "unexpected: container account doesn't match account of contained item")
-			dictionary[PasteboardWebFeed.Key.containerName] = folderName
+			assert(accountID == dictionary[PasteboardFeed.Key.accountID], "unexpected: container account doesn't match account of contained item")
+			dictionary[PasteboardFeed.Key.containerName] = folderName
 		}
 		return dictionary
 	}
