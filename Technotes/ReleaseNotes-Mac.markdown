@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 6.2 build 6200 1 Nov 2025 - branch main tag: mac-6.2
+
+Bump version and do release build
+
 ### 6.2b4 build 6145 29 Oct 2025 - branch main tag: mac-6.2b4
 
 Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body
