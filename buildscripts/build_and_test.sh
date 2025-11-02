@@ -9,7 +9,7 @@ PROJECT_PATH="NetNewsWire.xcodeproj"
 SCHEME_MAC="NetNewsWire"
 SCHEME_IOS="NetNewsWire-iOS"
 DESTINATION_MAC="platform=macOS,arch=arm64"
-DESTINATION_IOS="platform=iOS Simulator,name=iPhone 16"
+DESTINATION_IOS="platform=iOS Simulator,name=iPhone 17"
 
 echo "🛠 Building macOS target..."
 xcodebuild \
