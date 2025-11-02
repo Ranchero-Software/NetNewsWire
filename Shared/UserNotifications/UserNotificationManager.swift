@@ -26,7 +26,7 @@ final class UserNotificationManager: NSObject {
 		}
 		
 		for article in articles {
-			if !article.status.read, let webFeed = article.webFeed, webFeed.isNotifyAboutNewArticles ?? false {
+			if !article.status.read, let webFeed = article.feed, webFeed.isNotifyAboutNewArticles ?? false {
 				sendNotification(webFeed: webFeed, article: article)
 			}
 		}

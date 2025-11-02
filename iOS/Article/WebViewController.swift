@@ -114,7 +114,7 @@ final class WebViewController: UIViewController {
 		if article != self.article {
 			self.article = article
 			if updateView {
-				if article?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+				if article?.feed?.isArticleExtractorAlwaysOn ?? false {
 					startArticleExtractor()
 				}
 				windowScrollY = 0
@@ -451,7 +451,7 @@ extension WebViewController: WKScriptMessageHandler {
 		case MessageName.imageWasClicked:
 			imageWasClicked(body: message.body as? String)
 		case MessageName.showFeedInspector:
-			if let webFeed = article?.webFeed {
+			if let webFeed = article?.feed {
 				coordinator.showFeedInspector(for: webFeed)
 			}
 		default:

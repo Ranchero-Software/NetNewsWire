@@ -52,7 +52,7 @@ final class IconImageCache {
 		if let iconImage = imageForAuthors(article.authors) {
 			return iconImage
 		}
-		guard let feed = article.webFeed else {
+		guard let feed = article.feed else {
 			return nil
 		}
 		return imageForFeed(feed)

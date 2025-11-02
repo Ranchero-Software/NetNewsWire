@@ -42,7 +42,7 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 
 extension Article {
 	
-	var webFeed: Feed? {
+	var feed: Feed? {
 		return account?.existingWebFeed(withWebFeedID: webFeedID)
 	}
 	
@@ -135,7 +135,7 @@ extension Article {
 	}
 	
 	func byline() -> String {
-		guard let authors = authors ?? webFeed?.authors, !authors.isEmpty else {
+		guard let authors = authors ?? feed?.authors, !authors.isEmpty else {
 			return ""
 		}
 
@@ -143,7 +143,7 @@ extension Article {
 		// This code assumes that multiple authors would never match the feed name so that
 		// if there feed owner has an article co-author all authors are given the byline.
 		if authors.count == 1, let author = authors.first {
-			if author.name == webFeed?.nameForDisplay {
+			if author.name == feed?.nameForDisplay {
 				return ""
 			}
 		}
@@ -211,7 +211,7 @@ extension Article {
 extension Article: SortableArticle {
 	
 	var sortableName: String {
-		return webFeed?.name ?? ""
+		return feed?.name ?? ""
 	}
 	
 	var sortableDate: Date {

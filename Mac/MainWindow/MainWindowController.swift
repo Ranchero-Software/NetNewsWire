@@ -611,7 +611,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		if let articles = articles {
 			if articles.count == 1 {
 				activityManager.reading(feed: nil, article: articles.first)
-				if articles.first?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {
@@ -1124,7 +1124,7 @@ private extension MainWindowController {
 			return currentLink != nil
 		}
 
-		if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
+		if currentTimelineViewController?.selectedArticles.first?.feed != nil {
 			toolbarButton.isEnabled = true
 		}
 

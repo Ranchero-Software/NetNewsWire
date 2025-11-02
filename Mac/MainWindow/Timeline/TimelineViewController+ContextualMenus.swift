@@ -171,7 +171,7 @@ private extension TimelineViewController {
 
 		menu.addSeparatorIfNeeded()
 		
-		if articles.count == 1, let feed = articles.first!.webFeed {
+		if articles.count == 1, let feed = articles.first!.feed {
 			if !(representedObjects?.contains(where: { $0 as? Feed == feed }) ?? false) {
 				menu.addItem(selectFeedInSidebarMenuItem(feed))
 			}

@@ -619,7 +619,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			if article.webFeed == feed {
+			if article.feed == feed {
 				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
 					cell.setIconImage(image)
 				}
@@ -834,7 +834,7 @@ private extension MainTimelineViewController {
 		let iconImage = iconImageFor(article)
 		let showFeedNames = coordinator?.showFeedNames ?? ShowFeedName.none
 		let showIcon = showIcons && iconImage != nil
-		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		return cellData
 	}
 	
@@ -983,7 +983,7 @@ private extension MainTimelineViewController {
 	}
 
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let webFeed = article.webFeed,
+		guard let webFeed = article.feed,
 			!timelineFeedIsEqualTo(webFeed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
@@ -994,7 +994,7 @@ private extension MainTimelineViewController {
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed,
+		guard let webFeed = article.feed,
 			!timelineFeedIsEqualTo(webFeed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
@@ -1011,7 +1011,7 @@ private extension MainTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.feed else { return nil }
 		guard let fetchedArticles = try? webFeed.fetchArticles() else {
 			return nil
 		}
@@ -1034,7 +1034,7 @@ private extension MainTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.feed else { return nil }
 		guard let fetchedArticles = try? webFeed.fetchArticles() else {
 			return nil
 		}

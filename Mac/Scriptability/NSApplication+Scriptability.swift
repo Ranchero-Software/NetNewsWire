@@ -30,7 +30,7 @@ extension NSApplication : ScriptingObjectContainer {
     func currentArticle() -> ScriptableArticle? {
         var scriptableArticle: ScriptableArticle?
         if let currentArticle = appDelegate.scriptingCurrentArticle {
-            if let feed = currentArticle.webFeed,
+            if let feed = currentArticle.feed,
                let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
                 scriptableArticle = ScriptableArticle(currentArticle, container: scriptableFeed)
             }
@@ -42,7 +42,7 @@ extension NSApplication : ScriptingObjectContainer {
     func selectedArticles() -> NSArray {
         let articles = appDelegate.scriptingSelectedArticles
         let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
-            if let feed = article.webFeed,
+            if let feed = article.feed,
                let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
                 return ScriptableArticle(article, container:scriptableFeed)
             } else {
@@ -63,7 +63,7 @@ extension NSApplication : ScriptingObjectContainer {
         guard index >= 0 && index < articles.count else { return nil }
         let article = articles[index]
         
-        if let feed = article.webFeed,
+        if let feed = article.feed,
            let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
             return ScriptableArticle(article, container: scriptableFeed)
         } else {

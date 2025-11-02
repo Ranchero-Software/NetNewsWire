@@ -96,7 +96,7 @@ private extension ArticlePasteboardWriter {
 
 		s += "Date: \(article.logicalDatePublished)\n\n"
 
-		if let feed = article.webFeed {
+		if let feed = article.feed {
 			s += "Feed: \(feed.nameForDisplay)\n"
 			if let homePageURL = feed.homePageURL {
 				s += "Home page: \(homePageURL)\n"
@@ -143,7 +143,7 @@ private extension ArticlePasteboardWriter {
 		d[Key.articleID] = article.articleID
 		d[Key.uniqueID] = article.uniqueID
 
-		if let feed = article.webFeed {
+		if let feed = article.feed {
 			d[Key.feedURL] = feed.url
 		}
 
