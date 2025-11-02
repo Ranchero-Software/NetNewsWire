@@ -11,7 +11,7 @@ import Articles
 import Account
 import RSCore
 
-typealias PasteboardWebFeedDictionary = [String: String]
+typealias PasteboardFeedDictionary = [String: String]
 
 struct PasteboardFeed: Hashable {
 
@@ -23,13 +23,13 @@ struct PasteboardFeed: Hashable {
 		// Internal
 		static let accountID = "accountID"
 		static let accountType = "accountType"
-		static let webFeedID = "webFeedID"
+		static let feedID = "feedID"
 		static let editedName = "editedName"
 		static let containerName = "containerName"
 	}
 
 	let url: String
-	let webFeedID: String?
+	let feedID: String?
 	let homePageURL: String?
 	let name: String?
 	let editedName: String?
@@ -38,9 +38,9 @@ struct PasteboardFeed: Hashable {
 	let containerName: String?
 	let isLocalFeed: Bool
 
-	init(url: String, webFeedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?, accountType: AccountType?, containerName: String? = nil) {
+	init(url: String, feedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?, accountType: AccountType?, containerName: String? = nil) {
 		self.url = url.normalizedURL
-		self.webFeedID = webFeedID
+		self.feedID = feedID
 		self.homePageURL = homePageURL?.normalizedURL
 		self.name = name
 		self.editedName = editedName
@@ -52,7 +52,7 @@ struct PasteboardFeed: Hashable {
 
 	// MARK: - Reading
 
-	init?(dictionary: PasteboardWebFeedDictionary) {
+	init?(dictionary: PasteboardFeedDictionary) {
 		guard let url = dictionary[Key.url] else {
 			return nil
 		}
@@ -60,7 +60,7 @@ struct PasteboardFeed: Hashable {
 		let homePageURL = dictionary[Key.homePageURL]
 		let name = dictionary[Key.name]
 		let accountID = dictionary[Key.accountID]
-		let webFeedID = dictionary[Key.webFeedID]
+		let feedID = dictionary[Key.feedID]
 		let editedName = dictionary[Key.editedName]
 
 		var accountType: AccountType? = nil
@@ -69,19 +69,19 @@ struct PasteboardFeed: Hashable {
 		}
 		
 		let containerName = dictionary[Key.containerName]
-		self.init(url: url, webFeedID: webFeedID, homePageURL: homePageURL, name: name, editedName: editedName, accountID: accountID, accountType: accountType, containerName: containerName)
+		self.init(url: url, feedID: feedID, homePageURL: homePageURL, name: name, editedName: editedName, accountID: accountID, accountType: accountType, containerName: containerName)
 	}
 
 	init?(pasteboardItem: NSPasteboardItem) {
 		var pasteboardType: NSPasteboard.PasteboardType?
-		if pasteboardItem.types.contains(WebFeedPasteboardWriter.webFeedUTIInternalType) {
-			pasteboardType = WebFeedPasteboardWriter.webFeedUTIInternalType
+		if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIInternalType) {
+			pasteboardType = FeedPasteboardWriter.feedUTIInternalType
 		}
-		else if pasteboardItem.types.contains(WebFeedPasteboardWriter.webFeedUTIType) {
-			pasteboardType = WebFeedPasteboardWriter.webFeedUTIType
+		else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
+			pasteboardType = FeedPasteboardWriter.feedUTIType
 		}
 		if let foundType = pasteboardType {
-			if let feedDictionary = pasteboardItem.propertyList(forType: foundType) as? PasteboardWebFeedDictionary {
+			if let feedDictionary = pasteboardItem.propertyList(forType: foundType) as? PasteboardFeedDictionary {
 				self.init(dictionary: feedDictionary)
 				return
 			}
@@ -98,7 +98,7 @@ struct PasteboardFeed: Hashable {
 		if let foundType = pasteboardType {
 			if let possibleURLString = pasteboardItem.string(forType: foundType) {
 				if possibleURLString.mayBeURL {
-					self.init(url: possibleURLString, webFeedID: nil, homePageURL: nil, name: nil, editedName: nil, accountID: nil, accountType: nil)
+					self.init(url: possibleURLString, feedID: nil, homePageURL: nil, name: nil, editedName: nil, accountID: nil, accountType: nil)
 					return
 				}
 			}
@@ -111,14 +111,14 @@ struct PasteboardFeed: Hashable {
 		guard let items = pasteboard.pasteboardItems else {
 			return nil
 		}
-		let webFeeds = items.compactMap { PasteboardFeed(pasteboardItem: $0) }
-		return webFeeds.isEmpty ? nil : Set(webFeeds)
+		let feeds = items.compactMap { PasteboardFeed(pasteboardItem: $0) }
+		return feeds.isEmpty ? nil : Set(feeds)
 	}
 
 	// MARK: - Writing
 
-	func exportDictionary() -> PasteboardWebFeedDictionary {
-		var d = PasteboardWebFeedDictionary()
+	func exportDictionary() -> PasteboardFeedDictionary {
+		var d = PasteboardFeedDictionary()
 		d[Key.url] = url
 		d[Key.homePageURL] = homePageURL ?? ""
 		if let nameForDisplay = editedName ?? name {
@@ -127,9 +127,9 @@ struct PasteboardFeed: Hashable {
 		return d
 	}
 
-	func internalDictionary() -> PasteboardWebFeedDictionary {
-		var d = PasteboardWebFeedDictionary()
-		d[PasteboardFeed.Key.webFeedID] = webFeedID
+	func internalDictionary() -> PasteboardFeedDictionary {
+		var d = PasteboardFeedDictionary()
+		d[PasteboardFeed.Key.feedID] = feedID
 		d[PasteboardFeed.Key.url] = url
 		if let homePageURL = homePageURL {
 			d[PasteboardFeed.Key.homePageURL] = homePageURL
@@ -156,29 +156,29 @@ struct PasteboardFeed: Hashable {
 extension Feed: @retroactive PasteboardWriterOwner {
 
 	public var pasteboardWriter: NSPasteboardWriting {
-		return WebFeedPasteboardWriter(webFeed: self)
+		return FeedPasteboardWriter(feed: self)
 	}
 }
 
-@objc final class WebFeedPasteboardWriter: NSObject, NSPasteboardWriting {
+@objc final class FeedPasteboardWriter: NSObject, NSPasteboardWriting {
 
-	private let webFeed: Feed
-	static let webFeedUTI = "com.ranchero.webFeed"
-	static let webFeedUTIType = NSPasteboard.PasteboardType(rawValue: webFeedUTI)
-	static let webFeedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.webFeed"
-	static let webFeedUTIInternalType = NSPasteboard.PasteboardType(rawValue: webFeedUTIInternal)
+	private let feed: Feed
+	static let feedUTI = "com.ranchero.feed"
+	static let feedUTIType = NSPasteboard.PasteboardType(rawValue: feedUTI)
+	static let feedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.feed"
+	static let feedUTIInternalType = NSPasteboard.PasteboardType(rawValue: feedUTIInternal)
 
 	var containerID: ContainerIdentifier? = nil
 
-	init(webFeed: Feed) {
-		self.webFeed = webFeed
+	init(feed: Feed) {
+		self.feed = feed
 	}
 
 	// MARK: - NSPasteboardWriting
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 
-		return [WebFeedPasteboardWriter.webFeedUTIType, .URL, .string, WebFeedPasteboardWriter.webFeedUTIInternalType]
+		return [FeedPasteboardWriter.feedUTIType, .URL, .string, FeedPasteboardWriter.feedUTIInternalType]
 	}
 
 	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
@@ -187,12 +187,12 @@ extension Feed: @retroactive PasteboardWriterOwner {
 
 		switch type {
 		case .string:
-			plist = webFeed.nameForDisplay
+			plist = feed.nameForDisplay
 		case .URL:
-			plist = webFeed.url
-		case WebFeedPasteboardWriter.webFeedUTIType:
+			plist = feed.url
+		case FeedPasteboardWriter.feedUTIType:
 			plist = exportDictionary
-		case WebFeedPasteboardWriter.webFeedUTIInternalType:
+		case FeedPasteboardWriter.feedUTIInternalType:
 			plist = internalDictionary
 		default:
 			plist = nil
@@ -202,17 +202,17 @@ extension Feed: @retroactive PasteboardWriterOwner {
 	}
 }
 
-private extension WebFeedPasteboardWriter {
+private extension FeedPasteboardWriter {
 
 	var pasteboardFeed: PasteboardFeed {
-		return PasteboardFeed(url: webFeed.url, webFeedID: webFeed.webFeedID, homePageURL: webFeed.homePageURL, name: webFeed.name, editedName: webFeed.editedName, accountID: webFeed.account?.accountID, accountType: webFeed.account?.type)
+		return PasteboardFeed(url: feed.url, feedID: feed.webFeedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID, accountType: feed.account?.type)
 	}
 
-	var exportDictionary: PasteboardWebFeedDictionary {
+	var exportDictionary: PasteboardFeedDictionary {
 		return pasteboardFeed.exportDictionary()
 	}
 
-	var internalDictionary: PasteboardWebFeedDictionary {
+	var internalDictionary: PasteboardFeedDictionary {
 		var dictionary = pasteboardFeed.internalDictionary()
 		if dictionary[PasteboardFeed.Key.containerName] == nil,
 		   case let .folder(accountID, folderName) = containerID {

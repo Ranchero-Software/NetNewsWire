@@ -50,7 +50,7 @@ import Account
 		// WebFeed objects don't have knowledge of their parent so we inject parent container information
 		// into WebFeedPasteboardWriter instance and it adds this field to the PasteboardWebFeed objects it writes.
 		// Add similar to FolderPasteboardWriter if/when we allow sub-folders
-		if let feedWriter = pasteboardWriter as? WebFeedPasteboardWriter {
+		if let feedWriter = pasteboardWriter as? FeedPasteboardWriter {
 			if let parentContainerID = (node.parent?.representedObject as? Folder)?.containerID {
 				feedWriter.containerID = parentContainerID
 				pasteboardWriter = feedWriter
@@ -373,7 +373,7 @@ private extension SidebarOutlineDataSource {
 		draggedFeeds.forEach { pasteboardFeed in
 			guard let sourceAccountID = pasteboardFeed.accountID,
 				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
-				  let webFeedID = pasteboardFeed.webFeedID,
+				  let webFeedID = pasteboardFeed.feedID,
 				  let feed = sourceAccount.existingWebFeed(withWebFeedID:  webFeedID),
 				  let destinationContainer = parentNode.representedObject as? Container
 			else {
