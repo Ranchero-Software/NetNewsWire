@@ -40,7 +40,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
 	var userNotificationManager: UserNotificationManager!
-	var faviconDownloader: FaviconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	var widgetDataEncoder: WidgetDataEncoder!
@@ -237,14 +236,7 @@ private extension AppDelegate {
 	
 	private func initializeDownloaders() {
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
 		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-
-		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
-		let faviconsFolder = faviconsFolderURL.absoluteString
-		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
-		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
-
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
 	}
 

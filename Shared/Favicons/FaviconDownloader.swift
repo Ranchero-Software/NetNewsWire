@@ -21,6 +21,7 @@ extension Notification.Name {
 }
 
 final class FaviconDownloader {
+	static let shared = FaviconDownloader()
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -53,8 +54,9 @@ final class FaviconDownloader {
 		static let faviconURL = "faviconURL"
 	}
 
-	init(folder: String) {
-
+	init() {
+		let folderURL = AppConfig.cacheSubfolder(named: "Favicons")
+		let folder = folderURL.path
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")

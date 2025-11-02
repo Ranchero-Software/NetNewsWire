@@ -39,7 +39,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 	
 	var userNotificationManager: UserNotificationManager!
-	var faviconDownloader: FaviconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 
@@ -156,11 +155,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
 		}
-
-		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
-		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
-		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
-		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
 
 		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
 		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
@@ -342,7 +336,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			return
 		}
 		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
-			let _ = faviconDownloader.favicon(for: feed)
+			_ = FaviconDownloader.shared.favicon(for: feed)
 		}
 	}
 
