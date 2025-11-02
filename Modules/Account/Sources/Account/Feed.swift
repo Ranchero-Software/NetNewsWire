@@ -1,5 +1,5 @@
 //
-//  WebFeed.swift
+//  Feed.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 7/1/17.

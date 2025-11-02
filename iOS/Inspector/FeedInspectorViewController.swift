@@ -11,7 +11,7 @@ import Account
 import SafariServices
 import UserNotifications
 
-final class WebFeedInspectorViewController: UITableViewController {
+final class FeedInspectorViewController: UITableViewController {
 	
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 500.0)
 	
@@ -128,7 +128,7 @@ final class WebFeedInspectorViewController: UITableViewController {
 
 // MARK: Table View
 
-extension WebFeedInspectorViewController {
+extension FeedInspectorViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		let numberOfSections = super.numberOfSections(in: tableView)
@@ -186,7 +186,7 @@ extension WebFeedInspectorViewController {
 
 // MARK: UITextFieldDelegate
 
-extension WebFeedInspectorViewController: UITextFieldDelegate {
+extension FeedInspectorViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
@@ -197,7 +197,7 @@ extension WebFeedInspectorViewController: UITextFieldDelegate {
 
 // MARK: UNUserNotificationCenter
 
-extension WebFeedInspectorViewController {
+extension FeedInspectorViewController {
 	
 	@objc
 	func updateNotificationSettings() {
