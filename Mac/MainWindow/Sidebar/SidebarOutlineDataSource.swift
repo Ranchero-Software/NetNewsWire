@@ -443,7 +443,7 @@ private extension SidebarOutlineDataSource {
 		destinationAccount.addFolder(folder.name ?? "") { result in
 			switch result {
 			case .success(let destinationFolder):
-				for feed in folder.topLevelWebFeeds {
+				for feed in folder.topLevelFeeds {
 					if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
 						destinationAccount.addWebFeed(existingFeed, to: destinationFolder) { result in
 							switch result {

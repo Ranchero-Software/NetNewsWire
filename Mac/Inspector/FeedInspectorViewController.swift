@@ -35,7 +35,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	let isFallbackInspector = false
 	var objects: [Any]? {
 		didSet {
-			renameWebFeedIfNecessary()
+			renameFeedIfNecessary()
 			updateFeed()
 		}
 	}
@@ -58,7 +58,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	}
 	
 	override func viewDidDisappear() {
-		renameWebFeedIfNecessary()
+		renameFeedIfNecessary()
 	}
 	
 	// MARK: Actions
@@ -115,7 +115,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 extension FeedInspectorViewController: NSTextFieldDelegate {
 
 	func controlTextDidEndEditing(_ note: Notification) {
-		renameWebFeedIfNecessary()
+		renameFeedIfNecessary()
 	}
 	
 }
@@ -202,7 +202,7 @@ private extension FeedInspectorViewController {
 		}
 	}
 
-	func renameWebFeedIfNecessary() {
+	func renameFeedIfNecessary() {
 		guard let feed = feed,
 			  let account = feed.account,
 			  let nameTextField = nameTextField,
@@ -210,7 +210,7 @@ private extension FeedInspectorViewController {
 			return
 		}
 		
-		account.renameWebFeed(feed, to: nameTextField.stringValue) { [weak self] result in
+		account.renameFeed(feed, to: nameTextField.stringValue) { [weak self] result in
 			if case .failure(let error) = result {
 				self?.presentError(error)
 			} else {

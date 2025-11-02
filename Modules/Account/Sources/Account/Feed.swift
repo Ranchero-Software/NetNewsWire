@@ -222,7 +222,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 
 	public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let account = account else { return }
-		account.renameWebFeed(self, to: newName, completion: completion)
+		account.renameFeed(self, to: newName, completion: completion)
 	}
 
 	// MARK: - UnreadCountProvider
@@ -324,7 +324,7 @@ extension Feed: OPMLRepresentable {
 
 extension Set where Element == Feed {
 
-	func webFeedIDs() -> Set<String> {
+	func feedIDs() -> Set<String> {
 		return Set<String>(map { $0.webFeedID })
 	}
 	

@@ -236,7 +236,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			switch result {
 			case .success:
 				fromContainer.removeWebFeed(feed)
-				toContainer.addWebFeed(feed)
+				toContainer.addFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
 				self.processAccountError(account, error)
@@ -251,7 +251,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			self.syncProgress.completeTask()
 			switch result {
 			case .success:
-				container.addWebFeed(feed)
+				container.addFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
 				self.processAccountError(account, error)
@@ -365,7 +365,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 
-		let feedsToRestore = folder.topLevelWebFeeds
+		let feedsToRestore = folder.topLevelFeeds
 		syncProgress.addToNumberOfTasksAndRemaining(1 + feedsToRestore.count)
 
 		accountZone.createFolder(name: name) { result in
@@ -378,7 +378,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				let group = DispatchGroup()
 				for feed in feedsToRestore {
 
-					folder.topLevelWebFeeds.remove(feed)
+					folder.topLevelFeeds.remove(feed)
 
 					group.enter()
 					self.restoreWebFeed(for: account, feed: feed, container: folder) { result in
@@ -521,7 +521,7 @@ private extension CloudKitAccountDelegate {
 		accountZone.fetchChangesInZone() { result in
 			self.syncProgress.completeTask()
 
-			let webFeeds = account.flattenedWebFeeds()
+			let webFeeds = account.flattenedFeeds()
 
 			switch result {
 			case .success:
@@ -560,7 +560,7 @@ private extension CloudKitAccountDelegate {
 			case .success:
 				
 				self.syncProgress.completeTask()
-				let webFeeds = account.flattenedWebFeeds()
+				let webFeeds = account.flattenedFeeds()
 
 				self.refreshArticleStatus(for: account) { result in
 					switch result {
@@ -593,7 +593,7 @@ private extension CloudKitAccountDelegate {
 
 		func addDeadFeed() {
 			let feed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-			container.addWebFeed(feed)
+			container.addFeed(feed)
 
 			self.accountZone.createWebFeed(url: url.absoluteString,
 										   name: editedName,
@@ -638,7 +638,7 @@ private extension CloudKitAccountDelegate {
 
 				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 				feed.editedName = editedName
-				container.addWebFeed(feed)
+				container.addFeed(feed)
 
 				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 					self.syncProgress.completeTask()
@@ -703,7 +703,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
-		account.fetchArticlesAsync(.webFeed(feed)) { result in
+		account.fetchArticlesAsync(.feed(feed)) { result in
 			switch result {
 			case .success(let articles):
 				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
@@ -725,7 +725,7 @@ private extension CloudKitAccountDelegate {
 
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
-			account.removeFeeds(account.topLevelWebFeeds)
+			account.removeFeeds(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
 				account.removeFolder(folder)
 			}

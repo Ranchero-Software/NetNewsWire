@@ -97,13 +97,13 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     
     @objc(webFeeds)
     var webFeeds:NSArray  {
-		let feeds = Array(folder.topLevelWebFeeds)
+		let feeds = Array(folder.topLevelFeeds)
         return feeds.map { ScriptableWebFeed($0, container:self) } as NSArray
     }
 
     @objc(articles)
     var articles:NSArray {
-        let feeds = Array(folder.topLevelWebFeeds)
+        let feeds = Array(folder.topLevelFeeds)
         let allArticles = feeds.flatMap { feed in
             (try? feed.fetchArticles()) ?? Set<Article>()
         }
@@ -116,7 +116,7 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
 
     @objc(countOfArticles)
     func countOfArticles() -> Int {
-        let feeds = Array(folder.topLevelWebFeeds)
+        let feeds = Array(folder.topLevelFeeds)
         return feeds.reduce(0) { count, feed in
             let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
             return count + feedArticles.count
@@ -125,7 +125,7 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
 
     @objc(objectInArticlesAtIndex:)
     func objectInArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
-        let feeds = Array(folder.topLevelWebFeeds)
+        let feeds = Array(folder.topLevelFeeds)
         let allArticles = feeds.flatMap { feed in
             (try? feed.fetchArticles()) ?? Set<Article>()
         }

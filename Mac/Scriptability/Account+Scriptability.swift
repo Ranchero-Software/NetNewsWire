@@ -96,17 +96,17 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
     
     @objc(webFeeds)
     var webFeeds:NSArray  {
-        return account.topLevelWebFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
+        return account.topLevelFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
     }
     
     @objc(countOfWebFeeds)
     func countOfWebFeeds() -> Int {
-        return account.topLevelWebFeeds.count
+        return account.topLevelFeeds.count
     }
     
     @objc(objectInWebFeedsAtIndex:)
     func objectInWebFeedsAtIndex(_ index: Int) -> ScriptableWebFeed? {
-        let feeds = Array(account.topLevelWebFeeds)
+        let feeds = Array(account.topLevelFeeds)
         guard index >= 0 && index < feeds.count else { return nil }
         return ScriptableWebFeed(feeds[index], container: self)
     }
@@ -119,7 +119,7 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
     
     @objc(valueInWebFeedsWithName:)
     func valueInWebFeeds(withName name:String) -> ScriptableWebFeed? {
-		let feeds = Array(account.flattenedWebFeeds())
+		let feeds = Array(account.flattenedFeeds())
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
         return ScriptableWebFeed(feed, container:self)
     }
@@ -157,7 +157,7 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
 
     @objc(allWebFeeds)
     var allWebFeeds: NSArray  {
-		let allFeeds = account.flattenedWebFeeds()
+		let allFeeds = account.flattenedFeeds()
 		let scriptableWebFeeds = allFeeds.map { webFeed in
 			return ScriptableWebFeed(webFeed, container: self)
 		}
@@ -166,12 +166,12 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
     
     @objc(countOfAllWebFeeds)
     func countOfAllWebFeeds() -> Int {
-        return account.flattenedWebFeeds().count
+        return account.flattenedFeeds().count
     }
     
     @objc(objectInAllWebFeedsAtIndex:)
     func objectInAllWebFeedsAtIndex(_ index: Int) -> ScriptableWebFeed? {
-        let allFeeds = Array(account.flattenedWebFeeds())
+        let allFeeds = Array(account.flattenedFeeds())
         guard index >= 0 && index < allFeeds.count else { return nil }
         return ScriptableWebFeed(allFeeds[index], container: self)
     }
@@ -184,7 +184,7 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
     
     @objc(valueInAllWebFeedsWithName:)
     func valueInAllWebFeeds(withName name:String) -> ScriptableWebFeed? {
-		let feeds = Array(account.flattenedWebFeeds())
+		let feeds = Array(account.flattenedFeeds())
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
         return ScriptableWebFeed(feed, container:self)
     }

@@ -421,7 +421,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			case .success:
 				completion(.success(()))
 			case .failure(let error):
-				folder.addWebFeed(feed)
+				folder.addFeed(feed)
 				completion(.failure(error))
 			}
 		}
@@ -445,12 +445,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 					case .success:
 						completion(.success(()))
 					case .failure:
-						from.addWebFeed(feed)
+						from.addFeed(feed)
 						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed, from, to)))
 					}
 				}
 			case .failure(let error):
-				from.addWebFeed(feed)
+				from.addFeed(feed)
 				to.removeWebFeed(feed)
 				completion(.failure(error))
 			}
@@ -459,7 +459,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		// optimistically move the feed, undoing as appropriate to the failure
 		from.removeWebFeed(feed)
-		to.addWebFeed(feed)
+		to.addFeed(feed)
 	}
 	
 	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -487,9 +487,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			
-			folder.topLevelWebFeeds.remove(feed)
+			folder.topLevelFeeds.remove(feed)
 			
 			group.enter()
 			restoreWebFeed(for: account, feed: feed, container: folder) { result in

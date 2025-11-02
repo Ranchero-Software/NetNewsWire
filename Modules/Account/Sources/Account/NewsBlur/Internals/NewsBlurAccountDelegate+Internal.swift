@@ -47,8 +47,8 @@ extension NewsBlurAccountDelegate {
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !folderNames.contains(folder.name ?? "") {
-					for feed in folder.topLevelWebFeeds {
-						account.addWebFeed(feed)
+					for feed in folder.topLevelFeeds {
+						account.addFeed(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
 					account.removeFolder(folder)
@@ -84,7 +84,7 @@ extension NewsBlurAccountDelegate {
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
-				for feed in folder.topLevelWebFeeds {
+				for feed in folder.topLevelFeeds {
 					if !newsBlurFeedIds.contains(feed.webFeedID) {
 						folder.removeWebFeed(feed)
 					}
@@ -92,7 +92,7 @@ extension NewsBlurAccountDelegate {
 			}
 		}
 
-		for feed in account.topLevelWebFeeds {
+		for feed in account.topLevelFeeds {
 			if !newsBlurFeedIds.contains(feed.webFeedID) {
 				account.removeWebFeed(feed)
 			}
@@ -120,7 +120,7 @@ extension NewsBlurAccountDelegate {
 		feedsToAdd.forEach { feed in
 			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
 			webFeed.externalID = String(feed.feedID)
-			account.addWebFeed(webFeed)
+			account.addFeed(webFeed)
 		}
 	}
 
@@ -155,16 +155,16 @@ extension NewsBlurAccountDelegate {
 			guard let folder = folderDict[folderName] else { return }
 
 			// Move any feeds not in the folder to the account
-			for feed in folder.topLevelWebFeeds {
+			for feed in folder.topLevelFeeds {
 				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
 					folder.removeWebFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-					account.addWebFeed(feed)
+					account.addFeed(feed)
 				}
 			}
 
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelWebFeeds.map { $0.webFeedID }
+			let folderFeedIds = folder.topLevelFeeds.map { $0.webFeedID }
 
 			for relationship in folderRelationships {
 				let folderFeedID = String(relationship.feedID)
@@ -173,7 +173,7 @@ extension NewsBlurAccountDelegate {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: relationship.folderName)
-					folder.addWebFeed(feed)
+					folder.addFeed(feed)
 				}
 			}
 		}
@@ -182,13 +182,13 @@ extension NewsBlurAccountDelegate {
 		// in folders and we need to remove them all from the account level.
 		if let folderRelationships = newsBlurFolderDict[" "] {
 			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
-			for feed in account.topLevelWebFeeds {
+			for feed in account.topLevelFeeds {
 				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
 					account.removeWebFeed(feed)
 				}
 			}
 		} else {
-			for feed in account.topLevelWebFeeds {
+			for feed in account.topLevelFeeds {
 				account.removeWebFeed(feed)
 			}
 		}
@@ -427,7 +427,7 @@ extension NewsBlurAccountDelegate {
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameWebFeed(webFeed, to: name) { result in
+						account.renameFeed(webFeed, to: name) { result in
 							switch result {
 							case .success:
 								self.initialFeedDownload(account: account, feed: webFeed, completion: completion)

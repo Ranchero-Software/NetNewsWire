@@ -56,8 +56,8 @@ final class AppDefaults {
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let lastRefresh = "lastRefresh"
-		static let addWebFeedAccountID = "addWebFeedAccountID"
-		static let addWebFeedFolderName = "addWebFeedFolderName"
+		static let addFeedAccountID = "addFeedAccountID"
+		static let addFeedFolderName = "addFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
@@ -94,19 +94,19 @@ final class AppDefaults {
 
 	var addWebFeedAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.addWebFeedAccountID)
+			return AppDefaults.string(for: Key.addFeedAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.addWebFeedAccountID, newValue)
+			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
 		}
 	}
 	
 	var addWebFeedFolderName: String? {
 		get {
-			return AppDefaults.string(for: Key.addWebFeedFolderName)
+			return AppDefaults.string(for: Key.addFeedFolderName)
 		}
 		set {
-			AppDefaults.setString(for: Key.addWebFeedFolderName, newValue)
+			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
 		}
 	}
 	

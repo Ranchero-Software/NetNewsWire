@@ -521,7 +521,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<Feed> else {
+		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
 			return
 		}
 		

@@ -49,7 +49,7 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 
-		let webFeeds = account.flattenedWebFeeds()
+		let webFeeds = account.flattenedFeeds()
 
 		let group = DispatchGroup()
 
@@ -138,17 +138,17 @@ final class LocalAccountDelegate: AccountDelegate {
 	
 	func moveWebFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		from.removeWebFeed(feed)
-		to.addWebFeed(feed)
+		to.addFeed(feed)
 		completion(.success(()))
 	}
 	
 	func addWebFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addWebFeed(feed)
+		container.addFeed(feed)
 		completion(.success(()))
 	}
 	
 	func restoreWebFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addWebFeed(feed)
+		container.addFeed(feed)
 		completion(.success(()))
 	}
 	
@@ -255,7 +255,7 @@ private extension LocalAccountDelegate {
 						}
 						
 						feed.editedName = editedName
-						container.addWebFeed(feed)
+						container.addFeed(feed)
 
 						account.update(feed, with: parsedFeed, {_ in
 							BatchUpdate.shared.end()

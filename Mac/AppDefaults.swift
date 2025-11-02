@@ -35,8 +35,8 @@ final class AppDefaults {
 		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
 		static let articleTextSize = "articleTextSize"
 		static let refreshInterval = "refreshInterval"
-		static let addWebFeedAccountID = "addWebFeedAccountID"
-		static let addWebFeedFolderName = "addWebFeedFolderName"
+		static let addFeedAccountID = "addFeedAccountID"
+		static let addFeedFolderName = "addFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
 		static let importOPMLAccountID = "importOPMLAccountID"
 		static let exportOPMLAccountID = "exportOPMLAccountID"
@@ -161,19 +161,19 @@ final class AppDefaults {
 
 	var addWebFeedAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.addWebFeedAccountID)
+			return AppDefaults.string(for: Key.addFeedAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.addWebFeedAccountID, newValue)
+			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
 		}
 	}
 	
 	var addWebFeedFolderName: String? {
 		get {
-			return AppDefaults.string(for: Key.addWebFeedFolderName)
+			return AppDefaults.string(for: Key.addFeedFolderName)
 		}
 		set {
-			AppDefaults.setString(for: Key.addWebFeedFolderName, newValue)
+			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
 		}
 	}
 

@@ -29,11 +29,11 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		
 		let feedsBefore = Set(pairs
 			.map { $0.1 }
-			.flatMap { $0.topLevelWebFeeds })
+			.flatMap { $0.topLevelFeeds })
 		
 		// Remove feeds in a folder which are not in the corresponding collection.
 		for (collectionFeeds, folder) in pairs {
-			let feedsInFolder = folder.topLevelWebFeeds
+			let feedsInFolder = folder.topLevelFeeds
 			let feedsInCollection = Set(collectionFeeds.map { $0.id })
 			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.webFeedID) }
 			if !feedsToRemove.isEmpty {
@@ -95,7 +95,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		Feedly.logger.info("Feedly: Processing \(feedsAndFolders.count) feeds")
 		feedsAndFolders.forEach { (feed, folder) in
 			if !folder.has(feed) {
-				folder.addWebFeed(feed)
+				folder.addFeed(feed)
 			}
 		}
 		

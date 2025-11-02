@@ -66,7 +66,7 @@ private extension WebFeedTreeControllerDelegate {
 
 		var children = [AnyObject]()
 		
-		for webFeed in container.topLevelWebFeeds {
+		for webFeed in container.topLevelFeeds {
 			if let sidebarItemID = webFeed.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && webFeed.unreadCount == 0) {
 				children.append(webFeed)
 			}

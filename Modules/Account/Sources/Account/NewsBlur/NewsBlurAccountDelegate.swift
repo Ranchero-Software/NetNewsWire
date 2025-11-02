@@ -402,7 +402,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 
 		var feedIDs: [String] = []
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			if (feed.folderRelationship?.count ?? 0) > 1 {
 				clearFolderRelationship(for: feed, withFolderName: folderToRemove)
 			} else if let feedID = feed.externalID {
@@ -475,7 +475,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		guard let folder = container as? Folder else {
 			DispatchQueue.main.async {
 				if let account = container as? Account {
-					account.addWebFeed(feed)
+					account.addFeed(feed)
 				}
 				completion(.success(()))
 			}
@@ -485,7 +485,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 		let folderName = folder.name ?? ""
 		saveFolderRelationship(for: feed, withFolderName: folderName, id: folderName)
-		folder.addWebFeed(feed)
+		folder.addFeed(feed)
 
 		completion(.success(()))
 	}
@@ -512,7 +512,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			switch result {
 			case .success:
 				from.removeWebFeed(feed)
-				to.addWebFeed(feed)
+				to.addFeed(feed)
 				
 				completion(.success(()))
 			case .failure(let error):
@@ -550,9 +550,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 
 		var feedsToRestore: [Feed] = []
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			feedsToRestore.append(feed)
-			folder.topLevelWebFeeds.remove(feed)
+			folder.topLevelFeeds.remove(feed)
 		}
 
 		let group = DispatchGroup()

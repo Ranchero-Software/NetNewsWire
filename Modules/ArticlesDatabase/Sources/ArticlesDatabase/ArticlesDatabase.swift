@@ -340,12 +340,12 @@ public final class ArticlesDatabase {
 	/// This prevents the database from growing forever. If we didn’t do this:
 	/// 1) The database would grow to an inordinate size, and
 	/// 2) the app would become very slow.
-	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
+	public func cleanupDatabaseAtStartup(subscribedToFeedIDs: Set<String>) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		if retentionStyle == .syncSystem {
 			articlesTable.deleteOldArticles()
 		}
-		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
+		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToFeedIDs)
 		articlesTable.deleteOldStatuses()
 	}
 }

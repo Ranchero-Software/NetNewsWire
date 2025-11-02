@@ -120,7 +120,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		
 		if let existingUnclaimedWebFeeds = existingUnclaimedWebFeeds[containerExternalID] {
 			for existingUnclaimedWebFeed in existingUnclaimedWebFeeds {
-				container.addWebFeed(existingUnclaimedWebFeed)
+				container.addFeed(existingUnclaimedWebFeed)
 			}
 			self.existingUnclaimedWebFeeds.removeValue(forKey: containerExternalID)
 		}
@@ -156,7 +156,7 @@ private extension CloudKitAcountZoneDelegate {
 				}
 			case .insert(_, let externalID, _):
 				if let container = account.existingContainer(withExternalID: externalID) {
-					container.addWebFeed(webFeed)
+					container.addFeed(webFeed)
 				} else {
 					addExistingUnclaimedWebFeed(webFeed, containerExternalID: externalID)
 				}
@@ -174,7 +174,7 @@ private extension CloudKitAcountZoneDelegate {
 		let webFeed = account.createWebFeed(with: name, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: homePageURL)
 		webFeed.editedName = editedName
 		webFeed.externalID = webFeedExternalID
-		container.addWebFeed(webFeed)
+		container.addFeed(webFeed)
 	}
 	
 	func addNewUnclaimedWebFeed(url: URL, name: String?, editedName: String?, homePageURL: String?, webFeedExternalID: String, containerExternalID: String) {

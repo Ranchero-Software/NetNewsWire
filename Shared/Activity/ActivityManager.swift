@@ -117,7 +117,7 @@ final class ActivityManager {
 			}
 		}
 		
-		for webFeed in account.flattenedWebFeeds() {
+		for webFeed in account.flattenedFeeds() {
 			ids.append(contentsOf: identifiers(for: webFeed))
 		}
 		
@@ -128,7 +128,7 @@ final class ActivityManager {
 		var ids = [String]()
 		ids.append(identifier(for: folder))
 		
-		for webFeed in folder.flattenedWebFeeds() {
+		for webFeed in folder.flattenedFeeds() {
 			ids.append(contentsOf: identifiers(for: webFeed))
 		}
 		

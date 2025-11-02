@@ -329,7 +329,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			
 			if feed.folderRelationship?.count ?? 0 > 1 {
 				
@@ -514,7 +514,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				switch result {
 				case .success:
 					from.removeWebFeed(feed)
-					to.addWebFeed(feed)
+					to.addFeed(feed)
 					completion(.success(()))
 				case .failure(let error):
 					completion(.failure(error))
@@ -533,7 +533,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
 						account.removeWebFeed(feed)
-						folder.addWebFeed(feed)
+						folder.addFeed(feed)
 						completion(.success(()))
 					}
 				case .failure(let error):
@@ -581,9 +581,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			
-			folder.topLevelWebFeeds.remove(feed)
+			folder.topLevelFeeds.remove(feed)
 			
 			group.enter()
 			restoreWebFeed(for: account, feed: feed, container: folder) { result in
@@ -716,8 +716,8 @@ private extension ReaderAPIAccountDelegate {
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !readerFolderExternalIDs.contains(folder.externalID ?? "") {
-					for feed in folder.topLevelWebFeeds {
-						account.addWebFeed(feed)
+					for feed in folder.topLevelFeeds {
+						account.addFeed(feed)
 						clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					}
 					account.removeFolder(folder)
@@ -755,7 +755,7 @@ private extension ReaderAPIAccountDelegate {
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
-				for feed in folder.topLevelWebFeeds {
+				for feed in folder.topLevelFeeds {
 					if !subFeedIds.contains(feed.webFeedID) {
 						folder.removeWebFeed(feed)
 					}
@@ -763,7 +763,7 @@ private extension ReaderAPIAccountDelegate {
 			}
 		}
 		
-		for feed in account.topLevelWebFeeds {
+		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.webFeedID) {
 				account.clearFeedMetadata(feed)
 				account.removeWebFeed(feed)
@@ -780,7 +780,7 @@ private extension ReaderAPIAccountDelegate {
 			} else {
 				let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: subscription.feedID, homePageURL: subscription.homePageURL)
 				feed.externalID = subscription.feedID
-				account.addWebFeed(feed)
+				account.addFeed(feed)
 			}
 			
 		}
@@ -815,16 +815,16 @@ private extension ReaderAPIAccountDelegate {
 			let taggingFeedIDs = groupedTaggings.map { $0.feedID }
 			
 			// Move any feeds not in the folder to the account
-			for feed in folder.topLevelWebFeeds {
+			for feed in folder.topLevelFeeds {
 				if !taggingFeedIDs.contains(feed.webFeedID) {
 					folder.removeWebFeed(feed)
 					clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
-					account.addWebFeed(feed)
+					account.addFeed(feed)
 				}
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelWebFeeds.map { $0.webFeedID }
+			let folderFeedIds = folder.topLevelFeeds.map { $0.webFeedID }
 			
 			for subscription in groupedTaggings {
 				let taggingFeedID = subscription.feedID
@@ -833,7 +833,7 @@ private extension ReaderAPIAccountDelegate {
 						continue
 					}
 					saveFolderRelationship(for: feed, folderExternalID: folderExternalID, feedExternalID: subscription.feedID)
-					folder.addWebFeed(feed)
+					folder.addFeed(feed)
 				}
 			}
 			
@@ -842,7 +842,7 @@ private extension ReaderAPIAccountDelegate {
 		let taggedFeedIDs = Set(subscriptions.filter({ !$0.categories.isEmpty }).map { String($0.feedID) })
 		
 		// Remove all feeds from the account container that have a tag
-		for feed in account.topLevelWebFeeds {
+		for feed in account.topLevelFeeds {
 			if taggedFeedIDs.contains(feed.webFeedID) {
 				account.removeWebFeed(feed)
 			}

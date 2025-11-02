@@ -36,9 +36,9 @@ final class AccountFeedbinSyncTest: XCTestCase {
 		}
 		waitForExpectations(timeout: 5, handler: nil)
 		
-		XCTAssertEqual(224, account.flattenedWebFeeds().count)
+		XCTAssertEqual(224, account.flattenedFeeds().count)
 
-		let daringFireball = account.idToWebFeedDictionary["1296379"]
+		let daringFireball = account.idToFeedDictionary["1296379"]
 		XCTAssertEqual("Daring Fireball", daringFireball!.name)
 		XCTAssertEqual("https://daringfireball.net/feeds/json", daringFireball!.url)
 		XCTAssertEqual("https://daringfireball.net/", daringFireball!.homePageURL)
@@ -57,9 +57,9 @@ final class AccountFeedbinSyncTest: XCTestCase {
 		}
 		waitForExpectations(timeout: 5, handler: nil)
 		
-		XCTAssertEqual(225, account.flattenedWebFeeds().count)
+		XCTAssertEqual(225, account.flattenedFeeds().count)
 		
-		let bPixels = account.idToWebFeedDictionary["1096623"]
+		let bPixels = account.idToFeedDictionary["1096623"]
 		XCTAssertEqual("Beautiful Pixels", bPixels?.name)
 		XCTAssertEqual("https://feedpress.me/beautifulpixels", bPixels?.url)
 		XCTAssertEqual("https://beautifulpixels.com/", bPixels?.homePageURL)
