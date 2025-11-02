@@ -514,17 +514,17 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	}
 	
 	func configureIcon(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let feedID = feed.feedID else {
+		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let sidebarItemID = feed.sidebarItemID else {
 			return
 		}
-		cell.iconImage = IconImageCache.shared.imageFor(feedID)
+		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
 	}
 	
 	func configureIcon(_ cell: MainFeedCollectionViewFolderCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let feedID = feed.feedID else {
+		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed, let sidebarItemID = feed.sidebarItemID else {
 			return
 		}
-		cell.iconImage = IconImageCache.shared.imageFor(feedID)
+		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
 	}
 
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
@@ -536,7 +536,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			if let node = coordinator.nodeFor(indexPath),
 			   let representedFeed = representedObject as? Feed,
 			   let candidate = node.representedObject as? Feed,
-			   representedFeed.feedID == candidate.feedID {
+			   representedFeed.sidebarItemID == candidate.sidebarItemID {
 				completion(cell, indexPath)
 			}
 		}
