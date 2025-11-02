@@ -18,3 +18,5 @@ Mac shipping: 6.1.10
 
 Beta: 6.2b4
 	https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-6.2b4
+
+6.2 final release already created, just waiting for release
