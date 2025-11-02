@@ -49,12 +49,12 @@ final class ActivityManager {
 		invalidateNextUnread()
 	}
 	
-	func selecting(feed: Feed) {
+	func selecting(sidebarItem: SidebarItem) {
 		invalidateCurrentActivities()
 		
-		selectingActivity = makeSelectFeedActivity(feed: feed)
+		selectingActivity = makeSelectFeedActivity(sidebarItem: sidebarItem)
 		
-		if let webFeed = feed as? WebFeed {
+		if let webFeed = sidebarItem as? WebFeed {
 			updateSelectingActivityFeedSearchAttributes(with: webFeed)
 		}
 		
@@ -87,12 +87,12 @@ final class ActivityManager {
 		nextUnreadActivity = nil
 	}
 	
-	func reading(feed: Feed?, article: Article?) {
+	func reading(feed: SidebarItem?, article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
 		
 		guard let article = article else { return }
-		readingActivity = makeReadArticleActivity(feed: feed, article: article)
+		readingActivity = makeReadArticleActivity(sidebarItem: feed, article: article)
 		
 		#if os(iOS)
 		updateReadArticleSearchAttributes(with: article)
@@ -162,37 +162,37 @@ final class ActivityManager {
 
 private extension ActivityManager {
 	
-	func makeSelectFeedActivity(feed: Feed) -> NSUserActivity {
+	func makeSelectFeedActivity(sidebarItem: SidebarItem) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)
 		
 		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
-		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedText as NSString, sidebarItem.nameForDisplay) as String
 		activity.title = title
 		
 		activity.keywords = Set(makeKeywords(title))
 		activity.isEligibleForSearch = true
 		
-		let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
+		let articleFetcherIdentifierUserInfo = sidebarItem.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
 		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo]
 		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 
-		activity.persistentIdentifier = feed.feedID?.description ?? ""
+		activity.persistentIdentifier = sidebarItem.sidebarItemID?.description ?? ""
 
 		#if os(iOS)
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
-		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.feedID?.description ?? ""
+		activity.contentAttributeSet?.relatedUniqueIdentifier = sidebarItem.sidebarItemID?.description ?? ""
 		#endif
 
 		return activity
 	}
 	
-	func makeReadArticleActivity(feed: Feed?, article: Article) -> NSUserActivity {
+	func makeReadArticleActivity(sidebarItem: SidebarItem?, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
 		
-		if let feed = feed {
-			let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
+		if let sidebarItem {
+			let articleFetcherIdentifierUserInfo = sidebarItem.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
 			let articlePathUserInfo = article.pathUserInfo
 			activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
 		} else {

@@ -11,18 +11,18 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class WebFeed: Feed, Renamable, Hashable {
+public final class WebFeed: SidebarItem, Renamable, Hashable {
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .none
 	}
 
-	public var feedID: FeedIdentifier? {
+	public var sidebarItemID: SidebarItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
 		}
-		return FeedIdentifier.webFeed(accountID, webFeedID)
+		return SidebarItemIdentifier.webFeed(accountID, webFeedID)
 	}
 
 	public weak var account: Account?

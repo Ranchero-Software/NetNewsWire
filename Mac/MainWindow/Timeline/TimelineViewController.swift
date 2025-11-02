@@ -28,15 +28,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
 	var isReadFiltered: Bool? {
-		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed else {
+		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem else {
 			return nil
 		}
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let feedID = timelineFeed.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+		if let sidebarItemID = timelineFeed.sidebarItemID, let readFilterEnabled = readFilterEnabledTable[sidebarItemID] {
 			return readFilterEnabled
 		} else {
 			return timelineFeed.defaultReadFilterType == .read
@@ -46,7 +46,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var isCleanUpAvailable: Bool {
 		let isEligibleForCleanUp: Bool?
 		
-		if representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed, timelineFeed.defaultReadFilterType == .alwaysRead {
+		if representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem, timelineFeed.defaultReadFilterType == .alwaysRead {
 			isEligibleForCleanUp = true
 		} else {
 			isEligibleForCleanUp = isReadFiltered
@@ -281,8 +281,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func toggleReadFilter() {
-		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? Feed)?.feedID else { return }
-		readFilterEnabledTable[feedID] = !filter
+		guard let filter = isReadFiltered, let sidebarItemID = (representedObjects?.first as? SidebarItem)?.sidebarItemID else { return }
+		readFilterEnabledTable[sidebarItemID] = !filter
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
 	}
@@ -291,7 +291,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	func restoreState(from state: TimelineWindowState) {
 		for i in 0..<state.readArticlesFilterStateKeys.count {
-			if let feedIdentifier = FeedIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
+			if let feedIdentifier = SidebarItemIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
 				readFilterEnabledTable[feedIdentifier] = state.readArticlesFilterStateValues[i]
 			}
 		}
@@ -325,7 +325,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 
 		for i in 0..<readArticlesFilterStateKeys.count {
-			if let feedIdentifier = FeedIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
+			if let feedIdentifier = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
 				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
 			}
 		}
@@ -1194,7 +1194,7 @@ private extension TimelineViewController {
 
 		var fetchedArticles = Set<Article>()
 		for fetchers in fetchers {
-			if (fetchers as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+			if (fetchers as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
 				if let articles = try? fetchers.fetchUnreadArticles() {
 					fetchedArticles.formUnion(articles)
 				}

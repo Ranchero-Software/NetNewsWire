@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: Feed, Renamable, Container, Hashable {
+public final class Folder: SidebarItem, Renamable, Container, Hashable {
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .read
@@ -24,12 +24,12 @@ public final class Folder: Feed, Renamable, Container, Hashable {
 		return ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 	
-	public var feedID: FeedIdentifier? {
+	public var sidebarItemID: SidebarItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
 		}
-		return FeedIdentifier.folder(accountID, nameForDisplay)
+		return SidebarItemIdentifier.folder(accountID, nameForDisplay)
 	}
 
 	public weak var account: Account?

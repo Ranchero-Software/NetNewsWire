@@ -12,7 +12,7 @@ import Articles
 import ArticlesDatabase
 import RSCore
 
-protocol SmartFeedDelegate: FeedIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
+protocol SmartFeedDelegate: SidebarItemIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 	var fetchType: FetchType { get }
 	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock)
 }

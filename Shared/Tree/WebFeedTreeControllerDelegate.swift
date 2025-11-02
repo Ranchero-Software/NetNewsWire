@@ -13,15 +13,15 @@ import Account
 
 final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 
-	private var filterExceptions = Set<FeedIdentifier>()
+	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
 	
-	func addFilterException(_ feedID: FeedIdentifier) {
+	func addFilterException(_ feedID: SidebarItemIdentifier) {
 		filterExceptions.insert(feedID)
 	}
 	
 	func resetFilterExceptions() {
-		filterExceptions = Set<FeedIdentifier>()
+		filterExceptions = Set<SidebarItemIdentifier>()
 	}
 	
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
@@ -67,14 +67,14 @@ private extension WebFeedTreeControllerDelegate {
 		var children = [AnyObject]()
 		
 		for webFeed in container.topLevelWebFeeds {
-			if let feedID = webFeed.feedID, !(!filterExceptions.contains(feedID) && isReadFiltered && webFeed.unreadCount == 0) {
+			if let sidebarItemID = webFeed.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && webFeed.unreadCount == 0) {
 				children.append(webFeed)
 			}
 		}
 		
 		if let folders = container.folders {
 			for folder in folders {
-				if let feedID = folder.feedID, !(!filterExceptions.contains(feedID) && isReadFiltered && folder.unreadCount == 0) {
+				if let sidebarItemID = folder.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && folder.unreadCount == 0) {
 					children.append(folder)
 				}
 			}

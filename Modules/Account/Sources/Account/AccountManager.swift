@@ -210,8 +210,8 @@ public final class AccountManager: UnreadCountProvider {
 		return nil
 	}
 	
-	public func existingFeed(with feedID: FeedIdentifier) -> Feed? {
-		switch feedID {
+	public func existingFeed(with sidebarItemID: SidebarItemIdentifier) -> SidebarItem? {
+		switch sidebarItemID {
 		case .folder(let accountID, let folderName):
 			if let account = existingAccount(with: accountID) {
 				return account.existingFolder(with: folderName)

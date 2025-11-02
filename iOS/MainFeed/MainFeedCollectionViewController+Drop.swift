@@ -76,7 +76,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
 			
-		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? Feed,
+		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? SidebarItem,
 			  let destAccount = destFeed.account,
 			  let destCell = collectionView.cellForItem(at: destIndexPath) else {
 				  return UICollectionViewDropProposal(operation: .forbidden)
