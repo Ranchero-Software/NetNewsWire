@@ -71,9 +71,9 @@ private extension FeedMetadataFile {
 	}
 
 	private func metadataForOnlySubscribedToFeeds() -> Account.FeedMetadataDictionary {
-		let webFeedIDs = account.idToWebFeedDictionary.keys
+		let feedIDs = account.idToFeedDictionary.keys
 		return account.feedMetadata.filter { (feedID: String, metadata: FeedMetadata) -> Bool in
-			return webFeedIDs.contains(metadata.webFeedID)
+			return feedIDs.contains(metadata.feedID)
 		}
 	}
 }

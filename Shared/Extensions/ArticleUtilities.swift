@@ -42,8 +42,8 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 
 extension Article {
 	
-	var webFeed: WebFeed? {
-		return account?.existingWebFeed(withWebFeedID: webFeedID)
+	var feed: Feed? {
+		return account?.existingFeed(withFeedID: feedID)
 	}
 	
 	var url: URL? {
@@ -121,11 +121,11 @@ extension Article {
 		return IconImageCache.shared.imageForArticle(self)
 	}
 	
-	func iconImageUrl(webFeed: WebFeed) -> URL? {
+	func iconImageUrl(feed: Feed) -> URL? {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-			let feedID = webFeed.webFeedID.replacingOccurrences(of: "/", with: "_")
+			let feedID = feed.feedID.replacingOccurrences(of: "/", with: "_")
 			path.appendPathComponent(feedID + "_smallIcon.png")
 			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
 			return path
@@ -135,7 +135,7 @@ extension Article {
 	}
 	
 	func byline() -> String {
-		guard let authors = authors ?? webFeed?.authors, !authors.isEmpty else {
+		guard let authors = authors ?? feed?.authors, !authors.isEmpty else {
 			return ""
 		}
 
@@ -143,7 +143,7 @@ extension Article {
 		// This code assumes that multiple authors would never match the feed name so that
 		// if there feed owner has an article co-author all authors are given the byline.
 		if authors.count == 1, let author = authors.first {
-			if author.name == webFeed?.nameForDisplay {
+			if author.name == feed?.nameForDisplay {
 				return ""
 			}
 		}
@@ -189,7 +189,7 @@ extension Article {
 struct ArticlePathKey {
 	static let accountID = "accountID"
 	static let accountName = "accountName"
-	static let webFeedID = "webFeedID"
+	static let feedID = "feedID"
 	static let articleID = "articleID"
 }
 
@@ -199,7 +199,7 @@ extension Article {
 		return [
 			ArticlePathKey.accountID: accountID,
 			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
-			ArticlePathKey.webFeedID: webFeedID,
+			ArticlePathKey.feedID: feedID,
 			ArticlePathKey.articleID: articleID
 		]
 	}
@@ -211,7 +211,7 @@ extension Article {
 extension Article: SortableArticle {
 	
 	var sortableName: String {
-		return webFeed?.name ?? ""
+		return feed?.name ?? ""
 	}
 	
 	var sortableDate: Date {
@@ -222,8 +222,8 @@ extension Article: SortableArticle {
 		return articleID
 	}
 	
-	var sortableWebFeedID: String {
-		return webFeedID
+	var sortableFeedID: String {
+		return feedID
 	}
 	
 }

@@ -51,9 +51,9 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     }
  
     func deleteElement(_ element:ScriptingObject) {
-       if let scriptableFeed = element as? ScriptableWebFeed {
+       if let scriptableFeed = element as? ScriptableFeed {
             BatchUpdate.shared.perform {
-				folder.account?.removeWebFeed(scriptableFeed.webFeed, from: folder) { result in }
+				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { result in }
             }
         }
     }
@@ -95,19 +95,19 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     
     // MARK: --- Scriptable elements ---
     
-    @objc(webFeeds)
-    var webFeeds:NSArray  {
-		let feeds = Array(folder.topLevelWebFeeds)
-        return feeds.map { ScriptableWebFeed($0, container:self) } as NSArray
+    @objc(feeds)
+    var feeds:NSArray  {
+		let feeds = Array(folder.topLevelFeeds)
+        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
 
     @objc(articles)
     var articles:NSArray {
-        let feeds = Array(folder.topLevelWebFeeds)
+        let feeds = Array(folder.topLevelFeeds)
         let allArticles = feeds.flatMap { feed in
             (try? feed.fetchArticles()) ?? Set<Article>()
         }
-        // Sort articles by logical date published like WebFeed does
+        // Sort articles by logical date published like Feed does
         let sortedArticles = allArticles.sorted(by: {
             return $0.logicalDatePublished > $1.logicalDatePublished
         })
@@ -116,7 +116,7 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
 
     @objc(countOfArticles)
     func countOfArticles() -> Int {
-        let feeds = Array(folder.topLevelWebFeeds)
+        let feeds = Array(folder.topLevelFeeds)
         return feeds.reduce(0) { count, feed in
             let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
             return count + feedArticles.count
@@ -125,7 +125,7 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
 
     @objc(objectInArticlesAtIndex:)
     func objectInArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
-        let feeds = Array(folder.topLevelWebFeeds)
+        let feeds = Array(folder.topLevelFeeds)
         let allArticles = feeds.flatMap { feed in
             (try? feed.fetchArticles()) ?? Set<Article>()
         }

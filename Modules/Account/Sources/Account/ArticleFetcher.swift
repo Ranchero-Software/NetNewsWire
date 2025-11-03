@@ -18,10 +18,10 @@ public protocol ArticleFetcher {
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
 }
 
-extension WebFeed: ArticleFetcher {
+extension Feed: ArticleFetcher {
 	
 	public func fetchArticles() throws -> Set<Article> {
-		return try account?.fetchArticles(.webFeed(self)) ?? Set<Article>()
+		return try account?.fetchArticles(.feed(self)) ?? Set<Article>()
 	}
 
 	public func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
@@ -30,7 +30,7 @@ extension WebFeed: ArticleFetcher {
 			completion(.success(Set<Article>()))
 			return
 		}
-		account.fetchArticlesAsync(.webFeed(self), completion)
+		account.fetchArticlesAsync(.feed(self), completion)
 	}
 
 	public func fetchUnreadArticles() throws -> Set<Article> {
@@ -43,7 +43,7 @@ extension WebFeed: ArticleFetcher {
 			completion(.success(Set<Article>()))
 			return
 		}
-		account.fetchArticlesAsync(.webFeed(self)) { articleSetResult in
+		account.fetchArticlesAsync(.feed(self)) { articleSetResult in
 			switch articleSetResult {
 			case .success(let articles):
 				completion(.success(articles.unreadArticles()))

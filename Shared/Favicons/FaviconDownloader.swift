@@ -48,7 +48,7 @@ final class FaviconDownloader {
 	}
 
 	private let queue: DispatchQueue
-	private var cache = [WebFeed: IconImage]() // faviconURL: RSImage
+	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
@@ -73,24 +73,24 @@ final class FaviconDownloader {
 	// MARK: - API
 
 	func resetCache() {
-		cache = [WebFeed: IconImage]()
+		cache = [Feed: IconImage]()
 	}
 	
-	func favicon(for webFeed: WebFeed) -> IconImage? {
+	func favicon(for feed: Feed) -> IconImage? {
 		assert(Thread.isMainThread)
 
-		if shouldSkipDownloadingFavicon(feed: webFeed) {
+		if shouldSkipDownloadingFavicon(feed: feed) {
 			return nil
 		}
 
-		var homePageURL = webFeed.homePageURL
-		if let faviconURL = webFeed.faviconURL {
+		var homePageURL = feed.homePageURL
+		if let faviconURL = feed.faviconURL {
 			return favicon(with: faviconURL, homePageURL: homePageURL)
 		}
 
 		if homePageURL == nil {
 			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
-			if let feedURL = URL(string: webFeed.url), let scheme = feedURL.scheme, let host = feedURL.host {
+			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
 				homePageURL = scheme + "://" + host + "/"
 			}
 		}
@@ -101,14 +101,14 @@ final class FaviconDownloader {
 		return nil
 	}
 	
-	func faviconAsIcon(for webFeed: WebFeed) -> IconImage? {
+	func faviconAsIcon(for feed: Feed) -> IconImage? {
 
-		if let image = cache[webFeed] {
+		if let image = cache[feed] {
 			return image
 		}
 
-		if let iconImage = favicon(for: webFeed) {
-			cache[webFeed] = iconImage
+		if let iconImage = favicon(for: feed) {
+			cache[feed] = iconImage
 			return iconImage
 		}
 
@@ -213,7 +213,7 @@ private extension FaviconDownloader {
 
 	static let specialCasesToSkip = [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 
-	func shouldSkipDownloadingFavicon(feed: WebFeed) -> Bool {
+	func shouldSkipDownloadingFavicon(feed: Feed) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
 	}
 

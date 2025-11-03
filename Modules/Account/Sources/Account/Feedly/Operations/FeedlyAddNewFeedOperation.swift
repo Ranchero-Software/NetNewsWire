@@ -27,7 +27,7 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 	private let syncUnreadIdsService: FeedlyGetStreamIdsService
 	private let getStreamContentsService: FeedlyGetStreamContentsService
 	private var feedResourceId: FeedlyFeedResourceId?
-	var addCompletionHandler: ((Result<WebFeed, Error>) -> ())?
+	var addCompletionHandler: ((Result<Feed, Error>) -> ())?
 
 	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress) throws {
 		
@@ -135,7 +135,7 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 		guard let handler = addCompletionHandler else {
 			return
 		}
-		if let feedResource = feedResourceId, let feed = folder.existingWebFeed(withWebFeedID: feedResource.id) {
+		if let feedResource = feedResourceId, let feed = folder.existingFeed(withFeedID: feedResource.id) {
 			handler(.success(feed))
 		}
 		else {

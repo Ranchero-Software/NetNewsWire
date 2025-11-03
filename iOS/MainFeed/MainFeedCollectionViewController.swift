@@ -115,9 +115,9 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		// always know when an image is available — but watching the .htmlMetadataAvailable Notification
 		// lets us know that it’s time to request an image.
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
+
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 	}
 	
@@ -153,13 +153,13 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			renameAction.accessibilityLabel = renameTitle
 			actions.append(renameAction)
 			
-			if let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed {
+			if let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed {
 				let moreTitle = NSLocalizedString("More", comment: "More")
 				let moreAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completion) in
 					
 					if let self = self {
 					
-						let alert = UIAlertController(title: webFeed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
+						let alert = UIAlertController(title: feed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
 						if let popoverController = alert.popoverPresentationController {
 							popoverController.sourceView = view
 							popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
@@ -328,8 +328,8 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
 			return nil
 		}
-		if sidebarItem is WebFeed {
-			return makeWebFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
+		if sidebarItem is Feed {
+			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else if sidebarItem is Folder {
 			return makeFolderContextMenu(indexPath: indexPath)
 		} else if sidebarItem is PseudoFeed  {
@@ -656,12 +656,12 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		}
 	}
 	
-	@objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
+	@objc func feedSettingDidChange(_ note: Notification) {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
 			return
 		}
-		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
-			configureCellsForRepresentedObject(webFeed)
+		if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
+			configureCellsForRepresentedObject(feed)
 		}
 	}
 	
@@ -669,11 +669,11 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		applyToAvailableCells(configureIcon)
 	}
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		applyToCellsForRepresentedObject(webFeed, configureIcon(_:_:))
+		applyToCellsForRepresentedObject(feed, configureIcon(_:_:))
 	}
 	
 	// MARK: - Actions
@@ -681,24 +681,24 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	func configureContextMenu(_: Any? = nil) {
 		/*
 			Context Menu Order:
-			1. Add Web Feed
+			1. Add Feed
 			2. Add Folder
 		*/
 		
 		var menuItems: [UIAction] = []
 		
-		let addWebFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
-		let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
-			self.coordinator.showAddWebFeed()
+		let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
+		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAssets.plus) { _ in
+			self.coordinator.showAddFeed()
 		}
-		menuItems.append(addWebFeedAction)
+		menuItems.append(addFeedAction)
 		
-		let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
+		let addFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addFolderAction = UIAction(title: addFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
 			self.coordinator.showAddFolder()
 		}
 		
-		menuItems.append(addWebFolderAction)
+		menuItems.append(addFolderAction)
 		
 		let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
 		
@@ -722,19 +722,19 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 		
-		let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
-		let addWebFeedAction = UIAlertAction(title: addWebFeedActionTitle, style: .default) { _ in
-			self.coordinator.showAddWebFeed()
+		let addFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+		let addFeedAction = UIAlertAction(title: addFeedActionTitle, style: .default) { _ in
+			self.coordinator.showAddFeed()
 		}
 		
-		let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-		let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
+		let addFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addFolderAction = UIAlertAction(title: addFolderActionTitle, style: .default) { _ in
 			self.coordinator.showAddFolder()
 		}
 		
-		alertController.addAction(addWebFeedAction)
+		alertController.addAction(addFeedAction)
 		
-		alertController.addAction(addWebFolderAction)
+		alertController.addAction(addFolderAction)
 		alertController.addAction(cancelAction)
 		
 		alertController.popoverPresentationController?.barButtonItem = sender
@@ -841,7 +841,7 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 }
 
 extension MainFeedCollectionViewController {
-	func makeWebFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
+	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
 		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
 			
 			guard let self = self else { return nil }
@@ -945,8 +945,8 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
-			  let url = URL(string: webFeed.url) else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let url = URL(string: feed.url) else {
 				  return nil
 			  }
 		
@@ -958,8 +958,8 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyFeedPageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
-			  let url = URL(string: webFeed.url) else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let url = URL(string: feed.url) else {
 				  return nil
 			  }
 
@@ -972,8 +972,8 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
-			  let homePageURL = webFeed.homePageURL,
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let homePageURL = feed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
 			  }
@@ -986,8 +986,8 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyHomePageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
-			  let homePageURL = webFeed.homePageURL,
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let homePageURL = feed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
 			  }
@@ -1001,14 +1001,14 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed,
-			webFeed.unreadCount > 0,
-			let articles = try? webFeed.fetchArticles(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			feed.unreadCount > 0,
+			let articles = try? feed.fetchArticles(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
 				return nil
 		}
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
 		}
@@ -1041,13 +1041,13 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func getInfoAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
 			return nil
 		}
 		
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
-			self?.coordinator.showFeedInspector(for: webFeed)
+			self?.coordinator.showFeedInspector(for: feed)
 		}
 		return action
 	}
@@ -1069,13 +1069,13 @@ extension MainFeedCollectionViewController {
 	}
 
 	func getInfoAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
 			return nil
 		}
 
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.showFeedInspector(for: webFeed)
+			self?.coordinator.showFeedInspector(for: feed)
 			completion(true)
 		}
 		return action
@@ -1141,8 +1141,8 @@ extension MainFeedCollectionViewController {
 				return
 			}
 			
-			if let webFeed = sidebarItem as? WebFeed {
-				webFeed.rename(to: name) { result in
+			if let feed = sidebarItem as? Feed {
+				feed.rename(to: name) { result in
 					switch result {
 					case .success:
 						break
@@ -1216,7 +1216,7 @@ extension MainFeedCollectionViewController {
 
 		if let folder = deleteNode.representedObject as? Folder {
 			ActivityManager.cleanUp(folder)
-		} else if let feed = deleteNode.representedObject as? WebFeed {
+		} else if let feed = deleteNode.representedObject as? Feed {
 			ActivityManager.cleanUp(feed)
 		}
 		

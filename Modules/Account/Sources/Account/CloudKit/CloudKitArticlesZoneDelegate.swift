@@ -134,12 +134,12 @@ private extension CloudKitArticlesZoneDelegate {
 		group.enter()
 		compressionQueue.async {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
-			let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-			
+			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+
 			DispatchQueue.main.async {
-				for (webFeedID, parsedItems) in webFeedIDsAndItems {
+				for (feedID, parsedItems) in feedIDsAndItems {
 					group.enter()
-					self.account?.update(webFeedID, with: parsedItems, deleteOlder: false) { result in
+					self.account?.update(feedID, with: parsedItems, deleteOlder: false) { result in
 						switch result {
 						case .success(let articleChanges):
 							guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
@@ -193,7 +193,7 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		guard let uniqueID = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.uniqueID] as? String,
-			let webFeedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.webFeedURL] as? String else {
+			let feedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.feedURL] as? String else {
 			return nil
 		}
 		
@@ -213,7 +213,7 @@ private extension CloudKitArticlesZoneDelegate {
 		
 		let parsedItem = ParsedItem(syncServiceID: nil,
 									uniqueID: uniqueID,
-									feedURL: webFeedURL,
+									feedURL: feedURL,
 									url: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.url] as? String,
 									externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
 									title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,

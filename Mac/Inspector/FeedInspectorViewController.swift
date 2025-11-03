@@ -11,7 +11,7 @@ import Articles
 import Account
 import UserNotifications
 
-final class WebFeedInspectorViewController: NSViewController, Inspector {
+final class FeedInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var nameTextField: NSTextField?
@@ -20,7 +20,7 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	@IBOutlet weak var isNotifyAboutNewArticlesCheckBox: NSButton!
 	@IBOutlet weak var isReaderViewAlwaysOnCheckBox: NSButton?
 	
-	private var feed: WebFeed? {
+	private var feed: Feed? {
 		didSet {
 			if feed != oldValue {
 				updateUI()
@@ -35,14 +35,14 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	let isFallbackInspector = false
 	var objects: [Any]? {
 		didSet {
-			renameWebFeedIfNecessary()
+			renameFeedIfNecessary()
 			updateFeed()
 		}
 	}
 	var windowTitle: String = NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
-		return objects.count == 1 && objects.first is WebFeed
+		return objects.count == 1 && objects.first is Feed
 	}
 
 	// MARK: NSViewController
@@ -58,7 +58,7 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	}
 	
 	override func viewDidDisappear() {
-		renameWebFeedIfNecessary()
+		renameFeedIfNecessary()
 	}
 	
 	// MARK: Actions
@@ -112,18 +112,18 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	
 }
 
-extension WebFeedInspectorViewController: NSTextFieldDelegate {
+extension FeedInspectorViewController: NSTextFieldDelegate {
 
 	func controlTextDidEndEditing(_ note: Notification) {
-		renameWebFeedIfNecessary()
+		renameFeedIfNecessary()
 	}
 	
 }
 
-private extension WebFeedInspectorViewController {
+private extension FeedInspectorViewController {
 
 	func updateFeed() {
-		guard let objects = objects, objects.count == 1, let singleFeed = objects.first as? WebFeed else {
+		guard let objects = objects, objects.count == 1, let singleFeed = objects.first as? Feed else {
 			feed = nil
 			return
 		}
@@ -202,7 +202,7 @@ private extension WebFeedInspectorViewController {
 		}
 	}
 
-	func renameWebFeedIfNecessary() {
+	func renameFeedIfNecessary() {
 		guard let feed = feed,
 			  let account = feed.account,
 			  let nameTextField = nameTextField,
@@ -210,7 +210,7 @@ private extension WebFeedInspectorViewController {
 			return
 		}
 		
-		account.renameWebFeed(feed, to: nameTextField.stringValue) { [weak self] result in
+		account.renameFeed(feed, to: nameTextField.stringValue) { [weak self] result in
 			if case .failure(let error) = result {
 				self?.presentError(error)
 			} else {

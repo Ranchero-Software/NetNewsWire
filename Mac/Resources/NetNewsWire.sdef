@@ -73,9 +73,9 @@
              <element type="article">
                  <cocoa key="selectedArticles"/>
              </element>
-             <element type="webFeed">
-				 <synonym name="feed"/>
-                 <cocoa key="webFeeds"/>
+             <element type="feed">
+				 <synonym name="webFeed"/>
+                 <cocoa key="feeds"/>
              </element>
          </class>
 
@@ -105,30 +105,30 @@
 			<property name="active" code="Actv" type="boolean" access="rw" description="Whether or not the account is active">
 				<cocoa key="scriptingIsActive"/>
 			</property>
-           	<property name="allWebFeeds" code="Feds" access="r" description="All feeds, including feeds inside folders">
-				<synonym name="allFeeds"/>
-                <cocoa key="allWebFeeds"/>
-                <type type="webFeed" list="yes"/>
+           	<property name="allFeeds" code="Feds" access="r" description="All feeds, including feeds inside folders">
+				<synonym name="allWebFeeds"/>
+                <cocoa key="allFeeds"/>
+                <type type="feed" list="yes"/>
             </property>
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the account">
                 <cocoa key="opmlRepresentation"/>
             </property>
-            <element type="webFeed">
-				<synonym name="feed"/>
-				<cocoa key="webFeeds"/>
+            <element type="feed">
+				<synonym name="webFeed"/>
+				<cocoa key="feeds"/>
             </element>
-            <element type="webFeed">
+            <element type="feed">
 				<synonym name="allFeeds"/>
-				<cocoa key="allWebFeeds"/>
+				<cocoa key="allFeeds"/>
             </element>
             <element type="folder">
                 <cocoa key="folders"/>
             </element>
         </class>
         
-        <class name="webFeed" code="Feed" plural="webFeeds" description="An RSS feed">
-			<synonym name="feed"/>
-            <cocoa class="ScriptableWebFeed"/>
+        <class name="feed" code="Feed" plural="feeds" description="An RSS feed">
+			<synonym name="webFeed"/>
+            <cocoa class="ScriptableFeed"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the feed">
                 <cocoa key="name"/>
             </property>
@@ -189,9 +189,9 @@
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the folder">
                 <cocoa key="opmlRepresentation"/>
             </property>
-            <element type="webFeed">
-				<synonym name="feed"/>
-                <cocoa key="webFeeds"/>
+            <element type="feed">
+				<synonym name="webFeed"/>
+                <cocoa key="feeds"/>
             </element>
             <element type="article">
                 <cocoa key="articles"/>
@@ -245,7 +245,7 @@
             <property name="image url" code="IURL" type="text" access="r" description="an image url for the article">
                 <cocoa key="imageURL"/>
             </property>
-            <property name="feed" code="Feed" type="webFeed" access="r" description="the containing feed">
+            <property name="feed" code="Feed" type="feed" access="r" description="the containing feed">
                 <cocoa key="feed"/>
             </property>
 			<element type="author">

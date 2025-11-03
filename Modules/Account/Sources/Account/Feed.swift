@@ -1,5 +1,5 @@
 //
-//  WebFeed.swift
+//  Feed.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 7/1/17.
@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class WebFeed: SidebarItem, Renamable, Hashable {
+public final class Feed: SidebarItem, Renamable, Hashable {
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .none
@@ -22,18 +22,18 @@ public final class WebFeed: SidebarItem, Renamable, Hashable {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
 		}
-		return SidebarItemIdentifier.webFeed(accountID, webFeedID)
+		return SidebarItemIdentifier.feed(accountID, feedID)
 	}
 
 	public weak var account: Account?
 	public let url: String
 
-	public var webFeedID: String {
+	public var feedID: String {
 		get {
-			return metadata.webFeedID
+			return metadata.feedID
 		}
 		set {
-			metadata.webFeedID = newValue
+			metadata.feedID = newValue
 		}
 	}
 
@@ -222,7 +222,7 @@ public final class WebFeed: SidebarItem, Renamable, Hashable {
 
 	public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let account = account else { return }
-		account.renameWebFeed(self, to: newName, completion: completion)
+		account.renameFeed(self, to: newName, completion: completion)
 	}
 
 	// MARK: - UnreadCountProvider
@@ -282,19 +282,19 @@ public final class WebFeed: SidebarItem, Renamable, Hashable {
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {
-		hasher.combine(webFeedID)
+		hasher.combine(feedID)
 	}
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: WebFeed, rhs: WebFeed) -> Bool {
-		return lhs.webFeedID == rhs.webFeedID && lhs.accountID == rhs.accountID
+	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
+		return lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
 	}
 }
 
 // MARK: - OPMLRepresentable
 
-extension WebFeed: OPMLRepresentable {
+extension Feed: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		// https://github.com/brentsimmons/NetNewsWire/issues/527
@@ -322,18 +322,18 @@ extension WebFeed: OPMLRepresentable {
 	}
 }
 
-extension Set where Element == WebFeed {
+extension Set where Element == Feed {
 
-	func webFeedIDs() -> Set<String> {
-		return Set<String>(map { $0.webFeedID })
+	func feedIDs() -> Set<String> {
+		return Set<String>(map { $0.feedID })
 	}
 	
-	func sorted() -> Array<WebFeed> {
-		return sorted(by: { (webFeed1, webFeed2) -> Bool in
-			if webFeed1.nameForDisplay.localizedStandardCompare(webFeed2.nameForDisplay) == .orderedSame {
-				return webFeed1.url < webFeed2.url
+	func sorted() -> Array<Feed> {
+		return sorted(by: { (feed1, feed2) -> Bool in
+			if feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedSame {
+				return feed1.url < feed2.url
 			}
-			return webFeed1.nameForDisplay.localizedStandardCompare(webFeed2.nameForDisplay) == .orderedAscending
+			return feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedAscending
 		})
 	}
 	

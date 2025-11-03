@@ -16,7 +16,7 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 	
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
-	case webFeed(String, String) // accountID, webFeedID
+	case feed(String, String) // accountID, feedID
 	case folder(String, String) // accountID, folderName
 	
 	public var description: String {
@@ -25,8 +25,8 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 			return "smartFeed: \(id)"
 		case .script(let id):
 			return "script: \(id)"
-		case .webFeed(let accountID, let webFeedID):
-			return "feed: \(accountID)_\(webFeedID)"
+		case .feed(let accountID, let feedID):
+			return "feed: \(accountID)_\(feedID)"
 		case .folder(let accountID, let folderName):
 			return "folder: \(accountID)_\(folderName)"
 		}
@@ -44,11 +44,11 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 				"type": "script",
 				"id": id
 			]
-		case .webFeed(let accountID, let webFeedID):
+		case .feed(let accountID, let feedID):
 			return [
 				"type": "feed",
 				"accountID": accountID,
-				"webFeedID": webFeedID
+				"feedID": feedID
 			]
 		case .folder(let accountID, let folderName):
 			return [
@@ -70,8 +70,8 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable 
 			guard let id = userInfo["id"] as? String else { return nil }
 			self = SidebarItemIdentifier.script(id)
 		case "feed":
-			guard let accountID = userInfo["accountID"] as? String, let webFeedID = userInfo["webFeedID"] as? String else { return nil }
-			self = SidebarItemIdentifier.webFeed(accountID, webFeedID)
+			guard let accountID = userInfo["accountID"] as? String, let feedID = userInfo["feedID"] as? String else { return nil }
+			self = SidebarItemIdentifier.feed(accountID, feedID)
 		case "folder":
 			guard let accountID = userInfo["accountID"] as? String, let folderName = userInfo["folderName"] as? String else { return nil }
 			self = SidebarItemIdentifier.folder(accountID, folderName)

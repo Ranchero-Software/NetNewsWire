@@ -11,7 +11,7 @@ import RSTree
 import Articles
 import Account
 
-final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
+final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
@@ -39,7 +39,7 @@ final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 	}	
 }
 
-private extension WebFeedTreeControllerDelegate {
+private extension SidebarTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()
@@ -66,9 +66,9 @@ private extension WebFeedTreeControllerDelegate {
 
 		var children = [AnyObject]()
 		
-		for webFeed in container.topLevelWebFeeds {
-			if let sidebarItemID = webFeed.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && webFeed.unreadCount == 0) {
-				children.append(webFeed)
+		for feed in container.topLevelFeeds {
+			if let sidebarItemID = feed.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && feed.unreadCount == 0) {
+				children.append(feed)
 			}
 		}
 		
@@ -100,8 +100,8 @@ private extension WebFeedTreeControllerDelegate {
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {
-		if let webFeed = representedObject as? WebFeed {
-			return createNode(webFeed: webFeed, parent: parent)
+		if let feed = representedObject as? Feed {
+			return createNode(feed: feed, parent: parent)
 		}
 
 		if let folder = representedObject as? Folder {
@@ -115,8 +115,8 @@ private extension WebFeedTreeControllerDelegate {
 		return nil
 	}
 	
-	func createNode(webFeed: WebFeed, parent: Node) -> Node {
-		return parent.createChildNode(webFeed)
+	func createNode(feed: Feed, parent: Node) -> Node {
+		return parent.createChildNode(feed)
 	}
 	
 	func createNode(folder: Folder, parent: Node) -> Node {

@@ -1,5 +1,5 @@
 //
-//  WebFeedInspectorViewController.swift
+//  FeedInspectorViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/6/19.
@@ -11,11 +11,11 @@ import Account
 import SafariServices
 import UserNotifications
 
-final class WebFeedInspectorViewController: UITableViewController {
+final class FeedInspectorViewController: UITableViewController {
 	
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 500.0)
 	
-	var webFeed: WebFeed!
+	var feed: Feed!
 	@IBOutlet weak var nameTextField: UITextField!
 	@IBOutlet weak var notifyAboutNewArticlesSwitch: UISwitch!
 	@IBOutlet weak var alwaysShowReaderViewSwitch: UISwitch!
@@ -24,13 +24,13 @@ final class WebFeedInspectorViewController: UITableViewController {
 	
 	private var headerView: InspectorIconHeaderView?
 	private var iconImage: IconImage? {
-		return IconImageCache.shared.imageForFeed(webFeed)
+		return IconImageCache.shared.imageForFeed(feed)
 	}
 	
 	private let homePageIndexPath = IndexPath(row: 0, section: 1)
 	
 	private var shouldHideHomePageSection: Bool {
-		return webFeed.homePageURL == nil
+		return feed.homePageURL == nil
 	}
 	
 	private var userNotificationSettings: UNNotificationSettings?
@@ -38,17 +38,17 @@ final class WebFeedInspectorViewController: UITableViewController {
 	override func viewDidLoad() {
 		tableView.register(InspectorIconHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		
-		navigationItem.title = webFeed.nameForDisplay
-		nameTextField.text = webFeed.nameForDisplay
+		navigationItem.title = feed.nameForDisplay
+		nameTextField.text = feed.nameForDisplay
 		
-		notifyAboutNewArticlesSwitch.setOn(webFeed.isNotifyAboutNewArticles ?? false, animated: false)
+		notifyAboutNewArticlesSwitch.setOn(feed.isNotifyAboutNewArticles ?? false, animated: false)
 		
-		alwaysShowReaderViewSwitch.setOn(webFeed.isArticleExtractorAlwaysOn ?? false, animated: false)
+		alwaysShowReaderViewSwitch.setOn(feed.isArticleExtractorAlwaysOn ?? false, animated: false)
 
-		homePageLabel.text = webFeed.homePageURL
-		feedURLLabel.text = webFeed.url
+		homePageLabel.text = feed.homePageURL
+		feedURLLabel.text = feed.url
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNotificationSettings), name: UIApplication.willEnterForegroundNotification, object: nil)
 		
@@ -59,15 +59,15 @@ final class WebFeedInspectorViewController: UITableViewController {
 	}
 	
 	override func viewDidDisappear(_ animated: Bool) {
-		if nameTextField.text != webFeed.nameForDisplay {
+		if nameTextField.text != feed.nameForDisplay {
 			let nameText = nameTextField.text ?? ""
-			let newName = nameText.isEmpty ? (webFeed.name ?? NSLocalizedString("Untitled", comment: "Feed name")) : nameText
-			webFeed.rename(to: newName) { _ in }
+			let newName = nameText.isEmpty ? (feed.name ?? NSLocalizedString("Untitled", comment: "Feed name")) : nameText
+			feed.rename(to: newName) { _ in }
 		}
 	}
 	
 	// MARK: Notifications
-	@objc func webFeedIconDidBecomeAvailable(_ notification: Notification) {
+	@objc func feedIconDidBecomeAvailable(_ notification: Notification) {
 		headerView?.iconView.iconImage = iconImage
 	}
 	
@@ -80,13 +80,13 @@ final class WebFeedInspectorViewController: UITableViewController {
 			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
 			present(notificationUpdateErrorAlert(), animated: true, completion: nil)
 		} else if settings.authorizationStatus == .authorized {
-			webFeed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
+			feed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
 		} else {
 			UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
 				self.updateNotificationSettings()
 				if granted {
 					DispatchQueue.main.async {
-						self.webFeed.isNotifyAboutNewArticles = self.notifyAboutNewArticlesSwitch.isOn
+						self.feed.isNotifyAboutNewArticles = self.notifyAboutNewArticlesSwitch.isOn
 						UIApplication.shared.registerForRemoteNotifications()
 					}
 				} else {
@@ -99,7 +99,7 @@ final class WebFeedInspectorViewController: UITableViewController {
 	}
 	
 	@IBAction func alwaysShowReaderViewChanged(_ sender: Any) {
-		webFeed.isArticleExtractorAlwaysOn = alwaysShowReaderViewSwitch.isOn
+		feed.isArticleExtractorAlwaysOn = alwaysShowReaderViewSwitch.isOn
 	}
 	
 	@IBAction func done(_ sender: Any) {
@@ -128,7 +128,7 @@ final class WebFeedInspectorViewController: UITableViewController {
 
 // MARK: Table View
 
-extension WebFeedInspectorViewController {
+extension FeedInspectorViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		let numberOfSections = super.numberOfSections(in: tableView)
@@ -150,7 +150,7 @@ extension WebFeedInspectorViewController {
 				return cell
 			}
 			label.numberOfLines = 2
-			label.text = webFeed.notificationDisplayName.capitalized
+			label.text = feed.notificationDisplayName.capitalized
 		}
 		return cell
 	}
@@ -171,7 +171,7 @@ extension WebFeedInspectorViewController {
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if shift(indexPath) == homePageIndexPath,
-			let homePageUrlString = webFeed.homePageURL,
+			let homePageUrlString = feed.homePageURL,
 			let homePageUrl = URL(string: homePageUrlString) {
 			
 			let safari = SFSafariViewController(url: homePageUrl)
@@ -186,7 +186,7 @@ extension WebFeedInspectorViewController {
 
 // MARK: UITextFieldDelegate
 
-extension WebFeedInspectorViewController: UITextFieldDelegate {
+extension FeedInspectorViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
@@ -197,7 +197,7 @@ extension WebFeedInspectorViewController: UITextFieldDelegate {
 
 // MARK: UNUserNotificationCenter
 
-extension WebFeedInspectorViewController {
+extension FeedInspectorViewController {
 	
 	@objc
 	func updateNotificationSettings() {

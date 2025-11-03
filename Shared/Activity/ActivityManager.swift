@@ -40,7 +40,7 @@ final class ActivityManager {
 	}
 	
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 	}
 	
 	func invalidateCurrentActivities() {
@@ -54,8 +54,8 @@ final class ActivityManager {
 		
 		selectingActivity = makeSelectFeedActivity(sidebarItem: sidebarItem)
 		
-		if let webFeed = sidebarItem as? WebFeed {
-			updateSelectingActivityFeedSearchAttributes(with: webFeed)
+		if let feed = sidebarItem as? Feed {
+			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
 		
 		donate(selectingActivity!)
@@ -117,8 +117,8 @@ final class ActivityManager {
 			}
 		}
 		
-		for webFeed in account.flattenedWebFeeds() {
-			ids.append(contentsOf: identifiers(for: webFeed))
+		for feed in account.flattenedFeeds() {
+			ids.append(contentsOf: identifiers(for: feed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
@@ -128,31 +128,31 @@ final class ActivityManager {
 		var ids = [String]()
 		ids.append(identifier(for: folder))
 		
-		for webFeed in folder.flattenedWebFeeds() {
-			ids.append(contentsOf: identifiers(for: webFeed))
+		for feed in folder.flattenedFeeds() {
+			ids.append(contentsOf: identifiers(for: feed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ webFeed: WebFeed) {
-		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: webFeed))
+	static func cleanUp(_ feed: Feed) {
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: feed))
 	}
 	#endif
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
 			return
 		}
 		
 		#if os(iOS)
-		if let article = readingArticle, activityFeedId == article.webFeedID {
+		if let article = readingArticle, activityFeedId == article.feedID {
 			updateReadArticleSearchAttributes(with: article)
 		}
 		#endif
 		
-		if activityFeedId == webFeed.webFeedID {
-			updateSelectingActivityFeedSearchAttributes(with: webFeed)
+		if activityFeedId == feed.feedID {
+			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
 	}
 
@@ -236,7 +236,7 @@ private extension ActivityManager {
 	#endif
 	
 	func makeKeywords(_ article: Article) -> [String] {
-		let feedNameKeywords = makeKeywords(article.webFeed?.nameForDisplay)
+		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
 		let articleTitleKeywords = makeKeywords(ArticleStringFormatter.truncatedTitle(article))
 		return feedNameKeywords + articleTitleKeywords
 	}
@@ -245,7 +245,7 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	func updateSelectingActivityFeedSearchAttributes(with feed: WebFeed) {
+	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(contentType: UTType.compositeContent)
 		attributeSet.title = feed.nameForDisplay
@@ -278,15 +278,15 @@ private extension ActivityManager {
 		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
 	}
 	
-	static func identifier(for feed: WebFeed) -> String {
-		return "account_\(feed.account!.accountID)_feed_\(feed.webFeedID)"
+	static func identifier(for feed: Feed) -> String {
+		return "account_\(feed.account!.accountID)_feed_\(feed.feedID)"
 	}
 	
 	static func identifier(for article: Article) -> String {
-		return "account_\(article.accountID)_feed_\(article.webFeedID)_article_\(article.articleID)"
+		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
 	}
 	
-	static func identifiers(for feed: WebFeed) -> [String] {
+	static func identifiers(for feed: Feed) -> [String] {
 		var ids = [String]()
 		ids.append(identifier(for: feed))
 		if let articles = try? feed.fetchArticles() {

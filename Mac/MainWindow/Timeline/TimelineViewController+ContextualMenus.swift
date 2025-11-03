@@ -65,15 +65,15 @@ extension TimelineViewController {
 	}
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let webFeed = menuItem.representedObject as? WebFeed else {
+		guard let menuItem = sender as? NSMenuItem, let feed = menuItem.representedObject as? Feed else {
 			return
 		}
-		delegate?.timelineRequestedWebFeedSelection(self, webFeed: webFeed)
+		delegate?.timelineRequestedFeedSelection(self, feed: feed)
 	}
 	
 	@objc func markAllInFeedAsRead(_ sender: Any?) {
 		guard let menuItem = sender as? NSMenuItem,
-			  let feed = menuItem.representedObject as? WebFeed else {
+			  let feed = menuItem.representedObject as? Feed else {
 			return
 		}
 
@@ -171,8 +171,8 @@ private extension TimelineViewController {
 
 		menu.addSeparatorIfNeeded()
 		
-		if articles.count == 1, let feed = articles.first!.webFeed {
-			if !(representedObjects?.contains(where: { $0 as? WebFeed == feed }) ?? false) {
+		if articles.count == 1, let feed = articles.first!.feed {
+			if !(representedObjects?.contains(where: { $0 as? Feed == feed }) ?? false) {
 				menu.addItem(selectFeedInSidebarMenuItem(feed))
 			}
 			if let markAllMenuItem = markAllAsReadMenuItem(feed) {
@@ -256,13 +256,13 @@ private extension TimelineViewController {
 		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: AppAssets.markBelowAsReadImage)
 	}
 
-	func selectFeedInSidebarMenuItem(_ feed: WebFeed) -> NSMenuItem {
+	func selectFeedInSidebarMenuItem(_ feed: Feed) -> NSMenuItem {
 		let localizedMenuText = NSLocalizedString("Select “%@” in Sidebar", comment: "Command")
 		let formattedMenuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay)
 		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed, image: nil)
 	}
 
-	func markAllAsReadMenuItem(_ feed: WebFeed) -> NSMenuItem? {
+	func markAllAsReadMenuItem(_ feed: Feed) -> NSMenuItem? {
 		guard feed.unreadCount > 0 else {
 			return nil
 		}

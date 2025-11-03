@@ -357,7 +357,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func createTagging(webFeedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
+	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
@@ -365,7 +365,7 @@ final class FeedbinAPICaller: NSObject {
 
 		let payload: Data
 		do {
-			payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: webFeedID, name: name))
+			payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
 		} catch {
 			completion(.failure(error))
 			return

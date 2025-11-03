@@ -70,7 +70,7 @@
                                     <items>
                                         <menuItem title="New Feed…" keyEquivalent="n" id="Was-JA-tGl">
                                             <connections>
-                                                <action selector="showAddWebFeedWindow:" target="Ady-hI-5gd" id="LkT-kx-aCR"/>
+                                                <action selector="showAddFeedWindow:" target="Ady-hI-5gd" id="jOz-hB-3zH"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="New Folder…" keyEquivalent="N" id="wkh-LX-Xp1">

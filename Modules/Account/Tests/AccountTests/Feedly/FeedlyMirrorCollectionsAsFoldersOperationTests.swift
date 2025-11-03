@@ -180,7 +180,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 			
 			waitForExpectations(timeout: 2)
 			
-			XCTAssertFalse(account.flattenedWebFeeds().isEmpty, "Expected account to have feeds.")
+			XCTAssertFalse(account.flattenedFeeds().isEmpty, "Expected account to have feeds.")
 		}
 		
 		// Now that the folders are added, remove them all.
@@ -197,7 +197,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let feeds = account.flattenedWebFeeds()
+		let feeds = account.flattenedFeeds()
 		
 		XCTAssertTrue(feeds.isEmpty)
 	}
