@@ -1,6 +1,6 @@
 #include "./common/NetNewsWire_codesigning_common.xcconfig"
 
-CODE_SIGN_IDENTITY = iPhone Developer
+CODE_SIGN_IDENTITY = Apple Development
 DEVELOPMENT_TEAM = M8L2WTLA8W
 
 BUNDLE_LOADER = $(TEST_HOST)
