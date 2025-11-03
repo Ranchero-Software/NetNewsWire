@@ -54,8 +54,8 @@ final class ActivityManager {
 		
 		selectingActivity = makeSelectFeedActivity(sidebarItem: sidebarItem)
 		
-		if let webFeed = sidebarItem as? Feed {
-			updateSelectingActivityFeedSearchAttributes(with: webFeed)
+		if let feed = sidebarItem as? Feed {
+			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
 		
 		donate(selectingActivity!)
@@ -117,8 +117,8 @@ final class ActivityManager {
 			}
 		}
 		
-		for webFeed in account.flattenedFeeds() {
-			ids.append(contentsOf: identifiers(for: webFeed))
+		for feed in account.flattenedFeeds() {
+			ids.append(contentsOf: identifiers(for: feed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
@@ -128,15 +128,15 @@ final class ActivityManager {
 		var ids = [String]()
 		ids.append(identifier(for: folder))
 		
-		for webFeed in folder.flattenedFeeds() {
-			ids.append(contentsOf: identifiers(for: webFeed))
+		for feed in folder.flattenedFeeds() {
+			ids.append(contentsOf: identifiers(for: feed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ webFeed: Feed) {
-		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: webFeed))
+	static func cleanUp(_ feed: Feed) {
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: feed))
 	}
 	#endif
 

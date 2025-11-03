@@ -744,12 +744,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		update(webFeed.feedID, with: parsedItems, completion: completion)
 	}
 	
-	func update(_ webFeedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
+	func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 		
-		database.update(with: parsedItems, webFeedID: webFeedID, deleteOlder: deleteOlder) { updateArticlesResult in
+		database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { updateArticlesResult in
 			switch updateArticlesResult {
 			case .success(let articleChanges):
 				self.sendNotificationAbout(articleChanges)
@@ -760,16 +760,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	func update(webFeedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
+	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
-		guard !webFeedIDsAndItems.isEmpty else {
+		guard !feedIDsAndItems.isEmpty else {
 			completion(nil)
 			return
 		}
 
-		database.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
+		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
 			switch updateArticlesResult {
 			case .success(let newAndUpdatedArticles):
 				self.sendNotificationAbout(newAndUpdatedArticles)

@@ -98,7 +98,7 @@ private struct SidebarItemSpecifier {
 	private weak var account: Account?
 	private let parentFolder: Folder?
 	private let folder: Folder?
-	private let webFeed: Feed?
+	private let feed: Feed?
 	private let path: ContainerPath
 	private let errorHandler: (Error) -> ()
 
@@ -118,13 +118,13 @@ private struct SidebarItemSpecifier {
 
 		self.parentFolder = node.parentFolder()
 
-		if let webFeed = node.representedObject as? Feed {
-			self.webFeed = webFeed
+		if let feed = node.representedObject as? Feed {
+			self.feed = feed
 			self.folder = nil
-			account = webFeed.account
+			account = feed.account
 		}
 		else if let folder = node.representedObject as? Folder {
-			self.webFeed = nil
+			self.feed = nil
 			self.folder = folder
 			account = folder.account
 		}
@@ -144,15 +144,15 @@ private struct SidebarItemSpecifier {
 
 	func delete(completion: @escaping () -> Void) {
 
-		if let webFeed = webFeed {
-			
+		if let feed = feed {
+
 			guard let container = path.resolveContainer() else {
 				completion()
 				return
 			}
 			
 			BatchUpdate.shared.start()
-			account?.removeFeed(webFeed, from: container) { result in
+			account?.removeFeed(feed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
@@ -172,17 +172,17 @@ private struct SidebarItemSpecifier {
 
 	func restore() {
 
-		if let _ = webFeed {
-			restoreWebFeed()
+		if let _ = feed {
+			restoreFeed()
 		}
 		else if let _ = folder {
 			restoreFolder()
 		}
 	}
 
-	private func restoreWebFeed() {
+	private func restoreFeed() {
 
-		guard let account = account, let feed = webFeed, let container = path.resolveContainer() else {
+		guard let account = account, let feed = feed, let container = path.resolveContainer() else {
 			return
 		}
 		

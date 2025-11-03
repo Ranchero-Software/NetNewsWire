@@ -333,17 +333,17 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 			return datePublished >= since
 		}
-		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues {
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues {
 			Set($0)
 		}
 
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { error in
+		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { error in
 			if let error = error {
 				completion(.failure(error))
 				return
 			}
 
-			completion(.success(!webFeedIDsAndItems.isEmpty))
+			completion(.success(!feedIDsAndItems.isEmpty))
 		}
 	}
 

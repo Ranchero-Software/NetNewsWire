@@ -25,10 +25,10 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation {
 
 	private let queue: DatabaseQueue
 	private let cutoffDate: Date
-	private let webFeedID: String
+	private let feedID: String
 
-	init(webFeedID: String, databaseQueue: DatabaseQueue, cutoffDate: Date) {
-		self.webFeedID = webFeedID
+	init(feedID: String, databaseQueue: DatabaseQueue, cutoffDate: Date) {
+		self.feedID = feedID
 		self.queue = databaseQueue
 		self.cutoffDate = cutoffDate
 	}
@@ -55,7 +55,7 @@ private extension FetchFeedUnreadCountOperation {
 	func fetchUnreadCount(_ database: FMDatabase) {
 		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0;"
 
-		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [webFeedID]) else {
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [feedID]) else {
 			informOperationDelegateOfCompletion()
 			return
 		}

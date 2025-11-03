@@ -26,8 +26,8 @@ final class UserNotificationManager: NSObject {
 		}
 		
 		for article in articles {
-			if !article.status.read, let webFeed = article.feed, webFeed.isNotifyAboutNewArticles ?? false {
-				sendNotification(webFeed: webFeed, article: article)
+			if !article.status.read, let feed = article.feed, feed.isNotifyAboutNewArticles ?? false {
+				sendNotification(feed: feed, article: article)
 			}
 		}
 	}
@@ -53,19 +53,19 @@ final class UserNotificationManager: NSObject {
 
 private extension UserNotificationManager {
 	
-	func sendNotification(webFeed: Feed, article: Article) {
+	func sendNotification(feed: Feed, article: Article) {
 		let content = UNMutableNotificationContent()
 						
-		content.title = webFeed.nameForDisplay
+		content.title = feed.nameForDisplay
 		if !ArticleStringFormatter.truncatedTitle(article).isEmpty {
 			content.subtitle = ArticleStringFormatter.truncatedTitle(article)
 		}
 		content.body = ArticleStringFormatter.truncatedSummary(article)
-		content.threadIdentifier = webFeed.feedID
+		content.threadIdentifier = feed.feedID
 		content.sound = UNNotificationSound.default
 		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
 		content.categoryIdentifier = "NEW_ARTICLE_NOTIFICATION_CATEGORY"
-		if let attachment = thumbnailAttachment(for: article, webFeed: webFeed) {
+		if let attachment = thumbnailAttachment(for: article, feed: feed) {
 			content.attachments.append(attachment)
 		}
 		
@@ -76,12 +76,12 @@ private extension UserNotificationManager {
 	/// Determine if there is an available icon for the article. This will then move it to the caches directory and make it avialble for the notification. 
 	/// - Parameters:
 	///   - article: `Article`
-	///   - webFeed: `WebFeed`
+	///   - feed: `Feed`
 	/// - Returns: A `UNNotifcationAttachment` if an icon is available. Otherwise nil.
 	/// - Warning: In certain scenarios, this will return the `faviconTemplateImage`.
-	func thumbnailAttachment(for article: Article, webFeed: Feed) -> UNNotificationAttachment? {
-		if let imageURL = article.iconImageUrl(webFeed: webFeed) {
-			let thumbnail = try? UNNotificationAttachment(identifier: webFeed.feedID, url: imageURL, options: nil)
+	func thumbnailAttachment(for article: Article, feed: Feed) -> UNNotificationAttachment? {
+		if let imageURL = article.iconImageUrl(feed: feed) {
+			let thumbnail = try? UNNotificationAttachment(identifier: feed.feedID, url: imageURL, options: nil)
 			return thumbnail
 		}
 		return nil

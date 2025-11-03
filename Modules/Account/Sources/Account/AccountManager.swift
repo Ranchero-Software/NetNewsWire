@@ -216,9 +216,9 @@ public final class AccountManager: UnreadCountProvider {
 			if let account = existingAccount(with: accountID) {
 				return account.existingFolder(with: folderName)
 			}
-		case .feed(let accountID, let webFeedID):
+		case .feed(let accountID, let feedID):
 			if let account = existingAccount(with: accountID) {
-				return account.existingFeed(withFeedID: webFeedID)
+				return account.existingFeed(withFeedID: feedID)
 			}
 		default:
 			break

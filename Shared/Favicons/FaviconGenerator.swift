@@ -14,16 +14,16 @@ final class FaviconGenerator {
 
 	private static var faviconGeneratorCache = [String: IconImage]() // feedURL: RSImage
 
-	static func favicon(_ webFeed: Feed) -> IconImage {
+	static func favicon(_ feed: Feed) -> IconImage {
 		
-		if let favicon = FaviconGenerator.faviconGeneratorCache[webFeed.url] {
+		if let favicon = FaviconGenerator.faviconGeneratorCache[feed.url] {
 			return favicon
 		}
 		
-		let colorHash = ColorHash(webFeed.url)
+		let colorHash = ColorHash(feed.url)
 		if let favicon = AppAssets.faviconTemplateImage.maskWithColor(color: colorHash.color.cgColor) {
 			let iconImage = IconImage(favicon, isBackgroundSuppressed: true)
-			FaviconGenerator.faviconGeneratorCache[webFeed.url] = iconImage
+			FaviconGenerator.faviconGeneratorCache[feed.url] = iconImage
 			return iconImage
 		} else {
 			return IconImage(AppAssets.faviconTemplateImage, isBackgroundSuppressed: true)

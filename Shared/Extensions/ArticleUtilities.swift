@@ -121,11 +121,11 @@ extension Article {
 		return IconImageCache.shared.imageForArticle(self)
 	}
 	
-	func iconImageUrl(webFeed: Feed) -> URL? {
+	func iconImageUrl(feed: Feed) -> URL? {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-			let feedID = webFeed.feedID.replacingOccurrences(of: "/", with: "_")
+			let feedID = feed.feedID.replacingOccurrences(of: "/", with: "_")
 			path.appendPathComponent(feedID + "_smallIcon.png")
 			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
 			return path
@@ -222,7 +222,7 @@ extension Article: SortableArticle {
 		return articleID
 	}
 	
-	var sortableWebFeedID: String {
+	var sortableFeedID: String {
 		return feedID
 	}
 	

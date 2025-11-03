@@ -61,12 +61,12 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			}
 		}()
 		
-		guard let destination = destinationContainer, let webFeed = dragNode.representedObject as? Feed else { return }
+		guard let destination = destinationContainer, let feed = dragNode.representedObject as? Feed else { return }
 		
 		if source.account == destination.account {
-			moveWebFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
+			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
 		} else {
-			moveWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
+			moveFeedBetweenAccounts(feed: feed, sourceContainer: source, destinationContainer: destination)
 		}
 	}
 	
@@ -85,8 +85,8 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		// Validate account specific behaviors...
 		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
 		   let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
-		   let sourceWebFeed = sourceNode.representedObject as? Feed,
-		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasFeed(withURL: sourceWebFeed.url) {
+		   let sourceFeed = sourceNode.representedObject as? Feed,
+		   sourceFeed.account?.accountID != destAccount.accountID && destAccount.hasFeed(withURL: sourceFeed.url) {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
 
@@ -109,7 +109,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 	func collectionView(_ collectionView: UICollectionView, dropSessionDidEnd session: UIDropSession) {
 	}
 	
-	func moveWebFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+	func moveFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		guard sourceContainer !== destinationContainer else { return }
 		
 		BatchUpdate.shared.start()
@@ -124,7 +124,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		}
 	}
 	
-	func moveWebFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		
 		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
 			

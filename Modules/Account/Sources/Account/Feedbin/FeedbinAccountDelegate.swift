@@ -1250,8 +1250,8 @@ private extension FeedbinAccountDelegate {
 	
 	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: @escaping DatabaseCompletionBlock) {
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
-		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true, completion: completion)
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true, completion: completion)
 	}
 	
 	func mapEntriesToParsedItems(entries: [FeedbinEntry]?) -> Set<ParsedItem> {

@@ -131,9 +131,9 @@ extension Article {
 		return feedArticles
 	}
 
-	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
+	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ feedID: String, _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
 		let maximumDateAllowed = _maximumDateAllowed()
-		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: webFeedID, status: statusesDictionary[$0.articleID]!) })
+		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
 	}
 }
 

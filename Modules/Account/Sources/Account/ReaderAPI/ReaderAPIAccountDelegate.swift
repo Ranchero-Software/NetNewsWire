@@ -1029,8 +1029,8 @@ private extension ReaderAPIAccountDelegate {
 
 	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping VoidCompletionBlock) {
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
-		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { _ in
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { _ in
 			completion()
 		}
 	}

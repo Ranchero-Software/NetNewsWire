@@ -83,7 +83,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 				let parser = FeedlyFeedParser(feed: collectionFeed)
 				let feed = account.createFeed(with: parser.title,
 												 url: parser.url,
-												 webFeedID: parser.webFeedID,
+												 webFeedID: parser.feedID,
 												 homePageURL: parser.homePageURL)
 				
 				// So the same feed isn't created more than once.

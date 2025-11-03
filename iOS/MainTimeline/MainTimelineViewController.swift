@@ -977,29 +977,29 @@ private extension MainTimelineViewController {
 		return coordinator?.timelineFeedIsEqualTo(feed) ?? false
 	}
 
-	func discloseWebFeed(_ feed: Feed, animations: Animations = []) {
+	func discloseFeed(_ feed: Feed, animations: Animations = []) {
 		assert(coordinator != nil)
-		coordinator?.discloseWebFeed(feed, animations: animations)
+		coordinator?.discloseFeed(feed, animations: animations)
 	}
 
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let webFeed = article.feed,
-			!timelineFeedIsEqualTo(webFeed) else { return nil }
+		guard let feed = article.feed,
+			!timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
-			self?.discloseWebFeed(webFeed, animations: [.scroll, .navigation])
+			self?.discloseFeed(feed, animations: [.scroll, .navigation])
 		}
 		return action
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.feed,
-			!timelineFeedIsEqualTo(webFeed) else { return nil }
+		guard let feed = article.feed,
+			!timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.discloseWebFeed(webFeed, animations: [.scroll, .navigation])
+			self?.discloseFeed(feed, animations: [.scroll, .navigation])
 			completion(true)
 		}
 		return action
@@ -1011,8 +1011,8 @@ private extension MainTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = article.feed else { return nil }
-		guard let fetchedArticles = try? webFeed.fetchArticles() else {
+		guard let feed = article.feed else { return nil }
+		guard let fetchedArticles = try? feed.fetchArticles() else {
 			return nil
 		}
 
@@ -1023,7 +1023,7 @@ private extension MainTimelineViewController {
 		
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -1034,8 +1034,8 @@ private extension MainTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.feed else { return nil }
-		guard let fetchedArticles = try? webFeed.fetchArticles() else {
+		guard let feed = article.feed else { return nil }
+		guard let fetchedArticles = try? feed.fetchArticles() else {
 			return nil
 		}
 		
@@ -1045,7 +1045,7 @@ private extension MainTimelineViewController {
 		}
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
 		}

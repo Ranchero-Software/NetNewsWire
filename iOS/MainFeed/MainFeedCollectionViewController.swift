@@ -1141,8 +1141,8 @@ extension MainFeedCollectionViewController {
 				return
 			}
 			
-			if let webFeed = sidebarItem as? Feed {
-				webFeed.rename(to: name) { result in
+			if let feed = sidebarItem as? Feed {
+				feed.rename(to: name) { result in
 					switch result {
 					case .success:
 						break

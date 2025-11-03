@@ -66,9 +66,9 @@ private extension SidebarTreeControllerDelegate {
 
 		var children = [AnyObject]()
 		
-		for webFeed in container.topLevelFeeds {
-			if let sidebarItemID = webFeed.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && webFeed.unreadCount == 0) {
-				children.append(webFeed)
+		for feed in container.topLevelFeeds {
+			if let sidebarItemID = feed.sidebarItemID, !(!filterExceptions.contains(sidebarItemID) && isReadFiltered && feed.unreadCount == 0) {
+				children.append(feed)
 			}
 		}
 		
@@ -100,8 +100,8 @@ private extension SidebarTreeControllerDelegate {
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {
-		if let webFeed = representedObject as? Feed {
-			return createNode(webFeed: webFeed, parent: parent)
+		if let feed = representedObject as? Feed {
+			return createNode(feed: feed, parent: parent)
 		}
 
 		if let folder = representedObject as? Folder {
@@ -115,8 +115,8 @@ private extension SidebarTreeControllerDelegate {
 		return nil
 	}
 	
-	func createNode(webFeed: Feed, parent: Node) -> Node {
-		return parent.createChildNode(webFeed)
+	func createNode(feed: Feed, parent: Node) -> Node {
+		return parent.createChildNode(feed)
 	}
 	
 	func createNode(folder: Folder, parent: Node) -> Node {
