@@ -37,12 +37,12 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
-		let windowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
-														  name: name,
-														  account: account,
-														  folder: folder,
-														  folderTreeController: folderTreeController,
-														  delegate: self)
+		let windowController = AddFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
+													   name: name,
+													   account: account,
+													   folder: folder,
+													   folderTreeController: folderTreeController,
+													   delegate: self)
 		addFeedWindowController = windowController
 		windowController.runSheetOnWindow(hostWindow)
 	}
