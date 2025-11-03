@@ -84,7 +84,7 @@ protocol SidebarDelegate: AnyObject {
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
 
@@ -231,7 +231,7 @@ protocol SidebarDelegate: AnyObject {
 		configureCellsForRepresentedObject(feed)
 	}
 	
-	@objc func webFeedSettingDidChange(_ note: Notification) {
+	@objc func feedSettingDidChange(_ note: Notification) {
 		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
 			return
 		}

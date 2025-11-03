@@ -116,8 +116,8 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		// lets us know that it’s time to request an image.
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
+
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 	}
 	
@@ -656,7 +656,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		}
 	}
 	
-	@objc func webFeedSettingDidChange(_ note: Notification) {
+	@objc func feedSettingDidChange(_ note: Notification) {
 		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
 			return
 		}

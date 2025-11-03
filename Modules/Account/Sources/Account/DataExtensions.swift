@@ -11,7 +11,7 @@ import Articles
 import RSParser
 
 public extension Notification.Name {
-	static let WebFeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
+	static let feedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
 }
 
 public extension Feed {
@@ -43,7 +43,7 @@ extension Feed {
 
 	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
 		let userInfo = [Feed.SettingUserInfoKey: codingKey.stringValue]
-		NotificationCenter.default.post(name: .WebFeedSettingDidChange, object: self, userInfo: userInfo)
+		NotificationCenter.default.post(name: .feedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }
 
