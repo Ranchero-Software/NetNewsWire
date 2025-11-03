@@ -138,13 +138,13 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 	
 	/// Removes a web feed from a container and optionally deletes it, calling the completion with true if deleted
-	func removeWebFeed(_ webFeed: Feed, from: Container, completion: @escaping (Result<Bool, Error>) -> Void) {
+	func removeFeed(_ feed: Feed, from: Container, completion: @escaping (Result<Bool, Error>) -> Void) {
 		guard let fromContainerExternalID = from.externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
 		}
 		
-		fetch(externalID: webFeed.externalID) { result in
+		fetch(externalID: feed.externalID) { result in
 			switch result {
 			case .success(let record):
 				
@@ -153,7 +153,7 @@ final class CloudKitAccountZone: CloudKitZone {
 					containerExternalIDSet.remove(fromContainerExternalID)
 					
 					if containerExternalIDSet.isEmpty {
-						self.delete(externalID: webFeed.externalID) { result in
+						self.delete(externalID: feed.externalID) { result in
 							switch result {
 							case .success:
 								completion(.success(true))

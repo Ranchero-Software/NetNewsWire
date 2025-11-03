@@ -210,7 +210,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		removeWebFeedFromCloud(for: account, with: feed, from: container) { result in
+		removeFeedFromCloud(for: account, with: feed, from: container) { result in
 			switch result {
 			case .success:
 				account.clearFeedMetadata(feed)
@@ -311,18 +311,18 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		accountZone.findWebFeedExternalIDs(for: folder) { result in
 			self.syncProgress.completeTask()
 			switch result {
-			case .success(let webFeedExternalIDs):
+			case .success(let feedExternalIDs):
 
-				let webFeeds = webFeedExternalIDs.compactMap { account.existingWebFeed(withExternalID: $0) }
+				let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
 				let group = DispatchGroup()
 				var errorOccurred = false
 
-				for webFeed in webFeeds {
+				for feed in feeds {
 					group.enter()
-					self.removeWebFeedFromCloud(for: account, with: webFeed, from: folder) { result in
+					self.removeFeedFromCloud(for: account, with: feed, from: folder) { result in
 						group.leave()
 						if case .failure(let error) = result {
-							Self.logger.error("CloudKit: Remove folder, remove webfeed error: \(error.localizedDescription)")
+							Self.logger.error("CloudKit: Remove folder, remove feed error: \(error.localizedDescription)")
 							errorOccurred = true
 						}
 					}
@@ -790,9 +790,9 @@ private extension CloudKitAccountDelegate {
 	}
 
 
-	func removeWebFeedFromCloud(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		syncProgress.addToNumberOfTasksAndRemaining(2)
-		accountZone.removeWebFeed(feed, from: container) { result in
+		accountZone.removeFeed(feed, from: container) { result in
 			self.syncProgress.completeTask()
 			switch result {
 			case .success:

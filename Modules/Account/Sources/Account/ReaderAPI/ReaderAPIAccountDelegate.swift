@@ -555,7 +555,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
@@ -773,7 +773,7 @@ private extension ReaderAPIAccountDelegate {
 		// Add any feeds we don't have and update any we do
 		subscriptions.forEach { subscription in
 			
-			if let feed = account.existingWebFeed(withWebFeedID: subscription.feedID) {
+			if let feed = account.existingFeed(withFeedID: subscription.feedID) {
 				feed.name = subscription.name
 				feed.editedName = nil
 				feed.homePageURL = subscription.homePageURL
@@ -829,7 +829,7 @@ private extension ReaderAPIAccountDelegate {
 			for subscription in groupedTaggings {
 				let taggingFeedID = subscription.feedID
 				if !folderFeedIds.contains(taggingFeedID) {
-					guard let feed = account.existingWebFeed(withWebFeedID: taggingFeedID) else {
+					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, folderExternalID: folderExternalID, feedExternalID: subscription.feedID)

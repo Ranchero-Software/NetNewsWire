@@ -106,7 +106,7 @@ final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjec
         let (account, folder) = command.accountAndFolderForNewChild()
         guard let url = self.urlForNewFeed(arguments:arguments) else {return nil}
         
-        if let existingFeed = account.existingWebFeed(withURL:url) {
+        if let existingFeed = account.existingFeed(withURL:url) {
             return scriptableFeed(existingFeed, account:account, folder:folder).objectSpecifier
         }
 		
@@ -123,7 +123,7 @@ final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjec
 		account.createFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
 			switch result {
 			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 				let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
 				command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
 			case .failure:

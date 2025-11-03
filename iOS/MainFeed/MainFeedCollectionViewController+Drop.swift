@@ -126,7 +126,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 	
 	func moveWebFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		
-		if let existingFeed = destinationContainer.account?.existingWebFeed(withURL: feed.url) {
+		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
 			
 			BatchUpdate.shared.start()
 			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in

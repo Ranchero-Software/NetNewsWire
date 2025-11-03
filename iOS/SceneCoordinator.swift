@@ -507,7 +507,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? Feed else {
+		guard let webFeed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		discloseWebFeed(webFeed, animations: [.scroll, .navigation])
@@ -1518,7 +1518,7 @@ private extension SceneCoordinator {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
 			} else if let webFeed = sidebarItem as? Feed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
+				if webFeed.account?.existingFeed(withFeedID: webFeed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 					addParentFolderToFilterExceptions(webFeed)
 				}
@@ -2043,7 +2043,7 @@ private extension SceneCoordinator {
 				if !unsortedArticleIDs.contains(article.articleID) {
 					updatedArticles.insert(article)
 				}
-				if article.account?.existingWebFeed(withWebFeedID: article.feedID) == nil {
+				if article.account?.existingFeed(withFeedID: article.feedID) == nil {
 					updatedArticles.remove(article)
 				}
 			}
@@ -2200,7 +2200,7 @@ private extension SceneCoordinator {
 		case .webFeed(let accountID, let webFeedID):
 			guard let accountNode = findAccountNode(accountID: accountID),
 				let account = accountNode.representedObject as? Account,
-				let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
+				let webFeed = account.existingFeed(withFeedID: webFeedID) else {
 				return
 			}
 			
@@ -2216,7 +2216,7 @@ private extension SceneCoordinator {
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			  let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
-			  let webFeedID = articlePathUserInfo[ArticlePathKey.webFeedID] as? String,
+			  let webFeedID = articlePathUserInfo[ArticlePathKey.feedID] as? String,
 			  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String,
 			  let accountNode = findAccountNode(accountID: accountID, accountName: accountName),
 			  let account = accountNode.representedObject as? Account else {
@@ -2229,7 +2229,7 @@ private extension SceneCoordinator {
 			return
 		}
 		
-		guard let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
+		guard let webFeed = account.existingFeed(withFeedID: webFeedID) else {
 			return
 		}
 		

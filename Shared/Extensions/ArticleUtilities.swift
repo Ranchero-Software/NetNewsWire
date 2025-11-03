@@ -43,7 +43,7 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 extension Article {
 	
 	var feed: Feed? {
-		return account?.existingWebFeed(withWebFeedID: feedID)
+		return account?.existingFeed(withFeedID: feedID)
 	}
 	
 	var url: URL? {
@@ -189,7 +189,7 @@ extension Article {
 struct ArticlePathKey {
 	static let accountID = "accountID"
 	static let accountName = "accountName"
-	static let webFeedID = "webFeedID"
+	static let feedID = "feedID"
 	static let articleID = "articleID"
 }
 
@@ -199,7 +199,7 @@ extension Article {
 		return [
 			ArticlePathKey.accountID: accountID,
 			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
-			ArticlePathKey.webFeedID: feedID,
+			ArticlePathKey.feedID: feedID,
 			ArticlePathKey.articleID: articleID
 		]
 	}

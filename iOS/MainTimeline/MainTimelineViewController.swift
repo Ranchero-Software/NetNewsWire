@@ -142,7 +142,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
@@ -610,9 +610,9 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 	}
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 
-		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in

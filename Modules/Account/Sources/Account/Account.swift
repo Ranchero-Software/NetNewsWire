@@ -1007,7 +1007,7 @@ extension Account: FeedMetadataDelegate {
 
 	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
 		feedMetadataFile.markAsDirty()
-		guard let feed = existingWebFeed(withWebFeedID: feedMetadata.feedID) else {
+		guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
 			return
 		}
 		feed.postFeedSettingDidChangeNotification(key)
@@ -1374,11 +1374,11 @@ private extension Account {
 
 extension Account {
 
-	public func existingWebFeed(withWebFeedID webFeedID: String) -> Feed? {
-		return idToFeedDictionary[webFeedID]
+	public func existingFeed(withFeedID feedID: String) -> Feed? {
+		return idToFeedDictionary[feedID]
 	}
 
-	public func existingWebFeed(withExternalID externalID: String) -> Feed? {
+	public func existingFeed(withExternalID externalID: String) -> Feed? {
 		return externalIDToFeedDictionary[externalID]
 	}
 	

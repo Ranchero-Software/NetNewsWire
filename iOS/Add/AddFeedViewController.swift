@@ -113,7 +113,7 @@ final class AddFeedViewController: UITableViewController {
 			switch result {
 			case .success(let feed):
 				self.dismiss(animated: true)
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
 				self.addButton.isEnabled = true
 				self.activityIndicator.stopAnimating()

@@ -56,7 +56,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 			.compactMap { (collectionFeed, folder) -> (Feed, Folder) in
 
 				// find an existing feed previously added to the account
-				if let feed = account.existingWebFeed(withWebFeedID: collectionFeed.id) {
+				if let feed = account.existingFeed(withFeedID: collectionFeed.id) {
 					
 					// If the feed was renamed on Feedly, ensure we ingest the new name.
 					if feed.nameForDisplay != collectionFeed.title {

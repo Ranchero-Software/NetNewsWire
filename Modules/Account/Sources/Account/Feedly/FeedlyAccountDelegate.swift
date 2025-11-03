@@ -463,7 +463,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:

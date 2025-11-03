@@ -1384,10 +1384,10 @@ private extension MainWindowController {
 	func buildNewSidebarItemMenu() -> NSMenu {
 		let menu = NSMenu()
 		
-		let newWebFeedItem = NSMenuItem()
-		newWebFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
-		newWebFeedItem.action = Selector(("showAddWebFeedWindow:"))
-		menu.addItem(newWebFeedItem)
+		let newFeedItem = NSMenuItem()
+		newFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
+		newFeedItem.action = Selector(("showAddWebFeedWindow:"))
+		menu.addItem(newFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")

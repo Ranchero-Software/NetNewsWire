@@ -83,7 +83,7 @@ protocol SidebarDelegate: AnyObject {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
@@ -216,7 +216,7 @@ protocol SidebarDelegate: AnyObject {
 	}
 	
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let feed = notification.userInfo?[UserInfoKey.webFeed] else {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] else {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
@@ -226,9 +226,9 @@ protocol SidebarDelegate: AnyObject {
 		applyToAvailableCells(configureFavicon)
 	}
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed else { return }
-		configureCellsForRepresentedObject(webFeed)
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else { return }
+		configureCellsForRepresentedObject(feed)
 	}
 	
 	@objc func webFeedSettingDidChange(_ note: Notification) {
@@ -577,10 +577,10 @@ private extension SidebarViewController {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
-			} else if let webFeed = sidebarItem as? Feed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
+			} else if let feed = sidebarItem as? Feed {
+				if feed.account?.existingFeed(withFeedID: feed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
-					addParentFolderToFilterExceptions(webFeed)
+					addParentFolderToFilterExceptions(feed)
 				}
 			}
 		}
@@ -775,7 +775,7 @@ private extension SidebarViewController {
 	}
 	
 	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
-		guard let webFeedID = userInfo?[ArticlePathKey.webFeedID] as? String else {
+		guard let webFeedID = userInfo?[ArticlePathKey.feedID] as? String else {
 			return nil
 		}
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.webFeedID == webFeedID }) {

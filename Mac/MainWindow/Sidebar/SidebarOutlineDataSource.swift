@@ -47,8 +47,8 @@ import Account
 			return nil
 		}
 		
-		// WebFeed objects don't have knowledge of their parent so we inject parent container information
-		// into WebFeedPasteboardWriter instance and it adds this field to the PasteboardWebFeed objects it writes.
+		// Feed objects don't have knowledge of their parent so we inject parent container information
+		// into FeedPasteboardWriter instance and it adds this field to the PasteboardFeed objects it writes.
 		// Add similar to FolderPasteboardWriter if/when we allow sub-folders
 		if let feedWriter = pasteboardWriter as? FeedPasteboardWriter {
 			if let parentContainerID = (node.parent?.representedObject as? Folder)?.containerID {
@@ -315,7 +315,7 @@ private extension SidebarOutlineDataSource {
 		return .copy	// different AccountIDs means can only copy
 	}
 	
-	func copyWebFeedInAccount(_ feed: Feed, _ destination: Container ) {
+	func copyFeedInAccount(_ feed: Feed, _ destination: Container ) {
 		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
@@ -326,7 +326,7 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 	
-	func moveWebFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
+	func moveFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
 		BatchUpdate.shared.start()
 		source.account?.moveFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
@@ -339,12 +339,12 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 	
-	func copyWebFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
+	func copyFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
 		guard let destinationAccount = destinationContainer.account  else {
 			return
 		}
 		
-		if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
+		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
@@ -373,8 +373,8 @@ private extension SidebarOutlineDataSource {
 		draggedFeeds.forEach { pasteboardFeed in
 			guard let sourceAccountID = pasteboardFeed.accountID,
 				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
-				  let webFeedID = pasteboardFeed.feedID,
-				  let feed = sourceAccount.existingWebFeed(withWebFeedID:  webFeedID),
+				  let feedID = pasteboardFeed.feedID,
+				  let feed = sourceAccount.existingFeed(withFeedID:  feedID),
 				  let destinationContainer = parentNode.representedObject as? Container
 			else {
 				return
@@ -391,12 +391,12 @@ private extension SidebarOutlineDataSource {
 			
 			if sameAccount(pasteboardFeed, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyWebFeedInAccount(feed, destinationContainer)
+					copyFeedInAccount(feed, destinationContainer)
 				} else {
-					moveWebFeedInAccount(feed, sourceContainer, destinationContainer)
+					moveFeedInAccount(feed, sourceContainer, destinationContainer)
 				}
 			} else {
-				copyWebFeedBetweenAccounts(feed, destinationContainer)
+				copyFeedBetweenAccounts(feed, destinationContainer)
 			}
 		}
 		
@@ -444,7 +444,7 @@ private extension SidebarOutlineDataSource {
 			switch result {
 			case .success(let destinationFolder):
 				for feed in folder.topLevelFeeds {
-					if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
+					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
 							switch result {
 							case .success:

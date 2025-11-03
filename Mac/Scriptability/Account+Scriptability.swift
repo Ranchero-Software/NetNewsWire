@@ -113,7 +113,7 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
     
     @objc(valueInWebFeedsWithUniqueID:)
     func valueInWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
-		guard let feed = account.existingWebFeed(withWebFeedID: id) else { return nil }
+		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
         return ScriptableWebFeed(feed, container:self)
     }
     
@@ -178,7 +178,7 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
     
     @objc(valueInAllWebFeedsWithUniqueID:)
     func valueInAllWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
-		guard let feed = account.existingWebFeed(withWebFeedID: id) else { return nil }
+		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
         return ScriptableWebFeed(feed, container:self)
     }
     

@@ -65,7 +65,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		let editedName = record[CloudKitAccountZone.CloudKitWebFeed.Fields.editedName] as? String
 		let homePageURL = record[CloudKitAccountZone.CloudKitWebFeed.Fields.homePageURL] as? String
 
-		if let webFeed = account.existingWebFeed(withExternalID: record.externalID) {
+		if let webFeed = account.existingFeed(withExternalID: record.externalID) {
 			updateWebFeed(webFeed, name: name, editedName: editedName, homePageURL: homePageURL, containerExternalIDs: containerExternalIDs)
 		} else {
 			for containerExternalID in containerExternalIDs {
@@ -79,7 +79,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	}
 	
 	func removeWebFeed(_ externalID: String) {
-		if let webFeed = account?.existingWebFeed(withExternalID: externalID), let containers = account?.existingContainers(withFeed: webFeed) {
+		if let webFeed = account?.existingFeed(withExternalID: externalID), let containers = account?.existingContainers(withFeed: webFeed) {
 			for container in containers {
 				webFeed.dropConditionalGetInfo()
 				container.removeWebFeed(webFeed)
@@ -167,7 +167,7 @@ private extension CloudKitAcountZoneDelegate {
 	func createWebFeedIfNecessary(url: URL, name: String?, editedName: String?, homePageURL: String?, webFeedExternalID: String, container: Container) {
 		guard let account = account else { return  }
 		
-		if account.existingWebFeed(withExternalID: webFeedExternalID) != nil {
+		if account.existingFeed(withExternalID: webFeedExternalID) != nil {
 			return
 		}
 		

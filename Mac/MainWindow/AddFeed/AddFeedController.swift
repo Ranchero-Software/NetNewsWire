@@ -73,7 +73,7 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 			
 			switch result {
 			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
 				switch error {
 				case AccountError.createErrorAlreadySubscribed:

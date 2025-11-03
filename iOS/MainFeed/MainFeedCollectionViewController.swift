@@ -115,7 +115,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		// always know when an image is available — but watching the .htmlMetadataAvailable Notification
 		// lets us know that it’s time to request an image.
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
@@ -669,11 +669,11 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		applyToAvailableCells(configureIcon)
 	}
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed else {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		applyToCellsForRepresentedObject(webFeed, configureIcon(_:_:))
+		applyToCellsForRepresentedObject(feed, configureIcon(_:_:))
 	}
 	
 	// MARK: - Actions
@@ -681,24 +681,24 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	func configureContextMenu(_: Any? = nil) {
 		/*
 			Context Menu Order:
-			1. Add Web Feed
+			1. Add Feed
 			2. Add Folder
 		*/
 		
 		var menuItems: [UIAction] = []
 		
-		let addWebFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
-		let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
+		let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
+		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAssets.plus) { _ in
 			self.coordinator.showAddWebFeed()
 		}
-		menuItems.append(addWebFeedAction)
+		menuItems.append(addFeedAction)
 		
-		let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
+		let addFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addFolderAction = UIAction(title: addFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
 			self.coordinator.showAddFolder()
 		}
 		
-		menuItems.append(addWebFolderAction)
+		menuItems.append(addFolderAction)
 		
 		let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
 		

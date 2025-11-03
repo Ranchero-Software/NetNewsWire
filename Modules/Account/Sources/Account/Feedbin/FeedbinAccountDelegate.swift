@@ -505,7 +505,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
@@ -839,7 +839,7 @@ private extension FeedbinAccountDelegate {
 
 			let subFeedId = String(subscription.feedID)
 
-			if let feed = account.existingWebFeed(withWebFeedID: subFeedId) {
+			if let feed = account.existingFeed(withFeedID: subFeedId) {
 				feed.name = subscription.name
 				// If the name has been changed on the server remove the locally edited name
 				feed.editedName = nil
@@ -903,7 +903,7 @@ private extension FeedbinAccountDelegate {
 			for tagging in groupedTaggings {
 				let taggingFeedID = String(tagging.feedID)
 				if !folderFeedIds.contains(taggingFeedID) {
-					guard let feed = account.existingWebFeed(withWebFeedID: taggingFeedID) else {
+					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))

@@ -40,7 +40,7 @@ final class ActivityManager {
 	}
 	
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 	}
 	
 	func invalidateCurrentActivities() {
@@ -140,8 +140,8 @@ final class ActivityManager {
 	}
 	#endif
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
 			return
 		}
 		
@@ -151,8 +151,8 @@ final class ActivityManager {
 		}
 		#endif
 		
-		if activityFeedId == webFeed.webFeedID {
-			updateSelectingActivityFeedSearchAttributes(with: webFeed)
+		if activityFeedId == feed.webFeedID {
+			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
 	}
 

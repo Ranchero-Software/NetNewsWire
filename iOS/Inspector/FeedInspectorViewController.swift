@@ -48,7 +48,7 @@ final class FeedInspectorViewController: UITableViewController {
 		homePageLabel.text = webFeed.homePageURL
 		feedURLLabel.text = webFeed.url
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNotificationSettings), name: UIApplication.willEnterForegroundNotification, object: nil)
 		
@@ -67,7 +67,7 @@ final class FeedInspectorViewController: UITableViewController {
 	}
 	
 	// MARK: Notifications
-	@objc func webFeedIconDidBecomeAvailable(_ notification: Notification) {
+	@objc func feedIconDidBecomeAvailable(_ notification: Notification) {
 		headerView?.iconView.iconImage = iconImage
 	}
 	

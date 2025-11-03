@@ -103,7 +103,7 @@ extension NewsBlurAccountDelegate {
 		feeds.forEach { feed in
 			let subFeedId = String(feed.feedID)
 
-			if let webFeed = account.existingWebFeed(withWebFeedID: subFeedId) {
+			if let webFeed = account.existingFeed(withFeedID: subFeedId) {
 				webFeed.name = feed.name
 				// If the name has been changed on the server remove the locally edited name
 				webFeed.editedName = nil
@@ -169,7 +169,7 @@ extension NewsBlurAccountDelegate {
 			for relationship in folderRelationships {
 				let folderFeedID = String(relationship.feedID)
 				if !folderFeedIds.contains(folderFeedID) {
-					guard let feed = account.existingWebFeed(withWebFeedID: folderFeedID) else {
+					guard let feed = account.existingFeed(withFeedID: folderFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: relationship.folderName)
@@ -541,7 +541,7 @@ extension NewsBlurAccountDelegate {
 						}
 					}
 
-					if account.existingWebFeed(withWebFeedID: feedID) != nil {
+					if account.existingFeed(withFeedID: feedID) != nil {
 						account.clearFeedMetadata(feed)
 					}
 

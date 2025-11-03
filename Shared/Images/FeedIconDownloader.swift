@@ -167,7 +167,7 @@ private extension FeedIconDownloader {
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
 
 		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = [UserInfoKey.webFeed: feed]
+			let userInfo: [AnyHashable: Any] = [UserInfoKey.feed: feed]
 			NotificationCenter.default.post(name: .feedIconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
 	}

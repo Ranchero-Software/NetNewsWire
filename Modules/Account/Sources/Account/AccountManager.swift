@@ -218,7 +218,7 @@ public final class AccountManager: UnreadCountProvider {
 			}
 		case .webFeed(let accountID, let webFeedID):
 			if let account = existingAccount(with: accountID) {
-				return account.existingWebFeed(withWebFeedID: webFeedID)
+				return account.existingFeed(withFeedID: webFeedID)
 			}
 		default:
 			break
@@ -335,7 +335,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		for account in activeAccounts {
-			if let _ = account.existingWebFeed(withURL: urlString) {
+			if let _ = account.existingFeed(withURL: urlString) {
 				return true
 			}
 		}
