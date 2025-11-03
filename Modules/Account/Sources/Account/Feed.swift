@@ -22,7 +22,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
 		}
-		return SidebarItemIdentifier.webFeed(accountID, feedID)
+		return SidebarItemIdentifier.feed(accountID, feedID)
 	}
 
 	public weak var account: Account?
@@ -329,11 +329,11 @@ extension Set where Element == Feed {
 	}
 	
 	func sorted() -> Array<Feed> {
-		return sorted(by: { (webFeed1, webFeed2) -> Bool in
-			if webFeed1.nameForDisplay.localizedStandardCompare(webFeed2.nameForDisplay) == .orderedSame {
-				return webFeed1.url < webFeed2.url
+		return sorted(by: { (feed1, feed2) -> Bool in
+			if feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedSame {
+				return feed1.url < feed2.url
 			}
-			return webFeed1.nameForDisplay.localizedStandardCompare(webFeed2.nameForDisplay) == .orderedAscending
+			return feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedAscending
 		})
 	}
 	

@@ -2197,7 +2197,7 @@ private extension SceneCoordinator {
 				}
 			})
 		
-		case .webFeed(let accountID, let webFeedID):
+		case .feed(let accountID, let webFeedID):
 			guard let accountNode = findAccountNode(accountID: accountID),
 				let account = accountNode.representedObject as? Account,
 				let webFeed = account.existingFeed(withFeedID: webFeedID) else {
@@ -2258,7 +2258,7 @@ private extension SceneCoordinator {
 			}
 			return found
 		
-		case .webFeed:
+		case .feed:
 			let found = selectFeedAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
