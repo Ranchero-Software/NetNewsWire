@@ -722,19 +722,19 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 		
-		let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
-		let addWebFeedAction = UIAlertAction(title: addWebFeedActionTitle, style: .default) { _ in
+		let addFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+		let addFeedAction = UIAlertAction(title: addFeedActionTitle, style: .default) { _ in
 			self.coordinator.showAddFeed()
 		}
 		
-		let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-		let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
+		let addFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addFolderAction = UIAlertAction(title: addFolderActionTitle, style: .default) { _ in
 			self.coordinator.showAddFolder()
 		}
 		
-		alertController.addAction(addWebFeedAction)
+		alertController.addAction(addFeedAction)
 		
-		alertController.addAction(addWebFolderAction)
+		alertController.addAction(addFolderAction)
 		alertController.addAction(cancelAction)
 		
 		alertController.popoverPresentationController?.barButtonItem = sender
@@ -945,8 +945,8 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
-			  let url = URL(string: webFeed.url) else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let url = URL(string: feed.url) else {
 				  return nil
 			  }
 		
@@ -958,8 +958,8 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyFeedPageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
-			  let url = URL(string: webFeed.url) else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let url = URL(string: feed.url) else {
 				  return nil
 			  }
 
@@ -972,8 +972,8 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
-			  let homePageURL = webFeed.homePageURL,
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let homePageURL = feed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
 			  }
@@ -986,8 +986,8 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func copyHomePageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
-			  let homePageURL = webFeed.homePageURL,
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let homePageURL = feed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
 			  }
@@ -1001,14 +1001,14 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
-			webFeed.unreadCount > 0,
-			let articles = try? webFeed.fetchArticles(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			feed.unreadCount > 0,
+			let articles = try? feed.fetchArticles(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
 				return nil
 		}
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
 		}
@@ -1041,13 +1041,13 @@ extension MainFeedCollectionViewController {
 	}
 	
 	func getInfoAction(indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
 			return nil
 		}
 		
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
-			self?.coordinator.showFeedInspector(for: webFeed)
+			self?.coordinator.showFeedInspector(for: feed)
 		}
 		return action
 	}
@@ -1069,13 +1069,13 @@ extension MainFeedCollectionViewController {
 	}
 
 	func getInfoAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
 			return nil
 		}
 
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.showFeedInspector(for: webFeed)
+			self?.coordinator.showFeedInspector(for: feed)
 			completion(true)
 		}
 		return action

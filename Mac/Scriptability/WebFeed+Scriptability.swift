@@ -36,7 +36,7 @@ final class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectCo
     // MARK: --- ScriptingObject protocol ---
 
     var scriptingKey: String {
-        return "webFeeds"
+        return "feeds"
     }
 
     // MARK: --- UniqueIdScriptingObject protocol ---
@@ -81,7 +81,7 @@ final class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectCo
         }
     }
     
-    class func scriptableWebFeed(for feed: Feed) -> ScriptableFeed? {
+    class func scriptableFeed(for feed: Feed) -> ScriptableFeed? {
         guard let account = feed.account else { return nil }
         
         // Find the proper container hierarchy

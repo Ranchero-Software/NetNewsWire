@@ -95,8 +95,8 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     
     // MARK: --- Scriptable elements ---
     
-    @objc(webFeeds)
-    var webFeeds:NSArray  {
+    @objc(feeds)
+    var feeds:NSArray  {
 		let feeds = Array(folder.topLevelFeeds)
         return feeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
@@ -107,7 +107,7 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
         let allArticles = feeds.flatMap { feed in
             (try? feed.fetchArticles()) ?? Set<Article>()
         }
-        // Sort articles by logical date published like WebFeed does
+        // Sort articles by logical date published like Feed does
         let sortedArticles = allArticles.sorted(by: {
             return $0.logicalDatePublished > $1.logicalDatePublished
         })
