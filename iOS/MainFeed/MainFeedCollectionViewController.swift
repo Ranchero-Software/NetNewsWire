@@ -153,13 +153,13 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			renameAction.accessibilityLabel = renameTitle
 			actions.append(renameAction)
 			
-			if let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? Feed {
+			if let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed {
 				let moreTitle = NSLocalizedString("More", comment: "More")
 				let moreAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completion) in
 					
 					if let self = self {
 					
-						let alert = UIAlertController(title: webFeed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
+						let alert = UIAlertController(title: feed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
 						if let popoverController = alert.popoverPresentationController {
 							popoverController.sourceView = view
 							popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
@@ -329,7 +329,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 			return nil
 		}
 		if sidebarItem is Feed {
-			return makeWebFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
+			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else if sidebarItem is Folder {
 			return makeFolderContextMenu(indexPath: indexPath)
 		} else if sidebarItem is PseudoFeed  {
@@ -657,11 +657,11 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	}
 	
 	@objc func feedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
 			return
 		}
 		if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
-			configureCellsForRepresentedObject(webFeed)
+			configureCellsForRepresentedObject(feed)
 		}
 	}
 	
@@ -689,7 +689,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		
 		let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
 		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAssets.plus) { _ in
-			self.coordinator.showAddWebFeed()
+			self.coordinator.showAddFeed()
 		}
 		menuItems.append(addFeedAction)
 		
@@ -724,7 +724,7 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 		
 		let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
 		let addWebFeedAction = UIAlertAction(title: addWebFeedActionTitle, style: .default) { _ in
-			self.coordinator.showAddWebFeed()
+			self.coordinator.showAddFeed()
 		}
 		
 		let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
@@ -841,7 +841,7 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 }
 
 extension MainFeedCollectionViewController {
-	func makeWebFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
+	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
 		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
 			
 			guard let self = self else { return nil }

@@ -379,7 +379,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			case .readArticle:
 				self.handleReadArticle(activity.userInfo)
 			case .addFeedIntent:
-				self.showAddWebFeed()
+				self.showAddFeed()
 			}
 		}
 	}
@@ -1266,11 +1266,11 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		let feedInspectorController = feedInspectorNavController.topViewController as! FeedInspectorViewController
 		feedInspectorNavController.modalPresentationStyle = .formSheet
 		feedInspectorNavController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
-		feedInspectorController.webFeed = feed
+		feedInspectorController.feed = feed
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
 	
-	func showAddWebFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
+	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
 		
 		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
 		selectFeed(nil)

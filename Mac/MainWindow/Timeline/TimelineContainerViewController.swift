@@ -153,8 +153,8 @@ extension TimelineContainerViewController: TimelineDelegate {
 		delegate?.timelineSelectionDidChange(self, articles: selectedArticles, mode: mode(for: timelineViewController))
 	}
 
-	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: Feed) {
-		delegate?.timelineRequestedFeedSelection(self, feed: webFeed)
+	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed) {
+		delegate?.timelineRequestedFeedSelection(self, feed: feed)
 	}
 	
 	func timelineInvalidatedRestorationState(_: TimelineViewController) {

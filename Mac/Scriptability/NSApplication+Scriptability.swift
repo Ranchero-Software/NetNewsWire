@@ -31,7 +31,7 @@ extension NSApplication : ScriptingObjectContainer {
         var scriptableArticle: ScriptableArticle?
         if let currentArticle = appDelegate.scriptingCurrentArticle {
             if let feed = currentArticle.feed,
-               let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
+               let scriptableFeed = ScriptableFeed.scriptableWebFeed(for: feed) {
                 scriptableArticle = ScriptableArticle(currentArticle, container: scriptableFeed)
             }
         }
@@ -43,7 +43,7 @@ extension NSApplication : ScriptingObjectContainer {
         let articles = appDelegate.scriptingSelectedArticles
         let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
             if let feed = article.feed,
-               let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
+               let scriptableFeed = ScriptableFeed.scriptableWebFeed(for: feed) {
                 return ScriptableArticle(article, container:scriptableFeed)
             } else {
                 return nil
@@ -64,7 +64,7 @@ extension NSApplication : ScriptingObjectContainer {
         let article = articles[index]
         
         if let feed = article.feed,
-           let scriptableFeed = ScriptableWebFeed.scriptableWebFeed(for: feed) {
+           let scriptableFeed = ScriptableFeed.scriptableWebFeed(for: feed) {
             return ScriptableArticle(article, container: scriptableFeed)
         } else {
             return nil
@@ -116,7 +116,7 @@ extension NSApplication : ScriptingObjectContainer {
     @objc(webFeeds)
     func webFeeds() -> NSArray {
         let webFeeds = self.allWebFeeds()
-        return webFeeds.map { ScriptableWebFeed($0, container:self) } as NSArray
+        return webFeeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
     
     @objc(countOfWebFeeds)
@@ -125,17 +125,17 @@ extension NSApplication : ScriptingObjectContainer {
     }
     
     @objc(objectInWebFeedsAtIndex:)
-    func objectInWebFeedsAtIndex(_ index: Int) -> ScriptableWebFeed? {
+    func objectInWebFeedsAtIndex(_ index: Int) -> ScriptableFeed? {
         let webFeeds = self.allWebFeeds()
         guard index >= 0 && index < webFeeds.count else { return nil }
-        return ScriptableWebFeed(webFeeds[index], container: self)
+        return ScriptableFeed(webFeeds[index], container: self)
     }
 
     @objc(valueInWebFeedsWithUniqueID:)
-    func valueInWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
+    func valueInWebFeeds(withUniqueID id:String) -> ScriptableFeed? {
         let webFeeds = self.allWebFeeds()
         guard let webFeed = webFeeds.first(where:{$0.feedID == id}) else { return nil }
-        return ScriptableWebFeed(webFeed, container:self)
+        return ScriptableFeed(webFeed, container:self)
     }
 }
 

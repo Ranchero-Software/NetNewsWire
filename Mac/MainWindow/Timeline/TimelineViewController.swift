@@ -14,7 +14,7 @@ import os.log
 
 protocol TimelineDelegate: AnyObject  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
-	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: Feed)
+	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
@@ -675,7 +675,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 
-		let shouldFetchAndMergeArticles = representedObjectsContainsAnyWebFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
+		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
@@ -1269,7 +1269,7 @@ private extension TimelineViewController {
 		return representedObjects?.contains(where: { $0 is Folder }) ?? false
 	}
 
-	func representedObjectsContainsAnyWebFeed(_ webFeeds: Set<Feed>) -> Bool {
+	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 
 		guard let representedObjects = representedObjects else {
@@ -1277,14 +1277,14 @@ private extension TimelineViewController {
 		}
 		for representedObject in representedObjects {
 			if let feed = representedObject as? Feed {
-				for oneFeed in webFeeds {
+				for oneFeed in feeds {
 					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 						return true
 					}
 				}
 			}
 			else if let folder = representedObject as? Folder {
-				for oneFeed in webFeeds {
+				for oneFeed in feeds {
 					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true
 					}

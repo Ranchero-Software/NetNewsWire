@@ -159,7 +159,7 @@ final class AppDefaults {
 		}
 	}
 
-	var addWebFeedAccountID: String? {
+	var addFeedAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.addFeedAccountID)
 		}
@@ -168,7 +168,7 @@ final class AppDefaults {
 		}
 	}
 	
-	var addWebFeedFolderName: String? {
+	var addFeedFolderName: String? {
 		get {
 			return AppDefaults.string(for: Key.addFeedFolderName)
 		}

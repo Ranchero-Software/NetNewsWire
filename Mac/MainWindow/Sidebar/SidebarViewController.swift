@@ -232,11 +232,11 @@ protocol SidebarDelegate: AnyObject {
 	}
 	
 	@objc func feedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
 			return
 		}
 		if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
-			configureCellsForRepresentedObject(webFeed)
+			configureCellsForRepresentedObject(feed)
 		}
 	}
 
@@ -288,7 +288,7 @@ protocol SidebarDelegate: AnyObject {
 		guard outlineView.clickedRow == outlineView.selectedRow else {
 			return
 		}
-		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = try? singleSelectedWebFeed?.fetchUnreadArticles() {
+		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = try? singleSelectedFeed?.fetchUnreadArticles() {
 			if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) {
 				runCommand(markReadCommand)
 			}
@@ -297,7 +297,7 @@ protocol SidebarDelegate: AnyObject {
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
-		guard let feed = singleSelectedWebFeed, let homePageURL = feed.homePageURL else {
+		guard let feed = singleSelectedFeed, let homePageURL = feed.homePageURL else {
 			return
 		}
 		Browser.open(homePageURL, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
@@ -305,7 +305,7 @@ protocol SidebarDelegate: AnyObject {
 
 	@objc func openInAppBrowser(_ sender: Any?) {
 		// There is no In-App Browser for mac - so we use safari
-		guard let feed = singleSelectedWebFeed, let homePageURL = feed.homePageURL else {
+		guard let feed = singleSelectedFeed, let homePageURL = feed.homePageURL else {
 			return
 		}
 		Browser.open(homePageURL, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
@@ -485,8 +485,8 @@ protocol SidebarDelegate: AnyObject {
 		if isReadFiltered, let sidebarItemID = sidebarItem.sidebarItemID {
 			self.treeControllerDelegate.addFilterException(sidebarItemID)
 
-			if let webFeed = sidebarItem as? Feed, let account = webFeed.account {
-				let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
+			if let feed = sidebarItem as? Feed, let account = feed.account {
+				let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(feed) })
 				if let parentFolderSidebarItemID = parentFolder?.sidebarItemID {
 					self.treeControllerDelegate.addFilterException(parentFolderSidebarItemID)
 				}
@@ -558,7 +558,7 @@ private extension SidebarViewController {
 		return selectedNodes.first!
 	}
 
-	var singleSelectedWebFeed: Feed? {
+	var singleSelectedFeed: Feed? {
 		guard let node = singleSelectedNode else {
 			return nil
 		}
@@ -775,10 +775,10 @@ private extension SidebarViewController {
 	}
 	
 	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
-		guard let webFeedID = userInfo?[ArticlePathKey.feedID] as? String else {
+		guard let feedID = userInfo?[ArticlePathKey.feedID] as? String else {
 			return nil
 		}
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == webFeedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
 			return node
 		}
 		return nil

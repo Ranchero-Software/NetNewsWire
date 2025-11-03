@@ -451,8 +451,8 @@ extension WebViewController: WKScriptMessageHandler {
 		case MessageName.imageWasClicked:
 			imageWasClicked(body: message.body as? String)
 		case MessageName.showFeedInspector:
-			if let webFeed = article?.feed {
-				coordinator.showFeedInspector(for: webFeed)
+			if let feed = article?.feed {
+				coordinator.showFeedInspector(for: feed)
 			}
 		default:
 			return
