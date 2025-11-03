@@ -426,7 +426,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 		
-		folder.removeWebFeed(feed)
+		folder.removeFeed(feed)
 	}
 	
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -451,14 +451,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				from.addFeed(feed)
-				to.removeWebFeed(feed)
+				to.removeFeed(feed)
 				completion(.failure(error))
 			}
 			
 		}
 		
 		// optimistically move the feed, undoing as appropriate to the failure
-		from.removeWebFeed(feed)
+		from.removeFeed(feed)
 		to.addFeed(feed)
 	}
 	

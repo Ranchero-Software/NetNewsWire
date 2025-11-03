@@ -92,7 +92,7 @@ final class AddFeedViewController: UITableViewController {
 			account = containerAccount
 		}
 		
-		if account!.hasWebFeed(withURL: url.absoluteString) {
+		if account!.hasFeed(withURL: url.absoluteString) {
 			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}

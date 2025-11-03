@@ -16,9 +16,9 @@ public extension Notification.Name {
 
 public extension Feed {
 
-	static let WebFeedSettingUserInfoKey = "feedSetting"
+	static let SettingUserInfoKey = "feedSetting"
 
-	struct WebFeedSettingKey {
+	struct SettingKey {
 		public static let homePageURL = "homePageURL"
 		public static let iconURL = "iconURL"
 		public static let faviconURL = "faviconURL"
@@ -42,7 +42,7 @@ extension Feed {
 	}
 
 	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
-		let userInfo = [Feed.WebFeedSettingUserInfoKey: codingKey.stringValue]
+		let userInfo = [Feed.SettingUserInfoKey: codingKey.stringValue]
 		NotificationCenter.default.post(name: .WebFeedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }

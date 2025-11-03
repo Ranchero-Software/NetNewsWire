@@ -301,7 +301,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		guard folder.hasAtLeastOneWebFeed() else {
+		guard folder.hasAtLeastOneFeed() else {
 			folder.name = name
 			return
 		}
@@ -329,7 +329,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
-		guard folder.hasAtLeastOneWebFeed() else {
+		guard folder.hasAtLeastOneFeed() else {
 			account.removeFolder(folder)
 			completion(.success(()))
 			return
@@ -481,7 +481,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				case .success(let taggingID):
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
-						account.removeWebFeed(feed)
+						account.removeFeed(feed)
 						folder.addFeed(feed)
 						completion(.success(()))
 					}
@@ -821,7 +821,7 @@ private extension FeedbinAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !subFeedIds.contains(feed.webFeedID) {
-						folder.removeWebFeed(feed)
+						folder.removeFeed(feed)
 					}
 				}
 			}
@@ -829,7 +829,7 @@ private extension FeedbinAccountDelegate {
 		
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.webFeedID) {
-				account.removeWebFeed(feed)
+				account.removeFeed(feed)
 			}
 		}
 		
@@ -891,7 +891,7 @@ private extension FeedbinAccountDelegate {
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
 				if !taggingFeedIDs.contains(feed.webFeedID) {
-					folder.removeWebFeed(feed)
+					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					account.addFeed(feed)
 				}
@@ -918,7 +918,7 @@ private extension FeedbinAccountDelegate {
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelFeeds {
 			if taggedFeedIDs.contains(feed.webFeedID) {
-				account.removeWebFeed(feed)
+				account.removeFeed(feed)
 			}
 		}
 	}
@@ -1379,7 +1379,7 @@ private extension FeedbinAccountDelegate {
 				case .success:
 					DispatchQueue.main.async {
 						self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						folder.removeWebFeed(feed)
+						folder.removeFeed(feed)
 						account.addFeedIfNotInAnyFolder(feed)
 						completion(.success(()))
 					}
@@ -1392,7 +1392,7 @@ private extension FeedbinAccountDelegate {
 			}
 		} else {
 			if let account = container as? Account {
-				account.removeWebFeed(feed)
+				account.removeFeed(feed)
 			}
 			completion(.success(()))
 		}
@@ -1410,10 +1410,10 @@ private extension FeedbinAccountDelegate {
 		func complete() {
 			DispatchQueue.main.async {
 				account.clearFeedMetadata(feed)
-				account.removeWebFeed(feed)
+				account.removeFeed(feed)
 				if let folders = account.folders {
 					for folder in folders {
-						folder.removeWebFeed(feed)
+						folder.removeFeed(feed)
 					}
 				}
 				completion(.success(()))

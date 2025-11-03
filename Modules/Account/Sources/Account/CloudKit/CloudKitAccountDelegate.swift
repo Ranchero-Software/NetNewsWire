@@ -214,14 +214,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			switch result {
 			case .success:
 				account.clearFeedMetadata(feed)
-				container.removeWebFeed(feed)
+				container.removeFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
 				switch error {
 				case CloudKitZoneError.corruptAccount:
 					// We got into a bad state and should remove the feed to clear up the bad data
 					account.clearFeedMetadata(feed)
-					container.removeWebFeed(feed)
+					container.removeFeed(feed)
 				default:
 					completion(.failure(error))
 				}
@@ -235,7 +235,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			self.syncProgress.completeTask()
 			switch result {
 			case .success:
-				fromContainer.removeWebFeed(feed)
+				fromContainer.removeFeed(feed)
 				toContainer.addFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
@@ -607,7 +607,7 @@ private extension CloudKitAccountDelegate {
 					feed.externalID = externalID
 					completion(.success(feed))
 				case .failure(let error):
-					container.removeWebFeed(feed)
+					container.removeFeed(feed)
 					completion(.failure(error))
 				}
 			}
@@ -630,7 +630,7 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 
-				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
+				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
 					self.syncProgress.completeTasks(4)
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
@@ -668,14 +668,14 @@ private extension CloudKitAccountDelegate {
 										self.sendNewArticlesToTheCloud(account, feed)
 										completion(.success(feed))
 									case .failure(let error):
-										container.removeWebFeed(feed)
+										container.removeFeed(feed)
 										self.syncProgress.completeTasks(2)
 										completion(.failure(error))
 									}
 								}
 
 							case .failure(let error):
-								container.removeWebFeed(feed)
+								container.removeFeed(feed)
 								self.syncProgress.completeTasks(3)
 								completion(.failure(error))
 							}
@@ -683,7 +683,7 @@ private extension CloudKitAccountDelegate {
 						}
 					} else {
 						self.syncProgress.completeTasks(3)
-						container.removeWebFeed(feed)
+						container.removeFeed(feed)
 						completion(.failure(AccountError.createErrorNotFound))
 					}
 

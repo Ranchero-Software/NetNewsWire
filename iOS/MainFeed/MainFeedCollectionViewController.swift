@@ -657,10 +657,10 @@ class MainFeedCollectionViewController: UICollectionViewController, UndoableComm
 	}
 	
 	@objc func webFeedSettingDidChange(_ note: Notification) {
-		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.WebFeedSettingUserInfoKey] as? String else {
+		guard let webFeed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
 			return
 		}
-		if key == Feed.WebFeedSettingKey.homePageURL || key == Feed.WebFeedSettingKey.faviconURL {
+		if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
 	}

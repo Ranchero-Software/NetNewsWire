@@ -499,11 +499,11 @@ private extension SidebarOutlineDataSource {
 
 		// Show the add-feed sheet.
 		if let account = parentNode.representedObject as? Account {
-			appDelegate.addWebFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: nil)
+			appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: nil)
 		} else {
 			let account = parentNode.parent?.representedObject as? Account
 			let folder = parentNode.representedObject as? Folder
-			appDelegate.addWebFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: folder)
+			appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: folder)
 		}
 		
 		return true
@@ -525,8 +525,8 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 	
-	func sameAccount(_ pasteboardWebFeed: PasteboardFeed, _ parentNode: Node) -> Bool {
-		if let accountID = pasteboardWebFeed.accountID {
+	func sameAccount(_ pasteboardFeed: PasteboardFeed, _ parentNode: Node) -> Bool {
+		if let accountID = pasteboardFeed.accountID {
 			return sameAccount(accountID, parentNode)
 		}
 		return false
@@ -635,7 +635,7 @@ private extension SidebarOutlineDataSource {
 					return true
 				}
 			} else {
-				if dropTargetAccount.hasWebFeed(withURL: draggedFeed.url) {
+				if dropTargetAccount.hasFeed(withURL: draggedFeed.url) {
 					return true
 				}
 			}

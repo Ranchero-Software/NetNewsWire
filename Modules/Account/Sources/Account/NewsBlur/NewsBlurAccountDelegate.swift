@@ -511,7 +511,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 			switch result {
 			case .success:
-				from.removeWebFeed(feed)
+				from.removeFeed(feed)
 				to.addFeed(feed)
 				
 				completion(.success(()))

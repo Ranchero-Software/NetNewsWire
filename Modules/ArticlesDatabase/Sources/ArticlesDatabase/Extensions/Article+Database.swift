@@ -42,7 +42,7 @@ extension Article {
 		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
 	}
 
-	convenience init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, webFeedID: String, status: ArticleStatus) {
+	convenience init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 
 		// Deal with future datePublished and dateModified dates.
@@ -59,7 +59,7 @@ extension Article {
 			dateModified = nil
 		}
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: webFeedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, markdown: parsedItem.markdown, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, markdown: parsedItem.markdown, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
@@ -118,13 +118,13 @@ extension Article {
 		return Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
 	}
 
-	static func articlesWithWebFeedIDsAndItems(_ webFeedIDsAndItems: [String: Set<ParsedItem>], _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
+	static func articlesWithFeedIDsAndItems(_ feedIDsAndItems: [String: Set<ParsedItem>], _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
 		let maximumDateAllowed = _maximumDateAllowed()
 		var feedArticles = Set<Article>()
-		for (webFeedID, parsedItems) in webFeedIDsAndItems {
+		for (feedID, parsedItems) in feedIDsAndItems {
 			for parsedItem in parsedItems {
 				let status = statusesDictionary[parsedItem.articleID]!
-				let article = Article(parsedItem: parsedItem, maximumDateAllowed: maximumDateAllowed, accountID: accountID, webFeedID: webFeedID, status: status)
+				let article = Article(parsedItem: parsedItem, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: status)
 				feedArticles.insert(article)
 			}
 		}
@@ -133,7 +133,7 @@ extension Article {
 
 	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
 		let maximumDateAllowed = _maximumDateAllowed()
-		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, webFeedID: webFeedID, status: statusesDictionary[$0.articleID]!) })
+		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: webFeedID, status: statusesDictionary[$0.articleID]!) })
 	}
 }
 

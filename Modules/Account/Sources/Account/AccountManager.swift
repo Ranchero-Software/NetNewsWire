@@ -321,7 +321,7 @@ public final class AccountManager: UnreadCountProvider {
 	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
-			if account.hasAtLeastOneWebFeed() {
+			if account.hasAtLeastOneFeed() {
 				return true
 			}
 		}

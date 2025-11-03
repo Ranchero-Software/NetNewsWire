@@ -10,7 +10,7 @@ import Foundation
 import Account
 
 enum AddFeedWindowControllerType {
-	case webFeed
+	case feed
 }
 
 protocol AddFeedWindowControllerDelegate: AnyObject {

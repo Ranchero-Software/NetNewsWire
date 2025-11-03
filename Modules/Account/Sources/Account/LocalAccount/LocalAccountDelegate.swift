@@ -49,12 +49,12 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 
-		let webFeeds = account.flattenedFeeds()
+		let feeds = account.flattenedFeeds()
 
 		let group = DispatchGroup()
 
 		group.enter()
-		refresher.refreshFeeds(webFeeds) {
+		refresher.refreshFeeds(feeds) {
 			group.leave()
 		}
 		
@@ -123,7 +123,7 @@ final class LocalAccountDelegate: AccountDelegate {
 			return
 		}
 		
-        createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
+        createFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -132,12 +132,12 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.removeWebFeed(feed)
+		container.removeFeed(feed)
 		completion(.success(()))
 	}
 	
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		from.removeWebFeed(feed)
+		from.removeFeed(feed)
 		to.addFeed(feed)
 		completion(.success(()))
 	}
@@ -219,7 +219,7 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 
 private extension LocalAccountDelegate {
 	
-	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		// We need to use a batch update here because we need to assign add the feed to the
 		// container before the name has been downloaded.  This will put it in the sidebar
@@ -236,7 +236,7 @@ private extension LocalAccountDelegate {
 						return
 				}
 				
-				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
+				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
 					BatchUpdate.shared.end()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return

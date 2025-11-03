@@ -86,7 +86,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
 		   let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
 		   let sourceWebFeed = sourceNode.representedObject as? Feed,
-		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasWebFeed(withURL: sourceWebFeed.url) {
+		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasFeed(withURL: sourceWebFeed.url) {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
 

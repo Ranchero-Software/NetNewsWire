@@ -23,20 +23,20 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 	var folders: Set<Folder>? { get set }
 	var externalID: String? { get set }
 	
-	func hasAtLeastOneWebFeed() -> Bool
+	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
 	func hasChildFolder(with: String) -> Bool
 	func childFolder(with: String) -> Folder?
 
-    func removeWebFeed(_ webFeed: Feed)
-	func addFeed(_ webFeed: Feed)
+    func removeFeed(_ feed: Feed)
+	func addFeed(_ feed: Feed)
 
 	//Recursive — checks subfolders
 	func flattenedFeeds() -> Set<Feed>
-	func has(_ webFeed: Feed) -> Bool
-	func hasWebFeed(with webFeedID: String) -> Bool
-	func hasWebFeed(withURL url: String) -> Bool
+	func has(_ feed: Feed) -> Bool
+	func hasFeed(with feedID: String) -> Bool
+	func hasFeed(withURL url: String) -> Bool
 	func existingFeed(withFeedID: String) -> Feed?
 	func existingFeed(withURL url: String) -> Feed?
 	func existingFeed(withExternalID externalID: String) -> Feed?
@@ -48,7 +48,7 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 
 public extension Container {
 
-	func hasAtLeastOneWebFeed() -> Bool {
+	func hasAtLeastOneFeed() -> Bool {
 		return topLevelFeeds.count > 0
 	}
 
@@ -89,21 +89,21 @@ public extension Container {
 		return feeds
 	}
 
-	func hasWebFeed(with webFeedID: String) -> Bool {
-		return existingFeed(withFeedID: webFeedID) != nil
+	func hasFeed(with feedID: String) -> Bool {
+		return existingFeed(withFeedID: feedID) != nil
 	}
 
-	func hasWebFeed(withURL url: String) -> Bool {
+	func hasFeed(withURL url: String) -> Bool {
 		return existingFeed(withURL: url) != nil
 	}
 
-	func has(_ webFeed: Feed) -> Bool {
-		return flattenedFeeds().contains(webFeed)
+	func has(_ feed: Feed) -> Bool {
+		return flattenedFeeds().contains(feed)
 	}
 	
-	func existingFeed(withFeedID webFeedID: String) -> Feed? {
+	func existingFeed(withFeedID feedID: String) -> Feed? {
 		for feed in flattenedFeeds() {
-			if feed.webFeedID == webFeedID {
+			if feed.webFeedID == feedID {
 				return feed
 			}
 		}

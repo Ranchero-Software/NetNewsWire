@@ -628,8 +628,8 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		detailViewController?.setState(detailState, mode: mode)
 	}
 
-	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: Feed) {
-		sidebarViewController?.selectFeed(webFeed)
+	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed) {
+		sidebarViewController?.selectFeed(feed)
 	}
 	
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController) {
@@ -1386,7 +1386,7 @@ private extension MainWindowController {
 		
 		let newFeedItem = NSMenuItem()
 		newFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
-		newFeedItem.action = Selector(("showAddWebFeedWindow:"))
+		newFeedItem.action = Selector(("showAddFeedWindow:"))
 		menu.addItem(newFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()

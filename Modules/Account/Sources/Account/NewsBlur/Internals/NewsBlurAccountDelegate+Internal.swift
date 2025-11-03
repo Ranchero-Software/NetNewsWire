@@ -86,7 +86,7 @@ extension NewsBlurAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !newsBlurFeedIds.contains(feed.webFeedID) {
-						folder.removeWebFeed(feed)
+						folder.removeFeed(feed)
 					}
 				}
 			}
@@ -94,7 +94,7 @@ extension NewsBlurAccountDelegate {
 
 		for feed in account.topLevelFeeds {
 			if !newsBlurFeedIds.contains(feed.webFeedID) {
-				account.removeWebFeed(feed)
+				account.removeFeed(feed)
 			}
 		}
 
@@ -157,7 +157,7 @@ extension NewsBlurAccountDelegate {
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
 				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
-					folder.removeWebFeed(feed)
+					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					account.addFeed(feed)
 				}
@@ -184,12 +184,12 @@ extension NewsBlurAccountDelegate {
 			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
 			for feed in account.topLevelFeeds {
 				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
-					account.removeWebFeed(feed)
+					account.removeFeed(feed)
 				}
 			}
 		} else {
 			for feed in account.topLevelFeeds {
-				account.removeWebFeed(feed)
+				account.removeFeed(feed)
 			}
 		}
 		
@@ -532,12 +532,12 @@ extension NewsBlurAccountDelegate {
 					let feedID = feed.webFeedID
 
 					if folderName == nil {
-						account.removeWebFeed(feed)
+						account.removeFeed(feed)
 					}
 
 					if let folders = account.folders {
 						for folder in folders where folderName != nil && folder.name == folderName {
-							folder.removeWebFeed(feed)
+							folder.removeFeed(feed)
 						}
 					}
 

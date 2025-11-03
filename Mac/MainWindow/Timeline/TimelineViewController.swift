@@ -1285,7 +1285,7 @@ private extension TimelineViewController {
 			}
 			else if let folder = representedObject as? Folder {
 				for oneFeed in webFeeds {
-					if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
+					if folder.hasFeed(with: oneFeed.webFeedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true
 					}
 				}

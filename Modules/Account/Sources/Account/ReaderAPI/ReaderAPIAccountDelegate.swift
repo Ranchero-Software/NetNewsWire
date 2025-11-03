@@ -478,10 +478,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			case .success:
 				DispatchQueue.main.async {
 					account.clearFeedMetadata(feed)
-					account.removeWebFeed(feed)
+					account.removeFeed(feed)
 					if let folders = account.folders {
 						for folder in folders {
-							folder.removeWebFeed(feed)
+							folder.removeFeed(feed)
 						}
 					}
 					completion(.success(()))
@@ -513,7 +513,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				self.refreshProgress.completeTask()
 				switch result {
 				case .success:
-					from.removeWebFeed(feed)
+					from.removeFeed(feed)
 					to.addFeed(feed)
 					completion(.success(()))
 				case .failure(let error):
@@ -532,7 +532,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				case .success:
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
-						account.removeWebFeed(feed)
+						account.removeFeed(feed)
 						folder.addFeed(feed)
 						completion(.success(()))
 					}
@@ -757,7 +757,7 @@ private extension ReaderAPIAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !subFeedIds.contains(feed.webFeedID) {
-						folder.removeWebFeed(feed)
+						folder.removeFeed(feed)
 					}
 				}
 			}
@@ -766,7 +766,7 @@ private extension ReaderAPIAccountDelegate {
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.webFeedID) {
 				account.clearFeedMetadata(feed)
-				account.removeWebFeed(feed)
+				account.removeFeed(feed)
 			}
 		}
 		
@@ -817,7 +817,7 @@ private extension ReaderAPIAccountDelegate {
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
 				if !taggingFeedIDs.contains(feed.webFeedID) {
-					folder.removeWebFeed(feed)
+					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					account.addFeed(feed)
 				}
@@ -844,7 +844,7 @@ private extension ReaderAPIAccountDelegate {
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelFeeds {
 			if taggedFeedIDs.contains(feed.webFeedID) {
-				account.removeWebFeed(feed)
+				account.removeFeed(feed)
 			}
 		}
 	}

@@ -38,7 +38,7 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
 		switch type {
-		case .webFeed:
+		case .feed:
 			addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
 																 name: name,
 																 account: account,
@@ -60,7 +60,7 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 		}
 		let account = accountAndFolderSpecifier.account
 
-		if account.hasWebFeed(withURL: url.absoluteString) {
+		if account.hasFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError(url.absoluteString)
 			return
 		}
