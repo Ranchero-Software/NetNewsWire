@@ -136,7 +136,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 		addFeedController = AddFeedController(hostWindow: window)
-		addFeedController?.showAddFeedSheet(.feed, urlString, name, account, folder)
+		addFeedController?.showAddFeedSheet(urlString, name, account, folder)
 	}
 	
 	// MARK: - NSApplicationDelegate

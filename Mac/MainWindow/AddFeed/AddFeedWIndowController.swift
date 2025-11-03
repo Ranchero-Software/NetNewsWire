@@ -9,10 +9,6 @@
 import Foundation
 import Account
 
-enum AddFeedWindowControllerType {
-	case feed
-}
-
 protocol AddFeedWindowControllerDelegate: AnyObject {
 
 	// userEnteredURL will have already been validated and normalized.
