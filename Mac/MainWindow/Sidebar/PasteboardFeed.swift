@@ -205,7 +205,7 @@ extension Feed: @retroactive PasteboardWriterOwner {
 private extension FeedPasteboardWriter {
 
 	var pasteboardFeed: PasteboardFeed {
-		return PasteboardFeed(url: feed.url, feedID: feed.webFeedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID, accountType: feed.account?.type)
+		return PasteboardFeed(url: feed.url, feedID: feed.feedID, homePageURL: feed.homePageURL, name: feed.name, editedName: feed.editedName, accountID: feed.account?.accountID, accountType: feed.account?.type)
 	}
 
 	var exportDictionary: PasteboardFeedDictionary {

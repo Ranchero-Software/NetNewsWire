@@ -578,7 +578,7 @@ private extension SidebarViewController {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
 			} else if let feed = sidebarItem as? Feed {
-				if feed.account?.existingFeed(withFeedID: feed.webFeedID) != nil {
+				if feed.account?.existingFeed(withFeedID: feed.feedID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 					addParentFolderToFilterExceptions(feed)
 				}
@@ -778,7 +778,7 @@ private extension SidebarViewController {
 		guard let webFeedID = userInfo?[ArticlePathKey.feedID] as? String else {
 			return nil
 		}
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.webFeedID == webFeedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == webFeedID }) {
 			return node
 		}
 		return nil

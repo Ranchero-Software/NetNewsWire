@@ -756,7 +756,7 @@ private extension ReaderAPIAccountDelegate {
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
-					if !subFeedIds.contains(feed.webFeedID) {
+					if !subFeedIds.contains(feed.feedID) {
 						folder.removeFeed(feed)
 					}
 				}
@@ -764,7 +764,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 		
 		for feed in account.topLevelFeeds {
-			if !subFeedIds.contains(feed.webFeedID) {
+			if !subFeedIds.contains(feed.feedID) {
 				account.clearFeedMetadata(feed)
 				account.removeFeed(feed)
 			}
@@ -816,7 +816,7 @@ private extension ReaderAPIAccountDelegate {
 			
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
-				if !taggingFeedIDs.contains(feed.webFeedID) {
+				if !taggingFeedIDs.contains(feed.feedID) {
 					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					account.addFeed(feed)
@@ -824,7 +824,7 @@ private extension ReaderAPIAccountDelegate {
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelFeeds.map { $0.webFeedID }
+			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
 			
 			for subscription in groupedTaggings {
 				let taggingFeedID = subscription.feedID
@@ -843,7 +843,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelFeeds {
-			if taggedFeedIDs.contains(feed.webFeedID) {
+			if taggedFeedIDs.contains(feed.feedID) {
 				account.removeFeed(feed)
 			}
 		}
@@ -949,7 +949,7 @@ private extension ReaderAPIAccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
 		// Download the initial articles
-		self.caller.retrieveItemIDs(type: .allForFeed, webFeedID: feed.webFeedID) { result in
+		self.caller.retrieveItemIDs(type: .allForFeed, webFeedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let articleIDs):

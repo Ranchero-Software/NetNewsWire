@@ -473,7 +473,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let folder = container as? Folder, let webFeedID = Int(feed.webFeedID) {
+		if let folder = container as? Folder, let webFeedID = Int(feed.feedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
 			caller.createTagging(webFeedID: webFeedID, name: folder.name ?? "") { result in
 				self.refreshProgress.completeTask()
@@ -820,7 +820,7 @@ private extension FeedbinAccountDelegate {
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
-					if !subFeedIds.contains(feed.webFeedID) {
+					if !subFeedIds.contains(feed.feedID) {
 						folder.removeFeed(feed)
 					}
 				}
@@ -828,7 +828,7 @@ private extension FeedbinAccountDelegate {
 		}
 		
 		for feed in account.topLevelFeeds {
-			if !subFeedIds.contains(feed.webFeedID) {
+			if !subFeedIds.contains(feed.feedID) {
 				account.removeFeed(feed)
 			}
 		}
@@ -890,7 +890,7 @@ private extension FeedbinAccountDelegate {
 			
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
-				if !taggingFeedIDs.contains(feed.webFeedID) {
+				if !taggingFeedIDs.contains(feed.feedID) {
 					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					account.addFeed(feed)
@@ -898,7 +898,7 @@ private extension FeedbinAccountDelegate {
 			}
 			
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelFeeds.map { $0.webFeedID }
+			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
 			
 			for tagging in groupedTaggings {
 				let taggingFeedID = String(tagging.feedID)
@@ -917,7 +917,7 @@ private extension FeedbinAccountDelegate {
 		
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelFeeds {
-			if taggedFeedIDs.contains(feed.webFeedID) {
+			if taggedFeedIDs.contains(feed.feedID) {
 				account.removeFeed(feed)
 			}
 		}
@@ -1066,7 +1066,7 @@ private extension FeedbinAccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(4)
 
 		// Download the initial articles
-		self.caller.retrieveEntries(feedID: feed.webFeedID) { result in
+		self.caller.retrieveEntries(feedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
 			
 			switch result {

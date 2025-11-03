@@ -1518,7 +1518,7 @@ private extension SceneCoordinator {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
 			} else if let webFeed = sidebarItem as? Feed {
-				if webFeed.account?.existingFeed(withFeedID: webFeed.webFeedID) != nil {
+				if webFeed.account?.existingFeed(withFeedID: webFeed.feedID) != nil {
 					treeControllerDelegate.addFilterException(sidebarItemID)
 					addParentFolderToFilterExceptions(webFeed)
 				}
@@ -2121,13 +2121,13 @@ private extension SceneCoordinator {
 		
 		if let feed = timelineFeed as? Feed {
 			for oneFeed in feeds {
-				if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
+				if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 					return true
 				}
 			}
 		} else if let folder = timelineFeed as? Folder {
 			for oneFeed in feeds {
-				if folder.hasFeed(with: oneFeed.webFeedID) || folder.hasFeed(withURL: oneFeed.url) {
+				if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 					return true
 				}
 			}
@@ -2292,7 +2292,7 @@ private extension SceneCoordinator {
 	}
 
 	func findWebFeedNode(webFeedID: String, beginningAt startingNode: Node) -> Node? {
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.webFeedID == webFeedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == webFeedID }) {
 			return node
 		}
 		return nil

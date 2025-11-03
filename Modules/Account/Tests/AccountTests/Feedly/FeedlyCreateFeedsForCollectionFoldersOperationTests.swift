@@ -74,7 +74,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			.map { $0.title })
 		
 		let accountFeeds = account.flattenedFeeds()
-		let ingestedIds = Set(accountFeeds.map { $0.webFeedID })
+		let ingestedIds = Set(accountFeeds.map { $0.feedID })
 		let ingestedTitles = Set(accountFeeds.map { $0.nameForDisplay })
 		
 		let missingIds = feedIds.subtracting(ingestedIds)
@@ -92,7 +92,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		let ingestedFolderAndFeedIds = (account.folders ?? Set())
 			.sorted { $0.externalID! < $1.externalID! }
 			.compactMap { folder -> [String: [String]]? in
-				return [folder.externalID!: folder.topLevelFeeds.map { $0.webFeedID }.sorted(by: <)]
+				return [folder.externalID!: folder.topLevelFeeds.map { $0.feedID }.sorted(by: <)]
 		}
 		
 		XCTAssertEqual(expectedFolderAndFeedIds, ingestedFolderAndFeedIds, "Did not ingest feeds in their corresponding folders.")
@@ -167,7 +167,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			.map { $0.title })
 		
 		let accountFeeds = account.flattenedFeeds()
-		let ingestedIds = Set(accountFeeds.map { $0.webFeedID })
+		let ingestedIds = Set(accountFeeds.map { $0.feedID })
 		let ingestedTitles = Set(accountFeeds.map { $0.nameForDisplay })
 		
 		XCTAssertEqual(ingestedIds.count, feedIds.count)
@@ -188,7 +188,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		let ingestedFolderAndFeedIds = (account.folders ?? Set())
 			.sorted { $0.externalID! < $1.externalID! }
 			.compactMap { folder -> [String: [String]]? in
-				return [folder.externalID!: folder.topLevelFeeds.map { $0.webFeedID }.sorted(by: <)]
+				return [folder.externalID!: folder.topLevelFeeds.map { $0.feedID }.sorted(by: <)]
 		}
 		
 		XCTAssertEqual(expectedFolderAndFeedIds, ingestedFolderAndFeedIds, "Did not ingest feeds to their corresponding folders.")

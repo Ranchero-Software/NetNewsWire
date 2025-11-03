@@ -45,7 +45,7 @@ final class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjec
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
     var scriptingUniqueId:Any {
-        return webFeed.webFeedID
+        return webFeed.feedID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---

@@ -359,7 +359,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		let feedId = FeedlyFeedResourceId(id: feed.webFeedID)
+		let feedId = FeedlyFeedResourceId(id: feed.feedID)
 		let editedNameBefore = feed.editedName
 		
 		// Adding an existing feed updates it.
@@ -386,7 +386,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				throw FeedlyAccountDelegateError.notLoggedIn
 			}
 			
-			let resource = FeedlyFeedResourceId(id: feed.webFeedID)
+			let resource = FeedlyFeedResourceId(id: feed.feedID)
             let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
                                                                      credentials: credentials,
                                                                      resource: resource,
@@ -416,7 +416,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 		
-		caller.removeFeed(feed.webFeedID, fromCollectionWith: collectionId) { result in
+		caller.removeFeed(feed.feedID, fromCollectionWith: collectionId) { result in
 			switch result {
 			case .success:
 				completion(.success(()))

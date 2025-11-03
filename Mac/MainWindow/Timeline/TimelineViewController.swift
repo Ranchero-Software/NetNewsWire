@@ -1278,14 +1278,14 @@ private extension TimelineViewController {
 		for representedObject in representedObjects {
 			if let feed = representedObject as? Feed {
 				for oneFeed in webFeeds {
-					if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
+					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 						return true
 					}
 				}
 			}
 			else if let folder = representedObject as? Folder {
 				for oneFeed in webFeeds {
-					if folder.hasFeed(with: oneFeed.webFeedID) || folder.hasFeed(withURL: oneFeed.url) {
+					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true
 					}
 				}

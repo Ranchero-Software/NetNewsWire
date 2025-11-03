@@ -103,7 +103,7 @@ public extension Container {
 	
 	func existingFeed(withFeedID feedID: String) -> Feed? {
 		for feed in flattenedFeeds() {
-			if feed.webFeedID == feedID {
+			if feed.feedID == feedID {
 				return feed
 			}
 		}

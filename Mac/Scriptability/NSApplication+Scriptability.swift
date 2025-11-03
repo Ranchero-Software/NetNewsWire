@@ -134,7 +134,7 @@ extension NSApplication : ScriptingObjectContainer {
     @objc(valueInWebFeedsWithUniqueID:)
     func valueInWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
         let webFeeds = self.allWebFeeds()
-        guard let webFeed = webFeeds.first(where:{$0.webFeedID == id}) else { return nil }
+        guard let webFeed = webFeeds.first(where:{$0.feedID == id}) else { return nil }
         return ScriptableWebFeed(webFeed, container:self)
     }
 }

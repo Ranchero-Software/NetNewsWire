@@ -151,7 +151,7 @@ final class ActivityManager {
 		}
 		#endif
 		
-		if activityFeedId == feed.webFeedID {
+		if activityFeedId == feed.feedID {
 			updateSelectingActivityFeedSearchAttributes(with: feed)
 		}
 	}
@@ -279,7 +279,7 @@ private extension ActivityManager {
 	}
 	
 	static func identifier(for feed: Feed) -> String {
-		return "account_\(feed.account!.accountID)_feed_\(feed.webFeedID)"
+		return "account_\(feed.account!.accountID)_feed_\(feed.feedID)"
 	}
 	
 	static func identifier(for article: Article) -> String {

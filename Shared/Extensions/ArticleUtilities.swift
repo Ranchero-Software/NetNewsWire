@@ -125,7 +125,7 @@ extension Article {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-			let feedID = webFeed.webFeedID.replacingOccurrences(of: "/", with: "_")
+			let feedID = webFeed.feedID.replacingOccurrences(of: "/", with: "_")
 			path.appendPathComponent(feedID + "_smallIcon.png")
 			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
 			return path
