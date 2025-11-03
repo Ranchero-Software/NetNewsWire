@@ -11,7 +11,7 @@ import RSTree
 import Articles
 import Account
 
-final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
+final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
@@ -39,7 +39,7 @@ final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 	}	
 }
 
-private extension WebFeedTreeControllerDelegate {
+private extension SidebarTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()

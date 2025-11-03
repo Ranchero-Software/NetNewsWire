@@ -103,7 +103,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	var prefersStatusBarHidden = false
 	
-	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
+	private let treeControllerDelegate = SidebarTreeControllerDelegate()
 	private let treeController: TreeController
 	
 	var stateRestorationActivity: NSUserActivity {
