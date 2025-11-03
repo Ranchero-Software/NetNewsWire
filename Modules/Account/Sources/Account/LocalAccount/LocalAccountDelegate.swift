@@ -245,7 +245,7 @@ private extension LocalAccountDelegate {
 				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 
 					if let parsedFeed {
-						let feed = account.createFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+						let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 						feed.lastCheckDate = Date()
 
 						// Save conditional GET info so that first refresh uses conditional GET.

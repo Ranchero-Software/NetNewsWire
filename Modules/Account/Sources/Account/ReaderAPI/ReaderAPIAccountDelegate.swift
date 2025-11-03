@@ -778,7 +778,7 @@ private extension ReaderAPIAccountDelegate {
 				feed.editedName = nil
 				feed.homePageURL = subscription.homePageURL
 			} else {
-				let feed = account.createFeed(with: subscription.name, url: subscription.url, webFeedID: subscription.feedID, homePageURL: subscription.homePageURL)
+				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subscription.feedID, homePageURL: subscription.homePageURL)
 				feed.externalID = subscription.feedID
 				account.addFeed(feed)
 			}
@@ -918,7 +918,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		DispatchQueue.main.async {
 			
-			let feed = account.createFeed(with: sub.name, url: sub.url, webFeedID: String(sub.feedID), homePageURL: sub.homePageURL)
+			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.externalID = String(sub.feedID)
 			
 			account.addFeed(feed, to: container) { result in
@@ -949,7 +949,7 @@ private extension ReaderAPIAccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
 		// Download the initial articles
-		self.caller.retrieveItemIDs(type: .allForFeed, webFeedID: feed.feedID) { result in
+		self.caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let articleIDs):

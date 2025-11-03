@@ -473,9 +473,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let folder = container as? Folder, let webFeedID = Int(feed.feedID) {
+		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			caller.createTagging(webFeedID: webFeedID, name: folder.name ?? "") { result in
+			caller.createTagging(feedID: feedID, name: folder.name ?? "") { result in
 				self.refreshProgress.completeTask()
 				switch result {
 				case .success(let taggingID):
@@ -855,7 +855,7 @@ private extension FeedbinAccountDelegate {
 
 		// Actually add subscriptions all in one go, so we don’t trigger various rebuilding things that Account does.
 		subscriptionsToAdd.forEach { subscription in
-			let feed = account.createFeed(with: subscription.name, url: subscription.url, webFeedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
+			let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
 			feed.externalID = String(subscription.subscriptionID)
 			account.addFeed(feed)
 		}
@@ -1031,7 +1031,7 @@ private extension FeedbinAccountDelegate {
 		
 		DispatchQueue.main.async {
 			
-			let feed = account.createFeed(with: sub.name, url: sub.url, webFeedID: String(sub.feedID), homePageURL: sub.homePageURL)
+			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.externalID = String(sub.subscriptionID)
 			feed.iconURL = sub.jsonFeed?.icon
 			feed.faviconURL = sub.jsonFeed?.favicon

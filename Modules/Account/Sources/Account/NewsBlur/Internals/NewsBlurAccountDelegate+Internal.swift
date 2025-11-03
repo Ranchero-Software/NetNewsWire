@@ -103,13 +103,13 @@ extension NewsBlurAccountDelegate {
 		feeds.forEach { feed in
 			let subFeedId = String(feed.feedID)
 
-			if let webFeed = account.existingFeed(withFeedID: subFeedId) {
-				webFeed.name = feed.name
+			if let feed = account.existingFeed(withFeedID: subFeedId) {
+				feed.name = feed.name
 				// If the name has been changed on the server remove the locally edited name
-				webFeed.editedName = nil
-				webFeed.homePageURL = feed.homePageURL
-				webFeed.externalID = String(feed.feedID)
-				webFeed.faviconURL = feed.faviconURL
+				feed.editedName = nil
+				feed.homePageURL = feed.homePageURL
+				feed.externalID = String(feed.feedID)
+				feed.faviconURL = feed.faviconURL
 			}
 			else {
 				feedsToAdd.insert(feed)
@@ -118,9 +118,9 @@ extension NewsBlurAccountDelegate {
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
 		feedsToAdd.forEach { feed in
-			let webFeed = account.createFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			webFeed.externalID = String(feed.feedID)
-			account.addFeed(webFeed)
+			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
+			feed.externalID = String(feed.feedID)
+			account.addFeed(feed)
 		}
 	}
 
@@ -419,24 +419,24 @@ extension NewsBlurAccountDelegate {
 		}
 
 		DispatchQueue.main.async {
-			let webFeed = account.createFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			webFeed.externalID = String(feed.feedID)
-			webFeed.faviconURL = feed.faviconURL
+			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
+			feed.externalID = String(feed.feedID)
+			feed.faviconURL = feed.faviconURL
 
-			account.addFeed(webFeed, to: container) { result in
+			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameFeed(webFeed, to: name) { result in
+						account.renameFeed(feed, to: name) { result in
 							switch result {
 							case .success:
-								self.initialFeedDownload(account: account, feed: webFeed, completion: completion)
+								self.initialFeedDownload(account: account, feed: feed, completion: completion)
 							case .failure(let error):
 								completion(.failure(error))
 							}
 						}
 					} else {
-						self.initialFeedDownload(account: account, feed: webFeed, completion: completion)
+						self.initialFeedDownload(account: account, feed: feed, completion: completion)
 					}
 				case .failure(let error):
 					completion(.failure(error))
