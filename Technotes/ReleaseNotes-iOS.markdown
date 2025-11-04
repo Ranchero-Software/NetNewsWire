@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 6.2 TestFlight build 6202 31 Oct 2025 - branch main tag: iOS-6.2-6202
+### 6.2 TestFlight build 6202 31 Oct 2025 - branch main tag: iOS-6.2-6202  — submitted as App Store release build 4 Nov 2025
 
 Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body
 
