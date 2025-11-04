@@ -218,11 +218,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		#else
 		if AppDefaults.shared.suppressSyncOnLaunch {
 			refreshTimer!.update()
-			syncTimer!.update()
+			ArticleStatusSyncTimer.shared.update.update()
 		} else {
 			DispatchQueue.main.async {
 				self.refreshTimer!.timedRefresh(nil)
-				self.syncTimer!.timedRefresh(nil)
+				ArticleStatusSyncTimer.shared.timedRefresh(nil)
 			}
 		}
 		#endif
