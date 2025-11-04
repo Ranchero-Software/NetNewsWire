@@ -78,6 +78,7 @@ final class SidebarCell : NSTableCellView {
 	override var backgroundStyle: NSView.BackgroundStyle {
 		didSet {
 			updateFaviconImage()
+			unreadCountView.isSelected = (backgroundStyle != .normal)
 		}
 	}
 	
@@ -164,4 +165,3 @@ private extension SidebarCell {
 	}
 	
 }
-

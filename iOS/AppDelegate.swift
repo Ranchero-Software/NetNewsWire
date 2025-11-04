@@ -21,28 +21,21 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 	
-	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
-	
+	private let backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
+
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-	
-	var syncTimer: ArticleStatusSyncTimer?
 	
 	var shuttingDown = false {
 		didSet {
 			if shuttingDown {
-				syncTimer?.shuttingDown = shuttingDown
-				syncTimer?.invalidate()
+				ArticleStatusSyncTimer.shared.stop()
 			}
 		}
 	}
 	
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
-	var userNotificationManager: UserNotificationManager!
-	var faviconDownloader: FaviconDownloader!
-	var extensionContainersFile: ExtensionContainersFile!
-	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	var widgetDataEncoder: WidgetDataEncoder!
 
 	var unreadCount = 0 {
@@ -108,17 +101,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 
 		UNUserNotificationCenter.current().delegate = self
-		userNotificationManager = UserNotificationManager()
-
-		extensionContainersFile = ExtensionContainersFile()
-		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
+		UserNotificationManager.shared.start()
+		
+		ExtensionContainersFile.shared.start()
+		ExtensionFeedAddRequestFile.shared.start()
 		
 		widgetDataEncoder = WidgetDataEncoder()
 
-		syncTimer = ArticleStatusSyncTimer()
-
 		#if DEBUG
-		syncTimer!.update()
+		ArticleStatusSyncTimer.shared.update()
 		#endif
 			
 		return true
@@ -179,8 +170,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	
 	func prepareAccountsForBackground() {
 		updateBadge()
-		extensionFeedAddRequestFile.suspend()
-		syncTimer?.invalidate()
+		ExtensionFeedAddRequestFile.shared.suspend()
+		ArticleStatusSyncTimer.shared.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
 		widgetDataEncoder.encode()
@@ -190,8 +181,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	func prepareAccountsForForeground() {
 		updateBadge()
-		extensionFeedAddRequestFile.resume()
-		syncTimer?.update()
+		ExtensionFeedAddRequestFile.shared.resume()
+		ArticleStatusSyncTimer.shared.update()
 
 		if let lastRefresh = AppDefaults.shared.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
@@ -214,9 +205,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		let userInfo = response.notification.request.content.userInfo
 		
 		switch response.actionIdentifier {
-		case "MARK_AS_READ":
+		case UserNotificationManager.ActionIdentifier.markAsRead:
 			handleMarkAsRead(userInfo: userInfo)
-		case "MARK_AS_STARRED":
+		case UserNotificationManager.ActionIdentifier.markAsStarred:
 			handleMarkAsStarred(userInfo: userInfo)
 		default:
 			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
@@ -237,14 +228,7 @@ private extension AppDelegate {
 	
 	private func initializeDownloaders() {
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
 		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-
-		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
-		let faviconsFolder = faviconsFolderURL.absoluteString
-		let faviconsFolderPath = faviconsFolder.suffix(from: faviconsFolder.index(faviconsFolder.startIndex, offsetBy: 7))
-		faviconDownloader = FaviconDownloader(folder: String(faviconsFolderPath))
-
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
 	}
 
@@ -376,7 +360,7 @@ private extension AppDelegate {
 
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
-		bgTaskDispatchQueue.async {
+		backgroundTaskDispatchQueue.async {
 			do {
 				try BGTaskScheduler.shared.submit(request)
 			} catch {

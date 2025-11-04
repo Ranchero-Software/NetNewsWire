@@ -35,8 +35,8 @@ final class AppDefaults {
 		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
 		static let articleTextSize = "articleTextSize"
 		static let refreshInterval = "refreshInterval"
-		static let addWebFeedAccountID = "addWebFeedAccountID"
-		static let addWebFeedFolderName = "addWebFeedFolderName"
+		static let addFeedAccountID = "addFeedAccountID"
+		static let addFeedFolderName = "addFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
 		static let importOPMLAccountID = "importOPMLAccountID"
 		static let exportOPMLAccountID = "exportOPMLAccountID"
@@ -50,11 +50,8 @@ final class AppDefaults {
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 		static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
 		static let suppressSyncOnLaunch = "DevroeSuppressSyncOnLaunch"
-
-		#if !MAC_APP_STORE
-			static let webInspectorEnabled = "WebInspectorEnabled"
-			static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
-		#endif
+		static let webInspectorEnabled = "WebInspectorEnabled"
+		static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
 	}
 
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
@@ -162,21 +159,21 @@ final class AppDefaults {
 		}
 	}
 
-	var addWebFeedAccountID: String? {
+	var addFeedAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.addWebFeedAccountID)
+			return AppDefaults.string(for: Key.addFeedAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.addWebFeedAccountID, newValue)
+			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
 		}
 	}
 	
-	var addWebFeedFolderName: String? {
+	var addFeedFolderName: String? {
 		get {
-			return AppDefaults.string(for: Key.addWebFeedFolderName)
+			return AppDefaults.string(for: Key.addFeedFolderName)
 		}
 		set {
-			AppDefaults.setString(for: Key.addWebFeedFolderName, newValue)
+			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
 		}
 	}
 
@@ -251,25 +248,23 @@ final class AppDefaults {
 		}
 	}
 
-	#if !MAC_APP_STORE
-		var webInspectorEnabled: Bool {
-			get {
-				return AppDefaults.bool(for: Key.webInspectorEnabled)
-			}
-			set {
-				AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
-			}
+	var webInspectorEnabled: Bool {
+		get {
+			return AppDefaults.bool(for: Key.webInspectorEnabled)
 		}
-
-		var webInspectorStartsAttached: Bool {
-			get {
-				return AppDefaults.bool(for: Key.webInspectorStartsAttached)
-			}
-			set {
-				AppDefaults.setBool(for: Key.webInspectorStartsAttached, newValue)
-			}
+		set {
+			AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
 		}
-	#endif
+	}
+	
+	var webInspectorStartsAttached: Bool {
+		get {
+			return AppDefaults.bool(for: Key.webInspectorStartsAttached)
+		}
+		set {
+			AppDefaults.setBool(for: Key.webInspectorStartsAttached, newValue)
+		}
+	}
 
 	var timelineSortDirection: ComparisonResult {
 		get {

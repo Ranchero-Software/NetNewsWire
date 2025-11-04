@@ -23,7 +23,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
 
-	private lazy var filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+	private lazy var filterButton = UIBarButtonItem(image: AppAssets.filterImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
 
 	private lazy var dataSource = makeDataSource()
@@ -33,7 +33,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	var undoableCommands = [UndoableCommand]()
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 
-	private var timelineFeed: Feed? {
+	private var timelineFeed: SidebarItem? {
 		assert(coordinator != nil)
 		return coordinator?.timelineFeed
 	}
@@ -106,6 +106,30 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		return keyboardManager.keyCommands
 	}
 	
+	private var navigationBarTitleLabel: UILabel {
+		let label = UILabel()
+		label.font = UIFont.preferredFont(forTextStyle: .subheadline).bold()
+		label.isUserInteractionEnabled = true
+		label.numberOfLines = 1
+		label.textAlignment = .center
+		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
+		label.addGestureRecognizer(tap)
+		let pointerInteraction = UIPointerInteraction(delegate: nil)
+		label.addInteraction(pointerInteraction)
+		return label
+	}
+	
+	private var navigationBarSubtitleTitleLabel: UILabel {
+		let label = UILabel()
+		label.font = UIFont.preferredFont(forTextStyle: .footnote)
+		label.textColor = .systemGray
+		label.textAlignment = .center
+		label.isUserInteractionEnabled = true
+		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
+		label.addGestureRecognizer(tap)
+		return label
+	}
+	
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -118,7 +142,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
@@ -144,20 +168,19 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			NSLocalizedString("All Articles", comment: "All Articles")
 		]
 		navigationItem.searchController = searchController
+		
+		if traitCollection.userInterfaceIdiom == .pad {
+			searchController.searchBar.selectedScopeButtonIndex = 1
+			navigationItem.searchBarPlacementAllowsExternalIntegration = true
+		}
 		definesPresentationContext = true
-
+		
 		// Configure the table
 		tableView.dataSource = dataSource
-		if #available(iOS 15.0, *) {
-			tableView.isPrefetchingEnabled = false
-		}
+		tableView.isPrefetchingEnabled = false
+		
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
-		resetEstimatedRowHeight()
-
-		if let titleView = Bundle.main.loadNibNamed("MainTimelineTitleView", owner: self, options: nil)?[0] as? MainTimelineTitleView {
-			navigationItem.titleView = titleView
-		}
 		
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -173,33 +196,42 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 		
 		// Disable swipe back on iPad Mice
-		if #available(iOS 13.4, *) {
-			guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
-				return
-			}
-			gesture.allowedScrollTypesMask = []
+		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
+			return
 		}
+		gesture.allowedScrollTypesMask = []
 		
+		navigationItem.titleView = navigationBarTitleLabel
+		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
 		self.navigationController?.isToolbarHidden = false
 
 		// If the nav bar is hidden, fade it in to avoid it showing stuff as it is getting laid out
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		
-		super.viewWillAppear(animated)
+		//navigationItem.subtitle = "" // don't inherit feeds subtitle on push
+		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
+		updateNavigationBarSubtitle("")
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		isTimelineViewControllerPending = false
-
 		if navigationController?.navigationBar.alpha == 0 {
 			UIView.animate(withDuration: 0.5) {
 				self.navigationController?.navigationBar.alpha = 1
+			}
+		}
+		if traitCollection.userInterfaceIdiom == .phone {
+			if let _ = coordinator?.currentArticle {
+				if let indexPath = tableView.indexPathForSelectedRow {
+					tableView.deselectRow(at: indexPath, animated: true)
+				}
+				coordinator?.selectArticle(nil)
 			}
 		}
 	}
@@ -299,6 +331,22 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 		}
 	}
+	
+	func updateNavigationBarTitle(_ text: String) {
+		if let label = navigationItem.titleView as? UILabel {
+			label.text = text
+			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
+			label.sizeToFit()
+		}
+	}
+	
+	func updateNavigationBarSubtitle(_ text: String) {
+		if let label = navigationItem.subtitleView as? UILabel {
+			label.text = text
+			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
+			label.sizeToFit()
+		}
+	}
 
 	func reinitializeArticles(resetScroll: Bool) {
 		resetUI(resetScroll: resetScroll)
@@ -322,7 +370,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	func updateUI() {
 		refreshProgressView?.update()
-		updateTitleUnreadCount()
 		updateToolbar()
 	}
 	
@@ -338,10 +385,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	
 	func focus() {
 		becomeFirstResponder()
-	}
-
-	func setRefreshToolbarItemVisibility(visible: Bool) {
-		refreshProgressView?.alpha = visible ? 1.0 : 0
 	}
 	
 	// MARK: - Table view
@@ -502,7 +545,31 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 				return nil
 		}
 		
-		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
+		let previewView = cell.contentView
+		let inset: CGFloat = 12
+		let visibleBounds = previewView.bounds.insetBy(dx: inset, dy: 2)
+		let parameters = UIPreviewParameters()
+		parameters.backgroundColor = .clear
+		parameters.visiblePath = UIBezierPath(roundedRect: visibleBounds,
+											  cornerRadius: 20)
+		return UITargetedPreview(view: previewView, parameters: parameters)
+	}
+	
+	override func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+		guard let row = configuration.identifier as? Int,
+			let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) else {
+				return nil
+		}
+		
+		let previewView = cell.contentView
+		let inset: CGFloat = 0
+		let visibleBounds = previewView.bounds.insetBy(dx: inset, dy: 2)
+		let parameters = UIPreviewParameters()
+		parameters.backgroundColor = .clear
+		parameters.visiblePath = UIBezierPath(roundedRect: visibleBounds,
+											  cornerRadius: 20)
+		
+		return UITargetedPreview(view: previewView, parameters: parameters)
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -531,28 +598,31 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
-				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell {
-					configure(cell, article: article)
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell {
+					let cellData = configure(article: article)
+					cell.cellData = cellData
+				}
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineFeedCell {
+					let cellData = configure(article: article)
+					cell.cellData = cellData
 				}
 			}
 		}
 	}
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView?.iconImage = timelineIconImage
-		}
-		
-		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+
+		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		tableView.indexPathsForVisibleRows?.forEach { indexPath in
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			if article.webFeed == feed, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
-				cell.setIconImage(image)
+			if article.feed == feed {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
+					cell.setIconImage(image)
+				}
 			}
 		}
 	}
@@ -566,7 +636,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 				return
 			}
 			for author in authors {
-				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineTableViewCell, let image = iconImageFor(article) {
+				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
 					cell.setIconImage(image)
 				}
 			}
@@ -574,9 +644,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView?.iconImage = timelineIconImage
-		}
 		if showIcons {
 			queueReloadAvailableCells()
 		}
@@ -587,7 +654,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
 				self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 				self.iconSize = AppDefaults.shared.timelineIconSize
-				self.resetEstimatedRowHeight()
 				self.reloadAllVisibleCells()
 			}
 			self.updateToolbar()
@@ -599,9 +665,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.label?.text = timelineFeed?.nameForDisplay
-		}
+		updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
 	}
 	
 	@objc func willEnterForeground(_ note: Notification) {
@@ -630,29 +694,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
-	
-	// MARK: Cell Configuring
-
-	private func resetEstimatedRowHeight() {
-		
-		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
-		
-		let prototypeID = "prototype"
-		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, markdown: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
-		
-		let prototypeCellData = MainTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, numberOfLines: numberOfTextLines, iconSize: iconSize)
-
-		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
-			let layout = MainTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
-			tableView.estimatedRowHeight = layout.height
-		} else {
-			let layout = MainTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
-			tableView.estimatedRowHeight = layout.height
-		}
-		
-	}
-	
 }
 
 // MARK: Searching
@@ -697,57 +738,28 @@ private extension MainTimelineViewController {
 	}
 
 	func configureToolbar() {
-		guard !(splitViewController?.isCollapsed ?? true) else {
-			return
+		if traitCollection.userInterfaceIdiom == .phone {
+			toolbarItems?.insert(.flexibleSpace(), at: 1)
+			toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
 		}
-		
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
 
 	func resetUI(resetScroll: Bool) {
-		
-		title = timelineFeed?.nameForDisplay ?? "Timeline"
-
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.iconView?.iconImage = timelineIconImage
-			if let preferredColor = timelineIconImage?.preferredColor {
-				titleView.iconView?.tintColor = UIColor(cgColor: preferredColor)
-			} else {
-				titleView.iconView?.tintColor = nil
-			}
-			
-			titleView.label?.text = timelineFeed?.nameForDisplay
-			updateTitleUnreadCount()
-
-			if timelineFeed is WebFeed {
-				titleView.buttonize()
-				titleView.addGestureRecognizer(feedTapGestureRecognizer)
-			} else {
-				titleView.debuttonize()
-				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
-			}
-			
-			navigationItem.titleView = titleView
-		}
-
 		switch timelineDefaultReadFilterType {
 		case .none, .read:
 			navigationItem.rightBarButtonItem = filterButton
+			navigationItem.rightBarButtonItem?.isEnabled = true
 		case .alwaysRead:
 			navigationItem.rightBarButtonItem = nil
 		}
-
+		
 		if isReadArticlesFiltered {
-			filterButton.image = AppAssets.filterActiveImage
+			filterButton.style = .prominent
+			filterButton.tintColor = AppAssets.primaryAccentColor
 			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
-			filterButton.image = AppAssets.filterInactiveImage
+			filterButton.style = .plain
+			filterButton.tintColor = nil
 			filterButton.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 
@@ -781,12 +793,6 @@ private extension MainTimelineViewController {
 		}
 	}
 	
-	func updateTitleUnreadCount() {
-		if let titleView = navigationItem.titleView as? MainTimelineTitleView {
-			titleView.unreadCountView?.unreadCount = coordinator?.timelineUnreadCount ?? 0
-		}
-	}
-	
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
 		if (articles?.count ?? 0) == 0 {
 			tableView.rowHeight = tableView.estimatedRowHeight
@@ -807,22 +813,29 @@ private extension MainTimelineViewController {
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
 			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
-				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MainTimelineTableViewCell
-				self?.configure(cell, article: article)
-				return cell
+				let cellData = self!.configure(article: article)
+				if self!.showIcons {
+					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell", for: indexPath) as! MainTimelineIconFeedCell
+					cell.cellData = cellData
+					return cell
+				} else {
+					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell", for: indexPath) as! MainTimelineFeedCell
+					cell.cellData = cellData
+					return cell
+				}
+				
 			})
 		dataSource.defaultRowAnimation = .middle
 		return dataSource
     }
 	
-	func configure(_ cell: MainTimelineTableViewCell, article: Article) {
-
+	@discardableResult
+	func configure(article: Article) -> MainTimelineCellData {
 		let iconImage = iconImageFor(article)
-
 		let showFeedNames = coordinator?.showFeedNames ?? ShowFeedName.none
 		let showIcon = showIcons && iconImage != nil
-		cell.cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
-
+		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		return cellData
 	}
 	
 	func iconImageFor(_ article: Article) -> IconImage? {
@@ -959,34 +972,34 @@ private extension MainTimelineViewController {
 		return action
 	}
 
-	func timelineFeedIsEqualTo(_ feed: WebFeed) -> Bool {
+	func timelineFeedIsEqualTo(_ feed: Feed) -> Bool {
 		assert(coordinator != nil)
 		return coordinator?.timelineFeedIsEqualTo(feed) ?? false
 	}
 
-	func discloseWebFeed(_ feed: WebFeed, animations: Animations = []) {
+	func discloseFeed(_ feed: Feed, animations: Animations = []) {
 		assert(coordinator != nil)
-		coordinator?.discloseWebFeed(feed, animations: animations)
+		coordinator?.discloseFeed(feed, animations: animations)
 	}
 
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let webFeed = article.webFeed,
-			!timelineFeedIsEqualTo(webFeed) else { return nil }
+		guard let feed = article.feed,
+			!timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
-			self?.discloseWebFeed(webFeed, animations: [.scroll, .navigation])
+			self?.discloseFeed(feed, animations: [.scroll, .navigation])
 		}
 		return action
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed,
-			!timelineFeedIsEqualTo(webFeed) else { return nil }
+		guard let feed = article.feed,
+			!timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.discloseWebFeed(webFeed, animations: [.scroll, .navigation])
+			self?.discloseFeed(feed, animations: [.scroll, .navigation])
 			completion(true)
 		}
 		return action
@@ -998,8 +1011,8 @@ private extension MainTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let webFeed = article.webFeed else { return nil }
-		guard let fetchedArticles = try? webFeed.fetchArticles() else {
+		guard let feed = article.feed else { return nil }
+		guard let fetchedArticles = try? feed.fetchArticles() else {
 			return nil
 		}
 
@@ -1010,7 +1023,7 @@ private extension MainTimelineViewController {
 		
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -1021,8 +1034,8 @@ private extension MainTimelineViewController {
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed else { return nil }
-		guard let fetchedArticles = try? webFeed.fetchArticles() else {
+		guard let feed = article.feed else { return nil }
+		guard let fetchedArticles = try? feed.fetchArticles() else {
 			return nil
 		}
 		
@@ -1032,7 +1045,7 @@ private extension MainTimelineViewController {
 		}
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
 		}

@@ -96,7 +96,7 @@ final class RootSplitViewController: UISplitViewController {
 	}
 	
 	@objc func addNewFeed(_ sender: Any?) {
-		coordinator.showAddWebFeed()
+		coordinator.showAddFeed()
 	}
 
 	@objc func addNewFolder(_ sender: Any?) {
@@ -143,7 +143,7 @@ final class RootSplitViewController: UISplitViewController {
 		coordinator.toggleStarredForCurrentArticle()
 	}
 
-	@objc func toggleSidebar(_ sender: Any?) {
+	@objc override func toggleSidebar(_ sender: Any?) {
 		coordinator.toggleSidebar()
 	}
 }

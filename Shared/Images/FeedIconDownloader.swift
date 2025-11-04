@@ -24,8 +24,8 @@ public final class FeedIconDownloader {
 	private let imageDownloader = ImageDownloader.shared
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 	private var homePagesWithNoIconURL = Set<String>()
-	private var cache = [WebFeed: IconImage]()
-	private var waitingForFeedURLs = [String: WebFeed]()
+	private var cache = [Feed: IconImage]()
+	private var waitingForFeedURLs = [String: Feed]()
 
 	private var feedURLToIconURLCache = [String: String]()
 	private var feedURLToIconURLCachePath: URL
@@ -44,7 +44,7 @@ public final class FeedIconDownloader {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
 	}
 
-	func icon(for feed: WebFeed) -> IconImage? {
+	func icon(for feed: Feed) -> IconImage? {
 
 		if let cachedImage = cache[feed] {
 			return cachedImage
@@ -118,7 +118,7 @@ private extension FeedIconDownloader {
 
 	static let specialCasesToSkip = ["macsparky.com", "xkcd.com", SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 
-	static func shouldSkipDownloadingFeedIcon(feed: WebFeed) -> Bool {
+	static func shouldSkipDownloadingFeedIcon(feed: Feed) -> Bool {
 		shouldSkipDownloadingFeedIcon(feed.url)
 	}
 
@@ -126,7 +126,7 @@ private extension FeedIconDownloader {
 		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
 	}
 
-	func icon(forHomePageURL homePageURL: String, feed: WebFeed, _ resultBlock: @escaping (RSImage?, String?) -> Void) {
+	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping (RSImage?, String?) -> Void) {
 		if Self.shouldSkipDownloadingFeedIcon(homePageURL) {
 			resultBlock(nil, nil)
 			return
@@ -154,7 +154,7 @@ private extension FeedIconDownloader {
 		resultBlock(nil, nil)
 	}
 
-	func icon(forURL url: String, feed: WebFeed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
 
 		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {
@@ -164,10 +164,10 @@ private extension FeedIconDownloader {
 		RSImage.scaledForIcon(imageData, imageResultBlock: imageResultBlock)
 	}
 
-	func postFeedIconDidBecomeAvailableNotification(_ feed: WebFeed) {
+	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
 
 		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = [UserInfoKey.webFeed: feed]
+			let userInfo: [AnyHashable: Any] = [UserInfoKey.feed: feed]
 			NotificationCenter.default.post(name: .feedIconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
 	}

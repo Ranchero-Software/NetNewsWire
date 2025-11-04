@@ -26,8 +26,8 @@ final class UnreadFeed: PseudoFeed {
 		return .alwaysRead
 	}
 
-	var feedID: FeedIdentifier? {
-		return FeedIdentifier.smartFeed(String(describing: UnreadFeed.self))
+	var sidebarItemID: SidebarItemIdentifier? {
+		return SidebarItemIdentifier.smartFeed(String(describing: UnreadFeed.self))
 	}
 
 	let nameForDisplay = NSLocalizedString("All Unread", comment: "All Unread pseudo-feed title")

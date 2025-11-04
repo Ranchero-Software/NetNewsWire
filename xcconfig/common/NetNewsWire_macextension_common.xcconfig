@@ -1,0 +1,10 @@
+// Common settings for all Mac extensions
+
+#include "./NetNewsWire_codesigning_common.xcconfig"
+#include "./NetNewsWire_mac_target_common.xcconfig"
+
+CODE_SIGN_IDENTITY = Mac Developer
+DEVELOPMENT_TEAM = M8L2WTLA8W
+ENABLE_HARDENED_RUNTIME = YES
+SDKROOT = macosx
+PRODUCT_NAME = $(TARGET_NAME)

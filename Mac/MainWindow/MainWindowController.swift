@@ -90,6 +90,7 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 
 		timelineContainerViewController = splitViewController?.splitViewItems[1].viewController as? TimelineContainerViewController
 		timelineContainerViewController!.delegate = self
+		splitViewController?.splitViewItems[1].automaticallyAdjustsSafeAreaInsets = true
 
 		detailViewController = splitViewController?.splitViewItems[2].viewController as? DetailViewController
 
@@ -179,7 +180,7 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 			}
 		}
 		
-		if let feed = currentFeedOrFolder as? WebFeed, let noteObject = noteObject as? WebFeed {
+		if let feed = currentFeedOrFolder as? Feed, let noteObject = noteObject as? Feed {
 			if feed == noteObject {
 				updateWindowTitle()
 				return
@@ -610,7 +611,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		if let articles = articles {
 			if articles.count == 1 {
 				activityManager.reading(feed: nil, article: articles.first)
-				if articles.first?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {
@@ -627,8 +628,8 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		detailViewController?.setState(detailState, mode: mode)
 	}
 
-	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed) {
-		sidebarViewController?.selectFeed(webFeed)
+	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed) {
+		sidebarViewController?.selectFeed(feed)
 	}
 	
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController) {
@@ -1123,7 +1124,7 @@ private extension MainWindowController {
 			return currentLink != nil
 		}
 
-		if currentTimelineViewController?.selectedArticles.first?.webFeed != nil {
+		if currentTimelineViewController?.selectedArticles.first?.feed != nil {
 			toolbarButton.isEnabled = true
 		}
 
@@ -1275,7 +1276,7 @@ private extension MainWindowController {
 		}
 
 		guard let selectedObjects = selectedObjectsInSidebar(), selectedObjects.count > 0 else {
-			window?.title = appDelegate.appName!
+			window?.title = appName
 			setSubtitle(appDelegate.unreadCount)
 			return
 		}
@@ -1383,10 +1384,10 @@ private extension MainWindowController {
 	func buildNewSidebarItemMenu() -> NSMenu {
 		let menu = NSMenu()
 		
-		let newWebFeedItem = NSMenuItem()
-		newWebFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
-		newWebFeedItem.action = Selector(("showAddWebFeedWindow:"))
-		menu.addItem(newWebFeedItem)
+		let newFeedItem = NSMenuItem()
+		newFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
+		newFeedItem.action = Selector(("showAddFeedWindow:"))
+		menu.addItem(newFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")

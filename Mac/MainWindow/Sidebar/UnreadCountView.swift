@@ -13,11 +13,9 @@ final class UnreadCountView : NSView {
 	struct Appearance {
 		static let padding = NSEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
 		static let cornerRadius: CGFloat = 8.0
-		static let backgroundColor = NSColor(named: "SidebarUnreadCountBackground")!
-		static let textColor = NSColor(named: "SidebarUnreadCountText")!
-		static let textSize: CGFloat = 11.0
-		static let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFont.Weight.semibold)
-		static let textAttributes: [NSAttributedString.Key: AnyObject] = [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
+		static let backgroundColor = NSColor.clear
+		static let textSize: CGFloat = 13.0
+		static let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFont.Weight.regular)
 	}
 
 	var unreadCount = 0 {
@@ -28,6 +26,24 @@ final class UnreadCountView : NSView {
 	}
 	var unreadCountString: String {
 		return unreadCount < 1 ? "" : "\(unreadCount.formatted())"
+	}
+
+	var isSelected: Bool = false {
+		didSet {
+			needsDisplay = true
+		}
+	}
+	
+	private var currentTextColor: NSColor {
+		return isSelected ? NSColor.white : NSColor.secondaryLabelColor
+	}
+	
+	private var textAttributes: [NSAttributedString.Key: AnyObject] {
+		return [
+			.foregroundColor: currentTextColor,
+			.font: Appearance.textFont,
+			.kern: NSNull()
+		]
 	}
 
 	private var intrinsicContentSizeIsValid = false
@@ -66,7 +82,7 @@ final class UnreadCountView : NSView {
 			return cachedSize
 		}
 
-		var size = unreadCountString.size(withAttributes: Appearance.textAttributes)
+		var size = unreadCountString.size(withAttributes: textAttributes)
 		size.height = ceil(size.height)
 		size.width = ceil(size.width)
 
@@ -89,7 +105,7 @@ final class UnreadCountView : NSView {
 		path.fill()
 
 		if unreadCount > 0 {
-			unreadCountString.draw(at: textRect().origin, withAttributes: Appearance.textAttributes)
+			unreadCountString.draw(at: textRect().origin, withAttributes: textAttributes)
 		}
 	}
 }

@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Quiet build and test**: `./buildscripts/quiet_build_and_test.sh` - Same as above with less verbose output
 - **Manual Xcode builds**:
   - macOS: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire -destination "platform=macOS,arch=arm64" build`
-  - iOS: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire-iOS -destination "platform=iOS Simulator,name=iPhone 16" build`
+  - iOS: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire-iOS -destination "platform=iOS Simulator,name=iPhone 17" build`
 
 ### Testing
 - Run all tests: Use the `NetNewsWire.xctestplan` which includes tests from all modules

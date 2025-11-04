@@ -47,8 +47,8 @@ extension NewsBlurAccountDelegate {
 		if let folders = account.folders {
 			folders.forEach { folder in
 				if !folderNames.contains(folder.name ?? "") {
-					for feed in folder.topLevelWebFeeds {
-						account.addWebFeed(feed)
+					for feed in folder.topLevelFeeds {
+						account.addFeed(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
 					account.removeFolder(folder)
@@ -84,17 +84,17 @@ extension NewsBlurAccountDelegate {
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
-				for feed in folder.topLevelWebFeeds {
-					if !newsBlurFeedIds.contains(feed.webFeedID) {
-						folder.removeWebFeed(feed)
+				for feed in folder.topLevelFeeds {
+					if !newsBlurFeedIds.contains(feed.feedID) {
+						folder.removeFeed(feed)
 					}
 				}
 			}
 		}
 
-		for feed in account.topLevelWebFeeds {
-			if !newsBlurFeedIds.contains(feed.webFeedID) {
-				account.removeWebFeed(feed)
+		for feed in account.topLevelFeeds {
+			if !newsBlurFeedIds.contains(feed.feedID) {
+				account.removeFeed(feed)
 			}
 		}
 
@@ -103,13 +103,13 @@ extension NewsBlurAccountDelegate {
 		feeds.forEach { feed in
 			let subFeedId = String(feed.feedID)
 
-			if let webFeed = account.existingWebFeed(withWebFeedID: subFeedId) {
-				webFeed.name = feed.name
+			if let feed = account.existingFeed(withFeedID: subFeedId) {
+				feed.name = feed.name
 				// If the name has been changed on the server remove the locally edited name
-				webFeed.editedName = nil
-				webFeed.homePageURL = feed.homePageURL
-				webFeed.externalID = String(feed.feedID)
-				webFeed.faviconURL = feed.faviconURL
+				feed.editedName = nil
+				feed.homePageURL = feed.homePageURL
+				feed.externalID = String(feed.feedID)
+				feed.faviconURL = feed.faviconURL
 			}
 			else {
 				feedsToAdd.insert(feed)
@@ -118,9 +118,9 @@ extension NewsBlurAccountDelegate {
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
 		feedsToAdd.forEach { feed in
-			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			webFeed.externalID = String(feed.feedID)
-			account.addWebFeed(webFeed)
+			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
+			feed.externalID = String(feed.feedID)
+			account.addFeed(feed)
 		}
 	}
 
@@ -155,25 +155,25 @@ extension NewsBlurAccountDelegate {
 			guard let folder = folderDict[folderName] else { return }
 
 			// Move any feeds not in the folder to the account
-			for feed in folder.topLevelWebFeeds {
-				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
-					folder.removeWebFeed(feed)
+			for feed in folder.topLevelFeeds {
+				if !newsBlurFolderFeedIDs.contains(feed.feedID) {
+					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-					account.addWebFeed(feed)
+					account.addFeed(feed)
 				}
 			}
 
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelWebFeeds.map { $0.webFeedID }
+			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
 
 			for relationship in folderRelationships {
 				let folderFeedID = String(relationship.feedID)
 				if !folderFeedIds.contains(folderFeedID) {
-					guard let feed = account.existingWebFeed(withWebFeedID: folderFeedID) else {
+					guard let feed = account.existingFeed(withFeedID: folderFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: relationship.folderName)
-					folder.addWebFeed(feed)
+					folder.addFeed(feed)
 				}
 			}
 		}
@@ -182,27 +182,27 @@ extension NewsBlurAccountDelegate {
 		// in folders and we need to remove them all from the account level.
 		if let folderRelationships = newsBlurFolderDict[" "] {
 			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
-			for feed in account.topLevelWebFeeds {
-				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
-					account.removeWebFeed(feed)
+			for feed in account.topLevelFeeds {
+				if !newsBlurFolderFeedIDs.contains(feed.feedID) {
+					account.removeFeed(feed)
 				}
 			}
 		} else {
-			for feed in account.topLevelWebFeeds {
-				account.removeWebFeed(feed)
+			for feed in account.topLevelFeeds {
+				account.removeFeed(feed)
 			}
 		}
 		
 	}
 
-	func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
+	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
 			feed.folderRelationship = folderRelationship
 		}
 	}
 
-	func saveFolderRelationship(for feed: WebFeed, withFolderName folderName: String, id: String) {
+	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = id
 			feed.folderRelationship = folderRelationship
@@ -412,31 +412,31 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func createFeed(account: Account, feed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createFeed(account: Account, feed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let feed = feed else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
 		}
 
 		DispatchQueue.main.async {
-			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			webFeed.externalID = String(feed.feedID)
-			webFeed.faviconURL = feed.faviconURL
+			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
+			feed.externalID = String(feed.feedID)
+			feed.faviconURL = feed.faviconURL
 
-			account.addWebFeed(webFeed, to: container) { result in
+			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameWebFeed(webFeed, to: name) { result in
+						account.renameFeed(feed, to: name) { result in
 							switch result {
 							case .success:
-								self.initialFeedDownload(account: account, feed: webFeed, completion: completion)
+								self.initialFeedDownload(account: account, feed: feed, completion: completion)
 							case .failure(let error):
 								completion(.failure(error))
 							}
 						}
 					} else {
-						self.initialFeedDownload(account: account, feed: webFeed, completion: completion)
+						self.initialFeedDownload(account: account, feed: feed, completion: completion)
 					}
 				case .failure(let error):
 					completion(.failure(error))
@@ -445,10 +445,10 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func downloadFeed(account: Account, feed: WebFeed, page: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+	func downloadFeed(account: Account, feed: Feed, page: Int, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
-		caller.retrieveStories(feedID: feed.webFeedID, page: page) { result in
+		caller.retrieveStories(feedID: feed.feedID, page: page) { result in
 			switch result {
 			case .success((let stories, _)):
 				// No more stories
@@ -484,7 +484,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func initialFeedDownload(account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func initialFeedDownload(account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		// Download the initial articles
@@ -513,7 +513,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func deleteFeed(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteFeed(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		// This error should never happen
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
@@ -529,20 +529,20 @@ extension NewsBlurAccountDelegate {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
-					let feedID = feed.webFeedID
+					let feedID = feed.feedID
 
 					if folderName == nil {
-						account.removeWebFeed(feed)
+						account.removeFeed(feed)
 					}
 
 					if let folders = account.folders {
 						for folder in folders where folderName != nil && folder.name == folderName {
-							folder.removeWebFeed(feed)
+							folder.removeFeed(feed)
 						}
 					}
 
-					if account.existingWebFeed(withWebFeedID: feedID) != nil {
-						account.clearWebFeedMetadata(feed)
+					if account.existingFeed(withFeedID: feedID) != nil {
+						account.clearFeedMetadata(feed)
 					}
 
 					completion(.success(()))

@@ -115,12 +115,8 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 	
-	static var filterInactiveImage: UIImage = {
-		UIImage(systemName: "line.horizontal.3.decrease.circle")!
-	}()
-	
-	static var filterActiveImage: UIImage = {
-		UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
+	static var filterImage: UIImage = {
+		UIImage(systemName: "line.3.horizontal.decrease")!
 	}()
 	
 	static var folderOutlinePlus: UIImage = {
@@ -148,11 +144,11 @@ struct AppAssets {
 	}()
 	
 	static var mainFolderImage: IconImage = {
-		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+		return IconImage(UIImage(systemName: "folder")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
 	
 	static var mainFolderImageNonIcon: UIImage = {
-		return UIImage(systemName: "folder.fill")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
+		return UIImage(systemName: "folder")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
 	}()
 	
 	static var moreImage: UIImage = {
@@ -241,6 +237,11 @@ struct AppAssets {
 	static var trashImage: UIImage = {
 		return UIImage(systemName: "trash")!
 	}()
+	
+	static var unreadCellIndicatorImage: IconImage {
+		let image = UIImage(systemName: "circle.fill")!
+		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+	}
 	
 	static var unreadFeedImage: IconImage {
 		let image = UIImage(systemName: "largecircle.fill.circle")!

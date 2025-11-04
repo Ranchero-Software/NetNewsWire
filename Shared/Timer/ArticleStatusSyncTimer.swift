@@ -10,15 +10,16 @@ import Foundation
 import Account
 
 final class ArticleStatusSyncTimer {
-	
+	static let shared = ArticleStatusSyncTimer()
+
 	private static let intervalSeconds = Double(120)
-	
+
 	var shuttingDown = false
-	
+
 	private var internalTimer: Timer?
 	private var lastTimedRefresh: Date?
 	private let launchTime = Date()
-	
+
 	func fireOldTimer() {
 		if let timer = internalTimer {
 			if timer.fireDate < Date() {
@@ -26,7 +27,16 @@ final class ArticleStatusSyncTimer {
 			}
 		}
 	}
-	
+
+	func start() {
+		shuttingDown = false
+	}
+
+	func stop() {
+		shuttingDown = true
+		invalidate()
+	}
+
 	func invalidate() {
 		guard let timer = internalTimer else {
 			return
@@ -36,13 +46,13 @@ final class ArticleStatusSyncTimer {
 		}
 		internalTimer = nil
 	}
-	
+
 	func update() {
-		
+
 		guard !shuttingDown else {
 			return
 		}
-		
+
 		let lastRefreshDate = lastTimedRefresh ?? launchTime
 		var nextRefreshTime = lastRefreshDate.addingTimeInterval(ArticleStatusSyncTimer.intervalSeconds)
 		if nextRefreshTime < Date() {
@@ -51,25 +61,25 @@ final class ArticleStatusSyncTimer {
 		if let currentNextFireDate = internalTimer?.fireDate, currentNextFireDate == nextRefreshTime {
 			return
 		}
-		
+
 		invalidate()
 		let timer = Timer(fireAt: nextRefreshTime, interval: 0, target: self, selector: #selector(timedRefresh(_:)), userInfo: nil, repeats: false)
 		RunLoop.main.add(timer, forMode: .common)
 		internalTimer = timer
-		
+
 	}
-	
+
 	@objc func timedRefresh(_ sender: Timer?) {
-		
+
 		guard !shuttingDown else {
 			return
 		}
-		
+
 		lastTimedRefresh = Date()
 		update()
-		
+
 		AccountManager.shared.syncArticleStatusAll()
-		
+
 	}
-	
+
 }

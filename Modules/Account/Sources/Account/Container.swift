@@ -19,27 +19,27 @@ extension Notification.Name {
 public protocol Container: AnyObject, ContainerIdentifiable {
 
 	var account: Account? { get }
-	var topLevelWebFeeds: Set<WebFeed> { get set }
+	var topLevelFeeds: Set<Feed> { get set }
 	var folders: Set<Folder>? { get set }
 	var externalID: String? { get set }
 	
-	func hasAtLeastOneWebFeed() -> Bool
+	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
 	func hasChildFolder(with: String) -> Bool
 	func childFolder(with: String) -> Folder?
 
-    func removeWebFeed(_ webFeed: WebFeed)
-	func addWebFeed(_ webFeed: WebFeed)
+    func removeFeed(_ feed: Feed)
+	func addFeed(_ feed: Feed)
 
 	//Recursive — checks subfolders
-	func flattenedWebFeeds() -> Set<WebFeed>
-	func has(_ webFeed: WebFeed) -> Bool
-	func hasWebFeed(with webFeedID: String) -> Bool
-	func hasWebFeed(withURL url: String) -> Bool
-	func existingWebFeed(withWebFeedID: String) -> WebFeed?
-	func existingWebFeed(withURL url: String) -> WebFeed?
-	func existingWebFeed(withExternalID externalID: String) -> WebFeed?
+	func flattenedFeeds() -> Set<Feed>
+	func has(_ feed: Feed) -> Bool
+	func hasFeed(with feedID: String) -> Bool
+	func hasFeed(withURL url: String) -> Bool
+	func existingFeed(withFeedID: String) -> Feed?
+	func existingFeed(withURL url: String) -> Feed?
+	func existingFeed(withExternalID externalID: String) -> Feed?
 	func existingFolder(with name: String) -> Folder?
 	func existingFolder(withID: Int) -> Folder?
 
@@ -48,8 +48,8 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 
 public extension Container {
 
-	func hasAtLeastOneWebFeed() -> Bool {
-		return topLevelWebFeeds.count > 0
+	func hasAtLeastOneFeed() -> Bool {
+		return topLevelFeeds.count > 0
 	}
 
 	func hasChildFolder(with name: String) -> Bool {
@@ -69,8 +69,8 @@ public extension Container {
 	}
 
 	func objectIsChild(_ object: AnyObject) -> Bool {
-		if let feed = object as? WebFeed {
-			return topLevelWebFeeds.contains(feed)
+		if let feed = object as? Feed {
+			return topLevelFeeds.contains(feed)
 		}
 		if let folder = object as? Folder {
 			return folders?.contains(folder) ?? false
@@ -78,40 +78,40 @@ public extension Container {
 		return false
 	}
 
-	func flattenedWebFeeds() -> Set<WebFeed> {
-		var feeds = Set<WebFeed>()
-		feeds.formUnion(topLevelWebFeeds)
+	func flattenedFeeds() -> Set<Feed> {
+		var feeds = Set<Feed>()
+		feeds.formUnion(topLevelFeeds)
 		if let folders = folders {
 			for folder in folders {
-				feeds.formUnion(folder.flattenedWebFeeds())
+				feeds.formUnion(folder.flattenedFeeds())
 			}
 		}
 		return feeds
 	}
 
-	func hasWebFeed(with webFeedID: String) -> Bool {
-		return existingWebFeed(withWebFeedID: webFeedID) != nil
+	func hasFeed(with feedID: String) -> Bool {
+		return existingFeed(withFeedID: feedID) != nil
 	}
 
-	func hasWebFeed(withURL url: String) -> Bool {
-		return existingWebFeed(withURL: url) != nil
+	func hasFeed(withURL url: String) -> Bool {
+		return existingFeed(withURL: url) != nil
 	}
 
-	func has(_ webFeed: WebFeed) -> Bool {
-		return flattenedWebFeeds().contains(webFeed)
+	func has(_ feed: Feed) -> Bool {
+		return flattenedFeeds().contains(feed)
 	}
 	
-	func existingWebFeed(withWebFeedID webFeedID: String) -> WebFeed? {
-		for feed in flattenedWebFeeds() {
-			if feed.webFeedID == webFeedID {
+	func existingFeed(withFeedID feedID: String) -> Feed? {
+		for feed in flattenedFeeds() {
+			if feed.feedID == feedID {
 				return feed
 			}
 		}
 		return nil
 	}
 
-	func existingWebFeed(withURL url: String) -> WebFeed? {
-		for feed in flattenedWebFeeds() {
+	func existingFeed(withURL url: String) -> Feed? {
+		for feed in flattenedFeeds() {
 			if feed.url == url {
 				return feed
 			}
@@ -119,8 +119,8 @@ public extension Container {
 		return nil
 	}
 	
-	func existingWebFeed(withExternalID externalID: String) -> WebFeed? {
-		for feed in flattenedWebFeeds() {
+	func existingFeed(withExternalID externalID: String) -> Feed? {
+		for feed in flattenedFeeds() {
 			if feed.externalID == externalID {
 				return feed
 			}

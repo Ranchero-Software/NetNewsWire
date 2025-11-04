@@ -20,7 +20,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		
 		window!.tintColor = AppAssets.primaryAccentColor
-		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
 		
 		let rootViewController = window!.rootViewController as! RootSplitViewController
 		rootViewController.presentsWithGesture = true
@@ -123,7 +122,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			if urlString.starts(with: "feed:") || urlString.starts(with: "feeds:") {
 				let normalizedURLString = urlString.normalizedURL
 				if normalizedURLString.mayBeURL {
-					self.coordinator.showAddWebFeed(initialFeed: normalizedURLString, initialFeedName: nil)
+					self.coordinator.showAddFeed(initialFeed: normalizedURLString, initialFeedName: nil)
 				}
 			}
 			
@@ -228,7 +227,7 @@ private extension SceneDelegate {
 		case "com.ranchero.NetNewsWire.ShowSearch":
 			coordinator.showSearch()
 		case "com.ranchero.NetNewsWire.ShowAdd":
-			coordinator.showAddWebFeed()
+			coordinator.showAddFeed()
 		default:
 			break
 		}

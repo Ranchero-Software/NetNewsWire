@@ -70,7 +70,7 @@ final class WebViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
@@ -84,7 +84,7 @@ final class WebViewController: UIViewController {
 
 	// MARK: Notifications
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
 	}
 
@@ -114,7 +114,7 @@ final class WebViewController: UIViewController {
 		if article != self.article {
 			self.article = article
 			if updateView {
-				if article?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+				if article?.feed?.isArticleExtractorAlwaysOn ?? false {
 					startArticleExtractor()
 				}
 				windowScrollY = 0
@@ -159,9 +159,11 @@ final class WebViewController: UIViewController {
 	}
 
 	private func scrollPage(up scrollingUp: Bool) {
-		guard let webView = webView else { return }
+		guard let webView, let windowScene = webView.window?.windowScene else {
+			return
+		}
 
-		let overlap = 2 * UIFont.systemFont(ofSize: UIFont.systemFontSize).lineHeight * UIScreen.main.scale
+		let overlap = 2 * UIFont.systemFont(ofSize: UIFont.systemFontSize).lineHeight * windowScene.screen.scale
 		let scrollToY: CGFloat = {
 			let scrollDistance = webView.scrollView.layoutMarginsGuide.layoutFrame.height - overlap;
 			let fullScroll = webView.scrollView.contentOffset.y + (scrollingUp ? -scrollDistance : scrollDistance)
@@ -449,8 +451,8 @@ extension WebViewController: WKScriptMessageHandler {
 		case MessageName.imageWasClicked:
 			imageWasClicked(body: message.body as? String)
 		case MessageName.showFeedInspector:
-			if let webFeed = article?.webFeed {
-				coordinator.showFeedInspector(for: webFeed)
+			if let feed = article?.feed {
+				coordinator.showFeedInspector(for: feed)
 			}
 		default:
 			return

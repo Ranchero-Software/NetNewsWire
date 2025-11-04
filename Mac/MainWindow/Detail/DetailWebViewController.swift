@@ -52,17 +52,15 @@ final class DetailWebViewController: NSViewController {
 	
 	private var articleTextSize = AppDefaults.shared.articleTextSize
 
-	#if !MAC_APP_STORE
-		private var webInspectorEnabled: Bool {
-			get {
-				return webView.configuration.preferences._developerExtrasEnabled
-			}
-			set {
-				webView.configuration.preferences._developerExtrasEnabled = newValue
-			}
+	private var webInspectorEnabled: Bool {
+		get {
+			return webView.configuration.preferences._developerExtrasEnabled
 		}
-	#endif
-	
+		set {
+			webView.configuration.preferences._developerExtrasEnabled = newValue
+		}
+	}
+
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
@@ -110,7 +108,7 @@ final class DetailWebViewController: NSViewController {
 		webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
 		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
@@ -121,7 +119,7 @@ final class DetailWebViewController: NSViewController {
 
 	// MARK: Notifications
 	
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
 	}
 
@@ -309,10 +307,7 @@ private extension DetailWebViewController {
 	}
 
 	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
-		var javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
-		if #available(macOS 10.15, *) {
-			javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
-		}
+		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
 
 		webView.evaluateJavaScript(javascriptString) { (info, error) in
 			guard let info = info as? [String: Any] else {
@@ -329,11 +324,9 @@ private extension DetailWebViewController {
 		}
 	}
 
-	#if !MAC_APP_STORE
-		@objc func webInspectorEnabledDidChange(_ notification: Notification) {
-			self.webInspectorEnabled = notification.object! as! Bool
-		}
-	#endif
+	@objc func webInspectorEnabledDidChange(_ notification: Notification) {
+		self.webInspectorEnabled = notification.object! as! Bool
+	}
 }
 
 // MARK: - ScrollInfo

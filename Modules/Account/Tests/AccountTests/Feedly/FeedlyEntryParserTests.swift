@@ -55,7 +55,7 @@ final class FeedlyEntryParserTests: XCTestCase {
 		XCTAssertEqual(item.uniqueID, entry.id)
 		
 		// The following is not an error.
-		// The feedURL must match the webFeedID for the article to be connected to its matching feed.
+		// The feedURL must match the feedID for the article to be connected to its matching feed.
 		XCTAssertEqual(item.feedURL, origin.streamId)
 		XCTAssertEqual(item.title, entry.title)
 		XCTAssertEqual(item.contentHTML, content.content)

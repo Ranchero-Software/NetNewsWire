@@ -8,6 +8,7 @@
 
 import UIKit
 
+@IBDesignable
 final class IconView: UIView {
 
 	var iconImage: IconImage? = nil {
@@ -35,6 +36,7 @@ final class IconView: UIView {
 		imageView.contentMode = .scaleAspectFit
 		imageView.clipsToBounds = true
 		imageView.layer.cornerRadius = 2.0
+		imageView.layer.cornerCurve = .continuous
 		return imageView
 	}()
 
@@ -77,7 +79,7 @@ final class IconView: UIView {
 private extension IconView {
 
 	func commonInit() {
-		layer.cornerRadius = MainTimelineDefaultCellLayout.iconCornerRadius
+		layer.cornerRadius = 4
 		clipsToBounds = true
 		addSubview(imageView)
 	}
@@ -119,3 +121,4 @@ private extension IconView {
 		}
 	}
 }
+

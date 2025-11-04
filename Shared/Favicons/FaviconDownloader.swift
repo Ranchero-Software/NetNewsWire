@@ -21,6 +21,7 @@ extension Notification.Name {
 }
 
 final class FaviconDownloader {
+	static let shared = FaviconDownloader()
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -47,14 +48,15 @@ final class FaviconDownloader {
 	}
 
 	private let queue: DispatchQueue
-	private var cache = [WebFeed: IconImage]() // faviconURL: RSImage
+	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
 	}
 
-	init(folder: String) {
-
+	init() {
+		let folderURL = AppConfig.cacheSubfolder(named: "Favicons")
+		let folder = folderURL.path
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
@@ -71,24 +73,24 @@ final class FaviconDownloader {
 	// MARK: - API
 
 	func resetCache() {
-		cache = [WebFeed: IconImage]()
+		cache = [Feed: IconImage]()
 	}
 	
-	func favicon(for webFeed: WebFeed) -> IconImage? {
+	func favicon(for feed: Feed) -> IconImage? {
 		assert(Thread.isMainThread)
 
-		if shouldSkipDownloadingFavicon(feed: webFeed) {
+		if shouldSkipDownloadingFavicon(feed: feed) {
 			return nil
 		}
 
-		var homePageURL = webFeed.homePageURL
-		if let faviconURL = webFeed.faviconURL {
+		var homePageURL = feed.homePageURL
+		if let faviconURL = feed.faviconURL {
 			return favicon(with: faviconURL, homePageURL: homePageURL)
 		}
 
 		if homePageURL == nil {
 			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
-			if let feedURL = URL(string: webFeed.url), let scheme = feedURL.scheme, let host = feedURL.host {
+			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
 				homePageURL = scheme + "://" + host + "/"
 			}
 		}
@@ -99,14 +101,14 @@ final class FaviconDownloader {
 		return nil
 	}
 	
-	func faviconAsIcon(for webFeed: WebFeed) -> IconImage? {
+	func faviconAsIcon(for feed: Feed) -> IconImage? {
 
-		if let image = cache[webFeed] {
+		if let image = cache[feed] {
 			return image
 		}
 
-		if let iconImage = favicon(for: webFeed) {
-			cache[webFeed] = iconImage
+		if let iconImage = favicon(for: feed) {
+			cache[feed] = iconImage
 			return iconImage
 		}
 
@@ -211,7 +213,7 @@ private extension FaviconDownloader {
 
 	static let specialCasesToSkip = [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 
-	func shouldSkipDownloadingFavicon(feed: WebFeed) -> Bool {
+	func shouldSkipDownloadingFavicon(feed: Feed) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
 	}
 

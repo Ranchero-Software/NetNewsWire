@@ -25,10 +25,10 @@ extension Account: SmallIconProvider {
 	}
 }
 
-extension WebFeed: SmallIconProvider {
+extension Feed: SmallIconProvider {
 
 	var smallIcon: IconImage? {
-		if let iconImage = appDelegate.faviconDownloader.favicon(for: self) {
+		if let iconImage = FaviconDownloader.shared.favicon(for: self) {
 			return iconImage
 		}
 		return FaviconGenerator.favicon(self)

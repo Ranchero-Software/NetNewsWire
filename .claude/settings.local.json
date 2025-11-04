@@ -19,7 +19,8 @@
       "Bash(1)",
       "Bash(sed:*)",
       "Bash(cat:*)",
-      "Bash(dd:*)"
+      "Bash(dd:*)",
+      "Bash(xcrun simctl list:*)"
     ],
     "deny": []
   }

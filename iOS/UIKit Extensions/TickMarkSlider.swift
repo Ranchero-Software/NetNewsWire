@@ -8,6 +8,7 @@
 
 import UIKit
 
+@available(*, deprecated, message: "UISliders in iOS 26 come with tickmarks.")
 final class TickMarkSlider: UISlider {
 
 	private var enableFeedback = false

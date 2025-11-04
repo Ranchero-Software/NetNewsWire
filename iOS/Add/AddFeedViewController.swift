@@ -14,7 +14,6 @@ import RSParser
 
 final class AddFeedViewController: UITableViewController {
 	
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!
 	@IBOutlet weak var urlTextField: UITextField!
 	@IBOutlet weak var urlTextFieldToSuperViewConstraint: NSLayoutConstraint!
@@ -24,6 +23,8 @@ final class AddFeedViewController: UITableViewController {
 	
 	private var folderLabel = ""
 	private var userCancelled = false
+	
+	private let activityIndicator = UIActivityIndicatorView(style: .medium)
 
 	var initialFeed: String?
 	var initialFeedName: String?
@@ -33,9 +34,6 @@ final class AddFeedViewController: UITableViewController {
 	override func viewDidLoad() {
         super.viewDidLoad()
 
-		activityIndicator.isHidden = true
-		activityIndicator.color = .label
-		
 		if initialFeed == nil, let urlString = UIPasteboard.general.string {
 			if urlString.mayBeURL {
 				initialFeed = urlString.normalizedURL
@@ -54,7 +52,7 @@ final class AddFeedViewController: UITableViewController {
 		nameTextField.text = initialFeedName
 		nameTextField.delegate = self
 		
-		if let defaultContainer = AddWebFeedDefaultContainer.defaultContainer {
+		if let defaultContainer = AddFeedDefaultContainer.defaultContainer {
 			container = defaultContainer
 		} else {
 			addButton.isEnabled = false
@@ -94,31 +92,32 @@ final class AddFeedViewController: UITableViewController {
 			account = containerAccount
 		}
 		
-		if account!.hasWebFeed(withURL: url.absoluteString) {
+		if account!.hasFeed(withURL: url.absoluteString) {
 			presentError(AccountError.createErrorAlreadySubscribed)
  			return
 		}
 		
 		addButton.isEnabled = false
-		activityIndicator.isHidden = false
+		addButton.customView = activityIndicator
+		addButton.customView?.isHidden = false
 		activityIndicator.startAnimating()
 		
 		let feedName = (nameTextField.text?.isEmpty ?? true) ? nil : nameTextField.text
 		
 		BatchUpdate.shared.start()
 		
-		account!.createWebFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
+		account!.createFeed(url: url.absoluteString, name: feedName, container: container, validateFeed: true) { result in
 
 			BatchUpdate.shared.end()
 			
 			switch result {
 			case .success(let feed):
 				self.dismiss(animated: true)
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
 			case .failure(let error):
 				self.addButton.isEnabled = true
-				self.activityIndicator.isHidden = true
 				self.activityIndicator.stopAnimating()
+				self.addButton.customView = nil
 				self.presentError(error)
 			}
 
@@ -142,7 +141,7 @@ final class AddFeedViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.row == 2 {
-			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedFolderNavViewController") as! UINavigationController
+			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedFolderNavViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
 			let folderViewController = navController.topViewController as! AddFeedFolderViewController
 			folderViewController.delegate = self
@@ -153,13 +152,13 @@ final class AddFeedViewController: UITableViewController {
 	
 }
 
-// MARK: AddWebFeedFolderViewControllerDelegate
+// MARK: AddFeedFolderViewControllerDelegate
 
 extension AddFeedViewController: AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container) {
 		self.container = container
 		updateFolderLabel()
-		AddWebFeedDefaultContainer.saveDefaultContainer(container)
+		AddFeedDefaultContainer.saveDefaultContainer(container)
 	}
 }
 

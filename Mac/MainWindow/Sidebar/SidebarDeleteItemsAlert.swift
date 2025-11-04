@@ -22,10 +22,10 @@ enum SidebarDeleteItemsAlert {
 				alert.messageText = NSLocalizedString("Delete Folder", comment: "Delete Folder")
 				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
 				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, folder.nameForDisplay) as String
-			} else if let feed = nodes.first?.representedObject as? Feed {
+			} else if let sidebarItem = nodes.first?.representedObject as? SidebarItem {
 				alert.messageText = NSLocalizedString("Delete Feed", comment: "Delete Feed")
 				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
-				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
+				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, sidebarItem.nameForDisplay) as String
 			}
 		} else {
 			alert.messageText = NSLocalizedString("Delete Items", comment: "Delete Items")

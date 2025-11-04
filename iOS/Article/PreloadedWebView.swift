@@ -17,12 +17,12 @@ final class PreloadedWebView: WKWebView {
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 		super.init(frame: .zero, configuration: configuration)
-
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 	}
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
+		
 	}
 	
 	func preload() {
