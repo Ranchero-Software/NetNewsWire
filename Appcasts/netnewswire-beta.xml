@@ -7,6 +7,39 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 6.2</title>
+            <description><![CDATA[
+				<p>Changes since 6.1.10:</p>
+				<ul>
+					<li>Added support for Markdown in RSS via the source:markdown element. When present, the Markdown is rendered as HTML</li>
+					<li>Made several performance enhancements, most notably in scrolling the timeline</li>
+					<li>Fixed a bunch of AppleScript bugs</li>
+					<li>Added ability to copy multiple article URLs</li>
+					<li>Added a dotted underline to links in the Sepia theme, to make links more visible</li>
+					<li>Improved http/https caching, reducing bandwidth and battery use</li>
+					<li>Fixed bug where a feed could be read twice on being added</li>
+					<li>Fixed bug where the initial download for a new feed didn’t store conditional GET info</li>
+					<li>Added some special cases where we can and should avoid doing some specific work (such as downloading the home page to find a feed icon)</li>
+					<li>Worked around a server bug where a server would always respond with a 304 when any conditional GET info is sent (the app drops conditional GET info every 8 days)</li>
+					<li>Fixed a possible cause of feeds not updating by caching (non-429) 4xx responses for some hours rather than for the duration of the app run</li>
+					<li>Fixed a couple Atom parser bugs (one with relative URLs, one with root level author elements)</li>
+					<li>Fixed a bug where the webview can sometimes take a surprisingly long time to appear after launch</li>
+					<li>Fixed a possible cause of app icon unread count badge to be out of date</li>
+					<li>Fixed bug where timeline text could be truncated early when showing max number of lines in timeline and small text</li>
+					<li>Made Sidebar the first item in toolbar by default</li>
+					<li>Added Open Application Support Folder (data folder) to Help menu (moved from Debug menu)</li>
+					<li>Made it so we don’t get one-time codes in random text views</li>
+					<li>Fixed a bug where images that are links could get underlined in the default theme</li>
+					<li>Fixed a bug finding a feed in a page that has no body tag</li>
+					<li>Applied a number formatter for unread counts in the sidebar</li>
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 04 Nov 2025 10:00:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2/NetNewsWire6.2.zip" sparkle:version="6200" sparkle:shortVersionString="6.2" length="10242005" type="application/zip" />
+			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 6.2b4</title>
             <description><![CDATA[
 				<p>Changes since 6.2b3:</p>
