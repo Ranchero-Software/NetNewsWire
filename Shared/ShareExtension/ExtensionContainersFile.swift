@@ -13,6 +13,7 @@ import RSParser
 import Account
 
 final class ExtensionContainersFile {
+	static let shared = ExtensionContainersFile()
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ExtensionContainersFile")
 
@@ -22,6 +23,7 @@ final class ExtensionContainersFile {
 		return containerURL!.appendingPathComponent("extension_containers.plist").path
 	}()
 
+	private var isActive = false
 	private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
@@ -29,7 +31,13 @@ final class ExtensionContainersFile {
 	}
 	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
 
-	init() {
+	func start() {
+		guard !isActive else {
+			assertionFailure("start() called when already active")
+			return
+		}
+		isActive = true
+		
 		if !FileManager.default.fileExists(atPath: ExtensionContainersFile.filePath) {
 			save()
 		}
@@ -103,5 +111,4 @@ private extension ExtensionContainersFile {
 			Self.logger.error("Save to disk coordination failed: \(error.localizedDescription)")
 		}
 	}
-
 }

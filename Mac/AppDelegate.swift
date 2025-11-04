@@ -217,7 +217,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			self.toggleInspectorWindow(self)
 		}
 
-		extensionContainersFile = ExtensionContainersFile()
+		ExtensionContainersFile.shared.start()
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 
 		refreshTimer = AccountRefreshTimer()

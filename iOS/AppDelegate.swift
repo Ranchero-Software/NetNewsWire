@@ -107,8 +107,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
-
-		extensionContainersFile = ExtensionContainersFile()
+		
+		ExtensionContainersFile.shared.start()
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 		
 		widgetDataEncoder = WidgetDataEncoder()
