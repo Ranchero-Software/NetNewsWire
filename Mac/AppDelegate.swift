@@ -38,7 +38,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		static let mainWindow = "mainWindow"
 	}
 	
-	var userNotificationManager: UserNotificationManager!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 
@@ -235,7 +234,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 
 		UNUserNotificationCenter.current().delegate = self
-		userNotificationManager = UserNotificationManager()
+		UserNotificationManager.shared.start()
 
 		#if DEBUG
 		refreshTimer!.update()
@@ -466,9 +465,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		let userInfo = response.notification.request.content.userInfo
 		
 		switch response.actionIdentifier {
-		case "MARK_AS_READ":
+		case UserNotificationManager.ActionIdentifier.markAsRead:
 			handleMarkAsRead(userInfo: userInfo)
-		case "MARK_AS_STARRED":
+		case UserNotificationManager.ActionIdentifier.markAsStarred:
 			handleMarkAsStarred(userInfo: userInfo)
 		default:
 			mainWindowController?.handle(response)

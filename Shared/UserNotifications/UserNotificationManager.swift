@@ -11,15 +11,32 @@ import Account
 import Articles
 import UserNotifications
 
-final class UserNotificationManager: NSObject {
-	
-	override init() {
-		super.init()
+final class UserNotificationManager {
+	static let shared = UserNotificationManager()
+
+	static private let notificationCategory = "NEW_ARTICLE_NOTIFICATION_CATEGORY"
+
+	struct ActionIdentifier {
+		static let markAsRead = "MARK_AS_READ"
+		static let markAsStarred = "MARK_AS_STARRED"
+		static let openArticle = "OPEN_ARTICLE"
+	}
+
+	@MainActor private var isActive = false
+
+	@MainActor func start() {
+		guard !isActive else {
+			assertionFailure("start called when already active")
+			return
+		}
+
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		registerCategoriesAndActions()
+
+		isActive = true
 	}
-	
+
 	@objc func accountDidDownloadArticles(_ note: Notification) {
 		guard let articles = note.userInfo?[Account.UserInfoKey.newArticles] as? Set<Article> else {
 			return
@@ -48,11 +65,10 @@ final class UserNotificationManager: NSObject {
 			UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
 		}
 	}
-	
 }
 
 private extension UserNotificationManager {
-	
+
 	func sendNotification(feed: Feed, article: Article) {
 		let content = UNMutableNotificationContent()
 						
@@ -64,7 +80,7 @@ private extension UserNotificationManager {
 		content.threadIdentifier = feed.feedID
 		content.sound = UNNotificationSound.default
 		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
-		content.categoryIdentifier = "NEW_ARTICLE_NOTIFICATION_CATEGORY"
+		content.categoryIdentifier = Self.notificationCategory
 		if let attachment = thumbnailAttachment(for: article, feed: feed) {
 			content.attachments.append(attachment)
 		}
@@ -88,18 +104,16 @@ private extension UserNotificationManager {
 	}
 	
 	func registerCategoriesAndActions() {
-		let readAction = UNNotificationAction(identifier: "MARK_AS_READ", title: NSLocalizedString("Mark as Read", comment: "Mark as Read"), options: [])
-		let starredAction = UNNotificationAction(identifier: "MARK_AS_STARRED", title: NSLocalizedString("Mark as Starred", comment: "Mark as Starred"), options: [])
-		let openAction = UNNotificationAction(identifier: "OPEN_ARTICLE", title: NSLocalizedString("Open", comment: "Open"), options: [.foreground])
-		
-		let newArticleCategory =
-			  UNNotificationCategory(identifier: "NEW_ARTICLE_NOTIFICATION_CATEGORY",
-			  actions: [openAction, readAction, starredAction],
-			  intentIdentifiers: [],
-			  hiddenPreviewsBodyPlaceholder: "",
-			  options: [])
-		
+		let readAction = UNNotificationAction(identifier: ActionIdentifier.markAsRead, title: NSLocalizedString("Mark as Read", comment: "Mark as Read"), options: [])
+		let starredAction = UNNotificationAction(identifier: ActionIdentifier.markAsStarred, title: NSLocalizedString("Mark as Starred", comment: "Mark as Starred"), options: [])
+		let openAction = UNNotificationAction(identifier: ActionIdentifier.openArticle, title: NSLocalizedString("Open", comment: "Open"), options: [.foreground])
+
+		let newArticleCategory = UNNotificationCategory(identifier: Self.notificationCategory,
+														actions: [openAction, readAction, starredAction],
+														intentIdentifiers: [],
+														hiddenPreviewsBodyPlaceholder: "",
+														options: [])
+
 		UNUserNotificationCenter.current().setNotificationCategories([newArticleCategory])
 	}
-	
 }

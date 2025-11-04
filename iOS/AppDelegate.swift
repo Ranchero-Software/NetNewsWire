@@ -39,7 +39,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
-	var userNotificationManager: UserNotificationManager!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	var widgetDataEncoder: WidgetDataEncoder!
@@ -107,7 +106,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 
 		UNUserNotificationCenter.current().delegate = self
-		userNotificationManager = UserNotificationManager()
+		UserNotificationManager.shared.start()
 
 		extensionContainersFile = ExtensionContainersFile()
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
@@ -213,9 +212,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		let userInfo = response.notification.request.content.userInfo
 		
 		switch response.actionIdentifier {
-		case "MARK_AS_READ":
+		case UserNotificationManager.ActionIdentifier.markAsRead:
 			handleMarkAsRead(userInfo: userInfo)
-		case "MARK_AS_STARRED":
+		case UserNotificationManager.ActionIdentifier.markAsStarred:
 			handleMarkAsStarred(userInfo: userInfo)
 		default:
 			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
