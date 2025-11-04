@@ -11,6 +11,7 @@ import os.log
 import Account
 
 final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
+	static let shared = ExtensionFeedAddRequestFile()
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ExtensionFeedAddRequestFile")
 
@@ -19,23 +20,30 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 		return containerURL!.appendingPathComponent("extension_feed_add_request.plist").path
 	}()
-	
-	private let operationQueue: OperationQueue
-	
+
+	private let operationQueue = {
+		let queue = OperationQueue()
+		queue.maxConcurrentOperationCount = 1
+		return queue
+	}()
+
 	var presentedItemURL: URL? {
-		return URL(fileURLWithPath: ExtensionFeedAddRequestFile.filePath)
+		URL(fileURLWithPath: ExtensionFeedAddRequestFile.filePath)
 	}
-	
+
 	var presentedItemOperationQueue: OperationQueue {
-		return operationQueue
+		operationQueue
 	}
-	
-	override init() {
-		operationQueue = OperationQueue()
-		operationQueue.maxConcurrentOperationCount = 1
-		
-		super.init()
-		
+
+	private var isActive = false
+
+	func start() {
+		guard !isActive else {
+			assertionFailure("start called when already active")
+			return
+		}
+		isActive = true
+
 		NSFileCoordinator.addFilePresenter(self)
 		process()
 	}
@@ -47,16 +55,18 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 	}
 
 	func resume() {
+		assert(isActive)
 		NSFileCoordinator.addFilePresenter(self)
 		process()
 	}
-	
+
 	func suspend() {
+		assert(isActive)
 		NSFileCoordinator.removeFilePresenter(self)
 	}
-	
+
 	static func save(_ feedAddRequest: ExtensionFeedAddRequest) {
-		
+
 		let decoder = PropertyListDecoder()
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
@@ -64,10 +74,10 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 		let errorPointer: NSErrorPointer = nil
 		let fileCoordinator = NSFileCoordinator()
 		let fileURL = URL(fileURLWithPath: ExtensionFeedAddRequestFile.filePath)
-		
+
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: [.forMerging], error: errorPointer, byAccessor: { url in
 			do {
-				
+
 				var requests: [ExtensionFeedAddRequest]
 				if let fileData = try? Data(contentsOf: url),
 					let decodedRequests = try? decoder.decode([ExtensionFeedAddRequest].self, from: fileData) {
@@ -75,17 +85,17 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 				} else {
 					requests = [ExtensionFeedAddRequest]()
 				}
-				
+
 				requests.append(feedAddRequest)
 
 				let data = try encoder.encode(requests)
 				try data.write(to: url)
-				
+
 			} catch let error as NSError {
 				Self.logger.error("Save to disk failed: \(error.localizedDescription)")
 			}
 		})
-		
+
 		if let error = errorPointer?.pointee {
 			Self.logger.error("Save to disk coordination failed: \(error.localizedDescription)")
 		}
@@ -93,9 +103,9 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 }
 
 private extension ExtensionFeedAddRequestFile {
-	
+
 	func process() {
-		
+
 		let decoder = PropertyListDecoder()
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
@@ -108,27 +118,27 @@ private extension ExtensionFeedAddRequestFile {
 
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: [.forMerging], error: errorPointer, byAccessor: { url in
 			do {
-				
+
 				if let fileData = try? Data(contentsOf: url),
 					let decodedRequests = try? decoder.decode([ExtensionFeedAddRequest].self, from: fileData) {
 					requests = decodedRequests
 				}
-				
+
 				let data = try encoder.encode([ExtensionFeedAddRequest]())
 				try data.write(to: url)
-				
+
 			} catch let error as NSError {
 				Self.logger.error("Save to disk failed: \(error.localizedDescription)")
 			}
 		})
-		
+
 		if let error = errorPointer?.pointee {
 			Self.logger.error("Save to disk coordination failed: \(error.localizedDescription)")
 		}
 
 		requests?.forEach { processRequest($0) }
 	}
-	
+
 	func processRequest(_ request: ExtensionFeedAddRequest) {
 		var destinationAccountID: String? = nil
 		switch request.destinationContainerID {
@@ -139,20 +149,20 @@ private extension ExtensionFeedAddRequestFile {
 		default:
 			break
 		}
-		
+
 		guard let accountID = destinationAccountID, let account = AccountManager.shared.existingAccount(with: accountID) else {
 			return
 		}
-		
+
 		var destinationContainer: Container? = nil
 		if account.containerID == request.destinationContainerID {
 			destinationContainer = account
 		} else {
 			destinationContainer = account.folders?.first(where: { $0.containerID == request.destinationContainerID })
 		}
-		
+
 		guard let container = destinationContainer else { return }
-		
+
 		account.createFeed(url: request.feedURL.absoluteString, name: request.name, container: container, validateFeed: true) { _ in }
 	}
 }

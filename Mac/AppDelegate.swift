@@ -38,9 +38,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		static let mainWindow = "mainWindow"
 	}
 	
-	var extensionContainersFile: ExtensionContainersFile!
-	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
-
 	var appName: String!
 	
 	var refreshTimer: AccountRefreshTimer?
@@ -218,7 +215,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 
 		ExtensionContainersFile.shared.start()
-		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
+		ExtensionFeedAddRequestFile.shared.start()
 
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()

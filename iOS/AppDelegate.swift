@@ -39,8 +39,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
-	var extensionContainersFile: ExtensionContainersFile!
-	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	var widgetDataEncoder: WidgetDataEncoder!
 
 	var unreadCount = 0 {
@@ -109,7 +107,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		UserNotificationManager.shared.start()
 		
 		ExtensionContainersFile.shared.start()
-		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
+		ExtensionFeedAddRequestFile.shared.start()
 		
 		widgetDataEncoder = WidgetDataEncoder()
 
@@ -177,7 +175,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	
 	func prepareAccountsForBackground() {
 		updateBadge()
-		extensionFeedAddRequestFile.suspend()
+		ExtensionFeedAddRequestFile.shared.suspend()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
@@ -188,7 +186,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	func prepareAccountsForForeground() {
 		updateBadge()
-		extensionFeedAddRequestFile.resume()
+		ExtensionFeedAddRequestFile.shared.resume()
 		syncTimer?.update()
 
 		if let lastRefresh = AppDefaults.shared.lastRefresh {
