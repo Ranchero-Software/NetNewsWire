@@ -21,18 +21,15 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 	
-	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
-	
+	private let backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
+
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-	
-	var syncTimer: ArticleStatusSyncTimer?
 	
 	var shuttingDown = false {
 		didSet {
 			if shuttingDown {
-				syncTimer?.shuttingDown = shuttingDown
-				syncTimer?.invalidate()
+				ArticleStatusSyncTimer.shared.stop()
 			}
 		}
 	}
@@ -111,10 +108,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		
 		widgetDataEncoder = WidgetDataEncoder()
 
-		syncTimer = ArticleStatusSyncTimer()
-
 		#if DEBUG
-		syncTimer!.update()
+		ArticleStatusSyncTimer.shared.update()
 		#endif
 			
 		return true
@@ -176,7 +171,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	func prepareAccountsForBackground() {
 		updateBadge()
 		ExtensionFeedAddRequestFile.shared.suspend()
-		syncTimer?.invalidate()
+		ArticleStatusSyncTimer.shared.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
 		widgetDataEncoder.encode()
@@ -187,7 +182,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 	func prepareAccountsForForeground() {
 		updateBadge()
 		ExtensionFeedAddRequestFile.shared.resume()
-		syncTimer?.update()
+		ArticleStatusSyncTimer.shared.update()
 
 		if let lastRefresh = AppDefaults.shared.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
@@ -365,7 +360,7 @@ private extension AppDelegate {
 
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
-		bgTaskDispatchQueue.async {
+		backgroundTaskDispatchQueue.async {
 			do {
 				try BGTaskScheduler.shared.submit(request)
 			} catch {

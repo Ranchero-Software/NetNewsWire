@@ -29,6 +29,8 @@ import Sparkle
 
 var appDelegate: AppDelegate!
 
+let appName = Bundle.main.infoDictionary!["CFBundleName"]! as! String
+
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
@@ -38,10 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		static let mainWindow = "mainWindow"
 	}
 	
-	var appName: String!
-	
 	var refreshTimer: AccountRefreshTimer?
-	var syncTimer: ArticleStatusSyncTimer?
 	var lastRefreshInterval = AppDefaults.shared.refreshInterval
 	
 	var shuttingDown = false {
@@ -49,8 +48,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			if shuttingDown {
 				refreshTimer?.shuttingDown = shuttingDown
 				refreshTimer?.invalidate()
-				syncTimer?.shuttingDown = shuttingDown
-				syncTimer?.invalidate()
+				ArticleStatusSyncTimer.shared.stop()
 			}
 		}
 	}
@@ -155,8 +153,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
 		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
 		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-
-		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 	}
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
@@ -218,8 +214,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		ExtensionFeedAddRequestFile.shared.start()
 
 		refreshTimer = AccountRefreshTimer()
-		syncTimer = ArticleStatusSyncTimer()
-		
+		ArticleStatusSyncTimer.shared.start()
+
 		UNUserNotificationCenter.current().requestAuthorization(options:[.badge]) { (granted, error) in }
 
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
@@ -235,7 +231,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 		#if DEBUG
 		refreshTimer!.update()
-		syncTimer!.update()
+		ArticleStatusSyncTimer.shared.update()
 		#else
 		if AppDefaults.shared.suppressSyncOnLaunch {
 			refreshTimer!.update()
@@ -740,7 +736,7 @@ internal extension AppDelegate {
 		// It’s possible there’s a refresh timer set to go off in the past.
 		// In that case, refresh now and update the timer.
 		refreshTimer?.fireOldTimer()
-		syncTimer?.fireOldTimer()
+		ArticleStatusSyncTimer.shared.fireOldTimer()
 	}
 	
 	func objectsForInspector() -> [Any]? {
