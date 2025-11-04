@@ -75,7 +75,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	private var mainWindowControllers = [MainWindowController]()
-	private var preferencesWindowController: NSWindowController?
+	private lazy var preferencesWindowController = windowControllerWithName("Preferences")
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var importOPMLController: ImportOPMLWindowController?
@@ -472,11 +472,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	// MARK: - Actions
 	@IBAction func showPreferences(_ sender: Any?) {
-		if preferencesWindowController == nil {
-			preferencesWindowController = windowControllerWithName("Preferences")
-		}
-
-		preferencesWindowController!.showWindow(self)
+		preferencesWindowController.showWindow(self)
 	}
 
 	@IBAction func newMainWindow(_ sender: Any?) {
