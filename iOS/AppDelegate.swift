@@ -57,8 +57,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		SecretsManager.provider = Secrets()
 		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
-		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
-		AccountManager.shared = AccountManager(accountsFolder: documentAccountsFolderPath)
+
+		AccountManager.shared.start()
 
 		let documentThemesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
 		let documentThemesFolderPath = String(documentThemesFolder.suffix(from: documentAccountsFolder.index(documentThemesFolder.startIndex, offsetBy: 7)))

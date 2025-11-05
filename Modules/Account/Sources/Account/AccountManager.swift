@@ -16,9 +16,9 @@ import RSDatabase
 // Main thread only.
 
 public final class AccountManager: UnreadCountProvider {
+	public static var shared = AccountManager()
 
-	public static var shared: AccountManager!
-    public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
+	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
     private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
 
 	public let defaultAccount: Account
@@ -101,8 +101,10 @@ public final class AccountManager: UnreadCountProvider {
 
 	public let combinedRefreshProgress = CombinedRefreshProgress()
 
-	public init(accountsFolder: String) {
-		self.accountsFolder = accountsFolder
+	private var isActive = false
+
+	public init() {
+		self.accountsFolder = AppConfig.dataSubfolder(named: "Accounts").path
 
 		// The local "On My Mac" account must always exist, even if it's empty.
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
@@ -118,6 +120,14 @@ public final class AccountManager: UnreadCountProvider {
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
+	}
+
+	public func start() {
+		guard !isActive else {
+			assertionFailure("start called when isActive is already true")
+			return
+		}
+		isActive = true
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)

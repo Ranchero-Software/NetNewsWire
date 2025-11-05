@@ -50,11 +50,7 @@ extension Feed {
 public extension Article {
 
 	var account: Account? {
-		// The force unwrapped shared instance was crashing Account.framework unit tests.
-		guard let manager = AccountManager.shared else {
-			return nil
-		}
-		return manager.existingAccount(with: accountID)
+		return AccountManager.shared.existingAccount(with: accountID)
 	}
 
 	var feed: Feed? {
