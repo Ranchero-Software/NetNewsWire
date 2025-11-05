@@ -438,7 +438,7 @@ public final class AccountManager: UnreadCountProvider {
 	// MARK: - Notifications
 
 	@objc func unreadCountDidInitialize(_ notification: Notification) {
-		guard let _ = notification.object as? Account else {
+		guard notification.object is Account else {
 			return
 		}
 		if areUnreadCountsInitialized {
@@ -446,8 +446,8 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
-		guard let _ = notification.object as? Account else {
+	@objc func unreadCountDidChange(_ notification: Notification) {
+		guard notification.object is Account else {
 			return
 		}
 		updateUnreadCount()
@@ -467,7 +467,7 @@ private extension AccountManager {
 	}
 
 	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
+		Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
 	}
 
 	func loadAccount(_ filename: String) -> Account? {
@@ -489,11 +489,13 @@ private extension AccountManager {
 			return
 		}
 
-		filenames = filenames?.sorted()
+		guard let filenames = filenames?.sorted() else {
+			return
+		}
 
-		filenames?.forEach { (oneFilename) in
+		for oneFilename in filenames {
 			guard oneFilename != defaultAccountFolderName else {
-				return
+				continue
 			}
 			if let oneAccount = loadAccount(oneFilename) {
 				if !duplicateServiceAccount(oneAccount) {
@@ -504,7 +506,7 @@ private extension AccountManager {
 	}
 
 	func duplicateServiceAccount(_ account: Account) -> Bool {
-		return duplicateServiceAccount(type: account.type, username: account.username)
+		duplicateServiceAccount(type: account.type, username: account.username)
 	}
 
 	func sortByName(_ accounts: [Account]) -> [Account] {
@@ -529,7 +531,6 @@ private struct AccountSpecifier {
 	let folderPath: String
 	let folderName: String
 	let dataFilePath: String
-
 
 	init?(folderPath: String) {
 		if !FileManager.default.isFolder(atPath: folderPath) {
