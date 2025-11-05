@@ -48,11 +48,11 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public var accounts: [Account] {
-		return Array(accountsDictionary.values)
+		Array(accountsDictionary.values)
 	}
 
 	public var sortedAccounts: [Account] {
-		return sortByName(accounts)
+		sortByName(accounts)
 	}
 
 	public var hasiCloudAccount: Bool {
@@ -71,7 +71,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public var sortedActiveAccounts: [Account] {
-		return sortByName(activeAccounts)
+		sortByName(activeAccounts)
 	}
 
 	public var lastArticleFetchEndTime: Date? {
@@ -87,7 +87,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
-		return AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
+		AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
 	}
 
 	public var refreshInProgress: Bool {
