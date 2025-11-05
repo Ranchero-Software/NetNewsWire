@@ -52,7 +52,7 @@ protocol AccountDelegate {
 	
 	func accountWillBeDeleted(_ account: Account)
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void)
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials?
 
 	/// Suspend all network activity
 	func suspendNetwork()

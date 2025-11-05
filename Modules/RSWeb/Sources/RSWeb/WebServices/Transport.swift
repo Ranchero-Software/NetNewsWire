@@ -118,7 +118,11 @@ public protocol Transport {
 	
 	/// Cancels all pending requests
 	func cancelAll()
-	
+
+	/// Sends URLRequest and returns the HTTP headers and the data payload.
+	@discardableResult
+	func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?)
+
 	/// Sends URLRequest and returns the HTTP headers and the data payload.
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
 	
@@ -139,7 +143,15 @@ extension URLSession: Transport {
 			downloadTasks.forEach { $0.cancel() }
 		}
 	}
-	
+
+	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?) {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	public func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		let task = self.dataTask(with: request) { (data, response, error) in
 			DispatchQueue.main.async {

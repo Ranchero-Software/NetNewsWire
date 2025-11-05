@@ -541,10 +541,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
 		MainThreadOperationQueue.shared.add(logout)
 	}
-	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		assertionFailure("An `account` instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
-		completion(.success(credentials))
+
+	static func validateCredentials(transport: any Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		assertionFailure("An account instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
+		return credentials
 	}
 
 	// MARK: Suspend and Resume (for iOS)

@@ -631,21 +631,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	func accountWillBeDeleted(_ account: Account) {
 	}
-	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		guard let endpoint = endpoint else {
-			completion(.failure(TransportError.noURL))
-			return
+
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		guard let endpoint else {
+			throw TransportError.noURL
 		}
-		
+
 		let caller = ReaderAPICaller(transport: transport)
 		caller.credentials = credentials
-		caller.validateCredentials(endpoint: endpoint) { result in
-			DispatchQueue.main.async {
-				completion(result)
-			}
-		}
-		
+		return try await caller.validateCredentials(endpoint: endpoint)
 	}
 
 	// MARK: Suspend and Resume (for iOS)

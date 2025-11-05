@@ -90,7 +90,15 @@ final class ReaderAPICaller: NSObject {
 	func cancelAll() {
 		transport.cancelAll()
 	}
-	
+
+	func validateCredentials(endpoint: URL) async throws -> Credentials? {
+		try await withCheckedThrowingContinuation { continuation in
+			validateCredentials(endpoint: endpoint) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func validateCredentials(endpoint: URL, completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		guard let credentials = credentials else {
 			completion(.failure(CredentialsError.incompleteCredentials))

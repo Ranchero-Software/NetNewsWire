@@ -456,8 +456,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		articlesZone.resetChangeToken()
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {
-		return completion(.success(nil))
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		nil
 	}
 
 	// MARK: - Suspend and Resume (for iOS)

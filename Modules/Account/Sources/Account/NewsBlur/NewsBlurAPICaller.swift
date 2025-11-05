@@ -35,7 +35,15 @@ final class NewsBlurAPICaller: NSObject {
 		suspended = false
 	}
 
-	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
+	func validateCredentials() async throws -> Credentials? {
+		try await withCheckedThrowingContinuation { continuation in
+			validateCredentials { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		requestData(endpoint: "api/login", resultType: NewsBlurLoginResponse.self) { result in
 			switch result {
 			case .success((let response, let payload)):

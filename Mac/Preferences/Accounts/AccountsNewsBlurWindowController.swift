@@ -63,49 +63,50 @@ final class AccountsNewsBlurWindowController: NSWindowController {
 	}
 
 	@IBAction func action(_ sender: Any) {
-		self.errorMessageLabel.stringValue = ""
+		errorMessageLabel.stringValue = ""
 
 		guard !usernameTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username required.", comment: "Credentials Error")
+			errorMessageLabel.stringValue = NSLocalizedString("Username required.", comment: "Credentials Error")
 			return
 		}
 		
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: usernameTextField.stringValue) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
+			errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
 			return
 		}
-		
-		actionButton.isEnabled = false
-		progressIndicator.isHidden = false
-		progressIndicator.startAnimation(self)
 
-		let credentials = Credentials(type: .newsBlurBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: .newsBlur, credentials: credentials) { [weak self] result in
-
-			guard let self = self else { return }
-
-			self.actionButton.isEnabled = true
-			self.progressIndicator.isHidden = true
-			self.progressIndicator.stopAnimation(self)
-
-			switch result {
-			case .success(let validatedCredentials):
-				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+		Task { @MainActor in
+			actionButton.isEnabled = false
+			progressIndicator.isHidden = false
+			progressIndicator.startAnimation(self)
+			
+			@MainActor func stopAnimation() {
+				actionButton.isEnabled = true
+				progressIndicator.isHidden = true
+				progressIndicator.stopAnimation(self)
+			}
+			
+			let credentials = Credentials(type: .newsBlurBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
+			do {
+				let validatedCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: credentials)
+				stopAnimation()
+				
+				guard let validatedCredentials else {
+					errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
 					return
 				}
-
-				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: .newsBlur)
+				
+				if account == nil {
+					account = AccountManager.shared.createAccount(type: .newsBlur)
 				}
-
+				
 				do {
-					try self.account?.removeCredentials(type: .newsBlurBasic)
-					try self.account?.removeCredentials(type: .newsBlurSessionId)
-					try self.account?.storeCredentials(credentials)
-					try self.account?.storeCredentials(validatedCredentials)
-
-					self.account?.refreshAll() { result in
+					try account?.removeCredentials(type: .newsBlurBasic)
+					try account?.removeCredentials(type: .newsBlurSessionId)
+					try account?.storeCredentials(credentials)
+					try account?.storeCredentials(validatedCredentials)
+					
+					account?.refreshAll() { result in
 						switch result {
 						case .success:
 							break
@@ -114,15 +115,13 @@ final class AccountsNewsBlurWindowController: NSWindowController {
 						}
 					}
 					
-					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+					hostWindow?.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 				}
-
-			case .failure:
-
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
-
+			} catch {
+				stopAnimation()
+				errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
 			}
 		}
 	}

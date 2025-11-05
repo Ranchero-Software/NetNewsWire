@@ -614,14 +614,10 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		caller.logout() { _ in }
 	}
 
-	class func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> ()) {
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		let caller = NewsBlurAPICaller(transport: transport)
 		caller.credentials = credentials
-		caller.validateCredentials() { result in
-			DispatchQueue.main.async {
-				completion(result)
-			}
-		}
+		return try await caller.validateCredentials()
 	}
 
 	// MARK: Suspend and Resume (for iOS)
