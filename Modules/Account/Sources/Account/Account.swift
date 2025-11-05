@@ -188,7 +188,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	private var fetchingAllUnreadCounts = false
-	var isUnreadCountsInitialized = false
+	var areUnreadCountsInitialized = false
 
 	let dataFolder: String
 	let database: ArticlesDatabase
@@ -1322,8 +1322,8 @@ private extension Account {
 			self.fetchingAllUnreadCounts = false
 			self.updateUnreadCount()
 
-			if !self.isUnreadCountsInitialized {
-				self.isUnreadCountsInitialized = true
+			if !self.areUnreadCountsInitialized {
+				self.areUnreadCountsInitialized = true
 				self.postUnreadCountDidInitializeNotification()
 			}
 			completion?()

@@ -429,7 +429,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 		// We will handle the filtering of unread feeds in unreadCountDidInitialize after they have all be calculated
-		guard AccountManager.shared.isUnreadCountsInitialized else {
+		guard AccountManager.shared.areUnreadCountsInitialized else {
 			return	
 		}
 

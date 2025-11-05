@@ -190,7 +190,7 @@ protocol SidebarDelegate: AnyObject {
 			configureUnreadCountForCellsForRepresentedObjects([representedObject as AnyObject])
 		}
 
-		guard AccountManager.shared.isUnreadCountsInitialized else {
+		guard AccountManager.shared.areUnreadCountsInitialized else {
 			return
 		}
 

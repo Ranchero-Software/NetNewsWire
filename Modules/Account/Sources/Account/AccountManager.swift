@@ -30,9 +30,9 @@ public final class AccountManager: UnreadCountProvider {
 	private let defaultAccountIdentifier = "OnMyMac"
 
 	public var isSuspended = false
-	public var isUnreadCountsInitialized: Bool {
+	public var areUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
-			if !account.isUnreadCountsInitialized {
+			if !account.areUnreadCountsInitialized {
 				return false
 			}
 		}
@@ -432,7 +432,7 @@ public final class AccountManager: UnreadCountProvider {
 		guard let _ = notification.object as? Account else {
 			return
 		}
-		if isUnreadCountsInitialized {
+		if areUnreadCountsInitialized {
 			postUnreadCountDidInitializeNotification()
 		}
 	}
