@@ -238,25 +238,33 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func suspendNetworkAll() {
 		isSuspended = true
-		accounts.forEach { $0.suspendNetwork() }
+		for account in accounts {
+			account.suspendNetwork()
+		}
 	}
 
 	public func suspendDatabaseAll() {
-		accounts.forEach { $0.suspendDatabase() }
+		for account in accounts {
+			account.suspendDatabase()
+		}
 	}
 
 	public func resumeAll() {
 		isSuspended = false
-		accounts.forEach { $0.resumeDatabaseAndDelegate() }
-		accounts.forEach { $0.resume() }
+		for account in accounts {
+			account.resumeDatabaseAndDelegate()
+		}
+		for account in accounts {
+			account.resume()
+		}
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 
-		activeAccounts.forEach { account in
+		for account in activeAccounts {
 			group.enter()
-			account.receiveRemoteNotification(userInfo: userInfo) { 
+			account.receiveRemoteNotification(userInfo: userInfo) {
 				group.leave()
 			}
 		}
@@ -298,9 +306,9 @@ public final class AccountManager: UnreadCountProvider {
 	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 
-		activeAccounts.forEach {
+		for account in activeAccounts {
 			group.enter()
-			$0.sendArticleStatus() { _ in
+			account.sendArticleStatus() { _ in
 				group.leave()
 			}
 		}
@@ -313,9 +321,9 @@ public final class AccountManager: UnreadCountProvider {
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 
-		activeAccounts.forEach {
+		for account in activeAccounts {
 			group.enter()
-			$0.syncArticleStatus() { _ in
+			account.syncArticleStatus() { _ in
 				group.leave()
 			}
 		}
@@ -326,7 +334,9 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public func saveAll() {
-		accounts.forEach { $0.save() }
+		for account in accounts {
+			account.save()
+		}
 	}
 
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
@@ -340,7 +350,7 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public func anyAccountHasNetNewsWireNewsSubscription() -> Bool {
-		return anyAccountHasFeedWithURL(Self.netNewsWireNewsURL) || anyAccountHasFeedWithURL(Self.jsonNetNewsWireNewsURL)
+		anyAccountHasFeedWithURL(Self.netNewsWireNewsURL) || anyAccountHasFeedWithURL(Self.jsonNetNewsWireNewsURL)
 	}
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
@@ -374,37 +384,36 @@ public final class AccountManager: UnreadCountProvider {
             return
         }
 
-        var allFetchedArticles = Set<Article>()
-        var databaseError: DatabaseError?
-        let dispatchGroup = DispatchGroup()
+		Task { @MainActor in
+			var allFetchedArticles = Set<Article>()
+			var databaseError: DatabaseError?
+			let dispatchGroup = DispatchGroup()
 
-        for account in activeAccounts {
+			for account in activeAccounts {
 
-            dispatchGroup.enter()
+				dispatchGroup.enter()
+				defer {
+					dispatchGroup.leave()
+				}
 
-            account.fetchArticlesAsync(fetchType) { (articleSetResult) in
-                precondition(Thread.isMainThread)
+				do {
+					let articles = try await account.fetchArticles(fetchType)
+					allFetchedArticles.formUnion(articles)
+				} catch {
+					databaseError = error as? DatabaseError
+				}
+			}
 
-                switch articleSetResult {
-                case .success(let articles):
-                    allFetchedArticles.formUnion(articles)
-                case .failure(let error):
-                    databaseError = error
-                }
-
-                dispatchGroup.leave()
-            }
-        }
-
-        dispatchGroup.notify(queue: .main) {
-            if let databaseError {
-                completion(.failure(databaseError))
-            }
-            else {
-                completion(.success(allFetchedArticles))
-            }
-        }
-    }
+			dispatchGroup.notify(queue: .main) {
+				if let databaseError {
+					completion(.failure(databaseError))
+				}
+				else {
+					completion(.success(allFetchedArticles))
+				}
+			}
+		}
+	}
 
 	// MARK: - Fetching Article Counts
 

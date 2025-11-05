@@ -658,6 +658,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
+	public func fetchArticles(_ fetchType: FetchType) async throws -> Set<Article> {
+		try await withCheckedThrowingContinuation { continuation in
+			fetchArticlesAsync(fetchType) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
 		switch fetchType {
 		case .starred(let limit):
