@@ -105,14 +105,11 @@ final class AccountsNewsBlurWindowController: NSWindowController {
 					try account?.removeCredentials(type: .newsBlurSessionId)
 					try account?.storeCredentials(credentials)
 					try account?.storeCredentials(validatedCredentials)
-					
-					account?.refreshAll() { result in
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
-						}
+
+					do {
+						try await account?.refreshAll()
+					} catch {
+						NSApplication.shared.presentError(error)
 					}
 					
 					hostWindow?.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)

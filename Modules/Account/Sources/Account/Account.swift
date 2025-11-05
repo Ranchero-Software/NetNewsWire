@@ -393,7 +393,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		delegate.receiveRemoteNotification(for: self, userInfo: userInfo, completion: completion)
 	}
-	
+
+	public func refreshAll() async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshAll { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.refreshAll(for: self, completion: completion)
 	}

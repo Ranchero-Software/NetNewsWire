@@ -227,19 +227,18 @@ extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
 	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
 		let rootViewController = view.window?.rootViewController
-		
-		account.refreshAll { result in
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
+
+		Task { @MainActor in
+			do {
+				try await account.refreshAll()
+			} catch {
 				guard let viewController = rootViewController else {
 					return
 				}
 				viewController.presentError(error)
 			}
 		}
-		
+
 		dismiss()
 	}
 	

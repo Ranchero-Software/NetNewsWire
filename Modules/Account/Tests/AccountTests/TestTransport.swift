@@ -33,7 +33,16 @@ final class TestTransport: Transport {
 	}
 	
 	func cancelAll() { }
-	
+
+	@discardableResult
+	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?) {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		
 		guard let url = request.url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {

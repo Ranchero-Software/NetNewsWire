@@ -271,13 +271,12 @@ extension AccountsPreferencesViewController: OAuthAccountAuthorizationOperationD
 		// When this authorization is granted, the browser remains the foreground app which is unfortunate
 		// because the user probably wants to see the result of authorizing NetNewsWire to act on their behalf.
 		NSApp.activate(ignoringOtherApps: true)
-		
-		account.refreshAll { [weak self] result in
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
-				self?.presentError(error)
+
+		Task { @MainActor in
+			do {
+				try await account.refreshAll()
+			} catch {
+				presentError(error)
 			}
 		}
 	}

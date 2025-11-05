@@ -148,53 +148,52 @@ final class ReaderAPIAccountViewController: UITableViewController {
 			return
 		}
 
-		startAnimatingActivityIndicator()
-		disableNavigation()
+		Task { @MainActor in
+			startAnimatingActivityIndicator()
+			disableNavigation()
 
-		let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: password)
-		Account.validateCredentials(type: type, credentials: credentials, endpoint: url) { result in
+			@MainActor func stopAnimation() {
+				stopAnimatingActivityIndicator()
+				enableNavigation()
+			}
 
-			self.stopAnimatingActivityIndicator()
-			self.enableNavigation()
+			let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: password)
+			do {
+				let validatedCredentials = try await Account.validateCredentials(type: type, credentials: credentials, endpoint: url)
+				stopAnimation()
 
-			switch result {
-			case .success(let validatedCredentials):
-				if let validatedCredentials = validatedCredentials {
-
-					if self.account == nil {
-						self.account = AccountManager.shared.createAccount(type: type)
+				if let validatedCredentials {
+					if account == nil {
+						account = AccountManager.shared.createAccount(type: type)
 					}
 
 					do {
-						self.account?.endpointURL = url
-						
-						try? self.account?.removeCredentials(type: .readerBasic)
-						try? self.account?.removeCredentials(type: .readerAPIKey)
-						try self.account?.storeCredentials(credentials)
-						try self.account?.storeCredentials(validatedCredentials)
+						account?.endpointURL = url
 
-						self.dismiss(animated: true, completion: nil)
-						
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								self.showError(NSLocalizedString(error.localizedDescription, comment: "Account Refresh Error"))
-							}
+						try? account?.removeCredentials(type: .readerBasic)
+						try? account?.removeCredentials(type: .readerAPIKey)
+						try account?.storeCredentials(credentials)
+						try account?.storeCredentials(validatedCredentials)
+
+						dismiss(animated: true, completion: nil)
+
+						do {
+							try await account?.refreshAll()
+						} catch {
+							showError(NSLocalizedString(error.localizedDescription, comment: "Account Refresh Error"))
 						}
-						
-						self.delegate?.dismiss()
+
+						delegate?.dismiss()
 					} catch {
-						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+						showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
 					}
 				} else {
-					self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
+					showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
 				}
-			case .failure(let error):
-				self.showError(error.localizedDescription)
+			} catch {
+				stopAnimation()
+				showError(error.localizedDescription)
 			}
-
 		}
 	}
 	

@@ -46,7 +46,7 @@ final class NewsBlurAccountViewController: UITableViewController {
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 	}
-	
+
 	private func setupFooter() {
 		footerLabel.text = NSLocalizedString("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account?", comment: "NewsBlur")
 	}
@@ -93,66 +93,62 @@ final class NewsBlurAccountViewController: UITableViewController {
 			showError(NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error"))
 			return
 		}
-		
+
 		let password = passwordTextField.text ?? ""
 
-		startAnimatingActivityIndicator()
-		disableNavigation()
+		Task { @MainActor in
+			startAnimatingActivityIndicator()
+			disableNavigation()
 
-		let basicCredentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
-		Account.validateCredentials(type: .newsBlur, credentials: basicCredentials) { result in
+			@MainActor func stopAnimation() {
+				stopAnimatingActivityIndicator()
+				enableNavigation()
+			}
+			let basicCredentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
 
-			self.stopAnimatingActivityIndicator()
-			self.enableNavigation()
+			do {
+				let sessionCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: basicCredentials)
+				stopAnimation()
 
-			switch result {
-			case .success(let sessionCredentials):
-				if let sessionCredentials = sessionCredentials {
-
-					if self.account == nil {
-						self.account = AccountManager.shared.createAccount(type: .newsBlur)
+				if let sessionCredentials {
+					if account == nil {
+						account = AccountManager.shared.createAccount(type: .newsBlur)
 					}
 
+					try? account?.removeCredentials(type: .newsBlurBasic)
+					try? account?.removeCredentials(type: .newsBlurSessionId)
 					do {
+						try account?.storeCredentials(basicCredentials)
+						try account?.storeCredentials(sessionCredentials)
 
 						do {
-							try self.account?.removeCredentials(type: .newsBlurBasic)
-							try self.account?.removeCredentials(type: .newsBlurSessionId)
-						} catch {}
-						try self.account?.storeCredentials(basicCredentials)
-						try self.account?.storeCredentials(sessionCredentials)
-
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								self.presentError(error)
-							}
+							try await account?.refreshAll()
+						} catch {
+							presentError(error)
 						}
 
-						self.dismiss(animated: true, completion: nil)
-						self.delegate?.dismiss()
+						dismiss(animated: true, completion: nil)
+						delegate?.dismiss()
 					} catch {
-						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+						showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
 					}
 				} else {
-					self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
+					showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
 				}
-			case .failure(let error):
-				self.showError(error.localizedDescription)
+			} catch {
+				stopAnimation()
+				showError(error.localizedDescription)
 			}
-
 		}
 	}
-	
+
 	@IBAction func signUpWithProvider(_ sender: Any) {
 		let url = URL(string: "https://newsblur.com")!
 		let safari = SFSafariViewController(url: url)
 		safari.modalPresentationStyle = .currentContext
 		self.present(safari, animated: true, completion: nil)
 	}
-	
+
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false)
 	}
