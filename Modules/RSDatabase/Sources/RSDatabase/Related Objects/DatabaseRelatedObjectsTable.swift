@@ -15,7 +15,7 @@ public protocol DatabaseRelatedObjectsTable: DatabaseTable {
 
 	var databaseIDKey: String { get}
 	var cache: DatabaseObjectCache { get }
-	
+
 	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]?
 	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject]
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject?

@@ -23,7 +23,7 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 			return NSLocalizedString("Dark", comment: "Dark")
 		}
 	}
-	
+
 }
 
 extension Notification.Name {
@@ -33,16 +33,16 @@ extension Notification.Name {
 final class AppDefaults {
 
 	static let defaultThemeName = "Default"
-	
+
 	static let shared = AppDefaults()
 	private init() {}
-	
+
 	static var store: UserDefaults = {
 		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
 		let suiteName = "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
 		return UserDefaults.init(suiteName: suiteName)!
 	}()
-	
+
 	struct Key {
 		static let userInterfaceColorPalette = "userInterfaceColorPalette"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
@@ -78,7 +78,7 @@ final class AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
-	
+
 	static var userInterfaceColorPalette: UserInterfaceColorPalette {
 		get {
 			if let result = UserInterfaceColorPalette(rawValue: int(for: Key.userInterfaceColorPalette)) {
@@ -100,7 +100,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
 		}
 	}
-	
+
 	var addFeedFolderName: String? {
 		get {
 			return AppDefaults.string(for: Key.addFeedFolderName)
@@ -109,7 +109,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
 		}
 	}
-	
+
 	var addFolderAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.addFolderAccountID)
@@ -118,7 +118,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
 		}
 	}
-	
+
 	var useSystemBrowser: Bool {
 		get {
 			return UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
@@ -127,7 +127,7 @@ final class AppDefaults {
 			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
 		}
 	}
-	
+
 	var lastImageCacheFlushDate: Date? {
 		get {
 			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
@@ -194,7 +194,7 @@ final class AppDefaults {
 			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
 		}
 	}
-	
+
 	var isArticleContentJavascriptEnabled: Bool {
 		get {
 			return AppDefaults.bool(for: Key.articleContentJavascriptEnabled)
@@ -203,7 +203,7 @@ final class AppDefaults {
 			AppDefaults.setBool(for: Key.articleContentJavascriptEnabled, newValue)
 		}
 	}
-	
+
 	var lastRefresh: Date? {
 		get {
 			return AppDefaults.date(for: Key.lastRefresh)
@@ -212,7 +212,7 @@ final class AppDefaults {
 			AppDefaults.setDate(for: Key.lastRefresh, newValue)
 		}
 	}
-	
+
 	var timelineNumberOfLines: Int {
 		get {
 			return AppDefaults.int(for: Key.timelineNumberOfLines)
@@ -221,7 +221,7 @@ final class AppDefaults {
 			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)
 		}
 	}
-	
+
 	var timelineIconSize: IconSize {
 		get {
 			let rawValue = AppDefaults.store.integer(forKey: Key.timelineIconDimension)
@@ -231,7 +231,7 @@ final class AppDefaults {
 			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconDimension)
 		}
 	}
-	
+
 	var currentThemeName: String? {
 		get {
 			return AppDefaults.string(for: Key.currentThemeName)
@@ -240,7 +240,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.currentThemeName, newValue)
 		}
 	}
-	
+
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
@@ -272,7 +272,7 @@ private extension AppDefaults {
 	static func string(for key: String) -> String? {
 		return UserDefaults.standard.string(forKey: key)
 	}
-	
+
 	static func setString(for key: String, _ value: String?) {
 		UserDefaults.standard.set(value, forKey: key)
 	}
@@ -288,11 +288,11 @@ private extension AppDefaults {
 	static func int(for key: String) -> Int {
 		return AppDefaults.store.integer(forKey: key)
 	}
-	
+
 	static func setInt(for key: String, _ x: Int) {
 		AppDefaults.store.set(x, forKey: key)
 	}
-	
+
 	static func date(for key: String) -> Date? {
 		return AppDefaults.store.object(forKey: key) as? Date
 	}
@@ -317,5 +317,5 @@ private extension AppDefaults {
 			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
 		}
 	}
-	
+
 }

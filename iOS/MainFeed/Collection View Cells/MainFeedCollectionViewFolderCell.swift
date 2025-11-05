@@ -13,14 +13,14 @@ protocol MainFeedCollectionViewFolderCellDelegate: AnyObject {
 }
 
 class MainFeedCollectionViewFolderCell: UICollectionViewCell {
-    
+
 	@IBOutlet weak var folderTitle: UILabel!
 	@IBOutlet weak var faviconView: IconView!
 	@IBOutlet weak var unreadCountLabel: UILabel!
 	@IBOutlet weak var disclosureButton: UIButton!
-	
+
 	var delegate: MainFeedCollectionViewFolderCellDelegate?
-	
+
 	private var _unreadCount: Int = 0
 	var unreadCount: Int {
 		get {
@@ -37,7 +37,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			unreadCountLabel.text = newValue.formatted()
 		}
 	}
-	
+
 	var iconImage: IconImage? {
 		didSet {
 			faviconView.iconImage = iconImage
@@ -48,19 +48,19 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			}
 		}
 	}
-	
+
 	var disclosureExpanded = true {
 		didSet {
 			updateExpandedState(animate: true)
 			updateUnreadCount()
 		}
 	}
-	
+
 	override func awakeFromNib() {
 		super.awakeFromNib()
 		disclosureButton.addInteraction(UIPointerInteraction())
 	}
-	
+
 	func updateExpandedState(animate: Bool) {
 		let angle: CGFloat = disclosureExpanded ? 0 : -.pi / 2
 		let transform = CGAffineTransform(rotationAngle: angle)
@@ -73,7 +73,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			animations()
 		}
 	}
-	
+
 	func updateUnreadCount() {
 		if !disclosureExpanded && unreadCount > 0 && unreadCountLabel.alpha != 1 {
 			UIView.animate(withDuration: 0.3) {
@@ -85,18 +85,18 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			}
 		}
 	}
-	
+
 	@IBAction
 	func toggleDisclosure() {
 		setDisclosure(isExpanded: !disclosureExpanded, animated: true)
 		delegate?.mainFeedCollectionFolderViewCellDisclosureDidToggle(self, expanding: disclosureExpanded)
 	}
-	
+
 	func setDisclosure(isExpanded: Bool, animated: Bool) {
 		disclosureExpanded = isExpanded
 	}
-	
-	
+
+
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -108,10 +108,10 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			}
 		}
 	}
-	
+
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		
+
 		switch (state.isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
@@ -129,12 +129,12 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			folderTitle.font = UIFont.preferredFont(forTextStyle: .body)
 			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
 		}
-		
+
 		if state.cellDropState == .targeted {
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 		}
-		
+
 		self.backgroundConfiguration = backgroundConfig
 	}
-	
+
 }

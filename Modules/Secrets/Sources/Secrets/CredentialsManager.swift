@@ -9,7 +9,7 @@
 import Foundation
 
 public struct CredentialsManager {
-	
+
 	private static var keychainGroup: String? = {
 		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
 			return nil
@@ -29,7 +29,7 @@ public struct CredentialsManager {
 		if credentials.type != .basic {
 			query[kSecAttrSecurityDomain as String] = credentials.type.rawValue
 		}
-		
+
 		if let securityGroup = keychainGroup {
 			query[kSecAttrAccessGroup as String] = securityGroup
 		}
@@ -47,27 +47,27 @@ public struct CredentialsManager {
 		default:
 			throw CredentialsError.unhandledError(status: status)
 		}
-		
+
 		var deleteQuery = query
 		deleteQuery.removeValue(forKey: kSecAttrAccessible as String)
 		SecItemDelete(deleteQuery as CFDictionary)
-		
+
 		let addStatus = SecItemAdd(query as CFDictionary, nil)
 		if addStatus != errSecSuccess {
 			throw CredentialsError.unhandledError(status: status)
 		}
 
 	}
-	
+
 	public static func retrieveCredentials(type: CredentialsType, server: String, username: String) throws -> Credentials? {
-		
+
 		var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
 									kSecAttrAccount as String: username,
 									kSecAttrServer as String: server,
 									kSecMatchLimit as String: kSecMatchLimitOne,
 									kSecReturnAttributes as String: true,
 									kSecReturnData as String: true]
-		
+
 		if type != .basic {
 			query[kSecAttrSecurityDomain as String] = type.rawValue
 		}
@@ -75,37 +75,37 @@ public struct CredentialsManager {
 		if let securityGroup = keychainGroup {
 			query[kSecAttrAccessGroup as String] = securityGroup
 		}
-		
+
 		var item: CFTypeRef?
 		let status = SecItemCopyMatching(query as CFDictionary, &item)
-		
+
 		guard status != errSecItemNotFound else {
 			return nil
 		}
-		
+
 		guard status == errSecSuccess else {
 			throw CredentialsError.unhandledError(status: status)
 		}
-		
+
 		guard let existingItem = item as? [String : Any],
 			let secretData = existingItem[kSecValueData as String] as? Data,
 			let secret = String(data: secretData, encoding: String.Encoding.utf8) else {
 				return nil
 		}
-		
+
 		return Credentials(type: type, username: username, secret: secret)
-		
+
 	}
-	
+
 	public static func removeCredentials(type: CredentialsType, server: String, username: String) throws {
-		
+
 		var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
 									kSecAttrAccount as String: username,
 									kSecAttrServer as String: server,
 									kSecMatchLimit as String: kSecMatchLimitOne,
 									kSecReturnAttributes as String: true,
 									kSecReturnData as String: true]
-		
+
 		if type != .basic {
 			query[kSecAttrSecurityDomain as String] = type.rawValue
 		}
@@ -113,12 +113,12 @@ public struct CredentialsManager {
 		if let securityGroup = keychainGroup {
 			query[kSecAttrAccessGroup as String] = securityGroup
 		}
-		
+
 		let status = SecItemDelete(query as CFDictionary)
 		guard status == errSecSuccess || status == errSecItemNotFound else {
 			throw CredentialsError.unhandledError(status: status)
 		}
-		
+
 	}
-    
+
 }

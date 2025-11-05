@@ -58,7 +58,7 @@ struct FeedbinEntryJSONFeed: Decodable {
 		case jsonFeedAuthor = "author"
 		case jsonFeedExternalURL = "external_url"
 	}
-	
+
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		do {

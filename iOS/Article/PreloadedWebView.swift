@@ -10,7 +10,7 @@ import Foundation
 import WebKit
 
 final class PreloadedWebView: WKWebView {
-	
+
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?
 
@@ -19,17 +19,17 @@ final class PreloadedWebView: WKWebView {
 		super.init(frame: .zero, configuration: configuration)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 	}
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
-		
+
 	}
-	
+
 	func preload() {
 		navigationDelegate = self
 		loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
-	
+
 	func ready(completion: @escaping () -> Void) {
 		if isReady {
 			completeRequest(completion: completion)
@@ -37,7 +37,7 @@ final class PreloadedWebView: WKWebView {
 			readyCompletion = completion
 		}
 	}
-	
+
 	@objc func userDefaultsDidChange(_ sender: Any) {
 		Task { @MainActor in
 			if configuration.defaultWebpagePreferences.allowsContentJavaScript != AppDefaults.shared.isArticleContentJavascriptEnabled {
@@ -64,7 +64,7 @@ extension PreloadedWebView: WKNavigationDelegate {
 // MARK: Private
 
 private extension PreloadedWebView {
-	
+
 	func completeRequest(completion: @escaping () -> Void) {
 		isReady = false
 		navigationDelegate = nil

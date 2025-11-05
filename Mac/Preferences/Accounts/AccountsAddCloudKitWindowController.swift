@@ -36,13 +36,13 @@ final class AccountsAddCloudKitWindowController: NSWindowController {
 		guard let hostWindow, let window else {
 			return
 		}
-		
+
 		hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.cancel)
 	}
-	
+
 	@IBAction func create(_ sender: Any) {
 		assert(!AccountManager.shared.hasiCloudAccount)
-		
+
 		guard AddCloudKitAccountUtilities.isiCloudDriveEnabled else {
 			presentError(AddCloudKitAccountError.iCloudDriveMissing)
 			return

@@ -12,7 +12,7 @@ import Articles
 struct MainTimelineCellData {
 
 	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
-	
+
 	let title: String
 	let attributedTitle: NSAttributedString
 	let summary: String
@@ -38,7 +38,7 @@ struct MainTimelineCellData {
 		} else {
 			self.summary = truncatedSummary
 		}
-		
+
 		self.dateString = ArticleStringFormatter.dateString(article.logicalDatePublished)
 
 		if let feedName = feedName {
@@ -47,7 +47,7 @@ struct MainTimelineCellData {
 		else {
 			self.feedName = ""
 		}
-		
+
 		if let byline = byline {
 			self.byline = byline
 		} else {
@@ -63,7 +63,7 @@ struct MainTimelineCellData {
 		self.starred = article.status.starred
 		self.numberOfLines = numberOfLines
 		self.iconSize = iconSize
-		
+
 	}
 
 	init() { //Empty
@@ -81,5 +81,5 @@ struct MainTimelineCellData {
 		self.numberOfLines = 0
 		self.iconSize = .medium
 	}
-	
+
 }

@@ -18,7 +18,7 @@ import UniformTypeIdentifiers
 
 
 extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
-	
+
 	func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: any UICollectionViewDropCoordinator) {
 		guard let dragItem = coordinator.items.first?.dragItem,
 			  let dragNode = dragItem.localObject as? Node,
@@ -26,17 +26,17 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			  let destIndexPath = coordinator.destinationIndexPath else {
 				  return
 			  }
-		
+
 		let isFolderDrop: Bool = {
 			if self.coordinator.nodeFor(destIndexPath)?.representedObject is Folder, let propCell = collectionView.cellForItem(at: destIndexPath) {
 				return coordinator.session.location(in: propCell).y >= 0
 			}
 			return false
 		}()
-		
+
 		// Based on the drop we have to determine a node to start looking for a parent container.
 		let destNode: Node? = {
-			
+
 			if isFolderDrop {
 				return self.coordinator.nodeFor(destIndexPath)
 			} else {
@@ -48,7 +48,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 					return nil
 				}
 			}
-				
+
 		}()
 
 		// Now we start looking for the parent container
@@ -60,22 +60,22 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 				return self.coordinator.rootNode.childAtIndex(destIndexPath.section)?.representedObject as? Account
 			}
 		}()
-		
+
 		guard let destination = destinationContainer, let feed = dragNode.representedObject as? Feed else { return }
-		
+
 		if source.account == destination.account {
 			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
 		} else {
 			moveFeedBetweenAccounts(feed: feed, sourceContainer: source, destinationContainer: destination)
 		}
 	}
-	
+
 	func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: any UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
-		
+
 		guard let destIndexPath = destinationIndexPath,	destIndexPath.section > 0, collectionView.hasActiveDrag else {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
-			
+
 		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? SidebarItem,
 			  let destAccount = destFeed.account,
 			  let destCell = collectionView.cellForItem(at: destIndexPath) else {
@@ -101,17 +101,17 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
 		}
 	}
-	
+
 	func collectionView(_ collectionView: UICollectionView, canHandle session: any UIDropSession) -> Bool {
 		return session.localDragSession != nil
 	}
-	
+
 	func collectionView(_ collectionView: UICollectionView, dropSessionDidEnd session: UIDropSession) {
 	}
-	
+
 	func moveFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
 		guard sourceContainer !== destinationContainer else { return }
-		
+
 		BatchUpdate.shared.start()
 		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
 			BatchUpdate.shared.end()
@@ -123,11 +123,11 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			}
 		}
 	}
-	
+
 	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
-		
+
 		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
-			
+
 			BatchUpdate.shared.start()
 			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
@@ -146,9 +146,9 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 					self.presentError(error)
 				}
 			}
-			
+
 		} else {
-			
+
 			BatchUpdate.shared.start()
 			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {
@@ -167,8 +167,8 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 					self.presentError(error)
 				}
 			}
-			
+
 		}
 	}
-	
+
 }

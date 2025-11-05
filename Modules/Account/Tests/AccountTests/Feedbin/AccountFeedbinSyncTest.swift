@@ -18,12 +18,12 @@ final class AccountFeedbinSyncTest: XCTestCase {
     }
 
 	func testDownloadSync() {
-		
+
 		let testTransport = TestTransport()
 		testTransport.testFiles["tags.json"] = "JSON/tags_add.json"
 		testTransport.testFiles["subscriptions.json"] = "JSON/subscriptions_initial.json"
 		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
-		
+
 		// Test initial folders
 		let initialExpection = self.expectation(description: "Initial feeds")
 		account.refreshAll() { result in
@@ -35,7 +35,7 @@ final class AccountFeedbinSyncTest: XCTestCase {
 			}
 		}
 		waitForExpectations(timeout: 5, handler: nil)
-		
+
 		XCTAssertEqual(224, account.flattenedFeeds().count)
 
 		let daringFireball = account.idToFeedDictionary["1296379"]
@@ -45,7 +45,7 @@ final class AccountFeedbinSyncTest: XCTestCase {
 
 		// Test Adding a Feed
 		testTransport.testFiles["subscriptions.json"] = "JSON/subscriptions_add.json"
-		
+
 		let addExpection = self.expectation(description: "Add feeds")
 		account.refreshAll() { result in
 			switch result {
@@ -56,9 +56,9 @@ final class AccountFeedbinSyncTest: XCTestCase {
 			}
 		}
 		waitForExpectations(timeout: 5, handler: nil)
-		
+
 		XCTAssertEqual(225, account.flattenedFeeds().count)
-		
+
 		let bPixels = account.idToFeedDictionary["1096623"]
 		XCTAssertEqual("Beautiful Pixels", bPixels?.name)
 		XCTAssertEqual("https://feedpress.me/beautifulpixels", bPixels?.url)
@@ -67,5 +67,5 @@ final class AccountFeedbinSyncTest: XCTestCase {
 		TestAccountManager.shared.deleteAccount(account)
 
 	}
-	
+
 }

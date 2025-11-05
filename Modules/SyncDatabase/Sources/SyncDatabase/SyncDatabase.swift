@@ -35,7 +35,7 @@ public struct SyncDatabase {
 	public func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
 		syncStatusTable.insertStatuses(statuses, completion: completion)
 	}
-	
+
 	public func selectForProcessing(limit: Int? = nil, completion: @escaping SyncStatusesCompletionBlock) {
 		return syncStatusTable.selectForProcessing(limit: limit, completion: completion)
 	}
@@ -47,11 +47,11 @@ public struct SyncDatabase {
     public func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
         syncStatusTable.selectPendingReadStatusArticleIDs(completion: completion)
     }
-    
+
     public func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
         syncStatusTable.selectPendingStarredStatusArticleIDs(completion: completion)
     }
-    
+
 	public func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.resetAllSelectedForProcessing(completion: completion)
 	}
@@ -59,7 +59,7 @@ public struct SyncDatabase {
 	public func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.resetSelectedForProcessing(articleIDs, completion: completion)
 	}
-	
+
     public func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.deleteSelectedForProcessing(articleIDs, completion: completion)
 	}
@@ -81,7 +81,7 @@ public struct SyncDatabase {
 // MARK: - Private
 
 private extension SyncDatabase {
-	
+
 	static let tableCreationStatements = """
 	CREATE TABLE if not EXISTS syncStatus (articleID TEXT NOT NULL, key TEXT NOT NULL, flag BOOL NOT NULL DEFAULT 0, selected BOOL NOT NULL DEFAULT 0, PRIMARY KEY (articleID, key));
 	"""

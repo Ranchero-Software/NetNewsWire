@@ -27,7 +27,7 @@ final class FeedParserTypeTests: XCTestCase {
 		let type = feedType(d)
 		XCTAssertTrue(type == .notAFeed)
 	}
-	
+
 	func testInessentialHTMLType() {
 
 		let d = parserData("inessential", "html", "http://inessential.com/")
@@ -41,7 +41,7 @@ final class FeedParserTypeTests: XCTestCase {
 		let type = feedType(d)
 		XCTAssertTrue(type == .notAFeed)
 	}
-	
+
 	// MARK: RSS
 
 	func testEMarleyRSSType() {
@@ -57,7 +57,7 @@ final class FeedParserTypeTests: XCTestCase {
 		let type = feedType(d)
 		XCTAssertTrue(type == .rss)
 	}
-	
+
 	func testKatieFloydRSSType() {
 
 		let d = parserData("KatieFloyd", "rss", "https://katiefloyd.com/")
@@ -187,14 +187,14 @@ final class FeedParserTypeTests: XCTestCase {
 
 		// In the case of this feed, the partial data isn’t enough to detect that it’s a JSON Feed.
 		// The type detector should return .unknown rather than .notAFeed.
-		
+
 		let d = parserData("allthis-partial", "json", "http://leancrew.com/allthis/")
 		let type = feedType(d, isPartialData: true)
 		XCTAssertEqual(type, .unknown)
 	}
 
 	// MARK: Performance
-	
+
 	func testFeedTypePerformance() {
 
 		// 0.000 on my 2012 iMac.

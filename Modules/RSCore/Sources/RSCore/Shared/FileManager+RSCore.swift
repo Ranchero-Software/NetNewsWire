@@ -82,7 +82,7 @@ public extension FileManager {
 		guard let filenames = self.filenames(inFolder: folder) else {
 			return nil
 		}
-		
+
 		let url = URL(fileURLWithPath: folder)
 		return filenames.map { url.appendingPathComponent($0).path }
 	}

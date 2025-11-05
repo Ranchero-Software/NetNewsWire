@@ -37,7 +37,7 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 		selectedAccountID = coder.decodeObject(of: NSString.self, forKey: Key.selectedAccountID) as? String
 		selectedArticleID = coder.decodeObject(of: NSString.self, forKey: Key.selectedArticleID) as? String
 	}
-	
+
 	func encode(with coder: NSCoder) {
 		coder.encode(readArticlesFilterStateKeys, forKey: Key.readArticlesFilterStateKeys)
 		coder.encode(readArticlesFilterStateValues, forKey: Key.readArticlesFilterStateValues)

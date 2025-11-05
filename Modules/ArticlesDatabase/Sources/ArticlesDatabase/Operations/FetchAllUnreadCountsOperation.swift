@@ -27,7 +27,7 @@ public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 	init(databaseQueue: DatabaseQueue) {
 		self.queue = databaseQueue
 	}
-	
+
 	public func run() {
 		queue.runInDatabase { databaseResult in
 			if self.isCanceled {

@@ -47,7 +47,7 @@ public final class CombinedRefreshProgress {
 		guard isStarted else {
 			return
 		}
-		
+
 		var updatedNumberOfTasks = 0
 		var updatedNumberRemaining = 0
 		var updatedNumberCompleted = 0

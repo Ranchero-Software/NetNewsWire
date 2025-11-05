@@ -27,7 +27,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 	weak var account: Account?
 	var accountType: AccountType?
 	weak var delegate: AddAccountDismissDelegate?
-	
+
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupFooter()
@@ -35,7 +35,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		activityIndicator.isHidden = true
 		usernameTextField.delegate = self
 		passwordTextField.delegate = self
-		
+
 		if let unwrappedAccount = account,
 		   let credentials = try? retrieveCredentialsForAccount(for: unwrappedAccount) {
 			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
@@ -45,7 +45,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		} else {
 			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Add Account"), for: .normal)
 		}
-		
+
 		if let unwrappedAccountType = accountType {
 			switch unwrappedAccountType {
 			case .freshRSS:
@@ -61,14 +61,14 @@ final class ReaderAPIAccountViewController: UITableViewController {
 				title = ""
 			}
 		}
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: usernameTextField)
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
-		
+
     }
-	
+
 	private func setupFooter() {
 		switch accountType {
 			case .bazQux:
@@ -87,11 +87,11 @@ final class ReaderAPIAccountViewController: UITableViewController {
 				return
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
 	}
-	
+
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
@@ -101,7 +101,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		switch section {
 		case 0:
@@ -115,8 +115,8 @@ final class ReaderAPIAccountViewController: UITableViewController {
 			return 1
 		}
 	}
-	
-	
+
+
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
 	}
@@ -130,19 +130,19 @@ final class ReaderAPIAccountViewController: UITableViewController {
 			showHideButton.setTitle("Show", for: .normal)
 		}
 	}
-	
+
 	@IBAction func action(_ sender: Any) {
 		guard validateDataEntry(), let type = accountType else {
 			return
 		}
-		
+
 		let username = usernameTextField.text!
 		let password = passwordTextField.text!
 		let url = apiURL()!
-		
+
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
-		
+
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: type, username: trimmedUsername) else {
 			showError(NSLocalizedString("There is already an account of that type with that username created.", comment: "Duplicate Error"))
 			return
@@ -196,7 +196,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 			}
 		}
 	}
-	
+
 	private func retrieveCredentialsForAccount(for account: Account) throws -> Credentials? {
 		switch accountType {
 		case .bazQux, .inoreader, .theOldReader, .freshRSS:
@@ -205,7 +205,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 			return nil
 		}
 	}
-	
+
 	private func headerViewImage() -> UIImage? {
 		if let accountType = accountType {
 			switch accountType {
@@ -223,7 +223,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		}
 		return nil
 	}
-  
+
 	private func validateDataEntry() -> Bool {
 		switch accountType {
 		case .freshRSS:
@@ -243,7 +243,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		}
 		return true
 	}
-	
+
 	@IBAction func signUpWithProvider(_ sender: Any) {
 		var url: URL!
 		switch accountType {
@@ -262,7 +262,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		safari.modalPresentationStyle = .currentContext
 		self.present(safari, animated: true, completion: nil)
 	}
-	
+
 	private func apiURL() -> URL? {
 		switch accountType {
 		case .freshRSS:
@@ -277,9 +277,9 @@ final class ReaderAPIAccountViewController: UITableViewController {
 			return nil
 		}
 	}
-	
-	
-	
+
+
+
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false)
 	}

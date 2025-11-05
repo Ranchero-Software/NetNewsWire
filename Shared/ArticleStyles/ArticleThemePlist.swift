@@ -14,7 +14,7 @@ public struct ArticleThemePlist: Codable, Equatable {
 	public var creatorHomePage: String
 	public var creatorName: String
 	public var version: Int
-	
+
 	enum CodingKeys: String, CodingKey {
 		case name = "Name"
 		case themeIdentifier = "ThemeIdentifier"

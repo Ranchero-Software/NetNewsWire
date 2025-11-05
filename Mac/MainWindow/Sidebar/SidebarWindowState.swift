@@ -15,7 +15,7 @@ final class SidebarWindowState: NSObject, NSSecureCoding {
 	let isReadFiltered: Bool
 	let expandedContainers: [[String: String]]
 	let selectedFeeds: [[String: String]]
-	
+
 	init(isReadFiltered: Bool, expandedContainers: [[String : String]], selectedFeeds: [[String : String]]) {
 		self.isReadFiltered = isReadFiltered
 		self.expandedContainers = expandedContainers
@@ -33,7 +33,7 @@ final class SidebarWindowState: NSObject, NSSecureCoding {
 		expandedContainers = coder.decodeObject(of: [NSArray.self, NSDictionary.self, NSString.self], forKey: Key.expandedContainers) as? [[String: String]] ?? []
 		selectedFeeds = coder.decodeObject(of: [NSArray.self, NSDictionary.self, NSString.self], forKey: Key.selectedFeeds) as? [[String: String]] ?? []
 	}
-	
+
 	func encode(with coder: NSCoder) {
 		coder.encode(isReadFiltered, forKey: Key.isReadFiltered)
 		coder.encode(expandedContainers, forKey: Key.expandedContainers)

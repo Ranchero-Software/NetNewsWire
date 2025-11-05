@@ -12,7 +12,7 @@ final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector
 
 	@IBOutlet var nameTextField: NSTextField?
 	@IBOutlet weak var smartFeedImageView: NSImageView!
-	
+
 	private var smartFeed: PseudoFeed? {
 		didSet {
 			updateUI()

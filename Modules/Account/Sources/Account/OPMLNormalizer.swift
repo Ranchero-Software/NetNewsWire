@@ -10,15 +10,15 @@ import Foundation
 import RSParser
 
 final class OPMLNormalizer {
-	
+
 	var normalizedOPMLItems = [RSOPMLItem]()
-	
+
 	static func normalize(_ items: [RSOPMLItem]) -> [RSOPMLItem] {
 		let opmlNormalizer = OPMLNormalizer()
 		opmlNormalizer.normalize(items)
 		return opmlNormalizer.normalizedOPMLItems
 	}
-	
+
 	private func normalize(_ items: [RSOPMLItem], parentFolder: RSOPMLItem? = nil) {
 		var feedsToAdd = [RSOPMLItem]()
 
@@ -60,7 +60,7 @@ final class OPMLNormalizer {
 				normalizedOPMLItems.append(feed)
 			}
 		}
-		
+
 	}
-	
+
 }

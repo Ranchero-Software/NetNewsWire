@@ -37,7 +37,7 @@ final class ExtensionContainersFile {
 			return
 		}
 		isActive = true
-		
+
 		if !FileManager.default.fileExists(atPath: ExtensionContainersFile.filePath) {
 			save()
 		}

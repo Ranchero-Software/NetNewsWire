@@ -20,11 +20,11 @@ public func databaseIDWithString(_ s: String) -> String {
     defer {
         databaseIDCacheLock.unlock()
     }
-	
+
 	if let identifier = databaseIDCache[s] {
 		return identifier
 	}
-	
+
 	let identifier = s.md5String
 	databaseIDCache[s] = identifier
 	return identifier

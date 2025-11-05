@@ -15,7 +15,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var activeButton: NSButtonCell!
 	@IBOutlet weak var credentialsButton: NSButton!
-	
+
 	private var accountsWindowController: NSWindowController?
 	private var account: Account?
 
@@ -27,7 +27,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 	public required init?(coder: NSCoder) {
 		super.init(coder: coder)
 	}
-	
+
 	private var hidesCredentialsButton: Bool {
 		guard let account = account else {
 			return true
@@ -39,17 +39,17 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			return false
 		}
 	}
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
+
 		nameTextField.delegate = self
 		typeLabel.stringValue = account?.defaultName ?? ""
 		nameTextField.stringValue = account?.name ?? ""
 		activeButton.state = account?.isActive ?? false ? .on : .off
 		credentialsButton.isHidden = hidesCredentialsButton
 	}
-	
+
 	func controlTextDidEndEditing(_ obj: Notification) {
 		if !nameTextField.stringValue.isEmpty {
 			account?.name = nameTextField.stringValue
@@ -57,15 +57,15 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			account?.name = nil
 		}
 	}
-	
+
 	@IBAction func active(_ sender: NSButtonCell) {
 		account?.isActive = sender.state == .on ? true : false
 	}
-	
+
 	@IBAction func credentials(_ sender: Any) {
-		
+
 		guard let account = account else { return }
-		
+
 		switch account.type {
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
@@ -87,7 +87,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		default:
 			break
 		}
-		
+
 	}
-	
+
 }

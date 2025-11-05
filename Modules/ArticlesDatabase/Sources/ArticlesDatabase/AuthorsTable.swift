@@ -19,7 +19,7 @@ import Articles
 
 
 final class AuthorsTable: DatabaseRelatedObjectsTable {
-	
+
 	let name: String
 	let databaseIDKey = DatabaseKey.authorID
 	var cache = DatabaseObjectCache()
@@ -27,7 +27,7 @@ final class AuthorsTable: DatabaseRelatedObjectsTable {
 	init(name: String) {
 		self.name = name
 	}
-	
+
 	// MARK: - DatabaseRelatedObjectsTable
 
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject? {

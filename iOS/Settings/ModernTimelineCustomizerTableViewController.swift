@@ -11,7 +11,7 @@ import Articles
 
 class ModernTimelineCustomizerTableViewController: UITableViewController {
 
-	
+
 	private var previewArticle: Article {
 		var components = DateComponents()
 		components.year = 1925
@@ -20,7 +20,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 
 		let calendar = Calendar.current
 		let date = calendar.date(from: components)!
-		
+
 		return Article(accountID: "_testID",
 				articleID: "_testArticleID",
 				feedID: "_testFeedID",
@@ -38,16 +38,16 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 				authors: Set([Author(authorID: "_testAuthorID", name: "F. Scott Fitzgerald", url: nil, avatarURL: nil, emailAddress: nil)!]),
 				status: ArticleStatus(articleID: "_testArticleID", read: false, starred: false, dateArrived: .now))
 	}
-	
-	
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
 		title = NSLocalizedString("Timeline Customizer", comment: "Timeline Customizer")
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		
+
     }
 
-	
+
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 		tableView.reloadSections(IndexSet(integer: 2), with: .fade)
 	}
@@ -61,7 +61,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return 1
     }
-	
+
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if section == 0 { return NSLocalizedString("Icon Size", comment: "Icon Size")}
 		if section == 1 { return NSLocalizedString("Number of Lines", comment: "Number of Lines")}
@@ -70,21 +70,21 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 		return nil
 	}
 
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		if indexPath.section == 0 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "IconSizeCell") as! ModernTimelineSliderCell
 			cell.sliderConfiguration = .iconSize
 			return cell
 		}
-		
+
 		if indexPath.section == 1 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "NumberOfLinesCell") as! ModernTimelineSliderCell
 			cell.sliderConfiguration = .numberOfLines
 			return cell
 		}
-		
-		
+
+
 		if indexPath.section == 2 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell") as? MainTimelineIconFeedCell ?? MainTimelineIconFeedCell()
 			cell.cellData = MainTimelineCellData(article: previewArticle,
@@ -98,7 +98,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 			cell.isPreview = true
 			return cell
 		}
-		
+
 		if indexPath.section == 3 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell") as? MainTimelineFeedCell ?? MainTimelineFeedCell()
 			cell.cellData = MainTimelineCellData(article: previewArticle,
@@ -112,11 +112,11 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 			cell.isPreview = true
 			return cell
 		}
-		
+
 		return UITableViewCell()
-		
+
     }
-    
+
 	override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
 		return nil
 	}
@@ -124,7 +124,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
 		return false
 	}
-	
+
 	// MARK: - Notifications
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		tableView.reloadSections(IndexSet(integersIn: 2...3), with: .none)

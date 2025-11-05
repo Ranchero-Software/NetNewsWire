@@ -12,7 +12,7 @@ import XCTest
 final class TestGetEntriesService: FeedlyGetEntriesService {
 	var mockResult: Result<[FeedlyEntry], Error>?
 	var getEntriesExpectation: XCTestExpectation?
-	
+
 	func getEntries(for ids: Set<String>, completion: @escaping (Result<[FeedlyEntry], Error>) -> ()) {
 		guard let result = mockResult else {
 			XCTFail("Missing mock result. Test may time out because the completion will not be called.")

@@ -44,7 +44,7 @@ struct Browser {
 	///   to open in the background.
 	static func open(_ urlString: String, inBackground: Bool) {
 		guard let url = URL(string: urlString), let preparedURL = url.preparedForOpeningInBrowser() else { return }
-		
+
 		let configuration = NSWorkspace.OpenConfiguration()
 		configuration.requiresUniversalLinks = true
 		configuration.promptsUserIfNeeded = false

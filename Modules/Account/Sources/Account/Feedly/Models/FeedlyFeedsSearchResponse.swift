@@ -9,11 +9,11 @@
 import Foundation
 
 struct FeedlyFeedsSearchResponse: Decodable {
-	
+
 	struct Feed: Decodable {
 		let title: String
 		let feedId: String
 	}
-	
+
 	let results: [Feed]
 }

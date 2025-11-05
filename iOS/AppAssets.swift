@@ -10,7 +10,7 @@ import RSCore
 import Account
 
 struct AppAssets {
-	
+
 	static var accountBazQuxImage: UIImage = {
 		return UIImage(named: "accountBazQux")!
 	}()
@@ -90,39 +90,39 @@ struct AppAssets {
 	static var circleClosedImage: UIImage = {
 		return UIImage(systemName: "largecircle.fill.circle")!
 	}()
-	
+
 	static var circleOpenImage: UIImage = {
 		return UIImage(systemName: "circle")!
 	}()
-	
+
 	static var disclosureImage: UIImage = {
 		return UIImage(named: "disclosure")!
 	}()
-	
+
 	static var copyImage: UIImage = {
 		return UIImage(systemName: "doc.on.doc")!
 	}()
-	
+
 	static var deactivateImage: UIImage = {
 		UIImage(systemName: "minus.circle")!
 	}()
-	
+
 	static var editImage: UIImage = {
 		UIImage(systemName: "square.and.pencil")!
 	}()
-	
+
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
-	
+
 	static var filterImage: UIImage = {
 		UIImage(systemName: "line.3.horizontal.decrease")!
 	}()
-	
+
 	static var folderOutlinePlus: UIImage = {
 		UIImage(systemName: "folder.badge.plus")!
 	}()
-	
+
 	static var fullScreenBackgroundColor: UIColor = {
 		return UIColor(named: "fullScreenBackgroundColor")!
 	}()
@@ -130,91 +130,91 @@ struct AppAssets {
 	static var infoImage: UIImage = {
 		UIImage(systemName: "info.circle")!
 	}()
-	
+
 	static var markAllAsReadImage: UIImage = {
 		return UIImage(named: "markAllAsRead")!
 	}()
-	
+
 	static var markBelowAsReadImage: UIImage = {
 		return UIImage(systemName: "arrowtriangle.down.circle")!
 	}()
-	
+
 	static var markAboveAsReadImage: UIImage = {
 		return UIImage(systemName: "arrowtriangle.up.circle")!
 	}()
-	
+
 	static var mainFolderImage: IconImage = {
 		return IconImage(UIImage(systemName: "folder")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
-	
+
 	static var mainFolderImageNonIcon: UIImage = {
 		return UIImage(systemName: "folder")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
 	}()
-	
+
 	static var moreImage: UIImage = {
 		return UIImage(systemName: "ellipsis.circle")!
 	}()
-	
+
 	static var nextArticleImage: UIImage = {
 		return UIImage(systemName: "chevron.down")!
 	}()
-	
+
 	static var nextUnreadArticleImage: UIImage = {
 		return UIImage(systemName: "chevron.down.circle")!
 	}()
-	
+
 	static var plus: UIImage = {
 		UIImage(systemName: "plus")!
 	}()
-	
+
 	static var prevArticleImage: UIImage = {
 		return UIImage(systemName: "chevron.up")!
 	}()
-	
+
 	static var openInSidebarImage: UIImage = {
 		return UIImage(systemName: "arrow.turn.down.left")!
 	}()
-	
+
 	static var primaryAccentColor: UIColor {
 		return UIColor(named: "primaryAccentColor")!
 	}
-	
+
 	static var safariImage: UIImage = {
 		return UIImage(systemName: "safari")!
 	}()
-	
+
 	static var searchFeedImage: IconImage = {
 		return IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
 	}()
-	
+
 	static var secondaryAccentColor: UIColor {
 		return UIColor(named: "secondaryAccentColor")!
 	}
-	
+
 	static var sectionHeaderColor: UIColor = {
 		return UIColor(named: "sectionHeaderColor")!
 	}()
-	
+
 	static var shareImage: UIImage = {
 		return UIImage(systemName: "square.and.arrow.up")!
 	}()
-	
+
 	static var smartFeedImage: UIImage = {
 		return UIImage(systemName: "gear")!
 	}()
-	
+
 	static var starColor: UIColor = {
 		return UIColor(named: "starColor")!
 	}()
-	
+
 	static var starClosedImage: UIImage = {
 		return UIImage(systemName: "star.fill")!
 	}()
-	
+
 	static var starOpenImage: UIImage = {
 		return UIImage(systemName: "star")!
 	}()
-	
+
 	static var starredFeedImage: IconImage {
 		let image = UIImage(systemName: "star.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.starColor.cgColor)
@@ -223,12 +223,12 @@ struct AppAssets {
 	static var tickMarkColor: UIColor = {
 		return UIColor(named: "tickMarkColor")!
 	}()
-	
+
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
 	}()
-	
+
 	static var todayFeedImage: IconImage {
 		let image = UIImage(systemName: "sun.max.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange.cgColor)
@@ -237,17 +237,17 @@ struct AppAssets {
 	static var trashImage: UIImage = {
 		return UIImage(systemName: "trash")!
 	}()
-	
+
 	static var unreadCellIndicatorImage: IconImage {
 		let image = UIImage(systemName: "circle.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}
-	
+
 	static var unreadFeedImage: IconImage {
 		let image = UIImage(systemName: "largecircle.fill.circle")!
 		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}
-	
+
 	static var vibrantTextColor: UIColor = {
 		return UIColor(named: "vibrantTextColor")!
 	}()
@@ -283,5 +283,5 @@ struct AppAssets {
 			return AppAssets.accountTheOldReaderImage
 		}
 	}
-	
+
 }

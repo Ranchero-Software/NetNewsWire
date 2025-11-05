@@ -28,7 +28,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 
 		return true
 	}
-	
+
 	func sendObject(_ object: Any?, selectedText: String?) {
 
 		guard canSendObject(object, selectedText: selectedText) else {

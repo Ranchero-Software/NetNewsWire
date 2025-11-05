@@ -175,7 +175,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 		return true
 	}
-	
+
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession) {
 
 		Task { @MainActor in
@@ -277,7 +277,7 @@ private extension LocalAccountRefresher {
 // MARK: - Utility
 
 private extension Data {
-	
+
 	func isDefinitelyNotFeed() -> Bool {
 		// We only detect a few image types for now. This should get fleshed-out at some later date.
 		return self.isImage

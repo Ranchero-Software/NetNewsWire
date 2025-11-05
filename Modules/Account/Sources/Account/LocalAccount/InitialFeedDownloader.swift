@@ -19,7 +19,7 @@ struct InitialFeedDownloader {
 					completion(nil, nil, response, error)
 					return
 				}
-				
+
 				let parserData = ParserData(url: url.absoluteString, data: data)
 				FeedParser.parse(parserData) { (parsedFeed, error) in
 					completion(parsedFeed, data, response, error)

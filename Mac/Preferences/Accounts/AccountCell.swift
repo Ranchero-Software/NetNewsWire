@@ -9,33 +9,33 @@
 import AppKit
 
 final class AccountCell: NSTableCellView {
-	
+
 	private var originalImage: NSImage?
-	
+
 	var isImageTemplateCapable = true
-	
+
 	override func prepareForReuse() {
 		originalImage = nil
 	}
-	
+
 	override var backgroundStyle: NSView.BackgroundStyle {
 		didSet {
 			updateImage()
 		}
 	}
-	
+
 }
 
 private extension AccountCell {
-	
+
 	func updateImage() {
 		guard isImageTemplateCapable else { return }
-		
+
 		if backgroundStyle != .normal {
 			guard !(imageView?.image?.isTemplate ?? false) else { return }
-			
+
 			originalImage = imageView?.image
-			
+
 			let templateImage = imageView?.image?.copy() as? NSImage
 			templateImage?.isTemplate = true
 			imageView?.image = templateImage
@@ -44,5 +44,5 @@ private extension AccountCell {
 			imageView?.image = originalImage
 		}
 	}
-	
+
 }

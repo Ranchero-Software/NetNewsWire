@@ -56,7 +56,7 @@ final class RSMarkdownTests: XCTestCase {
 
 		measure {
 			let html = RSMarkdown.markdownToHTML(markdown)
-			
+
 			// Verify the output is valid HTML (inside measure block to ensure correctness)
 			XCTAssertFalse(html.isEmpty)
 			XCTAssertTrue(html.contains("<"))
@@ -124,7 +124,7 @@ final class RSMarkdownTests: XCTestCase {
 	func testLineBreaksAndParagraphs() throws {
 		let markdown = """
 		First paragraph.
-		
+
 		Second paragraph with  
 		line break.
 		"""
@@ -206,17 +206,17 @@ final class RSMarkdownTests: XCTestCase {
 	func testComplexNestedStructures() throws {
 		let markdown = """
 		# Main Header
-		
+
 		## Sub Header
-		
+
 		Here's a list with **bold** items:
-		
+
 		1. First item with [a link](https://example.com)
 		2. Second item with `inline code`
 		3. Third item with *emphasis*
-		
+
 		And a code block:
-		
+
 		```
 		function test() {
 			return "hello";
@@ -251,17 +251,17 @@ final class RSMarkdownTests: XCTestCase {
 		// Create a very large markdown document
 		let section = """
 		## Section Header
-		
+
 		This is a paragraph with **bold**, *italic*, and `code` formatting.
-		
+
 		- List item 1
 		- List item 2 with [link](https://example.com)
-		
+
 		```swift
 		let code = "example"
 		print(code)
 		```
-		
+
 		"""
 
 		let largeMarkdown = String(repeating: section, count: 500)

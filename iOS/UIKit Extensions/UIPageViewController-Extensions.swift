@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIPageViewController {
-	
+
 	var scrollViewInsidePageControl: UIScrollView? {
 		for view in view.subviews {
 			if let scrollView = view as? UIScrollView {
@@ -18,5 +18,5 @@ extension UIPageViewController {
 		}
 		return nil
 	}
-	
+
 }

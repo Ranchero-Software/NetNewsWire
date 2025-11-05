@@ -13,7 +13,7 @@ final class ShareViewController: NSViewController {
 
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var folderPopUpButton: NSPopUpButton!
-	
+
 	private var url: URL?
 	private var extensionContainers: ExtensionContainers?
 
@@ -23,10 +23,10 @@ final class ShareViewController: NSViewController {
 
     override func loadView() {
         super.loadView()
-		
+
 		extensionContainers = ExtensionContainersFile.read()
 		buildFolderPopupMenu()
-		
+
 		var provider: NSItemProvider? = nil
 
 		// Try to get any HTML that is maybe passed in
@@ -91,7 +91,7 @@ final class ShareViewController: NSViewController {
 		let name = nameTextField.stringValue.isEmpty ? nil : nameTextField.stringValue
 		let request = ExtensionFeedAddRequest(name: name, feedURL: url, destinationContainerID: containerID)
 		ExtensionFeedAddRequestFile.save(request)
-		
+
 		self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 	}
 
@@ -103,12 +103,12 @@ final class ShareViewController: NSViewController {
 }
 
 private extension ShareViewController {
-	
+
 	func buildFolderPopupMenu() {
-		
+
 		let menu = NSMenu(title: "Folders")
 		menu.autoenablesItems = false
-		
+
 		guard let extensionContainers = extensionContainers else {
 			folderPopUpButton.menu = nil
 			return
@@ -116,18 +116,18 @@ private extension ShareViewController {
 
 		let defaultContainer = ShareDefaultContainer.defaultContainer(containers: extensionContainers)
 		var defaultMenuItem: NSMenuItem? = nil
-		
+
 		for account in extensionContainers.accounts {
-			
+
 			let menuItem = NSMenuItem(title: account.name, action: nil, keyEquivalent: "")
 			menuItem.representedObject = account
-			
+
 			if account.disallowFeedInRootFolder {
 				menuItem.isEnabled = false
 			}
-			
+
 			menu.addItem(menuItem)
-			
+
 			if defaultContainer?.containerID == account.containerID {
 				defaultMenuItem = menuItem
 			}
@@ -141,15 +141,15 @@ private extension ShareViewController {
 					defaultMenuItem = menuItem
 				}
 			}
-			
+
 		}
-		
+
 		folderPopUpButton.menu = menu
 		folderPopUpButton.select(defaultMenuItem)
 	}
-	
+
 	func selectedContainer() -> ExtensionContainer? {
 		return folderPopUpButton.selectedItem?.representedObject as? ExtensionContainer
 	}
-	
+
 }

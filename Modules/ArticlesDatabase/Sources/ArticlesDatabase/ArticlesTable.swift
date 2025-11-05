@@ -41,13 +41,13 @@ final class ArticlesTable: DatabaseTable {
 		self.queue = queue
 		self.statusesTable = StatusesTable(queue: queue)
 		self.retentionStyle = retentionStyle
-		
+
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 	}
 
 	// MARK: - Fetching Articles for Feed
-	
+
 	func fetchArticles(_ feedID: String) throws -> Set<Article> {
 		return try fetchArticles{ self.fetchArticlesForFeedID(feedID, $0) }
 	}
@@ -113,7 +113,7 @@ final class ArticlesTable: DatabaseTable {
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
 		var articles: Set<Article> = Set<Article>()
 		var error: DatabaseError? = nil
-		
+
 		queue.runInDatabaseSync { (databaseResult) in
 			switch databaseResult {
 			case .success(let database):
@@ -364,20 +364,20 @@ final class ArticlesTable: DatabaseTable {
 					completion?(databaseError)
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	// MARK: - Unread Counts
-	
+
 	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		// Get unread count for today, for instance.
 		if feedIDs.isEmpty {
 			completion(.success(0))
 			return
 		}
-		
+
 		queue.runInDatabase { databaseResult in
 
 			func makeDatabaseCalls(_ database: FMDatabase) {
@@ -439,7 +439,7 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	// MARK: - Statuses
-	
+
 	func fetchUnreadArticleIDsAsync(_ completion: @escaping ArticleIDsCompletionBlock) {
 		statusesTable.fetchArticleIDsAsync(.read, false, completion)
 	}
@@ -451,7 +451,7 @@ final class ArticlesTable: DatabaseTable {
 	func fetchStarredArticleIDs() throws -> Set<String> {
 		return try statusesTable.fetchStarredArticleIDs()
 	}
-	
+
 	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate, completion)
 	}
@@ -591,7 +591,7 @@ final class ArticlesTable: DatabaseTable {
 
 			let sql: String
 			let cutoffDate: Date
-			
+
 			switch self.retentionStyle {
 			case .syncSystem:
 				sql = "delete from statuses where dateArrived<? and read=1 and starred=0 and articleID not in (select articleID from articles);"
@@ -913,21 +913,21 @@ private extension ArticlesTable {
 	}
 
 	// MARK: - Saving Parsed Items
-	
+
 	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ deletedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		let articleChanges = ArticleChanges(newArticles: newArticles, updatedArticles: updatedArticles, deletedArticles: deletedArticles)
 		DispatchQueue.main.async {
 			completion(.success(articleChanges))
 		}
 	}
-	
+
 	// MARK: - Saving New Articles
 
 	func findNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
 		let newArticles = Set(incomingArticles.filter { fetchedArticlesDictionary[$0.articleID] == nil })
 		return newArticles.isEmpty ? nil : newArticles
 	}
-	
+
 	func findAndSaveNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { //5
 		guard let newArticles = findNewArticles(incomingArticles, fetchedArticlesDictionary) else {
 			return nil
@@ -935,7 +935,7 @@ private extension ArticlesTable {
 		self.saveNewArticles(newArticles, database)
 		return newArticles
 	}
-	
+
 	func saveNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
 		saveRelatedObjectsForNewArticles(articles, database)
 
@@ -984,7 +984,7 @@ private extension ArticlesTable {
 
 		return updatedArticles.isEmpty ? nil : updatedArticles
 	}
-	
+
 	func findAndSaveUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { //6
 		guard let updatedArticles = findUpdatedArticles(incomingArticles, fetchedArticlesDictionary) else {
 			return nil
@@ -992,11 +992,11 @@ private extension ArticlesTable {
 		saveUpdatedArticles(Set(updatedArticles), fetchedArticlesDictionary, database)
 		return updatedArticles
 	}
-	
+
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
-		
+
 		for updatedArticle in updatedArticles {
 			saveUpdatedArticle(updatedArticle, fetchedArticles, database)
 		}
@@ -1005,7 +1005,7 @@ private extension ArticlesTable {
 	func saveUpdatedArticle(_ updatedArticle: Article, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
 		// Only update exactly what has changed in the Article (if anything).
 		// Untested theory: this gets us better performance and less database fragmentation.
-		
+
 		guard let fetchedArticle = fetchedArticles[updatedArticle.articleID] else {
 			assertionFailure("Expected to find matching fetched article.");
 			saveNewArticles(Set([updatedArticle]), database)

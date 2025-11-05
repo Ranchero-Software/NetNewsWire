@@ -15,7 +15,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	public var defaultReadFilterType: ReadFilterType {
 		return .read
 	}
-	
+
 	public var containerID: ContainerIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
@@ -23,7 +23,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		}
 		return ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
-	
+
 	public var sidebarItemID: SidebarItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
@@ -35,13 +35,13 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	public weak var account: Account?
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
-	
+
 	public var name: String? {
 		didSet {
 			postDisplayNameDidChangeNotification()
 		}
 	}
-	
+
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
 	public var externalID: String? = nil
@@ -52,7 +52,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	public var nameForDisplay: String {
 		return name ?? Folder.untitledName
 	}
-	
+
 	// MARK: - UnreadCountProvider
 
 	public var unreadCount = 0 {
@@ -69,7 +69,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		guard let account = account else { return }
 		account.renameFolder(self, to: name, completion: completion)
 	}
-	
+
 	// MARK: - Init
 
 	init(account: Account, name: String?) {
@@ -117,7 +117,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		topLevelFeeds.insert(feed)
 		postChildrenDidChangeNotification()
 	}
-	
+
 	public func addFeeds(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
@@ -125,12 +125,12 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		topLevelFeeds.formUnion(feeds)
 		postChildrenDidChangeNotification()
 	}
-	
+
 	public func removeFeed(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}
-	
+
 	public func removeFeeds(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
@@ -174,7 +174,7 @@ private extension Folder {
 extension Folder: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
-		
+
 		let attrExternalID: String = {
 			if allowCustomAttributes, let externalID = externalID {
 				return " nnw_externalID=\"\(externalID.escapingSpecialXMLCharacters)\""
@@ -182,7 +182,7 @@ extension Folder: OPMLRepresentable {
 				return ""
 			}
 		}()
-		
+
 		let escapedTitle = nameForDisplay.escapingSpecialXMLCharacters
 		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)>\n"
 		s = s.prepending(tabCount: indentLevel)
@@ -209,11 +209,11 @@ extension Folder: OPMLRepresentable {
 // MARK: Set
 
 extension Set where Element == Folder {
-	
+
 	func sorted() -> Array<Folder> {
 		return sorted(by: { (folder1, folder2) -> Bool in
 			return folder1.nameForDisplay.localizedStandardCompare(folder2.nameForDisplay) == .orderedAscending
 		})
 	}
-	
+
 }

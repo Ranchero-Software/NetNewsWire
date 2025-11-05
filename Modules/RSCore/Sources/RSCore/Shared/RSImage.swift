@@ -29,25 +29,25 @@ public extension RSImage {
 	/// - Parameter color: The color with which to fill the mask image.
 	/// - Returns: A new masked image.
 	func maskWithColor(color: CGColor) -> RSImage? {
-		
+
 		#if os(macOS)
 		guard let maskImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
 		#else
 		guard let maskImage = cgImage else { return nil }
 		#endif
-		
+
 		let width = size.width
 		let height = size.height
 		let bounds = CGRect(x: 0, y: 0, width: width, height: height)
-		
+
 		let colorSpace = CGColorSpaceCreateDeviceRGB()
 		let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
 		let context = CGContext(data: nil, width: Int(width), height: Int(height), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)!
-		
+
 		context.clip(to: bounds, mask: maskImage)
 		context.setFillColor(color)
 		context.fill(bounds)
-		
+
 		if let cgImage = context.makeImage() {
 			#if os(macOS)
 			let coloredImage = RSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height))
@@ -58,7 +58,7 @@ public extension RSImage {
 		} else {
 			return nil
 		}
-		
+
 	}
 
 	#if os(iOS)
@@ -131,7 +131,7 @@ public extension RSImage {
 			}
 			return nil
 		}
-		
+
 		let numberOfImages = CGImageSourceGetCount(imageSource)
 		if debugLoggingEnabled {
 			RSImageLogger.debug("RSImageLogger: numberOfImages == \(numberOfImages, privacy: .public)")
@@ -139,11 +139,11 @@ public extension RSImage {
 		guard numberOfImages > 0 else {
 			return nil
 		}
-		
+
 		var exactMatch: (index: Int, maxDimension: Int)? = nil
 		var goodMatch: (index: Int, maxDimension: Int)? = nil
 		var smallMatch: (index: Int, maxDimension: Int)? = nil
-		
+
 		// Single pass through all images to find the best match
 		for i in 0..<numberOfImages {
 			guard let cfImageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
@@ -151,7 +151,7 @@ public extension RSImage {
 				  let imagePixelHeight = (cfImageProperties as NSDictionary)[kCGImagePropertyPixelHeight] as? NSNumber else {
 				continue
 			}
-			
+
 			let width = imagePixelWidth.intValue
 			let height = imagePixelHeight.intValue
 			let maxDimension = max(width, height)
@@ -173,7 +173,7 @@ public extension RSImage {
 				}
 				break // Exact match is best, stop searching
 			}
-			
+
 			// Check for good larger match
 			if maxDimension > maxPixelSize && maxDimension <= maxPixelSize * 4 {
 				if let currentGoodMatch = goodMatch {
@@ -187,7 +187,7 @@ public extension RSImage {
 					RSImageLogger.debug("RSImageLogger: found good match \(maxDimension, privacy: .public) for maxPixelSize: \(maxPixelSize, privacy: .public)")
 				}
 			}
-			
+
 			// Check for small match (smaller than maxPixelSize)
 			if maxDimension < maxPixelSize {
 				if let currentSmallMatch = smallMatch {
@@ -202,12 +202,12 @@ public extension RSImage {
 				}
 			}
 		}
-		
+
 		// Return best match in order of preference: exact > good > small
 		if let match = exactMatch ?? goodMatch ?? smallMatch {
 			return CGImageSourceCreateImageAtIndex(imageSource, match.index, nil)
 		}
-		
+
 		// Fallback to creating a thumbnail
 		if debugLoggingEnabled {
 			RSImageLogger.debug("RSImageLogger: found no match — calling createThumbnail")

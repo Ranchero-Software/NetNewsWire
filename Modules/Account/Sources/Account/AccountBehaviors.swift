@@ -17,32 +17,32 @@ import Foundation
 public typealias AccountBehaviors = [AccountBehavior]
 
 public enum AccountBehavior: Equatable {
-	
+
 	/**
 	  Account doesn't support copies of a feed that are in a folder to be made to the root folder.
 	*/
 	case disallowFeedCopyInRootFolder
-	
+
 	/**
 	 Account doesn't support feeds in the root folder.
 	*/
 	case disallowFeedInRootFolder
-	
+
 	/**
 	 Account doesn't support a feed being in more than one folder.
 	*/
 	case disallowFeedInMultipleFolders
-	
+
 	/**
 	Account doesn't support folders
 	*/
 	case disallowFolderManagement
-	
+
 	/**
 	 Account doesn't support OPML imports
 	*/
 	case disallowOPMLImports
-	
+
 	/**
 	Account doesn't allow mark as read after a period of days
 	*/

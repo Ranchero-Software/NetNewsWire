@@ -13,12 +13,12 @@ import RSCore
 
 @objc(ScriptableAccount)
 final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
-    
+
     let account:Account
     init (_ account:Account) {
         self.account = account
     }
-    
+
     @objc(objectSpecifier)
     override var objectSpecifier: NSScriptObjectSpecifier? {
         let myContainer = NSApplication.shared
@@ -47,13 +47,13 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
 	}
 
     // MARK: --- ScriptingObject protocol ---
-    
+
     var scriptingKey: String {
         return "accounts"
     }
 
     // MARK: --- UniqueIdScriptingObject protocol ---
-    
+
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
@@ -62,11 +62,11 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
-    
+
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
-    
+
 	func deleteElement(_ element:ScriptingObject) {
 		if let scriptableFolder = element as? ScriptableFolder {
 			BatchUpdate.shared.perform {
@@ -93,30 +93,30 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
     }
 
     // MARK: --- Scriptable elements ---
-    
+
     @objc(feeds)
     var feeds:NSArray  {
         return account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
-    
+
     @objc(countOfFeeds)
     func countOfFeeds() -> Int {
         return account.topLevelFeeds.count
     }
-    
+
     @objc(objectInFeedsAtIndex:)
     func objectInFeedsAtIndex(_ index: Int) -> ScriptableFeed? {
         let feeds = Array(account.topLevelFeeds)
         guard index >= 0 && index < feeds.count else { return nil }
         return ScriptableFeed(feeds[index], container: self)
     }
-    
+
     @objc(valueInFeedsWithUniqueID:)
     func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
 		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
-    
+
     @objc(valueInFeedsWithName:)
     func valueInFeeds(withName name:String) -> ScriptableFeed? {
 		let feeds = Array(account.flattenedFeeds())
@@ -130,12 +130,12 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
 		let folders = Array(foldersSet)
 		return folders.map { ScriptableFolder($0, container:self) } as NSArray
     }
-    
+
     @objc(countOfFolders)
     func countOfFolders() -> Int {
         return account.folders?.count ?? 0
     }
-    
+
     @objc(objectInFoldersAtIndex:)
     func objectInFoldersAtIndex(_ index: Int) -> ScriptableFolder? {
         let foldersSet = account.folders ?? Set<Folder>()
@@ -143,7 +143,7 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
         guard index >= 0 && index < folders.count else { return nil }
         return ScriptableFolder(folders[index], container: self)
     }
-    
+
     @objc(valueInFoldersWithUniqueID:)
     func valueInFolders(withUniqueID id:NSNumber) -> ScriptableFolder? {
         let folderId = id.intValue
@@ -163,25 +163,25 @@ final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjec
 		}
 		return scriptableFeeds as NSArray
     }
-    
+
     @objc(countOfAllFeeds)
     func countOfAllFeeds() -> Int {
         return account.flattenedFeeds().count
     }
-    
+
     @objc(objectInAllFeedsAtIndex:)
     func objectInAllFeedsAtIndex(_ index: Int) -> ScriptableFeed? {
         let allFeeds = Array(account.flattenedFeeds())
         guard index >= 0 && index < allFeeds.count else { return nil }
         return ScriptableFeed(allFeeds[index], container: self)
     }
-    
+
     @objc(valueInAllFeedsWithUniqueID:)
     func valueInAllFeeds(withUniqueID id:String) -> ScriptableFeed? {
 		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
         return ScriptableFeed(feed, container:self)
     }
-    
+
     @objc(valueInAllFeedsWithName:)
     func valueInAllFeeds(withName name:String) -> ScriptableFeed? {
 		let feeds = Array(account.flattenedFeeds())

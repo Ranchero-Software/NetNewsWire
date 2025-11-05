@@ -14,7 +14,7 @@ final class FetchRequestQueue {
 
 	private var pendingRequests = [FetchRequestOperation]()
 	private var currentRequest: FetchRequestOperation? = nil
-	
+
 	var isAnyCurrentRequest: Bool {
 		if let currentRequest = currentRequest {
 			return !currentRequest.isCanceled

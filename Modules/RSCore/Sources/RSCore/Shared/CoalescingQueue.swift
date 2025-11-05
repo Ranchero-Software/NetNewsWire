@@ -61,12 +61,12 @@ struct QueueCall: Equatable {
 		resetCalls()
 		callsToMake.forEach { $0.perform() }
 	}
-	
+
 	@objc func timerDidFire(_ sender: Any?) {
 		lastCallTime = Date()
 		performCallsImmediately()
 	}
-	
+
 }
 
 private extension CoalescingQueue {

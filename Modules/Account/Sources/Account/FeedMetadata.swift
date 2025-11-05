@@ -41,7 +41,7 @@ final class FeedMetadata: Codable {
 			}
 		}
 	}
-	
+
 	var homePageURL: String? {
 		didSet {
 			if homePageURL != oldValue {
@@ -81,7 +81,7 @@ final class FeedMetadata: Codable {
 			}
 		}
 	}
-	
+
 	var isNotifyAboutNewArticles: Bool? {
 		didSet {
 			if isNotifyAboutNewArticles != oldValue {
@@ -142,7 +142,7 @@ final class FeedMetadata: Codable {
 			}
 		}
 	}
-	
+
 	// Folder Name: Sync Service Relationship ID
 	var folderRelationship: [String: String]? {
 		didSet {

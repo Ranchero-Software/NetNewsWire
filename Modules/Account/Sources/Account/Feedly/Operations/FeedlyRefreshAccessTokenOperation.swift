@@ -16,24 +16,24 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 	let service: OAuthAccessTokenRefreshing
 	let oauthClient: OAuthAuthorizationClient
 	let account: Account
-	
+
 	init(account: Account, service: OAuthAccessTokenRefreshing, oauthClient: OAuthAuthorizationClient) {
 		self.oauthClient = oauthClient
 		self.service = service
 		self.account = account
 	}
-	
+
 	override func run() {
 		let refreshToken: Credentials
-		
+
 		do {
 			guard let credentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
 				Feedly.logger.error("Feedly: Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again")
 				throw TransportError.httpError(status: 403)
 			}
-			
+
 			refreshToken = credentials
-			
+
 		} catch {
 			didFinish(with: error)
 			return
@@ -46,10 +46,10 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 			self.didRefreshAccessToken(result)
 		}
 	}
-	
+
 	private func didRefreshAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
 		assert(Thread.isMainThread)
-		
+
 		switch result {
 		case .success(let grant):
 			do {
@@ -58,16 +58,16 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 				if let token = grant.refreshToken {
 					try account.storeCredentials(token)
 				}
-				
+
 				Feedly.logger.info("Feedly: Storing access token")
 				// Now store the access token because we want the account delegate to use it.
 				try account.storeCredentials(grant.accessToken)
-				
+
 				didFinish()
 			} catch {
 				didFinish(with: error)
 			}
-			
+
 		case .failure(let error):
 			didFinish(with: error)
 		}

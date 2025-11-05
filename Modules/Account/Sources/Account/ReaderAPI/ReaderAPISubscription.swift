@@ -23,7 +23,7 @@ struct ReaderAPIQuickAddResult: Codable {
 	let numResults: Int
 	let error: String?
 	let streamId: String?
-	
+
 	enum CodingKeys: String, CodingKey {
 		case numResults = "numResults"
 		case error = "error"
@@ -33,7 +33,7 @@ struct ReaderAPIQuickAddResult: Codable {
 
 struct ReaderAPISubscriptionContainer: Codable {
 	let subscriptions: [ReaderAPISubscription]
-	
+
 	enum CodingKeys: String, CodingKey {
 		case subscriptions = "subscriptions"
 	}
@@ -84,7 +84,7 @@ struct ReaderAPISubscription: Codable {
 struct ReaderAPICategory: Codable {
 	let categoryId: String
 	let categoryLabel: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case categoryId = "id"
 		case categoryLabel = "label"
@@ -99,13 +99,13 @@ struct ReaderAPICreateSubscription: Codable {
 }
 
 struct ReaderAPISubscriptionChoice: Codable {
-	
+
 	let name: String?
 	let url: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case name = "title"
 		case url = "feed_url"
 	}
-	
+
 }

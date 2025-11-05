@@ -658,9 +658,9 @@ private extension WebViewController {
 			self.showFullScreenImage(image: image, clickMessage: clickMessage, webView: webView)
 		}
 	}
-	
+
 	private func showFullScreenImage(image: UIImage, clickMessage: ImageClickMessage, webView: WKWebView) {
-		
+
 		let y = CGFloat(clickMessage.y) + webView.safeAreaInsets.top
 		let rect = CGRect(x: CGFloat(clickMessage.x), y: y, width: CGFloat(clickMessage.width), height: CGFloat(clickMessage.height))
 		transition.originFrame = webView.convert(rect, to: nil)

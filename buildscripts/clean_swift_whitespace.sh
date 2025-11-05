@@ -19,6 +19,6 @@ file_count=0
 while IFS= read -r -d '' file; do
   "$CLEAN_SCRIPT" "$file"
   ((file_count++))
-done < <(find "$PROJECT_ROOT" -name "*.swift" -type f -print0)
+done < <(find "$PROJECT_ROOT" \( -name ".*" -prune \) -o \( -type f -name "*.swift" -print0 \))
 
 echo "✅ Cleaned $file_count Swift file(s)."

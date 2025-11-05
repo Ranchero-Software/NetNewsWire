@@ -20,57 +20,57 @@ final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIde
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
 	private let newerThan: Date?
-	
+
 	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.newerThan = newerThan
 	}
-	
+
 	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, newerThan: Date?) {
 		let all = FeedlyCategoryResourceId.Global.all(for: userId)
 		self.init(account: account, resource: all, service: service, newerThan: newerThan)
 	}
-	
+
 	var entryIds: Set<String> {
 		return storedUpdatedArticleIds
 	}
-	
+
 	private var storedUpdatedArticleIds = Set<String>()
-	
+
 	override func run() {
 		getStreamIds(nil)
 	}
-	
+
 	private func getStreamIds(_ continuation: String?) {
 		guard let date = newerThan else {
 			Feedly.logger.debug("Feedly: No date provided so everything must be new (nothing is updated)")
 			didFinish()
 			return
 		}
-		
+
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil, completion: didGetStreamIds(_:))
 	}
-	
+
 	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
-		
+
 		switch result {
 		case .success(let streamIds):
 			storedUpdatedArticleIds.formUnion(streamIds.ids)
-			
+
 			guard let continuation = streamIds.continuation else {
 				Feedly.logger.info("Feedly: Articles updated since last successful sync start date: \(self.storedUpdatedArticleIds.count)")
 				didFinish()
 				return
 			}
-			
+
 			getStreamIds(continuation)
-			
+
 		case .failure(let error):
 			didFinish(with: error)
 		}

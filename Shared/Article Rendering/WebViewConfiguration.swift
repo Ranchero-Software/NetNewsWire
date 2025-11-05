@@ -13,7 +13,7 @@ final class WebViewConfiguration {
 
 	static func configuration(with urlSchemeHandler: WKURLSchemeHandler) -> WKWebViewConfiguration {
 		assert(Thread.isMainThread)
-		
+
 		let configuration = WKWebViewConfiguration()
 
 		configuration.preferences = preferences
@@ -46,7 +46,7 @@ private extension WebViewConfiguration {
 
 	static var webpagePreferences: WKWebpagePreferences {
 		assert(Thread.isMainThread)
-		
+
 		let preferences = WKWebpagePreferences()
 		preferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		return preferences

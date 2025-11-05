@@ -13,7 +13,7 @@ struct TimelineCellAppearance: Equatable {
 	let showIcon: Bool
 
 	let cellPadding: NSEdgeInsets
-	
+
 	let feedNameFont: NSFont
 
 	let dateFont: NSFont
@@ -22,7 +22,7 @@ struct TimelineCellAppearance: Equatable {
 	let titleFont: NSFont
 	let titleBottomMargin: CGFloat = 1.0
 	let titleNumberOfLines = 3
-	
+
 	let textFont: NSFont
 
 	let textOnlyFont: NSFont
@@ -55,7 +55,7 @@ struct TimelineCellAppearance: Equatable {
 		self.textOnlyFont = NSFont.systemFont(ofSize: largeItemFontSize)
 
 		self.showIcon = showIcon
-		
+
 		cellPadding = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 10.0, right: 4.0)
 
 		let margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight

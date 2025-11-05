@@ -16,7 +16,7 @@ enum FontSize: Int {
 }
 
 final class AppDefaults {
-	
+
 	static let defaultThemeName = "Default"
 
 	static let shared = AppDefaults()
@@ -63,7 +63,7 @@ final class AppDefaults {
 		}
 		return false
 	}()
-	
+
 	var isFirstRun: Bool = {
 		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
 			return false
@@ -101,7 +101,7 @@ final class AppDefaults {
 			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
 		}
 	}
-	
+
 	var openInBrowserInBackground: Bool {
 		get {
 			return AppDefaults.bool(for: Key.openInBrowserInBackground)
@@ -167,7 +167,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
 		}
 	}
-	
+
 	var addFeedFolderName: String? {
 		get {
 			return AppDefaults.string(for: Key.addFeedFolderName)
@@ -185,7 +185,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
 		}
 	}
-	
+
 	var importOPMLAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.importOPMLAccountID)
@@ -194,7 +194,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.importOPMLAccountID, newValue)
 		}
 	}
-	
+
 	var exportOPMLAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.exportOPMLAccountID)
@@ -212,7 +212,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.defaultBrowserID, newValue)
 		}
 	}
-	
+
 	var currentThemeName: String? {
 		get {
 			return AppDefaults.string(for: Key.currentThemeName)
@@ -221,7 +221,7 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.currentThemeName, newValue)
 		}
 	}
-	
+
 	var showTitleOnMainWindow: Bool {
 		return AppDefaults.bool(for: Key.showTitleOnMainWindow)
 	}
@@ -256,7 +256,7 @@ final class AppDefaults {
 			AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
 		}
 	}
-	
+
 	var webInspectorStartsAttached: Bool {
 		get {
 			return AppDefaults.bool(for: Key.webInspectorStartsAttached)
@@ -274,7 +274,7 @@ final class AppDefaults {
 			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
 		}
 	}
-	
+
 	var timelineGroupByFeed: Bool {
 		get {
 			return AppDefaults.bool(for: Key.timelineGroupByFeed)
@@ -283,7 +283,7 @@ final class AppDefaults {
 			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
 		}
 	}
-	
+
 	var timelineShowsSeparators: Bool {
 		return AppDefaults.bool(for: Key.timelineShowsSeparators)
 	}
@@ -391,19 +391,19 @@ private extension AppDefaults {
 //		}
 //		return FontSize(rawValue: rawFontSize)!
 	}
-	
+
 	static func setFontSize(for key: String, _ fontSize: FontSize) {
 		setInt(for: key, fontSize.rawValue)
 	}
-	
+
 	static func string(for key: String) -> String? {
 		return UserDefaults.standard.string(forKey: key)
 	}
-	
+
 	static func setString(for key: String, _ value: String?) {
 		UserDefaults.standard.set(value, forKey: key)
 	}
-	
+
 	static func bool(for key: String) -> Bool {
 		return UserDefaults.standard.bool(forKey: key)
 	}
@@ -415,11 +415,11 @@ private extension AppDefaults {
 	static func int(for key: String) -> Int {
 		return UserDefaults.standard.integer(forKey: key)
 	}
-	
+
 	static func setInt(for key: String, _ x: Int) {
 		UserDefaults.standard.set(x, forKey: key)
 	}
-	
+
 	static func date(for key: String) -> Date? {
 		return UserDefaults.standard.object(forKey: key) as? Date
 	}

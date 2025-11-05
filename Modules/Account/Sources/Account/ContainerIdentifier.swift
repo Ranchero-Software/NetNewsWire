@@ -16,7 +16,7 @@ public enum ContainerIdentifier: Hashable, Equatable {
 	case smartFeedController
 	case account(String) // accountID
 	case folder(String, String) // accountID, folderName
-	
+
 	public var userInfo: [AnyHashable: AnyHashable] {
 		switch self {
 		case .smartFeedController:
@@ -36,10 +36,10 @@ public enum ContainerIdentifier: Hashable, Equatable {
 			]
 		}
 	}
-	
+
 	public init?(userInfo: [AnyHashable: AnyHashable]) {
 		guard let type = userInfo["type"] as? String else { return nil }
-		
+
 		switch type {
 		case "smartFeedController":
 			self = ContainerIdentifier.smartFeedController
@@ -53,7 +53,7 @@ public enum ContainerIdentifier: Hashable, Equatable {
 			return nil
 		}
 	}
-	
+
 }
 
 extension ContainerIdentifier: Encodable {
@@ -80,11 +80,11 @@ extension ContainerIdentifier: Encodable {
 }
 
 extension ContainerIdentifier: Decodable {
-	
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 		let type =  try container.decode(String.self, forKey: .type)
-		
+
 		switch type {
 		case "smartFeedController":
 			self = .smartFeedController
@@ -97,5 +97,5 @@ extension ContainerIdentifier: Decodable {
 			self = .folder(accountID, folderName)
 		}
     }
-	
+
 }

@@ -15,7 +15,7 @@ final class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
 
     let author:Author
     let container:ScriptingObjectContainer
-    
+
     init (_ author:Author, container:ScriptingObjectContainer) {
         self.author = author
         self.container = container
@@ -44,14 +44,14 @@ final class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
     var scriptingUniqueId:Any {
         return author.authorID
     }
-    
+
     // MARK: --- Scriptable properties ---
-    
+
     @objc(url)
     var url:String  {
         return self.author.url ?? ""
     }
-    
+
     @objc(name)
     var name:String  {
         return self.author.name ?? ""

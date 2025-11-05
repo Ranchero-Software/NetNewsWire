@@ -21,7 +21,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 		case icloud
 		case web
 		case selfhosted
-		
+
 		var sectionHeader: String {
 			switch self {
 			case .local:
@@ -34,7 +34,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 				return NSLocalizedString("Self-hosted", comment: "Self hosted Account")
 			}
 		}
-		
+
 		var sectionFooter: String {
 			switch self {
 			case .local:
@@ -47,7 +47,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 				return NSLocalizedString("Self-hosted accounts sync your feeds across all your devices", comment: "Self hosted Account")
 			}
 		}
-		
+
 		var sectionContent: [AccountType] {
 			switch self {
 			case .local:
@@ -65,7 +65,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			}
 		}
 	}
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 	}
@@ -73,27 +73,27 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		return AddAccountSections.allCases.count
 	}
-	
+
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		if section == AddAccountSections.local.rawValue {
 			return AddAccountSections.local.sectionContent.count
 		}
-		
+
 		if section == AddAccountSections.icloud.rawValue {
 			return AddAccountSections.icloud.sectionContent.count
 		}
-		
+
 		if section == AddAccountSections.web.rawValue {
 			return AddAccountSections.web.sectionContent.count
 		}
-		
+
 		if section == AddAccountSections.selfhosted.rawValue {
 			return AddAccountSections.selfhosted.sectionContent.count
 		}
 
 		return 0
 	}
-	
+
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		switch section {
 		case AddAccountSections.local.rawValue:
@@ -108,7 +108,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			return nil
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
 		switch section {
 		case AddAccountSections.local.rawValue:
@@ -123,10 +123,10 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			return nil
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsComboTableViewCell
-		
+
 		switch indexPath.section {
 		case AddAccountSections.local.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.local.sectionContent[indexPath.row].localizedAccountName()
@@ -149,15 +149,15 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 		case AddAccountSections.selfhosted.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.selfhosted.sectionContent[indexPath.row].localizedAccountName()
 			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.selfhosted.sectionContent[indexPath.row])
-			
+
 		default:
 			return cell
 		}
 		return cell
 	}
-	
+
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		
+
 		switch indexPath.section {
 		case AddAccountSections.local.rawValue:
 			let type = AddAccountSections.local.sectionContent[indexPath.row]
@@ -175,7 +175,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			return
 		}
 	}
-	
+
 	private func presentController(for accountType: AccountType) {
 		switch accountType {
 		case .onMyMac:
@@ -216,15 +216,15 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			present(navController, animated: true)
 		}
 	}
-	
+
 	func dismiss() {
 		navigationController?.popViewController(animated: false)
 	}
-	
+
 }
 
 extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
-	
+
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
 		let rootViewController = view.window?.rootViewController
 
@@ -241,7 +241,7 @@ extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
 
 		dismiss()
 	}
-	
+
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
 		presentError(error)
 	}

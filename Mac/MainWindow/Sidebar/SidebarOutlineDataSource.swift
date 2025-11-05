@@ -46,7 +46,7 @@ import Account
 		guard var pasteboardWriter = (node.representedObject as? PasteboardWriterOwner)?.pasteboardWriter else {
 			return nil
 		}
-		
+
 		// Feed objects don't have knowledge of their parent so we inject parent container information
 		// into FeedPasteboardWriter instance and it adds this field to the PasteboardFeed objects it writes.
 		// Add similar to FolderPasteboardWriter if/when we allow sub-folders
@@ -76,7 +76,7 @@ import Account
 				return validateLocalFoldersDrop(outlineView, draggedFolders, parentNode, index)
 			}
 		}
-		
+
 		if let draggedFeeds = draggedFeeds {
 			let contentsType = draggedFeedContentsType(draggedFeeds)
 
@@ -96,7 +96,7 @@ import Account
 
 		return SidebarOutlineDataSource.dragOperationNone
 	}
-	
+
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
 		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
 		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
@@ -108,7 +108,7 @@ import Account
 		if let draggedFolders = draggedFolders {
 			return acceptLocalFoldersDrop(outlineView, draggedFolders, parentNode, index)
 		}
-		
+
 		if let draggedFeeds = draggedFeeds {
 			let contentsType = draggedFeedContentsType(draggedFeeds)
 
@@ -124,7 +124,7 @@ import Account
 				return false
 			}
 		}
-		
+
 		return false
 	}
 }
@@ -236,7 +236,7 @@ private extension SidebarOutlineDataSource {
 		}
 		return localDragOperation(parentNode: parentNode, draggedFeeds)
 	}
-	
+
 	func localDragOperation(parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>)-> NSDragOperation {
 		guard let firstDraggedFeed = draggedFeeds.first else { return .move }
 		if sameAccount(firstDraggedFeed, parentNode) {
@@ -282,7 +282,7 @@ private extension SidebarOutlineDataSource {
 		}
 		return false
 	}
-	
+
 	func validateLocalFolderDrop(_ outlineView: NSOutlineView, _ draggedFolder: PasteboardFolder, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		guard let dropAccount = parentNode.representedObject as? Account, dropAccount.accountID != draggedFolder.accountID else {
 			return SidebarOutlineDataSource.dragOperationNone
@@ -296,7 +296,7 @@ private extension SidebarOutlineDataSource {
 		}
 		return .copy	// different AccountIDs means can only copy 
 	}
-	
+
 	func validateLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		guard let dropAccount = parentNode.representedObject as? Account else {
 			return SidebarOutlineDataSource.dragOperationNone
@@ -314,7 +314,7 @@ private extension SidebarOutlineDataSource {
 		}
 		return .copy	// different AccountIDs means can only copy
 	}
-	
+
 	func copyFeedInAccount(_ feed: Feed, _ destination: Container ) {
 		destination.account?.addFeed(feed, to: destination) { result in
 			switch result {
@@ -325,7 +325,7 @@ private extension SidebarOutlineDataSource {
 			}
 		}
 	}
-	
+
 	func moveFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
 		BatchUpdate.shared.start()
 		source.account?.moveFeed(feed, from: source, to: destination) { result in
@@ -338,12 +338,12 @@ private extension SidebarOutlineDataSource {
 			}
 		}
 	}
-	
+
 	func copyFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
 		guard let destinationAccount = destinationContainer.account  else {
 			return
 		}
-		
+
 		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
@@ -369,7 +369,7 @@ private extension SidebarOutlineDataSource {
 		guard draggedFeeds.isEmpty == false else {
 			return false
 		}
-		
+
 		draggedFeeds.forEach { pasteboardFeed in
 			guard let sourceAccountID = pasteboardFeed.accountID,
 				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
@@ -379,7 +379,7 @@ private extension SidebarOutlineDataSource {
 			else {
 				return
 			}
-			
+
 			var sourceContainer: Container = sourceAccount				// default to top level,
 			if let containerName = pasteboardFeed.containerName {		// then check if have folder info to use instead.
 				if let folderContainer = sourceAccount.existingFolder(with: containerName ) {
@@ -388,7 +388,7 @@ private extension SidebarOutlineDataSource {
 					sourceContainer = folderContainer
 				}
 			}
-			
+
 			if sameAccount(pasteboardFeed, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
 					copyFeedInAccount(feed, destinationContainer)
@@ -399,7 +399,7 @@ private extension SidebarOutlineDataSource {
 				copyFeedBetweenAccounts(feed, destinationContainer)
 			}
 		}
-		
+
 		return true
 	}
 
@@ -434,12 +434,12 @@ private extension SidebarOutlineDataSource {
 		}
 		return ancestorThatCanAcceptNonLocalFeed(parentNode)
 	}
-	
+
 	func copyFolderBetweenAccounts(folder: Folder, to parentNode: Node) {
 		guard let destinationAccount = nodeAccount(parentNode) else {
 			return
 		}
-		
+
 		destinationAccount.addFolder(folder.name ?? "") { result in
 			switch result {
 			case .success(let destinationFolder):
@@ -488,7 +488,7 @@ private extension SidebarOutlineDataSource {
 				copyFolderBetweenAccounts(folder: folder, to: parentNode)
 			}
 		}
-		
+
 		return true
 	}
 
@@ -505,7 +505,7 @@ private extension SidebarOutlineDataSource {
 			let folder = parentNode.representedObject as? Folder
 			appDelegate.addFeed(draggedFeed.url, name: draggedFeed.editedName ?? draggedFeed.name, account: account, folder: folder)
 		}
-		
+
 		return true
 	}
 
@@ -524,14 +524,14 @@ private extension SidebarOutlineDataSource {
 		}
 		return false
 	}
-	
+
 	func sameAccount(_ pasteboardFeed: PasteboardFeed, _ parentNode: Node) -> Bool {
 		if let accountID = pasteboardFeed.accountID {
 			return sameAccount(accountID, parentNode)
 		}
 		return false
 	}
-	
+
 	func sameAccount(_ pasteboardFolder: PasteboardFolder, _ parentNode: Node) -> Bool {
 		if let accountID = pasteboardFolder.accountID {
 			return sameAccount(accountID, parentNode)
@@ -547,7 +547,7 @@ private extension SidebarOutlineDataSource {
 		}
 		return false
 	}
-	
+
 	func nodeAccount(_ node: Node) -> Account? {
 		if let account = node.representedObject as? Account {
 			return account
@@ -560,11 +560,11 @@ private extension SidebarOutlineDataSource {
 		}
 
 	}
-	
+
 	func nodeAccountID(_ node: Node) -> String? {
 		return nodeAccount(node)?.accountID
 	}
-	
+
 	func nodeHasChildRepresentingAnyDraggedFeed(_ parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		for node in parentNode.childNodes {
 			if nodeRepresentsAnyDraggedFeed(node, draggedFeeds) {
@@ -577,7 +577,7 @@ private extension SidebarOutlineDataSource {
 	func violatesAccountSpecificBehavior(_ dropTargetNode: Node, _ draggedFeed: PasteboardFeed) -> Bool {
 		return violatesAccountSpecificBehavior(dropTargetNode, Set([draggedFeed]))
 	}
-	
+
 	func violatesAccountSpecificBehavior(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> Bool {
 		if violatesDisallowFeedInRootFolder(dropTargetNode) {
 			return true
@@ -586,23 +586,23 @@ private extension SidebarOutlineDataSource {
 		if violatesDisallowFeedCopyInRootFolder(dropTargetNode, draggedFeeds) {
 			return true
 		}
-		
+
 		if violatesDisallowFeedInMultipleFolders(dropTargetNode, draggedFeeds) {
 			return true
 		}
-		
+
 		return false
 	}
-	
+
 	func violatesDisallowFeedInRootFolder(_ dropTargetNode: Node) -> Bool {
 		guard let parentAccount = nodeAccount(dropTargetNode), parentAccount.behaviors.contains(.disallowFeedInRootFolder) else {
 			return false
 		}
-		
+
 		if dropTargetNode.representedObject is Account {
 			return true
 		}
-		
+
 		return false
 	}
 
@@ -610,17 +610,17 @@ private extension SidebarOutlineDataSource {
 		guard let dropTargetAccount = nodeAccount(dropTargetNode), dropTargetAccount.behaviors.contains(.disallowFeedCopyInRootFolder) else {
 			return false
 		}
-		
+
 		for draggedFeed in draggedFeeds {
 			if dropTargetAccount.accountID != draggedFeed.accountID {
 				return false
 			}
 		}
-		
+
 		if dropTargetNode.representedObject is Account && (NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false) {
 			return true
 		}
-		
+
 		return false
 	}
 
@@ -628,7 +628,7 @@ private extension SidebarOutlineDataSource {
 		guard let dropTargetAccount = nodeAccount(dropTargetNode), dropTargetAccount.behaviors.contains(.disallowFeedInMultipleFolders) else {
 			return false
 		}
-		
+
 		for draggedFeed in draggedFeeds {
 			if dropTargetAccount.accountID == draggedFeed.accountID {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
@@ -640,7 +640,7 @@ private extension SidebarOutlineDataSource {
 				}
 			}
 		}
-		
+
 		return false
 	}
 
@@ -660,7 +660,7 @@ private extension SidebarOutlineDataSource {
 		let draggedFolderNode = Node(representedObject: draggedFolderWrapper, parent: nil)
 		draggedFolderNode.canHaveChildNodes = true
 		let nodes = parentNode.childNodes + [draggedFolderNode]
-		
+
 		// Revisit if the tree controller can ever be sorted in some other way.
 		let sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
 		let index = sortedNodes.firstIndex(of: draggedFolderNode)!
@@ -681,12 +681,12 @@ final class PasteboardFeedObjectWrapper: DisplayNameProvider {
 }
 
 final class PasteboardFolderObjectWrapper: DisplayNameProvider {
-	
+
 	var nameForDisplay: String {
 		return pasteboardFolder.name
 	}
 	let pasteboardFolder: PasteboardFolder
-	
+
 	init(pasteboardFolder: PasteboardFolder) {
 		self.pasteboardFolder = pasteboardFolder
 	}

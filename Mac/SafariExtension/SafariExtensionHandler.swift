@@ -70,7 +70,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 			}
 		}
     }
-    
+
     override func toolbarItemClicked(in window: SFSafariWindow) {
 		window.getActiveTab { (activeTab) in
 			activeTab?.getActivePage(completionHandler: { (activePage) in

@@ -12,17 +12,17 @@ import RSParser
 private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
 
 final class HTMLFeedFinder {
-	
+
 	var feedSpecifiers: Set<FeedSpecifier> {
 		return Set(feedSpecifiersDictionary.values)
 	}
-	
+
 	private var feedSpecifiersDictionary = [String: FeedSpecifier]()
-	
+
 	init(parserData: ParserData) {
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
 		var orderFound = 0
-		
+
 		for oneFeedLink in metadata.feedLinks {
 			if let oneURLString = oneFeedLink.urlString?.normalizedURL {
 				orderFound = orderFound + 1

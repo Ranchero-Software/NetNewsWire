@@ -15,15 +15,15 @@ protocol AddFeedFolderViewControllerDelegate {
 }
 
 final class AddFeedFolderViewController: UITableViewController {
-	
+
 	var delegate: AddFeedFolderViewControllerDelegate?
 	var initialContainer: Container?
-	
+
 	var containers = [Container]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+
 		let sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
 
 		for account in sortedActiveAccounts {
@@ -53,15 +53,15 @@ final class AddFeedFolderViewController: UITableViewController {
 				return tableView.dequeueReusableCell(withIdentifier: "FolderCell", for: indexPath) as! AddComboTableViewCell
 			}
 		}()
-		
+
 		if let smallIconProvider = container as? SmallIconProvider {
 			cell.icon?.image = smallIconProvider.smallIcon?.image
 		}
-		
+
 		if let displayNameProvider = container as? DisplayNameProvider {
 			cell.label?.text = displayNameProvider.nameForDisplay
 		}
-		
+
 		if let compContainer = initialContainer, container === compContainer {
 			cell.accessoryType = .checkmark
 		} else {
@@ -73,7 +73,7 @@ final class AddFeedFolderViewController: UITableViewController {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		let container = containers[indexPath.row]
-		
+
 		if let account = container as? Account, account.behaviors.contains(.disallowFeedInRootFolder) {
 			tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
 		} else {
@@ -83,19 +83,19 @@ final class AddFeedFolderViewController: UITableViewController {
 			dismiss()
 		}
 	}
-	
+
 	// MARK: Actions
-	
+
 	@IBAction func cancel(_ sender: Any) {
 		dismiss()
 	}
-	
+
 }
 
 private extension AddFeedFolderViewController {
-	
+
 	func dismiss() {
 		dismiss(animated: true)
 	}
-	
+
 }

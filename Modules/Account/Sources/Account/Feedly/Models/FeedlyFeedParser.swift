@@ -12,20 +12,20 @@ struct FeedlyFeedParser {
 	let feed: FeedlyFeed
 
 	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
-	
+
 	var title: String? {
 		return rightToLeftTextSantizer.sanitize(feed.title) ?? ""
 	}
-	
+
 	var feedID: String {
 		return feed.id
 	}
-	
+
 	var url: String {
 		let resource = FeedlyFeedResourceId(id: feed.id)
 		return resource.url
 	}
-	
+
 	var homePageURL: String? {
 		return feed.website
 	}

@@ -10,7 +10,7 @@
 import AppKit
 
 extension NSAppearance {
-	
+
 	@objc(rsIsDarkMode)
 	public var isDarkMode: Bool {
 		if #available(macOS 10.14, *) {

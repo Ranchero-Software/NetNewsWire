@@ -247,7 +247,7 @@ private extension MainThreadOperationQueue {
 		guard !operationIDs.isEmpty else {
 			return
 		}
-		
+
 		let operationIDsToCancel = operationIDsByAddingChildOperationIDs(operationIDs)
 		setCanceledAndRemoveDelegate(for: operationIDsToCancel)
 		callCompletionBlockForOperationIDs(operationIDsToCancel)

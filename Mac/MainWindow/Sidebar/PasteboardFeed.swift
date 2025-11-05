@@ -67,7 +67,7 @@ struct PasteboardFeed: Hashable {
 		if let accountTypeString = dictionary[Key.accountType], let accountTypeInt = Int(accountTypeString) {
 			accountType = AccountType(rawValue: accountTypeInt)
 		}
-		
+
 		let containerName = dictionary[Key.containerName]
 		self.init(url: url, feedID: feedID, homePageURL: homePageURL, name: name, editedName: editedName, accountID: accountID, accountType: accountType, containerName: containerName)
 	}

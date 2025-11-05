@@ -13,15 +13,15 @@ protocol MainFeedCollectionHeaderReusableViewDelegate: AnyObject {
 }
 
 class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
-	
+
 	var delegate: MainFeedCollectionHeaderReusableViewDelegate?
-	
+
 	@IBOutlet weak var headerTitle: UILabel!
 	@IBOutlet weak var disclosureIndicator: UIImageView!
 	@IBOutlet weak var unreadCountLabel: UILabel!
 	private var unreadLabelWidthConstraint: NSLayoutConstraint?
-	
-	
+
+
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -43,10 +43,10 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 			return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
 		}
 	}
-	
-	
+
+
 	private var _unreadCount: Int = 0
-	
+
 	var unreadCount: Int {
 		get {
 			return _unreadCount
@@ -57,14 +57,14 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 			unreadCountLabel.text = newValue.formatted()
 		}
 	}
-	
+
 	var disclosureExpanded = true {
 		didSet {
 			updateExpandedState(animate: true)
 			updateUnreadCount()
 		}
 	}
-	
+
 	override func awakeFromNib() {
 		super.awakeFromNib()
 		unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 80)
@@ -72,35 +72,35 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 		configureUI()
 		addTapGesture()
 	}
-	
+
 	func configureUI() {
 		headerTitle.textColor = traitCollection.userInterfaceIdiom == .pad ? .tertiaryLabel : .label
 	}
-	
+
 	private func addTapGesture() {
 		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(containerHeaderTapped))
 		self.addGestureRecognizer(tapGesture)
 		self.isUserInteractionEnabled = true
 	}
-	
+
 	@objc private func containerHeaderTapped() {
 		delegate?.mainFeedCollectionHeaderReusableViewDidTapDisclosureIndicator(self)
 	}
-		
+
 	func configureContainer(withTitle title: String) {
 		headerTitle.text = title
 		disclosureIndicator.transform = .identity
 	}
-	
+
 	func updateExpandedState(animate: Bool) {
-	
+
 		if disclosureExpanded == false {
 			unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 80)
 		} else {
 			unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 0)
 			unreadLabelWidthConstraint?.isActive = false
 		}
-		
+
 		let angle: CGFloat = disclosureExpanded ? 0 : -.pi / 2
 		let transform = CGAffineTransform(rotationAngle: angle)
 		let animations = {
@@ -112,7 +112,7 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 			animations()
 		}
 	}
-	
+
 	func updateUnreadCount() {
 		if !disclosureExpanded && unreadCount > 0 {
 			UIView.animate(withDuration: 0.3) {
@@ -124,5 +124,5 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 			}
 		}
 	}
-	
+
 }

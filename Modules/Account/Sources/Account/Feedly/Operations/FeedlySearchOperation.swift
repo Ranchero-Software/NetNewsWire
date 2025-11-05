@@ -30,7 +30,7 @@ final class FeedlySearchOperation: FeedlyOperation {
 		self.locale = locale
 		self.searchService = service
 	}
-	
+
 	override func run() {
 		searchService.getFeeds(for: query, count: 1, locale: locale.identifier) { result in
 			switch result {
@@ -38,7 +38,7 @@ final class FeedlySearchOperation: FeedlyOperation {
 				assert(Thread.isMainThread)
 				self.searchDelegate?.feedlySearchOperation(self, didGet: response)
 				self.didFinish()
-				
+
 			case .failure(let error):
 				self.didFinish(with: error)
 			}

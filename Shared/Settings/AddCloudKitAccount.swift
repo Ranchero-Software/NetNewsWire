@@ -15,13 +15,13 @@ import UIKit
 #endif
 
 enum AddCloudKitAccountError: LocalizedError, RecoverableError {
-	
+
 	case iCloudDriveMissing
 
 	var errorDescription: String? {
 		NSLocalizedString("Can’t Add iCloud Account", comment: "CloudKit account setup failure description — iCloud Drive not enabled.")
 	}
-	
+
 	var recoverySuggestion: String? {
 		#if os(macOS)
 		NSLocalizedString("Open System Settings to configure iCloud and enable iCloud Drive.", comment: "CloudKit account setup recovery suggestion")
@@ -29,7 +29,7 @@ enum AddCloudKitAccountError: LocalizedError, RecoverableError {
 		NSLocalizedString("Open Settings to configure iCloud and enable iCloud Drive.", comment: "CloudKit account setup recovery suggestion")
 		#endif
 	}
-	
+
 	var recoveryOptions: [String] {
 		#if os(macOS)
 		[NSLocalizedString("Open System Settings", comment: "Open System Settings button"), NSLocalizedString("Cancel", comment: "Cancel button")]
@@ -37,7 +37,7 @@ enum AddCloudKitAccountError: LocalizedError, RecoverableError {
 		[NSLocalizedString("Open Settings", comment: "Open Settings button"), NSLocalizedString("Cancel", comment: "Cancel button")]
 		#endif
 	}
-	
+
 	func attemptRecovery(optionIndex recoveryOptionIndex: Int) -> Bool {
 		guard recoveryOptionIndex == 0 else {
 			return false

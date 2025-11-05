@@ -139,7 +139,7 @@ public final class RSAppMovementMonitor: NSObject {
 		let quitAlert = NSAlert()
 		quitAlert.alertStyle = .critical
 		quitAlert.addButton(withTitle: self.alertRelaunchButtonText)
-		
+
 		quitAlert.messageText = self.alertMessageText
 		quitAlert.informativeText = self.alertInformativeText
 

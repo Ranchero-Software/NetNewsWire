@@ -13,7 +13,7 @@ import RSCore
 final class AccountMetadataFile {
 	private let fileURL: URL
 	private let account: Account
-	
+
 	private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
@@ -26,11 +26,11 @@ final class AccountMetadataFile {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
-	
+
 	func markAsDirty() {
 		isDirty = true
 	}
-	
+
 	func load() {
 		if let fileData = try? Data(contentsOf: fileURL) {
 			let decoder = PropertyListDecoder()
@@ -38,10 +38,10 @@ final class AccountMetadataFile {
 		}
 		account.metadata.delegate = account
 	}
-	
+
 	func save() {
 		guard !account.isDeleted else { return }
-		
+
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
 
@@ -52,7 +52,7 @@ final class AccountMetadataFile {
 			Self.logger.error("AccountMetadataFile accountID: \(self.account.accountID) save to disk failed: \(error.localizedDescription)")
 		}
 	}
-	
+
 }
 
 private extension AccountMetadataFile {

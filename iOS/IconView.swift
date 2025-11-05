@@ -47,11 +47,11 @@ final class IconView: UIView {
 	private var isSymbolImage: Bool {
 		return iconImage?.isSymbol ?? false
 	}
-	
+
 	private var isBackgroundSuppressed: Bool {
 		return iconImage?.isBackgroundSuppressed ?? false
 	}
-	
+
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		commonInit()
@@ -61,7 +61,7 @@ final class IconView: UIView {
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	convenience init() {
 		self.init(frame: .zero)
 	}

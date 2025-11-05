@@ -13,21 +13,21 @@ final class AccountsAddLocalWindowController: NSWindowController {
 
 	@IBOutlet private weak var nameTextField: NSTextField!
 	@IBOutlet private weak var localAccountNameTextField: NSTextField!
-	
+
 	private weak var hostWindow: NSWindow?
 
 	convenience init() {
 		self.init(windowNibName: NSNib.Name("AccountsAddLocal"))
 	}
-	
+
 	override func windowDidLoad() {
 		super.windowDidLoad()
-		
+
 		localAccountNameTextField.stringValue = NSLocalizedString("Create a local account on your Mac.", comment: "Account Local")
 	}
-	
+
 	// MARK: API
-	
+
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
 		guard let window else {
 			return
@@ -38,11 +38,11 @@ final class AccountsAddLocalWindowController: NSWindowController {
 	}
 
 	// MARK: Actions
-	
+
 	@IBAction func cancel(_ sender: Any) {
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
 	}
-	
+
 	@IBAction func create(_ sender: Any) {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		if !nameTextField.stringValue.isEmpty {
@@ -50,5 +50,5 @@ final class AccountsAddLocalWindowController: NSWindowController {
 		}
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 	}
-	
+
 }

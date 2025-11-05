@@ -9,7 +9,7 @@
 import Foundation
 
 enum WidgetDeepLink {
-	
+
 	case unread
 	case unreadArticle(id: String)
 	case today
@@ -17,7 +17,7 @@ enum WidgetDeepLink {
 	case starred
 	case starredArticle(id: String)
 	case icon
-	
+
 	var url: URL {
 		switch self {
 		case .unread:
@@ -42,5 +42,5 @@ enum WidgetDeepLink {
 			return URL(string: "nnw://icon")!
 		}
 	}
-	
+
 }

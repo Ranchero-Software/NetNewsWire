@@ -9,7 +9,7 @@
 import UIKit
 
 struct ArticleThemeImporter {
-	
+
 	static func importTheme(controller: UIViewController, url: URL) throws {
 		let theme = try ArticleTheme(url: url, isAppTheme: false)
 
@@ -20,10 +20,10 @@ struct ArticleThemeImporter {
 		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.creatorHomePage) as String
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		
+
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
-		
+
 		if let websiteURL = URL(string: theme.creatorHomePage) {
 			let visitSiteTitle = NSLocalizedString("Show Website", comment: "Show Website")
 			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { action in
@@ -71,32 +71,32 @@ struct ArticleThemeImporter {
 			} else {
 				importTheme()
 			}
-			
+
 		}
-		
+
 		alertController.addAction(installThemeAction)
 		alertController.preferredAction = installThemeAction
 
 		controller.present(alertController, animated: true)
 
 	}
-	
+
 }
 
 private extension ArticleThemeImporter {
-	
+
 	static func confirmImportSuccess(controller: UIViewController, themeName: String) {
 		let title = NSLocalizedString("Theme installed", comment: "Theme installed")
-		
+
 		let localizedMessageText = NSLocalizedString("The theme “%@” has been installed.", comment: "Theme installed")
 		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		
+
 		let doneTitle = NSLocalizedString("Done", comment: "Done")
 		alertController.addAction(UIAlertAction(title: doneTitle, style: .default))
-		
+
 		controller.present(alertController, animated: true)
 	}
-	
+
 }

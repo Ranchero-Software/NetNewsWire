@@ -13,7 +13,7 @@ public final class WebViewWindowController: NSWindowController {
 
 	@IBOutlet private var webview: WKWebView!
 	private var title: String!
-    
+
 	public convenience init(title: String) {
         self.init(window: nil)
 		self.title = title

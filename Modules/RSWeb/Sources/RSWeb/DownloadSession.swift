@@ -59,7 +59,7 @@ struct HTTP4xxResponse {
 		self.delegate = delegate
 
 		super.init()
-		
+
 		let sessionConfiguration = URLSessionConfiguration.ephemeral
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 15.0
@@ -75,7 +75,7 @@ struct HTTP4xxResponse {
 
 		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)		
 	}
-	
+
 	deinit {
 		urlSession.invalidateAndCancel()
 	}
@@ -192,7 +192,7 @@ extension DownloadSession: URLSessionDataDelegate {
 		addDataTaskFromQueueIfNecessary()
 		completionHandler(.allow)
 	}
-	
+
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 
 		guard let info = infoForTask(dataTask) else {
@@ -490,7 +490,7 @@ extension URLSessionTask {
 // MARK: - DownloadInfo
 
 private final class DownloadInfo {
-	
+
 	let url: URL
 	let data = NSMutableData()
 	var urlResponse: URLResponse?
@@ -499,9 +499,9 @@ private final class DownloadInfo {
 
 		self.url = url
 	}
-	
+
 	func addData(_ d: Data) {
-		
+
 		data.append(d)
 	}
 }

@@ -15,15 +15,15 @@ import RSTree
 import UniformTypeIdentifiers
 
 final class ShareViewController: SLComposeServiceViewController, ShareFolderPickerControllerDelegate {
-	
+
 	private var url: URL?
 	private var extensionContainers: ExtensionContainers?
 	private var flattenedContainers: [ExtensionContainer]!
 	private var selectedContainer: ExtensionContainer?
 	private var folderItem: SLComposeSheetConfigurationItem!
-	
+
 	override func viewDidLoad() {
-		
+
 		extensionContainers = ExtensionContainersFile.read()
 		flattenedContainers = extensionContainers?.flattened ?? [ExtensionContainer]()
 		if let extensionContainers = extensionContainers {
@@ -92,15 +92,15 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 				return
 			})
 		}
-		
+
 		// Reddit in particular doesn't pass the URL correctly and instead puts it in the contentText
 		url = URL(string: contentText)
 	}
-	
+
 	override func isContentValid() -> Bool {
 		return url != nil && selectedContainer != nil
 	}
-	
+
 	override func didSelectPost() {
 		guard let url = url, let selectedContainer = selectedContainer, let containerID = selectedContainer.containerID else {
 			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
@@ -111,13 +111,13 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 		if !contentText.mayBeURL {
 			name = contentText.isEmpty ? nil : contentText
 		}
-		
+
 		let request = ExtensionFeedAddRequest(name: name, feedURL: url, destinationContainerID: containerID)
 		ExtensionFeedAddRequestFile.save(request)
-		
+
 		self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 	}
-	
+
 	func shareFolderPickerDidSelect(_ container: ExtensionContainer) {
 		ShareDefaultContainer.saveDefaultContainer(container)
 		self.selectedContainer = container
@@ -126,37 +126,37 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	}
 
 	override func configurationItems() -> [Any]! {
-		
+
 		// To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
 		guard let urlItem = SLComposeSheetConfigurationItem() else { return nil }
 		urlItem.title = "URL"
 		urlItem.value = url?.absoluteString ?? ""
-		
+
 		folderItem = SLComposeSheetConfigurationItem()
 		folderItem.title = "Folder"
 		updateFolderItemValue()
-		
+
 		folderItem.tapHandler = {
-			
+
 			let folderPickerController = ShareFolderPickerController()
-			
+
 			folderPickerController.navigationController?.title = NSLocalizedString("Folder", comment: "Folder")
 			folderPickerController.delegate = self
 			folderPickerController.containers = self.flattenedContainers
 			folderPickerController.selectedContainerID = self.selectedContainer?.containerID
-			
+
 			self.pushConfigurationViewController(folderPickerController)
-			
+
 		}
-		
+
 		return [folderItem!, urlItem]
-		
+
 	}
-	
+
 }
 
 private extension ShareViewController {
-	
+
 	func updateFolderItemValue() {
 		if let account = selectedContainer as? ExtensionAccount {
 			self.folderItem.value = account.name
@@ -164,5 +164,5 @@ private extension ShareViewController {
 			self.folderItem.value = "\(folder.accountName) / \(folder.name)"
 		}
 	}
-	
+
 }

@@ -17,7 +17,7 @@ final class WebViewProvider: NSObject {
 	private let articleIconSchemeHandler: ArticleIconSchemeHandler
 	private let operationQueue = MainThreadOperationQueue()
 	private var queue = NSMutableArray()
-	
+
 	init(coordinator: SceneCoordinator) {
 		articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 		super.init()
@@ -27,12 +27,12 @@ final class WebViewProvider: NSObject {
 	func replenishQueueIfNeeded() {
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
 	}
-	
+
 	func dequeueWebView(completion: @escaping (PreloadedWebView) -> ()) {
 		operationQueue.add(WebViewProviderDequeueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler, completion: completion))
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
 	}
-	
+
 }
 
 final class WebViewProviderReplenishQueueOperation: MainThreadOperation {
@@ -48,12 +48,12 @@ final class WebViewProviderReplenishQueueOperation: MainThreadOperation {
 
 	private var queue: NSMutableArray
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler
-	
+
 	init(queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		self.queue = queue
 		self.articleIconSchemeHandler = articleIconSchemeHandler
 	}
-	
+
 	func run() {
 		while queue.count < minimumQueueDepth {
 			let webView = PreloadedWebView(articleIconSchemeHandler: articleIconSchemeHandler)
@@ -62,11 +62,11 @@ final class WebViewProviderReplenishQueueOperation: MainThreadOperation {
 		}
 		self.operationDelegate?.operationDidComplete(self)
 	}
-	
+
 }
 
 final class WebViewProviderDequeueOperation: MainThreadOperation {
-	
+
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -77,13 +77,13 @@ final class WebViewProviderDequeueOperation: MainThreadOperation {
 	private var queue: NSMutableArray
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler
 	private var completion: (PreloadedWebView) -> ()
-	
+
 	init(queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler, completion: @escaping (PreloadedWebView) -> ()) {
 		self.queue = queue
 		self.articleIconSchemeHandler = articleIconSchemeHandler
 		self.completion = completion
 	}
-	
+
 	func run() {
 		if let webView = queue.lastObject as? PreloadedWebView {
 			self.completion(webView)
@@ -93,11 +93,11 @@ final class WebViewProviderDequeueOperation: MainThreadOperation {
 		}
 
 		assertionFailure("Creating PreloadedWebView in \(#function); queue has run dry.")
-		
+
 		let webView = PreloadedWebView(articleIconSchemeHandler: articleIconSchemeHandler)
 		webView.preload()
 		self.completion(webView)
 		self.operationDelegate?.operationDidComplete(self)
 	}
-	
+
 }

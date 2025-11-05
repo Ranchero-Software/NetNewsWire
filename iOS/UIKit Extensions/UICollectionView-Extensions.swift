@@ -20,7 +20,7 @@ extension UICollectionView {
 			indexPath.row < dataSource.collectionView(self, numberOfItemsInSection: indexPath.section) else {
 				return
 		}
-		
+
 		selectItem(at: indexPath, animated: animations.contains(.select), scrollPosition: [])
 
 		if  !indexPathsForVisibleItems.contains(indexPath) {

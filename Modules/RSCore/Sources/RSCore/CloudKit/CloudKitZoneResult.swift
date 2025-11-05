@@ -19,15 +19,15 @@ public enum CloudKitZoneResult {
 	case zoneNotFound
 	case userDeletedZone
 	case failure(error: Error)
-	
+
 	public static func resolve(_ error: Error?) -> CloudKitZoneResult {
-		
+
         guard error != nil else { return .success }
-        
+
         guard let ckError = error as? CKError else {
             return .failure(error: error!)
         }
-		
+
 		switch ckError.code {
 		case .serviceUnavailable, .requestRateLimited, .zoneBusy:
 			if let retry = ckError.userInfo[CKErrorRetryAfterKey] as? NSNumber {
@@ -60,11 +60,11 @@ public enum CloudKitZoneResult {
 		}
 
 	}
-	
+
 }
 
 private extension CloudKitZoneResult {
-	
+
 	static func anyRequestErrors(_ errors: [AnyHashable: CKError]) -> CloudKitZoneResult? {
 		if errors.values.contains(where: { $0.code == .changeTokenExpired } ) {
 			return .changeTokenExpired
@@ -77,5 +77,5 @@ private extension CloudKitZoneResult {
 		}
 		return nil
 	}
-	
+
 }

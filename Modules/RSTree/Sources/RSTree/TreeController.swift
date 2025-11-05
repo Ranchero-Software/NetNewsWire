@@ -21,32 +21,32 @@ public final class TreeController {
 	public let rootNode: Node
 
 	public init(delegate: TreeControllerDelegate, rootNode: Node) {
-		
+
 		self.delegate = delegate
 		self.rootNode = rootNode
 		rebuild()
 	}
 
 	public convenience init(delegate: TreeControllerDelegate) {
-		
+
 		self.init(delegate: delegate, rootNode: Node.genericRootNode())
 	}
-	
+
 	@discardableResult
 	public func rebuild() -> Bool {
 
 		// Rebuild and re-sort. Return true if any changes in the entire tree.
-		
+
 		return rebuildChildNodes(node: rootNode)
 	}
-	
+
 	public func visitNodes(_ visitBlock: NodeVisitBlock) {
-		
+
 		visitNode(rootNode, visitBlock)
 	}
-	
+
 	public func nodeInArrayRepresentingObject(nodes: [Node], representedObject: AnyObject, recurse: Bool = false) -> Node? {
-		
+
 		for oneNode in nodes {
 
 			if oneNode.representedObject === representedObject {
@@ -85,17 +85,17 @@ public final class TreeController {
 }
 
 private extension TreeController {
-	
+
 	func visitNode(_ node: Node, _ visitBlock: NodeVisitBlock) {
-		
+
 		visitBlock(node)
 		node.childNodes.forEach{ (oneChildNode) in
 			visitNode(oneChildNode, visitBlock)
 		}
 	}
-	
+
 	func nodeArraysAreEqual(_ nodeArray1: [Node]?, _ nodeArray2: [Node]?) -> Bool {
-		
+
 		if nodeArray1 == nil && nodeArray2 == nil {
 			return true
 		}
@@ -105,25 +105,25 @@ private extension TreeController {
 		if nodeArray1 == nil && nodeArray2 != nil {
 			return false
 		}
-		
+
 		return nodeArray1! == nodeArray2!
 	}
-	
+
 	func rebuildChildNodes(node: Node) -> Bool {
-		
+
 		if !node.canHaveChildNodes {
 			return false
 		}
-		
+
 		var childNodesDidChange = false
-		
+
 		let childNodes = delegate?.treeController(treeController: self, childNodesFor: node) ?? [Node]()
-		
+
 		childNodesDidChange = !nodeArraysAreEqual(childNodes, node.childNodes)
 		if (childNodesDidChange) {
 			node.childNodes = childNodes
 		}
-		
+
 		childNodes.forEach{ (oneChildNode) in
 			if rebuildChildNodes(node: oneChildNode) {
 				childNodesDidChange = true

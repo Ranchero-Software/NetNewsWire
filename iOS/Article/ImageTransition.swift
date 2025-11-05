@@ -16,15 +16,15 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 	var originFrame: CGRect!
 	var maskFrame: CGRect!
 	var originImage: UIImage!
-	
+
 	init(controller: WebViewController) {
 		self.webViewController = controller
 	}
-	
+
 	func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
 		return duration
 	}
-	
+
 	func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 		if presenting {
 			animateTransitionPresenting(using: transitionContext)
@@ -32,18 +32,18 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 			animateTransitionReturning(using: transitionContext)
 		}
 	}
-	
+
 	private func animateTransitionPresenting(using transitionContext: UIViewControllerContextTransitioning) {
 
 		let imageView = UIImageView(image: originImage)
 		imageView.frame = originFrame
-		
+
 		let fromView = transitionContext.view(forKey: .from)!
 		fromView.removeFromSuperview()
 
 		transitionContext.containerView.backgroundColor = AppAssets.fullScreenBackgroundColor
 		transitionContext.containerView.addSubview(imageView)
-		
+
 		webViewController?.hideClickedImage()
 
 		UIView.animate(
@@ -61,27 +61,27 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 				transitionContext.completeTransition(true)
 		})
 	}
-	
+
 	private func animateTransitionReturning(using transitionContext: UIViewControllerContextTransitioning) {
 		let imageController = transitionContext.viewController(forKey: .from) as! ImageViewController
 		let imageView = UIImageView(image: originImage)
 		imageView.frame = imageController.zoomedFrame
-		
+
 		let fromView = transitionContext.view(forKey: .from)!
 		let windowFrame = fromView.window!.frame
 		fromView.removeFromSuperview()
-		
+
 		let toView = transitionContext.view(forKey: .to)!
 		transitionContext.containerView.addSubview(toView)
-		
+
 		let maskingView = UIView()
-		
+
 		let fullMaskFrame = CGRect(x: windowFrame.minX, y: maskFrame.minY, width: windowFrame.width, height: maskFrame.height)
         let path = UIBezierPath(rect: fullMaskFrame)
         let maskLayer = CAShapeLayer()
 		maskLayer.path = path.cgPath
 		maskingView.layer.mask = maskLayer
-		
+
 		maskingView.addSubview(imageView)
 		transitionContext.containerView.addSubview(maskingView)
 
@@ -106,5 +106,5 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 				}
 		})
 	}
-	
+
 }

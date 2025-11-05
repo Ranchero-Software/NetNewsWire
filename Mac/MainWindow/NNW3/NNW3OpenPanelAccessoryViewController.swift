@@ -22,7 +22,7 @@ final class NNW3OpenPanelAccessoryViewController: NSViewController {
 	}
 
 	// MARK: - NSViewController
-	
+
 	required init?(coder: NSCoder) {
 		preconditionFailure("NNW3OpenPanelAccessoryViewController.init(coder) not implemented by design.")
 	}

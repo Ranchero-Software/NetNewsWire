@@ -212,19 +212,19 @@ public extension Data {
 			   self.range(of: RSSearch.UTF16.lowercaseDiv) != nil || self.range(of: RSSearch.UTF16.uppercaseDiv) != nil {
 				return true
 			}
-			
+
 			// Check for p tags
 			if self.range(of: RSSearch.UTF8.lowercaseP) != nil || self.range(of: RSSearch.UTF8.uppercaseP) != nil ||
 			   self.range(of: RSSearch.UTF16.lowercaseP) != nil || self.range(of: RSSearch.UTF16.uppercaseP) != nil {
 				return true
 			}
-			
+
 			// Check for span tags
 			if self.range(of: RSSearch.UTF8.lowercaseSpan) != nil || self.range(of: RSSearch.UTF8.uppercaseSpan) != nil ||
 			   self.range(of: RSSearch.UTF16.lowercaseSpan) != nil || self.range(of: RSSearch.UTF16.uppercaseSpan) != nil {
 				return true
 			}
-			
+
 			return false
 		}()
 

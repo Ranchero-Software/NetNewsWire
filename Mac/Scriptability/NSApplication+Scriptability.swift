@@ -25,7 +25,7 @@ extension NSApplication : ScriptingObjectContainer {
     var scriptingKey: String {
         return "application"
     }
-    
+
     @objc(currentArticle)
     func currentArticle() -> ScriptableArticle? {
         var scriptableArticle: ScriptableArticle?
@@ -51,18 +51,18 @@ extension NSApplication : ScriptingObjectContainer {
         }
         return scriptableArticles as NSArray
     }
-    
+
     @objc(countOfSelectedArticles)
     func countOfSelectedArticles() -> Int {
         return appDelegate.scriptingSelectedArticles.count
     }
-    
+
     @objc(objectInSelectedArticlesAtIndex:)
     func objectInSelectedArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
         let articles = appDelegate.scriptingSelectedArticles
         guard index >= 0 && index < articles.count else { return nil }
         let article = articles[index]
-        
+
         if let feed = article.feed,
            let scriptableFeed = ScriptableFeed.scriptableFeed(for: feed) {
             return ScriptableArticle(article, container: scriptableFeed)
@@ -78,19 +78,19 @@ extension NSApplication : ScriptingObjectContainer {
         let accounts = AccountManager.shared.accounts
         return accounts.map { ScriptableAccount($0) } as NSArray
     }
-    
+
     @objc(countOfAccounts)
     func countOfAccounts() -> Int {
         return AccountManager.shared.accounts.count
     }
-    
+
     @objc(objectInAccountsAtIndex:)
     func objectInAccountsAtIndex(_ index: Int) -> ScriptableAccount? {
         let accounts = Array(AccountManager.shared.accounts)
         guard index >= 0 && index < accounts.count else { return nil }
         return ScriptableAccount(accounts[index])
     }
-    
+
     @objc(valueInAccountsWithUniqueID:)
     func valueInAccounts(withUniqueID id:String) -> ScriptableAccount? {
         let accounts = AccountManager.shared.accounts
@@ -103,7 +103,7 @@ extension NSApplication : ScriptingObjectContainer {
         this allows a script like 'articles of feed "The Shape of Everything"' as a shorthand
         for  'articles of feed "The Shape of Everything" of account "On My Mac"'
     */  
-      
+
     func allFeeds() -> [Feed] {
         let accounts = AccountManager.shared.activeAccounts
         let emptyFeeds:[Feed] = []
@@ -117,12 +117,12 @@ extension NSApplication : ScriptingObjectContainer {
     func feeds() -> NSArray {
         allFeeds().map { ScriptableFeed($0, container:self) } as NSArray
     }
-    
+
     @objc(countOfFeeds)
     func countOfFeeds() -> Int {
         allFeeds().count
     }
-    
+
     @objc(objectInFeedsAtIndex:)
     func objectInFeedsAtIndex(_ index: Int) -> ScriptableFeed? {
         let feeds = allFeeds()

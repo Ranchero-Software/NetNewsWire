@@ -15,25 +15,25 @@ protocol FeedlyFeedsAndFoldersProviding {
 
 /// Reflect Collections from Feedly as Folders.
 final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding {
-	
+
 	let account: Account
 	let collectionsProvider: FeedlyCollectionProviding
-	
+
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
 
 	init(account: Account, collectionsProvider: FeedlyCollectionProviding) {
 		self.collectionsProvider = collectionsProvider
 		self.account = account
 	}
-	
+
 	override func run() {
 		defer {
 			didFinish()
 		}
-		
+
 		let localFolders = account.folders ?? Set()
 		let collections = collectionsProvider.collections
-		
+
 		feedsAndFolders = collections.compactMap { collection -> ([FeedlyFeed], Folder)? in
 			let parser = FeedlyCollectionParser(collection: collection)
 			guard let folder = account.ensureFolder(with: parser.folderName) else {
@@ -49,7 +49,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 		// Remove folders without a corresponding collection
 		let collectionFolders = Set(feedsAndFolders.map { $0.1 })
 		let foldersWithoutCollections = localFolders.subtracting(collectionFolders)
-		
+
 		if !foldersWithoutCollections.isEmpty {
 			for unmatched in foldersWithoutCollections {
 				account.removeFolder(unmatched)

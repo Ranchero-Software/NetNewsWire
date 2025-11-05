@@ -70,7 +70,7 @@ extension TimelineViewController {
 		}
 		delegate?.timelineRequestedFeedSelection(self, feed: feed)
 	}
-	
+
 	@objc func markAllInFeedAsRead(_ sender: Any?) {
 		guard let menuItem = sender as? NSMenuItem,
 			  let feed = menuItem.representedObject as? Feed else {
@@ -90,7 +90,7 @@ extension TimelineViewController {
 
 		runCommand(markReadCommand)
 	}
-	
+
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
 
 		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
@@ -98,7 +98,7 @@ extension TimelineViewController {
 		}
 		Browser.open(urlString, inBackground: false)
 	}
-	
+
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
 		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
 			return
@@ -170,7 +170,7 @@ private extension TimelineViewController {
 		}
 
 		menu.addSeparatorIfNeeded()
-		
+
 		if articles.count == 1, let feed = articles.first!.feed {
 			if !(representedObjects?.contains(where: { $0 as? Feed == feed }) ?? false) {
 				menu.addItem(selectFeedInSidebarMenuItem(feed))
@@ -179,13 +179,13 @@ private extension TimelineViewController {
 				menu.addItem(markAllMenuItem)
 			}
 		}
-		
+
 		if articles.count == 1, let link = articles.first!.preferredLink {
 			menu.addSeparatorIfNeeded()
 			menu.addItem(openInBrowserMenuItem(link))
 			menu.addSeparatorIfNeeded()
 			menu.addItem(copyArticleURLMenuItem(link))
-			
+
 			if let externalLink = articles.first?.externalLink, externalLink != link {
 				menu.addItem(copyExternalURLMenuItem(externalLink))
 			}
@@ -251,7 +251,7 @@ private extension TimelineViewController {
 	func markAboveReadMenuItem(_ articles: [Article]) -> NSMenuItem {
 		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles, image: AppAssets.markAboveAsReadImage)
 	}
-	
+
 	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
 		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: AppAssets.markBelowAsReadImage)
 	}
@@ -269,19 +269,19 @@ private extension TimelineViewController {
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let menuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
-		
+
 		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), feed, image: AppAssets.markAllAsReadImage)
 	}
-	
+
 	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
 
 		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString, image: AppAssets.openInBrowserImage)
 	}
-	
+
 	func copyArticleURLMenuItem(_ urlString: String) -> NSMenuItem {
 		return menuItem(NSLocalizedString("Copy Article URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString, image: AppAssets.copyImage)
 	}
-	
+
 	func copyExternalURLMenuItem(_ urlString: String) -> NSMenuItem {
 		return menuItem(NSLocalizedString("Copy External URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString, image: AppAssets.copyImage)
 	}

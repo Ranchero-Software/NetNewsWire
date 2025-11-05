@@ -11,11 +11,11 @@ import Account
 import RSCore
 
 struct DefaultFeedsImporter {
-	
+
 	static func importDefaultFeeds(account: Account) {
 		let defaultFeedsURL = Bundle.main.url(forResource: "DefaultFeeds", withExtension: "opml")!
 		AccountManager.shared.defaultAccount.importOPML(defaultFeedsURL) { result in }
 	}
-	
+
 }
 

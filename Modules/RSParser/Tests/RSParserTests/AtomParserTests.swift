@@ -84,7 +84,7 @@ final class AtomParserTests: XCTestCase {
 
 		d = parserData("neverworkintheory", "atom", "https://neverworkintheory.org/atom.xml")
 		parsedFeed = try! FeedParser.parse(d)!
-		
+
 		foundTestArticle = false
 		for item in parsedFeed.items {
 			if item.title == "Andreas Zeller on Creating Nasty Test Inputs" {
@@ -177,7 +177,7 @@ final class AtomParserTests: XCTestCase {
 			guard let attachments = article.attachments else {
 				continue
 			}
-			
+
 			XCTAssertEqual(attachments.count, 1)
 			let attachment = attachments.first!
 

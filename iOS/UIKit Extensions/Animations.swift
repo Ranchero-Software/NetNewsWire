@@ -10,16 +10,16 @@ import Foundation
 
 /// Used to select which animations should be performed
 public struct Animations: OptionSet {
-	
+
 	/// Selections and deselections will be animated.
 	public static let select = Animations(rawValue: 1)
-	
+
 	/// Scrolling will be animated
 	public static let scroll = Animations(rawValue: 2)
-	
+
 	/// Pushing and popping navigation view controllers will be animated
 	public static let navigation = Animations(rawValue: 4)
-	
+
 	public let rawValue: Int
 	public init(rawValue: Int) {
 		self.rawValue = rawValue

@@ -212,9 +212,9 @@ final class MainThreadOperationTests: XCTestCase {
 		waitForExpectations(timeout: 1.0, handler: nil)
 		XCTAssertTrue(queue.pendingOperationsCount == 0)
 	}
-    
+
     func testCancelingDisownsOperation() {
-        
+
 		final class SlowFinishingOperation: MainThreadOperation {
 
 			let didCancelExpectation: XCTestExpectation
@@ -231,7 +231,7 @@ final class MainThreadOperationTests: XCTestCase {
             var operationDelegate: MainThreadOperationDelegate?
             var name: String?
             var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-            
+
             var didStartRunBlock: (() -> ())?
 
 			init(didCancelExpectation: XCTestExpectation) {
@@ -252,7 +252,7 @@ final class MainThreadOperationTests: XCTestCase {
                 }
             }
         }
-        
+
         let queue = MainThreadOperationQueue()
 		let didCancelExpectation = expectation(description: "Did Cancel Operation")
 		let completionBlockDidRunExpectation = expectation(description: "Completion Block Did Run")
@@ -273,10 +273,10 @@ final class MainThreadOperationTests: XCTestCase {
             }
             return operation
         }()
-        
+
         // The queue should take ownership of the operation (asserted below).
         queue.add(operation!)
-        
+
         // Verify something other than this scope has ownership of the operation.
         weak var addedOperation = operation!
         operation = nil

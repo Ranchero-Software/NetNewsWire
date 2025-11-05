@@ -9,11 +9,11 @@
 import XCTest
 
 class AppleScriptXCTestCase: XCTestCase {
-    
+
     override func setUp() {
         super.setUp()
     }
-    
+
     override func tearDown() {
         super.tearDown()
     }
@@ -36,31 +36,31 @@ class AppleScriptXCTestCase: XCTestCase {
             XCTFail("Failed Getting script URL")
             return nil
         }
-        
+
         guard let testScript = NSAppleScript(contentsOf: testScriptUrl, error: &errorDict) else {
             print ("error is \(String(describing: errorDict))")
             XCTFail("Failed initializing NSAppleScript")
             return nil
         }
-        
+
         let scriptResult = testScript.executeAndReturnError(&errorDict)
         if (errorDict != nil) {
             print ("error is \(String(describing: errorDict))")
             XCTFail("Failed executing script")
             return nil
         }
-        
+
         let usrfDictionary = scriptResult.usrfDictionary()
         guard let testResult = usrfDictionary["test_result"] else {
             XCTFail("test script didn't return test result in usrf")
             return nil
         }
-        
+
         if (testResult.booleanValue != true) {
             print("test_result was \(testResult)")
             print("script_result was \(String(describing: usrfDictionary["script_result"]))")
         }
-        
+
         XCTAssert(testResult.booleanValue == true, "test_result should be true")
         return usrfDictionary["script_result"]
     }

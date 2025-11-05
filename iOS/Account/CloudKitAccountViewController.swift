@@ -18,10 +18,10 @@ final class CloudKitAccountViewController: UITableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setupFooter()
-		
+
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 	}
-	
+
 	private func setupFooter() {
 		footerLabel.text = NSLocalizedString("NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices.", comment: "iCloud")
 	}
@@ -30,22 +30,22 @@ final class CloudKitAccountViewController: UITableViewController {
 		dismiss(animated: true, completion: nil)
 		delegate?.dismiss()
 	}
-	
+
 	@IBAction func add(_ sender: Any) {
 		guard AddCloudKitAccountUtilities.isiCloudDriveEnabled else {
 			presentError(AddCloudKitAccountError.iCloudDriveMissing)
 			return
 		}
-		
+
 		let _ = AccountManager.shared.createAccount(type: .cloudKit)
 		dismiss(animated: true, completion: nil)
 		delegate?.dismiss()
 	}
-	
+
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
 	}
-	
+
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView

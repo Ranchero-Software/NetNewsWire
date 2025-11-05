@@ -23,7 +23,7 @@ public protocol UnreadCountProvider {
 
 
 public extension UnreadCountProvider {
-	
+
 	func postUnreadCountDidInitializeNotification() {
 		NotificationCenter.default.post(name: .UnreadCountDidInitialize, object: self, userInfo: nil)
 	}

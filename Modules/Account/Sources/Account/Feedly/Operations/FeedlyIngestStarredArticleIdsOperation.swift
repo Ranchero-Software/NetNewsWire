@@ -24,104 +24,104 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	private let service: FeedlyGetStreamIdsService
 	private let database: SyncDatabase
 	private var remoteEntryIds = Set<String>()
-	
+
 	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		let resource = FeedlyTagResourceId.Global.saved(for: userId)
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
-	
+
 	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.database = database
 	}
-	
+
 	override func run() {
 		getStreamIds(nil)
 	}
-	
+
 	private func getStreamIds(_ continuation: String?) {
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
 	}
-	
+
 	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
-		
+
 		switch result {
 		case .success(let streamIds):
-			
+
 			remoteEntryIds.formUnion(streamIds.ids)
-			
+
 			guard let continuation = streamIds.continuation else {
 				removeEntryIdsWithPendingStatus()
 				return
 			}
-			
+
 			getStreamIds(continuation)
-			
+
 		case .failure(let error):
 			didFinish(with: error)
 		}
 	}
-	
+
 	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
 	private func removeEntryIdsWithPendingStatus() {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
-		
+
 		database.selectPendingStarredStatusArticleIDs { result in
 			switch result {
 			case .success(let pendingArticleIds):
 				self.remoteEntryIds.subtract(pendingArticleIds)
-				
+
 				self.updateStarredStatuses()
-				
+
 			case .failure(let error):
 				self.didFinish(with: error)
 			}
 		}
 	}
-	
+
 	private func updateStarredStatuses() {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
-		
+
 		account.fetchStarredArticleIDs { result in
 			switch result {
 			case .success(let localStarredArticleIDs):
 				self.processStarredArticleIDs(localStarredArticleIDs)
-				
+
 			case .failure(let error):
 				self.didFinish(with: error)
 			}
 		}
 	}
-	
+
 	func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
 		guard !isCanceled else {
 			didFinish()
 			return
 		}
-		
+
 		let remoteStarredArticleIDs = remoteEntryIds
-		
+
 		let group = DispatchGroup()
-		
+
 		final class StarredStatusResults {
 			var markAsStarredError: Error?
 			var markAsUnstarredError: Error?
 		}
-		
+
 		let results = StarredStatusResults()
-		
+
 		group.enter()
 		account.markAsStarred(remoteStarredArticleIDs) { result in
 			if case .failure(let error) = result {

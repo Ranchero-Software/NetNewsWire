@@ -45,7 +45,7 @@ public final class Article: Hashable {
 		self.dateModified = dateModified
 		self.authors = authors
 		self.status = status
-		
+
 		if let articleID = articleID {
 			self.articleID = articleID
 		}
@@ -72,7 +72,7 @@ public final class Article: Hashable {
 }
 
 public extension Set where Element == Article {
-	
+
 	func articleIDs() -> Set<String> {
 		return Set<String>(map { $0.articleID })
 	}
@@ -85,11 +85,11 @@ public extension Set where Element == Article {
 	func contains(accountID: String, articleID: String) -> Bool {
 		return contains(where: { $0.accountID == accountID && $0.articleID == articleID})
 	}
-	
+
 }
 
 public extension Array where Element == Article {
-	
+
 	func articleIDs() -> [String] {
 		return map { $0.articleID }
 	}

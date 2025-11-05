@@ -17,12 +17,12 @@ import Account
 struct ArticleRenderer {
 
 	typealias Rendering = (style: String, html: String, title: String, baseURL: String)
-	
+
 	struct Page {
 		let url: URL
 		let baseURL: URL
 		let html: String
-		
+
 		init(name: String) {
 			url = Bundle.main.url(forResource: name, withExtension: "html")!
 			baseURL = url.deletingLastPathComponent()
@@ -31,17 +31,17 @@ struct ArticleRenderer {
 	}
 
 	static var imageIconScheme = "nnwImageIcon"
-	
+
 	static var blank = Page(name: "blank")
 	static var page = Page(name: "page")
-	
+
 	private let article: Article?
 	private let extractedArticle: ExtractedArticle?
 	private let articleTheme: ArticleTheme
 	private let title: String
 	private let body: String
 	private let baseURL: String?
-	
+
 	private static let longDateTimeFormatter: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateStyle = .long
@@ -140,7 +140,7 @@ struct ArticleRenderer {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
-	
+
 	static func noContentHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
@@ -173,7 +173,7 @@ private extension ArticleRenderer {
 	private var noContentHTML: String {
 		return ""
 	}
-	
+
 	private var articleCSS: String {
 		return try! MacroProcessor.renderedText(withTemplate: styleString(), substitutions: styleSubstitutions())
 	}
@@ -205,10 +205,10 @@ private extension ArticleRenderer {
 			assertionFailure("Article should have been set before calling this function.")
 			return d
 		}
-		
+
 		d["title"] = title
 		d["preferred_link"] = article.preferredLink ?? ""
-		
+
 		if let externalLink = article.externalLink, externalLink != article.preferredLink {
 			d["external_link_label"] = NSLocalizedString("Link:", comment: "Link")
 			d["external_link_stripped"] = externalLink.strippingHTTPOrHTTPSScheme
@@ -218,13 +218,13 @@ private extension ArticleRenderer {
 			d["external_link_stripped"] = ""
 			d["external_link"] = ""
 		}
-		
+
 		d["body"] = body
-		
+
 		#if os(macOS)
 		d["text_size_class"] = AppDefaults.shared.articleTextSize.cssClass
 		#endif
-		
+
 		var components = URLComponents()
 		components.scheme = Self.imageIconScheme
 		components.path = article.articleID
@@ -234,7 +234,7 @@ private extension ArticleRenderer {
 		else {
 			d["avatar_src"] = ""
 		}
-		
+
 		if self.title.isEmpty {
 			d["dateline_style"] = "articleDatelineTitle"
 		} else {
@@ -273,7 +273,7 @@ private extension ArticleRenderer {
 				return ""
 			}
 		}
-		
+
 		var byline = ""
 		var isFirstAuthor = true
 

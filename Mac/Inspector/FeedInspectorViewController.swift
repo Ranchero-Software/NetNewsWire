@@ -19,7 +19,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	@IBOutlet weak var urlTextField: NSTextField?
 	@IBOutlet weak var isNotifyAboutNewArticlesCheckBox: NSButton!
 	@IBOutlet weak var isReaderViewAlwaysOnCheckBox: NSButton?
-	
+
 	private var feed: Feed? {
 		didSet {
 			if feed != oldValue {
@@ -52,15 +52,15 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: .DidUpdateFeedPreferencesFromContextMenu, object: nil)
 	}
-	
+
 	override func viewDidAppear() {
 		updateNotificationSettings()
 	}
-	
+
 	override func viewDidDisappear() {
 		renameFeedIfNecessary()
 	}
-	
+
 	// MARK: Actions
 	@IBAction func isNotifyAboutNewArticlesChanged(_ sender: Any) {
 		guard userNotificationSettings != nil else  {
@@ -69,10 +69,10 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 			}
 			return
 		}
-		
+
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			self.updateNotificationSettings()
-			
+
 			if settings.authorizationStatus == .denied {
 				DispatchQueue.main.async {
 					self.isNotifyAboutNewArticlesCheckBox.setNextState()
@@ -99,17 +99,17 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 			}
 		}
 	}
-	
+
 	@IBAction func isReaderViewAlwaysOnChanged(_ sender: Any) {
 		feed?.isArticleExtractorAlwaysOn = (isReaderViewAlwaysOnCheckBox?.state ?? .off) == .on ? true : false
 	}
-	
+
 	// MARK: Notifications
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
 		updateImage()
 	}
-	
+
 }
 
 extension FeedInspectorViewController: NSTextFieldDelegate {
@@ -117,7 +117,7 @@ extension FeedInspectorViewController: NSTextFieldDelegate {
 	func controlTextDidEndEditing(_ note: Notification) {
 		renameFeedIfNecessary()
 	}
-	
+
 }
 
 private extension FeedInspectorViewController {
@@ -130,7 +130,7 @@ private extension FeedInspectorViewController {
 		feed = singleFeed
 	}
 
-	
+
 	@objc func updateUI() {
 		updateImage()
 		updateName()
@@ -209,7 +209,7 @@ private extension FeedInspectorViewController {
 			  feed.nameForDisplay != nameTextField.stringValue else {
 			return
 		}
-		
+
 		account.renameFeed(feed, to: nameTextField.stringValue) { [weak self] result in
 			if case .failure(let error) = result {
 				self?.presentError(error)
@@ -218,5 +218,5 @@ private extension FeedInspectorViewController {
 			}
 		}
 	}
-	
+
 }

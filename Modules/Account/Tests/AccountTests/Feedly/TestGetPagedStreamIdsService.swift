@@ -10,14 +10,14 @@ import XCTest
 @testable import Account
 
 final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
-	
+
 	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
 	var getStreamIdsExpectation: XCTestExpectation?
 	var pages = [String: FeedlyStreamIds]()
-	
+
 	func addAtLeastOnePage(for resource: FeedlyResourceId, continuations: [String], numberOfEntriesPerPage count: Int)  {
 		pages = [String: FeedlyStreamIds](minimumCapacity: continuations.count + 1)
-		
+
 		// A continuation is an identifier for the next page.
 		// The first page has a nil identifier.
 		// The last page has no next page, so the next continuation value for that page is nil.
@@ -30,17 +30,17 @@ final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
 			pages[key] = page
 		}
 	}
-	
+
 	private func makeStreamIds(for resource: FeedlyResourceId, continuation: String?, between range: Range<Int>) -> FeedlyStreamIds {
 		let entryIds = range.map { _ in UUID().uuidString }
 		let stream = FeedlyStreamIds(continuation: continuation, ids: entryIds)
 		return stream
 	}
-	
+
 	static func getPagingKey(for stream: FeedlyResourceId, continuation: String?) -> String {
 		return "\(stream.id)@\(continuation ?? "")"
 	}
-	
+
 	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
 		let key = TestGetPagedStreamIdsService.getPagingKey(for: resource, continuation: continuation)
 		guard let page = pages[key] else {

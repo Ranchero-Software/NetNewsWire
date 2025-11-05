@@ -13,16 +13,16 @@ import CloudKit
 public class CloudKitError: LocalizedError {
 
 	public let error: Error
-	
+
 	public init(_ error: Error) {
 		self.error = error
 	}
-	
+
 	public var errorDescription: String? {
 		guard let ckError = error as? CKError else {
 			return error.localizedDescription
 		}
-		
+
 		switch ckError.code {
 		case .alreadyShared:
 			return NSLocalizedString("Already Shared: a record or share cannot be saved because doing so would cause the same hierarchy of records to exist in multiple shares.", comment: "Known iCloud Error")
@@ -94,5 +94,5 @@ public class CloudKitError: LocalizedError {
 			return NSLocalizedString("Unhandled Error.", comment: "Unknown iCloud Error")
 		}
 	}
-	
+
 }

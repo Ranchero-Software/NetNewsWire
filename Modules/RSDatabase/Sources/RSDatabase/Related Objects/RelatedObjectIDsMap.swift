@@ -11,18 +11,18 @@ import Foundation
 // Maps objectIDs to Set<String> where the Strings are relatedObjectIDs.
 
 struct RelatedObjectIDsMap {
-	
+
 	private let dictionary: [String: Set<String>] // objectID: Set<relatedObjectID>
-	
+
 	init(dictionary: [String: Set<String>]) {
-		
+
 		self.dictionary = dictionary
 	}
-	
+
 	init(lookupValues: Set<LookupValue>) {
-		
+
 		var d = [String: Set<String>]()
-		
+
 		for lookupValue in lookupValues {
 			let objectID = lookupValue.objectID
 			let relatedObjectID: String = lookupValue.relatedObjectID
@@ -33,24 +33,24 @@ struct RelatedObjectIDsMap {
 				d[objectID]!.insert(relatedObjectID)
 			}
 		}
-		
+
 		self.init(dictionary: d)
 	}
-	
+
 	func objectIDs() -> Set<String> {
-		
+
 		return Set(dictionary.keys)
 	}
-	
+
 	func relatedObjectIDs() -> Set<String> {
-		
+
 		var ids = Set<String>()
 		for (_, relatedObjectIDs) in dictionary {
 			ids.formUnion(relatedObjectIDs)
 		}
 		return ids
 	}
-	
+
 	subscript(_ objectID: String) -> Set<String>? {
 		return dictionary[objectID]
 	}

@@ -27,32 +27,32 @@ final class OPMLFile {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
-	
+
 	func markAsDirty() {
 		isDirty = true
 	}
-	
+
 	func load() {
 		guard let fileData = opmlFileData(), let opmlItems = parsedOPMLItems(fileData: fileData) else {
 			return
 		}
-		
+
 		BatchUpdate.shared.perform {
 			account.loadOPMLItems(opmlItems)
 		}
 	}
-	
+
 	func save() {
 		guard !account.isDeleted else { return }
 		let opmlDocumentString = opmlDocument()
-		
+
 		do {
 			try opmlDocumentString.write(to: fileURL, atomically: true, encoding: .utf8)
 		} catch let error as NSError {
 			Self.logger.error("OPML save to disk failed: \(error.localizedDescription)")
 		}
 	}
-	
+
 }
 
 private extension OPMLFile {
@@ -70,7 +70,7 @@ private extension OPMLFile {
 
 	func opmlFileData() -> Data? {
 		var fileData: Data? = nil
-		
+
 		do {
 			fileData = try Data(contentsOf: fileURL)
 		} catch {
@@ -79,7 +79,7 @@ private extension OPMLFile {
 
 		return fileData
 	}
-	
+
 	func parsedOPMLItems(fileData: Data) -> [RSOPMLItem]? {
 		let parserData = ParserData(url: fileURL.absoluteString, data: fileData)
 		var opmlDocument: RSOPMLDocument?
@@ -90,10 +90,10 @@ private extension OPMLFile {
 			Self.logger.error("OPML import failed: \(error.localizedDescription)")
 			return nil
 		}
-		
+
 		return opmlDocument?.children
 	}
-	
+
 	func opmlDocument() -> String {
 		let escapedTitle = account.nameForDisplay.escapingSpecialXMLCharacters
 		let openingText =

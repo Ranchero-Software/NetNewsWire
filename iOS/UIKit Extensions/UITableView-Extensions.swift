@@ -9,7 +9,7 @@
 import UIKit
 
 extension UITableView {
-	
+
 	/**
 	Selects a row and scrolls it to the middle if it is not visible
 	*/
@@ -20,7 +20,7 @@ extension UITableView {
 			indexPath.row < dataSource.tableView(self, numberOfRowsInSection: indexPath.section) else {
 				return
 		}
-		
+
 		selectRow(at: indexPath, animated: animations.contains(.select), scrollPosition: .none)
 
 		if let visibleIndexPaths = indexPathsForRows(in: safeAreaLayoutGuide.layoutFrame) {
@@ -29,12 +29,12 @@ extension UITableView {
 			}
 		}
 	}
-	
+
 	func cellCompletelyVisible(_ indexPath: IndexPath) -> Bool {
 		let rect = rectForRow(at: indexPath)
 		return safeAreaLayoutGuide.layoutFrame.contains(rect)
 	}
-	
+
 	public func middleVisibleRow() -> IndexPath? {
 		if let visibleIndexPaths = indexPathsForRows(in: safeAreaLayoutGuide.layoutFrame), visibleIndexPaths.count > 2 {
 			return visibleIndexPaths[visibleIndexPaths.count / 2]

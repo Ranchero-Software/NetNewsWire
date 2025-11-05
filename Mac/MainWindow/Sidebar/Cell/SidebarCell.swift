@@ -81,7 +81,7 @@ final class SidebarCell : NSTableCellView {
 			unreadCountView.isSelected = (backgroundStyle != .normal)
 		}
 	}
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
@@ -90,7 +90,7 @@ final class SidebarCell : NSTableCellView {
 		super.init(frame: frameRect)
 		commonInit()
 	}
-	
+
 	required init?(coder: NSCoder) {		
 		super.init(coder: coder)
 		commonInit()
@@ -139,10 +139,10 @@ private extension SidebarCell {
 		titleView.setFrame(ifNotEqualTo: layout.titleRect)
 		unreadCountView.setFrame(ifNotEqualTo: layout.unreadCountRect)
 	}
-	
+
 	func updateFaviconImage() {
 		var updatedIconImage = iconImage
-		
+
 		if let iconImage = iconImage, iconImage.isSymbol {
 			var tintColor: CGColor
 			if backgroundStyle != .normal {
@@ -163,5 +163,5 @@ private extension SidebarCell {
 			faviconImageView.iconImage = nil
 		}
 	}
-	
+
 }

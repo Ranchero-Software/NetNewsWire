@@ -19,7 +19,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case invalidParameter
 	case invalidResponse
 	case urlNotFound
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .unknown:
@@ -35,11 +35,11 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 }
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
-	
+
 	private let variant: ReaderAPIVariant
-	
+
 	private let database: SyncDatabase
-	
+
 	private let caller: ReaderAPICaller
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
 
@@ -56,15 +56,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			return caller.server
 		}
 	}
-	
+
 	var isOPMLImportInProgress = false
-	
+
 	var credentials: Credentials? {
 		didSet {
 			caller.credentials = credentials
 		}
 	}
-	
+
 	weak var accountMetadata: AccountMetadata? {
 		didSet {
 			caller.accountMetadata = accountMetadata
@@ -72,11 +72,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
-	
+
 	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
-		
+
 		if transport != nil {
 			caller = ReaderAPICaller(transport: transport!)
 		} else {
@@ -88,27 +88,27 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			sessionConfiguration.httpMaximumConnectionsPerHost = 1
 			sessionConfiguration.httpCookieStorage = nil
 			sessionConfiguration.urlCache = nil
-			
+
 			if let userAgentHeaders = UserAgent.headers() {
 				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 			}
-			
+
 			caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
 		}
-		
+
 		caller.variant = variant
 		self.variant = variant
 	}
-	
+
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		completion()
 	}
-	
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		refreshProgress.reset()
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
-		
+
 		refreshAccount(account) { result in
 			switch result {
 			case .success():
@@ -139,11 +139,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				DispatchQueue.main.async {
 					self.refreshProgress.reset()
-					
+
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
 					if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
 						self.caller.credentials = basicCredentials
-						
+
 						self.caller.validateCredentials(endpoint: endpoint) { result in
 							switch result {
 							case .success(let apiCredentials):
@@ -164,15 +164,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 								}
 							}
 						}
-						
+
 					} else {
 						completion(.failure(wrappedError))
 					}
 				}
 			}
-			
+
 		}
-		
+
 	}
 
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
@@ -180,7 +180,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			completion?(.success(()))
 			return
 		}
-		
+
 		sendArticleStatus(for: account) { result in
 			switch result {
 			case .success:
@@ -197,7 +197,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
+
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		Self.logger.info("ReaderAPI: Sending article statuses")
 
@@ -245,7 +245,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
+
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		Self.logger.info("ReaderAPI: Refreshing article statuses")
 
@@ -264,9 +264,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				Self.logger.error("ReaderAPI: Retrieving unread entries failed: \(error.localizedDescription)")
 				group.leave()
 			}
-			
+
 		}
-		
+
 		group.enter()
 		caller.retrieveItemIDs(type: .starred) { result in
 			switch result {
@@ -281,7 +281,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 
 		}
-		
+
 		group.notify(queue: DispatchQueue.main) {
 			Self.logger.info("ReaderAPI: Finished refreshing article statuses")
 			if errorOccurred {
@@ -291,10 +291,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
+
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 	}
-	
+
 	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 		if let folder = account.ensureFolder(with: name) {
 			completion(.success(folder))
@@ -302,9 +302,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 		}
 	}
-	
+
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
 			self.refreshProgress.completeTask()
@@ -322,17 +322,17 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 			}
 		}
-		
+
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		let group = DispatchGroup()
-		
+
 		for feed in folder.topLevelFeeds {
-			
+
 			if feed.folderRelationship?.count ?? 0 > 1 {
-				
+
 				if let feedExternalID = feed.externalID {
 					group.enter()
 					refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -349,9 +349,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 						}
 					}
 				}
-				
+
 			} else {
-				
+
 				if let subscriptionID = feed.externalID {
 					group.enter()
 					refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -370,7 +370,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 			}
 		}
-		
+
 		group.notify(queue: DispatchQueue.main) {
 			if self.variant == .theOldReader {
 				account.removeFolder(folder)
@@ -388,15 +388,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
+
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let url = URL(string: url) else {
 			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return
 		}
-		
+
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		
+
 		FeedFinder.find(url: url) { result in
 			self.refreshProgress.completeTask()
 
@@ -427,25 +427,25 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 							completion(.failure(wrappedError))
 						}
 					}
-					
+
 				}
 			case .failure:
 				self.refreshProgress.reset()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
 			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return
 		}
-		
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.renameSubscription(subscriptionID: subscriptionID, newName: name) { result in
 			self.refreshProgress.completeTask()
@@ -462,15 +462,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let subscriptionID = feed.externalID else {
 			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return
 		}
-		
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
 			self.refreshProgress.completeTask()
@@ -494,7 +494,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
+
 	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if from is Account {
 			addFeed(for: account, with: feed, to: to, completion: completion)
@@ -507,7 +507,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 				return
 			}
-			
+
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
 			caller.moveSubscription(subscriptionID: subscriptionId, fromTag: fromTag, toTag: toTag) { result in
 				self.refreshProgress.completeTask()
@@ -522,7 +522,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
+
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let folder = container as? Folder, let feedExternalID = feed.externalID {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
@@ -552,7 +552,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
+
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
@@ -574,17 +574,17 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		let group = DispatchGroup()
-		
+
 		for feed in folder.topLevelFeeds {
-			
+
 			folder.topLevelFeeds.remove(feed)
-			
+
 			group.enter()
 			restoreFeed(for: account, feed: feed, container: folder) { result in
 				group.leave()
@@ -596,7 +596,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				}
 			}
 		}
-		
+
 		group.notify(queue: DispatchQueue.main) {
 			account.addFolder(folder)
 			completion(.success(()))
@@ -628,7 +628,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
 	}
-	
+
 	func accountWillBeDeleted(_ account: Account) {
 	}
 
@@ -648,12 +648,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func suspendNetwork() {
 		caller.cancelAll()
 	}
-	
+
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
 		database.suspend()
 	}
-	
+
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		database.resume()
@@ -663,7 +663,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 // MARK: Private
 
 private extension ReaderAPIAccountDelegate {
-	
+
 	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		caller.retrieveTags { result in
 			switch result {
@@ -692,14 +692,14 @@ private extension ReaderAPIAccountDelegate {
 	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
-		
+
 		let folderTags: [ReaderAPITag]
 		if variant == .inoreader {
 			folderTags = tags.filter{ $0.type == "folder" }
 		} else {
 			folderTags = tags.filter{ $0.tagID.contains("/label/") }
 		}
-		
+
 		guard !folderTags.isEmpty else { return }
 
 		Self.logger.info("ReaderAPI: Syncing folders with \(folderTags.count) tags")
@@ -718,7 +718,7 @@ private extension ReaderAPIAccountDelegate {
 				}
 			}
 		}
-		
+
 		let folderExternalIDs: [String] =  {
 			if let folders = account.folders {
 				return folders.compactMap { $0.externalID }
@@ -734,18 +734,18 @@ private extension ReaderAPIAccountDelegate {
 				folder?.externalID = tag.tagID
 			}
 		}
-		
+
 	}
-	
+
 	func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
-		
+
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
 
 		Self.logger.info("ReaderAPI: Syncing feeds with \(subscriptions.count) subscriptions")
 
 		let subFeedIds = subscriptions.map { $0.feedID }
-		
+
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
@@ -756,17 +756,17 @@ private extension ReaderAPIAccountDelegate {
 				}
 			}
 		}
-		
+
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.feedID) {
 				account.clearFeedMetadata(feed)
 				account.removeFeed(feed)
 			}
 		}
-		
+
 		// Add any feeds we don't have and update any we do
 		subscriptions.forEach { subscription in
-			
+
 			if let feed = account.existingFeed(withFeedID: subscription.feedID) {
 				feed.name = subscription.name
 				feed.editedName = nil
@@ -776,9 +776,9 @@ private extension ReaderAPIAccountDelegate {
 				feed.externalID = subscription.feedID
 				account.addFeed(feed)
 			}
-			
+
 		}
-		
+
 	}
 
 	func syncFeedFolderRelationship(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
@@ -790,7 +790,7 @@ private extension ReaderAPIAccountDelegate {
 		let folderDict = externalIDToFolderDictionary(with: account.folders)
 		let taggingsDict = subscriptions.reduce([String: [ReaderAPISubscription]]()) { (dict, subscription) in
 			var taggedFeeds = dict
-			
+
 			subscription.categories.forEach({ (category) in
 				if var taggedFeed = taggedFeeds[category.categoryId] {
 					taggedFeed.append(subscription)
@@ -799,15 +799,15 @@ private extension ReaderAPIAccountDelegate {
 					taggedFeeds[category.categoryId] = [subscription]
 				}
 			})
-			
+
 			return taggedFeeds
 		}
-		
+
 		// Sync the folders
 		for (folderExternalID, groupedTaggings) in taggingsDict {
 			guard let folder = folderDict[folderExternalID] else { return }
 			let taggingFeedIDs = groupedTaggings.map { $0.feedID }
-			
+
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
 				if !taggingFeedIDs.contains(feed.feedID) {
@@ -816,10 +816,10 @@ private extension ReaderAPIAccountDelegate {
 					account.addFeed(feed)
 				}
 			}
-			
+
 			// Add any feeds not in the folder
 			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
-			
+
 			for subscription in groupedTaggings {
 				let taggingFeedID = subscription.feedID
 				if !folderFeedIds.contains(taggingFeedID) {
@@ -830,11 +830,11 @@ private extension ReaderAPIAccountDelegate {
 					folder.addFeed(feed)
 				}
 			}
-			
+
 		}
-	
+
 		let taggedFeedIDs = Set(subscriptions.filter({ !$0.categories.isEmpty }).map { String($0.feedID) })
-		
+
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelFeeds {
 			if taggedFeedIDs.contains(feed.feedID) {
@@ -842,20 +842,20 @@ private extension ReaderAPIAccountDelegate {
 			}
 		}
 	}
-	
+
 	func externalIDToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
 		guard let folders = folders else {
 			return [String: Folder]()
 		}
 
 		var d = [String: Folder]()
-		
+
 		for folder in folders {
 			if let externalID = folder.externalID, d[externalID] == nil {
 				d[externalID] = folder
 			}
 		}
-		
+
 		return d
 	}
 
@@ -864,13 +864,13 @@ private extension ReaderAPIAccountDelegate {
 			completion()
 			return
 		}
-		
+
 		let group = DispatchGroup()
-		
+
 		let articleIDs = statuses.compactMap { $0.articleID }
 		let articleIDGroups = articleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
-			
+
 			group.enter()
 			apiCall(articleIDGroup) { result in
 				switch result {
@@ -883,21 +883,21 @@ private extension ReaderAPIAccountDelegate {
 					group.leave()
 				}
 			}
-			
+
 		}
-		
+
 		group.notify(queue: DispatchQueue.main) {
 			completion()
 		}
-		
+
 	}
-	
+
 	func clearFolderRelationship(for feed: Feed, folderExternalID: String?) {
 		guard var folderRelationship = feed.folderRelationship, let folderExternalID = folderExternalID else { return }
 		folderRelationship[folderExternalID] = nil
 		feed.folderRelationship = folderRelationship
 	}
-	
+
 	func saveFolderRelationship(for feed: Feed, folderExternalID: String?, feedExternalID: String) {
 		guard let folderExternalID = folderExternalID else { return }
 		if var folderRelationship = feed.folderRelationship {
@@ -907,14 +907,14 @@ private extension ReaderAPIAccountDelegate {
 			feed.folderRelationship = [folderExternalID: feedExternalID]
 		}
 	}
-	
+
 	func createFeed( account: Account, subscription sub: ReaderAPISubscription, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-		
+
 		DispatchQueue.main.async {
-			
+
 			let feed = account.createFeed(with: sub.name, url: sub.url, feedID: String(sub.feedID), homePageURL: sub.homePageURL)
 			feed.externalID = String(sub.feedID)
-			
+
 			account.addFeed(feed, to: container) { result in
 				switch result {
 				case .success:
@@ -934,14 +934,14 @@ private extension ReaderAPIAccountDelegate {
 					completion(.failure(error))
 				}
 			}
-			
+
 		}
-		
+
 	}
 
 	func initialFeedDownload( account: Account, feed: Feed, completion: @escaping (Result<Feed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
-		
+
 		// Download the initial articles
 		self.caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID) { result in
 			self.refreshProgress.completeTask()
@@ -964,11 +964,11 @@ private extension ReaderAPIAccountDelegate {
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
+
 		}
- 
+
 	}
-	
+
 	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDsResult in
 
@@ -1028,13 +1028,13 @@ private extension ReaderAPIAccountDelegate {
 			completion()
 		}
 	}
-	
+
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
-		
+
 		guard let entries = entries else {
 			return Set<ParsedItem>()
 		}
-		
+
 		let parsedItems: [ParsedItem] = entries.compactMap { entry in
 			guard let streamID = entry.origin.streamId else {
 				return nil
@@ -1046,7 +1046,7 @@ private extension ReaderAPIAccountDelegate {
 				}
 				return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
 			}
-			
+
 			return ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
 							  uniqueID: entry.uniqueID(variant: variant),
 							  feedURL: streamID,
@@ -1066,11 +1066,11 @@ private extension ReaderAPIAccountDelegate {
 							  tags: nil,
 							  attachments: nil)
 		}
-		
+
 		return Set(parsedItems)
-		
+
 	}
-	
+
 	func syncArticleReadState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
 			completion()
@@ -1081,14 +1081,14 @@ private extension ReaderAPIAccountDelegate {
 
 			func process(_ pendingArticleIDs: Set<String>) {
 				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-				
+
 				account.fetchUnreadArticleIDs { articleIDsResult in
 					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
 						return
 					}
 
 					let group = DispatchGroup()
-					
+
 					// Mark articles as unread
 					let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
 					group.enter()
@@ -1102,13 +1102,13 @@ private extension ReaderAPIAccountDelegate {
 					account.markAsRead(deltaReadArticleIDs) { _ in
 						group.leave()
 					}
-					
+
 					group.notify(queue: DispatchQueue.main) {
 						completion()
 					}
 				}
 			}
-			
+
 			switch result {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
@@ -1117,7 +1117,7 @@ private extension ReaderAPIAccountDelegate {
 			}
 		}
 	}
-	
+
 	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
 			completion()
@@ -1135,7 +1135,7 @@ private extension ReaderAPIAccountDelegate {
 					}
 
 					let group = DispatchGroup()
-					
+
 					// Mark articles as starred
 					let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
 					group.enter()
@@ -1155,7 +1155,7 @@ private extension ReaderAPIAccountDelegate {
 					}
 				}
 			}
-			
+
 			switch result {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)

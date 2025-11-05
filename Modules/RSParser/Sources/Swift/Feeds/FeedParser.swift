@@ -17,7 +17,7 @@ public typealias FeedParserCallback = (_ parsedFeed: ParsedFeed?, _ error: Error
 public struct FeedParser {
 
 	private static let parseQueue = DispatchQueue(label: "FeedParser parse queue")
-	
+
 	public static func canParse(_ parserData: ParserData) -> Bool {
 
 		let type = feedType(parserData)

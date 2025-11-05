@@ -11,7 +11,7 @@ import Foundation
 struct FeedlyStreamIds: Decodable {
 	let continuation: String?
 	let ids: [String]
-	
+
 	var isStreamEnd: Bool {
 		return continuation == nil
 	}

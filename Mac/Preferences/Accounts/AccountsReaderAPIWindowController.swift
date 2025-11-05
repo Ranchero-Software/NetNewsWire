@@ -15,7 +15,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 
 	@IBOutlet weak var titleImageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!
-	
+
 	@IBOutlet weak var gridView: NSGridView!
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!
 	@IBOutlet weak var usernameTextField: NSTextField!
@@ -25,16 +25,16 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 	@IBOutlet weak var errorMessageLabel: NSTextField!
 	@IBOutlet weak var actionButton: NSButton!
 	@IBOutlet weak var noAccountTextField: NSTextField!
-	
+
 	var account: Account?
 	var accountType: AccountType?
-	
+
 	private weak var hostWindow: NSWindow?
-	
+
 	convenience init() {
 		self.init(windowNibName: NSNib.Name("AccountsReaderAPI"))
 	}
-	
+
 	override func windowDidLoad() {
 		if let accountType = accountType {
 			switch accountType {
@@ -63,7 +63,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 				break
 			}
 		}
-		
+
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .readerBasic) {
 			usernameTextField.stringValue = credentials.username
 			apiURLTextField.stringValue = account.endpointURL?.absoluteString ?? ""
@@ -71,13 +71,13 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 		} else {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
 		}
-		
+
 		enableAutofill()
 		usernameTextField.becomeFirstResponder()
 	}
-	
+
 	// MARK: API
-	
+
 	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
 		guard let window else {
 			return
@@ -88,29 +88,29 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 	}
 
 	// MARK: Actions
-	
+
 	@IBAction func cancel(_ sender: Any) {
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
 	}
-	
+
 	@IBAction func action(_ sender: Any) {
 		self.errorMessageLabel.stringValue = ""
-		
+
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
 			return
 		}
-		
+
 		guard let accountType = accountType, !(accountType == .freshRSS && apiURLTextField.stringValue.isEmpty) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
 			return
 		}
-		
+
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: usernameTextField.stringValue) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
 			return
 		}
-		
+
 		let apiURL: URL
 		switch accountType {
 		case .freshRSS:
@@ -181,7 +181,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			}
 		}
 	}
-	
+
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		switch accountType {
 		case .freshRSS:
@@ -196,11 +196,11 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			return
 		}
 	}
-	
+
 	// MARK: Autofill
 	func enableAutofill() {
 		usernameTextField.contentType = .username
 		passwordTextField.contentType = .password
 	}
-    
+
 }

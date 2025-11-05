@@ -12,12 +12,12 @@ import os
 public enum Platform {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Platform")
-	
+
 	/// Returns true if the app is currently running unit tests.
 	public static var isRunningUnitTests: Bool {
 		return _isRunningUnitTests
 	}
-	
+
 	private static let _isRunningUnitTests: Bool = {
 
 		func checkIfRunningUnitTests() -> Bool {
@@ -51,7 +51,7 @@ public enum Platform {
 		Self.logger.info("Not running unit tests")
 		return false
 	}()
-	
+
 	/// Get the path to a subfolder of the application's data folder (often `Application Support`).
 	/// - Parameters:
 	///   - appName: The name of the application.

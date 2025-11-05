@@ -94,11 +94,11 @@ private extension HTMLMetadataDownloader {
 					self.cache[url] = htmlMetadata
 					return
 				}
-				
+
 				if let statusCode = response?.forcedStatusCode, (400...499).contains(statusCode) {
 					self.noteURLDidReturn4xx(url)
 				}
-				
+
 				Self.logger.debug("HTMLMetadataDownloader failed download for \(url)")
 			}
 		}

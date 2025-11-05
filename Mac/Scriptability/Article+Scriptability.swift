@@ -15,7 +15,7 @@ final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjec
 
     let article:Article
     let container:ScriptingObjectContainer
-    
+
     init (_ article:Article, container:ScriptingObjectContainer) {
         self.article = article
         self.container = container
@@ -44,17 +44,17 @@ final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjec
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
-    
+
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
-    
+
     func deleteElement(_ element:ScriptingObject) {
         print ("delete event not handled")
     }
 
     // MARK: --- Scriptable properties ---
-    
+
     @objc(url)
     var url:String?  {
         return article.preferredLink
@@ -69,7 +69,7 @@ final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjec
     var externalUrl:String?  {
         return article.externalLink
     }
-    
+
     @objc(title)
     var title:String  {
         return article.title ?? ""
@@ -134,7 +134,7 @@ final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjec
     var imageURL:String  {
         return article.imageLink ?? ""
     }
-    
+
     @objc(authors)
     var authors:NSArray {
         let articleAuthors = article.authors ?? []

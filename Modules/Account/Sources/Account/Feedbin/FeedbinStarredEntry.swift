@@ -9,11 +9,11 @@
 import Foundation
 
 struct FeedbinStarredEntry: Codable {
-	
+
 	let starredEntries: [Int]
-	
+
 	enum CodingKeys: String, CodingKey {
 		case starredEntries = "starred_entries"
 	}
-	
+
 }

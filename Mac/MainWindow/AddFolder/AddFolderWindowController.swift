@@ -11,7 +11,7 @@ import Articles
 import Account
 
 final class AddFolderWindowController : NSWindowController {
-    
+
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!
 	@IBOutlet var addFolderButton: NSButton!
@@ -22,7 +22,7 @@ final class AddFolderWindowController : NSWindowController {
 	}
 
     // MARK: - API
-    
+
     func runSheetOnWindow(_ hostWindow: NSWindow) {
 		guard let window else {
 			return
@@ -37,33 +37,33 @@ final class AddFolderWindowController : NSWindowController {
     }
 
 	// MARK: - NSViewController
-	
+
 	override func windowDidLoad() {
 		let preferredAccountID = AppDefaults.shared.addFolderAccountID
 		accountPopupButton.removeAllItems()
-		
+
 		let menu = NSMenu()
 		accountPopupButton.menu = menu
-		
+
 		let accounts = AccountManager.shared
 			.sortedActiveAccounts
 			.filter { !$0.behaviors.contains(.disallowFolderManagement) }
-		
+
 		for oneAccount in accounts {
-			
+
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
 			oneMenuItem.representedObject = oneAccount
 			menu.addItem(oneMenuItem)
-			
+
 			if oneAccount.accountID == preferredAccountID {
 				accountPopupButton.select(oneMenuItem)
 			}
 		}
 	}
-	
+
 	// MARK: - Actions
-	
+
     @IBAction func cancel(_ sender: Any?) {
 		guard let hostWindow, let window else {
 			return
@@ -71,7 +71,7 @@ final class AddFolderWindowController : NSWindowController {
 		hostWindow.endSheet(window, returnCode: .cancel)
 		self.hostWindow = nil
     }
-    
+
     @IBAction func addFolder(_ sender: Any?) {
 		guard let hostWindow, let window else {
 			return

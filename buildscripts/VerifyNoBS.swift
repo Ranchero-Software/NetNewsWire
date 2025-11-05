@@ -23,13 +23,13 @@ struct LocatedMessage {
 
 /// Utility to process the pbxproj file
 struct BuildSettingsVerifier {
-    
+
     public enum ProcessXcodeprojResult {
         case foundBuildSettings([LocatedMessage])
         case error(String)
         case success(String)
     }
-    
+
     /// Mode to run the utility in. Mode defines the output format
     public enum Mode {
         /// Write errors to stderr
@@ -37,18 +37,18 @@ struct BuildSettingsVerifier {
         /// Write errors to stdout in a format that is picked up by Xcode
         case xcode
     }
-    
+
     /// The mode to run in
     let mode: Mode
-    
+
     /// The absolute file URL to the pbxproj file
     let projUrl: URL
-    
+
     init(mode: Mode, projUrl: URL) {
         self.mode = mode
         self.projUrl = projUrl
     }
-    
+
     /// Reports an error either to stderr or to stdout, depending on the mode
     func reportError(message: String, fileUrl: URL? = nil, line: Int? = nil) {
         switch mode {
@@ -61,17 +61,17 @@ struct BuildSettingsVerifier {
             }
         case .xcode:
             var messageParts = [String]()
-            
+
             if let fileUrl = fileUrl {
                 messageParts.append("\(fileUrl.path):")
             }
-            
+
             if let line = line {
                 messageParts.append("\(line): ")
             }
-            
+
             messageParts.append("error: \(message)")
-            
+
             print(messageParts.joined())
         }
     }
@@ -115,10 +115,10 @@ struct BuildSettingsVerifier {
         }
         return .success(":-)")
     }
-    
+
     public func verify() -> Int32 {
         print("Verifying there are no build settings...")
-        
+
         let result = processXcodeprojAt(url: projUrl)
 
         switch result {

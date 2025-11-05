@@ -18,7 +18,7 @@ extension NSScriptCommand {
         }
         return nil
     }
-    
+
     func isCreateCommand(forClass whatClass:String) -> Bool {
         guard let arguments = self.arguments else {return false}
         guard let newObjectClass = arguments["ObjectClass"] as? Int else {return false}
@@ -44,7 +44,7 @@ extension NSScriptCommand {
             } else if let subjectDescriptor = appleEvent.attributeDescriptor(forKeyword:"subj".fourCharCode) {
                 descriptorToConsider = subjectDescriptor
             }
-            
+
             if let descriptorToConsider = descriptorToConsider {
                 guard let newContainerSpecifier = NSScriptObjectSpecifier(descriptor:descriptorToConsider) else {return (account, folder)}
                 let newContainer = newContainerSpecifier.objectsByEvaluatingSpecifier

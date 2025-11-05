@@ -16,7 +16,7 @@ struct SidebarCellLayout {
 	let faviconRect: CGRect
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
-	
+
 	init(appearance: SidebarCellAppearance, cellSize: NSSize, shouldShowImage: Bool, textField: NSTextField, unreadCountView: UnreadCountView) {
 
 		let bounds = NSRect(x: 0.0, y: 0.0, width: floor(cellSize.width), height: floor(cellSize.height))

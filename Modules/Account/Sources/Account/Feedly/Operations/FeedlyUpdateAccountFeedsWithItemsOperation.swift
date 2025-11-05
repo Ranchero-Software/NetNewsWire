@@ -20,10 +20,10 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 		self.account = account
 		self.organisedItemsProvider = organisedItemsProvider
 	}
-	
+
 	override func run() {
 		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
-		
+
 		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { databaseError in
 			if let error = databaseError {
 				self.didFinish(with: error)

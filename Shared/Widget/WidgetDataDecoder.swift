@@ -9,7 +9,7 @@
 import Foundation
 
 struct WidgetDataDecoder {
-	
+
 	static func decodeWidgetData() throws -> WidgetData {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
@@ -21,7 +21,7 @@ struct WidgetDataDecoder {
 			return WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date())
 		}
 	}
-	
+
 	static func sampleData() -> WidgetData {
 		let pathToSample = Bundle.main.url(forResource: "widget-sample", withExtension: "json")
 		do {
@@ -32,5 +32,5 @@ struct WidgetDataDecoder {
 			return WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date())
 		}
 	}
-	
+
 }

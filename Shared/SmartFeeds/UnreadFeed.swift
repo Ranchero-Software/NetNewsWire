@@ -19,7 +19,7 @@ import ArticlesDatabase
 // This just shows the global unread count, which appDelegate already has. Easy.
 
 final class UnreadFeed: PseudoFeed {
-	
+
 	var account: Account? = nil
 
 	public var defaultReadFilterType: ReadFilterType {
@@ -32,7 +32,7 @@ final class UnreadFeed: PseudoFeed {
 
 	let nameForDisplay = NSLocalizedString("All Unread", comment: "All Unread pseudo-feed title")
 	let fetchType = FetchType.unread(nil)
-	
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -44,13 +44,13 @@ final class UnreadFeed: PseudoFeed {
 	var smallIcon: IconImage? {
 		return AppAssets.unreadFeedImage
 	}
-	
+
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)
 	}
 	#endif
-	
+
 	init() {
 
 		self.unreadCount = appDelegate.unreadCount
@@ -65,7 +65,7 @@ final class UnreadFeed: PseudoFeed {
 }
 
 extension UnreadFeed: ArticleFetcher {
-	
+
 	func fetchArticles() throws -> Set<Article> {
 		return try fetchUnreadArticles()
 	}

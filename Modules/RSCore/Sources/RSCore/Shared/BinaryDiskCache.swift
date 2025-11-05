@@ -43,7 +43,7 @@ public struct BinaryDiskCache {
 			catch {}
 			return nil
 		}
-		
+
 		set {
 			if let data = newValue {
 				do {

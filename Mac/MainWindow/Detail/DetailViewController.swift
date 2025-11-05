@@ -31,7 +31,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	var windowState: DetailWindowState {
 		currentWebViewController.windowState
 	}
-	
+
 	private var currentWebViewController: DetailWebViewController! {
 		didSet {
 			let webview = currentWebViewController.view
@@ -86,7 +86,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	func stopMediaPlayback() {
 		currentWebViewController.stopMediaPlayback()
 	}
-	
+
 	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
 		currentWebViewController.canScrollDown(callback)
 	}
@@ -102,9 +102,9 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	override func scrollPageUp(_ sender: Any?) {
 		currentWebViewController.scrollPageUp(sender)
 	}
-	
+
 	// MARK: - Navigation
-	
+
 	func focus() {
 		guard let window = currentWebViewController.webView.window else {
 			return

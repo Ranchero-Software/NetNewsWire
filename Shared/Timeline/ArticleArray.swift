@@ -49,11 +49,11 @@ extension Array where Element == Article {
 			return articleAtRow(oneIndex)
 		}
 	}
-		
+
 	func sortedByDate(_ sortDirection: ComparisonResult, groupByFeed: Bool = false) -> ArticleArray {
 		return ArticleSorter.sortedByDate(articles: self, sortDirection: sortDirection, groupByFeed: groupByFeed)
 	}
-	
+
 	func canMarkAllAsRead() -> Bool {
 		return anyArticleIsUnread()
 	}
@@ -107,7 +107,7 @@ extension Array where Element == Article {
 		guard let position = firstIndex(of: article) else {	return [] }
 		return articlesAbove(position: position)
 	}
-	
+
 	func articlesAbove(position: Int) -> [Article] {
 		guard position < count else { return [] }
 		let articlesAbove = self[..<position]
@@ -118,7 +118,7 @@ extension Array where Element == Article {
 		guard let position = firstIndex(of: article) else {	return [] }
 		return articlesBelow(position: position)
 	}
-	
+
 	func articlesBelow(position: Int) -> [Article] {
 		guard position < count else { return [] }
 		var articlesBelow = Array(self[position...])
@@ -128,6 +128,6 @@ extension Array where Element == Article {
 		articlesBelow.removeFirst()
 		return articlesBelow
 	}
-	
+
 }
 

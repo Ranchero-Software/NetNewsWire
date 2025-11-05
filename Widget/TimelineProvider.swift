@@ -10,7 +10,7 @@ import WidgetKit
 import SwiftUI
 
 struct Provider: TimelineProvider {
-	
+
 	func placeholder(in context: Context) -> WidgetTimelineEntry {
 		do {
 			let data = try WidgetDataDecoder.decodeWidgetData()
@@ -19,7 +19,7 @@ struct Provider: TimelineProvider {
 			return WidgetTimelineEntry(date: Date(), widgetData: WidgetDataDecoder.sampleData())
 		}
 	}
-	
+
 	func getSnapshot(in context: Context, completion: @escaping (WidgetTimelineEntry) -> Void) {
 		if context.isPreview {
 			do {
@@ -41,31 +41,31 @@ struct Provider: TimelineProvider {
 			}
 		}
 	}
-	
+
 	func getTimeline(in context: Context, completion: @escaping (Timeline<WidgetTimelineEntry>) -> Void) {
 		// Create current timeline entry for now.
 		let date = Date()
 		var entry: WidgetTimelineEntry
-		
+
 		do {
 			let widgetData = try WidgetDataDecoder.decodeWidgetData()
 			entry = WidgetTimelineEntry(date: date, widgetData: widgetData)
 		} catch {
 			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date()))
 		}
-		
+
 		// Configure next update in 1 hour.
 		let nextUpdateDate = Calendar.current.date(byAdding: .hour, value: 1, to: date)!
-		
+
 		let timeline = Timeline(
 			entries:[entry],
 			policy: .after(nextUpdateDate))
-		
+
 		completion(timeline)
 	}
-	
+
 	public typealias Entry = WidgetTimelineEntry
-	
+
 }
 
 struct WidgetTimelineEntry: TimelineEntry {

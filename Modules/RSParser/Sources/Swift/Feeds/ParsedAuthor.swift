@@ -14,7 +14,7 @@ public struct ParsedAuthor: Hashable, Codable {
 	public let url: String?
 	public let avatarURL: String?
 	public let emailAddress: String?
-	
+
 	public init(name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
 		self.name = name
 		self.url = url

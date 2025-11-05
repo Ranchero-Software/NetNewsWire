@@ -31,13 +31,13 @@ protocol ScriptingAppDelegate {
 }
 
 extension AppDelegate : AppDelegateAppleEvents {
-    
+
     // MARK: GetURL Apple Event
 
     func installAppleEventHandlers() {
         NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.getURL(_:_:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
     }
-    
+
     @objc func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
 
         guard var urlString = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {
@@ -51,14 +51,14 @@ extension AppDelegate : AppDelegateAppleEvents {
 				  let themeURLString = queryItems.first(where: { $0.name == "url" })?.value else {
 					  return
 				  }
-			
+
 			if let themeURL = URL(string: themeURLString) {
 				let request = URLRequest(url: themeURL)
 				let task = URLSession.shared.downloadTask(with: request) { location, response, error in
 					guard let location = location else {
 						return
 					}
-					
+
 					do {
 						try ArticleThemeDownloader.shared.handleFile(at: location)
 					} catch {
@@ -68,10 +68,10 @@ extension AppDelegate : AppDelegateAppleEvents {
 				task.resume()
 			}
 			return
-		
+
 		}
-		
-		
+
+
 		// Special case URL with specific scheme handler x-netnewswire-feed: intended to ensure we open
 		// it regardless of which news reader may be set as the default
 		let nnwScheme = "x-netnewswire-feed:"
@@ -128,7 +128,7 @@ final class NetNewsWireDeleteCommand : NSDeleteCommand {
             container.deleteElement(element)
         }
     }
-    
+
     /*
         delete(specifier:, from container:)
         At this point in handling the command, the container could be a list or a single object,
@@ -177,7 +177,7 @@ final class NetNewsWireExistsCommand : NSExistsCommand {
     // must not exist.  Otherwise, we return the result of the defaultImplementation
     // The wrinkle is that it is possible that the direct object is a list, so we need to
     // handle that case as well
-    
+
     override func performDefaultImplementation() -> Any? {
          guard let result = super.performDefaultImplementation() else { return NSNumber(booleanLiteral:false) }
          return result

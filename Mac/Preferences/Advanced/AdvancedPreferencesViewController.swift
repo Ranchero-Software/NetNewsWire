@@ -58,7 +58,7 @@ private extension AdvancedPreferencesViewController {
 			releaseBuildsButton.state = .on
 		}
 	}
-	
+
 	func currentAppcastURL() -> String {
 		return UserDefaults.standard.string(forKey: appcastDefaultsKey) ?? ""
 	}

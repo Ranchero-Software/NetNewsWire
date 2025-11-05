@@ -28,7 +28,7 @@ struct SidebarCellAppearance: Equatable {
 			imageSize = CGSize(width: 19, height: 19)
 			textFieldFontSize = 13
 		}
-		
+
 		self.textFieldFont = NSFont.systemFont(ofSize: textFieldFontSize)
 	}
 }

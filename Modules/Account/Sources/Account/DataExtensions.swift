@@ -56,7 +56,7 @@ public extension Article {
 		}
 		return manager.existingAccount(with: accountID)
 	}
-	
+
 	var feed: Feed? {
 		return account?.existingFeed(withFeedID: feedID)
 	}

@@ -39,7 +39,7 @@ final class SmartFeed: PseudoFeed {
 	var smallIcon: IconImage? {
 		return delegate.smallIcon
 	}
-	
+
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)
@@ -63,7 +63,7 @@ final class SmartFeed: PseudoFeed {
 
 	@objc func fetchUnreadCounts() {
 		let activeAccounts = AccountManager.shared.activeAccounts
-		
+
 		// Remove any accounts that are no longer active or have been deleted
 		let activeAccountIDs = activeAccounts.map { $0.accountID }
 		unreadCounts.keys.forEach { accountID in
@@ -71,14 +71,14 @@ final class SmartFeed: PseudoFeed {
 				unreadCounts.removeValue(forKey: accountID)
 			}
 		}
-		
+
 		if activeAccounts.isEmpty {
 			updateUnreadCount()
 		} else {
 			activeAccounts.forEach { self.fetchUnreadCount(for: $0) }
 		}
 	}
-	
+
 }
 
 extension SmartFeed: ArticleFetcher {

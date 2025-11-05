@@ -38,7 +38,7 @@ final class DetailStatusBarView: NSView {
 	override var isOpaque: Bool {
 		return false
 	}
-	
+
 	override var isFlipped: Bool {
 		return true
 	}

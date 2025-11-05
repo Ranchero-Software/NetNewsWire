@@ -12,11 +12,11 @@ struct FeedlyCollectionParser {
 	let collection: FeedlyCollection
 
 	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
-	
+
 	var folderName: String {
 		return rightToLeftTextSantizer.sanitize(collection.label) ?? ""
 	}
-	
+
 	var externalID: String {
 		return collection.id
 	}

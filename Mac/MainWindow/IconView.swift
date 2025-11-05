@@ -39,7 +39,7 @@ final class IconView: NSView {
 	}
 
 	private var isDiscernable = true
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
@@ -108,7 +108,7 @@ private extension IconView {
 		guard !(iconImage?.isSymbol ?? false) else {
 			return NSMakeRect(0.0, 0.0, bounds.size.width, bounds.size.height)
 		}
-		
+
 		guard let image = iconImage?.image else {
 			return NSRect.zero
 		}

@@ -43,13 +43,13 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     var scriptingUniqueId:Any {
         return folder.folderID
     }
-    
+
     // MARK: --- ScriptingObjectContainer protocol ---
-    
+
     var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
- 
+
     func deleteElement(_ element:ScriptingObject) {
        if let scriptableFeed = element as? ScriptableFeed {
             BatchUpdate.shared.perform {
@@ -76,9 +76,9 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
             print("support for folders within folders is NYI");
             return nil
         }
-		
+
 		command.suspendExecution()
-		
+
 		account.addFolder(name) { result in
 			switch result {
 			case .success(let folder):
@@ -89,12 +89,12 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
 				command.resumeExecution(withResult:nil)
 			}
 		}
-		
+
         return nil
     }
-    
+
     // MARK: --- Scriptable elements ---
-    
+
     @objc(feeds)
     var feeds:NSArray  {
 		let feeds = Array(folder.topLevelFeeds)
@@ -137,7 +137,7 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     }
 
     // MARK: --- Scriptable properties ---
-    
+
     @objc(name)
     var name:String  {
         return self.folder.name ?? ""

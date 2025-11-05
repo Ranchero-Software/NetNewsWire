@@ -47,7 +47,7 @@ final class JSONFeedParserTests: XCTestCase {
 	}
 
 	func testCurt() {
-		
+
 		let d = parserData("curt", "json", "http://curtclifton.net/")
 		let parsedFeed = try! FeedParser.parse(d)!
 
@@ -83,7 +83,7 @@ final class JSONFeedParserTests: XCTestCase {
 		let parsedFeed = try! FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.items.count, 20)
 		XCTAssertEqual(parsedFeed.language, "de-DE")
-		
+
 		for item in parsedFeed.items {
 			XCTAssertEqual(item.language, "de-DE")
 		}

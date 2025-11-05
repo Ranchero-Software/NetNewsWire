@@ -16,7 +16,7 @@ final class SettingsComboTableViewCell: VibrantTableViewCell {
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
 		updateLabelVibrancy(comboNameLabel, color: labelColor, animated: animated)
-		
+
 		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
 		if animated {
 			UIView.animate(withDuration: Self.duration) {
@@ -26,5 +26,5 @@ final class SettingsComboTableViewCell: VibrantTableViewCell {
 			self.comboImage?.tintColor = tintColor
 		}
 	}
-	
+
 }

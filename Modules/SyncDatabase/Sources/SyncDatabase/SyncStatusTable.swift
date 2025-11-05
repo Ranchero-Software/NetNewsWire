@@ -56,7 +56,7 @@ struct SyncStatusTable: DatabaseTable {
 			}
 		}
 	}
-	
+
 	func selectPendingCount(_ completion: @escaping DatabaseIntCompletionBlock) {
 		queue.runInDatabase { databaseResult in
 			var count: Int = 0
@@ -90,11 +90,11 @@ struct SyncStatusTable: DatabaseTable {
     func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
         selectPendingArticleIDsAsync(.read, completion)
     }
-    
+
     func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
         selectPendingArticleIDsAsync(.starred, completion)
     }
-    
+
 	func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
 		queue.runInTransaction { databaseResult in
 
@@ -118,7 +118,7 @@ struct SyncStatusTable: DatabaseTable {
 			callCompletion(completion, nil)
 			return
 		}
-		
+
 		queue.runInTransaction { databaseResult in
 
 			func makeDatabaseCall(_ database: FMDatabase) {
@@ -137,13 +137,13 @@ struct SyncStatusTable: DatabaseTable {
 			}
 		}
 	}
-	
+
     func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		guard !articleIDs.isEmpty else {
 			callCompletion(completion, nil)
 			return
 		}
-		
+
 		queue.runInTransaction { databaseResult in
 
 			func makeDatabaseCall(_ database: FMDatabase) {
@@ -162,7 +162,7 @@ struct SyncStatusTable: DatabaseTable {
 			}
 		}
 	}
-	
+
     func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
 		queue.runInTransaction { databaseResult in
 
@@ -180,7 +180,7 @@ struct SyncStatusTable: DatabaseTable {
 			}
 		}
 	}
-	
+
 }
 
 private extension SyncStatusTable {
@@ -191,13 +191,13 @@ private extension SyncStatusTable {
 			let key = SyncStatus.Key(rawValue: rawKey) else {
 				return nil
 		}
-		
+
 		let flag = row.bool(forColumn: DatabaseKey.flag)
 		let selected = row.bool(forColumn: DatabaseKey.selected)
-		
+
 		return SyncStatus(articleID: articleID, key: key, flag: flag, selected: selected)
 	}
-    
+
     func selectPendingArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ completion: @escaping SyncStatusArticleIDsCompletionBlock) {
 
         queue.runInDatabase { databaseResult in
@@ -228,7 +228,7 @@ private extension SyncStatusTable {
             }
         }
     }
-    
+
 }
 
 private func callCompletion(_ completion: DatabaseCompletionBlock?, _ databaseError: DatabaseError?) {

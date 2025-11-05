@@ -16,9 +16,9 @@ protocol FeedlyRequestStreamsOperationDelegate: AnyObject {
 /// Create one stream request operation for one Feedly collection.
 /// This is the start of the process of refreshing the entire contents of a Folder.
 final class FeedlyRequestStreamsOperation: FeedlyOperation {
-	
+
 	weak var queueDelegate: FeedlyRequestStreamsOperationDelegate?
-	
+
 	let collectionsProvider: FeedlyCollectionProviding
 	let service: FeedlyGetStreamContentsService
 	let account: Account
@@ -32,16 +32,16 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 		self.newerThan = newerThan
 		self.unreadOnly = unreadOnly
 	}
-	
+
 	override func run() {
 		defer {
 			didFinish()
 		}
-		
+
 		assert(queueDelegate != nil, "This is not particularly useful unless the `queueDelegate` is non-nil.")
-		
+
 		// TODO: Prioritise the must read collection/category before others so the most important content for the user loads first.
-		
+
 		for collection in collectionsProvider.collections {
 			let resource = FeedlyCategoryResourceId(id: collection.id)
 			let operation = FeedlyGetStreamContentsOperation(
@@ -53,7 +53,7 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 			)
 			queueDelegate?.feedlyRequestStreamsOperation(self, enqueue: operation)
 		}
-		
+
 		Feedly.logger.info("Feedly: Requested \(self.collectionsProvider.collections.count) collection streams")
 	}
 }

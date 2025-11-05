@@ -22,20 +22,20 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 		self.service = service
 		self.provider = provider
 	}
-	
+
 	private(set) var entries = [FeedlyEntry]()
-	
+
 	private var storedParsedEntries: Set<ParsedItem>?
-	
+
 	var parsedEntries: Set<ParsedItem> {
 		if let entries = storedParsedEntries {
 			return entries
 		}
-		
+
 		let parsed = Set(entries.compactMap {
 			FeedlyEntryParser(entry: $0).parsedItemRepresentation
 		})
-		
+
 		// TODO: Fix the below. There’s an error on the os.log line: "Expression type '()' is ambiguous without more context"
 //		if parsed.count != entries.count {
 //			let entryIds = Set(entries.map { $0.id })
@@ -43,23 +43,23 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 //			let difference = entryIds.subtracting(parsedIds)
 //			os_log(.debug, log: log, "%{public}@ dropping articles with ids: %{public}@.", self, difference)
 //		}
-		
+
 		storedParsedEntries = parsed
-		
+
 		return parsed
 	}
-	
+
 	var parsedItemProviderName: String {
 		return name ?? String(describing: Self.self)
 	}
-	
+
 	override func run() {
 		service.getEntries(for: provider.entryIds) { result in
 			switch result {
 			case .success(let entries):
 				self.entries = entries
 				self.didFinish()
-				
+
 			case .failure(let error):
 				Feedly.logger.error("Feedly: Unable to get entries with error \(error.localizedDescription)")
 				self.didFinish(with: error)

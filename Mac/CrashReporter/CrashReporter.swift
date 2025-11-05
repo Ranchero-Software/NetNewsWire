@@ -41,7 +41,7 @@ struct CrashReporter {
 		} else {
 			runCrashReporterWindow(crashLogText)
 		}
-		
+
 		crashReporter.purgePendingCrashReport()
 	}
 

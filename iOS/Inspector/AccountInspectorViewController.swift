@@ -21,23 +21,23 @@ final class AccountInspectorViewController: UITableViewController {
 
 	var isModal = false
 	weak var account: Account?
-	
+
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+
 		guard let account = account else { return }
-		
+
 		nameTextField.placeholder = account.defaultName
 		nameTextField.text = account.name
 		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
-		
+
 		navigationItem.title = account.nameForDisplay
-		
+
 		if account.type != .onMyMac {
 			deleteAccountButton.setTitle(NSLocalizedString("Remove Account", comment: "Remove Account"), for: .normal) 
 		}
-		
+
 		if account.type != .cloudKit {
 			limitationsAndSolutionsButton.isHidden = true
 		}
@@ -46,11 +46,11 @@ final class AccountInspectorViewController: UITableViewController {
 			let doneBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
 			navigationItem.leftBarButtonItem = doneBarButtonItem
 		}
-		
+
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 
 	}
-	
+
 	override func viewWillDisappear(_ animated: Bool) {
 		account?.name = nameTextField.text
 		account?.isActive = activeSwitch.isOn
@@ -59,7 +59,7 @@ final class AccountInspectorViewController: UITableViewController {
 	@objc func done() {
 		dismiss(animated: true)
 	}
-	
+
 	@IBAction func credentials(_ sender: Any) {
 		guard let account = account else { return }
 		switch account.type {
@@ -86,12 +86,12 @@ final class AccountInspectorViewController: UITableViewController {
 			break
 		}
 	}
-	
+
 	@IBAction func deleteAccount(_ sender: Any) {
 		guard let account = account else {
 			return
 		}
-		
+
 		let title = NSLocalizedString("Remove Account", comment: "Remove Account")
 		let message: String = {
 			switch account.type {
@@ -105,7 +105,7 @@ final class AccountInspectorViewController: UITableViewController {
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 		alertController.addAction(cancelAction)
-		
+
 		let markTitle = NSLocalizedString("Remove", comment: "Remove")
 		let markAction = UIAlertAction(title: markTitle, style: .destructive) { [weak self] (action) in
 			guard let self = self, let account = self.account else { return }
@@ -118,7 +118,7 @@ final class AccountInspectorViewController: UITableViewController {
 		}
 		alertController.addAction(markAction)
 		alertController.preferredAction = markAction
-		
+
 		present(alertController, animated: true)
 	}
 
@@ -132,7 +132,7 @@ final class AccountInspectorViewController: UITableViewController {
 // MARK: Table View
 
 extension AccountInspectorViewController {
-	
+
 	var hidesCredentialsSection: Bool {
 		guard let account = account else {
 			return true
@@ -147,7 +147,7 @@ extension AccountInspectorViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		guard let account = account else { return 0 }
-		
+
 		if account == AccountManager.shared.defaultAccount {
 			return 1
 		} else if hidesCredentialsSection {
@@ -156,11 +156,11 @@ extension AccountInspectorViewController {
 			return super.numberOfSections(in: tableView)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
 	}
-	
+
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		guard let account = account else { return nil }
 
@@ -172,16 +172,16 @@ extension AccountInspectorViewController {
 			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell: UITableViewCell
-		
+
 		if indexPath.section == 1, hidesCredentialsSection {
 			cell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 2))
 		} else {
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
 		}
-		
+
 		return cell
 	}
 
@@ -191,17 +191,17 @@ extension AccountInspectorViewController {
 		}
 		return false
 	}
-	
+
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 	}
-	
+
 }
 
 // MARK: UITextFieldDelegate
 
 extension AccountInspectorViewController: UITextFieldDelegate {
-	
+
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return true

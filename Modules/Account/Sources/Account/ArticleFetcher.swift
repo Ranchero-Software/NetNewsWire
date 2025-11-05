@@ -19,7 +19,7 @@ public protocol ArticleFetcher {
 }
 
 extension Feed: ArticleFetcher {
-	
+
 	public func fetchArticles() throws -> Set<Article> {
 		return try account?.fetchArticles(.feed(self)) ?? Set<Article>()
 	}
@@ -55,7 +55,7 @@ extension Feed: ArticleFetcher {
 }
 
 extension Folder: ArticleFetcher {
-	
+
 	public func fetchArticles() throws -> Set<Article> {
 		guard let account = account else {
 			assertionFailure("Expected folder.account, but got nil.")

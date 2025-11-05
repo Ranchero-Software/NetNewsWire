@@ -17,17 +17,17 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 
 	let service: FeedlyLogoutService
 	let account: Account
-	
+
 	init(account: Account, service: FeedlyLogoutService) {
 		self.service = service
 		self.account = account
 	}
-	
+
 	override func run() {
 		Feedly.logger.info("Feedly: Requesting logout \(self.account.accountID, privacy: .public)")
 		service.logout(completion: didCompleteLogout(_:))
 	}
-	
+
 	func didCompleteLogout(_ result: Result<Void, Error>) {
 		assert(Thread.isMainThread)
 		switch result {
@@ -40,7 +40,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 				// oh well, we tried our best.
 			}
 			didFinish()
-			
+
 		case .failure(let error):
 			Feedly.logger.error("Feedly: Logout failed: \(error.localizedDescription)")
 			didFinish(with: error)

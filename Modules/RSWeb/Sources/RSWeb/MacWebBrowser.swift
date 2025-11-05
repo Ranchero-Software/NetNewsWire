@@ -14,11 +14,11 @@ public class MacWebBrowser {
 
 	/// Opens a URL in the default browser.
 	@discardableResult public class func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
-		
+
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false
 		}
-		
+
 		if inBackground {
 
 			let configuration = NSWorkspace.OpenConfiguration()

@@ -35,13 +35,13 @@ final class TimelineTableCellView: NSTableCellView {
 			}
 		}
 	}
-	
+
 	var cellData: TimelineCellData! {
 		didSet {
 			updateSubviews()
 		}
 	}
-	
+
 	var isEmphasized: Bool = false {
 		didSet {
 			unreadIndicatorView.isEmphasized = isEmphasized
@@ -55,7 +55,7 @@ final class TimelineTableCellView: NSTableCellView {
 			updateStarView()
 		}
 	}
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
@@ -64,7 +64,7 @@ final class TimelineTableCellView: NSTableCellView {
 		super.init(frame: frameRect)
 		commonInit()
 	}
-	
+
 	required init?(coder: NSCoder) {		
 		super.init(coder: coder)
 		commonInit()
@@ -73,29 +73,29 @@ final class TimelineTableCellView: NSTableCellView {
 	convenience init() {
 		self.init(frame: NSRect.zero)
 	}
-	
+
 	override func setFrameSize(_ newSize: NSSize) {
-		
+
 		if newSize == self.frame.size {
 			return
 		}
-		
+
 		super.setFrameSize(newSize)
 		needsLayout = true
 	}
 
 	override func viewDidMoveToSuperview() {
-		
+
 		updateSubviews()
 	}
-	
+
 	override func layout() {
 
 		resizeSubviews(withOldSize: NSZeroSize)
 	}
-	
+
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
-		
+
 		let layoutRects = updatedLayoutRects()
 
 		setFrame(for: titleView, rect: layoutRects.titleRect)
@@ -144,7 +144,7 @@ private extension TimelineTableCellView {
 		imageView.imageScaling = scaling
 		return imageView
 	}
-	
+
 	func setFrame(for textField: NSTextField, rect: NSRect) {
 
 		if Int(floor(rect.height)) == 0 || Int(floor(rect.width)) == 0 {

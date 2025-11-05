@@ -13,12 +13,12 @@ import RSTree
 
 
 class MainFeedCollectionViewCell: UICollectionViewCell {
-    
+
 	@IBOutlet weak var feedTitle: UILabel!
 	@IBOutlet weak var faviconView: IconView!
 	@IBOutlet weak var unreadCountLabel: UILabel!
 	private var faviconLeadingConstraint: NSLayoutConstraint?
-	
+
 	var iconImage: IconImage? {
 		didSet {
 			faviconView.iconImage = iconImage
@@ -29,9 +29,9 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 			}
 		}
 	}
-	
+
 	private var _unreadCount: Int = 0
-	
+
 	var unreadCount: Int {
 		get {
 			return _unreadCount
@@ -46,7 +46,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 			unreadCountLabel.text = newValue.formatted()
 		}
 	}
-	
+
 	/// If the feed is contained in a folder, the indentation level is 1
 	/// and the cell's favicon leading constrain is increased. Otherwise,
 	/// it has the standard leading constraint.
@@ -61,7 +61,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 			}
 		}
 	}
-	
+
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -73,16 +73,16 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 			}
 		}
 	}
-	
+
     override func awakeFromNib() {
         super.awakeFromNib()
 		faviconLeadingConstraint = faviconView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor)
 		faviconLeadingConstraint?.isActive = true
     }
-	
+
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		
+
 		switch (state.isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
@@ -114,6 +114,6 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 		self.backgroundConfiguration = backgroundConfig
 	}
-		
+
 }
 

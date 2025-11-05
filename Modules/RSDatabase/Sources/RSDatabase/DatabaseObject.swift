@@ -20,9 +20,9 @@ public protocol DatabaseObject {
 }
 
 public extension DatabaseObject {
-	
+
 	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {
-		
+
 		return nil
 	}
 }
@@ -37,14 +37,14 @@ extension Array where Element == DatabaseObject {
 		}
 		return d
 	}
-	
+
 	func databaseIDs() -> Set<String> {
-		
+
 		return Set(self.map { $0.databaseID })
 	}
-	
+
 	func includesObjectWithDatabaseID(_ databaseID: String) -> Bool {
-		
+
 		for object in self {
 			if object.databaseID == databaseID {
 				return true

@@ -13,7 +13,7 @@ final class TickMarkSlider: UISlider {
 
 	private var enableFeedback = false
 	private let feedbackGenerator = UISelectionFeedbackGenerator()
-	
+
 	private var roundedValue: Float?
 	override var value: Float {
 		didSet {
@@ -24,17 +24,17 @@ final class TickMarkSlider: UISlider {
 			}
 		}
 	}
-	
+
 	func addTickMarks() {
 
 		enableFeedback = true
-		
+
 		let numberOfGaps = Int(maximumValue) - Int(minimumValue)
-		
+
 		var gapLayoutGuides = [UILayoutGuide]()
-		
+
 		for i in 0...numberOfGaps {
-			
+
 			let tick = UIView()
 			tick.translatesAutoresizingMaskIntoConstraints = false
 			tick.backgroundColor = AppAssets.tickMarkColor
@@ -47,11 +47,11 @@ final class TickMarkSlider: UISlider {
 			if i == 0 {
 				tick.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
 			}
-			
+
 			if let lastGapLayoutGuild = gapLayoutGuides.last {
 				lastGapLayoutGuild.trailingAnchor.constraint(equalTo: tick.leadingAnchor).isActive = true
 			}
-			
+
 			if i != numberOfGaps {
 				let gapLayoutGuild = UILayoutGuide()
 				gapLayoutGuides.append(gapLayoutGuild)
@@ -60,17 +60,17 @@ final class TickMarkSlider: UISlider {
 			} else {
 				tick.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
 			}
-			
+
 		}
-		
+
 		if let firstGapLayoutGuild = gapLayoutGuides.first {
 			for i in 1..<gapLayoutGuides.count {
 				gapLayoutGuides[i].widthAnchor.constraint(equalTo: firstGapLayoutGuild.widthAnchor).isActive = true
 			}
 		}
-				
+
 	}
-	
+
 	override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
 		let result = super.continueTracking(touch, with: event)
 		value = value.rounded()
@@ -80,5 +80,5 @@ final class TickMarkSlider: UISlider {
 	override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
 		value = value.rounded()
 	}
-	
+
 }

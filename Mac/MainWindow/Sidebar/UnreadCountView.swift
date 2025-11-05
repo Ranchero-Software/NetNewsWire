@@ -33,11 +33,11 @@ final class UnreadCountView : NSView {
 			needsDisplay = true
 		}
 	}
-	
+
 	private var currentTextColor: NSColor {
 		return isSelected ? NSColor.white : NSColor.secondaryLabelColor
 	}
-	
+
 	private var textAttributes: [NSAttributedString.Key: AnyObject] {
 		return [
 			.foregroundColor: currentTextColor,
@@ -48,7 +48,7 @@ final class UnreadCountView : NSView {
 
 	private var intrinsicContentSizeIsValid = false
 	private var _intrinsicContentSize = NSZeroSize
-	
+
 	override var intrinsicContentSize: NSSize {
 		if !intrinsicContentSizeIsValid {
 			var size = NSZeroSize
@@ -62,11 +62,11 @@ final class UnreadCountView : NSView {
 		}
 		return _intrinsicContentSize
 	}
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
-	
+
 	override func invalidateIntrinsicContentSize() {
 		intrinsicContentSizeIsValid = false
 	}

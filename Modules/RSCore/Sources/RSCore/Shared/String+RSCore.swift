@@ -26,14 +26,14 @@ public extension String {
 	static func htmlWithLink(_ link: String) -> String {
 		return link.htmlByAddingLink(link)
 	}
-	
+
     func hmacUsingSHA1(key: String) -> String {
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
         CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA1), key, key.count, self, self.count, &digest)
         let data = Data(digest)
         return data.map { String(format: "%02hhx", $0) }.joined()
     }
-	
+
 }
 
 public extension String {

@@ -9,12 +9,12 @@
 import Foundation
 
 extension Transport {
-	
+
 	/**
 	 Sends an HTTP get and returns JSON object(s)
 	 */
     public func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
-		
+
 		send(request: request) { result in
 			DispatchQueue.main.async {
 
@@ -51,12 +51,12 @@ extension Transport {
 			}
 		}
 	}
-	
+
 	/**
 	Sends the specified HTTP method with a JSON payload.
 	*/
 	public func send<P: Encodable>(request: URLRequest, method: String, payload: P, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		var postRequest = request
 		postRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
@@ -79,12 +79,12 @@ extension Transport {
 			}
 		}
 	}
-	
+
 	/**
 	Sends the specified HTTP method with a JSON payload and returns JSON object(s).
 	*/
 	public func send<P: Encodable, R: Decodable>(request: URLRequest, method: String, payload: P, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
-		
+
 		var postRequest = request
 		postRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
@@ -95,7 +95,7 @@ extension Transport {
 			completion(.failure(error))
 			return
 		}
-		
+
 		send(request: postRequest, method: method, payload: data) { result in
 			DispatchQueue.main.async {
 

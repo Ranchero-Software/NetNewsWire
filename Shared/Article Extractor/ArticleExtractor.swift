@@ -24,23 +24,23 @@ protocol ArticleExtractorDelegate {
 }
 
 final class ArticleExtractor {
-	
+
 	private var dataTask: URLSessionDataTask? = nil
-    
+
     var state: ArticleExtractorState!
     var article: ExtractedArticle?
     var delegate: ArticleExtractorDelegate?
 	var articleLink: String?
-	
+
     private var url: URL!
-    
+
     public init?(_ articleLink: String) {
 		self.articleLink = articleLink
-		
+
 		let clientURL = "https://extract.feedbin.com/parser"
 		let username = SecretsManager.provider.mercuryClientId
 		let signature = articleLink.hmacUsingSHA1(key: SecretsManager.provider.mercuryClientSecret)
-		
+
 		if let base64URL = articleLink.data(using: .utf8)?.base64EncodedString() {
 			let fullURL = "\(clientURL)/\(username)/\(signature)?base64_url=\(base64URL)"
 			if let url = URL(string: fullURL) {
@@ -48,18 +48,18 @@ final class ArticleExtractor {
 				return
 			}
 		}
-		
+
 		return nil
     }
-    
+
     public func process() {
-        
+
         state = .processing
 
         dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            
+
             guard let self = self else { return }
-            
+
             if let error = error {
                 self.state = .failedToParse
                 DispatchQueue.main.async {
@@ -67,7 +67,7 @@ final class ArticleExtractor {
                 }
                 return
             }
-            
+
             guard let data = data else {
                 self.state = .failedToParse
                 DispatchQueue.main.async {
@@ -75,12 +75,12 @@ final class ArticleExtractor {
                 }
                 return
             }
- 
+
             do {
 				let decoder = JSONDecoder()
 				decoder.dateDecodingStrategy = .iso8601
 				self.article = try decoder.decode(ExtractedArticle.self, from: data)
-				
+
                 DispatchQueue.main.async {
 					if self.article?.content == nil {
 						self.state = .failedToParse
@@ -96,16 +96,16 @@ final class ArticleExtractor {
                     self.delegate?.articleExtractionDidFail(with: error)
                 }
             }
-            
+
         }
-        
+
         dataTask!.resume()
-		
+
     }
-	
+
 	public func cancel() {
 		state = .cancelled
 		dataTask?.cancel()
 	}
-    
+
 }

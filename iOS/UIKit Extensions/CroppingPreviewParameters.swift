@@ -9,11 +9,11 @@
 import UIKit
 
 final class CroppingPreviewParameters: UIPreviewParameters {
-	
+
 	override init() {
 		super.init()
 	}
-	
+
 	init(view: UIView) {
 		super.init()
 		let newBounds = CGRect(x: 1, y: 1, width: view.bounds.width - 2, height: view.bounds.height - 2)

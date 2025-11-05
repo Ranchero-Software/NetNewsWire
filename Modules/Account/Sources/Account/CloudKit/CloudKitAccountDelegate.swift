@@ -88,7 +88,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 
 		syncProgress.reset()
-		
+
 		guard NetworkMonitor.shared.isConnected else {
 			completion(.success(()))
 			return
@@ -172,7 +172,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
-		
+
 		syncProgress.addToNumberOfTasksAndRemaining(1)
 		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
 			self.syncProgress.completeTask()
@@ -304,7 +304,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		syncProgress.addToNumberOfTasksAndRemaining(2)
 		accountZone.findFeedExternalIDs(for: folder) { result in
 			self.syncProgress.completeTask()
@@ -544,7 +544,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		syncProgress.addToNumberOfTasksAndRemaining(3)
 
 		func fail(_ error: Error) {
@@ -556,7 +556,7 @@ private extension CloudKitAccountDelegate {
 		accountZone.fetchChangesInZone() { result in
 			switch result {
 			case .success:
-				
+
 				self.syncProgress.completeTask()
 				let feeds = account.flattenedFeeds()
 
@@ -613,7 +613,7 @@ private extension CloudKitAccountDelegate {
 
 		syncProgress.addToNumberOfTasksAndRemaining(5)
 		FeedFinder.find(url: url) { result in
-			
+
 			self.syncProgress.completeTask()
 			switch result {
 			case .success(let feedSpecifiers):
@@ -641,7 +641,7 @@ private extension CloudKitAccountDelegate {
 				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 					self.syncProgress.completeTask()
 					feed.lastCheckDate = Date()
-					
+
 					if let parsedFeed {
 						// Save conditional GET info so that first refresh uses conditional GET.
 						if let httpResponse = response as? HTTPURLResponse,

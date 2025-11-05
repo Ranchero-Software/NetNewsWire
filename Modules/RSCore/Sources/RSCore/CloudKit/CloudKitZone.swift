@@ -13,7 +13,7 @@ public enum CloudKitZoneError: LocalizedError {
 	case userDeletedZone
 	case corruptAccount
 	case unknown
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .userDeletedZone:
@@ -33,7 +33,7 @@ public protocol CloudKitZoneDelegate: AnyObject {
 public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
 
 public protocol CloudKitZone: AnyObject {
-	
+
 	static var qualityOfService: QualityOfService { get }
 
 	var zoneID: CKRecordZone.ID { get }
@@ -47,17 +47,17 @@ public protocol CloudKitZone: AnyObject {
 
 	/// Generates a new CKRecord.ID using a UUID for the record's name
 	func generateRecordID() -> CKRecord.ID
-	
+
 	/// Subscribe to changes at a zone level
 	func subscribeToZoneChanges()
-	
+
 	/// Process a remove notification
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
-	
+
 }
 
 public extension CloudKitZone {
-	
+
 	// My observation has been that QoS is treated differently for CloudKit operations on macOS vs iOS.
 	// .userInitiated is too aggressive on iOS and can lead the UI slowing down and appearing to block.
 	// .default (or lower) on macOS will sometimes hang for extended periods of time and appear to hang.
@@ -103,12 +103,12 @@ public extension CloudKitZone {
 			UserDefaults.standard.removeObject(forKey: oldChangeTokenKey)
 		}
 	}
-	
+
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken() {
 		changeToken = nil
 	}
-	
+
 	func generateRecordID() -> CKRecord.ID {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: zoneID)
 	}
@@ -119,14 +119,14 @@ public extension CloudKitZone {
 			block()
 		})
 	}
-	
+
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == zoneID.zoneName else {
 			completion()
 			return
 		}
-		
+
 		fetchChangesInZone() { result in
 			if case .failure(let error) = result {
 				Self.logger.error("CloudKit: \(self.zoneID.zoneName) remote notification fetch error: \(error.localizedDescription)")
@@ -162,25 +162,25 @@ public extension CloudKitZone {
 		let info = CKSubscription.NotificationInfo()
         info.shouldSendContentAvailable = true
         subscription.notificationInfo = info
-        
+
 		save(subscription) { result in
 			if case .failure(let error) = result {
 				Self.logger.error("CloudKit: \(self.zoneID.zoneName) zone subscribe to changes error: \(error.localizedDescription)")
 			}
 		}
     }
-		
+
 	/// Issue a CKQuery and return the resulting CKRecords.
 	func query(_ ckQuery: CKQuery, desiredKeys: [String]? = nil, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		var records = [CKRecord]()
-		
+
 		let op = CKQueryOperation(query: ckQuery)
 		op.qualityOfService = Self.qualityOfService
-		
+
 		if let desiredKeys = desiredKeys {
 			op.desiredKeys = desiredKeys
 		}
-		
+
 		op.recordMatchedBlock = { recordID, result in
 			if let record = try? result.get() {
 				records.append(record)
@@ -235,21 +235,21 @@ public extension CloudKitZone {
 				}
 			}
 		}
-		
+
 		database?.add(op)
 	}
-	
+
 	/// Query CKRecords using a CKQuery Cursor
 	func query(cursor: CKQueryOperation.Cursor, desiredKeys: [String]? = nil, carriedRecords: [CKRecord], completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		var records = carriedRecords
-		
+
 		let op = CKQueryOperation(cursor: cursor)
 		op.qualityOfService = Self.qualityOfService
-		
+
 		if let desiredKeys = desiredKeys {
 			op.desiredKeys = desiredKeys
 		}
-		
+
 		op.recordMatchedBlock = { recordID, result in
 			if let record = try? result.get() {
 				records.append(record)
@@ -307,7 +307,7 @@ public extension CloudKitZone {
 
 		database?.add(op)
 	}
-	
+
 
 	/// Fetch a CKRecord by using its externalID
 	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
@@ -317,7 +317,7 @@ public extension CloudKitZone {
 		}
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
-		
+
 		database?.fetch(withRecordID: recordID) { [weak self] record, error in
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
@@ -360,24 +360,24 @@ public extension CloudKitZone {
 			}
 		}
 	}
-	
+
 	/// Save the CKRecord
 	func save(_ record: CKRecord, completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
 	}
-	
+
 	/// Save the CKRecords
 	func save(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: records, recordIDsToDelete: [], completion: completion)
 	}
-	
+
 	/// Saves or modifies the records as long as they are unchanged relative to the local version
 	func saveIfNew(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
 		let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: [CKRecord.ID]())
 		op.savePolicy = .ifServerRecordUnchanged
 		op.isAtomic = false
 		op.qualityOfService = Self.qualityOfService
-		
+
 		op.modifyRecordsResultBlock = { [weak self] result in
 
 			guard let self = self else { return }
@@ -485,12 +485,12 @@ public extension CloudKitZone {
 			}
 		}
 	}
-	
+
 	/// Delete CKRecords using a CKQuery
 	func delete(ckQuery: CKQuery, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		var records = [CKRecord]()
-		
+
 		let op = CKQueryOperation(query: ckQuery)
 		op.qualityOfService = Self.qualityOfService
 		op.recordMatchedBlock = { recordID, result in
@@ -526,15 +526,15 @@ public extension CloudKitZone {
 				}
 			}
 		}
-		
+
 		database?.add(op)
 	}
-	
+
 	/// Delete CKRecords using a CKQuery
 	func delete(cursor: CKQueryOperation.Cursor, carriedRecords: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
 		var records = [CKRecord]()
-		
+
 		let op = CKQueryOperation(cursor: cursor)
 		op.qualityOfService = Self.qualityOfService
 		op.recordMatchedBlock = { recordID, result in
@@ -565,20 +565,20 @@ public extension CloudKitZone {
 				}
 			}
 		}
-		
+
 		database?.add(op)
 	}
-	
+
 	/// Delete a CKRecord using its recordID
 	func delete(recordID: CKRecord.ID, completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
-		
+
 	/// Delete CKRecords
 	func delete(recordIDs: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
 	}
-		
+
 	/// Delete a CKRecord using its externalID
 	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let externalID = externalID else {
@@ -589,7 +589,7 @@ public extension CloudKitZone {
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
-	
+
 	/// Delete a CKSubscription
 	func delete(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		database?.delete(withSubscriptionID: subscriptionID) { [weak self] _, error in
@@ -736,10 +736,10 @@ public extension CloudKitZone {
     func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
 
 		var savedChangeToken = changeToken
-		
+
 		var changedRecords = [CKRecord]()
 		var deletedRecordKeys = [CloudKitRecordKey]()
-		
+
 		let zoneConfig = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
 		zoneConfig.previousServerChangeToken = changeToken
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [zoneID], configurationsByRecordZoneID: [zoneID: zoneConfig])
@@ -835,5 +835,5 @@ public extension CloudKitZone {
 
         database?.add(op)
     }
-	
+
 }

@@ -20,23 +20,23 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 
 	private let account: Account
 	private let parsedItemProvider: FeedlyParsedItemProviding
-	
+
 	var parsedItemsByFeedProviderName: String {
 		return name ?? String(describing: Self.self)
 	}
-	
+
 	var parsedItemsKeyedByFeedId: [String : Set<ParsedItem>] {
 		precondition(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
 		return itemsKeyedByFeedId
 	}
-	
+
 	private var itemsKeyedByFeedId = [String: Set<ParsedItem>]()
-	
+
 	init(account: Account, parsedItemProvider: FeedlyParsedItemProviding) {
 		self.account = account
 		self.parsedItemProvider = parsedItemProvider
 	}
-	
+
 	override func run() {
 		defer {
 			didFinish()
@@ -44,7 +44,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 
 		let items = parsedItemProvider.parsedEntries
 		var dict = [String: Set<ParsedItem>](minimumCapacity: items.count)
-		
+
 		for item in items {
 			let key = item.feedURL
 			let value: Set<ParsedItem> = {

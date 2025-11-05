@@ -14,7 +14,7 @@ struct ArticleRenderingSpecialCases {
 		guard let url = URL(string: baseURL) else {
 			return html
 		}
-		
+
 		if isVergeSpecialCase(url) {
 			return filterVergeHTML(html)
 		}

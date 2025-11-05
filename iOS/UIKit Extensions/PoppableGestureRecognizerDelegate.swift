@@ -10,7 +10,7 @@
 import UIKit
 
 final class PoppableGestureRecognizerDelegate: NSObject, UIGestureRecognizerDelegate {
-	
+
     weak var navigationController: UINavigationController?
 
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -20,12 +20,12 @@ final class PoppableGestureRecognizerDelegate: NSObject, UIGestureRecognizerDele
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		return true
     }
-	
+
 	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		if otherGestureRecognizer is UIPanGestureRecognizer {
 			return true
 		}
 		return false
 	}
-	
+
 }

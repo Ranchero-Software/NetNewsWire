@@ -16,7 +16,7 @@ extension Notification.Name {
 /// A type that provides a name for display to the user.
 
 public protocol DisplayNameProvider {
-	
+
 	var nameForDisplay: String { get }
 }
 

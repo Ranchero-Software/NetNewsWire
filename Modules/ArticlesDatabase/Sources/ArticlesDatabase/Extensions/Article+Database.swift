@@ -79,7 +79,7 @@ extension Article {
 		if self == existingArticle {
 			return nil
 		}
-		
+
 		var d = DatabaseDictionary()
 		if uniqueID != existingArticle.uniqueID {
 			d[DatabaseKey.uniqueID] = uniqueID
@@ -178,7 +178,7 @@ extension Article: @retroactive DatabaseObject {
 		}
 		return d
 	}
-	
+
 	public var databaseID: String {
 		return articleID
 	}
@@ -205,7 +205,7 @@ extension Set where Element == Article {
 	func statuses() -> Set<ArticleStatus> {
 		return Set<ArticleStatus>(map { $0.status })
 	}
-	
+
 	func dictionary() -> [String: Article] {
 		var d = [String: Article]()
 		for article in self {

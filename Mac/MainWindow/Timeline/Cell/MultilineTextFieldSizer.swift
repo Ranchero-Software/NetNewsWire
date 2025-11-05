@@ -56,7 +56,7 @@ final class MultilineTextFieldSizer {
 		guard attributedString.length > 0 else {
 			return TextFieldSizeInfo(size: NSSize.zero, numberOfLinesUsed: 0)
 		}
-		
+
 		// Assumes the same font family/size for the whole string
 		let font = attributedString.attribute(.font, at: 0, effectiveRange: nil) as! NSFont
 

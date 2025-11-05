@@ -28,7 +28,7 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 	private var addFeedWindowController: AddFeedWindowController?
 	private var foundFeedURLString: String?
 	private var titleFromFeed: String?
-	
+
 	init(hostWindow: NSWindow) {
 		self.hostWindow = hostWindow
 	}
@@ -63,11 +63,11 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 		}
 
 		account.createFeed(url: url.absoluteString, name: title, container: container, validateFeed: true) { result in
-			
+
 			DispatchQueue.main.async {
 				self.endShowingProgress()
 			}
-			
+
 			switch result {
 			case .success(let feed):
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
@@ -83,9 +83,9 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 					}
 				}
 			}
-			
+
 		}
-		
+
 		beginShowingProgress()
 	}
 
@@ -103,7 +103,7 @@ private extension AddFeedController {
 		}
 		return nil
 	}
-	
+
 	struct AccountAndFolderSpecifier {
 		let account: Account
 		let folder: Folder?
@@ -159,11 +159,11 @@ private extension AddFeedController {
 	func beginShowingProgress() {
 		runIndeterminateProgressWithMessage(NSLocalizedString("Finding feed…", comment:"Feed finder"))
 	}
-	
+
 	func endShowingProgress() {
 		stopIndeterminateProgress()
 		hostWindow.makeKeyAndOrderFront(self)
 	}
-	
+
 }
 

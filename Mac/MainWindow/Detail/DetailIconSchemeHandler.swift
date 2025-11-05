@@ -11,9 +11,9 @@ import WebKit
 import Articles
 
 final class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
-	
+
 	var currentArticle: Article?
-	
+
 	func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
 
 		guard let responseURL = urlSchemeTask.request.url, let iconImage = self.currentArticle?.iconImage() else {
@@ -24,12 +24,12 @@ final class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
 		let iconView = IconView(frame: CGRect(x: 0, y: 0, width: 48, height: 48))
 		iconView.iconImage = iconImage
 		let renderedImage = iconView.asImage()
-		
+
 		guard let data = renderedImage.dataRepresentation() else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}
-		
+
 		let headerFields = ["Cache-Control": "no-cache"]
 		if let response = HTTPURLResponse(url: responseURL, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
 			urlSchemeTask.didReceive(response)
@@ -38,9 +38,9 @@ final class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
 		}
 
 	}
-	
+
 	func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
 		urlSchemeTask.didFailWithError(URLError(.unknown))
 	}
-	
+
 }

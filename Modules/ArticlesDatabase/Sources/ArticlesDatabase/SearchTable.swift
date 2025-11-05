@@ -22,7 +22,7 @@ final class ArticleSearchInfo: Hashable {
 	let summary: String?
 	let authorsNames: String?
 	let searchRowID: Int?
-	
+
 	var preferredText: String {
 		if let body = contentHTML, !body.isEmpty {
 			return body

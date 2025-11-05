@@ -35,7 +35,7 @@ public struct ArticleChanges {
 		self.updatedArticles = Set<Article>()
 		self.deletedArticles = Set<Article>()
 	}
-	
+
 	public init(newArticles: Set<Article>?, updatedArticles: Set<Article>?, deletedArticles: Set<Article>?) {
 		self.newArticles = newArticles
 		self.updatedArticles = updatedArticles
@@ -105,7 +105,7 @@ public final class ArticlesDatabase {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticles(feedID)
 	}
-	
+
 	public func fetchArticles(_ feedIDs: Set<String>) throws -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticles(feedIDs)
@@ -268,7 +268,7 @@ public final class ArticlesDatabase {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.fetchUnreadArticleIDsAsync(completion)
 	}
-	
+
 	/// Fetch the articleIDs of starred articles.
 	public func fetchStarredArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
@@ -323,7 +323,7 @@ public final class ArticlesDatabase {
 		operationQueue.resume()
 	}
 #endif
-	
+
 	// MARK: - Caches
 
 	/// Call to free up some memory. Should be done when the app is backgrounded, for instance.

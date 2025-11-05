@@ -22,7 +22,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	private let newerThan: Date?
 	private let isPagingEnabled: Bool
 	private let finishOperation: FeedlyCheckpointOperation
-	
+
 	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, isPagingEnabled: Bool, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
@@ -31,19 +31,19 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		self.operationQueue.suspend()
 		self.newerThan = newerThan
 		self.finishOperation = FeedlyCheckpointOperation()
-		
+
 		super.init()
-		
+
 		self.operationQueue.add(self.finishOperation)
 		self.finishOperation.checkpointDelegate = self
 		enqueueOperations(for: nil)
 	}
-	
+
 	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamContentsService, newerThan: Date?) {
 		let all = FeedlyCategoryResourceId.Global.all(for: credentials.username)
 		self.init(account: account, resource: all, service: service, isPagingEnabled: true, newerThan: newerThan)
 	}
-	
+
 	override func run() {
 		operationQueue.resume()
 	}
@@ -59,7 +59,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		let operations = pageOperations(for: continuation)
 		operationQueue.addOperations(operations)
 	}
-	
+
 	func pageOperations(for continuation: String?) -> [MainThreadOperation] {
 		let getPage = FeedlyGetStreamContentsOperation(account: account,
 													   resource: resource,
@@ -67,11 +67,11 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 													   continuation: continuation,
 													   newerThan: newerThan)
 
-		
+
 		let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: getPage)
-		
+
 		let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: organiseByFeed)
-		
+
 		getPage.delegate = self
 		getPage.streamDelegate = self
 
@@ -85,7 +85,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 
 		return [getPage, organiseByFeed, updateAccount]
 	}
-	
+
 	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
 		guard !isCanceled else {
 			Feedly.logger.info("Feedly: Canceled requesting page for \(self.resource.id)")
@@ -98,15 +98,15 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 			Feedly.logger.info("Feedly: Reached end of stream for \(stream.id)")
 			return
 		}
-		
+
 		enqueueOperations(for: continuation)
 	}
-	
+
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
 		Feedly.logger.info("Feedly: Finished ingesting items from \(self.resource.id)")
 		didFinish()
 	}
-	
+
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		operationQueue.cancelAllOperations()
 		didFinish(with: error)

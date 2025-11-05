@@ -10,7 +10,7 @@ import SwiftUI
 import Account
 
 struct AddAccountHelpView: View {
-	
+
 	let accountTypes: [AccountType] = AddAccountSections.allOrdered.sectionContent
 	var delegate: AccountsPreferencesAddAccountDelegate?
 	var helpText: String
@@ -38,7 +38,7 @@ struct AddAccountHelpView: View {
 					}
 				}
 			}
-			
+
 			Text(helpText)
 				.multilineTextAlignment(.center)
 				.padding(.top, 8)

@@ -61,11 +61,11 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		completion()
 	}
-	
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 
 		refreshProgress.reset()
-		
+
 		self.refreshProgress.addToNumberOfTasksAndRemaining(4)
 
 		refreshFeeds(for: account) { result in
@@ -134,7 +134,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
+
 	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 		Self.logger.info("NewsBlur: Sending story statuses")
 
@@ -513,7 +513,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			case .success:
 				from.removeFeed(feed)
 				to.addFeed(feed)
-				
+
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))

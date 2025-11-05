@@ -12,7 +12,7 @@ import RSCore
 import Articles
 
 extension Notification.Name {
-	
+
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
 
@@ -22,7 +22,7 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 	var topLevelFeeds: Set<Feed> { get set }
 	var folders: Set<Folder>? { get set }
 	var externalID: String? { get set }
-	
+
 	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
@@ -100,7 +100,7 @@ public extension Container {
 	func has(_ feed: Feed) -> Bool {
 		return flattenedFeeds().contains(feed)
 	}
-	
+
 	func existingFeed(withFeedID feedID: String) -> Feed? {
 		for feed in flattenedFeeds() {
 			if feed.feedID == feedID {
@@ -118,7 +118,7 @@ public extension Container {
 		}
 		return nil
 	}
-	
+
 	func existingFeed(withExternalID externalID: String) -> Feed? {
 		for feed in flattenedFeeds() {
 			if feed.externalID == externalID {

@@ -15,7 +15,7 @@ protocol FeedlyGetStreamIdsOperationDelegate: AnyObject {
 
 /// Single responsibility is to get the stream ids from Feedly.
 final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
-	
+
 	var entryIds: Set<String> {
 		guard let ids = streamIds?.ids else {
 			assertionFailure("Has this operation been addeded as a dependency on the caller?")
@@ -23,9 +23,9 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 		}
 		return Set(ids)
 	}
-	
+
 	private(set) var streamIds: FeedlyStreamIds?
-	
+
 	let account: Account
 	let service: FeedlyGetStreamIdsService
 	let continuation: String?
@@ -41,19 +41,19 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 		self.newerThan = newerThan
 		self.unreadOnly = unreadOnly
 	}
-	
+
 	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
-	
+
 	override func run() {
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
 				self.streamIds = stream
-				
+
 				self.streamIdsDelegate?.feedlyGetStreamIdsOperation(self, didGet: stream)
-				
+
 				self.didFinish()
-				
+
 			case .failure(let error):
 				Feedly.logger.error("Feedly: Unable to get stream IDs: \(error.localizedDescription)")
 				self.didFinish(with: error)

@@ -46,7 +46,7 @@ final class DeleteCommand: UndoableCommand {
 	}
 
 	func perform() {
-		
+
 		let group = DispatchGroup()
 		itemSpecifiers.forEach {
 			group.enter()
@@ -54,14 +54,14 @@ final class DeleteCommand: UndoableCommand {
 				group.leave()
 			}
 		}
-	
+
 		group.notify(queue: DispatchQueue.main) {
 			self.treeController?.rebuild()
 			self.registerUndo()
 		}
-		
+
 	}
-	
+
 	func undo() {
 		itemSpecifiers.forEach { $0.restore() }
 		registerRedo()
@@ -137,9 +137,9 @@ private struct SidebarItemSpecifier {
 
 		self.account = account!
 		self.path = ContainerPath(account: account!, folders: node.containingFolders())
-		
+
 		self.errorHandler = errorHandler
-		
+
 	}
 
 	func delete(completion: @escaping () -> Void) {
@@ -150,23 +150,23 @@ private struct SidebarItemSpecifier {
 				completion()
 				return
 			}
-			
+
 			BatchUpdate.shared.start()
 			account?.removeFeed(feed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-			
+
 		} else if let folder = folder {
-			
+
 			BatchUpdate.shared.start()
 			account?.removeFolder(folder) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-			
+
 		}
 	}
 
@@ -185,13 +185,13 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let feed = feed, let container = path.resolveContainer() else {
 			return
 		}
-		
+
 		BatchUpdate.shared.start()
 		account.restoreFeed(feed, container: container) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-		
+
 	}
 
 	private func restoreFolder() {
@@ -199,17 +199,17 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let folder = folder else {
 			return
 		}
-		
+
 		BatchUpdate.shared.start()
 		account.restoreFolder(folder) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-		
+
 	}
 
 	private func checkResult(_ result: Result<Void, Error>) {
-		
+
 		switch result {
 		case .success:
 			break
@@ -218,11 +218,11 @@ private struct SidebarItemSpecifier {
 		}
 
 	}
-	
+
 }
 
 private extension Node {
-	
+
 	func parentFolder() -> Folder? {
 
 		guard let parentNode = self.parent else {

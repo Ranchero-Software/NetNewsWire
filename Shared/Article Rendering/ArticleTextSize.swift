@@ -14,9 +14,9 @@ enum ArticleTextSize: Int, CaseIterable, Identifiable {
 	case large = 3
 	case xlarge = 4
 	case xxlarge = 5
-	
+
 	var id: String { description() }
-	
+
 	var cssClass: String {
 		switch self {
 		case .small:
@@ -31,7 +31,7 @@ enum ArticleTextSize: Int, CaseIterable, Identifiable {
 			return "xxLargeText"
 		}
 	}
-	
+
 	func description() -> String {
 		switch self {
 		case .small:
@@ -46,5 +46,5 @@ enum ArticleTextSize: Int, CaseIterable, Identifiable {
 			return NSLocalizedString("Extra Extra Large", comment: "XX-Large")
 		}
 	}
-	
+
 }

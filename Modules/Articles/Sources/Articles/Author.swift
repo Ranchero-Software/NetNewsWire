@@ -15,7 +15,7 @@ public struct Author: Codable, Hashable {
 	public let url: String?
 	public let avatarURL: String?
 	public let emailAddress: String?
-	
+
 	public init?(authorID: String?, name: String?, url: String?, avatarURL: String?, emailAddress: String?) {
 		if name == nil && url == nil && emailAddress == nil {
 			return nil

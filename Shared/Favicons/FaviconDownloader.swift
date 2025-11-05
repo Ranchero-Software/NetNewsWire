@@ -75,7 +75,7 @@ final class FaviconDownloader {
 	func resetCache() {
 		cache = [Feed: IconImage]()
 	}
-	
+
 	func favicon(for feed: Feed) -> IconImage? {
 		assert(Thread.isMainThread)
 
@@ -100,7 +100,7 @@ final class FaviconDownloader {
 
 		return nil
 	}
-	
+
 	func faviconAsIcon(for feed: Feed) -> IconImage? {
 
 		if let image = cache[feed] {
@@ -201,7 +201,7 @@ final class FaviconDownloader {
 			saveHomePageToFaviconURLCache()
 		}
 	}
-	
+
 	@objc func saveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
 		if homePageURLsWithNoFaviconURLCacheDirty {
 			saveHomePageURLsWithNoFaviconURLCache()
@@ -240,7 +240,7 @@ private extension FaviconDownloader {
 	func faviconDownloader(withURL faviconURL: String, homePageURL: String?) -> SingleFaviconDownloader {
 
 		var firstTimeSeeingHomepageURL = false
-		
+
 		if let homePageURL = homePageURL, self.homePageToFaviconURLCache[homePageURL] == nil {
 			self.homePageToFaviconURLCache[homePageURL] = faviconURL
 			self.homePageToFaviconURLCacheDirty = true
@@ -311,7 +311,7 @@ private extension FaviconDownloader {
 			assertionFailure(error.localizedDescription)
 		}
 	}
-	
+
 	func saveHomePageURLsWithNoFaviconURLCache() {
 		homePageURLsWithNoFaviconURLCacheDirty = false
 

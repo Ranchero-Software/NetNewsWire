@@ -8,7 +8,7 @@
 
 
 class LinkLabel: NSTextField {
-    
+
 	/// pièces de résistance -- keeping it a mac-assed mac app.
 	override func resetCursorRects() {
         addCursorRect(bounds, cursor: .pointingHand)

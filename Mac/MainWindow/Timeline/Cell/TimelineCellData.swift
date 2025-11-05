@@ -10,9 +10,9 @@ import AppKit
 import Articles
 
 struct TimelineCellData {
-	
+
 	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
-	
+
 	let title: String
 	let attributedTitle: NSAttributedString
 	let text: String
@@ -36,7 +36,7 @@ struct TimelineCellData {
 		} else {
 			self.text = truncatedSummary
 		}
-		
+
 		self.dateString = ArticleStringFormatter.dateString(article.logicalDatePublished)
 
 		if let feedName = feedName {
@@ -44,7 +44,7 @@ struct TimelineCellData {
 		} else {
 			self.feedName = ""
 		}
-		
+
 		if let byline = byline {
 			self.byline = byline
 		} else {

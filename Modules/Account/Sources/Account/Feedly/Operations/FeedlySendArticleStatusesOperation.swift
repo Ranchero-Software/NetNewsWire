@@ -22,7 +22,7 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 		self.database = database
 		self.service = service
 	}
-	
+
 	override func run() {
 		Feedly.logger.info("Feedly: Sending article statuses")
 
@@ -31,7 +31,7 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 				self.didFinish()
 				return
 			}
-			
+
 			switch result {
 			case .success(let syncStatuses):
 				self.processStatuses(syncStatuses)

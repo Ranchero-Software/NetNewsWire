@@ -149,7 +149,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			metadata.cacheControlInfo = newValue
 		}
 	}
-	
+
 	public var contentHash: String? {
 		get {
 			return metadata.contentHash
@@ -167,7 +167,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			metadata.isNotifyAboutNewArticles = newValue
 		}
 	}
-	
+
 	public var isArticleExtractorAlwaysOn: Bool? {
 		get {
             metadata.isArticleExtractorAlwaysOn
@@ -176,7 +176,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			metadata.isArticleExtractorAlwaysOn = newValue
 		}
 	}
-	
+
 	public var externalID: String? {
 		get {
 			return metadata.externalID
@@ -226,7 +226,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 	}
 
 	// MARK: - UnreadCountProvider
-	
+
 	public var unreadCount: Int {
 		get {
 			return account?.unreadCount(for: self) ?? 0
@@ -239,7 +239,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 			postUnreadCountDidChangeNotification()
 		}
 	}
-    
+
     // MARK: - NotificationDisplayName
     public var notificationDisplayName: String {
         #if os(macOS)
@@ -308,7 +308,7 @@ extension Feed: OPMLRepresentable {
 			nameToUse = ""
 		}
 		let escapedName = nameToUse!.escapingSpecialXMLCharacters
-		
+
 		var escapedHomePageURL = ""
 		if let homePageURL = homePageURL {
 			escapedHomePageURL = homePageURL.escapingSpecialXMLCharacters
@@ -327,7 +327,7 @@ extension Set where Element == Feed {
 	func feedIDs() -> Set<String> {
 		return Set<String>(map { $0.feedID })
 	}
-	
+
 	func sorted() -> Array<Feed> {
 		return sorted(by: { (feed1, feed2) -> Bool in
 			if feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedSame {
@@ -336,5 +336,5 @@ extension Set where Element == Feed {
 			return feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedAscending
 		})
 	}
-	
+
 }

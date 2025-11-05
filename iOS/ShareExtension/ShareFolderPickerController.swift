@@ -20,13 +20,13 @@ final class ShareFolderPickerController: UITableViewController {
 	var selectedContainerID: ContainerIdentifier?
 
 	weak var delegate: ShareFolderPickerControllerDelegate?
-	
+
 	override func viewDidLoad() {
 		tableView.register(UINib(nibName: "ShareFolderPickerAccountCell", bundle: Bundle.main), forCellReuseIdentifier: "AccountCell")
 		tableView.register(UINib(nibName: "ShareFolderPickerFolderCell", bundle: Bundle.main), forCellReuseIdentifier: "FolderCell")
-		
+
 	}
-	
+
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
 	}
@@ -34,7 +34,7 @@ final class ShareFolderPickerController: UITableViewController {
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return containers?.count ?? 0
 	}
-	
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let container = containers?[indexPath.row]
 		let cell: ShareFolderPickerCell = {
@@ -44,7 +44,7 @@ final class ShareFolderPickerController: UITableViewController {
 				return tableView.dequeueReusableCell(withIdentifier: "FolderCell", for: indexPath) as! ShareFolderPickerCell
 			}
 		}()
-		
+
 		if let account = container as? ExtensionAccount {
 			cell.icon.image = AppAssets.image(for: account.type)
 		} else {
@@ -58,13 +58,13 @@ final class ShareFolderPickerController: UITableViewController {
 		} else {
 			cell.accessoryType = .none
 		}
-		
+
         return cell
 	}
-	
+
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		guard let container = containers?[indexPath.row] else { return }
-		
+
 		if let account = container as? ExtensionAccount, account.disallowFeedInRootFolder {
 			tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
 		} else {
@@ -73,5 +73,5 @@ final class ShareFolderPickerController: UITableViewController {
 			delegate?.shareFolderPickerDidSelect(container)
 		}
 	}
-	
+
 }

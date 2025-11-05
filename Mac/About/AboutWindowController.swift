@@ -9,7 +9,7 @@
 import Cocoa
 
 class AboutWindowController: NSWindowController {
-	
+
 	@IBOutlet weak var appIconImageView: NSImageView!
 	@IBOutlet weak var appTitleLabel: NSTextField!
 	@IBOutlet weak var versionLabel: NSTextField!
@@ -22,7 +22,7 @@ class AboutWindowController: NSWindowController {
 		configureWindow()
 		updateUI()
     }
-	
+
 	func configureWindow() {
 		window?.isOpaque = false
 		window?.backgroundColor = .clear
@@ -36,22 +36,22 @@ class AboutWindowController: NSWindowController {
 			contentView.addSubview(visualEffectView, positioned: .below, relativeTo: nil)
 		}
 	}
-	
+
 	private func updateUI() {
-		
+
 		// App Icon
 		appIconImageView.image = NSApp.applicationIconImage
-		
+
 		// Version
 		let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
 		let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
 		let versionString = "Version \(version) (Build \(build))"
 		versionLabel.stringValue = versionString
-		
+
 		// Copyright
 		let copyright = Bundle.main.infoDictionary?["NSHumanReadableCopyright"] as? String ?? "Copyright © 2002-2025 Brent Simmons. All rights reserved."
 		copyrightLabel.stringValue = copyright
-		
+
 		// Credits
 		if let creditsURL = Bundle.main.url(forResource: "Credits", withExtension: "rtf"),
 		   let creditsData = try? Data(contentsOf: creditsURL),
@@ -60,12 +60,12 @@ class AboutWindowController: NSWindowController {
 		} else {
 			creditsTextView.string = "Credits not available."
 		}
-		
+
 		let fullRange = NSRange(location: 0, length: creditsTextView.string.utf16.count)
 		let leadingParagraphStyle = NSMutableParagraphStyle()
 		leadingParagraphStyle.alignment = .left
 		creditsTextView.textStorage?.addAttribute(.paragraphStyle, value: leadingParagraphStyle, range: fullRange)
-		
+
 		// URL
 		let url = URL(string: "https://inessential.com")!
 		let attributedString = NSMutableAttributedString(string: "inessential.com")
@@ -74,5 +74,5 @@ class AboutWindowController: NSWindowController {
 		attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: attributedString.length))
 		websiteLabel.attributedStringValue = attributedString
 	}
-    
+
 }

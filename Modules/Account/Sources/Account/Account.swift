@@ -43,11 +43,11 @@ public enum AccountType: Int, Codable {
 	case inoreader = 21
 	case bazQux = 22
 	case theOldReader = 23
-	
+
 	public var isDeveloperRestricted: Bool {
 		return self == .cloudKit || self == .feedbin || self == .feedly || self == .inoreader
 	}
-	
+
 }
 
 public enum FetchType {
@@ -79,11 +79,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public static let defaultLocalAccountName = NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
 
 	public var isDeleted = false
-	
+
 	public var containerID: ContainerIdentifier? {
 		return ContainerIdentifier.account(accountID)
 	}
-	
+
 	public var account: Account? {
 		return self
 	}
@@ -111,7 +111,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	public let defaultName: String
-	
+
 	public var isActive: Bool {
 		get {
 			return metadata.isActive
@@ -128,7 +128,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public var topLevelFeeds = Set<Feed>()
 	public var folders: Set<Folder>? = Set<Folder>()
-	
+
 	public var externalID: String? {
 		get {
 			return metadata.externalID
@@ -137,14 +137,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			metadata.externalID = newValue
 		}
 	}
-	
+
 	public var sortedFolders: [Folder]? {
 		if let folders = folders {
 			return Array(folders).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 		}
 		return nil
 	}
-	
+
 	private var feedDictionariesNeedUpdate = true
 	private var _idToFeedDictionary = [String: Feed]()
 	var idToFeedDictionary: [String: Feed] {
@@ -160,7 +160,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		return _externalIDToFeedDictionary
 	}
-	
+
 	var flattenedFeedURLs: Set<String> {
 		return Set(flattenedFeeds().map({ $0.url }))
 	}
@@ -175,7 +175,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 	}
-	
+
 	public var endpointURL: URL? {
 		get {
 			return metadata.endpointURL
@@ -186,7 +186,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 	}
-	
+
 	private var fetchingAllUnreadCounts = false
 	var isUnreadCountsInitialized = false
 
@@ -219,11 +219,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
             }
         }
     }
-    
+
 	public var behaviors: AccountBehaviors {
 		return delegate.behaviors
 	}
-	
+
 	var refreshInProgress = false {
 		didSet {
 			if refreshInProgress != oldValue {
@@ -265,7 +265,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 
 		self.delegate.accountMetadata = metadata
-		
+
 		self.accountID = accountID
 		self.type = type
 		self.dataFolder = dataFolder
@@ -312,9 +312,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		self.delegate.accountDidInitialize(self)
 	}
-	
+
 	// MARK: - API
-	
+
 	public func storeCredentials(_ credentials: Credentials) throws {
 		username = credentials.username
 		guard let server = delegate.server else {
@@ -324,14 +324,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		try CredentialsManager.storeCredentials(credentials, server: server)
 		delegate.credentials = credentials
 	}
-	
+
 	public func retrieveCredentials(type: CredentialsType) throws -> Credentials? {
 		guard let username = self.username, let server = delegate.server else {
 			return nil
 		}
 		return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
 	}
-	
+
 	public func removeCredentials(type: CredentialsType) throws {
 		guard let username = self.username, let server = delegate.server else {
 			return
@@ -351,7 +351,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return nil
 		}
 	}
-	
+
 	internal static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
 		switch type {
 		case .feedly:
@@ -360,7 +360,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fatalError("\(type) is not a client for OAuth authorization code granting.")
 		}
 	}
-		
+
 	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType) -> URLRequest {
 		let grantingType: OAuthAuthorizationGranting.Type
 		switch type {
@@ -369,24 +369,24 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		default:
 			fatalError("\(type) does not support OAuth authorization code granting.")
 		}
-		
+
 		return grantingType.oauthAuthorizationCodeGrantRequest()
 	}
-	
+
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
 											   client: OAuthAuthorizationClient,
 											   accountType: AccountType,
 											   transport: Transport = URLSession.webserviceTransport(),
 											   completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
 		let grantingType: OAuthAuthorizationGranting.Type
-		
+
 		switch accountType {
 		case .feedly:
 			grantingType = FeedlyAccountDelegate.self
 		default:
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}
-		
+
 		grantingType.requestOAuthAccessToken(with: response, transport: transport, completion: completion)
 	}
 
@@ -416,17 +416,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 	}
-	
+
 	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
 		delegate.syncArticleStatus(for: self, completion: completion)
 	}
-	
+
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard !delegate.isOPMLImportInProgress else {
 			completion(.failure(AccountError.opmlImportInProgress))
 			return
 		}
-		
+
 		delegate.importOPML(for: self, opmlFile: opmlFile) { [weak self] result in
 			switch result {
 			case .success:
@@ -438,13 +438,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				completion(.failure(error))
 			}
 		}
-		
+
 	}
-	
+
 	public func suspendNetwork() {
 		delegate.suspendNetwork()
 	}
-	
+
 	public func suspendDatabase() {
 		#if os(iOS)
 		database.cancelAndSuspend()
@@ -471,7 +471,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feedMetadataFile.save()
 		opmlFile.save()
 	}
-	
+
 	public func prepareForDeletion() {
 		delegate.accountWillBeDeleted(self)
 	}
@@ -492,11 +492,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 	}
-	
+
 	func loadOPMLItems(_ items: [RSOPMLItem]) {
 		addOPMLItems(OPMLNormalizer.normalize(items))		
 	}
-	
+
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag, completion: completion)
 	}
@@ -507,7 +507,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		return existingFolder(withExternalID: externalID)
 	}
-	
+
 	public func existingContainers(withFeed feed: Feed) -> [Container] {
 		var containers = [Container]()
 		if topLevelFeeds.contains(feed) {
@@ -520,7 +520,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		return containers
 	}
-	
+
 	@discardableResult
 	func ensureFolder(with name: String) -> Folder? {
 		// TODO: support subfolders, maybe, some day
@@ -554,11 +554,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func existingFolder(withDisplayName displayName: String) -> Folder? {
 		return folders?.first(where: { $0.nameForDisplay == displayName })
 	}
-	
+
 	public func existingFolder(withExternalID externalID: String) -> Folder? {
 		return folders?.first(where: { $0.externalID == externalID })
 	}
-	
+
 	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
@@ -578,7 +578,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func createFeed(url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		delegate.createFeed(for: self, url: url, name: name, container: container, validateFeed: validateFeed, completion: completion)
 	}
-	
+
 	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
 		let metadata = feedMetadata(feedURL: url, feedID: feedID)
 		let feed = Feed(account: self, url: url, metadata: metadata)
@@ -586,31 +586,31 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feed.homePageURL = homePageURL
 		return feed
 	}
-	
+
 	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.removeFeed(for: self, with: feed, from: container, completion: completion)
 	}
-	
+
 	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.moveFeed(for: self, with: feed, from: from, to: to, completion: completion)
 	}
-	
+
 	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.renameFeed(for: self, with: feed, to: name, completion: completion)
 	}
-	
+
 	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
-	
+
 	public func addFolder(_ name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 		delegate.createFolder(for: self, name: name, completion: completion)
 	}
-	
+
 	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.removeFolder(for: self, with: folder, completion: completion)
 	}
-	
+
 	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.renameFolder(for: self, with: folder, to: name, completion: completion)
 	}
@@ -618,17 +618,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.restoreFolder(for: self, folder: folder, completion: completion)
 	}
-	
+
 	func clearFeedMetadata(_ feed: Feed) {
 		feedMetadata[feed.url] = nil
 	}
-	
+
 	func addFolder(_ folder: Folder) {
 		folders!.insert(folder)
 		postChildrenDidChangeNotification()
 		structureDidChange()
 	}
-	
+
 	public func updateUnreadCounts(for feeds: Set<Feed>, completion: VoidCompletionBlock? = nil) {
 		fetchUnreadCounts(for: feeds, completion: completion)
 	}
@@ -707,7 +707,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
-	
+
 	public func unreadCount(for feed: Feed) -> Int {
 		return unreadCounts[feed.feedID] ?? 0
 	}
@@ -748,15 +748,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			completion(.success(ArticleChanges()))
 			return
 		}
-		
+
 		update(feed.feedID, with: parsedItems, completion: completion)
 	}
-	
+
 	func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
-		
+
 		database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { updateArticlesResult in
 			switch updateArticlesResult {
 			case .success(let articleChanges):
@@ -794,7 +794,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			completion(.success(Set<Article>()))
 			return
 		}
-		
+
 		database.mark(articles, statusKey: statusKey, flag: flag) { result in
 			switch result {
 			case .success(let updatedStatuses):
@@ -877,7 +877,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		database.delete(articleIDs: articleIDs, completion: completion)
 	}
-	
+
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
 	func emptyCaches() {
 		database.emptyCaches()
@@ -898,7 +898,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
-	
+
 	public func removeFeeds(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
@@ -907,7 +907,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
-	
+
 	public func addFeed(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		structureDidChange()
@@ -919,13 +919,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			addFeed(feed)
 		}
 	}
-	
+
 	func removeFolder(_ folder: Folder) {
 		folders?.remove(folder)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
-	
+
 	// MARK: - Debug
 
 	public func debugDropConditionalGetInfo() {
@@ -956,13 +956,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		refreshInProgress = refreshProgress.numberRemaining > 0
 		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
 	}
-	
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if let feed = note.object as? Feed, feed.account === self {
 			updateUnreadCount()
 		}
 	}
-    
+
     @objc func batchUpdateDidPerform(_ note: Notification) {
 		flattenedFeedsNeedUpdate = true
 		rebuildFeedDictionaries()
@@ -1091,7 +1091,7 @@ private extension Account {
 	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
 		return try database.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
 	}
-	
+
 	func fetchArticlesMatchingAsync(_ searchString: String, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs(), completion)
 	}
@@ -1137,13 +1137,13 @@ private extension Account {
 	func fetchUnreadArticles(forContainer container: Container, limit: Int?) throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
 		let articles = try database.fetchUnreadArticles(feeds.feedIDs(), limit)
-		
+
 		// We don't validate limit queries because they, by definition, won't correctly match the
 		// complete unread state for the given container.
 		if limit == nil {
 			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
 		}
-		
+
 		return articles
 	}
 
@@ -1152,13 +1152,13 @@ private extension Account {
 		database.fetchUnreadArticlesAsync(feeds.feedIDs(), limit) { [weak self] (articleSetResult) in
 			switch articleSetResult {
 			case .success(let articles):
-				
+
 				// We don't validate limit queries because they, by definition, won't correctly match the
 				// complete unread state for the given container.
 				if limit == nil {
 					self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
 				}
-				
+
 				completion(.success(articles))
 			case .failure(let databaseError):
 				completion(.failure(databaseError))
@@ -1226,7 +1226,7 @@ private extension Account {
 	func rebuildFeedDictionaries() {
 		var idDictionary = [String: Feed]()
 		var externalIDDictionary = [String: Feed]()
-		
+
 		flattenedFeeds().forEach { (feed) in
 			idDictionary[feed.feedID] = feed
 			if let externalID = feed.externalID {
@@ -1238,7 +1238,7 @@ private extension Account {
 		_externalIDToFeedDictionary = externalIDDictionary
 		feedDictionariesNeedUpdate = false
 	}
-    
+
     func updateUnreadCount() {
 		if fetchingAllUnreadCounts {
 			return
@@ -1249,7 +1249,7 @@ private extension Account {
 		}
 		unreadCount = updatedUnreadCount
     }
-    
+
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
 		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
@@ -1258,7 +1258,7 @@ private extension Account {
         // .UnreadCountDidChange notification will get sent to Folder and Account objects,
         // which will update their own unread counts.
         updateUnreadCounts(for: feeds)
-        
+
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.articleIDs: articleIDs, UserInfoKey.feeds: feeds])
     }
 
@@ -1389,7 +1389,7 @@ extension Account {
 	public func existingFeed(withExternalID externalID: String) -> Feed? {
 		return externalIDToFeedDictionary[externalID]
 	}
-	
+
 }
 
 // MARK: - OPMLRepresentable

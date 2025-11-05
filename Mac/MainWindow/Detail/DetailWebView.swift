@@ -13,13 +13,13 @@ import RSCore
 final class DetailWebView: WKWebView {
 
 	weak var keyboardDelegate: KeyboardDelegate?
-	
+
 	override func accessibilityLabel() -> String? {
 		return NSLocalizedString("Article", comment: "Article")
 	}
 
 	// MARK: - NSResponder
-	
+
 	override func keyDown(with event: NSEvent) {
 		if keyboardDelegate?.keydown(event, in: self) ?? false {
 			return

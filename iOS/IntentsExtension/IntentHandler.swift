@@ -9,7 +9,7 @@
 import Intents
 
 final class IntentHandler: INExtension {
-    
+
 	override func handler(for intent: INIntent) -> Any {
 		switch intent {
 		case is AddWebFeedIntent:
@@ -18,5 +18,5 @@ final class IntentHandler: INExtension {
 			fatalError("Unhandled intent type: \(intent)")
 		}
 	}
-    
+
 }

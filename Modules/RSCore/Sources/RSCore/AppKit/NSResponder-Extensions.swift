@@ -9,9 +9,9 @@
 import AppKit
 
 public extension NSResponder {
-	
+
 	func hasAncestor(_ ancestor: NSResponder) -> Bool {
-		
+
 		var nomad: NSResponder = self
 		while(true) {
 			if nomad === ancestor {
@@ -24,7 +24,7 @@ public extension NSResponder {
 				break
 			}
 		}
-		
+
 		return false
 	}
 }

@@ -21,15 +21,15 @@ final class AccountsFeedbinWindowController: NSWindowController {
 	@IBOutlet weak var passwordTextField: NSSecureTextField!
 	@IBOutlet weak var errorMessageLabel: NSTextField!
 	@IBOutlet weak var actionButton: NSButton!
-	
+
 	var account: Account?
-	
+
 	private weak var hostWindow: NSWindow?
-	
+
 	convenience init() {
 		self.init(windowNibName: NSNib.Name("AccountsFeedbin"))
 	}
-	
+
 	override func windowDidLoad() {
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .basic) {
 			usernameTextField.stringValue = credentials.username
@@ -41,14 +41,14 @@ final class AccountsFeedbinWindowController: NSWindowController {
 			actionButton.title = NSLocalizedString("Create", comment: "Add Account")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your Feedbin account.", comment: "SignIn")
 		}
-		
+
 		enableAutofill()
-		
+
 		usernameTextField.becomeFirstResponder()
 	}
-	
+
 	// MARK: API
-	
+
 	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
 		guard let window else {
 			return
@@ -63,15 +63,15 @@ final class AccountsFeedbinWindowController: NSWindowController {
 	@IBAction func cancel(_ sender: Any) {
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
 	}
-	
+
 	@IBAction func action(_ sender: Any) {
 		errorMessageLabel.stringValue = ""
-		
+
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
 			errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
 			return
 		}
-		
+
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: usernameTextField.stringValue) else {
 			errorMessageLabel.stringValue = NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error")
 			return
@@ -123,11 +123,11 @@ final class AccountsFeedbinWindowController: NSWindowController {
 			}
 		}
 	}
-	
+
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		NSWorkspace.shared.open(URL(string: "https://feedbin.com/signup")!)
 	}
-	
+
 	// MARK: Autofill
 	func enableAutofill() {
 		usernameTextField.contentType = .username

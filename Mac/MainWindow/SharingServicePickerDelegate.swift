@@ -10,13 +10,13 @@ import AppKit
 import RSCore
 
 @objc final class SharingServicePickerDelegate: NSObject, NSSharingServicePickerDelegate {
-	
+
 	private let sharingServiceDelegate: SharingServiceDelegate
-	
+
 	init(_ window: NSWindow?) {
 		sharingServiceDelegate = SharingServiceDelegate(window)
 	}
-	
+
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
 		let filteredServices = proposedServices.filter { $0.menuItemTitle != "NetNewsWire" }
 		return filteredServices + SharingServicePickerDelegate.customSharingServices(for: items)
@@ -34,7 +34,7 @@ import RSCore
 			guard let object = items.first else {
 				return nil
 			}
-			
+
 			guard sendToCommand.canSendObject(object, selectedText: nil) else {
 				return nil
 			}

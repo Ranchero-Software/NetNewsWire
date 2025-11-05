@@ -16,7 +16,7 @@ import SyncDatabase
 import os.log
 
 extension NewsBlurAccountDelegate {
-	
+
 	func refreshFeeds(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		Self.logger.info("NewsBlur: Refreshing feeds")
 
@@ -177,7 +177,7 @@ extension NewsBlurAccountDelegate {
 				}
 			}
 		}
-		
+
 		// Handle the account level feeds.  If there isn't the special folder, that means all the feeds are
 		// in folders and we need to remove them all from the account level.
 		if let folderRelationships = newsBlurFolderDict[" "] {
@@ -192,7 +192,7 @@ extension NewsBlurAccountDelegate {
 				account.removeFeed(feed)
 			}
 		}
-		
+
 	}
 
 	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
@@ -334,7 +334,7 @@ extension NewsBlurAccountDelegate {
 					}
 
 					let group = DispatchGroup()
-					
+
 					// Mark articles as unread
 					let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
 					group.enter()
@@ -348,7 +348,7 @@ extension NewsBlurAccountDelegate {
 					account.markAsRead(deltaReadArticleIDs) { _ in
 						group.leave()
 					}
-					
+
 					group.notify(queue: DispatchQueue.main) {
 						completion()
 					}
@@ -382,7 +382,7 @@ extension NewsBlurAccountDelegate {
 					}
 
 					let group = DispatchGroup()
-					
+
 					// Mark articles as starred
 					let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
 					group.enter()
@@ -474,7 +474,7 @@ extension NewsBlurAccountDelegate {
 						completion(.success(()))
 						return
 					}
-					
+
 					self.downloadFeed(account: account, feed: feed, page: page + 1, completion: completion)
 				}
 

@@ -28,7 +28,7 @@ public struct Credentials: Equatable {
 	public let type: CredentialsType
 	public let username: String
 	public let secret: String
-	
+
 	public init(type: CredentialsType, username: String, secret: String) {
 		self.type = type
 		self.username = username

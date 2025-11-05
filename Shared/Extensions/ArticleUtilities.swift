@@ -14,11 +14,11 @@ import Account
 // These handle multiple accounts.
 
 func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
-	
+
 	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 
 	let group = DispatchGroup()
-	
+
 	for (accountID, accountArticles) in d {
 		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
 			continue
@@ -28,42 +28,42 @@ func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: 
 			group.leave()
 		}
 	}
-	
+
 	group.notify(queue: .main) {
 		completion?()
 	}
 }
 
 private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: Set<Article>] {
-	
+
 	let d = Dictionary(grouping: articles, by: { $0.accountID })
 	return d.mapValues{ Set($0) }
 }
 
 extension Article {
-	
+
 	var feed: Feed? {
 		return account?.existingFeed(withFeedID: feedID)
 	}
-	
+
 	var url: URL? {
 		return URL.encodeSpacesIfNeeded(rawLink)
 	}
-	
+
 	var externalURL: URL? {
 		return URL.encodeSpacesIfNeeded(rawExternalLink)
 	}
-	
+
 	var imageURL: URL? {
 		return URL.encodeSpacesIfNeeded(rawImageLink)
 	}
-	
+
 	var link: String? {
 		// Prefer link from URL, if one can be created, as these are repaired if required.
 		// Provide the raw link if URL creation fails.
 		return url?.absoluteString ?? rawLink
 	}
-	
+
 	var externalLink: String? {
 		// Prefer link from externalURL, if one can be created, as these are repaired if required.
 		// Provide the raw link if URL creation fails.
@@ -85,19 +85,19 @@ extension Article {
 		}
 		return nil
 	}
-	
+
 	var preferredURL: URL? {
 		return url ?? externalURL
 	}
-	
+
 	var body: String? {
 		return contentHTML ?? contentText ?? summary
 	}
-	
+
 	var logicalDatePublished: Date {
 		return datePublished ?? dateModified ?? status.dateArrived
 	}
-	
+
 	var isAvailableToMarkUnread: Bool {
 		guard let markUnreadWindow = account?.behaviors.compactMap( { behavior -> Int? in
 			switch behavior {
@@ -109,7 +109,7 @@ extension Article {
 		}).first else {
 			return true
 		}
-		
+
 		if logicalDatePublished.byAdding(days: markUnreadWindow) > Date() {
 			return true
 		} else {
@@ -120,7 +120,7 @@ extension Article {
 	func iconImage() -> IconImage? {
 		return IconImageCache.shared.imageForArticle(self)
 	}
-	
+
 	func iconImageUrl(feed: Feed) -> URL? {
 		if let image = iconImage() {
 			let fm = FileManager.default
@@ -133,7 +133,7 @@ extension Article {
 			return nil
 		}
 	}
-	
+
 	func byline() -> String {
 		guard let authors = authors ?? feed?.authors, !authors.isEmpty else {
 			return ""
@@ -147,7 +147,7 @@ extension Article {
 				return ""
 			}
 		}
-		
+
 		var byline = ""
 		var isFirstAuthor = true
 
@@ -156,7 +156,7 @@ extension Article {
 				byline += ", "
 			}
 			isFirstAuthor = false
-			
+
 			var authorEmailAddress: String? = nil
 			if let emailAddress = author.emailAddress, !(emailAddress.contains("noreply@") || emailAddress.contains("no-reply@")) {
 				authorEmailAddress = emailAddress
@@ -181,7 +181,7 @@ extension Article {
 
 		return byline
 	}
-	
+
 }
 
 // MARK: Path
@@ -209,21 +209,21 @@ extension Article {
 // MARK: SortableArticle
 
 extension Article: SortableArticle {
-	
+
 	var sortableName: String {
 		return feed?.name ?? ""
 	}
-	
+
 	var sortableDate: Date {
 		return logicalDatePublished
 	}
-	
+
 	var sortableArticleID: String {
 		return articleID
 	}
-	
+
 	var sortableFeedID: String {
 		return feedID
 	}
-	
+
 }

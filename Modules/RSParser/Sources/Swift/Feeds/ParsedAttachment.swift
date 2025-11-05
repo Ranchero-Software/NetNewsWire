@@ -20,7 +20,7 @@ public struct ParsedAttachment: Hashable {
 		if url.isEmpty {
 			return nil
 		}
-		
+
 		self.url = url
 		self.mimeType = mimeType
 		self.title = title

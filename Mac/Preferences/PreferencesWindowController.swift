@@ -13,7 +13,7 @@ private struct PreferencesToolbarItemSpec {
 	let identifier: NSToolbarItem.Identifier
 	let name: String
 	let image: NSImage?
-	
+
 	init(identifierRawValue: String, name: String, image: NSImage?) {
 		self.identifier = NSToolbarItem.Identifier(identifierRawValue)
 		self.name = name
@@ -28,7 +28,7 @@ private struct ToolbarItemIdentifier {
 }
 
 final class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
-	
+
 	private let windowWidth = CGFloat(512.0) // Width is constant for all views; only the height changes
 	private var viewControllers = [String: NSViewController]()
 	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
@@ -126,7 +126,7 @@ private extension PreferencesWindowController {
 			assertionFailure("Preferences window: no view controller matching \(identifier).")
 			return
 		}
-		
+
 		if newViewController.view == currentView {
 			return
 		}
@@ -167,23 +167,23 @@ private extension PreferencesWindowController {
 		let viewFrame = view.frame
 		let windowFrame = window!.frame
 		let contentViewFrame = window!.contentView!.frame
-		
+
 		let deltaHeight = NSHeight(contentViewFrame) - NSHeight(viewFrame)
 		let heightForWindow = NSHeight(windowFrame) - deltaHeight
 		let windowOriginY = NSMinY(windowFrame) + deltaHeight
-		
+
 		var updatedWindowFrame = windowFrame
 		updatedWindowFrame.size.height = heightForWindow
 		updatedWindowFrame.origin.y = windowOriginY
 		updatedWindowFrame.size.width = windowWidth //NSWidth(viewFrame)
-		
+
 		var updatedViewFrame = viewFrame
 		updatedViewFrame.origin = NSZeroPoint
 		updatedViewFrame.size.width = windowWidth
 		if viewFrame != updatedViewFrame {
 			view.frame = updatedViewFrame
 		}
-		
+
 		if windowFrame != updatedWindowFrame {
 			window!.contentView?.alphaValue = 0.0
 			window!.setFrame(updatedWindowFrame, display: true, animate: true)

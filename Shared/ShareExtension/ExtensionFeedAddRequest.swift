@@ -10,7 +10,7 @@ import Foundation
 import Account
 
 struct ExtensionFeedAddRequest: Codable {
-	
+
 	enum CodingKeys: String, CodingKey {
 		case name
 		case feedURL
@@ -20,5 +20,5 @@ struct ExtensionFeedAddRequest: Codable {
 	let name: String?
 	let feedURL: URL
 	let destinationContainerID: ContainerIdentifier
-	
+
 }

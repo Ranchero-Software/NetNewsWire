@@ -21,7 +21,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 	private let urlSession: URLSession
 	private var callbacks = [URL: [DownloadCallback]]()
 	private let cache = DownloadCache.shared
-	
+
 	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Downloader")
 
 	private init() {
@@ -31,7 +31,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		sessionConfiguration.httpCookieAcceptPolicy = .never
 		sessionConfiguration.httpMaximumConnectionsPerHost = 1
 		sessionConfiguration.httpCookieStorage = nil
-		
+
 		if let userAgentHeaders = UserAgent.headers() {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
