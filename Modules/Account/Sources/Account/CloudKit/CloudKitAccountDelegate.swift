@@ -89,9 +89,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 		syncProgress.reset()
 		
-		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
-		var flags = SCNetworkReachabilityFlags()
-		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
+		guard NetworkMonitor.shared.isConnected else {
 			completion(.success(()))
 			return
 		}

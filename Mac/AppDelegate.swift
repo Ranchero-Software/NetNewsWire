@@ -13,6 +13,7 @@ import Articles
 import Account
 import RSCore
 import RSCoreResources
+import RSWeb
 import Secrets
 import CrashReporter
 import Sparkle
@@ -193,6 +194,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			self.toggleInspectorWindow(self)
 		}
 
+		NetworkMonitor.shared.start()
 		ExtensionContainersFile.shared.start()
 		ExtensionFeedAddRequestFile.shared.start()
 

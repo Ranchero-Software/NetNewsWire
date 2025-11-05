@@ -258,7 +258,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func refreshAll(errorHandler: ((Error) -> Void)? = nil, completion: (() -> Void)? = nil) {
 
-		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else {
+		guard NetworkMonitor.shared.isConnected else {
 			return
 		}
 
