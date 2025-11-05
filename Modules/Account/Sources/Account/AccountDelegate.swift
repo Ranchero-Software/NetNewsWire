@@ -23,7 +23,7 @@ protocol AccountDelegate {
 
 	var refreshProgress: DownloadProgress { get }
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async
 
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void)
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)?)

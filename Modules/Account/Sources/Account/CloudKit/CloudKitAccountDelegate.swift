@@ -72,7 +72,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .DownloadProgressDidChange, object: syncProgress)
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+		await withCheckedContinuation { continuation in
+			receiveRemoteNotification(for: account, userInfo: userInfo) {
+				continuation.resume()
+			}
+		}
+	}
+
+	private func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
 		op.completionBlock = { mainThreadOperaion in
 			completion()

@@ -274,7 +274,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-		AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
+		Task {
+			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
+		}
 	}
 
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
