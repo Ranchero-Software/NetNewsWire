@@ -277,22 +277,19 @@ public final class AccountManager: UnreadCountProvider {
 
 		combinedRefreshProgress.start()
 
-		let group = DispatchGroup()
-
-		for account in activeAccounts {
-			group.enter()
-			account.refreshAll() { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					errorHandler?(error)
+		Task {
+			await withTaskGroup(of: Void.self) { group in
+				for account in activeAccounts {
+					group.addTask {
+						do {
+							try await account.refreshAll()
+						} catch {
+							errorHandler?(error)
+						}
+					}
 				}
 			}
-		}
 
-		group.notify(queue: DispatchQueue.main) {
 			self.combinedRefreshProgress.stop()
 			completion?()
 		}

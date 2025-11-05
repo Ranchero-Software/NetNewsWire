@@ -9,15 +9,9 @@
 import XCTest
 @testable import Account
 
-final class AccountFeedbinSyncTest: XCTestCase {
-
-    override func setUp() {
-    }
-
-    override func tearDown() {
-    }
-
-	func testDownloadSync() {
+@MainActor final class AccountFeedbinSyncTest: XCTestCase {
+	
+	func testDownloadSync() async throws {
 
 		let testTransport = TestTransport()
 		testTransport.testFiles["tags.json"] = "JSON/tags_add.json"
@@ -25,16 +19,7 @@ final class AccountFeedbinSyncTest: XCTestCase {
 		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
 
 		// Test initial folders
-		let initialExpection = self.expectation(description: "Initial feeds")
-		account.refreshAll() { result in
-			switch result {
-			case .success:
-				initialExpection.fulfill()
-			case .failure(let error):
-				XCTFail(error.localizedDescription)
-			}
-		}
-		waitForExpectations(timeout: 5, handler: nil)
+		try await account.refreshAll()
 
 		XCTAssertEqual(224, account.flattenedFeeds().count)
 
@@ -46,16 +31,7 @@ final class AccountFeedbinSyncTest: XCTestCase {
 		// Test Adding a Feed
 		testTransport.testFiles["subscriptions.json"] = "JSON/subscriptions_add.json"
 
-		let addExpection = self.expectation(description: "Add feeds")
-		account.refreshAll() { result in
-			switch result {
-			case .success:
-				addExpection.fulfill()
-			case .failure(let error):
-				XCTFail(error.localizedDescription)
-			}
-		}
-		waitForExpectations(timeout: 5, handler: nil)
+		try await account.refreshAll()
 
 		XCTAssertEqual(225, account.flattenedFeeds().count)
 
@@ -65,7 +41,5 @@ final class AccountFeedbinSyncTest: XCTestCase {
 		XCTAssertEqual("https://beautifulpixels.com/", bPixels?.homePageURL)
 
 		TestAccountManager.shared.deleteAccount(account)
-
 	}
-
 }

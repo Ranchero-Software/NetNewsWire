@@ -395,15 +395,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func refreshAll() async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			self.refreshAll { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.refreshAll(for: self, completion: completion)
+		try await delegate.refreshAll(for: self)
 	}
 
 	public func sendArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
@@ -433,7 +425,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				guard let self = self else { return }
 				// Reset the last fetch date to get the article history for the added feeds.
 				self.metadata.lastArticleFetchStartTime = nil
-				self.delegate.refreshAll(for: self, completion: completion)
+				Task {
+					do {
+						try await self.delegate.refreshAll(for: self)
+						completion(.success(()))
+					} catch {
+						completion(.failure(error))
+					}
+				}
 			case .failure(let error):
 				completion(.failure(error))
 			}

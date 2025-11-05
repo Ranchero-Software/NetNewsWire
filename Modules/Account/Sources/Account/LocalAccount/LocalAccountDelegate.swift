@@ -42,25 +42,20 @@ final class LocalAccountDelegate: AccountDelegate {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
 		guard refreshProgress.isComplete, !Platform.isRunningUnitTests else {
-			completion(.success(()))
 			return
 		}
 
 		let feeds = account.flattenedFeeds()
 
-		let group = DispatchGroup()
-
-		group.enter()
-		refresher.refreshFeeds(feeds) {
-			group.leave()
+		await withCheckedContinuation { continuation in
+			refresher.refreshFeeds(feeds) {
+				continuation.resume()
+			}
 		}
 
-		group.notify(queue: DispatchQueue.main) {
-			account.metadata.lastArticleFetchEndTime = Date()
-			completion(.success(()))
-		}
+		account.metadata.lastArticleFetchEndTime = Date()
 	}
 
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {

@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-final class AccountFeedbinFolderSyncTest: XCTestCase {
+@MainActor final class AccountFeedbinFolderSyncTest: XCTestCase {
 
     override func setUp() {
     }
@@ -17,18 +17,14 @@ final class AccountFeedbinFolderSyncTest: XCTestCase {
     override func tearDown() {
     }
 
-    func testDownloadSync() {
+    func testDownloadSync() async throws {
 
 		let testTransport = TestTransport()
 		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_initial.json"
 		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
 
 		// Test initial folders
-		let initialExpection = self.expectation(description: "Initial tags")
-		account.refreshAll() { _ in
-			initialExpection.fulfill()
-		}
-		waitForExpectations(timeout: 5, handler: nil)
+		try await account.refreshAll()
 
 		guard let intialFolders = account.folders else {
 			XCTFail()
@@ -42,11 +38,7 @@ final class AccountFeedbinFolderSyncTest: XCTestCase {
 		// Test removing folders
 		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_delete.json"
 
-		let deleteExpection = self.expectation(description: "Delete tags")
-		account.refreshAll() { _ in
-			deleteExpection.fulfill()
-		}
-		waitForExpectations(timeout: 5, handler: nil)
+		try await account.refreshAll()
 
 		guard let deleteFolders = account.folders else {
 			XCTFail()
@@ -61,11 +53,7 @@ final class AccountFeedbinFolderSyncTest: XCTestCase {
 		// Test Adding Folders
 		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_add.json"
 
-		let addExpection = self.expectation(description: "Add tags")
-		account.refreshAll() { _ in 
-			addExpection.fulfill()
-		}
-		waitForExpectations(timeout: 5, handler: nil)
+		try await account.refreshAll()
 
 		guard let addFolders = account.folders else {
 			XCTFail()

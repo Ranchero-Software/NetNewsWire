@@ -103,7 +103,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			refreshAll(for: account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		refreshProgress.reset()
 		refreshProgress.addToNumberOfTasksAndRemaining(6)

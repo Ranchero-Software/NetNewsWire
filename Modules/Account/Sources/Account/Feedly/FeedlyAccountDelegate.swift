@@ -107,6 +107,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 
+	func refreshAll(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			refreshAll(for: account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		assert(Thread.isMainThread)
 

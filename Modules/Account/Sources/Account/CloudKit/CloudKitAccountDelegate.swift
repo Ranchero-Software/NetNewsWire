@@ -88,7 +88,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		mainThreadOperationQueue.add(op)
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshAll(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			refreshAll(for: account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		guard refreshProgress.isComplete else {
 			completion(.success(()))
