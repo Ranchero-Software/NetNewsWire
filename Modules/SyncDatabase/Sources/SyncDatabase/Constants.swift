@@ -6,10 +6,6 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-struct DatabaseTableName {
-	static let syncStatus = "syncStatus"
-}
-
 struct DatabaseKey {
 	// Sync Status
 	static let articleID = "articleID"
