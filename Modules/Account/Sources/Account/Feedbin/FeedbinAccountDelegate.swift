@@ -955,16 +955,18 @@ private extension FeedbinAccountDelegate {
 
 			group.enter()
 			apiCall(articleIDGroup) { result in
-				switch result {
-				case .success:
-					self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) } ))
-					group.leave()
-				case .failure(let error):
-					errorOccurred = true
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) } ))
+						group.leave()
+					case .failure(let error):
+						errorOccurred = true
 
-					Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
-					self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) } ))
-					group.leave()
+						Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
+						try? await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) } ))
+						group.leave()
+					}
 				}
 			}
 
@@ -1268,12 +1270,11 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func syncArticleReadState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
-
-		syncDatabase.selectPendingReadStatusArticleIDs() { result in
+		Task { @MainActor in
+			guard let articleIDs else {
+				completion()
+				return
+			}
 
 			func process(_ pendingArticleIDs: Set<String>) {
 
@@ -1309,22 +1310,25 @@ private extension FeedbinAccountDelegate {
 
 			}
 
-			switch result {
-			case .success(let pendingArticleIDs):
+			do {
+				guard let pendingArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() else {
+					completion()
+					return
+				}
 				process(pendingArticleIDs)
-			case .failure(let error):
+			} catch {
 				Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
+				completion()
 			}
 		}
 	}
 
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
-
-		syncDatabase.selectPendingStarredStatusArticleIDs() { result in
+		Task { @MainActor in
+			guard let articleIDs else {
+				completion()
+				return
+			}
 
 			func process(_ pendingArticleIDs: Set<String>) {
 
@@ -1359,11 +1363,15 @@ private extension FeedbinAccountDelegate {
 
 			}
 
-			switch result {
-			case .success(let pendingArticleIDs):
+			do {
+				guard let pendingArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+					completion()
+					return
+				}
 				process(pendingArticleIDs)
-			case .failure(let error):
+			} catch {
 				Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
+				completion()
 			}
 		}
 	}
