@@ -191,6 +191,14 @@ final class RSSParserTests: XCTestCase {
 		}
 	}
 
+	func testMedscapeExternalURLs() {
+		let d = parserData("medscape", "rss", "https://www.medscape.com/cx/rssfeeds/2674.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.externalURL)
+		}
+	}
+
 //	func testFeedWithGB2312Encoding() {
 //		// This feed has an encoding we don’t run into very often.
 //		// https://github.com/Ranchero-Software/NetNewsWire/issues/1477

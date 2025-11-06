@@ -376,7 +376,13 @@ static const NSInteger kLanguageLength = 9;
 		[self addAuthorWithString:[self currentString]];
 	}
 	else if (RSSAXEqualTags(localName, kLink, kLinkLength)) {
-		self.currentArticle.link = [self urlString:[self currentString]];
+		RSParsedArticle *article = self.currentArticle;
+		if (article.link == nil) {
+			NSString *s = [self currentString];
+			if (!RSParserStringIsEmpty(s)) {
+				article.link = [self urlString:s];
+			}
+		}
 	}
 	else if (RSSAXEqualTags(localName, kDescription, kDescriptionLength)) {
 
