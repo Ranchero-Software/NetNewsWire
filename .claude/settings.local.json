@@ -20,7 +20,8 @@
       "Bash(sed:*)",
       "Bash(cat:*)",
       "Bash(dd:*)",
-      "Bash(xcrun simctl list:*)"
+      "Bash(xcrun simctl list:*)",
+      "Bash(timeout 600 ./buildscripts/quiet_build_and_test.sh:*)"
     ],
     "deny": []
   }
