@@ -28,7 +28,6 @@ enum CloudKitAccountDelegateError: LocalizedError {
 }
 
 final class CloudKitAccountDelegate: AccountDelegate {
-
 	private static let logger = cloudKitLogger
 
 	private let syncDatabase: SyncDatabase
@@ -428,13 +427,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				})
 
-				self.syncDatabase.insertStatuses(syncStatuses) { _ in
-					self.syncDatabase.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account, showProgress: false)  { _ in }
-						}
-						completion(.success(()))
+				Task { @MainActor in
+					try? await self.syncDatabase.insertStatuses(syncStatuses)
+					let count = (try? await self.syncDatabase.selectPendingCount()) ?? 0
+					if count > 100 {
+						self.sendArticleStatus(for: account, showProgress: false)  { _ in }
 					}
+					completion(.success(()))
 				}
 			case .failure(let error):
 				completion(.failure(error))
@@ -780,9 +779,10 @@ private extension CloudKitAccountDelegate {
 			return
 		}
 		let syncStatuses = Set(articles.map { article in
-			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+			SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
 		})
-		syncDatabase.insertStatuses(syncStatuses) { _ in
+		Task { @MainActor in
+			try? await syncDatabase.insertStatuses(syncStatuses)
 			completion()
 		}
 	}
@@ -793,8 +793,8 @@ private extension CloudKitAccountDelegate {
 											 refreshProgress: refreshProgress,
 											 showProgress: showProgress,
 											 database: syncDatabase)
-		op.completionBlock = { mainThreadOperaion in
-			if mainThreadOperaion.isCanceled {
+		op.completionBlock = { mainThreadOperation in
+			if mainThreadOperation.isCanceled {
 				completion(.failure(CloudKitAccountDelegateError.unknown))
 			} else {
 				completion(.success(()))

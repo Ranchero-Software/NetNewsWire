@@ -85,7 +85,7 @@ public actor SyncDatabase {
 	nonisolated public func suspend() {
 #if os(iOS)
 		Task {
-			_suspend()
+			await _suspend()
 		}
 #endif
 	}
@@ -93,7 +93,7 @@ public actor SyncDatabase {
 	nonisolated public func resume() {
 #if os(iOS)
 		Task {
-			_resume()
+			await _resume()
 		}
 #endif
 	}

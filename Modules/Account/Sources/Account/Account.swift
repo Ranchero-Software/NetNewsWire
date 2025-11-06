@@ -938,6 +938,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	// Delete the articles associated with the given set of articleIDs
+	func delete(articleIDs: Set<String>) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>)
+			in
+			delete(articleIDs: articleIDs) { error in
+				if let error {
+					continuation.resume(throwing: error)
+				} else {
+					continuation.resume(returning: ())
+				}
+			}
+		}
+	}
+	
 	func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		guard !articleIDs.isEmpty else {
 			completion?(nil)
