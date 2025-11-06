@@ -205,50 +205,38 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		Self.logger.info("ReaderAPI: Sending article statuses")
-
-		syncDatabase.selectForProcessing { result in
-
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
-				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
-				let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
-				let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
-
-				let group = DispatchGroup()
-
-				group.enter()
-				self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) {
-					group.leave()
-				}
-
-				group.notify(queue: DispatchQueue.main) {
-					Self.logger.info("ReaderAPI: finished sending article statuses")
-					completion(.success(()))
-				}
+	func sendArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			sendArticleStatus(for: account) { result in
+				continuation.resume(with: result)
 			}
+		}
+	}
 
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		Task { @MainActor in
+			Self.logger.info("ReaderAPI: Sending article statuses")
+
+			do {
+				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+					completion(.success(()))
+					return
+				}
+
+				let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
+				let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
+				let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
+				let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
+
+				await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+				await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+				await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+				await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+
+				Self.logger.info("ReaderAPI: finished sending article statuses")
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}
@@ -611,22 +599,20 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
+		Task { @MainActor in
+			do {
+				let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
 				let syncStatuses = Set(articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+					SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				})
 
-				self.syncDatabase.insertStatuses(syncStatuses) { _ in
-					self.syncDatabase.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
-					}
+				try await syncDatabase.insertStatuses(syncStatuses)
+				if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+					try? await sendArticleStatus(for: account)
 				}
-			case .failure(let error):
+
+				completion(.success(()))
+			} catch {
 				completion(.failure(error))
 			}
 		}
@@ -866,6 +852,14 @@ private extension ReaderAPIAccountDelegate {
 		return d
 	}
 
+	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([String], @escaping (Result<Void, Error>) -> Void) -> Void) async {
+		await withCheckedContinuation { continuation in
+			sendArticleStatuses(statuses, apiCall: apiCall) {
+				continuation.resume()
+			}
+		}
+	}
+
 	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([String], @escaping (Result<Void, Error>) -> Void) -> Void, completion: @escaping (() -> Void)) {
 		guard !statuses.isEmpty else {
 			completion()
@@ -880,17 +874,18 @@ private extension ReaderAPIAccountDelegate {
 
 			group.enter()
 			apiCall(articleIDGroup) { result in
-				switch result {
-				case .success:
-					self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { $0 } ))
-					group.leave()
-				case .failure(let error):
-					Self.logger.error("ReaderAPI: Article status sync call failed: \(error.localizedDescription)")
-					self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { $0 } ))
-					group.leave()
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { $0 } ))
+						group.leave()
+					case .failure(let error):
+						Self.logger.error("ReaderAPI: Article status sync call failed: \(error.localizedDescription)")
+						try? await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { $0 } ))
+						group.leave()
+					}
 				}
 			}
-
 		}
 
 		group.notify(queue: DispatchQueue.main) {
@@ -1079,95 +1074,67 @@ private extension ReaderAPIAccountDelegate {
 	}
 
 	func syncArticleReadState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
-
-		syncDatabase.selectPendingReadStatusArticleIDs() { result in
-
-			func process(_ pendingArticleIDs: Set<String>) {
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-
-				account.fetchUnreadArticleIDs { articleIDsResult in
-					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
-
-					let group = DispatchGroup()
-
-					// Mark articles as unread
-					let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-					group.enter()
-					account.markAsUnread(deltaUnreadArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as read
-					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					group.enter()
-					account.markAsRead(deltaReadArticleIDs) { _ in
-						group.leave()
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
+		Task { @MainActor in
+			guard let articleIDs else {
+				completion()
+				return
 			}
 
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
+			do {
+				guard let pendingArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() else {
+					completion()
+					return
+				}
+
+				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+				let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+
+				// Mark articles as unread
+				let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+				try await account.markAsUnread(deltaUnreadArticleIDs)
+
+
+				// Mark articles as read
+				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+				try await account.markAsRead(deltaReadArticleIDs)
+
+				completion()
+			} catch {
 				Self.logger.error("ReaderAPI: Sync article read status failed: \(error.localizedDescription)")
+				completion()
 			}
 		}
 	}
 
 	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
+		Task { @MainActor in
 
-		syncDatabase.selectPendingStarredStatusArticleIDs() { result in
-
-			func process(_ pendingArticleIDs: Set<String>) {
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-
-				account.fetchStarredArticleIDs { articleIDsResult in
-					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
-
-					let group = DispatchGroup()
-
-					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-					group.enter()
-					account.markAsStarred(deltaStarredArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					group.enter()
-					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-						group.leave()
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
+			guard let articleIDs else {
+				completion()
+				return
 			}
 
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
+			do {
+				guard let pendingArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+					completion()
+					return
+				}
+
+				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+				let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
+
+				// Mark articles as starred
+				let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+				try await account.markAsStarred(deltaStarredArticleIDs)
+
+				// Mark articles as unstarred
+				let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+				try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+
+				completion()
+			} catch {
 				Self.logger.error("ReaderAPI: Sync article starred status failed: \(error.localizedDescription)")
+				completion()
 			}
 		}
 	}
