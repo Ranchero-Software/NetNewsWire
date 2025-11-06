@@ -67,11 +67,11 @@ private extension FeedlySendArticleStatusesOperation {
 				assert(Thread.isMainThread)
 				switch result {
 				case .success:
-					database.deleteSelectedForProcessing(Array(ids)) { _ in
+					database.deleteSelectedForProcessing(ids) { _ in
 						group.leave()
 					}
 				case .failure:
-					database.resetSelectedForProcessing(Array(ids)) { _ in
+					database.resetSelectedForProcessing(ids) { _ in
 						group.leave()
 					}
 				}

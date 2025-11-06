@@ -60,11 +60,10 @@ public actor SyncDatabase {
 		return SyncStatusTable.selectPendingStarredStatusArticleIDs(database: database)
 	}
 
-	public func resetAllSelectedForProcessing() throws {
-		guard let database else {
-			throw DatabaseError.isSuspended
+	nonisolated public func resetAllSelectedForProcessing() {
+		Task {
+			try? await _resetAllSelectedForProcessing()
 		}
-		SyncStatusTable.resetAllSelectedForProcessing(database: database)
 	}
 
 	public func resetSelectedForProcessing(_ articleIDs: Set<String>) throws {
@@ -83,17 +82,18 @@ public actor SyncDatabase {
 
 	// MARK: - Suspend and Resume (for iOS)
 
-	public func suspend() {
+	nonisolated public func suspend() {
 #if os(iOS)
-		database?.close()
-		database = nil
+		Task {
+			_suspend()
+		}
 #endif
 	}
 
-	public func resume() {
+	nonisolated public func resume() {
 #if os(iOS)
-		if database == nil {
-			self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
+		Task {
+			_resume()
 		}
 #endif
 	}
@@ -106,4 +106,26 @@ private extension SyncDatabase {
 	static let tableCreationStatements = """
 	CREATE TABLE if not EXISTS syncStatus (articleID TEXT NOT NULL, key TEXT NOT NULL, flag BOOL NOT NULL DEFAULT 0, selected BOOL NOT NULL DEFAULT 0, PRIMARY KEY (articleID, key));
 	"""
+
+	func _resetAllSelectedForProcessing() throws {
+		guard let database else {
+			throw DatabaseError.isSuspended
+		}
+		SyncStatusTable.resetAllSelectedForProcessing(database: database)
+	}
+
+	func _suspend() {
+#if os(iOS)
+		database?.close()
+		database = nil
+#endif
+	}
+
+	func _resume() {
+#if os(iOS)
+		if database == nil {
+			self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
+		}
+#endif
+	}
 }

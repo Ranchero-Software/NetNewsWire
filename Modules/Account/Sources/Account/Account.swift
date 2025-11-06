@@ -702,8 +702,24 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return try database.fetchStarredArticlesCount(flattenedFeeds().feedIDs())
 	}
 
+	public func fetchUnreadArticleIDs() async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			fetchUnreadArticleIDs { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+	
 	public func fetchUnreadArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
 		database.fetchUnreadArticleIDsAsync(completion: completion)
+	}
+
+	public func fetchStarredArticleIDs() async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			fetchStarredArticleIDs { result in
+				continuation.resume(with: result)
+			}
+		}
 	}
 
 	public func fetchStarredArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
@@ -795,6 +811,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
+	@discardableResult
+	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
+		try await withCheckedThrowingContinuation { continuation in
+			update(articles, statusKey: statusKey, flag: flag) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleSetResultBlock) {
 		// Returns set of Articles whose statuses did change.
 		guard !articles.isEmpty else {
@@ -854,24 +879,60 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
+	@discardableResult
+	func markAsRead(_ articleIDs: Set<String>) async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			markAsRead(articleIDs) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func markAsRead(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .read, flag: true, completion: completion)
 	}
 
 	/// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
+	@discardableResult
+	func markAsUnread(_ articleIDs: Set<String>) async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			markAsUnread(articleIDs) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+	
 	func markAsUnread(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .read, flag: false, completion: completion)
 	}
 
 	/// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
+	@discardableResult
+	func markAsStarred(_ articleIDs: Set<String>) async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			markAsStarred(articleIDs) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func markAsStarred(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .starred, flag: true, completion: completion)
 	}
 
 	/// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
+	@discardableResult
+	func markAsUnstarred(_ articleIDs: Set<String>) async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			markAsUnstarred(articleIDs) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func markAsUnstarred(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .starred, flag: false, completion: completion)
 	}

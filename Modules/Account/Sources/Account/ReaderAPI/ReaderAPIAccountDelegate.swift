@@ -38,7 +38,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	private let variant: ReaderAPIVariant
 
-	private let database: SyncDatabase
+	private let syncDatabase: SyncDatabase
 
 	private let caller: ReaderAPICaller
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
@@ -75,7 +75,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databaseFilePath: databaseFilePath)
+		syncDatabase = SyncDatabase(databasePath: databaseFilePath)
 
 		if transport != nil {
 			caller = ReaderAPICaller(transport: transport!)
@@ -208,7 +208,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		Self.logger.info("ReaderAPI: Sending article statuses")
 
-		database.selectForProcessing { result in
+		syncDatabase.selectForProcessing { result in
 
 			func processStatuses(_ syncStatuses: [SyncStatus]) {
 				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
@@ -614,12 +614,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		account.update(articles, statusKey: statusKey, flag: flag) { result in
 			switch result {
 			case .success(let articles):
-				let syncStatuses = articles.map { article in
+				let syncStatuses = Set(articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
+				})
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
+				self.syncDatabase.insertStatuses(syncStatuses) { _ in
+					self.syncDatabase.selectPendingCount { result in
 						if let count = try? result.get(), count > 100 {
 							self.sendArticleStatus(for: account) { _ in }
 						}
@@ -658,12 +658,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+		syncDatabase.suspend()
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
-		database.resume()
+		syncDatabase.resume()
 	}
 }
 
@@ -882,11 +882,11 @@ private extension ReaderAPIAccountDelegate {
 			apiCall(articleIDGroup) { result in
 				switch result {
 				case .success:
-					self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
+					self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { $0 } ))
 					group.leave()
 				case .failure(let error):
 					Self.logger.error("ReaderAPI: Article status sync call failed: \(error.localizedDescription)")
-					self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
+					self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { $0 } ))
 					group.leave()
 				}
 			}
@@ -1084,7 +1084,7 @@ private extension ReaderAPIAccountDelegate {
 			return
 		}
 
-		database.selectPendingReadStatusArticleIDs() { result in
+		syncDatabase.selectPendingReadStatusArticleIDs() { result in
 
 			func process(_ pendingArticleIDs: Set<String>) {
 				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
@@ -1131,7 +1131,7 @@ private extension ReaderAPIAccountDelegate {
 			return
 		}
 
-		database.selectPendingStarredStatusArticleIDs() { result in
+		syncDatabase.selectPendingStarredStatusArticleIDs() { result in
 
 			func process(_ pendingArticleIDs: Set<String>) {
 				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)

@@ -294,15 +294,17 @@ extension NewsBlurAccountDelegate {
 		for storyHashGroup in storyHashGroups {
 			group.enter()
 			apiCall(storyHashGroup) { result in
-				switch result {
-				case .success:
-					self.database.deleteSelectedForProcessing(storyHashGroup.map { String($0) } )
-					group.leave()
-				case .failure(let error):
-					errorOccurred = true
-					Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
-					self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
-					group.leave()
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await self.syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup.map { String($0) } ))
+						group.leave()
+					case .failure(let error):
+						errorOccurred = true
+						Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
+						try? await self.syncDatabase.resetSelectedForProcessing(Set(storyHashGroup.map { String($0) } ))
+						group.leave()
+					}
 				}
 			}
 		}
@@ -317,96 +319,66 @@ extension NewsBlurAccountDelegate {
 	}
 
 	func syncStoryReadState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
-		guard let hashes = hashes else {
-			completion()
-			return
-		}
-
-		database.selectPendingReadStatusArticleIDs() { result in
-			func process(_ pendingStoryHashes: Set<String>) {
-
+		Task { @MainActor in
+			defer {
+				completion()
+			}
+			
+			guard let hashes else {
+				return
+			}
+			
+			do {
+				guard let pendingStoryHashes = try await syncDatabase.selectPendingReadStatusArticleIDs() else {
+					return
+				}
+				
 				let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
 				let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
-
-				account.fetchUnreadArticleIDs { articleIDsResult in
-					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
-
-					let group = DispatchGroup()
-
-					// Mark articles as unread
-					let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-					group.enter()
-					account.markAsUnread(deltaUnreadArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as read
-					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-					group.enter()
-					account.markAsRead(deltaReadArticleIDs) { _ in
-						group.leave()
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
-			}
-
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
+				
+				let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+				
+				// Mark articles as unread
+				let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
+				try await account.markAsUnread(deltaUnreadArticleIDs)
+				
+				// Mark articles as read
+				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+				try await account.markAsRead(deltaReadArticleIDs)
+			} catch {
 				Self.logger.error("NewsBlur: Sync Story Read Status failed: \(error.localizedDescription)")
 			}
 		}
 	}
 
 	func syncStoryStarredState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
-		guard let hashes = hashes else {
-			completion()
-			return
-		}
+		Task { @MainActor in
+			defer {
+				completion()
+			}
 
-		database.selectPendingStarredStatusArticleIDs() { result in
-			func process(_ pendingStoryHashes: Set<String>) {
+			guard let hashes else {
+				return
+			}
+
+			do {
+				guard let pendingStoryHashes = try await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+					return
+				}
 
 				let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
 				let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
 
-				account.fetchStarredArticleIDs { articleIDsResult in
-					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+				let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
 
-					let group = DispatchGroup()
+				// Mark articles as starred
+				let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
+				try await account.markAsStarred(deltaStarredArticleIDs)
 
-					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-					group.enter()
-					account.markAsStarred(deltaStarredArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-					group.enter()
-					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-						group.leave()
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
-			}
-
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
+				// Mark articles as unstarred
+				let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+				try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+			} catch {
 				Self.logger.error("NewsBlur: Sync Story Starred Status failed: \(error.localizedDescription)")
 			}
 		}

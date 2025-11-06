@@ -152,7 +152,7 @@ private extension CloudKitSendStatusOperation {
 			case .success(let articles):
 				processWithArticles(articles)
 			case .failure(let databaseError):
-				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+				self.database.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID }))) { _ in
 					Self.logger.error("iCloud: Send article status fetch articles error: \(databaseError.localizedDescription)")
 					completion(true)
 				}

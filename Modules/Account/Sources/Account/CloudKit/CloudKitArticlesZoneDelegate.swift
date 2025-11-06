@@ -73,7 +73,7 @@ private extension CloudKitArticlesZoneDelegate {
 			return
 		}
 
-		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
+		database.deleteSelectedForProcessing(deletableArticleIDs) { _ in
 			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
 				completion()
 			}
@@ -146,7 +146,7 @@ private extension CloudKitArticlesZoneDelegate {
 								group.leave()
 								return
 							}
-							let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
+							let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
 							self.database.insertStatuses(syncStatuses) { _ in
 								group.leave()
 							}
