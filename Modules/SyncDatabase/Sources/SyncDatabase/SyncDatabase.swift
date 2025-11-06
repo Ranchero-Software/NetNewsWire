@@ -12,7 +12,7 @@ import RSDatabaseObjC
 
 public actor SyncDatabase {
 	private var database: FMDatabase?
-	private var databasePath: String
+	private let databasePath: String
 
 	public init(databasePath: String) {
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
