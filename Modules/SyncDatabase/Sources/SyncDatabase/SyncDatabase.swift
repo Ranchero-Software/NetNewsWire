@@ -17,8 +17,7 @@ public actor SyncDatabase {
 	public init(databasePath: String) {
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		database.runCreateStatements(Self.tableCreationStatements)
-		// TODO: vacuum every 11 days
-		database.vacuum()
+		database.vacuumIfNeeded(daysBetweenVacuums: 11, filepath: databasePath)
 
 		self.database = database
 		self.databasePath = databasePath

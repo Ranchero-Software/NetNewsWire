@@ -26,6 +26,27 @@ public extension FMDatabase {
 		commit()
 	}
 
+	/// Vacuum the database if it’s been more than `daysBetweenVacuums` since the last vacuum.
+	/// Call this as part of an init method.
+	func vacuumIfNeeded(daysBetweenVacuums: Int, filepath: String) {
+		let defaultsKey = "FMDatabase-LastVacuumDate-\(filepath)"
+		let now = Date()
+
+		guard let lastVacuumDate = UserDefaults.standard.object(forKey: defaultsKey) as? Date else {
+			// Never vacuumed — probably a new database.
+			// Set the LastVacuumDate pref to now and skip vacuuming.
+			UserDefaults.standard.set(now, forKey: defaultsKey)
+			return
+		}
+
+		let minimumVacuumInterval = TimeInterval(daysBetweenVacuums * (60 * 60 * 24)) // Doesn’t have to be precise
+		let cutoffDate = now - minimumVacuumInterval
+		if lastVacuumDate < cutoffDate {
+			vacuum()
+			UserDefaults.standard.set(now, forKey: defaultsKey)
+		}
+	}
+
 	func vacuum() {
 		executeStatements("vacuum;")
 	}
