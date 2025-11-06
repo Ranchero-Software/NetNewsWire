@@ -139,11 +139,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-
-		Self.logger.info("Feedbin: Sending article statuses")
-
-		syncDatabase.selectForProcessing { result in
-
+		Task { @MainActor in
+			Self.logger.info("Feedbin: Sending article statuses")
+			
 			func processStatuses(_ syncStatuses: [SyncStatus]) {
 				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
@@ -195,11 +193,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			}
 
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			do {
+				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+					completion(.success(()))
+					return
+				}
+				processStatuses(Array(syncStatuses))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}
@@ -563,22 +564,19 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
+		Task { @MainActor in
+			do {
+				let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
 				let syncStatuses = Set(articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+					SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				})
 
-				self.syncDatabase.insertStatuses(syncStatuses) { _ in
-					self.syncDatabase.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
-					}
+				try await syncDatabase.insertStatuses(syncStatuses)
+				if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+					sendArticleStatus(for: account) { _ in }
 				}
-			case .failure(let error):
+				completion(.success(()))
+			} catch {
 				completion(.failure(error))
 			}
 		}
