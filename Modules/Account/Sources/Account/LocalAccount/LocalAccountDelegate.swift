@@ -129,7 +129,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.removeFolder(folder)
+		account.removeFolderFromTree(folder)
 		completion(.success(()))
 	}
 

@@ -375,7 +375,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 							self.syncProgress.completeTask()
 							switch result {
 							case .success:
-								account.removeFolder(folder)
+								account.removeFolderFromTree(folder)
 								completion(.success(()))
 							case .failure(let error):
 								completion(.failure(error))
@@ -768,7 +768,7 @@ private extension CloudKitAccountDelegate {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeeds(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
-				account.removeFolder(folder)
+				account.removeFolderFromTree(folder)
 			}
 		}
 	}

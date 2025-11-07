@@ -346,7 +346,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 			switch result {
 			case .success:
-				account.removeFolder(folder)
+				account.removeFolderFromTree(folder)
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))

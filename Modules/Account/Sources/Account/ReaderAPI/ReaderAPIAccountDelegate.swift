@@ -370,13 +370,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		group.notify(queue: DispatchQueue.main) {
 			if self.variant == .theOldReader {
-				account.removeFolder(folder)
+				account.removeFolderFromTree(folder)
 				completion(.success(()))
 			} else {
 				self.caller.deleteTag(folder: folder) { result in
 					switch result {
 					case .success:
-						account.removeFolder(folder)
+						account.removeFolderFromTree(folder)
 						completion(.success(()))
 					case .failure(let error):
 						completion(.failure(error))
@@ -741,7 +741,7 @@ private extension ReaderAPIAccountDelegate {
 						account.addFeed(feed)
 						clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					}
-					account.removeFolder(folder)
+					account.removeFolderFromTree(folder)
 				}
 			}
 		}

@@ -52,7 +52,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 
 		if !foldersWithoutCollections.isEmpty {
 			for unmatched in foldersWithoutCollections {
-				account.removeFolder(unmatched)
+				account.removeFolderFromTree(unmatched)
 			}
 
 			let folderCountForLog = foldersWithoutCollections.count

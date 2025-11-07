@@ -1029,7 +1029,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	func removeFolder(_ folder: Folder) {
+	/// Remove the folder from this account. Does not call delegate.
+	func removeFolderFromTree(_ folder: Folder) {
 		folders?.remove(folder)
 		structureDidChange()
 		postChildrenDidChangeNotification()

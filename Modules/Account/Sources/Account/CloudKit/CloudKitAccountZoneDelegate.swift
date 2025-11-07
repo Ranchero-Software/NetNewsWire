@@ -129,7 +129,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 	func removeContainer(_ externalID: String) {
 		if let folder = account?.existingFolder(withExternalID: externalID) {
-			account?.removeFolder(folder)
+			account?.removeFolderFromTree(folder)
 		}
 	}
 

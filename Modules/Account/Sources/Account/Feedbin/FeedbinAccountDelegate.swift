@@ -269,7 +269,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
-			account.removeFolder(folder)
+			account.removeFolderFromTree(folder)
 			completion(.success(()))
 			return
 		}
@@ -322,7 +322,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 
 		group.notify(queue: DispatchQueue.main) {
-			account.removeFolder(folder)
+			account.removeFolderFromTree(folder)
 			completion(.success(()))
 		}
 
@@ -721,7 +721,7 @@ private extension FeedbinAccountDelegate {
 						account.addFeed(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
-					account.removeFolder(folder)
+					account.removeFolderFromTree(folder)
 				}
 			}
 		}
