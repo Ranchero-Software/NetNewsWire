@@ -428,7 +428,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	private func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let name = folder.name else {
-			completion(.failure(LocalAccountDelegateError.invalidParameter))
+			completion(.failure(AccountError.invalidParameter))
 			return
 		}
 

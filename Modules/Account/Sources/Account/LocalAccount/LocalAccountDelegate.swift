@@ -14,10 +14,6 @@ import ArticlesDatabase
 import RSWeb
 import Secrets
 
-public enum LocalAccountDelegateError: String, Error {
-	case invalidParameter = "An invalid parameter was used."
-}
-
 final class LocalAccountDelegate: AccountDelegate {
 
 	weak var account: Account?
