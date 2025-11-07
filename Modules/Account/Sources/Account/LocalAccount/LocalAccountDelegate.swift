@@ -77,11 +77,7 @@ final class LocalAccountDelegate: AccountDelegate {
 			throw AccountError.invalidParameter
 		}
 
-		return try await withCheckedThrowingContinuation { continuation in
-			createFeed(for: account, url: url, editedName: name, container: container) { result in
-				continuation.resume(with: result)
-			}
-		}
+		return try await createFeed(account: account, url: url, editedName: name, container: container)
 	}
 
 	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
@@ -162,58 +158,47 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 
 private extension LocalAccountDelegate {
 
-	func createFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
-
+	@MainActor func createFeed(account: Account, url: URL, editedName: String?, container: Container) async throws -> Feed {
 		// We need to use a batch update here because we need to assign add the feed to the
 		// container before the name has been downloaded.  This will put it in the sidebar
 		// with an Untitled name if we don't delay it being added to the sidebar.
 		BatchUpdate.shared.start()
-		FeedFinder.find(url: url) { result in
-
-			switch result {
-			case .success(let feedSpecifiers):
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-					let url = URL(string: bestFeedSpecifier.urlString) else {
-						BatchUpdate.shared.end()
-						completion(.failure(AccountError.createErrorNotFound))
-						return
-				}
-
-				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
-					BatchUpdate.shared.end()
-					completion(.failure(AccountError.createErrorAlreadySubscribed))
-					return
-				}
-
-				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
-
-					if let parsedFeed {
-						let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
-						feed.lastCheckDate = Date()
-
-						// Save conditional GET info so that first refresh uses conditional GET.
-						if let httpResponse = response as? HTTPURLResponse,
-						   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
-							feed.conditionalGetInfo = conditionalGetInfo
-						}
-
-						feed.editedName = editedName
-						container.addFeedToTreeAtTopLevel(feed)
-
-						account.update(feed, with: parsedFeed, {_ in
-							BatchUpdate.shared.end()
-							completion(.success(feed))
-						})
-					} else {
-						BatchUpdate.shared.end()
-						completion(.failure(AccountError.createErrorNotFound))
-					}
-				}
-
-			case .failure:
-				BatchUpdate.shared.end()
-				completion(.failure(AccountError.createErrorNotFound))
-			}
+		defer {
+			BatchUpdate.shared.end()
 		}
+
+		let feedSpecifiers = try await FeedFinder.find(url: url)
+
+		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+			  let url = URL(string: bestFeedSpecifier.urlString) else {
+			throw AccountError.createErrorNotFound
+		}
+
+		guard !account.hasFeed(withURL: bestFeedSpecifier.urlString) else {
+			throw AccountError.createErrorAlreadySubscribed
+		}
+
+		let feedDownloaderResponse = try await InitialFeedDownloader.download(url)
+		guard let parsedFeed = feedDownloaderResponse.parsedFeed else {
+			throw AccountError.createErrorNotFound
+		}
+
+		let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
+		feed.lastCheckDate = Date()
+
+		// Save conditional GET info so that first refresh uses conditional GET.
+		if let httpResponse = feedDownloaderResponse.response as? HTTPURLResponse,
+		   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
+			feed.conditionalGetInfo = conditionalGetInfo
+		}
+
+		feed.editedName = editedName
+		container.addFeedToTreeAtTopLevel(feed)
+
+		Task {
+			try? await account.update(feed, with: parsedFeed)
+		}
+
+		return feed
 	}
 }

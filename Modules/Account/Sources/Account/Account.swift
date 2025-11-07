@@ -796,6 +796,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feedDictionariesNeedUpdate = true
 	}
 
+	@discardableResult
 	@MainActor func update(_ feed: Feed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
 		try await withCheckedThrowingContinuation { continuation in
 			update(feed, with: parsedFeed) { result in

@@ -16,6 +16,14 @@ final class FeedFinder {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
 
+	static func find(url: URL) async throws -> Set<FeedSpecifier> {
+		try await withCheckedThrowingContinuation { continuation in
+			find(url: url) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		Task { @MainActor in
 			// Check special cases first.

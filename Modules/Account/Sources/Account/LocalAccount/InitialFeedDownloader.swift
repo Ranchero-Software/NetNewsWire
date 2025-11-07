@@ -10,7 +10,26 @@ import Foundation
 import RSParser
 import RSWeb
 
+struct InitialFeedDownloaderResponse {
+	let parsedFeed: ParsedFeed?
+	let data: Data?
+	let response: URLResponse?
+}
+
 struct InitialFeedDownloader {
+
+	@MainActor static func download(_ url: URL) async throws -> InitialFeedDownloaderResponse {
+		try await withCheckedThrowingContinuation { continuation in
+			download(url) { (parsedFeed, data, response, error) in
+				if let error {
+					continuation.resume(throwing: error)
+				} else {
+					let response = InitialFeedDownloaderResponse(parsedFeed: parsedFeed, data: data, response: response)
+					continuation.resume(returning: response)
+				}
+			}
+		}
+	}
 
 	static func download(_ url: URL,_ completion: @escaping (_ parsedFeed: ParsedFeed?, _ data: Data?, _ response: URLResponse?, _ error: Error?) -> Void) {
 		Task { @MainActor in
