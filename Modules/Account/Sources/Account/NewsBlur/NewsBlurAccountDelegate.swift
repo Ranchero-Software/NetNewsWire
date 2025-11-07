@@ -477,7 +477,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			renameFeed(for: account, with: feed, to: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return

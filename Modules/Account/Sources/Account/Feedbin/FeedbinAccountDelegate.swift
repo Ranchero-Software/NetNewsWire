@@ -359,7 +359,15 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			renameFeed(for: account, with: feed, to: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {

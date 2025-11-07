@@ -120,9 +120,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 		feed.editedName = name
-		completion(.success(()))
 	}
 
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {

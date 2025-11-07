@@ -385,7 +385,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			renameFeed(for: account, with: feed, to: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
 			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
