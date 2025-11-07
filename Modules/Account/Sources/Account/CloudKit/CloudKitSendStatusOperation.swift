@@ -162,7 +162,7 @@ private extension CloudKitSendStatusOperation {
 
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
-			account.removeFeeds(account.topLevelFeeds)
+			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
 				account.removeFolderFromTree(folder)
 			}

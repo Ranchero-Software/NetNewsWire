@@ -37,7 +37,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 			let feedsInCollection = Set(collectionFeeds.map { $0.id })
 			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.feedID) }
 			if !feedsToRemove.isEmpty {
-				folder.removeFeeds(feedsToRemove)
+				folder.removeFeedsFromTreeAtTopLevel(feedsToRemove)
 //				os_log(.debug, log: log, "\"%@\" - removed: %@", collection.label, feedsToRemove.map { $0.feedID }, feedsInCollection)
 			}
 
@@ -102,7 +102,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		// Remove feeds without folders/collections.
 		let feedsAfter = Set(feedsAndFolders.map { $0.0 })
 		let feedsWithoutCollections = feedsBefore.subtracting(feedsAfter)
-		account.removeFeeds(feedsWithoutCollections)
+		account.removeFeedsFromTreeAtTopLevel(feedsWithoutCollections)
 
 		if !feedsWithoutCollections.isEmpty {
 			Feedly.logger.info("Feedly: Removed \(feedsWithoutCollections.count) feeds")

@@ -499,10 +499,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			case .success:
 				DispatchQueue.main.async {
 					account.clearFeedMetadata(feed)
-					account.removeFeed(feed)
+					account.removeFeedFromTreeAtTopLevel(feed)
 					if let folders = account.folders {
 						for folder in folders {
-							folder.removeFeed(feed)
+							folder.removeFeedFromTreeAtTopLevel(feed)
 						}
 					}
 					completion(.success(()))
@@ -542,7 +542,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				self.refreshProgress.completeTask()
 				switch result {
 				case .success:
-					from.removeFeed(feed)
+					from.removeFeedFromTreeAtTopLevel(feed)
 					to.addFeedToTreeAtTopLevel(feed)
 					completion(.success(()))
 				case .failure(let error):
@@ -569,7 +569,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				case .success:
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
-						account.removeFeed(feed)
+						account.removeFeedFromTreeAtTopLevel(feed)
 						folder.addFeedToTreeAtTopLevel(feed)
 						completion(.success(()))
 					}
@@ -794,7 +794,7 @@ private extension ReaderAPIAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !subFeedIds.contains(feed.feedID) {
-						folder.removeFeed(feed)
+						folder.removeFeedFromTreeAtTopLevel(feed)
 					}
 				}
 			}
@@ -803,7 +803,7 @@ private extension ReaderAPIAccountDelegate {
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.feedID) {
 				account.clearFeedMetadata(feed)
-				account.removeFeed(feed)
+				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
 
@@ -854,7 +854,7 @@ private extension ReaderAPIAccountDelegate {
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
 				if !taggingFeedIDs.contains(feed.feedID) {
-					folder.removeFeed(feed)
+					folder.removeFeedFromTreeAtTopLevel(feed)
 					clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					account.addFeedToTreeAtTopLevel(feed)
 				}
@@ -881,7 +881,7 @@ private extension ReaderAPIAccountDelegate {
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelFeeds {
 			if taggedFeedIDs.contains(feed.feedID) {
-				account.removeFeed(feed)
+				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
 	}

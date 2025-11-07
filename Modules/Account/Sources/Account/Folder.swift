@@ -135,12 +135,12 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		postChildrenDidChangeNotification()
 	}
 
-	public func removeFeed(_ feed: Feed) {
+	public func removeFeedFromTreeAtTopLevel(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}
 
-	public func removeFeeds(_ feeds: Set<Feed>) {
+	public func removeFeedsFromTreeAtTopLevel(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
 		}

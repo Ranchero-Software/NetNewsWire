@@ -29,7 +29,7 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 	func hasChildFolder(with: String) -> Bool
 	func childFolder(with: String) -> Folder?
 
-    func removeFeed(_ feed: Feed)
+    func removeFeedFromTreeAtTopLevel(_ feed: Feed)
 	func addFeedToTreeAtTopLevel(_ feed: Feed)
 
 	//Recursive — checks subfolders

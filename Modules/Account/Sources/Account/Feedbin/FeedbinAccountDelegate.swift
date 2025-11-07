@@ -460,7 +460,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				case .success(let taggingID):
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
-						account.removeFeed(feed)
+						account.removeFeedFromTreeAtTopLevel(feed)
 						folder.addFeedToTreeAtTopLevel(feed)
 						completion(.success(()))
 					}
@@ -773,7 +773,7 @@ private extension FeedbinAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !subFeedIds.contains(feed.feedID) {
-						folder.removeFeed(feed)
+						folder.removeFeedFromTreeAtTopLevel(feed)
 					}
 				}
 			}
@@ -781,7 +781,7 @@ private extension FeedbinAccountDelegate {
 
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.feedID) {
-				account.removeFeed(feed)
+				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
 
@@ -843,7 +843,7 @@ private extension FeedbinAccountDelegate {
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
 				if !taggingFeedIDs.contains(feed.feedID) {
-					folder.removeFeed(feed)
+					folder.removeFeedFromTreeAtTopLevel(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					account.addFeedToTreeAtTopLevel(feed)
 				}
@@ -870,7 +870,7 @@ private extension FeedbinAccountDelegate {
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelFeeds {
 			if taggedFeedIDs.contains(feed.feedID) {
-				account.removeFeed(feed)
+				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
 	}
@@ -1310,7 +1310,7 @@ private extension FeedbinAccountDelegate {
 				case .success:
 					DispatchQueue.main.async {
 						self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-						folder.removeFeed(feed)
+						folder.removeFeedFromTreeAtTopLevel(feed)
 						account.addFeedIfNotInAnyFolder(feed)
 						completion(.success(()))
 					}
@@ -1323,7 +1323,7 @@ private extension FeedbinAccountDelegate {
 			}
 		} else {
 			if let account = container as? Account {
-				account.removeFeed(feed)
+				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 			completion(.success(()))
 		}
@@ -1341,10 +1341,10 @@ private extension FeedbinAccountDelegate {
 		func complete() {
 			DispatchQueue.main.async {
 				account.clearFeedMetadata(feed)
-				account.removeFeed(feed)
+				account.removeFeedFromTreeAtTopLevel(feed)
 				if let folders = account.folders {
 					for folder in folders {
-						folder.removeFeed(feed)
+						folder.removeFeedFromTreeAtTopLevel(feed)
 					}
 				}
 				completion(.success(()))

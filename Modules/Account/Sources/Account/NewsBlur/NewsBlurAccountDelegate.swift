@@ -576,7 +576,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 			switch result {
 			case .success:
-				from.removeFeed(feed)
+				from.removeFeedFromTreeAtTopLevel(feed)
 				to.addFeedToTreeAtTopLevel(feed)
 
 				completion(.success(()))

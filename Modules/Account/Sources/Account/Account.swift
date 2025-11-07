@@ -1016,13 +1016,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return _flattenedFeeds
 	}
 
-	public func removeFeed(_ feed: Feed) {
+	public func removeFeedFromTreeAtTopLevel(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}
 
-	public func removeFeeds(_ feeds: Set<Feed>) {
+	public func removeFeedsFromTreeAtTopLevel(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
 		}

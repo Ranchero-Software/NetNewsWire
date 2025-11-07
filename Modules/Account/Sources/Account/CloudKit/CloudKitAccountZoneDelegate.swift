@@ -83,7 +83,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		if let feed = account?.existingFeed(withExternalID: externalID), let containers = account?.existingContainers(withFeed: feed) {
 			for container in containers {
 				feed.dropConditionalGetInfo()
-				container.removeFeed(feed)
+				container.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
 	}
@@ -153,7 +153,7 @@ private extension CloudKitAcountZoneDelegate {
 			switch change {
 			case .remove(_, let externalID, _):
 				if let container = existingContainers.first(where: { $0.externalID == externalID }) {
-					container.removeFeed(feed)
+					container.removeFeedFromTreeAtTopLevel(feed)
 				}
 			case .insert(_, let externalID, _):
 				if let container = account.existingContainer(withExternalID: externalID) {

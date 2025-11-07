@@ -99,12 +99,12 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.removeFeed(feed)
+		container.removeFeedFromTreeAtTopLevel(feed)
 		completion(.success(()))
 	}
 
 	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
-		from.removeFeed(feed)
+		from.removeFeedFromTreeAtTopLevel(feed)
 		to.addFeedToTreeAtTopLevel(feed)
 	}
 
