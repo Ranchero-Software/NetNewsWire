@@ -21,15 +21,10 @@ public enum FeedbinAccountDelegateError: String, Error {
 }
 
 final class FeedbinAccountDelegate: AccountDelegate {
-
-	private let syncDatabase: SyncDatabase
-
-	private let caller: FeedbinAPICaller
-	private static let logger = Feedbin.logger
-
 	let behaviors: AccountBehaviors = [.disallowFeedCopyInRootFolder]
 	let server: String? = "api.feedbin.com"
 	var isOPMLImportInProgress = false
+	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	var credentials: Credentials? {
 		didSet {
@@ -43,19 +38,17 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+	private let syncDatabase: SyncDatabase
+	private let caller: FeedbinAPICaller
+	private static let logger = Feedbin.logger
 
 	init(dataFolder: String, transport: Transport?) {
-
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		syncDatabase = SyncDatabase(databasePath: databaseFilePath)
 
-		if transport != nil {
-
-			caller = FeedbinAPICaller(transport: transport!)
-
+		if let transport {
+			caller = FeedbinAPICaller(transport: transport)
 		} else {
-
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 			sessionConfiguration.timeoutIntervalForRequest = 60.0
@@ -70,54 +63,24 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			}
 
 			caller = FeedbinAPICaller(transport: URLSession(configuration: sessionConfiguration))
-
 		}
-
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 
-	func refreshAll(for account: Account) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			refreshAll(for: account) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	@MainActor private func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-
+	@MainActor func refreshAll(for account: Account) async throws {
 		refreshProgress.reset()
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 
-		refreshAccount(account) { result in
-			switch result {
-			case .success():
-
-				self.refreshArticlesAndStatuses(account) { result in
-					switch result {
-					case .success():
-						completion(.success(()))
-					case .failure(let error):
-						DispatchQueue.main.async {
-							self.refreshProgress.reset()
-							let wrappedError = AccountError.wrappedError(error: error, account: account)
-							completion(.failure(wrappedError))
-						}
-					}
-				}
-
-			case .failure(let error):
-				DispatchQueue.main.async {
-					self.refreshProgress.reset()
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
-
+		do {
+			try await refreshAccount(account)
+			try await refreshArticlesAndStatuses(account)
+		} catch {
+			refreshProgress.reset()
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
 		}
-
 	}
 
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
@@ -216,7 +179,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		caller.retrieveUnreadEntries() { result in
 			switch result {
 			case .success(let articleIDs):
-				self.syncArticleReadState(account: account, articleIDs: articleIDs) {
+				Task { @MainActor in
+					await self.syncArticleReadState(account: account, articleIDs: articleIDs)
 					group.leave()
 				}
 			case .failure(let error):
@@ -231,7 +195,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		caller.retrieveStarredEntries() { result in
 			switch result {
 			case .success(let articleIDs):
-				self.syncArticleStarredState(account: account, articleIDs: articleIDs) {
+				Task { @MainActor in
+					await self.syncArticleStarredState(account: account, articleIDs: articleIDs)
 					group.leave()
 				}
 			case .failure(let error):
@@ -250,7 +215,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				completion(.success(()))
 			}
 		}
-
 	}
 
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -655,6 +619,14 @@ private extension FeedbinAccountDelegate {
 
 	}
 
+	func refreshAccount(_ account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			refreshAccount(account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		caller.retrieveTags { result in
@@ -699,6 +671,14 @@ private extension FeedbinAccountDelegate {
 
 		}
 
+	}
+
+	func refreshArticlesAndStatuses(_ account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			refreshArticlesAndStatuses(account) { result in
+				continuation.resume(with: result)
+			}
+		}
 	}
 
 	func refreshArticlesAndStatuses(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -1269,110 +1249,57 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	func syncArticleReadState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		Task { @MainActor in
-			guard let articleIDs else {
-				completion()
+	@MainActor func syncArticleReadState(account: Account, articleIDs: [Int]?) async {
+		guard let articleIDs else {
+			return
+		}
+
+		do {
+			guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
 				return
 			}
 
-			func process(_ pendingArticleIDs: Set<String>) {
+			let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+			let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
 
-				let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
+			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
 
-				account.fetchUnreadArticleIDs { articleIDsResult in
-					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+			// Mark articles as unread
+			let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+			try await account.markAsUnread(deltaUnreadArticleIDs)
 
-					let group = DispatchGroup()
-
-					// Mark articles as unread
-					let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-					group.enter()
-					account.markAsUnread(deltaUnreadArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as read
-					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-					group.enter()
-					account.markAsRead(deltaReadArticleIDs) { _ in
-						group.leave()
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-
-				}
-
-			}
-
-			do {
-				guard let pendingArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() else {
-					completion()
-					return
-				}
-				process(pendingArticleIDs)
-			} catch {
-				Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
-				completion()
-			}
+			// Mark articles as read
+			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
+			try await account.markAsRead(deltaReadArticleIDs)
+		} catch {
+			Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
 		}
 	}
 
-	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		Task { @MainActor in
-			guard let articleIDs else {
-				completion()
+	@MainActor func syncArticleStarredState(account: Account, articleIDs: [Int]?) async {
+		guard let articleIDs else {
+			return
+		}
+		
+		do {
+			guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 				return
 			}
 
-			func process(_ pendingArticleIDs: Set<String>) {
+			let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
+			let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
 
-				let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
+			let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
 
-				account.fetchStarredArticleIDs { articleIDsResult in
-					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+			// Mark articles as starred
+			let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+			try await account.markAsStarred(deltaStarredArticleIDs)
 
-					let group = DispatchGroup()
-
-					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-					group.enter()
-					account.markAsStarred(deltaStarredArticleIDs) { _ in
-						group.leave()
-					}
-
-					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
-					group.enter()
-					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-						group.leave()
-					}
-
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
-
-			}
-
-			do {
-				guard let pendingArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() else {
-					completion()
-					return
-				}
-				process(pendingArticleIDs)
-			} catch {
-				Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
-				completion()
-			}
+			// Mark articles as unstarred
+			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
+			try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+		} catch {
+			Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
 		}
 	}
 
