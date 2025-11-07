@@ -322,7 +322,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFolder(for: account, with: folder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		let group = DispatchGroup()
 

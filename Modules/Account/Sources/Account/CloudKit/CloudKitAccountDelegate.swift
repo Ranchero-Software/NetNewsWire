@@ -340,7 +340,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFolder(for: account, with: folder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		syncProgress.addToNumberOfTasksAndRemaining(2)
 		accountZone.findFeedExternalIDs(for: folder) { result in

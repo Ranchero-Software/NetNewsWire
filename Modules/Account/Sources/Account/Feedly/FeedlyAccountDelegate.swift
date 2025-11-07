@@ -331,7 +331,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		folder.name = name
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFolder(for: account, with: folder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)))

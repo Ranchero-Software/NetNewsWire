@@ -265,7 +265,15 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFolder(for: account, with: folder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {

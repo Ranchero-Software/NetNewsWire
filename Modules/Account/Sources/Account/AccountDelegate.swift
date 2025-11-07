@@ -34,7 +34,7 @@ protocol AccountDelegate {
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder
 	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
+	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws
 
 	@MainActor func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed
 	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws

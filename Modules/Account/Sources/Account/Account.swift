@@ -628,7 +628,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFolder(for: self, with: folder, completion: completion)
+		Task { @MainActor in
+			do {
+				try await delegate.removeFolder(for: self, with: folder)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	public func renameFolder(_ folder: Folder, to name: String) async throws {
