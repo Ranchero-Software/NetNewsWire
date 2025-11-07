@@ -127,7 +127,13 @@ public protocol Transport {
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
 
 	/// Sends URLRequest that doesn't require any result information.
+	func send(request: URLRequest, method: String) async throws
+
+	/// Sends URLRequest that doesn't require any result information.
 	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void)
+
+	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
+	func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?)
 
 	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
 	func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
@@ -174,6 +180,14 @@ extension URLSession: Transport {
 		task.resume()
 	}
 
+	public func send(request: URLRequest, method: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	public func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		var sendRequest = request
@@ -198,6 +212,14 @@ extension URLSession: Transport {
 			}
 		}
 		task.resume()
+	}
+
+	public func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?) {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method, payload: payload) { result in
+				continuation.resume(with: result)
+			}
+		}
 	}
 
 	public func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
