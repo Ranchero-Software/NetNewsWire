@@ -385,7 +385,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		try await withCheckedThrowingContinuation { continuation in
+			createFeed(for: account, url: urlString, name: name, container: container, validateFeed: validateFeed) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		guard let url = URL(string: url) else {
 			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return

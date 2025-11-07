@@ -199,15 +199,19 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	@discardableResult
+	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 		guard let url = URL(string: urlString) else {
-			completion(.failure(LocalAccountDelegateError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
 
 		let editedName = name == nil || name!.isEmpty ? nil : name
 
-		createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed, completion: completion)
+		return try await withCheckedThrowingContinuation { continuation in
+			self.createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed) { result in
+				continuation.resume(with: result)
+			}
+		}
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -278,11 +282,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
-			switch result {
-			case .success:
+		Task { @MainActor in
+			do {
+				try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 				completion(.success(()))
-			case .failure(let error):
+			} catch {
 				completion(.failure(error))
 			}
 		}

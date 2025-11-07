@@ -108,13 +108,16 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 		guard let url = URL(string: urlString) else {
-			completion(.failure(LocalAccountDelegateError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
 
-        createFeed(for: account, url: url, editedName: name, container: container, completion: completion)
+		return try await withCheckedThrowingContinuation { continuation in
+			createFeed(for: account, url: url, editedName: name, container: container) { result in
+				continuation.resume(with: result)
+			}
+		}
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
