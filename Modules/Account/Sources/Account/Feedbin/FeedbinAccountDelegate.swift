@@ -84,86 +84,44 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
-				}
-			case .failure(let error):
+		Task { @MainActor in
+			do {
+				try await sendArticleStatus(for: account)
+				try await refreshArticleStatus(for: account)
+				completion?(.success(()))
+			} catch {
 				completion?(.failure(error))
 			}
 		}
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		Task { @MainActor in
-			Self.logger.info("Feedbin: Sending article statuses")
-			
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
-				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
-				let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
-				let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
+	@MainActor func sendArticleStatus(for account: Account) async throws {
+		Self.logger.info("Feedbin: Sending article statuses")
+		defer {
+			Self.logger.info("Feedbin: Finished sending article statuses")
+		}
 
-				let group = DispatchGroup()
-				var errorOccurred = false
+		guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+			return
+		}
 
-				group.enter()
-				self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
+		let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
+		try await self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries)
 
-				group.enter()
-				self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
+		let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
+		try await self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries)
 
-				group.enter()
-				self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
+		let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
+		try await self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries)
 
-				group.enter()
-				self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
+		let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
+		try await self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries)
+	}
 
-				group.notify(queue: DispatchQueue.main) {
-					Self.logger.info("Feedbin: Finished sending article statuses")
-					if errorOccurred {
-						completion(.failure(FeedbinAccountDelegateError.unknown))
-					} else {
-						completion(.success(()))
-					}
-				}
-			}
-
-			do {
-				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
-					completion(.success(()))
-					return
-				}
-				processStatuses(Array(syncStatuses))
-			} catch {
-				completion(.failure(error))
+	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticleStatus(for: account) { result in
+				continuation.resume(with: result)
 			}
 		}
 	}
@@ -537,7 +495,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 				try await syncDatabase.insertStatuses(syncStatuses)
 				if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
-					sendArticleStatus(for: account) { _ in }
+					try await sendArticleStatus(for: account)
 				}
 				completion(.success(()))
 			} catch {
@@ -673,55 +631,12 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	func refreshArticlesAndStatuses(_ account: Account) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			refreshArticlesAndStatuses(account) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func refreshArticlesAndStatuses(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		self.sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-
-						self.refreshArticles(account) { result in
-							switch result {
-							case .success:
-
-								self.refreshMissingArticles(account) { result in
-									switch result {
-									case .success:
-
-										DispatchQueue.main.async {
-											self.refreshProgress.reset()
-											completion(.success(()))
-										}
-
-									case .failure(let error):
-										completion(.failure(error))
-									}
-								}
-
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				}
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+	@MainActor func refreshArticlesAndStatuses(_ account: Account) async throws {
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
+		try await refreshArticles(account)
+		try await refreshMissingArticles(account)
+		refreshProgress.reset()
 	}
 
 	// This function can be deleted if Feedbin updates their taggings.json service to
@@ -917,6 +832,14 @@ private extension FeedbinAccountDelegate {
 		return d
 	}
 
+	@MainActor func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.sendArticleStatuses(statuses, apiCall: apiCall) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func sendArticleStatuses(_ statuses: [SyncStatus],
 							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
 							 completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -1103,7 +1026,15 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	func refreshArticles(_ account: Account, completion: @escaping VoidResultCompletionBlock) {
+	@MainActor func refreshArticles(_ account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshArticles(account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func refreshArticles(_ account: Account, completion: @escaping VoidResultCompletionBlock) {
 
 		Self.logger.info("Feedbin: Refreshing articles")
 
@@ -1142,7 +1073,15 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func refreshMissingArticles(_ account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func refreshMissingArticles(_ account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.refreshMissingArticles(account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func refreshMissingArticles(_ account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		Self.logger.info("Feedbin: Refreshing missing articles")
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in

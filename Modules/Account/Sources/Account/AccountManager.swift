@@ -296,16 +296,10 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
-
-		for account in activeAccounts {
-			group.enter()
-			account.sendArticleStatus() { _ in
-				group.leave()
+		Task { @MainActor in
+			for account in activeAccounts {
+				try? await account.sendArticleStatus()
 			}
-		}
-
-		group.notify(queue: DispatchQueue.global(qos: .background)) {
 			completion?()
 		}
 	}
