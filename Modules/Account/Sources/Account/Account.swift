@@ -402,8 +402,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		try await delegate.sendArticleStatus(for: self)
 	}
 
-	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
-		delegate.syncArticleStatus(for: self, completion: completion)
+	@MainActor public func syncArticleStatus() async throws {
+		try await delegate.syncArticleStatus(for: self)
 	}
 
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {

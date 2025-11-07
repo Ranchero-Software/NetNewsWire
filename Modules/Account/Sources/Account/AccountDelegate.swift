@@ -26,7 +26,7 @@ protocol AccountDelegate {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async
 
 	@MainActor func refreshAll(for account: Account) async throws
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)?)
+	@MainActor func syncArticleStatus(for account: Account) async throws
 	@MainActor func sendArticleStatus(for account: Account) async throws
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void))
 

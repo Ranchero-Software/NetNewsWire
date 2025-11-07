@@ -83,16 +83,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		Task { @MainActor in
-			do {
-				try await sendArticleStatus(for: account)
-				try await refreshArticleStatus(for: account)
-				completion?(.success(()))
-			} catch {
-				completion?(.failure(error))
-			}
-		}
+	@MainActor func syncArticleStatus(for account: Account) async throws {
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
 	}
 
 	@MainActor func sendArticleStatus(for account: Account) async throws {

@@ -309,7 +309,8 @@ public final class AccountManager: UnreadCountProvider {
 
 		for account in activeAccounts {
 			group.enter()
-			account.syncArticleStatus() { _ in
+			Task { @MainActor in
+				try? await account.syncArticleStatus()
 				group.leave()
 			}
 		}

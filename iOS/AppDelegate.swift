@@ -438,11 +438,10 @@ private extension AppDelegate {
 		assert(singleArticleSet.count == 1)
 		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
 
-		account.syncArticleStatus(completion: { [weak self] _ in
-			if !AccountManager.shared.isSuspended {
-				self?.prepareAccountsForBackground()
-				self?.suspendApplication()
-			}
-		})
+		Task { @MainActor in
+			try? await account.syncArticleStatus()
+			prepareAccountsForBackground()
+			suspendApplication()
+		}
 	}
 }

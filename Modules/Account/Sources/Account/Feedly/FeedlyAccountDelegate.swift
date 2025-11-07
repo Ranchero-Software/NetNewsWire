@@ -158,22 +158,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		operationQueue.add(syncAllOperation)
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
-				}
-			case .failure(let error):
-				completion?(.failure(error))
-			}
-		}
+	@MainActor func syncArticleStatus(for account: Account) async throws {
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
 	}
 
 	@MainActor func sendArticleStatus(for account: Account) async throws {
@@ -201,7 +188,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	/// this app does its part to ensure the articles have a consistent status between both.
 	///
 	/// - Parameter account: The account whose articles have a remote status.
-	/// - Parameter completion: Call on the main queue.
+	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			refreshArticleStatus(for: account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard let credentials = credentials else {
 			return completion(.success(()))

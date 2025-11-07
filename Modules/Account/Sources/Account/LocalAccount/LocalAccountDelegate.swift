@@ -58,11 +58,10 @@ final class LocalAccountDelegate: AccountDelegate {
 		account.metadata.lastArticleFetchEndTime = Date()
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		completion?(.success(()))
+	@MainActor func syncArticleStatus(for account: Account) async throws {
 	}
 
-	func sendArticleStatus(for account: Account) async throws {
+	@MainActor func sendArticleStatus(for account: Account) async throws {
 	}
 
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {

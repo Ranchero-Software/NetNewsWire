@@ -113,22 +113,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		standardRefreshAll(for: account, completion: completion)
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
-				}
-			case .failure(let error):
-				completion?(.failure(error))
-			}
-		}
+	@MainActor func syncArticleStatus(for account: Account) async throws {
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
 	}
 
 	@MainActor func sendArticleStatus(for account: Account) async throws {
@@ -141,6 +128,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		sendArticleStatus(for: account, showProgress: false, completion: completion)
+	}
+
+	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			refreshArticleStatus(for: account) { result in
+				continuation.resume(with: result)
+			}
+		}
 	}
 
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {

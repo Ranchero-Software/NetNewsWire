@@ -182,27 +182,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
+	@MainActor func syncArticleStatus(for account: Account) async throws {
 		guard variant != .inoreader else {
-			completion?(.success(()))
 			return
 		}
 
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
-				}
-			case .failure(let error):
-				completion?(.failure(error))
-			}
-		}
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
 	}
 
 	func sendArticleStatus(for account: Account) async throws {
@@ -241,6 +227,14 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
+	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			refreshArticleStatus(for: account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		Self.logger.info("ReaderAPI: Refreshing article statuses")
 
