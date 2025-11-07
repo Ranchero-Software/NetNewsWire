@@ -38,7 +38,7 @@ protocol AccountDelegate {
 
 	@MainActor func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed
 	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws
-	func addFeed(for account: Account, with: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void)
+	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws
 	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void)
 	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws
 

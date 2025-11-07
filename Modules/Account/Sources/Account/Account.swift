@@ -563,7 +563,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func addFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.addFeed(for: self, with: feed, to: container, completion: completion)
+		Task { @MainActor in
+			do {
+				try await delegate.addFeed(account: self, feed: feed, container: container)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	public func createFeed(url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {

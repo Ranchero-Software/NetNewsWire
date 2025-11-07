@@ -260,7 +260,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			addFeed(for: account, with: feed, to: container) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		syncProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.addFeed(feed, to: container) { result in
 			self.syncProgress.completeTask()

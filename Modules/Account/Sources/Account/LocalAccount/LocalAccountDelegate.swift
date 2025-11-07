@@ -108,9 +108,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		to.addFeedToTreeAtTopLevel(feed)
 	}
 
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
 		container.addFeedToTreeAtTopLevel(feed)
-		completion(.success(()))
 	}
 
 	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container) async throws {
