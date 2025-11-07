@@ -21,8 +21,7 @@ enum CreateSubscriptionResult {
 	case notFound
 }
 
-final class FeedbinAPICaller: NSObject {
-
+final class FeedbinAPICaller {
 	struct ConditionalGetKeys {
 		static let subscriptions = "subscriptions"
 		static let tags = "tags"
@@ -40,7 +39,6 @@ final class FeedbinAPICaller: NSObject {
 	weak var accountMetadata: AccountMetadata?
 
 	init(transport: Transport) {
-		super.init()
 		self.transport = transport
 	}
 
