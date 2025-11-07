@@ -412,25 +412,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 
-		delegate.importOPML(for: self, opmlFile: opmlFile) { [weak self] result in
-			switch result {
-			case .success:
-				guard let self = self else { return }
+		Task { @MainActor in
+			do {
+				try await delegate.importOPML(for: self, opmlFile: opmlFile)
 				// Reset the last fetch date to get the article history for the added feeds.
-				self.metadata.lastArticleFetchStartTime = nil
-				Task {
-					do {
-						try await self.delegate.refreshAll(for: self)
-						completion(.success(()))
-					} catch {
-						completion(.failure(error))
-					}
-				}
-			case .failure(let error):
+				metadata.lastArticleFetchStartTime = nil
+				try? await delegate.refreshAll(for: self)
+				completion(.success(()))
+			} catch {
 				completion(.failure(error))
 			}
 		}
-
 	}
 
 	public func suspendNetwork() {

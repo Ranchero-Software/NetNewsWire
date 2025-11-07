@@ -54,7 +54,15 @@ final class CloudKitAccountZone: CloudKitZone {
 		migrateChangeToken()
     }
 
-	func importOPML(rootExternalID: String, items: [RSOPMLItem], completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			importOPML(rootExternalID: rootExternalID, items: items) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func importOPML(rootExternalID: String, items: [RSOPMLItem], completion: @escaping (Result<Void, Error>) -> Void) {
 		var records = [CKRecord]()
 		var feedRecords = [String: CKRecord]()
 

@@ -225,6 +225,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		operationQueue.addOperations([ingestUnread, ingestStarred])
 	}
 
+
+	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			importOPML(for: account, opmlFile: opmlFile) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		let data: Data
 

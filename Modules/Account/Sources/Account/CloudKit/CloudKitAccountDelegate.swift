@@ -150,52 +150,30 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		mainThreadOperationQueue.add(op)
 	}
 
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-
+	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
 		guard refreshProgress.isComplete else {
-			completion(.success(()))
 			return
 		}
 
-		var fileData: Data?
-
-		do {
-			fileData = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-
-		guard let opmlData = fileData else {
-			completion(.success(()))
-			return
-		}
-
+		let opmlData = try Data(contentsOf: opmlFile)
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
+		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
+		// TODO: throw appropriate error if OPML file is empty.
+		guard let opmlItems = opmlDocument.children, let rootExternalID = account.externalID else {
 			return
 		}
-
-		guard let loadDocument = opmlDocument else {
-			completion(.success(()))
-			return
-		}
-
-		guard let opmlItems = loadDocument.children, let rootExternalID = account.externalID else {
-			return
-		}
-
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 
 		syncProgress.addToNumberOfTasksAndRemaining(1)
-		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
+
+		do {
+			try await accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems)
 			self.syncProgress.completeTask()
-			self.standardRefreshAll(for: account, completion: completion)
+			try? await standardRefreshAll(for: account)
+		} catch {
+			self.syncProgress.completeTask()
+			throw error
 		}
 	}
 
@@ -596,6 +574,14 @@ private extension CloudKitAccountDelegate {
 				}
 			case .failure(let error):
 				fail(error)
+			}
+		}
+	}
+
+	@MainActor func standardRefreshAll(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			standardRefreshAll(for: account) { result in
+				continuation.resume(with: result)
 			}
 		}
 	}

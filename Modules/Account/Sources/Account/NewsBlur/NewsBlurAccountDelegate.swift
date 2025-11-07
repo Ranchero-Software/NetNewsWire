@@ -356,8 +356,8 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+
+	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
 	}
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {

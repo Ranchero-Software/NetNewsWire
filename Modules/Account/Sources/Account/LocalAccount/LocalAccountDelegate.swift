@@ -67,45 +67,19 @@ final class LocalAccountDelegate: AccountDelegate {
 	@MainActor func refreshArticleStatus(for account: Account) async throws {
 	}
 
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		var fileData: Data?
-
-		do {
-			fileData = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-
-		guard let opmlData = fileData else {
-			completion(.success(()))
-			return
-		}
-
+	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+		let opmlData = try Data(contentsOf: opmlFile)
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
+		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 
-		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-
-		guard let loadDocument = opmlDocument else {
-			completion(.success(()))
-			return
-		}
-
-		guard let children = loadDocument.children else {
+		// TODO: throw appropriate error for empty OPML
+		guard let children = opmlDocument.children else {
 			return
 		}
 
 		BatchUpdate.shared.perform {
 			account.loadOPMLItems(children)
 		}
-
-		completion(.success(()))
 	}
 
 	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {

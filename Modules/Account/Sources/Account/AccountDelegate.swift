@@ -30,7 +30,7 @@ protocol AccountDelegate {
 	@MainActor func sendArticleStatus(for account: Account) async throws
 	@MainActor func refreshArticleStatus(for account: Account) async throws
 
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void)
+	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder
 	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws

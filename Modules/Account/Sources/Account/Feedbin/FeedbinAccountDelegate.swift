@@ -168,7 +168,16 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.importOPML(for: account, opmlFile: opmlFile) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		var fileData: Data?
 
