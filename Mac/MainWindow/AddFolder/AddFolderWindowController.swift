@@ -111,11 +111,10 @@ private extension AddFolderWindowController {
 			return
 		}
 
-		account.addFolder(folderName) { result in
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
+		Task { @MainActor in
+			do {
+				try await account.addFolder(folderName)
+			} catch {
 				NSApplication.shared.presentError(error)
 			}
 		}

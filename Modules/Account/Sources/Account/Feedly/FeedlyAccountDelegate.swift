@@ -260,6 +260,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+		try await withCheckedThrowingContinuation { continuation in
+			createFolder(for: account, name: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 
 		let progress = refreshProgress
@@ -279,6 +287,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				completion(.failure(error))
+			}
+		}
+	}
+
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			renameFolder(for: account, with: folder, to: name) { result in
+				continuation.resume(with: result)
 			}
 		}
 	}

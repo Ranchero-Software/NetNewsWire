@@ -284,15 +284,22 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+		guard let folder = account.ensureFolder(with: name) else {
+			throw AccountError.invalidParameter
+		}
+		return folder
+	}
+
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			renameFolder(for: account, with: folder, to: name) { result in
+				continuation.resume(with: result)
+			}
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in

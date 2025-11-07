@@ -360,7 +360,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+		try await withCheckedThrowingContinuation { continuation in
+			self.createFolder(for: account, name: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
 		self.refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		caller.addFolder(named: name) { result in
@@ -375,6 +383,14 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				completion(.failure(error))
+			}
+		}
+	}
+
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			renameFolder(for: account, with: folder, to: name) { result in
+				continuation.resume(with: result)
 			}
 		}
 	}

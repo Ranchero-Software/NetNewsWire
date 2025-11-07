@@ -66,8 +66,17 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	// MARK: - Renamable
 
 	public func rename(to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let account = account else { return }
-		account.renameFolder(self, to: name, completion: completion)
+		guard let account else {
+			return
+		}
+		Task { @MainActor in
+			do {
+				try await account.renameFolder(self, to: name)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	// MARK: - Init

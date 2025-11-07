@@ -66,8 +66,8 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
            tell account X to make new folder at end with properties {name:"new folder name"}
     */
     class func handleCreateElement(command:NSCreateCommand) -> Any?  {
-        guard command.isCreateCommand(forClass:"fold") else { return nil }
-        let name = command.property(forKey:"name") as? String ?? ""
+        guard command.isCreateCommand(forClass: "fold") else { return nil }
+        let name = command.property(forKey: "name") as? String ?? ""
 
         // some combination of the tell target and the location specifier ("in" or "at")
         // identifies where the new folder should be created
@@ -79,13 +79,13 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
 
 		command.suspendExecution()
 
-		account.addFolder(name) { result in
-			switch result {
-			case .success(let folder):
+		Task { @MainActor in
+			do {
+				let folder = try await account.addFolder(name)
 				let scriptableAccount = ScriptableAccount(account)
-				let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
+				let scriptableFolder = ScriptableFolder(folder, container: scriptableAccount)
 				command.resumeExecution(withResult:scriptableFolder.objectSpecifier)
-			case .failure:
+			} catch {
 				command.resumeExecution(withResult:nil)
 			}
 		}

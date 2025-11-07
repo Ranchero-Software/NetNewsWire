@@ -440,9 +440,10 @@ private extension SidebarOutlineDataSource {
 			return
 		}
 
-		destinationAccount.addFolder(folder.name ?? "") { result in
-			switch result {
-			case .success(let destinationFolder):
+		Task { @MainActor in
+			do {
+				let destinationFolder = try await destinationAccount.addFolder(folder.name ?? "")
+				
 				for feed in folder.topLevelFeeds {
 					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in
@@ -464,7 +465,7 @@ private extension SidebarOutlineDataSource {
 						}
 					}
 				}
-			case .failure(let error):
+			} catch {
 				NSApplication.shared.presentError(error)
 			}
 		}

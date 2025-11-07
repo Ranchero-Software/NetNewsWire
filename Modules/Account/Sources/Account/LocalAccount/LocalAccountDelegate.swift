@@ -64,8 +64,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	@MainActor func sendArticleStatus(for account: Account) async throws {
 	}
 
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		completion(.success(()))
+	@MainActor func refreshArticleStatus(for account: Account) async throws {
 	}
 
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -144,17 +143,15 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+		guard let folder = account.ensureFolder(with: name) else {
+			throw AccountError.invalidParameter
 		}
+		return folder
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		folder.name = name
-		completion(.success(()))
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

@@ -106,20 +106,22 @@ private extension FolderInspectorViewController {
 	}
 
 	func renameFolderIfNecessary() {
-		guard let folder = folder,
-			  let account = folder.account,
-			  let nameTextField = nameTextField,
-			  folder.nameForDisplay != nameTextField.stringValue else {
+		guard let folder, let account = folder.account, let nameTextField else {
 			return
 		}
 
-		account.renameFolder(folder, to: nameTextField.stringValue) { [weak self] result in
-			if case .failure(let error) = result {
-				self?.presentError(error)
-			} else {
-				self?.windowTitle = folder.nameForDisplay
+		let newFolderName = nameTextField.stringValue
+		guard !newFolderName.isEmpty, folder.nameForDisplay != newFolderName else {
+			return
+		}
+
+		Task { @MainActor in
+			do {
+				try await account.renameFolder(folder, to: newFolderName)
+				windowTitle = folder.nameForDisplay
+			} catch {
+				presentError(error)
 			}
 		}
 	}
-
 }

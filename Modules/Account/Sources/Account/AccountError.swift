@@ -14,6 +14,7 @@ public enum AccountError: LocalizedError {
 	case createErrorNotFound
 	case createErrorAlreadySubscribed
 	case opmlImportInProgress
+	case invalidParameter
 	case wrappedError(error: Error, account: Account)
 
 	public var account: Account? {
@@ -41,6 +42,8 @@ public enum AccountError: LocalizedError {
 			return NSLocalizedString("You are already subscribed to this feed and can’t add it again.", comment: "Already subscribed")
 		case .opmlImportInProgress:
 			return NSLocalizedString("An OPML import for this account is already running.", comment: "Import running")
+		case .invalidParameter:
+			return NSLocalizedString("Couldn’t fulfill the request due to an invalid parameter.", comment: "Invalid parameter")
 		case .wrappedError(let error, let account):
 			switch error {
 			case TransportError.httpError(let status):

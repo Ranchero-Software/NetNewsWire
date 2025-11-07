@@ -288,7 +288,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+		try await withCheckedThrowingContinuation { continuation in
+			createFolder(for: account, name: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 		syncProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.createFolder(name: name) { result in
 			self.syncProgress.completeTask()
@@ -298,7 +306,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					folder.externalID = externalID
 					completion(.success(folder))
 				} else {
-					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+					completion(.failure(AccountError.invalidParameter))
 				}
 			case .failure(let error):
 				self.processAccountError(account, error)
@@ -307,7 +315,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			renameFolder(for: account, with: folder, to: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		syncProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.renameFolder(folder, to: name) { result in
 			self.syncProgress.completeTask()

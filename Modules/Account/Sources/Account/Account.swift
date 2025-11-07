@@ -595,16 +595,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
 	}
 
-	public func addFolder(_ name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		delegate.createFolder(for: self, name: name, completion: completion)
+	@discardableResult
+	@MainActor public func addFolder(_ name: String) async throws -> Folder {
+		try await delegate.createFolder(for: self, name: name)
 	}
 
 	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.removeFolder(for: self, with: folder, completion: completion)
 	}
 
-	public func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.renameFolder(for: self, with: folder, to: name, completion: completion)
+	public func renameFolder(_ folder: Folder, to name: String) async throws {
+		try await delegate.renameFolder(for: self, with: folder, to: name)
 	}
 
 	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

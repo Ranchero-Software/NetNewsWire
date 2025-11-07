@@ -214,15 +214,22 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+		guard let folder = account.ensureFolder(with: name) else {
+			throw AccountError.invalidParameter
+		}
+		return folder
+	}
+
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			renameFolder(for: account, with: folder, to: name) { result in
+				continuation.resume(with: result)
+			}
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		guard folder.hasAtLeastOneFeed() else {
 			folder.name = name

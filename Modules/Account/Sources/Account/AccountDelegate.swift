@@ -28,12 +28,12 @@ protocol AccountDelegate {
 	@MainActor func refreshAll(for account: Account) async throws
 	@MainActor func syncArticleStatus(for account: Account) async throws
 	@MainActor func sendArticleStatus(for account: Account) async throws
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void))
+	@MainActor func refreshArticleStatus(for account: Account) async throws
 
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void)
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void)
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
 
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void)

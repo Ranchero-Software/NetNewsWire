@@ -79,13 +79,15 @@ final class AddFolderViewController: UITableViewController {
 		guard let folderName = nameTextField.text else {
 			return
 		}
-		selectedAccount.addFolder(folderName) { result in
-			switch result {
-			case .success:
-				self.dismiss(animated: true)
-			case .failure(let error):
-				self.presentError(error)
-				self.dismiss(animated: true)
+
+		Task { @MainActor in
+			defer {
+				dismiss(animated: true)
+			}
+			do {
+				try await selectedAccount.addFolder(folderName)
+			} catch {
+				presentError(error)
 			}
 		}
 	}
