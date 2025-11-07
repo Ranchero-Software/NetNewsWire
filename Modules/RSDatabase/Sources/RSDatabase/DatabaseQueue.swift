@@ -133,7 +133,6 @@ public final class DatabaseQueue {
 	/// Nevertheless, it’s best to avoid this because it will block the main thread —
 	/// prefer the async `runInTransaction` instead.
 	public func runInTransactionSync(_ databaseBlock: @escaping DatabaseBlock) {
-		precondition(Thread.isMainThread)
 		serialDispatchQueue.sync {
 			self._runInDatabase(self.database, databaseBlock, true)
 		}
@@ -142,7 +141,6 @@ public final class DatabaseQueue {
 	/// Run a DatabaseBlock wrapped in a transaction asynchronously.
 	/// Transactions help performance significantly when updating the database.
 	public func runInTransaction(_ databaseBlock: @escaping DatabaseBlock) {
-		precondition(Thread.isMainThread)
 		serialDispatchQueue.async {
 			self._runInDatabase(self.database, databaseBlock, true)
 		}

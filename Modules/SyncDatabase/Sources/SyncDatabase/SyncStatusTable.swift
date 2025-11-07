@@ -16,12 +16,12 @@ struct SyncStatusTable {
 
 	static func selectForProcessing(limit: Int?, database: FMDatabase) -> Set<SyncStatus>? {
 		database.beginTransaction()
-		defer {
-			database.commit()
-		}
 
 		let updateSQL = "update \(name) set selected = true"
-		database.executeUpdate(updateSQL, withArgumentsIn: nil)
+		guard database.executeUpdate(updateSQL, withArgumentsIn: nil) else {
+			database.rollback()
+			return nil
+		}
 
 		let selectSQL = {
 			var sql = "select * from \(name) where selected == true"
@@ -32,9 +32,14 @@ struct SyncStatusTable {
 		}()
 
 		guard let resultSet = database.executeQuery(selectSQL, withArgumentsIn: nil) else {
+			database.rollback()
 			return nil
 		}
+
 		let statuses = resultSet.mapToSet(statusWithRow)
+
+		database.commit()
+
 		return statuses
 	}
 
@@ -85,12 +90,11 @@ struct SyncStatusTable {
 
 	static func insertStatuses(_ statuses: Set<SyncStatus>, database: FMDatabase) {
 		database.beginTransaction()
-		defer {
-			database.commit()
-		}
 
 		let statusArray = statuses.map { $0.databaseDictionary() }
 		database.insertRows(statusArray, insertType: .orReplace, tableName: name)
+
+		database.commit()
 	}
 }
 

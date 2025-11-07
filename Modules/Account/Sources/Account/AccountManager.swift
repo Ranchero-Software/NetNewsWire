@@ -277,7 +277,7 @@ public final class AccountManager: UnreadCountProvider {
 
 		combinedRefreshProgress.start()
 
-		Task {
+		Task { @MainActor in
 			await withTaskGroup(of: Void.self) { group in
 				for account in activeAccounts {
 					group.addTask {

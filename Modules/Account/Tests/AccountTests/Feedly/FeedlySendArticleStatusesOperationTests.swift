@@ -12,7 +12,7 @@ import SyncDatabase
 import Articles
 import RSCore
 
-final class FeedlySendArticleStatusesOperationTests: XCTestCase {
+@MainActor final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -32,7 +32,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		super.tearDown()
 	}
 
-	func testSendEmpty() {
+	func testSendEmpty() async {
 		let service = TestMarkArticlesService()
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 
@@ -43,20 +43,14 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 	}
 
-	func testSendUnreadSuccess() {
+	func testSendUnreadSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) }
+		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) })
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
@@ -71,35 +65,18 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
-
 		MainThreadOperationQueue.shared.add(send)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		waitForExpectations(timeout: 2)
-
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, 0)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendUnreadFailure() {
+	func testSendUnreadFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) }
+		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) })
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
@@ -117,32 +94,17 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, statuses.count)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, statuses.count)
 	}
 
-	func testSendReadSuccess() {
+	func testSendReadSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) }
+		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) })
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
@@ -160,32 +122,17 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, 0)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendReadFailure() {
+	func testSendReadFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) }
+		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) })
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
@@ -203,32 +150,17 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, statuses.count)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, statuses.count)
 	}
 
-	func testSendStarredSuccess() {
+	func testSendStarredSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) }
+		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) })
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
@@ -246,32 +178,17 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, 0)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendStarredFailure() {
+	func testSendStarredFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) }
+		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) })
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
@@ -289,32 +206,17 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, statuses.count)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, statuses.count)
 	}
 
-	func testSendUnstarredSuccess() {
+	func testSendUnstarredSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) }
+		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) })
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
@@ -332,32 +234,17 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, 0)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendUnstarredFailure() {
+	func testSendUnstarredFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) }
+		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) })
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
@@ -375,39 +262,24 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let expectedCount = try result.get()
-				XCTAssertEqual(expectedCount, statuses.count)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, statuses.count)
 	}
 
-	func testSendAllSuccess() {
+	func testSendAllSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let keys = [SyncStatus.Key.read, .starred]
 		let flags = [true, false]
-		let statuses = articleIds.map { articleId -> SyncStatus in
+		let statuses = Set(articleIds.map { articleId -> SyncStatus in
 			let key = keys.randomElement()!
 			let flag = flags.randomElement()!
 			let status = SyncStatus(articleID: articleId, key: key, flag: flag)
 			return status
-		}
+		})
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .success(())
@@ -435,39 +307,24 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, 0)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendAllFailure() {
+	func testSendAllFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let keys = [SyncStatus.Key.read, .starred]
 		let flags = [true, false]
-		let statuses = articleIds.map { articleId -> SyncStatus in
+		let statuses = Set(articleIds.map { articleId -> SyncStatus in
 			let key = keys.randomElement()!
 			let flag = flags.randomElement()!
 			let status = SyncStatus(articleID: articleId, key: key, flag: flag)
 			return status
-		}
+		})
 
-		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) { error in
-			XCTAssertNil(error)
-			insertExpectation.fulfill()
-		}
-
-		waitForExpectations(timeout: 2)
+		try await container.database.insertStatuses(statuses)
 
 		let service = TestMarkArticlesService()
 		service.mockResult = .failure(URLError(.timedOut))
@@ -496,18 +353,9 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(send)
 
-		waitForExpectations(timeout: 2)
+		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
-		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
-		container.database.selectPendingCount { result in
-			do {
-				let statusCount = try result.get()
-				XCTAssertEqual(statusCount, statuses.count)
-				selectPendingCountExpectation.fulfill()
-			} catch {
-				XCTFail("Error unwrapping database result: \(error)")
-			}
-		}
-		waitForExpectations(timeout: 2)
+		let statusCount = try await container.database.selectPendingCount()
+		XCTAssertEqual(statusCount, statuses.count)
 	}
 }
