@@ -8,6 +8,7 @@
 
 import CloudKit
 import os.log
+import RSCore
 
 public enum CloudKitZoneError: LocalizedError {
 	case userDeletedZone

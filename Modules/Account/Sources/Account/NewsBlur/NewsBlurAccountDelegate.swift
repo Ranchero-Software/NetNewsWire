@@ -142,7 +142,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func sendArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			sendArticleStatus(for: account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 		Task { @MainActor in
 			Self.logger.info("NewsBlur: Sending story statuses")
 

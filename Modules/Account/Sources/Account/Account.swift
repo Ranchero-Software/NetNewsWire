@@ -398,15 +398,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		try await delegate.refreshAll(for: self)
 	}
 
-	public func sendArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
-		delegate.sendArticleStatus(for: self) { result in
-			switch result {
-			case .success:
-				completion?(.success(()))
-			case .failure(let error):
-				completion?(.failure(error))
-			}
-		}
+	@MainActor public func sendArticleStatus() async throws {
+		try await delegate.sendArticleStatus(for: self)
 	}
 
 	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {

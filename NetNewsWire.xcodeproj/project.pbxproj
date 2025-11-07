@@ -915,7 +915,6 @@
 /* Begin PBXProject section */
 		849C64581ED37A5D003D8FC0 /* Project object */ = {
 			isa = PBXProject;
-			buildIndependentTargetsInParallel = YES;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1620;

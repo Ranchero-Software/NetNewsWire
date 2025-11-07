@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import RSCore
+import CloudKitSync
 
 final class CloudKitReceiveStatusOperation: MainThreadOperation {
 	// MainThreadOperation

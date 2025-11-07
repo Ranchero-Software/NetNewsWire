@@ -12,6 +12,7 @@ import RSCore
 import RSWeb
 import RSParser
 import CloudKit
+import CloudKitSync
 
 enum CloudKitAccountZoneError: LocalizedError {
 	case unknown

@@ -14,6 +14,7 @@ import RSWeb
 import CloudKit
 import Articles
 import SyncDatabase
+import CloudKitSync
 
 final class CloudKitArticlesZone: CloudKitZone {
 

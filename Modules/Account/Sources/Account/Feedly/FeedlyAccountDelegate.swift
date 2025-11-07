@@ -176,7 +176,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func sendArticleStatus(for account: Account) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			sendArticleStatus(for: account) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
 		let send = FeedlySendArticleStatusesOperation(database: syncDatabase, service: caller)
 		send.completionBlock = { operation in
