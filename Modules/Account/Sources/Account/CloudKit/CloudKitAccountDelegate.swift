@@ -17,6 +17,7 @@ import Articles
 import ArticlesDatabase
 import RSWeb
 import Secrets
+import CloudKitSync
 
 enum CloudKitAccountDelegateError: LocalizedError {
 	case invalidParameter

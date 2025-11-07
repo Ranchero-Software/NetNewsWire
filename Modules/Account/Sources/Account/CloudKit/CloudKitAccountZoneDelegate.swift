@@ -12,6 +12,7 @@ import RSWeb
 import CloudKit
 import RSCore
 import Articles
+import CloudKitSync
 
 final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
