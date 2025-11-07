@@ -470,7 +470,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		folder.removeFeed(feed)
 	}
 
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+		try await withCheckedThrowingContinuation{ continuation in
+			moveFeed(for: account, with: feed, from: from, to: to) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let from = from as? Folder, let to = to as? Folder else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))

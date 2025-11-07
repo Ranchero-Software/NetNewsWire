@@ -402,7 +402,15 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+		try await withCheckedThrowingContinuation{ continuation in
+			moveFeed(for: account, with: feed, from: from, to: to) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if from is Account {
 			addFeed(for: account, with: feed, to: to, completion: completion)
 		} else {

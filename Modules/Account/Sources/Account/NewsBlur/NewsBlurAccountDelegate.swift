@@ -535,7 +535,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		deleteFeed(for: account, with: feed, from: container, completion: completion)
 	}
 
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+		try await withCheckedThrowingContinuation{ continuation in
+			moveFeed(for: account, with: feed, from: from, to: to) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return

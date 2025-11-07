@@ -258,7 +258,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func moveFeed(for account: Account, with feed: Feed, from fromContainer: Container, to toContainer: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+		try await withCheckedThrowingContinuation{ continuation in
+			moveFeed(for: account, with: feed, from: from, to: to) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func moveFeed(for account: Account, with feed: Feed, from fromContainer: Container, to toContainer: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		syncProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.moveFeed(feed, from: fromContainer, to: toContainer) { result in
 			self.syncProgress.completeTask()

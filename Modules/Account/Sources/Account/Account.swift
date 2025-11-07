@@ -591,7 +591,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.moveFeed(for: self, with: feed, from: from, to: to, completion: completion)
+		Task { @MainActor in
+			do {
+				try await delegate.moveFeed(for: self, with: feed, from: from, to: to)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
