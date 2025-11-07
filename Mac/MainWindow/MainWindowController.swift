@@ -1386,12 +1386,12 @@ private extension MainWindowController {
 
 		let newFeedItem = NSMenuItem()
 		newFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
-		newFeedItem.action = Selector(("showAddFeedWindow:"))
+		newFeedItem.action = #selector(AppDelegate.showAddFeedWindow(_:))
 		menu.addItem(newFeedItem)
 
 		let newFolderFeedItem = NSMenuItem()
 		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")
-		newFolderFeedItem.action = Selector(("showAddFolderWindow:"))
+		newFolderFeedItem.action = #selector(AppDelegate.showAddFolderWindow(_:))
 		menu.addItem(newFolderFeedItem)
 
 		return menu
