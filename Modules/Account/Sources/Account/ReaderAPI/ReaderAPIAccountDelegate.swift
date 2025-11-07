@@ -639,23 +639,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		Task { @MainActor in
-			do {
-				let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
-				let syncStatuses = Set(articles.map { article in
-					SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				})
+	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(articles.map { article in
+			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		})
 
-				try await syncDatabase.insertStatuses(syncStatuses)
-				if let count = try await syncDatabase.selectPendingCount(), count > 100 {
-					try? await sendArticleStatus(for: account)
-				}
-
-				completion(.success(()))
-			} catch {
-				completion(.failure(error))
-			}
+		try await syncDatabase.insertStatuses(syncStatuses)
+		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+			try? await sendArticleStatus(for: account)
 		}
 	}
 

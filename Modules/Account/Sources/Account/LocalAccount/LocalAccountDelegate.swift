@@ -163,14 +163,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		account.addFolder(folder)
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			if case .failure(let error) = result {
-				completion(.failure(error))
-			} else {
-				completion(.success(()))
-			}
-		}
+	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		try await account.update(articles, statusKey: statusKey, flag: flag)
 	}
 
 	func accountDidInitialize(_ account: Account) {

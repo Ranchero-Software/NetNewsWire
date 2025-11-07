@@ -490,7 +490,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag, completion: completion)
+		Task { @MainActor in
+			do {
+				try await delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func existingContainer(withExternalID externalID: String) -> Container? {

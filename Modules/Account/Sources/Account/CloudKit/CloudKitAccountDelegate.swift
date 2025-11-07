@@ -471,25 +471,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = Set(articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				})
-
-				Task { @MainActor in
-					try? await self.syncDatabase.insertStatuses(syncStatuses)
-					let count = (try? await self.syncDatabase.selectPendingCount()) ?? 0
-					if count > 100 {
-						self.sendArticleStatus(for: account, showProgress: false)  { _ in }
-					}
-					completion(.success(()))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(articles.map { article in
+			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		})
+		
+		try await syncDatabase.insertStatuses(syncStatuses)
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+			try await sendArticleStatus(for: account)
 		}
 	}
 

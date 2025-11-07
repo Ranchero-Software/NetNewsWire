@@ -45,7 +45,7 @@ protocol AccountDelegate {
 	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container) async throws
 	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws
 
 	// Called at the end of account’s init method.
 	func accountDidInitialize(_ account: Account)

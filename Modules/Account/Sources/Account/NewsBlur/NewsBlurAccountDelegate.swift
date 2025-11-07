@@ -649,22 +649,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		Task { @MainActor in
-			do {
-				try await account.update(articles, statusKey: statusKey, flag: flag)
-				let syncStatuses = Set(articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				})
+	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		try await account.update(articles, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(articles.map { article in
+			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		})
 
-				try await syncDatabase.insertStatuses(syncStatuses)
-				if let count = try await syncDatabase.selectPendingCount(), count > 100 {
-					sendArticleStatus(for: account) { _ in }
-				}
-				completion(.success(()))
-			} catch {
-				completion(.failure(error))
-			}
+		try await syncDatabase.insertStatuses(syncStatuses)
+		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+			sendArticleStatus(for: account) { _ in }
 		}
 	}
 
