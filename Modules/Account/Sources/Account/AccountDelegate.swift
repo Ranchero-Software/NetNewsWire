@@ -43,7 +43,7 @@ protocol AccountDelegate {
 	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws
 
 	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container) async throws
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
+	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void)
 

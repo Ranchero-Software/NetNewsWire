@@ -637,7 +637,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.restoreFolder(for: self, folder: folder, completion: completion)
+		Task { @MainActor in
+			do {
+				try await delegate.restoreFolder(for: self, folder: folder)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func clearFeedMetadata(_ feed: Feed) {

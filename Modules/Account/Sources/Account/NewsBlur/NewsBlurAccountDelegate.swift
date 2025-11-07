@@ -600,7 +600,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			restoreFolder(for: account, folder: folder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let folderName = folder.name else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return

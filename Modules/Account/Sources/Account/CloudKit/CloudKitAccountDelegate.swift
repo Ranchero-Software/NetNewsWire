@@ -416,7 +416,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	}
 
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			restoreFolder(for: account, folder: folder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let name = folder.name else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
