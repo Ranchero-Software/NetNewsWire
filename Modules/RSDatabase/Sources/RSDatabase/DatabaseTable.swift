@@ -116,24 +116,3 @@ public extension DatabaseTable {
 		return false
 	}
 }
-
-public extension FMResultSet {
-
-	func compactMap<T>(_ completion: (_ row: FMResultSet) -> T?) -> [T] {
-
-		var objects = [T]()
-		while next() {
-			if let obj = completion(self) {
-				objects += [obj]
-			}
-		}
-		close()
-		return objects
-	}
-
-	func mapToSet<T>(_ completion: (_ row: FMResultSet) -> T?) -> Set<T> {
-
-		return Set(compactMap(completion))
-	}
-}
-

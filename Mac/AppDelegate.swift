@@ -274,7 +274,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-		Task {
+		Task { @MainActor in
 			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
 		}
 	}

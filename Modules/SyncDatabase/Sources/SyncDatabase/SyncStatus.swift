@@ -11,12 +11,11 @@ import Articles
 import RSDatabase
 
 public struct SyncStatus: Hashable, Equatable {
-
 	public enum Key: String {
-		case read = "read"
-		case starred = "starred"
-		case deleted = "deleted"
-		case new = "new"
+		case read
+		case starred
+		case deleted
+		case new
 
 		public init(_ articleStatusKey: ArticleStatus.Key) {
 			switch articleStatusKey {
@@ -26,7 +25,6 @@ public struct SyncStatus: Hashable, Equatable {
 				self = Self.starred
 			}
 		}
-
 	}
 
 	public let articleID: String
@@ -42,7 +40,11 @@ public struct SyncStatus: Hashable, Equatable {
 	}
 
 	public func databaseDictionary() -> DatabaseDictionary {
-		return [DatabaseKey.articleID: articleID, DatabaseKey.key: key.rawValue, DatabaseKey.flag: flag, DatabaseKey.selected: selected]
+		[DatabaseKey.articleID: articleID, DatabaseKey.key: key.rawValue, DatabaseKey.flag: flag, DatabaseKey.selected: selected]
 	}
 
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(articleID)
+		hasher.combine(key)
+	}
 }

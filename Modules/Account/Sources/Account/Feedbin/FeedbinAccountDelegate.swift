@@ -22,7 +22,7 @@ public enum FeedbinAccountDelegateError: String, Error {
 
 final class FeedbinAccountDelegate: AccountDelegate {
 
-	private let database: SyncDatabase
+	private let syncDatabase: SyncDatabase
 
 	private let caller: FeedbinAPICaller
 	private static let logger = Feedbin.logger
@@ -48,7 +48,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	init(dataFolder: String, transport: Transport?) {
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databaseFilePath: databaseFilePath)
+		syncDatabase = SyncDatabase(databasePath: databaseFilePath)
 
 		if transport != nil {
 
@@ -139,11 +139,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-
-		Self.logger.info("Feedbin: Sending article statuses")
-
-		database.selectForProcessing { result in
-
+		Task { @MainActor in
+			Self.logger.info("Feedbin: Sending article statuses")
+			
 			func processStatuses(_ syncStatuses: [SyncStatus]) {
 				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
@@ -195,11 +193,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			}
 
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			do {
+				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+					completion(.success(()))
+					return
+				}
+				processStatuses(Array(syncStatuses))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}
@@ -563,22 +564,19 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
+		Task { @MainActor in
+			do {
+				let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
+				let syncStatuses = Set(articles.map { article in
+					SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+				})
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
-					}
+				try await syncDatabase.insertStatuses(syncStatuses)
+				if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+					sendArticleStatus(for: account) { _ in }
 				}
-			case .failure(let error):
+				completion(.success(()))
+			} catch {
 				completion(.failure(error))
 			}
 		}
@@ -606,13 +604,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+		syncDatabase.suspend()
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		caller.resume()
-		database.resume()
+		syncDatabase.resume()
 	}
 }
 
@@ -957,16 +955,18 @@ private extension FeedbinAccountDelegate {
 
 			group.enter()
 			apiCall(articleIDGroup) { result in
-				switch result {
-				case .success:
-					self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
-					group.leave()
-				case .failure(let error):
-					errorOccurred = true
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) } ))
+						group.leave()
+					case .failure(let error):
+						errorOccurred = true
 
-					Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
-					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
-					group.leave()
+						Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
+						try? await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) } ))
+						group.leave()
+					}
 				}
 			}
 
@@ -1270,12 +1270,11 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func syncArticleReadState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
-
-		database.selectPendingReadStatusArticleIDs() { result in
+		Task { @MainActor in
+			guard let articleIDs else {
+				completion()
+				return
+			}
 
 			func process(_ pendingArticleIDs: Set<String>) {
 
@@ -1311,22 +1310,25 @@ private extension FeedbinAccountDelegate {
 
 			}
 
-			switch result {
-			case .success(let pendingArticleIDs):
+			do {
+				guard let pendingArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() else {
+					completion()
+					return
+				}
 				process(pendingArticleIDs)
-			case .failure(let error):
+			} catch {
 				Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
+				completion()
 			}
 		}
 	}
 
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
-			return
-		}
-
-		database.selectPendingStarredStatusArticleIDs() { result in
+		Task { @MainActor in
+			guard let articleIDs else {
+				completion()
+				return
+			}
 
 			func process(_ pendingArticleIDs: Set<String>) {
 
@@ -1361,11 +1363,15 @@ private extension FeedbinAccountDelegate {
 
 			}
 
-			switch result {
-			case .success(let pendingArticleIDs):
+			do {
+				guard let pendingArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+					completion()
+					return
+				}
 				process(pendingArticleIDs)
-			case .failure(let error):
+			} catch {
 				Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
+				completion()
 			}
 		}
 	}

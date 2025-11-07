@@ -70,20 +70,21 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 
 	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
 	private func removeEntryIdsWithPendingStatus() {
-		guard !isCanceled else {
-			didFinish()
-			return
-		}
+		Task { @MainActor in
+			guard !isCanceled else {
+				didFinish()
+				return
+			}
 
-		database.selectPendingStarredStatusArticleIDs { result in
-			switch result {
-			case .success(let pendingArticleIds):
-				self.remoteEntryIds.subtract(pendingArticleIds)
-
-				self.updateStarredStatuses()
-
-			case .failure(let error):
-				self.didFinish(with: error)
+			do {
+				guard let pendingArticleIDs = try await database.selectPendingStarredStatusArticleIDs() else {
+					didFinish()
+					return
+				}
+				remoteEntryIds.subtract(pendingArticleIDs)
+				updateStarredStatuses()
+			} catch {
+				didFinish(with: error)
 			}
 		}
 	}

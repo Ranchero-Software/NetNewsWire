@@ -28,10 +28,9 @@ enum CloudKitAccountDelegateError: LocalizedError {
 }
 
 final class CloudKitAccountDelegate: AccountDelegate {
-
 	private static let logger = cloudKitLogger
 
-	private let database: SyncDatabase
+	private let syncDatabase: SyncDatabase
 
 	private let container: CKContainer = {
 		let orgID = Bundle.main.object(forInfoDictionaryKey: "OrganizationIdentifier") as! String
@@ -63,7 +62,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		self.articlesZone = CloudKitArticlesZone(container: container)
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
+		self.syncDatabase = SyncDatabase(databasePath: databaseFilePath)
 
 		self.refresher = LocalAccountRefresher()
 		self.refresher.delegate = self
@@ -424,17 +423,17 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		account.update(articles, statusKey: statusKey, flag: flag) { result in
 			switch result {
 			case .success(let articles):
-				let syncStatuses = articles.map { article in
+				let syncStatuses = Set(articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
+				})
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account, showProgress: false)  { _ in }
-						}
-						completion(.success(()))
+				Task { @MainActor in
+					try? await self.syncDatabase.insertStatuses(syncStatuses)
+					let count = (try? await self.syncDatabase.selectPendingCount()) ?? 0
+					if count > 100 {
+						self.sendArticleStatus(for: account, showProgress: false)  { _ in }
 					}
+					completion(.success(()))
 				}
 			case .failure(let error):
 				completion(.failure(error))
@@ -446,9 +445,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		self.account = account
 
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, articlesZone: articlesZone)
-		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: syncDatabase, articlesZone: articlesZone)
 
-		database.resetAllSelectedForProcessing()
+		syncDatabase.resetAllSelectedForProcessing()
 
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
@@ -483,12 +482,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func suspendDatabase() {
-		database.suspend()
+		syncDatabase.suspend()
 	}
 
 	func resume() {
 		refresher.resume()
-		database.resume()
+		syncDatabase.resume()
 	}
 }
 
@@ -779,10 +778,11 @@ private extension CloudKitAccountDelegate {
 			completion()
 			return
 		}
-		let syncStatuses = articles.map { article in
-			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
-		}
-		database.insertStatuses(syncStatuses) { _ in
+		let syncStatuses = Set(articles.map { article in
+			SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+		})
+		Task { @MainActor in
+			try? await syncDatabase.insertStatuses(syncStatuses)
 			completion()
 		}
 	}
@@ -792,9 +792,9 @@ private extension CloudKitAccountDelegate {
 											 articlesZone: articlesZone,
 											 refreshProgress: refreshProgress,
 											 showProgress: showProgress,
-											 database: database)
-		op.completionBlock = { mainThreadOperaion in
-			if mainThreadOperaion.isCanceled {
+											 database: syncDatabase)
+		op.completionBlock = { mainThreadOperation in
+			if mainThreadOperation.isCanceled {
 				completion(.failure(CloudKitAccountDelegateError.unknown))
 			} else {
 				completion(.success(()))

@@ -21,44 +21,34 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	private static let logger = cloudKitLogger
 
 	weak var account: Account?
-	var database: SyncDatabase
+	var syncDatabase: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
 	var compressionQueue = DispatchQueue(label: "Articles Zone Delegate Compression Queue")
 
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
 		self.account = account
-		self.database = database
+		self.syncDatabase = database
 		self.articlesZone = articlesZone
 	}
 
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+		Task { @MainActor in
+			do {
+				let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
+				let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
 
-		database.selectPendingReadStatusArticleIDs() { result in
-			switch result {
-			case .success(let pendingReadStatusArticleIDs):
-
-				self.database.selectPendingStarredStatusArticleIDs() { result in
-					switch result {
-					case .success(let pendingStarredStatusArticleIDs):
-
-						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-							self.update(records: changed,
-										 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-										 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-										 completion: completion)
-						}
-
-					case .failure(let error):
-						Self.logger.error("CloudKit: Error getting pending starred records: \(error.localizedDescription)")
-						completion(.failure(CloudKitZoneError.unknown))
-					}
+				self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
+					self.update(records: changed,
+								pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+								pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+								completion: completion)
 				}
-			case .failure(let error):
-				Self.logger.error("CloudKit: Error getting pending read status records: \(error.localizedDescription)")
+			} catch {
+				Self.logger.error("CloudKit: Error getting sync status records: \(error.localizedDescription)")
 				completion(.failure(CloudKitZoneError.unknown))
 			}
 		}
-	}	
+	}
 }
 
 private extension CloudKitArticlesZoneDelegate {
@@ -73,10 +63,10 @@ private extension CloudKitArticlesZoneDelegate {
 			return
 		}
 
-		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
-			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
-				completion()
-			}
+		Task { @MainActor in
+			try? await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
+			try? await account?.delete(articleIDs: deletableArticleIDs)
+			completion()
 		}
 	}
 
@@ -146,8 +136,9 @@ private extension CloudKitArticlesZoneDelegate {
 								group.leave()
 								return
 							}
-							let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
-							self.database.insertStatuses(syncStatuses) { _ in
+							let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
+							Task { @MainActor in
+								try? await self.syncDatabase.insertStatuses(syncStatuses)
 								group.leave()
 							}
 						case .failure(let databaseError):

@@ -30,7 +30,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	let caller: NewsBlurAPICaller
-	let database: SyncDatabase
+	let syncDatabase: SyncDatabase
 
 	static let logger = NewsBlur.logger
 
@@ -55,7 +55,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			caller = NewsBlurAPICaller(transport: session)
 		}
 
-		database = SyncDatabase(databaseFilePath: dataFolder.appending("/DB.sqlite3"))
+		syncDatabase = SyncDatabase(databasePath: dataFolder.appending("/DB.sqlite3"))
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
@@ -143,23 +143,27 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		Self.logger.info("NewsBlur: Sending story statuses")
+		Task { @MainActor in
+			Self.logger.info("NewsBlur: Sending story statuses")
 
-		database.selectForProcessing { result in
+			do {
+				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+					completion(.success(()))
+					return
+				}
 
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter {
+				let createUnreadStatuses = Array(syncStatuses.filter {
 					$0.key == SyncStatus.Key.read && $0.flag == false
-				}
-				let deleteUnreadStatuses = syncStatuses.filter {
+				})
+				let deleteUnreadStatuses = Array(syncStatuses.filter {
 					$0.key == SyncStatus.Key.read && $0.flag == true
-				}
-				let createStarredStatuses = syncStatuses.filter {
+				})
+				let createStarredStatuses = Array(syncStatuses.filter {
 					$0.key == SyncStatus.Key.starred && $0.flag == true
-				}
-				let deleteStarredStatuses = syncStatuses.filter {
+				})
+				let deleteStarredStatuses = Array(syncStatuses.filter {
 					$0.key == SyncStatus.Key.starred && $0.flag == false
-				}
+				})
 
 				let group = DispatchGroup()
 				var errorOccurred = false
@@ -204,13 +208,8 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 						completion(.success(()))
 					}
 				}
-			}
-
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			} catch {
+				completion(.failure(error))
 			}
 		}
 	}
@@ -592,22 +591,19 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = articles.map { article in
+		Task { @MainActor in
+			do {
+				try await account.update(articles, statusKey: statusKey, flag: flag)
+				let syncStatuses = Set(articles.map { article in
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
+				})
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
-					}
+				try await syncDatabase.insertStatuses(syncStatuses)
+				if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+					sendArticleStatus(for: account) { _ in }
 				}
-			case .failure(let error):
+				completion(.success(()))
+			} catch {
 				completion(.failure(error))
 			}
 		}
@@ -636,12 +632,12 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+		syncDatabase.suspend()
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		caller.resume()
-		database.resume()
+		syncDatabase.resume()
 	}
 }

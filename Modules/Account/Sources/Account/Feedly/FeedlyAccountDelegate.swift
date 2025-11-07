@@ -62,7 +62,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	internal let caller: FeedlyAPICaller
 
 	private static let logger = Feedly.logger
-	private let database: SyncDatabase
+	private let syncDatabase: SyncDatabase
 
 	private weak var currentSyncAllOperation: MainThreadOperation?
 	private let operationQueue = MainThreadOperationQueue()
@@ -96,7 +96,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
+		self.syncDatabase = SyncDatabase(databasePath: databaseFilePath)
 		self.oauthAuthorizationClient = api.oauthAuthorizationClient
 
 		self.caller.delegate = self
@@ -137,7 +137,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		refreshProgress.reset()
 
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: syncDatabase, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
 
 		syncAllOperation.downloadProgress = refreshProgress
 
@@ -178,7 +178,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
-		let send = FeedlySendArticleStatusesOperation(database: database, service: caller)
+		let send = FeedlySendArticleStatusesOperation(database: syncDatabase, service: caller)
 		send.completionBlock = { operation in
 			// TODO: not call with success if operation was canceled? Not sure.
 			DispatchQueue.main.async {
@@ -201,7 +201,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		let group = DispatchGroup()
 
-		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil)
+		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: syncDatabase, newerThan: nil)
 
 		group.enter()
 		ingestUnread.completionBlock = { _ in
@@ -209,7 +209,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		}
 
-		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil)
+		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: syncDatabase, newerThan: nil)
 
 		group.enter()
 		ingestStarred.completionBlock = { _ in
@@ -342,7 +342,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 														   addToCollectionService: caller,
 														   syncUnreadIdsService: caller,
 														   getStreamContentsService: caller,
-														   database: database,
+														   database: syncDatabase,
 														   container: container,
 														   progress: refreshProgress)
 
@@ -517,22 +517,20 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		Task { @MainActor in
+			do {
+				let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
+				let syncStatuses = Set(articles.map { article in
+					SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+				})
+
+				try await syncDatabase.insertStatuses(syncStatuses)
+				if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+					sendArticleStatus(for: account) { _ in }
 				}
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
-					}
-				}
-			case .failure(let error):
+				completion(.success(()))
+			} catch {
 				completion(.failure(error))
 			}
 		}
@@ -564,12 +562,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+		syncDatabase.suspend()
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
-		database.resume()
+		syncDatabase.resume()
 		caller.resume()
 	}
 }

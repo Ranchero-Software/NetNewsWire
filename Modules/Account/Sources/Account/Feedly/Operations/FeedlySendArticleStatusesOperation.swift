@@ -14,7 +14,6 @@ import os.log
 
 /// Take changes to statuses of articles locally and apply them to the corresponding the articles remotely.
 final class FeedlySendArticleStatusesOperation: FeedlyOperation {
-
 	private let database: SyncDatabase
 	private let service: FeedlyMarkArticlesService
 
@@ -24,26 +23,23 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 	}
 
 	override func run() {
-		Feedly.logger.info("Feedly: Sending article statuses")
+		Task { @MainActor in
+			Feedly.logger.info("Feedly: Sending article statuses")
 
-		database.selectForProcessing { result in
-			if self.isCanceled {
-				self.didFinish()
-				return
-			}
-
-			switch result {
-			case .success(let syncStatuses):
-				self.processStatuses(syncStatuses)
-			case .failure:
-				self.didFinish()
+			do {
+				guard let syncStatuses = try await database.selectForProcessing() else {
+					didFinish()
+					return
+				}
+				processStatuses(Array(syncStatuses))
+			} catch {
+				didFinish()
 			}
 		}
 	}
 }
 
 private extension FeedlySendArticleStatusesOperation {
-
 	func processStatuses(_ pending: [SyncStatus]) {
 		let statuses: [(status: SyncStatus.Key, flag: Bool, action: FeedlyMarkAction)] = [
 			(.read, false, .unread),
@@ -64,14 +60,13 @@ private extension FeedlySendArticleStatusesOperation {
 			let database = self.database
 			group.enter()
 			service.mark(ids, as: pairing.action) { result in
-				assert(Thread.isMainThread)
-				switch result {
-				case .success:
-					database.deleteSelectedForProcessing(Array(ids)) { _ in
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await database.deleteSelectedForProcessing(ids)
 						group.leave()
-					}
-				case .failure:
-					database.resetSelectedForProcessing(Array(ids)) { _ in
+					case .failure:
+						try? await database.resetSelectedForProcessing(ids)
 						group.leave()
 					}
 				}
