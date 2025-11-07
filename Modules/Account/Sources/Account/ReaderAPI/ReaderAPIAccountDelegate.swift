@@ -543,7 +543,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				switch result {
 				case .success:
 					from.removeFeed(feed)
-					to.addFeed(feed)
+					to.addFeedToTreeAtTopLevel(feed)
 					completion(.success(()))
 				case .failure(let error):
 					completion(.failure(error))
@@ -562,7 +562,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
 						account.removeFeed(feed)
-						folder.addFeed(feed)
+						folder.addFeedToTreeAtTopLevel(feed)
 						completion(.success(()))
 					}
 				case .failure(let error):
@@ -746,7 +746,7 @@ private extension ReaderAPIAccountDelegate {
 			folders.forEach { folder in
 				if !readerFolderExternalIDs.contains(folder.externalID ?? "") {
 					for feed in folder.topLevelFeeds {
-						account.addFeed(feed)
+						account.addFeedToTreeAtTopLevel(feed)
 						clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					}
 					account.removeFolderFromTree(folder)
@@ -809,7 +809,7 @@ private extension ReaderAPIAccountDelegate {
 			} else {
 				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subscription.feedID, homePageURL: subscription.homePageURL)
 				feed.externalID = subscription.feedID
-				account.addFeed(feed)
+				account.addFeedToTreeAtTopLevel(feed)
 			}
 
 		}
@@ -848,7 +848,7 @@ private extension ReaderAPIAccountDelegate {
 				if !taggingFeedIDs.contains(feed.feedID) {
 					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
-					account.addFeed(feed)
+					account.addFeedToTreeAtTopLevel(feed)
 				}
 			}
 
@@ -862,7 +862,7 @@ private extension ReaderAPIAccountDelegate {
 						continue
 					}
 					saveFolderRelationship(for: feed, folderExternalID: folderExternalID, feedExternalID: subscription.feedID)
-					folder.addFeed(feed)
+					folder.addFeedToTreeAtTopLevel(feed)
 				}
 			}
 

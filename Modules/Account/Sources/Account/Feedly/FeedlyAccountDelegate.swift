@@ -479,7 +479,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			case .success:
 				completion(.success(()))
 			case .failure(let error):
-				folder.addFeed(feed)
+				folder.addFeedToTreeAtTopLevel(feed)
 				completion(.failure(error))
 			}
 		}
@@ -511,12 +511,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 					case .success:
 						completion(.success(()))
 					case .failure:
-						from.addFeed(feed)
+						from.addFeedToTreeAtTopLevel(feed)
 						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed, from, to)))
 					}
 				}
 			case .failure(let error):
-				from.addFeed(feed)
+				from.addFeedToTreeAtTopLevel(feed)
 				to.removeFeed(feed)
 				completion(.failure(error))
 			}
@@ -525,7 +525,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		// optimistically move the feed, undoing as appropriate to the failure
 		from.removeFeed(feed)
-		to.addFeed(feed)
+		to.addFeedToTreeAtTopLevel(feed)
 	}
 
 	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {

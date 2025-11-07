@@ -30,7 +30,7 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 	func childFolder(with: String) -> Folder?
 
     func removeFeed(_ feed: Feed)
-	func addFeed(_ feed: Feed)
+	func addFeedToTreeAtTopLevel(_ feed: Feed)
 
 	//Recursive — checks subfolders
 	func flattenedFeeds() -> Set<Feed>

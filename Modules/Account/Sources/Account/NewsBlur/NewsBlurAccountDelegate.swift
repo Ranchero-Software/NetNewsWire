@@ -524,7 +524,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		guard let folder = container as? Folder else {
 			DispatchQueue.main.async {
 				if let account = container as? Account {
-					account.addFeed(feed)
+					account.addFeedToTreeAtTopLevel(feed)
 				}
 				completion(.success(()))
 			}
@@ -534,7 +534,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 		let folderName = folder.name ?? ""
 		saveFolderRelationship(for: feed, withFolderName: folderName, id: folderName)
-		folder.addFeed(feed)
+		folder.addFeedToTreeAtTopLevel(feed)
 
 		completion(.success(()))
 	}
@@ -569,7 +569,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			switch result {
 			case .success:
 				from.removeFeed(feed)
-				to.addFeed(feed)
+				to.addFeedToTreeAtTopLevel(feed)
 
 				completion(.success(()))
 			case .failure(let error):

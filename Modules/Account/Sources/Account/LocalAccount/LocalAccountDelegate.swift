@@ -105,16 +105,16 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
 		from.removeFeed(feed)
-		to.addFeed(feed)
+		to.addFeedToTreeAtTopLevel(feed)
 	}
 
 	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addFeed(feed)
+		container.addFeedToTreeAtTopLevel(feed)
 		completion(.success(()))
 	}
 
 	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container) async throws {
-		container.addFeed(feed)
+		container.addFeedToTreeAtTopLevel(feed)
 	}
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
@@ -210,7 +210,7 @@ private extension LocalAccountDelegate {
 						}
 
 						feed.editedName = editedName
-						container.addFeed(feed)
+						container.addFeedToTreeAtTopLevel(feed)
 
 						account.update(feed, with: parsedFeed, {_ in
 							BatchUpdate.shared.end()

@@ -251,7 +251,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			switch result {
 			case .success:
 				fromContainer.removeFeed(feed)
-				toContainer.addFeed(feed)
+				toContainer.addFeedToTreeAtTopLevel(feed)
 				completion(.success(()))
 			case .failure(let error):
 				self.processAccountError(account, error)
@@ -266,7 +266,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			self.syncProgress.completeTask()
 			switch result {
 			case .success:
-				container.addFeed(feed)
+				container.addFeedToTreeAtTopLevel(feed)
 				completion(.success(()))
 			case .failure(let error):
 				self.processAccountError(account, error)
@@ -642,7 +642,7 @@ private extension CloudKitAccountDelegate {
 
 		func addDeadFeed() {
 			let feed = account.createFeed(with: editedName, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
-			container.addFeed(feed)
+			container.addFeedToTreeAtTopLevel(feed)
 
 			self.accountZone.createFeed(url: url.absoluteString,
 										   name: editedName,
@@ -687,7 +687,7 @@ private extension CloudKitAccountDelegate {
 
 				let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 				feed.editedName = editedName
-				container.addFeed(feed)
+				container.addFeedToTreeAtTopLevel(feed)
 
 				InitialFeedDownloader.download(url) { parsedFeed, _, response, _ in
 					self.syncProgress.completeTask()

@@ -121,7 +121,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 		if let existingUnclaimedFeeds = existingUnclaimedFeeds[containerExternalID] {
 			for existingUnclaimedFeed in existingUnclaimedFeeds {
-				container.addFeed(existingUnclaimedFeed)
+				container.addFeedToTreeAtTopLevel(existingUnclaimedFeed)
 			}
 			self.existingUnclaimedFeeds.removeValue(forKey: containerExternalID)
 		}
@@ -157,7 +157,7 @@ private extension CloudKitAcountZoneDelegate {
 				}
 			case .insert(_, let externalID, _):
 				if let container = account.existingContainer(withExternalID: externalID) {
-					container.addFeed(feed)
+					container.addFeedToTreeAtTopLevel(feed)
 				} else {
 					addExistingUnclaimedFeed(feed, containerExternalID: externalID)
 				}
@@ -175,7 +175,7 @@ private extension CloudKitAcountZoneDelegate {
 		let feed = account.createFeed(with: name, url: url.absoluteString, feedID: url.absoluteString, homePageURL: homePageURL)
 		feed.editedName = editedName
 		feed.externalID = feedExternalID
-		container.addFeed(feed)
+		container.addFeedToTreeAtTopLevel(feed)
 	}
 
 	func addNewUnclaimedFeed(url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String, containerExternalID: String) {

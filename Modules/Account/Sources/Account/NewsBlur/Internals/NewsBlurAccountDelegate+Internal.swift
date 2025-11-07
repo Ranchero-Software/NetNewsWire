@@ -48,7 +48,7 @@ extension NewsBlurAccountDelegate {
 			folders.forEach { folder in
 				if !folderNames.contains(folder.name ?? "") {
 					for feed in folder.topLevelFeeds {
-						account.addFeed(feed)
+						account.addFeedToTreeAtTopLevel(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
 					account.removeFolderFromTree(folder)
@@ -120,7 +120,7 @@ extension NewsBlurAccountDelegate {
 		feedsToAdd.forEach { feed in
 			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
 			feed.externalID = String(feed.feedID)
-			account.addFeed(feed)
+			account.addFeedToTreeAtTopLevel(feed)
 		}
 	}
 
@@ -159,7 +159,7 @@ extension NewsBlurAccountDelegate {
 				if !newsBlurFolderFeedIDs.contains(feed.feedID) {
 					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-					account.addFeed(feed)
+					account.addFeedToTreeAtTopLevel(feed)
 				}
 			}
 
@@ -173,7 +173,7 @@ extension NewsBlurAccountDelegate {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: relationship.folderName)
-					folder.addFeed(feed)
+					folder.addFeedToTreeAtTopLevel(feed)
 				}
 			}
 		}

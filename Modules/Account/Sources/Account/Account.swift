@@ -463,13 +463,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	func addOPMLItems(_ items: [RSOPMLItem]) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
-				addFeed(newFeed(with: feedSpecifier))
+				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
 			} else {
 				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
 					folder.externalID = item.attributes?["nnw_externalID"] as? String
 					item.children?.forEach { itemChild in
 						if let feedSpecifier = itemChild.feedSpecifier {
-							folder.addFeed(newFeed(with: feedSpecifier))
+							folder.addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
 						}
 					}
 				}
@@ -1024,7 +1024,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		postChildrenDidChangeNotification()
 	}
 
-	public func addFeed(_ feed: Feed) {
+	public func addFeedToTreeAtTopLevel(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		structureDidChange()
 		postChildrenDidChangeNotification()
@@ -1032,7 +1032,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	func addFeedIfNotInAnyFolder(_ feed: Feed) {
 		if !flattenedFeeds().contains(feed) {
-			addFeed(feed)
+			addFeedToTreeAtTopLevel(feed)
 		}
 	}
 

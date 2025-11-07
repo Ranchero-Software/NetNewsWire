@@ -453,7 +453,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 					DispatchQueue.main.async {
 						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
 						account.removeFeed(feed)
-						folder.addFeed(feed)
+						folder.addFeedToTreeAtTopLevel(feed)
 						completion(.success(()))
 					}
 				case .failure(let error):
@@ -726,7 +726,7 @@ private extension FeedbinAccountDelegate {
 			folders.forEach { folder in
 				if !tagNames.contains(folder.name ?? "") {
 					for feed in folder.topLevelFeeds {
-						account.addFeed(feed)
+						account.addFeedToTreeAtTopLevel(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					}
 					account.removeFolderFromTree(folder)
@@ -801,7 +801,7 @@ private extension FeedbinAccountDelegate {
 		subscriptionsToAdd.forEach { subscription in
 			let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
 			feed.externalID = String(subscription.subscriptionID)
-			account.addFeed(feed)
+			account.addFeedToTreeAtTopLevel(feed)
 		}
 	}
 
@@ -837,7 +837,7 @@ private extension FeedbinAccountDelegate {
 				if !taggingFeedIDs.contains(feed.feedID) {
 					folder.removeFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
-					account.addFeed(feed)
+					account.addFeedToTreeAtTopLevel(feed)
 				}
 			}
 
@@ -851,7 +851,7 @@ private extension FeedbinAccountDelegate {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(tagging.taggingID))
-					folder.addFeed(feed)
+					folder.addFeedToTreeAtTopLevel(feed)
 				}
 			}
 

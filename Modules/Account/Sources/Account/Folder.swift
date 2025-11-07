@@ -122,7 +122,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		return topLevelFeeds.contains(feed)
 	}
 
-	public func addFeed(_ feed: Feed) {
+	public func addFeedToTreeAtTopLevel(_ feed: Feed) {
 		topLevelFeeds.insert(feed)
 		postChildrenDidChangeNotification()
 	}

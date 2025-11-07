@@ -95,7 +95,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		Feedly.logger.info("Feedly: Processing \(feedsAndFolders.count) feeds")
 		feedsAndFolders.forEach { (feed, folder) in
 			if !folder.has(feed) {
-				folder.addFeed(feed)
+				folder.addFeedToTreeAtTopLevel(feed)
 			}
 		}
 
