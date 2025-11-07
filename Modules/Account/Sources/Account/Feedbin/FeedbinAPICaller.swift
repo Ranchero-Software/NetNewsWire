@@ -70,40 +70,33 @@ final class FeedbinAPICaller {
 		}
 	}
 
-	func importOPML(opmlData: Data, completion: @escaping (Result<FeedbinImportResult, Error>) -> Void) {
-
+	func importOPML(opmlData: Data) async throws -> FeedbinImportResult {
 		let callURL = feedbinBaseURL.appendingPathComponent("imports.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		transport.send(request: request, method: HTTPMethod.post, payload: opmlData) { result in
+		let (_, data) = try await transport.send(request: request, method: HTTPMethod.post, payload: opmlData)
 
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (_, data)):
-
-				guard let resultData = data else {
-					completion(.failure(TransportError.noData))
-					break
-				}
-
-				do {
-					let result = try JSONDecoder().decode(FeedbinImportResult.self, from: resultData)
-					completion(.success(result))
-				} catch {
-					completion(.failure(error))
-				}
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
+		if suspended {
+			throw TransportError.suspended
+		}
+		guard let data else {
+			throw TransportError.noData
 		}
 
+		let importResult = try JSONDecoder().decode(FeedbinImportResult.self, from: data)
+		return importResult
+	}
+	
+	func importOPML(opmlData: Data, completion: @escaping (Result<FeedbinImportResult, Error>) -> Void) {
+		Task { @MainActor in
+			do {
+				let importResult = try await self.importOPML(opmlData: opmlData)
+				completion(.success(importResult))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func retrieveOPMLImportResult(importID: Int, completion: @escaping (Result<FeedbinImportResult?, Error>) -> Void) {

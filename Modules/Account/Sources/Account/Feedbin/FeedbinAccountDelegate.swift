@@ -178,7 +178,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	private func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-
 		var fileData: Data?
 
 		do {
