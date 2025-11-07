@@ -613,7 +613,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.restoreFeed(for: self, feed: feed, container: container, completion: completion)
+		Task { @MainActor in
+			do {
+				try await delegate.restoreFeed(for: self, feed: feed, container: container)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	@discardableResult

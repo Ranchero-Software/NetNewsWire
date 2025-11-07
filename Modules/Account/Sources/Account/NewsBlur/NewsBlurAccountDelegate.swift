@@ -570,7 +570,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			restoreFeed(for: account, feed: feed, container: container) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {

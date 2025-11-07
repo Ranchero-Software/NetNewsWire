@@ -139,9 +139,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container) async throws {
 		container.addFeed(feed)
-		completion(.success(()))
 	}
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {

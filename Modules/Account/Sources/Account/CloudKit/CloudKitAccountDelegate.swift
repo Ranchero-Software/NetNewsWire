@@ -297,7 +297,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+		try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
+	}
+
+	private func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
 				try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
