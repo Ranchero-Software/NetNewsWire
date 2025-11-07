@@ -593,7 +593,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.removeFeed(for: self, with: feed, from: container, completion: completion)
+		Task { @MainActor in
+			do {
+				try await delegate.removeFeed(account: self, feed: feed, container: container)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {

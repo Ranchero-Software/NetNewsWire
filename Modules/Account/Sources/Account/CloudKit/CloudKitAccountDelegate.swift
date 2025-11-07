@@ -216,7 +216,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFeed(for: account, with: feed, from: container) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		removeFeedFromCloud(for: account, with: feed, from: container) { result in
 			switch result {
 			case .success:

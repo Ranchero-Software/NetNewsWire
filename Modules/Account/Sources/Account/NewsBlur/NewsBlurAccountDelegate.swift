@@ -547,7 +547,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFeed(for: account, with: feed, from: container) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
 		deleteFeed(for: account, with: feed, from: container, completion: completion)
 	}
 

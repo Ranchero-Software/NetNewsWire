@@ -411,7 +411,15 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	}
 
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFeed(for: account, with: feed, from: container) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			deleteTagging(for: account, with: feed, from: container, completion: completion)
 		} else {

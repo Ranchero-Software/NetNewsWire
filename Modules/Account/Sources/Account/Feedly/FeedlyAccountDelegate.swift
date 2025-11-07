@@ -475,7 +475,15 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFeed(for: account, with: feed, from: container) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder, let collectionId = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed)))
