@@ -36,7 +36,15 @@ final class LocalAccountRefresher {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccountRefresher")
 
-	public func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
+	public func refreshFeeds(_ feeds: Set<Feed>) async {
+		await withCheckedContinuation { continuation in
+			refreshFeeds(feeds) {
+				continuation.resume()
+			}
+		}
+	}
+
+	private func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
 		let specialCaseCutoffDate = Date().bySubtracting(hours: 25)
 		let filteredFeeds = feeds.filter { !Self.feedShouldBeSkipped($0, specialCaseCutoffDate) }
 

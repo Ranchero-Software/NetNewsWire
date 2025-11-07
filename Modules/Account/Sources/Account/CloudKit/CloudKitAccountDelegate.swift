@@ -650,8 +650,10 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func combinedRefresh(_ account: Account, _ feeds: Set<Feed>, completion: @escaping () -> Void) {
-
-		refresher.refreshFeeds(feeds, completion: completion)
+		Task { @MainActor in
+			await refresher.refreshFeeds(feeds)
+			completion()
+		}
 	}
 
 	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {

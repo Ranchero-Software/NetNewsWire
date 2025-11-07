@@ -18,10 +18,6 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	weak var account: Account?
 
-	lazy var refreshProgress: DownloadProgress = {
-		refresher.downloadProgress
-	}()
-
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
 
@@ -35,6 +31,10 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher
 	}()
 
+	lazy var refreshProgress: DownloadProgress = {
+		refresher.downloadProgress
+	}()
+
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 
@@ -44,13 +44,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 
 		let feeds = account.flattenedFeeds()
-
-		await withCheckedContinuation { continuation in
-			refresher.refreshFeeds(feeds) {
-				continuation.resume()
-			}
-		}
-
+		await refresher.refreshFeeds(feeds)
 		account.metadata.lastArticleFetchEndTime = Date()
 	}
 
