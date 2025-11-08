@@ -168,56 +168,32 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-
 	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			self.importOPML(for: account, opmlFile: opmlFile) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	private func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-		var fileData: Data?
-
-		do {
-			fileData = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-
-		guard let opmlData = fileData else {
-			completion(.success(()))
+		let opmlData = try Data(contentsOf: opmlFile)
+		guard !opmlData.isEmpty else {
 			return
 		}
 
 		Self.logger.info("Feedbin: Did begin importing OPML")
 		isOPMLImportInProgress = true
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		defer {
+			isOPMLImportInProgress = false
+			refreshProgress.completeTask()
+		}
 
-		caller.importOPML(opmlData: opmlData) { result in
-			Task { @MainActor in
-				switch result {
-				case .success(let importResult):
-					if importResult.complete {
-						Self.logger.info("Feedbin: Finished importing OPML")
-						self.refreshProgress.completeTask()
-						self.isOPMLImportInProgress = false
-						DispatchQueue.main.async {
-							completion(.success(()))
-						}
-					} else {
-						self.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
-					}
-				case .failure(let error):
-					Self.logger.info("Feedbin: OPML import failed: \(error.localizedDescription)")
-					self.refreshProgress.completeTask()
-					self.isOPMLImportInProgress = false
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
+		do {
+			let importResult = try await caller.importOPML(opmlData: opmlData)
+			if importResult.complete {
+				Self.logger.info("Feedbin: Finished importing OPML")
+			} else {
+				// This will retry until success or error.
+				try await self.checkImportResult(opmlImportResultID: importResult.importResultID)
 			}
+		} catch {
+			Self.logger.info("Feedbin: OPML import failed: \(error.localizedDescription)")
+			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			throw wrappedError
 		}
 	}
 
@@ -604,7 +580,15 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 private extension FeedbinAccountDelegate {
 
-	@MainActor func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func checkImportResult(opmlImportResultID: Int) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.checkImportResult(opmlImportResultID: opmlImportResultID) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	@MainActor private func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			while true {
 				try? await Task.sleep(for: .seconds(15))
