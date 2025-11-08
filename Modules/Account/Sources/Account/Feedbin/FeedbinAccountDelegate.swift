@@ -197,29 +197,28 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		caller.importOPML(opmlData: opmlData) { result in
-			switch result {
-			case .success(let importResult):
-				if importResult.complete {
-					Self.logger.info("Feedbin: Finished importing OPML")
+			Task { @MainActor in
+				switch result {
+				case .success(let importResult):
+					if importResult.complete {
+						Self.logger.info("Feedbin: Finished importing OPML")
+						self.refreshProgress.completeTask()
+						self.isOPMLImportInProgress = false
+						DispatchQueue.main.async {
+							completion(.success(()))
+						}
+					} else {
+						self.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
+					}
+				case .failure(let error):
+					Self.logger.info("Feedbin: OPML import failed: \(error.localizedDescription)")
 					self.refreshProgress.completeTask()
 					self.isOPMLImportInProgress = false
-					DispatchQueue.main.async {
-						completion(.success(()))
-					}
-				} else {
-					self.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
-				}
-			case .failure(let error):
-				Self.logger.info("Feedbin: OPML import failed: \(error.localizedDescription)")
-				self.refreshProgress.completeTask()
-				self.isOPMLImportInProgress = false
-				DispatchQueue.main.async {
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
 					completion(.failure(wrappedError))
 				}
 			}
 		}
-
 	}
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
@@ -605,41 +604,31 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 private extension FeedbinAccountDelegate {
 
-	func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		DispatchQueue.main.async {
-
-			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
+	@MainActor func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+		Task { @MainActor in
+			while true {
+				try? await Task.sleep(for: .seconds(15))
 
 				Self.logger.info("Feedbin: Checking status of OPML import")
+				do {
+					let importResult = try await self.caller.retrieveOPMLImportResult(importID: opmlImportResultID)
 
-				self.caller.retrieveOPMLImportResult(importID: opmlImportResultID) { result in
-					switch result {
-					case .success(let importResult):
-						if let result = importResult, result.complete {
-							Self.logger.info("Feedbin: Checking status of OPML import finished successfully")
-							timer.invalidate()
-							self.refreshProgress.completeTask()
-							self.isOPMLImportInProgress = false
-							DispatchQueue.main.async {
-								completion(.success(()))
-							}
-						}
-					case .failure(let error):
-						Self.logger.info("Feedbin: Import OPML check failed: \(error.localizedDescription)")
-						timer.invalidate()
+					if let result = importResult, result.complete {
+						Self.logger.info("Feedbin: Checking status of OPML import finished successfully")
 						self.refreshProgress.completeTask()
 						self.isOPMLImportInProgress = false
-						DispatchQueue.main.async {
-							completion(.failure(error))
-						}
+						completion(.success(()))
+						break
 					}
+				} catch {
+					Self.logger.info("Feedbin: Import OPML check failed: \(error.localizedDescription)")
+					self.refreshProgress.completeTask()
+					self.isOPMLImportInProgress = false
+					completion(.failure(error))
+					break
 				}
-
 			}
-
 		}
-
 	}
 
 	func refreshAccount(_ account: Account) async throws {

@@ -10,6 +10,15 @@ import Foundation
 
 extension Transport {
 
+	/// Send an HTTP GET and return JSON object(s)
+	public func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
+		try await withCheckedThrowingContinuation { continuation in
+			send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	/**
 	 Sends an HTTP get and returns JSON object(s)
 	 */

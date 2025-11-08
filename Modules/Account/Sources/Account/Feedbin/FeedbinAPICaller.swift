@@ -99,27 +99,17 @@ final class FeedbinAPICaller {
 		}
 	}
 
-	func retrieveOPMLImportResult(importID: Int, completion: @escaping (Result<FeedbinImportResult?, Error>) -> Void) {
-
+	func retrieveOPMLImportResult(importID: Int) async throws -> FeedbinImportResult? {
 		let callURL = feedbinBaseURL.appendingPathComponent("imports/\(importID).json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 
-		transport.send(request: request, resultType: FeedbinImportResult.self) { result in
+		let (_, importResult) = try await transport.send(request: request, resultType: FeedbinImportResult.self)
 
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (_, importResult)):
-				completion(.success(importResult))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
+		guard !suspended else {
+			throw TransportError.suspended
 		}
 
+		return importResult
 	}
 
 	func retrieveTags(completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {

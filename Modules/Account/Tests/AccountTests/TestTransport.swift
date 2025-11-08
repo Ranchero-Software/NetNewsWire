@@ -15,7 +15,6 @@ protocol TestTransportMockResponseProviding: AnyObject {
 }
 
 final class TestTransport: Transport {
-
 	enum TestTransportError: String, Error {
 		case invalidState = "The test wasn't set up correctly."
 	}
@@ -86,7 +85,15 @@ final class TestTransport: Transport {
 		}
 	}
 
+	func send(request: URLRequest, method: String) async throws {
+		fatalError("Unimplemented.")
+	}
+
 	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		fatalError("Unimplemented.")
+	}
+
+	func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?) {
 		fatalError("Unimplemented.")
 	}
 
