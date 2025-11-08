@@ -244,9 +244,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		try await withCheckedThrowingContinuation{ continuation in
-			moveFeed(for: account, with: feed, from: from, to: to) { result in
+			moveFeed(for: account, with: feed, from: sourceContainer, to: destinationContainer) { result in
 				continuation.resume(with: result)
 			}
 		}
@@ -440,7 +440,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			switch result {
 			case .success(let externalID):
 				folder.externalID = externalID
-				account.addFolder(folder)
+				account.addFolderToTree(folder)
 
 				let group = DispatchGroup()
 				for feed in feedsToRestore {
@@ -462,7 +462,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				}
 
 				group.notify(queue: DispatchQueue.main) {
-					account.addFolder(folder)
+					account.addFolderToTree(folder)
 					completion(.success(()))
 				}
 

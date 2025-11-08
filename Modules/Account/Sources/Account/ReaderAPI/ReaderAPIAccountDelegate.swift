@@ -524,9 +524,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		try await withCheckedThrowingContinuation{ continuation in
-			moveFeed(for: account, with: feed, from: from, to: to) { result in
+			moveFeed(for: account, with: feed, from: sourceContainer, to: destinationContainer) { result in
 				continuation.resume(with: result)
 			}
 		}
@@ -659,7 +659,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 
 		group.notify(queue: DispatchQueue.main) {
-			account.addFolder(folder)
+			account.addFolderToTree(folder)
 			completion(.success(()))
 		}
 	}
@@ -1082,9 +1082,10 @@ private extension ReaderAPIAccountDelegate {
 	}
 
 	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping VoidCompletionBlock) {
-		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
-		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { _ in
+		Task { @MainActor in
+			let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
+			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+			try? await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 			completion()
 		}
 	}

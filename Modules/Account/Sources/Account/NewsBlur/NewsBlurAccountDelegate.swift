@@ -334,7 +334,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func processStories(account: Account, stories: [NewsBlurStory]?, since: Date? = nil, completion: @escaping (Result<Bool, DatabaseError>) -> Void) {
+	func processStories(account: Account, stories: [NewsBlurStory]?, since: Date? = nil, completion: @escaping (Result<Bool, Error>) -> Void) {
 		let parsedItems = mapStoriesToParsedItems(stories: stories).filter {
 			guard let datePublished = $0.datePublished, let since = since else {
 				return true
@@ -346,13 +346,13 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			Set($0)
 		}
 
-		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true) { error in
-			if let error = error {
+		Task { @MainActor in
+			do {
+				try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+				completion(.success(!feedIDsAndItems.isEmpty))
+			} catch {
 				completion(.failure(error))
-				return
 			}
-
-			completion(.success(!feedIDsAndItems.isEmpty))
 		}
 	}
 
@@ -559,9 +559,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		deleteFeed(for: account, with: feed, from: container, completion: completion)
 	}
 
-	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		try await withCheckedThrowingContinuation{ continuation in
-			moveFeed(for: account, with: feed, from: from, to: to) { result in
+			moveFeed(for: account, with: feed, from: sourceContainer, to: destinationContainer) { result in
 				continuation.resume(with: result)
 			}
 		}

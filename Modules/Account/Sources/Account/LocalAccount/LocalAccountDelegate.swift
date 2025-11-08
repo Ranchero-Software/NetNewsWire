@@ -88,9 +88,9 @@ final class LocalAccountDelegate: AccountDelegate {
 		container.removeFeedFromTreeAtTopLevel(feed)
 	}
 
-	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
-		from.removeFeedFromTreeAtTopLevel(feed)
-		to.addFeedToTreeAtTopLevel(feed)
+	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		sourceContainer.removeFeedFromTreeAtTopLevel(feed)
+		destinationContainer.addFeedToTreeAtTopLevel(feed)
 	}
 
 	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
@@ -117,7 +117,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
-		account.addFolder(folder)
+		account.addFolderToTree(folder)
 	}
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {

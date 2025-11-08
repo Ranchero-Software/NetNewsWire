@@ -61,6 +61,19 @@ extension Transport {
 		}
 	}
 
+	public func send<P: Encodable & Sendable>(request: URLRequest, method: String, payload: P) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method, payload: payload) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	/**
 	Sends the specified HTTP method with a JSON payload.
 	*/

@@ -221,8 +221,17 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 	// MARK: - Renamable
 
 	public func rename(to newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let account = account else { return }
-		account.renameFeed(self, to: newName, completion: completion)
+		guard let account else {
+			return
+		}
+		Task { @MainActor in
+			do {
+				try await account.renameFeed(self, name: newName)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	// MARK: - UnreadCountProvider

@@ -503,9 +503,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		folder.removeFeedFromTreeAtTopLevel(feed)
 	}
 
-	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws {
+	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		try await withCheckedThrowingContinuation{ continuation in
-			moveFeed(for: account, with: feed, from: from, to: to) { result in
+			moveFeed(for: account, with: feed, from: sourceContainer, to: destinationContainer) { result in
 				continuation.resume(with: result)
 			}
 		}
@@ -602,7 +602,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 
 		group.notify(queue: .main) {
-			account.addFolder(folder)
+			account.addFolderToTree(folder)
 			completion(.success(()))
 		}
 	}

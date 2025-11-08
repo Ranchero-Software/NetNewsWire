@@ -31,7 +31,7 @@ final class FeedbinAPICaller {
 	}
 
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
-	private var transport: Transport!
+	private let transport: Transport
 	private var suspended = false
 	private var lastBackdateStartTime: Date?
 
@@ -53,14 +53,15 @@ final class FeedbinAPICaller {
 	}
 
 	func validateCredentials() async throws -> Credentials? {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("authentication.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 
 		do {
 			try await transport.send(request: request)
-			if suspended {
-				throw TransportError.suspended
-			}
 			return credentials
 		} catch {
 			if case TransportError.httpError(let status) = error, status == 401 {
@@ -70,16 +71,17 @@ final class FeedbinAPICaller {
 		}
 	}
 
-	func importOPML(opmlData: Data) async throws -> FeedbinImportResult {
+	@MainActor func importOPML(opmlData: Data) async throws -> FeedbinImportResult {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("imports.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
 		let (_, data) = try await transport.send(request: request, method: HTTPMethod.post, payload: opmlData)
 
-		if suspended {
-			throw TransportError.suspended
-		}
 		guard let data else {
 			throw TransportError.noData
 		}
@@ -87,104 +89,66 @@ final class FeedbinAPICaller {
 		let importResult = try JSONDecoder().decode(FeedbinImportResult.self, from: data)
 		return importResult
 	}
-	
-	func importOPML(opmlData: Data, completion: @escaping (Result<FeedbinImportResult, Error>) -> Void) {
-		Task { @MainActor in
-			do {
-				let importResult = try await self.importOPML(opmlData: opmlData)
-				completion(.success(importResult))
-			} catch {
-				completion(.failure(error))
-			}
-		}
-	}
 
-	func retrieveOPMLImportResult(importID: Int) async throws -> FeedbinImportResult? {
+	@MainActor func retrieveOPMLImportResult(importID: Int) async throws -> FeedbinImportResult? {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("imports/\(importID).json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 
 		let (_, importResult) = try await transport.send(request: request, resultType: FeedbinImportResult.self)
 
-		guard !suspended else {
-			throw TransportError.suspended
-		}
-
 		return importResult
 	}
 
-	func retrieveTags(completion: @escaping (Result<[FeedbinTag]?, Error>) -> Void) {
+	@MainActor func retrieveTags() async throws -> [FeedbinTag]? {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		transport.send(request: request, resultType: [FeedbinTag].self) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, tags)):
-				self.storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
-				completion(.success(tags))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (response, tags) = try await transport.send(request: request, resultType: [FeedbinTag].self)
+		storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
+		return tags
 	}
 
-	func renameTag(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameTag(oldName: String, newName: String) async throws {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinRenameTag(oldName: oldName, newName: newName)
 
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
-
+	@MainActor func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
+		if suspended {
+			throw TransportError.suspended
+		}
+		
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
 
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
 		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 
-		transport.send(request: request, resultType: [FeedbinSubscription].self) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, subscriptions)):
-				self.storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
-				completion(.success(subscriptions))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (response, subscriptions) = try await transport.send(request: request, resultType: [FeedbinSubscription].self)
+		storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
+		return subscriptions
 	}
 
-	func createSubscription(url: String, completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
+	@MainActor func createSubscription(url: String) async throws -> CreateSubscriptionResult {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
@@ -192,207 +156,138 @@ final class FeedbinAPICaller {
 		var request = URLRequest(url: callComponents.url!, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		let payload: Data
+		let payload = try JSONEncoder().encode(FeedbinCreateSubscription(feedURL: url))
+
 		do {
-			payload = try JSONEncoder().encode(FeedbinCreateSubscription(feedURL: url))
+			let (response, data) = try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
+
+			switch response.forcedStatusCode {
+			case HTTPResponseCode.created: // 201
+				guard let subData = data else {
+					throw TransportError.noData
+				}
+				do {
+					let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: subData)
+					return .created(subscription)
+				} catch {
+					throw error
+				}
+			case HTTPResponseCode.redirectMultipleChoices: // 300
+				guard let subData = data else {
+					throw TransportError.noData
+				}
+				do {
+					let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: subData)
+					return .multipleChoice(subscriptions)
+				} catch {
+					throw error
+				}
+			case HTTPResponseCode.redirectTemporary: // 302
+				return .alreadySubscribed
+			default:
+				throw TransportError.httpError(status: response.forcedStatusCode)
+			}
 		} catch {
-			completion(.failure(error))
-			return
-		}
-
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, data)):
-
-				switch response.forcedStatusCode {
-				case 201:
-					guard let subData = data else {
-						completion(.failure(TransportError.noData))
-						break
-					}
-					do {
-						let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: subData)
-						completion(.success(.created(subscription)))
-					} catch {
-						completion(.failure(error))
-					}
-				case 300:
-					guard let subData = data else {
-						completion(.failure(TransportError.noData))
-						break
-					}
-					do {
-						let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: subData)
-						completion(.success(.multipleChoice(subscriptions)))
-					} catch {
-						completion(.failure(error))
-					}
-				case 302:
-					completion(.success(.alreadySubscribed))
+			switch error {
+			case TransportError.httpError(let status):
+				switch status {
+				case HTTPResponseCode.unauthorized: // 401
+					// I don’t know why we get 401s here. This looks like a Feedbin bug, but it only happens
+					// when you are already subscribed to the feed.
+					return .alreadySubscribed
+				case HTTPResponseCode.notFound: // 404
+					return .notFound
 				default:
-					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
+					throw error
 				}
-
-			case .failure(let error):
-
-				switch error {
-				case TransportError.httpError(let status):
-					switch status {
-					case 401:
-						// I don't know why we get 401's here.  This looks like a Feedbin bug, but it only happens
-						// when you are already subscribed to the feed.
-						completion(.success(.alreadySubscribed))
-					case 404:
-						completion(.success(.notFound))
-					default:
-						completion(.failure(error))
-					}
-				default:
-					completion(.failure(error))
-				}
-
+			default:
+				throw error
 			}
-
 		}
-
 	}
 
-	func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameSubscription(subscriptionID: String, newName: String) async throws {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID)/update.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUpdateSubscription(title: newName)
 
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	func deleteSubscription(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func deleteSubscription(subscriptionID: String) async throws {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID).json")
 		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, method: HTTPMethod.delete) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
 
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.delete)
 	}
 
-	func retrieveTaggings(completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
+	@MainActor func retrieveTaggings() async throws -> [FeedbinTagging]? {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		transport.send(request: request, resultType: [FeedbinTagging].self) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, taggings)):
-				self.storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
-				completion(.success(taggings))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (response, taggings) = try await transport.send(request: request, resultType: [FeedbinTagging].self)
+		storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
+		return taggings
 	}
 
-	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
+	@MainActor func createTagging(feedID: Int, name: String) async throws -> Int {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		let payload: Data
-		do {
-			payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
-		} catch {
-			completion(.failure(error))
-			return
+		let payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
+
+		let (response, _) = try await transport.send(request: request, method: HTTPMethod.post, payload:payload)
+
+		if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
+			let lowerBound = taggingLocation.range(of: "v2/taggings/")?.upperBound,
+			let upperBound = taggingLocation.range(of: ".json")?.lowerBound,
+			let taggingID = Int(taggingLocation[lowerBound..<upperBound]) {
+				return taggingID
+		} else {
+			throw TransportError.noData
 		}
-
-		transport.send(request: request, method: HTTPMethod.post, payload:payload) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, _)):
-				if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
-					let lowerBound = taggingLocation.range(of: "v2/taggings/")?.upperBound,
-					let upperBound = taggingLocation.range(of: ".json")?.lowerBound,
-					let taggingID = Int(taggingLocation[lowerBound..<upperBound]) {
-						completion(.success(taggingID))
-				} else {
-					completion(.failure(TransportError.noData))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
 	}
 
-	func deleteTagging(taggingID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func deleteTagging(taggingID: String) async throws {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings/\(taggingID).json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		transport.send(request: request, method: HTTPMethod.delete) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
 
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.delete)
 	}
 
-	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
-
+	@MainActor func retrieveEntries(articleIDs: [String]) async throws -> [FeedbinEntry]? {
+		if suspended {
+			throw TransportError.suspended
+		}
 		guard !articleIDs.isEmpty else {
-			completion(.success(([FeedbinEntry]())))
-			return
+			return [FeedbinEntry]()
 		}
 
 		let concatIDs = articleIDs.reduce("") { param, articleID in return param + ",\(articleID)" }
 		let paramIDs = String(concatIDs.dropFirst())
-
 		let url = feedbinBaseURL
 			.appendingPathComponent("entries.json")
 			.appendingQueryItems([
@@ -401,29 +296,17 @@ final class FeedbinAPICaller {
 			])
 		let request = URLRequest(url: url!, credentials: credentials)
 
-		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (_, entries)):
-				completion(.success((entries)))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (_, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		return entries
 	}
 
-	func retrieveEntries(feedID: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+	@MainActor func retrieveEntries(feedID: String) async throws -> ([FeedbinEntry]?, String?) {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		let since = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
 		let sinceString = FeedbinDate.formatter.string(from: since)
-
 		let url = feedbinBaseURL
 			.appendingPathComponent("feeds/\(feedID)/entries.json")
 			.appendingQueryItems([
@@ -433,28 +316,15 @@ final class FeedbinAPICaller {
 			])
 		let request = URLRequest(url: url!, credentials: credentials)
 
-		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, entries)):
-
-				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
-				completion(.success((entries, pagingInfo.nextPage)))
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (response, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
+		return (entries, pagingInfo.nextPage)
 	}
 
-	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Date?, Int?), Error>) -> Void) {
+	@MainActor func retrieveEntries() async throws -> ([FeedbinEntry]?, String?, Date?, Int?) {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		// If this is an initial sync, go and grab the previous 3 months of entries.  If not, use the last
 		// article fetch to only get the articles **published** since the last article fetch.
@@ -490,192 +360,110 @@ final class FeedbinAPICaller {
 			])
 		let request = URLRequest(url: url!, credentials: credentials)
 
-		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, entries)):
-
-				let dateInfo = HTTPDateInfo(urlResponse: response)
-
-				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
-				let lastPageNumber = self.extractPageNumber(link: pagingInfo.lastPage)
-				completion(.success((entries, pagingInfo.nextPage, dateInfo?.date, lastPageNumber)))
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (response, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		let dateInfo = HTTPDateInfo(urlResponse: response)
+		let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
+		let lastPageNumber = extractPageNumber(link: pagingInfo.lastPage)
+		return (entries, pagingInfo.nextPage, dateInfo?.date, lastPageNumber)
 	}
 
-	func retrieveEntries(page: String, completion: @escaping (Result<([FeedbinEntry]?, String?), Error>) -> Void) {
+	@MainActor func retrieveEntries(page: String) async throws -> ([FeedbinEntry]?, String?) {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		guard let url = URL(string: page) else {
-			completion(.success((nil, nil)))
-			return
+			return (nil, nil)
 		}
 
 		let request = URLRequest(url: url, credentials: credentials)
-
-		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, entries)):
-
-				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
-				completion(.success((entries, pagingInfo.nextPage)))
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (response, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
+		return (entries, pagingInfo.nextPage)
 	}
 
-	func retrieveUnreadEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
+	@MainActor func retrieveUnreadEntries() async throws -> [Int]? {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		transport.send(request: request, resultType: [Int].self) { result in
-
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, unreadEntries)):
-				self.storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
-				completion(.success(unreadEntries))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (response, unreadEntries) = try await transport.send(request: request, resultType: [Int].self)
+		storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
+		return unreadEntries
 	}
 
-	func createUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func createUnreadEntries(entries: [Int]) async throws {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUnreadEntry(unreadEntries: entries)
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
 
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	func deleteUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func deleteUnreadEntries(entries: [Int]) async throws {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUnreadEntry(unreadEntries: entries)
-		transport.send(request: request, method: HTTPMethod.delete, payload: payload) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
 
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.delete, payload: payload)
 	}
 
-	func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
+	@MainActor func retrieveStarredEntries() async throws -> [Int]? {
+		if suspended {
+			throw TransportError.suspended
+		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		transport.send(request: request, resultType: [Int].self) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success(let (response, starredEntries)):
-				self.storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
-				completion(.success(starredEntries))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
-		}
-
+		let (response, starredEntries) = try await transport.send(request: request, resultType: [Int].self)
+		storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
+		return starredEntries
 	}
 
-	func createStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func createStarredEntries(entries: [Int]) async throws {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinStarredEntry(starredEntries: entries)
-		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
 
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	func deleteStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func deleteStarredEntries(entries: [Int]) async throws {
+		if suspended {
+			throw TransportError.suspended
+		}
+
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinStarredEntry(starredEntries: entries)
-		transport.send(request: request, method: HTTPMethod.delete, payload: payload) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
 
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await transport.send(request: request, method: HTTPMethod.delete, payload: payload)
 	}
-
 }
 
 // MARK: Private
 
 extension FeedbinAPICaller {
 
-	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
+	@MainActor func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
 		if var conditionalGet = accountMetadata?.conditionalGetInfo {
 			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
 			accountMetadata?.conditionalGetInfo = conditionalGet
@@ -683,8 +471,7 @@ extension FeedbinAPICaller {
 	}
 
 	func extractPageNumber(link: String?) -> Int? {
-
-		guard let link = link else {
+		guard let link else {
 			return nil
 		}
 
@@ -699,7 +486,5 @@ extension FeedbinAPICaller {
 		}
 
 		return nil
-
 	}
-
 }

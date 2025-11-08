@@ -40,7 +40,7 @@ protocol AccountDelegate {
 	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws
 	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws
 	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws
-	@MainActor func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container) async throws
+	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws
 
 	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container) async throws
 	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws

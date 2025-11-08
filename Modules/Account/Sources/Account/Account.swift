@@ -562,6 +562,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return feed
 	}
 
+	@MainActor func addFeed(_ feed: Feed, container: Container) async throws {
+		try await delegate.addFeed(account: self, feed: feed, container: container)
+	}
+
 	public func addFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
@@ -606,7 +610,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.moveFeed(for: self, with: feed, from: from, to: to)
+				try await delegate.moveFeed(account: self, feed: feed, sourceContainer: from, destinationContainer: to)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -614,15 +618,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func renameFeed(_ feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		Task { @MainActor in
-			do {
-				try await delegate.renameFeed(for: self, with: feed, to: name)
-				completion(.success(()))
-			} catch {
-				completion(.failure(error))
-			}
-		}
+	@MainActor public func renameFeed(_ feed: Feed, name: String) async throws {
+		try await delegate.renameFeed(for: self, with: feed, to: name)
 	}
 
 	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -671,7 +668,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feedMetadata[feed.url] = nil
 	}
 
-	func addFolder(_ folder: Folder) {
+	func addFolderToTree(_ folder: Folder) {
 		folders!.insert(folder)
 		postChildrenDidChangeNotification()
 		structureDidChange()
@@ -776,6 +773,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
+	@MainActor public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
@@ -841,7 +846,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
+	@MainActor func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { error in
+				if let error {
+					continuation.resume(throwing: error)
+				} else {
+					continuation.resume(returning: ())
+				}
+			}
+		}
+	}
+	
+	private func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
@@ -1026,6 +1043,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func removeFeedFromTreeAtTopLevel(_ feed: Feed) {
 		topLevelFeeds.remove(feed)
+		structureDidChange()
+		postChildrenDidChangeNotification()
+	}
+
+	public func removeAllInstancesOfFeedFromTreeAtAllLevels(_ feed: Feed) {
+		topLevelFeeds.remove(feed)
+
+		if let folders {
+			for folder in folders {
+				folder.removeFeedFromTreeAtTopLevel(feed)
+			}
+		}
+
 		structureDidChange()
 		postChildrenDidChangeNotification()
 	}

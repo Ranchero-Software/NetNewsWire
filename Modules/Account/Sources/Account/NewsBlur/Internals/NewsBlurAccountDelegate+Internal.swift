@@ -389,31 +389,25 @@ extension NewsBlurAccountDelegate {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
 		}
-
-		DispatchQueue.main.async {
+		
+		Task { @MainActor in
 			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
 			feed.externalID = String(feed.feedID)
 			feed.faviconURL = feed.faviconURL
-
-			account.addFeed(feed, to: container) { result in
-				switch result {
-				case .success:
-					if let name = name {
-						account.renameFeed(feed, to: name) { result in
-							switch result {
-							case .success:
-								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-					} else {
-						self.initialFeedDownload(account: account, feed: feed, completion: completion)
-					}
-				case .failure(let error):
+			
+			do {
+				try await account.addFeed(feed, container: container)
+			} catch {
+				completion(.failure(error))
+			}
+			if let name {
+				do {
+					try await account.renameFeed(feed, name: name)
+				} catch {
 					completion(.failure(error))
 				}
 			}
+			initialFeedDownload(account: account, feed: feed, completion: completion)
 		}
 	}
 
