@@ -143,6 +143,21 @@ extension Transport {
 		}
 	}
 
+	public func send<R: Decodable>(request: URLRequest, method: String, data: Data, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method, data: data, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { result in
+
+				switch result {
+				case .success(let (response, decoded)):
+					continuation.resume(returning: (response, decoded))
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
     /**
      Sends the specified HTTP method with a Raw payload and returns JSON object(s).
      */
