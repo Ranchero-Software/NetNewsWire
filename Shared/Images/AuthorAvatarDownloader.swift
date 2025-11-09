@@ -25,7 +25,7 @@ final class AuthorAvatarDownloader {
 
 	init() {
 
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
 	}
 
 	func resetCache() {

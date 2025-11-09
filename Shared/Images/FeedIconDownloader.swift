@@ -41,7 +41,7 @@ public final class FeedIconDownloader {
 		self.feedURLToIconURLCachePath = folder.appendingPathComponent("FeedURLToIconURLCache.plist")
 		loadFeedURLToIconURLCache()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
 	}
 
 	func icon(for feed: Feed) -> IconImage? {
