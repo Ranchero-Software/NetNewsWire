@@ -85,21 +85,26 @@ private extension HTMLMetadataDownloader {
 		Self.logger.debug("HTMLMetadataDownloader downloading for \(url)")
 
 		Task { @MainActor in
-			Downloader.shared.download(actualURL) { data, response, error in
+			do {
+				let (data, response) = try await Downloader.shared.download(actualURL)
+
 				if let data, !data.isEmpty, let response, response.statusIsOK {
 					let urlToUse = response.url ?? actualURL
 					let parserData = ParserData(url: urlToUse.absoluteString, data: data)
 					let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
 					Self.logger.debug("HTMLMetadataDownloader caching parsed metadata for \(url)")
-					self.cache[url] = htmlMetadata
+					cache[url] = htmlMetadata
 					return
 				}
 
-				if let statusCode = response?.forcedStatusCode, (400...499).contains(statusCode) {
-					self.noteURLDidReturn4xx(url)
+				let statusCode = response?.forcedStatusCode ?? -1
+				if (400...499).contains(statusCode) {
+					noteURLDidReturn4xx(url)
 				}
 
-				Self.logger.debug("HTMLMetadataDownloader failed download for \(url)")
+				Self.logger.debug("HTMLMetadataDownloader failed download for \(url) statusCode: \(statusCode)")
+			} catch {
+				Self.logger.debug("HTMLMetadataDownloader failed download for \(url) error: \(error.localizedDescription)")
 			}
 		}
 	}
