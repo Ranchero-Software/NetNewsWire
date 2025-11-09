@@ -32,14 +32,13 @@ final class CloudKitReceiveStatusOperation: MainThreadOperation {
 			return
 		}
 
-		Self.logger.debug("iCloud: Refreshing article statuses")
-
- 		articlesZone.refreshArticles() { result in
-			Self.logger.debug("iCloud: Finished refreshing article statuses")
-			switch result {
-			case .success:
+		Task {
+			Self.logger.debug("iCloud: Refreshing article statuses")
+			do {
+				try await articlesZone.refreshArticles()
+				Self.logger.debug("iCloud: Finished refreshing article statuses")
 				self.operationDelegate?.operationDidComplete(self)
-			case .failure(let error):
+			} catch {
 				Self.logger.error("iCloud: Receive status error: \(error.localizedDescription)")
 				self.operationDelegate?.cancelOperation(self)
 			}

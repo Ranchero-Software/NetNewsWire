@@ -129,19 +129,15 @@ private extension CloudKitSendStatusOperation {
 						done(true)
 						return
 					} else {
-						articlesZone.modifyArticles(statusUpdates) { result in
-							Task { @MainActor in
-								switch result {
-								case .success:
-									try? await self.syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
-									done(false)
-								case .failure(let error):
-									try? await self.syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
-									self.processAccountError(account, error)
-									Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
-									completion(true)
-								}
-							}
+						do {
+							try await articlesZone.modifyArticles(statusUpdates)
+							try? await self.syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
+							done(false)
+						} catch {
+							try? await self.syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+							self.processAccountError(account, error)
+							Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
+							completion(true)
 						}
 					}
 				}

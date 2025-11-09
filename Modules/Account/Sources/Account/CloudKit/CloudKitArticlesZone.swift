@@ -24,7 +24,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	weak var database: CKDatabase?
 	var delegate: CloudKitZoneDelegate? = nil
 
-	var compressionQueue = DispatchQueue(label: "Articles Zone Compression Queue")
+	let compressionQueue = DispatchQueue(label: "Articles Zone Compression Queue")
 
 	struct CloudKitArticle {
 		static let recordType = "Article"
@@ -63,31 +63,21 @@ final class CloudKitArticlesZone: CloudKitZone {
 		migrateChangeToken()
 	}
 
-	func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
-		fetchChangesInZone() { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				if case CloudKitZoneError.userDeletedZone = error {
-					self.createZoneRecord() { result in
-						switch result {
-						case .success:
-							self.refreshArticles(completion: completion)
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				} else {
-					completion(.failure(error))
-				}
+	func refreshArticles() async throws {
+		do {
+			try await fetchChangesInZone()
+		} catch {
+			if case CloudKitZoneError.userDeletedZone = error {
+				try await createZoneRecord()
+				try await refreshArticles()
+			} else {
+				throw error
 			}
 		}
 	}
 
-	func saveNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func saveNewArticles(_ articles: Set<Article>) async throws {
 		guard !articles.isEmpty else {
-			completion(.success(()))
 			return
 		}
 
@@ -99,21 +89,20 @@ final class CloudKitArticlesZone: CloudKitZone {
 			records.append(makeArticleRecord(saveArticle))
 		}
 
-		compressionQueue.async {
-			let compressedRecords = self.compressArticleRecords(records)
-			self.save(compressedRecords, completion: completion)
-		}
+		let compressedRecords = await Task.detached(priority: .userInitiated) {
+			self.compressArticleRecords(records)
+		}.value
+		try await save(compressedRecords)
 	}
 
-	func deleteArticles(_ feedExternalID: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func deleteArticles(_ feedExternalID: String) async throws {
 		let predicate = NSPredicate(format: "webFeedExternalID = %@", feedExternalID)
 		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)
-		delete(ckQuery: ckQuery, completion: completion)
+		try await delete(ckQuery: ckQuery)
 	}
 
-	func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate]) async throws {
 		guard !statusUpdates.isEmpty else {
-			completion(.success(()))
 			return
 		}
 
@@ -137,59 +126,17 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 
-		compressionQueue.async {
-			let compressedModifyRecords = self.compressArticleRecords(modifyRecords)
-			self.modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
-				switch result {
-				case .success:
-					let compressedNewRecords = self.compressArticleRecords(newRecords)
-					self.saveIfNew(compressedNewRecords) { result in
-						switch result {
-						case .success:
-							completion(.success(()))
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				case .failure(let error):
-					self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
-				}
-			}
-		}
+		let (compressedModifyRecords, compressedNewRecords) = await Task.detached(priority: .userInitiated) {
+			let compressedModify = self.compressArticleRecords(modifyRecords)
+			let compressedNew = self.compressArticleRecords(newRecords)
+			return (compressedModify, compressedNew)
+		}.value
 
-	}
-
-	// MARK: - Async Wrappers
-
-	func refreshArticles() async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			refreshArticles { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func saveNewArticles(_ articles: Set<Article>) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			saveNewArticles(articles) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func deleteArticles(_ feedExternalID: String) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			deleteArticles(feedExternalID) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate]) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			modifyArticles(statusUpdates) { result in
-				continuation.resume(with: result)
-			}
+		do {
+			try await modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs)
+			try await saveIfNew(compressedNewRecords)
+		} catch {
+			try await handleModifyArticlesError(error, statusUpdates: statusUpdates)
 		}
 	}
 
@@ -197,18 +144,12 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 private extension CloudKitArticlesZone {
 
-	func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate]) async throws {
 		if case CloudKitZoneError.userDeletedZone = error {
-			self.createZoneRecord() { result in
-				switch result {
-				case .success:
-					self.modifyArticles(statusUpdates, completion: completion)
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+			try await createZoneRecord()
+			try await modifyArticles(statusUpdates)
 		} else {
-			completion(.failure(error))
+			throw error
 		}
 	}
 
