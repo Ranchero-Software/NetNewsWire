@@ -53,7 +53,7 @@ public protocol CloudKitZone: AnyObject {
 	func subscribeToZoneChanges()
 
 	/// Process a remove notification
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
+	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async
 
 }
 
@@ -121,18 +121,16 @@ public extension CloudKitZone {
 		})
 	}
 
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == zoneID.zoneName else {
-			completion()
 			return
 		}
 
-		fetchChangesInZone() { result in
-			if case .failure(let error) = result {
-				Self.logger.error("CloudKit: \(self.zoneID.zoneName) remote notification fetch error: \(error.localizedDescription)")
-			}
-			completion()
+		do {
+			try await fetchChangesInZone()
+		} catch {
+			Self.logger.error("CloudKit: \(self.zoneID.zoneName) remote notification fetch error: \(error.localizedDescription)")
 		}
 	}
 
@@ -836,5 +834,119 @@ public extension CloudKitZone {
 
         database?.add(op)
     }
+
+	// MARK: - Async Wrappers
+
+	func createZoneRecord() async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			createZoneRecord { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func query(_ ckQuery: CKQuery, desiredKeys: [String]? = nil) async throws -> [CKRecord] {
+		try await withCheckedThrowingContinuation { continuation in
+			query(ckQuery, desiredKeys: desiredKeys) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func fetch(externalID: String?) async throws -> CKRecord {
+		try await withCheckedThrowingContinuation { continuation in
+			fetch(externalID: externalID) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func save(_ record: CKRecord) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			save(record) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func save(_ records: [CKRecord]) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			save(records) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func saveIfNew(_ records: [CKRecord]) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			saveIfNew(records) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func save(_ subscription: CKSubscription) async throws -> CKSubscription {
+		try await withCheckedThrowingContinuation { continuation in
+			save(subscription) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func delete(ckQuery: CKQuery) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			delete(ckQuery: ckQuery) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func delete(recordID: CKRecord.ID) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			delete(recordID: recordID) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func delete(recordIDs: [CKRecord.ID]) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			delete(recordIDs: recordIDs) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func delete(externalID: String?) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			delete(externalID: externalID) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func delete(subscriptionID: String) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			delete(subscriptionID: subscriptionID) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID]) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func fetchChangesInZone() async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			fetchChangesInZone { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
 
 }

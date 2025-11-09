@@ -36,13 +36,12 @@ final class CloudKitRemoteNotificationOperation: MainThreadOperation {
 			return
 		}
 
-		Self.logger.debug("iCloud: Processing remote notification")
-
-		accountZone.receiveRemoteNotification(userInfo: userInfo) {
-			articlesZone.receiveRemoteNotification(userInfo: self.userInfo) {
-				Self.logger.debug("iCloud: Finished processing remote notification")
-				self.operationDelegate?.operationDidComplete(self)
-			}
+		Task { @MainActor in
+			Self.logger.debug("iCloud: Processing remote notification")
+			await accountZone.receiveRemoteNotification(userInfo: userInfo)
+			await articlesZone.receiveRemoteNotification(userInfo: self.userInfo)
+			Self.logger.debug("iCloud: Finished processing remote notification")
+			self.operationDelegate?.operationDidComplete(self)
 		}
 	}
 }
