@@ -10,7 +10,7 @@ import Foundation
 
 // Thread safety is up to the caller.
 
-public struct BinaryDiskCache {
+public struct BinaryDiskCache: Sendable {
 
 	public let folder: String
 
