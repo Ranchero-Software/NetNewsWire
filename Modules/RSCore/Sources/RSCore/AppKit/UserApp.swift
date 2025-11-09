@@ -130,7 +130,7 @@ public final class UserApp {
 		// Does not automatically launch the app first.
 
 		updateStatus()
-		return runningApplication?.activate(options: [.activateIgnoringOtherApps]) ?? false
+		return runningApplication?.activate() ?? false
 	}
 
 	public func targetDescriptor() -> NSAppleEventDescriptor? {
