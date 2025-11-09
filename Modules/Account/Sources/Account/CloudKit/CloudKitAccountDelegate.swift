@@ -522,16 +522,16 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func downloadAndParseFeed(feedURL: URL, feed: Feed) async throws -> ParsedFeed {
-		let downloadResponse = try await InitialFeedDownloader.download(feedURL)
+		let (parsedFeed, response) = try await InitialFeedDownloader.download(feedURL)
 		syncProgress.completeTask()
 		feed.lastCheckDate = Date()
 
-		guard let parsedFeed = downloadResponse.parsedFeed else {
+		guard let parsedFeed else {
 			throw AccountError.createErrorNotFound
 		}
 
 		// Save conditional GET info so that first refresh uses conditional GET.
-		if let httpResponse = downloadResponse.response as? HTTPURLResponse,
+		if let httpResponse = response as? HTTPURLResponse,
 		   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
 			feed.conditionalGetInfo = conditionalGetInfo
 		}

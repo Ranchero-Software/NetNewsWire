@@ -178,8 +178,8 @@ private extension LocalAccountDelegate {
 			throw AccountError.createErrorAlreadySubscribed
 		}
 
-		let feedDownloaderResponse = try await InitialFeedDownloader.download(url)
-		guard let parsedFeed = feedDownloaderResponse.parsedFeed else {
+		let (parsedFeed, response) = try await InitialFeedDownloader.download(url)
+		guard let parsedFeed else {
 			throw AccountError.createErrorNotFound
 		}
 
@@ -187,7 +187,7 @@ private extension LocalAccountDelegate {
 		feed.lastCheckDate = Date()
 
 		// Save conditional GET info so that first refresh uses conditional GET.
-		if let httpResponse = feedDownloaderResponse.response as? HTTPURLResponse,
+		if let httpResponse = response as? HTTPURLResponse,
 		   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
 			feed.conditionalGetInfo = conditionalGetInfo
 		}
