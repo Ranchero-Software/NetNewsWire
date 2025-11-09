@@ -55,14 +55,6 @@ final class CloudKitAccountZone: CloudKitZone {
     }
 
 	@MainActor func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			importOPML(rootExternalID: rootExternalID, items: items) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	private func importOPML(rootExternalID: String, items: [RSOPMLItem], completion: @escaping (Result<Void, Error>) -> Void) {
 		var records = [CKRecord]()
 		var feedRecords = [String: CKRecord]()
 
@@ -93,7 +85,7 @@ final class CloudKitAccountZone: CloudKitZone {
 			}
 		}
 
-		save(records, completion: completion)
+		try await save(records)
 	}
 
 	///  Persist a web feed record to iCloud and return the external key
@@ -204,7 +196,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		return records.map { $0.externalID }
 	}
 
-	func findOrCreateAccount(completion: @escaping (Result<String, Error>) -> Void) {
+	private func findOrCreateAccount(completion: @escaping (Result<String, Error>) -> Void) {
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 
@@ -218,14 +210,28 @@ final class CloudKitAccountZone: CloudKitZone {
 					if !records.isEmpty {
 						completion(.success(records[0].externalID))
 					} else {
-						self.createContainer(name: "Account", isAccount: true, completion: completion)
+						Task {
+							do {
+								let externalID = try await self.createContainer(name: "Account", isAccount: true)
+								completion(.success(externalID))
+							} catch let createError {
+								completion(.failure(createError))
+							}
+						}
 					}
 				}
 			case .failure(let error):
 				switch CloudKitZoneResult.resolve(error) {
 				case .success:
 					DispatchQueue.main.async {
-						self.createContainer(name: "Account", isAccount: true, completion: completion)
+						Task {
+							do {
+								let externalID = try await self.createContainer(name: "Account", isAccount: true)
+								completion(.success(externalID))
+							} catch let createError {
+								completion(.failure(createError))
+							}
+						}
 					}
 				case .retry(let timeToWait):
 					self.retryIfPossible(after: timeToWait) {
@@ -243,15 +249,22 @@ final class CloudKitAccountZone: CloudKitZone {
 						}
 					}
 				default:
-					self.createContainer(name: "Account", isAccount: true, completion: completion)
+					Task {
+						do {
+							let externalID = try await self.createContainer(name: "Account", isAccount: true)
+							completion(.success(externalID))
+						} catch let createError {
+							completion(.failure(createError))
+						}
+					}
 				}
 			}
 		}
 
 	}
 
-	func createFolder(name: String, completion: @escaping (Result<String, Error>) -> Void) {
-		createContainer(name: name, isAccount: false, completion: completion)
+	func createFolder(name: String) async throws -> String {
+		try await createContainer(name: name, isAccount: false)
 	}
 
 	func renameFolder(_ folder: Folder, to name: String) async throws {
@@ -275,14 +288,6 @@ final class CloudKitAccountZone: CloudKitZone {
 	func findOrCreateAccount() async throws -> String {
 		try await withCheckedThrowingContinuation { continuation in
 			findOrCreateAccount { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func createFolder(name: String) async throws -> String {
-		try await withCheckedThrowingContinuation { continuation in
-			createFolder(name: name) { result in
 				continuation.resume(with: result)
 			}
 		}
@@ -312,19 +317,13 @@ private extension CloudKitAccountZone {
 		return record
 	}
 
-	func createContainer(name: String, isAccount: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+	func createContainer(name: String, isAccount: Bool) async throws -> String {
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
 		record[CloudKitContainer.Fields.name] = name
 		record[CloudKitContainer.Fields.isAccount] = isAccount ? "1" : "0"
 
-		save(record) { result in
-			switch result {
-			case .success:
-				completion(.success(record.externalID))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await save(record)
+		return record.externalID
 	}
 
 }
