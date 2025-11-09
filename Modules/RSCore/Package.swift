@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
 	name: "RSCore",
-	platforms: [.macOS(.v13), .iOS(.v17)],
+	platforms: [.macOS(.v14), .iOS(.v17)],
 	products: [
 		.library(name: "RSCore", type: .dynamic, targets: ["RSCore"]),
 		.library(name: "RSCoreObjC", type: .dynamic, targets: ["RSCoreObjC"]),

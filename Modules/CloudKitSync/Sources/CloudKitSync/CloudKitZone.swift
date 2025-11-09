@@ -28,7 +28,7 @@ public enum CloudKitZoneError: LocalizedError {
 }
 
 public protocol CloudKitZoneDelegate: AnyObject {
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void);
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws
 }
 
 public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
@@ -774,29 +774,25 @@ public extension CloudKitZone {
 
 			switch result {
 			case .success:
-				DispatchQueue.main.async {
-					self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys) { result in
-						switch result {
-						case .success:
-							self.changeToken = savedChangeToken
-							completion(.success(()))
-						case .failure(let error):
-							completion(.failure(error))
-						}
+				Task { @MainActor in
+					do {
+						try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
+						self.changeToken = savedChangeToken
+						completion(.success(()))
+					} catch {
+						completion(.failure(error))
 					}
 				}
 			case .failure(let error):
 				switch CloudKitZoneResult.resolve(error) {
 				case .success:
-					DispatchQueue.main.async {
-						self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys) { result in
-							switch result {
-							case .success:
-								self.changeToken = savedChangeToken
-								completion(.success(()))
-							case .failure(let error):
-								completion(.failure(error))
-							}
+					Task { @MainActor in
+						do {
+							try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
+							self.changeToken = savedChangeToken
+							completion(.success(()))
+						} catch {
+							completion(.failure(error))
 						}
 					}
 				case .zoneNotFound:

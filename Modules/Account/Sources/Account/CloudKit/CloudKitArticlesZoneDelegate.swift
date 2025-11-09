@@ -24,7 +24,6 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	weak var account: Account?
 	var syncDatabase: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
-	var compressionQueue = DispatchQueue(label: "Articles Zone Delegate Compression Queue")
 
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
 		self.account = account
@@ -32,46 +31,38 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		self.articlesZone = articlesZone
 	}
 
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
-		Task { @MainActor in
-			do {
-				let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
-				let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
-
-				self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-					self.update(records: changed,
-								pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-								pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-								completion: completion)
-				}
-			} catch {
-				Self.logger.error("CloudKit: Error getting sync status records: \(error.localizedDescription)")
-				completion(.failure(CloudKitZoneError.unknown))
-			}
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+		do {
+			let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
+			let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
+			
+			await delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
+			try await update(records: changed,
+							 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+							 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
+		} catch {
+			Self.logger.error("CloudKit: Error getting sync status records: \(error.localizedDescription)")
+			throw CloudKitZoneError.unknown
 		}
 	}
 }
 
 private extension CloudKitArticlesZoneDelegate {
 
-	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping () -> Void) {
+	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>) async {
 		let receivedRecordIDs = recordKeys.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticleStatus.recordType }).map({ $0.recordID })
 		let receivedArticleIDs = Set(receivedRecordIDs.map({ stripPrefix($0.externalID) }))
 		let deletableArticleIDs = receivedArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 
 		guard !deletableArticleIDs.isEmpty else {
-			completion()
 			return
 		}
 
-		Task { @MainActor in
-			try? await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
-			try? await account?.delete(articleIDs: deletableArticleIDs)
-			completion()
-		}
+		try? await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
+		try? await account?.delete(articleIDs: deletableArticleIDs)
 	}
 
-	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
+	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>) async throws {
 
 		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ stripPrefix($0.externalID) }))
 		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ stripPrefix($0.externalID) }))
@@ -83,83 +74,72 @@ private extension CloudKitArticlesZoneDelegate {
 		let updateableUnstarredArticleIDs = receivedUnstarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 		let updateableStarredArticleIDs = receivedStarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 
-		var errorOccurred = false
-		let group = DispatchGroup()
-
-		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				Self.logger.error("CloudKit: Error while storing unread statuses: \(databaseError.localizedDescription)")
-			}
-			group.leave()
-		}
-
-		group.enter()
-		account?.markAsRead(updateableReadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				Self.logger.error("CloudKit: Error while storing read statuses: \(databaseError.localizedDescription)")
-			}
-			group.leave()
-		}
-
-		group.enter()
-		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				Self.logger.error("CloudKit: Error while storing unstarred statuses: \(databaseError.localizedDescription)")
-			}
-			group.leave()
-		}
-
-		group.enter()
-		account?.markAsStarred(updateableStarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				Self.logger.error("CloudKit: Error while storing starred statuses: \(databaseError.localizedDescription)")
-			}
-			group.leave()
-		}
-
-		group.enter()
-		compressionQueue.async {
+		// Parse items on background thread
+		let feedIDsAndItems = await Task.detached(priority: .userInitiated) {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
-			let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+			return Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		}.value
 
-			DispatchQueue.main.async {
-				for (feedID, parsedItems) in feedIDsAndItems {
-					group.enter()
-					self.account?.update(feedID, with: parsedItems, deleteOlder: false) { result in
-						switch result {
-						case .success(let articleChanges):
-							guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
-								group.leave()
-								return
-							}
-							let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
-							Task { @MainActor in
-								try? await self.syncDatabase.insertStatuses(syncStatuses)
-								group.leave()
-							}
-						case .failure(let databaseError):
-							errorOccurred = true
-							Self.logger.error("CloudKit: Error while storing starred articles: \(databaseError.localizedDescription)")
-							group.leave()
+		var errorOccurred = false
+
+		await withTaskGroup(of: Void.self) { group in
+			group.addTask { @MainActor in
+				do {
+					try await self.account?.markAsUnread(updateableUnreadArticleIDs)
+				} catch {
+					errorOccurred = true
+					Self.logger.error("CloudKit: Error while storing unread statuses: \(error.localizedDescription)")
+				}
+			}
+
+			group.addTask { @MainActor in
+				do {
+					try await self.account?.markAsRead(updateableReadArticleIDs)
+				} catch {
+					errorOccurred = true
+					Self.logger.error("CloudKit: Error while storing read statuses: \(error.localizedDescription)")
+				}
+			}
+
+			group.addTask { @MainActor in
+				do {
+					try await self.account?.markAsUnstarred(updateableUnstarredArticleIDs)
+				} catch {
+					errorOccurred = true
+					Self.logger.error("CloudKit: Error while storing unstarred statuses: \(error.localizedDescription)")
+				}
+			}
+
+			group.addTask { @MainActor in
+				do {
+					try await self.account?.markAsStarred(updateableStarredArticleIDs)
+				} catch {
+					errorOccurred = true
+					Self.logger.error("CloudKit: Error while storing starred statuses: \(error.localizedDescription)")
+				}
+			}
+
+			for (feedID, parsedItems) in feedIDsAndItems {
+				group.addTask { @MainActor in
+					do {
+						guard let articleChanges = try await self.account?.update(feedID, with: parsedItems, deleteOlder: false) else {
+							return
 						}
+						guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
+							return
+						}
+						let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
+						try? await self.syncDatabase.insertStatuses(syncStatuses)
+					} catch {
+						errorOccurred = true
+						Self.logger.error("CloudKit: Error while storing starred articles: \(error.localizedDescription)")
 					}
 				}
-				group.leave()
 			}
-
 		}
 
-		group.notify(queue: DispatchQueue.main) {
-			if errorOccurred {
-				completion(.failure(CloudKitZoneError.unknown))
-			} else {
-				completion(.success(()))
-			}
+		if errorOccurred {
+			throw CloudKitZoneError.unknown
 		}
 	}
 
@@ -224,5 +204,4 @@ private extension CloudKitArticlesZoneDelegate {
 
 		return parsedItem
 	}
-
 }

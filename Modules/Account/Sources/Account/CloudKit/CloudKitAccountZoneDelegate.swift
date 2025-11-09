@@ -28,7 +28,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		self.articlesZone = articlesZone
 	}
 
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
 		for deletedRecordKey in deleted {
 			switch deletedRecordKey.recordType {
 			case CloudKitAccountZone.CloudKitFeed.recordType:
@@ -50,8 +50,6 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 				assertionFailure("Unknown record type: \(changedRecord.recordType)")
 			}
 		}
-
-		completion(.success(()))
 	}
 
 	func addOrUpdateFeed(_ record: CKRecord) {

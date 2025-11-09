@@ -830,6 +830,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		update(feed.feedID, with: parsedItems, completion: completion)
 	}
 
+	@MainActor func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
+		try await withCheckedThrowingContinuation { continuation in
+			update(feedID, with: parsedItems, deleteOlder: deleteOlder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+	
 	func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
