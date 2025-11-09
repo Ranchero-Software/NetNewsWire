@@ -43,6 +43,18 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		urlSession.invalidateAndCancel()
 	}
 
+	public func download(_ url: URL) async throws -> (Data?, URLResponse?) {
+		try await withCheckedThrowingContinuation { continuation in
+			download(url) { data, response, error in
+				if let error {
+					continuation.resume(throwing: error)
+				} else {
+					continuation.resume(returning: (data, response))
+				}
+			}
+		}
+	}
+
 	public func download(_ url: URL, _ callback: @escaping DownloadCallback) {
 		assert(Thread.isMainThread)
 		download(URLRequest(url: url), callback)
