@@ -11,7 +11,7 @@ import Foundation
 import RSParserObjC
 #endif
 
-public enum FeedType {
+public enum FeedType: Sendable {
 	case rss
 	case atom
 	case jsonFeed

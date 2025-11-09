@@ -8,8 +8,7 @@
 
 import Foundation
 
-public struct ParsedHub: Hashable {
-
+public struct ParsedHub: Hashable, Sendable {
 	public let type: String
 	public let url: String
 }
