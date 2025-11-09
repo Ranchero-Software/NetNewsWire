@@ -333,6 +333,88 @@ final class CloudKitAccountZone: CloudKitZone {
 		delete(externalID: folder.externalID, completion: completion)
 	}
 
+	// MARK: - Async Wrappers
+
+	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container) async throws -> String {
+		try await withCheckedThrowingContinuation { continuation in
+			createFeed(url: url, name: name, editedName: editedName, homePageURL: homePageURL, container: container) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func renameFeed(_ feed: Feed, editedName: String?) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			renameFeed(feed, editedName: editedName) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func removeFeed(_ feed: Feed, from: Container) async throws -> Bool {
+		try await withCheckedThrowingContinuation { continuation in
+			removeFeed(feed, from: from) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func moveFeed(_ feed: Feed, from: Container, to: Container) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			moveFeed(feed, from: from, to: to) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func addFeed(_ feed: Feed, to: Container) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			addFeed(feed, to: to) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func findFeedExternalIDs(for folder: Folder) async throws -> [String] {
+		try await withCheckedThrowingContinuation { continuation in
+			findFeedExternalIDs(for: folder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func findOrCreateAccount() async throws -> String {
+		try await withCheckedThrowingContinuation { continuation in
+			findOrCreateAccount { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func createFolder(name: String) async throws -> String {
+		try await withCheckedThrowingContinuation { continuation in
+			createFolder(name: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func renameFolder(_ folder: Folder, to name: String) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			renameFolder(folder, to: name) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func removeFolder(_ folder: Folder) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			removeFolder(folder) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 }
 
 private extension CloudKitAccountZone {

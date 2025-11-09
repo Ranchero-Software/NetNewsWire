@@ -208,7 +208,7 @@ final class ReaderAPICaller {
 		let newTagName = "user/-/label/\(encodedNewName)"
 		let postData = "T=\(token)&s=\(oldTagName)&dest=\(newTagName)".data(using: String.Encoding.utf8)
 
-		try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
 	public func deleteTag(folderExternalID: String) async throws {
@@ -226,7 +226,7 @@ final class ReaderAPICaller {
 
 		let postData = "T=\(token)&s=\(folderExternalID)".data(using: String.Encoding.utf8)
 
-		try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
 	public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
@@ -314,7 +314,7 @@ final class ReaderAPICaller {
 
 		let postData = "T=\(token)&s=\(subscriptionID)&ac=unsubscribe".data(using: String.Encoding.utf8)
 
-		try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
 	public func createTagging(subscriptionID: String, tagName: String) async throws {
@@ -360,7 +360,7 @@ final class ReaderAPICaller {
 		}
 		let postData = postString.data(using: String.Encoding.utf8)
 
-		try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
 	public func retrieveEntries(articleIDs: [String]) async throws -> [ReaderAPIEntry]? {
@@ -565,6 +565,6 @@ private extension ReaderAPICaller {
 
 		let postData = "T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".data(using: String.Encoding.utf8)
 
-		try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 }

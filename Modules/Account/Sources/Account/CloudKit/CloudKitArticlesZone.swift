@@ -159,6 +159,40 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 	}
 
+	// MARK: - Async Wrappers
+
+	func refreshArticles() async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			refreshArticles { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func saveNewArticles(_ articles: Set<Article>) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			saveNewArticles(articles) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func deleteArticles(_ feedExternalID: String) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			deleteArticles(feedExternalID) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate]) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			modifyArticles(statusUpdates) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 }
 
 private extension CloudKitArticlesZone {
