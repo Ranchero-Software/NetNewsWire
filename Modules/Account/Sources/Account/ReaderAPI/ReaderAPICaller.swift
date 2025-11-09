@@ -15,7 +15,7 @@ enum CreateReaderAPISubscriptionResult {
 	case notFound
 }
 
-final class ReaderAPICaller: NSObject {
+final class ReaderAPICaller {
 
 	enum ItemIDType {
 		case unread
@@ -47,7 +47,7 @@ final class ReaderAPICaller: NSObject {
 		case editTag = "/reader/api/0/edit-tag"
 	}
 
-	private var transport: Transport!
+	private let transport: Transport
 	private let uriComponentAllowed: CharacterSet
 
 	private var accessToken: String?
@@ -84,115 +84,88 @@ final class ReaderAPICaller: NSObject {
 		urlHostAllowed.remove("+")
 		urlHostAllowed.remove("&")
 		uriComponentAllowed = urlHostAllowed
-		super.init()
 	}
 
 	func cancelAll() {
 		transport.cancelAll()
 	}
 
-	func validateCredentials(endpoint: URL) async throws -> Credentials? {
-		try await withCheckedThrowingContinuation { continuation in
-			validateCredentials(endpoint: endpoint) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
+	public func validateCredentials(endpoint: URL) async throws -> Credentials? {
 
-	func validateCredentials(endpoint: URL, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		guard let credentials = credentials else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+		guard let credentials else {
+			throw CredentialsError.incompleteCredentials
 		}
 
-		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), credentials: credentials)
+		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		transport.send(request: request) { result in
-			switch result {
-			case .success(let (_, data)):
-				guard let resultData = data else {
-					completion(.failure(TransportError.noData))
-					break
-				}
+		do {
+			let (_, data) = try await transport.send(request: request)
 
-				// Convert the return data to UTF8 and then parse out the Auth token
-				guard let rawData = String(data: resultData, encoding: .utf8) else {
-					completion(.failure(TransportError.noData))
-					break
-				}
+			guard let data else {
+				throw TransportError.noData
+			}
 
-				var authData: [String: String] = [:]
-				rawData.split(separator: "\n").forEach({ (line: Substring) in
-					let items = line.split(separator: "=").map{String($0)}
-					if items.count == 2 {
-						authData[items[0]] = items[1]
-					}
-				})
+			// Convert the return data to UTF8 and then parse out the Auth token
+			guard let rawData = String(data: data, encoding: .utf8) else {
+				throw TransportError.noData
+			}
 
-				guard let authString = authData["Auth"] else {
-					completion(.failure(CredentialsError.incompleteCredentials))
-					break
-				}
-
-				// Save Auth Token for later use
-				self.credentials = Credentials(type: .readerAPIKey, username: credentials.username, secret: authString)
-
-				completion(.success(self.credentials))
-			case .failure(let error):
-				if let transportError = error as? TransportError, case .httpError(let code) = transportError, code == 404 {
-					completion(.failure(ReaderAPIAccountDelegateError.urlNotFound))
-				} else {
-					completion(.failure(error))
+			var authData: [String: String] = [:]
+			for line in rawData.split(separator: "\n") {
+				let items = line.split(separator: "=").map { String($0) }
+				if items.count == 2 {
+					authData[items[0]] = items[1]
 				}
 			}
-		}
 
+			guard let authString = authData["Auth"] else {
+				throw CredentialsError.incompleteCredentials
+			}
+
+			// Save Auth Token for later use
+			self.credentials = Credentials(type: .readerAPIKey, username: credentials.username, secret: authString)
+
+			return self.credentials
+
+		} catch {
+			if let transportError = error as? TransportError, case .httpError(let code) = transportError, code == 404 {
+				throw AccountError.urlNotFound
+			} else {
+				throw error
+			}
+		}
 	}
 
-	func requestAuthorizationToken(endpoint: URL, completion: @escaping (Result<String, Error>) -> Void) {
+	func requestAuthorizationToken(endpoint: URL) async throws -> String {
 		// If we have a token already, use it
-		if let accessToken = accessToken {
-			completion(.success(accessToken))
-			return
+		if let accessToken {
+			return accessToken
 		}
 
 		// Otherwise request one.
-		guard let credentials = credentials else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+		guard let credentials else {
+			throw CredentialsError.incompleteCredentials
 		}
 
-		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.token.rawValue), credentials: credentials)
+		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.token.rawValue), readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		transport.send(request: request) { result in
-			switch result {
-			case .success(let (_, data)):
-				guard let resultData = data else {
-					completion(.failure(TransportError.noData))
-					break
-				}
+		let (_, data) = try await transport.send(request: request)
 
-				// Convert the return data to UTF8 and then parse out the Auth token
-				guard let accessToken = String(data: resultData, encoding: .utf8) else {
-					completion(.failure(TransportError.noData))
-					break
-				}
-
-				self.accessToken = accessToken
-				completion(.success(accessToken))
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		// Convert the return data to UTF8 and then parse out the Auth token
+		guard let data, let accessToken = String(data: data, encoding: .utf8) else {
+			throw TransportError.noData
 		}
+
+		self.accessToken = accessToken
+		return accessToken
 	}
 
+	public func retrieveTags() async throws -> [ReaderAPITag]? {
 
-	func retrieveTags(completion: @escaping (Result<[ReaderAPITag]?, Error>) -> Void) {
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
 		var url = baseURL
@@ -204,108 +177,62 @@ final class ReaderAPICaller: NSObject {
 		}
 
 		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
+			throw TransportError.noURL
 		}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		transport.send(request: request, resultType: ReaderAPITagContainer.self) { result in
-			switch result {
-			case .success(let (_, wrapper)):
-				completion(.success(wrapper?.tags))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-
+		let (_, wrapper) = try await transport.send(request: request, resultType: ReaderAPITagContainer.self)
+		return wrapper?.tags
 	}
 
-	func renameTag(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func renameTag(oldName: String, newName: String) async throws {
+
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
-		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-			switch result {
-			case .success(let token):
-				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.renameTag.rawValue), credentials: self.credentials)
-				self.addVariantHeaders(&request)
-				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-				request.httpMethod = "POST"
+		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
-				guard let encodedOldName = self.encodeForURLPath(oldName), let encodedNewName = self.encodeForURLPath(newName) else {
-					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-					return
-				}
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.renameTag.rawValue), readerAPICredentials: self.credentials)
+		self.addVariantHeaders(&request)
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
+		request.httpMethod = "POST"
 
-				let oldTagName = "user/-/label/\(encodedOldName)"
-				let newTagName = "user/-/label/\(encodedNewName)"
-				let postData = "T=\(token)&s=\(oldTagName)&dest=\(newTagName)".data(using: String.Encoding.utf8)
-
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
-					switch result {
-					case .success:
-						completion(.success(()))
-						break
-					case .failure(let error):
-						completion(.failure(error))
-						break
-					}
-				})
-
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		guard let encodedOldName = self.encodeForURLPath(oldName), let encodedNewName = self.encodeForURLPath(newName) else {
+			throw AccountError.invalidParameter
 		}
+
+		let oldTagName = "user/-/label/\(encodedOldName)"
+		let newTagName = "user/-/label/\(encodedNewName)"
+		let postData = "T=\(token)&s=\(oldTagName)&dest=\(newTagName)".data(using: String.Encoding.utf8)
+
+		try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
-	func deleteTag(folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func deleteTag(folderExternalID: String) async throws {
+
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
-		guard let folderExternalID = folder.externalID else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			return
-		}
+		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
 
-		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-			switch result {
-			case .success(let token):
-				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.disableTag.rawValue), credentials: self.credentials)
-				self.addVariantHeaders(&request)
-				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-				request.httpMethod = "POST"
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.disableTag.rawValue), readerAPICredentials: self.credentials)
+		self.addVariantHeaders(&request)
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
+		request.httpMethod = "POST"
 
-				let postData = "T=\(token)&s=\(folderExternalID)".data(using: String.Encoding.utf8)
+		let postData = "T=\(token)&s=\(folderExternalID)".data(using: String.Encoding.utf8)
 
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
-					switch result {
-					case .success:
-						completion(.success(()))
-						break
-					case .failure(let error):
-						completion(.failure(error))
-						break
-					}
-				})
-
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
-	func retrieveSubscriptions(completion: @escaping (Result<[ReaderAPISubscription]?, Error>) -> Void) {
+	public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
+
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
 		let url = baseURL
@@ -313,259 +240,171 @@ final class ReaderAPICaller: NSObject {
 			.appendingQueryItem(URLQueryItem(name: "output", value: "json"))
 
 		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
+			throw TransportError.noURL
 		}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		transport.send(request: request, resultType: ReaderAPISubscriptionContainer.self) { result in
-			switch result {
-			case .success(let (_, container)):
-				completion(.success(container?.subscriptions))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		let (_, container) = try await transport.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
+		return container?.subscriptions
 	}
 
-	func createSubscription(url: String, name: String?, folder: Folder?, completion: @escaping (Result<CreateReaderAPISubscriptionResult, Error>) -> Void) {
+	public func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
+
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
-		func findSubscription(streamID: String, completion: @escaping (Result<CreateReaderAPISubscriptionResult, Error>) -> Void) {
-			// There is no call to get a single subscription entry, so we get them all,
-			// look up the one we just subscribed to and return that
-			self.retrieveSubscriptions(completion: { (result) in
-				switch result {
-				case .success(let subscriptions):
-					guard let subscriptions = subscriptions else {
-						completion(.failure(AccountError.createErrorNotFound))
-						return
-					}
+		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
 
-					guard let subscription = subscriptions.first(where: { (sub) -> Bool in
-						sub.feedID == streamID
-					}) else {
-						completion(.failure(AccountError.createErrorNotFound))
-						return
-					}
+		let callURL = baseURL
+			.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue)
 
-					completion(.success(.created(subscription)))
+		var request = URLRequest(url: callURL, readerAPICredentials: self.credentials)
+		self.addVariantHeaders(&request)
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
+		request.httpMethod = "POST"
 
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			})
+		guard let encodedFeedURL = self.encodeForURLPath(url) else {
+			throw AccountError.invalidParameter
 		}
 
+		let postData = "T=\(token)&quickadd=\(encodedFeedURL)".data(using: String.Encoding.utf8)
 
-		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-			switch result {
-			case .success(let token):
-				let callURL = baseURL
-					.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue)
+		let (_, subResult) = try await self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIQuickAddResult.self)
 
-				var request = URLRequest(url: callURL, credentials: self.credentials)
-				self.addVariantHeaders(&request)
-				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-				request.httpMethod = "POST"
-
-				guard let encodedFeedURL = self.encodeForURLPath(url) else {
-					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-					return
-				}
-				let postData = "T=\(token)&quickadd=\(encodedFeedURL)".data(using: String.Encoding.utf8)
-
-				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIQuickAddResult.self, completion: { (result) in
-					switch result {
-					case .success(let (_, subResult)):
-
-						switch subResult?.numResults {
-						case 0:
-							completion(.success(.notFound))
-						default:
-							guard let streamId = subResult?.streamId else {
-								completion(.failure(AccountError.createErrorNotFound))
-								return
-							}
-
-							findSubscription(streamID: streamId, completion: completion)
-						}
-
-					case .failure(let error):
-						completion(.failure(error))
-					}
-
-				})
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-
+		guard let subResult else {
+			return .notFound
+		}
+		if subResult.numResults == 0 {
+			return .notFound
 		}
 
+		// There is no call to get a single subscription entry, so we get them all,
+		// look up the one we just subscribed to and return that
+		guard let subscriptions = try await retrieveSubscriptions() else {
+			throw AccountError.createErrorNotFound
+		}
+		guard let subscription = subscriptions.first(where: { $0.feedID == subResult.streamId }) else {
+			throw AccountError.createErrorNotFound
+		}
+
+		return .created(subscription)
 	}
 
-	func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		changeSubscription(subscriptionID: subscriptionID, title: newName, completion: completion)
+
+	public func renameSubscription(subscriptionID: String, newName: String) async throws {
+
+		try await changeSubscription(subscriptionID: subscriptionID, title: newName)
 	}
 
-	func deleteSubscription(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	public func deleteSubscription(subscriptionID: String) async throws {
+
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
-		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-			switch result {
-			case .success(let token):
-				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
-				self.addVariantHeaders(&request)
-				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-				request.httpMethod = "POST"
+		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
 
-				let postData = "T=\(token)&s=\(subscriptionID)&ac=unsubscribe".data(using: String.Encoding.utf8)
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
+		self.addVariantHeaders(&request)
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
+		request.httpMethod = "POST"
 
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
-					switch result {
-					case .success:
-						completion(.success(()))
-						break
-					case .failure(let error):
-						completion(.failure(error))
-						break
-					}
-				})
+		let postData = "T=\(token)&s=\(subscriptionID)&ac=unsubscribe".data(using: String.Encoding.utf8)
 
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
-	func createTagging(subscriptionID: String, tagName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		changeSubscription(subscriptionID: subscriptionID, addTagName: tagName, completion: completion)
+	public func createTagging(subscriptionID: String, tagName: String) async throws {
+
+		try await changeSubscription(subscriptionID: subscriptionID, addTagName: tagName)
 	}
 
-	func deleteTagging(subscriptionID: String, tagName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		changeSubscription(subscriptionID: subscriptionID, removeTagName: tagName, completion: completion)
+	public func deleteTagging(subscriptionID: String, tagName: String) async throws {
+
+		try await changeSubscription(subscriptionID: subscriptionID, removeTagName: tagName)
 	}
 
-	func moveSubscription(subscriptionID: String, fromTag: String, toTag: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		changeSubscription(subscriptionID: subscriptionID, removeTagName: fromTag, addTagName: toTag, completion: completion)
+	public func moveSubscription(subscriptionID: String, sourceTag: String, destinationTag: String) async throws {
+
+		try await changeSubscription(subscriptionID: subscriptionID, removeTagName: sourceTag, addTagName: destinationTag)
 	}
 
-	private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil) async throws {
+
 		guard removeTagName != nil || addTagName != nil || title != nil else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
-
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
-		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-			switch result {
-			case .success(let token):
-				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
-				self.addVariantHeaders(&request)
-				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-				request.httpMethod = "POST"
+		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
-				var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
-				if let fromLabel = self.encodeForURLPath(removeTagName) {
-					postString += "&r=user/-/label/\(fromLabel)"
-				}
-				if let toLabel = self.encodeForURLPath(addTagName) {
-					postString += "&a=user/-/label/\(toLabel)"
-				}
-				if let encodedTitle = self.encodeForURLPath(title) {
-					postString += "&t=\(encodedTitle)"
-				}
-				let postData = postString.data(using: String.Encoding.utf8)
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
+		self.addVariantHeaders(&request)
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
+		request.httpMethod = "POST"
 
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
-					switch result {
-					case .success:
-						completion(.success(()))
-						break
-					case .failure(let error):
-						completion(.failure(error))
-						break
-					}
-				})
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
+		if let fromLabel = self.encodeForURLPath(removeTagName) {
+			postString += "&r=user/-/label/\(fromLabel)"
 		}
+		if let toLabel = self.encodeForURLPath(addTagName) {
+			postString += "&a=user/-/label/\(toLabel)"
+		}
+		if let encodedTitle = self.encodeForURLPath(title) {
+			postString += "&t=\(encodedTitle)"
+		}
+		let postData = postString.data(using: String.Encoding.utf8)
+
+		try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
-	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([ReaderAPIEntry]?), Error>) -> Void) {
+	public func retrieveEntries(articleIDs: [String]) async throws -> [ReaderAPIEntry]? {
 
 		guard !articleIDs.isEmpty else {
-			completion(.success(([ReaderAPIEntry]())))
-			return
+			return [ReaderAPIEntry]()
 		}
-
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
-		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-			switch result {
-			case .success(let token):
-				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), credentials: self.credentials)
-				self.addVariantHeaders(&request)
-				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-				request.httpMethod = "POST"
+		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
-				// Get ids from above into hex representation of value
-				let idsToFetch = articleIDs.map({ articleID -> String in
-					if self.variant == .theOldReader {
-						return "i=tag:google.com,2005:reader/item/\(articleID)"
-					} else {
-						let idValue = Int(articleID)!
-						let idHexString = String(idValue, radix: 16, uppercase: false)
-						return "i=tag:google.com,2005:reader/item/\(idHexString)"
-					}
-				}).joined(separator:"&")
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), readerAPICredentials: self.credentials)
+		self.addVariantHeaders(&request)
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
+		request.httpMethod = "POST"
 
-				let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
-
-				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
-					switch result {
-					case .success(let (_, entryWrapper)):
-						guard let entryWrapper = entryWrapper else {
-							completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
-							return
-						}
-
-						completion(.success((entryWrapper.entries)))
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				})
-
-
-			case .failure(let error):
-				completion(.failure(error))
+		// Get ids from above into hex representation of value
+		let idsToFetch = articleIDs.map({ articleID -> String in
+			if self.variant == .theOldReader {
+				return "i=tag:google.com,2005:reader/item/\(articleID)"
+			} else {
+				let idValue = Int(articleID)!
+				let idHexString = String(idValue, radix: 16, uppercase: false)
+				return "i=tag:google.com,2005:reader/item/\(idHexString)"
 			}
+		}).joined(separator:"&")
+
+		let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
+
+		let (_, entryWrapper) = try await transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self)
+
+		guard let entryWrapper else {
+			throw AccountError.invalidResponse
 		}
 
+		return entryWrapper.entries
 	}
 
-	func retrieveItemIDs(type: ItemIDType, feedID: String? = nil, completion: @escaping ((Result<[String], Error>) -> Void)) {
+	public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil) async throws -> [String] {
+
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
 		var queryItems = [
@@ -587,9 +426,8 @@ final class ReaderAPICaller: NSObject {
 			queryItems.append(URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))))
 			queryItems.append(URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue))
 		case .allForFeed:
-			guard let feedID = feedID else {
-				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-				return
+			guard let feedID else {
+				throw AccountError.invalidParameter
 			}
 			let sinceTimeInterval = (Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()).timeIntervalSince1970
 			queryItems.append(URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))))
@@ -606,42 +444,36 @@ final class ReaderAPICaller: NSObject {
 			.appendingQueryItems(queryItems)
 
 		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
+			throw TransportError.noURL
 		}
 
-		var request: URLRequest = URLRequest(url: callURL, credentials: credentials)
+		var request: URLRequest = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
-			switch result {
-			case .success(let (response, entries)):
-				guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
-					completion(.success([String]()))
-					return
-				}
-				let dateInfo = HTTPDateInfo(urlResponse: response)
-				let itemIDs = entriesItemRefs.compactMap { $0.itemId }
-				self.retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, completion: completion)
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		let (response, entries) = try await transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+
+		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
+			return [String]()
 		}
+
+		let dateInfo = HTTPDateInfo(urlResponse: response)
+		let itemIDs = entriesItemRefs.compactMap { $0.itemId }
+
+		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation)
 	}
 
-	func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?, completion: @escaping ((Result<[String], Error>) -> Void)) {
-		guard let continuation = continuation else {
+	func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?) async throws -> [String] {
+
+		guard let continuation else {
 			if type == .allForAccount {
 				self.accountMetadata?.lastArticleFetchStartTime = dateInfo?.date
 				self.accountMetadata?.lastArticleFetchEndTime = Date()
 			}
-			completion(.success(itemIDs))
-			return
+			return itemIDs
 		}
 
 		guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
 
 		var queryItems = urlComponents.queryItems!.filter({ $0.name != "c" })
@@ -649,45 +481,43 @@ final class ReaderAPICaller: NSObject {
 		urlComponents.queryItems = queryItems
 
 		guard let callURL = urlComponents.url else {
-			completion(.failure(TransportError.noURL))
-			return
+			throw TransportError.noURL
 		}
 
-		var request: URLRequest = URLRequest(url: callURL, credentials: credentials)
+		var request: URLRequest = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
-			switch result {
-			case .success(let (_, entries)):
-				guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
-					self.retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, completion: completion)
-					return
-				}
-				var totalItemIDs = itemIDs
-				totalItemIDs.append(contentsOf: entriesItemRefs.compactMap { $0.itemId })
-				self.retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation, completion: completion)
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		let (_, entries) = try await self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+
+		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
+			return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation)
 		}
+
+		var totalItemIDs = itemIDs
+		totalItemIDs.append(contentsOf: entriesItemRefs.compactMap { $0.itemId })
+
+		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation)
 	}
 
-	func createUnreadEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		updateStateToEntries(entries: entries, state: .read, add: false, completion: completion)
+	public func createUnreadEntries(entries: [String]) async throws {
+
+		try await updateStateToEntries(entries: entries, state: .read, add: false)
 	}
 
-	func deleteUnreadEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		updateStateToEntries(entries: entries, state: .read, add: true, completion: completion)
+	public func deleteUnreadEntries(entries: [String]) async throws {
+
+		try await updateStateToEntries(entries: entries, state: .read, add: true)
 	}
 
-	func createStarredEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		updateStateToEntries(entries: entries, state: .starred, add: true, completion: completion)
+	public func createStarredEntries(entries: [String]) async throws {
+
+		try await updateStateToEntries(entries: entries, state: .starred, add: true)
 	}
 
-	func deleteStarredEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		updateStateToEntries(entries: entries, state: .starred, add: false, completion: completion)
-	}
+	public func deleteStarredEntries(entries: [String]) async throws {
 
+		try await updateStateToEntries(entries: entries, state: .starred, add: false)
+	}
 }
 
 // MARK: Private
@@ -706,51 +536,35 @@ private extension ReaderAPICaller {
 		}
 	}
 
-	private func updateStateToEntries(entries: [String], state: ReaderState, add: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func updateStateToEntries(entries: [String], state: ReaderState, add: Bool) async throws {
+
 		guard let baseURL = apiBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
+			throw CredentialsError.incompleteCredentials
 		}
 
-		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-			switch result {
-			case .success(let token):
-				// Do POST asking for data about all the new articles
-				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.editTag.rawValue), credentials: self.credentials)
-				self.addVariantHeaders(&request)
-				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-				request.httpMethod = "POST"
+		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
-				// Get ids from above into hex representation of value
-				let idsToFetch = entries.compactMap({ idValue -> String? in
-					if self.variant == .theOldReader {
-						return "i=tag:google.com,2005:reader/item/\(idValue)"
-					} else {
-						guard let intValue = Int(idValue) else { return nil }
-						let idHexString = String(format: "%.16llx", intValue)
-						return "i=tag:google.com,2005:reader/item/\(idHexString)"
-					}
-				}).joined(separator:"&")
+		// Do POST asking for data about all the new articles
+		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.editTag.rawValue), readerAPICredentials: self.credentials)
+		self.addVariantHeaders(&request)
+		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
+		request.httpMethod = "POST"
 
-				let actionIndicator = add ? "a" : "r"
-
-				let postData = "T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".data(using: String.Encoding.utf8)
-
-				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
-					switch result {
-					case .success:
-						completion(.success(()))
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				})
-
-
-			case .failure(let error):
-				completion(.failure(error))
+		// Get ids from above into hex representation of value
+		let idsToFetch = entries.compactMap({ idValue -> String? in
+			if self.variant == .theOldReader {
+				return "i=tag:google.com,2005:reader/item/\(idValue)"
+			} else {
+				guard let intValue = Int(idValue) else { return nil }
+				let idHexString = String(format: "%.16llx", intValue)
+				return "i=tag:google.com,2005:reader/item/\(idHexString)"
 			}
-		}
+		}).joined(separator:"&")
+
+		let actionIndicator = add ? "a" : "r"
+
+		let postData = "T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".data(using: String.Encoding.utf8)
+
+		try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
-
-
 }

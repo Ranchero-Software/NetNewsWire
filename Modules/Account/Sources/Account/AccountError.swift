@@ -15,6 +15,9 @@ public enum AccountError: LocalizedError {
 	case createErrorAlreadySubscribed
 	case opmlImportInProgress
 	case invalidParameter
+	case invalidResponse
+	case urlNotFound
+	case unknown
 	case wrappedError(error: Error, account: Account)
 
 	public var account: Account? {
@@ -44,6 +47,12 @@ public enum AccountError: LocalizedError {
 			return NSLocalizedString("An OPML import for this account is already running.", comment: "Import running")
 		case .invalidParameter:
 			return NSLocalizedString("Couldn’t fulfill the request due to an invalid parameter.", comment: "Invalid parameter")
+		case .invalidResponse:
+			return NSLocalizedString("There was an invalid response from the server.", comment: "Invalid response")
+		case .urlNotFound:
+			return NSLocalizedString("The URL request resulted in a not found error.", comment: "URL not found")
+		case .unknown:
+			return NSLocalizedString("Unknown error", comment: "Unknown error")
 		case .wrappedError(let error, let account):
 			switch error {
 			case TransportError.httpError(let status):
