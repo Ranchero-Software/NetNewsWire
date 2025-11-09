@@ -71,7 +71,8 @@ private extension ImageDownloader {
 				return
 			}
 
-			self.downloadImage(url) { (image) in
+			Task { @MainActor in
+				let image = await self.downloadImage(url)
 
 				if let image = image {
 					self.cacheImage(url, image)
@@ -98,31 +99,28 @@ private extension ImageDownloader {
 		}
 	}
 
-	func downloadImage(_ url: String, _ completion: @escaping (Data?) -> Void) {
+	func downloadImage(_ url: String) async -> Data? {
 
 		guard let imageURL = URL(string: url) else {
-			completion(nil)
-			return
+			return nil
 		}
 
-		Task { @MainActor in
-			Downloader.shared.download(imageURL) { (data, response, error) in
+		do {
+			let (data, response) = try await Downloader.shared.download(imageURL)
 
-				if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-					self.saveToDisk(url, data)
-					completion(data)
-					return
-				}
-
-				if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
-					self.badURLs.insert(url)
-				}
-				if let error = error {
-					Self.logger.error("Error downloading image at \(url) \(error.localizedDescription)")
-				}
-
-				completion(nil)
+			if let data = data, !data.isEmpty, let response = response, response.statusIsOK {
+				self.saveToDisk(url, data)
+				return data
 			}
+
+			if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
+				self.badURLs.insert(url)
+			}
+
+			return nil
+		} catch {
+			Self.logger.error("Error downloading image at \(url) \(error.localizedDescription)")
+			return nil
 		}
 	}
 
