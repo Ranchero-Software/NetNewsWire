@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -17,7 +17,14 @@ let package = Package(
             name: "RSMarkdown",
             dependencies: [
                 .product(name: "Markdown", package: "swift-markdown")
-            ]),
+            ],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self),
+				.unsafeFlags(["-warnings-as-errors"])
+			]
+		),
         .testTarget(
             name: "RSMarkdownTests",
             dependencies: ["RSMarkdown"],
