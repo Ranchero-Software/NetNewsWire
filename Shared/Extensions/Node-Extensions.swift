@@ -24,7 +24,7 @@ import RSCore
 	}
 }
 
-private extension Node {
+@MainActor private extension Node {
 
 	class func nodesSortedAlphabetically(_ nodes: [Node]) -> [Node] {
 

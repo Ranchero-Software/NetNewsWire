@@ -22,7 +22,11 @@
       "Bash(dd:*)",
       "Bash(xcrun simctl list:*)",
       "Bash(timeout 600 ./buildscripts/quiet_build_and_test.sh:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "WebFetch(domain:www.donnywals.com)",
+      "WebFetch(domain:mjtsai.com)",
+      "WebFetch(domain:www.massicotte.org)",
+      "WebFetch(domain:www.hackingwithswift.com)"
     ],
     "deny": []
   }

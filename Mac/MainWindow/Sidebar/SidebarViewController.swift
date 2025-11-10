@@ -889,7 +889,7 @@ private extension SidebarViewController {
 
 }
 
-private extension Node {
+@MainActor private extension Node {
 
 	func representsSidebarObject(_ object: AnyObject) -> Bool {
 		if representedObject === object {

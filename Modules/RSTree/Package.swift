@@ -13,6 +13,11 @@ let package = Package(
 	targets: [
 		.target(
 			name: "RSTree",
-			dependencies: []),
+			dependencies: [],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self)
+			]),
 	]
 )

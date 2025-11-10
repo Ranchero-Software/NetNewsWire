@@ -222,7 +222,7 @@ private struct SidebarItemSpecifier {
 
 }
 
-private extension Node {
+@MainActor private extension Node {
 
 	func parentFolder() -> Folder? {
 

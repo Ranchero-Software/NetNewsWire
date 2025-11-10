@@ -10,7 +10,7 @@ import Foundation
 
 // Main thread only.
 
-@MainActor public final class Node: Hashable {
+public final class Node: Hashable {
 
 	public weak var parent: Node?
 	public let representedObject: AnyObject
@@ -185,8 +185,7 @@ import Foundation
 
 public extension Array where Element == Node {
 
-	@MainActor func representedObjects() -> [AnyObject] {
-
+	func representedObjects() -> [AnyObject] {
 		return self.map{ $0.representedObject }
 	}
 }

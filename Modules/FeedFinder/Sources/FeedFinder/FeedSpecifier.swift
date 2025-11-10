@@ -24,7 +24,7 @@ public struct FeedSpecifier: Hashable, Sendable {
 	public let source: Source
 	public let orderFound: Int
 	public var score: Int {
-		return calculatedScore()
+		calculatedScore()
 	}
 
 	public init(title: String?, urlString: String, source: Source, orderFound: Int) {

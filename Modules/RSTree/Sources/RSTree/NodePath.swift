@@ -8,8 +8,7 @@
 
 import Foundation
 
-@MainActor public struct NodePath {
-
+public struct NodePath {
 	let components: [Node]
 
 	public init(node: Node) {

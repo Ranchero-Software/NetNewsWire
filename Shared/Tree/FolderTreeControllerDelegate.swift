@@ -20,7 +20,7 @@ final class FolderTreeControllerDelegate: TreeControllerDelegate {
 	}
 }
 
-private extension FolderTreeControllerDelegate {
+@MainActor private extension FolderTreeControllerDelegate {
 
 	func childNodesForRootNode(_ node: Node) -> [Node]? {
 
