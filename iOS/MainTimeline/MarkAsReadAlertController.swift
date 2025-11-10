@@ -57,7 +57,9 @@ struct MarkAsReadAlertController {
 			cancelCompletion?()
 		}
 		let settingsAction = UIAlertAction(title: settingsTitle, style: .default) { _ in
-			coordinator.showSettings(scrollToArticlesSection: true)
+			Task { @MainActor in
+				coordinator.showSettings(scrollToArticlesSection: true)
+			}
 		}
 		let markAction = UIAlertAction(title: confirmTitle, style: .default, handler: completion)
 

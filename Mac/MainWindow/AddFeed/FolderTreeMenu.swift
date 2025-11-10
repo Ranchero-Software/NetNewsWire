@@ -13,7 +13,7 @@ import Account
 
 final class FolderTreeMenu {
 
-	static func createFolderPopupMenu(with rootNode: Node, restrictToSpecialAccounts: Bool = false) -> NSMenu {
+	@MainActor static func createFolderPopupMenu(with rootNode: Node, restrictToSpecialAccounts: Bool = false) -> NSMenu {
 
 		let menu = NSMenu(title: "Folders")
 		menu.autoenablesItems = false
@@ -60,7 +60,7 @@ final class FolderTreeMenu {
 		}
 	}
 
-	private static func addFolderItemsToMenuWithNodes(menu: NSMenu, nodes: [Node], indentationLevel: Int) {
+	@MainActor private static func addFolderItemsToMenuWithNodes(menu: NSMenu, nodes: [Node], indentationLevel: Int) {
 
 		nodes.forEach { (oneNode) in
 

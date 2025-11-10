@@ -12,7 +12,7 @@ public protocol SidebarItemIdentifiable {
 	var sidebarItemID: SidebarItemIdentifier? { get }
 }
 
-public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable {
+public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable, Sendable {
 
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier

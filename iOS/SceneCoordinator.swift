@@ -25,11 +25,11 @@ enum ShowFeedName {
 	case feed
 }
 
-struct FeedNode: Hashable {
-	var node: Node
-	var sidebarItemID: SidebarItemIdentifier
+struct FeedNode: Hashable, Sendable {
+	let node: Node
+	let sidebarItemID: SidebarItemIdentifier
 
-	init(_ node: Node) {
+	@MainActor init(_ node: Node) {
 		self.node = node
 		self.sidebarItemID = (node.representedObject as! SidebarItem).sidebarItemID!
 	}
@@ -39,7 +39,7 @@ struct FeedNode: Hashable {
 	}
 }
 
-final class SceneCoordinator: NSObject, UndoableCommandRunner {
+@MainActor final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
 		return rootSplitViewController.undoManager

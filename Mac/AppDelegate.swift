@@ -115,7 +115,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
+	@MainActor func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 		addFeedController = AddFeedController(hostWindow: window)
 		addFeedController?.showAddFeedSheet(urlString, name, account, folder)
 	}
@@ -455,7 +455,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
     }
 
 	// MARK: Add Feed
-	func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
+	@MainActor func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
 		createAndShowMainWindowIfNecessary()
 
 		if mainWindowController!.isDisplayingSheet {

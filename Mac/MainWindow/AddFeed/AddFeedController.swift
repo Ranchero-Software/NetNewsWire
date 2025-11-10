@@ -33,7 +33,7 @@ final class AddFeedController: AddFeedWindowControllerDelegate {
 		self.hostWindow = hostWindow
 	}
 
-	func showAddFeedSheet(_ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
+	@MainActor func showAddFeedSheet(_ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 

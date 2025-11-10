@@ -10,7 +10,7 @@ import Foundation
 
 // Main thread only.
 
-public final class Node: Hashable {
+@MainActor public final class Node: Hashable {
 
 	public weak var parent: Node?
 	public let representedObject: AnyObject
@@ -171,13 +171,13 @@ public final class Node: Hashable {
 
 	// MARK: - Hashable
 
-	public func hash(into hasher: inout Hasher) {
+	nonisolated public func hash(into hasher: inout Hasher) {
 		hasher.combine(uniqueID)
 	}
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Node, rhs: Node) -> Bool {
+	nonisolated public class func ==(lhs: Node, rhs: Node) -> Bool {
 		return lhs === rhs
 	}
 }
@@ -185,7 +185,7 @@ public final class Node: Hashable {
 
 public extension Array where Element == Node {
 
-	func representedObjects() -> [AnyObject] {
+	@MainActor func representedObjects() -> [AnyObject] {
 
 		return self.map{ $0.representedObject }
 	}

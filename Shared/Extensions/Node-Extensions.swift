@@ -11,7 +11,7 @@ import RSTree
 import Articles
 import RSCore
 
-extension Array where Element == Node {
+@MainActor extension Array where Element == Node {
 
 	func sortedAlphabetically() -> [Node] {
 

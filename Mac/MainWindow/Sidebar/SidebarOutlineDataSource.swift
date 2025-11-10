@@ -12,7 +12,7 @@ import Articles
 import RSCore
 import Account
 
-@objc final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
+@objc @MainActor final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
 
 	let treeController: TreeController
 	static let dragOperationNone = NSDragOperation(rawValue: 0)
@@ -199,7 +199,7 @@ private extension SidebarOutlineDataSource {
 		return .copy
 	}
 
-	func validateSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+	@MainActor func validateSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		// A local feed should always drag on to an Account or Folder node, and we can provide an index.
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone

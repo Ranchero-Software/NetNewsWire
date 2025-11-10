@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct NodePath {
+@MainActor public struct NodePath {
 
 	let components: [Node]
 

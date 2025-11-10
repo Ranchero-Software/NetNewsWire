@@ -8,14 +8,14 @@
 
 import Foundation
 
-public protocol TreeControllerDelegate: AnyObject {
+@MainActor public protocol TreeControllerDelegate: AnyObject {
 
 	func treeController(treeController: TreeController, childNodesFor: Node) -> [Node]?
 }
 
 public typealias NodeVisitBlock = (_ : Node) -> Void
 
-public final class TreeController {
+@MainActor public final class TreeController {
 
 	private weak var delegate: TreeControllerDelegate?
 	public let rootNode: Node

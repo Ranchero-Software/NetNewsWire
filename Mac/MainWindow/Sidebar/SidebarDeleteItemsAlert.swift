@@ -13,7 +13,7 @@ import Account
 enum SidebarDeleteItemsAlert {
 
 	/// Builds a delete confirmation dialog for the supplied nodes
-	static func build(_ nodes: [Node]) -> NSAlert {
+	@MainActor static func build(_ nodes: [Node]) -> NSAlert {
 		let alert = NSAlert()
 		alert.alertStyle = .warning
 

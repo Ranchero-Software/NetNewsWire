@@ -24,7 +24,7 @@ final class DeleteCommand: UndoableCommand {
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
 
-	init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
+	@MainActor init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
 
 		guard DeleteCommand.canDelete(nodesToDelete) else {
 			return nil
@@ -56,10 +56,11 @@ final class DeleteCommand: UndoableCommand {
 		}
 
 		group.notify(queue: DispatchQueue.main) {
-			self.treeController?.rebuild()
-			self.registerUndo()
+			MainActor.assumeIsolated {
+				self.treeController?.rebuild()
+				self.registerUndo()
+			}
 		}
-
 	}
 
 	func undo() {
@@ -67,7 +68,7 @@ final class DeleteCommand: UndoableCommand {
 		registerRedo()
 	}
 
-	static func canDelete(_ nodes: [Node]) -> Bool {
+	@MainActor static func canDelete(_ nodes: [Node]) -> Bool {
 
 		// Return true if all nodes are feeds and folders.
 		// Any other type: return false.
@@ -112,7 +113,7 @@ private struct SidebarItemSpecifier {
 		return nil
 	}
 
-	init?(node: Node, errorHandler: @escaping (Error) -> ()) {
+	@MainActor init?(node: Node, errorHandler: @escaping (Error) -> ()) {
 
 		var account: Account?
 
@@ -265,7 +266,7 @@ private struct DeleteActionName {
 	private static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
 	private static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
 
-	static func name(for nodes: [Node]) -> String? {
+	@MainActor static func name(for nodes: [Node]) -> String? {
 
 		var numberOfFeeds = 0
 		var numberOfFolders = 0

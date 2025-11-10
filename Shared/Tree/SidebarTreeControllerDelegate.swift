@@ -11,7 +11,7 @@ import RSTree
 import Articles
 import Account
 
-final class SidebarTreeControllerDelegate: TreeControllerDelegate {
+@MainActor final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false

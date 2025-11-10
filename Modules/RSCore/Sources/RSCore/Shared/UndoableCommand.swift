@@ -41,27 +41,27 @@ extension UndoableCommand {
 
 public protocol UndoableCommandRunner: AnyObject {
 
-    var undoableCommands: [UndoableCommand] { get set }
-    var undoManager: UndoManager? { get }
+	@MainActor var undoableCommands: [UndoableCommand] { get set }
+	@MainActor var undoManager: UndoManager? { get }
 
-    func runCommand(_ undoableCommand: UndoableCommand)
-    func clearUndoableCommands()
+	@MainActor func runCommand(_ undoableCommand: UndoableCommand)
+	@MainActor func clearUndoableCommands()
 }
 
 public extension UndoableCommandRunner {
 
-    func runCommand(_ undoableCommand: UndoableCommand) {
+	@MainActor func runCommand(_ undoableCommand: UndoableCommand) {
 
         pushUndoableCommand(undoableCommand)
         undoableCommand.perform()
     }
 
-    func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
+	@MainActor func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
 
         undoableCommands += [undoableCommand]
     }
 
-    func clearUndoableCommands() {
+	@MainActor func clearUndoableCommands() {
 
         // Useful, for example, when timeline is reloaded and the list of articles changes.
         // Otherwise things like Redo Mark Read are ambiguous.
