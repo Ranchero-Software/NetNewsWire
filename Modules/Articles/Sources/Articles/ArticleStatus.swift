@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-public final class ArticleStatus: Hashable {
+nonisolated public final class ArticleStatus: Hashable, Sendable {
 
 	public enum Key: String {
 		case read = "read"

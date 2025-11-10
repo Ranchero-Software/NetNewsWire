@@ -13,9 +13,10 @@ import RSCore
 // * It’s fast
 // * Collisions aren’t going to happen with feed data
 
-private var databaseIDCache = [String: String]()
-private var databaseIDCacheLock = NSLock()
-public func databaseIDWithString(_ s: String) -> String {
+nonisolated(unsafe) private var databaseIDCache = [String: String]()
+nonisolated private let databaseIDCacheLock = NSLock()
+
+nonisolated public func databaseIDWithString(_ s: String) -> String {
     databaseIDCacheLock.lock()
     defer {
         databaseIDCacheLock.unlock()
