@@ -9,9 +9,9 @@
 import Foundation
 import RSWeb
 
-public struct FeedSpecifier: Hashable {
+public struct FeedSpecifier: Hashable, Sendable {
 
-	public enum Source: Int {
+	public enum Source: Int, Sendable {
 		case UserEntered = 0, HTMLHead, HTMLLink
 
 		func equalToOrBetterThan(_ otherSource: Source) -> Bool {

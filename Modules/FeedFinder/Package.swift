@@ -24,7 +24,6 @@ let package = Package(
 				"RSCore"
 			],
 			swiftSettings: [
-				.swiftLanguageMode(.v5),
 				.unsafeFlags(["-warnings-as-errors"])
 			]
 		),
