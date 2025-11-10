@@ -7,6 +7,7 @@
 //
 
 import Articles
+import FeedFinder
 import RSCore
 import RSDatabase
 import RSParser

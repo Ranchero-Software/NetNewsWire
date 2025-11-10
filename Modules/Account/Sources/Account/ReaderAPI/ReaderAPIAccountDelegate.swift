@@ -10,6 +10,7 @@ import Articles
 import RSCore
 import RSParser
 import RSWeb
+import FeedFinder
 import SyncDatabase
 import os.log
 import Secrets

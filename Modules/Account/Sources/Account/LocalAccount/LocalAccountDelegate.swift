@@ -11,6 +11,7 @@ import RSCore
 import RSParser
 import Articles
 import ArticlesDatabase
+import FeedFinder
 import RSWeb
 import Secrets
 
