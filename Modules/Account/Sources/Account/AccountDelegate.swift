@@ -48,18 +48,18 @@ protocol AccountDelegate {
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws
 
 	// Called at the end of account’s init method.
-	func accountDidInitialize(_ account: Account)
+	@MainActor func accountDidInitialize(_ account: Account)
 
-	func accountWillBeDeleted(_ account: Account)
+	@MainActor func accountWillBeDeleted(_ account: Account)
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials?
+	@MainActor static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials?
 
 	/// Suspend all network activity
-	func suspendNetwork()
+	@MainActor func suspendNetwork()
 
 	/// Suspend the SQLite databases
-	func suspendDatabase()
+	@MainActor func suspendDatabase()
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume()
+	@MainActor func resume()
 }

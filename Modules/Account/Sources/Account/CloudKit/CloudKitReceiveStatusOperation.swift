@@ -26,13 +26,13 @@ final class CloudKitReceiveStatusOperation: MainThreadOperation {
 		self.articlesZone = articlesZone
 	}
 
-	func run() {
+	@MainActor func run() {
 		guard let articlesZone else {
 			self.operationDelegate?.operationDidComplete(self)
 			return
 		}
 
-		Task {
+		Task { @MainActor in
 			Self.logger.debug("iCloud: Refreshing article statuses")
 			do {
 				try await articlesZone.refreshArticles()

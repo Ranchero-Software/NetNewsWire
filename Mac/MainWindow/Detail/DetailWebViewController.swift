@@ -150,16 +150,14 @@ final class DetailWebViewController: NSViewController {
 
 	// MARK: Scrolling
 
-	func canScrollDown(_ completion: @escaping (Bool) -> Void) {
-		fetchScrollInfo { (scrollInfo) in
-			completion(scrollInfo?.canScrollDown ?? false)
-		}
+	func canScrollDown() async -> Bool {
+		let scrollInfo = await fetchScrollInfo()
+		return scrollInfo?.canScrollDown ?? false
 	}
 
-	func canScrollUp(_ completion: @escaping (Bool) -> Void) {
-		fetchScrollInfo { (scrollInfo) in
-			completion(scrollInfo?.canScrollUp ?? false)
-		}
+	func canScrollUp() async -> Bool {
+		let scrollInfo = await fetchScrollInfo()
+		return scrollInfo?.canScrollUp ?? false
 	}
 
 	override func scrollPageDown(_ sender: Any?) {
@@ -306,7 +304,15 @@ private extension DetailWebViewController {
 		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 
-	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
+	func fetchScrollInfo() async -> ScrollInfo? {
+		await withCheckedContinuation { continuation in
+			self.fetchScrollInfo { scrollInfo in
+				continuation.resume(returning: scrollInfo)
+			}
+		}
+	}
+
+	private func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
 
 		webView.evaluateJavaScript(javascriptString) { (info, error) in

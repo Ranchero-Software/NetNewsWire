@@ -167,7 +167,7 @@ public final class AccountManager: UnreadCountProvider {
 		return account
 	}
 
-	public func deleteAccount(_ account: Account) {
+	@MainActor public func deleteAccount(_ account: Account) {
 		guard !account.refreshInProgress else {
 			return
 		}
@@ -236,7 +236,7 @@ public final class AccountManager: UnreadCountProvider {
 		return nil
 	}
 
-	public func suspendNetworkAll() {
+	@MainActor public func suspendNetworkAll() {
 		isSuspended = true
 		for account in accounts {
 			account.suspendNetwork()
@@ -249,7 +249,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func resumeAll() {
+	@MainActor public func resumeAll() {
 		isSuspended = false
 		for account in accounts {
 			account.resumeDatabaseAndDelegate()
@@ -278,9 +278,9 @@ public final class AccountManager: UnreadCountProvider {
 		combinedRefreshProgress.start()
 
 		Task { @MainActor in
-			await withTaskGroup(of: Void.self) { group in
+			await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 				for account in activeAccounts {
-					group.addTask {
+					group.addTask { @MainActor in
 						do {
 							try await account.refreshAll()
 						} catch {
@@ -313,9 +313,6 @@ public final class AccountManager: UnreadCountProvider {
 				try? await account.syncArticleStatus()
 				group.leave()
 			}
-		}
-
-		group.notify(queue: DispatchQueue.global(qos: .background)) {
 			completion?()
 		}
 	}

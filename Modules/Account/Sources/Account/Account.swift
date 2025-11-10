@@ -310,7 +310,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.fetchAllUnreadCounts()
 		}
 
-		self.delegate.accountDidInitialize(self)
+		MainActor.assumeIsolated {
+			self.delegate.accountDidInitialize(self)
+		}
 	}
 
 	// MARK: - API
@@ -394,7 +396,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		await delegate.receiveRemoteNotification(for: self, userInfo: userInfo)
 	}
 
-	public func refreshAll() async throws {
+	@MainActor public func refreshAll() async throws {
 		try await delegate.refreshAll(for: self)
 	}
 
@@ -425,7 +427,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func suspendNetwork() {
+	@MainActor public func suspendNetwork() {
 		delegate.suspendNetwork()
 	}
 
@@ -438,7 +440,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	/// Re-open the SQLite database and allow database calls.
 	/// Call this *before* calling resume.
-	public func resumeDatabaseAndDelegate() {
+	@MainActor public func resumeDatabaseAndDelegate() {
 		#if os(iOS)
 		database.resume()
 		#endif
@@ -456,7 +458,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		opmlFile.save()
 	}
 
-	public func prepareForDeletion() {
+	@MainActor public func prepareForDeletion() {
 		delegate.accountWillBeDeleted(self)
 	}
 

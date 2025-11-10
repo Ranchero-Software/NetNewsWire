@@ -50,7 +50,7 @@ public protocol MainThreadOperation: AnyObject {
 	/// When this is called, you don’t need to check isCanceled:
 	/// it’s guaranteed to not be canceled. However, if you run code
 	/// in another thread, you should check isCanceled in that code.
-	func run()
+	@MainActor func run()
 
 	/// Cancel this operation.
 	///

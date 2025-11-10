@@ -63,7 +63,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		migrateChangeToken()
 	}
 
-	func refreshArticles() async throws {
+	@MainActor func refreshArticles() async throws {
 		do {
 			try await fetchChangesInZone()
 		} catch {

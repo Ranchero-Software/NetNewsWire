@@ -381,15 +381,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	// MARK: - Suspend and Resume (for iOS)
 
-	func suspendNetwork() {
+	@MainActor func suspendNetwork() {
 		refresher.suspend()
 	}
 
-	func suspendDatabase() {
+	@MainActor func suspendDatabase() {
 		syncDatabase.suspend()
 	}
 
-	func resume() {
+	@MainActor func resume() {
 		refresher.resume()
 		syncDatabase.resume()
 	}

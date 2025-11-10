@@ -38,7 +38,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 
-	func refreshAll(for account: Account) async throws {
+	@MainActor func refreshAll(for account: Account) async throws {
 		guard refreshProgress.isComplete, !Platform.isRunningUnitTests else {
 			return
 		}
@@ -137,15 +137,15 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	// MARK: Suspend and Resume (for iOS)
 
-	func suspendNetwork() {
+	@MainActor func suspendNetwork() {
 		refresher.suspend()
 	}
 
-	func suspendDatabase() {
+	@MainActor func suspendDatabase() {
 		// Nothing to do
 	}
 
-	func resume() {
+	@MainActor func resume() {
 		refresher.resume()
 	}
 }
