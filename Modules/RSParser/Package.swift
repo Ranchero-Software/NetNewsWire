@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -21,17 +21,16 @@ let package = Package(
 		.target(
 			name: "RSParser",
 			dependencies: ["RSParserObjC", "RSMarkdown"],
-			path: "Sources/Swift"),
+			path: "Sources/Swift",
+			swiftSettings: [
+				.swiftLanguageMode(.v5)
+			]),
 		.target(
 			name: "RSParserObjC",
 			dependencies: [],
 			path: "Sources/ObjC",
 			cSettings: [
-				.headerSearchPath("include"),
-				.unsafeFlags(["-fprofile-instr-generate", "-fcoverage-mapping"])
-			],
-			linkerSettings: [
-				.unsafeFlags(["-fprofile-instr-generate"])
+				.headerSearchPath("include")
 			]
 		),
 		.testTarget(
