@@ -9,10 +9,10 @@ import Foundation
 import Secrets
 
 struct FeedlyTestSecrets: SecretsProvider {
-	var mercuryClientId = ""
+	var mercuryClientID = ""
 	var mercuryClientSecret = ""
-	var feedlyClientId = ""
+	var feedlyClientID = ""
 	var feedlyClientSecret = ""
-	var inoreaderAppId = ""
+	var inoreaderAppID = ""
 	var inoreaderAppKey = ""
 }
