@@ -531,8 +531,8 @@ private extension ReaderAPICaller {
 
 	func addVariantHeaders(_ request: inout URLRequest) {
 		if variant == .inoreader {
-			request.addValue(SecretsManager.provider.inoreaderAppID, forHTTPHeaderField: "AppId")
-			request.addValue(SecretsManager.provider.inoreaderAppKey, forHTTPHeaderField: "AppKey")
+			request.addValue(SecretKey.inoreaderAppID, forHTTPHeaderField: "AppId")
+			request.addValue(SecretKey.inoreaderAppKey, forHTTPHeaderField: "AppKey")
 		}
 	}
 

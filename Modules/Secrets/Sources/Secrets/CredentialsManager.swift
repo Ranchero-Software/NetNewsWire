@@ -10,7 +10,7 @@ import Foundation
 
 public struct CredentialsManager {
 
-	private static var keychainGroup: String? = {
+	private static let keychainGroup: String? = {
 		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
 			return nil
 		}

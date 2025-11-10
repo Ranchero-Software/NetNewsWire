@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-public enum Platform {
+public struct Platform {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Platform")
 

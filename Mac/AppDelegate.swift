@@ -99,7 +99,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
 		crashReporter.enable()
 
-		SecretsManager.provider = Secrets()
 		AccountManager.shared.start()
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
 

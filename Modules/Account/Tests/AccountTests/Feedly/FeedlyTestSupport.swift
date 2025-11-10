@@ -19,10 +19,6 @@ final class FeedlyTestSupport {
 	var refreshToken = Credentials(type: .oauthRefreshToken, username: "Test", secret: "t3st-refresh-tok3n")
 	var transport = TestTransport()
 
-	init() {
-		SecretsManager.provider = FeedlyTestSecrets()
-	}
-
 	func makeMockNetworkStack() -> (TestTransport, FeedlyAPICaller) {
 		let caller = FeedlyAPICaller(transport: transport, api: .sandbox)
 		caller.credentials = accessToken
