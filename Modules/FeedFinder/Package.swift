@@ -24,6 +24,9 @@ let package = Package(
 				"RSCore"
 			],
 			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self),
 				.unsafeFlags(["-warnings-as-errors"])
 			]
 		),

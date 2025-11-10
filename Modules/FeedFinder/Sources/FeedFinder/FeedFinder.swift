@@ -23,11 +23,11 @@ public enum FeedFinderError: LocalizedError {
 	}
 }
 
-public final class FeedFinder {
+nonisolated public final class FeedFinder {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
 
-	public static func find(url: URL) async throws -> Set<FeedSpecifier> {
+	@concurrent public static func find(url: URL) async throws -> Set<FeedSpecifier> {
 		// Check special cases first.
 		if let feedSpecifier = FeedSpecifier.knownFeedSpecifier(url: url) {
 			logger.info("FeedFinder: found special case feed URL: \(url.absoluteString) - \(feedSpecifier.urlString)")
@@ -68,10 +68,10 @@ public final class FeedFinder {
 	}
 }
 
-private extension FeedFinder {
-	
+nonisolated private extension FeedFinder {
+
 	static func addFeedSpecifier(_ feedSpecifier: FeedSpecifier, feedSpecifiers: inout [String: FeedSpecifier]) {
-		// If there’s an existing feed specifier, merge the two so that we have the best data. If one has a title and one doesn’t, use that non-nil title. Use the better source.
+		// If there's an existing feed specifier, merge the two so that we have the best data. If one has a title and one doesn't, use that non-nil title. Use the better source.
 
 		if let existingFeedSpecifier = feedSpecifiers[feedSpecifier.urlString] {
 			let mergedFeedSpecifier = existingFeedSpecifier.feedSpecifierByMerging(feedSpecifier)
@@ -122,8 +122,8 @@ private extension FeedFinder {
 		var feedSpecifiers = HTMLFeedFinder(parserData: parserData).feedSpecifiers
 
 		if feedSpecifiers.isEmpty {
-			// Odds are decent it’s a WordPress site, and just adding /feed/ will work.
-			// It’s also fairly common for /index.xml to work.
+			// Odds are decent it's a WordPress site, and just adding /feed/ will work.
+			// It's also fairly common for /index.xml to work.
 			if let url = URL(string: urlString) {
 				let feedURL = url.appendingPathComponent("feed", isDirectory: true)
 				let wordpressFeedSpecifier = FeedSpecifier(title: nil, urlString: feedURL.absoluteString, source: .HTMLLink, orderFound: 1)
