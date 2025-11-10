@@ -29,9 +29,10 @@ final class AddFolderWindowController : NSWindowController {
 		}
 		self.hostWindow = hostWindow
 
-		hostWindow.beginSheet(window) { (returnCode: NSApplication.ModalResponse) -> Void in
-			if returnCode == NSApplication.ModalResponse.OK {
-				self.addFolderIfNeeded()
+		Task { @MainActor in
+			let response = await hostWindow.beginSheet(window)
+			if response == .OK {
+				addFolderIfNeeded()
 			}
 		}
     }

@@ -152,39 +152,50 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 }
 
 extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelegate {
+
 	func presentSheetForAccount(_ accountType: AccountType) {
+		guard let window = view.window else {
+			return
+		}
+
 		switch accountType {
 		case .onMyMac:
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
-			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsAddLocalWindowController
+			accountsAddLocalWindowController.runSheetOnWindow(window)
+
 		case .cloudKit:
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
-			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
-				if response == NSApplication.ModalResponse.OK {
-					self.tableView.reloadData()
+			addAccountWindowController = accountsAddCloudKitWindowController
+			Task { @MainActor in
+				if let response = await accountsAddCloudKitWindowController.runSheetOnWindow(window),
+				   response == .OK {
+					tableView.reloadData()
 				}
 			}
-			addAccountWindowController = accountsAddCloudKitWindowController
+
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
-			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsFeedbinWindowController
+			accountsFeedbinWindowController.runSheetOnWindow(window)
+
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = accountType
-			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsReaderAPIWindowController
+			accountsReaderAPIWindowController.accountType = accountType
+			accountsReaderAPIWindowController.runSheetOnWindow(window)
+
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
-			addAccount.presentationAnchor = self.view.window!
+			addAccount.presentationAnchor = window
 			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
 			MainThreadOperationQueue.shared.add(addAccount)
+
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
-			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsNewsBlurWindowController
+			accountsNewsBlurWindowController.runSheetOnWindow(window)
 		}
 	}
 

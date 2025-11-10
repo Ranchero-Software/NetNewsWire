@@ -10,7 +10,6 @@ import AppKit
 import Account
 
 final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate {
-
 	@IBOutlet weak var typeLabel: NSTextField!
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var activeButton: NSButtonCell!
@@ -63,31 +62,35 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 	}
 
 	@IBAction func credentials(_ sender: Any) {
-
-		guard let account = account else { return }
+		guard let account else {
+			return
+		}
+		guard let window = view.window else {
+			return
+		}
 
 		switch account.type {
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
-			accountsFeedbinWindowController.account = account
-			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsFeedbinWindowController
+			accountsFeedbinWindowController.account = account
+			accountsFeedbinWindowController.runSheetOnWindow(window)
+
 		case .inoreader, .bazQux, .theOldReader, .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsWindowController = accountsReaderAPIWindowController
 			accountsReaderAPIWindowController.accountType = account.type
 			accountsReaderAPIWindowController.account = account
-			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-			accountsWindowController = accountsReaderAPIWindowController
-			break
+			accountsReaderAPIWindowController.runSheetOnWindow(window)
+
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
-			accountsNewsBlurWindowController.account = account
-			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsNewsBlurWindowController
+			accountsNewsBlurWindowController.account = account
+			accountsNewsBlurWindowController.runSheetOnWindow(window)
+
 		default:
 			break
 		}
-
 	}
-
 }

@@ -10,7 +10,6 @@ import Foundation
 import Account
 
 final class AccountsAddCloudKitWindowController: NSWindowController {
-
 	private weak var hostWindow: NSWindow?
 
 	convenience init() {
@@ -19,14 +18,14 @@ final class AccountsAddCloudKitWindowController: NSWindowController {
 
 	// MARK: - API
 
-	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+	func runSheetOnWindow(_ hostWindow: NSWindow) async -> NSApplication.ModalResponse? {
 		assert(window != nil)
 		guard let window else {
-			return
+			return nil
 		}
 
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window, completionHandler: completion)
+		return await hostWindow.beginSheet(window)
 	}
 
 	// MARK: - Actions

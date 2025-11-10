@@ -57,8 +57,7 @@ final class AddFeedWindowController : NSWindowController {
 		guard let window else {
 			return
 		}
-		hostWindow.beginSheet(window) { (returnCode: NSApplication.ModalResponse) -> Void in
-		}
+		hostWindow.beginSheet(window)
 	}
 
 	override func windowDidLoad() {
