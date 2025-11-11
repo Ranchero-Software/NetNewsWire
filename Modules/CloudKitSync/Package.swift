@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
 	name: "CloudKitSync",
-	platforms: [.macOS(.v14), .iOS(.v17)],
+	platforms: [.macOS(.v26), .iOS(.v26)],
 	products: [
 		.library(
 			name: "CloudKitSync",

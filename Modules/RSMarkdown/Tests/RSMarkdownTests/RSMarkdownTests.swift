@@ -22,7 +22,7 @@ final class RSMarkdownTests: XCTestCase {
 	private func loadMarkdownFile(named name: String) throws -> String {
 		let bundle = Bundle.module
 		let url = bundle.url(forResource: name, withExtension: "markdown")!
-		return try String(contentsOf: url)
+		return try String(contentsOf: url, encoding: .utf8)
 	}
 
 	// MARK: - Simple tests
