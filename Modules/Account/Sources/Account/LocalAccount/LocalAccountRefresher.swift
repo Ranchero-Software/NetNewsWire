@@ -38,8 +38,10 @@ final class LocalAccountRefresher {
 
 	@MainActor public func refreshFeeds(_ feeds: Set<Feed>) async {
 		await withCheckedContinuation { continuation in
-			refreshFeeds(feeds) {
-				continuation.resume()
+			Task { @MainActor in
+				refreshFeeds(feeds) {
+					continuation.resume()
+				}
 			}
 		}
 	}
@@ -291,3 +293,4 @@ private extension Data {
 		return self.isImage
 	}
 }
+
