@@ -11,7 +11,7 @@ import Articles
 import RSDatabase
 import RSDatabaseObjC
 
-struct SyncStatusTable {
+nonisolated struct SyncStatusTable {
 	static let name = "syncStatus"
 
 	static func selectForProcessing(limit: Int?, database: FMDatabase) -> Set<SyncStatus>? {
@@ -98,7 +98,7 @@ struct SyncStatusTable {
 	}
 }
 
-private extension SyncStatusTable {
+nonisolated private extension SyncStatusTable {
 
 	static func statusWithRow(_ row: FMResultSet) -> SyncStatus? {
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID),

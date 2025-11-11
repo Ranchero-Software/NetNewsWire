@@ -10,7 +10,7 @@ import Foundation
 import Articles
 import RSDatabase
 
-public struct SyncStatus: Hashable, Equatable {
+nonisolated public struct SyncStatus: Hashable, Equatable {
 	public enum Key: String {
 		case read
 		case starred

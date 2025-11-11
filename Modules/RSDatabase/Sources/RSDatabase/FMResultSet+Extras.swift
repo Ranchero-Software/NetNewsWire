@@ -8,7 +8,7 @@
 import Foundation
 import RSDatabaseObjC
 
-public extension FMResultSet {
+nonisolated public extension FMResultSet {
 
 	func intWithCountResult() -> Int? {
 		guard next() else {

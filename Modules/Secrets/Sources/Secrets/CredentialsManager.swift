@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CredentialsManager {
+nonisolated public struct CredentialsManager {
 
 	private static let keychainGroup: String? = {
 		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
@@ -20,7 +20,6 @@ public struct CredentialsManager {
 	}()
 
 	public static func storeCredentials(_ credentials: Credentials, server: String) throws {
-
 		var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
 									kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
 									kSecAttrAccount as String: credentials.username,
@@ -56,11 +55,9 @@ public struct CredentialsManager {
 		if addStatus != errSecSuccess {
 			throw CredentialsError.unhandledError(status: status)
 		}
-
 	}
 
 	public static func retrieveCredentials(type: CredentialsType, server: String, username: String) throws -> Credentials? {
-
 		var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
 									kSecAttrAccount as String: username,
 									kSecAttrServer as String: server,
@@ -94,7 +91,6 @@ public struct CredentialsManager {
 		}
 
 		return Credentials(type: type, username: username, secret: secret)
-
 	}
 
 	public static func removeCredentials(type: CredentialsType, server: String, username: String) throws {
@@ -118,7 +114,5 @@ public struct CredentialsManager {
 		guard status == errSecSuccess || status == errSecItemNotFound else {
 			throw CredentialsError.unhandledError(status: status)
 		}
-
 	}
-
 }
