@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -12,7 +12,9 @@ let package = Package(
 	targets: [
 		.target(
 			name: "RSCore",
-			dependencies: ["RSCoreObjC"]),
+			dependencies: ["RSCoreObjC"],
+			swiftSettings: [.swiftLanguageMode(.v5)]
+		),
 		.target(
 			name: "RSCoreObjC",
 			dependencies: [],
@@ -25,12 +27,14 @@ let package = Package(
 			resources: [
 				.process("Resources/WebViewWindow.xib"),
 				.process("Resources/IndeterminateProgressWindow.xib")
-			]),
+			],
+			swiftSettings: [.swiftLanguageMode(.v5)]
+		),
 		.testTarget(
 			name: "RSCoreTests",
 			dependencies: ["RSCore"],
-			resources: [
-				.copy("Resources")
-			]),
+			resources: [.copy("Resources")],
+			swiftSettings: [.swiftLanguageMode(.v5)]
+		),
 	]
 )
