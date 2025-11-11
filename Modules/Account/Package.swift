@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -36,12 +36,15 @@ let package = Package(
 				"FeedFinder",
 				"Secrets",
 				"SyncDatabase",
-			]),
+			],
+			swiftSettings: [.swiftLanguageMode(.v5)]),
 		.testTarget(
 			name: "AccountTests",
 			dependencies: ["Account"],
 			resources: [
 				.copy("JSON"),
-			]),
+			],
+			swiftSettings: [.swiftLanguageMode(.v5)]
+		),
 	]
 )
