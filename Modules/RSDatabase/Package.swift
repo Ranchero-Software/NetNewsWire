@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -19,7 +19,8 @@ let package = Package(
 	targets: [
 		.target(
 			name: "RSDatabase",
-			dependencies: ["RSDatabaseObjC"]
+			dependencies: ["RSDatabaseObjC"],
+			swiftSettings: [.swiftLanguageMode(.v5)]
 		),
 		.target(
 			name: "RSDatabaseObjC",
