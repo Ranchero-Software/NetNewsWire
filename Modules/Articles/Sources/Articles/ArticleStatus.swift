@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os
+import Synchronization
 
 nonisolated public final class ArticleStatus: Hashable, Sendable {
 
@@ -19,31 +19,34 @@ nonisolated public final class ArticleStatus: Hashable, Sendable {
 	public let articleID: String
 	public let dateArrived: Date
 
-	private let _read: OSAllocatedUnfairLock<Bool>
-	private let _starred: OSAllocatedUnfairLock<Bool>
+	private struct State: Sendable {
+		var read: Bool
+		var starred: Bool
+	}
+
+	private let state: Mutex<State>
 
 	public var read: Bool {
 		get {
-			_read.withLock { $0 }
+			state.withLock { $0.read }
 		}
 		set {
-			_read.withLock { $0 = newValue }
+			state.withLock { $0.read = newValue }
 		}
 	}
 
 	public var starred: Bool {
 		get {
-			_starred.withLock { $0 }
+			state.withLock { $0.starred }
 		}
 		set {
-			_starred.withLock { $0 = newValue }
+			state.withLock { $0.starred = newValue }
 		}
 	}
 
 	public init(articleID: String, read: Bool, starred: Bool, dateArrived: Date) {
 		self.articleID = articleID
-		self._read = OSAllocatedUnfairLock(initialState: read)
-		self._starred = OSAllocatedUnfairLock(initialState: starred)
+		self.state = Mutex(State(read: read, starred: starred))
 		self.dateArrived = dateArrived
 	}
 
