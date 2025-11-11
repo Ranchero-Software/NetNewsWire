@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -24,6 +24,8 @@ let package = Package(
 				"RSDatabase",
 				"RSParser",
 				"Articles",
-			]),
+			],
+			swiftSettings: [.swiftLanguageMode(.v5)]
+		),
 	]
 )
