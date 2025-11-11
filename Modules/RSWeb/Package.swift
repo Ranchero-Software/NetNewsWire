@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -21,7 +21,10 @@ let package = Package(
 				"RSParser",
 				"RSCore"
 			],
-			swiftSettings: [.unsafeFlags(["-warnings-as-errors"])]
+			swiftSettings: [
+				.unsafeFlags(["-warnings-as-errors"]),
+				.swiftLanguageMode(.v5)
+			]
 		),
 		.testTarget(
 			name: "RSWebTests",
