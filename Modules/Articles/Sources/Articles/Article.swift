@@ -11,7 +11,6 @@ import Foundation
 public typealias ArticleSetBlock = (Set<Article>) -> Void
 
 nonisolated public final class Article: Hashable, Sendable {
-
 	public let articleID: String // Unique database ID (possibly sync service ID)
 	public let accountID: String
 	public let feedID: String // Likely a URL, but not necessarily
@@ -71,7 +70,7 @@ nonisolated public final class Article: Hashable, Sendable {
 	}
 }
 
-public extension Set where Element == Article {
+nonisolated public extension Set where Element == Article {
 
 	func articleIDs() -> Set<String> {
 		return Set<String>(map { $0.articleID })
@@ -85,21 +84,22 @@ public extension Set where Element == Article {
 	func contains(accountID: String, articleID: String) -> Bool {
 		return contains(where: { $0.accountID == accountID && $0.articleID == articleID})
 	}
-
 }
 
-public extension Array where Element == Article {
+nonisolated public extension Array where Element == Article {
 
 	func articleIDs() -> [String] {
 		return map { $0.articleID }
 	}
 }
 
-public extension Article {
+nonisolated public extension Article {
 	private static let allowedTags: Set = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em", "i", "ins", "kbd", "mark", "q", "s", "samp", "small", "strong", "sub", "sup", "time", "u", "var"]
 
 	func sanitizedTitle(forHTML: Bool = true) -> String? {
-		guard let title = title else { return nil }
+		guard let title else {
+			return nil
+		}
 
 		let scanner = Scanner(string: title)
 		scanner.charactersToBeSkipped = nil
@@ -127,5 +127,4 @@ public extension Article {
 
 		return result
 	}
-
 }
