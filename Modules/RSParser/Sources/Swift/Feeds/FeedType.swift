@@ -11,7 +11,7 @@ import Foundation
 import RSParserObjC
 #endif
 
-public enum FeedType: Sendable {
+nonisolated public enum FeedType: Sendable {
 	case rss
 	case atom
 	case jsonFeed
@@ -21,9 +21,9 @@ public enum FeedType: Sendable {
 }
 
 
-private let minNumberOfBytesRequired = 128
+nonisolated private let minNumberOfBytesRequired = 128
 
-public func feedType(_ parserData: ParserData, isPartialData: Bool = false) -> FeedType {
+nonisolated public func feedType(_ parserData: ParserData, isPartialData: Bool = false) -> FeedType {
 
 	// Can call with partial data — while still downloading, for instance.
 	// If there’s not enough data, return .unknown. Ask again when there’s more data.

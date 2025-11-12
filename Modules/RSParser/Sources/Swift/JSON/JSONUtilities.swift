@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct JSONUtilities {
+nonisolated public struct JSONUtilities {
 
 	public static func object(with data: Data) -> Any? {
 

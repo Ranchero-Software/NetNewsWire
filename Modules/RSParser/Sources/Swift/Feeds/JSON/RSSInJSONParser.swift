@@ -14,19 +14,18 @@ import RSParserObjC
 // See https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md
 // Also: http://cyber.harvard.edu/rss/rss.html
 
-public struct RSSInJSONParser {
+nonisolated public struct RSSInJSONParser {
 
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
-
 		do {
 			guard let parsedObject = try JSONSerialization.jsonObject(with: parserData.data) as? JSONDictionary else {
-				throw FeedParserError(.invalidJSON)
+				throw FeedParserError.invalidJSON
 			}
 			guard let rssObject = parsedObject["rss"] as? JSONDictionary else {
-				throw FeedParserError(.rssChannelNotFound)
+				throw FeedParserError.rssChannelNotFound
 			}
 			guard let channelObject = rssObject["channel"] as? JSONDictionary else {
-				throw FeedParserError(.rssChannelNotFound)
+				throw FeedParserError.rssChannelNotFound
 			}
 
 			// I’d bet money that in practice the items array won’t always appear correctly inside the channel object.
@@ -42,7 +41,7 @@ public struct RSSInJSONParser {
 				itemsObject = parsedObject["items"] as? JSONArray
 			}
 			if itemsObject == nil {
-				throw FeedParserError(.rssItemsNotFound)
+				throw FeedParserError.rssItemsNotFound
 			}
 
 			let title = channelObject["title"] as? String
@@ -60,7 +59,7 @@ public struct RSSInJSONParser {
 	}
 }
 
-private extension RSSInJSONParser {
+nonisolated private extension RSSInJSONParser {
 
 	static func parseItems(_ itemsObject: JSONArray, _ feedURL: String) -> Set<ParsedItem> {
 

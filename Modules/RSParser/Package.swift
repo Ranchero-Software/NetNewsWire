@@ -23,7 +23,9 @@ let package = Package(
 			dependencies: ["RSParserObjC", "RSMarkdown"],
 			path: "Sources/Swift",
 			swiftSettings: [
-				.swiftLanguageMode(.v5)
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self)
 			]),
 		.target(
 			name: "RSParserObjC",

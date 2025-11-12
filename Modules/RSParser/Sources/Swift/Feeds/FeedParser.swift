@@ -12,9 +12,9 @@ import RSParserObjC
 // FeedParser handles RSS, Atom, JSON Feed, and RSS-in-JSON.
 // You don’t need to know the type of feed.
 
-public typealias FeedParserCallback = (_ parsedFeed: ParsedFeed?, _ error: Error?) -> Void
+public typealias FeedParserCallback = @Sendable (_ parsedFeed: ParsedFeed?, _ error: Error?) -> Void
 
-public struct FeedParser {
+nonisolated public struct FeedParser {
 
 	private static let parseQueue = DispatchQueue(label: "FeedParser parse queue")
 

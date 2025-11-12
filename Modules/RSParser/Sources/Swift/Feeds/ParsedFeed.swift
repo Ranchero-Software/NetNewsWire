@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ParsedFeed: Sendable {
+nonisolated public struct ParsedFeed: Sendable {
 	public let type: FeedType
 	public let title: String?
 	public let homePageURL: String?

@@ -13,7 +13,7 @@ import RSParserObjC
 
 // See https://jsonfeed.org/version/1.1
 
-public struct JSONFeedParser {
+nonisolated public struct JSONFeedParser {
 
 	struct Key {
 		static let version = "version"
@@ -55,17 +55,17 @@ public struct JSONFeedParser {
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 
 		guard let d = JSONUtilities.dictionary(with: parserData.data) else {
-			throw FeedParserError(.invalidJSON)
+			throw FeedParserError.invalidJSON
 		}
 
 		guard let version = d[Key.version] as? String, let _ = version.range(of: JSONFeedParser.jsonFeedVersionMarker) else {
-			throw FeedParserError(.jsonFeedVersionNotFound)
+			throw FeedParserError.jsonFeedVersionNotFound
 		}
 		guard let itemsArray = d[Key.items] as? JSONArray else {
-			throw FeedParserError(.jsonFeedItemsNotFound)
+			throw FeedParserError.jsonFeedItemsNotFound
 		}
 		guard let title = d[Key.title] as? String else {
-			throw FeedParserError(.jsonFeedTitleNotFound)
+			throw FeedParserError.jsonFeedTitleNotFound
 		}
 
 		let authors = parseAuthors(d)
@@ -85,7 +85,7 @@ public struct JSONFeedParser {
 	}
 }
 
-private extension JSONFeedParser {
+nonisolated private extension JSONFeedParser {
 
 	static func parseAuthors(_ dictionary: JSONDictionary) -> Set<ParsedAuthor>? {
 
