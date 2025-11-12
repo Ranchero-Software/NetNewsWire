@@ -286,31 +286,13 @@ public extension String {
 		return escaped
 	}
 
-	/// Initializes a string with a run of tabs.
-	///
-	/// - Parameter tabCount: The number of tabs in the returned string. Must be greater than or equal to zero.
-	init(tabCount: Int) {
-		enum Cache {
-			static var tabs: [Int: String] = [:]
-		}
-
-		if let cachedString = Cache.tabs[tabCount] {
-			self = cachedString
-		} else {
-			let s = String(repeating: "\t", count: tabCount)
-			Cache.tabs[tabCount] = s
-			self = s
-		}
-	}
-
 	/// Prepends tabs to a string.
 	///
 	/// - Parameter tabCount: The number of tabs to prepend. Must be greater than or equal to zero.
 	///
 	/// - Returns: The string with `numberOfTabs` tabs prepended.
 	func prepending(tabCount: Int) -> String {
-
-		let tabs = String(tabCount: tabCount)
+		let tabs = String(repeating: "\t", count: tabCount)
 		return "\(tabs)\(self)"
 	}
 
