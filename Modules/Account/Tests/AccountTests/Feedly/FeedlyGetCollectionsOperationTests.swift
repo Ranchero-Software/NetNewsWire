@@ -11,7 +11,7 @@ import XCTest
 import os.log
 import RSCore
 
-final class FeedlyGetCollectionsOperationTests: XCTestCase {
+@MainActor final class FeedlyGetCollectionsOperationTests: XCTestCase {
 
 	func testGetCollections() {
 		let support = FeedlyTestSupport()

@@ -10,13 +10,12 @@ import XCTest
 @testable import Account
 import RSCore
 
-final class FeedlyCheckpointOperationTests: XCTestCase {
+@MainActor final class FeedlyCheckpointOperationTests: XCTestCase {
 
 	final class TestDelegate: FeedlyCheckpointOperationDelegate {
-
 		var didReachCheckpointExpectation: XCTestExpectation?
 
-		func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
+		@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
 			didReachCheckpointExpectation?.fulfill()
 		}
 	}
@@ -55,7 +54,7 @@ final class FeedlyCheckpointOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(operation)
 
-		MainThreadOperationQueue.shared.cancelOperations([operation])
+		MainThreadOperationQueue.shared.cancel([operation])
 
 		waitForExpectations(timeout: 1)
 	}

@@ -13,22 +13,23 @@ protocol FeedlyLogoutService {
 	func logout(completion: @escaping (Result<Void, Error>) -> ())
 }
 
-final class FeedlyLogoutOperation: FeedlyOperation {
+final class FeedlyLogoutOperation: FeedlyOperation, @unchecked Sendable {
 
 	let service: FeedlyLogoutService
 	let account: Account
 
-	init(account: Account, service: FeedlyLogoutService) {
+	@MainActor init(account: Account, service: FeedlyLogoutService) {
 		self.service = service
 		self.account = account
+		super.init()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		Feedly.logger.info("Feedly: Requesting logout \(self.account.accountID, privacy: .public)")
 		service.logout(completion: didCompleteLogout(_:))
 	}
 
-	func didCompleteLogout(_ result: Result<Void, Error>) {
+	@MainActor func didCompleteLogout(_ result: Result<Void, Error>) {
 		assert(Thread.isMainThread)
 		switch result {
 		case .success:
@@ -39,11 +40,11 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 			} catch {
 				// oh well, we tried our best.
 			}
-			didFinish()
+			didComplete()
 
 		case .failure(let error):
 			Feedly.logger.error("Feedly: Logout failed: \(error.localizedDescription)")
-			didFinish(with: error)
+			didComplete(with: error)
 		}
 	}
 }

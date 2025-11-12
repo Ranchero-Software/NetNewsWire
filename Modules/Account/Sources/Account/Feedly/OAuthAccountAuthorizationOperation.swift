@@ -22,33 +22,45 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 		return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
 	}
 }
-@objc public final class OAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
 
-	public var isCanceled: Bool = false {
-		didSet {
-			if isCanceled {
-				cancel()
-			}
+@objc final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
+	var presentationAnchor: ASPresentationAnchor?
+
+	// MARK: - ASWebAuthenticationPresentationContextProviding
+
+	public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+		guard let presentationAnchor else {
+			preconditionFailure("presentationAnchor is required")
+		}
+		return presentationAnchor
+	}
+}
+
+public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unchecked Sendable {
+	public var presentationAnchor: ASPresentationAnchor? {
+		get {
+			anchorProvider.presentationAnchor
+		}
+		set {
+			anchorProvider.presentationAnchor = newValue
 		}
 	}
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String?
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
-	public weak var presentationAnchor: ASPresentationAnchor?
 	public weak var delegate: OAuthAccountAuthorizationOperationDelegate?
 
 	private let accountType: AccountType
 	private let oauthClient: OAuthAuthorizationClient
+	private let anchorProvider = PresentationAnchorProvider()
 	private var session: ASWebAuthenticationSession?
+	private var error: Error?
 
 	public init(accountType: AccountType) {
 		self.accountType = accountType
 		self.oauthClient = Account.oauthAuthorizationClient(for: accountType)
+		super.init()
 	}
 
-	public func run() {
+	@MainActor public override func run() {
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 
 		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType)
@@ -72,7 +84,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 			}
 		}
 
-		session.presentationContextProvider = self
+		session.presentationContextProvider = anchorProvider
 
 		guard session.start() else {
 
@@ -85,21 +97,17 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 																	comment: "OAuth - recovery suggestion - ensure browser selected supports web authentication.")
 			}
 
-			didFinish(UnableToStartASWebAuthenticationSessionError())
-
+			error = UnableToStartASWebAuthenticationSessionError()
+			didComplete()
 			return
 		}
 
 		self.session = session
 	}
 
-	public func cancel() {
-		session?.cancel()
-	}
-
-	private func didEndAuthentication(url: URL?, error: Error?) {
+	@MainActor private func didEndAuthentication(url: URL?, error: Error?) {
 		guard !isCanceled else {
-			didFinish()
+			didComplete()
 			return
 		}
 
@@ -116,10 +124,11 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, completion: didEndRequestingAccessToken(_:))
 
 		} catch is ASWebAuthenticationSessionError {
-			didFinish() // Primarily, cancellation.
+			didComplete() // Primarily, cancellation.
 
 		} catch {
-			didFinish(error)
+			self.error = error
+			didComplete()
 		}
 	}
 
@@ -130,9 +139,9 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 		return anchor
 	}
 
-	private func didEndRequestingAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
+	@MainActor private func didEndRequestingAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
 		guard !isCanceled else {
-			didFinish()
+			didComplete()
 			return
 		}
 
@@ -140,13 +149,15 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 		case .success(let tokenResponse):
 			saveAccount(for: tokenResponse)
 		case .failure(let error):
-			didFinish(error)
+			self.error = error
+			didComplete()
 		}
 	}
 
-	private func saveAccount(for grant: OAuthAuthorizationGrant) {
+	@MainActor private func saveAccount(for grant: OAuthAuthorizationGrant) {
 		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
-			didFinish(OAuthAccountAuthorizationOperationError.duplicateAccount)
+			self.error = OAuthAccountAuthorizationOperationError.duplicateAccount
+			didComplete()
 			return
 		}
 
@@ -162,23 +173,19 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 			try account.storeCredentials(grant.accessToken)
 
 			delegate?.oauthAccountAuthorizationOperation(self, didCreate: account)
-
-			didFinish()
 		} catch {
-			didFinish(error)
+			self.error = error
 		}
+
+		didComplete()
 	}
 
-	// MARK: Managing Operation State
-
-	private func didFinish() {
-		assert(Thread.isMainThread)
-		operationDelegate?.operationDidComplete(self)
-	}
-
-	private func didFinish(_ error: Error) {
-		assert(Thread.isMainThread)
-		delegate?.oauthAccountAuthorizationOperation(self, didFailWith: error)
-		didFinish()
+	@MainActor override public func noteDidComplete() {
+		if isCanceled {
+			session?.cancel()
+		}
+		if let error {
+			delegate?.oauthAccountAuthorizationOperation(self, didFailWith: error)
+		}
 	}
 }

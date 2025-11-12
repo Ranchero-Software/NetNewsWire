@@ -115,7 +115,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		assert(Thread.isMainThread)
 
 		guard !Platform.isRunningUnitTests else {
@@ -137,7 +137,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 		refreshProgress.reset()
 
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: syncDatabase, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: syncDatabase, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, operationQueue: operationQueue)
 
 		syncAllOperation.downloadProgress = refreshProgress
 
@@ -171,7 +171,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
 		let send = FeedlySendArticleStatusesOperation(database: syncDatabase, service: caller)
 		send.completionBlock = { operation in
@@ -196,7 +196,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	@MainActor func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard let credentials = credentials else {
 			return completion(.success(()))
 		}
@@ -222,7 +222,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			completion(.success(()))
 		}
 
-		operationQueue.addOperations([ingestUnread, ingestStarred])
+		operationQueue.add([ingestUnread, ingestStarred])
 	}
 
 
@@ -370,7 +370,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	private func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	@MainActor private func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		do {
 			guard let credentials = credentials else {
@@ -387,7 +387,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 														   getStreamContentsService: caller,
 														   database: syncDatabase,
 														   container: container,
-														   progress: refreshProgress)
+														   progress: refreshProgress,
+														   operationQueue: operationQueue)
 
 			addNewFeed.addCompletionHandler = { result in
 				completion(result)
@@ -445,7 +446,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		do {
 			guard let credentials = credentials else {
@@ -459,7 +460,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
                                                                      service: caller,
                                                                      container: container,
                                                                      progress: refreshProgress,
-                                                                     customFeedName: feed.editedName)
+                                                                     customFeedName: feed.editedName,
+																	 operationQueue: operationQueue)
 
 
 			addExistingFeed.addCompletionHandler = { result in
@@ -511,7 +513,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let from = from as? Folder, let to = to as? Folder else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
@@ -552,7 +554,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	private func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor private func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			account.addFeed(existingFeed, to: container) { result in
 				switch result {
@@ -582,7 +584,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	private func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor private func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		let group = DispatchGroup()
 
 		for feed in folder.topLevelFeeds {
@@ -640,7 +642,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	/// Suspend all network activity
 	func suspendNetwork() {
 		caller.suspend()
-		operationQueue.cancelAllOperations()
+		operationQueue.cancelAll()
 	}
 
 	/// Suspend the SQLLite databases
@@ -657,7 +659,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 
-	func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ()) {
+	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ()) {
 		guard let account = initializedAccount else {
 			completionHandler(false)
 			return

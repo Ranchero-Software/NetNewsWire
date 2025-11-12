@@ -11,16 +11,17 @@ import os.log
 import RSWeb
 import Secrets
 
-final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
+final class FeedlyRefreshAccessTokenOperation: FeedlyOperation, @unchecked Sendable {
 
 	let service: OAuthAccessTokenRefreshing
 	let oauthClient: OAuthAuthorizationClient
 	let account: Account
 
-	init(account: Account, service: OAuthAccessTokenRefreshing, oauthClient: OAuthAuthorizationClient) {
+	@MainActor init(account: Account, service: OAuthAccessTokenRefreshing, oauthClient: OAuthAuthorizationClient) {
 		self.oauthClient = oauthClient
 		self.service = service
 		self.account = account
+		super.init()
 	}
 
 	override func run() {
@@ -35,7 +36,7 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 			refreshToken = credentials
 
 		} catch {
-			didFinish(with: error)
+			didComplete(with: error)
 			return
 		}
 
@@ -43,11 +44,13 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 
 		// Ignore cancellation after the request is resumed otherwise we may continue storing a potentially invalid token!
 		service.refreshAccessToken(with: refreshToken.secret, client: oauthClient) { result in
-			self.didRefreshAccessToken(result)
+			Task { @MainActor in
+				self.didRefreshAccessToken(result)
+			}
 		}
 	}
 
-	private func didRefreshAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
+	@MainActor private func didRefreshAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
 		assert(Thread.isMainThread)
 
 		switch result {
@@ -63,13 +66,13 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 				// Now store the access token because we want the account delegate to use it.
 				try account.storeCredentials(grant.accessToken)
 
-				didFinish()
+				didComplete()
 			} catch {
-				didFinish(with: error)
+				didComplete(with: error)
 			}
 
 		case .failure(let error):
-			didFinish(with: error)
+			didComplete(with: error)
 		}
 	}
 }

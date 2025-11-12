@@ -20,11 +20,11 @@ protocol FeedlyParsedItemProviding {
 }
 
 protocol FeedlyGetStreamContentsOperationDelegate: AnyObject {
-	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream)
+	@MainActor func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream)
 }
 
 /// Get the stream content of a Collection from Feedly.
-final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
+final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding, @unchecked Sendable {
 
 	struct ResourceProvider: FeedlyResourceProviding {
 		var resource: FeedlyResourceId
@@ -82,32 +82,35 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 
 	weak var streamDelegate: FeedlyGetStreamContentsOperationDelegate?
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) {
+	@MainActor init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.account = account
 		self.resourceProvider = ResourceProvider(resource: resource)
 		self.service = service
 		self.continuation = continuation
 		self.unreadOnly = unreadOnly
 		self.newerThan = newerThan
+		super.init()
 	}
 
-	convenience init(account: Account, resourceProvider: FeedlyResourceProviding, service: FeedlyGetStreamContentsService, newerThan: Date?, unreadOnly: Bool? = nil) {
+	@MainActor convenience init(account: Account, resourceProvider: FeedlyResourceProviding, service: FeedlyGetStreamContentsService, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.init(account: account, resource: resourceProvider.resource, service: service, newerThan: newerThan, unreadOnly: unreadOnly)
 	}
 
 	override func run() {
 		service.getStreamContents(for: resourceProvider.resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
-			switch result {
-			case .success(let stream):
-				self.stream = stream
-
-				self.streamDelegate?.feedlyGetStreamContentsOperation(self, didGetContentsOf: stream)
-
-				self.didFinish()
-
-			case .failure(let error):
-				Feedly.logger.error("Feedly: Unable to get stream contents: \(error.localizedDescription)")
-				self.didFinish(with: error)
+			Task { @MainActor in
+				switch result {
+				case .success(let stream):
+					self.stream = stream
+					
+					self.streamDelegate?.feedlyGetStreamContentsOperation(self, didGetContentsOf: stream)
+					
+					self.didComplete()
+					
+				case .failure(let error):
+					Feedly.logger.error("Feedly: Unable to get stream contents: \(error.localizedDescription)")
+					self.didComplete(with: error)
+				}
 			}
 		}
 	}

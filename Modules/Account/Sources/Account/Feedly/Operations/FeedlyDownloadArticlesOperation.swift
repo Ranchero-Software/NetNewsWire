@@ -11,28 +11,28 @@ import os.log
 import RSCore
 import RSWeb
 
-final class FeedlyDownloadArticlesOperation: FeedlyOperation {
-
+final class FeedlyDownloadArticlesOperation: FeedlyOperation, @unchecked Sendable {
 	private let account: Account
 	private let missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding
 	private let updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding
 	private let getEntriesService: FeedlyGetEntriesService
-	private let operationQueue = MainThreadOperationQueue()
 	private let finishOperation: FeedlyCheckpointOperation
 
-	init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService) {
+	@MainActor init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService, operationQueue: MainThreadOperationQueue) {
 		self.account = account
-		self.operationQueue.suspend()
 		self.missingArticleEntryIdProvider = missingArticleEntryIdProvider
 		self.updatedArticleEntryIdProvider = updatedArticleEntryIdProvider
 		self.getEntriesService = getEntriesService
 		self.finishOperation = FeedlyCheckpointOperation()
 		super.init()
 		self.finishOperation.checkpointDelegate = self
-		self.operationQueue.add(self.finishOperation)
+
+		operationQueue.suspend()
+		operationQueue.add(self.finishOperation)
+		operationQueue.resume()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		var articleIds = missingArticleEntryIdProvider.entryIds
 		articleIds.formUnion(updatedArticleEntryIdProvider.entryIds)
 
@@ -44,7 +44,7 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation {
 			let provider = FeedlyEntryIdentifierProvider(entryIds: Set(articleIds))
 			let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider)
 			getEntries.delegate = self
-			self.operationQueue.add(getEntries)
+			self.operationQueue?.add(getEntries)
 
 			let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(
 				account: account,
@@ -52,7 +52,7 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation {
 			)
 			organiseByFeed.delegate = self
 			organiseByFeed.addDependency(getEntries)
-			self.operationQueue.add(organiseByFeed)
+			self.operationQueue?.add(organiseByFeed)
 
 			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(
 				account: account,
@@ -61,25 +61,25 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation {
 
 			updateAccount.delegate = self
 			updateAccount.addDependency(organiseByFeed)
-			self.operationQueue.add(updateAccount)
+			self.operationQueue?.add(updateAccount)
 
 			finishOperation.addDependency(updateAccount)
 		}
 
-		operationQueue.resume()
+		didComplete()
 	}
 
-	override func didCancel() {
-		Feedly.logger.info("Feedly: Canceling FeedlyDownloadArticlesOperation")
-		operationQueue.cancelAllOperations()
-		super.didCancel()
+	@MainActor override func noteDidComplete() {
+		if isCanceled {
+			operationQueue?.cancelAll()
+		}
 	}
 }
 
 extension FeedlyDownloadArticlesOperation: FeedlyCheckpointOperationDelegate {
 
-	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-		didFinish()
+	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
+		didComplete()
 	}
 }
 
@@ -90,6 +90,5 @@ extension FeedlyDownloadArticlesOperation: FeedlyOperationDelegate {
 
 		// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
 		Feedly.logger.error("Feedly: FeedlyDownloadArticlesOperation did fail with error: \(error.localizedDescription)")
-		cancel()
 	}
 }

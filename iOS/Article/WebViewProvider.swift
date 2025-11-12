@@ -13,67 +13,49 @@ import WebKit
 /// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
 /// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-white part of their lifecycle.
 final class WebViewProvider: NSObject {
-
 	private let articleIconSchemeHandler: ArticleIconSchemeHandler
 	private let operationQueue = MainThreadOperationQueue()
 	private var queue = NSMutableArray()
 
-	init(coordinator: SceneCoordinator) {
+	@MainActor init(coordinator: SceneCoordinator) {
 		articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 		super.init()
 		replenishQueueIfNeeded()
 	}
 
-	func replenishQueueIfNeeded() {
+	@MainActor func replenishQueueIfNeeded() {
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
 	}
 
-	func dequeueWebView(completion: @escaping (PreloadedWebView) -> ()) {
+	@MainActor func dequeueWebView(completion: @escaping (PreloadedWebView) -> ()) {
 		operationQueue.add(WebViewProviderDequeueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler, completion: completion))
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
 	}
-
 }
 
-final class WebViewProviderReplenishQueueOperation: MainThreadOperation {
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "WebViewProviderReplenishQueueOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
+final class WebViewProviderReplenishQueueOperation: MainThreadOperation, @unchecked Sendable {
 	private let minimumQueueDepth = 3
 
 	private var queue: NSMutableArray
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler
 
-	init(queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler) {
+	@MainActor init(queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		self.queue = queue
 		self.articleIconSchemeHandler = articleIconSchemeHandler
+		super.init(name: "WebViewProviderReplenishQueueOperation")
 	}
 
-	func run() {
+	@MainActor override func run() {
 		while queue.count < minimumQueueDepth {
 			let webView = PreloadedWebView(articleIconSchemeHandler: articleIconSchemeHandler)
 			webView.preload()
 			queue.insert(webView, at: 0)
 		}
-		self.operationDelegate?.operationDidComplete(self)
+		didComplete()
 	}
-
 }
 
-final class WebViewProviderDequeueOperation: MainThreadOperation {
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "WebViewProviderFlushQueueOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
+final class WebViewProviderDequeueOperation: MainThreadOperation, @unchecked Sendable {
 	private var queue: NSMutableArray
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler
 	private var completion: (PreloadedWebView) -> ()
@@ -82,13 +64,14 @@ final class WebViewProviderDequeueOperation: MainThreadOperation {
 		self.queue = queue
 		self.articleIconSchemeHandler = articleIconSchemeHandler
 		self.completion = completion
+		super.init(name: "WebViewProviderFlushQueueOperation")
 	}
 
-	func run() {
+	@MainActor override func run() {
 		if let webView = queue.lastObject as? PreloadedWebView {
 			self.completion(webView)
 			self.queue.remove(webView)
-			self.operationDelegate?.operationDidComplete(self)
+			didComplete()
 			return
 		}
 
@@ -97,7 +80,6 @@ final class WebViewProviderDequeueOperation: MainThreadOperation {
 		let webView = PreloadedWebView(articleIconSchemeHandler: articleIconSchemeHandler)
 		webView.preload()
 		self.completion(webView)
-		self.operationDelegate?.operationDidComplete(self)
+		didComplete()
 	}
-
 }

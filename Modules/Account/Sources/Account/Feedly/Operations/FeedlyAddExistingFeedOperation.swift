@@ -12,17 +12,15 @@ import RSWeb
 import RSCore
 import Secrets
 
-final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
-
-	private let operationQueue = MainThreadOperationQueue()
+final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate, @unchecked Sendable {
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
 
-    init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, customFeedName: String? = nil) throws {
+	@MainActor init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, customFeedName: String? = nil, operationQueue: MainThreadOperationQueue) throws {
 
 		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionId) = try validator.getValidContainer()
 
-		self.operationQueue.suspend()
+		operationQueue.suspend()
 
 		super.init()
 
@@ -31,45 +29,45 @@ final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDele
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: customFeedName, collectionId: collectionId, service: service)
 		addRequest.delegate = self
 		addRequest.downloadProgress = progress
-		self.operationQueue.add(addRequest)
+		operationQueue.add(addRequest)
 
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest)
 		createFeeds.downloadProgress = progress
 		createFeeds.addDependency(addRequest)
-		self.operationQueue.add(createFeeds)
+		operationQueue.add(createFeeds)
 
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = progress
 		finishOperation.addDependency(createFeeds)
-		self.operationQueue.add(finishOperation)
+		operationQueue.add(finishOperation)
 	}
 
-	override func run() {
-		operationQueue.resume()
+	@MainActor override func run() {
+		operationQueue?.resume()
+		didComplete()
 	}
 
-	override func didCancel() {
-		operationQueue.cancelAllOperations()
+	@MainActor override func noteDidComplete() {
+		if isCanceled {
+			operationQueue?.cancelAll()
+		}
 		addCompletionHandler = nil
-		super.didCancel()
 	}
 
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		addCompletionHandler?(.failure(error))
 		addCompletionHandler = nil
-
-		cancel()
 	}
-
-	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
+	
+	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
 		guard !isCanceled else {
 			return
 		}
-
+		
 		addCompletionHandler?(.success(()))
 		addCompletionHandler = nil
-
-		didFinish()
+		
+		didComplete()
 	}
 }

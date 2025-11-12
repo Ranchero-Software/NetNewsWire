@@ -14,21 +14,22 @@ protocol FeedlyFeedsAndFoldersProviding {
 }
 
 /// Reflect Collections from Feedly as Folders.
-final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding {
+final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, @unchecked Sendable {
 
 	let account: Account
 	let collectionsProvider: FeedlyCollectionProviding
 
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
 
-	init(account: Account, collectionsProvider: FeedlyCollectionProviding) {
+	@MainActor init(account: Account, collectionsProvider: FeedlyCollectionProviding) {
 		self.collectionsProvider = collectionsProvider
 		self.account = account
+		super.init()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		defer {
-			didFinish()
+			didComplete()
 		}
 
 		let localFolders = account.folders ?? Set()

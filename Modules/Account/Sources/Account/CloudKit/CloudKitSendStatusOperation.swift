@@ -14,16 +14,8 @@ import RSWeb
 import SyncDatabase
 import CloudKitSync
 
-final class CloudKitSendStatusOperation: MainThreadOperation {
+final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendable {
 	private let blockSize = 150
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "CloudKitSendStatusOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
 	private weak var account: Account?
 	private weak var articlesZone: CloudKitArticlesZone?
 	private weak var refreshProgress: DownloadProgress?
@@ -37,9 +29,10 @@ final class CloudKitSendStatusOperation: MainThreadOperation {
 		self.refreshProgress = refreshProgress
 		self.showProgress = showProgress
 		self.syncDatabase = database
+		super.init(name: "CloudKitSendStatusOperation")
 	}
 
-	public func run() {
+	@MainActor override func run() {
 		Self.logger.debug("iCloud: Sending article statuses")
 
 		if showProgress {
@@ -51,7 +44,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation {
 					selectForProcessing()
 				} catch {
 					Self.logger.debug("iCloud: Send status count pending error: \(error.localizedDescription)")
-					operationDelegate?.cancelOperation(self)
+					didComplete()
 				}
 			}
 		} else {
@@ -70,7 +63,7 @@ private extension CloudKitSendStatusOperation {
 					self.refreshProgress?.completeTask()
 				}
 				Self.logger.debug("iCloud: Finished sending article statuses")
-				self.operationDelegate?.operationDidComplete(self)
+				didComplete()
 			}
 
 			do {
@@ -88,7 +81,7 @@ private extension CloudKitSendStatusOperation {
 				}
 			} catch {
 				Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
-				self.operationDelegate?.cancelOperation(self)
+				didComplete()
 			}
 		}
 	}

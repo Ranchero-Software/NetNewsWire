@@ -11,16 +11,17 @@ import os.log
 import RSParser
 
 /// Get full entries for the entry identifiers.
-final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
+final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding, @unchecked Sendable {
 
 	let account: Account
 	let service: FeedlyGetEntriesService
 	let provider: FeedlyEntryIdentifierProviding
 
-	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding) {
+	@MainActor init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding) {
 		self.account = account
 		self.service = service
 		self.provider = provider
+		super.init()
 	}
 
 	private(set) var entries = [FeedlyEntry]()
@@ -55,14 +56,16 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 
 	override func run() {
 		service.getEntries(for: provider.entryIds) { result in
-			switch result {
-			case .success(let entries):
-				self.entries = entries
-				self.didFinish()
+			Task { @MainActor in
+				switch result {
+				case .success(let entries):
+					self.entries = entries
+					self.didComplete()
 
-			case .failure(let error):
-				Feedly.logger.error("Feedly: Unable to get entries with error \(error.localizedDescription)")
-				self.didFinish(with: error)
+				case .failure(let error):
+					Feedly.logger.error("Feedly: Unable to get entries with error \(error.localizedDescription)")
+					self.didComplete(with: error)
+				}
 			}
 		}
 	}

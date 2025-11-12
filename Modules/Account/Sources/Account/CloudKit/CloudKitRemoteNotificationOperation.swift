@@ -11,14 +11,7 @@ import os.log
 import RSCore
 import CloudKitSync
 
-final class CloudKitRemoteNotificationOperation: MainThreadOperation {
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "CloudKitRemoteNotificationOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
+final class CloudKitRemoteNotificationOperation: MainThreadOperation, @unchecked Sendable {
 	private weak var accountZone: CloudKitAccountZone?
 	private weak var articlesZone: CloudKitArticlesZone?
 	private var userInfo: [AnyHashable : Any]
@@ -28,11 +21,12 @@ final class CloudKitRemoteNotificationOperation: MainThreadOperation {
 		self.accountZone = accountZone
 		self.articlesZone = articlesZone
 		self.userInfo = userInfo
+		super.init(name: "CloudKitRemoteNotificationOperation")
 	}
 
-	func run() {
-		guard let accountZone = accountZone, let articlesZone = articlesZone else {
-			self.operationDelegate?.operationDidComplete(self)
+	@MainActor override func run() {
+		guard let accountZone, let articlesZone else {
+			didComplete()
 			return
 		}
 
@@ -40,8 +34,9 @@ final class CloudKitRemoteNotificationOperation: MainThreadOperation {
 			Self.logger.debug("iCloud: Processing remote notification")
 			await accountZone.receiveRemoteNotification(userInfo: userInfo)
 			await articlesZone.receiveRemoteNotification(userInfo: self.userInfo)
+
 			Self.logger.debug("iCloud: Finished processing remote notification")
-			self.operationDelegate?.operationDidComplete(self)
+			didComplete()
 		}
 	}
 }

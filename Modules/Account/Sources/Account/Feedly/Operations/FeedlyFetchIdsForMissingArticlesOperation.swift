@@ -9,25 +9,28 @@
 import Foundation
 import os.log
 
-final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, @unchecked Sendable {
 
 	private let account: Account
 
 	private(set) var entryIds = Set<String>()
 
-	init(account: Account) {
+	@MainActor init(account: Account) {
 		self.account = account
+		super.init()
 	}
 
 	override func run() {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
-			switch result {
-			case .success(let articleIds):
-				self.entryIds.formUnion(articleIds)
-				self.didFinish()
+			Task { @MainActor in
+				switch result {
+				case .success(let articleIds):
+					self.entryIds.formUnion(articleIds)
+					self.didComplete()
 
-			case .failure(let error):
-				self.didFinish(with: error)
+				case .failure(let error):
+					self.didComplete(with: error)
+				}
 			}
 		}
 	}

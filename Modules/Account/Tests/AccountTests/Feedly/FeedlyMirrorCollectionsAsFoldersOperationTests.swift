@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 import RSCore
 
-final class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
+@MainActor final class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -169,14 +169,14 @@ final class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 			let addFoldersAndFeeds = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider)
 
 			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addFoldersAndFeeds)
-			MainThreadOperationQueue.shared.make(createFeeds, dependOn: addFoldersAndFeeds)
+			createFeeds.addDependency(addFoldersAndFeeds)
 
 			let completionExpectation = expectation(description: "Did Finish")
 			createFeeds.completionBlock = { _ in
 				completionExpectation.fulfill()
 			}
 
-			MainThreadOperationQueue.shared.addOperations([addFoldersAndFeeds, createFeeds])
+			MainThreadOperationQueue.shared.add([addFoldersAndFeeds, createFeeds])
 
 			waitForExpectations(timeout: 2)
 

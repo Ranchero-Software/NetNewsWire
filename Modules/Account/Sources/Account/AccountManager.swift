@@ -243,7 +243,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func suspendDatabaseAll() {
+	@MainActor public func suspendDatabaseAll() {
 		for account in accounts {
 			account.suspendDatabase()
 		}

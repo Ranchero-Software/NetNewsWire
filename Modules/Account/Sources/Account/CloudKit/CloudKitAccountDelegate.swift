@@ -76,7 +76,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 		await withCheckedContinuation { continuation in
 			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
-			op.completionBlock = { mainThreadOperaion in
+			op.completionBlock = { mainThreadOperation in
 				continuation.resume()
 			}
 			mainThreadOperationQueue.add(op)

@@ -9,25 +9,17 @@
 import Foundation
 
 /// Run a block of code as an operation.
-///
-/// This also serves as a simple example implementation of MainThreadOperation.
-public final class MainThreadBlockOperation: MainThreadOperation {
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public var operationDelegate: MainThreadOperationDelegate?
-	public var name: String?
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
+public final class MainThreadBlockOperation: MainThreadOperation, @unchecked Sendable {
 	private let block: VoidBlock
 
-	public init(block: @escaping VoidBlock) {
+	public init(name: String? = nil, block: @escaping VoidBlock) {
 		self.block = block
+		super.init(name: name, completionBlock: nil)
 	}
 
-	public func run() {
+	@MainActor override public func run() {
+		assert(Thread.isMainThread)
 		block()
-		informOperationDelegateOfCompletion()
+		didComplete()
 	}
 }

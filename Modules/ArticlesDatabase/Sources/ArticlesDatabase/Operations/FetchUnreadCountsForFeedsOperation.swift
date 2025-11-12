@@ -12,16 +12,8 @@ import RSDatabase
 import RSDatabaseObjC
 
 /// Fetch the unread counts for a number of feeds.
-public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
-
-	var result: UnreadCountDictionaryCompletionResult = .failure(.isSuspended)
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "FetchUnreadCountsForFeedsOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
+public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation, @unchecked Sendable {
+	var result: UnreadCountDictionaryCompletionResult?
 
 	private let queue: DatabaseQueue
 	private let feedIDs: Set<String>
@@ -29,12 +21,13 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
 	init(feedIDs: Set<String>, databaseQueue: DatabaseQueue) {
 		self.feedIDs = feedIDs
 		self.queue = databaseQueue
+		super.init(name: "FetchUnreadCountsForFeedsOperation")
 	}
 
-	public func run() {
+	@MainActor public override func run() {
 		queue.runInDatabase { databaseResult in
 			if self.isCanceled {
-				self.informOperationDelegateOfCompletion()
+				self.didComplete()
 				return
 			}
 
@@ -42,7 +35,7 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
 			case .success(let database):
 				self.fetchUnreadCounts(database)
 			case .failure:
-				self.informOperationDelegateOfCompletion()
+				self.result = .failure(.isSuspended)
 			}
 		}
 	}
@@ -57,22 +50,11 @@ private extension FetchUnreadCountsForFeedsOperation {
 		let parameters = Array(feedIDs) as [Any]
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
-			informOperationDelegateOfCompletion()
-			return
-		}
-		if isCanceled {
-			resultSet.close()
-			informOperationDelegateOfCompletion()
 			return
 		}
 
 		var unreadCountDictionary = UnreadCountDictionary()
 		while resultSet.next() {
-			if isCanceled {
-				resultSet.close()
-				informOperationDelegateOfCompletion()
-				return
-			}
 			let unreadCount = resultSet.long(forColumnIndex: 1)
 			if let feedID = resultSet.string(forColumnIndex: 0) {
 				unreadCountDictionary[feedID] = unreadCount
@@ -81,6 +63,5 @@ private extension FetchUnreadCountsForFeedsOperation {
 		resultSet.close()
 
 		result = .success(unreadCountDictionary)
-		informOperationDelegateOfCompletion()
 	}
 }

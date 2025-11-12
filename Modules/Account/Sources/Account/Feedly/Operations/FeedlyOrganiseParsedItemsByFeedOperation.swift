@@ -16,7 +16,7 @@ protocol FeedlyParsedItemsByFeedProviding {
 }
 
 /// Group articles by their feeds.
-final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyParsedItemsByFeedProviding {
+final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyParsedItemsByFeedProviding, @unchecked Sendable {
 
 	private let account: Account
 	private let parsedItemProvider: FeedlyParsedItemProviding
@@ -32,14 +32,15 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 
 	private var itemsKeyedByFeedId = [String: Set<ParsedItem>]()
 
-	init(account: Account, parsedItemProvider: FeedlyParsedItemProviding) {
+	@MainActor init(account: Account, parsedItemProvider: FeedlyParsedItemProviding) {
 		self.account = account
 		self.parsedItemProvider = parsedItemProvider
+		super.init()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		defer {
-			didFinish()
+			didComplete()
 		}
 
 		let items = parsedItemProvider.parsedEntries

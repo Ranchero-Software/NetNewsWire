@@ -14,21 +14,22 @@ import Secrets
 ///
 /// Typically, it pages through the article ids of the global.all stream.
 /// When all the article ids are collected, it is the responsibility of another operation to download them when appropriate.
-final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, @unchecked Sendable {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
 	private let newerThan: Date?
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?) {
+	@MainActor init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.newerThan = newerThan
+		super.init()
 	}
 
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, newerThan: Date?) {
+	@MainActor convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, newerThan: Date?) {
 		let all = FeedlyCategoryResourceId.Global.all(for: userId)
 		self.init(account: account, resource: all, service: service, newerThan: newerThan)
 	}
@@ -39,23 +40,23 @@ final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIde
 
 	private var storedUpdatedArticleIds = Set<String>()
 
-	override func run() {
+	@MainActor override func run() {
 		getStreamIds(nil)
 	}
 
-	private func getStreamIds(_ continuation: String?) {
+	@MainActor private func getStreamIds(_ continuation: String?) {
 		guard let date = newerThan else {
 			Feedly.logger.debug("Feedly: No date provided so everything must be new (nothing is updated)")
-			didFinish()
+			didComplete()
 			return
 		}
 
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: date, unreadOnly: nil, completion: didGetStreamIds(_:))
 	}
 
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	@MainActor private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
 		guard !isCanceled else {
-			didFinish()
+			didComplete()
 			return
 		}
 
@@ -65,14 +66,14 @@ final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIde
 
 			guard let continuation = streamIds.continuation else {
 				Feedly.logger.info("Feedly: Articles updated since last successful sync start date: \(self.storedUpdatedArticleIds.count)")
-				didFinish()
+				didComplete()
 				return
 			}
 
 			getStreamIds(continuation)
 
 		case .failure(let error):
-			didFinish(with: error)
+			didComplete(with: error)
 		}
 	}
 }

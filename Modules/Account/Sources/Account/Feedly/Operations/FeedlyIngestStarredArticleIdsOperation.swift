@@ -17,7 +17,7 @@ import Secrets
 /// When all the article ids are collected, a status is created for each.
 /// The article ids previously marked as starred but not collected become unstarred.
 /// So this operation has side effects *for the entire account* it operates on.
-final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
+final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation, @unchecked Sendable {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
@@ -25,29 +25,30 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	private let database: SyncDatabase
 	private var remoteEntryIds = Set<String>()
 
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
+	@MainActor convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		let resource = FeedlyTagResourceId.Global.saved(for: userId)
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
+	@MainActor init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.database = database
+		super.init()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		getStreamIds(nil)
 	}
 
-	private func getStreamIds(_ continuation: String?) {
+	@MainActor private func getStreamIds(_ continuation: String?) {
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil, completion: didGetStreamIds(_:))
 	}
 
-	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	@MainActor private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
 		guard !isCanceled else {
-			didFinish()
+			didComplete()
 			return
 		}
 
@@ -64,7 +65,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 			getStreamIds(continuation)
 
 		case .failure(let error):
-			didFinish(with: error)
+			didComplete(with: error)
 		}
 	}
 
@@ -72,26 +73,26 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	private func removeEntryIdsWithPendingStatus() {
 		Task { @MainActor in
 			guard !isCanceled else {
-				didFinish()
+				didComplete()
 				return
 			}
 
 			do {
 				guard let pendingArticleIDs = try await database.selectPendingStarredStatusArticleIDs() else {
-					didFinish()
+					didComplete()
 					return
 				}
 				remoteEntryIds.subtract(pendingArticleIDs)
 				updateStarredStatuses()
 			} catch {
-				didFinish(with: error)
+				didComplete(with: error)
 			}
 		}
 	}
 
-	private func updateStarredStatuses() {
+	@MainActor private func updateStarredStatuses() {
 		guard !isCanceled else {
-			didFinish()
+			didComplete()
 			return
 		}
 
@@ -101,14 +102,14 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 				self.processStarredArticleIDs(localStarredArticleIDs)
 
 			case .failure(let error):
-				self.didFinish(with: error)
+				self.didComplete(with: error)
 			}
 		}
 	}
 
-	func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
+	@MainActor func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
 		guard !isCanceled else {
-			didFinish()
+			didComplete()
 			return
 		}
 
@@ -143,10 +144,10 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 		group.notify(queue: .main) {
 			let markingError = results.markAsStarredError ?? results.markAsUnstarredError
 			guard let error = markingError else {
-				self.didFinish()
+				self.didComplete()
 				return
 			}
-			self.didFinish(with: error)
+			self.didComplete(with: error)
 		}
 	}
 }

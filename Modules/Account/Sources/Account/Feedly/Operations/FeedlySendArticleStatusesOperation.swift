@@ -13,13 +13,14 @@ import os.log
 
 
 /// Take changes to statuses of articles locally and apply them to the corresponding the articles remotely.
-final class FeedlySendArticleStatusesOperation: FeedlyOperation {
+final class FeedlySendArticleStatusesOperation: FeedlyOperation, @unchecked Sendable {
 	private let database: SyncDatabase
 	private let service: FeedlyMarkArticlesService
 
-	init(database: SyncDatabase, service: FeedlyMarkArticlesService) {
+	@MainActor init(database: SyncDatabase, service: FeedlyMarkArticlesService) {
 		self.database = database
 		self.service = service
+		super.init()
 	}
 
 	override func run() {
@@ -28,12 +29,12 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 
 			do {
 				guard let syncStatuses = try await database.selectForProcessing() else {
-					didFinish()
+					didComplete()
 					return
 				}
 				processStatuses(Array(syncStatuses))
 			} catch {
-				didFinish()
+				didComplete()
 			}
 		}
 	}
@@ -73,9 +74,9 @@ private extension FeedlySendArticleStatusesOperation {
 			}
 		}
 
-		group.notify(queue: DispatchQueue.main) {
+		Task { @MainActor in
 			Feedly.logger.info("Feedly: Finished sending article statuses")
-			self.didFinish()
+			self.didComplete()
 		}
 	}
 }

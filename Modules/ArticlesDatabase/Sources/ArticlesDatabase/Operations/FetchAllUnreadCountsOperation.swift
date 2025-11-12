@@ -11,35 +11,31 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
-public final class FetchAllUnreadCountsOperation: MainThreadOperation {
-
-	var result: UnreadCountDictionaryCompletionResult = .failure(.isSuspended)
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "FetchAllUnreadCountsOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
+public final class FetchAllUnreadCountsOperation: MainThreadOperation, @unchecked Sendable {
+	var result: UnreadCountDictionaryCompletionResult?
 	private let queue: DatabaseQueue
 
 	init(databaseQueue: DatabaseQueue) {
 		self.queue = databaseQueue
+		super.init(name: "FetchAllUnreadCountsOperation")
 	}
 
-	public func run() {
+	@MainActor public override func run() {
 		queue.runInDatabase { databaseResult in
-			if self.isCanceled {
-				self.informOperationDelegateOfCompletion()
-				return
-			}
+			Task { @MainActor in
+				if self.isCanceled {
+					self.didComplete()
+					return
+				}
 
-			switch databaseResult {
-			case .success(let database):
-				self.fetchUnreadCounts(database)
-			case .failure:
-				self.informOperationDelegateOfCompletion()
+				switch databaseResult {
+				case .success(let database):
+					self.fetchUnreadCounts(database)
+				case .failure:
+					self.result = .failure(.isSuspended)
+				}
+
+				self.didComplete()
 			}
 		}
 	}
@@ -51,17 +47,11 @@ private extension FetchAllUnreadCountsOperation {
 		let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 group by feedID;"
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-			informOperationDelegateOfCompletion()
 			return
 		}
 
 		var unreadCountDictionary = UnreadCountDictionary()
 		while resultSet.next() {
-			if isCanceled {
-				resultSet.close()
-				informOperationDelegateOfCompletion()
-				return
-			}
 			let unreadCount = resultSet.long(forColumnIndex: 1)
 			if let feedID = resultSet.string(forColumnIndex: 0) {
 				unreadCountDictionary[feedID] = unreadCount
@@ -70,6 +60,5 @@ private extension FetchAllUnreadCountsOperation {
 		resultSet.close()
 
 		result = .success(unreadCountDictionary)
-		informOperationDelegateOfCompletion()
 	}
 }

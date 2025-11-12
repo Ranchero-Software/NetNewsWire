@@ -10,19 +10,20 @@ import Foundation
 import os.log
 
 /// Single responsibility is to accurately reflect Collections and their Feeds as Folders and their Feeds.
-final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
+final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, @unchecked Sendable {
 
 	let account: Account
 	let feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding
 
-	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding) {
+	@MainActor init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding) {
 		self.feedsAndFoldersProvider = feedsAndFoldersProvider
 		self.account = account
+		super.init()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		defer {
-			didFinish()
+			didComplete()
 		}
 
 		let pairs = feedsAndFoldersProvider.feedsAndFolders

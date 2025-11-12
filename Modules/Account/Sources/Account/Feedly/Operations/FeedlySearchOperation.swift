@@ -13,34 +13,34 @@ protocol FeedlySearchService: AnyObject {
 }
 
 protocol FeedlySearchOperationDelegate: AnyObject {
-	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse)
+	@MainActor func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse)
 }
 
 /// Find one and only one feed for a given query (usually, a URL).
 /// What happens when a feed is found for the URL is delegated to the `searchDelegate`.
-final class FeedlySearchOperation: FeedlyOperation {
-
+final class FeedlySearchOperation: FeedlyOperation, @unchecked Sendable {
 	let query: String
 	let locale: Locale
 	let searchService: FeedlySearchService
 	weak var searchDelegate: FeedlySearchOperationDelegate?
 
-	init(query: String, locale: Locale = .current, service: FeedlySearchService) {
+	@MainActor init(query: String, locale: Locale = .current, service: FeedlySearchService) {
 		self.query = query
 		self.locale = locale
 		self.searchService = service
+		super.init()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		searchService.getFeeds(for: query, count: 1, locale: locale.identifier) { result in
 			switch result {
 			case .success(let response):
 				assert(Thread.isMainThread)
 				self.searchDelegate?.feedlySearchOperation(self, didGet: response)
-				self.didFinish()
+				self.didComplete()
 
 			case .failure(let error):
-				self.didFinish(with: error)
+				self.didComplete(with: error)
 			}
 		}
 	}

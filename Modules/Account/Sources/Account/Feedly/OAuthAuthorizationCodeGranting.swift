@@ -143,9 +143,9 @@ public protocol OAuthAccessTokenResponse {
 }
 
 /// The access and refresh tokens from a successful authorization grant.
-public struct OAuthAuthorizationGrant: Equatable {
-	public var accessToken: Credentials
-	public var refreshToken: Credentials?
+public struct OAuthAuthorizationGrant: Equatable, Sendable {
+	public let accessToken: Credentials
+	public let refreshToken: Credentials?
 }
 
 /// Conformed to by API callers to provide a consistent interface for `AccountDelegate` types to enable OAuth Authorization Grants. Conformers provide an associated type that models any custom parameters/properties, as well as the standard ones, in the response to a request for an access token.

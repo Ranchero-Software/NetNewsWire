@@ -12,7 +12,7 @@ protocol FeedlyAddFeedToCollectionService {
 	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
 }
 
-final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
+final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding, @unchecked Sendable {
 
 	let feedName: String?
 	let collectionId: String
@@ -21,13 +21,14 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 	let folder: Folder
 	let feedResource: FeedlyFeedResourceId
 
-	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
+	@MainActor init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
 		self.account = account
 		self.folder = folder
 		self.feedResource = feedResource
 		self.feedName = feedName
 		self.collectionId = collectionId
 		self.service = service
+		super.init()
 	}
 
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
@@ -36,16 +37,17 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 		return feedResource
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
-			guard let self = self else {
+			guard let self else {
 				return
 			}
 			if self.isCanceled {
-				self.didFinish()
+				self.didComplete()
 				return
 			}
 			self.didCompleteRequest(result)
+			didComplete()
 		}
 	}
 }
@@ -60,13 +62,11 @@ private extension FeedlyAddFeedToCollectionOperation {
 			let feedsWithCreatedFeedId = feedlyFeeds.filter { $0.id == resource.id }
 
 			if feedsWithCreatedFeedId.isEmpty {
-				didFinish(with: AccountError.createErrorNotFound)
-			} else {
-				didFinish()
+				self.error = AccountError.createErrorNotFound
 			}
 
 		case .failure(let error):
-			didFinish(with: error)
+			self.error = error
 		}
 	}
 }

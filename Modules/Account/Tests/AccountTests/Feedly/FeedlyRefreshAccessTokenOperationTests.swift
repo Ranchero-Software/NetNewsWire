@@ -12,7 +12,7 @@ import RSWeb
 import RSCore
 import Secrets
 
-final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
+@MainActor final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -29,7 +29,7 @@ final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		super.tearDown()
 	}
 
-	final class TestRefreshTokenService: OAuthAccessTokenRefreshing {
+	final class TestRefreshTokenService: OAuthAccessTokenRefreshing, @unchecked Sendable {
 		var mockResult: Result<OAuthAuthorizationGrant, Error>?
 		var refreshAccessTokenExpectation: XCTestExpectation?
 		var parameterTester: ((String, OAuthAuthorizationClient) -> ())?
@@ -63,8 +63,7 @@ final class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		}
 
 		MainThreadOperationQueue.shared.add(refresh)
-
-		MainThreadOperationQueue.shared.cancelOperations([refresh])
+		refresh.cancel()
 
 		waitForExpectations(timeout: 1)
 

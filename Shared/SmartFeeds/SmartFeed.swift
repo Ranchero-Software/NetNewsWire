@@ -108,7 +108,7 @@ private extension SmartFeed {
 
 	func fetchUnreadCount(for account: Account) {
 		delegate.fetchUnreadCount(for: account) { singleUnreadCountResult in
-			guard let accountUnreadCount = try? singleUnreadCountResult.get() else {
+			guard let singleUnreadCountResult, let accountUnreadCount = try? singleUnreadCountResult.get() else {
 				return
 			}
 			self.unreadCounts[account.accountID] = accountUnreadCount

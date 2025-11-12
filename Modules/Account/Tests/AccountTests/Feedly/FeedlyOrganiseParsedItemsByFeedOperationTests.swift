@@ -11,7 +11,7 @@ import XCTest
 import RSParser
 import RSCore
 
-final class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
+@MainActor final class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()

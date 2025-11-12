@@ -7,93 +7,139 @@
 //
 
 import Foundation
+import Synchronization
 
-/// Code to be run by MainThreadOperationQueue.
+/// Code to be run by MainThreadOperationQueue on @MainActor.
 ///
-/// When finished, it must call operationDelegate.operationDidComplete(self).
-/// If it’s canceled, it should not call the delegate.
-/// When it’s canceled, it should do its best to stop
-/// doing whatever it’s doing. However, it should not
-/// leave data in an inconsistent state.
-public protocol MainThreadOperation: AnyObject {
+/// Override `run()` with the code to be run — this is the only
+/// thing that needs to be overridden.
+///
+/// When finished, it must call `didComplete()`.
+///
+/// It should check `isCanceled` at appropriate times,
+/// and do its best stop when canceled.
+/// However, it should not leave data in an inconsistent state.
+///
+/// The completion block will be called when finished,
+/// regardless of cancellation status. The completion block
+/// takes the operation as a parameter so that it can check
+/// cancellation status if it needs to.
+nonisolated open class MainThreadOperation: Hashable, @unchecked Sendable {
+	public let id: Int
+	private static let nextID = Mutex(0)
 
-	// These three properties are set by MainThreadOperationQueue. Don’t set them.
-	var isCanceled: Bool { get set } // Check this at appropriate times in case the operation has been canceled.
-	var id: Int? { get set }
-	var operationDelegate: MainThreadOperationDelegate? { get set } // Make this weak.
+	private struct State: Sendable {
+		var isCanceled = false
+	}
+	private let state = Mutex(State())
 
-	/// Name may be useful for debugging. Unused otherwise.
-	var name: String? { get set }
+	// Check this at appropriate times in case the operation has been canceled.
+	public var isCanceled: Bool {
+		get { state.withLock { $0.isCanceled } }
+		set { state.withLock { $0.isCanceled = newValue } }
+	}
 
-	typealias MainThreadOperationCompletionBlock = (MainThreadOperation) -> Void
+	public let name: String?
 
-	/// Called when the operation completes.
-	///
-	/// The completionBlock is called
-	/// even if the operation was canceled. The completionBlock
-	/// takes the operation as parameter, so you can inspect it as needed.
-	///
-	/// Implementations of MainThreadOperation are *not* responsible
-	/// for calling the completionBlock — MainThreadOperationQueue
-	/// handles that.
-	///
-	/// The completionBlock is always called on the main thread.
-	/// The queue will clear the completionBlock after calling it.
-	var completionBlock: MainThreadOperationCompletionBlock? { get set }
+	public typealias MainThreadOperationCompletionBlock = @MainActor @Sendable (MainThreadOperation) -> Void
+	public var completionBlock: MainThreadOperationCompletionBlock?
 
-	/// Do the thing this operation does.
+	@MainActor public weak var operationQueue: MainThreadOperationQueue?
+
+	@MainActor var dependencies = Set<MainThreadOperation>()
+
+	/// Create a new MainThreadOperation.
 	///
-	/// This code runs on the main thread. If you want to run
-	/// code off of the main thread, you can use the standard mechanisms:
-	/// a DispatchQueue, most likely.
+	/// This doesn’t add the operation to the queue.
+	/// Call `MainThreadOperationQueue.add` to add it.
 	///
-	/// When this is called, you don’t need to check isCanceled:
-	/// it’s guaranteed to not be canceled. However, if you run code
-	/// in another thread, you should check isCanceled in that code.
-	@MainActor func run()
+	/// - Parameters:
+	///   - name: Name of the operation — used for debugging.
+	///   - completionBlock: Called on the main thread once the operation has completed.
+	///   Called even if canceled, even if `run` was never called.
+	public init(name: String? = nil, completionBlock: MainThreadOperationCompletionBlock? = nil) {
+		self.id = Self.autoincrementingID()
+		self.name = name
+		self.completionBlock = completionBlock
+	}
+
+	/// Do the thing this operation does. This method must be subclassed.
+	///
+	/// This code runs on the main thread. You can run code off the main
+	/// thread via the standard ways.
+	@MainActor open func run() {
+		preconditionFailure("MainThreadOperation.run must be overridden.")
+	}
 
 	/// Cancel this operation.
 	///
 	/// Any operations dependent on this operation
 	/// will also be canceled automatically.
-	///
-	/// This function has a default implementation. It’s super-rare
-	/// to need to provide your own.
-	func cancel()
+	@MainActor public func cancel() {
+		isCanceled = true
+		dependencies.removeAll()
+		Task { @MainActor in
+			didComplete()
+		}
+	}
 
 	/// Make this operation dependent on an other operation.
 	///
-	/// This means the other operation must complete before
+	/// Do this before adding to the queue, since it might get run
+	/// before adding the dependency if you add to the queue first.
+	///
+	/// The other operation must complete before
 	/// this operation gets run. If the other operation is canceled,
 	/// this operation will automatically be canceled.
 	/// Note: an operation can have multiple dependencies.
-	///
-	/// This function has a default implementation. It’s super-rare
-	/// to need to provide your own.
-	func addDependency(_ parentOperation: MainThreadOperation)
+	@MainActor public func addDependency(_ parentOperation: MainThreadOperation) {
+		dependencies.insert(parentOperation)
+	}
+
+	@MainActor func removeDependency(_ parentOperation: MainThreadOperation) {
+		dependencies.remove(parentOperation)
+	}
+
+	@MainActor func hasDependency(_ parentOperation: MainThreadOperation) -> Bool {
+		dependencies.contains(parentOperation)
+	}
+
+	/// Call when completed. This will trigger calling completionBlock.
+	@MainActor public func didComplete() {
+		assert(Thread.isMainThread)
+		operationQueue?.operationDidComplete(self)
+	}
+
+	/// Override to be notified when the operation is complete.
+	@MainActor open func noteDidComplete() {
+	}
+
+	@MainActor func callCompletionBlock() {
+		completionBlock?(self)
+		completionBlock = nil
+	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(id)
+	}
+
+	// MARK: - Equatable
+
+	static public func ==(lhs: MainThreadOperation, rhs: MainThreadOperation) -> Bool {
+		lhs.id == rhs.id
+	}
 }
 
-public extension MainThreadOperation {
+nonisolated private extension MainThreadOperation {
 
-	func cancel() {
-		operationDelegate?.cancelOperation(self)
-	}
-
-	func addDependency(_ parentOperation: MainThreadOperation) {
-		operationDelegate?.make(self, dependOn: parentOperation)
-	}
-
-	func informOperationDelegateOfCompletion() {
-		guard !isCanceled else {
-			return
-		}
-		if Thread.isMainThread {
-			operationDelegate?.operationDidComplete(self)
-		}
-		else {
-			DispatchQueue.main.async {
-				self.informOperationDelegateOfCompletion()
+	static func autoincrementingID() -> Int {
+		nextID.withLock { id in
+			defer {
+				id += 1
 			}
+			return id
 		}
 	}
 }

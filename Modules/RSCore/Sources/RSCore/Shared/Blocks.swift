@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias VoidBlock = () -> Void
+public typealias VoidBlock = @Sendable () -> Void
 public typealias VoidCompletionBlock = VoidBlock
 
 /// Call a VoidCompletionBlock on the main thread.

@@ -11,36 +11,32 @@ import os.log
 import RSCore
 import CloudKitSync
 
-final class CloudKitReceiveStatusOperation: MainThreadOperation {
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "CloudKitReceiveStatusOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
+final class CloudKitReceiveStatusOperation: MainThreadOperation, @unchecked Sendable {
 	private weak var articlesZone: CloudKitArticlesZone?
 	private static let logger = cloudKitLogger
 
 	init(articlesZone: CloudKitArticlesZone) {
 		self.articlesZone = articlesZone
+		super.init(name: "CloudKitReceiveStatusOperation")
 	}
 
-	@MainActor func run() {
+	@MainActor override func run() {
 		guard let articlesZone else {
-			self.operationDelegate?.operationDidComplete(self)
+			self.didComplete()
 			return
 		}
 
 		Task { @MainActor in
+			defer {
+				self.didComplete()
+			}
+
 			Self.logger.debug("iCloud: Refreshing article statuses")
 			do {
 				try await articlesZone.refreshArticles()
 				Self.logger.debug("iCloud: Finished refreshing article statuses")
-				self.operationDelegate?.operationDidComplete(self)
 			} catch {
 				Self.logger.error("iCloud: Receive status error: \(error.localizedDescription)")
-				self.operationDelegate?.cancelOperation(self)
 			}
 		}
 	}

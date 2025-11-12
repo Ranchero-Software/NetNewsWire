@@ -12,16 +12,9 @@ import RSDatabase
 import RSDatabaseObjC
 
 /// Fetch the unread count for a single feed.
-public final class FetchFeedUnreadCountOperation: MainThreadOperation {
+public final class FetchFeedUnreadCountOperation: MainThreadOperation, @unchecked Sendable {
 
-	var result: SingleUnreadCountResult = .failure(.isSuspended)
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "FetchFeedUnreadCountOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
+	var result: SingleUnreadCountResult?
 
 	private let queue: DatabaseQueue
 	private let cutoffDate: Date
@@ -31,12 +24,13 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation {
 		self.feedID = feedID
 		self.queue = databaseQueue
 		self.cutoffDate = cutoffDate
+		super.init(name: "FetchFeedUnreadCountOperation")
 	}
 
-	public func run() {
+	@MainActor public override func run() {
 		queue.runInDatabase { databaseResult in
 			if self.isCanceled {
-				self.informOperationDelegateOfCompletion()
+				self.didComplete()
 				return
 			}
 
@@ -44,8 +38,10 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation {
 			case .success(let database):
 				self.fetchUnreadCount(database)
 			case .failure:
-				self.informOperationDelegateOfCompletion()
+				self.result = .failure(.isSuspended)
 			}
+
+			self.didComplete()
 		}
 	}
 }
@@ -56,11 +52,6 @@ private extension FetchFeedUnreadCountOperation {
 		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0;"
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [feedID]) else {
-			informOperationDelegateOfCompletion()
-			return
-		}
-		if isCanceled {
-			informOperationDelegateOfCompletion()
 			return
 		}
 
@@ -69,7 +60,5 @@ private extension FetchFeedUnreadCountOperation {
 			result = .success(unreadCount)
 		}
 		resultSet.close()
-
-		informOperationDelegateOfCompletion()
 	}
 }

@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 import RSCore
 
-final class FeedlySyncStreamContentsOperationTests: XCTestCase {
+@MainActor final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
@@ -28,6 +28,7 @@ final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 	}
 
 	func testIngestsOnePageSuccess() throws {
+		let operationQueue = MainThreadOperationQueue()
 		let service = TestGetStreamContentsService()
 		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 0)
@@ -45,16 +46,16 @@ final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			XCTAssertNil(serviceUnreadOnly)
 		}
 
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, operationQueue: operationQueue)
 
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(syncStreamContents)
+		operationQueue.add(syncStreamContents)
 
-		waitForExpectations(timeout: 2)
+		waitForExpectations(timeout: 30)
 
 		let expectedArticleIds = Set(items.map { $0.id })
 		let expectedArticles = try account.fetchArticles(.articleIDs(expectedArticleIds))
@@ -79,7 +80,7 @@ final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			XCTAssertNil(serviceUnreadOnly)
 		}
 
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, operationQueue: MainThreadOperationQueue.shared)
 
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in
@@ -120,7 +121,7 @@ final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			getStreamPageExpectation.fulfill()
 		}
 
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, operationQueue: MainThreadOperationQueue.shared)
 
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in
@@ -129,7 +130,7 @@ final class FeedlySyncStreamContentsOperationTests: XCTestCase {
 
 		MainThreadOperationQueue.shared.add(syncStreamContents)
 
-		waitForExpectations(timeout: 30)
+		waitForExpectations(timeout: 10)
 
 		// Find articles inserted.
 		let articleIds = Set(service.pages.values.map { $0.items }.flatMap { $0 }.map { $0.id })

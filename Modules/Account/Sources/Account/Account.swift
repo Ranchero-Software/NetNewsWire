@@ -431,7 +431,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.suspendNetwork()
 	}
 
-	public func suspendDatabase() {
+	@MainActor public func suspendDatabase() {
 		#if os(iOS)
 		database.cancelAndSuspend()
 		#endif
@@ -1464,41 +1464,47 @@ private extension Account {
 	}
 
 	func fetchUnreadCount(_ feed: Feed, _ completion: VoidCompletionBlock?) {
-		database.fetchUnreadCount(feed.feedID) { result in
-			if let unreadCount = try? result.get() {
-				feed.unreadCount = unreadCount
+		Task { @MainActor in
+			database.fetchUnreadCount(feed.feedID) { result in
+				if let result, let unreadCount = try? result.get() {
+					feed.unreadCount = unreadCount
+				}
+				completion?()
 			}
-			completion?()
 		}
 	}
 
 	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: VoidCompletionBlock?) {
 		let feedIDs = Set(feeds.map { $0.feedID })
-		database.fetchUnreadCounts(for: feedIDs) { result in
-			if let unreadCountDictionary = try? result.get() {
-				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+		Task { @MainActor in
+			database.fetchUnreadCounts(for: feedIDs) { result in
+				if let result, let unreadCountDictionary = try? result.get() {
+					self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+				}
+				completion?()
 			}
-			completion?()
 		}
 	}
 
 	func fetchAllUnreadCounts(_ completion: VoidCompletionBlock? = nil) {
 		fetchingAllUnreadCounts = true
-		database.fetchAllUnreadCounts { result in
-			guard let unreadCountDictionary = try? result.get() else {
+		Task { @MainActor in
+			database.fetchAllUnreadCounts { result in
+				guard let result, let unreadCountDictionary = try? result.get() else {
+					completion?()
+					return
+				}
+				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
+				
+				self.fetchingAllUnreadCounts = false
+				self.updateUnreadCount()
+				
+				if !self.areUnreadCountsInitialized {
+					self.areUnreadCountsInitialized = true
+					self.postUnreadCountDidInitializeNotification()
+				}
 				completion?()
-				return
 			}
-			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
-
-			self.fetchingAllUnreadCounts = false
-			self.updateUnreadCount()
-
-			if !self.areUnreadCountsInitialized {
-				self.areUnreadCountsInitialized = true
-				self.postUnreadCountDidInitializeNotification()
-			}
-			completion?()
 		}
 	}
 

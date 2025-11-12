@@ -20,10 +20,10 @@ import Articles
 
 public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
 public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary,DatabaseError>
-public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCompletionResult) -> Void
+public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCompletionResult?) -> Void
 
 public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
-public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) -> Void
+public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult?) -> Void
 
 public struct ArticleChanges {
 	public let newArticles: Set<Article>?
@@ -191,10 +191,12 @@ public final class ArticlesDatabase {
 	// MARK: - Unread Counts
 
 	/// Fetch all non-zero unread counts.
-	public func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+	@MainActor public func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		let operation = FetchAllUnreadCountsOperation(databaseQueue: queue)
-		operationQueue.cancelOperations(named: operation.name!)
+		if let operationName = operation.name {
+			operationQueue.cancel(named: operationName)
+		}
 		operation.completionBlock = { operation in
 			let fetchOperation = operation as! FetchAllUnreadCountsOperation
 			completion(fetchOperation.result)
@@ -203,7 +205,7 @@ public final class ArticlesDatabase {
 	}
 
 	/// Fetch unread count for a single feed.
-	public func fetchUnreadCount(_ feedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+	@MainActor public func fetchUnreadCount(_ feedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		let operation = FetchFeedUnreadCountOperation(feedID: feedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
 		operation.completionBlock = { operation in
@@ -214,7 +216,7 @@ public final class ArticlesDatabase {
 	}
 
 	/// Fetch non-zero unread counts for given feedIDs.
-	public func fetchUnreadCounts(for feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+	@MainActor public func fetchUnreadCounts(for feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		let operation = FetchUnreadCountsForFeedsOperation(feedIDs: feedIDs, databaseQueue: queue)
 		operation.completionBlock = { operation in
@@ -302,7 +304,7 @@ public final class ArticlesDatabase {
 	// MARK: - Suspend and Resume (for iOS)
 
 	/// Cancel current operations and close the database.
-	public func cancelAndSuspend() {
+	@MainActor public func cancelAndSuspend() {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		cancelOperations()
 		suspend()
@@ -310,14 +312,14 @@ public final class ArticlesDatabase {
 
 	/// Close the database and stop running database calls.
 	/// Any pending calls will complete first.
-	public func suspend() {
+	@MainActor public func suspend() {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		operationQueue.suspend()
 		queue.suspend()
 	}
 
 	/// Open the database and allow for running database calls again.
-	public func resume() {
+	@MainActor public func resume() {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		queue.resume()
 		operationQueue.resume()
@@ -380,6 +382,8 @@ private extension ArticlesDatabase {
 
 	func cancelOperations() {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		operationQueue.cancelAllOperations()
+		Task { @MainActor in
+			operationQueue.cancelAll()
+		}
 	}
 }

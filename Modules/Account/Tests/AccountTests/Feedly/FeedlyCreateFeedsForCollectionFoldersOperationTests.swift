@@ -10,7 +10,7 @@ import XCTest
 @testable import Account
 import RSCore
 
-final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
+@MainActor final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
