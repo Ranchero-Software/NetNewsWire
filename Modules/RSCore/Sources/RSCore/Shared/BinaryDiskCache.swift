@@ -7,61 +7,82 @@
 //
 
 import Foundation
+import Synchronization
 
-// Thread safety is up to the caller.
-
-public struct BinaryDiskCache: Sendable {
-
+nonisolated public final class BinaryDiskCache: Sendable {
 	public let folder: String
+	private let mutex = Mutex(())
 
 	public init(folder: String) {
 		self.folder = folder
 	}
 
 	public func data(forKey key: String) throws -> Data? {
-		let url = urlForKey(key)
-		return try Data(contentsOf: url)
+		try mutex.withLock { _ in
+			try _data(forKey: key)
+		}
 	}
 
 	public func setData(_ data: Data, forKey key: String) throws {
-		let url = urlForKey(key)
-		try data.write(to: url)
+		try mutex.withLock { _ in
+			try _setData(data, forKey: key)
+		}
 	}
 
 	public func deleteData(forKey key: String) throws {
-		let url = urlForKey(key)
-		try FileManager.default.removeItem(at: url)
+		try mutex.withLock { _ in
+			try _deleteData(forKey: key)
+		}
 	}
 
-	// subscript doesn’t throw, for cases when you can ignore errors.
+	// Subscript doesn’t throw. Use when you can ignore errors.
 
 	public subscript(_ key: String) -> Data? {
 		get {
-			do {
-				return try data(forKey: key)
+			mutex.withLock { _ in
+				do {
+					return try _data(forKey: key)
+				}
+				catch {}
+				return nil
 			}
-			catch {}
-			return nil
 		}
 
 		set {
-			if let data = newValue {
-				do {
-					try setData(data, forKey: key)
+			mutex.withLock { _ in
+				if let data = newValue {
+					do {
+						try _setData(data, forKey: key)
+					}
+					catch {}
 				}
-				catch {}
-			}
-			else {
-				do {
-					try deleteData(forKey: key)
+				else {
+					do {
+						try _deleteData(forKey: key)
+					}
+					catch{}
 				}
-				catch{}
 			}
 		}
 	}
 }
 
 private extension BinaryDiskCache {
+
+	func _data(forKey key: String) throws -> Data? {
+		let url = urlForKey(key)
+		return try Data(contentsOf: url)
+	}
+
+	func _setData(_ data: Data, forKey key: String) throws {
+		let url = urlForKey(key)
+		try data.write(to: url)
+	}
+
+	func _deleteData(forKey key: String) throws {
+		let url = urlForKey(key)
+		try FileManager.default.removeItem(at: url)
+	}
 
 	func filePath(forKey key: String) -> String {
 		return (folder as NSString).appendingPathComponent(key)
