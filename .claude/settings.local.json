@@ -26,7 +26,8 @@
       "WebFetch(domain:www.donnywals.com)",
       "WebFetch(domain:mjtsai.com)",
       "WebFetch(domain:www.massicotte.org)",
-      "WebFetch(domain:www.hackingwithswift.com)"
+      "WebFetch(domain:www.hackingwithswift.com)",
+      "Bash(/dev/null)"
     ],
     "deny": []
   }
