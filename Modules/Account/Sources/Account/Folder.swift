@@ -209,7 +209,7 @@ extension Folder: OPMLRepresentable {
 			return s
 		}
 
-		s = s + String(repeating: "\t", count: tabCount) + "</outline>\n"
+		s = s + String(repeating: "\t", count: indentLevel) + "</outline>\n"
 
 		return s
 	}
