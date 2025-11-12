@@ -8,17 +8,20 @@
 
 import Foundation
 
-enum MacroProcessorError: Error {
+enum MacroProcessorError: Error, Sendable {
 	case emptyMacroDelimiter
 }
 
-public final class MacroProcessor {
+nonisolated public final class MacroProcessor: Sendable {
 
 	let template: String
 	let substitutions: [String: String]
 	let macroStart: String
 	let macroEnd: String
-	lazy var renderedText: String = processMacros()
+
+	var renderedText: String {
+		processMacros()
+	}
 
 	/// Parses a template string and replaces macros with specified values.
 	///
