@@ -917,7 +917,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2610;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					176813F22564BB2C00D98635 = {

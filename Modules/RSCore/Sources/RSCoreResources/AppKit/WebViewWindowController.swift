@@ -5,6 +5,7 @@
 //  Created by Brent Simmons on 11/13/17.
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 import WebKit
