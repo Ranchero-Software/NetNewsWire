@@ -59,7 +59,7 @@ nonisolated public struct FeedSpecifier: Hashable, Sendable {
 			return nil
 		}
 		if feedSpecifiers.count == 1 {
-			return feedSpecifiers.anyObject()
+			return feedSpecifiers.first
 		}
 
 		var currentHighScore = Int.min

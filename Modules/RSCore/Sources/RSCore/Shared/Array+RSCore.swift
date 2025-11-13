@@ -15,14 +15,4 @@ public extension Array {
 			Array(self[$0 ..< Swift.min($0 + size, count)])
 		}
 	}
-
-}
-
-public extension Array where Element: Equatable {
-
-	mutating func removeFirst(object: Element) {
-		guard let index = firstIndex(of: object) else {return}
-		remove(at: index)
-	}
-
 }
