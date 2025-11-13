@@ -28,7 +28,11 @@ let package = Package(
 				.process("Resources/WebViewWindow.xib"),
 				.process("Resources/IndeterminateProgressWindow.xib")
 			],
-			swiftSettings: [.swiftLanguageMode(.v5)]
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self)
+			]
 		),
 		.testTarget(
 			name: "RSCoreTests",
