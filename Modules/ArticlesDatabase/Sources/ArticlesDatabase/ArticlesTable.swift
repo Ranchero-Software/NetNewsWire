@@ -7,26 +7,23 @@
 //
 
 import Foundation
+import Synchronization
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import RSParser
 import Articles
 
-final class ArticlesTable: DatabaseTable {
-
+nonisolated final class ArticlesTable: DatabaseTable, Sendable {
 	let name: String
+
 	private let accountID: String
 	private let queue: DatabaseQueue
 	private let statusesTable: StatusesTable
+	private let searchTable: SearchTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let retentionStyle: ArticlesDatabase.RetentionStyle
-
-	private var articlesCache = [String: Article]()
-
-	private lazy var searchTable: SearchTable = {
-		return SearchTable(queue: queue, articlesTable: self)
-	}()
+	private let articlesCache = Mutex([String: Article]())
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	let articleCutoffDate = Date().bySubtracting(days: 90)
@@ -35,7 +32,6 @@ final class ArticlesTable: DatabaseTable {
 	private typealias ArticlesCountFetchMethod = (FMDatabase) -> Int
 
 	init(name: String, accountID: String, queue: DatabaseQueue, retentionStyle: ArticlesDatabase.RetentionStyle) {
-
 		self.name = name
 		self.accountID = accountID
 		self.queue = queue
@@ -44,6 +40,9 @@ final class ArticlesTable: DatabaseTable {
 
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
+
+		self.searchTable = SearchTable(queue: queue)
+		self.searchTable.articlesTable = self
 	}
 
 	// MARK: - Fetching Articles for Feed
@@ -111,8 +110,8 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Fetching Search Articles
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
-		var articles: Set<Article> = Set<Article>()
-		var error: DatabaseError? = nil
+		nonisolated(unsafe) var articles: Set<Article> = Set<Article>()
+		nonisolated(unsafe) var error: DatabaseError? = nil
 
 		queue.runInDatabaseSync { (databaseResult) in
 			switch databaseResult {
@@ -535,7 +534,7 @@ final class ArticlesTable: DatabaseTable {
 
 	func emptyCaches() {
 		queue.runInDatabase { _ in
-			self.articlesCache = [String: Article]()
+			self.articlesCache.withLock { $0 = [String: Article]() }
 		}
 	}
 
@@ -655,13 +654,14 @@ final class ArticlesTable: DatabaseTable {
 
 // MARK: - Private
 
-private extension ArticlesTable {
+nonisolated private extension ArticlesTable {
 
 	// MARK: - Fetching
 
 	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) throws -> Set<Article> {
-		var articles = Set<Article>()
-		var error: DatabaseError? = nil
+		nonisolated(unsafe) var articles = Set<Article>()
+		nonisolated(unsafe) var error: DatabaseError? = nil
+
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
 			case .success(let database):
@@ -677,8 +677,9 @@ private extension ArticlesTable {
 	}
 
 	private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) throws -> Int {
-		var articlesCount = 0
-		var error: DatabaseError? = nil
+		nonisolated(unsafe) var articlesCount = 0
+		nonisolated(unsafe) var error: DatabaseError? = nil
+		
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
 			case .success(let database):
@@ -721,7 +722,7 @@ private extension ArticlesTable {
 				continue
 			}
 
-			if let article = articlesCache[articleID] {
+			if let article = articlesCache.withLock({ $0[articleID] }) {
 				cachedArticles.insert(article)
 				continue
 			}
@@ -755,8 +756,10 @@ private extension ArticlesTable {
 		}
 
 		// Add fetchedArticles to cache, now that they have attached authors.
-		for article in articlesWithFetchedAuthors {
-			articlesCache[article.articleID] = article
+		articlesCache.withLock { articlesCache in
+			for article in articlesWithFetchedAuthors {
+				articlesCache[article.articleID] = article
+			}
 		}
 
 		return cachedArticles.union(articlesWithFetchedAuthors)
@@ -1020,17 +1023,21 @@ private extension ArticlesTable {
 	}
 
 	func addArticlesToCache(_ articles: Set<Article>?) {
-		guard let articles = articles else {
+		guard let articles else {
 			return
 		}
-		for article in articles {
-			articlesCache[article.articleID] = article
+		articlesCache.withLock { articlesCache in
+			for article in articles {
+				articlesCache[article.articleID] = article
+			}
 		}
 	}
 
 	func removeArticleIDsFromCache(_ articleIDs: Set<String>) {
-		for articleID in articleIDs {
-			articlesCache[articleID] = nil
+		articlesCache.withLock { articlesCache in
+			for articleID in articleIDs {
+				articlesCache[articleID] = nil
+			}
 		}
 	}
 
@@ -1052,7 +1059,7 @@ private extension ArticlesTable {
 	}
 }
 
-private extension Set where Element == ParsedItem {
+nonisolated private extension Set where Element == ParsedItem {
 	func articleIDs() -> Set<String> {
 		return Set<String>(map { $0.articleID })
 	}

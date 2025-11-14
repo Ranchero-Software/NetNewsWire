@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import Synchronization
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import Articles
 import RSParser
 
-final class ArticleSearchInfo: Hashable {
+nonisolated final class ArticleSearchInfo: Hashable, Sendable {
 
 	let articleID: String
 	let title: String?
@@ -22,27 +23,7 @@ final class ArticleSearchInfo: Hashable {
 	let summary: String?
 	let authorsNames: String?
 	let searchRowID: Int?
-
-	var preferredText: String {
-		if let body = contentHTML, !body.isEmpty {
-			return body
-		}
-		if let body = contentText, !body.isEmpty {
-			return body
-		}
-		return summary ?? ""
-	}
-
-	lazy var bodyForIndex: String = {
-		let s = preferredText.rsparser_stringByDecodingHTMLEntities()
-		let sanitizedBody = s.strippingHTML()
-
-		if let authorsNames = authorsNames {
-			return sanitizedBody.appending(" \(authorsNames)")
-		} else {
-			return sanitizedBody
-		}
-	}()
+	let bodyForIndex: String
 
 	init(articleID: String, title: String?, contentHTML: String?, contentText: String?, summary: String?, authorsNames: String?, searchRowID: Int?) {
 		self.articleID = articleID
@@ -52,6 +33,27 @@ final class ArticleSearchInfo: Hashable {
 		self.contentText = contentText
 		self.summary = summary
 		self.searchRowID = searchRowID
+
+		let preferredText: String = {
+			if let body = contentHTML, !body.isEmpty {
+				return body
+			}
+			if let body = contentText, !body.isEmpty {
+				return body
+			}
+			return summary ?? ""
+		}()
+
+		self.bodyForIndex = {
+			let s = preferredText.rsparser_stringByDecodingHTMLEntities()
+			let sanitizedBody = s.strippingHTML()
+
+			if let authorsNames {
+				return sanitizedBody.appending(" \(authorsNames)")
+			} else {
+				return sanitizedBody
+			}
+		}()
 	}
 
 	convenience init(article: Article) {
@@ -77,15 +79,13 @@ final class ArticleSearchInfo: Hashable {
 	}
 }
 
-final class SearchTable: DatabaseTable {
-
+nonisolated final class SearchTable: DatabaseTable, @unchecked Sendable {
 	let name = "search"
 	private let queue: DatabaseQueue
-	private weak var articlesTable: ArticlesTable?
+	weak var articlesTable: ArticlesTable?
 
-	init(queue: DatabaseQueue, articlesTable: ArticlesTable) {
+	init(queue: DatabaseQueue) {
 		self.queue = queue
-		self.articlesTable = articlesTable
 	}
 
 	func ensureIndexedArticles(for articleIDs: Set<String>) {

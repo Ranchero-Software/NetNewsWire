@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Synchronization
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
@@ -16,7 +17,7 @@ import Articles
 //
 // CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 
-final class StatusesTable: DatabaseTable {
+nonisolated final class StatusesTable: DatabaseTable, Sendable {
 
 	let name = DatabaseTableName.statuses
 	private let cache = StatusCache()
@@ -168,8 +169,8 @@ final class StatusesTable: DatabaseTable {
 	}
 
 	func fetchArticleIDs(_ sql: String) throws -> Set<String> {
-		var error: DatabaseError?
-		var articleIDs = Set<String>()
+		nonisolated(unsafe) var error: DatabaseError?
+		nonisolated(unsafe) var articleIDs = Set<String>()
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
 			case .success(let database):
@@ -273,21 +274,25 @@ private extension StatusesTable {
 	}
 }
 
-// MARK: -
+// MARK: - StatusCache
 
-private final class StatusCache {
+nonisolated private final class StatusCache: Sendable {
+	private struct State {
+		var dictionary = [String: ArticleStatus]()
+	}
 
-	// Serial database queue only.
+	private let state = Mutex(State())
 
-	var dictionary = [String: ArticleStatus]()
 	var cachedStatuses: Set<ArticleStatus> {
-		return Set(dictionary.values)
+		state.withLock { Set($0.dictionary.values) }
 	}
 
 	func add(_ statuses: Set<ArticleStatus>) {
 		// Replaces any cached statuses.
-		for status in statuses {
-			self[status.articleID] = status
+		state.withLock { state in
+			for status in statuses {
+				state.dictionary[status.articleID] = status
+			}
 		}
 	}
 
@@ -297,22 +302,22 @@ private final class StatusCache {
 
 	func addIfNotCached(_ statuses: Set<ArticleStatus>) {
 		// Does not replace already cached statuses.
-
-		for status in statuses {
-			let articleID = status.articleID
-			if let _ = self[articleID] {
-				continue
+		state.withLock { state in
+			for status in statuses {
+				let articleID = status.articleID
+				if state.dictionary[articleID] == nil {
+					state.dictionary[articleID] = status
+				}
 			}
-			self[articleID] = status
 		}
 	}
 
 	subscript(_ articleID: String) -> ArticleStatus? {
 		get {
-			return dictionary[articleID]
+			state.withLock { $0.dictionary[articleID] }
 		}
 		set {
-			dictionary[articleID] = newValue
+			state.withLock { $0.dictionary[articleID] = newValue }
 		}
 	}
 }

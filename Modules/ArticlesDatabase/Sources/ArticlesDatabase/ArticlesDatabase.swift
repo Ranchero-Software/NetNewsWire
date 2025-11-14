@@ -25,7 +25,7 @@ public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCo
 public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
 public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult?) -> Void
 
-public struct ArticleChanges {
+nonisolated public struct ArticleChanges: Sendable {
 	public let newArticles: Set<Article>?
 	public let updatedArticles: Set<Article>?
 	public let deletedArticles: Set<Article>?
@@ -55,9 +55,9 @@ public typealias ArticleIDsCompletionBlock = (ArticleIDsResult) -> Void
 public typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseError>
 public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 
-public final class ArticlesDatabase {
+nonisolated public final class ArticlesDatabase: Sendable {
 
-	public enum RetentionStyle {
+	public enum RetentionStyle: Sendable {
 		case feedBased // Local and iCloud: article retention is defined by contents of feed
 		case syncSystem // Feedbin, Feedly, etc.: article retention is defined by external system
 	}

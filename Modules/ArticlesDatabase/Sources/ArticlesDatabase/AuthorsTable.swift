@@ -18,11 +18,11 @@ import Articles
 // CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
 
 
-final class AuthorsTable: DatabaseRelatedObjectsTable {
+nonisolated final class AuthorsTable: DatabaseRelatedObjectsTable, Sendable {
 
 	let name: String
 	let databaseIDKey = DatabaseKey.authorID
-	var cache = DatabaseObjectCache()
+	let cache = DatabaseObjectCache()
 
 	init(name: String) {
 		self.name = name

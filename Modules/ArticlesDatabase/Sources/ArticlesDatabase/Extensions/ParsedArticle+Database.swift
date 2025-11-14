@@ -10,7 +10,7 @@ import Foundation
 import RSParser
 import Articles
 
-extension ParsedItem {
+nonisolated extension ParsedItem {
 
 	var articleID: String {
 		if let s = syncServiceID {

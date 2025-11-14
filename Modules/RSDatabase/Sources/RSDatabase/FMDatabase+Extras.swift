@@ -8,7 +8,7 @@
 import Foundation
 import RSDatabaseObjC
 
-public extension FMDatabase {
+nonisolated public extension FMDatabase {
 
 	static func openAndSetUpDatabase(path: String) -> FMDatabase {
 		let database = FMDatabase(path: path)!

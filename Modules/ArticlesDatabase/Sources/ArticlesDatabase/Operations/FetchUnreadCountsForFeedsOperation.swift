@@ -26,14 +26,11 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation, @unc
 
 	@MainActor public override func run() {
 		queue.runInDatabase { databaseResult in
-			if self.isCanceled {
-				self.didComplete()
-				return
-			}
-
 			switch databaseResult {
 			case .success(let database):
-				self.fetchUnreadCounts(database)
+				if let unreadCountDictionary = self.fetchUnreadCounts(database) {
+					self.result = .success(unreadCountDictionary)
+				}
 			case .failure:
 				self.result = .failure(.isSuspended)
 			}
@@ -41,16 +38,19 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation, @unc
 	}
 }
 
-private extension FetchUnreadCountsForFeedsOperation {
+nonisolated private extension FetchUnreadCountsForFeedsOperation {
 
-	func fetchUnreadCounts(_ database: FMDatabase) {
+	func fetchUnreadCounts(_ database: FMDatabase) -> UnreadCountDictionary? {
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 		let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 group by feedID;"
 
 		let parameters = Array(feedIDs) as [Any]
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
-			return
+			return nil
+		}
+		defer {
+			resultSet.close()
 		}
 
 		var unreadCountDictionary = UnreadCountDictionary()
@@ -60,8 +60,7 @@ private extension FetchUnreadCountsForFeedsOperation {
 				unreadCountDictionary[feedID] = unreadCount
 			}
 		}
-		resultSet.close()
 
-		result = .success(unreadCountDictionary)
+		return unreadCountDictionary
 	}
 }

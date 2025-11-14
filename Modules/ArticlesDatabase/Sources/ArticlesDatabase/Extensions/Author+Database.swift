@@ -14,7 +14,7 @@ import RSParser
 
 // MARK: - DatabaseObject
 
-extension Author {
+nonisolated extension Author {
 
 	init?(row: FMResultSet) {
 		let authorID = row.string(forColumn: DatabaseKey.authorID)
@@ -40,7 +40,7 @@ extension Author {
 	}
 }
 
-extension Author: @retroactive DatabaseObject {
+nonisolated extension Author: @retroactive DatabaseObject {
 
 	public var databaseID: String {
 		return authorID

@@ -20,7 +20,11 @@ let package = Package(
 		.target(
 			name: "RSDatabase",
 			dependencies: ["RSDatabaseObjC"],
-			swiftSettings: [.swiftLanguageMode(.v5)]
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self)
+			]
 		),
 		.target(
 			name: "RSDatabaseObjC",

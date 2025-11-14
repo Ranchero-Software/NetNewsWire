@@ -10,10 +10,9 @@ import Foundation
 import Synchronization
 
 nonisolated public final class ArticleStatus: Hashable, Sendable {
-
-	public enum Key: String {
-		case read = "read"
-		case starred = "starred"
+	nonisolated public enum Key: String, Sendable {
+		case read
+		case starred
 	}
 
 	public let articleID: String

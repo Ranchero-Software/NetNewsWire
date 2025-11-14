@@ -7,23 +7,30 @@
 //
 
 import Foundation
+import Synchronization
 import RSDatabaseObjC
 
 // Implement a lookup table for a many-to-many relationship.
 // Example: CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
 // articleID is objectID; authorID is relatedObjectID.
 
-public final class DatabaseLookupTable {
-
+nonisolated public final class DatabaseLookupTable: Sendable {
 	private let name: String
 	private let objectIDKey: String
 	private let relatedObjectIDKey: String
 	private let relationshipName: String
 	private let relatedTable: DatabaseRelatedObjectsTable
-	private var objectIDsWithNoRelatedObjects = Set<String>()
+
+	// Performance optimization: cache objectIDs that have no related objects,
+	// so we can avoid some fetches and other database work.
+	//
+	// The Mutex is not really needed, since this object always runs within
+	// the context of a serial dispatch queue. But the Mutex proves
+	// to the compiler that this is Sendable, and the cost of that is so small.
+	// (The Mutex will never face contention.)
+	private let objectIDsWithNoRelatedObjects = Mutex(Set<String>())
 
 	public init(name: String, objectIDKey: String, relatedObjectIDKey: String, relatedTable: DatabaseRelatedObjectsTable, relationshipName: String) {
-
 		self.name = name
 		self.objectIDKey = objectIDKey
 		self.relatedObjectIDKey = relatedObjectIDKey
@@ -32,14 +39,13 @@ public final class DatabaseLookupTable {
 	}
 
 	public func fetchRelatedObjects(for objectIDs: Set<String>, in database: FMDatabase) -> RelatedObjectsMap? {
-
-		let objectIDsThatMayHaveRelatedObjects = objectIDs.subtracting(objectIDsWithNoRelatedObjects)
-		if objectIDsThatMayHaveRelatedObjects.isEmpty {
+		let objectIDsThatMayHaveRelatedObjects = objectIDsSubtractingObjectIDsWithNoRelatedObjects(objectIDs)
+		if objectIDsThatMayHaveRelatedObjects.isEmpty { // None of the objectIDs has a related object. Skip the fetch.
 			return nil
 		}
 
 		guard let relatedObjectIDsMap = fetchRelatedObjectIDsMap(objectIDsThatMayHaveRelatedObjects, database) else {
-			objectIDsWithNoRelatedObjects.formUnion(objectIDsThatMayHaveRelatedObjects)
+			cacheObjectIDsWithNoRelatedObjects(objectIDsThatMayHaveRelatedObjects) // They don’t have related objects.
 			return nil
 		}
 
@@ -48,7 +54,7 @@ public final class DatabaseLookupTable {
 			let relatedObjectsMap = RelatedObjectsMap(relatedObjects: relatedObjects, relatedObjectIDsMap: relatedObjectIDsMap)
 
 			let objectIDsWithNoFetchedRelatedObjects = objectIDsThatMayHaveRelatedObjects.subtracting(relatedObjectsMap.objectIDs())
-			objectIDsWithNoRelatedObjects.formUnion(objectIDsWithNoFetchedRelatedObjects)
+			cacheObjectIDsWithNoRelatedObjects(objectIDsWithNoFetchedRelatedObjects)
 
 			return relatedObjectsMap
 		}
@@ -73,21 +79,20 @@ public final class DatabaseLookupTable {
 		removeRelationships(for: objectsWithNoRelationships, database)
 		updateRelationships(for: objectsWithRelationships, database)
 
-		objectIDsWithNoRelatedObjects.formUnion(objectsWithNoRelationships.databaseIDs())
-		objectIDsWithNoRelatedObjects.subtract(objectsWithRelationships.databaseIDs())
+		cacheObjectIDsWithNoRelatedObjects(objectsWithNoRelationships.databaseIDs())
+		uncacheObjectIDsWithNoRelatedObjects(objectsWithRelationships.databaseIDs())
 	}
 }
 
 // MARK: - Private
 
-private extension DatabaseLookupTable {
+nonisolated private extension DatabaseLookupTable {
 
 	// MARK: Removing
 
 	func removeRelationships(for objects: [DatabaseObject], _ database: FMDatabase) {
-
 		let objectIDs = objects.databaseIDs()
-		let objectIDsToRemove = objectIDs.subtracting(objectIDsWithNoRelatedObjects)
+		let objectIDsToRemove = objectIDsSubtractingObjectIDsWithNoRelatedObjects(objectIDs)
 		if objectIDsToRemove.isEmpty {
 			return
 		}
@@ -224,6 +229,20 @@ private extension DatabaseLookupTable {
 			return nil
 		}
 		return LookupValue(objectID: objectID, relatedObjectID: relatedObjectID)
+	}
+
+	// MARK: - Object IDs with no related objects
+
+	func objectIDsSubtractingObjectIDsWithNoRelatedObjects(_ objectIDs: Set<String>) -> Set<String> {
+		objectIDsWithNoRelatedObjects.withLock { objectIDs.subtracting($0) }
+	}
+
+	func cacheObjectIDsWithNoRelatedObjects(_ objectIDs: Set<String>) {
+		objectIDsWithNoRelatedObjects.withLock { $0.formUnion(objectIDs) }
+	}
+
+	func uncacheObjectIDsWithNoRelatedObjects(_ objectIDs: Set<String>) {
+		objectIDsWithNoRelatedObjects.withLock { $0.subtract(objectIDs) }
 	}
 }
 

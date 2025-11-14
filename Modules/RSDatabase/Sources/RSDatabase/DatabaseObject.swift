@@ -10,7 +10,7 @@ import Foundation
 
 public typealias DatabaseDictionary = [String: Any]
 
-public protocol DatabaseObject {
+nonisolated public protocol DatabaseObject: Sendable {
 
 	var databaseID: String { get }
 
@@ -19,7 +19,7 @@ public protocol DatabaseObject {
 	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]?
 }
 
-public extension DatabaseObject {
+nonisolated public extension DatabaseObject {
 
 	func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {
 
@@ -27,7 +27,7 @@ public extension DatabaseObject {
 	}
 }
 
-extension Array where Element == DatabaseObject {
+nonisolated extension Array where Element == DatabaseObject {
 
 	func dictionary() -> [String: DatabaseObject] {
 

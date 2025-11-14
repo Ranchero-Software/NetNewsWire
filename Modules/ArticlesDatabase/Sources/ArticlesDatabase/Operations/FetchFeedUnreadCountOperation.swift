@@ -29,36 +29,40 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation, @unchecke
 
 	@MainActor public override func run() {
 		queue.runInDatabase { databaseResult in
-			if self.isCanceled {
-				self.didComplete()
-				return
-			}
 
 			switch databaseResult {
 			case .success(let database):
-				self.fetchUnreadCount(database)
+				if let unreadCount = self.fetchUnreadCount(database) {
+					self.result = .success(unreadCount)
+				}
 			case .failure:
 				self.result = .failure(.isSuspended)
 			}
 
-			self.didComplete()
+			Task { @MainActor in
+				self.didComplete()
+			}
 		}
 	}
 }
 
-private extension FetchFeedUnreadCountOperation {
+nonisolated private extension FetchFeedUnreadCountOperation {
 
-	func fetchUnreadCount(_ database: FMDatabase) {
+	func fetchUnreadCount(_ database: FMDatabase) -> Int? {
 		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0;"
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [feedID]) else {
-			return
+			return nil
+		}
+		defer {
+			resultSet.close()
 		}
 
-		if resultSet.next() {
-			let unreadCount = resultSet.long(forColumnIndex: 0)
-			result = .success(unreadCount)
+		guard resultSet.next() else {
+			return nil
 		}
-		resultSet.close()
+
+		let unreadCount = resultSet.long(forColumnIndex: 0)
+		return unreadCount
 	}
 }
