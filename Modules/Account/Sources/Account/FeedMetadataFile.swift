@@ -10,11 +10,11 @@ import Foundation
 import os.log
 import RSCore
 
-final class FeedMetadataFile {
+@MainActor final class FeedMetadataFile {
 	private let fileURL: URL
 	private let account: Account
 
-	private var isDirty = false {
+	@MainActor private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
 		}
@@ -28,7 +28,7 @@ final class FeedMetadataFile {
 		self.account = account
 	}
 
-	func markAsDirty() {
+	@MainActor func markAsDirty() {
 		isDirty = true
 	}
 
@@ -59,11 +59,11 @@ final class FeedMetadataFile {
 
 private extension FeedMetadataFile {
 
-	func queueSaveToDiskIfNeeded() {
+	@MainActor func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 
-	@objc func saveToDiskIfNeeded() {
+	@MainActor @objc func saveToDiskIfNeeded() {
 		if isDirty {
 			isDirty = false
 			save()

@@ -98,7 +98,7 @@ private extension SingleFaviconDownloader {
 		}
 	}
 
-	func readFromDisk(_ completion: @escaping (RSImage?) -> Void) {
+	func readFromDisk(_ completion: @escaping @Sendable (RSImage?) -> Void) {
 
 		guard diskStatus != .notOnDisk else {
 			completion(nil)
@@ -132,7 +132,7 @@ private extension SingleFaviconDownloader {
 		}
 	}
 
-	func downloadFavicon(_ completion: @escaping (RSImage?) -> Void) {
+	func downloadFavicon(_ completion: @escaping @Sendable (RSImage?) -> Void) {
 
 		guard let url = URL(string: faviconURL) else {
 			completion(nil)

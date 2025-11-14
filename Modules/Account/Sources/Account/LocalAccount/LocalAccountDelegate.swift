@@ -15,7 +15,7 @@ import FeedFinder
 import RSWeb
 import Secrets
 
-final class LocalAccountDelegate: AccountDelegate {
+@MainActor final class LocalAccountDelegate: AccountDelegate {
 
 	weak var account: Account?
 

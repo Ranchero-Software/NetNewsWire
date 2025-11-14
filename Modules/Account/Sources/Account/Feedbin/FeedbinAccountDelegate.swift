@@ -79,8 +79,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			try await refreshArticlesAndStatuses(account)
 		} catch {
 			refreshProgress.reset()
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -163,8 +162,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			}
 		} catch {
 			Self.logger.info("Feedbin: OPML import failed: \(error.localizedDescription)")
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -191,8 +189,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
 			folder.name = name
 		} catch {
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -252,8 +249,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				throw AccountError.createErrorNotFound
 			}
 		} catch {
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -272,8 +268,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			try await caller.renameSubscription(subscriptionID: subscriptionID, newName: name)
 			feed.editedName = name
 		} catch {
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -307,8 +302,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				account.removeFeedFromTreeAtTopLevel(feed)
 				folder.addFeedToTreeAtTopLevel(feed)
 			} catch {
-				let wrappedError = AccountError.wrappedError(error: error, account: account)
-				throw wrappedError
+				throw AccountError.wrapped(error, account)
 			}
 		} else if let account = container as? Account {
 			account.addFeedIfNotInAnyFolder(feed)
@@ -448,7 +442,7 @@ private extension FeedbinAccountDelegate {
 
 	// This function can be deleted if Feedbin updates their taggings.json service to
 	// show a change when a tag is renamed.
-	func forceExpireFolderFeedRelationship(_ account: Account, _ tags: [FeedbinTag]?) {
+	@MainActor func forceExpireFolderFeedRelationship(_ account: Account, _ tags: [FeedbinTag]?) {
 		guard let tags = tags else { return }
 
 		let folderNames: [String] =  {
@@ -470,7 +464,7 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
+	@MainActor func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
 
@@ -508,7 +502,7 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
+	@MainActor func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
 
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
@@ -562,7 +556,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func syncFeedFolderRelationship(_ account: Account, _ taggings: [FeedbinTagging]?) {
+	@MainActor func syncFeedFolderRelationship(_ account: Account, _ taggings: [FeedbinTagging]?) {
 
 		guard let taggings = taggings else { return }
 		assert(Thread.isMainThread)
@@ -624,7 +618,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
+	@MainActor func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
 		guard let folders = folders else {
 			return [String: Folder]()
 		}
@@ -664,7 +658,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
+	@MainActor func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
 		for feed in account.flattenedFeeds() {
 			if var folderRelationship = feed.folderRelationship {
 				let relationship = folderRelationship[fromName]
@@ -675,14 +669,14 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
+	@MainActor func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
 			feed.folderRelationship = folderRelationship
 		}
 	}
 
-	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
+	@MainActor func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = id
 			feed.folderRelationship = folderRelationship
@@ -891,8 +885,7 @@ private extension FeedbinAccountDelegate {
 				folder.removeFeedFromTreeAtTopLevel(feed)
 				account.addFeedIfNotInAnyFolder(feed)
 			} catch {
-				let wrappedError = AccountError.wrappedError(error: error, account: account)
-				throw wrappedError
+				throw AccountError.wrapped(error, account)
 			}
 		} else {
 			if let account = container as? Account {

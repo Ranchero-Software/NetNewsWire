@@ -54,7 +54,7 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 	private var session: ASWebAuthenticationSession?
 	private var error: Error?
 
-	public init(accountType: AccountType) {
+	@MainActor public init(accountType: AccountType) {
 		self.accountType = accountType
 		self.oauthClient = Account.oauthAuthorizationClient(for: accountType)
 		super.init()

@@ -13,7 +13,7 @@ import RSCore
 // Create a DownloadSessionDelegate, then create a DownloadSession.
 // To download things: call download with a set of URLs. DownloadSession will call the various delegate methods.
 
-public protocol DownloadSessionDelegate {
+@MainActor public protocol DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
@@ -90,7 +90,7 @@ struct HTTP4xxResponse {
 		}
 	}
 
-	public func download(_ urls: Set<URL>) {
+	@MainActor public func download(_ urls: Set<URL>) {
 		cleanUp4xxResponsesCache()
 
 		let filteredURLs = Self.filteredURLs(urls)
@@ -108,26 +108,27 @@ struct HTTP4xxResponse {
 extension DownloadSession: URLSessionTaskDelegate {
 
 	public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-
-		defer {
-			removeTask(task)
-		}
-
-		guard let info = infoForTask(task) else {
-			if let url = task.originalRequest?.url {
-				Self.logger.debug("DownloadSession: no task info found for \(url)")
-			} else {
-				Self.logger.debug("DownloadSession: no task info found for unknown URL")
+		MainActor.assumeIsolated {
+			defer {
+				removeTask(task)
 			}
-			return
-		}
 
-		if let url = task.originalRequest?.url, error == nil {
-			Self.logger.debug("DownloadSession: Caching response for \(url)")
-			cache.add(url.absoluteString, data: info.data as Data, response: info.urlResponse)
-		}
+			guard let info = infoForTask(task) else {
+				if let url = task.originalRequest?.url {
+					Self.logger.debug("DownloadSession: no task info found for \(url)")
+				} else {
+					Self.logger.debug("DownloadSession: no task info found for unknown URL")
+				}
+				return
+			}
 
-		delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
+			if let url = task.originalRequest?.url, error == nil {
+				Self.logger.debug("DownloadSession: Caching response for \(url)")
+				cache.add(url.absoluteString, data: info.data as Data, response: info.urlResponse)
+			}
+
+			delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
+		}
 	}
 
 	private static let redirectStatusCodes = Set([HTTPResponseCode.redirectPermanent, HTTPResponseCode.redirectTemporary, HTTPResponseCode.redirectVeryTemporary, HTTPResponseCode.redirectPermanentPreservingMethod])
@@ -153,56 +154,58 @@ extension DownloadSession: URLSessionTaskDelegate {
 extension DownloadSession: URLSessionDataDelegate {
 
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+		MainActor.assumeIsolated {
+			defer {
+				updateDownloadProgress()
+			}
 
-		defer {
-			updateDownloadProgress()
-		}
+			tasksInProgress.insert(dataTask)
+			tasksPending.remove(dataTask)
 
-		tasksInProgress.insert(dataTask)
-		tasksPending.remove(dataTask)
+			let taskInfo = infoForTask(dataTask)
+			if let taskInfo {
+				taskInfo.urlResponse = response
+			}
 
-		let taskInfo = infoForTask(dataTask)
-		if let taskInfo {
-			taskInfo.urlResponse = response
-		}
-
-		let statusCode = response.forcedStatusCode
-		if statusCode >= 400 {
-			if statusCode != HTTPResponseCode.tooManyRequests {
-				if let urlString = response.url?.absoluteString {
-					Self.logger.debug("DownloadSession: Caching >= 400 response for \(urlString)")
-					cache.add(urlString, data: nil, response: response)
+			let statusCode = response.forcedStatusCode
+			if statusCode >= 400 {
+				if statusCode != HTTPResponseCode.tooManyRequests {
+					if let urlString = response.url?.absoluteString {
+						Self.logger.debug("DownloadSession: Caching >= 400 response for \(urlString)")
+						cache.add(urlString, data: nil, response: response)
+					}
 				}
+
+				Self.logger.debug("DownloadSession: canceling task due to >= 400 response \(response)")
+
+				completionHandler(.cancel)
+				removeTask(dataTask)
+
+				if statusCode == HTTPResponseCode.tooManyRequests {
+					handle429Response(dataTask, response)
+				} else if (400...499).contains(statusCode), let url = response.url {
+					http4xxResponses[url] = HTTP4xxResponse(statusCode)
+				}
+
+				return
 			}
 
-			Self.logger.debug("DownloadSession: canceling task due to >= 400 response \(response)")
-
-			completionHandler(.cancel)
-			removeTask(dataTask)
-
-			if statusCode == HTTPResponseCode.tooManyRequests {
-				handle429Response(dataTask, response)
-			} else if (400...499).contains(statusCode), let url = response.url {
-				http4xxResponses[url] = HTTP4xxResponse(statusCode)
-			}
-
-			return
+			addDataTaskFromQueueIfNecessary()
+			completionHandler(.allow)
 		}
-
-		addDataTaskFromQueueIfNecessary()
-		completionHandler(.allow)
 	}
 
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-
-		guard let info = infoForTask(dataTask) else {
-			return
-		}
-		info.addData(data)
-
-		if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
-			dataTask.cancel()
-			removeTask(dataTask)
+		MainActor.assumeIsolated {
+			guard let info = infoForTask(dataTask) else {
+				return
+			}
+			info.addData(data)
+			
+			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
+				dataTask.cancel()
+				removeTask(dataTask)
+			}
 		}
 	}
 }
@@ -211,7 +214,7 @@ extension DownloadSession: URLSessionDataDelegate {
 
 private extension DownloadSession {
 
-	func addDataTask(_ url: URL) {
+	@MainActor func addDataTask(_ url: URL) {
 
 		guard tasksPending.count < 500 else {
 			queue.insert(url, at: 0)
@@ -256,7 +259,7 @@ private extension DownloadSession {
 		task.resume()
 	}
 
-	func addDataTaskFromQueueIfNecessary() {
+	@MainActor func addDataTaskFromQueueIfNecessary() {
 		guard tasksPending.count < 500, let url = queue.popLast() else { return }
 		addDataTask(url)
 	}
@@ -265,7 +268,7 @@ private extension DownloadSession {
 		return taskIdentifierToInfoDictionary[task.taskIdentifier]
 	}
 
-	func removeTask(_ task: URLSessionTask) {
+	@MainActor func removeTask(_ task: URLSessionTask) {
 		tasksInProgress.remove(task)
 		tasksPending.remove(task)
 		taskIdentifierToInfoDictionary[task.taskIdentifier] = nil
@@ -332,7 +335,7 @@ private extension DownloadSession {
 
 	// MARK: - Download Progress
 
-	func updateDownloadProgress() {
+	@MainActor func updateDownloadProgress() {
 
 		downloadProgress.numberOfTasks = urlsInSession.count
 
@@ -348,7 +351,7 @@ private extension DownloadSession {
 
 	// MARK: - 429 Too Many Requests
 
-	func handle429Response(_ dataTask: URLSessionDataTask, _ response: URLResponse) {
+	@MainActor func handle429Response(_ dataTask: URLSessionDataTask, _ response: URLResponse) {
 
 		guard let message = createHTTPResponse429(dataTask, response) else {
 			return
@@ -376,13 +379,13 @@ private extension DownloadSession {
 		return HTTPResponse429(url: url, retryAfter: retryAfter)
 	}
 
-	func cancelAndRemoveTasksWithHost(_ host: String) {
+	@MainActor func cancelAndRemoveTasksWithHost(_ host: String) {
 
 		cancelAndRemoveTasksWithHost(host, in: tasksInProgress)
 		cancelAndRemoveTasksWithHost(host, in: tasksPending)
 	}
 
-	func cancelAndRemoveTasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) {
+	@MainActor func cancelAndRemoveTasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) {
 
 		let lowercaseHost = host.lowercased(with: localeForLowercasing)
 

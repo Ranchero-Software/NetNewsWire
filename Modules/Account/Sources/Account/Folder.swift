@@ -16,7 +16,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		return .read
 	}
 
-	public var containerID: ContainerIdentifier? {
+	@MainActor public var containerID: ContainerIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
@@ -24,7 +24,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		return ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 
-	public var sidebarItemID: SidebarItemIdentifier? {
+	@MainActor public var sidebarItemID: SidebarItemIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")
 			return nil
@@ -36,7 +36,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
 
-	public var name: String? {
+	@MainActor public var name: String? {
 		didSet {
 			postDisplayNameDidChangeNotification()
 		}
@@ -217,7 +217,7 @@ extension Folder: OPMLRepresentable {
 
 // MARK: Set
 
-extension Set where Element == Folder {
+@MainActor extension Set where Element == Folder {
 
 	func sorted() -> Array<Folder> {
 		return sorted(by: { (folder1, folder2) -> Bool in

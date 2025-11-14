@@ -86,7 +86,7 @@ private extension CloudKitSendStatusOperation {
 		}
 	}
 
-	func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
+	@MainActor func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
 		guard let account, let articlesZone else {
 			completion(true)
 			return
@@ -149,7 +149,7 @@ private extension CloudKitSendStatusOperation {
 		}
 	}
 
-	func processAccountError(_ account: Account, _ error: Error) {
+	@MainActor func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {

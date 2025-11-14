@@ -14,7 +14,7 @@ final class AccountMetadataFile {
 	private let fileURL: URL
 	private let account: Account
 
-	private var isDirty = false {
+	@MainActor private var isDirty = false {
 		didSet {
 			queueSaveToDiskIfNeeded()
 		}
@@ -27,11 +27,11 @@ final class AccountMetadataFile {
 		self.account = account
 	}
 
-	func markAsDirty() {
+	@MainActor func markAsDirty() {
 		isDirty = true
 	}
 
-	func load() {
+	@MainActor func load() {
 		if let fileData = try? Data(contentsOf: fileURL) {
 			let decoder = PropertyListDecoder()
 			account.metadata = (try? decoder.decode(AccountMetadata.self, from: fileData)) ?? AccountMetadata()
@@ -39,7 +39,7 @@ final class AccountMetadataFile {
 		account.metadata.delegate = account
 	}
 
-	func save() {
+	@MainActor func save() {
 		guard !account.isDeleted else { return }
 
 		let encoder = PropertyListEncoder()
@@ -57,11 +57,11 @@ final class AccountMetadataFile {
 
 private extension AccountMetadataFile {
 
-	func queueSaveToDiskIfNeeded() {
+	@MainActor func queueSaveToDiskIfNeeded() {
 		saveQueue.add(self, #selector(saveToDiskIfNeeded))
 	}
 
-	@objc func saveToDiskIfNeeded() {
+	@MainActor @objc func saveToDiskIfNeeded() {
 		if isDirty {
 			isDirty = false
 			save()

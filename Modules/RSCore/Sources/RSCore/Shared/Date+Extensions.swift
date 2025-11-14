@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension Date {
+nonisolated public extension Date {
 
 	// Below are for rough use only — they don't use the calendar.
 
@@ -25,7 +25,7 @@ public extension Date {
 	}
 }
 
-public extension TimeInterval {
+nonisolated public extension TimeInterval {
 
 	init(days: Int) {
 		self.init(days * 24 * 60 * 60)

@@ -14,11 +14,11 @@ import Articles
 import ArticlesDatabase
 import os
 
-protocol LocalAccountRefresherDelegate {
+@MainActor protocol LocalAccountRefresherDelegate {
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges)
 }
 
-final class LocalAccountRefresher {
+@MainActor final class LocalAccountRefresher {
 
 	var delegate: LocalAccountRefresherDelegate?
 	var downloadProgress: DownloadProgress {
@@ -80,7 +80,7 @@ final class LocalAccountRefresher {
 
 // MARK: - DownloadSessionDelegate
 
-extension LocalAccountRefresher: DownloadSessionDelegate {
+@MainActor extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor url: URL) -> HTTPConditionalGetInfo? {
 

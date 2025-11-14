@@ -11,7 +11,7 @@ import WebKit
 
 final class WebViewConfiguration {
 
-	static func configuration(with urlSchemeHandler: WKURLSchemeHandler) -> WKWebViewConfiguration {
+	@MainActor static func configuration(with urlSchemeHandler: WKURLSchemeHandler) -> WKWebViewConfiguration {
 		assert(Thread.isMainThread)
 
 		let configuration = WKWebViewConfiguration()

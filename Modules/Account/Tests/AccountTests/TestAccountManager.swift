@@ -11,7 +11,7 @@ import RSWeb
 
 @testable import Account
 
-final class TestAccountManager {
+@MainActor final class TestAccountManager {
 
 	static let shared = TestAccountManager()
 

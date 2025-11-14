@@ -17,7 +17,7 @@ extension Notification.Name {
 	static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable") // UserInfoKey.feed
 }
 
-public final class FeedIconDownloader {
+@MainActor public final class FeedIconDownloader {
 
 	public static let shared = FeedIconDownloader()
 
@@ -57,7 +57,7 @@ public final class FeedIconDownloader {
 			return nil
 		}
 
-		func checkHomePageURL() {
+		@MainActor func checkHomePageURL() {
 			guard let homePageURL = feed.homePageURL else {
 				return
 			}
@@ -73,15 +73,17 @@ public final class FeedIconDownloader {
 			}
 		}
 
-		func checkFeedIconURL() {
+		@MainActor func checkFeedIconURL() {
 			if let iconURL = feed.iconURL {
 				icon(forURL: iconURL, feed: feed) { (image) in
-					if let image = image {
-						self.cache[feed] = IconImage(image)
-						self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
-						self.postFeedIconDidBecomeAvailableNotification(feed)
-					} else {
-						checkHomePageURL()
+					MainActor.assumeIsolated {
+						if let image = image {
+							self.cache[feed] = IconImage(image)
+							self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
+							self.postFeedIconDidBecomeAvailableNotification(feed)
+						} else {
+							checkHomePageURL()
+						}
 					}
 				}
 			} else {
@@ -91,9 +93,11 @@ public final class FeedIconDownloader {
 
 		if let previouslyFoundIconURL = feedURLToIconURLCache[feed.url] {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { image in
-				if let image {
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-					self.cache[feed] = IconImage(image)
+				MainActor.assumeIsolated {
+					if let image {
+						self.postFeedIconDidBecomeAvailableNotification(feed)
+						self.cache[feed] = IconImage(image)
+					}
 				}
 			}
 
@@ -154,7 +158,7 @@ private extension FeedIconDownloader {
 		resultBlock(nil, nil)
 	}
 
-	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping @Sendable (RSImage?) -> Void) {
 
 		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {

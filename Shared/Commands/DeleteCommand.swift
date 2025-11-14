@@ -94,7 +94,7 @@ final class DeleteCommand: UndoableCommand {
 // Remember as much as we can now about the items being deleted,
 // so they can be restored to the correct place.
 
-private struct SidebarItemSpecifier {
+@MainActor private struct SidebarItemSpecifier {
 
 	private weak var account: Account?
 	private let parentFolder: Folder?

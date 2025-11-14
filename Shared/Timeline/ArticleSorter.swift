@@ -9,14 +9,14 @@
 import Articles
 import Foundation
 
-protocol SortableArticle {
+@MainActor protocol SortableArticle {
 	var sortableName: String { get }
 	var sortableDate: Date { get }
 	var sortableArticleID: String { get }
 	var sortableFeedID: String { get }
 }
 
-struct ArticleSorter {
+@MainActor struct ArticleSorter {
 
 	static func sortedByDate<T: SortableArticle>(articles: [T],
 												 sortDirection: ComparisonResult,

@@ -11,12 +11,12 @@ import Articles
 import RSCore
 
 extension Article: @retroactive PasteboardWriterOwner {
-	public var pasteboardWriter: NSPasteboardWriting {
+	@MainActor public var pasteboardWriter: NSPasteboardWriting {
 		return ArticlePasteboardWriter(article: self)
 	}
 }
 
-@objc final class ArticlePasteboardWriter: NSObject, NSPasteboardWriting {
+@MainActor @objc final class ArticlePasteboardWriter: NSObject, @MainActor NSPasteboardWriting {
 
 	let article: Article
 	static let articleUTI = "com.ranchero.article"

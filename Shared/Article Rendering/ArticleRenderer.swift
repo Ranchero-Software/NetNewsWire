@@ -14,7 +14,7 @@ import RSCore
 import Articles
 import Account
 
-struct ArticleRenderer {
+@MainActor struct ArticleRenderer {
 
 	typealias Rendering = (style: String, html: String, title: String, baseURL: String)
 
@@ -328,7 +328,7 @@ private extension ArticleRenderer {
 
 // MARK: - Article extension
 
-private extension Article {
+@MainActor private extension Article {
 
 	var baseURL: URL? {
 		var s = link

@@ -67,7 +67,7 @@ nonisolated public final class BinaryDiskCache: Sendable {
 	}
 }
 
-private extension BinaryDiskCache {
+nonisolated private extension BinaryDiskCache {
 
 	func _data(forKey key: String) throws -> Data? {
 		let url = urlForKey(key)

@@ -92,7 +92,7 @@ extension AppDelegate : AppDelegateAppleEvents {
 }
 
 final class NetNewsWireCreateElementCommand : NSCreateCommand {
-    override func performDefaultImplementation() -> Any? {
+	@MainActor override func performDefaultImplementation() -> Any? {
          let classDescription = self.createClassDescription
          if (classDescription.className == "feed") {
              return ScriptableFeed.handleCreateElement(command:self)
@@ -119,7 +119,7 @@ final class NetNewsWireDeleteCommand : NSDeleteCommand {
         Here the code unravels the case of objectToDelete being a list or a single object,
         ultimately calling container.deleteElement(element) for each element to delete
     */
-    func delete(objectToDelete:Any, from container:ScriptingObjectContainer) {
+	@MainActor func delete(objectToDelete:Any, from container:ScriptingObjectContainer) {
         if let objectList = objectToDelete as? [Any] {
             for nthObject in objectList {
                 self.delete(objectToDelete:nthObject, from:container)
@@ -138,7 +138,7 @@ final class NetNewsWireDeleteCommand : NSDeleteCommand {
         After resolving, we call delete(objectToDelete:, from container:) with the container and
         the resolved objects
     */
-    func delete(specifier:NSScriptObjectSpecifier, from container:Any) {
+	@MainActor func delete(specifier:NSScriptObjectSpecifier, from container:Any) {
         if let containerList = container as? [Any] {
             for nthObject in containerList {
                 self.delete(specifier:specifier, from:nthObject)
@@ -156,7 +156,7 @@ final class NetNewsWireDeleteCommand : NSDeleteCommand {
         the item to be deleted. keySpecifier is the thing in that container(s) to be deleted
         The first step is to resolve the receiversSpecifier and then call delete(specifier:, from container:)
     */
-    override func performDefaultImplementation() -> Any? {
+	@MainActor override func performDefaultImplementation() -> Any? {
          if let receiversSpecifier = self.receiversSpecifier {
              if let receiverObjects = receiversSpecifier.objectsByEvaluatingSpecifier {
                 self.delete(specifier:self.keySpecifier, from:receiverObjects)

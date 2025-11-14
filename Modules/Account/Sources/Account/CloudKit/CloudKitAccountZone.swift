@@ -89,7 +89,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 
 	///  Persist a web feed record to iCloud and return the external key
-	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container) async throws -> String {
+	@MainActor func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container) async throws -> String {
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
 		record[CloudKitFeed.Fields.url] = url
@@ -111,7 +111,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 
 	/// Rename the given web feed
-	func renameFeed(_ feed: Feed, editedName: String?) async throws {
+	@MainActor func renameFeed(_ feed: Feed, editedName: String?) async throws {
 		guard let externalID = feed.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}
@@ -124,7 +124,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 
 	/// Removes a web feed from a container and optionally deletes it, returning true if deleted
-	func removeFeed(_ feed: Feed, from: Container) async throws -> Bool {
+	@MainActor func removeFeed(_ feed: Feed, from: Container) async throws -> Bool {
 		guard let fromContainerExternalID = from.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}
@@ -155,7 +155,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 
-	func moveFeed(_ feed: Feed, from: Container, to: Container) async throws {
+	@MainActor func moveFeed(_ feed: Feed, from: Container, to: Container) async throws {
 		guard let fromContainerExternalID = from.externalID, let toContainerExternalID = to.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}
@@ -170,7 +170,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 
-	func addFeed(_ feed: Feed, to: Container) async throws {
+	@MainActor func addFeed(_ feed: Feed, to: Container) async throws {
 		guard let toContainerExternalID = to.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}
@@ -184,7 +184,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 
-	func findFeedExternalIDs(for folder: Folder) async throws -> [String] {
+	@MainActor func findFeedExternalIDs(for folder: Folder) async throws -> [String] {
 		guard let folderExternalID = folder.externalID else {
 			throw CloudKitAccountZoneError.unknown
 		}
@@ -267,7 +267,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		try await createContainer(name: name, isAccount: false)
 	}
 
-	func renameFolder(_ folder: Folder, to name: String) async throws {
+	@MainActor func renameFolder(_ folder: Folder, to name: String) async throws {
 		guard let externalID = folder.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}

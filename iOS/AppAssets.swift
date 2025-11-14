@@ -65,7 +65,7 @@ struct AppAssets {
 		return UIImage(systemName: "doc.plaintext")!
 	}()
 
-	static var articleExtractorOffTinted: UIImage = {
+	@MainActor static var articleExtractorOffTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOff")!
 		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
@@ -78,7 +78,7 @@ struct AppAssets {
 		return UIImage(named: "articleExtractorOnSF")!
 	}()
 
-	static var articleExtractorOnTinted: UIImage = {
+	@MainActor static var articleExtractorOnTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOn")!
 		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()

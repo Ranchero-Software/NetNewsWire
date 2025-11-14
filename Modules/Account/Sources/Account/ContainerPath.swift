@@ -21,7 +21,7 @@ public struct ContainerPath {
 
 	// folders should be from top-level down, as in ["Cats", "Tabbies"]
 
-	public init(account: Account, folders: [Folder]) {
+	@MainActor public init(account: Account, folders: [Folder]) {
 		self.account = account
 		self.names = folders.map { $0.nameForDisplay }
 		self.isTopLevel = folders.isEmpty
@@ -29,7 +29,7 @@ public struct ContainerPath {
         self.folderID = folders.last?.folderID
 	}
 
-	public func resolveContainer() -> Container? {
+	@MainActor public func resolveContainer() -> Container? {
 		// The only time it should fail is if the account no longer exists.
 		// Otherwise the worst-case scenario is that it will create Folders if needed.
 

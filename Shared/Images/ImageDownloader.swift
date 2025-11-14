@@ -16,12 +16,12 @@ extension Notification.Name {
 	static let imageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
 }
 
-final class ImageDownloader {
+@MainActor final class ImageDownloader {
 	public static let shared = ImageDownloader()
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
 
-	private var diskCache: BinaryDiskCache
+	nonisolated private let diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
 	private var imageCache = [String: Data]() // url: image
 	private var urlsInProgress = Set<String>()
@@ -122,7 +122,7 @@ private extension ImageDownloader {
 		}
 	}
 
-	func diskKey(_ url: String) -> String {
+	nonisolated func diskKey(_ url: String) -> String {
 		url.md5String
 	}
 

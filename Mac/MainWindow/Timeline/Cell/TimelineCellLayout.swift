@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-struct TimelineCellLayout {
+@MainActor struct TimelineCellLayout {
 
 	let width: CGFloat
 	let height: CGFloat
@@ -91,7 +91,7 @@ struct TimelineCellLayout {
 
 // MARK: - Calculate Rects
 
-private extension TimelineCellLayout {
+@MainActor private extension TimelineCellLayout {
 
 	static func rectForTextBox(_ appearance: TimelineCellAppearance, _ cellData: TimelineCellData, _ showIcon: Bool, _ width: CGFloat) -> NSRect {
 

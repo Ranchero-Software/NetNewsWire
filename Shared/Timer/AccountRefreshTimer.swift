@@ -9,7 +9,7 @@
 import Foundation
 import Account
 
-final class AccountRefreshTimer {
+@MainActor final class AccountRefreshTimer {
 
 	var shuttingDown = false
 

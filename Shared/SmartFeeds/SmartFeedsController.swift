@@ -10,11 +10,8 @@ import Foundation
 import RSCore
 import Account
 
-final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
-
-	var containerID: ContainerIdentifier? {
-		return ContainerIdentifier.smartFeedController
-	}
+@MainActor final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
+	nonisolated let containerID: ContainerIdentifier? = ContainerIdentifier.smartFeedController
 
 	public static let shared = SmartFeedsController()
 	let nameForDisplay = NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")

@@ -15,8 +15,8 @@ import RSDatabase
 
 // Main thread only.
 
-public final class AccountManager: UnreadCountProvider {
-	public static var shared = AccountManager()
+@MainActor public final class AccountManager: UnreadCountProvider {
+	@MainActor public static var shared = AccountManager()
 
 	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
     private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
@@ -30,7 +30,7 @@ public final class AccountManager: UnreadCountProvider {
 	private let defaultAccountIdentifier = "OnMyMac"
 
 	public var isSuspended = false
-	public var areUnreadCountsInitialized: Bool {
+	@MainActor public var areUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
 			if !account.areUnreadCountsInitialized {
 				return false
@@ -51,7 +51,7 @@ public final class AccountManager: UnreadCountProvider {
 		Array(accountsDictionary.values)
 	}
 
-	public var sortedAccounts: [Account] {
+	@MainActor public var sortedAccounts: [Account] {
 		sortByName(accounts)
 	}
 
@@ -65,16 +65,16 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 
-	public var activeAccounts: [Account] {
+	@MainActor public var activeAccounts: [Account] {
 		assert(Thread.isMainThread)
 		return Array(accountsDictionary.values.filter { $0.isActive })
 	}
 
-	public var sortedActiveAccounts: [Account] {
+	@MainActor public var sortedActiveAccounts: [Account] {
 		sortByName(activeAccounts)
 	}
 
-	public var lastArticleFetchEndTime: Date? {
+	@MainActor public var lastArticleFetchEndTime: Date? {
 		var lastArticleFetchEndTime: Date? = nil
 		for account in activeAccounts {
 			if let accountLastArticleFetchEndTime = account.metadata.lastArticleFetchEndTime {
@@ -86,11 +86,11 @@ public final class AccountManager: UnreadCountProvider {
 		return lastArticleFetchEndTime
 	}
 
-	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
+	@MainActor public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
 		AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
 	}
 
-	public var refreshInProgress: Bool {
+	@MainActor public var refreshInProgress: Bool {
 		for account in activeAccounts {
 			if account.refreshInProgress {
 				return true
@@ -103,7 +103,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	private var isActive = false
 
-	public init() {
+	@MainActor public init() {
 		self.accountsFolder = AppConfig.dataSubfolder(named: "Accounts").path
 
 		// The local "On My Mac" account must always exist, even if it's empty.
@@ -192,7 +192,7 @@ public final class AccountManager: UnreadCountProvider {
 		NotificationCenter.default.post(name: .UserDidDeleteAccount, object: self, userInfo: userInfo)
 	}
 
-	public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
+	@MainActor public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
 		guard type != .onMyMac else {
 			return false
 		}
@@ -208,7 +208,7 @@ public final class AccountManager: UnreadCountProvider {
 		return accountsDictionary[accountID]
 	}
 
-	public func existingContainer(with containerID: ContainerIdentifier) -> Container? {
+	@MainActor public func existingContainer(with containerID: ContainerIdentifier) -> Container? {
 		switch containerID {
 		case .account(let accountID):
 			return existingAccount(with: accountID)
@@ -220,7 +220,7 @@ public final class AccountManager: UnreadCountProvider {
 		return nil
 	}
 
-	public func existingFeed(with sidebarItemID: SidebarItemIdentifier) -> SidebarItem? {
+	@MainActor public func existingFeed(with sidebarItemID: SidebarItemIdentifier) -> SidebarItem? {
 		switch sidebarItemID {
 		case .folder(let accountID, let folderName):
 			if let account = existingAccount(with: accountID) {
@@ -259,7 +259,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+	@MainActor public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
 		await withTaskGroup(of: Void.self) { group in
 			for account in activeAccounts {
 				group.addTask { @MainActor in
@@ -304,7 +304,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
+	@MainActor public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 
 		for account in activeAccounts {
@@ -323,7 +323,7 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	public func anyAccountHasAtLeastOneFeed() -> Bool {
+	@MainActor public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
 			if account.hasAtLeastOneFeed() {
 				return true
@@ -333,11 +333,11 @@ public final class AccountManager: UnreadCountProvider {
 		return false
 	}
 
-	public func anyAccountHasNetNewsWireNewsSubscription() -> Bool {
+	@MainActor public func anyAccountHasNetNewsWireNewsSubscription() -> Bool {
 		anyAccountHasFeedWithURL(Self.netNewsWireNewsURL) || anyAccountHasFeedWithURL(Self.jsonNetNewsWireNewsURL)
 	}
 
-	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
+	@MainActor public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		for account in activeAccounts {
 			if let _ = account.existingFeed(withURL: urlString) {
 				return true
@@ -350,7 +350,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
 
-	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
+	@MainActor public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		precondition(Thread.isMainThread)
 
 		var articles = Set<Article>()
@@ -360,7 +360,7 @@ public final class AccountManager: UnreadCountProvider {
 		return articles
 	}
 
-    public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
+	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
         precondition(Thread.isMainThread)
 
         guard activeAccounts.count > 0 else {
@@ -401,7 +401,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	// MARK: - Fetching Article Counts
 
-	public func fetchCountForStarredArticles() throws -> Int {
+	@MainActor public func fetchCountForStarredArticles() throws -> Int {
 		precondition(Thread.isMainThread)
 		var count = 0
 		for account in activeAccounts {
@@ -421,7 +421,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	// MARK: - Notifications
 
-	@objc func unreadCountDidInitialize(_ notification: Notification) {
+	@MainActor @objc func unreadCountDidInitialize(_ notification: Notification) {
 		guard notification.object is Account else {
 			return
 		}
@@ -430,14 +430,14 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
-	@objc func unreadCountDidChange(_ notification: Notification) {
+	@MainActor @objc func unreadCountDidChange(_ notification: Notification) {
 		guard notification.object is Account else {
 			return
 		}
 		updateUnreadCount()
 	}
 
-	@objc func accountStateDidChange(_ notification: Notification) {
+	@MainActor @objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
 }
@@ -446,7 +446,7 @@ public final class AccountManager: UnreadCountProvider {
 
 private extension AccountManager {
 
-	func updateUnreadCount() {
+	@MainActor func updateUnreadCount() {
 		unreadCount = calculateUnreadCount(activeAccounts)
 	}
 
@@ -462,7 +462,7 @@ private extension AccountManager {
 		return nil
 	}
 
-	func readAccountsFromDisk() {
+	@MainActor func readAccountsFromDisk() {
 		var filenames: [String]?
 
 		do {
@@ -489,11 +489,11 @@ private extension AccountManager {
 		}
 	}
 
-	func duplicateServiceAccount(_ account: Account) -> Bool {
+	@MainActor func duplicateServiceAccount(_ account: Account) -> Bool {
 		duplicateServiceAccount(type: account.type, username: account.username)
 	}
 
-	func sortByName(_ accounts: [Account]) -> [Account] {
+	@MainActor func sortByName(_ accounts: [Account]) -> [Account] {
 		// LocalAccount is first.
 
 		return accounts.sorted { (account1, account2) -> Bool in

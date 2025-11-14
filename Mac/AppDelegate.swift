@@ -37,9 +37,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	private var shuttingDown = false {
 		didSet {
 			if shuttingDown {
-				refreshTimer?.shuttingDown = shuttingDown
-				refreshTimer?.invalidate()
-				ArticleStatusSyncTimer.shared.stop()
+				MainActor.assumeIsolated {
+					refreshTimer?.shuttingDown = shuttingDown
+					refreshTimer?.invalidate()
+					ArticleStatusSyncTimer.shared.stop()
+				}
 			}
 		}
 	}
@@ -55,8 +57,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
-				CoalescingQueue.standard.add(self, #selector(updateDockBadge))
-				postUnreadCountDidChangeNotification()
+				MainActor.assumeIsolated {
+					CoalescingQueue.standard.add(self, #selector(updateDockBadge))
+					postUnreadCountDidChangeNotification()
+				}
 			}
 		}
 	}
@@ -84,14 +88,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
-	private let appMovementMonitor = RSAppMovementMonitor()
+	private let appMovementMonitor: RSAppMovementMonitor
 	private var softwareUpdater: SPUUpdater!
 	private var crashReporter: PLCrashReporter!
 
 	private var themeImportPath: String?
 
-	override init() {
+	@MainActor override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
+		self.appMovementMonitor = RSAppMovementMonitor()
 		super.init()
 
 		appDelegate = self
@@ -101,6 +106,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 		AccountManager.shared.start()
 		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
+
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
@@ -304,25 +310,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	// MARK: Notifications
 	@objc func unreadCountDidChange(_ note: Notification) {
-		if note.object is AccountManager {
-			unreadCount = AccountManager.shared.unreadCount
+		MainActor.assumeIsolated {
+			if note.object is AccountManager {
+				unreadCount = AccountManager.shared.unreadCount
+			}
 		}
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
-			return
-		}
-		if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
-			_ = FaviconDownloader.shared.favicon(for: feed)
+		MainActor.assumeIsolated {
+			guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
+				return
+			}
+			if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
+				_ = FaviconDownloader.shared.favicon(for: feed)
+			}
 		}
 	}
 
 	@objc func inspectableObjectsDidChange(_ note: Notification) {
-		guard let inspectorWindowController = inspectorWindowController, inspectorWindowController.isOpen else {
-			return
+		MainActor.assumeIsolated {
+			guard let inspectorWindowController = inspectorWindowController, inspectorWindowController.isOpen else {
+				return
+			}
+			inspectorWindowController.objects = objectsForInspector()
 		}
-		inspectorWindowController.objects = objectsForInspector()
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
@@ -340,7 +352,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	@objc func didWakeNotification(_ note: Notification) {
-		fireOldTimers()
+		MainActor.assumeIsolated {
+			fireOldTimers()
+		}
 	}
 
 	@objc func importDownloadedTheme(_ note: Notification) {
@@ -709,7 +723,7 @@ extension AppDelegate {
 	}
 }
 
-internal extension AppDelegate {
+@MainActor internal extension AppDelegate {
 
 	func fireOldTimers() {
 		// It’s possible there’s a refresh timer set to go off in the past.
@@ -942,27 +956,29 @@ private extension AppDelegate {
 	}
 
 	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-			assertionFailure("Expected valid articlePathUserInfo from userInfo \(userInfo)")
-			Self.logger.error("No valid articlePathUserInfo from userInfo \(userInfo) in status notification")
-			return
-		}
+		MainActor.assumeIsolated {
+			guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+				  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+				  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+				assertionFailure("Expected valid articlePathUserInfo from userInfo \(userInfo)")
+				Self.logger.error("No valid articlePathUserInfo from userInfo \(userInfo) in status notification")
+				return
+			}
 
-		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
-			assertionFailure("Expected account with \(accountID)")
-			Self.logger.error("No account with accountID \(accountID) found from status notification")
-			return
-		}
+			guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+				assertionFailure("Expected account with \(accountID)")
+				Self.logger.error("No account with accountID \(accountID) found from status notification")
+				return
+			}
 
-		guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
-			assertionFailure("Expected article with \(articleID)")
-			Self.logger.error("No article with articleID found \(articleID) from status notification")
-			return
-		}
+			guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
+				assertionFailure("Expected article with \(articleID)")
+				Self.logger.error("No article with articleID found \(articleID) from status notification")
+				return
+			}
 
-		assert(singleArticleSet.count == 1)
-		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
+			assert(singleArticleSet.count == 1)
+			account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
+		}
 	}
 }

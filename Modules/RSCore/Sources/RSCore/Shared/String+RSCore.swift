@@ -10,7 +10,7 @@ import Foundation
 import CommonCrypto
 import RSCoreObjC
 
-public extension String {
+nonisolated public extension String {
 
 	func htmlByAddingLink(_ link: String, className: String? = nil) -> String {
 		if let className = className {
@@ -32,7 +32,7 @@ public extension String {
 
 }
 
-public extension String {
+nonisolated public extension String {
 
 	/// An MD5 hash of the string's UTF-8 representation.
 	var md5Hash: Data {

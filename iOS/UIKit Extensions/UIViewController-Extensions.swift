@@ -66,7 +66,8 @@ private extension UIViewController {
 		let title = NSLocalizedString("Account Error", comment: "Account Error")
 		let alertController = UIAlertController(title: title, message: error.localizedDescription, preferredStyle: .alert)
 
-		if error.account?.type == .feedbin {
+		let account = AccountError.account(from: error)
+		if account?.type == .feedbin {
 
 			let credentialsTitle = NSLocalizedString("Update Credentials", comment: "Update Credentials")
 			let credentialsAction = UIAlertAction(title: credentialsTitle, style: .default) { [weak self] _ in
@@ -75,7 +76,7 @@ private extension UIViewController {
 				let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
 				navController.modalPresentationStyle = .formSheet
 				let addViewController = navController.topViewController as! FeedbinAccountViewController
-				addViewController.account = error.account
+				addViewController.account = account
 				self?.present(navController, animated: true)
 			}
 

@@ -45,19 +45,23 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 		isActive = true
 
 		NSFileCoordinator.addFilePresenter(self)
-		process()
+		Task { @MainActor in
+			process()
+		}
 	}
 
 	func presentedItemDidChange() {
-		DispatchQueue.main.async {
-			self.process()
+		Task { @MainActor in
+			process()
 		}
 	}
 
 	func resume() {
 		assert(isActive)
 		NSFileCoordinator.addFilePresenter(self)
-		process()
+		Task { @MainActor in
+			process()
+		}
 	}
 
 	func suspend() {
@@ -102,7 +106,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 	}
 }
 
-private extension ExtensionFeedAddRequestFile {
+@MainActor private extension ExtensionFeedAddRequestFile {
 
 	func process() {
 

@@ -28,7 +28,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		self.articlesZone = articlesZone
 	}
 
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+	@MainActor func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
 		for deletedRecordKey in deleted {
 			switch deletedRecordKey.recordType {
 			case CloudKitAccountZone.CloudKitFeed.recordType:
@@ -52,7 +52,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 
-	func addOrUpdateFeed(_ record: CKRecord) {
+	@MainActor func addOrUpdateFeed(_ record: CKRecord) {
 		guard let account = account,
 			let urlString = record[CloudKitAccountZone.CloudKitFeed.Fields.url] as? String,
 			let containerExternalIDs = record[CloudKitAccountZone.CloudKitFeed.Fields.containerExternalIDs] as? [String],
@@ -77,7 +77,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 
-	func removeFeed(_ externalID: String) {
+	@MainActor func removeFeed(_ externalID: String) {
 		if let feed = account?.existingFeed(withExternalID: externalID), let containers = account?.existingContainers(withFeed: feed) {
 			for container in containers {
 				feed.dropConditionalGetInfo()
@@ -86,7 +86,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 
-	func addOrUpdateContainer(_ record: CKRecord) {
+	@MainActor func addOrUpdateContainer(_ record: CKRecord) {
 		guard let account = account,
 			let name = record[CloudKitAccountZone.CloudKitContainer.Fields.name] as? String,
 			let isAccount = record[CloudKitAccountZone.CloudKitContainer.Fields.isAccount] as? String,
@@ -125,7 +125,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 
-	func removeContainer(_ externalID: String) {
+	@MainActor func removeContainer(_ externalID: String) {
 		if let folder = account?.existingFolder(withExternalID: externalID) {
 			account?.removeFolderFromTree(folder)
 		}
@@ -135,7 +135,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 private extension CloudKitAcountZoneDelegate {
 
-	func updateFeed(_ feed: Feed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
+	@MainActor func updateFeed(_ feed: Feed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
 		guard let account = account else { return }
 
 		feed.name = name
@@ -163,7 +163,7 @@ private extension CloudKitAcountZoneDelegate {
 		}
 	}
 
-	func createFeedIfNecessary(url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String, container: Container) {
+	@MainActor func createFeedIfNecessary(url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String, container: Container) {
 		guard let account = account else { return  }
 
 		if account.existingFeed(withExternalID: feedExternalID) != nil {

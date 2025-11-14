@@ -11,7 +11,7 @@ import Account
 import Articles
 import UserNotifications
 
-final class UserNotificationManager {
+@MainActor final class UserNotificationManager {
 	static let shared = UserNotificationManager()
 
 	static private let notificationCategory = "NEW_ARTICLE_NOTIFICATION_CATEGORY"

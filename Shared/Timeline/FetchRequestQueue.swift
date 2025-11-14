@@ -8,10 +8,7 @@
 
 import Foundation
 
-// Main thread only.
-
-final class FetchRequestQueue {
-
+@MainActor final class FetchRequestQueue {
 	private var pendingRequests = [FetchRequestOperation]()
 	private var currentRequest: FetchRequestOperation? = nil
 

@@ -16,7 +16,7 @@ import Articles
 
 typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperation) -> Void
 
-final class FetchRequestOperation {
+@MainActor final class FetchRequestOperation {
 
 	let id: Int
 	let readFilterEnabledTable: [SidebarItemIdentifier: Bool]

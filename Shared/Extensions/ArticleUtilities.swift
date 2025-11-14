@@ -13,7 +13,7 @@ import Account
 
 // These handle multiple accounts.
 
-func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
+@MainActor func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 
 	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 
@@ -40,7 +40,7 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 	return d.mapValues{ Set($0) }
 }
 
-extension Article {
+@MainActor extension Article {
 
 	var feed: Feed? {
 		return account?.existingFeed(withFeedID: feedID)
@@ -193,7 +193,7 @@ struct ArticlePathKey {
 	static let articleID = "articleID"
 }
 
-extension Article {
+@MainActor extension Article {
 
 	public var pathUserInfo: [AnyHashable : Any] {
 		return [
@@ -208,7 +208,7 @@ extension Article {
 
 // MARK: SortableArticle
 
-extension Article: SortableArticle {
+@MainActor extension Article: SortableArticle {
 
 	var sortableName: String {
 		return feed?.name ?? ""

@@ -9,12 +9,12 @@
 import AppKit
 import Account
 
-protocol ScriptingObjectContainer: ScriptingObject {
-    var scriptingClassDescription:NSScriptClassDescription { get }
-    func deleteElement(_ element:ScriptingObject)
+@MainActor protocol ScriptingObjectContainer: ScriptingObject {
+	var scriptingClassDescription:NSScriptClassDescription { get }
+	func deleteElement(_ element:ScriptingObject)
 }
 
-extension ScriptingObjectContainer {
+@MainActor extension ScriptingObjectContainer {
 
     func makeFormNameScriptObjectSpecifier(forObject object:NamedScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription

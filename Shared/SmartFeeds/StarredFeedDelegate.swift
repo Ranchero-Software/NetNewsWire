@@ -12,9 +12,7 @@ import Articles
 import ArticlesDatabase
 import Account
 
-// Main thread only.
-
-struct StarredFeedDelegate: SmartFeedDelegate {
+@MainActor struct StarredFeedDelegate: SmartFeedDelegate {
 
 	var sidebarItemID: SidebarItemIdentifier? {
 		return SidebarItemIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))

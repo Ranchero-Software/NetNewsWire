@@ -77,7 +77,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 		}
 	}
 
-	public var name: String? {
+	@MainActor public var name: String? {
 		didSet {
 			if name != oldValue {
 				postDisplayNameDidChangeNotification()
@@ -102,7 +102,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 		}
 	}
 
-	public var editedName: String? {
+	@MainActor public var editedName: String? {
 		// Don’t let editedName == ""
 		get {
 			guard let s = metadata.editedName, !s.isEmpty else {
@@ -331,7 +331,7 @@ extension Feed: OPMLRepresentable {
 	}
 }
 
-extension Set where Element == Feed {
+@MainActor extension Set where Element == Feed {
 
 	func feedIDs() -> Set<String> {
 		return Set<String>(map { $0.feedID })

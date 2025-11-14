@@ -29,8 +29,8 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 }
 
-final class CloudKitAccountDelegate: AccountDelegate {
-	private static let logger = cloudKitLogger
+@MainActor final class CloudKitAccountDelegate: AccountDelegate {
+	nonisolated private static let logger = cloudKitLogger
 
 	private let syncDatabase: SyncDatabase
 
@@ -309,12 +309,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 			folder.externalID = externalID
 			account.addFolderToTree(folder)
-
+			
 			await withTaskGroup(of: Void.self) { group in
 				for feed in feedsToRestore {
 					folder.topLevelFeeds.remove(feed)
-
-					group.addTask {
+					
+					group.addTask { @MainActor in
 						do {
 							try await self.restoreFeed(for: account, feed: feed, container: folder)
 							self.syncProgress.completeTask()
@@ -462,7 +462,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	@MainActor func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 		syncProgress.addToNumberOfTasksAndRemaining(5)
 
 		do {
@@ -501,7 +501,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func createAndSyncFeed(account: Account, feedURL: URL, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws -> Feed {
+	@MainActor func createAndSyncFeed(account: Account, feedURL: URL, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws -> Feed {
 		let feed = account.createFeed(with: nil, url: feedURL.absoluteString, feedID: feedURL.absoluteString, homePageURL: nil)
 		feed.editedName = editedName
 		container.addFeedToTreeAtTopLevel(feed)
@@ -522,7 +522,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func downloadAndParseFeed(feedURL: URL, feed: Feed) async throws -> ParsedFeed {
+	@MainActor func downloadAndParseFeed(feedURL: URL, feed: Feed) async throws -> ParsedFeed {
 		let (parsedFeed, response) = try await InitialFeedDownloader.download(feedURL)
 		syncProgress.completeTask()
 		feed.lastCheckDate = Date()
@@ -540,7 +540,7 @@ private extension CloudKitAccountDelegate {
 		return parsedFeed
 	}
 
-	func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
+	@MainActor func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
 		let _ = try await account.update(feed, with: parsedFeed)
 
 		let externalID = try await accountZone.createFeed(url: bestFeedSpecifier.urlString,
@@ -553,7 +553,7 @@ private extension CloudKitAccountDelegate {
 		sendNewArticlesToTheCloud(account, feed)
 	}
 
-	func addDeadFeed(account: Account, url: URL, editedName: String?, container: Container) async throws -> Feed {
+	@MainActor func addDeadFeed(account: Account, url: URL, editedName: String?, container: Container) async throws -> Feed {
 		let feed = account.createFeed(with: editedName, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 		container.addFeedToTreeAtTopLevel(feed)
 
@@ -589,7 +589,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func processAccountError(_ account: Account, _ error: Error) {
+	@MainActor func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
@@ -646,7 +646,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container) async throws {
+	@MainActor func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container) async throws {
 		syncProgress.addToNumberOfTasksAndRemaining(2)
 
 		do {

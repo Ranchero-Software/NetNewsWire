@@ -12,7 +12,7 @@ import RSCore
 import RSParser
 import Account
 
-final class ExtensionContainersFile {
+@MainActor final class ExtensionContainersFile {
 	static let shared = ExtensionContainersFile()
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ExtensionContainersFile")
@@ -71,7 +71,7 @@ final class ExtensionContainersFile {
 
 }
 
-private extension ExtensionContainersFile {
+@MainActor private extension ExtensionContainersFile {
 
 	@objc func markAsDirty() {
 		isDirty = true

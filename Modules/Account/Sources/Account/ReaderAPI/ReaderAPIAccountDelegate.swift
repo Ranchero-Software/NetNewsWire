@@ -52,7 +52,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		return behaviors
 	}
 
-	var server: String? {
+	@MainActor var server: String? {
 		get {
 			return caller.server
 		}
@@ -127,7 +127,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		} catch {
 			refreshProgress.reset()
 
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
+			let wrappedError = AccountError.wrapped(error, account)
 			if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
 
 				self.caller.credentials = basicCredentials
@@ -227,8 +227,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			folder.externalID = "user/-/label/\(name)"
 			folder.name = name
 		} catch {
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -334,8 +333,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			refreshProgress.completeTask()
 		} catch {
 			refreshProgress.completeTask()
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -353,8 +351,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			account.clearFeedMetadata(feed)
 			account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
 		} catch {
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -405,8 +402,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			} catch {
 
 				refreshProgress.completeTask()
-				let wrappedError = AccountError.wrappedError(error: error, account: account)
-				throw wrappedError
+				throw AccountError.wrapped(error, account)
 			}
 		} else {
 
@@ -493,7 +489,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 private extension ReaderAPIAccountDelegate {
 
-	func refreshAccount(_ account: Account) async throws {
+	@MainActor func refreshAccount(_ account: Account) async throws {
 
 		let tags = try await caller.retrieveTags()
 		refreshProgress.completeTask()
@@ -508,7 +504,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 	}
 
-	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
+	@MainActor func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
 
@@ -556,7 +552,7 @@ private extension ReaderAPIAccountDelegate {
 
 	}
 
-	func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
+	@MainActor func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
@@ -714,7 +710,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 	}
 
-	func createFeed(account: Account, subscription: ReaderAPISubscription, name: String?, container: Container) async throws -> Feed {
+	@MainActor func createFeed(account: Account, subscription: ReaderAPISubscription, name: String?, container: Container) async throws -> Feed {
 
 		let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
 		feed.externalID = String(subscription.feedID)

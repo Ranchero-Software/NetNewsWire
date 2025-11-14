@@ -11,7 +11,7 @@ import RSWeb
 import Articles
 
 protocol FeedMetadataDelegate: AnyObject {
-	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys)
+	@MainActor func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys)
 }
 
 final class FeedMetadata: Codable {
@@ -169,6 +169,14 @@ final class FeedMetadata: Codable {
 	}
 
 	func valueDidChange(_ key: CodingKeys) {
-		delegate?.valueDidChange(self, key: key)
+		if Thread.isMainThread {
+			MainActor.assumeIsolated {
+				delegate?.valueDidChange(self, key: key)
+			}
+		} else {
+			Task { @MainActor in
+				delegate?.valueDidChange(self, key: key)
+			}
+		}
 	}
 }

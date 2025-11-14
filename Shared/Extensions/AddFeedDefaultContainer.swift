@@ -9,7 +9,7 @@
 import Foundation
 import Account
 
-struct AddFeedDefaultContainer {
+@MainActor struct AddFeedDefaultContainer {
 
 	static var defaultContainer: Container? {
 

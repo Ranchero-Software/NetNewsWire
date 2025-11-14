@@ -12,13 +12,13 @@ import ArticlesDatabase
 
 public protocol ArticleFetcher {
 
-	func fetchArticles() throws -> Set<Article>
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
-	func fetchUnreadArticles() throws -> Set<Article>
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
+	@MainActor func fetchArticles() throws -> Set<Article>
+	@MainActor func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
+	@MainActor func fetchUnreadArticles() throws -> Set<Article>
+	@MainActor func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
 }
 
-extension Feed: ArticleFetcher {
+@MainActor extension Feed: ArticleFetcher {
 
 	public func fetchArticles() throws -> Set<Article> {
 		return try account?.fetchArticles(.feed(self)) ?? Set<Article>()

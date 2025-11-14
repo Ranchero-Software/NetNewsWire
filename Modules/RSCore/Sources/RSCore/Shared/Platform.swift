@@ -11,14 +11,14 @@ import os
 
 public struct Platform {
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Platform")
+	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Platform")
 
 	/// Returns true if the app is currently running unit tests.
-	public static var isRunningUnitTests: Bool {
+	nonisolated public static var isRunningUnitTests: Bool {
 		return _isRunningUnitTests
 	}
 
-	private static let _isRunningUnitTests: Bool = {
+	nonisolated private static let _isRunningUnitTests: Bool = {
 
 		func checkIfRunningUnitTests() -> Bool {
 			// Check multiple indicators to be super-reliable

@@ -15,7 +15,7 @@ import Articles
 import Intents
 import UniformTypeIdentifiers
 
-final class ActivityManager {
+@MainActor final class ActivityManager {
 
 	private var nextUnreadActivity: NSUserActivity?
 	private var selectingActivity: NSUserActivity?
@@ -160,7 +160,7 @@ final class ActivityManager {
 
 // MARK: Private
 
-private extension ActivityManager {
+@MainActor private extension ActivityManager {
 
 	func makeSelectFeedActivity(sidebarItem: SidebarItem) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)

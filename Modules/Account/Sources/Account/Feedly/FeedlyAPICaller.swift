@@ -297,7 +297,7 @@ final class FeedlyAPICaller {
 		}
 		guard let encodedId = encodeForURLPath(id) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(id)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(id)))
 			}
 		}
 		var components = baseUrlComponents
@@ -342,7 +342,7 @@ final class FeedlyAPICaller {
 
 		guard let encodedCollectionId = encodeForURLPath(collectionId) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(collectionId)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionId)))
 			}
 		}
 
@@ -406,7 +406,7 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 
 		guard let encodedId = encodeForURLPath(collectionId) else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(collectionId)))
+				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionId)))
 			}
 		}
 		var components = baseUrlComponents

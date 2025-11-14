@@ -11,7 +11,7 @@ import RSCore
 import RSTree
 import Account
 
-final class FolderTreeMenu {
+@MainActor final class FolderTreeMenu {
 
 	@MainActor static func createFolderPopupMenu(with rootNode: Node, restrictToSpecialAccounts: Bool = false) -> NSMenu {
 

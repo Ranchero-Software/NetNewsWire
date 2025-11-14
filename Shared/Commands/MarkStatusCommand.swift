@@ -12,7 +12,7 @@ import Articles
 
 // Mark articles read/unread, starred/unstarred, deleted/undeleted.
 
-final class MarkStatusCommand: UndoableCommand {
+@MainActor final class MarkStatusCommand: UndoableCommand {
 
 	let undoActionName: String
 	let redoActionName: String
@@ -61,7 +61,7 @@ final class MarkStatusCommand: UndoableCommand {
     }
 }
 
-private extension MarkStatusCommand {
+@MainActor private extension MarkStatusCommand {
 
 	func mark(_ statusKey: ArticleStatus.Key, _ flag: Bool) {
         markArticles(articles, statusKey: statusKey, flag: flag, completion: completion)

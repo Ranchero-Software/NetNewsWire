@@ -10,7 +10,7 @@ import Foundation
 import Account
 import Articles
 
-final class IconImageCache {
+@MainActor final class IconImageCache {
 
 	static var shared = IconImageCache()
 

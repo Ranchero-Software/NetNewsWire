@@ -33,7 +33,7 @@ public extension Feed {
 
 extension Feed {
 
-	func takeSettings(from parsedFeed: ParsedFeed) {
+	@MainActor func takeSettings(from parsedFeed: ParsedFeed) {
 		iconURL = parsedFeed.iconURL
 		faviconURL = parsedFeed.faviconURL
 		homePageURL = parsedFeed.homePageURL
@@ -49,11 +49,11 @@ extension Feed {
 
 public extension Article {
 
-	var account: Account? {
+	@MainActor var account: Account? {
 		return AccountManager.shared.existingAccount(with: accountID)
 	}
 
-	var feed: Feed? {
+	@MainActor var feed: Feed? {
 		return account?.existingFeed(withFeedID: feedID)
 	}
 }

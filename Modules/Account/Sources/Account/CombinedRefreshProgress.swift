@@ -42,7 +42,7 @@ public final class CombinedRefreshProgress {
 		isStarted = false
 	}
 
-	@objc func refreshProgressDidChange(_ notification: Notification) {
+	@MainActor @objc func refreshProgressDidChange(_ notification: Notification) {
 
 		guard isStarted else {
 			return

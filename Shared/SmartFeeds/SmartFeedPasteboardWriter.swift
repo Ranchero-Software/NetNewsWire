@@ -10,7 +10,7 @@ import AppKit
 import Account
 import RSCore
 
-@objc final class SmartFeedPasteboardWriter: NSObject, NSPasteboardWriting {
+@MainActor @objc final class SmartFeedPasteboardWriter: NSObject, @MainActor NSPasteboardWriting {
 
 	private let smartFeed: PseudoFeed
 

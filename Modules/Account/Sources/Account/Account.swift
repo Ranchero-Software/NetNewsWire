@@ -96,7 +96,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return name
 	}
 
-	public var name: String? {
+	@MainActor public var name: String? {
 		get {
 			return metadata.name
 		}
@@ -112,7 +112,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	public let defaultName: String
 
-	public var isActive: Bool {
+	@MainActor public var isActive: Bool {
 		get {
 			return metadata.isActive
 		}
@@ -129,7 +129,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public var topLevelFeeds = Set<Feed>()
 	public var folders: Set<Folder>? = Set<Folder>()
 
-	public var externalID: String? {
+	@MainActor public var externalID: String? {
 		get {
 			return metadata.externalID
 		}
@@ -138,7 +138,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public var sortedFolders: [Folder]? {
+	@MainActor public var sortedFolders: [Folder]? {
 		if let folders = folders {
 			return Array(folders).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 		}
@@ -165,7 +165,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return Set(flattenedFeeds().map({ $0.url }))
 	}
 
-	var username: String? {
+	@MainActor var username: String? {
 		get {
 			return metadata.username
 		}
@@ -176,7 +176,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public var endpointURL: URL? {
+	@MainActor public var endpointURL: URL? {
 		get {
 			return metadata.endpointURL
 		}
@@ -202,7 +202,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
 	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
-	var metadata = AccountMetadata() {
+	@MainActor var metadata = AccountMetadata() {
 		didSet {
 			delegate.accountMetadata = metadata
 		}
@@ -301,9 +301,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
-		metadataFile.load()
-		feedMetadataFile.load()
-		opmlFile.load()
+		MainActor.assumeIsolated {
+			metadataFile.load()
+			feedMetadataFile.load()
+			opmlFile.load()
+		}
 
 		DispatchQueue.main.async {
 			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
@@ -317,7 +319,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	// MARK: - API
 
-	public func storeCredentials(_ credentials: Credentials) throws {
+	@MainActor public func storeCredentials(_ credentials: Credentials) throws {
 		username = credentials.username
 		guard let server = delegate.server else {
 			assertionFailure()
@@ -327,14 +329,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.credentials = credentials
 	}
 
-	public func retrieveCredentials(type: CredentialsType) throws -> Credentials? {
+	@MainActor public func retrieveCredentials(type: CredentialsType) throws -> Credentials? {
 		guard let username = self.username, let server = delegate.server else {
 			return nil
 		}
 		return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
 	}
 
-	public func removeCredentials(type: CredentialsType) throws {
+	@MainActor public func removeCredentials(type: CredentialsType) throws {
 		guard let username = self.username, let server = delegate.server else {
 			return
 		}
@@ -453,16 +455,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func save() {
-		metadataFile.save()
-		feedMetadataFile.save()
-		opmlFile.save()
+		MainActor.assumeIsolated {
+			metadataFile.save()
+			feedMetadataFile.save()
+			opmlFile.save()
+		}
 	}
 
 	@MainActor public func prepareForDeletion() {
 		delegate.accountWillBeDeleted(self)
 	}
 
-	func addOPMLItems(_ items: [RSOPMLItem]) {
+	@MainActor func addOPMLItems(_ items: [RSOPMLItem]) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
 				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
@@ -479,7 +483,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	func loadOPMLItems(_ items: [RSOPMLItem]) {
+	@MainActor func loadOPMLItems(_ items: [RSOPMLItem]) {
 		addOPMLItems(OPMLNormalizer.normalize(items))		
 	}
 
@@ -494,7 +498,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	func existingContainer(withExternalID externalID: String) -> Container? {
+	@MainActor func existingContainer(withExternalID externalID: String) -> Container? {
 		guard self.externalID != externalID else {
 			return self
 		}
@@ -515,7 +519,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	@discardableResult
-	func ensureFolder(with name: String) -> Folder? {
+	@MainActor func ensureFolder(with name: String) -> Folder? {
 		// TODO: support subfolders, maybe, some day
 
 		if name.isEmpty {
@@ -534,7 +538,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return folder
 	}
 
-	public func ensureFolder(withFolderNames folderNames: [String]) -> Folder? {
+	@MainActor public func ensureFolder(withFolderNames folderNames: [String]) -> Folder? {
 		// TODO: support subfolders, maybe, some day.
 		// Since we don’t, just take the last name and make sure there’s a Folder.
 
@@ -544,7 +548,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return ensureFolder(with: folderName)
 	}
 
-	public func existingFolder(withDisplayName displayName: String) -> Folder? {
+	@MainActor public func existingFolder(withDisplayName displayName: String) -> Folder? {
 		return folders?.first(where: { $0.nameForDisplay == displayName })
 	}
 
@@ -552,7 +556,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return folders?.first(where: { $0.externalID == externalID })
 	}
 
-	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
+	@MainActor func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
@@ -590,7 +594,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
+	@MainActor func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
 		let metadata = feedMetadata(feedURL: url, feedID: feedID)
 		let feed = Feed(account: self, url: url, metadata: metadata)
 		feed.name = name
@@ -680,7 +684,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		fetchUnreadCounts(for: feeds, completion: completion)
 	}
 
-	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
+	@MainActor public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
 			return try fetchStarredArticles(limit: limit)
@@ -705,7 +709,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func fetchArticles(_ fetchType: FetchType) async throws -> Set<Article> {
+	@MainActor public func fetchArticles(_ fetchType: FetchType) async throws -> Set<Article> {
 		try await withCheckedThrowingContinuation { continuation in
 			fetchArticlesAsync(fetchType) { result in
 				continuation.resume(with: result)
@@ -713,7 +717,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
+	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
 		switch fetchType {
 		case .starred(let limit):
 			fetchStarredArticlesAsync(limit: limit, completion)
@@ -817,7 +821,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesCompletionBlock) {
+	@MainActor func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
@@ -840,7 +844,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	
-	func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
+	@MainActor func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
@@ -868,7 +872,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	
-	private func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
+	@MainActor private func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
@@ -889,7 +893,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	@discardableResult
-	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
+	@MainActor func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
 		try await withCheckedThrowingContinuation { continuation in
 			update(articles, statusKey: statusKey, flag: flag) { result in
 				continuation.resume(with: result)
@@ -897,7 +901,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleSetResultBlock) {
+	@MainActor func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleSetResultBlock) {
 		// Returns set of Articles whose statuses did change.
 		guard !articles.isEmpty else {
 			completion(.success(Set<Article>()))
@@ -1176,7 +1180,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 // MARK: - AccountMetadataDelegate
 
 extension Account: AccountMetadataDelegate {
-	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
+	@MainActor func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
 		metadataFile.markAsDirty()
 	}
 }
@@ -1185,7 +1189,7 @@ extension Account: AccountMetadataDelegate {
 
 extension Account: FeedMetadataDelegate {
 
-	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
+	@MainActor func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
 		feedMetadataFile.markAsDirty()
 		guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
 			return
@@ -1238,13 +1242,13 @@ private extension Account {
 		fetchUnreadArticlesAsync(forContainer: folder, limit: nil, completion)
 	}
 
-	func fetchArticles(feed: Feed) throws -> Set<Article> {
+	@MainActor func fetchArticles(feed: Feed) throws -> Set<Article> {
 		let articles = try database.fetchArticles(feed.feedID)
 		validateUnreadCount(feed, articles)
 		return articles
 	}
 
-	func fetchArticlesAsync(feed: Feed, _ completion: @escaping ArticleSetResultBlock) {
+	@MainActor func fetchArticlesAsync(feed: Feed, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchArticlesAsync(feed.feedID) { [weak self] articleSetResult in
 			switch articleSetResult {
 			case .success(let articles):
@@ -1280,7 +1284,7 @@ private extension Account {
 		return database.fetchArticlesAsync(articleIDs: articleIDs, completion)
 	}
 
-	func fetchUnreadArticles(feed: Feed) throws -> Set<Article> {
+	@MainActor func fetchUnreadArticles(feed: Feed) throws -> Set<Article> {
 		let articles = try database.fetchUnreadArticles(Set([feed.feedID]), nil)
 		validateUnreadCount(feed, articles)
 		return articles
@@ -1354,7 +1358,7 @@ private extension Account {
 		}
 	}
 
-	func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
+	@MainActor func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
 		// articles must contain all the unread articles for the feed.
 		// The unread number should match the feed’s unread count.
 
@@ -1422,7 +1426,7 @@ private extension Account {
 		unreadCount = updatedUnreadCount
     }
 
-    func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
+	@MainActor func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
 		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
 		let articleIDs = Set(articles.map { $0.articleID })
@@ -1516,7 +1520,7 @@ private extension Account {
 		}
 	}
 
-	func sendNotificationAbout(_ articleChanges: ArticleChanges) {
+	@MainActor func sendNotificationAbout(_ articleChanges: ArticleChanges) {
 		var feeds = Set<Feed>()
 
 		if let newArticles = articleChanges.newArticles {

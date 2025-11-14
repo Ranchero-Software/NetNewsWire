@@ -67,7 +67,7 @@ public final class WidgetDataEncoder {
 	}
 
 	@available(iOS 14, *)
-	private func encodeWidgetData(completion: @escaping (WidgetData?) -> Void) {
+	@MainActor private func encodeWidgetData(completion: @escaping (WidgetData?) -> Void) {
 		let dispatchGroup = DispatchGroup()
 		var groupError: Error? = nil
 

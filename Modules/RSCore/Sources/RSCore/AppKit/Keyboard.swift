@@ -19,7 +19,7 @@ public struct KeyboardConstant {
 
 public extension String {
 
-	var keyboardIntegerValue: Int? {
+	nonisolated var keyboardIntegerValue: Int? {
 		if isEmpty {
 			return nil
 		}
@@ -32,7 +32,7 @@ public extension String {
 	}
 }
 
-public struct KeyboardShortcut: Hashable {
+nonisolated public struct KeyboardShortcut: Hashable, Sendable {
 
 	public let key: KeyboardKey
 	public let actionString: String
@@ -50,8 +50,7 @@ public struct KeyboardShortcut: Hashable {
 		self.actionString = actionString
 	}
 
-	public func perform(with view: NSView) {
-
+	@MainActor public func perform(with view: NSView) {
 		let action = NSSelectorFromString(actionString)
 		NSApplication.shared.sendAction(action, to: nil, from: view)
 	}
@@ -67,7 +66,7 @@ public struct KeyboardShortcut: Hashable {
 	}
 }
 
-public struct KeyboardKey: Hashable {
+nonisolated public struct KeyboardKey: Hashable, Sendable {
 
 	public let shiftKeyDown: Bool
 	public let optionKeyDown: Bool

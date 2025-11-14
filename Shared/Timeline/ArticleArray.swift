@@ -11,7 +11,7 @@ import Articles
 
 typealias ArticleArray = [Article]
 
-extension Array where Element == Article {
+@MainActor extension Array where Element == Article {
 
 	func articleAtRow(_ row: Int) -> Article? {
 		if row < 0 || row == NSNotFound || row > count - 1 {

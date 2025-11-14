@@ -13,7 +13,7 @@ public extension Notification.Name {
 	static let UnreadCountDidChange = Notification.Name(rawValue: "UnreadCountDidChange")
 }
 
-public protocol UnreadCountProvider {
+@MainActor public protocol UnreadCountProvider {
 
 	var unreadCount: Int { get }
 
@@ -22,7 +22,7 @@ public protocol UnreadCountProvider {
 }
 
 
-public extension UnreadCountProvider {
+@MainActor public extension UnreadCountProvider {
 
 	func postUnreadCountDidInitializeNotification() {
 		NotificationCenter.default.post(name: .UnreadCountDidInitialize, object: self, userInfo: nil)

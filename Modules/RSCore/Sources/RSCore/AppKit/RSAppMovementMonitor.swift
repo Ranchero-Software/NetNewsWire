@@ -78,18 +78,20 @@ public final class RSAppMovementMonitor: NSObject {
 			// changes to the app bundle's path, such as when a containing folder or the
 			// volume name changes.
 			NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: nil) { notification in
-				// Removing observer in invalidate doesn't seem to prevent this getting called? Maybe
-				// because it's on the same invocation of the runloop?
-				if self.isValid() && self.originalAppURL != self.appTrackingURL?.absoluteURL {
-					self.invokeEventHandler()
+				Task { @MainActor in
+					// Removing observer in invalidate doesn't seem to prevent this getting called? Maybe
+					// because it's on the same invocation of the runloop?
+					if self.isValid() && self.originalAppURL != self.appTrackingURL?.absoluteURL {
+						self.invokeEventHandler()
+					}
 				}
 			}
 		}
 	}
 
-	deinit {
-		self.invalidate()
-	}
+//	deinit {
+//		self.invalidate()
+//	}
 
 	func invokeEventHandler() {
 		// Prevent re-entry when the app is activated while running handler
@@ -131,7 +133,9 @@ public final class RSAppMovementMonitor: NSObject {
 		let configuration = NSWorkspace.OpenConfiguration()
 		configuration.createsNewApplicationInstance = true
 		NSWorkspace.shared.openApplication(at: appURL, configuration: configuration) { _, _  in
-			NSApp.terminate(self)
+			Task { @MainActor in
+				NSApp.terminate(self)
+			}
 		}
 	}
 

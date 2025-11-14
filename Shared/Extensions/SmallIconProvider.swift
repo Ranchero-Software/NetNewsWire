@@ -13,10 +13,10 @@ import RSCore
 
 protocol SmallIconProvider {
 
-	var smallIcon: IconImage? { get }
+	@MainActor var smallIcon: IconImage? { get }
 }
 
-extension Account: SmallIconProvider {
+@MainActor extension Account: SmallIconProvider {
 	var smallIcon: IconImage? {
 		if let image = AppAssets.image(for: type) {
 			return IconImage(image)
@@ -25,7 +25,7 @@ extension Account: SmallIconProvider {
 	}
 }
 
-extension Feed: SmallIconProvider {
+@MainActor extension Feed: SmallIconProvider {
 
 	var smallIcon: IconImage? {
 		if let iconImage = FaviconDownloader.shared.favicon(for: self) {
@@ -35,7 +35,7 @@ extension Feed: SmallIconProvider {
 	}
 }
 
-extension Folder: SmallIconProvider {
+@MainActor extension Folder: SmallIconProvider {
 	var smallIcon: IconImage? {
 		AppAssets.mainFolderImage
 	}

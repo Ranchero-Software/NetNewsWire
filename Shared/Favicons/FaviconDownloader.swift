@@ -20,7 +20,7 @@ extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-final class FaviconDownloader {
+@MainActor final class FaviconDownloader {
 	static let shared = FaviconDownloader()
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)

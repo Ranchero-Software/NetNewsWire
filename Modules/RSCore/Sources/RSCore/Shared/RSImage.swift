@@ -19,10 +19,10 @@ import UIKit
 public typealias RSImage = UIImage
 #endif
 
-private let RSImageLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "RSImage")
-private let debugLoggingEnabled = false
+nonisolated private let RSImageLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "RSImage")
+nonisolated private let debugLoggingEnabled = false
 
-public extension RSImage {
+nonisolated public extension RSImage {
 
 	/// Create a colored image from the source image using a specified color.
 	///
@@ -66,7 +66,7 @@ public extension RSImage {
 	///
 	/// - Parameter color: The color to use to tint the image.
 	/// - Returns: The tinted image.
-	func tinted(color: UIColor) -> UIImage? {
+	@MainActor func tinted(color: UIColor) -> UIImage? {
 		let image = withRenderingMode(.alwaysTemplate)
 		let imageView = UIImageView(image: image)
 		imageView.tintColor = color

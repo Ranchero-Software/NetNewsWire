@@ -12,7 +12,7 @@ import RSCore
 
 typealias PasteboardFolderDictionary = [String: String]
 
-struct PasteboardFolder: Hashable {
+@MainActor struct PasteboardFolder: Hashable {
 
 	private struct Key {
 		static let name = "name"
@@ -91,7 +91,7 @@ extension Folder: @retroactive PasteboardWriterOwner {
 	}
 }
 
-@objc final class FolderPasteboardWriter: NSObject, NSPasteboardWriting {
+@MainActor @objc final class FolderPasteboardWriter: NSObject, @MainActor NSPasteboardWriting {
 
 	private let folder: Folder
 	static let folderUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.folder"
@@ -126,8 +126,8 @@ extension Folder: @retroactive PasteboardWriterOwner {
 	}
 }
 
-private extension FolderPasteboardWriter {
-	var pasteboardFolder: PasteboardFolder {
+@MainActor private extension FolderPasteboardWriter {
+var pasteboardFolder: PasteboardFolder {
 		return PasteboardFolder(name: folder.name ?? "", folderID: String(folder.folderID), accountID: folder.account?.accountID)
 	}
 

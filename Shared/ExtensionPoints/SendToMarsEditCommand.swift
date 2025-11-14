@@ -10,7 +10,7 @@ import AppKit
 import RSCore
 import Articles
 
-final class SendToMarsEditCommand: SendToCommand {
+@MainActor final class SendToMarsEditCommand: SendToCommand {
 
 	let title = "MarsEdit"
 	let image: RSImage? = AppAssets.marsEditIcon

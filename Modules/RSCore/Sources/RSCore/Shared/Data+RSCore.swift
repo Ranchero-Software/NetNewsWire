@@ -9,7 +9,7 @@
 import Foundation
 import CryptoKit
 
-public extension Data {
+nonisolated public extension Data {
 
 	/// The MD5 hash of the data.
 	var md5Hash: Data {

@@ -15,7 +15,7 @@ import SyncDatabase
 import os.log
 import Secrets
 
-final class NewsBlurAccountDelegate: AccountDelegate {
+@MainActor final class NewsBlurAccountDelegate: AccountDelegate {
 	var behaviors: AccountBehaviors = []
 
 	var isOPMLImportInProgress: Bool = false
@@ -79,8 +79,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			refreshProgress.completeTask()
 		} catch {
 			refreshProgress.reset()
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -313,8 +312,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			let feed = try await createFeed(account: account, newsBlurFeed: newsBlurFeed, name: name, container: container)
 			return feed
 		} catch {
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -332,7 +330,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			try await caller.renameFeed(feedID: feedID, newName: name)
 			feed.editedName = name
 		} catch {
-			throw AccountError.wrappedError(error: error, account: account)
+			throw AccountError.wrapped(error, account)
 		}
 	}
 

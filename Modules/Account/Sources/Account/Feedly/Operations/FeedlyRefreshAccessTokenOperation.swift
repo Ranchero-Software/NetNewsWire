@@ -24,7 +24,7 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation, @unchecked Senda
 		super.init()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		let refreshToken: Credentials
 
 		do {

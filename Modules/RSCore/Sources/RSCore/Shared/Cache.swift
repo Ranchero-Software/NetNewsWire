@@ -6,13 +6,13 @@
 //
 
 import Foundation
-import os
+import Synchronization
 
-public protocol CacheRecord: Sendable {
+nonisolated public protocol CacheRecord: Sendable {
 	var dateCreated: Date { get }
 }
 
-public final class Cache<T: CacheRecord>: Sendable {
+nonisolated public final class Cache<T: CacheRecord>: Sendable {
 
 	public let timeToLive: TimeInterval
 	public let timeBetweenCleanups: TimeInterval
@@ -21,8 +21,7 @@ public final class Cache<T: CacheRecord>: Sendable {
 		var lastCleanupDate = Date()
 		var cache = [String: T]()
 	}
-
-	private let stateLock = OSAllocatedUnfairLock(initialState: State())
+	private let stateLock = Mutex(State())
 
 	public init(timeToLive: TimeInterval, timeBetweenCleanups: TimeInterval) {
 		self.timeToLive = timeToLive
@@ -60,7 +59,7 @@ public final class Cache<T: CacheRecord>: Sendable {
 	}
 }
 
-extension Cache {
+nonisolated extension Cache {
 
 	private func cleanupIfNeeded(_ state: inout State) {
 

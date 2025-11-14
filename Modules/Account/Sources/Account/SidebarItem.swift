@@ -22,7 +22,7 @@ public protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNam
 
 }
 
-public extension SidebarItem {
+@MainActor public extension SidebarItem {
 
 	func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool]) -> Bool {
 		guard defaultReadFilterType != .alwaysRead else {

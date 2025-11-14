@@ -20,7 +20,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 		super.init()
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 			Task { @MainActor in
 				switch result {

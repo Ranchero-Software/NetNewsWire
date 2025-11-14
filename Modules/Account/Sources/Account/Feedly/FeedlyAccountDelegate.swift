@@ -14,7 +14,7 @@ import SyncDatabase
 import os.log
 import Secrets
 
-final class FeedlyAccountDelegate: AccountDelegate {
+@MainActor final class FeedlyAccountDelegate: AccountDelegate {
 
 	/// Feedly has a sandbox API and a production API.
 	/// This property is referred to when clients need to know which environment it should be pointing to.
@@ -262,7 +262,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					let wrappedError = AccountError.wrapped(error, account)
 					completion(.failure(wrappedError))
 				}
 			}
@@ -277,7 +277,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+	@MainActor func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
@@ -308,7 +308,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)))
@@ -411,7 +411,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 
-	private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
 			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
@@ -488,7 +488,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder, let collectionId = folder.externalID else {
 			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed)))
+				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed.nameForDisplay)))
 			}
 		}
 
@@ -530,7 +530,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 						completion(.success(()))
 					case .failure:
 						from.addFeedToTreeAtTopLevel(feed)
-						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed, from, to)))
+						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)))
 					}
 				}
 			case .failure(let error):

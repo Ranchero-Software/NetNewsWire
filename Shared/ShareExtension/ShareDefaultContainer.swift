@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ShareDefaultContainer {
+@MainActor struct ShareDefaultContainer {
 
 	static func defaultContainer(containers: ExtensionContainers) -> ExtensionContainer? {
 

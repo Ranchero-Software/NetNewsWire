@@ -15,7 +15,7 @@ public protocol OPMLRepresentable {
 
 public extension OPMLRepresentable {
 
-	func OPMLString(indentLevel: Int) -> String {
+	@MainActor func OPMLString(indentLevel: Int) -> String {
 		return OPMLString(indentLevel: indentLevel, allowCustomAttributes: false)
 	}
 }

@@ -16,7 +16,7 @@ extension Notification.Name {
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
 
-public protocol Container: AnyObject, ContainerIdentifiable {
+@MainActor public protocol Container: AnyObject, ContainerIdentifiable {
 
 	var account: Account? { get }
 	var topLevelFeeds: Set<Feed> { get set }
@@ -26,8 +26,8 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 	func hasAtLeastOneFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 
-	func hasChildFolder(with: String) -> Bool
-	func childFolder(with: String) -> Folder?
+	@MainActor func hasChildFolder(with: String) -> Bool
+	@MainActor func childFolder(with: String) -> Folder?
 
     func removeFeedFromTreeAtTopLevel(_ feed: Feed)
 	func addFeedToTreeAtTopLevel(_ feed: Feed)
@@ -40,23 +40,23 @@ public protocol Container: AnyObject, ContainerIdentifiable {
 	func existingFeed(withFeedID: String) -> Feed?
 	func existingFeed(withURL url: String) -> Feed?
 	func existingFeed(withExternalID externalID: String) -> Feed?
-	func existingFolder(with name: String) -> Folder?
+	@MainActor func existingFolder(with name: String) -> Folder?
 	func existingFolder(withID: Int) -> Folder?
 
 	func postChildrenDidChangeNotification()
 }
 
-public extension Container {
+@MainActor public extension Container {
 
 	func hasAtLeastOneFeed() -> Bool {
 		return topLevelFeeds.count > 0
 	}
 
-	func hasChildFolder(with name: String) -> Bool {
+	@MainActor func hasChildFolder(with name: String) -> Bool {
 		return childFolder(with: name) != nil
 	}
 
-	func childFolder(with name: String) -> Folder? {
+	@MainActor func childFolder(with name: String) -> Folder? {
 		guard let folders = folders else {
 			return nil
 		}
@@ -128,7 +128,7 @@ public extension Container {
 		return nil
 	}
 
-	func existingFolder(with name: String) -> Folder? {
+	@MainActor func existingFolder(with name: String) -> Folder? {
 		guard let folders = folders else {
 			return nil
 		}

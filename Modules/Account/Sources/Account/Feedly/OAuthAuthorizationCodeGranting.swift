@@ -165,7 +165,7 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completion: @escaping (Result<AccessTokenResponse, Error>) -> ())
 }
 
-protocol OAuthAuthorizationGranting: AccountDelegate {
+@MainActor protocol OAuthAuthorizationGranting: AccountDelegate {
 
 	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
 

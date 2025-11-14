@@ -11,7 +11,7 @@ import Articles
 import RSWeb
 import Secrets
 
-protocol AccountDelegate {
+@MainActor protocol AccountDelegate {
 
 	var behaviors: AccountBehaviors { get }
 

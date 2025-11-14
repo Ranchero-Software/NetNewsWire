@@ -9,7 +9,7 @@
 import Foundation
 import Account
 
-extension NSScriptCommand {
+@MainActor extension NSScriptCommand {
     func property(forKey key:String) -> Any? {
         if let evaluatedArguments = self.evaluatedArguments  {
             if let props = evaluatedArguments["KeyDictionary"] as? [String: Any] {

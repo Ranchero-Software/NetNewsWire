@@ -15,9 +15,9 @@ import RSWeb
 import SyncDatabase
 import os.log
 
-extension NewsBlurAccountDelegate {
+@MainActor extension NewsBlurAccountDelegate {
 
-	func refreshFeeds(for account: Account) async throws {
+	@MainActor func refreshFeeds(for account: Account) async throws {
 		Self.logger.info("NewsBlur: Refreshing feeds")
 
 		let (feeds, folders) = try await caller.retrieveFeeds()
@@ -120,7 +120,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func syncFeedFolderRelationship(_ account: Account, _ folders: [NewsBlurFolder]?) {
+	@MainActor func syncFeedFolderRelationship(_ account: Account, _ folders: [NewsBlurFolder]?) {
 		guard let folders = folders else { return }
 		assert(Thread.isMainThread)
 
@@ -191,14 +191,14 @@ extension NewsBlurAccountDelegate {
 
 	}
 
-	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
+	@MainActor func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
 			feed.folderRelationship = folderRelationship
 		}
 	}
 
-	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
+	@MainActor func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = id
 			feed.folderRelationship = folderRelationship
@@ -207,7 +207,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
+	@MainActor func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
 		guard let folders = folders else {
 			return [String: Folder]()
 		}
@@ -222,7 +222,7 @@ extension NewsBlurAccountDelegate {
 		return d
 	}
 
-	func refreshUnreadStories(for account: Account, hashes: [NewsBlurStoryHash]?, updateFetchDate: Date?) async throws {
+	@MainActor func refreshUnreadStories(for account: Account, hashes: [NewsBlurStoryHash]?, updateFetchDate: Date?) async throws {
 		guard let hashes = hashes, !hashes.isEmpty else {
 			if let lastArticleFetch = updateFetchDate {
 				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
@@ -337,7 +337,7 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func createFeed(account: Account, newsBlurFeed: NewsBlurFeed, name: String?, container: Container) async throws -> Feed {
+	@MainActor func createFeed(account: Account, newsBlurFeed: NewsBlurFeed, name: String?, container: Container) async throws -> Feed {
 		let feed = account.createFeed(with: newsBlurFeed.name, url: newsBlurFeed.feedURL, feedID: String(newsBlurFeed.feedID), homePageURL: newsBlurFeed.homePageURL)
 		feed.externalID = String(feed.feedID)
 		feed.faviconURL = feed.faviconURL
@@ -384,7 +384,7 @@ extension NewsBlurAccountDelegate {
 		try await refreshMissingStories(for: account)
 	}
 
-	func deleteFeed(for account: Account, with feed: Feed, from container: Container?) async throws {
+	@MainActor func deleteFeed(for account: Account, with feed: Feed, from container: Container?) async throws {
 		// This error should never happen
 		guard let feedID = feed.externalID else {
 			throw AccountError.invalidParameter
@@ -405,8 +405,7 @@ extension NewsBlurAccountDelegate {
 				account.clearFeedMetadata(feed)
 			}
 		} catch {
-			let wrappedError = AccountError.wrappedError(error: error, account: account)
-			throw wrappedError
+			throw AccountError.wrapped(error, account)
 		}
 	}
 }

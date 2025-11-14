@@ -57,13 +57,13 @@ final class ReaderAPICaller {
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
 
-	var server: String? {
+	@MainActor var server: String? {
 		get {
 			return apiBaseURL?.host
 		}
 	}
 
-	private var apiBaseURL: URL? {
+	@MainActor private var apiBaseURL: URL? {
 		get {
 			switch variant {
 			case .generic, .freshRSS:
@@ -162,7 +162,7 @@ final class ReaderAPICaller {
 		return accessToken
 	}
 
-	public func retrieveTags() async throws -> [ReaderAPITag]? {
+	@MainActor public func retrieveTags() async throws -> [ReaderAPITag]? {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -187,7 +187,7 @@ final class ReaderAPICaller {
 		return wrapper?.tags
 	}
 
-	public func renameTag(oldName: String, newName: String) async throws {
+	@MainActor public func renameTag(oldName: String, newName: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -211,7 +211,7 @@ final class ReaderAPICaller {
 		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
-	public func deleteTag(folderExternalID: String) async throws {
+	@MainActor public func deleteTag(folderExternalID: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -229,7 +229,7 @@ final class ReaderAPICaller {
 		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
-	public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
+	@MainActor public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -250,7 +250,7 @@ final class ReaderAPICaller {
 		return container?.subscriptions
 	}
 
-	public func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
+	@MainActor public func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -299,7 +299,7 @@ final class ReaderAPICaller {
 		try await changeSubscription(subscriptionID: subscriptionID, title: newName)
 	}
 
-	public func deleteSubscription(subscriptionID: String) async throws {
+	@MainActor public func deleteSubscription(subscriptionID: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -332,7 +332,7 @@ final class ReaderAPICaller {
 		try await changeSubscription(subscriptionID: subscriptionID, removeTagName: sourceTag, addTagName: destinationTag)
 	}
 
-	private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil) async throws {
+	@MainActor private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil) async throws {
 
 		guard removeTagName != nil || addTagName != nil || title != nil else {
 			throw AccountError.invalidParameter
@@ -363,7 +363,7 @@ final class ReaderAPICaller {
 		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
 	}
 
-	public func retrieveEntries(articleIDs: [String]) async throws -> [ReaderAPIEntry]? {
+	@MainActor public func retrieveEntries(articleIDs: [String]) async throws -> [ReaderAPIEntry]? {
 
 		guard !articleIDs.isEmpty else {
 			return [ReaderAPIEntry]()
@@ -401,7 +401,7 @@ final class ReaderAPICaller {
 		return entryWrapper.entries
 	}
 
-	public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil) async throws -> [String] {
+	@MainActor public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil) async throws -> [String] {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
@@ -462,7 +462,7 @@ final class ReaderAPICaller {
 		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation)
 	}
 
-	func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?) async throws -> [String] {
+	@MainActor func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?) async throws -> [String] {
 
 		guard let continuation else {
 			if type == .allForAccount {
@@ -536,7 +536,7 @@ private extension ReaderAPICaller {
 		}
 	}
 
-	private func updateStateToEntries(entries: [String], state: ReaderState, add: Bool) async throws {
+	@MainActor private func updateStateToEntries(entries: [String], state: ReaderState, add: Bool) async throws {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials

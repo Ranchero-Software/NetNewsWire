@@ -12,7 +12,7 @@ import RSCore
 
 // Not undoable.
 
-final class SendToMicroBlogCommand: SendToCommand {
+@MainActor final class SendToMicroBlogCommand: SendToCommand {
 
 	let title = "Micro.blog"
 	let image: RSImage? = AppAssets.microblogIcon
@@ -61,7 +61,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 	}
 }
 
-private extension Article {
+@MainActor private extension Article {
 
 	var attributionString: String {
 

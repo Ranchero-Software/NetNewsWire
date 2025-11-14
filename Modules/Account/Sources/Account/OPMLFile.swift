@@ -32,7 +32,7 @@ final class OPMLFile {
 		isDirty = true
 	}
 
-	func load() {
+	@MainActor func load() {
 		guard let fileData = opmlFileData(), let opmlItems = parsedOPMLItems(fileData: fileData) else {
 			return
 		}
@@ -42,7 +42,7 @@ final class OPMLFile {
 		}
 	}
 
-	func save() {
+	@MainActor func save() {
 		guard !account.isDeleted else { return }
 		let opmlDocumentString = opmlDocument()
 
@@ -58,10 +58,18 @@ final class OPMLFile {
 private extension OPMLFile {
 
 	func queueSaveToDiskIfNeeded() {
-		saveQueue.add(self, #selector(saveToDiskIfNeeded))
+		if Thread.isMainThread {
+			MainActor.assumeIsolated {
+				saveQueue.add(self, #selector(saveToDiskIfNeeded))
+			}
+		} else {
+			Task { @MainActor in
+				saveQueue.add(self, #selector(saveToDiskIfNeeded))
+			}
+		}
 	}
 
-	@objc func saveToDiskIfNeeded() {
+	@MainActor @objc func saveToDiskIfNeeded() {
 		if isDirty {
 			isDirty = false
 			save()
@@ -94,7 +102,7 @@ private extension OPMLFile {
 		return opmlDocument?.children
 	}
 
-	func opmlDocument() -> String {
+	@MainActor func opmlDocument() -> String {
 		let escapedTitle = account.nameForDisplay.escapingSpecialXMLCharacters
 		let openingText =
 		"""

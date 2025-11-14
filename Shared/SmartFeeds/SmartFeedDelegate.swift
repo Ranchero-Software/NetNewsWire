@@ -12,12 +12,12 @@ import Articles
 import ArticlesDatabase
 import RSCore
 
-protocol SmartFeedDelegate: SidebarItemIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
+@MainActor protocol SmartFeedDelegate: SidebarItemIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 	var fetchType: FetchType { get }
 	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock)
 }
 
-extension SmartFeedDelegate {
+@MainActor extension SmartFeedDelegate {
 
 	func fetchArticles() throws -> Set<Article> {
 		return try AccountManager.shared.fetchArticles(fetchType)

@@ -12,7 +12,7 @@ import RSTree
 import Articles
 import Account
 
-protocol AddFeedWindowControllerDelegate: AnyObject {
+@MainActor protocol AddFeedWindowControllerDelegate: AnyObject {
 	// userEnteredURL will have already been validated and normalized.
 	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
 	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)

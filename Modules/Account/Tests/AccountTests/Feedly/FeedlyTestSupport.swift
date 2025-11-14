@@ -13,7 +13,7 @@ import Secrets
 import os.log
 import SyncDatabase
 
-final class FeedlyTestSupport {
+@MainActor final class FeedlyTestSupport {
 
 	var accessToken = Credentials(type: .oauthAccessToken, username: "Test", secret: "t3st-access-tok3n")
 	var refreshToken = Credentials(type: .oauthRefreshToken, username: "Test", secret: "t3st-refresh-tok3n")

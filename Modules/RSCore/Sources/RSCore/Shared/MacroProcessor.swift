@@ -54,7 +54,7 @@ nonisolated public final class MacroProcessor: Sendable {
 
 }
 
-private extension MacroProcessor {
+nonisolated private extension MacroProcessor {
 
 	func processMacros() -> String {
 		var result = String()

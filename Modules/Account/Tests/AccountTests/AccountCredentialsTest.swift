@@ -11,7 +11,7 @@ import RSWeb
 @testable import Account
 import Secrets
 
-final class AccountCredentialsTest: XCTestCase {
+@MainActor final class AccountCredentialsTest: XCTestCase {
 
 	private var account: Account!
 

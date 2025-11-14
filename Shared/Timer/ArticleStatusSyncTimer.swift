@@ -9,7 +9,7 @@
 import Foundation
 import Account
 
-final class ArticleStatusSyncTimer {
+@MainActor final class ArticleStatusSyncTimer {
 	static let shared = ArticleStatusSyncTimer()
 
 	private static let intervalSeconds = Double(120)

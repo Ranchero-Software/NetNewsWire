@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-@objc final class SharingServicePickerDelegate: NSObject, NSSharingServicePickerDelegate {
+@objc final class SharingServicePickerDelegate: NSObject, @MainActor NSSharingServicePickerDelegate {
 
 	private let sharingServiceDelegate: SharingServiceDelegate
 
@@ -17,7 +17,7 @@ import RSCore
 		sharingServiceDelegate = SharingServiceDelegate(window)
 	}
 
-	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
+	@MainActor func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
 		let filteredServices = proposedServices.filter { $0.menuItemTitle != "NetNewsWire" }
 		return filteredServices + SharingServicePickerDelegate.customSharingServices(for: items)
 	}
@@ -26,7 +26,7 @@ import RSCore
 		return sharingServiceDelegate
 	}
 
-	static func customSharingServices(for items: [Any]) -> [NSSharingService] {
+	@MainActor static func customSharingServices(for items: [Any]) -> [NSSharingService] {
 		let customServices: [SendToCommand] = [SendToMarsEditCommand(), SendToMicroBlogCommand()]
 
 		return customServices.compactMap { (sendToCommand) -> NSSharingService? in
