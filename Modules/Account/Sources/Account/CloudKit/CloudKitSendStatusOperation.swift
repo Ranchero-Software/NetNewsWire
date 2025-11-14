@@ -40,7 +40,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 				do {
 					let count = (try await syncDatabase.selectPendingCount()) ?? 0
 					let ticks = count / blockSize
-					refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
+					refreshProgress?.addTasks(ticks)
 					selectForProcessing()
 				} catch {
 					Self.logger.debug("iCloud: Send status count pending error: \(error.localizedDescription)")

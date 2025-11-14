@@ -105,7 +105,7 @@ struct HTTP4xxResponse {
 
 // MARK: - URLSessionTaskDelegate
 
-extension DownloadSession: URLSessionTaskDelegate {
+extension DownloadSession: @preconcurrency URLSessionTaskDelegate {
 
 	public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 		MainActor.assumeIsolated {
@@ -151,7 +151,7 @@ extension DownloadSession: URLSessionTaskDelegate {
 
 // MARK: - URLSessionDataDelegate
 
-extension DownloadSession: URLSessionDataDelegate {
+extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 		MainActor.assumeIsolated {
@@ -336,17 +336,17 @@ private extension DownloadSession {
 	// MARK: - Download Progress
 
 	@MainActor func updateDownloadProgress() {
-
-		downloadProgress.numberOfTasks = urlsInSession.count
-
-		let numberRemaining = tasksPending.count + tasksInProgress.count + queue.count
-		downloadProgress.numberRemaining = min(numberRemaining, downloadProgress.numberOfTasks)
-
-		// Complete?
-		if downloadProgress.numberOfTasks > 0 && downloadProgress.numberRemaining < 1 {
-			delegate.downloadSessionDidComplete(self)
-			urlsInSession.removeAll()
-		}
+		// TODO
+//		downloadProgress.numberOfTasks = urlsInSession.count
+//
+//		let numberRemaining = tasksPending.count + tasksInProgress.count + queue.count
+//		downloadProgress.numberRemaining = min(numberRemaining, downloadProgress.numberOfTasks)
+//
+//		// Complete?
+//		if downloadProgress.numberOfTasks > 0 && downloadProgress.numberRemaining < 1 {
+//			delegate.downloadSessionDidComplete(self)
+//			urlsInSession.removeAll()
+//		}
 	}
 
 	// MARK: - 429 Too Many Requests

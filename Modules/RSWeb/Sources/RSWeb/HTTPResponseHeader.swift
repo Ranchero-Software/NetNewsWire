@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct HTTPResponseHeader {
+nonisolated public struct HTTPResponseHeader: Sendable {
 
 	public static let contentType = "Content-Type"
 	public static let location = "Location"

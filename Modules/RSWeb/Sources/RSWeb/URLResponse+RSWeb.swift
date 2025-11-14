@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension URLResponse {
+nonisolated public extension URLResponse {
 
 	var statusIsOK: Bool {
 		return forcedStatusCode >= 200 && forcedStatusCode <= 299
@@ -25,7 +25,7 @@ public extension URLResponse {
 	}
 }
 
-public extension HTTPURLResponse {
+nonisolated public extension HTTPURLResponse {
 
 	func valueForHTTPHeaderField(_ headerField: String) -> String? {
 

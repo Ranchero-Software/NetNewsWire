@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedlyEntry: Decodable {
+nonisolated struct FeedlyEntry: Decodable, Sendable {
     /// the unique, immutable ID for this particular article.
     let id: String
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct HTTPRequestHeader {
+nonisolated public struct HTTPRequestHeader {
 
 	public static let userAgent = "User-Agent"
 	public static let authorization = "Authorization"

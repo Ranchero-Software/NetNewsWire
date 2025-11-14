@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct UserAgent {
+nonisolated public struct UserAgent {
 
 	public static func fromInfoPlist() -> String? {
 

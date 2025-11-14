@@ -24,7 +24,7 @@ open class FeedlyOperation: MainThreadOperation, @unchecked Sendable {
 	var downloadProgress: DownloadProgress? {
 		didSet {
 			oldValue?.completeTask()
-			downloadProgress?.addToNumberOfTasksAndRemaining(1)
+			downloadProgress?.addTask()
 		}
 	}
 

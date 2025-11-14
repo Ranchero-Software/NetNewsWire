@@ -72,7 +72,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	@MainActor func refreshAll(for account: Account) async throws {
 		refreshProgress.reset()
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		refreshProgress.addTasks(5)
 
 		do {
 			try await refreshAccount(account)
@@ -146,7 +146,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 		Self.logger.info("Feedbin: Did begin importing OPML")
 		isOPMLImportInProgress = true
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			isOPMLImportInProgress = false
 			refreshProgress.completeTask()
@@ -179,7 +179,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -200,7 +200,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(folder.topLevelFeeds.count)
+		refreshProgress.addTasks(folder.topLevelFeeds.count)
 
 		for feed in folder.topLevelFeeds {
 			defer {
@@ -233,7 +233,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	@discardableResult
 	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
@@ -259,7 +259,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -292,7 +292,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			refreshProgress.addTask()
 			defer { refreshProgress.completeTask() }
 
 			do {
@@ -739,7 +739,7 @@ private extension FeedbinAccountDelegate {
 		let (entries, page, updateFetchDate, lastPageNumber) = try await caller.retrieveEntries()
 
 		if let last = lastPageNumber {
-			refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
+			refreshProgress.addTasks(last - 1)
 		}
 
 		try await processEntries(account: account, entries: entries)
@@ -874,7 +874,7 @@ private extension FeedbinAccountDelegate {
 
 	@MainActor func deleteTagging(for account: Account, with feed: Feed, from container: Container?) async throws {
 		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			refreshProgress.addTask()
 			defer {
 				refreshProgress.completeTask()
 			}
@@ -900,7 +900,7 @@ private extension FeedbinAccountDelegate {
 			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {

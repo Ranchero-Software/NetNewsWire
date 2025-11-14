@@ -8,8 +8,7 @@
 
 import Foundation
 
-public struct HTTPMethod {
-
+nonisolated public struct HTTPMethod {
 	public static let get = "GET"
 	public static let post = "POST"
 	public static let put = "PUT"

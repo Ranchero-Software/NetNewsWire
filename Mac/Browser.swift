@@ -9,7 +9,7 @@
 import Foundation
 import RSWeb
 
-struct Browser {
+@MainActor struct Browser {
 
 	/// The user-specified default browser for opening web pages.
 	///
@@ -53,11 +53,13 @@ struct Browser {
 		}
 
 		NSWorkspace.shared.open(preparedURL, configuration: configuration) { (runningApplication, error) in
-			guard error != nil else { return }
-			if let defaultBrowser = defaultBrowser {
-				defaultBrowser.openURL(url, inBackground: inBackground)
-			} else {
-				MacWebBrowser.openURL(url, inBackground: inBackground)
+			Task { @MainActor in
+				guard error != nil else { return }
+				if let defaultBrowser = defaultBrowser {
+					defaultBrowser.openURL(url, inBackground: inBackground)
+				} else {
+					MacWebBrowser.openURL(url, inBackground: inBackground)
+				}
 			}
 		}
 	}

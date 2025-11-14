@@ -1129,7 +1129,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 
-		refreshInProgress = refreshProgress.numberRemaining > 0
+		refreshInProgress = !refreshProgress.isComplete
 		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
 	}
 

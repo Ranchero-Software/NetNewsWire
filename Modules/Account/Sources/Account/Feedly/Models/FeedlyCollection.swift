@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedlyCollection: Codable {
+nonisolated struct FeedlyCollection: Codable, Sendable {
 	let feeds: [FeedlyFeed]
 	let label: String
 	let id: String

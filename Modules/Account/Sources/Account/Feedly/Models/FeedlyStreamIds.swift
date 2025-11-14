@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedlyStreamIds: Decodable {
+nonisolated struct FeedlyStreamIds: Decodable, Sendable {
 	let continuation: String?
 	let ids: [String]
 

@@ -8,7 +8,7 @@
 import Foundation
 import RSCore
 
-struct DownloadCacheRecord: CacheRecord {
+nonisolated struct DownloadCacheRecord: CacheRecord, Sendable {
 	let dateCreated = Date()
 	let data: Data?
 	let response: URLResponse?
@@ -19,7 +19,7 @@ struct DownloadCacheRecord: CacheRecord {
 	}
 }
 
-final class DownloadCache: Sendable {
+nonisolated final class DownloadCache: Sendable {
 	static let shared = DownloadCache()
 
 	private let cache = Cache<DownloadCacheRecord>(timeToLive: 60 * 13, timeBetweenCleanups: 60 * 2)

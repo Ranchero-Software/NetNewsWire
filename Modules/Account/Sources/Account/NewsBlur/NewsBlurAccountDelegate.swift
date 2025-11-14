@@ -63,7 +63,7 @@ import Secrets
 
 	func refreshAll(for account: Account) async throws {
 		refreshProgress.reset()
-		self.refreshProgress.addToNumberOfTasksAndRemaining(4)
+		self.refreshProgress.addTasks(4)
 
 		do {
 			try await refreshFeeds(for: account)
@@ -176,7 +176,7 @@ import Secrets
 
 		let storyHashes = try await caller.retrieveUnreadStoryHashes()
 		if let count = storyHashes?.count, count > 0 {
-			refreshProgress.addToNumberOfTasksAndRemaining((count - 1) / 100 + 1)
+			refreshProgress.addTasks((count - 1) / 100 + 1)
 		}
 
 		let storyHashesArray: [NewsBlurStoryHash] = {
@@ -239,7 +239,7 @@ import Secrets
 	}
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -257,7 +257,7 @@ import Secrets
 			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -287,7 +287,7 @@ import Secrets
 			}
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -298,7 +298,7 @@ import Secrets
 
 	@discardableResult
 	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -321,7 +321,7 @@ import Secrets
 			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -358,7 +358,7 @@ import Secrets
 			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}

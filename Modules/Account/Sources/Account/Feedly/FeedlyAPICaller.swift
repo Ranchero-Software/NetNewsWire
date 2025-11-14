@@ -84,7 +84,7 @@ final class FeedlyAPICaller {
 		isSuspended = false
 	}
 
-	func send<R: Decodable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+	func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
 		transport.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { [weak self] result in
 			Task { @MainActor in
 				assert(Thread.isMainThread)
@@ -105,7 +105,7 @@ final class FeedlyAPICaller {
 						
 						/// Capture the credentials before the reauthorization to check for a change.
 						let credentialsBefore = self.credentials
-						
+
 						delegate.reauthorizeFeedlyAPICaller(self) { [weak self] isReauthorizedAndShouldRetry in
 							assert(Thread.isMainThread)
 							

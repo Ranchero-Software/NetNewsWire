@@ -12,7 +12,7 @@ import RSParser
 
 // To get a notification when HTMLMetadata is cached, see HTMLMetadataCache.
 
-public final class HTMLMetadataDownloader: Sendable {
+nonisolated public final class HTMLMetadataDownloader: Sendable {
 
 	public static let shared = HTMLMetadataDownloader()
 
@@ -40,7 +40,7 @@ public final class HTMLMetadataDownloader: Sendable {
 	}
 }
 
-private extension HTMLMetadataDownloader {
+nonisolated private extension HTMLMetadataDownloader {
 
 	private static let specialCasesToSkip = [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 

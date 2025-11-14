@@ -246,7 +246,7 @@ import Secrets
 
 		Self.logger.info("Feedly: Begin importing OPML")
 		isOPMLImportInProgress = true
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 
 		caller.importOpml(data) { result in
 			switch result {
@@ -280,7 +280,7 @@ import Secrets
 	@MainActor func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 
 		let progress = refreshProgress
-		progress.addToNumberOfTasksAndRemaining(1)
+		progress.addTask()
 
 		caller.createCollection(named: name) { result in
 			progress.completeTask()
@@ -347,8 +347,8 @@ import Secrets
 		}
 
 		let progress = refreshProgress
-		progress.addToNumberOfTasksAndRemaining(1)
-
+		progress.addTask()
+		
 		caller.deleteCollection(with: id) { result in
 			progress.completeTask()
 

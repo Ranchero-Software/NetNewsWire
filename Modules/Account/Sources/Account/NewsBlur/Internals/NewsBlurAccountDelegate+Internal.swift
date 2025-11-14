@@ -354,7 +354,7 @@ import os.log
 	}
 
 	func downloadFeed(account: Account, feed: Feed, page: Int) async throws {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -373,7 +373,7 @@ import os.log
 	}
 
 	func initialFeedDownload(account: Account, feed: Feed) async throws {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}
@@ -390,7 +390,7 @@ import os.log
 			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
 		}

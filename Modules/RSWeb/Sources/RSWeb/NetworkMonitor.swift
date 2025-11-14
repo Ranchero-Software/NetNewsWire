@@ -9,7 +9,7 @@ import Foundation
 import Network
 import os
 
-public final class NetworkMonitor: Sendable {
+nonisolated public final class NetworkMonitor: Sendable {
 	public static let shared = NetworkMonitor()
 
 	private let monitor: NWPathMonitor

@@ -8,9 +8,9 @@
 import Foundation
 import os
 
-public let localeForLowercasing = Locale(identifier: "en_US")
+nonisolated public let localeForLowercasing = Locale(identifier: "en_US")
 
-public struct SpecialCase {
+nonisolated public struct SpecialCase {
 	public static let rachelByTheBayHostName = "rachelbythebay.com"
 	public static let openRSSOrgHostName = "openrss.org"
 
@@ -26,7 +26,7 @@ public struct SpecialCase {
 }
 
 
-extension URL {
+nonisolated extension URL {
 
 	public var isOpenRSSOrgURL: Bool {
 		guard let host = host() else {
@@ -43,7 +43,7 @@ extension URL {
 	}
 }
 
-extension Set where Element == URL {
+nonisolated extension Set where Element == URL {
 
 	func byRemovingOpenRSSOrgURLs() -> Set<URL> {
 		filter { !$0.isOpenRSSOrgURL }
@@ -73,7 +73,7 @@ extension Set where Element == URL {
 	}
 }
 
-extension URLRequest {
+nonisolated extension URLRequest {
 
 	mutating func addSpecialCaseUserAgentIfNeeded() {
 		guard let url else {
@@ -86,7 +86,7 @@ extension URLRequest {
 	}
 }
 
-extension UserAgent {
+nonisolated extension UserAgent {
 
 	static let extendedUserAgent = {
 #if os(iOS)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct MimeType {
+nonisolated public struct MimeType: Sendable {
 
 	// This could certainly use expansion.
 
@@ -21,7 +21,7 @@ public struct MimeType {
 	public static let formURLEncoded = "application/x-www-form-urlencoded"
 }
 
-public extension String {
+nonisolated public extension String {
 
 	func isMimeTypeImage() -> Bool {
 

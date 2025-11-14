@@ -23,7 +23,9 @@ let package = Package(
 			],
 			swiftSettings: [
 				.unsafeFlags(["-warnings-as-errors"]),
-				.swiftLanguageMode(.v5)
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self)
 			]
 		),
 		.testTarget(

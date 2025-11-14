@@ -135,7 +135,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 
-		syncProgress.addToNumberOfTasksAndRemaining(1)
+		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
 		do {
@@ -158,7 +158,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 
 	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 		let editedName = name.isEmpty ? nil : name
-		syncProgress.addToNumberOfTasksAndRemaining(1)
+		syncProgress.addTask()
 		defer {
 			syncProgress.completeTask()
 		}
@@ -190,7 +190,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 
 	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
-		syncProgress.addToNumberOfTasksAndRemaining(1)
+		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
 		do {
@@ -204,7 +204,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 
 	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
-		syncProgress.addToNumberOfTasksAndRemaining(1)
+		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
 		do {
@@ -221,7 +221,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
-		syncProgress.addToNumberOfTasksAndRemaining(1)
+		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
 		do {
@@ -238,7 +238,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 
 	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
-		syncProgress.addToNumberOfTasksAndRemaining(1)
+		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
 		do {
@@ -251,7 +251,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 
 	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
-		syncProgress.addToNumberOfTasksAndRemaining(2)
+		syncProgress.addTask()
 
 		let feedExternalIDs: [String]
 		do {
@@ -301,7 +301,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		}
 
 		let feedsToRestore = folder.topLevelFeeds
-		syncProgress.addToNumberOfTasksAndRemaining(1 + feedsToRestore.count)
+		syncProgress.addTasks(1 + feedsToRestore.count)
 
 		do {
 			let externalID = try await accountZone.createFolder(name: name)
@@ -402,13 +402,13 @@ private extension CloudKitAccountDelegate {
 
 	func updateRefreshProgress() {
 
-		refreshProgress.numberOfTasks = refresher.downloadProgress.numberOfTasks + syncProgress.numberOfTasks
-		refreshProgress.numberRemaining = refresher.downloadProgress.numberRemaining + syncProgress.numberRemaining
+//		refreshProgress.numberOfTasks = refresher.downloadProgress.numberOfTasks + syncProgress.numberOfTasks
+//		refreshProgress.numberRemaining = refresher.downloadProgress.numberRemaining + syncProgress.numberRemaining
 
 		// Complete?
-		if refreshProgress.numberOfTasks > 0 && refreshProgress.numberRemaining < 1 {
-			refresher.downloadProgress.numberOfTasks = 0
-			syncProgress.numberOfTasks = 0
+		if refreshProgress.isComplete {
+			refresher.downloadProgress.reset()
+			syncProgress.reset()
 		}
 	}
 
@@ -436,7 +436,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	@MainActor func performRefreshAll(for account: Account, sendArticleStatus: Bool) async throws {
-		syncProgress.addToNumberOfTasksAndRemaining(3)
+		syncProgress.addTasks(3)
 
 		do {
 			try await accountZone.fetchChangesInZone()
@@ -463,7 +463,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	@MainActor func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
-		syncProgress.addToNumberOfTasksAndRemaining(5)
+		syncProgress.addTasks(5)
 
 		do {
 			let feedSpecifiers = try await FeedFinder.find(url: url)
@@ -647,7 +647,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	@MainActor func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container) async throws {
-		syncProgress.addToNumberOfTasksAndRemaining(2)
+		syncProgress.addTasks(2)
 
 		do {
 			let _ = try await accountZone.removeFeed(feed, from: container)

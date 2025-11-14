@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension String {
+nonisolated public extension String {
 
 	/// Escapes special HTML characters.
 	///

@@ -56,9 +56,10 @@ public final class CombinedRefreshProgress {
 
 		let downloadProgresses = AccountManager.shared.activeAccounts.map { $0.refreshProgress }
 		for downloadProgress in downloadProgresses {
-			updatedNumberOfTasks += downloadProgress.numberOfTasks
-			updatedNumberRemaining += downloadProgress.numberRemaining
-			updatedNumberCompleted += downloadProgress.numberCompleted
+			let progressInfo = downloadProgress.progressInfo
+			updatedNumberOfTasks += progressInfo.numberOfTasks
+			updatedNumberRemaining += progressInfo.numberRemaining
+			updatedNumberCompleted += progressInfo.numberCompleted
 		}
 
 		if updatedNumberOfTasks > numberOfTasks {

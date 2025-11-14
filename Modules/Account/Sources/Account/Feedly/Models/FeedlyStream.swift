@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeedlyStream: Decodable {
+nonisolated struct FeedlyStream: Decodable, Sendable {
 	let id: String
 
 	/// Of the most recent entry for this stream (regardless of continuation, newerThan, etc).

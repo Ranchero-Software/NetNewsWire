@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct FeedlyFeedsSearchResponse: Decodable {
-
+nonisolated struct FeedlyFeedsSearchResponse: Decodable, Sendable {
 	struct Feed: Decodable {
 		let title: String
 		let feedId: String

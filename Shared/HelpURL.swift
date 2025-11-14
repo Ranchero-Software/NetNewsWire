@@ -21,7 +21,7 @@ enum HelpURL: String {
 	case privacyPolicy = "https://netnewswire.com/privacypolicy.html"
 
 #if os(macOS)
-	func open() {
+	@MainActor func open() {
 		Browser.open(self.rawValue, inBackground: false)
 	}
 #endif

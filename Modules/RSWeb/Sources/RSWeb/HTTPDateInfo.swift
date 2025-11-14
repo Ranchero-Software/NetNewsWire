@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct HTTPDateInfo: Codable, Equatable {
+nonisolated public struct HTTPDateInfo: Codable, Equatable {
 
 	private static let formatter: DateFormatter = {
 		let dateFormatter = DateFormatter()

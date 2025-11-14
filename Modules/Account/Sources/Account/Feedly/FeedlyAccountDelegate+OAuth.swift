@@ -12,16 +12,16 @@ import Secrets
 
 /// Models the access token response from Feedly.
 /// https://developer.feedly.com/v3/auth/#exchanging-an-auth-code-for-a-refresh-token-and-an-access-token
-public struct FeedlyOAuthAccessTokenResponse: Decodable, OAuthAccessTokenResponse {
+nonisolated public struct FeedlyOAuthAccessTokenResponse: Decodable, OAuthAccessTokenResponse, Sendable {
 	/// The ID of the Feedly user.
-	public var id: String
+	public let id: String
 
 	// Required properties of the OAuth 2.0 Authorization Framework section 4.1.4.
-	public var accessToken: String
-	public var tokenType: String
-	public var expiresIn: Int
-	public var refreshToken: String?
-	public var scope: String
+	public let accessToken: String
+	public let tokenType: String
+	public let expiresIn: Int
+	public let refreshToken: String?
+	public let scope: String
 }
 
 extension FeedlyAccountDelegate: OAuthAuthorizationGranting {

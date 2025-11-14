@@ -11,10 +11,10 @@ import RSCore
 
 public extension Notification.Name {
 	// Sent when HTMLMetadata is cached. Posted on any thread.
-	static let htmlMetadataAvailable = Notification.Name("htmlMetadataAvailable")
+	nonisolated static let htmlMetadataAvailable = Notification.Name("htmlMetadataAvailable")
 }
 
-public final class HTMLMetadataCache: Sendable {
+nonisolated public final class HTMLMetadataCache: Sendable {
 
 	static let shared = HTMLMetadataCache()
 
