@@ -25,7 +25,11 @@ let package = Package(
 				"RSParser",
 				"Articles",
 			],
-			swiftSettings: [.swiftLanguageMode(.v5)]
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self)
+			]
 		),
 	]
 )

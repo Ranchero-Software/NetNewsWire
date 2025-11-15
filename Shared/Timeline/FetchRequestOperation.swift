@@ -33,7 +33,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 		self.resultBlock = resultBlock
 	}
 
-	func run(_ completion: @escaping (FetchRequestOperation) -> Void) {
+	@MainActor func run(_ completion: @escaping (FetchRequestOperation) -> Void) {
 		precondition(Thread.isMainThread)
 		precondition(!isFinished)
 
@@ -62,7 +62,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
 
-		func process(_ articles: Set<Article>) {
+		@MainActor func process(_ articles: Set<Article>) {
 			precondition(Thread.isMainThread)
 			guard !self.isCanceled else {
 				callCompletionIfNeeded()
@@ -84,12 +84,16 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 			if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
 				fetcher.fetchUnreadArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
-					process(articles)
+					Task { @MainActor in
+						process(articles)
+					}
 				}
 			} else {
 				fetcher.fetchArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
-					process(articles)
+					Task { @MainActor in
+						process(articles)
+					}
 				}
 			}
 

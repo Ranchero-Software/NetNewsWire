@@ -96,13 +96,12 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, @unchecked S
 			return
 		}
 
-		account.fetchUnreadArticleIDs { result in
-			switch result {
-			case .success(let localUnreadArticleIDs):
-				self.processUnreadArticleIDs(localUnreadArticleIDs)
-
-			case .failure(let error):
-				self.didComplete(with: error)
+		Task { @MainActor in
+			do {
+				let localUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+				processUnreadArticleIDs(localUnreadArticleIDs)
+			} catch {
+				didComplete(with: error)
 			}
 		}
 	}

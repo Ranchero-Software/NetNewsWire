@@ -20,10 +20,10 @@ import Articles
 
 public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
 public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary,DatabaseError>
-public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCompletionResult?) -> Void
+public typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionaryCompletionResult?) -> Void
 
 public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
-public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult?) -> Void
+public typealias SingleUnreadCountCompletionBlock = @Sendable (SingleUnreadCountResult?) -> Void
 
 nonisolated public struct ArticleChanges: Sendable {
 	public let newArticles: Set<Article>?
@@ -44,16 +44,16 @@ nonisolated public struct ArticleChanges: Sendable {
 }
 
 public typealias UpdateArticlesResult = Result<ArticleChanges, DatabaseError>
-public typealias UpdateArticlesCompletionBlock = (UpdateArticlesResult) -> Void
+public typealias UpdateArticlesCompletionBlock = @Sendable (UpdateArticlesResult) -> Void
 
 public typealias ArticleSetResult = Result<Set<Article>, DatabaseError>
-public typealias ArticleSetResultBlock = (ArticleSetResult) -> Void
+public typealias ArticleSetResultBlock = @Sendable (ArticleSetResult) -> Void
 
-public typealias ArticleIDsResult = Result<Set<String>, DatabaseError>
-public typealias ArticleIDsCompletionBlock = (ArticleIDsResult) -> Void
+public typealias ArticleIDsResult = Result<Set<String>, Error>
+public typealias ArticleIDsCompletionBlock = @Sendable (ArticleIDsResult) -> Void
 
 public typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseError>
-public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
+public typealias ArticleStatusesResultBlock = @Sendable (ArticleStatusesResult) -> Void
 
 nonisolated public final class ArticlesDatabase: Sendable {
 
@@ -191,7 +191,22 @@ nonisolated public final class ArticlesDatabase: Sendable {
 	// MARK: - Unread Counts
 
 	/// Fetch all non-zero unread counts.
-	@MainActor public func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+	@MainActor public func fetchAllUnreadCounts() async throws -> UnreadCountDictionary? {
+		return try await withCheckedThrowingContinuation { continuation in
+			self.fetchAllUnreadCounts { result in
+				switch result {
+				case .success(let unreadCountDictionary):
+					continuation.resume(returning: unreadCountDictionary)
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				case .none:
+					continuation.resume(returning: nil)
+				}
+			}
+		}
+	}
+
+	@MainActor func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		let operation = FetchAllUnreadCountsOperation(databaseQueue: queue)
 		if let operationName = operation.name {
@@ -283,19 +298,47 @@ nonisolated public final class ArticlesDatabase: Sendable {
 		articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
 
+	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<ArticleStatus> {
+		try await withCheckedThrowingContinuation { continuation in
+			self.mark(articles, statusKey: statusKey, flag: flag) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return articlesTable.mark(articles, statusKey, flag, completion)
 	}
 
-	public func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
+	public func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<String> {
+		try await withCheckedThrowingContinuation { continuation in
+			markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	private func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.markAndFetchNew(articleIDs, statusKey, flag, completion)
 	}
 
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
 	/// For newly-created statuses, mark them as read and not-starred.
-	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
+	public func createStatusesIfNeeded(articleIDs: Set<String>) async throws {
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			self.createStatusesIfNeeded(articleIDs: articleIDs) { error in
+				if let error {
+					continuation.resume(throwing: error)
+				} else {
+					continuation.resume(returning: ())
+				}
+			}
+		}
+	}
+
+	func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.createStatusesIfNeeded(articleIDs, completion)
 	}
@@ -354,7 +397,7 @@ nonisolated public final class ArticlesDatabase: Sendable {
 
 // MARK: - Private
 
-private extension ArticlesDatabase {
+nonisolated private extension ArticlesDatabase {
 
 	static let tableCreationStatements = """
 	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER);

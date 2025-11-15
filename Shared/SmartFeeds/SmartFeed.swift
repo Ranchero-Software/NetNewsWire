@@ -111,8 +111,10 @@ private extension SmartFeed {
 			guard let singleUnreadCountResult, let accountUnreadCount = try? singleUnreadCountResult.get() else {
 				return
 			}
-			self.unreadCounts[account.accountID] = accountUnreadCount
-			self.updateUnreadCount()
+			Task { @MainActor in
+				self.unreadCounts[account.accountID] = accountUnreadCount
+				self.updateUnreadCount()
+			}
 		}
 	}
 

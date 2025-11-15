@@ -28,8 +28,8 @@ nonisolated final class ArticlesTable: DatabaseTable, Sendable {
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	let articleCutoffDate = Date().bySubtracting(days: 90)
 
-	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
-	private typealias ArticlesCountFetchMethod = (FMDatabase) -> Int
+	private typealias ArticlesFetchMethod = @Sendable (FMDatabase) -> Set<Article>
+	private typealias ArticlesCountFetchMethod = @Sendable (FMDatabase) -> Int
 
 	init(name: String, accountID: String, queue: DatabaseQueue, retentionStyle: ArticlesDatabase.RetentionStyle) {
 		self.name = name

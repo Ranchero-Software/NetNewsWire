@@ -850,12 +850,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		precondition(type == .onMyMac || type == .cloudKit)
 
 		database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { updateArticlesResult in
-			switch updateArticlesResult {
-			case .success(let articleChanges):
-				self.sendNotificationAbout(articleChanges)
-				completion(.success(articleChanges))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			Task { @MainActor in
+				switch updateArticlesResult {
+				case .success(let articleChanges):
+					self.sendNotificationAbout(articleChanges)
+					completion(.success(articleChanges))
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
+				}
 			}
 		}
 	}
@@ -882,12 +884,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 
 		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
-			switch updateArticlesResult {
-			case .success(let newAndUpdatedArticles):
-				self.sendNotificationAbout(newAndUpdatedArticles)
-				completion(nil)
-			case .failure(let databaseError):
-				completion(databaseError)
+			Task { @MainActor in
+				switch updateArticlesResult {
+				case .success(let newAndUpdatedArticles):
+					self.sendNotificationAbout(newAndUpdatedArticles)
+					completion(nil)
+				case .failure(let databaseError):
+					completion(databaseError)
+				}
 			}
 		}
 	}
@@ -908,14 +912,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 
-		database.mark(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let updatedStatuses):
+		Task { @MainActor in
+			do {
+				let updatedStatuses = try await database.mark(articles, statusKey: statusKey, flag: flag)
 				let updatedArticleIDs = updatedStatuses.articleIDs()
 				let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
 				self.noteStatusesForArticlesDidChange(updatedArticles)
+
 				completion(.success(updatedArticles))
-			case .failure(let error):
+			} catch let error as DatabaseError {
 				completion(.failure(error))
 			}
 		}
@@ -924,20 +929,25 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	/// Make sure statuses exist. Any existing statuses won’t be touched.
 	/// All created statuses will be marked as read and not starred.
 	/// Sends a .StatusesDidChange notification.
-	func createStatusesIfNeeded(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
-		guard !articleIDs.isEmpty else {
-			completion?(nil)
-			return
-		}
-		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
-			if let error = error {
-				completion?(error)
-				return
-			}
-			self.noteStatusesForArticleIDsDidChange(articleIDs)
-			completion?(nil)
-		}
+	func createStatusesIfNeeded(articleIDs: Set<String>) async throws {
+		try await database.createStatusesIfNeeded(articleIDs: articleIDs)
+		noteStatusesForArticleIDsDidChange(articleIDs)
 	}
+
+//	func createStatusesIfNeeded(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+//		guard !articleIDs.isEmpty else {
+//			completion?(nil)
+//			return
+//		}
+//		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
+//			if let error = error {
+//				completion?(error)
+//				return
+//			}
+//			self.noteStatusesForArticleIDsDidChange(articleIDs)
+//			completion?(nil)
+//		}
+//	}
 
 	/// Mark articleIDs statuses based on statusKey and flag.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
@@ -947,18 +957,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			completion?(.success(Set<String>()))
 			return
 		}
-		database.markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let newArticleStatusIDs):
+		Task { @MainActor in
+			do {
+				let newArticleStatusIDs = try await database.markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 				completion?(.success(newArticleStatusIDs))
-			case .failure(let databaseError):
-				completion?(.failure(databaseError))
+			} catch {
+				completion?(.failure(error))
 			}
 		}
 	}
 
-	/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+		/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
 	@discardableResult
 	func markAsRead(_ articleIDs: Set<String>) async throws -> Set<String> {
@@ -1250,12 +1260,14 @@ private extension Account {
 
 	@MainActor func fetchArticlesAsync(feed: Feed, _ completion: @escaping ArticleSetResultBlock) {
 		database.fetchArticlesAsync(feed.feedID) { [weak self] articleSetResult in
-			switch articleSetResult {
-			case .success(let articles):
-				self?.validateUnreadCount(feed, articles)
-				completion(.success(articles))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			Task { @MainActor in
+				switch articleSetResult {
+				case .success(let articles):
+					self?.validateUnreadCount(feed, articles)
+					completion(.success(articles))
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
+				}
 			}
 		}
 	}
@@ -1300,12 +1312,14 @@ private extension Account {
 	func fetchArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
 		let feeds = container.flattenedFeeds()
 		database.fetchArticlesAsync(feeds.feedIDs()) { [weak self] (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-				completion(.success(articles))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+			Task { @MainActor in
+				switch articleSetResult {
+				case .success(let articles):
+					self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+					completion(.success(articles))
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
+				}
 			}
 		}
 	}
@@ -1326,18 +1340,20 @@ private extension Account {
 	func fetchUnreadArticlesAsync(forContainer container: Container, limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		let feeds = container.flattenedFeeds()
 		database.fetchUnreadArticlesAsync(feeds.feedIDs(), limit) { [weak self] (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
+			Task { @MainActor in
+				switch articleSetResult {
+				case .success(let articles):
 
-				// We don't validate limit queries because they, by definition, won't correctly match the
-				// complete unread state for the given container.
-				if limit == nil {
-					self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+					// We don't validate limit queries because they, by definition, won't correctly match the
+					// complete unread state for the given container.
+					if limit == nil {
+						self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+					}
+
+					completion(.success(articles))
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
 				}
-
-				completion(.success(articles))
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
 			}
 		}
 	}
@@ -1470,10 +1486,12 @@ private extension Account {
 	func fetchUnreadCount(_ feed: Feed, _ completion: VoidCompletionBlock?) {
 		Task { @MainActor in
 			database.fetchUnreadCount(feed.feedID) { result in
-				if let result, let unreadCount = try? result.get() {
-					feed.unreadCount = unreadCount
+				Task { @MainActor in
+					if let result, let unreadCount = try? result.get() {
+						feed.unreadCount = unreadCount
+					}
+					completion?()
 				}
-				completion?()
 			}
 		}
 	}
@@ -1482,10 +1500,12 @@ private extension Account {
 		let feedIDs = Set(feeds.map { $0.feedID })
 		Task { @MainActor in
 			database.fetchUnreadCounts(for: feedIDs) { result in
-				if let result, let unreadCountDictionary = try? result.get() {
-					self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+				Task { @MainActor in
+					if let result, let unreadCountDictionary = try? result.get() {
+						self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+					}
+					completion?()
 				}
-				completion?()
 			}
 		}
 	}
@@ -1493,22 +1513,21 @@ private extension Account {
 	func fetchAllUnreadCounts(_ completion: VoidCompletionBlock? = nil) {
 		fetchingAllUnreadCounts = true
 		Task { @MainActor in
-			database.fetchAllUnreadCounts { result in
-				guard let result, let unreadCountDictionary = try? result.get() else {
-					completion?()
-					return
-				}
-				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedFeeds())
-				
-				self.fetchingAllUnreadCounts = false
-				self.updateUnreadCount()
-				
-				if !self.areUnreadCountsInitialized {
-					self.areUnreadCountsInitialized = true
-					self.postUnreadCountDidInitializeNotification()
-				}
+			guard let unreadCountDictionary = try? await database.fetchAllUnreadCounts() else {
 				completion?()
+				return
 			}
+
+			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
+			fetchingAllUnreadCounts = false
+			updateUnreadCount()
+
+			if !self.areUnreadCountsInitialized {
+				self.areUnreadCountsInitialized = true
+				self.postUnreadCountDidInitializeNotification()
+			}
+
+			completion?()
 		}
 	}
 
@@ -1555,7 +1574,7 @@ private extension Account {
 
 		if shouldSendNotification {
 			userInfo[UserInfoKey.feeds] = feeds
-			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
+			NotificationCenter.default.postOnMainThread(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
 	}
 }

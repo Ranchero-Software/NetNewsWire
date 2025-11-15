@@ -10,8 +10,8 @@ import Foundation
 import Articles
 import RSDatabase
 
-nonisolated public struct SyncStatus: Hashable, Equatable {
-	public enum Key: String {
+nonisolated public struct SyncStatus: Hashable, Equatable, Sendable {
+	public enum Key: String, Sendable {
 		case read
 		case starred
 		case deleted

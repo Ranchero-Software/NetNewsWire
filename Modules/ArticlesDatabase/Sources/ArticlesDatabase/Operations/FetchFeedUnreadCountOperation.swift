@@ -29,6 +29,10 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation, @unchecke
 
 	@MainActor public override func run() {
 		queue.runInDatabase { databaseResult in
+			if self.isCanceled {
+				self.didComplete()
+				return
+			}
 
 			switch databaseResult {
 			case .success(let database):
@@ -39,9 +43,7 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation, @unchecke
 				self.result = .failure(.isSuspended)
 			}
 
-			Task { @MainActor in
-				self.didComplete()
-			}
+			self.didComplete()
 		}
 	}
 }

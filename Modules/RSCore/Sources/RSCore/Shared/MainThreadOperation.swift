@@ -105,9 +105,16 @@ nonisolated open class MainThreadOperation: Hashable, @unchecked Sendable {
 	}
 
 	/// Call when completed. This will trigger calling completionBlock.
-	@MainActor public func didComplete() {
-		assert(Thread.isMainThread)
-		operationQueue?.operationDidComplete(self)
+	nonisolated public func didComplete() {
+		if Thread.isMainThread {
+			MainActor.assumeIsolated {
+				operationQueue?.operationDidComplete(self)
+			}
+		} else {
+			Task { @MainActor in
+				didComplete()
+			}
+		}
 	}
 
 	/// Override to be notified when the operation is complete.

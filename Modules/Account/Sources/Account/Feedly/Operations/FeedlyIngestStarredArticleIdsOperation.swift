@@ -96,13 +96,13 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation, @unchecked 
 			return
 		}
 
-		account.fetchStarredArticleIDs { result in
-			switch result {
-			case .success(let localStarredArticleIDs):
-				self.processStarredArticleIDs(localStarredArticleIDs)
-
-			case .failure(let error):
-				self.didComplete(with: error)
+		Task { @MainActor in
+			do {
+				let localStarredArticleIDs = try await account.fetchStarredArticleIDs()
+				processStarredArticleIDs(localStarredArticleIDs)
+				didComplete()
+			} catch {
+				didComplete(with: error)
 			}
 		}
 	}

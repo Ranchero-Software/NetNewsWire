@@ -93,10 +93,10 @@ private extension CloudKitSendStatusOperation {
 		}
 
 		let articleIDs = syncStatuses.map({ $0.articleID })
-		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
+		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { [syncStatuses] result in
 
 			func processWithArticles(_ articles: Set<Article>) {
-				Task { @MainActor in
+				Task { @MainActor [syncStatuses] in
 
 					let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
 					let articlesDict = articles.reduce(into: [String: Article]()) { result, article in

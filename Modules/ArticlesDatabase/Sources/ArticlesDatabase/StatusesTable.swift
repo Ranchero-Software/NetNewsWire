@@ -138,32 +138,23 @@ nonisolated final class StatusesTable: DatabaseTable, Sendable {
 	func fetchArticleIDsForStatusesWithoutArticlesNewerThan(_ cutoffDate: Date, _ completion: @escaping ArticleIDsCompletionBlock) {
 		queue.runInDatabase { databaseResult in
 
-			var error: DatabaseError?
-			var articleIDs = Set<String>()
-
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
-				if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
-					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
-				}
-			}
+			let result: Result<Set<String>, Error>
 
 			switch databaseResult {
 			case .success(let database):
-				makeDatabaseCall(database)
+				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
+				if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
+					let articleIDs = resultSet.mapToSet(self.articleIDWithRow)
+					result = .success(articleIDs)
+				} else {
+					result = .success(Set<String>())
+				}
 			case .failure(let databaseError):
-				error = databaseError
+				result = .failure(databaseError)
 			}
 
-			if let error = error {
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			else {
-				DispatchQueue.main.async {
-					completion(.success(articleIDs))
-				}
+			DispatchQueue.main.async {
+				completion(result)
 			}
 		}
 	}
@@ -235,7 +226,7 @@ nonisolated final class StatusesTable: DatabaseTable, Sendable {
 
 // MARK: - Private
 
-private extension StatusesTable {
+nonisolated private extension StatusesTable {
 
 	// MARK: - Cache
 

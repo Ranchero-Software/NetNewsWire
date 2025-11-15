@@ -75,63 +75,69 @@ public final class WidgetDataEncoder {
 
 		dispatchGroup.enter()
 		AccountManager.shared.fetchArticlesAsync(.unread(fetchLimit)) { (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				for article in articles {
-					let latestArticle = LatestArticle(id: article.sortableArticleID,
-													  feedTitle: article.sortableName,
-													  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
-													  articleSummary: article.summary,
-													  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
-													  pubDate: article.datePublished?.description ?? "")
-					unread.append(latestArticle)
+			MainActor.assumeIsolated {
+				switch articleSetResult {
+				case .success(let articles):
+					for article in articles {
+						let latestArticle = LatestArticle(id: article.sortableArticleID,
+														  feedTitle: article.sortableName,
+														  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
+														  articleSummary: article.summary,
+														  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
+														  pubDate: article.datePublished?.description ?? "")
+						unread.append(latestArticle)
+					}
+				case .failure(let databaseError):
+					groupError = databaseError
 				}
-			case .failure(let databaseError):
-				groupError = databaseError
+				dispatchGroup.leave()
 			}
-			dispatchGroup.leave()
 		}
 
 		var starred = [LatestArticle]()
 
 		dispatchGroup.enter()
 		AccountManager.shared.fetchArticlesAsync(.starred(fetchLimit)) { (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				for article in articles {
-					let latestArticle = LatestArticle(id: article.sortableArticleID,
-													  feedTitle: article.sortableName,
-													  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
-													  articleSummary: article.summary,
-													  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
-													  pubDate: article.datePublished?.description ?? "")
-					starred.append(latestArticle)
+			MainActor.assumeIsolated {
+				switch articleSetResult {
+				case .success(let articles):
+					for article in articles {
+						let latestArticle = LatestArticle(id: article.sortableArticleID,
+														  feedTitle: article.sortableName,
+														  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
+														  articleSummary: article.summary,
+														  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
+														  pubDate: article.datePublished?.description ?? "")
+						starred.append(latestArticle)
+					}
+				case .failure(let databaseError):
+					groupError = databaseError
 				}
-			case .failure(let databaseError):
-				groupError = databaseError
+				dispatchGroup.leave()
 			}
-			dispatchGroup.leave()
 		}
 
 		var today = [LatestArticle]()
 
 		dispatchGroup.enter()
 		AccountManager.shared.fetchArticlesAsync(.today(fetchLimit)) { (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				for article in articles {
-					let latestArticle = LatestArticle(id: article.sortableArticleID,
-													  feedTitle: article.sortableName,
-													  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
-													  articleSummary: article.summary,
-													  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
-													  pubDate: article.datePublished?.description ?? "")
-					today.append(latestArticle)
+			MainActor.assumeIsolated {
+				switch articleSetResult {
+				case .success(let articles):
+					for article in articles {
+						let latestArticle = LatestArticle(id: article.sortableArticleID,
+														  feedTitle: article.sortableName,
+														  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
+														  articleSummary: article.summary,
+														  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
+														  pubDate: article.datePublished?.description ?? "")
+						today.append(latestArticle)
+					}
+				case .failure(let databaseError):
+					groupError = databaseError
 				}
-			case .failure(let databaseError):
-				groupError = databaseError
+				dispatchGroup.leave()
 			}
-			dispatchGroup.leave()
 		}
 
 		dispatchGroup.notify(queue: .main) {

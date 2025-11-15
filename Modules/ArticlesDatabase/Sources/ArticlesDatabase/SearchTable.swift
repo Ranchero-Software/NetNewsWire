@@ -129,7 +129,7 @@ nonisolated final class SearchTable: DatabaseTable, @unchecked Sendable {
 
 // MARK: - Private
 
-private extension SearchTable {
+nonisolated private extension SearchTable {
 
 	func performInitialIndexForArticles(_ articles: Set<ArticleSearchInfo>, _ database: FMDatabase) {
 		articles.forEach { performInitialIndex($0, database) }

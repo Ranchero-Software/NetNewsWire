@@ -47,25 +47,24 @@ final class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation, @unchecked S
 			return
 		}
 
-		switch result {
-		case .success(let streamIds):
-			account.createStatusesIfNeeded(articleIDs: Set(streamIds.ids)) { databaseError in
+		Task { @MainActor in
+			switch result {
+			case .success(let streamIds):
+				do {
+					try await account.createStatusesIfNeeded(articleIDs: Set(streamIds.ids))
+					guard let continuation = streamIds.continuation else {
+						Feedly.logger.info("Feedly: Reached end of stream for \(self.resource.id)")
+						didComplete()
+						return
+					}
 
-				if let error = databaseError {
-					self.didComplete(with: error)
-					return
+					getStreamIds(continuation)
+				} catch {
+					didComplete(with: error)
 				}
-
-				guard let continuation = streamIds.continuation else {
-					Feedly.logger.info("Feedly: Reached end of stream for \(self.resource.id)")
-					self.didComplete()
-					return
-				}
-
-				self.getStreamIds(continuation)
+			case .failure(let error):
+				didComplete(with: error)
 			}
-		case .failure(let error):
-			didComplete(with: error)
 		}
 	}
 }
