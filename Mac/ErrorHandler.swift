@@ -10,12 +10,14 @@ import AppKit
 import Account
 import os.log
 
-struct ErrorHandler {
+nonisolated struct ErrorHandler: Sendable {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
 
-	public static func present(_ error: Error) {
-		NSApplication.shared.presentError(error)
+	@Sendable public static func present(_ error: Error) {
+		Task { @MainActor in
+			NSApplication.shared.presentError(error)
+		}
 	}
 
 	public static func log(_ error: Error) {
