@@ -14,12 +14,15 @@ public extension Notification.Name {
 	static let DownloadProgressDidChange = Notification.Name(rawValue: "DownloadProgressDidChange")
 }
 
-nonisolated public final class DownloadProgress: Sendable {
+nonisolated public final class DownloadProgress: Hashable, Sendable {
 	public struct ProgressInfo: Sendable {
 		public let numberOfTasks: Int
 		public let numberCompleted: Int
 		public let numberRemaining: Int
 	}
+
+	private let id: Int
+	private static let nextID = Mutex(0)
 
 	private struct State {
 		var numberOfTasks = 0
@@ -31,6 +34,8 @@ nonisolated public final class DownloadProgress: Sendable {
 			return n
 		}
 
+		var children = Set<DownloadProgress>()
+
 		init(_ numberOfTasks: Int) {
 			self.numberOfTasks = numberOfTasks
 		}
@@ -41,6 +46,7 @@ nonisolated public final class DownloadProgress: Sendable {
 	public init(numberOfTasks: Int) {
 		assert(numberOfTasks >= 0)
 		self.state = Mutex(State(numberOfTasks))
+		self.id = Self.autoincrementingID()
 	}
 
 	public var progressInfo: ProgressInfo {
@@ -52,6 +58,13 @@ nonisolated public final class DownloadProgress: Sendable {
 			numberOfTasks = state.numberOfTasks
 			numberCompleted = state.numberCompleted
 			numberRemaining = state.numberRemaining
+
+			for child in state.children {
+				let childProgressInfo = child.progressInfo
+				numberOfTasks += childProgressInfo.numberOfTasks
+				numberCompleted += childProgressInfo.numberCompleted
+				numberRemaining += childProgressInfo.numberRemaining
+			}
 		}
 
 		return ProgressInfo(numberOfTasks: numberOfTasks,
@@ -62,6 +75,13 @@ nonisolated public final class DownloadProgress: Sendable {
 	public var isComplete: Bool {
 		state.withLock { state in
 			state.numberRemaining < 1
+		}
+	}
+
+	public func addChild(_ childDownloadProgress: DownloadProgress) {
+		precondition(self != childDownloadProgress)
+		state.withLock { state in
+			_ = state.children.insert(childDownloadProgress)
 		}
 	}
 
@@ -90,9 +110,18 @@ nonisolated public final class DownloadProgress: Sendable {
 		postDidChangeNotification()
 	}
 
-	public func reset() {
+	public func completeAll() {
 		state.withLock { state in
+			state.numberCompleted = state.numberOfTasks
+			for child in state.children {
+				child.completeAll()
+			}
+		}
+	}
 
+	@discardableResult
+	public func reset() -> Bool {
+		state.withLock { state in
 			var didChange = false
 
 			if state.numberOfTasks != 0 {
@@ -104,10 +133,27 @@ nonisolated public final class DownloadProgress: Sendable {
 				didChange = true
 			}
 
+			for child in state.children {
+				didChange = child.reset()
+			}
+
 			if didChange {
 				postDidChangeNotification()
 			}
+			return didChange
 		}
+	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(id)
+	}
+
+	// MARK - Equatable
+
+	public static func ==(lhs: DownloadProgress, rhs: DownloadProgress) -> Bool {
+		lhs.id == rhs.id
 	}
 }
 
@@ -118,6 +164,15 @@ nonisolated private extension DownloadProgress {
 	func postDidChangeNotification() {
 		DispatchQueue.main.async {
 			NotificationCenter.default.post(name: .DownloadProgressDidChange, object: self)
+		}
+	}
+
+	static func autoincrementingID() -> Int {
+		nextID.withLock { id in
+			defer {
+				id += 1
+			}
+			return id
 		}
 	}
 }
