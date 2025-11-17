@@ -149,7 +149,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	// MARK: - API
 
-	func manualRefresh(errorHandler: @escaping (Error) -> ()) {
+	func manualRefresh(errorHandler: @escaping @Sendable (Error) -> ()) {
 		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
 			$0.cleanUp(conditional: true)
 		}

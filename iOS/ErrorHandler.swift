@@ -10,21 +10,23 @@ import UIKit
 import os
 import RSCore
 
-struct ErrorHandler {
+nonisolated struct ErrorHandler: Sendable {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
 
-	public static func present(_ viewController: UIViewController) -> (Error) -> () {
+	@Sendable public static func present(_ viewController: UIViewController) -> (Error) -> () {
 		return { [weak viewController] error in
-			if UIApplication.shared.applicationState == .active {
-				viewController?.presentError(error)
-			} else {
-				log(error)
+			Task { @MainActor in
+				if UIApplication.shared.applicationState == .active {
+					viewController?.presentError(error)
+				} else {
+					log(error)
+				}
 			}
 		}
 	}
 
-	public static func log(_ error: Error) {
+	@Sendable nonisolated public static func log(_ error: Error) {
 		logger.error("\(error.localizedDescription)")
 	}
 }
