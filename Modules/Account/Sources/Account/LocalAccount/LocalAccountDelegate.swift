@@ -122,7 +122,7 @@ import Secrets
 	}
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		try await account.update(articles, statusKey: statusKey, flag: flag)
+		try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 	}
 
 	func accountDidInitialize(_ account: Account) {
@@ -197,7 +197,7 @@ private extension LocalAccountDelegate {
 		container.addFeedToTreeAtTopLevel(feed)
 
 		Task {
-			try? await account.update(feed, with: parsedFeed)
+			try? await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
 		}
 
 		return feed

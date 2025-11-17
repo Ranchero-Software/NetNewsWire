@@ -194,7 +194,7 @@ import Secrets
 			Self.logger.info("NewsBlur: Finished refreshing missing stories.")
 		}
 
-		let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
+		let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 
 		var savedError: Error?
 
@@ -230,7 +230,7 @@ import Secrets
 			Set($0)
 		}
 
-		try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 		return !feedIDsAndItems.isEmpty
 	}
 
@@ -402,7 +402,7 @@ import Secrets
 	}
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		try await account.update(articles, statusKey: statusKey, flag: flag)
+		try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})

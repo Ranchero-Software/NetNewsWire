@@ -296,15 +296,15 @@ import os.log
 			let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
 			let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
 
-			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
 
 			// Mark articles as unread
 			let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-			try await account.markAsUnread(deltaUnreadArticleIDs)
+			try await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 			// Mark articles as read
 			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-			try await account.markAsRead(deltaReadArticleIDs)
+			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 		} catch {
 			Self.logger.error("NewsBlur: Sync Story Read Status failed: \(error.localizedDescription)")
 		}
@@ -323,15 +323,15 @@ import os.log
 			let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
 			let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
 
-			let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
+			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
 
 			// Mark articles as starred
 			let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-			try await account.markAsStarred(deltaStarredArticleIDs)
+			try await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 			// Mark articles as unstarred
 			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-			try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 		} catch {
 			Self.logger.error("NewsBlur: Sync Story Starred Status failed: \(error.localizedDescription)")
 		}

@@ -369,7 +369,7 @@ import RSDatabase
 
 		var articles = Set<Article>()
 		for account in activeAccounts {
-			articles.formUnion(try account.fetchArticlesSync(fetchType))
+			articles.formUnion(try account.fetchArticles(fetchType))
 		}
 		return articles
 	}
@@ -382,24 +382,11 @@ import RSDatabase
 		}
 
 		var allFetchedArticles = Set<Article>()
-		var fetchError: Error?
-
-		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
-			for account in activeAccounts {
-				group.addTask { @MainActor in
-					do {
-						let articles = try await account.fetchArticles(fetchType)
-						allFetchedArticles.formUnion(articles)
-					} catch {
-						fetchError = error
-					}
-				}
-			}
+		for account in activeAccounts {
+			let articles = try await account.fetchArticlesAsync(fetchType)
+			allFetchedArticles.formUnion(articles)
 		}
 
-		if let fetchError {
-			throw fetchError
-		}
 		return allFetchedArticles
 	}
 

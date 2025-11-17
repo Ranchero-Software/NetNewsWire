@@ -541,7 +541,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	@MainActor func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
-		let _ = try await account.updateAsync(feed: feed, with: parsedFeed)
+		let _ = try await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
 
 		let externalID = try await accountZone.createFeed(url: bestFeedSpecifier.urlString,
 														  name: parsedFeed.title,

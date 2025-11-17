@@ -20,7 +20,7 @@ public protocol ArticleFetcher {
 @MainActor extension Feed: ArticleFetcher {
 
 	public func fetchArticles() throws -> Set<Article> {
-		return try account?.fetchArticlesSync(.feed(self)) ?? Set<Article>()
+		return try account?.fetchArticles(.feed(self)) ?? Set<Article>()
 	}
 
 	public func fetchArticlesAsync() async throws -> Set<Article> {
@@ -28,7 +28,7 @@ public protocol ArticleFetcher {
 			assertionFailure("Expected feed.account, but got nil.")
 			return Set<Article>()
 		}
-		return try await account.fetchArticles(.feed(self))
+		return try await account.fetchArticlesAsync(.feed(self))
 	}
 
 	public func fetchUnreadArticles() throws -> Set<Article> {
@@ -41,7 +41,7 @@ public protocol ArticleFetcher {
 			return Set<Article>()
 		}
 		// TODO: fetch only unread articles rather than filtering.
-		let articles = try await account.fetchArticles(.feed(self))
+		let articles = try await account.fetchArticlesAsync(.feed(self))
 		return articles.unreadArticles()
 	}
 }
@@ -53,7 +53,7 @@ public protocol ArticleFetcher {
 			assertionFailure("Expected folder.account, but got nil.")
 			return Set<Article>()
 		}
-		return try account.fetchArticlesSync(.folder(self, false))
+		return try account.fetchArticles(.folder(self, false))
 	}
 
 	public func fetchArticlesAsync() async throws -> Set<Article> {
@@ -61,7 +61,7 @@ public protocol ArticleFetcher {
 			assertionFailure("Expected folder.account, but got nil.")
 			return Set<Article>()
 		}
-		return try await account.fetchArticles(.folder(self, false))
+		return try await account.fetchArticlesAsync(.folder(self, false))
 	}
 
 	public func fetchUnreadArticles() throws -> Set<Article> {
@@ -69,7 +69,7 @@ public protocol ArticleFetcher {
 			assertionFailure("Expected folder.account, but got nil.")
 			return Set<Article>()
 		}
-		return try account.fetchArticlesSync(.folder(self, true))
+		return try account.fetchArticles(.folder(self, true))
 	}
 
 	public func fetchUnreadArticlesAsync() async throws -> Set<Article> {
@@ -77,6 +77,6 @@ public protocol ArticleFetcher {
 			assertionFailure("Expected folder.account, but got nil.")
 			return Set<Article>()
 		}
-		return try await account.fetchArticles(.folder(self, true))
+		return try await account.fetchArticlesAsync(.folder(self, true))
 	}
 }

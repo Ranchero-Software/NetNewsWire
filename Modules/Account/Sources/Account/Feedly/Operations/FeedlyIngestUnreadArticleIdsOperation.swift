@@ -98,7 +98,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, @unchecked S
 
 		Task { @MainActor in
 			do {
-				let localUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+				let localUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
 				processUnreadArticleIDs(localUnreadArticleIDs)
 			} catch {
 				didComplete(with: error)
@@ -112,40 +112,29 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, @unchecked S
 			return
 		}
 
-		let remoteUnreadArticleIDs = remoteEntryIds
-		let group = DispatchGroup()
+		Task { @MainActor in
+			var markingError: Error?
 
-		final class ReadStatusResults {
-			var markAsUnreadError: Error?
-			var markAsReadError: Error?
-		}
+			let remoteUnreadArticleIDs = remoteEntryIds
+			let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
 
-		let results = ReadStatusResults()
-
-		group.enter()
-		account.markAsUnread(remoteUnreadArticleIDs) { result in
-			if case .failure(let error) = result {
-				results.markAsUnreadError = error
+			do {
+				try await account.markAsUnreadAsync(articleIDs: remoteUnreadArticleIDs)
+			} catch {
+				markingError = error
 			}
-			group.leave()
-		}
 
-		let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
-		group.enter()
-		account.markAsRead(articleIDsToMarkRead) { result in
-			if case .failure(let error) = result {
-				results.markAsReadError = error
+			do {
+				try await account.markAsReadAsync(articleIDs: articleIDsToMarkRead)
+			} catch {
+				markingError = error
 			}
-			group.leave()
-		}
 
-		group.notify(queue: .main) {
-			let markingError = results.markAsReadError ?? results.markAsUnreadError
-			guard let error = markingError else {
-				self.didComplete()
-				return
+			if let markingError {
+				didComplete(with: markingError)
+			} else {
+				didComplete()
 			}
-			self.didComplete(with: error)
 		}
 	}
 }

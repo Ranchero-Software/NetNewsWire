@@ -307,7 +307,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		DispatchQueue.main.async {
 			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
-			self.fetchAllUnreadCounts()
+			self._fetchAllUnreadCounts()
 		}
 
 		MainActor.assumeIsolated {
@@ -457,7 +457,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	/// Reload OPML, etc.
 	public func resume() {
-		fetchAllUnreadCounts()
+		_fetchAllUnreadCounts()
 	}
 
 	// MARK: - Data
@@ -689,7 +689,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func updateUnreadCounts(feeds: Set<Feed>) {
-		fetchUnreadCounts(for: feeds)
+		_fetchUnreadCounts(feeds: feeds)
 	}
 
 	// MARK: - Fetching Articles
@@ -713,9 +713,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .articleIDs(let articleIDs):
 			return try _fetchArticles(articleIDs: articleIDs)
 		case .search(let searchString):
-			return try _fetchArticlesMatching(searchString)
+			return try _fetchArticlesMatching(searchString: searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return try _fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+			return try _fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
 		}
 	}
 
@@ -738,9 +738,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .articleIDs(let articleIDs):
 			return try await _fetchArticlesAsync(articleIDs: articleIDs)
 		case .search(let searchString):
-			return try await _fetchArticlesMatchingAsync(searchString)
+			return try await _fetchArticlesMatchingAsync(searchString: searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return try await _FetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs)
+			return try await _fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
 		}
 	}
 
@@ -785,7 +785,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Updating Feeds
 
 	@discardableResult
-	@MainActor func updateAsync(feed: Feed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
+	@MainActor func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async throws -> ArticleChanges {
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
@@ -977,11 +977,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func debugRunSearch() {
 		#if DEBUG
-			let t1 = Date()
-			let articles = try! fetchArticlesMatching("Brent NetNewsWire")
-			let t2 = Date()
-			print(t2.timeIntervalSince(t1))
-			print(articles.count)
+		let t1 = Date()
+		let articles = try! _fetchArticlesMatching(searchString: "Brent NetNewsWire")
+		let t2 = Date()
+		print(t2.timeIntervalSince(t1))
+		print(articles.count)
 		#endif
 	}
 
@@ -1079,47 +1079,47 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Account Unread Articles
 
 	func _fetchUnreadArticles(limit: Int? = nil) throws -> Set<Article> {
-		try fetchUnreadArticles(container: self, limit: limit)
+		try _fetchUnreadArticles(container: self, limit: limit)
 	}
 
 	func _fetchUnreadArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await fetchUnreadArticlesAsync(container: self, limit: limit)
+		try await _fetchUnreadArticlesAsync(container: self, limit: limit)
 	}
 
 	// MARK: - Today Articles
 
 	func _fetchTodayArticles(limit: Int? = nil) throws -> Set<Article> {
-		try database.fetchTodayArticles(flattenedFeeds().feedIDs(), limit)
+		try database.fetchTodayArticles(feedIDs: flattenedFeeds().feedIDs(), limit: limit)
 	}
 
 	func _fetchTodayArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await database.fetchTodayArticlesAsync(flattenedFeeds().feedIDs(), limit)
+		try await database.fetchTodayArticlesAsync(feedIDs: flattenedFeeds().feedIDs(), limit: limit)
 	}
 
 	// MARK: - Container Articles
 
 	func _fetchArticles(container: Container) throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try database.fetchArticles(feeds.feedIDs())
-		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		let articles = try database.fetchArticles(feedIDs: feeds.feedIDs())
+		validateUnreadCountsAfterFetchingUnreadArticles(feeds: feeds, articles: articles)
 		return articles
 	}
 
 	func _fetchArticlesAsync(container: Container) async throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try await database.fetchArticlesAsync(feeds.feedIDs())
-		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		let articles = try await database.fetchArticlesAsync(feedIDs: feeds.feedIDs())
+		validateUnreadCountsAfterFetchingUnreadArticles(feeds: feeds, articles: articles)
 		return articles
 	}
 
 	func _fetchUnreadArticles(container: Container, limit: Int? = nil) throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try database.fetchUnreadArticles(feeds.feedIDs(), limit)
+		let articles = try database.fetchUnreadArticles(feedIDs: feeds.feedIDs(), limit: limit)
 
 		// We don't validate limit queries because they, by definition, won't correctly match the
 		// complete unread state for the given container.
 		if limit == nil {
-			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+			validateUnreadCountsAfterFetchingUnreadArticles(feeds: feeds, articles: articles)
 		}
 
 		return articles
@@ -1127,12 +1127,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	func _fetchUnreadArticlesAsync(container: Container, limit: Int? = nil) async throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try await database.fetchUnreadArticlesAsync(feeds.feedIDs(), limit)
+		let articles = try await database.fetchUnreadArticlesAsync(feedIDs: feeds.feedIDs(), limit: limit)
 
 		// We don't validate limit queries because they, by definition, won't correctly match the
 		// complete unread state for the given container.
 		if limit == nil {
-			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+			validateUnreadCountsAfterFetchingUnreadArticles(feeds: feeds, articles: articles)
 		}
 
 		return articles
@@ -1142,20 +1142,20 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Feed Articles
 
 	func _fetchArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchArticles(feed.feedID)
-		validateUnreadCount(feed, articles)
+		let articles = try database.fetchArticles(feedID: feed.feedID)
+		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
 
 	func _fetchArticlesAsync(feed: Feed) async throws -> Set<Article> {
-		let articles = try await database.fetchArticlesAsync(feed.feedID)
-		validateUnreadCount(feed, articles)
+		let articles = try await database.fetchArticlesAsync(feedID: feed.feedID)
+		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
 
 	func _fetchUnreadArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchUnreadArticles(Set([feed.feedID]), nil)
-		validateUnreadCount(feed, articles)
+		let articles = try database.fetchUnreadArticles(feedIDs: Set([feed.feedID]))
+		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
 
@@ -1171,25 +1171,25 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	// MARK: - Search Articles
 
-	func _fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
-		try database.fetchArticlesMatching(searchString, flattenedFeeds().feedIDs())
+	func _fetchArticlesMatching(searchString: String) throws -> Set<Article> {
+		try database.fetchArticlesMatching(searchString: searchString, feedIDs: flattenedFeeds().feedIDs())
 	}
 
-	func _fetchArticlesMatchingAsync(_ searchString: String) async throws -> Set<Article> {
-		try await database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs())
+	func _fetchArticlesMatchingAsync(searchString: String) async throws -> Set<Article> {
+		try await database.fetchArticlesMatchingAsync(searchString: searchString, feedIDs: flattenedFeeds().feedIDs())
 	}
 
-	func _fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
-		try database.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+	func _fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) throws -> Set<Article> {
+		try database.fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
 	}
 
-	func _fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>) async throws -> Set<Article> {
-		try await database.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs)
+	func _fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async throws -> Set<Article> {
+		try await database.fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
 	}
 
 	// MARK: - Unread Counts
 
-	private func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
+	private func validateUnreadCountsAfterFetchingUnreadArticles(feeds: Set<Feed>, articles: Set<Article>) {
 		// Validate unread counts. This was the site of a performance slowdown:
 		// it was calling going through the entire list of articles once per feed:
 		// feeds.forEach { validateUnreadCount($0, articles) }
@@ -1205,7 +1205,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	private func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
+	private func validateUnreadCount(feed: Feed, articles: Set<Article>) {
 		// articles must contain all the unread articles for the feed.
 		// The unread number should match the feed’s unread count.
 		var feedUnreadCount = 0
@@ -1230,13 +1230,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return
 		}
 		if feeds.count == 1, let feed = feeds.first {
-			fetchUnreadCount(feed: feed)
+			_fetchUnreadCount(feed: feed)
 		}
 		else if feeds.count < 10 {
-			fetchUnreadCounts(feeds: feeds)
+			_fetchUnreadCounts(feeds: feeds)
 		}
 		else {
-			fetchAllUnreadCounts()
+			_fetchAllUnreadCounts()
 		}
 	}
 
@@ -1346,18 +1346,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
         // .UnreadCountDidChange notification will get sent to Folder and Account objects,
         // which will update their own unread counts.
-        updateUnreadCounts(for: feeds)
+        updateUnreadCounts(feeds: feeds)
 
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.articleIDs: articleIDs, UserInfoKey.feeds: feeds])
     }
 
 	func noteStatusesForArticleIDsDidChange(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) {
-		fetchAllUnreadCounts()
+		_fetchAllUnreadCounts()
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.articleIDs: articleIDs, UserInfoKey.statusKey: statusKey, UserInfoKey.statusFlag: flag])
 	}
 
 	func noteStatusesForArticleIDsDidChange(_ articleIDs: Set<String>) {
-		fetchAllUnreadCounts()
+		_fetchAllUnreadCounts()
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.articleIDs: articleIDs])
 	}
 

@@ -117,7 +117,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			let articleIDs = try await caller.retrieveItemIDs(type: .allForAccount)
 			refreshProgress.completeTask()
 
-			_ = try? await account.markAsRead(Set(articleIDs))
+			_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
 			try? await refreshArticleStatus(for: account)
 			refreshProgress.completeTask()
 
@@ -439,7 +439,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
+		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
@@ -734,7 +734,7 @@ private extension ReaderAPIAccountDelegate {
 
 		refreshProgress.completeTask()
 
-		_ = try? await account.markAsRead(Set(articleIDs))
+		_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
 		refreshProgress.completeTask()
 
 		try? await refreshArticleStatus(for: account)
@@ -749,7 +749,7 @@ private extension ReaderAPIAccountDelegate {
 	func refreshMissingArticles(_ account: Account) async {
 
 		do {
-			let fetchedArticleIDs = (try? await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()) ?? Set<String>()
+			let fetchedArticleIDs = (try? await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()) ?? Set<String>()
 
 			if fetchedArticleIDs.isEmpty {
 				return
@@ -783,7 +783,7 @@ private extension ReaderAPIAccountDelegate {
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 
-		try? await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		try? await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
@@ -841,15 +841,15 @@ private extension ReaderAPIAccountDelegate {
 
 				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
-				let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+				let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
 
 				// Mark articles as unread
 				let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-				_ = try? await account.markAsUnread(deltaUnreadArticleIDs)
+				_ = try? await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 				// Mark articles as read
 				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-				_ = try? await account.markAsRead(deltaReadArticleIDs)
+				_ = try? await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 
 			} catch {
 				Self.logger.error("Sync Article read status error: \(error.localizedDescription)")
@@ -869,15 +869,15 @@ private extension ReaderAPIAccountDelegate {
 
 			let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
-			let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
+			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
 
 			// Mark articles as starred
 			let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-			_ = try? await account.markAsStarred(deltaStarredArticleIDs)
+			_ = try? await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 			// Mark articles as unstarred
 			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-			_ = try? await account.markAsUnstarred(deltaUnstarredArticleIDs)
+			_ = try? await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 
 		} catch {
 			Self.logger.error("Sync Article starred status error: \(error.localizedDescription)")
