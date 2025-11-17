@@ -37,7 +37,12 @@ let package = Package(
 				"Secrets",
 				"SyncDatabase",
 			],
-			swiftSettings: [.swiftLanguageMode(.v5)]),
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.defaultIsolation(MainActor.self)
+			]
+		),
 		.testTarget(
 			name: "AccountTests",
 			dependencies: ["Account"],

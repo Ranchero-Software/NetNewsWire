@@ -54,7 +54,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 		return name ?? String(describing: Self.self)
 	}
 
-	override func run() {
+	@MainActor override func run() {
 		service.getEntries(for: provider.entryIDs) { result in
 			Task { @MainActor in
 				switch result {

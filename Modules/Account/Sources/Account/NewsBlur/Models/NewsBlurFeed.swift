@@ -12,7 +12,7 @@ import RSParser
 
 typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
 
-struct NewsBlurFeed: Hashable, Codable {
+nonisolated struct NewsBlurFeed: Hashable, Codable, Sendable {
 	let name: String
 	let feedID: Int
 	let feedURL: String
@@ -20,21 +20,21 @@ struct NewsBlurFeed: Hashable, Codable {
 	let faviconURL: String?
 }
 
-struct NewsBlurFeedsResponse: Decodable {
+nonisolated struct NewsBlurFeedsResponse: Decodable, Sendable {
 	let feeds: [NewsBlurFeed]
 	let folders: [Folder]
 
-	struct Folder: Hashable, Codable {
+	nonisolated struct Folder: Hashable, Codable, Sendable {
 		let name: String
 		let feedIDs: [Int]
 	}
 }
 
-struct NewsBlurAddURLResponse: Decodable {
+nonisolated struct NewsBlurAddURLResponse: Decodable, Sendable {
 	let feed: NewsBlurFeed?
 }
 
-struct NewsBlurFolderRelationship {
+nonisolated struct NewsBlurFolderRelationship: Sendable {
 	let folderName: String
 	let feedID: Int
 }
@@ -49,7 +49,7 @@ extension NewsBlurFeed {
 	}
 }
 
-extension NewsBlurFeedsResponse {
+nonisolated extension NewsBlurFeedsResponse {
 	private enum CodingKeys: String, CodingKey {
 		case feeds = "feeds"
 		case folders = "flat_folders"

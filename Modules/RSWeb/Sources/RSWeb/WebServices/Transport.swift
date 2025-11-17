@@ -114,7 +114,7 @@ nonisolated public enum TransportError: LocalizedError, Sendable {
 
 }
 
-nonisolated public protocol Transport {
+nonisolated public protocol Transport: Sendable {
 
 	/// Cancels all pending requests
 	func cancelAll()

@@ -9,17 +9,15 @@
 import Foundation
 import RSCore
 
-public enum ReadFilterType {
+nonisolated public enum ReadFilterType: Sendable {
 	case read
 	case none
 	case alwaysRead
 }
 
 public protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
-
-	var account: Account? { get }
-	var defaultReadFilterType: ReadFilterType { get }
-
+	@MainActor var account: Account? { get }
+	@MainActor var defaultReadFilterType: ReadFilterType { get }
 }
 
 @MainActor public extension SidebarItem {
@@ -35,5 +33,4 @@ public protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNam
 		}
 
 	}
-
 }
