@@ -197,6 +197,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	private var _flattenedFeeds = Set<Feed>()
 	private var flattenedFeedsNeedUpdate = true
+	private var flattenedFeedsIDs: Set<String> {
+		flattenedFeeds().feedIDs()
+	}
 
 	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
 	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
@@ -306,7 +309,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 
 		DispatchQueue.main.async {
-			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
+			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeedsIDs)
 			self._fetchAllUnreadCounts()
 		}
 
@@ -745,11 +748,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func fetchUnreadCountForStarredArticlesAsync() async throws -> Int? {
-		try await database.fetchUnreadCountForStarredArticlesAsync(feedIDs: flattenedFeeds().feedIDs())
+		try await database.fetchUnreadCountForStarredArticlesAsync(feedIDs: flattenedFeedsIDs)
 	}
-	
+
 	public func fetchCountForStarredArticles() throws -> Int {
-		try database.fetchStarredArticlesCount(feedIDs: flattenedFeeds().feedIDs())
+		try database.fetchStarredArticlesCount(feedIDs: flattenedFeedsIDs)
+	}
+
+	public func fetchUnreadCountForTodayAsync() async throws -> Int {
+		try await database.fetchUnreadCountForTodayAsync(feedIDs: flattenedFeedsIDs)
 	}
 
 	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
@@ -1069,11 +1076,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Starred Articles
 
 	func _fetchStarredArticles(limit: Int? = nil) throws -> Set<Article> {
-		try database.fetchStarredArticles(feedIDs: flattenedFeeds().feedIDs(), limit: limit)
+		try database.fetchStarredArticles(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	func _fetchStarredArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await database.fetchedStarredArticlesAsync(feedIDs: flattenedFeeds().feedIDs(), limit: limit)
+		try await database.fetchedStarredArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	// MARK: - Account Unread Articles
@@ -1089,11 +1096,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Today Articles
 
 	func _fetchTodayArticles(limit: Int? = nil) throws -> Set<Article> {
-		try database.fetchTodayArticles(feedIDs: flattenedFeeds().feedIDs(), limit: limit)
+		try database.fetchTodayArticles(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	func _fetchTodayArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await database.fetchTodayArticlesAsync(feedIDs: flattenedFeeds().feedIDs(), limit: limit)
+		try await database.fetchTodayArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	// MARK: - Container Articles
@@ -1172,11 +1179,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	// MARK: - Search Articles
 
 	func _fetchArticlesMatching(searchString: String) throws -> Set<Article> {
-		try database.fetchArticlesMatching(searchString: searchString, feedIDs: flattenedFeeds().feedIDs())
+		try database.fetchArticlesMatching(searchString: searchString, feedIDs: flattenedFeedsIDs)
 	}
 
 	func _fetchArticlesMatchingAsync(searchString: String) async throws -> Set<Article> {
-		try await database.fetchArticlesMatchingAsync(searchString: searchString, feedIDs: flattenedFeeds().feedIDs())
+		try await database.fetchArticlesMatchingAsync(searchString: searchString, feedIDs: flattenedFeedsIDs)
 	}
 
 	func _fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) throws -> Set<Article> {

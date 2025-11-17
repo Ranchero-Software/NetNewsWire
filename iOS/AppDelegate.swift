@@ -422,7 +422,7 @@ private extension AppDelegate {
 			return
 		}
 
-		guard let singleArticleSet = try? account.fetchArticlesSync(.articleIDs([articleID])) else {
+		guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
 			assertionFailure("Expected article with \(articleID)")
 			Self.logger.error("No article with articleID found \(articleID) from status notification")
 			return

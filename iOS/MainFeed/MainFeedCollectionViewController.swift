@@ -1112,7 +1112,7 @@ extension MainFeedCollectionViewController {
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-					if let articles = try? account.fetchArticlesSync(.unread()) {
+					if let articles = try? account.fetchArticles(.unread()) {
 						self?.coordinator.markAllAsRead(Array(articles))
 					}
 				}

@@ -24,6 +24,6 @@ import Account
 		return AppAssets.starredFeedImage
 	}
 	func fetchUnreadCount(account: Account) async throws -> Int? {
-		try await account.fetchUnreadCountForStarredArticles()
+		try await account.fetchUnreadCountForStarredArticlesAsync()
 	}
 }
