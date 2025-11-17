@@ -14,15 +14,15 @@ protocol TestTransportMockResponseProviding: AnyObject {
 	func mockResponseFileUrl(for components: URLComponents) -> URL?
 }
 
-final class TestTransport: Transport {
+final class TestTransport: Transport, @unchecked Sendable {
 	enum TestTransportError: String, Error {
 		case invalidState = "The test wasn't set up correctly."
 	}
 
-	var testFiles = [String: String]()
-	var testStatusCodes = [String: Int]()
+	nonisolated(unsafe) var testFiles = [String: String]()
+	nonisolated(unsafe) var testStatusCodes = [String: Int]()
 
-	weak var mockResponseFileUrlProvider: TestTransportMockResponseProviding?
+//	weak var mockResponseFileUrlProvider: TestTransportMockResponseProviding?
 
 	private func httpResponse(for request: URLRequest, statusCode: Int = 200) -> HTTPURLResponse {
 		guard let url = request.url else {
@@ -42,9 +42,9 @@ final class TestTransport: Transport {
 		}
 	}
 
-	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
+	func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 
-		guard let url = request.url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+		guard let url = request.url/*, let components = URLComponents(url: url, resolvingAgainstBaseURL: false)*/ else {
 			completion(.failure(TestTransportError.invalidState))
 			return
 		}
@@ -53,19 +53,19 @@ final class TestTransport: Transport {
 		let response = httpResponse(for: request, statusCode: testStatusCodes[urlString] ?? 200)
 		let testFileURL: URL
 
-		if let provider = mockResponseFileUrlProvider {
+		/*if let provider = mockResponseFileUrlProvider {
 			guard let providerUrl = provider.mockResponseFileUrl(for: components) else {
 				XCTFail("Test behaviour undefined. Mock provider failed to provide non-nil URL for \(components).")
 				return
 			}
 			testFileURL = providerUrl
 
-		} else if let testKeyAndFileName = testFiles.first(where: { urlString.contains($0.key) }) {
+		} else*/ if let testKeyAndFileName = testFiles.first(where: { urlString.contains($0.key) }) {
 			testFileURL = Bundle.module.resourceURL!.appendingPathComponent(testKeyAndFileName.value)
 
 		} else {
 			// XCTFail("Missing mock response for: \(urlString)")
-			print("***\nWARNING: \(self) missing mock response for:\n\(urlString)\n***")
+			// print("***\nWARNING: \(self) missing mock response for:\n\(urlString)\n***")
 			DispatchQueue.global(qos: .background).async {
 				completion(.success((response, nil)))
 			}
@@ -89,7 +89,7 @@ final class TestTransport: Transport {
 		fatalError("Unimplemented.")
 	}
 
-	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		fatalError("Unimplemented.")
 	}
 
@@ -97,7 +97,7 @@ final class TestTransport: Transport {
 		fatalError("Unimplemented.")
 	}
 
-	func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
+	func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		fatalError("Unimplemented.")
 	}
 }
