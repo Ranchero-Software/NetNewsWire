@@ -333,7 +333,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
+		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
@@ -758,7 +758,7 @@ private extension FeedbinAccountDelegate {
 		var savedError: Error?
 
 		do {
-			let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
+			let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 			let articleIDs = Array(fetchedArticleIDs)
 			let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
@@ -801,7 +801,7 @@ private extension FeedbinAccountDelegate {
 	@MainActor func processEntries(account: Account, entries: [FeedbinEntry]?) async throws {
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 
 	func mapEntriesToParsedItems(entries: [FeedbinEntry]?) -> Set<ParsedItem> {
@@ -831,15 +831,15 @@ private extension FeedbinAccountDelegate {
 			let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
 			let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
 
-			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
 
 			// Mark articles as unread
 			let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-			try await account.markAsUnread(deltaUnreadArticleIDs)
+			try await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 			// Mark articles as read
 			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-			try await account.markAsRead(deltaReadArticleIDs)
+			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 		} catch {
 			Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
 		}
@@ -858,15 +858,15 @@ private extension FeedbinAccountDelegate {
 			let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
 			let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
 
-			let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
+			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
 
 			// Mark articles as starred
 			let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-			try await account.markAsStarred(deltaStarredArticleIDs)
+			try await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 			// Mark articles as unstarred
 			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
-			try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 		} catch {
 			Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
 		}

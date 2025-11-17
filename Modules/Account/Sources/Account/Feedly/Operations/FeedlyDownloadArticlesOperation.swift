@@ -33,15 +33,15 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation, @unchecked Sendabl
 	}
 
 	@MainActor override func run() {
-		var articleIds = missingArticleEntryIdProvider.entryIds
-		articleIds.formUnion(updatedArticleEntryIdProvider.entryIds)
+		var articleIds = missingArticleEntryIdProvider.entryIDs
+		articleIds.formUnion(updatedArticleEntryIdProvider.entryIDs)
 
 		Feedly.logger.info("Feedly: Requesting \(articleIds.count) articles")
 
 		let feedlyAPILimitBatchSize = 1000
 		for articleIds in Array(articleIds).chunked(into: feedlyAPILimitBatchSize) {
 
-			let provider = FeedlyEntryIdentifierProvider(entryIds: Set(articleIds))
+			let provider = FeedlyEntryIdentifierProvider(entryIDs: Set(articleIds))
 			let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider)
 			getEntries.delegate = self
 			self.operationQueue?.add(getEntries)

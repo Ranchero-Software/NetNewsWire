@@ -47,7 +47,6 @@ public enum AccountType: Int, Codable {
 	public var isDeveloperRestricted: Bool {
 		return self == .cloudKit || self == .feedbin || self == .feedly || self == .inoreader
 	}
-
 }
 
 public enum FetchType {
@@ -62,7 +61,6 @@ public enum FetchType {
 }
 
 public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
-
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
@@ -317,7 +315,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	// MARK: - API
+	// MARK: - Credentials
 
 	@MainActor public func storeCredentials(_ credentials: Credentials) throws {
 		username = credentials.username
@@ -398,9 +396,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		await delegate.receiveRemoteNotification(for: self, userInfo: userInfo)
 	}
 
+	// MARK: - Refreshing
+
 	@MainActor public func refreshAll() async throws {
 		try await delegate.refreshAll(for: self)
 	}
+
+	// MARK: - Syncing Article Status
 
 	@MainActor public func sendArticleStatus() async throws {
 		try await delegate.sendArticleStatus(for: self)
@@ -409,6 +411,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	@MainActor public func syncArticleStatus() async throws {
 		try await delegate.syncArticleStatus(for: self)
 	}
+
+	// MARK: - OPML
 
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard !delegate.isOPMLImportInProgress else {
@@ -428,6 +432,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 	}
+
+	// MARK: - Suspend/Resume
 
 	@MainActor public func suspendNetwork() {
 		delegate.suspendNetwork()
@@ -453,6 +459,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func resume() {
 		fetchAllUnreadCounts()
 	}
+
+	// MARK: - Data
 
 	public func save() {
 		MainActor.assumeIsolated {
@@ -680,119 +688,86 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		structureDidChange()
 	}
 
-	public func updateUnreadCounts(for feeds: Set<Feed>, completion: VoidCompletionBlock? = nil) {
-		fetchUnreadCounts(for: feeds, completion: completion)
+	public func updateUnreadCounts(feeds: Set<Feed>) {
+		fetchUnreadCounts(for: feeds)
 	}
+
+	// MARK: - Fetching Articles
 
 	@MainActor public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
-			return try fetchStarredArticles(limit: limit)
+			return try _fetchStarredArticles(limit: limit)
 		case .unread(let limit):
-			return try fetchUnreadArticles(limit: limit)
+			return try _fetchUnreadArticles(limit: limit)
 		case .today(let limit):
-			return try fetchTodayArticles(limit: limit)
+			return try _fetchTodayArticles(limit: limit)
 		case .folder(let folder, let readFilter):
 			if readFilter {
-				return try fetchUnreadArticles(folder: folder)
+				return try _fetchUnreadArticles(container: folder)
 			} else {
-				return try fetchArticles(folder: folder)
+				return try _fetchArticles(container: folder)
 			}
 		case .feed(let feed):
-			return try fetchArticles(feed: feed)
+			return try _fetchArticles(feed: feed)
 		case .articleIDs(let articleIDs):
-			return try fetchArticles(articleIDs: articleIDs)
+			return try _fetchArticles(articleIDs: articleIDs)
 		case .search(let searchString):
-			return try fetchArticlesMatching(searchString)
+			return try _fetchArticlesMatching(searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return try fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+			return try _fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
 		}
 	}
 
-	@MainActor public func fetchArticles(_ fetchType: FetchType) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			fetchArticlesAsync(fetchType) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
+	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
-			fetchStarredArticlesAsync(limit: limit, completion)
+			return try await _fetchStarredArticlesAsync(limit: limit)
 		case .unread(let limit):
-			fetchUnreadArticlesAsync(limit: limit, completion)
+			return try await _fetchUnreadArticlesAsync(limit: limit)
 		case .today(let limit):
-			fetchTodayArticlesAsync(limit: limit, completion)
+			return try await _fetchTodayArticlesAsync(limit: limit)
 		case .folder(let folder, let readFilter):
 			if readFilter {
-				return fetchUnreadArticlesAsync(folder: folder, completion)
+				return try await _fetchUnreadArticlesAsync(container: folder)
 			} else {
-				return fetchArticlesAsync(folder: folder, completion)
+				return try await _fetchArticlesAsync(container: folder)
 			}
 		case .feed(let feed):
-			fetchArticlesAsync(feed: feed, completion)
+			return try await _fetchArticlesAsync(feed: feed)
 		case .articleIDs(let articleIDs):
-			fetchArticlesAsync(articleIDs: articleIDs, completion)
+			return try await _fetchArticlesAsync(articleIDs: articleIDs)
 		case .search(let searchString):
-			fetchArticlesMatchingAsync(searchString, completion)
+			return try await _fetchArticlesMatchingAsync(searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
+			return try await _FetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs)
 		}
 	}
 
-	public func fetchUnreadCountForToday(_ completion: @escaping SingleUnreadCountCompletionBlock) {
-		database.fetchUnreadCountForToday(for: flattenedFeeds().feedIDs(), completion: completion)
-	}
-
-	public func fetchUnreadCountForStarredArticles(_ completion: @escaping SingleUnreadCountCompletionBlock) {
-		database.fetchStarredAndUnreadCount(for: flattenedFeeds().feedIDs(), completion: completion)
-	}
-
-	public func fetchCountForStarredArticles() throws -> Int {
-		return try database.fetchStarredArticlesCount(flattenedFeeds().feedIDs())
-	}
-
-	public func fetchUnreadArticleIDs() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			fetchUnreadArticleIDs { result in
-				continuation.resume(with: result)
-			}
-		}
+	public func fetchUnreadCountForStarredArticlesAsync() async throws -> Int? {
+		try await database.fetchUnreadCountForStarredArticlesAsync(feedIDs: flattenedFeeds().feedIDs())
 	}
 	
-	public func fetchUnreadArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchUnreadArticleIDsAsync(completion: completion)
+	public func fetchCountForStarredArticles() throws -> Int {
+		try database.fetchStarredArticlesCount(feedIDs: flattenedFeeds().feedIDs())
 	}
 
-	public func fetchStarredArticleIDs() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			fetchStarredArticleIDs { result in
-				continuation.resume(with: result)
-			}
-		}
+	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
+		try await database.fetchUnreadArticleIDsAsync()
 	}
 
-	public func fetchStarredArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchStarredArticleIDsAsync(completion: completion)
+	public func fetchStarredArticleIDsAsync() async throws -> Set<String> {
+		try await database.fetchStarredArticleIDsAsync()
 	}
-
+	
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	@MainActor public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
-				continuation.resume(with: result)
-			}
-		}
+	@MainActor public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
+		try await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 	}
 
-	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
-	}
-
+	// MARK: - Unread Counts
 	public func unreadCount(for feed: Feed) -> Int {
-		return unreadCounts[feed.feedID] ?? 0
+		unreadCounts[feed.feedID] ?? 0
 	}
 
 	public func setUnreadCount(_ unreadCount: Int, for feed: Feed) {
@@ -807,247 +782,125 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		feedDictionariesNeedUpdate = true
 	}
 
-	@discardableResult
-	@MainActor func update(_ feed: Feed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
-		try await withCheckedThrowingContinuation { continuation in
-			update(feed, with: parsedFeed) { result in
-				switch result {
-				case .success(let articleChanges):
-					continuation.resume(returning: articleChanges)
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
+	// MARK: - Updating Feeds
 
-	@MainActor func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesCompletionBlock) {
-		// Used only by an On My Mac or iCloud account.
+	@discardableResult
+	@MainActor func updateAsync(feed: Feed, with parsedFeed: ParsedFeed) async throws -> ArticleChanges {
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
 		feed.takeSettings(from: parsedFeed)
 		let parsedItems = parsedFeed.items
 		guard !parsedItems.isEmpty else {
-			completion(.success(ArticleChanges()))
-			return
+			return ArticleChanges()
 		}
 
-		update(feed.feedID, with: parsedItems, completion: completion)
+		return try await updateAsync(feedID: feed.feedID, parsedItems: parsedItems)
 	}
 
-	@MainActor func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
-		try await withCheckedThrowingContinuation { continuation in
-			update(feedID, with: parsedItems, deleteOlder: deleteOlder) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-	
-	@MainActor func update(_ feedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
+	@MainActor func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
-		database.update(with: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { updateArticlesResult in
-			Task { @MainActor in
-				switch updateArticlesResult {
-				case .success(let articleChanges):
-					self.sendNotificationAbout(articleChanges)
-					completion(.success(articleChanges))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
-			}
-		}
+		let articleChanges = try await database.updateAsync(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
+		sendNotificationAbout(articleChanges)
+		return articleChanges
 	}
 
-	@MainActor func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { error in
-				if let error {
-					continuation.resume(throwing: error)
-				} else {
-					continuation.resume(returning: ())
-				}
-			}
-		}
-	}
-	
-	@MainActor private func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
+	@MainActor func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
 		guard !feedIDsAndItems.isEmpty else {
-			completion(nil)
 			return
 		}
 
-		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
-			Task { @MainActor in
-				switch updateArticlesResult {
-				case .success(let newAndUpdatedArticles):
-					self.sendNotificationAbout(newAndUpdatedArticles)
-					completion(nil)
-				case .failure(let databaseError):
-					completion(databaseError)
-				}
-			}
-		}
+		let newAndUpdatedArticles = try await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
+		sendNotificationAbout(newAndUpdatedArticles)
 	}
 
+	/// Returns set of Article whose statuses did change.
 	@discardableResult
-	@MainActor func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			update(articles, statusKey: statusKey, flag: flag) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	@MainActor func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleSetResultBlock) {
-		// Returns set of Articles whose statuses did change.
+	@MainActor func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
 		guard !articles.isEmpty else {
-			completion(.success(Set<Article>()))
-			return
+			return Set<Article>()
 		}
 
-		Task { @MainActor in
-			do {
-				let updatedStatuses = try await database.mark(articles, statusKey: statusKey, flag: flag)
-				let updatedArticleIDs = updatedStatuses.articleIDs()
-				let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-				self.noteStatusesForArticlesDidChange(updatedArticles)
+		let updatedStatuses = try await database.markAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let updatedArticleIDs = updatedStatuses.articleIDs()
+		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+		noteStatusesForArticlesDidChange(updatedArticles)
 
-				completion(.success(updatedArticles))
-			} catch let error as DatabaseError {
-				completion(.failure(error))
-			}
-		}
+		return updatedArticles
 	}
+
+	// MARK: - Article Statuses
 
 	/// Make sure statuses exist. Any existing statuses won’t be touched.
 	/// All created statuses will be marked as read and not starred.
 	/// Sends a .StatusesDidChange notification.
-	func createStatusesIfNeeded(articleIDs: Set<String>) async throws {
-		try await database.createStatusesIfNeeded(articleIDs: articleIDs)
+	func createStatusesIfNeededAsync(articleIDs: Set<String>) async throws {
+		guard !articleIDs.isEmpty else {
+			return
+		}
+		try await database.createStatusesIfNeededAsync(articleIDs: articleIDs)
 		noteStatusesForArticleIDsDidChange(articleIDs)
 	}
 
-//	func createStatusesIfNeeded(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
-//		guard !articleIDs.isEmpty else {
-//			completion?(nil)
-//			return
-//		}
-//		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
-//			if let error = error {
-//				completion?(error)
-//				return
-//			}
-//			self.noteStatusesForArticleIDsDidChange(articleIDs)
-//			completion?(nil)
-//		}
-//	}
-
 	/// Mark articleIDs statuses based on statusKey and flag.
+	///
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
-	func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: ArticleIDsCompletionBlock? = nil) {
+	func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<String> {
 		guard !articleIDs.isEmpty else {
-			completion?(.success(Set<String>()))
-			return
+			return Set<String>()
 		}
-		Task { @MainActor in
-			do {
-				let newArticleStatusIDs = try await database.markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-				completion?(.success(newArticleStatusIDs))
-			} catch {
-				completion?(.failure(error))
-			}
-		}
+
+		let newArticleStatusIDs = try await database.markAndFetchNewAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		return newArticleStatusIDs
 	}
 
-		/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
+	/// Mark articleIDs as read.
+	///
+	/// - Returns: Set of new article statuses.
+	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsRead(_ articleIDs: Set<String>) async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			markAsRead(articleIDs) { result in
-				continuation.resume(with: result)
-			}
-		}
+	func markAsReadAsync(articleIDs: Set<String>) async throws -> Set<String> {
+		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: true)
 	}
 
-	func markAsRead(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
-		markAndFetchNew(articleIDs: articleIDs, statusKey: .read, flag: true, completion: completion)
-	}
-
-	/// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
+	/// Mark articleIDs as unread.
+	/// - Returns: Set of new article statuses.
+	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsUnread(_ articleIDs: Set<String>) async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			markAsUnread(articleIDs) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-	
-	func markAsUnread(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
-		markAndFetchNew(articleIDs: articleIDs, statusKey: .read, flag: false, completion: completion)
+	func markAsUnreadAsync(articleIDs: Set<String>) async throws -> Set<String> {
+		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: false)
 	}
 
-	/// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
+	/// Mark articleIDs as starred.
+	/// - Returns: Set of new article statuses.
+	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsStarred(_ articleIDs: Set<String>) async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			markAsStarred(articleIDs) { result in
-				continuation.resume(with: result)
-			}
-		}
+	func markAsStarredAsync(articleIDs: Set<String>) async throws -> Set<String> {
+		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: true)
 	}
 
-	func markAsStarred(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
-		markAndFetchNew(articleIDs: articleIDs, statusKey: .starred, flag: true, completion: completion)
-	}
-
-	/// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	/// Returns a set of new article statuses.
+	/// Mark articleIDs as unstarred.
+	/// - Returns: Set of new article statuses.
+	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsUnstarred(_ articleIDs: Set<String>) async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			markAsUnstarred(articleIDs) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func markAsUnstarred(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
-		markAndFetchNew(articleIDs: articleIDs, statusKey: .starred, flag: false, completion: completion)
+	func markAsUnstarredAsync(articleIDs: Set<String>) async throws -> Set<String> {
+		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: false)
 	}
 
 	// Delete the articles associated with the given set of articleIDs
 	func delete(articleIDs: Set<String>) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>)
-			in
-			delete(articleIDs: articleIDs) { error in
-				if let error {
-					continuation.resume(throwing: error)
-				} else {
-					continuation.resume(returning: ())
-				}
-			}
-		}
-	}
-	
-	func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		guard !articleIDs.isEmpty else {
-			completion?(nil)
 			return
 		}
-		database.delete(articleIDs: articleIDs, completion: completion)
+		try await database.deleteAsync(articleIDs: articleIDs)
 	}
 
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
@@ -1189,17 +1042,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 // MARK: - AccountMetadataDelegate
 
-extension Account: AccountMetadataDelegate {
-	@MainActor func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
+@MainActor extension Account: AccountMetadataDelegate {
+
+	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
 		metadataFile.markAsDirty()
 	}
 }
 
 // MARK: - FeedMetadataDelegate
 
-extension Account: FeedMetadataDelegate {
+@MainActor extension Account: FeedMetadataDelegate {
 
-	@MainActor func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
+	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
 		feedMetadataFile.markAsDirty()
 		guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
 			return
@@ -1208,123 +1062,57 @@ extension Account: FeedMetadataDelegate {
 	}
 }
 
-// MARK: - Fetching (Private)
+// MARK: - Fetching Articles (Private)
 
-private extension Account {
+@MainActor private extension Account {
 
-	func fetchStarredArticles(limit: Int?) throws -> Set<Article> {
-		return try database.fetchStarredArticles(flattenedFeeds().feedIDs(), limit)
+	// MARK: - Starred Articles
+
+	func _fetchStarredArticles(limit: Int? = nil) throws -> Set<Article> {
+		try database.fetchStarredArticles(feedIDs: flattenedFeeds().feedIDs(), limit: limit)
 	}
 
-	func fetchStarredArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchedStarredArticlesAsync(flattenedFeeds().feedIDs(), limit, completion)
+	func _fetchStarredArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
+		try await database.fetchedStarredArticlesAsync(feedIDs: flattenedFeeds().feedIDs(), limit: limit)
 	}
 
-	func fetchUnreadArticles(limit: Int?) throws -> Set<Article> {
-		return try fetchUnreadArticles(forContainer: self, limit: limit)
+	// MARK: - Account Unread Articles
+
+	func _fetchUnreadArticles(limit: Int? = nil) throws -> Set<Article> {
+		try fetchUnreadArticles(container: self, limit: limit)
 	}
 
-	func fetchUnreadArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		fetchUnreadArticlesAsync(forContainer: self, limit: limit, completion)
+	func _fetchUnreadArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
+		try await fetchUnreadArticlesAsync(container: self, limit: limit)
 	}
 
-	func fetchTodayArticles(limit: Int?) throws -> Set<Article> {
-		return try database.fetchTodayArticles(flattenedFeeds().feedIDs(), limit)
+	// MARK: - Today Articles
+
+	func _fetchTodayArticles(limit: Int? = nil) throws -> Set<Article> {
+		try database.fetchTodayArticles(flattenedFeeds().feedIDs(), limit)
 	}
 
-	func fetchTodayArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchTodayArticlesAsync(flattenedFeeds().feedIDs(), limit, completion)
+	func _fetchTodayArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
+		try await database.fetchTodayArticlesAsync(flattenedFeeds().feedIDs(), limit)
 	}
 
-	func fetchArticles(folder: Folder) throws -> Set<Article> {
-		return try fetchArticles(forContainer: folder)
-	}
+	// MARK: - Container Articles
 
-	func fetchArticlesAsync(folder: Folder, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync(forContainer: folder, completion)
-	}
-
-	func fetchUnreadArticles(folder: Folder) throws -> Set<Article> {
-		return try fetchUnreadArticles(forContainer: folder, limit: nil)
-	}
-
-	func fetchUnreadArticlesAsync(folder: Folder, _ completion: @escaping ArticleSetResultBlock) {
-		fetchUnreadArticlesAsync(forContainer: folder, limit: nil, completion)
-	}
-
-	@MainActor func fetchArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchArticles(feed.feedID)
-		validateUnreadCount(feed, articles)
-		return articles
-	}
-
-	@MainActor func fetchArticlesAsync(feed: Feed, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchArticlesAsync(feed.feedID) { [weak self] articleSetResult in
-			Task { @MainActor in
-				switch articleSetResult {
-				case .success(let articles):
-					self?.validateUnreadCount(feed, articles)
-					completion(.success(articles))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
-			}
-		}
-	}
-
-	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
-		return try database.fetchArticlesMatching(searchString, flattenedFeeds().feedIDs())
-	}
-
-	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
-		return try database.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
-	}
-
-	func fetchArticlesMatchingAsync(_ searchString: String, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs(), completion)
-	}
-
-	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
-	}
-
-	func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
-		return try database.fetchArticles(articleIDs: articleIDs)
-	}
-
-	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
-		return database.fetchArticlesAsync(articleIDs: articleIDs, completion)
-	}
-
-	@MainActor func fetchUnreadArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchUnreadArticles(Set([feed.feedID]), nil)
-		validateUnreadCount(feed, articles)
-		return articles
-	}
-
-	func fetchArticles(forContainer container: Container) throws -> Set<Article> {
+	func _fetchArticles(container: Container) throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
 		let articles = try database.fetchArticles(feeds.feedIDs())
 		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
 		return articles
 	}
 
-	func fetchArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
+	func _fetchArticlesAsync(container: Container) async throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		database.fetchArticlesAsync(feeds.feedIDs()) { [weak self] (articleSetResult) in
-			Task { @MainActor in
-				switch articleSetResult {
-				case .success(let articles):
-					self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-					completion(.success(articles))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
-			}
-		}
+		let articles = try await database.fetchArticlesAsync(feeds.feedIDs())
+		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		return articles
 	}
 
-	func fetchUnreadArticles(forContainer container: Container, limit: Int?) throws -> Set<Article> {
+	func _fetchUnreadArticles(container: Container, limit: Int? = nil) throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
 		let articles = try database.fetchUnreadArticles(feeds.feedIDs(), limit)
 
@@ -1337,28 +1125,71 @@ private extension Account {
 		return articles
 	}
 
-	func fetchUnreadArticlesAsync(forContainer container: Container, limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+	func _fetchUnreadArticlesAsync(container: Container, limit: Int? = nil) async throws -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		database.fetchUnreadArticlesAsync(feeds.feedIDs(), limit) { [weak self] (articleSetResult) in
-			Task { @MainActor in
-				switch articleSetResult {
-				case .success(let articles):
+		let articles = try await database.fetchUnreadArticlesAsync(feeds.feedIDs(), limit)
 
-					// We don't validate limit queries because they, by definition, won't correctly match the
-					// complete unread state for the given container.
-					if limit == nil {
-						self?.validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
-					}
-
-					completion(.success(articles))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-				}
-			}
+		// We don't validate limit queries because they, by definition, won't correctly match the
+		// complete unread state for the given container.
+		if limit == nil {
+			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
 		}
+
+		return articles
 	}
 
-	func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
+
+	// MARK: - Feed Articles
+
+	func _fetchArticles(feed: Feed) throws -> Set<Article> {
+		let articles = try database.fetchArticles(feed.feedID)
+		validateUnreadCount(feed, articles)
+		return articles
+	}
+
+	func _fetchArticlesAsync(feed: Feed) async throws -> Set<Article> {
+		let articles = try await database.fetchArticlesAsync(feed.feedID)
+		validateUnreadCount(feed, articles)
+		return articles
+	}
+
+	func _fetchUnreadArticles(feed: Feed) throws -> Set<Article> {
+		let articles = try database.fetchUnreadArticles(Set([feed.feedID]), nil)
+		validateUnreadCount(feed, articles)
+		return articles
+	}
+
+	// MARK: - ArticleIDs Articles
+
+	func _fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
+		try database.fetchArticles(articleIDs: articleIDs)
+	}
+
+	func _fetchArticlesAsync(articleIDs: Set<String>) async throws -> Set<Article> {
+		try await database.fetchArticlesAsync(articleIDs: articleIDs)
+	}
+
+	// MARK: - Search Articles
+
+	func _fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
+		try database.fetchArticlesMatching(searchString, flattenedFeeds().feedIDs())
+	}
+
+	func _fetchArticlesMatchingAsync(_ searchString: String) async throws -> Set<Article> {
+		try await database.fetchArticlesMatchingAsync(searchString, flattenedFeeds().feedIDs())
+	}
+
+	func _fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
+		try database.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+	}
+
+	func _fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>) async throws -> Set<Article> {
+		try await database.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs)
+	}
+
+	// MARK: - Unread Counts
+
+	private func validateUnreadCountsAfterFetchingUnreadArticles(_ feeds: Set<Feed>, _ articles: Set<Article>) {
 		// Validate unread counts. This was the site of a performance slowdown:
 		// it was calling going through the entire list of articles once per feed:
 		// feeds.forEach { validateUnreadCount($0, articles) }
@@ -1368,30 +1199,96 @@ private extension Account {
 		for article in articles where !article.status.read {
 			unreadCountStorage[article.feedID, default: 0] += 1
 		}
-		feeds.forEach { (feed) in
+		for feed in feeds {
 			let unreadCount = unreadCountStorage[feed.feedID, default: 0]
 			feed.unreadCount = unreadCount
 		}
 	}
 
-	@MainActor func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
+	private func validateUnreadCount(_ feed: Feed, _ articles: Set<Article>) {
 		// articles must contain all the unread articles for the feed.
 		// The unread number should match the feed’s unread count.
-
-		let feedUnreadCount = articles.reduce(0) { (result, article) -> Int in
+		var feedUnreadCount = 0
+		for article in articles {
 			if article.feed == feed && !article.status.read {
-				return result + 1
+				feedUnreadCount += 1
 			}
-			return result
 		}
-
 		feed.unreadCount = feedUnreadCount
+	}
+}
+
+// MARK: - Fetching Unread Counts (Private)
+
+@MainActor private extension Account {
+
+	/// Fetch unread counts for zero or more feeds.
+	///
+	/// Uses the most efficient method based on how many feeds were passed in.
+	func _fetchUnreadCounts(for feeds: Set<Feed>) {
+		if feeds.isEmpty {
+			return
+		}
+		if feeds.count == 1, let feed = feeds.first {
+			fetchUnreadCount(feed: feed)
+		}
+		else if feeds.count < 10 {
+			fetchUnreadCounts(feeds: feeds)
+		}
+		else {
+			fetchAllUnreadCounts()
+		}
+	}
+
+	func _fetchUnreadCount(feed: Feed) {
+		Task { @MainActor in
+			guard let unreadCount = try? await database.fetchUnreadCountAsync(feedID: feed.feedID) else {
+				return
+			}
+			feed.unreadCount = unreadCount
+		}
+	}
+
+	func _fetchUnreadCounts(feeds: Set<Feed>) {
+		Task { @MainActor in
+			guard let unreadCountDictionary = try? await database.fetchUnreadCountsAsync(feedIDs: feeds.feedIDs()) else {
+				return
+			}
+			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+		}
+	}
+
+	func _fetchAllUnreadCounts() {
+		fetchingAllUnreadCounts = true
+
+		Task { @MainActor in
+			guard let unreadCountDictionary = try? await database.fetchAllUnreadCountsAsync() else {
+				return
+			}
+
+			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
+			fetchingAllUnreadCounts = false
+			updateUnreadCount()
+
+			if !self.areUnreadCountsInitialized {
+				self.areUnreadCountsInitialized = true
+				self.postUnreadCountDidInitializeNotification()
+			}
+		}
+	}
+
+	private func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<Feed>) {
+		for feed in feeds {
+			// When the unread count is zero, it won’t appear in unreadCountDictionary.
+			let unreadCount = unreadCountDictionary[feed.feedID] ?? 0
+			feed.unreadCount = unreadCount
+		}
 	}
 }
 
 // MARK: - Private
 
-private extension Account {
+@MainActor private extension Account {
 
 	func feedMetadata(feedURL: String, feedID: String) -> FeedMetadata {
 		if let d = feedMetadata[feedURL] {
@@ -1442,7 +1339,7 @@ private extension Account {
 		unreadCount = updatedUnreadCount
     }
 
-	@MainActor func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
+	func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
 		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
 		let articleIDs = Set(articles.map { $0.articleID })
@@ -1464,88 +1361,13 @@ private extension Account {
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.articleIDs: articleIDs])
 	}
 
-	/// Fetch unread counts for zero or more feeds.
-	///
-	/// Uses the most efficient method based on how many feeds were passed in.
-	func fetchUnreadCounts(for feeds: Set<Feed>, completion: VoidCompletionBlock?) {
-		if feeds.isEmpty {
-			completion?()
-			return
-		}
-		if feeds.count == 1, let feed = feeds.first {
-			fetchUnreadCount(feed, completion)
-		}
-		else if feeds.count < 10 {
-			fetchUnreadCounts(feeds, completion)
-		}
-		else {
-			fetchAllUnreadCounts(completion)
-		}
-	}
-
-	func fetchUnreadCount(_ feed: Feed, _ completion: VoidCompletionBlock?) {
-		Task { @MainActor in
-			database.fetchUnreadCount(feed.feedID) { result in
-				Task { @MainActor in
-					if let result, let unreadCount = try? result.get() {
-						feed.unreadCount = unreadCount
-					}
-					completion?()
-				}
-			}
-		}
-	}
-
-	func fetchUnreadCounts(_ feeds: Set<Feed>, _ completion: VoidCompletionBlock?) {
-		let feedIDs = Set(feeds.map { $0.feedID })
-		Task { @MainActor in
-			database.fetchUnreadCounts(for: feedIDs) { result in
-				Task { @MainActor in
-					if let result, let unreadCountDictionary = try? result.get() {
-						self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
-					}
-					completion?()
-				}
-			}
-		}
-	}
-
-	func fetchAllUnreadCounts(_ completion: VoidCompletionBlock? = nil) {
-		fetchingAllUnreadCounts = true
-		Task { @MainActor in
-			guard let unreadCountDictionary = try? await database.fetchAllUnreadCounts() else {
-				completion?()
-				return
-			}
-
-			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
-			fetchingAllUnreadCounts = false
-			updateUnreadCount()
-
-			if !self.areUnreadCountsInitialized {
-				self.areUnreadCountsInitialized = true
-				self.postUnreadCountDidInitializeNotification()
-			}
-
-			completion?()
-		}
-	}
-
-	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<Feed>) {
-		for feed in feeds {
-			// When the unread count is zero, it won’t appear in unreadCountDictionary.
-			let unreadCount = unreadCountDictionary[feed.feedID] ?? 0
-			feed.unreadCount = unreadCount
-		}
-	}
-
-	@MainActor func sendNotificationAbout(_ articleChanges: ArticleChanges) {
+	func sendNotificationAbout(_ articleChanges: ArticleChanges) {
 		var feeds = Set<Feed>()
 
-		if let newArticles = articleChanges.newArticles {
+		if let newArticles = articleChanges.new {
 			feeds.formUnion(Set(newArticles.compactMap { $0.feed }))
 		}
-		if let updatedArticles = articleChanges.updatedArticles {
+		if let updatedArticles = articleChanges.updated {
 			feeds.formUnion(Set(updatedArticles.compactMap { $0.feed }))
 		}
 
@@ -1553,23 +1375,23 @@ private extension Account {
 		var shouldUpdateUnreadCounts = false
 		var userInfo = [String: Any]()
 
-		if let newArticles = articleChanges.newArticles, !newArticles.isEmpty {
+		if let newArticles = articleChanges.new, !newArticles.isEmpty {
 			shouldSendNotification = true
 			shouldUpdateUnreadCounts = true
 			userInfo[UserInfoKey.newArticles] = newArticles
 		}
 
-		if let updatedArticles = articleChanges.updatedArticles, !updatedArticles.isEmpty {
+		if let updatedArticles = articleChanges.updated, !updatedArticles.isEmpty {
 			shouldSendNotification = true
 			userInfo[UserInfoKey.updatedArticles] = updatedArticles
 		}
 
-		if let deletedArticles = articleChanges.deletedArticles, !deletedArticles.isEmpty {
+		if let deletedArticles = articleChanges.deleted, !deletedArticles.isEmpty {
 			shouldUpdateUnreadCounts = true
 		}
 
 		if shouldUpdateUnreadCounts {
-			self.updateUnreadCounts(for: feeds)
+			updateUnreadCounts(feeds: feeds)
 		}
 
 		if shouldSendNotification {
@@ -1590,7 +1412,6 @@ extension Account {
 	public func existingFeed(withExternalID externalID: String) -> Feed? {
 		return externalIDToFeedDictionary[externalID]
 	}
-
 }
 
 // MARK: - OPMLRepresentable

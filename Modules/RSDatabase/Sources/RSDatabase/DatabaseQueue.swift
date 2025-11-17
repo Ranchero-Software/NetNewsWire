@@ -154,6 +154,7 @@ nonisolated public final class DatabaseQueue: Sendable {
 				error = databaseError
 			}
 		}
+
 		if let error {
 			throw(error)
 		}

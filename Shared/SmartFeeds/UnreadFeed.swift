@@ -64,21 +64,21 @@ final class UnreadFeed: PseudoFeed {
 	}
 }
 
-extension UnreadFeed: ArticleFetcher {
+@MainActor extension UnreadFeed: ArticleFetcher {
 
 	func fetchArticles() throws -> Set<Article> {
 		return try fetchUnreadArticles()
 	}
 
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		fetchUnreadArticlesAsync(completion)
+	func fetchArticlesAsync() async throws -> Set<Article> {
+		try await fetchUnreadArticlesAsync()
 	}
 
 	func fetchUnreadArticles() throws -> Set<Article> {
-		return try AccountManager.shared.fetchArticles(fetchType)
+		try AccountManager.shared.fetchArticles(fetchType)
 	}
 
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		AccountManager.shared.fetchArticlesAsync(fetchType, completion)
+	func fetchUnreadArticlesAsync() async throws -> Set<Article> {
+		try await AccountManager.shared.fetchArticlesAsync(fetchType)
 	}
 }

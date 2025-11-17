@@ -23,8 +23,7 @@ import Account
 	var smallIcon: IconImage? {
 		return AppAssets.starredFeedImage
 	}
-
-	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
-		account.fetchUnreadCountForStarredArticles(completion)
+	func fetchUnreadCount(account: Account) async throws -> Int? {
+		try await account.fetchUnreadCountForStarredArticles()
 	}
 }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import RSCore
 import RSWeb
 import Articles
@@ -30,6 +31,9 @@ import RSDatabase
 	private let defaultAccountIdentifier = "OnMyMac"
 
 	public var isSuspended = false
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountManager")
+
 	@MainActor public var areUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
 			if !account.areUnreadCountsInitialized {
@@ -269,51 +273,61 @@ import RSDatabase
 		}
 	}
 
-	public func refreshAll(errorHandler: ((Error) -> Void)? = nil, completion: (() -> Void)? = nil) {
+	public typealias ErrorHandlerCallback = (Error) -> Void
 
+	@MainActor public func refreshAllWithoutWaiting(errorHandler: ErrorHandlerCallback? = nil) {
+		Task { @MainActor in
+			await refreshAll(errorHandler: errorHandler)
+		}
+	}
+	
+	@MainActor public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async {
 		guard NetworkMonitor.shared.isConnected else {
+			Self.logger.info("AccountManager: skipping refreshAll — not connected to internet.")
 			return
 		}
 
 		combinedRefreshProgress.start()
+		defer {
+			combinedRefreshProgress.stop()
+		}
 
-		Task { @MainActor in
-			await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
-				for account in activeAccounts {
-					group.addTask { @MainActor in
-						do {
-							try await account.refreshAll()
-						} catch {
-							errorHandler?(error)
-						}
+		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
+			for account in activeAccounts {
+				group.addTask { @MainActor in
+					do {
+						try await account.refreshAll()
+					} catch {
+						errorHandler?(error)
 					}
 				}
 			}
-
-			self.combinedRefreshProgress.stop()
-			completion?()
 		}
 	}
 
-	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
-		Task { @MainActor in
+	@MainActor public func sendArticleStatusAll() async {
+		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
-				try? await account.sendArticleStatus()
+				group.addTask { @MainActor in
+					try? await account.sendArticleStatus()
+				}
 			}
-			completion?()
 		}
 	}
 
-	@MainActor public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
+	@MainActor public func syncArticleStatusAllWithoutWaiting() {
+		Task { @MainActor in
+			await syncArticleStatusAll()
+		}
+	}
 
-		for account in activeAccounts {
-			group.enter()
-			Task { @MainActor in
-				try? await account.syncArticleStatus()
-				group.leave()
+	@MainActor public func syncArticleStatusAll() async {
+		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
+			for account in activeAccounts {
+				group.addTask { @MainActor in
+					try? await account.syncArticleStatus()
+				}
 			}
-			completion?()
 		}
 	}
 
@@ -355,48 +369,38 @@ import RSDatabase
 
 		var articles = Set<Article>()
 		for account in activeAccounts {
-			articles.formUnion(try account.fetchArticles(fetchType))
+			articles.formUnion(try account.fetchArticlesSync(fetchType))
 		}
 		return articles
 	}
 
-	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
-        precondition(Thread.isMainThread)
+	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
+		precondition(Thread.isMainThread)
 
-        guard activeAccounts.count > 0 else {
-            completion(.success(Set<Article>()))
-            return
-        }
+		guard activeAccounts.count > 0 else {
+			return Set<Article>()
+		}
 
-		Task { @MainActor in
-			var allFetchedArticles = Set<Article>()
-			var databaseError: DatabaseError?
-			let dispatchGroup = DispatchGroup()
+		var allFetchedArticles = Set<Article>()
+		var fetchError: Error?
 
+		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
-
-				dispatchGroup.enter()
-				defer {
-					dispatchGroup.leave()
-				}
-
-				do {
-					let articles = try await account.fetchArticles(fetchType)
-					allFetchedArticles.formUnion(articles)
-				} catch {
-					databaseError = error as? DatabaseError
-				}
-			}
-
-			dispatchGroup.notify(queue: .main) {
-				if let databaseError {
-					completion(.failure(databaseError))
-				}
-				else {
-					completion(.success(allFetchedArticles))
+				group.addTask { @MainActor in
+					do {
+						let articles = try await account.fetchArticles(fetchType)
+						allFetchedArticles.formUnion(articles)
+					} catch {
+						fetchError = error
+					}
 				}
 			}
 		}
+
+		if let fetchError {
+			throw fetchError
+		}
+		return allFetchedArticles
 	}
 
 	// MARK: - Fetching Article Counts

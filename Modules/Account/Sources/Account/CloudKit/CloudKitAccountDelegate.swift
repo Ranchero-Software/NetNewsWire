@@ -335,7 +335,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
+		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
@@ -541,7 +541,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	@MainActor func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
-		let _ = try await account.update(feed, with: parsedFeed)
+		let _ = try await account.updateAsync(feed: feed, with: parsedFeed)
 
 		let externalID = try await accountZone.createFeed(url: bestFeedSpecifier.urlString,
 														  name: parsedFeed.title,
@@ -576,7 +576,7 @@ private extension CloudKitAccountDelegate {
 	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
 		Task {
 			do {
-				let articles = try await account.fetchArticles(.feed(feed))
+				let articles = try await account.fetchArticlesAsync(.feed(feed))
 
 				await storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
 				syncProgress.completeTask()
@@ -681,9 +681,9 @@ extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges) {
 		Task {
-			await storeArticleChanges(new: articleChanges.newArticles,
-									  updated: articleChanges.updatedArticles,
-									  deleted: articleChanges.deletedArticles)
+			await storeArticleChanges(new: articleChanges.new,
+									  updated: articleChanges.updated,
+									  deleted: articleChanges.deleted)
 		}
 	}
 }

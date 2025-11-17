@@ -29,6 +29,7 @@ nonisolated final class StatusesTable: DatabaseTable, Sendable {
 
 	// MARK: - Creating/Updating
 
+	@discardableResult
 	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ read: Bool, _ database: FMDatabase) -> ([String: ArticleStatus], Set<String>) {
 
 		#if DEBUG

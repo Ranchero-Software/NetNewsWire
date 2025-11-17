@@ -94,26 +94,26 @@ final class FeedlySyncAllOperation: FeedlyOperation, @unchecked Sendable {
 		operationQueue.add(getStarred)
 
 		// Now all the possible article ids we need have a status, fetch the article ids for missing articles.
-		let getMissingIds = FeedlyFetchIdsForMissingArticlesOperation(account: account)
-		getMissingIds.delegate = self
-		getMissingIds.downloadProgress = downloadProgress
-		getMissingIds.addDependency(getAllArticleIds)
-		getMissingIds.addDependency(getUnread)
-		getMissingIds.addDependency(getStarred)
-		getMissingIds.addDependency(getUpdated)
-		operationQueue.add(getMissingIds)
+		let getMissingIDs = FeedlyFetchIDsForMissingArticlesOperation(account: account)
+		getMissingIDs.delegate = self
+		getMissingIDs.downloadProgress = downloadProgress
+		getMissingIDs.addDependency(getAllArticleIds)
+		getMissingIDs.addDependency(getUnread)
+		getMissingIDs.addDependency(getStarred)
+		getMissingIDs.addDependency(getUpdated)
+		operationQueue.add(getMissingIDs)
 
 		// Download all the missing and updated articles
 		let downloadMissingArticles = FeedlyDownloadArticlesOperation(
 			account: account,
-			missingArticleEntryIdProvider: getMissingIds,
+			missingArticleEntryIdProvider: getMissingIDs,
 			updatedArticleEntryIdProvider: getUpdated,
 			getEntriesService: getEntriesService,
 			operationQueue: operationQueue
 		)
 		downloadMissingArticles.delegate = self
 		downloadMissingArticles.downloadProgress = downloadProgress
-		downloadMissingArticles.addDependency(getMissingIds)
+		downloadMissingArticles.addDependency(getMissingIDs)
 		downloadMissingArticles.addDependency(getUpdated)
 		operationQueue.add(downloadMissingArticles)
 

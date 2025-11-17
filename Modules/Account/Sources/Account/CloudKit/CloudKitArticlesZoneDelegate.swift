@@ -85,7 +85,7 @@ private extension CloudKitArticlesZoneDelegate {
 		await withTaskGroup(of: Void.self) { group in
 			group.addTask { @MainActor in
 				do {
-					try await self.account?.markAsUnread(updateableUnreadArticleIDs)
+					try await self.account?.markAsUnreadAsync(articleIDs: updateableUnreadArticleIDs)
 				} catch {
 					errorOccurred = true
 					Self.logger.error("CloudKit: Error while storing unread statuses: \(error.localizedDescription)")
@@ -94,7 +94,7 @@ private extension CloudKitArticlesZoneDelegate {
 
 			group.addTask { @MainActor in
 				do {
-					try await self.account?.markAsRead(updateableReadArticleIDs)
+					try await self.account?.markAsReadAsync(articleIDs: updateableReadArticleIDs)
 				} catch {
 					errorOccurred = true
 					Self.logger.error("CloudKit: Error while storing read statuses: \(error.localizedDescription)")
@@ -103,7 +103,7 @@ private extension CloudKitArticlesZoneDelegate {
 
 			group.addTask { @MainActor in
 				do {
-					try await self.account?.markAsUnstarred(updateableUnstarredArticleIDs)
+					try await self.account?.markAsUnstarredAsync(articleIDs: updateableUnstarredArticleIDs)
 				} catch {
 					errorOccurred = true
 					Self.logger.error("CloudKit: Error while storing unstarred statuses: \(error.localizedDescription)")
@@ -112,7 +112,7 @@ private extension CloudKitArticlesZoneDelegate {
 
 			group.addTask { @MainActor in
 				do {
-					try await self.account?.markAsStarred(updateableStarredArticleIDs)
+					try await self.account?.markAsStarredAsync(articleIDs: updateableStarredArticleIDs)
 				} catch {
 					errorOccurred = true
 					Self.logger.error("CloudKit: Error while storing starred statuses: \(error.localizedDescription)")
@@ -122,10 +122,10 @@ private extension CloudKitArticlesZoneDelegate {
 			for (feedID, parsedItems) in feedIDsAndItems {
 				group.addTask { @MainActor in
 					do {
-						guard let articleChanges = try await self.account?.update(feedID, with: parsedItems, deleteOlder: false) else {
+						guard let articleChanges = try await self.account?.updateAsync(feedID: feedID, parsedItems: parsedItems, deleteOlder: false) else {
 							return
 						}
-						guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
+						guard let deletes = articleChanges.deleted, !deletes.isEmpty else {
 							return
 						}
 						let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })

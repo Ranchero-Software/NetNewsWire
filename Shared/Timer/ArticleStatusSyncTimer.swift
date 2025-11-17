@@ -78,8 +78,6 @@ import Account
 		lastTimedRefresh = Date()
 		update()
 
-		AccountManager.shared.syncArticleStatusAll()
-
+		AccountManager.shared.syncArticleStatusAllWithoutWaiting()
 	}
-
 }
