@@ -98,7 +98,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation, @unchecked 
 
 		Task { @MainActor in
 			do {
-				let localStarredArticleIDs = try await account.fetchStarredArticleIDs()
+				let localStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
 				processStarredArticleIDs(localStarredArticleIDs)
 				didComplete()
 			} catch {
@@ -113,41 +113,29 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation, @unchecked 
 			return
 		}
 
-		let remoteStarredArticleIDs = remoteEntryIds
+		Task { @MainActor in
+			nonisolated(unsafe) var processingError: Error?
 
-		let group = DispatchGroup()
+			let remoteStarredArticleIDs = remoteEntryIds
+			let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
 
-		final class StarredStatusResults {
-			var markAsStarredError: Error?
-			var markAsUnstarredError: Error?
-		}
-
-		let results = StarredStatusResults()
-
-		group.enter()
-		account.markAsStarred(remoteStarredArticleIDs) { result in
-			if case .failure(let error) = result {
-				results.markAsStarredError = error
+			do {
+				try await account.markAsStarredAsync(articleIDs: remoteStarredArticleIDs)
+			} catch {
+				processingError = error
 			}
-			group.leave()
-		}
 
-		let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
-		group.enter()
-		account.markAsUnstarred(deltaUnstarredArticleIDs) { result in
-			if case .failure(let error) = result {
-				results.markAsUnstarredError = error
+			do {
+				try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
+			} catch {
+				processingError = error
 			}
-			group.leave()
-		}
 
-		group.notify(queue: .main) {
-			let markingError = results.markAsStarredError ?? results.markAsUnstarredError
-			guard let error = markingError else {
-				self.didComplete()
-				return
+			if let processingError {
+				didComplete(with: processingError)
+			} else {
+				didComplete()
 			}
-			self.didComplete(with: error)
 		}
 	}
 }
