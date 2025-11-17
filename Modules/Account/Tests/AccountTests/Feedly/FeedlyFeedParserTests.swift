@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-final class FeedlyFeedParserTests: XCTestCase {
+@MainActor final class FeedlyFeedParserTests: XCTestCase {
 
 	func testParsing() {
 		let name = "Test Feed"

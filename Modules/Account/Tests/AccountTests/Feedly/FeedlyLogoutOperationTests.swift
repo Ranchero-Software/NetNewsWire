@@ -40,7 +40,7 @@ import Secrets
 		var mockResult: Result<Void, Error>?
 		var logoutExpectation: XCTestExpectation?
 
-		func logout(completion: @escaping (Result<Void, Error>) -> ()) {
+		func logout(completion: @escaping @MainActor (Result<Void, Error>) -> ()) {
 			guard let result = mockResult else {
 				XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 				return
