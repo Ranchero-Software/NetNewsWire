@@ -8,8 +8,8 @@
 
 import Foundation
 
-@MainActor public protocol SidebarItemIdentifiable {
-	var sidebarItemID: SidebarItemIdentifier? { get }
+public protocol SidebarItemIdentifiable {
+	@MainActor var sidebarItemID: SidebarItemIdentifier? { get }
 }
 
 public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable, Sendable {

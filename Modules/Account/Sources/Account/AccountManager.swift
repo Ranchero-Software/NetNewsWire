@@ -264,16 +264,14 @@ import RSDatabase
 	}
 
 	@MainActor public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
-		await withTaskGroup(of: Void.self) { group in
+		Task { @MainActor in
 			for account in activeAccounts {
-				group.addTask { @MainActor in
-					await account.receiveRemoteNotification(userInfo: userInfo)
-				}
+				await account.receiveRemoteNotification(userInfo: userInfo)
 			}
 		}
 	}
 
-	public typealias ErrorHandlerCallback = (Error) -> Void
+	public typealias ErrorHandlerCallback = @Sendable (Error) -> Void
 
 	@MainActor public func refreshAllWithoutWaiting(errorHandler: ErrorHandlerCallback? = nil) {
 		Task { @MainActor in
@@ -294,7 +292,7 @@ import RSDatabase
 
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
-				group.addTask { @MainActor in
+				group.addTask {
 					do {
 						try await account.refreshAll()
 					} catch {
@@ -308,7 +306,7 @@ import RSDatabase
 	@MainActor public func sendArticleStatusAll() async {
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
-				group.addTask { @MainActor in
+				group.addTask {
 					try? await account.sendArticleStatus()
 				}
 			}
@@ -324,7 +322,7 @@ import RSDatabase
 	@MainActor public func syncArticleStatusAll() async {
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
-				group.addTask { @MainActor in
+				group.addTask {
 					try? await account.syncArticleStatus()
 				}
 			}

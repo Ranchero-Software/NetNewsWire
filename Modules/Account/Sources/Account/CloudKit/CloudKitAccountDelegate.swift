@@ -267,15 +267,22 @@ enum CloudKitAccountDelegateError: LocalizedError {
 		let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
 		var errorOccurred = false
 
-		await withTaskGroup(of: Void.self) { group in
+		await withTaskGroup(of: Result<Void, Error>.self) { group in
 			for feed in feeds {
 				group.addTask {
 					do {
 						try await self.removeFeedFromCloud(for: account, with: feed, from: folder)
+						return .success(())
 					} catch {
 						Self.logger.error("CloudKit: Remove folder, remove feed error: \(error.localizedDescription)")
-						errorOccurred = true
+						return .failure(error)
 					}
+				}
+			}
+			
+			for await result in group {
+				if case .failure = result {
+					errorOccurred = true
 				}
 			}
 		}
@@ -314,7 +321,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 				for feed in feedsToRestore {
 					folder.topLevelFeeds.remove(feed)
 					
-					group.addTask { @MainActor in
+					group.addTask {
 						do {
 							try await self.restoreFeed(for: account, feed: feed, container: folder)
 							self.syncProgress.completeTask()

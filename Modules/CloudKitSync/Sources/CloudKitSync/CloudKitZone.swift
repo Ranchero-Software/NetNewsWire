@@ -114,7 +114,7 @@ public extension CloudKitZone {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: zoneID)
 	}
 
-	func retryIfPossible(after: Double, block: @escaping () -> ()) {
+	func retryIfPossible(after: Double, block: @escaping @MainActor () -> ()) {
 		let delayTime = DispatchTime.now() + after
 		DispatchQueue.main.asyncAfter(deadline: delayTime, execute: {
 			block()

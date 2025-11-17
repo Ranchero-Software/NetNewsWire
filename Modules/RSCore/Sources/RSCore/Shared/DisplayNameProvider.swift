@@ -17,7 +17,7 @@ extension Notification.Name {
 
 public protocol DisplayNameProvider {
 
-	var nameForDisplay: String { get }
+	@MainActor var nameForDisplay: String { get }
 }
 
 public extension DisplayNameProvider {

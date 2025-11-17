@@ -80,66 +80,54 @@ private extension CloudKitArticlesZoneDelegate {
 			return Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 		}.value
 
-		var errorOccurred = false
+		nonisolated(unsafe) var updateError: Error?
 
-		await withTaskGroup(of: Void.self) { group in
-			group.addTask { @MainActor in
-				do {
-					try await self.account?.markAsUnreadAsync(articleIDs: updateableUnreadArticleIDs)
-				} catch {
-					errorOccurred = true
-					Self.logger.error("CloudKit: Error while storing unread statuses: \(error.localizedDescription)")
-				}
-			}
+		do {
+			try await self.account?.markAsUnreadAsync(articleIDs: updateableUnreadArticleIDs)
+		} catch {
+			updateError = error
+			Self.logger.error("CloudKit: Error while storing unread statuses: \(error.localizedDescription)")
+		}
 
-			group.addTask { @MainActor in
-				do {
-					try await self.account?.markAsReadAsync(articleIDs: updateableReadArticleIDs)
-				} catch {
-					errorOccurred = true
-					Self.logger.error("CloudKit: Error while storing read statuses: \(error.localizedDescription)")
-				}
-			}
+		do {
+			try await self.account?.markAsReadAsync(articleIDs: updateableReadArticleIDs)
+		} catch {
+			updateError = error
+			Self.logger.error("CloudKit: Error while storing read statuses: \(error.localizedDescription)")
+		}
 
-			group.addTask { @MainActor in
-				do {
-					try await self.account?.markAsUnstarredAsync(articleIDs: updateableUnstarredArticleIDs)
-				} catch {
-					errorOccurred = true
-					Self.logger.error("CloudKit: Error while storing unstarred statuses: \(error.localizedDescription)")
-				}
-			}
+		do {
+			try await self.account?.markAsUnstarredAsync(articleIDs: updateableUnstarredArticleIDs)
+		} catch {
+			updateError = error
+			Self.logger.error("CloudKit: Error while storing unstarred statuses: \(error.localizedDescription)")
+		}
 
-			group.addTask { @MainActor in
-				do {
-					try await self.account?.markAsStarredAsync(articleIDs: updateableStarredArticleIDs)
-				} catch {
-					errorOccurred = true
-					Self.logger.error("CloudKit: Error while storing starred statuses: \(error.localizedDescription)")
-				}
-			}
+		do {
+			try await self.account?.markAsStarredAsync(articleIDs: updateableStarredArticleIDs)
+		} catch {
+			updateError = error
+			Self.logger.error("CloudKit: Error while storing starred statuses: \(error.localizedDescription)")
+		}
 
-			for (feedID, parsedItems) in feedIDsAndItems {
-				group.addTask { @MainActor in
-					do {
-						guard let articleChanges = try await self.account?.updateAsync(feedID: feedID, parsedItems: parsedItems, deleteOlder: false) else {
-							return
-						}
-						guard let deletes = articleChanges.deleted, !deletes.isEmpty else {
-							return
-						}
-						let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
-						try? await self.syncDatabase.insertStatuses(syncStatuses)
-					} catch {
-						errorOccurred = true
-						Self.logger.error("CloudKit: Error while storing starred articles: \(error.localizedDescription)")
-					}
+		for (feedID, parsedItems) in feedIDsAndItems {
+			do {
+				guard let articleChanges = try await self.account?.updateAsync(feedID: feedID, parsedItems: parsedItems, deleteOlder: false) else {
+					continue
 				}
+				guard let deletes = articleChanges.deleted, !deletes.isEmpty else {
+					continue
+				}
+				let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
+				try? await self.syncDatabase.insertStatuses(syncStatuses)
+			} catch {
+				updateError = error
+				Self.logger.error("CloudKit: Error while storing articles: \(error.localizedDescription)")
 			}
 		}
 
-		if errorOccurred {
-			throw CloudKitZoneError.unknown
+		if let updateError {
+			throw updateError
 		}
 	}
 
@@ -147,7 +135,7 @@ private extension CloudKitArticlesZoneDelegate {
 		return String(externalID[externalID.index(externalID.startIndex, offsetBy: 2)..<externalID.endIndex])
 	}
 
-	func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
+	nonisolated func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
 		guard articleRecord.recordType == CloudKitArticlesZone.CloudKitArticle.recordType else {
 			return nil
 		}

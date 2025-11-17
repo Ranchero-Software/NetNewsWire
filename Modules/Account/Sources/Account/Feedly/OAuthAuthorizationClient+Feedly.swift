@@ -9,7 +9,7 @@
 import Foundation
 import Secrets
 
-extension OAuthAuthorizationClient {
+nonisolated extension OAuthAuthorizationClient {
 
 	static var feedlyCloudClient: OAuthAuthorizationClient {
 		/// Models private NetNewsWire client secrets.

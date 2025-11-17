@@ -32,7 +32,7 @@ public extension Notification.Name {
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
 }
 
-public enum AccountType: Int, Codable {
+nonisolated public enum AccountType: Int, Codable, Sendable {
 	// Raw values should not change since they’re stored on disk.
 	case onMyMac = 1
 	case cloudKit = 2
@@ -357,7 +357,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	internal static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
+	nonisolated internal static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
 		switch type {
 		case .feedly:
 			return FeedlyAccountDelegate.environment.oauthAuthorizationClient
@@ -382,7 +382,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 											   client: OAuthAuthorizationClient,
 											   accountType: AccountType,
 											   transport: Transport = URLSession.webserviceTransport(),
-											   completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+											   completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> ()) {
 		let grantingType: OAuthAuthorizationGranting.Type
 
 		switch accountType {

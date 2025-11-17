@@ -196,7 +196,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		return records.map { $0.externalID }
 	}
 
-	private func findOrCreateAccount(completion: @escaping (Result<String, Error>) -> Void) {
+	private func findOrCreateAccount(completion: @escaping @Sendable (Result<String, Error>) -> Void) {
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 
@@ -234,17 +234,21 @@ final class CloudKitAccountZone: CloudKitZone {
 						}
 					}
 				case .retry(let timeToWait):
-					self.retryIfPossible(after: timeToWait) {
-						self.findOrCreateAccount(completion: completion)
+					DispatchQueue.main.async {
+						self.retryIfPossible(after: timeToWait) {
+							self.findOrCreateAccount(completion: completion)
+						}
 					}
 				case .zoneNotFound, .userDeletedZone:
-					self.createZoneRecord() { result in
-						switch result {
-						case .success:
-							self.findOrCreateAccount(completion: completion)
-						case .failure(let error):
-							DispatchQueue.main.async {
-								completion(.failure(CloudKitError(error)))
+					DispatchQueue.main.async {
+						self.createZoneRecord() { result in
+							switch result {
+							case .success:
+								self.findOrCreateAccount(completion: completion)
+							case .failure(let error):
+								DispatchQueue.main.async {
+									completion(.failure(CloudKitError(error)))
+								}
 							}
 						}
 					}

@@ -10,11 +10,10 @@ import Foundation
 import os.log
 
 protocol FeedlyLogoutService {
-	func logout(completion: @escaping (Result<Void, Error>) -> ())
+	func logout(completion: @escaping @MainActor (Result<Void, Error>) -> ())
 }
 
 final class FeedlyLogoutOperation: FeedlyOperation, @unchecked Sendable {
-
 	let service: FeedlyLogoutService
 	let account: Account
 

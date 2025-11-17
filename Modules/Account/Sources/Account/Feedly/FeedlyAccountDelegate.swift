@@ -20,7 +20,7 @@ import Secrets
 	/// This property is referred to when clients need to know which environment it should be pointing to.
 	/// The value of this property must match any `OAuthAuthorizationClient` used.
 	/// Currently this is always returning the cloud API, but we are leaving it stubbed out for now.
-	static var environment: FeedlyAPICaller.API {
+	nonisolated static var environment: FeedlyAPICaller.API {
 		return .cloud
 	}
 
@@ -53,7 +53,7 @@ import Secrets
 
 	var accountMetadata: AccountMetadata?
 
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+	nonisolated let refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	/// Set on `accountDidInitialize` for the purposes of refreshing OAuth tokens when they expire.
 	/// See the implementation for `FeedlyAPICallerDelegate`.
@@ -61,7 +61,7 @@ import Secrets
 
 	internal let caller: FeedlyAPICaller
 
-	private static let logger = Feedly.logger
+	nonisolated private static let logger = Feedly.logger
 	private let syncDatabase: SyncDatabase
 
 	private weak var currentSyncAllOperation: MainThreadOperation?
@@ -234,7 +234,7 @@ import Secrets
 		}
 	}
 
-	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+	func importOPML(for account: Account, opmlFile: URL, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		let data: Data
 
 		do {
@@ -249,21 +249,23 @@ import Secrets
 		refreshProgress.addTask()
 
 		caller.importOpml(data) { result in
-			switch result {
-			case .success:
-				Self.logger.info("Feedly: OPML import finished")
-				self.refreshProgress.completeTask()
-				self.isOPMLImportInProgress = false
-				DispatchQueue.main.async {
-					completion(.success(()))
-				}
-			case .failure(let error):
-				Self.logger.error("Feedly: OPML import failed: \(error.localizedDescription)")
-				self.refreshProgress.completeTask()
-				self.isOPMLImportInProgress = false
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrapped(error, account)
-					completion(.failure(wrappedError))
+			Task { @MainActor in
+				switch result {
+				case .success:
+					Self.logger.info("Feedly: OPML import finished")
+					self.refreshProgress.completeTask()
+					self.isOPMLImportInProgress = false
+					DispatchQueue.main.async {
+						completion(.success(()))
+					}
+				case .failure(let error):
+					Self.logger.error("Feedly: OPML import failed: \(error.localizedDescription)")
+					self.refreshProgress.completeTask()
+					self.isOPMLImportInProgress = false
+					DispatchQueue.main.async {
+						let wrappedError = AccountError.wrapped(error, account)
+						completion(.failure(wrappedError))
+					}
 				}
 			}
 		}
@@ -277,25 +279,27 @@ import Secrets
 		}
 	}
 
-	@MainActor func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+	@MainActor func createFolder(for account: Account, name: String, completion: @escaping @Sendable (Result<Folder, Error>) -> Void) {
 
 		let progress = refreshProgress
 		progress.addTask()
 
 		caller.createCollection(named: name) { result in
-			progress.completeTask()
+			Task { @MainActor in
+				progress.completeTask()
 
-			switch result {
-			case .success(let collection):
-				if let folder = account.ensureFolder(with: collection.label) {
-					folder.externalID = collection.id
-					completion(.success(folder))
-				} else {
-					// Is the name empty? Or one of the global resource names?
-					completion(.failure(FeedlyAccountDelegateError.unableToAddFolder(name)))
+				switch result {
+				case .success(let collection):
+					if let folder = account.ensureFolder(with: collection.label) {
+						folder.externalID = collection.id
+						completion(.success(folder))
+					} else {
+						// Is the name empty? Or one of the global resource names?
+						completion(.failure(FeedlyAccountDelegateError.unableToAddFolder(name)))
+					}
+				case .failure(let error):
+					completion(.failure(error))
 				}
-			case .failure(let error):
-				completion(.failure(error))
 			}
 		}
 	}
@@ -308,7 +312,7 @@ import Secrets
 		}
 	}
 
-	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)))
@@ -318,13 +322,15 @@ import Secrets
 		let nameBefore = folder.name
 
 		caller.renameCollection(with: id, to: name) { result in
-			switch result {
-			case .success(let collection):
-				folder.name = collection.label
-				completion(.success(()))
-			case .failure(let error):
-				folder.name = nameBefore
-				completion(.failure(error))
+			Task { @MainActor in
+				switch result {
+				case .success(let collection):
+					folder.name = collection.label
+					completion(.success(()))
+				case .failure(let error):
+					folder.name = nameBefore
+					completion(.failure(error))
+				}
 			}
 		}
 
@@ -339,7 +345,7 @@ import Secrets
 		}
 	}
 
-	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)))
@@ -350,14 +356,16 @@ import Secrets
 		progress.addTask()
 		
 		caller.deleteCollection(with: id) { result in
-			progress.completeTask()
+			Task { @MainActor in
+				progress.completeTask()
 
-			switch result {
-			case .success:
-				account.removeFolderFromTree(folder)
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
+				switch result {
+				case .success:
+					account.removeFolderFromTree(folder)
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
 			}
 		}
 	}
@@ -411,7 +419,7 @@ import Secrets
 		}
 	}
 
-	@MainActor private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
 			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
@@ -424,13 +432,15 @@ import Secrets
 		// Adding an existing feed updates it.
 		// Updating feed name in one folder/collection updates it for all folders/collections.
 		caller.addFeed(with: feedId, title: name, toCollectionWith: collectionId) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
+			Task { @MainActor in
+				switch result {
+				case .success:
+					completion(.success(()))
 
-			case .failure(let error):
-				feed.editedName = editedNameBefore
-				completion(.failure(error))
+				case .failure(let error):
+					feed.editedName = editedNameBefore
+					completion(.failure(error))
+				}
 			}
 		}
 
@@ -446,7 +456,7 @@ import Secrets
 		}
 	}
 
-	@MainActor private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping @MainActor (Result<Void, Error>) -> Void) {
 
 		do {
 			guard let credentials = credentials else {
@@ -485,7 +495,7 @@ import Secrets
 		}
 	}
 
-	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder, let collectionId = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed.nameForDisplay)))
@@ -493,12 +503,14 @@ import Secrets
 		}
 
 		caller.removeFeed(feed.feedID, fromCollectionWith: collectionId) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				folder.addFeedToTreeAtTopLevel(feed)
-				completion(.failure(error))
+			Task { @MainActor in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					folder.addFeedToTreeAtTopLevel(feed)
+					completion(.failure(error))
+				}
 			}
 		}
 
@@ -513,7 +525,7 @@ import Secrets
 		}
 	}
 
-	@MainActor private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		guard let from = from as? Folder, let to = to as? Folder else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
@@ -521,24 +533,27 @@ import Secrets
 		}
 
 		addFeed(for: account, with: feed, to: to) { [weak self] addResult in
-			switch addResult {
-				// now that we have added the feed, remove it from the other collection
-			case .success:
-				self?.removeFeed(for: account, with: feed, from: from) { removeResult in
-					switch removeResult {
-					case .success:
-						completion(.success(()))
-					case .failure:
-						from.addFeedToTreeAtTopLevel(feed)
-						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)))
+			Task { @MainActor in
+				switch addResult {
+					// now that we have added the feed, remove it from the other collection
+				case .success:
+					self?.removeFeed(for: account, with: feed, from: from) { removeResult in
+						Task { @MainActor in
+							switch removeResult {
+							case .success:
+								completion(.success(()))
+							case .failure:
+								from.addFeedToTreeAtTopLevel(feed)
+								completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)))
+							}
+						}
 					}
+				case .failure(let error):
+					from.addFeedToTreeAtTopLevel(feed)
+					to.removeFeedFromTreeAtTopLevel(feed)
+					completion(.failure(error))
 				}
-			case .failure(let error):
-				from.addFeedToTreeAtTopLevel(feed)
-				to.removeFeedFromTreeAtTopLevel(feed)
-				completion(.failure(error))
 			}
-
 		}
 
 		// optimistically move the feed, undoing as appropriate to the failure

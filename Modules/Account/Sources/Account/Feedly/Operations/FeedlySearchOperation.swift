@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlySearchService: AnyObject {
-	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> ())
+	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping @Sendable (Result<FeedlyFeedsSearchResponse, Error>) -> ())
 }
 
 protocol FeedlySearchOperationDelegate: AnyObject {
@@ -33,14 +33,16 @@ final class FeedlySearchOperation: FeedlyOperation, @unchecked Sendable {
 
 	@MainActor override func run() {
 		searchService.getFeeds(for: query, count: 1, locale: locale.identifier) { result in
-			switch result {
-			case .success(let response):
-				assert(Thread.isMainThread)
-				self.searchDelegate?.feedlySearchOperation(self, didGet: response)
-				self.didComplete()
-
-			case .failure(let error):
-				self.didComplete(with: error)
+			Task { @MainActor in
+				switch result {
+				case .success(let response):
+					assert(Thread.isMainThread)
+					self.searchDelegate?.feedlySearchOperation(self, didGet: response)
+					self.didComplete()
+					
+				case .failure(let error):
+					self.didComplete(with: error)
+				}
 			}
 		}
 	}

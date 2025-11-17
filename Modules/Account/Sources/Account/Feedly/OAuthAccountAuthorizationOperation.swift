@@ -23,7 +23,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	}
 }
 
-@objc final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
+@objc nonisolated final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
 	nonisolated(unsafe) var presentationAnchor: ASPresentationAnchor?
 
 	// MARK: - ASWebAuthenticationPresentationContextProviding
@@ -36,7 +36,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	}
 }
 
-@MainActor public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unchecked Sendable {
+public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unchecked Sendable {
 	public var presentationAnchor: ASPresentationAnchor? {
 		get {
 			anchorProvider.presentationAnchor
@@ -54,7 +54,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	private var session: ASWebAuthenticationSession?
 	private var error: Error?
 
-	@MainActor public init(accountType: AccountType) {
+	public init(accountType: AccountType) {
 		self.accountType = accountType
 		self.oauthClient = Account.oauthAuthorizationClient(for: accountType)
 		super.init(name: "OAuthAccountAuthorizationOperation")

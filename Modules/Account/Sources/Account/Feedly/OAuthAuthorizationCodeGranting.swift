@@ -12,11 +12,11 @@ import Secrets
 
 /// Client-specific information for requesting an authorization code grant.
 /// Accounts are responsible for the scope.
-public struct OAuthAuthorizationClient: Equatable {
-	public var id: String
-	public var redirectUri: String
-	public var state: String?
-	public var secret: String
+nonisolated public struct OAuthAuthorizationClient: Equatable, Sendable {
+	public let id: String
+	public let redirectUri: String
+	public let state: String?
+	public let secret: String
 
 	public init(id: String, redirectUri: String, state: String?, secret: String) {
 		self.id = id
@@ -28,7 +28,7 @@ public struct OAuthAuthorizationClient: Equatable {
 
 /// Models section 4.1.1 of the OAuth 2.0 Authorization Framework
 /// https://tools.ietf.org/html/rfc6749#section-4.1.1
-public struct OAuthAuthorizationRequest {
+nonisolated public struct OAuthAuthorizationRequest: Sendable {
 	public let responseType = "code"
 	public var clientId: String
 	public var redirectUri: String
@@ -54,9 +54,9 @@ public struct OAuthAuthorizationRequest {
 
 /// Models section 4.1.2 of the OAuth 2.0 Authorization Framework
 /// https://tools.ietf.org/html/rfc6749#section-4.1.2
-public struct OAuthAuthorizationResponse {
-	public var code: String
-	public var state: String?
+nonisolated public struct OAuthAuthorizationResponse {
+	public let code: String
+	public let state: String?
 }
 
 public extension OAuthAuthorizationResponse {
@@ -85,10 +85,10 @@ public extension OAuthAuthorizationResponse {
 
 /// Models section 4.1.2.1 of the OAuth 2.0 Authorization Framework
 /// https://tools.ietf.org/html/rfc6749#section-4.1.2.1
-public struct OAuthAuthorizationErrorResponse: Error {
-	public var error: OAuthAuthorizationError
-	public var state: String?
-	public var errorDescription: String?
+nonisolated public struct OAuthAuthorizationErrorResponse: Error, Sendable {
+	public let error: OAuthAuthorizationError
+	public let state: String?
+	public let errorDescription: String?
 
 	public var localizedDescription: String {
 		return errorDescription ?? error.rawValue
@@ -97,7 +97,7 @@ public struct OAuthAuthorizationErrorResponse: Error {
 
 /// Error values as enumerated in section 4.1.2.1 of the OAuth 2.0 Authorization Framework.
 /// https://tools.ietf.org/html/rfc6749#section-4.1.2.1
-public enum OAuthAuthorizationError: String {
+nonisolated public enum OAuthAuthorizationError: String, Sendable {
 	case invalidRequest = "invalid_request"
 	case unauthorizedClient = "unauthorized_client"
 	case accessDenied = "access_denied"
@@ -109,12 +109,12 @@ public enum OAuthAuthorizationError: String {
 
 /// Models section 4.1.3 of the OAuth 2.0 Authorization Framework
 /// https://tools.ietf.org/html/rfc6749#section-4.1.3
-public struct OAuthAccessTokenRequest: Encodable {
+nonisolated public struct OAuthAccessTokenRequest: Encodable, Sendable {
 	public let grantType = "authorization_code"
-	public var code: String
-	public var redirectUri: String
-	public var state: String?
-	public var clientId: String
+	public let code: String
+	public let redirectUri: String
+	public let state: String?
+	public let clientId: String
 
 	// Possibly not part of the standard but specific to certain implementations (e.g.: Feedly).
 	public var clientSecret: String
@@ -143,7 +143,7 @@ public protocol OAuthAccessTokenResponse {
 }
 
 /// The access and refresh tokens from a successful authorization grant.
-public struct OAuthAuthorizationGrant: Equatable, Sendable {
+nonisolated public struct OAuthAuthorizationGrant: Equatable, Sendable {
 	public let accessToken: Credentials
 	public let refreshToken: Credentials?
 }
@@ -162,12 +162,12 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 	/// Performs the request for the access token given an authorization code.
 	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokens on the user's behalf.
 	/// - Parameter completion: On success, the access token response appropriate for concrete type's service. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
-	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completion: @escaping (Result<AccessTokenResponse, Error>) -> ())
+	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completion: @escaping @Sendable (Result<AccessTokenResponse, Error>) -> ())
 }
 
-@MainActor protocol OAuthAuthorizationGranting: AccountDelegate {
+protocol OAuthAuthorizationGranting: AccountDelegate {
 
 	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
 
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> ())
 }

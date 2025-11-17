@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlyAddFeedToCollectionService {
-	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
+	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping @Sendable (Result<[FeedlyFeed], Error>) -> ())
 }
 
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding, @unchecked Sendable {
@@ -39,15 +39,17 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 
 	@MainActor override func run() {
 		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
-			guard let self else {
-				return
-			}
-			if self.isCanceled {
+			Task { @MainActor in
+				guard let self else {
+					return
+				}
+				if self.isCanceled {
+					self.didComplete()
+					return
+				}
+				self.didCompleteRequest(result)
 				self.didComplete()
-				return
 			}
-			self.didCompleteRequest(result)
-			didComplete()
 		}
 	}
 }
