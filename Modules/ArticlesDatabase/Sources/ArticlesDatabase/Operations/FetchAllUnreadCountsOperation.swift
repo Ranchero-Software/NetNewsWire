@@ -11,8 +11,8 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
-public final class FetchAllUnreadCountsOperation: MainThreadOperation, @unchecked Sendable {
-	var result: UnreadCountDictionaryCompletionResult?
+@MainActor public final class FetchAllUnreadCountsOperation: MainThreadOperation, @unchecked Sendable {
+	nonisolated(unsafe) var result: UnreadCountDictionaryCompletionResult?
 	private let queue: DatabaseQueue
 
 	init(databaseQueue: DatabaseQueue) {
@@ -20,7 +20,7 @@ public final class FetchAllUnreadCountsOperation: MainThreadOperation, @unchecke
 		super.init(name: "FetchAllUnreadCountsOperation")
 	}
 
-	@MainActor public override func run() {
+	public override func run() {
 		queue.runInDatabase { databaseResult in
 			if self.isCanceled {
 				self.didComplete()

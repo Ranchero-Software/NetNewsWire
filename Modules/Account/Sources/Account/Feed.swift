@@ -11,7 +11,7 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class Feed: SidebarItem, Renamable, Hashable {
+@MainActor public final class Feed: SidebarItem, Renamable, Hashable {
 	public let feedID: String
 	public let accountID: String
 	public let url: String

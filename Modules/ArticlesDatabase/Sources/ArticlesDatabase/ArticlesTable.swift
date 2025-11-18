@@ -14,7 +14,7 @@ import RSDatabaseObjC
 import RSParser
 import Articles
 
-nonisolated final class ArticlesTable: DatabaseTable, Sendable {
+final class ArticlesTable: DatabaseTable, Sendable {
 	let name: String
 
 	private let accountID: String
@@ -1116,7 +1116,7 @@ nonisolated private extension ArticlesTable {
 	}
 }
 
-nonisolated private extension Set where Element == ParsedItem {
+private extension Set where Element == ParsedItem {
 	func articleIDs() -> Set<String> {
 		return Set<String>(map { $0.articleID })
 	}

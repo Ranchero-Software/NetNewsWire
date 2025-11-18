@@ -5,6 +5,7 @@
 //  Created by Brent Simmons on 1/14/18.
 //  Copyright © 2018 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 
@@ -13,7 +14,6 @@ import AppKit
 /// The app may or may not be running. It may or may not exist.
 
 public final class UserApp {
-
 	public let bundleID: String
 	public var icon: NSImage? = nil
 	public var existsOnDisk = false
@@ -21,7 +21,6 @@ public final class UserApp {
 	public var runningApplication: NSRunningApplication? = nil
 
 	public var isRunning: Bool {
-
 		updateStatus()
 		if let runningApplication = runningApplication {
 			return !runningApplication.isTerminated
@@ -30,13 +29,11 @@ public final class UserApp {
 	}
 
 	public init(bundleID: String) {
-
 		self.bundleID = bundleID
 		updateStatus()
 	}
 
 	public func updateStatus() {
-
 		if let runningApplication = runningApplication, runningApplication.isTerminated {
 			self.runningApplication = nil
 		}
@@ -85,7 +82,6 @@ public final class UserApp {
 	}
 
 	public func launchIfNeeded() async -> Bool {
-
 		// Return true if already running.
 		// Return true if not running and successfully gets launched.
 
@@ -125,7 +121,6 @@ public final class UserApp {
 	}
 
 	public func bringToFront() -> Bool {
-
 		// Activates the app, ignoring other apps.
 		// Does not automatically launch the app first.
 
@@ -134,7 +129,6 @@ public final class UserApp {
 	}
 
 	public func targetDescriptor() -> NSAppleEventDescriptor? {
-
 		// Requires that the app has previously been launched.
 
 		updateStatus()

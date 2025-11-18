@@ -13,13 +13,12 @@ import Foundation
 public typealias BatchUpdateBlock = () -> Void
 
 public extension Notification.Name {
-
 	/// A notification posted when a batch update completes.
 	static let BatchUpdateDidPerform = Notification.Name(rawValue: "BatchUpdateDidPerform")
 }
 
 /// A class for batch updating.
-public final class BatchUpdate {
+@MainActor public final class BatchUpdate {
 
 	/// The shared batch update object.
 	public static let shared = BatchUpdate()
@@ -77,5 +76,4 @@ private extension BatchUpdate {
 			NotificationCenter.default.post(name: .BatchUpdateDidPerform, object: nil, userInfo: nil)
 		}
 	}
-
 }

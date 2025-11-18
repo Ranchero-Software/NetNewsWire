@@ -5,6 +5,7 @@
 //  Created by Maurice Parker on 11/12/19.
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 
@@ -18,7 +19,6 @@ extension NSView {
 		img.addRepresentation(rep)
 		return img
     }
-
 }
 
 public extension NSView {

@@ -9,7 +9,7 @@
 import Foundation
 import RSDatabaseObjC
 
-nonisolated public enum DatabaseError: Error, LocalizedError, Sendable {
+public enum DatabaseError: Error, LocalizedError, Sendable {
 	case isSuspended // On iOS, to support background refreshing, a database may be suspended.
 
 	public var errorDescription: String? {
@@ -37,7 +37,7 @@ public typealias DatabaseIntCompletionBlock = (DatabaseIntResult) -> Void
 
 // MARK: - Extensions
 
-nonisolated public extension DatabaseResult {
+public extension DatabaseResult {
 	/// Convenience for getting the database from a DatabaseResult.
 	var database: FMDatabase? {
 		switch self {

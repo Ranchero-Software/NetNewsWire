@@ -5,11 +5,11 @@
 //  Created by Brent Simmons on 9/6/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 
 public extension NSOutlineView {
-
 	var selectedItems: [AnyObject] {
 		if selectionIsEmpty {
 			return [AnyObject]()

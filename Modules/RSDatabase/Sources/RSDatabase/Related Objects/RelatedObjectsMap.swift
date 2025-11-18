@@ -11,7 +11,7 @@ import Foundation
 // Map objectID to [DatabaseObject] (related objects).
 // It’s used as the return value for DatabaseLookupTable.fetchRelatedObjects.
 
-nonisolated public struct RelatedObjectsMap: Sendable {
+public struct RelatedObjectsMap: Sendable {
 	private let dictionary: [String: [DatabaseObject]] // objectID: relatedObjects
 
 	init(relatedObjects: [DatabaseObject], relatedObjectIDsMap: RelatedObjectIDsMap) {

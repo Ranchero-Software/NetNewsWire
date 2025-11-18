@@ -20,7 +20,6 @@ let package = Package(
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances"),
-				.defaultIsolation(MainActor.self),
 				.unsafeFlags(["-warnings-as-errors"])
 			]
 		)

@@ -8,11 +8,11 @@
 import Foundation
 import Synchronization
 
-nonisolated public protocol CacheRecord: Sendable {
+public protocol CacheRecord: Sendable {
 	var dateCreated: Date { get }
 }
 
-nonisolated public final class Cache<T: CacheRecord>: Sendable {
+public final class Cache<T: CacheRecord>: Sendable {
 
 	public let timeToLive: TimeInterval
 	public let timeBetweenCleanups: TimeInterval
@@ -59,10 +59,9 @@ nonisolated public final class Cache<T: CacheRecord>: Sendable {
 	}
 }
 
-nonisolated extension Cache {
+extension Cache {
 
 	private func cleanupIfNeeded(_ state: inout State) {
-
 		let currentDate = Date()
 		guard state.lastCleanupDate.timeIntervalSince(currentDate) < -timeBetweenCleanups else {
 			return

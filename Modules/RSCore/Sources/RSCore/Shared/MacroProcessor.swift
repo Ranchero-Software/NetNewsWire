@@ -12,8 +12,7 @@ enum MacroProcessorError: Error, Sendable {
 	case emptyMacroDelimiter
 }
 
-nonisolated public final class MacroProcessor: Sendable {
-
+public final class MacroProcessor: Sendable {
 	let template: String
 	let substitutions: [String: String]
 	let macroStart: String
@@ -51,7 +50,6 @@ nonisolated public final class MacroProcessor: Sendable {
 		self.macroStart = macroStart
 		self.macroEnd = macroEnd
 	}
-
 }
 
 nonisolated private extension MacroProcessor {
@@ -85,5 +83,4 @@ nonisolated private extension MacroProcessor {
 
 		return result
 	}
-
 }

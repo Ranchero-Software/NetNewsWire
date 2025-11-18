@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated public struct ParsedAttachment: Hashable, Sendable {
+public struct ParsedAttachment: Hashable, Sendable {
 	public let url: String
 	public let mimeType: String?
 	public let title: String?

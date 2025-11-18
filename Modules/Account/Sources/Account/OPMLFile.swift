@@ -11,7 +11,7 @@ import os.log
 import RSCore
 import RSParser
 
-final class OPMLFile {
+@MainActor final class OPMLFile {
 	private let fileURL: URL
 	private let account: Account
 
@@ -32,7 +32,7 @@ final class OPMLFile {
 		isDirty = true
 	}
 
-	@MainActor func load() {
+	func load() {
 		guard let fileData = opmlFileData(), let opmlItems = parsedOPMLItems(fileData: fileData) else {
 			return
 		}
@@ -42,7 +42,7 @@ final class OPMLFile {
 		}
 	}
 
-	@MainActor func save() {
+	func save() {
 		guard !account.isDeleted else { return }
 		let opmlDocumentString = opmlDocument()
 
@@ -52,7 +52,6 @@ final class OPMLFile {
 			Self.logger.error("OPML save to disk failed: \(error.localizedDescription)")
 		}
 	}
-
 }
 
 private extension OPMLFile {
@@ -69,7 +68,7 @@ private extension OPMLFile {
 		}
 	}
 
-	@MainActor @objc func saveToDiskIfNeeded() {
+	@objc func saveToDiskIfNeeded() {
 		if isDirty {
 			isDirty = false
 			save()
@@ -102,7 +101,7 @@ private extension OPMLFile {
 		return opmlDocument?.children
 	}
 
-	@MainActor func opmlDocument() -> String {
+	func opmlDocument() -> String {
 		let escapedTitle = account.nameForDisplay.escapingSpecialXMLCharacters
 		let openingText =
 		"""

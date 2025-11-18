@@ -18,7 +18,7 @@ import Articles
 
 public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
 
-nonisolated public struct ArticleChanges: Sendable {
+public struct ArticleChanges: Sendable {
 	public let new: Set<Article>?
 	public let updated: Set<Article>?
 	public let deleted: Set<Article>?
@@ -36,7 +36,7 @@ nonisolated public struct ArticleChanges: Sendable {
 	}
 }
 
-nonisolated public final class ArticlesDatabase: Sendable {
+@MainActor public final class ArticlesDatabase: Sendable {
 	public enum RetentionStyle: Sendable {
 		case feedBased // Local and iCloud: article retention is defined by contents of feed
 		case syncSystem // Feedbin, Feedly, etc.: article retention is defined by external system
@@ -48,7 +48,7 @@ nonisolated public final class ArticlesDatabase: Sendable {
 	private let retentionStyle: RetentionStyle
 	private let accountID: String
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticlesDatabase")
+	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticlesDatabase")
 
 	public init(databaseFilePath: String, accountID: String, retentionStyle: RetentionStyle) {
 		Self.logger.debug("Articles Database init \(accountID, privacy: .public)")
@@ -394,7 +394,7 @@ nonisolated public final class ArticlesDatabase: Sendable {
 
 // MARK: - Private
 
-nonisolated private extension ArticlesDatabase {
+private extension ArticlesDatabase {
 
 	static let tableCreationStatements = """
 	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER);
@@ -448,7 +448,7 @@ typealias ArticleIDsCompletionBlock = @Sendable (ArticleIDsResult) -> Void
 typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseError>
 typealias ArticleStatusesResultBlock = @Sendable (ArticleStatusesResult) -> Void
 
-nonisolated private extension ArticlesDatabase {
+private extension ArticlesDatabase {
 
 	func _fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")

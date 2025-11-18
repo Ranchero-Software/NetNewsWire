@@ -14,7 +14,7 @@ import RSParserObjC
 
 public typealias FeedParserCallback = @Sendable (_ parsedFeed: ParsedFeed?, _ error: Error?) -> Void
 
-nonisolated public struct FeedParser {
+public struct FeedParser {
 
 	private static let parseQueue = DispatchQueue(label: "FeedParser parse queue")
 

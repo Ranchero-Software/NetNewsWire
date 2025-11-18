@@ -23,8 +23,7 @@ public enum FeedFinderError: LocalizedError {
 	}
 }
 
-nonisolated public final class FeedFinder {
-
+public final class FeedFinder {
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
 
 	@concurrent public static func find(url: URL) async throws -> Set<FeedSpecifier> {
@@ -68,7 +67,7 @@ nonisolated public final class FeedFinder {
 	}
 }
 
-nonisolated private extension FeedFinder {
+private extension FeedFinder {
 
 	static func addFeedSpecifier(_ feedSpecifier: FeedSpecifier, feedSpecifiers: inout [String: FeedSpecifier]) {
 		// If there's an existing feed specifier, merge the two so that we have the best data. If one has a title and one doesn't, use that non-nil title. Use the better source.

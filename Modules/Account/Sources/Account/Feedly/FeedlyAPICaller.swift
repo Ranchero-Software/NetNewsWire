@@ -17,9 +17,9 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ())
 }
 
-nonisolated final class FeedlyAPICaller: @unchecked Sendable {
+@MainActor final class FeedlyAPICaller {
 
-	nonisolated enum API: Sendable {
+	enum API: Sendable {
 		case sandbox
 		case cloud
 

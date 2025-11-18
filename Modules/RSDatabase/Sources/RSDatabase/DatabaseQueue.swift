@@ -16,7 +16,7 @@ import RSDatabaseObjC
 ///
 /// On iOS, the queue can be suspended
 /// in order to support background refreshing.
-nonisolated public final class DatabaseQueue: Sendable {
+public final class DatabaseQueue: Sendable {
 	private struct State {
 		var isCallingDatabase = false
 		var isSuspended = false
@@ -201,7 +201,7 @@ nonisolated public final class DatabaseQueue: Sendable {
 	}
 }
 
-nonisolated private extension DatabaseQueue {
+private extension DatabaseQueue {
 
 	private func _runInDatabase(_ state: inout State, _ databaseBlock: DatabaseBlock, _ useTransaction: Bool) {
 		precondition(!state.isCallingDatabase)

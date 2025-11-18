@@ -17,7 +17,7 @@ import RSDatabase
 // Main thread only.
 
 @MainActor public final class AccountManager: UnreadCountProvider {
-	@MainActor public static var shared = AccountManager()
+	public static var shared = AccountManager()
 
 	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
     private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"

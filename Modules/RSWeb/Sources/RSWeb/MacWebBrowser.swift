@@ -10,7 +10,7 @@
 import AppKit
 import UniformTypeIdentifiers
 
-public class MacWebBrowser {
+@MainActor public class MacWebBrowser {
 
 	/// Opens a URL in the default browser.
 	@discardableResult public class func openURL(_ url: URL, inBackground: Bool = false) -> Bool {

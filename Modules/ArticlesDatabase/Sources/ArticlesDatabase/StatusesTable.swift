@@ -17,8 +17,7 @@ import Articles
 //
 // CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 
-nonisolated final class StatusesTable: DatabaseTable, Sendable {
-
+final class StatusesTable: DatabaseTable, Sendable {
 	let name = DatabaseTableName.statuses
 	private let cache = StatusCache()
 	private let queue: DatabaseQueue
@@ -227,7 +226,7 @@ nonisolated final class StatusesTable: DatabaseTable, Sendable {
 
 // MARK: - Private
 
-nonisolated private extension StatusesTable {
+private extension StatusesTable {
 
 	// MARK: - Cache
 
@@ -268,7 +267,7 @@ nonisolated private extension StatusesTable {
 
 // MARK: - StatusCache
 
-nonisolated private final class StatusCache: Sendable {
+private final class StatusCache: Sendable {
 	private struct State {
 		var dictionary = [String: ArticleStatus]()
 	}
@@ -313,5 +312,3 @@ nonisolated private final class StatusCache: Sendable {
 		}
 	}
 }
-
-

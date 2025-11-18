@@ -11,7 +11,7 @@ import RSDatabaseObjC
 
 // Protocol for a database table for related objects — authors and attachments in NetNewsWire, for instance.
 
-nonisolated public protocol DatabaseRelatedObjectsTable: DatabaseTable, Sendable {
+public protocol DatabaseRelatedObjectsTable: DatabaseTable, Sendable {
 
 	var databaseIDKey: String { get}
 	var cache: DatabaseObjectCache { get }
@@ -23,7 +23,7 @@ nonisolated public protocol DatabaseRelatedObjectsTable: DatabaseTable, Sendable
 	func save(_ objects: [DatabaseObject], in database: FMDatabase)
 }
 
-nonisolated public extension DatabaseRelatedObjectsTable {
+public extension DatabaseRelatedObjectsTable {
 
 	// MARK: Default implementations
 

@@ -17,7 +17,7 @@ import RSParserObjC
 //
 // In general, you should see FeedParser.swift for all your feed-parsing needs.
 
-nonisolated public struct RSSParser {
+public struct RSSParser {
 
 	public static func parse(_ parserData: ParserData) -> ParsedFeed? {
 

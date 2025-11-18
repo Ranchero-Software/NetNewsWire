@@ -10,7 +10,7 @@ import Foundation
 import RSDatabase
 import Articles
 
-nonisolated extension RelatedObjectsMap {
+extension RelatedObjectsMap {
 
 	func authors(for articleID: String) -> Set<Author>? {
 		if let objects = self[articleID] {

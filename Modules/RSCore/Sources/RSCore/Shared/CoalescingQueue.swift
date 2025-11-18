@@ -15,22 +15,19 @@ import Foundation
 // Calls are FIFO.
 
 struct QueueCall: Equatable {
-
 	weak var target: AnyObject?
 	let selector: Selector
 
 	func perform() {
-
 		_ = target?.perform(selector)
 	}
 
 	static func ==(lhs: QueueCall, rhs: QueueCall) -> Bool {
-
-		return lhs.target === rhs.target && lhs.selector == rhs.selector
+		lhs.target === rhs.target && lhs.selector == rhs.selector
 	}
 }
 
-@objc public final class CoalescingQueue: NSObject {
+@MainActor @objc public final class CoalescingQueue: NSObject {
 
 	public static let standard = CoalescingQueue(name: "Standard", interval: 0.05, maxInterval: 0.1)
 	public let name: String

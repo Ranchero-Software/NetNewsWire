@@ -20,7 +20,7 @@ import Secrets
 import CloudKitSync
 import FeedFinder
 
-enum CloudKitAccountDelegateError: LocalizedError {
+enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	case invalidParameter
 	case unknown
 

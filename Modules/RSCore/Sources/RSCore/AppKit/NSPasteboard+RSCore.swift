@@ -11,7 +11,6 @@ import AppKit
 public extension NSPasteboard {
 
 	func copyObjects(_ objects: [Any]) {
-
 		guard let writers = writersFor(objects) else {
 			return
 		}
@@ -21,7 +20,6 @@ public extension NSPasteboard {
 	}
 
 	func canCopyAtLeastOneObject(_ objects: [Any]) -> Bool {
-
 		for object in objects {
 			if object is PasteboardWriterOwner {
 				return true
@@ -29,7 +27,6 @@ public extension NSPasteboard {
 		}
 		return false
 	}
-
 }
 
 public extension NSPasteboard {
@@ -55,7 +52,6 @@ public extension NSPasteboard {
 private extension NSPasteboard {
 
 	func writersFor(_ objects: [Any]) -> [NSPasteboardWriting]? {
-
 		let writers = objects.compactMap { ($0 as? PasteboardWriterOwner)?.pasteboardWriter }
 		return writers.isEmpty ? nil : writers
 	}

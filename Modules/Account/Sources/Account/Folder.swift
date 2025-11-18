@@ -18,18 +18,18 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		return .read
 	}
 
-	@MainActor public var containerID: ContainerIdentifier? {
+	public var containerID: ContainerIdentifier? {
 		ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 
-	@MainActor public var sidebarItemID: SidebarItemIdentifier? {
+	public var sidebarItemID: SidebarItemIdentifier? {
 		SidebarItemIdentifier.folder(accountID, nameForDisplay)
 	}
 
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
 
-	@MainActor public var name: String? {
+	public var name: String? {
 		didSet {
 			postDisplayNameDidChangeNotification()
 		}

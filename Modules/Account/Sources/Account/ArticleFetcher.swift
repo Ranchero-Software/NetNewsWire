@@ -10,14 +10,14 @@ import Foundation
 import Articles
 import ArticlesDatabase
 
-public protocol ArticleFetcher {
-	@MainActor func fetchArticles() throws -> Set<Article>
-	@MainActor func fetchArticlesAsync() async throws -> Set<Article>
-	@MainActor func fetchUnreadArticles() throws -> Set<Article>
-	@MainActor func fetchUnreadArticlesAsync() async throws -> Set<Article>
+@MainActor public protocol ArticleFetcher {
+	func fetchArticles() throws -> Set<Article>
+	func fetchArticlesAsync() async throws -> Set<Article>
+	func fetchUnreadArticles() throws -> Set<Article>
+	func fetchUnreadArticlesAsync() async throws -> Set<Article>
 }
 
-@MainActor extension Feed: ArticleFetcher {
+extension Feed: ArticleFetcher {
 
 	public func fetchArticles() throws -> Set<Article> {
 		return try account?.fetchArticles(.feed(self)) ?? Set<Article>()
@@ -46,7 +46,7 @@ public protocol ArticleFetcher {
 	}
 }
 
-@MainActor extension Folder: ArticleFetcher {
+extension Folder: ArticleFetcher {
 
 	public func fetchArticles() throws -> Set<Article> {
 		guard let account else {

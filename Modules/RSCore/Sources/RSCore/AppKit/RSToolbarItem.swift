@@ -5,13 +5,13 @@
 //  Created by Brent Simmons on 10/16/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 
 public class RSToolbarItem: NSToolbarItem {
 
 	override public func validate() {
-
 		guard let view = view, let _ = view.window else {
 			isEnabled = false
 			return
@@ -23,7 +23,6 @@ public class RSToolbarItem: NSToolbarItem {
 private extension RSToolbarItem {
 
 	func isValidAsUserInterfaceItem() -> Bool {
-
 		// Use NSValidatedUserInterfaceItem protocol rather than calling validateToolbarItem:.
 
 		if let target = target as? NSResponder {
@@ -55,7 +54,6 @@ private extension RSToolbarItem {
 	}
 
 	func validateWithResponder(_ responder: NSObjectProtocol) -> Bool? {
-
 		guard responder.responds(to: action), let target = responder as? NSUserInterfaceValidations else {
 			return nil
 		}

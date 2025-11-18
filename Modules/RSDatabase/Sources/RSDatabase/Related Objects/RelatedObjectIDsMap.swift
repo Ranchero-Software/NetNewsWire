@@ -10,8 +10,7 @@ import Foundation
 
 // Maps objectIDs to Set<String> where the Strings are relatedObjectIDs.
 
-nonisolated struct RelatedObjectIDsMap: Sendable {
-
+struct RelatedObjectIDsMap: Sendable {
 	private let dictionary: [String: Set<String>] // objectID: Set<relatedObjectID>
 
 	init(dictionary: [String: Set<String>]) {
@@ -56,7 +55,7 @@ nonisolated struct RelatedObjectIDsMap: Sendable {
 	}
 }
 
-nonisolated struct LookupValue: Hashable, Sendable {
+struct LookupValue: Hashable, Sendable {
 	let objectID: String
 	let relatedObjectID: String
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class AppConfig {
+@MainActor public final class AppConfig {
 
 	public static let appName: String = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 

@@ -8,14 +8,14 @@
 
 import Foundation
 
-public protocol OPMLRepresentable {
+@MainActor public protocol OPMLRepresentable {
 
 	func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String
 }
 
 public extension OPMLRepresentable {
 
-	@MainActor func OPMLString(indentLevel: Int) -> String {
-		return OPMLString(indentLevel: indentLevel, allowCustomAttributes: false)
+	func OPMLString(indentLevel: Int) -> String {
+		OPMLString(indentLevel: indentLevel, allowCustomAttributes: false)
 	}
 }

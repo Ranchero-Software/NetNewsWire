@@ -31,10 +31,8 @@ struct HTTP4xxResponse {
 	}
 }
 
-@objc public final class DownloadSession: NSObject {
-
+@MainActor @objc public final class DownloadSession: NSObject {
 	public let downloadProgress = DownloadProgress(numberOfTasks: 0)
-
 	private var urlSession: URLSession!
 	private var tasksInProgress = Set<URLSessionTask>()
 	private var tasksPending = Set<URLSessionTask>()

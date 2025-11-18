@@ -12,7 +12,7 @@ import RSDatabaseObjC
 import Articles
 import RSParser
 
-nonisolated extension Article {
+extension Article {
 
 	convenience init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
@@ -137,7 +137,7 @@ nonisolated extension Article {
 	}
 }
 
-nonisolated extension Article: @retroactive DatabaseObject {
+extension Article: @retroactive DatabaseObject {
 
 	public func databaseDictionary() -> DatabaseDictionary? {
 		var d = DatabaseDictionary()
@@ -200,7 +200,7 @@ nonisolated extension Article: @retroactive DatabaseObject {
 	}
 }
 
-nonisolated extension Set where Element == Article {
+extension Set where Element == Article {
 
 	func statuses() -> Set<ArticleStatus> {
 		return Set<ArticleStatus>(map { $0.status })

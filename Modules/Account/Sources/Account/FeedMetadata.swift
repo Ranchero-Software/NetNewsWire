@@ -10,12 +10,11 @@ import Foundation
 import RSWeb
 import Articles
 
-protocol FeedMetadataDelegate: AnyObject {
-	@MainActor func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys)
+@MainActor protocol FeedMetadataDelegate: AnyObject {
+	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys)
 }
 
-final class FeedMetadata: Codable {
-
+@MainActor final class FeedMetadata: Codable {
 	enum CodingKeys: String, CodingKey {
 		case feedID
 		case homePageURL
@@ -169,14 +168,6 @@ final class FeedMetadata: Codable {
 	}
 
 	func valueDidChange(_ key: CodingKeys) {
-		if Thread.isMainThread {
-			MainActor.assumeIsolated {
-				delegate?.valueDidChange(self, key: key)
-			}
-		} else {
-			Task { @MainActor in
-				delegate?.valueDidChange(self, key: key)
-			}
-		}
+		delegate?.valueDidChange(self, key: key)
 	}
 }

@@ -60,7 +60,7 @@ public enum FetchType {
 	case searchWithArticleIDs(String, Set<String>)
 }
 
-public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
+@MainActor public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles

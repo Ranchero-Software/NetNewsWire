@@ -7,8 +7,9 @@
 //
 
 import Foundation
+
 #if os(macOS)
-nonisolated public extension CGRect {
+public extension CGRect {
 
 	/// Centers a rectangle vertically in another rectangle.
 	///

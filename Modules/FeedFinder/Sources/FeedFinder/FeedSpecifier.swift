@@ -9,8 +9,7 @@
 import Foundation
 import RSWeb
 
-nonisolated public struct FeedSpecifier: Hashable, Sendable {
-
+public struct FeedSpecifier: Hashable, Sendable {
 	public enum Source: Int, Sendable {
 		case UserEntered = 0, HTMLHead, HTMLLink
 
@@ -77,7 +76,7 @@ nonisolated public struct FeedSpecifier: Hashable, Sendable {
 	}
 }
 
-nonisolated private extension FeedSpecifier {
+private extension FeedSpecifier {
 
 	func calculatedScore() -> Int {
 		var score = 0

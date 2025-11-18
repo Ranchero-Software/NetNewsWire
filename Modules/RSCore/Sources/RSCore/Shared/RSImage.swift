@@ -19,10 +19,10 @@ import UIKit
 public typealias RSImage = UIImage
 #endif
 
-nonisolated private let RSImageLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "RSImage")
-nonisolated private let debugLoggingEnabled = false
+private let RSImageLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "RSImage")
+private let debugLoggingEnabled = false
 
-nonisolated public extension RSImage {
+public extension RSImage {
 
 	/// Create a colored image from the source image using a specified color.
 	///

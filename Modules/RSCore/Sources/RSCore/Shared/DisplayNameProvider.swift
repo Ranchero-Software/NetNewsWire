@@ -9,19 +9,18 @@
 import Foundation
 
 extension Notification.Name {
-
 	public static let DisplayNameDidChange = Notification.Name("DisplayNameDidChange")
 }
 
 /// A type that provides a name for display to the user.
 
 @MainActor public protocol DisplayNameProvider {
-	@MainActor var nameForDisplay: String { get }
+	var nameForDisplay: String { get }
 }
 
 public extension DisplayNameProvider {
 
-	@MainActor func postDisplayNameDidChangeNotification() {
+	func postDisplayNameDidChangeNotification() {
 		NotificationCenter.default.post(name: .DisplayNameDidChange, object: self, userInfo: nil)
 	}
 }

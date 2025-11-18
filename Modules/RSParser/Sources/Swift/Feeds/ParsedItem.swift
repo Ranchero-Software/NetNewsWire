@@ -9,8 +9,7 @@
 import Foundation
 import RSMarkdown
 
-nonisolated public struct ParsedItem: Hashable, Sendable {
-
+public struct ParsedItem: Hashable, Sendable {
 	public let syncServiceID: String? //Nil when not syncing
 	public let uniqueID: String //RSS guid, for instance; may be calculated
 	public let feedURL: String
@@ -73,4 +72,3 @@ nonisolated public struct ParsedItem: Hashable, Sendable {
 		}
 	}
 }
-

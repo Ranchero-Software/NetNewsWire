@@ -9,7 +9,7 @@
 
 import Foundation
 
-nonisolated public enum TransportError: LocalizedError, Sendable {
+public enum TransportError: LocalizedError, Sendable {
 	case noData
     case noURL
 	case suspended

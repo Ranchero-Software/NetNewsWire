@@ -15,8 +15,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 /// Simple downloader, for a one-shot download like an image
 /// or a web page. For a download-feeds session, see DownloadSession.
 /// Caches response for a short time for GET requests. May return cached response.
-public final class Downloader {
-
+@MainActor public final class Downloader {
 	public static let shared = Downloader()
 	private let urlSession: URLSession
 	private var callbacks = [URL: [DownloadCallback]]()
