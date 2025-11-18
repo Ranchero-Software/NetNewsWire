@@ -6,7 +6,7 @@
 //  Copyright © 2018 Ranchero Software. All rights reserved.
 //
 
-import SafariServices
+@preconcurrency import SafariServices
 
 final class SafariExtensionHandler: SFSafariExtensionHandler {
 
@@ -29,8 +29,8 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 	}
 
 	// Maps from UUID to a validation wrapper
-	static var gPingPongMap = Dictionary<String, ValidationWrapper>()
-	static var validationQueue = DispatchQueue(label: "Toolbar Validation")
+	nonisolated(unsafe) static var gPingPongMap = Dictionary<String, ValidationWrapper>()
+	static let validationQueue = DispatchQueue(label: "Toolbar Validation")
 
 	// Bottleneck for calling through to a validation handler we have saved, and removing it from the list.
 	static func callValidationHandler(forHandlerID handlerID: String, withShouldValidate shouldValidate: Bool) {

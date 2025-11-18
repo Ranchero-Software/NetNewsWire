@@ -196,7 +196,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 
 	// WKNavigationDelegate
 
-	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void) {
 		if navigationAction.navigationType == .linkActivated {
 			if let url = navigationAction.request.url {
 				self.openInBrowser(url, flags: navigationAction.modifierFlags)
@@ -204,7 +204,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			decisionHandler(.cancel)
 			return
 		}
-
+		
 		decisionHandler(.allow)
 	}
 

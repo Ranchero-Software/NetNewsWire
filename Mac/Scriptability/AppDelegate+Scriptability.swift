@@ -92,7 +92,7 @@ extension AppDelegate: AppDelegateAppleEvents {
 }
 
 final class NetNewsWireCreateElementCommand : NSCreateCommand {
-	@MainActor override func performDefaultImplementation() -> Any? {
+	override func performDefaultImplementation() -> Any? {
          let classDescription = self.createClassDescription
          if (classDescription.className == "feed") {
              return ScriptableFeed.handleCreateElement(command:self)

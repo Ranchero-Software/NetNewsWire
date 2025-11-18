@@ -20,7 +20,7 @@ import Sparkle
 
 let appName = "NetNewsWire"
 
-var appDelegate: AppDelegate!
+@MainActor var appDelegate: AppDelegate!
 
 @main
 final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
@@ -105,8 +105,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		crashReporter.enable()
 
 		AccountManager.shared.start()
-		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
-
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
@@ -450,23 +448,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	// MARK: UNUserNotificationCenterDelegate
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .badge, .sound])
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
 		let userInfo = response.notification.request.content.userInfo
 
-		switch response.actionIdentifier {
-		case UserNotificationManager.ActionIdentifier.markAsRead:
-			handleMarkAsRead(userInfo: userInfo)
-		case UserNotificationManager.ActionIdentifier.markAsStarred:
-			handleMarkAsStarred(userInfo: userInfo)
-		default:
-			mainWindowController?.handle(response)
+		Task { @MainActor in
+			switch response.actionIdentifier {
+			case UserNotificationManager.ActionIdentifier.markAsRead:
+				handleMarkAsRead(userInfo: userInfo)
+			case UserNotificationManager.ActionIdentifier.markAsStarred:
+				handleMarkAsStarred(userInfo: userInfo)
+			default:
+				mainWindowController?.handle(response)
+			}
+			completionHandler()
 		}
-		completionHandler()
     }
 
 	// MARK: Add Feed

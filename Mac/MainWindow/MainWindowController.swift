@@ -1310,8 +1310,7 @@ private extension MainWindowController {
 	}
 
 	func startArticleExtractorForCurrentLink() {
-		if let link = currentLink, let extractor = ArticleExtractor(link) {
-			extractor.delegate = self
+		if let link = currentLink, let extractor = ArticleExtractor(link, delegate: self) {
 			extractor.process()
 			articleExtractor = extractor
 		}

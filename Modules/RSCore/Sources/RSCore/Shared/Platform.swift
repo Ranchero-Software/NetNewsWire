@@ -76,16 +76,18 @@ private extension Platform {
 
 	static func dataFolder(forApplication appName: String?) -> URL? {
 		do {
+			#if os(macOS)
 			var dataFolder = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
 
 			if let appName = appName ?? Bundle.main.infoDictionary?["CFBundleExecutable"] as? String {
-
 				dataFolder = dataFolder.appendingPathComponent(appName)
-
-				try FileManager.default.createDirectory(at: dataFolder, withIntermediateDirectories: true, attributes: nil)
 			}
+			#else // iOS
+			let dataFolder = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+			#endif
 
-			return dataFolder
+			try FileManager.default.createDirectory(at: dataFolder, withIntermediateDirectories: true, attributes: nil)
+
 		} catch {
 			Self.logger.error("Platform.dataFolder error: \(error.localizedDescription)")
 		}

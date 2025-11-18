@@ -9,14 +9,14 @@
 import Foundation
 
 @MainActor protocol ScriptingObject {
-    var objectSpecifier: NSScriptObjectSpecifier?  { get }
-    var scriptingKey: String { get }
+	@MainActor var objectSpecifier: NSScriptObjectSpecifier?  { get }
+	@MainActor var scriptingKey: String { get }
 }
 
 @MainActor protocol NamedScriptingObject: ScriptingObject {
-    var name:String { get }
+	@MainActor var name:String { get }
 }
 
 @MainActor protocol UniqueIDScriptingObject: ScriptingObject {
-	var scriptingUniqueID: Any { get }
+	@MainActor var scriptingUniqueID: Any { get }
 }

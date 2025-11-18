@@ -10,7 +10,7 @@ import UIKit
 import RSCore
 import Account
 
-protocol AddFeedFolderViewControllerDelegate {
+@MainActor protocol AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container)
 }
 
