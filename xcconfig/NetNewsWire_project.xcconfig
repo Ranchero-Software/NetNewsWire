@@ -51,8 +51,9 @@ IPHONEOS_DEPLOYMENT_TARGET = 26.0
 //SDKROOT = macosx
 SWIFT_EMIT_LOC_STRINGS = YES
 SWIFT_SWIFT3_OBJC_INFERENCE = Off
-SWIFT_VERSION = 5.10
+SWIFT_VERSION = 6.2
 SWIFT_TREAT_WARNINGS_AS_ERRORS = YES
+OTHER_SWIFT_FLAGS = $(inherited) -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-upcoming-feature InferIsolatedConformances
 
 // https://forums.swift.org/t/swift-packages-in-multiple-targets-results-in-this-will-result-in-duplication-of-library-code-errors/34892/33
 DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES

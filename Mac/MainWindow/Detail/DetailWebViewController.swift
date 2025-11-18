@@ -12,7 +12,7 @@ import RSCore
 import RSWeb
 import Articles
 
-protocol DetailWebViewControllerDelegate: AnyObject {
+@MainActor protocol DetailWebViewControllerDelegate: AnyObject {
 	func mouseDidEnter(_: DetailWebViewController, link: String)
 	func mouseDidExit(_: DetailWebViewController)
 }

@@ -17,7 +17,7 @@ import CrashReporter
 // At some point this code should probably move into RSCore, so Rainier and any other
 // future apps can use it.
 
-struct CrashReporter {
+@MainActor struct CrashReporter {
 
 	struct DefaultsKey {
 		static let sendCrashLogsAutomaticallyKey = "SendCrashLogsAutomatically"

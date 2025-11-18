@@ -9,8 +9,8 @@
 #if os(macOS)
 import AppKit
 
-@objc public protocol KeyboardDelegate: AnyObject {
+@MainActor @objc public protocol KeyboardDelegate: AnyObject {
 	// Return true if handled.
-	@MainActor func keydown(_: NSEvent, in view: NSView) -> Bool
+	func keydown(_: NSEvent, in view: NSView) -> Bool
 }
 #endif
