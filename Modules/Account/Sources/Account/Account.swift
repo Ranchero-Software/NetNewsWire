@@ -85,7 +85,7 @@ public enum FetchType {
 	public var account: Account? {
 		return self
 	}
-	public let accountID: String
+	nonisolated public let accountID: String
 	public let type: AccountType
 	public var nameForDisplay: String {
 		guard let name = name, !name.isEmpty else {

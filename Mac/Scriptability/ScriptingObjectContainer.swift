@@ -9,14 +9,14 @@
 import AppKit
 import Account
 
-@MainActor protocol ScriptingObjectContainer: ScriptingObject {
-	@MainActor var scriptingClassDescription:NSScriptClassDescription { get }
-	@MainActor func deleteElement(_ element:ScriptingObject)
+protocol ScriptingObjectContainer: ScriptingObject {
+	var scriptingClassDescription:NSScriptClassDescription { get }
+	func deleteElement(_ element:ScriptingObject)
 }
 
-@MainActor extension ScriptingObjectContainer {
+extension ScriptingObjectContainer {
 
-	@MainActor func makeFormNameScriptObjectSpecifier(forObject object:NamedScriptingObject) -> NSScriptObjectSpecifier? {
+	nonisolated func makeFormNameScriptObjectSpecifier(forObject object:NamedScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier
         let scriptingKey = object.scriptingKey
@@ -26,7 +26,7 @@ import Account
         return specifier
     }
 
-	@MainActor func makeFormUniqueIDScriptObjectSpecifier(forObject object:UniqueIDScriptingObject) -> NSScriptObjectSpecifier? {
+	nonisolated func makeFormUniqueIDScriptObjectSpecifier(forObject object:UniqueIDScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier
         let scriptingKey = object.scriptingKey

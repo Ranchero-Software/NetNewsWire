@@ -12,10 +12,10 @@ import Account
 import Articles
 
 @objc(ScriptableFeed)
-@MainActor final class ScriptableFeed: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
+@MainActor final class ScriptableFeed: NSObject, UniqueIDScriptingObject, @preconcurrency ScriptingObjectContainer {
 
     let feed:Feed
-    let container:ScriptingObjectContainer
+    nonisolated(unsafe) let container:ScriptingObjectContainer
 
     init (_ feed:Feed, container:ScriptingObjectContainer) {
         self.feed = feed
@@ -23,9 +23,9 @@ import Articles
     }
 
     @objc(objectSpecifier)
-    override var objectSpecifier: NSScriptObjectSpecifier? {
+    nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
         let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
-        return (scriptObjectSpecifier)
+        return scriptObjectSpecifier
     }
 
     @objc(scriptingSpecifierDescriptor)
@@ -35,7 +35,7 @@ import Articles
 
     // MARK: --- ScriptingObject protocol ---
 
-    var scriptingKey: String {
+    nonisolated var scriptingKey: String {
         return "feeds"
     }
 
@@ -44,13 +44,13 @@ import Articles
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
-    var scriptingUniqueID:Any {
+    nonisolated var scriptingUniqueID:Any {
         return feed.feedID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
 
-    var scriptingClassDescription: NSScriptClassDescription {
+    nonisolated var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
 

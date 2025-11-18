@@ -8,15 +8,15 @@
 
 import Foundation
 
-@MainActor protocol ScriptingObject {
-	@MainActor var objectSpecifier: NSScriptObjectSpecifier?  { get }
-	@MainActor var scriptingKey: String { get }
+protocol ScriptingObject {
+	var objectSpecifier: NSScriptObjectSpecifier?  { get }
+	var scriptingKey: String { get }
 }
 
-@MainActor protocol NamedScriptingObject: ScriptingObject {
-	@MainActor var name:String { get }
+protocol NamedScriptingObject: ScriptingObject {
+	var name:String { get }
 }
 
-@MainActor protocol UniqueIDScriptingObject: ScriptingObject {
-	@MainActor var scriptingUniqueID: Any { get }
+protocol UniqueIDScriptingObject: ScriptingObject {
+	var scriptingUniqueID: Any { get }
 }

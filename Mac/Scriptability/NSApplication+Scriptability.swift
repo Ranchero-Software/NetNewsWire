@@ -10,19 +10,19 @@ import AppKit
 import Account
 import Articles
 
-extension NSApplication : ScriptingObjectContainer {
+extension NSApplication : @preconcurrency ScriptingObjectContainer {
 
     // MARK: --- ScriptingObjectContainer protocol ---
 
-    var scriptingClassDescription: NSScriptClassDescription {
-        return NSApplication.shared.classDescription as! NSScriptClassDescription
+    nonisolated var scriptingClassDescription: NSScriptClassDescription {
+        return self.classDescription as! NSScriptClassDescription
     }
 
     func deleteElement(_ element:ScriptingObject) {
         print ("delete event not handled")
     }
 
-    var scriptingKey: String {
+    nonisolated var scriptingKey: String {
         return "application"
     }
 
