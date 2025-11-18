@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
+@MainActor final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
 
 	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
 	var getStreamContentsExpectation: XCTestExpectation?

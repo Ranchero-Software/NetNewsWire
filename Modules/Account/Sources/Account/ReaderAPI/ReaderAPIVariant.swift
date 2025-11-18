@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ReaderAPIVariant {
+nonisolated public enum ReaderAPIVariant: Sendable {
 	case generic
 	case freshRSS
 	case inoreader
@@ -26,5 +26,4 @@ public enum ReaderAPIVariant {
 			return ""
 		}
 	}
-
 }

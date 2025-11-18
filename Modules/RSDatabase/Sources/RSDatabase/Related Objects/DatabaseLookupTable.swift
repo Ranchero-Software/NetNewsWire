@@ -14,7 +14,7 @@ import RSDatabaseObjC
 // Example: CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
 // articleID is objectID; authorID is relatedObjectID.
 
-nonisolated public final class DatabaseLookupTable: Sendable {
+public final class DatabaseLookupTable: Sendable {
 	private let name: String
 	private let objectIDKey: String
 	private let relatedObjectIDKey: String
@@ -86,7 +86,7 @@ nonisolated public final class DatabaseLookupTable: Sendable {
 
 // MARK: - Private
 
-nonisolated private extension DatabaseLookupTable {
+private extension DatabaseLookupTable {
 
 	// MARK: Removing
 

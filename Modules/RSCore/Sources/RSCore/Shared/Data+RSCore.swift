@@ -9,8 +9,7 @@
 import Foundation
 import CryptoKit
 
-nonisolated public extension Data {
-
+public extension Data {
 	/// The MD5 hash of the data.
 	var md5Hash: Data {
 		let digest = Insecure.MD5.hash(data: self)
@@ -85,7 +84,6 @@ nonisolated public extension Data {
 
 	/// Constants for `isProbablyHTML`.
 	private enum RSSearch {
-
 		static let lessThan = "<".utf8.first!
 		static let greaterThan = ">".utf8.first!
 

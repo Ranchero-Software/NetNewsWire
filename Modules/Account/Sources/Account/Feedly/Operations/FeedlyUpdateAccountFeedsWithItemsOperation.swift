@@ -26,7 +26,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation, @unchec
 		Task { @MainActor in
 			let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 			do {
-				try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+				try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 				didComplete()
 			} catch {
 				didComplete(with: error)

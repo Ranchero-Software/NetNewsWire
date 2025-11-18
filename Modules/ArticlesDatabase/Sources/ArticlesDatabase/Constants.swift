@@ -10,16 +10,14 @@ import Foundation
 
 // MARK: - Database structure
 
-nonisolated struct DatabaseTableName {
-
+struct DatabaseTableName {
 	static let articles = "articles"
 	static let authors = "authors"
 	static let authorsLookup = "authorsLookup"
 	static let statuses = "statuses"
 }
 
-nonisolated struct DatabaseKey {
-
+struct DatabaseKey {
 	// Shared
 	static let articleID = "articleID"
 	static let url = "url"
@@ -59,7 +57,6 @@ nonisolated struct DatabaseKey {
 	static let rowID = "rowid"
 }
 
-nonisolated struct RelationshipName {
-
+struct RelationshipName {
 	static let authors = "authors"
 }

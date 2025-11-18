@@ -16,12 +16,12 @@ import SyncDatabase
 import os.log
 import Secrets
 
-public enum FeedbinAccountDelegateError: String, Error {
+public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	case invalidParameter = "There was an invalid parameter passed."
 	case unknown = "An unknown error occurred."
 }
 
-final class FeedbinAccountDelegate: AccountDelegate {
+@MainActor final class FeedbinAccountDelegate: AccountDelegate {
 	let behaviors: AccountBehaviors = [.disallowFeedCopyInRootFolder]
 	let server: String? = "api.feedbin.com"
 	var isOPMLImportInProgress = false
@@ -70,7 +70,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
 	}
 
-	@MainActor func refreshAll(for account: Account) async throws {
+	func refreshAll(for account: Account) async throws {
 		refreshProgress.reset()
 		refreshProgress.addTasks(5)
 
@@ -83,12 +83,12 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws {
+	func syncArticleStatus(for account: Account) async throws {
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
 	}
 
-	@MainActor func sendArticleStatus(for account: Account) async throws {
+	func sendArticleStatus(for account: Account) async throws {
 		Self.logger.info("Feedbin: Sending article statuses")
 		defer {
 			Self.logger.info("Feedbin: Finished sending article statuses")
@@ -111,7 +111,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
 	}
 
-	@MainActor func refreshArticleStatus(for account: Account) async throws {
+	func refreshArticleStatus(for account: Account) async throws {
 		Self.logger.info("Feedbin: Refreshing article statuses")
 		var refreshError: Error?
 
@@ -138,7 +138,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+	func importOPML(for account: Account, opmlFile: URL) async throws {
 		let opmlData = try Data(contentsOf: opmlFile)
 		guard !opmlData.isEmpty else {
 			return
@@ -166,14 +166,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+	func createFolder(for account: Account, name: String) async throws -> Folder {
 		guard let folder = account.ensureFolder(with: name) else {
 			throw AccountError.invalidParameter
 		}
 		return folder
 	}
 
-	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		guard folder.hasAtLeastOneFeed() else {
 			folder.name = name
 			return
@@ -193,7 +193,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
+	func removeFolder(for account: Account, with folder: Folder) async throws {
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
 			account.removeFolderFromTree(folder)
@@ -232,7 +232,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	}
 
 	@discardableResult
-	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
@@ -253,7 +253,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
 			throw AccountError.invalidParameter
@@ -272,7 +272,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+	func removeFeed(account: Account, feed: Feed, container: Container) async throws {
 		if feed.folderRelationship?.count ?? 0 > 1 {
 			try await deleteTagging(for: account, with: feed, from: container)
 		} else {
@@ -280,7 +280,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		if sourceContainer is Account {
 			try await addFeed(account: account, feed: feed, container: destinationContainer)
 		} else {
@@ -289,7 +289,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
+	func addFeed(account: Account, feed: Feed, container: Container) async throws {
 		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 
 			refreshProgress.addTask()
@@ -309,7 +309,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			try await account.addFeed(existingFeed, container: container)
 		} else {
@@ -317,7 +317,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
+	func restoreFolder(for account: Account, folder: Folder) async throws {
 		for feed in folder.topLevelFeeds {
 
 			folder.topLevelFeeds.remove(feed)
@@ -332,8 +332,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		account.addFolderToTree(folder)
 	}
 
-	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		let articles = try await account.update(articles, statusKey: statusKey, flag: flag)
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
@@ -380,7 +380,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 private extension FeedbinAccountDelegate {
 
-	@MainActor func checkImportResult(opmlImportResultID: Int) async throws {
+	func checkImportResult(opmlImportResultID: Int) async throws {
 		try await withCheckedThrowingContinuation { continuation in
 			self.checkImportResult(opmlImportResultID: opmlImportResultID) { result in
 				continuation.resume(with: result)
@@ -388,7 +388,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor private func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			while true {
 				try? await Task.sleep(for: .seconds(15))
@@ -415,7 +415,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor func refreshAccount(_ account: Account) async throws {
+	func refreshAccount(_ account: Account) async throws {
 		let tags = try await caller.retrieveTags()
 		refreshProgress.completeTask()
 
@@ -432,7 +432,7 @@ private extension FeedbinAccountDelegate {
 		refreshProgress.completeTask()
 	}
 
-	@MainActor func refreshArticlesAndStatuses(_ account: Account) async throws {
+	func refreshArticlesAndStatuses(_ account: Account) async throws {
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
 		try await refreshArticles(account)
@@ -442,7 +442,7 @@ private extension FeedbinAccountDelegate {
 
 	// This function can be deleted if Feedbin updates their taggings.json service to
 	// show a change when a tag is renamed.
-	@MainActor func forceExpireFolderFeedRelationship(_ account: Account, _ tags: [FeedbinTag]?) {
+	func forceExpireFolderFeedRelationship(_ account: Account, _ tags: [FeedbinTag]?) {
 		guard let tags = tags else { return }
 
 		let folderNames: [String] =  {
@@ -464,7 +464,7 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	@MainActor func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
+	func syncFolders(_ account: Account, _ tags: [FeedbinTag]?) {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
 
@@ -502,7 +502,7 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	@MainActor func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
+	func syncFeeds(_ account: Account, _ subscriptions: [FeedbinSubscription]?) {
 
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
@@ -556,7 +556,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor func syncFeedFolderRelationship(_ account: Account, _ taggings: [FeedbinTagging]?) {
+	func syncFeedFolderRelationship(_ account: Account, _ taggings: [FeedbinTagging]?) {
 
 		guard let taggings = taggings else { return }
 		assert(Thread.isMainThread)
@@ -618,7 +618,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
+	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
 		guard let folders = folders else {
 			return [String: Folder]()
 		}
@@ -633,7 +633,7 @@ private extension FeedbinAccountDelegate {
 		return d
 	}
 
-	@MainActor func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int]) async throws -> Void) async throws {
+	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int]) async throws -> Void) async throws {
 		guard !statuses.isEmpty else {
 			return
 		}
@@ -658,7 +658,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
+	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
 		for feed in account.flattenedFeeds() {
 			if var folderRelationship = feed.folderRelationship {
 				let relationship = folderRelationship[fromName]
@@ -669,14 +669,14 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
+	func clearFolderRelationship(for feed: Feed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = nil
 			feed.folderRelationship = folderRelationship
 		}
 	}
 
-	@MainActor func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
+	func saveFolderRelationship(for feed: Feed, withFolderName folderName: String, id: String) {
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderName] = id
 			feed.folderRelationship = folderRelationship
@@ -685,7 +685,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice]) async throws -> Feed {
+	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice]) async throws -> Feed {
 		var orderFound = 0
 
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
@@ -704,7 +704,7 @@ private extension FeedbinAccountDelegate {
 	}
 
 	@discardableResult
-	@MainActor func createFeed(account: Account, subscription: FeedbinSubscription, name: String?, container: Container) async throws -> Feed {
+	func createFeed(account: Account, subscription: FeedbinSubscription, name: String?, container: Container) async throws -> Feed {
 		let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
 		feed.externalID = String(subscription.subscriptionID)
 		feed.iconURL = subscription.jsonFeed?.icon
@@ -722,7 +722,7 @@ private extension FeedbinAccountDelegate {
 		return feed
 	}
 
-	@MainActor func initialFeedDownload(account: Account, feed: Feed) async throws -> Feed {
+	func initialFeedDownload(account: Account, feed: Feed) async throws -> Feed {
 		// Download the initial articles
 		let (entries, page) = try await caller.retrieveEntries(feedID: feed.feedID)
 		try await processEntries(account: account, entries: entries)
@@ -733,7 +733,7 @@ private extension FeedbinAccountDelegate {
 		return feed
 	}
 
-	@MainActor func refreshArticles(_ account: Account) async throws {
+	func refreshArticles(_ account: Account) async throws {
 		Self.logger.info("Feedbin: Refreshing articles")
 
 		let (entries, page, updateFetchDate, lastPageNumber) = try await caller.retrieveEntries()
@@ -748,7 +748,7 @@ private extension FeedbinAccountDelegate {
 		try await refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
 	}
 
-	@MainActor func refreshMissingArticles(_ account: Account) async throws {
+	func refreshMissingArticles(_ account: Account) async throws {
 		Self.logger.info("Feedbin: Refreshing missing articles")
 		defer {
 			refreshProgress.completeTask()
@@ -758,7 +758,7 @@ private extension FeedbinAccountDelegate {
 		var savedError: Error?
 
 		do {
-			let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
+			let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 			let articleIDs = Array(fetchedArticleIDs)
 			let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
@@ -781,7 +781,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?) async throws {
+	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?) async throws {
 		guard let page else {
 			if let lastArticleFetch = updateFetchDate {
 				accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
@@ -798,10 +798,10 @@ private extension FeedbinAccountDelegate {
 		try await refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate)
 	}
 
-	@MainActor func processEntries(account: Account, entries: [FeedbinEntry]?) async throws {
+	func processEntries(account: Account, entries: [FeedbinEntry]?) async throws {
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		try await account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 
 	func mapEntriesToParsedItems(entries: [FeedbinEntry]?) -> Set<ParsedItem> {
@@ -818,7 +818,7 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	@MainActor func syncArticleReadState(account: Account, articleIDs: [Int]?) async {
+	func syncArticleReadState(account: Account, articleIDs: [Int]?) async {
 		guard let articleIDs else {
 			return
 		}
@@ -831,21 +831,21 @@ private extension FeedbinAccountDelegate {
 			let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
 			let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
 
-			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDs()
+			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
 
 			// Mark articles as unread
 			let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-			try await account.markAsUnread(deltaUnreadArticleIDs)
+			try await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 			// Mark articles as read
 			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-			try await account.markAsRead(deltaReadArticleIDs)
+			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 		} catch {
 			Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
 		}
 	}
 
-	@MainActor func syncArticleStarredState(account: Account, articleIDs: [Int]?) async {
+	func syncArticleStarredState(account: Account, articleIDs: [Int]?) async {
 		guard let articleIDs else {
 			return
 		}
@@ -858,21 +858,21 @@ private extension FeedbinAccountDelegate {
 			let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
 			let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
 
-			let currentStarredArticleIDs = try await account.fetchStarredArticleIDs()
+			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
 
 			// Mark articles as starred
 			let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-			try await account.markAsStarred(deltaStarredArticleIDs)
+			try await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 			// Mark articles as unstarred
 			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
-			try await account.markAsUnstarred(deltaUnstarredArticleIDs)
+			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 		} catch {
 			Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
 		}
 	}
 
-	@MainActor func deleteTagging(for account: Account, with feed: Feed, from container: Container?) async throws {
+	func deleteTagging(for account: Account, with feed: Feed, from container: Container?) async throws {
 		if let folder = container as? Folder, let feedTaggingID = feed.folderRelationship?[folder.name ?? ""] {
 			refreshProgress.addTask()
 			defer {
@@ -894,7 +894,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor func deleteSubscription(for account: Account, with feed: Feed, from container: Container?) async throws {
+	func deleteSubscription(for account: Account, with feed: Feed, from container: Container?) async throws {
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
 			throw AccountError.invalidParameter

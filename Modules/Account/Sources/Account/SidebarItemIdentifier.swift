@@ -13,7 +13,6 @@ import Foundation
 }
 
 public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable, Sendable {
-
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
 	case feed(String, String) // accountID, feedID

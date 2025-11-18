@@ -73,6 +73,6 @@ import Account
 		lastTimedRefresh = Date()
 		update()
 
-		AccountManager.shared.refreshAll()
+		AccountManager.shared.refreshAllWithoutWaiting()
 	}
 }

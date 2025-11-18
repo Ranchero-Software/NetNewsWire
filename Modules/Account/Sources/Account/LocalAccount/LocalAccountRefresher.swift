@@ -167,7 +167,7 @@ import os
 			}
 
 			assert(Thread.isMainThread)
-			guard let articleChanges = try? await account.update(feed, with: parsedFeed) else {
+			guard let articleChanges = try? await account.updateAsync(feed: feed, parsedFeed: parsedFeed) else {
 				return
 			}
 

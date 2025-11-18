@@ -16,16 +16,16 @@ import Secrets
 	private var account: Account!
 	private let support = FeedlyTestSupport()
 
-	override func setUp() {
-		super.setUp()
+	override func setUp() async throws {
+		try await super.setUp()
 		account = support.makeTestAccount()
 	}
 
-	override func tearDown() {
+	override func tearDown() async throws {
 		if let account = account {
 			support.destroy(account)
 		}
-		super.tearDown()
+		try await super.tearDown()
 	}
 
 	private func getTokens(for account: Account) throws -> (accessToken: Credentials, refreshToken: Credentials) {
@@ -40,7 +40,7 @@ import Secrets
 		var mockResult: Result<Void, Error>?
 		var logoutExpectation: XCTestExpectation?
 
-		func logout(completion: @escaping (Result<Void, Error>) -> ()) {
+		func logout(completion: @escaping @MainActor (Result<Void, Error>) -> ()) {
 			guard let result = mockResult else {
 				XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 				return

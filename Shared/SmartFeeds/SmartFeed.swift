@@ -12,7 +12,7 @@ import Articles
 import ArticlesDatabase
 import Account
 
-final class SmartFeed: PseudoFeed {
+@MainActor final class SmartFeed: PseudoFeed {
 
 	var account: Account? = nil
 
@@ -75,7 +75,9 @@ final class SmartFeed: PseudoFeed {
 		if activeAccounts.isEmpty {
 			updateUnreadCount()
 		} else {
-			activeAccounts.forEach { self.fetchUnreadCount(for: $0) }
+			for account in activeAccounts {
+				fetchUnreadCount(account: account)
+			}
 		}
 	}
 
@@ -84,19 +86,19 @@ final class SmartFeed: PseudoFeed {
 extension SmartFeed: ArticleFetcher {
 
 	func fetchArticles() throws -> Set<Article> {
-		return try delegate.fetchArticles()
+		try delegate.fetchArticles()
 	}
 
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		delegate.fetchArticlesAsync(completion)
+	func fetchArticlesAsync() async throws -> Set<Article> {
+		try await delegate.fetchArticlesAsync()
 	}
 
 	func fetchUnreadArticles() throws -> Set<Article> {
-		return try delegate.fetchUnreadArticles()
+		try delegate.fetchUnreadArticles()
 	}
 
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		delegate.fetchUnreadArticlesAsync(completion)
+	func fetchUnreadArticlesAsync() async throws -> Set<Article> {
+		try await delegate.fetchUnreadArticlesAsync()
 	}
 }
 
@@ -106,24 +108,24 @@ private extension SmartFeed {
 		CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
 	}
 
-	func fetchUnreadCount(for account: Account) {
-		delegate.fetchUnreadCount(for: account) { singleUnreadCountResult in
-			guard let singleUnreadCountResult, let accountUnreadCount = try? singleUnreadCountResult.get() else {
+	func fetchUnreadCount(account: Account) {
+		Task { @MainActor in
+			guard let unreadCount = try? await delegate.fetchUnreadCount(account: account) else {
 				return
 			}
-			Task { @MainActor in
-				self.unreadCounts[account.accountID] = accountUnreadCount
-				self.updateUnreadCount()
-			}
+			unreadCounts[account.accountID] = unreadCount
+			updateUnreadCount()
 		}
 	}
 
 	func updateUnreadCount() {
-		unreadCount = AccountManager.shared.activeAccounts.reduce(0) { (result, account) -> Int in
+		var updatedUnreadCount = 0
+		for account in AccountManager.shared.activeAccounts {
 			if let oneUnreadCount = unreadCounts[account.accountID] {
-				return result + oneUnreadCount
+				updatedUnreadCount += oneUnreadCount
 			}
-			return result
 		}
+
+		unreadCount = updatedUnreadCount
 	}
 }

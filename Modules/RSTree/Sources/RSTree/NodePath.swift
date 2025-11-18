@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct NodePath {
+@MainActor public struct NodePath {
 	let components: [Node]
 
 	public init(node: Node) {
@@ -30,7 +30,6 @@ public struct NodePath {
 	}
 
 	public init?(representedObject: AnyObject, treeController: TreeController) {
-
 		if let node = treeController.nodeInTreeRepresentingObject(representedObject) {
 			self.init(node: node)
 		}

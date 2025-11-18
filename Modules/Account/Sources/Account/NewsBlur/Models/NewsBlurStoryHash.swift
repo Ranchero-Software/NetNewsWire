@@ -12,19 +12,19 @@ import RSParser
 
 typealias NewsBlurStoryHash = NewsBlurStoryHashesResponse.StoryHash
 
-struct NewsBlurStoryHashesResponse: Decodable {
+struct NewsBlurStoryHashesResponse: Decodable, Sendable {
 	typealias StoryHashDictionary = [String: [StoryHash]]
 
 	var unread: [StoryHash]?
 	var starred: [StoryHash]?
 
-	struct StoryHash: Hashable, Codable {
-		var hash: String
-		var timestamp: Date
+	struct StoryHash: Hashable, Codable, Sendable {
+		let hash: String
+		let timestamp: Date
 	}
 }
 
-extension NewsBlurStoryHashesResponse {
+nonisolated extension NewsBlurStoryHashesResponse {
 	private enum CodingKeys: String, CodingKey {
 		case unread = "unread_feed_story_hashes"
 		case starred = "starred_story_hashes"

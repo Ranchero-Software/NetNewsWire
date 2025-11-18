@@ -26,7 +26,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 	let compressionQueue = DispatchQueue(label: "Articles Zone Compression Queue")
 
-	struct CloudKitArticle {
+	struct CloudKitArticle: Sendable {
 		static let recordType = "Article"
 		struct Fields {
 			static let articleStatus = "articleStatus"
@@ -47,7 +47,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 
-	struct CloudKitArticleStatus {
+	struct CloudKitArticleStatus: Sendable {
 		static let recordType = "ArticleStatus"
 		struct Fields {
 			static let feedExternalID = "webFeedExternalID"
@@ -223,7 +223,7 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 
-	func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
+	nonisolated func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
 		var result = [CKRecord]()
 
 		for record in records {

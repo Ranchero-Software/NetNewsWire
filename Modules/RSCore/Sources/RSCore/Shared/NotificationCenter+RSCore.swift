@@ -7,9 +7,9 @@
 
 import Foundation
 
-nonisolated public extension NotificationCenter {
+public extension NotificationCenter {
 
-	func postOnMainThread(name: Notification.Name, object: Any?, userInfo: [AnyHashable : Any]? = nil) {
+	nonisolated func postOnMainThread(name: Notification.Name, object: Any?, userInfo: [AnyHashable : Any]? = nil) {
 		nonisolated(unsafe) let capturedObject = object
 		nonisolated(unsafe) let capturedUserInfo = userInfo
 		Task { @MainActor in

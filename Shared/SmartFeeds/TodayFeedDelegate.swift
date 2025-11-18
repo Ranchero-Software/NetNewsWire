@@ -13,7 +13,6 @@ import ArticlesDatabase
 import Account
 
 struct TodayFeedDelegate: SmartFeedDelegate {
-
 	var sidebarItemID: SidebarItemIdentifier? {
 		return SidebarItemIdentifier.smartFeed(String(describing: TodayFeedDelegate.self))
 	}
@@ -24,8 +23,8 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 		return AppAssets.todayFeedImage
 	}
 
-	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
-		account.fetchUnreadCountForToday(completion)
+	func fetchUnreadCount(account: Account) async throws -> Int? {
+		try await account.fetchUnreadCountForTodayAsync()
 	}
 }
 

@@ -25,7 +25,6 @@ let package = Package(
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances"),
-				.defaultIsolation(MainActor.self)
 			]),
 		.target(
 			name: "RSParserObjC",
@@ -39,6 +38,11 @@ let package = Package(
 			name: "RSParserTests",
 			dependencies: ["RSParser"],
 			exclude: ["Info.plist"],
-			resources: [.copy("Resources")]),
+			resources: [.copy("Resources")],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+			]
+		),
 	]
 )

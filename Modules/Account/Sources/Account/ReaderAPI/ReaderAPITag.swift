@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ReaderAPITagContainer: Codable {
+struct ReaderAPITagContainer: Codable, Sendable {
 	let tags: [ReaderAPITag]
 
 	enum CodingKeys: String, CodingKey {
@@ -16,8 +16,7 @@ struct ReaderAPITagContainer: Codable {
 	}
 }
 
-struct ReaderAPITag: Codable {
-
+struct ReaderAPITag: Codable, Sendable {
 	let tagID: String
 	let type: String?
 
@@ -32,5 +31,4 @@ struct ReaderAPITag: Codable {
 		}
 		return String(tagID.suffix(from: range.upperBound))
 	}
-
 }

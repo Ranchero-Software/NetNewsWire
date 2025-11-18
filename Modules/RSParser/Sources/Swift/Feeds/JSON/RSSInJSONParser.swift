@@ -14,7 +14,7 @@ import RSParserObjC
 // See https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md
 // Also: http://cyber.harvard.edu/rss/rss.html
 
-nonisolated public struct RSSInJSONParser {
+public struct RSSInJSONParser {
 
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 		do {
@@ -59,7 +59,7 @@ nonisolated public struct RSSInJSONParser {
 	}
 }
 
-nonisolated private extension RSSInJSONParser {
+private extension RSSInJSONParser {
 
 	static func parseItems(_ itemsObject: JSONArray, _ feedURL: String) -> Set<ParsedItem> {
 

@@ -8,8 +8,7 @@
 
 import Foundation
 
-nonisolated public extension FileManager {
-
+public extension FileManager {
 	/// Returns whether a path refers to a folder.
 	///
 	/// - Parameter path: The file path to check.

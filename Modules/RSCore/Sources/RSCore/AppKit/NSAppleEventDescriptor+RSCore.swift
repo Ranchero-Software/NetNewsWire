@@ -17,7 +17,6 @@ public extension NSAppleEventDescriptor {
 	/// - Returns: An instance of `NSAppleEventDescriptor` that refers to the running application,
 	///   or `nil` if the running application has no process ID.
 	convenience init?(runningApplication: NSRunningApplication) {
-
 		let pid = runningApplication.processIdentifier
 		if pid == -1 {
 			return nil

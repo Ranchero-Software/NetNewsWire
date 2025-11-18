@@ -11,8 +11,7 @@ import Foundation
 /// This is for sending articles to MarsEdit and other apps that implement the
 /// [send-to-blog-editor Apple Events API](http://ranchero.com/netnewswire/developers/externalinterface)\.
 
-public struct SendToBlogEditorApp {
-
+@MainActor public struct SendToBlogEditorApp {
 	///The target descriptor of the application.
 	///
 	/// The easiest way to get this is probably `UserApp.targetDescriptor` or `NSAppleEventDescriptor(runningApplication:)`.
@@ -49,10 +48,8 @@ public struct SendToBlogEditorApp {
 		self.sourceFeedURL = sourceFeedURL
 	}
 
-
 	/// Sends the receiver's data to the blog editor application described by `targetDescriptor`.
 	public func send() {
-
 		let appleEvent = NSAppleEventDescriptor(eventClass: .editDataItemAppleEventClass, eventID: .editDataItemAppleEventID, targetDescriptor: targetDescriptor, returnID: .autoGenerate, transactionID: .any)
 
 		appleEvent.setParam(paramDescriptor, forKeyword: keyDirectObject)
@@ -60,11 +57,9 @@ public struct SendToBlogEditorApp {
 		let _ = try? appleEvent.sendEvent(options: [.noReply, .canSwitchLayer, .alwaysInteract], timeout: .AEDefaultTimeout)
 
 	}
-
 }
 
 private extension SendToBlogEditorApp {
-
 	var paramDescriptor: NSAppleEventDescriptor {
 		let descriptor = NSAppleEventDescriptor.record()
 
@@ -94,19 +89,15 @@ private extension SendToBlogEditorApp {
 }
 
 private extension AEEventClass {
-
 	static let editDataItemAppleEventClass = "EBlg".fourCharCode
 
 }
 
 private extension AEEventID {
-
 	static let editDataItemAppleEventID = "oitm".fourCharCode
-
 }
 
 private extension AEKeyword {
-
 	static let dataItemTitle = "titl".fourCharCode
 	static let dataItemDescription = "desc".fourCharCode
 	static let dataItemSummary = "summ".fourCharCode
@@ -119,22 +110,18 @@ private extension AEKeyword {
 	static let dataItemSourceName = "snam".fourCharCode
 	static let dataItemSourceHomeURL = "hurl".fourCharCode
 	static let dataItemSourceFeedURL = "furl".fourCharCode
-
 }
 
 private extension AEReturnID {
-
 	static let autoGenerate = AEReturnID(kAutoGenerateReturnID)
 }
 
 private extension AETransactionID {
-
 	static let any = AETransactionID(kAnyTransactionID)
 
 }
 
 private extension TimeInterval {
-
 	static let AEDefaultTimeout = TimeInterval(kAEDefaultTimeout)
 
 }

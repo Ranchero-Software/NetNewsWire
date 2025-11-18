@@ -37,14 +37,18 @@ let package = Package(
 				"Secrets",
 				"SyncDatabase",
 			],
-			swiftSettings: [.swiftLanguageMode(.v5)]),
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+			]
+		),
 		.testTarget(
 			name: "AccountTests",
 			dependencies: ["Account"],
 			resources: [
 				.copy("JSON"),
 			],
-			swiftSettings: [.swiftLanguageMode(.v5)]
+			swiftSettings: [.swiftLanguageMode(.v6)]
 		),
 	]
 )

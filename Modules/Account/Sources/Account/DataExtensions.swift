@@ -50,7 +50,7 @@ extension Feed {
 public extension Article {
 
 	@MainActor var account: Account? {
-		return AccountManager.shared.existingAccount(with: accountID)
+		return AccountManager.shared.existingAccount(accountID: accountID)
 	}
 
 	@MainActor var feed: Feed? {

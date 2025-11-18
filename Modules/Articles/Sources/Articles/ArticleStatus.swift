@@ -9,8 +9,8 @@
 import Foundation
 import Synchronization
 
-nonisolated public final class ArticleStatus: Hashable, Sendable {
-	nonisolated public enum Key: String, Sendable {
+public final class ArticleStatus: Hashable, Sendable {
+	public enum Key: String, Sendable {
 		case read
 		case starred
 	}

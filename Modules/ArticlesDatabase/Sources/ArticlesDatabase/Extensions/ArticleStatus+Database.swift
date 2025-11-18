@@ -11,7 +11,7 @@ import RSDatabase
 import RSDatabaseObjC
 import Articles
 
-nonisolated extension ArticleStatus {
+extension ArticleStatus {
 
 	convenience init(articleID: String, dateArrived: Date, row: FMResultSet) {
 		let read = row.bool(forColumn: DatabaseKey.read)
@@ -22,7 +22,7 @@ nonisolated extension ArticleStatus {
 
 }
 
-nonisolated extension ArticleStatus: @retroactive DatabaseObject {
+extension ArticleStatus: @retroactive DatabaseObject {
 
 	public var databaseID: String {
 		return articleID

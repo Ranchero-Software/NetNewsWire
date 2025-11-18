@@ -21,7 +21,6 @@ public enum CloudKitZoneResult {
 	case failure(error: Error)
 
 	public static func resolve(_ error: Error?) -> CloudKitZoneResult {
-
         guard error != nil else { return .success }
 
         guard let ckError = error as? CKError else {
@@ -58,9 +57,7 @@ public enum CloudKitZoneResult {
 		default:
 			return .failure(error: CloudKitError(ckError))
 		}
-
 	}
-
 }
 
 private extension CloudKitZoneResult {
@@ -77,5 +74,4 @@ private extension CloudKitZoneResult {
 		}
 		return nil
 	}
-
 }

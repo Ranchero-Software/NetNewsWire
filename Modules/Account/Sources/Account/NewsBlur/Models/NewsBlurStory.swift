@@ -12,7 +12,7 @@ import RSParser
 
 typealias NewsBlurStory = NewsBlurStoriesResponse.Story
 
-struct NewsBlurStoriesResponse: Decodable {
+struct NewsBlurStoriesResponse: Decodable, Sendable {
 	let stories: [Story]
 
 	struct Story: Decodable {

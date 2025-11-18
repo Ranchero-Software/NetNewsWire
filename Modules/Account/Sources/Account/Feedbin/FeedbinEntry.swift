@@ -10,8 +10,7 @@ import Foundation
 import RSParser
 import RSCore
 
-final class FeedbinEntry: Decodable {
-
+final class FeedbinEntry: Decodable, Sendable {
 	let articleID: Int
 	let feedID: Int
 	let title: String?
@@ -27,14 +26,12 @@ final class FeedbinEntry: Decodable {
 	// requires a very specific date formatter to work and even then it fails occasionally.
 	// Rather than loose all the entries we only lose the one date by decoding as a string
 	// and letting the one date fail when parsed.
-	lazy var parsedDatePublished: Date? = {
-		if let datePublished = datePublished {
+	var parsedDatePublished: Date? {
+		if let datePublished {
 			return RSDateWithString(datePublished)
 		}
-		else {
-			return nil
-		}
-	}()
+		return nil
+	}
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
@@ -50,7 +47,7 @@ final class FeedbinEntry: Decodable {
 	}
 }
 
-struct FeedbinEntryJSONFeed: Decodable {
+struct FeedbinEntryJSONFeed: Decodable, Sendable {
 	let jsonFeedAuthor: FeedbinEntryJSONFeedAuthor?
 	let jsonFeedExternalURL: String?
 
@@ -72,12 +69,12 @@ struct FeedbinEntryJSONFeed: Decodable {
 			jsonFeedExternalURL = nil
 		}
 	}
-
 }
 
-struct FeedbinEntryJSONFeedAuthor: Decodable {
+struct FeedbinEntryJSONFeedAuthor: Decodable, Sendable {
 	let url: String?
 	let avatarURL: String?
+
 	enum CodingKeys: String, CodingKey {
 		case url = "url"
 		case avatarURL = "avatar"

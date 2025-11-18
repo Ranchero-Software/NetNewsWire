@@ -10,83 +10,73 @@ import Foundation
 import Articles
 import ArticlesDatabase
 
-public protocol ArticleFetcher {
-
-	@MainActor func fetchArticles() throws -> Set<Article>
-	@MainActor func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
-	@MainActor func fetchUnreadArticles() throws -> Set<Article>
-	@MainActor func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
+@MainActor public protocol ArticleFetcher {
+	func fetchArticles() throws -> Set<Article>
+	func fetchArticlesAsync() async throws -> Set<Article>
+	func fetchUnreadArticles() throws -> Set<Article>
+	func fetchUnreadArticlesAsync() async throws -> Set<Article>
 }
 
-@MainActor extension Feed: ArticleFetcher {
+extension Feed: ArticleFetcher {
 
 	public func fetchArticles() throws -> Set<Article> {
 		return try account?.fetchArticles(.feed(self)) ?? Set<Article>()
 	}
 
-	public func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		guard let account = account else {
+	public func fetchArticlesAsync() async throws -> Set<Article> {
+		guard let account else {
 			assertionFailure("Expected feed.account, but got nil.")
-			completion(.success(Set<Article>()))
-			return
+			return Set<Article>()
 		}
-		account.fetchArticlesAsync(.feed(self), completion)
+		return try await account.fetchArticlesAsync(.feed(self))
 	}
 
 	public func fetchUnreadArticles() throws -> Set<Article> {
 		return try fetchArticles().unreadArticles()
 	}
 
-	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		guard let account = account else {
+	public func fetchUnreadArticlesAsync() async throws -> Set<Article> {
+		guard let account else {
 			assertionFailure("Expected feed.account, but got nil.")
-			completion(.success(Set<Article>()))
-			return
+			return Set<Article>()
 		}
-		account.fetchArticlesAsync(.feed(self)) { articleSetResult in
-			switch articleSetResult {
-			case .success(let articles):
-				completion(.success(articles.unreadArticles()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		// TODO: fetch only unread articles rather than filtering.
+		let articles = try await account.fetchArticlesAsync(.feed(self))
+		return articles.unreadArticles()
 	}
 }
 
 extension Folder: ArticleFetcher {
 
 	public func fetchArticles() throws -> Set<Article> {
-		guard let account = account else {
+		guard let account else {
 			assertionFailure("Expected folder.account, but got nil.")
 			return Set<Article>()
 		}
 		return try account.fetchArticles(.folder(self, false))
 	}
 
-	public func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		guard let account = account else {
+	public func fetchArticlesAsync() async throws -> Set<Article> {
+		guard let account else {
 			assertionFailure("Expected folder.account, but got nil.")
-			completion(.success(Set<Article>()))
-			return
+			return Set<Article>()
 		}
-		account.fetchArticlesAsync(.folder(self, false), completion)
+		return try await account.fetchArticlesAsync(.folder(self, false))
 	}
 
 	public func fetchUnreadArticles() throws -> Set<Article> {
-		guard let account = account else {
+		guard let account else {
 			assertionFailure("Expected folder.account, but got nil.")
 			return Set<Article>()
 		}
 		return try account.fetchArticles(.folder(self, true))
 	}
 
-	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		guard let account = account else {
+	public func fetchUnreadArticlesAsync() async throws -> Set<Article> {
+		guard let account else {
 			assertionFailure("Expected folder.account, but got nil.")
-			completion(.success(Set<Article>()))
-			return
+			return Set<Article>()
 		}
-		account.fetchArticlesAsync(.folder(self, true), completion)
+		return try await account.fetchArticlesAsync(.folder(self, true))
 	}
 }

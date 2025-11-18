@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum FeedlyMarkAction: String {
+enum FeedlyMarkAction: String, Sendable {
 	 case read
 	 case unread
 	 case saved
@@ -30,6 +30,6 @@ enum FeedlyMarkAction: String {
 	 }
  }
 
-protocol FeedlyMarkArticlesService: AnyObject {
+@MainActor protocol FeedlyMarkArticlesService: AnyObject {
 	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ())
 }

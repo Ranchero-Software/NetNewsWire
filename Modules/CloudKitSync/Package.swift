@@ -19,7 +19,10 @@ let package = Package(
 			dependencies: [
 				"RSCore"
 			],
-			swiftSettings: [.swiftLanguageMode(.v5)]
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+			]
 		),
 		.testTarget(
 			name: "CloudKitSyncTests",

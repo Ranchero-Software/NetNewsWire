@@ -9,7 +9,6 @@
 import Foundation
 
 public extension Calendar {
-
 	/// A cached `.autoupdatingCurrent` for performance.
 	static let cached: Calendar = .autoupdatingCurrent
 

@@ -11,7 +11,7 @@ import XCTest
 
 @MainActor final class AccountFeedbinFolderContentsSyncTest: XCTestCase {
 
-	@MainActor func testDownloadSync() async throws {
+	func testDownloadSync() async throws {
 		let testTransport = TestTransport()
 		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_add.json"
 		testTransport.testFiles["https://api.feedbin.com/v2/subscriptions.json"] = "JSON/subscriptions_initial.json"

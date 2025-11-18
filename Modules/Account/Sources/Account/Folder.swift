@@ -11,32 +11,25 @@ import Articles
 import RSCore
 
 public final class Folder: SidebarItem, Renamable, Container, Hashable {
+	public let accountID: String
+	public weak var account: Account?
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .read
 	}
 
-	@MainActor public var containerID: ContainerIdentifier? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return ContainerIdentifier.folder(accountID, nameForDisplay)
+	public var containerID: ContainerIdentifier? {
+		ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 
-	@MainActor public var sidebarItemID: SidebarItemIdentifier? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return SidebarItemIdentifier.folder(accountID, nameForDisplay)
+	public var sidebarItemID: SidebarItemIdentifier? {
+		SidebarItemIdentifier.folder(accountID, nameForDisplay)
 	}
 
-	public weak var account: Account?
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
 	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
 
-	@MainActor public var name: String? {
+	public var name: String? {
 		didSet {
 			postDisplayNameDidChangeNotification()
 		}
@@ -82,6 +75,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	// MARK: - Init
 
 	init(account: Account, name: String?) {
+		self.accountID = account.accountID
 		self.account = account
 		self.name = name
 

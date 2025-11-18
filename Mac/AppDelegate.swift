@@ -300,8 +300,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 		ArticleThemeDownloader.shared.cleanUp()
 
-		AccountManager.shared.sendArticleStatusAll() {
-			self.isShutDownSyncDone = true
+		Task { @MainActor in
+			await AccountManager.shared.sendArticleStatusAll()
+			isShutDownSyncDone = true
 		}
 
 		let timeout = Date().addingTimeInterval(2)
@@ -502,7 +503,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	}
 
 	@IBAction func refreshAll(_ sender: Any?) {
-		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
+		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.present)
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {
@@ -965,7 +966,7 @@ private extension AppDelegate {
 				return
 			}
 
-			guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+			guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 				assertionFailure("Expected account with \(accountID)")
 				Self.logger.error("No account with accountID \(accountID) found from status notification")
 				return

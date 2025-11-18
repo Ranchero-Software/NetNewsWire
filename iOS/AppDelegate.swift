@@ -36,8 +36,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
-	var widgetDataEncoder: WidgetDataEncoder!
-
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -106,8 +104,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		ExtensionContainersFile.shared.start()
 		ExtensionFeedAddRequestFile.shared.start()
 
-		widgetDataEncoder = WidgetDataEncoder()
-
 		#if DEBUG
 		ArticleStatusSyncTimer.shared.update()
 		#endif
@@ -153,11 +149,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 	// MARK: - API
 
-	func manualRefresh(errorHandler: @escaping (Error) -> ()) {
+	func manualRefresh(errorHandler: @escaping @Sendable (Error) -> ()) {
 		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
 			$0.cleanUp(conditional: true)
 		}
-		AccountManager.shared.refreshAll(errorHandler: errorHandler)
+		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: errorHandler)
 	}
 
 	func resumeDatabaseProcessingIfNecessary() {
@@ -173,7 +169,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		ArticleStatusSyncTimer.shared.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
-		widgetDataEncoder.encode()
+		WidgetDataEncoder.shared?.encode()
 		waitForSyncTasksToFinish()
 		IconImageCache.shared.emptyCache()
 	}
@@ -185,12 +181,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 
 		if let lastRefresh = AppDefaults.shared.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
-				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+				AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.log)
 			} else {
-				AccountManager.shared.syncArticleStatusAll()
+				AccountManager.shared.syncArticleStatusAllWithoutWaiting()
 			}
 		} else {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+			AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.log)
 		}
 	}
 
@@ -278,7 +274,7 @@ private extension AppDelegate {
 			return
 		}
 
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || widgetDataEncoder.isRunning {
+		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || WidgetDataEncoder.shared?.isRunning ?? false {
 			Self.logger.info("Waiting for sync to finish…")
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)
@@ -314,10 +310,9 @@ private extension AppDelegate {
 			Self.logger.info("Accounts sync processing terminated for running too long.")
 		}
 
-		DispatchQueue.main.async {
-			AccountManager.shared.syncArticleStatusAll() {
-				completeProcessing()
-			}
+		Task { @MainActor in
+			await AccountManager.shared.syncArticleStatusAll()
+			completeProcessing()
 		}
 	}
 
@@ -375,24 +370,23 @@ private extension AppDelegate {
 
 		scheduleBackgroundFeedRefresh() // schedule next refresh
 
-		Self.logger.info("Woken to perform account refresh.")
+		Self.logger.info("Performing background refresh.")
 
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
-				if !AccountManager.shared.isSuspended {
-					self.suspendApplication()
-					Self.logger.info("Account refresh operation completed.")
-					task.setTaskCompleted(success: true)
-				}
+			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+			if !AccountManager.shared.isSuspended {
+				self.suspendApplication()
+				Self.logger.info("Background refresh completed.")
+				task.setTaskCompleted(success: true)
 			}
 		}
 
 		// set expiration handler
 		task.expirationHandler = { [weak task] in
-			Self.logger.info("Accounts refresh processing terminated for running too long.")
+			Self.logger.info("Background refresh terminated for running too long.")
 			DispatchQueue.main.async {
 				self.suspendApplication()
 				task?.setTaskCompleted(success: false)
@@ -422,7 +416,7 @@ private extension AppDelegate {
 
 		resumeDatabaseProcessingIfNecessary()
 
-		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+		guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 			assertionFailure("Expected account with \(accountID)")
 			Self.logger.error("No account with accountID \(accountID) found from status notification")
 			return

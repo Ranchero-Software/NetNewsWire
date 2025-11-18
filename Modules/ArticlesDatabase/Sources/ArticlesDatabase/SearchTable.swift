@@ -14,8 +14,7 @@ import RSDatabaseObjC
 import Articles
 import RSParser
 
-nonisolated final class ArticleSearchInfo: Hashable, Sendable {
-
+final class ArticleSearchInfo: Hashable, Sendable {
 	let articleID: String
 	let title: String?
 	let contentHTML: String?
@@ -79,7 +78,7 @@ nonisolated final class ArticleSearchInfo: Hashable, Sendable {
 	}
 }
 
-nonisolated final class SearchTable: DatabaseTable, @unchecked Sendable {
+final class SearchTable: DatabaseTable, @unchecked Sendable {
 	let name = "search"
 	private let queue: DatabaseQueue
 	weak var articlesTable: ArticlesTable?
@@ -129,7 +128,7 @@ nonisolated final class SearchTable: DatabaseTable, @unchecked Sendable {
 
 // MARK: - Private
 
-nonisolated private extension SearchTable {
+private extension SearchTable {
 
 	func performInitialIndexForArticles(_ articles: Set<ArticleSearchInfo>, _ database: FMDatabase) {
 		articles.forEach { performInitialIndex($0, database) }

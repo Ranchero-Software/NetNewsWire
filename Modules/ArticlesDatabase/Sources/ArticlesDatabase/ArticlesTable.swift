@@ -14,7 +14,7 @@ import RSDatabaseObjC
 import RSParser
 import Articles
 
-nonisolated final class ArticlesTable: DatabaseTable, Sendable {
+final class ArticlesTable: DatabaseTable, Sendable {
 	let name: String
 
 	private let accountID: String
@@ -370,6 +370,58 @@ nonisolated final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Unread Counts
 
+	func fetchUnreadCounts(_ feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+		if feedIDs.isEmpty {
+			completion(.success(UnreadCountDictionary()))
+			return
+		}
+
+		queue.runInDatabase { databaseResult in
+
+			func makeDatabaseCalls(_ database: FMDatabase) throws -> UnreadCountDictionary {
+				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+				let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 group by feedID;"
+
+				let parameters = Array(feedIDs) as [Any]
+
+				guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+					throw DatabaseError.isSuspended
+				}
+				defer {
+					resultSet.close()
+				}
+
+				var unreadCountDictionary = UnreadCountDictionary()
+				while resultSet.next() {
+					let unreadCount = resultSet.long(forColumnIndex: 1)
+					if let feedID = resultSet.string(forColumnIndex: 0) {
+						unreadCountDictionary[feedID] = unreadCount
+					}
+				}
+				return unreadCountDictionary
+			}
+
+
+			switch databaseResult {
+			case .success(let database):
+				do {
+					let unreadCountDictionary = try makeDatabaseCalls(database)
+					DispatchQueue.main.async {
+						completion(.success(unreadCountDictionary))
+					}
+				} catch {
+					DispatchQueue.main.async {
+						completion(.failure(error))
+					}
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+		}
+	}
+
 	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		// Get unread count for today, for instance.
 		if feedIDs.isEmpty {
@@ -488,10 +540,15 @@ nonisolated final class ArticlesTable: DatabaseTable, Sendable {
 	}
 
 	func createStatusesIfNeeded(_ articleIDs: Set<String>, _ completion: @escaping DatabaseCompletionBlock) {
+		guard !articleIDs.isEmpty else {
+			completion(nil)
+			return
+		}
+		
 		queue.runInTransaction { databaseResult in
 			switch databaseResult {
 			case .success(let database):
-				let _ = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
+				self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
 				DispatchQueue.main.async {
 					completion(nil)
 				}
@@ -918,7 +975,7 @@ nonisolated private extension ArticlesTable {
 	// MARK: - Saving Parsed Items
 
 	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ deletedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
-		let articleChanges = ArticleChanges(newArticles: newArticles, updatedArticles: updatedArticles, deletedArticles: deletedArticles)
+		let articleChanges = ArticleChanges(new: newArticles, updated: updatedArticles, deleted: deletedArticles)
 		DispatchQueue.main.async {
 			completion(.success(articleChanges))
 		}
@@ -1059,7 +1116,7 @@ nonisolated private extension ArticlesTable {
 	}
 }
 
-nonisolated private extension Set where Element == ParsedItem {
+private extension Set where Element == ParsedItem {
 	func articleIDs() -> Set<String> {
 		return Set<String>(map { $0.articleID })
 	}

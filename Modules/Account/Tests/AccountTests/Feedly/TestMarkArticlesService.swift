@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-final class TestMarkArticlesService: FeedlyMarkArticlesService {
+@MainActor final class TestMarkArticlesService: FeedlyMarkArticlesService {
 
 	var didMarkExpectation: XCTestExpectation?
 	var parameterTester: ((Set<String>, FeedlyMarkAction) -> ())?

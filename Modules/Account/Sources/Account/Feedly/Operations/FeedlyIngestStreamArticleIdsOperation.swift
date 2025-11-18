@@ -51,7 +51,7 @@ final class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation, @unchecked S
 			switch result {
 			case .success(let streamIds):
 				do {
-					try await account.createStatusesIfNeeded(articleIDs: Set(streamIds.ids))
+					try await account.createStatusesIfNeededAsync(articleIDs: Set(streamIds.ids))
 					guard let continuation = streamIds.continuation else {
 						Feedly.logger.info("Feedly: Reached end of stream for \(self.resource.id)")
 						didComplete()

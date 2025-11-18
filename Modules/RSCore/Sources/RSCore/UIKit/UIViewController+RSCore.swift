@@ -10,8 +10,7 @@ import UIKit
 import SwiftUI
 
 extension UIViewController {
-
-	// MARK: Error Handling
+	// MARK: - Error Handling
 
 	public func presentError(title: String, message: String, dismiss: (() -> Void)? = nil) {
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -25,7 +24,7 @@ extension UIViewController {
 
 }
 
-// MARK: SwiftUI
+// MARK: - SwiftUI
 
 public struct ViewControllerHolder {
 	public weak var value: UIViewController?

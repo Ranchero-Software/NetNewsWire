@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import RSCore
 import RSWeb
 import Articles
@@ -16,7 +17,7 @@ import RSDatabase
 // Main thread only.
 
 @MainActor public final class AccountManager: UnreadCountProvider {
-	@MainActor public static var shared = AccountManager()
+	public static var shared = AccountManager()
 
 	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
     private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
@@ -30,6 +31,9 @@ import RSDatabase
 	private let defaultAccountIdentifier = "OnMyMac"
 
 	public var isSuspended = false
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountManager")
+
 	@MainActor public var areUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
 			if !account.areUnreadCountsInitialized {
@@ -204,16 +208,16 @@ import RSDatabase
 		return false
 	}
 
-	public func existingAccount(with accountID: String) -> Account? {
+	public func existingAccount(accountID: String) -> Account? {
 		return accountsDictionary[accountID]
 	}
 
 	@MainActor public func existingContainer(with containerID: ContainerIdentifier) -> Container? {
 		switch containerID {
 		case .account(let accountID):
-			return existingAccount(with: accountID)
+			return existingAccount(accountID: accountID)
 		case .folder(let accountID, let folderName):
-			return existingAccount(with: accountID)?.existingFolder(with: folderName)
+			return existingAccount(accountID: accountID)?.existingFolder(with: folderName)
 		default:
 			break
 		}
@@ -223,11 +227,11 @@ import RSDatabase
 	@MainActor public func existingFeed(with sidebarItemID: SidebarItemIdentifier) -> SidebarItem? {
 		switch sidebarItemID {
 		case .folder(let accountID, let folderName):
-			if let account = existingAccount(with: accountID) {
+			if let account = existingAccount(accountID: accountID) {
 				return account.existingFolder(with: folderName)
 			}
 		case .feed(let accountID, let feedID):
-			if let account = existingAccount(with: accountID) {
+			if let account = existingAccount(accountID: accountID) {
 				return account.existingFeed(withFeedID: feedID)
 			}
 		default:
@@ -260,60 +264,68 @@ import RSDatabase
 	}
 
 	@MainActor public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
-		await withTaskGroup(of: Void.self) { group in
+		Task { @MainActor in
 			for account in activeAccounts {
-				group.addTask { @MainActor in
-					await account.receiveRemoteNotification(userInfo: userInfo)
-				}
+				await account.receiveRemoteNotification(userInfo: userInfo)
 			}
 		}
 	}
 
-	public func refreshAll(errorHandler: ((Error) -> Void)? = nil, completion: (() -> Void)? = nil) {
+	public typealias ErrorHandlerCallback = @Sendable (Error) -> Void
 
+	@MainActor public func refreshAllWithoutWaiting(errorHandler: ErrorHandlerCallback? = nil) {
+		Task { @MainActor in
+			await refreshAll(errorHandler: errorHandler)
+		}
+	}
+	
+	@MainActor public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async {
 		guard NetworkMonitor.shared.isConnected else {
+			Self.logger.info("AccountManager: skipping refreshAll — not connected to internet.")
 			return
 		}
 
 		combinedRefreshProgress.start()
+		defer {
+			combinedRefreshProgress.stop()
+		}
 
-		Task { @MainActor in
-			await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
-				for account in activeAccounts {
-					group.addTask { @MainActor in
-						do {
-							try await account.refreshAll()
-						} catch {
-							errorHandler?(error)
-						}
+		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
+			for account in activeAccounts {
+				group.addTask {
+					do {
+						try await account.refreshAll()
+					} catch {
+						errorHandler?(error)
 					}
 				}
 			}
-
-			self.combinedRefreshProgress.stop()
-			completion?()
 		}
 	}
 
-	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
-		Task { @MainActor in
+	@MainActor public func sendArticleStatusAll() async {
+		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
-				try? await account.sendArticleStatus()
+				group.addTask {
+					try? await account.sendArticleStatus()
+				}
 			}
-			completion?()
 		}
 	}
 
-	@MainActor public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
-		let group = DispatchGroup()
+	@MainActor public func syncArticleStatusAllWithoutWaiting() {
+		Task { @MainActor in
+			await syncArticleStatusAll()
+		}
+	}
 
-		for account in activeAccounts {
-			group.enter()
-			Task { @MainActor in
-				try? await account.syncArticleStatus()
-				group.leave()
+	@MainActor public func syncArticleStatusAll() async {
+		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
+			for account in activeAccounts {
+				group.addTask {
+					try? await account.syncArticleStatus()
+				}
 			}
-			completion?()
 		}
 	}
 
@@ -360,43 +372,20 @@ import RSDatabase
 		return articles
 	}
 
-	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
-        precondition(Thread.isMainThread)
+	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
+		precondition(Thread.isMainThread)
 
-        guard activeAccounts.count > 0 else {
-            completion(.success(Set<Article>()))
-            return
-        }
-
-		Task { @MainActor in
-			var allFetchedArticles = Set<Article>()
-			var databaseError: DatabaseError?
-			let dispatchGroup = DispatchGroup()
-
-			for account in activeAccounts {
-
-				dispatchGroup.enter()
-				defer {
-					dispatchGroup.leave()
-				}
-
-				do {
-					let articles = try await account.fetchArticles(fetchType)
-					allFetchedArticles.formUnion(articles)
-				} catch {
-					databaseError = error as? DatabaseError
-				}
-			}
-
-			dispatchGroup.notify(queue: .main) {
-				if let databaseError {
-					completion(.failure(databaseError))
-				}
-				else {
-					completion(.success(allFetchedArticles))
-				}
-			}
+		guard activeAccounts.count > 0 else {
+			return Set<Article>()
 		}
+
+		var allFetchedArticles = Set<Article>()
+		for account in activeAccounts {
+			let articles = try await account.fetchArticlesAsync(fetchType)
+			allFetchedArticles.formUnion(articles)
+		}
+
+		return allFetchedArticles
 	}
 
 	// MARK: - Fetching Article Counts

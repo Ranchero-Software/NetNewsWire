@@ -9,9 +9,9 @@
 import Foundation
 import RSParser
 
-nonisolated private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
+private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
 
-nonisolated final class HTMLFeedFinder {
+final class HTMLFeedFinder {
 
 	var feedSpecifiers: Set<FeedSpecifier> {
 		return Set(feedSpecifiersDictionary.values)
@@ -42,7 +42,7 @@ nonisolated final class HTMLFeedFinder {
 	}
 }
 
-nonisolated private extension HTMLFeedFinder {
+private extension HTMLFeedFinder {
 
 	func addFeedSpecifier(_ feedSpecifier: FeedSpecifier) {
 		// If there’s an existing feed specifier, merge the two so that we have the best data. If one has a title and one doesn’t, use that non-nil title. Use the better source.

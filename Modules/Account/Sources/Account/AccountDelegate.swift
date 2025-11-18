@@ -23,43 +23,43 @@ import Secrets
 
 	var refreshProgress: DownloadProgress { get }
 
-	@MainActor func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async
 
-	@MainActor func refreshAll(for account: Account) async throws
-	@MainActor func syncArticleStatus(for account: Account) async throws
-	@MainActor func sendArticleStatus(for account: Account) async throws
-	@MainActor func refreshArticleStatus(for account: Account) async throws
+	func refreshAll(for account: Account) async throws
+	func syncArticleStatus(for account: Account) async throws
+	func sendArticleStatus(for account: Account) async throws
+	func refreshArticleStatus(for account: Account) async throws
 
-	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws
+	func importOPML(for account: Account, opmlFile: URL) async throws
 
-	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder
-	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws
-	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws
+	func createFolder(for account: Account, name: String) async throws -> Folder
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws
+	func removeFolder(for account: Account, with folder: Folder) async throws
 
-	@MainActor func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed
-	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws
-	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws
-	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws
-	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws
+	func addFeed(account: Account, feed: Feed, container: Container) async throws
+	func removeFeed(account: Account, feed: Feed, container: Container) async throws
+	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws
 
-	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container) async throws
-	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws
+	func restoreFeed(for account: Account, feed: Feed, container: Container) async throws
+	func restoreFolder(for account: Account, folder: Folder) async throws
 
-	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws
 
 	// Called at the end of account’s init method.
-	@MainActor func accountDidInitialize(_ account: Account)
+	func accountDidInitialize(_ account: Account)
 
-	@MainActor func accountWillBeDeleted(_ account: Account)
+	func accountWillBeDeleted(_ account: Account)
 
-	@MainActor static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials?
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials?
 
 	/// Suspend all network activity
-	@MainActor func suspendNetwork()
+	func suspendNetwork()
 
 	/// Suspend the SQLite databases
-	@MainActor func suspendDatabase()
+	func suspendDatabase()
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	@MainActor func resume()
+	func resume()
 }

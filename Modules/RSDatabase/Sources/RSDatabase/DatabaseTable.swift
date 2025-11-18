@@ -9,12 +9,12 @@
 import Foundation
 import RSDatabaseObjC
 
-nonisolated public protocol DatabaseTable {
+public protocol DatabaseTable {
 
 	var name: String { get }
 }
 
-nonisolated public extension DatabaseTable {
+public extension DatabaseTable {
 
 	// MARK: Fetching
 

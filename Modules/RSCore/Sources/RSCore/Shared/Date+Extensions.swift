@@ -8,8 +8,7 @@
 
 import Foundation
 
-nonisolated public extension Date {
-
+public extension Date {
 	// Below are for rough use only — they don't use the calendar.
 
 	func bySubtracting(days: Int) -> Date {

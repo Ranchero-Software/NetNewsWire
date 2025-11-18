@@ -13,7 +13,7 @@ import RSWeb
 
 @MainActor final class TestAccountManager {
 
-	static let shared = TestAccountManager()
+	nonisolated static let shared = TestAccountManager()
 
 	var accountsFolder: URL {
 		return try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)

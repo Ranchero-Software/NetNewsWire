@@ -16,7 +16,7 @@ protocol FeedlyGetStreamIdsOperationDelegate: AnyObject {
 /// Single responsibility is to get the stream ids from Feedly.
 final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, @unchecked Sendable {
 
-	var entryIds: Set<String> {
+	var entryIDs: Set<String> {
 		guard let ids = streamIds?.ids else {
 			assertionFailure("Has this operation been addeded as a dependency on the caller?")
 			return []

@@ -5,18 +5,16 @@
 //  Created by Brent Simmons on 10/10/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 
 public extension NSWindow {
-
 	var isDisplayingSheet: Bool {
-
 		return attachedSheet != nil
 	}
 
 	func makeFirstResponderUnlessDescendantIsFirstResponder(_ responder: NSResponder) {
-
 		if let fr = firstResponder, fr.hasAncestor(responder) {
 			return
 		}
@@ -24,7 +22,6 @@ public extension NSWindow {
 	}
 
 	func setPointAndSizeAdjustingForScreen(point: NSPoint, size: NSSize, minimumSize: NSSize) {
-
 		// point.y specifies from the *top* of the screen, even though screen coordinates work from the bottom up. This is for convenience.
 		// The eventual size may be smaller than requested, since the screen may be small, but not smaller than minimumSize.
 
@@ -52,7 +49,6 @@ public extension NSWindow {
 	}
 
 	var flippedOrigin: NSPoint? {
-
 		// Screen coordinates start at lower-left.
 		// With this we can use upper-left, like sane people.
 
@@ -75,7 +71,6 @@ public extension NSWindow {
 	}
 
 	func setFlippedOriginAdjustingForScreen(_ point: NSPoint) {
-
 		guard let screenFrame = screen?.frame else {
 			return
 		}

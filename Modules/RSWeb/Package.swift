@@ -25,7 +25,6 @@ let package = Package(
 				.unsafeFlags(["-warnings-as-errors"]),
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances"),
-				.defaultIsolation(MainActor.self)
 			]
 		),
 		.testTarget(

@@ -16,7 +16,7 @@ import RSParserObjC
 // These functions take an RSParsedFeed and return a Swift-y ParsedFeed,
 // which is part of providing a single API for feed parsing.
 
-nonisolated struct RSParsedFeedTransformer {
+struct RSParsedFeedTransformer {
 
 	static func parsedFeed(_ rsParsedFeed: RSParsedFeed) -> ParsedFeed {
 
@@ -25,7 +25,7 @@ nonisolated struct RSParsedFeedTransformer {
 	}
 }
 
-nonisolated private extension RSParsedFeedTransformer {
+private extension RSParsedFeedTransformer {
 
 	static func parsedItems(_ parsedArticles: Set<RSParsedArticle>) -> Set<ParsedItem> {
 

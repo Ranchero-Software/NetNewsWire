@@ -8,8 +8,7 @@
 
 import Foundation
 
-public protocol UndoableCommand: AnyObject {
-
+@MainActor public protocol UndoableCommand: AnyObject {
 	var undoActionName: String { get }
 	var redoActionName: String { get }
 	var undoManager: UndoManager { get }
@@ -21,7 +20,6 @@ public protocol UndoableCommand: AnyObject {
 extension UndoableCommand {
 
 	public func registerUndo() {
-
 		undoManager.setActionName(undoActionName)
 		undoManager.registerUndo(withTarget: self) { (target) in
 			self.undo()
@@ -29,7 +27,6 @@ extension UndoableCommand {
 	}
 
 	public func registerRedo() {
-
 		undoManager.setActionName(redoActionName)
 		undoManager.registerUndo(withTarget: self) { (target) in
 			self.perform()
@@ -39,30 +36,26 @@ extension UndoableCommand {
 
 // Useful for view controllers.
 
-public protocol UndoableCommandRunner: AnyObject {
+@MainActor public protocol UndoableCommandRunner: AnyObject {
+	var undoableCommands: [UndoableCommand] { get set }
+	var undoManager: UndoManager? { get }
 
-	@MainActor var undoableCommands: [UndoableCommand] { get set }
-	@MainActor var undoManager: UndoManager? { get }
-
-	@MainActor func runCommand(_ undoableCommand: UndoableCommand)
-	@MainActor func clearUndoableCommands()
+	func runCommand(_ undoableCommand: UndoableCommand)
+	func clearUndoableCommands()
 }
 
-public extension UndoableCommandRunner {
+@MainActor public extension UndoableCommandRunner {
 
-	@MainActor func runCommand(_ undoableCommand: UndoableCommand) {
-
+	func runCommand(_ undoableCommand: UndoableCommand) {
         pushUndoableCommand(undoableCommand)
         undoableCommand.perform()
     }
 
-	@MainActor func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
-
+	func pushUndoableCommand(_ undoableCommand: UndoableCommand) {
         undoableCommands += [undoableCommand]
     }
 
-	@MainActor func clearUndoableCommands() {
-
+	func clearUndoableCommands() {
         // Useful, for example, when timeline is reloaded and the list of articles changes.
         // Otherwise things like Redo Mark Read are ambiguous.
         // (Do they apply to the previous articles or to the current articles?)

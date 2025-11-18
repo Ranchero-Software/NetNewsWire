@@ -23,8 +23,8 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 	}
 }
 
-@objc final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-	var presentationAnchor: ASPresentationAnchor?
+@objc nonisolated final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
+	nonisolated(unsafe) var presentationAnchor: ASPresentationAnchor?
 
 	// MARK: - ASWebAuthenticationPresentationContextProviding
 
@@ -54,10 +54,10 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 	private var session: ASWebAuthenticationSession?
 	private var error: Error?
 
-	@MainActor public init(accountType: AccountType) {
+	public init(accountType: AccountType) {
 		self.accountType = accountType
 		self.oauthClient = Account.oauthAuthorizationClient(for: accountType)
-		super.init()
+		super.init(name: "OAuthAccountAuthorizationOperation")
 	}
 
 	@MainActor public override func run() {

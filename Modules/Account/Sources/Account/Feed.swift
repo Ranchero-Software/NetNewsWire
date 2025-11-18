@@ -11,30 +11,16 @@ import RSCore
 import RSWeb
 import Articles
 
-public final class Feed: SidebarItem, Renamable, Hashable {
-
-	public var defaultReadFilterType: ReadFilterType {
-		return .none
-	}
-
-	public var sidebarItemID: SidebarItemIdentifier? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return SidebarItemIdentifier.feed(accountID, feedID)
-	}
+@MainActor public final class Feed: SidebarItem, Renamable, Hashable {
+	public let feedID: String
+	public let accountID: String
+	public let url: String
+	public let sidebarItemID: SidebarItemIdentifier?
 
 	public weak var account: Account?
-	public let url: String
 
-	public var feedID: String {
-		get {
-			return metadata.feedID
-		}
-		set {
-			metadata.feedID = newValue
-		}
+	public var defaultReadFilterType: ReadFilterType {
+		.none
 	}
 
 	public var homePageURL: String? {
@@ -270,13 +256,17 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 
 	// MARK: - Private
 
-	private let accountID: String // Used for hashing and equality; account may turn nil
 
 	// MARK: - Init
 
 	init(account: Account, url: String, metadata: FeedMetadata) {
+		let accountID = account.accountID
+		let feedID = metadata.feedID
+		self.accountID = accountID
 		self.account = account
-		self.accountID = account.accountID
+		self.feedID = feedID
+		self.sidebarItemID = SidebarItemIdentifier.feed(accountID, feedID)
+
 		self.url = url
 		self.metadata = metadata
 	}
@@ -292,6 +282,7 @@ public final class Feed: SidebarItem, Renamable, Hashable {
 
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(feedID)
+		hasher.combine(accountID)
 	}
 
 	// MARK: - Equatable
@@ -345,5 +336,4 @@ extension Feed: OPMLRepresentable {
 			return feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedAscending
 		})
 	}
-
 }

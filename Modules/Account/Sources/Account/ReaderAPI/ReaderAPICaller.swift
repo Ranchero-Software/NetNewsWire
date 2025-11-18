@@ -15,8 +15,7 @@ enum CreateReaderAPISubscriptionResult {
 	case notFound
 }
 
-final class ReaderAPICaller {
-
+@MainActor final class ReaderAPICaller {
 	enum ItemIDType {
 		case unread
 		case starred

@@ -11,15 +11,13 @@ import AppKit
 // To get, for instance, the keyboard integer value for "\r": "\r".keyboardIntegerValue (returns 13)
 
 public struct KeyboardConstant {
-
 	public static let lineFeedKey = "\n".keyboardIntegerValue
 	public static let returnKey = "\r".keyboardIntegerValue
 	public static let spaceKey = " ".keyboardIntegerValue
 }
 
 public extension String {
-
-	nonisolated var keyboardIntegerValue: Int? {
+	var keyboardIntegerValue: Int? {
 		if isEmpty {
 			return nil
 		}
@@ -32,13 +30,11 @@ public extension String {
 	}
 }
 
-nonisolated public struct KeyboardShortcut: Hashable, Sendable {
-
+public struct KeyboardShortcut: Hashable, Sendable {
 	public let key: KeyboardKey
 	public let actionString: String
 
 	public init?(dictionary: [String: Any]) {
-
 		guard let key = KeyboardKey(dictionary: dictionary) else {
 			return nil
 		}
@@ -56,7 +52,6 @@ nonisolated public struct KeyboardShortcut: Hashable, Sendable {
 	}
 
 	public static func findMatchingShortcut(in shortcuts: Set<KeyboardShortcut>, key: KeyboardKey) -> KeyboardShortcut? {
-
 		for shortcut in shortcuts {
 			if shortcut.key == key {
 				return shortcut
@@ -66,8 +61,7 @@ nonisolated public struct KeyboardShortcut: Hashable, Sendable {
 	}
 }
 
-nonisolated public struct KeyboardKey: Hashable, Sendable {
-
+public struct KeyboardKey: Hashable, Sendable {
 	public let shiftKeyDown: Bool
 	public let optionKeyDown: Bool
 	public let commandKeyDown: Bool
@@ -79,7 +73,6 @@ nonisolated public struct KeyboardKey: Hashable, Sendable {
 	}
 
 	init(integerValue: Int, shiftKeyDown: Bool, optionKeyDown: Bool, commandKeyDown: Bool, controlKeyDown: Bool) {
-
 		self.integerValue = integerValue
 
 		self.shiftKeyDown = shiftKeyDown
@@ -91,7 +84,6 @@ nonisolated public struct KeyboardKey: Hashable, Sendable {
 	static let deleteKeyCode = 127
 
 	public init(with event: NSEvent) {
-
 		let flags = event.modifierFlags
 		let shiftKeyDown = flags.contains(.shift)
 		let optionKeyDown = flags.contains(.option)
@@ -104,7 +96,6 @@ nonisolated public struct KeyboardKey: Hashable, Sendable {
 	}
 
 	public init?(dictionary: [String: Any]) {
-
 		guard let s = dictionary["key"] as? String else {
 			return nil
 		}

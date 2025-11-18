@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated public struct CredentialsManager {
+public struct CredentialsManager {
 
 	private static let keychainGroup: String? = {
 		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {

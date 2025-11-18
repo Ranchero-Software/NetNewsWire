@@ -8,8 +8,7 @@
 
 import Foundation
 
-nonisolated public struct Author: Codable, Hashable, Sendable {
-
+public struct Author: Codable, Hashable, Sendable {
 	public let authorID: String // calculated
 	public let name: String?
 	public let url: String?

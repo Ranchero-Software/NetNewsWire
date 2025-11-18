@@ -13,7 +13,7 @@ import RSParserObjC
 
 // See https://jsonfeed.org/version/1.1
 
-nonisolated public struct JSONFeedParser {
+public struct JSONFeedParser {
 
 	struct Key {
 		static let version = "version"
@@ -85,7 +85,7 @@ nonisolated public struct JSONFeedParser {
 	}
 }
 
-nonisolated private extension JSONFeedParser {
+private extension JSONFeedParser {
 
 	static func parseAuthors(_ dictionary: JSONDictionary) -> Set<ParsedAuthor>? {
 

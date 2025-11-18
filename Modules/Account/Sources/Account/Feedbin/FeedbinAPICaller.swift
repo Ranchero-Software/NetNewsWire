@@ -21,7 +21,7 @@ enum CreateSubscriptionResult {
 	case notFound
 }
 
-final class FeedbinAPICaller {
+@MainActor final class FeedbinAPICaller {
 	struct ConditionalGetKeys {
 		static let subscriptions = "subscriptions"
 		static let tags = "tags"
@@ -71,7 +71,7 @@ final class FeedbinAPICaller {
 		}
 	}
 
-	@MainActor func importOPML(opmlData: Data) async throws -> FeedbinImportResult {
+	func importOPML(opmlData: Data) async throws -> FeedbinImportResult {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -90,7 +90,7 @@ final class FeedbinAPICaller {
 		return importResult
 	}
 
-	@MainActor func retrieveOPMLImportResult(importID: Int) async throws -> FeedbinImportResult? {
+	func retrieveOPMLImportResult(importID: Int) async throws -> FeedbinImportResult? {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -103,7 +103,7 @@ final class FeedbinAPICaller {
 		return importResult
 	}
 
-	@MainActor func retrieveTags() async throws -> [FeedbinTag]? {
+	func retrieveTags() async throws -> [FeedbinTag]? {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -117,7 +117,7 @@ final class FeedbinAPICaller {
 		return tags
 	}
 
-	@MainActor func renameTag(oldName: String, newName: String) async throws {
+	func renameTag(oldName: String, newName: String) async throws {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -129,7 +129,7 @@ final class FeedbinAPICaller {
 		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	@MainActor func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
+	func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -145,7 +145,7 @@ final class FeedbinAPICaller {
 		return subscriptions
 	}
 
-	@MainActor func createSubscription(url: String) async throws -> CreateSubscriptionResult {
+	func createSubscription(url: String) async throws -> CreateSubscriptionResult {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -206,7 +206,7 @@ final class FeedbinAPICaller {
 		}
 	}
 
-	@MainActor func renameSubscription(subscriptionID: String, newName: String) async throws {
+	func renameSubscription(subscriptionID: String, newName: String) async throws {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -218,7 +218,7 @@ final class FeedbinAPICaller {
 		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	@MainActor func deleteSubscription(subscriptionID: String) async throws {
+	func deleteSubscription(subscriptionID: String) async throws {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -229,7 +229,7 @@ final class FeedbinAPICaller {
 		try await transport.send(request: request, method: HTTPMethod.delete)
 	}
 
-	@MainActor func retrieveTaggings() async throws -> [FeedbinTagging]? {
+	func retrieveTaggings() async throws -> [FeedbinTagging]? {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -243,7 +243,7 @@ final class FeedbinAPICaller {
 		return taggings
 	}
 
-	@MainActor func createTagging(feedID: Int, name: String) async throws -> Int {
+	func createTagging(feedID: Int, name: String) async throws -> Int {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -266,7 +266,7 @@ final class FeedbinAPICaller {
 		}
 	}
 
-	@MainActor func deleteTagging(taggingID: String) async throws {
+	func deleteTagging(taggingID: String) async throws {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -278,7 +278,7 @@ final class FeedbinAPICaller {
 		try await transport.send(request: request, method: HTTPMethod.delete)
 	}
 
-	@MainActor func retrieveEntries(articleIDs: [String]) async throws -> [FeedbinEntry]? {
+	func retrieveEntries(articleIDs: [String]) async throws -> [FeedbinEntry]? {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -300,7 +300,7 @@ final class FeedbinAPICaller {
 		return entries
 	}
 
-	@MainActor func retrieveEntries(feedID: String) async throws -> ([FeedbinEntry]?, String?) {
+	func retrieveEntries(feedID: String) async throws -> ([FeedbinEntry]?, String?) {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -321,7 +321,7 @@ final class FeedbinAPICaller {
 		return (entries, pagingInfo.nextPage)
 	}
 
-	@MainActor func retrieveEntries() async throws -> ([FeedbinEntry]?, String?, Date?, Int?) {
+	func retrieveEntries() async throws -> ([FeedbinEntry]?, String?, Date?, Int?) {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -367,7 +367,7 @@ final class FeedbinAPICaller {
 		return (entries, pagingInfo.nextPage, dateInfo?.date, lastPageNumber)
 	}
 
-	@MainActor func retrieveEntries(page: String) async throws -> ([FeedbinEntry]?, String?) {
+	func retrieveEntries(page: String) async throws -> ([FeedbinEntry]?, String?) {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -382,7 +382,7 @@ final class FeedbinAPICaller {
 		return (entries, pagingInfo.nextPage)
 	}
 
-	@MainActor func retrieveUnreadEntries() async throws -> [Int]? {
+	func retrieveUnreadEntries() async throws -> [Int]? {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -396,7 +396,7 @@ final class FeedbinAPICaller {
 		return unreadEntries
 	}
 
-	@MainActor func createUnreadEntries(entries: [Int]) async throws {
+	func createUnreadEntries(entries: [Int]) async throws {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -408,7 +408,7 @@ final class FeedbinAPICaller {
 		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	@MainActor func deleteUnreadEntries(entries: [Int]) async throws {
+	func deleteUnreadEntries(entries: [Int]) async throws {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -420,7 +420,7 @@ final class FeedbinAPICaller {
 		try await transport.send(request: request, method: HTTPMethod.delete, payload: payload)
 	}
 
-	@MainActor func retrieveStarredEntries() async throws -> [Int]? {
+	func retrieveStarredEntries() async throws -> [Int]? {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -434,7 +434,7 @@ final class FeedbinAPICaller {
 		return starredEntries
 	}
 
-	@MainActor func createStarredEntries(entries: [Int]) async throws {
+	func createStarredEntries(entries: [Int]) async throws {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -446,7 +446,7 @@ final class FeedbinAPICaller {
 		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	@MainActor func deleteStarredEntries(entries: [Int]) async throws {
+	func deleteStarredEntries(entries: [Int]) async throws {
 		if suspended {
 			throw TransportError.suspended
 		}
@@ -463,7 +463,7 @@ final class FeedbinAPICaller {
 
 extension FeedbinAPICaller {
 
-	@MainActor func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
+	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
 		if var conditionalGet = accountMetadata?.conditionalGetInfo {
 			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
 			accountMetadata?.conditionalGetInfo = conditionalGet

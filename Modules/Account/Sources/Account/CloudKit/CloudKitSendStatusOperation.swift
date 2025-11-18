@@ -19,6 +19,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 	private weak var account: Account?
 	private weak var articlesZone: CloudKitArticlesZone?
 	private weak var refreshProgress: DownloadProgress?
+	private let localProgress = DownloadProgress(numberOfTasks: 0)
 	private var showProgress: Bool
 	private var syncDatabase: SyncDatabase
 	private static let logger = cloudKitLogger
@@ -30,126 +31,110 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		self.showProgress = showProgress
 		self.syncDatabase = database
 		super.init(name: "CloudKitSendStatusOperation")
+
+		if showProgress {
+			refreshProgress.addChild(self.localProgress)
+		}
 	}
 
 	@MainActor override func run() {
 		Self.logger.debug("iCloud: Sending article statuses")
 
-		if showProgress {
-			Task { @MainActor in
-				do {
-					let count = (try await syncDatabase.selectPendingCount()) ?? 0
-					let ticks = count / blockSize
-					refreshProgress?.addTasks(ticks)
-					selectForProcessing()
-				} catch {
-					Self.logger.debug("iCloud: Send status count pending error: \(error.localizedDescription)")
-					didComplete()
-				}
-			}
-		} else {
-			selectForProcessing()
-		}
-	}
-}
-
-private extension CloudKitSendStatusOperation {
-
-	func selectForProcessing() {
 		Task { @MainActor in
-
-			@MainActor func stopProcessing() {
-				if self.showProgress {
-					self.refreshProgress?.completeTask()
-				}
-				Self.logger.debug("iCloud: Finished sending article statuses")
+			defer {
+				localProgress.completeAll()
 				didComplete()
 			}
 
 			do {
-				guard let syncStatuses = try await self.syncDatabase.selectForProcessing(limit: blockSize), !syncStatuses.isEmpty else {
-					stopProcessing()
-					return
+				if showProgress {
+					let count = (try await syncDatabase.selectPendingCount()) ?? 0
+					let ticks = count / blockSize
+					localProgress.addTasks(ticks)
 				}
 
-				self.processStatuses(Array(syncStatuses)) { stop in
-					if stop {
-						stopProcessing()
-					} else {
-						self.selectForProcessing()
-					}
-				}
+				await selectForProcessing()
+				Self.logger.debug("iCloud: Finished sending article statuses")
 			} catch {
 				Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
-				didComplete()
 			}
 		}
 	}
+}
 
-	@MainActor func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
+@MainActor private extension CloudKitSendStatusOperation {
+
+	func selectForProcessing() async {
+		defer {
+			if showProgress {
+				localProgress.completeTask()
+			}
+		}
+
+		do {
+			guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
+				  !syncStatuses.isEmpty else {
+				return
+			}
+
+			let stopProcessing = await processStatuses(Array(syncStatuses))
+			if stopProcessing {
+				return
+			}
+
+			await selectForProcessing()
+		} catch {
+			Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
+		}
+	}
+
+	/// Returns true if processing should stop.
+	func processStatuses(_ syncStatuses: [SyncStatus]) async -> Bool {
 		guard let account, let articlesZone else {
-			completion(true)
-			return
+			return true
 		}
 
 		let articleIDs = syncStatuses.map({ $0.articleID })
-		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { [syncStatuses] result in
+		let articles: Set<Article>
 
-			func processWithArticles(_ articles: Set<Article>) {
-				Task { @MainActor [syncStatuses] in
+		do {
+			articles = try await account.fetchArticlesAsync(.articleIDs(Set(articleIDs)))
+		} catch {
+			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+			Self.logger.error("iCloud: Send article status fetch articles error: \(error.localizedDescription)")
+			return true
+		}
 
-					let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
-					let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
-						result[article.articleID] = article
-					}
-					let statusUpdates = syncStatusesDict.compactMap { (key, value) in
-						return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
-					}
+		let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
+		let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
+			result[article.articleID] = article
+		}
+		let statusUpdates = syncStatusesDict.compactMap { (key, value) in
+			CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
+		}
 
-					func done(_ stop: Bool) {
-						if self.showProgress {
-							self.refreshProgress?.completeTask()
-						}
-						Self.logger.debug("iCloud: Finished sending article status block")
-						completion(stop)
-					}
 
-					// If this happens, we have somehow gotten into a state where we have new status records
-					// but the articles didn't come back in the fetch.  We need to clean up those sync records
-					// and stop processing.
-					if statusUpdates.isEmpty {
-						try? await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDs))
-						done(true)
-						return
-					} else {
-						do {
-							try await articlesZone.modifyArticles(statusUpdates)
-							try? await self.syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
-							done(false)
-						} catch {
-							try? await self.syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
-							self.processAccountError(account, error)
-							Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
-							completion(true)
-						}
-					}
-				}
-			}
-
-			switch result {
-			case .success(let articles):
-				processWithArticles(articles)
-			case .failure(let databaseError):
-				Task { @MainActor in
-					try? await self.syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
-					Self.logger.error("iCloud: Send article status fetch articles error: \(databaseError.localizedDescription)")
-					completion(true)
-				}
+		// If this happens, we have somehow gotten into a state where we have new status records
+		// but the articles didn't come back in the fetch. We need to clean up those sync records
+		// and stop processing.
+		if statusUpdates.isEmpty {
+			try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDs))
+			return true
+		} else {
+			do {
+				try await articlesZone.modifyArticles(statusUpdates)
+				try? await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
+				return false
+			} catch {
+				try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+				processAccountError(account, error)
+				Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
+				return true
 			}
 		}
 	}
 
-	@MainActor func processAccountError(_ account: Account, _ error: Error) {
+	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {

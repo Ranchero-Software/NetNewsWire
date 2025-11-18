@@ -8,10 +8,7 @@
 
 import Foundation
 
-// Main thread only.
-
-public final class Node: Hashable {
-
+@MainActor public final class Node: Hashable {
 	public weak var parent: Node?
 	public let representedObject: AnyObject
 	public var canHaveChildNodes = false
@@ -54,7 +51,6 @@ public final class Node: Hashable {
 	}
 
 	public init(representedObject: AnyObject, parent: Node?) {
-
 		precondition(Thread.isMainThread)
 
 		self.representedObject = representedObject
@@ -65,14 +61,12 @@ public final class Node: Hashable {
 	}
 
 	public class func genericRootNode() -> Node {
-
 		let node = Node(representedObject: TopLevelRepresentedObject(), parent: nil)
 		node.canHaveChildNodes = true
 		return node
 	}
 
 	public func existingOrNewChildNode(with representedObject: AnyObject) -> Node {
-
 		if let node = childNodeRepresentingObject(representedObject) {
 			return node
 		}
@@ -80,13 +74,11 @@ public final class Node: Hashable {
 	}
 
 	public func createChildNode(_ representedObject: AnyObject) -> Node {
-
 		// Just creates — doesn’t add it.
 		return Node(representedObject: representedObject, parent: self)
 	}
 
 	public func childAtIndex(_ index: Int) -> Node? {
-
 		if index >= childNodes.count || index < 0 {
 			return nil
 		}
@@ -94,7 +86,6 @@ public final class Node: Hashable {
 	}
 
 	public func indexOfChild(_ node: Node) -> Int? {
-
 		return childNodes.firstIndex{ (oneChildNode) -> Bool in
 			oneChildNode === node
 		}
@@ -113,7 +104,6 @@ public final class Node: Hashable {
 	}
 
 	public func hasAncestor(in nodes: [Node]) -> Bool {
-
 		for node in nodes {
 			if node.isAncestor(of: self) {
 				return true
@@ -123,7 +113,6 @@ public final class Node: Hashable {
 	}
 
 	public func isAncestor(of node: Node) -> Bool {
-
 		if node == self {
 			return false
 		}
@@ -141,13 +130,11 @@ public final class Node: Hashable {
 	}
 
 	public class func nodesOrganizedByParent(_ nodes: [Node]) -> [Node: [Node]] {
-
 		let nodesWithParents = nodes.filter { $0.parent != nil }
 		return Dictionary(grouping: nodesWithParents, by: { $0.parent! })
 	}
 
 	public class func indexSetsGroupedByParent(_ nodes: [Node]) -> [Node: IndexSet] {
-
 		let d = nodesOrganizedByParent(nodes)
 		let indexSetDictionary = d.mapValues { (nodes) -> IndexSet in
 
@@ -183,7 +170,7 @@ public final class Node: Hashable {
 }
 
 
-public extension Array where Element == Node {
+@MainActor public extension Array where Element == Node {
 
 	func representedObjects() -> [AnyObject] {
 		return self.map{ $0.representedObject }
@@ -193,7 +180,6 @@ public extension Array where Element == Node {
 private extension Node {
 
 	func findNodeRepresentingObject(_ obj: AnyObject, recursively: Bool = false) -> Node? {
-
 		for childNode in childNodes {
 			if childNode.representedObject === obj {
 				return childNode
@@ -207,7 +193,6 @@ private extension Node {
 	}
 
 	func findNode(where test: (Node) -> Bool, recursively: Bool = false) -> Node? {
-
 		for childNode in childNodes {
 			if test(childNode) {
 				return childNode
@@ -219,5 +204,4 @@ private extension Node {
 
 		return nil
 	}
-
 }

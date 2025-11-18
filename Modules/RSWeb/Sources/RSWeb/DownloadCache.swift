@@ -8,7 +8,7 @@
 import Foundation
 import RSCore
 
-nonisolated struct DownloadCacheRecord: CacheRecord, Sendable {
+struct DownloadCacheRecord: CacheRecord, Sendable {
 	let dateCreated = Date()
 	let data: Data?
 	let response: URLResponse?

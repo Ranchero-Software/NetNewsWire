@@ -30,7 +30,7 @@ import Foundation
 		return pendingNonCanceledOperations.count
 	}
 
-	nonisolated public init() {}
+	public init() {}
 
 	/// Add an operation to the queue.
 	public func add(_ operation: MainThreadOperation) {
@@ -156,7 +156,7 @@ private extension MainThreadOperationQueue {
 		}
 		hasPendingRunScheduled = true
 		
-		Task { @MainActor in
+		Task {
 			hasPendingRunScheduled = false
 			guard !isSuspended && currentOperation == nil else {
 				return

@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct FeedbinImportResult: Codable {
-
+struct FeedbinImportResult: Codable, Sendable {
 	let importResultID: Int
 	let complete: Bool
 
@@ -17,5 +16,4 @@ struct FeedbinImportResult: Codable {
 		case importResultID = "id"
 		case complete
 	}
-
 }

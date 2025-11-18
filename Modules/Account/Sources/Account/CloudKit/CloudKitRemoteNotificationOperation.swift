@@ -11,10 +11,10 @@ import os.log
 import RSCore
 import CloudKitSync
 
-final class CloudKitRemoteNotificationOperation: MainThreadOperation, @unchecked Sendable {
+@MainActor final class CloudKitRemoteNotificationOperation: MainThreadOperation, @unchecked Sendable {
 	private weak var accountZone: CloudKitAccountZone?
 	private weak var articlesZone: CloudKitArticlesZone?
-	private var userInfo: [AnyHashable : Any]
+	nonisolated(unsafe) private var userInfo: [AnyHashable : Any]
 	private static let logger = cloudKitLogger
 
 	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable : Any]) {
@@ -24,7 +24,7 @@ final class CloudKitRemoteNotificationOperation: MainThreadOperation, @unchecked
 		super.init(name: "CloudKitRemoteNotificationOperation")
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		guard let accountZone, let articlesZone else {
 			didComplete()
 			return

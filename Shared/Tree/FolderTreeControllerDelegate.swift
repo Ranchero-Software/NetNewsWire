@@ -12,7 +12,7 @@ import RSTree
 import Articles
 import Account
 
-final class FolderTreeControllerDelegate: TreeControllerDelegate {
+@MainActor final class FolderTreeControllerDelegate: TreeControllerDelegate {
 
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 

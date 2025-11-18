@@ -44,7 +44,7 @@ extension AccountType {
 	}
 
 	// MARK: - SwiftUI Images
-	func image() -> Image {
+	@MainActor func image() -> Image {
 		switch self {
 		case .onMyMac:
 			// If it's the multiplatform app, the asset catalog contains assets for 

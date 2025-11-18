@@ -20,7 +20,7 @@ import Account
 	let group = DispatchGroup()
 
 	for (accountID, accountArticles) in d {
-		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+		guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 			continue
 		}
 		group.enter()

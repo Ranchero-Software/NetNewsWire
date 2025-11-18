@@ -6,10 +6,11 @@
 //  Created by Daniel Jalkut on 8/28/19.
 //  Copyright © 2019 Red Sweater Software. All rights reserved.
 //
+
 #if os(macOS)
 import Cocoa
 
-public final class RSAppMovementMonitor: NSObject {
+@MainActor public final class RSAppMovementMonitor: NSObject {
 
 	// If provided, the handler will be consulted when the app is moved.
 	// Return true to indicate that the default handler should be invoked.

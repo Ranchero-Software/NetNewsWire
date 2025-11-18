@@ -9,8 +9,7 @@
 import Foundation
 
 /// For anything that can be renamed by the user.
-
-public protocol Renamable {
+@MainActor public protocol Renamable {
 
 	/// Renames an object.
 	/// - Parameters:
@@ -18,6 +17,4 @@ public protocol Renamable {
 	///   - completion: A block called when the renaming completes or fails.
 	///   - result: The result of the renaming.
 	func rename(to: String, completion: @escaping (_ result: Result<Void, Error>) -> Void)
-
 }
-

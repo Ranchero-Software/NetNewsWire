@@ -9,7 +9,7 @@
 import Foundation
 import Synchronization
 
-nonisolated public final class DatabaseObjectCache: Sendable {
+public final class DatabaseObjectCache: Sendable {
 	private let state = Mutex([String: DatabaseObject]())
 
 	public init() {

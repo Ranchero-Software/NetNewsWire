@@ -20,7 +20,7 @@ import RSParserObjC
 //
 // In general, you should see FeedParser.swift for all your feed-parsing needs.
 
-nonisolated public struct AtomParser {
+public struct AtomParser {
 
 	public static func parse(_ parserData: ParserData) -> ParsedFeed? {
 

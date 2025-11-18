@@ -12,19 +12,19 @@ import RSCore
 
 @MainActor final class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 
-	private var account: Account!
+	nonisolated(unsafe) private var account: Account!
 	private let support = FeedlyTestSupport()
 
-	override func setUp() {
-		super.setUp()
+	override func setUp() async throws {
+		try await super.setUp()
 		account = support.makeTestAccount()
 	}
 
-	override func tearDown() {
-		if let account = account {
+	override func tearDown() async throws {
+		if let account {
 			support.destroy(account)
 		}
-		super.tearDown()
+		try await super.tearDown()
 	}
 
 	final class FeedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding {

@@ -8,13 +8,13 @@
 
 import Foundation
 
-struct NewsBlurLoginResponse: Decodable {
-	var code: Int
-	var errors: LoginError?
+struct NewsBlurLoginResponse: Decodable, Sendable {
+	let code: Int
+	let errors: LoginError?
 
-	struct LoginError: Decodable {
-		var username: [String]?
-		var others: [String]?
+	struct LoginError: Decodable, Sendable {
+		let username: [String]?
+		let others: [String]?
 	}
 }
 

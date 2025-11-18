@@ -20,8 +20,7 @@ import UIKit
 ///
 /// See NetNewsWire.
 
-public protocol SendToCommand {
-
+@MainActor public protocol SendToCommand {
 	/// The title of the command.
 	///
 	/// Often the name of the target application.

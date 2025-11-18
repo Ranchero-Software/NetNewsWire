@@ -12,7 +12,6 @@ import AppKit
 
 /// Takes a string, not a URL, but writes it as a URL (when possible) and as a String.
 @objc public final class URLPasteboardWriter: NSObject, NSPasteboardWriting {
-
 	let urlString: String
 
 	public init(urlString: String) {
