@@ -40,7 +40,7 @@ extension Notification.Name {
 		}
 
 		Task { @MainActor in
-			findImage(url)
+			await findImage(url)
 		}
 
 		return nil

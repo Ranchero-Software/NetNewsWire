@@ -46,7 +46,7 @@ extension Notification.Name {
 		self.diskKey = faviconURL.md5String
 
 		Task { @MainActor in
-			findFavicon()
+			await findFavicon()
 		}
 	}
 
@@ -63,7 +63,7 @@ extension Notification.Name {
 		lastDownloadAttemptDate = Date()
 
 		Task { @MainActor in
-			findFavicon()
+			await findFavicon()
 		}
 
 		return true
