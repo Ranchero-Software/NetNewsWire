@@ -15,7 +15,7 @@ import Secrets
 final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate, @unchecked Sendable {
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
 
-	@MainActor init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, customFeedName: String? = nil, operationQueue: MainThreadOperationQueue) throws {
+	init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, customFeedName: String? = nil, operationQueue: MainThreadOperationQueue) throws {
 
 		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionId) = try validator.getValidContainer()
@@ -43,12 +43,12 @@ final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDele
 		operationQueue.add(finishOperation)
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		operationQueue?.resume()
 		didComplete()
 	}
 
-	@MainActor override func noteDidComplete() {
+	override func noteDidComplete() {
 		if isCanceled {
 			operationQueue?.cancelAll()
 		}
@@ -60,7 +60,7 @@ final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDele
 		addCompletionHandler = nil
 	}
 	
-	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
+	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
 		guard !isCanceled else {
 			return
 		}

@@ -190,7 +190,7 @@ private extension TimelineContainerViewController {
 		return .regular // Should never get here.
 	}
 
-	@MainActor func updateViewOptionsPopUpButton() {
+	func updateViewOptionsPopUpButton() {
 		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
 			newestToOldestMenuItem.state = .off
 			oldestToNewestMenuItem.state = .on

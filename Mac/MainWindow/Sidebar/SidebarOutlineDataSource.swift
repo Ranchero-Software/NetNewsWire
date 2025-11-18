@@ -199,7 +199,7 @@ private extension SidebarOutlineDataSource {
 		return .copy
 	}
 
-	@MainActor func validateSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
+	func validateSingleLocalFeedDrop(_ outlineView: NSOutlineView, _ draggedFeed: PasteboardFeed, _ parentNode: Node, _ index: Int) -> NSDragOperation {
 		// A local feed should always drag on to an Account or Folder node, and we can provide an index.
 		guard let dropTargetNode = ancestorThatCanAcceptLocalFeed(parentNode) else {
 			return SidebarOutlineDataSource.dragOperationNone

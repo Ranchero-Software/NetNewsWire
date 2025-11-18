@@ -111,7 +111,7 @@ final class NetNewsWireCreateElementCommand : NSCreateCommand {
     is ambiguity about whether specifiers are lists or single objects, the code switches
     based on which it is.
 */
-final class NetNewsWireDeleteCommand : NSDeleteCommand {
+@MainActor final class NetNewsWireDeleteCommand : NSDeleteCommand {
 
     /*
         delete(objectToDelete:, from container:)

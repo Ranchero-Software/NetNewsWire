@@ -21,7 +21,7 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 	let folder: Folder
 	let feedResource: FeedlyFeedResourceId
 
-	@MainActor init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
+	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
 		self.account = account
 		self.folder = folder
 		self.feedResource = feedResource
@@ -37,7 +37,7 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 		return feedResource
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
 			Task { @MainActor in
 				guard let self else {

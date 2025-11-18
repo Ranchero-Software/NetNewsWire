@@ -33,7 +33,7 @@ import RSParser
 		self.hostWindow = hostWindow
 	}
 
-	@MainActor func showAddFeedSheet(_ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
+	func showAddFeedSheet(_ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
