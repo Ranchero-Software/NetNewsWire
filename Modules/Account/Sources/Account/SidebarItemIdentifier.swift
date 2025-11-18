@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol SidebarItemIdentifiable {
+@MainActor public protocol SidebarItemIdentifiable {
 	@MainActor var sidebarItemID: SidebarItemIdentifier? { get }
 }
 

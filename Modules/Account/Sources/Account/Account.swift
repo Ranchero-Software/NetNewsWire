@@ -1315,8 +1315,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			feeds.formUnion(folder.flattenedFeeds())
 		}
 
+		// Keep old feeds alive during transition to work around Swift runtime bug
+		let oldFeeds = _flattenedFeeds
 		_flattenedFeeds = feeds
 		flattenedFeedsNeedUpdate = false
+		_ = oldFeeds // Ensure oldFeeds stays alive until after assignment
 	}
 
 	func rebuildFeedDictionaries() {

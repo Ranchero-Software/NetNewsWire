@@ -25,7 +25,7 @@ import SyncDatabase
 		return (transport, caller)
 	}
 
-	func makeTestAccount() -> Account {
+	@MainActor func makeTestAccount() -> Account {
 		let manager = TestAccountManager()
 		let account = manager.createAccount(type: .feedly, transport: transport)
 		do {
@@ -42,7 +42,7 @@ import SyncDatabase
 		return OAuthAuthorizationClient(id: "test", redirectUri: "test://test/auth", state: nil, secret: "password")
 	}
 
-	func removeCredentials(matching type: CredentialsType, from account: Account) {
+	@MainActor func removeCredentials(matching type: CredentialsType, from account: Account) {
 		do {
 			try account.removeCredentials(type: type)
 		} catch {
@@ -54,9 +54,9 @@ import SyncDatabase
 		return TestDatabaseContainer()
 	}
 
-	final class TestDatabaseContainer {
+	nonisolated final class TestDatabaseContainer: Sendable {
 		private let path: String
-		private(set) var database: SyncDatabase!
+		nonisolated(unsafe) private(set) var database: SyncDatabase!
 
 		init() {
 			let dataFolder = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)

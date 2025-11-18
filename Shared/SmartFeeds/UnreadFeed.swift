@@ -18,7 +18,7 @@ import ArticlesDatabase
 
 // This just shows the global unread count, which appDelegate already has. Easy.
 
-final class UnreadFeed: PseudoFeed {
+@MainActor final class UnreadFeed: PseudoFeed {
 
 	var account: Account? = nil
 

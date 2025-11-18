@@ -15,15 +15,13 @@ extension Notification.Name {
 
 /// A type that provides a name for display to the user.
 
-public protocol DisplayNameProvider {
-
+@MainActor public protocol DisplayNameProvider {
 	@MainActor var nameForDisplay: String { get }
 }
 
 public extension DisplayNameProvider {
 
-	func postDisplayNameDidChangeNotification() {
-
+	@MainActor func postDisplayNameDidChangeNotification() {
 		NotificationCenter.default.post(name: .DisplayNameDidChange, object: self, userInfo: nil)
 	}
 }

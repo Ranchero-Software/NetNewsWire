@@ -49,7 +49,7 @@ let package = Package(
 			resources: [
 				.copy("JSON"),
 			],
-			swiftSettings: [.swiftLanguageMode(.v5)]
+			swiftSettings: [.swiftLanguageMode(.v6)]
 		),
 	]
 )

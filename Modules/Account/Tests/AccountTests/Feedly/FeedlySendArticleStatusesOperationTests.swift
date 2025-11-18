@@ -12,27 +12,27 @@ import SyncDatabase
 import Articles
 import RSCore
 
-@MainActor final class FeedlySendArticleStatusesOperationTests: XCTestCase {
+final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 
 	private var account: Account!
 	private let support = FeedlyTestSupport()
 	private var container: FeedlyTestSupport.TestDatabaseContainer!
 
-	override func setUp() {
-		super.setUp()
-		account = support.makeTestAccount()
-		container = support.makeTestDatabaseContainer()
+	override func setUp() async throws {
+		try? await super.setUp()
+		account = await support.makeTestAccount()
+		container = await support.makeTestDatabaseContainer()
 	}
 
-	override func tearDown() {
+	override func tearDown() async throws {
 		container = nil
-		if let account = account {
-			support.destroy(account)
+		if let account {
+			await support.destroy(account)
 		}
-		super.tearDown()
+		try? await super.tearDown()
 	}
 
-	func testSendEmpty() async {
+	@MainActor func testSendEmpty() async {
 		let service = TestMarkArticlesService()
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service)
 
@@ -46,7 +46,7 @@ import RSCore
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 	}
 
-	func testSendUnreadSuccess() async throws {
+	@MainActor func testSendUnreadSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) })
 
@@ -72,7 +72,7 @@ import RSCore
 		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendUnreadFailure() async throws {
+	@MainActor func testSendUnreadFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) })
 
@@ -100,7 +100,7 @@ import RSCore
 		XCTAssertEqual(statusCount, statuses.count)
 	}
 
-	func testSendReadSuccess() async throws {
+	@MainActor func testSendReadSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) })
 
@@ -128,7 +128,7 @@ import RSCore
 		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendReadFailure() async throws {
+	@MainActor func testSendReadFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) })
 
@@ -156,7 +156,7 @@ import RSCore
 		XCTAssertEqual(statusCount, statuses.count)
 	}
 
-	func testSendStarredSuccess() async throws {
+	@MainActor func testSendStarredSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) })
 
@@ -184,7 +184,7 @@ import RSCore
 		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendStarredFailure() async throws {
+	@MainActor func testSendStarredFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) })
 
@@ -212,7 +212,7 @@ import RSCore
 		XCTAssertEqual(statusCount, statuses.count)
 	}
 
-	func testSendUnstarredSuccess() async throws {
+	@MainActor func testSendUnstarredSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) })
 
@@ -240,7 +240,7 @@ import RSCore
 		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendUnstarredFailure() async throws {
+	@MainActor func testSendUnstarredFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let statuses = Set(articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) })
 
@@ -268,7 +268,7 @@ import RSCore
 		XCTAssertEqual(statusCount, statuses.count)
 	}
 
-	func testSendAllSuccess() async throws {
+	@MainActor func testSendAllSuccess() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let keys = [SyncStatus.Key.read, .starred]
 		let flags = [true, false]
@@ -313,7 +313,7 @@ import RSCore
 		XCTAssertEqual(statusCount, 0)
 	}
 
-	func testSendAllFailure() async throws {
+	@MainActor func testSendAllFailure() async throws {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
 		let keys = [SyncStatus.Key.read, .starred]
 		let flags = [true, false]

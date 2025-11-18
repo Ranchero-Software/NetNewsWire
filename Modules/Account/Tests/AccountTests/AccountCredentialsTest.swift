@@ -15,11 +15,11 @@ import Secrets
 
 	private var account: Account!
 
-    override func setUp() {
+	override func setUp() async throws {
 		account = TestAccountManager.shared.createAccount(type: .feedbin, transport: TestTransport())
     }
 
-    override func tearDown() {
+	override func tearDown() async throws {
 		TestAccountManager.shared.deleteAccount(account)
     }
 

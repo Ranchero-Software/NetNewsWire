@@ -16,16 +16,16 @@ import Secrets
 	private var account: Account!
 	private let support = FeedlyTestSupport()
 
-	override func setUp() {
-		super.setUp()
+	override func setUp() async throws {
+		try await super.setUp()
 		account = support.makeTestAccount()
 	}
 
-	override func tearDown() {
+	override func tearDown() async throws {
 		if let account = account {
 			support.destroy(account)
 		}
-		super.tearDown()
+		try await super.tearDown()
 	}
 
 	private func getTokens(for account: Account) throws -> (accessToken: Credentials, refreshToken: Credentials) {

@@ -12,7 +12,7 @@ import Articles
 import ArticlesDatabase
 import Account
 
-final class SmartFeed: PseudoFeed {
+@MainActor final class SmartFeed: PseudoFeed {
 
 	var account: Account? = nil
 

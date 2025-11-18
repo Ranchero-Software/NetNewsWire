@@ -15,7 +15,7 @@ nonisolated public enum ReadFilterType: Sendable {
 	case alwaysRead
 }
 
-public protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
+@MainActor public protocol SidebarItem: SidebarItemIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 	@MainActor var account: Account? { get }
 	@MainActor var defaultReadFilterType: ReadFilterType { get }
 }

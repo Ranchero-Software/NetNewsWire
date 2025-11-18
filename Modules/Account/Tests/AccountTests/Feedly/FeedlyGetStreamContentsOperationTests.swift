@@ -15,16 +15,16 @@ import RSCore
 	private var account: Account!
 	private let support = FeedlyTestSupport()
 
-	override func setUp() {
-		super.setUp()
+	override func setUp() async throws {
+		try await super.setUp()
 		account = support.makeTestAccount()
 	}
 
-	override func tearDown() {
-		if let account = account {
+	override func tearDown() async throws{
+		if let account {
 			support.destroy(account)
 		}
-		super.tearDown()
+		try await super.tearDown()
 	}
 
 	func testGetStreamContentsFailure() {

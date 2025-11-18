@@ -27,7 +27,9 @@
       "WebFetch(domain:mjtsai.com)",
       "WebFetch(domain:www.massicotte.org)",
       "WebFetch(domain:www.hackingwithswift.com)",
-      "Bash(/dev/null)"
+      "Bash(/dev/null)",
+      "Bash(wait)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }
