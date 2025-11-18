@@ -10,7 +10,7 @@
 import Foundation
 import CloudKit
 
-public class CloudKitError: LocalizedError {
+public final class CloudKitError: LocalizedError, Sendable {
 
 	public let error: Error
 

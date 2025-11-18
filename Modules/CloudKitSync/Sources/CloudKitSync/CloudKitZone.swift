@@ -34,7 +34,6 @@ public protocol CloudKitZoneDelegate: AnyObject {
 public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
 
 @MainActor public protocol CloudKitZone: AnyObject {
-
 	static var qualityOfService: QualityOfService { get }
 
 	var zoneID: CKRecordZone.ID { get }
@@ -58,7 +57,6 @@ public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID:
 }
 
 public extension CloudKitZone {
-
 	// My observation has been that QoS is treated differently for CloudKit operations on macOS vs iOS.
 	// .userInitiated is too aggressive on iOS and can lead the UI slowing down and appearing to block.
 	// .default (or lower) on macOS will sometimes hang for extended periods of time and appear to hang.
@@ -950,5 +948,4 @@ public extension CloudKitZone {
 			}
 		}
 	}
-
 }
