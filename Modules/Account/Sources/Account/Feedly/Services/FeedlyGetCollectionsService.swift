@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol FeedlyGetCollectionsService: AnyObject {
+@MainActor protocol FeedlyGetCollectionsService: AnyObject {
 	func getCollections(completion: @escaping @Sendable (Result<[FeedlyCollection], Error>) -> ())
 }

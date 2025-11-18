@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated struct FeedlyRTLTextSanitizer: Sendable {
+struct FeedlyRTLTextSanitizer: Sendable {
     private let rightToLeftPrefix = "<div style=\"direction:rtl;text-align:right\">"
     private let rightToLeftSuffix = "</div>"
 

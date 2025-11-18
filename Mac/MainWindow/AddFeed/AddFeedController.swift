@@ -157,11 +157,11 @@ private extension AddFeedController {
 	// MARK: Progress
 
 	func beginShowingProgress() {
-		runIndeterminateProgressWithMessage(NSLocalizedString("Finding feed…", comment:"Feed finder"))
+		IndeterminateProgressController.beginProgressWithMessage(NSLocalizedString("Finding feed…", comment:"Feed finder"))
 	}
 
 	func endShowingProgress() {
-		stopIndeterminateProgress()
+		IndeterminateProgressController.endProgress()
 		hostWindow.makeKeyAndOrderFront(self)
 	}
 

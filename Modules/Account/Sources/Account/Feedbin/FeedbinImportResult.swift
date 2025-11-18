@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated struct FeedbinImportResult: Codable, Sendable {
+struct FeedbinImportResult: Codable, Sendable {
 	let importResultID: Int
 	let complete: Bool
 

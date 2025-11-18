@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated struct FeedlyFeed: Codable, Sendable {
+struct FeedlyFeed: Codable, Sendable {
 	let id: String
 	let title: String?
 	let updated: Date?

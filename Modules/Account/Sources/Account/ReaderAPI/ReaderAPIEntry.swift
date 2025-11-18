@@ -10,7 +10,7 @@ import Foundation
 import RSParser
 import RSCore
 
-nonisolated struct ReaderAPIEntryWrapper: Codable, Sendable {
+struct ReaderAPIEntryWrapper: Codable, Sendable {
 	let id: String
 	let updated: Int
 	let entries: [ReaderAPIEntry]
@@ -46,7 +46,7 @@ nonisolated struct ReaderAPIEntryWrapper: Codable, Sendable {
 }
 }
 */
-nonisolated struct ReaderAPIEntry: Codable, Sendable {
+struct ReaderAPIEntry: Codable, Sendable {
 	let articleID: String
 	let title: String?
 	let author: String?
@@ -102,7 +102,7 @@ nonisolated struct ReaderAPIEntry: Codable, Sendable {
 
 }
 
-nonisolated struct ReaderAPIArticleSummary: Codable, Sendable {
+struct ReaderAPIArticleSummary: Codable, Sendable {
 	let content: String?
 
 	enum CodingKeys: String, CodingKey {
@@ -110,7 +110,7 @@ nonisolated struct ReaderAPIArticleSummary: Codable, Sendable {
 	}
 }
 
-nonisolated struct ReaderAPIAlternateLocation: Codable, Sendable {
+struct ReaderAPIAlternateLocation: Codable, Sendable {
 	let url: String?
 
 	enum CodingKeys: String, CodingKey {
@@ -118,7 +118,7 @@ nonisolated struct ReaderAPIAlternateLocation: Codable, Sendable {
 	}
 }
 
-nonisolated struct ReaderAPIEntryOrigin: Codable, Sendable {
+struct ReaderAPIEntryOrigin: Codable, Sendable {
 	let streamId: String?
 	let title: String?
 

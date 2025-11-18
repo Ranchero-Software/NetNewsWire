@@ -9,11 +9,10 @@
 import Foundation
 
 @MainActor public protocol SidebarItemIdentifiable {
-	@MainActor var sidebarItemID: SidebarItemIdentifier? { get }
+	var sidebarItemID: SidebarItemIdentifier? { get }
 }
 
-nonisolated public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable, Sendable {
-
+public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable, Sendable {
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
 	case feed(String, String) // accountID, feedID

@@ -19,7 +19,7 @@ import RSParser
 
 */
 
-nonisolated struct ReaderAPIQuickAddResult: Codable, Sendable {
+struct ReaderAPIQuickAddResult: Codable, Sendable {
 	let numResults: Int
 	let error: String?
 	let streamId: String?
@@ -31,7 +31,7 @@ nonisolated struct ReaderAPIQuickAddResult: Codable, Sendable {
 	}
 }
 
-nonisolated struct ReaderAPISubscriptionContainer: Codable, Sendable {
+struct ReaderAPISubscriptionContainer: Codable, Sendable {
 	let subscriptions: [ReaderAPISubscription]
 
 	enum CodingKeys: String, CodingKey {
@@ -55,7 +55,7 @@ nonisolated struct ReaderAPISubscriptionContainer: Codable, Sendable {
 }
 
 */
-nonisolated struct ReaderAPISubscription: Codable, Sendable {
+struct ReaderAPISubscription: Codable, Sendable {
 	let feedID: String
 	let name: String?
 	let categories: [ReaderAPICategory]
@@ -81,7 +81,7 @@ nonisolated struct ReaderAPISubscription: Codable, Sendable {
 	}
 }
 
-nonisolated struct ReaderAPICategory: Codable, Sendable {
+struct ReaderAPICategory: Codable, Sendable {
 	let categoryId: String
 	let categoryLabel: String
 
@@ -91,14 +91,14 @@ nonisolated struct ReaderAPICategory: Codable, Sendable {
 	}
 }
 
-nonisolated struct ReaderAPICreateSubscription: Codable, Sendable {
+struct ReaderAPICreateSubscription: Codable, Sendable {
 	let feedURL: String
 	enum CodingKeys: String, CodingKey {
 		case feedURL = "feed_url"
 	}
 }
 
-nonisolated struct ReaderAPISubscriptionChoice: Codable, Sendable {
+struct ReaderAPISubscriptionChoice: Codable, Sendable {
 	let name: String?
 	let url: String
 

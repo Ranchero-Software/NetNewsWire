@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol TreeControllerDelegate: AnyObject {
+@MainActor public protocol TreeControllerDelegate: AnyObject {
 	func treeController(treeController: TreeController, childNodesFor: Node) -> [Node]?
 }
 

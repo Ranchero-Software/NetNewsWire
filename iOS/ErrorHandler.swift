@@ -10,7 +10,7 @@ import UIKit
 import os
 import RSCore
 
-nonisolated struct ErrorHandler: Sendable {
+struct ErrorHandler: Sendable {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
 

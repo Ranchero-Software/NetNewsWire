@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated struct FeedbinTag: Codable, Sendable {
+struct FeedbinTag: Codable, Sendable {
 	let tagID: Int
 	let name: String
 
@@ -18,7 +18,7 @@ nonisolated struct FeedbinTag: Codable, Sendable {
 	}
 }
 
-nonisolated struct FeedbinRenameTag: Codable, Sendable {
+struct FeedbinRenameTag: Codable, Sendable {
 	let oldName: String
 	let newName: String
 
@@ -28,7 +28,7 @@ nonisolated struct FeedbinRenameTag: Codable, Sendable {
 	}
 }
 
-nonisolated struct FeedbinDeleteTag: Codable, Sendable {
+struct FeedbinDeleteTag: Codable, Sendable {
 	let name: String
 
 	enum CodingKeys: String, CodingKey {

@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated struct FeedbinUnreadEntry: Codable, Sendable {
+struct FeedbinUnreadEntry: Codable, Sendable {
 	let unreadEntries: [Int]
 
 	enum CodingKeys: String, CodingKey {

@@ -10,7 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 
-nonisolated struct FeedbinSubscription: Hashable, Codable, Sendable {
+struct FeedbinSubscription: Hashable, Codable, Sendable {
 	let subscriptionID: Int
 	let feedID: Int
 	let name: String?
@@ -36,7 +36,7 @@ nonisolated struct FeedbinSubscription: Hashable, Codable, Sendable {
 	}
 }
 
-nonisolated struct FeedbinSubscriptionJSONFeed: Codable, Sendable {
+struct FeedbinSubscriptionJSONFeed: Codable, Sendable {
 	let favicon: String?
 	let icon: String?
 	enum CodingKeys: String, CodingKey {
@@ -45,21 +45,21 @@ nonisolated struct FeedbinSubscriptionJSONFeed: Codable, Sendable {
 	}
 }
 
-nonisolated struct FeedbinCreateSubscription: Codable, Sendable {
+struct FeedbinCreateSubscription: Codable, Sendable {
 	let feedURL: String
 	enum CodingKeys: String, CodingKey {
 		case feedURL = "feed_url"
 	}
 }
 
-nonisolated struct FeedbinUpdateSubscription: Codable, Sendable {
+struct FeedbinUpdateSubscription: Codable, Sendable {
 	let title: String
 	enum CodingKeys: String, CodingKey {
 		case title
 	}
 }
 
-nonisolated struct FeedbinSubscriptionChoice: Codable, Sendable {
+struct FeedbinSubscriptionChoice: Codable, Sendable {
 	let name: String?
 	let url: String
 

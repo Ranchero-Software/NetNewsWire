@@ -8,11 +8,11 @@
 
 import Foundation
 
-nonisolated struct NewsBlurLoginResponse: Decodable, Sendable {
+struct NewsBlurLoginResponse: Decodable, Sendable {
 	let code: Int
 	let errors: LoginError?
 
-	nonisolated struct LoginError: Decodable, Sendable {
+	struct LoginError: Decodable, Sendable {
 		let username: [String]?
 		let others: [String]?
 	}

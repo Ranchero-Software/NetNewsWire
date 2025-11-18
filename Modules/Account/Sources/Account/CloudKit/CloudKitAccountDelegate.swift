@@ -83,7 +83,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func refreshAll(for account: Account) async throws {
+	func refreshAll(for account: Account) async throws {
 		guard refreshProgress.isComplete else {
 			return
 		}
@@ -97,16 +97,16 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		try await standardRefreshAll(for: account)
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws {
+	func syncArticleStatus(for account: Account) async throws {
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
 	}
 
-	@MainActor func sendArticleStatus(for account: Account) async throws {
+	func sendArticleStatus(for account: Account) async throws {
 		try await sendArticleStatus(account: account, showProgress: false)
 	}
 
-	@MainActor func refreshArticleStatus(for account: Account) async throws {
+	func refreshArticleStatus(for account: Account) async throws {
 		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
 			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
 			op.completionBlock = { mainThreadOperaion in
@@ -120,7 +120,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+	func importOPML(for account: Account, opmlFile: URL) async throws {
 		guard refreshProgress.isComplete else {
 			return
 		}
@@ -147,7 +147,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	}
 
 	@discardableResult
-	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 		guard let url = URL(string: urlString) else {
 			throw AccountError.invalidParameter
 		}
@@ -156,7 +156,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		return try await createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed)
 	}
 
-	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 		let editedName = name.isEmpty ? nil : name
 		syncProgress.addTask()
 		defer {
@@ -172,7 +172,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+	func removeFeed(account: Account, feed: Feed, container: Container) async throws {
 		do {
 			try await removeFeedFromCloud(for: account, with: feed, from: container)
 			account.clearFeedMetadata(feed)
@@ -189,7 +189,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
@@ -203,7 +203,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
+	func addFeed(account: Account, feed: Feed, container: Container) async throws {
 		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
@@ -216,11 +216,11 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 		try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 	}
 
-	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+	func createFolder(for account: Account, name: String) async throws -> Folder {
 		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
@@ -237,7 +237,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
@@ -250,7 +250,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
+	func removeFolder(for account: Account, with folder: Folder) async throws {
 		syncProgress.addTask()
 
 		let feedExternalIDs: [String]
@@ -302,7 +302,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
+	func restoreFolder(for account: Account, folder: Folder) async throws {
 		guard let name = folder.name else {
 			throw AccountError.invalidParameter
 		}
@@ -341,7 +341,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
@@ -389,15 +389,15 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	// MARK: - Suspend and Resume (for iOS)
 
-	@MainActor func suspendNetwork() {
+	func suspendNetwork() {
 		refresher.suspend()
 	}
 
-	@MainActor func suspendDatabase() {
+	func suspendDatabase() {
 		syncDatabase.suspend()
 	}
 
-	@MainActor func resume() {
+	func resume() {
 		refresher.resume()
 		syncDatabase.resume()
 	}
@@ -434,15 +434,15 @@ private extension CloudKitAccountDelegate {
 
 private extension CloudKitAccountDelegate {
 
-	@MainActor func initialRefreshAll(for account: Account) async throws {
+	func initialRefreshAll(for account: Account) async throws {
 		try await performRefreshAll(for: account, sendArticleStatus: false)
 	}
 
-	@MainActor func standardRefreshAll(for account: Account) async throws {
+	func standardRefreshAll(for account: Account) async throws {
 		try await performRefreshAll(for: account, sendArticleStatus: true)
 	}
 
-	@MainActor func performRefreshAll(for account: Account, sendArticleStatus: Bool) async throws {
+	func performRefreshAll(for account: Account, sendArticleStatus: Bool) async throws {
 		syncProgress.addTasks(3)
 
 		do {
@@ -469,7 +469,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	@MainActor func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 		syncProgress.addTasks(5)
 
 		do {
@@ -508,7 +508,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	@MainActor func createAndSyncFeed(account: Account, feedURL: URL, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws -> Feed {
+	func createAndSyncFeed(account: Account, feedURL: URL, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws -> Feed {
 		let feed = account.createFeed(with: nil, url: feedURL.absoluteString, feedID: feedURL.absoluteString, homePageURL: nil)
 		feed.editedName = editedName
 		container.addFeedToTreeAtTopLevel(feed)
@@ -529,7 +529,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	@MainActor func downloadAndParseFeed(feedURL: URL, feed: Feed) async throws -> ParsedFeed {
+	func downloadAndParseFeed(feedURL: URL, feed: Feed) async throws -> ParsedFeed {
 		let (parsedFeed, response) = try await InitialFeedDownloader.download(feedURL)
 		syncProgress.completeTask()
 		feed.lastCheckDate = Date()
@@ -547,7 +547,7 @@ private extension CloudKitAccountDelegate {
 		return parsedFeed
 	}
 
-	@MainActor func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
+	func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
 		let _ = try await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
 
 		let externalID = try await accountZone.createFeed(url: bestFeedSpecifier.urlString,
@@ -560,7 +560,7 @@ private extension CloudKitAccountDelegate {
 		sendNewArticlesToTheCloud(account, feed)
 	}
 
-	@MainActor func addDeadFeed(account: Account, url: URL, editedName: String?, container: Container) async throws -> Feed {
+	func addDeadFeed(account: Account, url: URL, editedName: String?, container: Container) async throws -> Feed {
 		let feed = account.createFeed(with: editedName, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
 		container.addFeedToTreeAtTopLevel(feed)
 
@@ -596,7 +596,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	@MainActor func processAccountError(_ account: Account, _ error: Error) {
+	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
@@ -635,7 +635,7 @@ private extension CloudKitAccountDelegate {
 		try? await syncDatabase.insertStatuses(syncStatuses)
 	}
 
-	@MainActor func sendArticleStatus(account: Account, showProgress: Bool) async throws {
+	func sendArticleStatus(account: Account, showProgress: Bool) async throws {
 		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
 			let op = CloudKitSendStatusOperation(account: account,
 												 articlesZone: articlesZone,
@@ -653,7 +653,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	@MainActor func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container) async throws {
+	func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container) async throws {
 		syncProgress.addTasks(2)
 
 		do {

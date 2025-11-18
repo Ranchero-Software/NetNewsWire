@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated struct FeedbinTagging: Codable, Sendable {
+struct FeedbinTagging: Codable, Sendable {
 	let taggingID: Int
 	let feedID: Int
 	let name: String
@@ -20,7 +20,7 @@ nonisolated struct FeedbinTagging: Codable, Sendable {
 	}
 }
 
-nonisolated struct FeedbinCreateTagging: Codable, Sendable {
+struct FeedbinCreateTagging: Codable, Sendable {
 	let feedID: Int
 	let name: String
 

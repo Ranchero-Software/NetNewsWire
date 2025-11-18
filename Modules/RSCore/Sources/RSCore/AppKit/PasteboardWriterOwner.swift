@@ -9,7 +9,7 @@
 #if os(macOS)
 import AppKit
 
-public protocol PasteboardWriterOwner {
+@MainActor public protocol PasteboardWriterOwner {
 	var pasteboardWriter: NSPasteboardWriting { get }
 }
 #endif

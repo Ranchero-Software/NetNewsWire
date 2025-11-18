@@ -10,7 +10,7 @@ import AppKit
 
 public extension NSPasteboard {
 
-	func copyObjects(_ objects: [Any]) {
+	@MainActor func copyObjects(_ objects: [Any]) {
 		guard let writers = writersFor(objects) else {
 			return
 		}
@@ -51,7 +51,7 @@ public extension NSPasteboard {
 
 private extension NSPasteboard {
 
-	func writersFor(_ objects: [Any]) -> [NSPasteboardWriting]? {
+	@MainActor func writersFor(_ objects: [Any]) -> [NSPasteboardWriting]? {
 		let writers = objects.compactMap { ($0 as? PasteboardWriterOwner)?.pasteboardWriter }
 		return writers.isEmpty ? nil : writers
 	}

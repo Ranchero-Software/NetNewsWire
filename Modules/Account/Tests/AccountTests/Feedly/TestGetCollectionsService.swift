@@ -9,7 +9,7 @@
 import XCTest
 @testable import Account
 
-final class TestGetCollectionsService: FeedlyGetCollectionsService {
+@MainActor final class TestGetCollectionsService: FeedlyGetCollectionsService {
 	var mockResult: Result<[FeedlyCollection], Error>?
 	var getCollectionsExpectation: XCTestExpectation?
 

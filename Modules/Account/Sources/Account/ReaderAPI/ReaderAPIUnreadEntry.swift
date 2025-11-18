@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated struct ReaderAPIReferenceWrapper: Codable, Sendable {
+struct ReaderAPIReferenceWrapper: Codable, Sendable {
 	let itemRefs: [ReaderAPIReference]?
 	let continuation: String?
 
@@ -18,7 +18,7 @@ nonisolated struct ReaderAPIReferenceWrapper: Codable, Sendable {
 	}
 }
 
-nonisolated struct ReaderAPIReference: Codable, Sendable {
+struct ReaderAPIReference: Codable, Sendable {
 	let itemId: String?
 
 	enum CodingKeys: String, CodingKey {

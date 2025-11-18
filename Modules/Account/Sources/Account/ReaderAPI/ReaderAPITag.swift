@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated struct ReaderAPITagContainer: Codable, Sendable {
+struct ReaderAPITagContainer: Codable, Sendable {
 	let tags: [ReaderAPITag]
 
 	enum CodingKeys: String, CodingKey {
@@ -16,7 +16,7 @@ nonisolated struct ReaderAPITagContainer: Codable, Sendable {
 	}
 }
 
-nonisolated struct ReaderAPITag: Codable, Sendable {
+struct ReaderAPITag: Codable, Sendable {
 	let tagID: String
 	let type: String?
 

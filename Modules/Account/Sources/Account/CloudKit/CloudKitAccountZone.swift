@@ -20,8 +20,8 @@ enum CloudKitAccountZoneError: LocalizedError {
 		return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
 	}
 }
-final class CloudKitAccountZone: CloudKitZone {
 
+@MainActor final class CloudKitAccountZone: CloudKitZone {
 	var zoneID: CKRecordZone.ID
 
     weak var container: CKContainer?
@@ -54,7 +54,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		migrateChangeToken()
     }
 
-	@MainActor func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
+	func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
 		var records = [CKRecord]()
 		var feedRecords = [String: CKRecord]()
 
@@ -89,7 +89,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 
 	///  Persist a web feed record to iCloud and return the external key
-	@MainActor func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container) async throws -> String {
+	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container) async throws -> String {
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
 		record[CloudKitFeed.Fields.url] = url
@@ -111,7 +111,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 
 	/// Rename the given web feed
-	@MainActor func renameFeed(_ feed: Feed, editedName: String?) async throws {
+	func renameFeed(_ feed: Feed, editedName: String?) async throws {
 		guard let externalID = feed.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}
@@ -124,7 +124,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 
 	/// Removes a web feed from a container and optionally deletes it, returning true if deleted
-	@MainActor func removeFeed(_ feed: Feed, from: Container) async throws -> Bool {
+	func removeFeed(_ feed: Feed, from: Container) async throws -> Bool {
 		guard let fromContainerExternalID = from.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}
@@ -155,7 +155,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 
-	@MainActor func moveFeed(_ feed: Feed, from: Container, to: Container) async throws {
+	func moveFeed(_ feed: Feed, from: Container, to: Container) async throws {
 		guard let fromContainerExternalID = from.externalID, let toContainerExternalID = to.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}
@@ -170,7 +170,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 
-	@MainActor func addFeed(_ feed: Feed, to: Container) async throws {
+	func addFeed(_ feed: Feed, to: Container) async throws {
 		guard let toContainerExternalID = to.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}
@@ -184,7 +184,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 
-	@MainActor func findFeedExternalIDs(for folder: Folder) async throws -> [String] {
+	func findFeedExternalIDs(for folder: Folder) async throws -> [String] {
 		guard let folderExternalID = folder.externalID else {
 			throw CloudKitAccountZoneError.unknown
 		}
@@ -271,7 +271,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		try await createContainer(name: name, isAccount: false)
 	}
 
-	@MainActor func renameFolder(_ folder: Folder, to name: String) async throws {
+	func renameFolder(_ folder: Folder, to name: String) async throws {
 		guard let externalID = folder.externalID else {
 			throw CloudKitZoneError.corruptAccount
 		}

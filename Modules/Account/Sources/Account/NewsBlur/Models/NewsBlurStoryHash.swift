@@ -12,13 +12,13 @@ import RSParser
 
 typealias NewsBlurStoryHash = NewsBlurStoryHashesResponse.StoryHash
 
-nonisolated struct NewsBlurStoryHashesResponse: Decodable, Sendable {
+struct NewsBlurStoryHashesResponse: Decodable, Sendable {
 	typealias StoryHashDictionary = [String: [StoryHash]]
 
 	var unread: [StoryHash]?
 	var starred: [StoryHash]?
 
-	nonisolated struct StoryHash: Hashable, Codable, Sendable {
+	struct StoryHash: Hashable, Codable, Sendable {
 		let hash: String
 		let timestamp: Date
 	}

@@ -76,7 +76,7 @@ private extension CloudKitArticlesZoneDelegate {
 
 		// Parse items on background thread
 		let feedIDsAndItems = await Task.detached(priority: .userInitiated) {
-			let parsedItems = records.compactMap { self.makeParsedItem($0) }
+			let parsedItems = records.compactMap { makeParsedItem($0) }
 			return Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 		}.value
 
@@ -134,62 +134,62 @@ private extension CloudKitArticlesZoneDelegate {
 	func stripPrefix(_ externalID: String) -> String {
 		return String(externalID[externalID.index(externalID.startIndex, offsetBy: 2)..<externalID.endIndex])
 	}
+}
 
-	nonisolated func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
-		guard articleRecord.recordType == CloudKitArticlesZone.CloudKitArticle.recordType else {
-			return nil
-		}
-
-		var parsedAuthors = Set<ParsedAuthor>()
-
-		let decoder = JSONDecoder()
-
-		if let encodedParsedAuthors = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.parsedAuthors] as? [String] {
-			for encodedParsedAuthor in encodedParsedAuthors {
-				if let data = encodedParsedAuthor.data(using: .utf8), let parsedAuthor = try? decoder.decode(ParsedAuthor.self, from: data) {
-					parsedAuthors.insert(parsedAuthor)
-				}
-			}
-		}
-
-		guard let uniqueID = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.uniqueID] as? String,
-			let feedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.feedURL] as? String else {
-			return nil
-		}
-
-		var contentHTML = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String
-		if let contentHTMLData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTMLData] as? NSData {
-			if let decompressedContentHTMLData = try? contentHTMLData.decompressed(using: .lzfse) {
-				contentHTML = String(data: decompressedContentHTMLData as Data, encoding: .utf8)
-			}
-		}
-
-		var contentText = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String
-		if let contentTextData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentTextData] as? NSData {
-			if let decompressedContentTextData = try? contentTextData.decompressed(using: .lzfse) {
-				contentText = String(data: decompressedContentTextData as Data, encoding: .utf8)
-			}
-		}
-
-		let parsedItem = ParsedItem(syncServiceID: nil,
-									uniqueID: uniqueID,
-									feedURL: feedURL,
-									url: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.url] as? String,
-									externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
-									title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,
-									language: nil,
-									contentHTML: contentHTML,
-									contentText: contentText,
-									markdown: nil,
-									summary: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.summary] as? String,
-									imageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
-									bannerImageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
-									datePublished: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.datePublished] as? Date,
-									dateModified: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.dateModified] as? Date,
-									authors: parsedAuthors,
-									tags: nil,
-									attachments: nil)
-
-		return parsedItem
+nonisolated func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
+	guard articleRecord.recordType == CloudKitArticlesZone.CloudKitArticle.recordType else {
+		return nil
 	}
+
+	var parsedAuthors = Set<ParsedAuthor>()
+
+	let decoder = JSONDecoder()
+
+	if let encodedParsedAuthors = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.parsedAuthors] as? [String] {
+		for encodedParsedAuthor in encodedParsedAuthors {
+			if let data = encodedParsedAuthor.data(using: .utf8), let parsedAuthor = try? decoder.decode(ParsedAuthor.self, from: data) {
+				parsedAuthors.insert(parsedAuthor)
+			}
+		}
+	}
+
+	guard let uniqueID = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.uniqueID] as? String,
+		  let feedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.feedURL] as? String else {
+		return nil
+	}
+
+	var contentHTML = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String
+	if let contentHTMLData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTMLData] as? NSData {
+		if let decompressedContentHTMLData = try? contentHTMLData.decompressed(using: .lzfse) {
+			contentHTML = String(data: decompressedContentHTMLData as Data, encoding: .utf8)
+		}
+	}
+
+	var contentText = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String
+	if let contentTextData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentTextData] as? NSData {
+		if let decompressedContentTextData = try? contentTextData.decompressed(using: .lzfse) {
+			contentText = String(data: decompressedContentTextData as Data, encoding: .utf8)
+		}
+	}
+
+	let parsedItem = ParsedItem(syncServiceID: nil,
+								uniqueID: uniqueID,
+								feedURL: feedURL,
+								url: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.url] as? String,
+								externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
+								title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,
+								language: nil,
+								contentHTML: contentHTML,
+								contentText: contentText,
+								markdown: nil,
+								summary: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.summary] as? String,
+								imageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
+								bannerImageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
+								datePublished: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.datePublished] as? Date,
+								dateModified: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.dateModified] as? Date,
+								authors: parsedAuthors,
+								tags: nil,
+								attachments: nil)
+
+	return parsedItem
 }

@@ -1317,15 +1317,6 @@ public enum FetchType {
 			}
 		}
 
-		print("previous flattenedFeeds \(_flattenedFeeds.count)")
-		print("updated flattenedFeeds \(feeds.count)")
-		if _flattenedFeeds.count == 3 && feeds.count == 0 {
-			for feed in _flattenedFeeds {
-				print("feed id: \(feed.feedID) url: \(feed.url) name: \(feed.nameForDisplay)")
-			}
-			print("this is going to be a problem")
-		}
-
 		_flattenedFeeds = feeds
 		flattenedFeedsNeedUpdate = false
 	}

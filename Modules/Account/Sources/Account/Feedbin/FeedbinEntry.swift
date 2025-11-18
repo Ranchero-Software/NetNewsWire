@@ -10,7 +10,7 @@ import Foundation
 import RSParser
 import RSCore
 
-nonisolated final class FeedbinEntry: Decodable, Sendable {
+final class FeedbinEntry: Decodable, Sendable {
 	let articleID: Int
 	let feedID: Int
 	let title: String?
@@ -47,7 +47,7 @@ nonisolated final class FeedbinEntry: Decodable, Sendable {
 	}
 }
 
-nonisolated struct FeedbinEntryJSONFeed: Decodable, Sendable {
+struct FeedbinEntryJSONFeed: Decodable, Sendable {
 	let jsonFeedAuthor: FeedbinEntryJSONFeedAuthor?
 	let jsonFeedExternalURL: String?
 
@@ -71,7 +71,7 @@ nonisolated struct FeedbinEntryJSONFeed: Decodable, Sendable {
 	}
 }
 
-nonisolated struct FeedbinEntryJSONFeedAuthor: Decodable, Sendable {
+struct FeedbinEntryJSONFeedAuthor: Decodable, Sendable {
 	let url: String?
 	let avatarURL: String?
 

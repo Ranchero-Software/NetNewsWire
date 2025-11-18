@@ -10,7 +10,7 @@ import AppKit
 import Account
 import os.log
 
-nonisolated struct ErrorHandler: Sendable {
+struct ErrorHandler: Sendable {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
 

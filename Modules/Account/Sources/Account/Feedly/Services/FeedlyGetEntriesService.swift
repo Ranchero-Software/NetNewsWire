@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol FeedlyGetEntriesService: AnyObject {
+@MainActor protocol FeedlyGetEntriesService: AnyObject {
 	func getEntries(for ids: Set<String>, completion: @escaping @Sendable (Result<[FeedlyEntry], Error>) -> ())
 }

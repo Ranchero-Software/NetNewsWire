@@ -9,11 +9,11 @@
 #if os(macOS)
 import AppKit
 
-@MainActor private final class IndeterminateProgressController {
-	static var windowController: IndeterminateProgressWindowController?
-	static var runningProgressWindow = false
+@MainActor public final class IndeterminateProgressController {
+	private static var windowController: IndeterminateProgressWindowController?
+	private static var runningProgressWindow = false
 
-	static func beginProgressWithMessage(_ message: String) {
+	public static func beginProgressWithMessage(_ message: String) {
 		if runningProgressWindow {
 			assertionFailure("Expected !runningProgressWindow.")
 			endProgress()
@@ -24,7 +24,7 @@ import AppKit
 		NSApplication.shared.runModal(for: windowController!.window!)
 	}
 
-	static func endProgress() {
+	public static func endProgress() {
 		if !runningProgressWindow {
 			assertionFailure("Expected runningProgressWindow.")
 			return
