@@ -16,5 +16,4 @@ struct FeedbinImportResult: Codable, Sendable {
 		case importResultID = "id"
 		case complete
 	}
-
 }

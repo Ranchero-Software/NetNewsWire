@@ -388,7 +388,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 
-	@MainActor private func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+	private func checkImportResult(opmlImportResultID: Int, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			while true {
 				try? await Task.sleep(for: .seconds(15))
