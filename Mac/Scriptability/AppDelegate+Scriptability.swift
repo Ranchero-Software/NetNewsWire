@@ -19,18 +19,18 @@
 import Foundation
 import Articles
 
-protocol AppDelegateAppleEvents {
+@MainActor protocol AppDelegateAppleEvents {
     func installAppleEventHandlers()
     func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor)
 }
 
-protocol ScriptingAppDelegate {
+@MainActor protocol ScriptingAppDelegate {
     var  scriptingCurrentArticle: Article?  {get}
     var  scriptingSelectedArticles: [Article]  {get}
     var  scriptingMainWindowController:ScriptingMainWindowController? {get}
 }
 
-extension AppDelegate : AppDelegateAppleEvents {
+extension AppDelegate: AppDelegateAppleEvents {
 
     // MARK: GetURL Apple Event
 

@@ -10,12 +10,12 @@ import Foundation
 import AuthenticationServices
 import RSCore
 
-public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
+@MainActor public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
 }
 
-public enum OAuthAccountAuthorizationOperationError: LocalizedError {
+public enum OAuthAccountAuthorizationOperationError: LocalizedError, Sendable {
 	case duplicateAccount
 
 	public var errorDescription: String? {

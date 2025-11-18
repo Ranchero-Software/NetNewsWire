@@ -14,7 +14,7 @@ import UIKit
 
 import RSCore
 
-final class IconImage {
+final class IconImage: @unchecked Sendable {
 
 	lazy var isDark: Bool = {
 		return image.isDark()

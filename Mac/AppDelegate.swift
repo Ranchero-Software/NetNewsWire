@@ -22,7 +22,7 @@ let appName = "NetNewsWire"
 
 var appDelegate: AppDelegate!
 
-@NSApplicationMain
+@main
 final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")

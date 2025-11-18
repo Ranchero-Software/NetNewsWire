@@ -17,6 +17,6 @@ import Foundation
     var name:String { get }
 }
 
-@MainActor protocol UniqueIdScriptingObject: ScriptingObject {
-	var scriptingUniqueId:Any { get }
+@MainActor protocol UniqueIDScriptingObject: ScriptingObject {
+	var scriptingUniqueID: Any { get }
 }

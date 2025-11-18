@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ArticleTheme: Equatable {
+struct ArticleTheme: Equatable, Sendable {
 
 	static let defaultTheme = ArticleTheme()
 	static let nnwThemeSuffix = ".nnwtheme"
@@ -46,16 +46,15 @@ struct ArticleTheme: Equatable {
 
 		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
 		let stylesheetPath = Bundle.main.path(forResource: "stylesheet", ofType: "css")!
-		css = Self.stringAtPath(corePath)! + "\n" + Self.stringAtPath(stylesheetPath)!
+		self.css = Self.stringAtPath(corePath)! + "\n" + Self.stringAtPath(stylesheetPath)!
 
 		let templatePath = Bundle.main.path(forResource: "template", ofType: "html")!
-		template = Self.stringAtPath(templatePath)!
+		self.template = Self.stringAtPath(templatePath)!
 
-		isAppTheme = true
+		self.isAppTheme = true
 	}
 
 	init(url: URL, isAppTheme: Bool) throws {
-
 		_ = url.startAccessingSecurityScopedResource()
 		defer {
 			url.stopAccessingSecurityScopedResource()
@@ -106,5 +105,4 @@ struct ArticleTheme: Equatable {
 		let filename = (path as NSString).lastPathComponent
 		return filenameWithThemeSuffixRemoved(filename) == themeName
 	}
-
 }

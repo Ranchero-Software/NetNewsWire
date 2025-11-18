@@ -12,7 +12,7 @@ import Articles
 import RSCore
 
 @objc(ScriptableFolder)
-final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor final class ScriptableFolder: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
 
     let folder:Folder
     let container:ScriptingObjectContainer
@@ -40,7 +40,7 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    var scriptingUniqueID:Any {
         return folder.folderID
     }
 

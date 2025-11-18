@@ -12,7 +12,7 @@ import Account
 import Articles
 
 @objc(ScriptableFeed)
-final class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor final class ScriptableFeed: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
 
     let feed:Feed
     let container:ScriptingObjectContainer
@@ -44,7 +44,7 @@ final class ScriptableFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectCo
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    var scriptingUniqueID:Any {
         return feed.feedID
     }
 

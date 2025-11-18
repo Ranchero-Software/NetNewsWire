@@ -10,11 +10,10 @@ import AppKit
 import Account
 import Articles
 
-protocol TimelineContainerViewControllerDelegate: AnyObject {
+@MainActor protocol TimelineContainerViewControllerDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
 	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController)
-
 }
 
 final class TimelineContainerViewController: NSViewController {

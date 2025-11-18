@@ -12,13 +12,13 @@ import Articles
 import Account
 import os.log
 
-protocol TimelineDelegate: AnyObject  {
+@MainActor protocol TimelineDelegate: AnyObject  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
-enum TimelineShowFeedName {
+enum TimelineShowFeedName: Sendable {
 	case none
 	case byline
 	case feed

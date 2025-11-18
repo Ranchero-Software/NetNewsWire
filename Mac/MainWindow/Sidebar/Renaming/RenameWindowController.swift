@@ -8,7 +8,7 @@
 
 import AppKit
 
-protocol RenameWindowControllerDelegate {
+@MainActor protocol RenameWindowControllerDelegate {
 
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject: Any, withNewName: String)
 }

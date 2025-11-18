@@ -93,7 +93,7 @@ final class LegacyArticleExtractorButton: NSButton {
 		let images = [imageProgress1, imageProgress2, imageProgress3, imageProgress4, imageProgress3, imageProgress2, imageProgress1]
 
 		let imageLayer = CALayer()
-		imageLayer.bounds = CGRect(x: 0, y: 0, width: imageProgress1?.size.width ?? 0, height: imageProgress1?.size.height ?? 0)
+		imageLayer.bounds = CGRect(x: 0, y: 0, width: imageProgress1.size.width, height: imageProgress1.size.height)
 		imageLayer.position = CGPoint(x: bounds.midX, y: floor(bounds.midY))
 
 		hostedLayer.addSublayer(imageLayer)

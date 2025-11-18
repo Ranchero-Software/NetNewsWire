@@ -10,7 +10,7 @@ import Foundation
 import Account
 import Secrets
 
-public enum ArticleExtractorState {
+public enum ArticleExtractorState: Sendable {
     case ready
     case processing
     case failedToParse
@@ -18,7 +18,7 @@ public enum ArticleExtractorState {
 	case cancelled
 }
 
-protocol ArticleExtractorDelegate {
+@MainActor protocol ArticleExtractorDelegate {
     func articleExtractionDidFail(with: Error)
     func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }

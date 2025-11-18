@@ -16,7 +16,7 @@ extension Notification.Name {
 	static let appleSideBarDefaultIconSizeChanged = Notification.Name("AppleSideBarDefaultIconSizeChanged")
 }
 
-protocol SidebarDelegate: AnyObject {
+@MainActor protocol SidebarDelegate: AnyObject {
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?)
 	func unreadCount(for: AnyObject) -> Int
 	func sidebarInvalidatedRestorationState(_: SidebarViewController)

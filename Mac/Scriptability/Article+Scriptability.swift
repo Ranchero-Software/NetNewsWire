@@ -11,7 +11,7 @@ import Account
 import Articles
 
 @objc(ScriptableArticle)
-final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor final class ScriptableArticle: NSObject, UniqueIDScriptingObject, ScriptingObjectContainer {
 
     let article:Article
     let container:ScriptingObjectContainer
@@ -39,7 +39,7 @@ final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjec
     // article.uniqueID here is the feed unique id
 
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    var scriptingUniqueID:Any {
         return article.uniqueID
     }
 

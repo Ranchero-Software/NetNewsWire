@@ -26,11 +26,11 @@ import Account
         return specifier
     }
 
-    func makeFormUniqueIDScriptObjectSpecifier(forObject object:UniqueIdScriptingObject) -> NSScriptObjectSpecifier? {
+    func makeFormUniqueIDScriptObjectSpecifier(forObject object:UniqueIDScriptingObject) -> NSScriptObjectSpecifier? {
         let containerClassDescription = self.scriptingClassDescription
         let containerScriptObjectSpecifier = self.objectSpecifier
         let scriptingKey = object.scriptingKey
-        let uniqueId = object.scriptingUniqueId
+        let uniqueId = object.scriptingUniqueID
         let specifier = NSUniqueIDSpecifier(containerClassDescription:containerClassDescription,
                                             containerSpecifier:containerScriptObjectSpecifier, key:scriptingKey, uniqueID: uniqueId)
         return specifier

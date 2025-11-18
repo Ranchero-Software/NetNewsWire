@@ -11,8 +11,7 @@ import RSCore
 
 // image - title - unreadCount
 
-struct SidebarCellLayout {
-
+@MainActor struct SidebarCellLayout {
 	let faviconRect: CGRect
 	let titleRect: CGRect
 	let unreadCountRect: CGRect
