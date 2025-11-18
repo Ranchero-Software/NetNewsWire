@@ -154,7 +154,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 			break
 		}
 
-		guard let accountID = destinationAccountID, let account = AccountManager.shared.existingAccount(with: accountID) else {
+		guard let accountID = destinationAccountID, let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 			return
 		}
 

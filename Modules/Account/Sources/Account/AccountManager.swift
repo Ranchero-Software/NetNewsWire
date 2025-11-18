@@ -208,16 +208,16 @@ import RSDatabase
 		return false
 	}
 
-	public func existingAccount(with accountID: String) -> Account? {
+	public func existingAccount(accountID: String) -> Account? {
 		return accountsDictionary[accountID]
 	}
 
 	@MainActor public func existingContainer(with containerID: ContainerIdentifier) -> Container? {
 		switch containerID {
 		case .account(let accountID):
-			return existingAccount(with: accountID)
+			return existingAccount(accountID: accountID)
 		case .folder(let accountID, let folderName):
-			return existingAccount(with: accountID)?.existingFolder(with: folderName)
+			return existingAccount(accountID: accountID)?.existingFolder(with: folderName)
 		default:
 			break
 		}
@@ -227,11 +227,11 @@ import RSDatabase
 	@MainActor public func existingFeed(with sidebarItemID: SidebarItemIdentifier) -> SidebarItem? {
 		switch sidebarItemID {
 		case .folder(let accountID, let folderName):
-			if let account = existingAccount(with: accountID) {
+			if let account = existingAccount(accountID: accountID) {
 				return account.existingFolder(with: folderName)
 			}
 		case .feed(let accountID, let feedID):
-			if let account = existingAccount(with: accountID) {
+			if let account = existingAccount(accountID: accountID) {
 				return account.existingFeed(withFeedID: feedID)
 			}
 		default:

@@ -1311,15 +1311,23 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	func updateFlattenedFeeds() {
 		var feeds = Set<Feed>()
 		feeds.formUnion(topLevelFeeds)
-		for folder in folders! {
-			feeds.formUnion(folder.flattenedFeeds())
+		if let folders {
+			for folder in folders {
+				feeds.formUnion(folder.flattenedFeeds())
+			}
 		}
 
-		// Keep old feeds alive during transition to work around Swift runtime bug
-		let oldFeeds = _flattenedFeeds
+		print("previous flattenedFeeds \(_flattenedFeeds.count)")
+		print("updated flattenedFeeds \(feeds.count)")
+		if _flattenedFeeds.count == 3 && feeds.count == 0 {
+			for feed in _flattenedFeeds {
+				print("feed id: \(feed.feedID) url: \(feed.url) name: \(feed.nameForDisplay)")
+			}
+			print("this is going to be a problem")
+		}
+
 		_flattenedFeeds = feeds
 		flattenedFeedsNeedUpdate = false
-		_ = oldFeeds // Ensure oldFeeds stays alive until after assignment
 	}
 
 	func rebuildFeedDictionaries() {

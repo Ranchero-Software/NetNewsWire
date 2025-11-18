@@ -372,7 +372,7 @@ private extension SidebarOutlineDataSource {
 
 		draggedFeeds.forEach { pasteboardFeed in
 			guard let sourceAccountID = pasteboardFeed.accountID,
-				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
+				  let sourceAccount = AccountManager.shared.existingAccount(accountID: sourceAccountID),
 				  let feedID = pasteboardFeed.feedID,
 				  let feed = sourceAccount.existingFeed(withFeedID:  feedID),
 				  let destinationContainer = parentNode.representedObject as? Container
@@ -478,7 +478,7 @@ private extension SidebarOutlineDataSource {
 
 		draggedFolders.forEach { pasteboardFolder in
 			guard let sourceAccountID = pasteboardFolder.accountID,
-				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
+				  let sourceAccount = AccountManager.shared.existingAccount(accountID: sourceAccountID),
 				  let folderStringID = pasteboardFolder.folderID,
 				  let folderID = Int(folderStringID),
 				  let folder = sourceAccount.existingFolder(withID: folderID)

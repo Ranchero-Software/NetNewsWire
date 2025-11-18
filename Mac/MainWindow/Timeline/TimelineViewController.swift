@@ -297,7 +297,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 
 		if let selectedAccountID = state.selectedAccountID,
-		   let account = AccountManager.shared.existingAccount(with: selectedAccountID),
+		   let account = AccountManager.shared.existingAccount(accountID: selectedAccountID),
 		   let selectedArticleID = state.selectedArticleID {
 
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: selectedArticleID)
@@ -332,7 +332,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let account = AccountManager.shared.existingAccount(with: accountID),
+			let account = AccountManager.shared.existingAccount(accountID: accountID),
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String {
 
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)

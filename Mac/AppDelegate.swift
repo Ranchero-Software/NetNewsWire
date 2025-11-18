@@ -966,7 +966,7 @@ private extension AppDelegate {
 				return
 			}
 
-			guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+			guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 				assertionFailure("Expected account with \(accountID)")
 				Self.logger.error("No account with accountID \(accountID) found from status notification")
 				return

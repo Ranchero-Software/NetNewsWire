@@ -35,7 +35,7 @@ public enum AccountError: LocalizedError {
 
 	@MainActor public static func account(from error: AccountError?) -> Account? {
 		if case let .wrappedError(_, accountID, _) = error {
-			return AccountManager.shared.existingAccount(with: accountID)
+			return AccountManager.shared.existingAccount(accountID: accountID)
 		}
 		return nil
 	}
