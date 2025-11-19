@@ -184,31 +184,40 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 	}
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 		completionHandler([.list, .banner, .badge, .sound])
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-		defer { completionHandler() }
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
-		let userInfo = response.notification.request.content.userInfo
-
-		switch response.actionIdentifier {
-		case UserNotificationManager.ActionIdentifier.markAsRead:
-			handleMarkAsRead(userInfo: userInfo)
-		case UserNotificationManager.ActionIdentifier.markAsStarred:
-			handleMarkAsStarred(userInfo: userInfo)
-		default:
-			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
-				sceneDelegate.handle(response)
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-					sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
-				})
-			}
+		// Wrapper to safely transfer non-Sendable values to MainActor
+		struct UnsafeSendable<T>: @unchecked Sendable {
+			let value: T
 		}
 
-    }
+		let wrappedResponse = UnsafeSendable(value: response)
+		let wrappedCompletionHandler = UnsafeSendable(value: completionHandler)
 
+		Task { @MainActor in
+			let response = wrappedResponse.value
+			let userInfo = response.notification.request.content.userInfo
+
+			switch response.actionIdentifier {
+			case UserNotificationManager.ActionIdentifier.markAsRead:
+				handleMarkAsRead(userInfo: userInfo)
+			case UserNotificationManager.ActionIdentifier.markAsStarred:
+				handleMarkAsStarred(userInfo: userInfo)
+			default:
+				if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
+					sceneDelegate.handle(response)
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+						sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
+					})
+				}
+			}
+			wrappedCompletionHandler.value()
+		}
+    }
 }
 
 // MARK: App Initialization

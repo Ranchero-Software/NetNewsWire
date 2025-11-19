@@ -317,7 +317,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	func registerDefaults() {
+	@MainActor func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
  		#else

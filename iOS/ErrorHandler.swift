@@ -14,7 +14,7 @@ struct ErrorHandler: Sendable {
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
 
-	@Sendable public static func present(_ viewController: UIViewController) -> (Error) -> () {
+	@Sendable public static func present(_ viewController: UIViewController) -> @Sendable (Error) -> () {
 		return { [weak viewController] error in
 			Task { @MainActor in
 				if UIApplication.shared.applicationState == .active {

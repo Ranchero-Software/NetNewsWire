@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Synchronization
 import RSCore
 
 public extension Notification.Name {
@@ -14,7 +15,7 @@ public extension Notification.Name {
 	static let CurrentArticleThemeDidChangeNotification = Notification.Name("CurrentArticleThemeDidChangeNotification")
 }
 
-@MainActor final class ArticleThemesManager: NSObject, NSFilePresenter {
+final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 	static let shared = ArticleThemesManager()
 	public let folderPath: String
 
@@ -23,7 +24,7 @@ public extension Notification.Name {
 
 	var currentThemeName: String {
 		get {
-			return AppDefaults.shared.currentThemeName ?? AppDefaults.defaultThemeName
+			AppDefaults.shared.currentThemeName ?? AppDefaults.defaultThemeName
 		}
 		set {
 			if newValue != currentThemeName {
@@ -35,24 +36,37 @@ public extension Notification.Name {
 	}
 
 	var currentTheme: ArticleTheme {
-		didSet {
-			NotificationCenter.default.post(name: .CurrentArticleThemeDidChangeNotification, object: self)
+		get {
+			state.withLock { $0.currentTheme }
+		}
+		set {
+			state.withLock { $0.currentTheme = newValue }
+			NotificationCenter.default.postOnMainThread(name: .CurrentArticleThemeDidChangeNotification, object: self)
 		}
 	}
 
-	var themeNames = [AppDefaults.defaultThemeName] {
-		didSet {
-			NotificationCenter.default.post(name: .ArticleThemeNamesDidChangeNotification, object: self)
+	var themeNames: [String] {
+		get {
+			state.withLock { $0.themeNames }
+		}
+		set {
+			state.withLock { $0.themeNames = newValue }
+			NotificationCenter.default.postOnMainThread(name: .ArticleThemeNamesDidChangeNotification, object: self)
 		}
 	}
 
-	private var didStart = false
+	private struct State {
+		var currentTheme = ArticleTheme.defaultTheme
+		var themeNames = [AppDefaults.defaultThemeName]
+	}
+	private let state = Mutex(State())
+
+	@MainActor private var didStart = false
 
 	override init() {
 		let folderPath = Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!
 		self.folderPath = folderPath
 		self.presentedItemURL = URL(fileURLWithPath: folderPath)
-		self.currentTheme = ArticleTheme.defaultTheme
 
 		super.init()
 
@@ -64,7 +78,7 @@ public extension Notification.Name {
 		}
 	}
 
-	func start() {
+	@MainActor func start() {
 		guard !didStart else {
 			assertionFailure("ArticlesThemesManager.start called when already started.")
 			return
@@ -77,7 +91,7 @@ public extension Notification.Name {
 		NSFileCoordinator.addFilePresenter(self)
 	}
 
-	nonisolated func presentedSubitemDidChange(at url: URL) {
+	func presentedSubitemDidChange(at url: URL) {
 		updateThemeNames()
 		updateCurrentTheme()
 	}
@@ -124,7 +138,6 @@ public extension Notification.Name {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
 			return nil
 		}
-
 	}
 
 	func deleteTheme(themeName: String) {
@@ -138,20 +151,18 @@ public extension Notification.Name {
 
 private extension ArticleThemesManager {
 
-	nonisolated func updateThemeNames() {
-		MainActor.assumeIsolated {
-			let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
-			let appThemeNames = Set(appThemeFilenames.map { ArticleTheme.themeNameForPath($0) })
+	func updateThemeNames() {
+		let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
+		let appThemeNames = Set(appThemeFilenames.map { ArticleTheme.themeNameForPath($0) })
 
-			let installedThemeNames = Set(allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) })
+		let installedThemeNames = Set(allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) })
 
-			let allThemeNames = appThemeNames.union(installedThemeNames)
+		let allThemeNames = appThemeNames.union(installedThemeNames)
 
-			let sortedThemeNames = allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
-			Task { @MainActor in
-				if sortedThemeNames != themeNames {
-					themeNames = sortedThemeNames
-				}
+		let sortedThemeNames = allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
+		Task { @MainActor in
+			if sortedThemeNames != themeNames {
+				themeNames = sortedThemeNames
 			}
 		}
 	}
@@ -160,27 +171,25 @@ private extension ArticleThemesManager {
 		articleThemeWithThemeName(AppDefaults.defaultThemeName)!
 	}
 
-	nonisolated func updateCurrentTheme() {
-		MainActor.assumeIsolated {
-			var themeName = currentThemeName
-			if !themeNames.contains(themeName) {
-				themeName = AppDefaults.defaultThemeName
-				currentThemeName = AppDefaults.defaultThemeName
-			}
+	func updateCurrentTheme() {
+		var themeName = currentThemeName
+		if !themeNames.contains(themeName) {
+			themeName = AppDefaults.defaultThemeName
+			currentThemeName = AppDefaults.defaultThemeName
+		}
 
-			var articleTheme = articleThemeWithThemeName(themeName)
-			if articleTheme == nil {
-				articleTheme = defaultArticleTheme()
-				currentThemeName = AppDefaults.defaultThemeName
-			}
+		var articleTheme = articleThemeWithThemeName(themeName)
+		if articleTheme == nil {
+			articleTheme = defaultArticleTheme()
+			currentThemeName = AppDefaults.defaultThemeName
+		}
 
-			if let articleTheme = articleTheme, articleTheme != currentTheme {
-				currentTheme = articleTheme
-			}
+		if let articleTheme = articleTheme, articleTheme != currentTheme {
+			currentTheme = articleTheme
 		}
 	}
 
-	nonisolated func allThemePaths(_ folder: String) -> [String] {
+	func allThemePaths(_ folder: String) -> [String] {
 		let filepaths = FileManager.default.filePaths(inFolder: folder)
 		return filepaths?.filter { $0.hasSuffix(ArticleTheme.nnwThemeSuffix) } ?? []
 	}
