@@ -187,7 +187,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
 
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
@@ -337,18 +341,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 	}
 
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task { @MainActor in
-			updateSortMenuItems()
-			updateGroupByFeedMenuItem()
+	func userDefaultsDidChange() {
+		updateSortMenuItems()
+		updateGroupByFeedMenuItem()
 
-			if lastRefreshInterval != AppDefaults.shared.refreshInterval {
-				refreshTimer?.update()
-				lastRefreshInterval = AppDefaults.shared.refreshInterval
-			}
-
-			updateDockBadge()
+		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
+			refreshTimer?.update()
+			lastRefreshInterval = AppDefaults.shared.refreshInterval
 		}
+
+		updateDockBadge()
 	}
 
 	@objc func didWakeNotification(_ note: Notification) {

@@ -326,13 +326,17 @@ struct FeedNode: Hashable, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .combinedRefreshProgressDidChange, object: nil)
 
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
 	}
 
 	func restoreWindowState(_ activity: NSUserActivity?) {
@@ -513,11 +517,9 @@ struct FeedNode: Hashable, Sendable {
 		discloseFeed(feed, animations: [.scroll, .navigation])
 	}
 
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task { @MainActor in
-			self.sortDirection = AppDefaults.shared.timelineSortDirection
-			self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
-		}
+	func userDefaultsDidChange() {
+		sortDirection = AppDefaults.shared.timelineSortDirection
+		groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}
 
 	@objc func accountDidDownloadArticles(_ note: Notification) {

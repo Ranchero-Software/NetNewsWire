@@ -152,7 +152,11 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		// lets us know that it’s time to request an image.
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -649,15 +653,13 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 	}
 
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task { @MainActor in
-			if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
-				self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-				self.iconSize = AppDefaults.shared.timelineIconSize
-				self.reloadAllVisibleCells()
-			}
-			self.updateToolbar()
+	func userDefaultsDidChange() {
+		if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
+			self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+			self.iconSize = AppDefaults.shared.timelineIconSize
+			self.reloadAllVisibleCells()
 		}
+		self.updateToolbar()
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {

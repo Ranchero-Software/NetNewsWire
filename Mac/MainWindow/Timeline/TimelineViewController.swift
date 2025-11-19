@@ -240,7 +240,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+			NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+				Task { @MainActor in
+					self?.userDefaultsDidChange()
+				}
+			}
 			didRegisterForNotifications = true
 		}
 	}
@@ -699,12 +703,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task { @MainActor in
-			self.fontSize = AppDefaults.shared.timelineFontSize
-			self.sortDirection = AppDefaults.shared.timelineSortDirection
-			self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
-		}
+	@MainActor func userDefaultsDidChange() {
+		fontSize = AppDefaults.shared.timelineFontSize
+		sortDirection = AppDefaults.shared.timelineSortDirection
+		groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}
 
 	// MARK: - Reloading Data

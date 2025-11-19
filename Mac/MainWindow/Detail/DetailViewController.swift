@@ -65,7 +65,11 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
 	}
 
 	// MARK: - API
@@ -155,12 +159,10 @@ private extension DetailViewController {
 		}
 	}
 
-	@objc func userDefaultsDidChange(_ : Notification) {
-		Task { @MainActor in
-			if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
-				isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
-				createNewWebViewsAndRestoreState()
-			}
+	func userDefaultsDidChange() {
+		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+			createNewWebViewsAndRestoreState()
 		}
 	}
 
