@@ -361,7 +361,7 @@ extension WebViewController: WKNavigationDelegate {
 		}
 	}
 
-	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void) {
 
 		if navigationAction.navigationType == .linkActivated {
 			guard let url = navigationAction.request.url else {
@@ -613,8 +613,7 @@ private extension WebViewController {
 
 	func startArticleExtractor() {
 		guard articleExtractor == nil else { return }
-		if let link = article?.preferredLink, let extractor = ArticleExtractor(link) {
-			extractor.delegate = self
+		if let link = article?.preferredLink, let extractor = ArticleExtractor(link, delegate: self) {
 			extractor.process()
 			articleExtractor = extractor
 			articleExtractorButtonState = .animated

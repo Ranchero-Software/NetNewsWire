@@ -34,7 +34,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
 	var unreadCount = 0 {
 		didSet {
@@ -343,13 +343,12 @@ private extension AppDelegate {
 
 	/// Schedules a background app refresh based on `AppDefaults.refreshInterval`.
 	func scheduleBackgroundFeedRefresh() {
-		let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
-		request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
-
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
 		backgroundTaskDispatchQueue.async {
 			do {
+				let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
+				request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
 				Self.logger.error("Could not schedule app refresh: \(error.localizedDescription)")
